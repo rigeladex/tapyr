@@ -446,7 +446,7 @@ _test_code = """
     <Field FB-0:2::p-3:1 'points'> <Form FB>
 
     >>> for e in fb.transitive_iter () :
-    ...   if e.names :
+    ...   if e.names and e.anchor_id :
     ...     print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id, e.type_base_name, e.__class__.__name__, e.names)
     FB-0:0:0             FB-0                 Boat_Class           Field_Entity         ['left']
     FB-0:2::p            FB-0                 Boat_in_Regatta      Entity_Link          ['Boat_in_Regatta']
@@ -460,7 +460,7 @@ _test_code = """
     FB-0:2::p-2:0:3      FB-0:2::p-2:0        Club                 Field_Entity         ['Boat_in_Regatta', 'skipper', 'club']
 
     >>> for e in fi.transitive_iter () :
-    ...   if e.names :
+    ...   if e.names and e.anchor_id :
     ...     print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id, e.type_base_name, e.elem.__class__.__name__, e.names)
     FB-0:0:0             FB-0                 Boat_Class           Field_Entity         ['left']
     FB-0:2::0            FB-0                 Boat_in_Regatta      Entity_Link          ['Boat_in_Regatta']
@@ -1273,7 +1273,7 @@ _test_code = """
     >>> v.edit.get ("pid")
 
     >>> for e in fv.transitive_iter () :
-    ...   if e.names :
+    ...   if e.names and e.anchor_id :
     ...     print "%-20s %-20s %-20s %-20s %s" % (e.id, e.anchor_id, e.type_base_name, e.elem.__class__.__name__, e.names)
     FB-0:0:0             FB-0                 Boat_Class           Field_Entity         ['left']
     FB-0:2::0            FB-0                 Boat_in_Regatta      Entity_Link          ['Boat_in_Regatta']

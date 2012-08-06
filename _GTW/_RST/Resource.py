@@ -62,6 +62,7 @@
 #                     factor `_http_response_need_auth`
 #     1-Aug-2012 (CT) Fix cold-start behavior of `Root.resource_from_href`
 #     4-Aug-2012 (MG) `Alias`: add `top` to the `_parent_attr` set
+#     6-Aug-2012 (CT) Add `blackboard` to `_handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -307,10 +308,11 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @page_template.setter
     def page_template (self, value) :
+        T = self.Templateer
         self._page_template = None
         if isinstance (value, basestring) :
             self.page_template_name = value
-        elif not isinstance (value, self.Templateer.Template_Type) :
+        elif T is not None and not isinstance (value, T.Template_Type) :
             self.page_template_name = value.name
         else :
             self.page_template_name = value.name
@@ -496,7 +498,12 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        yield
+        T = self.Templateer
+        if T :
+            with T.GTW.LET (blackboard = TFL.Record ()) :
+                yield
+        else :
+            yield
     # end def _handle_method_context
 
     def __getattr__ (self, name) :

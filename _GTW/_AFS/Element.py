@@ -112,6 +112,7 @@
 #     2-Mar-2012 (CT) Remove `instance.init` from `_value_sig`
 #     5-Aug-2012 (CT) Change `__repr__` to single line, add `formatted` with
 #                     the same output as the former `__repr__`
+#     5-Aug-2012 (CT) Change `Form.__init__` to set `names`
 #    ««revision-date»»···
 #--
 
@@ -731,6 +732,7 @@ class Form (_Element_List_) :
         self.__super.__init__ (id = id, children = children, ** kw)
         self._id_children     (id, children, self.id_map)
         self._anchor_children ()
+        self.names = list (c.name for c in self.children)
     # end def __init__
 
     def __call__ (self, * args, ** kw) :

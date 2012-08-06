@@ -55,6 +55,7 @@
 #                     `Name_Clash` changed
 #     2-Aug-2012 (CT) Add `dependent_attrs` to `Change_Summary.add_pending`
 #     4-Aug-2012 (CT) Rename `remove` to `_remove`
+#     6-Aug-2012 (CT) Fix `add_pending`: use `E_Type`, not `E_Type_Manager`
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ class Change_Summary (MOM.SCM.Summary) :
     def add_pending (self, c, scope) :
         mo = c.modified_attrs
         if mo :
-            ET   = scope [c.type_name]
+            ET   = scope [c.type_name].E_Type
             pacs = set (mo)
             for an in mo :
                 a = getattr (ET, an, None)
