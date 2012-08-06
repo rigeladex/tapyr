@@ -769,9 +769,11 @@ _test_get = r"""
 
     >>> r = showf (R.head (""))
     { 'headers' :
-        { 'content-length' : '0'
+        { 'cache-control' : 'no-cache'
+        , 'content-length' : '0'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
         , 'server' : '<server>'
         }
     , 'status' : 200
@@ -1063,7 +1065,8 @@ _test_get = r"""
 
     >>> r = showf (R.get ("/v1/PAP-Person/1"))
     { 'headers' :
-        { 'content-length' : '<length>'
+        { 'cache-control' : 'no-cache'
+        , 'content-length' : '<length>'
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
@@ -1091,7 +1094,8 @@ _test_get = r"""
     >>> last_etag     = r.headers ["etag"]
     >>> r = showf (R.get ("/v1/PAP-Person/1", headers = { "If-Modified-Since" : last_modified }))
     { 'headers' :
-        { 'connection' : 'close'
+        { 'cache-control' : 'no-cache'
+        , 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
@@ -1102,7 +1106,8 @@ _test_get = r"""
 
     >>> r = showf (R.get ("/v1/PAP-Person/1", headers = { "If-None-Match" : last_etag }))
     { 'headers' :
-        { 'connection' : 'close'
+        { 'cache-control' : 'no-cache'
+        , 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'server' : '<server>'

@@ -30,6 +30,7 @@
 #     5-Aug-2012 (MG) Cache filenames of media fragments
 #     5-Aug-2012 (MG) Fix filename cache (use `templates` instead of
 #                     `templates_i` )
+#     6-Aug-2012 (CT) Add `etag`
 #    ««revision-date»»···
 #--
 
@@ -43,9 +44,9 @@ from   _TFL                   import sos
 import _TFL._Meta.Object
 import _TFL.predicate
 
-import  hashlib
-import  base64
-from    posixpath import join as pp_join
+import base64
+import hashlib
+from   posixpath import join as pp_join
 
 class Template_Media_Cache (TFL.Meta.Object) :
 
@@ -70,9 +71,11 @@ class Template_Media_Cache (TFL.Meta.Object) :
             self._clear_dir ()
         css_map = {}
         js_map  = {}
+        t_set   = set ()
         TEST    = root.TEST
         TT      = root.Templateer.Template_Type
         for t in TFL.uniq (root.template_iter ()) :
+            t_set.update (t.templates)
             css_href = self._add_to_map (t, "CSS", css_map)
             js_href  = None if TEST else self._add_to_map (t, "js", js_map)
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
@@ -81,7 +84,12 @@ class Template_Media_Cache (TFL.Meta.Object) :
         self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
         if not TEST :
             self._create_cache ("js", js_map, GTW.minified_js)
-        return dict (css_href_map = TT.css_href_map, Media_Map = TT.Media_Map)
+        etag = self._get_etag (css_map, js_map, t_set)
+        return dict \
+            ( css_href_map = TT.css_href_map
+            , etag         = etag
+            , Media_Map    = TT.Media_Map
+            )
     # end def as_pickle_cargo
 
     def _add_filenames (self, template) :
@@ -98,6 +106,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     def from_pickle_cargo (self, root, cargo) :
         TT              = root.Templateer.Template_Type
         TT.css_href_map = cargo.get ("css_href_map", {})
+        TT.etag         = cargo.get ("etag")
         TT.Media_Map    = cargo.get ("Media_Map",    {})
     # end def from_pickle_cargo
 
@@ -143,6 +152,23 @@ class Template_Media_Cache (TFL.Meta.Object) :
                     attr = minifier (attr)
                 file.write (attr)
     # end def _create_cache
+
+    def _get_etag (self, css_map, js_map, t_set) :
+        def _gen (css_map, js_map, t_set) :
+            yield "CSS"
+            for c in sorted (css_map) :
+                yield c
+            yield "JS"
+            for j in sorted (js_map) :
+                yield j
+            yield "JNJ"
+            for t in sorted (t_set, key = TFL.Getter.path) :
+                s = t.source
+                if s is not None :
+                    yield s.encode ("iso-8859-1", "replace")
+        h = hashlib.sha1 ("\n".join (_gen (css_map, js_map, t_set))).digest ()
+        return base64.b64encode (h, str ("_-")).rstrip ("=")
+    # end def _get_etag
 
     def __str__ (self) :
         return "Template_Media_Cache (%r, %r)" % (self.media_dir, self.prefix)

@@ -60,6 +60,7 @@
 #     2-Aug-2012 (CT) Change `_wsgi_app` to avoid loading of `scope`
 #     2-Aug-2012 (MG) Correct implementation of `watch_media_files`
 #     5-Aug-2012 (MG) Change handling of `watch_media_files`
+#     6-Aug-2012 (CT) Move `-watch_media_files` to `_GT2W_Server_Base_`
 #    ««revision-date»»···
 #--
 
@@ -166,6 +167,9 @@ class GT2W_Command (GTW.OMP.Command) :
                 "?Load the translation files during startup"
             , "-log_level:I?Verbosity of logging"
             , "-port:I?Port the server should use"
+            , "-watch_media_files:B"
+                "?Add the .media files to list files watched by "
+                "automatic reloader"
             , TFL.CAO.Opt.Key
                 ( name        = "UTP"
                 , dct         = dict
@@ -180,14 +184,7 @@ class GT2W_Command (GTW.OMP.Command) :
     # end class _GT2W_Server_Base_
 
     class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
-
-        _opts                   = \
-            ( "-watch_media_files:B"
-                "?Add the .media files to list files watched by "
-                "automatic reloader"
-            ,
-            )
-
+        pass
     _Run_Server_ = _GT2W_Run_Server_ # end class
 
     class _GT2W_FCGI_ (_GT2W_Server_Base_, GTW.OMP.Command._FCGI_) :

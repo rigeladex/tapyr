@@ -31,6 +31,7 @@
 #     2-Jul-2012 (CT) Factor `has_option` to `GTW.Request_Data`
 #    17-Jul-2012 (CT) Add property `user`
 #    24-Jul-2012 (CT) Add `use_language`
+#     6-Aug-2012 (CT) Add attribute `lang`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     _real_name = "Request"
     _user      = None
 
+    lang              = None
     original_resource = None
 
     def __init__ (self, root, environ) :
@@ -116,6 +118,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def get_browser_locale_codes
 
     def use_language (self, langs) :
+        self.lang = langs
         I18N.use (* langs)
     # end def use_language
 

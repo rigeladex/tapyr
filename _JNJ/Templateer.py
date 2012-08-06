@@ -72,8 +72,8 @@
 #    10-May-2012 (CT) Add `error_email`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`, factor `env_globals`
 #    22-Jun-2012 (CT) Use `static_handler.get_path` instead of home-grown code
-#     2-Aug-2012 (MG) Add `Media_Filenames`
-#     5-Aug-2012 (MG) Remove `Media_Filenames` again
+#     6-Aug-2012 (CT) Add `etag`
+#     6-Aug-2012 (CT) Remove `e_type_aggregator` (template doesn't exist)
 #    ««revision-date»»···
 #--
 
@@ -95,7 +95,7 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL._Meta.totally_ordered import totally_ordered
 from   _TFL.Regexp                import *
 
-from jinja2.exceptions import TemplateNotFound
+from   jinja2.exceptions import TemplateNotFound
 
 class _Template_ (TFL.Meta.Object) :
     """Describe a Jinja template."""
@@ -557,7 +557,6 @@ Template ("error_email",                  "email/error.jnj")
 Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
 Template ("e_type_afs",                   "html/e_type_afs.jnj")
-Template ("e_type_aggregator",            "html/e_type_aggregator.jnj")
 Template ("e_type_change",                "html/e_type_change.jnj")
 Template ("gallery",                      "html/gallery.jnj")
 Template ("login",                        "html/login.jnj")
@@ -582,11 +581,22 @@ class Templateer (TFL.Meta.Object) :
         self.GTW = GTW = JNJ.GTW (self)
         self.env = env = JNJ.Environment.HTML (* args, GTW = GTW, ** kw)
         self.Template_Type = T = Template_E.New \
-            ("x", By_Path = {}, Map = {}, Media_Map = {}, css_href_map = {})
+            ( "x"
+            , By_Path      = {}
+            , Map          = {}
+            , Media_Map    = {}
+            , css_href_map = {}
+            , etag         = None
+            )
         self.Template_Map  = T.Map
         for t in sorted (Template.Map.itervalues (), key = TFL.Getter.id) :
             T.copy (env, t)
     # end def __init__
+
+    @property
+    def etag (self) :
+        return self.Template_Type.etag
+    # end def etag
 
     def call_macro (self, macro_name, * _args, ** _kw) :
         return self.GTW.call_macro (macro_name, * _args, ** _kw)

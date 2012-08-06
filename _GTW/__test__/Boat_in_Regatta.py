@@ -546,7 +546,7 @@ def show_ora (x) :
         print "---"
 def show_dep (x) :
     if x and x.dependencies :
-        for k, v in sorted (x.dependencies.iteritems ()) :
+        for k, v in sorted (x.dependencies.iteritems (), key = TFL.Getter [0].ui_display) :
             print k, ":", v
     else :
         print "---"

@@ -29,6 +29,7 @@
 #    19-Jul-2012 (CT) Creation
 #    25-Jul-2012 (CT) Fix `Alias`: delegate `ETM` to `target`
 #     2-Aug-2012 (CT) Use `response.renderer`, not `request.renderer`
+#     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -76,19 +77,7 @@ class _Action_ (_Ancestor) :
 
     _exclude_robots   = True
 
-    class _Action_Method_ (GTW.RST.HTTP_Method) :
-
-        _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
-
-    # end class _Action_Method_
-
-    class _Action_GET_ (_Action_Method_, _Ancestor.GET) :
-
-        _real_name             = "GET"
-
-    GET = _Action_GET_ # end class
-
-    class _Action_POST_ (_Action_Method_, GTW.RST.POST) :
+    class _Action_POST_ (GTW.RST.POST) :
 
         _real_name             = "POST"
 
@@ -829,6 +818,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     dir_template_name     = "e_type_admin"
     form_parameters       = {}
     max_completions       = 20
+    skip_etag             = True
     submit_callback       = None
 
     _entry_type_map       = dict \
@@ -846,7 +836,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     class _E_Type_GET_ (_Ancestor.GET) :
 
-        _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
         _renderers             = \
             _Ancestor.GET._renderers + (GTW.RST.Mime_Type.JSON, )
 

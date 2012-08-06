@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Jul-2012 (CT) Creation
 #    26-Jul-2012 (CT) Add `Archive.Year.regattas`
+#     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -61,29 +62,25 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
 
     class _Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
 
-        class _SRM_Page_GET_ (GTW.RST.TOP.Page.GET) :
-
-            _do_change_info        = GTW.RST.HTTP_Method._do_change_info_skip
-
-        GET = _SRM_Page_GET_ # end class _SRM_Page_GET_
+        skip_etag           = True
 
     # end class _Page_
 
     class Registration (_Page_) :
 
-        page_template_name = u"regatta_registration"
+        page_template_name  = u"regatta_registration"
 
     # end class Registration
 
     class Result (_Page_) :
 
-        page_template_name = u"regatta_result"
+        page_template_name  = u"regatta_result"
 
     # end class Result
 
     class Result_Teamrace (_Page_) :
 
-        page_template_name = u"regatta_result_teamrace"
+        page_template_name  = u"regatta_result_teamrace"
 
     # end class Result_Teamrace
 
