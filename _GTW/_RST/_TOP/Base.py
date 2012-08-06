@@ -35,6 +35,7 @@
 #     2-Aug-2012 (CT) Add missing import, fix typo
 #     3-Aug-2012 (CT) Add `http_method` to `_render_context`
 #     4-Aug-2012 (MG) Add missing import
+#     6-Aug-2012 (MG) Enhance `is_current_page`
 #    ««revision-date»»···
 #--
 
@@ -263,7 +264,8 @@ class _TOP_Base_ (_Ancestor) :
 
     def is_current_page (self, page) :
         return \
-            (  (self.permalink == page.permalink)
+            (  (self           is page)
+            or (self.permalink == page.permalink)
             or (self.href      == page.href)
             )
     # end def is_current_page

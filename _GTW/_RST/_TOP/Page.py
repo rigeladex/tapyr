@@ -28,6 +28,7 @@
 # Revision Dates
 #     5-Jul-2012 (CT) Creation (based on GTW.NAV.Base)
 #    20-Jul-2012 (CT) Add `Alias`
+#     6-Aug-2012 (MG) Add `Alias.is_current_page`
 #    ««revision-date»»···
 #--
 
@@ -111,6 +112,16 @@ class TOP_Alias (GTW.RST.Alias) :
     def login_required (self) :
         return (not self.target) or self.target.login_required
     # end def login_required
+
+    def is_current_page (self, page) :
+        ### ensure that not the is_current_page from the target is called
+        return \
+            (  (self           is page)
+            or (self.target    is page)
+            or (self.permalink == page.permalink)
+            or (self.href      == page.href)
+            )
+    # end def is_current_page
 
 Alias = TOP_Alias # end class
 
