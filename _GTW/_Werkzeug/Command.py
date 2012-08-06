@@ -59,6 +59,7 @@
 #     2-Aug-2012 (MG) Close database connections before starting the server
 #     2-Aug-2012 (CT) Change `_wsgi_app` to avoid loading of `scope`
 #     2-Aug-2012 (MG) Correct implementation of `watch_media_files`
+#     5-Aug-2012 (MG) Change handling of `watch_media_files`
 #    ««revision-date»»···
 #--
 
@@ -309,7 +310,13 @@ class GT2W_Command (GTW.OMP.Command) :
             if result.Cacher :
                 mc_fix = "media/v"
                 mc_dir = sos.path.join (self.web_src_root, mc_fix)
-                cachers.append (result.Cacher (mc_dir, mc_fix))
+                cachers.append \
+                    ( result.Cacher
+                        ( mc_dir, mc_fix
+                        , cache_filenames = cmd.watch_media_files
+                        )
+                    )
+                self._tmc_filenames = cachers [-1].tmc.filenames
             self.cacher = GTW.Werkzeug.App_Cache \
                 ( self.cache_path (UTP)
                 , * cachers
@@ -329,10 +336,7 @@ class GT2W_Command (GTW.OMP.Command) :
             , use_debugger = cmd.debug
             , use_reloader = cmd.auto_reload
             )
-        if cmd.watch_media_files :
-            fct = getattr (self.root.Templateer, "Media_Filenames", None)
-            if fct :
-                kw ["extra_files"] = fct (self.root)
+        kw ["extra_files"] = self._tmc_filenames
         werkzeug.serving.run_simple (** kw)
     # end def _handle_run_server
 

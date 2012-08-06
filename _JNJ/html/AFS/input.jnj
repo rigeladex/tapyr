@@ -35,6 +35,7 @@
 ##     2-Dec-2011 (CT) Add `id_entity`; remove argument `form` from signatures
 ##     5-Dec-2011 (CT) Add support for keyword arguments to all macros here
 ##    21-Dec-2011 (CT) Add `title` to display-input of `id_entity`
+##     5-Aug-2012 (MG) Add `media_browser`
 ##    ««revision-date»»···
 ##--
 #}
@@ -59,7 +60,7 @@
 {%- endmacro -%} {#- email -#}
 
 {%- macro hidden (elem) -%}
-  {{ _field (X.input.hidden, elem, ** kwargs)}}
+  {{ _field (X.input.hidden, elem, ** kwargs) }}
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro id_entity (elem) -%}
@@ -80,6 +81,13 @@
       )
   }}
 {%- endmacro -%} {#- id_entity -#}
+
+{%- macro media_browser (elem) -%}
+  {{ _field (X.input.text, elem, class="afs-media-url") }}
+  <button class="ui-button ui-state-default afs-media-button" id="B::{{ elem.id }}">
+    {{ GTW._T ("Choose file") }}
+  </button>
+{%- endmacro -%} {#- media_browser -#}
 
 {%- macro named_value (elem) -%}
   {%- set kw = GTW.dict

@@ -47,7 +47,8 @@
 ##    19-Apr-2012 (CT) Add `texts ["Entity-Errors"]`
 ##     9-May-2012 (CT) Change `urls.next` to refer to default
 ##                     `page.parent.parent.abs_href`
-##     2-Aug-2012 (MG) Add url for ckeditor
+##     2-Aug-2012 (MG) Add url for `ckeditor`
+##     5-Aug-2012 (MG) Add url for `filemanager`
 ##    ««revision-date»»···
 ##--
 #}
@@ -103,6 +104,7 @@
             , qx_esf_completer : "{{ page.href_qx_esf_completer () }}" {# -#}
             , qx_esf : "{{ page.href_qx_esf () }}" {# -#}
             , ckedior : "/media/X/js/ckeditor/"
+            , filemanager : "/media/X/js/filemanager/index.html"
             }
         }
       );
