@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-May-2012 (CT) Creation
 #     3-Aug-2012 (CT) Add `show_ref_map` and `show_ref_maps`
+#     7-Aug-2012 (CT) Rename `parents` to `ancestors`
 #    ««revision-date»»···
 #--
 
@@ -41,10 +42,10 @@ from   _TFL.Formatter           import formatted_1
 import _MOM._Meta.M_Entity
 import _TFL.Accessor
 
-def parents (T) :
-    """Return the essential parents of essential type `T`."""
+def ancestors (T) :
+    """Return the essential ancestors of essential type `T`."""
     return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
-# end def parents
+# end def ancestors
 
 def show_children (T, bi = "  ", level = 0, seen = None) :
     """Display tree of children of essential type `T`."""

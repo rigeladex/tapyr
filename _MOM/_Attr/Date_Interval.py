@@ -37,6 +37,7 @@
 #    10-Oct-2011 (CT) `start.completer` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    22-Dec-2011 (CT) Move `completer` from `start` to `A_Date`
+#     7-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ class Date_Interval (_Ancestor_Essence) :
             """Finish date of interval"""
 
             kind               = Attr.Optional
+            example            = "2038/01/19"
             rank               = 2
 
         # end class finish
@@ -107,6 +109,7 @@ class Date_Interval (_Ancestor_Essence) :
             """Start date of interval"""
 
             kind               = Attr.Necessary
+            example            = "1970/01/01"
             rank               = 1
 
         # end class start

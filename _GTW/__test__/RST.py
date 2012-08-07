@@ -31,6 +31,7 @@
 #     2-Aug-2012 (CT) Change sequence of tests in `test_post` (Postgresql
 #                     wastes pids for a Name_Clash)
 #     2-Aug-2012 (CT) Add `change_query_filters` for entities to `test_cqf`
+#     7-Aug-2012 (CT) Add `test_doc`
 #    ««revision-date»»···
 #--
 
@@ -124,12 +125,14 @@ class _GTW_Test_Command_ (_Ancestor) :
     # end def combiner
 
     def create_rst (self, cmd, ** kw) :
+        import _GTW._RST._MOM.Doc
         import _GTW._RST._MOM.Scope
         result = GTW.RST.Root \
             ( language          = "de"
             , entries           =
-                [ GTW.RST.MOM.Scope (name = "v1")
-                , GTW.RST.Raiser    (name = "RAISE")
+                [ GTW.RST.MOM.Scope        (name = "v1")
+                , GTW.RST.MOM.Doc.App_Type (name = "Doc")
+                , GTW.RST.Raiser           (name = "RAISE")
                 ]
             , ** kw
             )
@@ -556,7 +559,7 @@ _test_cqf = r"""
     SRM-Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -752,6 +755,563 @@ _test_delete = r"""
 
 """
 
+_test_doc = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
+
+    >>> _ = show (R.get ("/Doc"))
+    { 'json' :
+        { 'entries' :
+            [ 'MOM-Id_Entity'
+            , 'MOM-Link'
+            , 'MOM-Link1'
+            , 'MOM-_MOM_Link_n_'
+            , 'MOM-Link2'
+            , 'MOM-Link2_Ordered'
+            , 'MOM-Link3'
+            , 'MOM-Object'
+            , 'MOM-Named_Object'
+            , 'PAP-Address'
+            , 'PAP-Subject'
+            , 'PAP-Company'
+            , 'PAP-Email'
+            , 'PAP-Phone'
+            , 'PAP-Person'
+            , 'PAP-Subject_has_Property'
+            , 'PAP-Subject_has_Address'
+            , 'PAP-Company_has_Address'
+            , 'PAP-Subject_has_Email'
+            , 'PAP-Company_has_Email'
+            , 'PAP-Subject_has_Phone'
+            , 'PAP-Company_has_Phone'
+            , 'PAP-Entity_created_by_Person'
+            , 'PAP-Person_has_Address'
+            , 'PAP-Person_has_Email'
+            , 'PAP-Person_has_Phone'
+            , 'SRM-Link1'
+            , 'SRM-Link2'
+            , 'SRM-Object'
+            , 'SRM-_Boat_Class_'
+            , 'SRM-Boat_Class'
+            , 'SRM-Handicap'
+            , 'SRM-Boat'
+            , 'SRM-Club'
+            , 'SRM-Regatta_Event'
+            , 'SWP-Link1'
+            , 'SWP-Link2'
+            , 'SWP-Object'
+            , 'SWP-Object_PN'
+            , 'SWP-Page'
+            , 'SWP-Page_Y'
+            , 'SWP-Clip_O'
+            , 'SWP-Clip_X'
+            , 'SWP-Gallery'
+            , 'SWP-Picture'
+            , 'SRM-Page'
+            , 'SRM-Regatta'
+            , 'SRM-Regatta_C'
+            , 'SRM-Regatta_H'
+            , 'SRM-Sailor'
+            , 'SRM-Boat_in_Regatta'
+            , 'SRM-Race_Result'
+            , 'SRM-Team'
+            , 'SRM-Crew_Member'
+            , 'SRM-Team_has_Boat_in_Regatta'
+            ]
+        , 'url_template' : '/Doc/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/Doc'
+    }
+
+    >>> _ = show (R.get ("/Doc/SRM-Boat_in_Regatta"))
+    { 'json' :
+        { 'attributes' :
+            [ { 'default_value' : ''
+              , 'description' : 'Boat racing in a regatta.'
+              , 'example' :
+                  [
+                    [ 'Laser'
+                    , 'SRM.Boat_Class'
+                    ]
+                  , 'AUT'
+                  , '2827'
+                  , 'X'
+                  , 'SRM.Boat'
+                  ]
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'left'
+              , 'p_type' : 'Boat'
+              , 'role_name' : 'boat'
+              , 'type' : 'Boat'
+              , 'type_name' : 'SRM.Boat'
+              , 'ui_name' : 'Boat'
+              , 'url' : '/Doc/SRM-Boat'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Regatta a boat races in.'
+              , 'example' :
+                  [
+                    [ 'Fastnet Race'
+                    ,
+                      [
+                        [ 'finish'
+                        , '2038/01/19'
+                        ]
+                      ,
+                        [ 'start'
+                        , '1970/01/01'
+                        ]
+                      ]
+                    , 'SRM.Regatta_Event'
+                    ]
+                  ,
+                    [ 'Laser'
+                    , 'SRM.Boat_Class'
+                    ]
+                  , 'SRM.Regatta_C'
+                  ]
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'right'
+              , 'p_type' : 'Regatta'
+              , 'role_name' : 'regatta'
+              , 'type' : 'Regatta'
+              , 'type_name' : 'SRM.Regatta'
+              , 'ui_name' : 'Regatta'
+              , 'url' : '/Doc/SRM-Regatta'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Skipper of boat.'
+              , 'example' :
+                  [
+                    [ 'Doe'
+                    , 'John'
+                    , 'F.'
+                    , 'Dr.'
+                    , 'PAP.Person'
+                    ]
+                  , 'AUT'
+                  , '499999.5'
+                  ,
+                    [ 'RORC'
+                    , 'SRM.Club'
+                    ]
+                  , 'SRM.Sailor'
+                  ]
+              , 'is_required' : True
+              , 'kind' : 'required'
+              , 'name' : 'skipper'
+              , 'p_type' : 'Sailor'
+              , 'type' : 'Entity'
+              , 'type_name' : 'SRM.Sailor'
+              , 'ui_name' : 'Skipper'
+              , 'url' : '/Doc/SRM-Sailor'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Place of boat in this regatta.'
+              , 'example' : 2
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'place'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Place'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Total points of boat in this regatta.'
+              , 'example' : 25
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'points'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Points'
+              }
+            ]
+        , 'description' : 'Boat racing in a regatta.'
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Link2'
+              , 'url' : '/Doc/SRM-Link2'
+              }
+            ]
+        , 'type_name' : 'SRM.Boat_in_Regatta'
+        , 'url' : '/Doc/SRM-Boat_in_Regatta'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/Doc/SRM-Boat_in_Regatta'
+    }
+
+    >>> _ = show (R.get ("/Doc/SRM-Regatta"))
+    { 'json' :
+        { 'attributes' :
+            [ { 'default_value' : ''
+              , 'description' : 'Regatta event to which this regatta belongs.'
+              , 'example' :
+                  [ 'Fastnet Race'
+                  ,
+                    [
+                      [ 'finish'
+                      , '2038/01/19'
+                      ]
+                    ,
+                      [ 'start'
+                      , '1970/01/01'
+                      ]
+                    ]
+                  , 'SRM.Regatta_Event'
+                  ]
+              , 'is_changeable' : False
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'left'
+              , 'p_type' : 'Regatta_Event'
+              , 'role_name' : 'event'
+              , 'type' : 'Regatta_Event'
+              , 'type_name' : 'SRM.Regatta_Event'
+              , 'ui_name' : 'Event'
+              , 'url' : '/Doc/SRM-Regatta_Event'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Class of boats sailing in this regatta.'
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'boat_class'
+              , 'p_type' : '_Boat_Class_'
+              , 'type' : 'Entity'
+              , 'type_name' : 'SRM._Boat_Class_'
+              , 'ui_name' : 'Boat class'
+              , 'url' : '/Doc/SRM-_Boat_Class_'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'Number of discardable races in regatta'
+              , 'example' : '42'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'discards'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Discards'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Indicates that the regatta is cancelled'
+              , 'example' : 'no'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'is_cancelled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is cancelled'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Kind of regatta.'
+              , 'example' : 'One race, one beer'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'max_length' : 32
+              , 'name' : 'kind'
+              , 'p_type' : 'unicode'
+              , 'type' : 'String'
+              , 'ui_name' : 'Kind'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'Number of races sailed in regatta'
+              , 'example' : '42'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'races'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Races'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Information about result.'
+              , 'example' :
+                  { 'date' : '1979/08/18'
+                  , 'software' : 'Blowing Bits Inc.'
+                  , 'status' : 'Final'
+                  }
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'result'
+              , 'p_type' : 'Regatta_Result'
+              , 'type' : 'Regatta_Result'
+              , 'type_name' : 'SRM.Regatta_Result'
+              , 'ui_name' : 'Result'
+              , 'url' : None
+              }
+            ]
+        , 'children' :
+            [ { 'type_name' : 'SRM.Regatta_C'
+              , 'url' : '/Doc/SRM-Regatta_C'
+              }
+            , { 'type_name' : 'SRM.Regatta_H'
+              , 'url' : '/Doc/SRM-Regatta_H'
+              }
+            ]
+        , 'description' : 'Sailing regatta for one class or handicap.'
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Link1'
+              , 'url' : '/Doc/SRM-Link1'
+              }
+            ]
+        , 'type_name' : 'SRM.Regatta'
+        , 'url' : '/Doc/SRM-Regatta'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/Doc/SRM-Regatta'
+    }
+
+    >>> _ = show (R.get ("/Doc/SRM-Regatta_C"))
+    { 'json' :
+        { 'attributes' :
+            [ { 'default_value' : ''
+              , 'description' : 'Regatta event to which this regatta belongs.'
+              , 'example' :
+                  [ 'Fastnet Race'
+                  ,
+                    [
+                      [ 'finish'
+                      , '2038/01/19'
+                      ]
+                    ,
+                      [ 'start'
+                      , '1970/01/01'
+                      ]
+                    ]
+                  , 'SRM.Regatta_Event'
+                  ]
+              , 'is_changeable' : False
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'left'
+              , 'p_type' : 'Regatta_Event'
+              , 'role_name' : 'event'
+              , 'type' : 'Regatta_Event'
+              , 'type_name' : 'SRM.Regatta_Event'
+              , 'ui_name' : 'Event'
+              , 'url' : '/Doc/SRM-Regatta_Event'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Class of boats sailing in this regatta.'
+              , 'example' :
+                  [ 'Laser'
+                  , 'SRM.Boat_Class'
+                  ]
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'boat_class'
+              , 'p_type' : 'Boat_Class'
+              , 'type' : 'Entity'
+              , 'type_name' : 'SRM.Boat_Class'
+              , 'ui_name' : 'Boat class'
+              , 'url' : '/Doc/SRM-Boat_Class'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'Number of discardable races in regatta'
+              , 'example' : '42'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'discards'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Discards'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Indicates that the regatta is cancelled'
+              , 'example' : 'no'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'is_cancelled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is cancelled'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Kind of regatta.'
+              , 'example' : 'One race, one beer'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'max_length' : 32
+              , 'name' : 'kind'
+              , 'p_type' : 'unicode'
+              , 'type' : 'String'
+              , 'ui_name' : 'Kind'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'Number of races sailed in regatta'
+              , 'example' : '42'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'races'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Races'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Information about result.'
+              , 'example' :
+                  { 'date' : '1979/08/18'
+                  , 'software' : 'Blowing Bits Inc.'
+                  , 'status' : 'Final'
+                  }
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'result'
+              , 'p_type' : 'Regatta_Result'
+              , 'type' : 'Regatta_Result'
+              , 'type_name' : 'SRM.Regatta_Result'
+              , 'ui_name' : 'Result'
+              , 'url' : None
+              }
+            , { 'default_value' : 'no'
+              , 'description' : 'Boolean attribute.'
+              , 'example' : 'no'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'is_team_race'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is team race'
+              }
+            ]
+        , 'description' : 'Regatta for a single class of sail boats.'
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Regatta'
+              , 'url' : '/Doc/SRM-Regatta'
+              }
+            ]
+        , 'type_name' : 'SRM.Regatta_C'
+        , 'url' : '/Doc/SRM-Regatta_C'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/Doc/SRM-Regatta_C'
+    }
+
+    >>> _ = show (R.get ("/Doc/SRM-Regatta_H"))
+    { 'json' :
+        { 'attributes' :
+            [ { 'default_value' : ''
+              , 'description' : 'Regatta event to which this regatta belongs.'
+              , 'example' :
+                  [ 'Fastnet Race'
+                  ,
+                    [
+                      [ 'finish'
+                      , '2038/01/19'
+                      ]
+                    ,
+                      [ 'start'
+                      , '1970/01/01'
+                      ]
+                    ]
+                  , 'SRM.Regatta_Event'
+                  ]
+              , 'is_changeable' : False
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'left'
+              , 'p_type' : 'Regatta_Event'
+              , 'role_name' : 'event'
+              , 'type' : 'Regatta_Event'
+              , 'type_name' : 'SRM.Regatta_Event'
+              , 'ui_name' : 'Event'
+              , 'url' : '/Doc/SRM-Regatta_Event'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Name of handicap system used for this regatta.'
+              , 'example' :
+                  [ 'IRC'
+                  , 'SRM.Handicap'
+                  ]
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'boat_class'
+              , 'p_type' : 'Handicap'
+              , 'type' : 'Entity'
+              , 'type_name' : 'SRM.Handicap'
+              , 'ui_name' : 'Handicap'
+              , 'url' : '/Doc/SRM-Handicap'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'Number of discardable races in regatta'
+              , 'example' : '42'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'discards'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Discards'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Indicates that the regatta is cancelled'
+              , 'example' : 'no'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'is_cancelled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is cancelled'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Kind of regatta.'
+              , 'example' : 'One race, one beer'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'max_length' : 32
+              , 'name' : 'kind'
+              , 'p_type' : 'unicode'
+              , 'type' : 'String'
+              , 'ui_name' : 'Kind'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'Number of races sailed in regatta'
+              , 'example' : '42'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'races'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Races'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Information about result.'
+              , 'example' :
+                  { 'date' : '1979/08/18'
+                  , 'software' : 'Blowing Bits Inc.'
+                  , 'status' : 'Final'
+                  }
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'result'
+              , 'p_type' : 'Regatta_Result'
+              , 'type' : 'Regatta_Result'
+              , 'type_name' : 'SRM.Regatta_Result'
+              , 'ui_name' : 'Result'
+              , 'url' : None
+              }
+            ]
+        , 'description' : 'Regatta for boats in a handicap system.'
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Regatta'
+              , 'url' : '/Doc/SRM-Regatta'
+              }
+            ]
+        , 'type_name' : 'SRM.Regatta_H'
+        , 'url' : '/Doc/SRM-Regatta_H'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/Doc/SRM-Regatta_H'
+    }
+
+    >>> server.terminate ()
+
+"""
+
 _test_get = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
@@ -784,6 +1344,7 @@ _test_get = r"""
     { 'json' :
         { 'entries' :
             [ 'v1'
+            , 'Doc'
             , 'RAISE'
             ]
         , 'url_template' : '/{entry}'
@@ -796,6 +1357,7 @@ _test_get = r"""
     { 'json' :
         { 'entries' :
             [ '/v1'
+            , '/Doc'
             , '/RAISE'
             ]
         }
@@ -2409,6 +2971,7 @@ __test__ = Scaffold.create_test_dict \
     ( dict
         ( test_cqf      = _test_cqf
         , test_delete   = _test_delete
+        , test_doc      = _test_doc
         , test_get      = _test_get
         , test_options  = _test_options
         , test_post     = _test_post

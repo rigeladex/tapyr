@@ -210,6 +210,7 @@
 #     5-Aug-2012 (CT) Add `epk_raw_pid`
 #     5-Aug-2012 (MG) Change `set` to use `get_raw_pid`
 #     5-Aug-2012 (CT) Change `_record_iter_raw` to include `raw_pid`
+#     7-Aug-2012 (CT) Use `Add_To_Class` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -238,6 +239,7 @@ from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
 
 import _TFL._Meta.Once_Property
+import _TFL.Decorator
 import _TFL.defaultdict
 import _TFL.Sorted_By
 
@@ -882,6 +884,7 @@ class An_Entity (Entity) :
 
 # end class An_Entity
 
+@TFL.Add_To_Class ("P_Type", _A_Id_Entity_)
 class Id_Entity (Entity) :
     """Internal root class for MOM entities with identity, i.e.,
        objects and links.
@@ -1467,8 +1470,6 @@ class Id_Entity (Entity) :
     # end def __unicode__
 
 # end class Id_Entity
-
-_A_Id_Entity_.P_Type = Id_Entity
 
 class _Id_Entity_Reload_Mixin_ (object) :
     """Mixin triggering a reload from the database on any attribute access."""
