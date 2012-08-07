@@ -31,6 +31,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     2-Mar-2012 (CT) Set `name.ignore_case` to `True`
 #    19-Mar-2012 (CT) Factor `_Boat_Class_`, add `Handicap`
+#     7-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ class _Boat_Class_ (_Ancestor_Essence) :
         class name (A_String) :
 
             kind               = Attr.Primary
+            example            = "Laser"
             ignore_case        = True
             max_length         = 48
 
@@ -84,6 +86,8 @@ class Boat_Class (_Ancestor_Essence) :
         class name (_Ancestor.name) :
             """Name of class of sailboats."""
 
+            example            = "Laser"
+
         # end class name
 
         ### Non-primary attributes
@@ -92,6 +96,7 @@ class Boat_Class (_Ancestor_Essence) :
             """Maximum beam of boat (in meters)."""
 
             kind               = Attr.Optional
+            example            = 1.39
             max_value          = 5.0
             min_value          = 0.5
 
@@ -101,6 +106,7 @@ class Boat_Class (_Ancestor_Essence) :
             """Length over all (in meters)."""
 
             kind               = Attr.Optional
+            example            = 4.2
             max_value          = 10.0
             min_value          = 2.0
 
@@ -110,6 +116,7 @@ class Boat_Class (_Ancestor_Essence) :
             """Maximum number of crew for this class of sailboats."""
 
             kind               = Attr.Required
+            example            = 1
             max_value          = 4
             min_value          = 1
 
@@ -119,6 +126,7 @@ class Boat_Class (_Ancestor_Essence) :
             """Seal area upwind (in square meters)."""
 
             kind               = Attr.Optional
+            example            = 7.06
             min_value          = 3.5
 
         # end class sail_area
@@ -138,6 +146,8 @@ class Handicap (_Ancestor_Essence) :
 
         class name (_Ancestor.name) :
             """Name of handicap formula."""
+
+            example            = "IRC"
 
         # end class name
 

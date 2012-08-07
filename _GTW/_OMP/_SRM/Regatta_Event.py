@@ -71,6 +71,7 @@ class Regatta_Event (_Ancestor_Essence) :
 
             kind               = Attr.Primary
             ignore_case        = True
+            example            = "Fastnet Race"
             max_length         = 64
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
@@ -99,6 +100,7 @@ class Regatta_Event (_Ancestor_Essence) :
             """Short description of the regatta."""
 
             kind               = Attr.Optional
+            example            = "The famous classic"
             max_length         = 160
             completer          = Attr.Completer_Spec  (1)
 

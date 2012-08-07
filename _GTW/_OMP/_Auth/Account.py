@@ -54,6 +54,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    29-Mar-2012 (CT) Redefine `Account_Anonymous.x_locked` instead of
 #                     `.electric`
+#     7-Aug-2012 (CT) Set `Account_Anonymous.electric` to True
 #    ««revision-date»»···
 #--
 
@@ -151,6 +152,13 @@ class Account_Anonymous (_Ancestor_Essence) :
             default    = False
 
         # end class superuser
+
+        class electric (_Ancestor_Essence._Attributes.electric) :
+
+            kind       = Attr.Const
+            default    = True
+
+        # end class electric
 
         class x_locked (_Ancestor_Essence._Attributes.x_locked) :
 

@@ -137,6 +137,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
 
             kind           = Attr.Primary_Optional
             ignore_case    = True
+            example        = "F."
             max_length     = 32
             rank           = 1
 
@@ -149,6 +150,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
 
             kind           = Attr.Primary_Optional
             ignore_case    = True
+            example        = "Dr."
             max_length     = 20
             rank           = 2
             ui_name        = _("Academic title")
