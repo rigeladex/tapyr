@@ -47,6 +47,7 @@
 #                     `RST_Entity_Mixin.change_query_filters`
 #     5-Aug-2012 (CT) Change `pid_query_request` to handle `result is None`
 #     6-Aug-2012 (CT) Change `etag` in `_get_change_info`
+#     7-Aug-2012 (CT) Factor `RST_Base_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -143,16 +144,10 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
 
 # end class _PUT_POST_Mixin_
 
-class RST_Mixin (TFL.Meta.Object) :
-    """Mixin for MOM-specific RST classes."""
-
-    objects                    = property (lambda s : s._get_objects ())
+class RST_Base_Mixin (TFL.Meta.Object) :
+    """Base mixin for MOM-specific RST classes."""
 
     _attributes                = None
-    _exclude_robots            = True
-    _objects                   = []
-    _old_cid                   = -1
-    _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     @Once_Property
     def E_Type (self) :
@@ -163,14 +158,6 @@ class RST_Mixin (TFL.Meta.Object) :
             result = ETM.E_Type
         return result
     # end def E_Type
-
-    @Once_Property
-    def ETM (self) :
-        result = self._ETM
-        if isinstance (result, basestring) :
-            result = self.top.scope [result]
-        return result
-    # end def ETM
 
     @property
     def attributes (self) :
@@ -196,6 +183,31 @@ class RST_Mixin (TFL.Meta.Object) :
         self._attributes = tuple (_gen (value)) if value is not None else None
     # end def attributes
 
+    @Once_Property
+    def type_name (self) :
+        return self.E_Type.type_name
+    # end def type_name
+
+# end class RST_Base_Mixin
+
+class RST_Mixin (RST_Base_Mixin) :
+    """Mixin for MOM-specific RST classes dealing with entities living in a scope."""
+
+    objects                    = property (lambda s : s._get_objects ())
+
+    _exclude_robots            = True
+    _objects                   = []
+    _old_cid                   = -1
+    _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
+
+    @Once_Property
+    def ETM (self) :
+        result = self._ETM
+        if isinstance (result, basestring) :
+            result = self.top.scope [result]
+        return result
+    # end def ETM
+
     @property
     def change_info (self) :
         result = self._change_info
@@ -203,11 +215,6 @@ class RST_Mixin (TFL.Meta.Object) :
             result = self._change_info = self._get_change_info ()
         return result
     # end def change_info
-
-    @Once_Property
-    def type_name (self) :
-        return self.E_Type.type_name
-    # end def type_name
 
     @property
     def _change_info (self) :
