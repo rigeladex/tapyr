@@ -32,6 +32,8 @@
 #                     (mySQL gives `long` which messes up the test output)
 #    31-Jul-2012 (CT) Use `dw.writerow`, not `dw.writeheader`: 2.6 compatibility
 #    31-Jul-2012 (CT) Add `_E_Type_CSV_.mime_type_parameters`
+#     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
+#     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #    ««revision-date»»···
 #--
 
@@ -74,7 +76,7 @@ class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
 
 _Ancestor = GTW.RST.Dir_V
 
-class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
+class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
     """RESTful node for a specific essential type."""
 
     _real_name                 = "E_Type"
@@ -83,7 +85,7 @@ class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
 
     Entity                     = GTW.RST.MOM.Entity
 
-    class RST_E_Type_GET (_Ancestor.GET) :
+    class _RST_MOM_E_Type_GET_ (_Ancestor.GET) :
 
         _real_name             = "GET"
 
@@ -129,9 +131,9 @@ class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
             return sorted (result, key = Q.pid)
         # end def _resource_entries
 
-    GET = RST_E_Type_GET # end class
+    GET = _RST_MOM_E_Type_GET_ # end class
 
-    class RST_E_Type_POST (GTW.RST.MOM._PUT_POST_Mixin_, GTW.RST.POST) :
+    class _RST_MOM_E_Type_POST_ (GTW.RST.MOM._PUT_POST_Mixin_, GTW.RST.POST) :
 
         _real_name                 = "POST"
 
@@ -141,7 +143,7 @@ class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
             return resource.ETM (raw = True, ** attrs)
         # end def _apply_attrs
 
-    POST = RST_E_Type_POST # end class
+    POST = _RST_MOM_E_Type_POST_ # end class
 
     def allow_method (self, method, user) :
         if method.name == "POST" and self.ETM.is_partial :
@@ -149,7 +151,7 @@ class RST_E_Type (GTW.RST.MOM.RST_E_Type_Mixin, _Ancestor) :
         return self.__super.allow_method (method, user)
     # end def allow_method
 
-E_Type = RST_E_Type # end class
+E_Type = _RST_MOM_E_Type_ # end class
 
 if __name__ != "__main__" :
     GTW.RST.MOM._Export ("*")

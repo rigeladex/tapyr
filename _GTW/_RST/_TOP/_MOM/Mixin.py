@@ -31,6 +31,7 @@
 #    18-Jul-2012 (CT) Factor from `Display._E_Type_` to `E_Type_Mixin`
 #    23-Jul-2012 (CT) Remove `has_children`
 #    30-Jul-2012 (CT) Redefine `E_Type_Mixin_Base.QR`
+#     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ import _TFL.Attr_Mapper
 
 from   posixpath                import join as pp_join
 
-class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Entity_Mixin) :
+class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.Entity_Mixin) :
     """Base mixin for RST.TOP classes displaying MOM instances."""
 
     _real_name      = "Entity_Mixin_Base"
@@ -121,7 +122,7 @@ class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
 
 Entity_Mixin = TOP_MOM_Entity_Mixin # end class
 
-class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.RST_E_Type_Mixin) :
+class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.E_Type_Mixin) :
 
     _real_name      = "E_Type_Mixin_Base"
 
