@@ -58,6 +58,7 @@
 #     4-May-2012 (CT) Change `email_uri` to allow email-tuple and `text` passed
 #    16-Jul-2012 (MG) `log_stdout` enhanced
 #     6-Aug-2012 (MG) Add `update_blackboard`
+#     8-Aug-2012 (MG) Remove debug code
 #    ««revision-date»»···
 #--
 
@@ -240,7 +241,6 @@ class GTW (TFL.Meta.Object) :
 
     def update_blackboard (self, name, value) :
         self.blackboard [name] = value
-        print (name, value)
         return ""
     # end def update_blackboard
 
