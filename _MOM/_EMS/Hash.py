@@ -82,6 +82,8 @@
 #     2-Jul-2012 (MG) `_add` renamed back to `add`
 #     4-Aug-2012 (CT) Factor `remove` to `MOM.EMS._Manager_`
 #     4-Aug-2012 (CT) Call `_rollback_uncommitted_changes`
+#     8-Aug-2012 (CT) Change `add` to check roles amiss before touching tables
+#                     (ditto for `_remove`)
 #    ««revision-date»»···
 #--
 
@@ -130,17 +132,17 @@ class Manager (MOM.EMS._Manager_) :
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         self.pm (entity, pid)
+        if entity.Roles :
+            refs  = tuple ((r, r.get_role (entity)) for r in entity.Roles)
+            amiss = tuple (r for r, o in refs if o is None)
+            if amiss :
+                raise TypeError ("Roles %s of %r are empty" % (amiss, entity))
+            r_map = self._r_map
+            for r, obj in refs :
+                obj.register_dependency (entity.__class__)
+                r_map [r] [obj.pid].add (entity)
         count [entity.type_name] += 1
         table [hpk] = entity
-        if entity.Roles :
-            r_map = self._r_map
-            for r in entity.Roles :
-                obj = r.get_role (entity)
-                if obj is None :
-                    print entity.type_name, entity, "role", r, "is_empty"
-                else :
-                    obj.register_dependency (entity.__class__)
-                    r_map [r] [obj.pid].add (entity)
     # end def add
 
     def all_links (self, obj_id) :
@@ -302,14 +304,20 @@ class Manager (MOM.EMS._Manager_) :
         hpk   = entity.hpk
         root  = entity.relevant_root
         table = self._tables [root.type_name]
-        del table [hpk]
-        count [entity.type_name] -= 1
         if entity.Roles :
+            refs  = tuple ((r, r.get_role (entity)) for r in entity.Roles)
+            amiss = tuple (r for r, o in refs if o is None)
+            if amiss :
+                raise TypeError ("Roles %s of %r are empty" % (amiss, entity))
             r_map = self._r_map
-            for r in entity.Roles :
-                obj = r.get_role (entity)
-                obj.unregister_dependency (entity.__class__)
+            for r, obj in refs :
+                obj.unregister_dependency  (entity.__class__)
                 r_map [r] [obj.pid].remove (entity)
+        try :
+            del table [hpk]
+            count [entity.type_name] -= 1
+        except KeyError :
+            logging.exception ("%r: hpk = %s", entity, hpk)
     # end def _remove
 
     def _rollback (self) :
