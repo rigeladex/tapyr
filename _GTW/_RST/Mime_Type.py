@@ -29,6 +29,7 @@
 #    15-Jun-2012 (CT) Creation
 #    24-Jul-2012 (CT) Add `TXT`
 #    31-Jul-2012 (CT) Add and use `mime_type_parameters`
+#     8-Aug-2012 (CT) Add `rst_cargo` to `_Template_Mixin_.rendered`
 #    ««revision-date»»···
 #--
 
@@ -150,7 +151,10 @@ class _Template_Mixin_ (_Base_) :
     # end def template
 
     def rendered (self, request, response, body) :
-        return self.template.render (self.render_context)
+        context = self.render_context
+        context.setdefault ("rst_cargo", body)
+        context.setdefault ("resource",  self.resource)
+        return self.template.render (context)
     # end def rendered
 
 # end class _Template_Mixin_
