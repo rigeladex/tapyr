@@ -70,6 +70,7 @@
 #    27-Jun-2012 (MG) Fix `Q_Result_Reload`
 #     2-Jul-2012 (MG) `Q_Result_Reload`: not cache the `session` object
 #    18-Jul-2012 (MG) Export `_Q_Result_`
+#     8-Aug-2012 (CT) Fix typo (`.__class__.__name__`, not `.__class__.__name`)
 #    ««revision-date»»···
 #--
 
@@ -124,7 +125,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         if not getters :
             raise TypeError \
                 ( "%s.attrs() requires at least one argument"
-                % self.__class__.__name
+                % self.__class__.__name__
                 )
         return self._Q_Result_Attrs_ \
             (self.e_type, self.session, self, getters, kw.pop ("raw", False))
@@ -298,7 +299,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         if not self._filter :
             raise TypeError \
                 ( "%s.set() requires at least one filter criteria"
-                % (self.__class__.__name)
+                % (self.__class__.__name__)
                 )
         tables = TFL.defaultdict (dict)
         SAQ    = self.e_type._SAQ

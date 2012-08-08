@@ -50,6 +50,7 @@
 #                     define all `_Attr_` comparison operators explicitly
 #    12-Jun-2012 (MG) `Q_Result_Composite._fill_cache`: check for
 #                     `self._order_by` fixed
+#     8-Aug-2012 (CT) Fix typo (`.__class__.__name__`, not `.__class__.__name`)
 #    ««revision-date»»···
 #--
 
@@ -341,7 +342,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         if not getters :
             raise TypeError \
                 ( "%s.attrs() requires at least one argument"
-                % self.__class__.__name
+                % self.__class__.__name__
                 )
         def _g (getters) :
             Q = self.Q
