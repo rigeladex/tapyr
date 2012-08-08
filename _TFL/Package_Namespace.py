@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -133,6 +133,7 @@
 #    14-Jan-2010 (CT)  `_Outer` added (and methods sorted alphabetically)
 #    16-Jun-2010 (CT)  s/print/pyk.fprint/
 #    30-Aug-2010 (CT) `_import_names` changed to check against `basestring`
+#     8-Aug-2012 (CT) Improve names of name-attributes
 #    ««revision-date»»···
 #--
 
@@ -145,9 +146,10 @@ def _caller_globals () :
 
 class _Module_Space_ :
 
-    def __init__ (self, name, qname) :
-        self.__name = self._name = name
-        self._qname              = qname
+    def __init__ (self, bname, module_name, qname) :
+        self._bname       = bname
+        self._module_name = module_name
+        self._qname       = self.__name__ = qname
     # end def __init__
 
     def _load (self, q_name, module_name) :
@@ -274,17 +276,18 @@ class Package_Namespace (object) :
     _leading_underscores = re.compile (r"(\.|^)_+")
     _check_clashes       = True
 
-    def __init__ (self, pname = None, name = None) :
-        if not pname :
-            pname = _caller_globals () ["__name__"]
+    def __init__ (self, module_name = None, name = None) :
+        if not module_name :
+            module_name = _caller_globals () ["__name__"]
         if not name :
-            name = pname
-        qname = self._leading_underscores.sub (r"\1", name) ### XXX s/\._/_/
+            name = module_name
+        qname = self._leading_underscores.sub (r"\1", name)
         bname = qname.split (".") [-1]
-        self.__name         = bname
+        self.__bname        = bname
         self.__qname        = self.__name__ = qname
-        self.__pname        = pname
-        self.__module_space = self._ = _Module_Space_ (pname, qname)
+        self.__module_name  = module_name
+        self.__module_space = self._ = _Module_Space_ \
+            (bname, module_name, qname)
         self.__modules      = {}
         self.__seen         = {}
         self.__reload       = 0
@@ -362,7 +365,7 @@ class Package_Namespace (object) :
     def _Import_Module (self, module) :
         import _TFL.import_module ### avoid circular imports !!!
         return _TFL.import_module.import_module \
-            (".".join ((self.__pname, module)))
+            (".".join ((self.__module_name, module)))
     # end def _Import_Module
 
     def _import_names (self, mod, names, result, check_clashes) :
@@ -412,7 +415,7 @@ class Package_Namespace (object) :
                 [m for (m, i) in dusort (self.__modules.values (), second)]
         try :
             self.__reload = 1
-            pyk.fprint ("Reloading", self.__name, end = " ")
+            pyk.fprint ("Reloading", self.__bname, end = " ")
             for m in modules :
                 pyk.fprint (m.__name__, end = " ")
                 reload (m)
@@ -424,7 +427,7 @@ class Package_Namespace (object) :
     # end def _Reload
 
     def __repr__ (self) :
-        return "<%s %s>" % (self.__class__.__name__, self.__name)
+        return "<%s %s>" % (self.__class__.__name__, self.__name__)
     # end def __repr__
 
 # end class Package_Namespace
@@ -464,15 +467,15 @@ class Derived_Package_Namespace (Package_Namespace) :
     """
 
     def __init__ (self, parent, name = None) :
-        pname = _caller_globals () ["__name__"]
+        module_name = _caller_globals () ["__name__"]
         if not name :
-            name = pname
-        Package_Namespace.__init__ (self, pname, name)
+            name = module_name
+        Package_Namespace.__init__ (self, module_name, name)
         self._parent  = parent
         self.__cached = {}
-        mod           = sys.modules [pname]
+        mod           = sys.modules [module_name]
         from _TFL.Importers import DPN_Importer
-        DPN_Importer.register (mod, pname, parent)
+        DPN_Importer.register (mod, module_name, parent)
     # end def __init__
 
     def _Reload (self, * modules) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2010 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
+# Copyright (C) 2006-2012 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -45,6 +45,7 @@
 #                      in the argument list (3.x doesn't support that anymore)
 #    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
 #    16-Jun-2010 (CT)  s/print/pyk.fprint/
+#     8-Aug-2012 (CT) Use `parent._._module_name`, not `parent._._name`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,7 @@ class DPN_Importer (object) :
             return ### a Package_Namespace is not always a package *argh*
         token = [DERIVED_PNS_TOKEN, name]
         while parent :
-            token.append (parent._._name)
+            token.append (parent._._module_name)
             parent = getattr (parent, "_parent", None)
         mod.__path__.append (",".join (token))
     # end def register
