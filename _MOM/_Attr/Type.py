@@ -238,6 +238,8 @@
 #     5-Aug-2012 (CT) Change `_A_Id_Entity_.from_string` to allow pid
 #     7-Aug-2012 (CT) Return `result.epk_raw` from `_A_Id_Entity_.example`
 #     7-Aug-2012 (CT) Add `_A_Composite_.example`
+#     8-Aug-2012 (CT) Robustify `A_Link_Role.ui_name`
+#     8-Aug-2012 (CT) Guard against exceptions in `example`
 #    ««revision-date»»···
 #--
 
@@ -268,6 +270,7 @@ import _TFL.Currency
 import datetime
 import decimal
 import itertools
+import logging
 import math
 import time
 
@@ -955,12 +958,18 @@ class _A_Id_Entity_ (_A_Entity_) :
 
     @TFL.Meta.Once_Property
     def example (self) :
-        etm    = self.etype_manager ()
+        etm = self.etype_manager ()
         if etm and etm.is_partial :
             etm = etm.default_child
         if etm :
-            result = etm.example ()
-            return result.epk_raw
+            try :
+                result = etm.example ()
+            except Exception as exc :
+                if __debug__ :
+                    logging.exception \
+                        ("\n    %s [%s] .example", self, self.E_Type)
+            else :
+                return result.epk_raw
     # end def example
 
     @TFL.Meta.Once_Property
@@ -1824,12 +1833,19 @@ class A_Link_Role (_A_Id_Entity_) :
     role_name         = None
     role_type         = None
     E_Type = P_Type   = TFL.Meta.Alias_Property ("role_type")
-    ### don't allow creation of new object for this attribute
+    ### by default, don't allow creation of new object for this attribute
     ui_allow_new      = False
-    ui_name           = TFL.Meta.Once_Property \
-        (lambda s : s.role_name.capitalize ().replace ("_", " "))
 
     _t_rank           = -100
+
+    @TFL.Meta.Once_Property
+    def ui_name (self) :
+        role_name = self.role_name
+        if role_name :
+            return role_name.capitalize ().replace ("_", " ")
+        else :
+            return self.__super.ui_name
+    # end def ui_name
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :

@@ -178,6 +178,7 @@
 #                     only append to `obj._init_pending` if not `init_finished`
 #                     (I don't know what I'd smoked on 11-Apr-2012 :-( )
 #     5-Aug-2012 (CT) Add/use `get_raw_pid`
+#     8-Aug-2012 (CT) Use `logging` instead of `print`
 #    ««revision-date»»···
 #--
 
@@ -373,7 +374,8 @@ class Kind (MOM.Prop.Kind) :
             except StandardError as exc :
                 if dont_raise :
                     if __debug__ :
-                        print exc
+                        logging.exception \
+                            ("set_raw %s %r -> %r", obj, raw_value, value)
                 else :
                     raise
         return self._set_raw (obj, raw_value, value, changed)
@@ -449,8 +451,10 @@ class Kind (MOM.Prop.Kind) :
                 value = self.attr.cooked (value)
             except StandardError as exc :
                 if __debug__ :
-                    print "%s: %s.%s, value `%s` [%r]" % \
-                        (exc, obj.type_base_name, self.name, value, obj)
+                    logging.exception \
+                        ( "%s: %s.%s, value `%s` [%r]"
+                        , obj.type_base_name, self.name, value, obj
+                        )
                 raise
         return self._set_cooked_value (obj, value, changed)
     # end def _set_cooked_inner
@@ -708,9 +712,10 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
                 attr.R_Type = PT.New (attr_name = attr.name)
             elif attr.R_Type is not tuple :
                 if __debug__ :
-                    print \
-                        ( "%s.R_Type doesn't have a correspondence in "
+                    logging.exception \
+                        ( "%s: R_Type %r doesn't have a correspondence in "
                           "MOM.Attr.Coll; is it immutable?"
+                        , attr, attr.R_Type
                         )
     # end def __init__
 
@@ -843,7 +848,8 @@ class _Raw_Value_Mixin_ (Kind) :
                 value = self.attr.from_string (raw_value, obj, obj.globals ())
             except StandardError as exc :
                 if __debug__ :
-                    print exc
+                    logging.exception \
+                        ("%s._sync: %s -> %r", self, obj, raw_value)
         self._set_cooked_inner (obj, value)
         obj._attr_man.needs_sync [self.name] = False
     # end def _sync

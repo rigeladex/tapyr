@@ -69,6 +69,8 @@
 #    11-May-2012 (CT) Change `Attribute_Syntax` to use
 #                     `self.attribute.name`, not `self.attribute`, for json
 #     1-Aug-2012 (CT) Add `Destroyed_Entity`
+#     8-Aug-2012 (CT) Derive base class from `StandardError`, not `Exception`
+#                     (too many exception clauses still use `StandardError`)
 #    ««revision-date»»···
 #--
 
@@ -113,7 +115,7 @@ def as_json_cargo (* excs) :
     return list (_gen (excs))
 # end def as_json_cargo
 
-class Error (Exception) :
+class Error (StandardError) :
     """Root class of MOM exceptions"""
 
     __metaclass__    = TFL.Meta.Object.__class__

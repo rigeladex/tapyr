@@ -211,6 +211,7 @@
 #     5-Aug-2012 (MG) Change `set` to use `get_raw_pid`
 #     5-Aug-2012 (CT) Change `_record_iter_raw` to include `raw_pid`
 #     7-Aug-2012 (CT) Use `Add_To_Class` instead of home-grown code
+#     8-Aug-2012 (CT) Use `logging` instead of `print`
 #    ««revision-date»»···
 #--
 
@@ -247,6 +248,7 @@ from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.object_globals   import object_globals
 
 import itertools
+import logging
 import traceback
 
 class Entity (TFL.Meta.Object) :
@@ -639,16 +641,18 @@ class Entity (TFL.Meta.Object) :
                             (self, name, val, attr.kind, err)
                         )
                     if __debug__ :
-                        print (err)
+                        logging.exception  \
+                            ( "\n    %s %s, attribute conversion error "
+                              "%s: %s [%s]"
+                            , self.type_name, self, name, val, type (val)
+                            )
                     to_do.append ((attr, u"", None))
                 except StandardError as exc :
-                    print \
-                      ( exc
-                      , "; object %s, attribute %s: %s [%s]"
-                      % (self, name, val, type (val))
-                      )
-                    if __debug__ :
-                        traceback.print_exc ()
+                    if 0:
+                        logging.exception \
+                        ( "\n    %s %s, attribute conversion error %s: %s [%s]"
+                        , self.type_name, self, name, val, type (val)
+                        )
                 else :
                     to_do.append ((attr, val, ckd_val))
             else :
@@ -658,6 +662,8 @@ class Entity (TFL.Meta.Object) :
     # end def _kw_raw_check_predicates
 
     def _print_attr_err (self, exc) :
+        if debug:
+            logging.exception (repr (self))
         print (self, exc)
     # end def _print_attr_err
 
@@ -723,7 +729,7 @@ class Entity (TFL.Meta.Object) :
     # end def _set_raw
 
     def _store_attr_error (self, exc) :
-        print ("Warning: Setting attribute failed with exception %s" % (exc, ))
+        logging.exception ("Setting attribute failed with exception")
         if self._home_scope :
             self.home_scope._attr_errors.append (exc)
     # end def _store_attr_error

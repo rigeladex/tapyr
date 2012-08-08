@@ -114,6 +114,7 @@
 #     4-Aug-2012 (CT) Add `pid` to `Id_Entity.__call__`
 #     5-Aug-2012 (CT) Change `_cooked_role` to accept `int`
 #     7-Aug-2012 (CT) Change `An_Entity.example` default of `full` to `True`
+#     8-Aug-2012 (CT) Guard against exceptions in `example`
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,7 @@ from   _TFL.predicate        import first, paired
 from   _TFL.I18N             import _, _T, _Tn
 
 import itertools
+import logging
 
 class Entity (TFL.Meta.Object) :
     """Base class for scope-specific E_Type managers."""
@@ -247,8 +249,12 @@ class Id_Entity (Entity) :
     # end def cooked_epk
 
     def example (self, full = False) :
-        return self.instance_or_new \
-            (raw = True, ** self._etype.example_attrs (full))
+        try :
+            return self.instance_or_new \
+                (raw = True, ** self._etype.example_attrs (full))
+        except Exception as exc :
+            if __debug__ :
+                logging.exception ("\n    %s.example", self.type_name)
     # end def example
 
     def exists (self, * epk, ** kw) :
