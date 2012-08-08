@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Aug-2012 (CT) Creation
+#     8-Aug-2012 (CT) Continue creation
 #    ««revision-date»»···
 #--
 
@@ -42,9 +43,12 @@ import _GTW._RST._MOM.Mixin
 
 from   _MOM.import_MOM          import MOM
 
+from   _TFL.I18N                import _, _T, _Tn
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 import _TFL.Record
+
+import logging
 
 class _RST_MOM_Doc_Mixin_ (TFL.Meta.Object) :
     """Mixin for MOM documentation resources"""
@@ -56,7 +60,38 @@ class _RST_MOM_Doc_Mixin_ (TFL.Meta.Object) :
         return TFL.Record (etag = self.top.App_Type.db_version_hash)
     # end def change_info
 
+    def e_type_filter (self, e_type) :
+        return \
+            (   issubclass (e_type, MOM.Id_Entity)
+            and not e_type.is_locked ()
+            and e_type.is_relevant
+            )
+    # end def e_type_filter
+
 Mixin = _RST_MOM_Doc_Mixin_ # end class
+
+class _RST_MOM_Doc_Dir_Mixin_ (Mixin) :
+    """Mixin for MOM documentation directory resources"""
+
+    _real_name                 = "Dir_Mixin"
+
+    @property
+    def entries (self) :
+        if not self._entries :
+            try :
+                self.add_entries (* self._gen_entries ())
+            except Exception as exc :
+                logging.exception (exc)
+        return self._entries
+    # end def entries
+
+    def e_type_href (self, e_type) :
+        resource = self.resource_from_e_type (e_type)
+        if resource is not None :
+            return resource.abs_href
+    # end def e_type_href
+
+Dir_Mixin = _RST_MOM_Doc_Dir_Mixin_ # end class
 
 _Ancestor = GTW.RST.Leaf
 
@@ -66,40 +101,56 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
     _real_name                 = "E_Type"
     _ETM                       = None
 
+    page_template_name         = "e_type_doc_bare"
+
     class _RST_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
 
         _real_name             = "GET"
+        _renderers             = \
+            _Ancestor.GET._renderers + (GTW.RST.Mime_Type.HTML_T, )
+
+        def _add_attr_prop (self, attr, k, result, fct = None) :
+            v = getattr (attr, k, None)
+            if v :
+                if fct is not None :
+                    v = fct (v)
+                result [k] = v
+        # end def _add_attr_prop
+
+        def _add_attr_props (self, attr, ks, result, fct = None) :
+            for k in ks :
+                self._add_attr_prop (attr, k, result, fct)
+        # end def _add_attr_props
 
         def _response_attr (self, resource, request, response, attr) :
             result = dict \
                 ( default_value = attr.raw_default
-                , description   = attr.description
+                , description   = _T (attr.description)
                 , is_required   = attr.is_required
-                , kind          = attr.kind
+                , kind          = _T (attr.kind)
                 , name          = attr.name
-                , p_type        = attr.P_Type.__name__
-                , type          = attr.typ
+                , type          = _T (attr.typ)
                 )
-            for k in \
-                    ( "example", "explanation", "group", "max_length"
-                    , "role_name", "syntax"
-                    ) :
-                v = getattr (attr, k, None)
-                if v :
-                    result [k] = v
+            self._add_attr_props \
+                (attr, ("group", "max_length", "role_name"), result)
+            self._add_attr_props (attr, ("explanation", "syntax"), result, _T)
             if not attr.is_changeable :
                 result ["is_changeable"] = False
             if attr.ui_name_T != attr.name :
                 result ["ui_name"] = attr.ui_name_T
             if attr.E_Type :
                 result ["type_name"] = tn = attr.E_Type.type_name
-                if isinstance (attr.E_Type, MOM.An_Entity) :
+                if isinstance (attr.attr, MOM.Attr._A_Composite_) :
                     result ["attributes"] = list \
                         (   self._response_attr (resource, request, response, a)
                         for a in attr.E_Type.edit_attr
                         )
                 else :
                     result ["url"] = resource.e_type_href (tn)
+            else :
+                self._add_attr_prop (attr, "example", result)
+            if attr.P_Type :
+                result ["p_type"] = attr.P_Type.__name__
             return result
         # end def _response_attr
 
@@ -108,9 +159,11 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             attrs    = resource.attributes
             children = E_Type.children
             parents  = E_Type.parents
+            rel_root = E_Type.relevant_root
             result   = dict \
-                ( description = E_Type.__doc__
+                ( description = _T (E_Type.__doc__)
                 , type_name   = E_Type.type_name
+                , ui_name     = _T (E_Type.type_name)
                 , url         = resource.abs_href
                 )
             if attrs :
@@ -119,36 +172,48 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                     for a in attrs
                     )
             if children :
-                result ["children"] = self._response_children \
+                v = self._response_children \
                     (resource, request, response, children)
+                if v :
+                    result ["children"] = v
             if parents :
-                result ["parents"] = self._response_parents \
+                v = self._response_parents \
                     (resource, request, response, parents)
+                if v :
+                    result ["parents"] = v
+            if rel_root and rel_root is not E_Type :
+                v = self._response_ref_e_type (resource, rel_root)
+                if v :
+                    result ["relevant_root"] = v
             resource.scope.rollback () ### Remove example objects, if any
             return result
         # end def _response_body
 
         def _response_children (self, resource, request, response, children) :
             return list \
-                (   dict
-                        ( type_name = k
-                        , url       = resource.e_type_href (c)
-                        )
-                for k, c in sorted (children.iteritems ())
-                if  issubclass (c, MOM.Id_Entity)
-
-                )
+                (self._response_ref_e_types (resource, children.itervalues ()))
         # end def _response_children
 
         def _response_parents (self, resource, request, response, parents) :
-            return list \
-                (   dict
-                        ( type_name = p.type_name
-                        , url       = resource.e_type_href (p)
-                        )
-                for p in sorted (parents) if issubclass (p, MOM.Id_Entity)
-                )
+            return list (self._response_ref_e_types (resource, parents))
         # end def _response_parents
+
+        def _response_ref_e_types (self, resource, e_types) :
+            for et in sorted (e_types, key = TFL.Getter.type_name) :
+                if issubclass (et, MOM.Id_Entity) :
+                    ref = self._response_ref_e_type (resource, et)
+                    if ref :
+                        yield ref
+        # end def _response_ref_e_types
+
+        def _response_ref_e_type (self, resource, e_type) :
+            url = resource.e_type_href (e_type)
+            if url :
+                return dict \
+                    ( type_name = e_type.type_name
+                    , url       = url
+                    )
+        # end def _response_ref_e_type
 
     GET = _RST_MOM_Doc_E_Type_GET_ # end class
 
@@ -157,42 +222,21 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
         etn = self.type_name
         if "name" not in kw :
             kw ["name"] = etn.replace (".", "-")
-        if "short_title" not in kw :
-            kw ["short_title"] = etn
         self.__super.__init__ (** kw)
+        if not getattr (self, "short_title", None) :
+            self.short_title = _T (etn)
     # end def __init__
 
 E_Type = _RST_MOM_Doc_E_Type_ # end class
 
 _Ancestor = GTW.RST.Dir
 
-class _RST_MOM_Doc_App_Type_ (Mixin, _Ancestor) :
+class _RST_MOM_Doc_App_Type_ (Dir_Mixin, _Ancestor) :
     """RESTful node documenting the essential types of a specific App_Type."""
 
     _real_name                 = "App_Type"
 
     E_Type                     = E_Type
-
-    def __init__ (self, ** kw) :
-        if "entries" not in kw :
-            etf = self.e_type_filter
-            kw ["entries"] = tuple \
-                (   self.E_Type (ETM = str (et.type_name))
-                for et in self.top.App_Type._T_Extension if  etf (et)
-                )
-        self.__super.__init__ (** kw)
-    # end def __init__
-
-    def e_type_filter (self, e_type) :
-        return issubclass (e_type, MOM.Id_Entity) and not e_type.is_locked ()
-            ### ??? and (et.children or not et.is_partial)
-    # end def e_type_filter
-
-    def e_type_href (self, e_type) :
-        resource = self.resource_from_e_type (e_type)
-        if resource is not None :
-            return resource.abs_href
-    # end def e_type_href
 
     def resource_from_e_type (self, e_type) :
         if not isinstance (e_type, basestring) :
@@ -200,6 +244,13 @@ class _RST_MOM_Doc_App_Type_ (Mixin, _Ancestor) :
         result = self._entry_map.get (e_type.replace (".", "-"))
         return result
     # end def resource_from_e_type
+
+    def _gen_entries (self) :
+        etf = self.e_type_filter
+        for et in self.top.App_Type._T_Extension :
+            if etf (et) :
+                yield self.E_Type (ETM = str (et.type_name), parent = self)
+    # end def _gen_entries
 
 App_Type = _RST_MOM_Doc_App_Type_ # end class
 

@@ -1,0 +1,91 @@
+{#- jinja template: html/e_type_doc.m.jnj -#}
+{#
+## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This module is part of the package JNJ.
+##
+## This module is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This module is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this module. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/e_type_doc.m.jnj
+##
+## Purpose
+##    Macros for E_Type documentation pages
+##
+## Revision Dates
+##     8-Aug-2012 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import (html_version or "html/5.jnj") as X %}
+
+{%- macro header (name) -%}
+  {%- set tag = kwargs.get ("tag", "h2") -%}
+  <{{ tag }}>{{ GTW._T (name.capitalize ()).replace ("_", " ") }}</{{ tag }}>
+{%- endmacro -%} {#- header -#}
+
+{%- macro e_type_ref (et) -%}
+  {%- if et -%}
+    {%- if et.url %}
+      <a href={{ et.url }}>{{ et.type_name }}</a>
+    {%- else %}
+      {{ et.type_name }}
+    {% endif -%}
+  {%- endif -%}
+{%- endmacro -%} {#- e_type_ref -#}
+
+{%- macro e_type_refs (refs) -%}
+  {%- if refs %}
+    <ul>
+      {%- for r in refs %}
+        <li>
+          {{ e_type_ref (r) }}
+        </li>
+      {% endfor -%}
+    </ul>
+  {% endif -%}
+{%- endmacro -%} {#- e_type_refs -#}
+
+{%- macro section (resource, rst_cargo, name) -%}
+  {%- set caller = kwargs.pop ("caller",   None) -%}
+  {%- set body   = rst_cargo [name] -%}
+  {%- if body %}
+    {{ header (name, tag = kwargs.get ("tag", "h2")) }}
+    {%- if caller %}
+      {{- caller (body) -}}
+    {%- else %}
+      <p>{{ body }}</p>
+    {%- endif -%}
+  {% endif -%}
+{%- endmacro -%} {#- section -#}
+
+{%- macro e_type (resource, rst_cargo) -%}
+  <h1 class="headline">{{ resource.title or resource.short_title }}</h1>
+  {{ section (resource, rst_cargo, "description") }}
+  {% call(rr) section (resource, rst_cargo, "relevant_root") -%}
+    {{ e_type_ref (rr) }}
+  {% endcall %} {# section #}
+  {% call(ps) section (resource, rst_cargo, "parents") -%}
+    {{ e_type_refs (ps) }}
+  {% endcall %} {# section #}
+  {% call(cs) section (resource, rst_cargo, "children") -%}
+    {{ e_type_ref (cs) }}
+  {% endcall %} {# section #}
+{%- endmacro -%} {#- e_type -#}
+
+{#- __END__ jinja template: html/e_type_doc.m.jnj -#}

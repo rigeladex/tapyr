@@ -74,6 +74,7 @@
 #    22-Jun-2012 (CT) Use `static_handler.get_path` instead of home-grown code
 #     6-Aug-2012 (CT) Add `etag`
 #     6-Aug-2012 (CT) Remove `e_type_aggregator` (template doesn't exist)
+#     8-Aug-2012 (CT) Add `e_type_doc`
 #    ««revision-date»»···
 #--
 
@@ -557,6 +558,8 @@ Template ("error_email",                  "email/error.jnj")
 Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
 Template ("e_type_afs",                   "html/e_type_afs.jnj")
+Template ("e_type_doc",                   "html/e_type_doc.jnj")
+Template ("e_type_doc_bare",              "html/e_type_doc_bare.jnj")
 Template ("e_type_change",                "html/e_type_change.jnj")
 Template ("gallery",                      "html/gallery.jnj")
 Template ("login",                        "html/login.jnj")

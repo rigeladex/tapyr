@@ -32,6 +32,7 @@
 #                     wastes pids for a Name_Clash)
 #     2-Aug-2012 (CT) Add `change_query_filters` for entities to `test_cqf`
 #     7-Aug-2012 (CT) Add `test_doc`
+#     8-Aug-2012 (CT) Add `test_example_*`, continue `test_doc`
 #    ««revision-date»»···
 #--
 
@@ -761,45 +762,24 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc"))
     { 'json' :
         { 'entries' :
-            [ 'MOM-Id_Entity'
-            , 'MOM-Link'
-            , 'MOM-Link1'
-            , 'MOM-_MOM_Link_n_'
-            , 'MOM-Link2'
-            , 'MOM-Link2_Ordered'
-            , 'MOM-Link3'
-            , 'MOM-Object'
-            , 'MOM-Named_Object'
-            , 'PAP-Address'
-            , 'PAP-Subject'
+            [ 'PAP-Address'
             , 'PAP-Company'
             , 'PAP-Email'
             , 'PAP-Phone'
             , 'PAP-Person'
-            , 'PAP-Subject_has_Property'
-            , 'PAP-Subject_has_Address'
             , 'PAP-Company_has_Address'
-            , 'PAP-Subject_has_Email'
             , 'PAP-Company_has_Email'
-            , 'PAP-Subject_has_Phone'
             , 'PAP-Company_has_Phone'
             , 'PAP-Entity_created_by_Person'
             , 'PAP-Person_has_Address'
             , 'PAP-Person_has_Email'
             , 'PAP-Person_has_Phone'
-            , 'SRM-Link1'
-            , 'SRM-Link2'
-            , 'SRM-Object'
             , 'SRM-_Boat_Class_'
             , 'SRM-Boat_Class'
             , 'SRM-Handicap'
             , 'SRM-Boat'
             , 'SRM-Club'
             , 'SRM-Regatta_Event'
-            , 'SWP-Link1'
-            , 'SWP-Link2'
-            , 'SWP-Object'
-            , 'SWP-Object_PN'
             , 'SWP-Page'
             , 'SWP-Page_Y'
             , 'SWP-Clip_O'
@@ -828,16 +808,6 @@ _test_doc = r"""
         { 'attributes' :
             [ { 'default_value' : ''
               , 'description' : 'Boat racing in a regatta.'
-              , 'example' :
-                  [
-                    [ 'Laser'
-                    , 'SRM.Boat_Class'
-                    ]
-                  , 'AUT'
-                  , '2827'
-                  , 'X'
-                  , 'SRM.Boat'
-                  ]
               , 'is_required' : True
               , 'kind' : 'primary'
               , 'name' : 'left'
@@ -850,27 +820,6 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Regatta a boat races in.'
-              , 'example' :
-                  [
-                    [ 'Fastnet Race'
-                    ,
-                      [
-                        [ 'finish'
-                        , '2038/01/19'
-                        ]
-                      ,
-                        [ 'start'
-                        , '1970/01/01'
-                        ]
-                      ]
-                    , 'SRM.Regatta_Event'
-                    ]
-                  ,
-                    [ 'Laser'
-                    , 'SRM.Boat_Class'
-                    ]
-                  , 'SRM.Regatta_C'
-                  ]
               , 'is_required' : True
               , 'kind' : 'primary'
               , 'name' : 'right'
@@ -883,22 +832,6 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Skipper of boat.'
-              , 'example' :
-                  [
-                    [ 'Doe'
-                    , 'John'
-                    , 'F.'
-                    , 'Dr.'
-                    , 'PAP.Person'
-                    ]
-                  , 'AUT'
-                  , '499999.5'
-                  ,
-                    [ 'RORC'
-                    , 'SRM.Club'
-                    ]
-                  , 'SRM.Sailor'
-                  ]
               , 'is_required' : True
               , 'kind' : 'required'
               , 'name' : 'skipper'
@@ -930,12 +863,8 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Boat racing in a regatta.'
-        , 'parents' :
-            [ { 'type_name' : 'SRM.Link2'
-              , 'url' : '/Doc/SRM-Link2'
-              }
-            ]
         , 'type_name' : 'SRM.Boat_in_Regatta'
+        , 'ui_name' : 'SRM.Boat_in_Regatta'
         , 'url' : '/Doc/SRM-Boat_in_Regatta'
         }
     , 'status' : 200
@@ -947,20 +876,6 @@ _test_doc = r"""
         { 'attributes' :
             [ { 'default_value' : ''
               , 'description' : 'Regatta event to which this regatta belongs.'
-              , 'example' :
-                  [ 'Fastnet Race'
-                  ,
-                    [
-                      [ 'finish'
-                      , '2038/01/19'
-                      ]
-                    ,
-                      [ 'start'
-                      , '1970/01/01'
-                      ]
-                    ]
-                  , 'SRM.Regatta_Event'
-                  ]
               , 'is_changeable' : False
               , 'is_required' : True
               , 'kind' : 'primary'
@@ -1025,13 +940,42 @@ _test_doc = r"""
               , 'type' : 'Int'
               , 'ui_name' : 'Races'
               }
-            , { 'default_value' : ''
+            , { 'attributes' :
+                  [ { 'default_value' : ''
+                    , 'description' : 'Date of regatta result.'
+                    , 'example' : '1979/08/18'
+                    , 'is_required' : False
+                    , 'kind' : 'necessary'
+                    , 'name' : 'date'
+                    , 'p_type' : 'datetime'
+                    , 'type' : 'Date-Time'
+                    , 'ui_name' : 'Date'
+                    }
+                  , { 'default_value' : ''
+                    , 'description' : 'Name of software used for managing the regatta.'
+                    , 'example' : 'Blowing Bits Inc.'
+                    , 'is_required' : False
+                    , 'kind' : 'optional'
+                    , 'max_length' : 64
+                    , 'name' : 'software'
+                    , 'p_type' : 'unicode'
+                    , 'type' : 'String'
+                    , 'ui_name' : 'Software'
+                    }
+                  , { 'default_value' : ''
+                    , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
+                    , 'example' : 'Final'
+                    , 'is_required' : False
+                    , 'kind' : 'optional'
+                    , 'max_length' : 64
+                    , 'name' : 'status'
+                    , 'p_type' : 'unicode'
+                    , 'type' : 'String'
+                    , 'ui_name' : 'Status'
+                    }
+                  ]
+              , 'default_value' : ''
               , 'description' : 'Information about result.'
-              , 'example' :
-                  { 'date' : '1979/08/18'
-                  , 'software' : 'Blowing Bits Inc.'
-                  , 'status' : 'Final'
-                  }
               , 'is_required' : False
               , 'kind' : 'optional'
               , 'name' : 'result'
@@ -1039,7 +983,6 @@ _test_doc = r"""
               , 'type' : 'Regatta_Result'
               , 'type_name' : 'SRM.Regatta_Result'
               , 'ui_name' : 'Result'
-              , 'url' : None
               }
             ]
         , 'children' :
@@ -1051,12 +994,8 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Sailing regatta for one class or handicap.'
-        , 'parents' :
-            [ { 'type_name' : 'SRM.Link1'
-              , 'url' : '/Doc/SRM-Link1'
-              }
-            ]
         , 'type_name' : 'SRM.Regatta'
+        , 'ui_name' : 'SRM.Regatta'
         , 'url' : '/Doc/SRM-Regatta'
         }
     , 'status' : 200
@@ -1068,20 +1007,6 @@ _test_doc = r"""
         { 'attributes' :
             [ { 'default_value' : ''
               , 'description' : 'Regatta event to which this regatta belongs.'
-              , 'example' :
-                  [ 'Fastnet Race'
-                  ,
-                    [
-                      [ 'finish'
-                      , '2038/01/19'
-                      ]
-                    ,
-                      [ 'start'
-                      , '1970/01/01'
-                      ]
-                    ]
-                  , 'SRM.Regatta_Event'
-                  ]
               , 'is_changeable' : False
               , 'is_required' : True
               , 'kind' : 'primary'
@@ -1095,10 +1020,6 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Class of boats sailing in this regatta.'
-              , 'example' :
-                  [ 'Laser'
-                  , 'SRM.Boat_Class'
-                  ]
               , 'is_required' : True
               , 'kind' : 'primary'
               , 'name' : 'boat_class'
@@ -1150,13 +1071,42 @@ _test_doc = r"""
               , 'type' : 'Int'
               , 'ui_name' : 'Races'
               }
-            , { 'default_value' : ''
+            , { 'attributes' :
+                  [ { 'default_value' : ''
+                    , 'description' : 'Date of regatta result.'
+                    , 'example' : '1979/08/18'
+                    , 'is_required' : False
+                    , 'kind' : 'necessary'
+                    , 'name' : 'date'
+                    , 'p_type' : 'datetime'
+                    , 'type' : 'Date-Time'
+                    , 'ui_name' : 'Date'
+                    }
+                  , { 'default_value' : ''
+                    , 'description' : 'Name of software used for managing the regatta.'
+                    , 'example' : 'Blowing Bits Inc.'
+                    , 'is_required' : False
+                    , 'kind' : 'optional'
+                    , 'max_length' : 64
+                    , 'name' : 'software'
+                    , 'p_type' : 'unicode'
+                    , 'type' : 'String'
+                    , 'ui_name' : 'Software'
+                    }
+                  , { 'default_value' : ''
+                    , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
+                    , 'example' : 'Final'
+                    , 'is_required' : False
+                    , 'kind' : 'optional'
+                    , 'max_length' : 64
+                    , 'name' : 'status'
+                    , 'p_type' : 'unicode'
+                    , 'type' : 'String'
+                    , 'ui_name' : 'Status'
+                    }
+                  ]
+              , 'default_value' : ''
               , 'description' : 'Information about result.'
-              , 'example' :
-                  { 'date' : '1979/08/18'
-                  , 'software' : 'Blowing Bits Inc.'
-                  , 'status' : 'Final'
-                  }
               , 'is_required' : False
               , 'kind' : 'optional'
               , 'name' : 'result'
@@ -1164,7 +1114,6 @@ _test_doc = r"""
               , 'type' : 'Regatta_Result'
               , 'type_name' : 'SRM.Regatta_Result'
               , 'ui_name' : 'Result'
-              , 'url' : None
               }
             , { 'default_value' : 'no'
               , 'description' : 'Boolean attribute.'
@@ -1184,7 +1133,12 @@ _test_doc = r"""
               , 'url' : '/Doc/SRM-Regatta'
               }
             ]
+        , 'relevant_root' :
+            { 'type_name' : 'SRM.Regatta'
+            , 'url' : '/Doc/SRM-Regatta'
+            }
         , 'type_name' : 'SRM.Regatta_C'
+        , 'ui_name' : 'SRM.Regatta_C'
         , 'url' : '/Doc/SRM-Regatta_C'
         }
     , 'status' : 200
@@ -1196,20 +1150,6 @@ _test_doc = r"""
         { 'attributes' :
             [ { 'default_value' : ''
               , 'description' : 'Regatta event to which this regatta belongs.'
-              , 'example' :
-                  [ 'Fastnet Race'
-                  ,
-                    [
-                      [ 'finish'
-                      , '2038/01/19'
-                      ]
-                    ,
-                      [ 'start'
-                      , '1970/01/01'
-                      ]
-                    ]
-                  , 'SRM.Regatta_Event'
-                  ]
               , 'is_changeable' : False
               , 'is_required' : True
               , 'kind' : 'primary'
@@ -1223,10 +1163,6 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Name of handicap system used for this regatta.'
-              , 'example' :
-                  [ 'IRC'
-                  , 'SRM.Handicap'
-                  ]
               , 'is_required' : True
               , 'kind' : 'primary'
               , 'name' : 'boat_class'
@@ -1278,13 +1214,42 @@ _test_doc = r"""
               , 'type' : 'Int'
               , 'ui_name' : 'Races'
               }
-            , { 'default_value' : ''
+            , { 'attributes' :
+                  [ { 'default_value' : ''
+                    , 'description' : 'Date of regatta result.'
+                    , 'example' : '1979/08/18'
+                    , 'is_required' : False
+                    , 'kind' : 'necessary'
+                    , 'name' : 'date'
+                    , 'p_type' : 'datetime'
+                    , 'type' : 'Date-Time'
+                    , 'ui_name' : 'Date'
+                    }
+                  , { 'default_value' : ''
+                    , 'description' : 'Name of software used for managing the regatta.'
+                    , 'example' : 'Blowing Bits Inc.'
+                    , 'is_required' : False
+                    , 'kind' : 'optional'
+                    , 'max_length' : 64
+                    , 'name' : 'software'
+                    , 'p_type' : 'unicode'
+                    , 'type' : 'String'
+                    , 'ui_name' : 'Software'
+                    }
+                  , { 'default_value' : ''
+                    , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
+                    , 'example' : 'Final'
+                    , 'is_required' : False
+                    , 'kind' : 'optional'
+                    , 'max_length' : 64
+                    , 'name' : 'status'
+                    , 'p_type' : 'unicode'
+                    , 'type' : 'String'
+                    , 'ui_name' : 'Status'
+                    }
+                  ]
+              , 'default_value' : ''
               , 'description' : 'Information about result.'
-              , 'example' :
-                  { 'date' : '1979/08/18'
-                  , 'software' : 'Blowing Bits Inc.'
-                  , 'status' : 'Final'
-                  }
               , 'is_required' : False
               , 'kind' : 'optional'
               , 'name' : 'result'
@@ -1292,7 +1257,6 @@ _test_doc = r"""
               , 'type' : 'Regatta_Result'
               , 'type_name' : 'SRM.Regatta_Result'
               , 'ui_name' : 'Result'
-              , 'url' : None
               }
             ]
         , 'description' : 'Regatta for boats in a handicap system.'
@@ -1301,14 +1265,344 @@ _test_doc = r"""
               , 'url' : '/Doc/SRM-Regatta'
               }
             ]
+        , 'relevant_root' :
+            { 'type_name' : 'SRM.Regatta'
+            , 'url' : '/Doc/SRM-Regatta'
+            }
         , 'type_name' : 'SRM.Regatta_H'
+        , 'ui_name' : 'SRM.Regatta_H'
         , 'url' : '/Doc/SRM-Regatta_H'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/Doc/SRM-Regatta_H'
     }
 
+    >>> _ = show (R.get ("/Doc/SRM-Crew_Member"))
+    { 'json' :
+        { 'attributes' :
+            [ { 'default_value' : ''
+              , 'description' : '`Boat_in_Regatta` the crew member sails on.'
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'left'
+              , 'p_type' : 'Boat_in_Regatta'
+              , 'role_name' : 'boat_in_regatta'
+              , 'type' : 'Boat_in_Regatta'
+              , 'type_name' : 'SRM.Boat_in_Regatta'
+              , 'ui_name' : 'Boat in regatta'
+              , 'url' : '/Doc/SRM-Boat_in_Regatta'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Person which sails as crew member on `boat_in_regatta`'
+              , 'is_required' : True
+              , 'kind' : 'primary'
+              , 'name' : 'right'
+              , 'p_type' : 'Sailor'
+              , 'role_name' : 'sailor'
+              , 'type' : 'Sailor'
+              , 'type_name' : 'SRM.Sailor'
+              , 'ui_name' : 'Sailor'
+              , 'url' : '/Doc/SRM-Sailor'
+              }
+            , { 'default_value' : '0'
+              , 'description' : 'The crew members of a boat will be sorted by `key`, if\ndefined, by order of creation otherwise.'
+              , 'example' : 7
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'name' : 'key'
+              , 'p_type' : 'int'
+              , 'type' : 'Int'
+              , 'ui_name' : 'Key'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Role of crew member.'
+              , 'example' : 'trimmer'
+              , 'is_required' : False
+              , 'kind' : 'optional'
+              , 'max_length' : 32
+              , 'name' : 'role'
+              , 'p_type' : 'unicode'
+              , 'type' : 'String'
+              , 'ui_name' : 'Role'
+              }
+            ]
+        , 'description' : 'Crew member of a `Boat_in_Regatta`.'
+        , 'type_name' : 'SRM.Crew_Member'
+        , 'ui_name' : 'SRM.Crew_Member'
+        , 'url' : '/Doc/SRM-Crew_Member'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/Doc/SRM-Crew_Member'
+    }
+
     >>> server.terminate ()
+
+"""
+
+_test_example_1 = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> print ("Count before loop:", scope.MOM.Id_Entity.count)
+    Count before loop: 16
+
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np) :
+    ...     ETM = scope [tn]
+    ...     exa = ETM.example ()
+    ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    ...     scope.rollback ()
+    PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), 'PAP.Company_has_Phone')
+    PAP.Email : (u'john.doe@example.com', 'PAP.Email')
+    PAP.Entity_created_by_Person : ------
+    PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
+    SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
+    SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
+    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Club : (u'RORC', 'SRM.Club')
+    SRM.Crew_Member : ------
+    SRM.Handicap : (u'IRC', 'SRM.Handicap')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ------
+    SRM.Regatta_C : ------
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ------
+    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
+    SRM.Team : ------
+    SRM.Team_has_Boat_in_Regatta : ------
+    SWP.Clip_O : ------
+    SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
+    SWP.Page : (u'20101010_000042_137', 'SWP.Page')
+    SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+
+    >>> print ("Count after loop:", scope.MOM.Id_Entity.count)
+    Count after loop: 16
+
+    >>> scope.destroy ()
+
+"""
+
+_test_example_2 = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np) : ### nummero 2
+    ...     ETM = scope [tn]
+    ...     exa = ETM.example ()
+    ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    ...     scope.rollback ()
+    PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), 'PAP.Company_has_Phone')
+    PAP.Email : (u'john.doe@example.com', 'PAP.Email')
+    PAP.Entity_created_by_Person : ------
+    PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
+    SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
+    SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
+    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Club : (u'RORC', 'SRM.Club')
+    SRM.Crew_Member : ------
+    SRM.Handicap : (u'IRC', 'SRM.Handicap')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ------
+    SRM.Regatta_C : ------
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ------
+    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
+    SRM.Team : ------
+    SRM.Team_has_Boat_in_Regatta : ------
+    SWP.Clip_O : ------
+    SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
+    SWP.Page : (u'20101010_000042_137', 'SWP.Page')
+    SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+
+    >>> scope.destroy ()
+
+"""
+
+_test_example_3 = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np, reverse = True) :
+    ...     ETM = scope [tn]
+    ...     exa = ETM.example ()
+    ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    ...     scope.rollback ()
+    SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+    SWP.Page : (u'20101010_000042_137', 'SWP.Page')
+    SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
+    SWP.Clip_O : ------
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SRM.Team : (u'', u'foo', 'SRM.Team')
+    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
+    SRM.Regatta_H : ------
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
+    SRM.Regatta_C : ------
+    SRM.Race_Result : ------
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Handicap : (u'IRC', 'SRM.Handicap')
+    SRM.Crew_Member : ------
+    SRM.Club : (u'RORC', 'SRM.Club')
+    SRM.Boat_in_Regatta : ------
+    SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
+    SRM.Boat : (u'', u'AUT', u'2827', u'X', 'SRM.Boat')
+    PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Entity_created_by_Person : ------
+    PAP.Email : (u'john.doe@example.com', 'PAP.Email')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Phone')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Email')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Address')
+    PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+
+    >>> scope.destroy ()
+
+"""
+
+_test_example_4 = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> print ("Count before loop:", scope.MOM.Id_Entity.count)
+    Count before loop: 16
+
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np) :
+    ...     ETM = scope [tn]
+    ...     exa = ETM.example ()
+    ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    ...     scope.rollback ()
+    PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), 'PAP.Company_has_Phone')
+    PAP.Email : (u'john.doe@example.com', 'PAP.Email')
+    PAP.Entity_created_by_Person : ------
+    PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
+    SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
+    SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
+    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Club : (u'RORC', 'SRM.Club')
+    SRM.Crew_Member : ------
+    SRM.Handicap : (u'IRC', 'SRM.Handicap')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ------
+    SRM.Regatta_C : ------
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ------
+    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
+    SRM.Team : ------
+    SRM.Team_has_Boat_in_Regatta : ------
+    SWP.Clip_O : ------
+    SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
+    SWP.Page : (u'20101010_000042_137', 'SWP.Page')
+    SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+
+    >>> scope.destroy ()
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np) : ### nummero 2
+    ...     ETM = scope [tn]
+    ...     exa = ETM.example ()
+    ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    ...     scope.rollback ()
+    PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), 'PAP.Company_has_Phone')
+    PAP.Email : (u'john.doe@example.com', 'PAP.Email')
+    PAP.Entity_created_by_Person : ------
+    PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
+    SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
+    SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
+    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Club : (u'RORC', 'SRM.Club')
+    SRM.Crew_Member : ------
+    SRM.Handicap : (u'IRC', 'SRM.Handicap')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ------
+    SRM.Regatta_C : ------
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ------
+    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
+    SRM.Team : ------
+    SRM.Team_has_Boat_in_Regatta : ------
+    SWP.Clip_O : ------
+    SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
+    SWP.Page : (u'20101010_000042_137', 'SWP.Page')
+    SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+
+    >>> scope.destroy ()
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np, reverse = True) :
+    ...     ETM = scope [tn]
+    ...     exa = ETM.example ()
+    ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    ...     scope.rollback ()
+    SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+    SWP.Page : (u'20101010_000042_137', 'SWP.Page')
+    SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
+    SWP.Clip_O : ------
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SRM.Team : (u'', u'foo', 'SRM.Team')
+    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
+    SRM.Regatta_H : ------
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
+    SRM.Regatta_C : ------
+    SRM.Race_Result : ------
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Handicap : (u'IRC', 'SRM.Handicap')
+    SRM.Crew_Member : ------
+    SRM.Club : (u'RORC', 'SRM.Club')
+    SRM.Boat_in_Regatta : ------
+    SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
+    SRM.Boat : (u'', u'AUT', u'2827', u'X', 'SRM.Boat')
+    PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Entity_created_by_Person : ------
+    PAP.Email : (u'john.doe@example.com', 'PAP.Email')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Phone')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Email')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Address')
+    PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+
+    >>> scope.destroy ()
 
 """
 
@@ -2969,14 +3263,18 @@ _test_qr_local = """
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( test_cqf      = _test_cqf
-        , test_delete   = _test_delete
-        , test_doc      = _test_doc
-        , test_get      = _test_get
-        , test_options  = _test_options
-        , test_post     = _test_post
-        , test_query    = _test_query
-        , test_qr_local = _test_qr_local
+        ( test_cqf        = _test_cqf
+        , test_delete     = _test_delete
+        , test_doc        = _test_doc
+        , test_example_1  = _test_example_1
+        , test_example_2  = _test_example_2
+        , test_example_3  = _test_example_3
+        , test_example_4  = _test_example_4
+        , test_get        = _test_get
+        , test_options    = _test_options
+        , test_post       = _test_post
+        , test_query      = _test_query
+        , test_qr_local   = _test_qr_local
         )
     )
 

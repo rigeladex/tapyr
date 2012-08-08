@@ -1,0 +1,58 @@
+{#- jinja template: html/e_type_doc_bare.jnj -#}
+{#
+## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This module is part of the package JNJ.
+##
+## This module is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This module is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this module. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/e_type_doc_bare.jnj
+##
+## Purpose
+##    Template for bare HTML page documenting a specific E_Type
+##
+## Revision Dates
+##     8-Aug-2012 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import (html_version or "html/5.jnj") as X %}
+{%- import "html/e_type_doc.m.jnj" as etd %}
+
+{%- call X.html (lang = resource.language|default ("en")) -%}
+  {%- call X.head () -%}
+    {%- block head_elements -%}
+      <meta http-equiv="Content-Type" content="text/html; charset={{ resource.encoding|default ("utf-8") }}" />
+      {%- if resource.exclude_robots %}
+        <meta name="robots" content="NOINDEX, NOFOLLOW">
+      {% endif -%}
+      {% block title %}
+        <title>{{ resource.title or resource.short_title }}</title>
+      {% endblock title -%}
+      {%- block meta_elements -%}
+        <meta name="generator" content="GTW, JNJ, Jinja2, MOM, Werkzeug" />
+      {%- endblock meta_elements -%}
+    {%- endblock head_elements %}
+  {%- endcall %} {# X.head #}
+  <body>
+    {{ etd.e_type (resource, rst_cargo) }}
+  </body>
+{%- endcall -%} {#- X.html -#}
+
+{#- __END__ jinja template: html/e_type_doc_bare.jnj -#}

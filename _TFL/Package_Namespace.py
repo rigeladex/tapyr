@@ -134,6 +134,7 @@
 #    16-Jun-2010 (CT)  s/print/pyk.fprint/
 #    30-Aug-2010 (CT) `_import_names` changed to check against `basestring`
 #     8-Aug-2012 (CT) Improve names of name-attributes
+#     8-Aug-2012 (CT) Add `__doc__` to `Package_Namespace`
 #    ««revision-date»»···
 #--
 
@@ -277,8 +278,9 @@ class Package_Namespace (object) :
     _check_clashes       = True
 
     def __init__ (self, module_name = None, name = None) :
+        c_scope = _caller_globals ()
         if not module_name :
-            module_name = _caller_globals () ["__name__"]
+            module_name = c_scope ["__name__"]
         if not name :
             name = module_name
         qname = self._leading_underscores.sub (r"\1", name)
@@ -292,6 +294,7 @@ class Package_Namespace (object) :
         self.__seen         = {}
         self.__reload       = 0
         self._Outer         = None
+        self.__doc__        = c_scope.get ("__doc__", str (self))
     # end def __init__
 
     def _Add (self, ** kw) :
