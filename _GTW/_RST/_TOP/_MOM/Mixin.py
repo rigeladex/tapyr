@@ -31,6 +31,8 @@
 #    18-Jul-2012 (CT) Factor from `Display._E_Type_` to `E_Type_Mixin`
 #    23-Jul-2012 (CT) Remove `has_children`
 #    30-Jul-2012 (CT) Redefine `E_Type_Mixin_Base.QR`
+#     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
+#     7-Aug-2012 (CT) Fix typo (`.admin`, not `._admin`)
 #    ««revision-date»»···
 #--
 
@@ -52,7 +54,7 @@ import _TFL.Attr_Mapper
 
 from   posixpath                import join as pp_join
 
-class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.RST_Entity_Mixin) :
+class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.Entity_Mixin) :
     """Base mixin for RST.TOP classes displaying MOM instances."""
 
     _real_name      = "Entity_Mixin_Base"
@@ -121,7 +123,7 @@ class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
 
 Entity_Mixin = TOP_MOM_Entity_Mixin # end class
 
-class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.RST_E_Type_Mixin) :
+class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.E_Type_Mixin) :
 
     _real_name      = "E_Type_Mixin_Base"
 
@@ -183,8 +185,9 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
             self._entries   = []
             entries         = tuple (self._new_entry (o) for o in objects)
             self.add_entries (* entries)
-            if self._admin :
-                self.add_entries (self._admin)
+            admin = self.admin
+            if admin and admin is not self :
+                self.add_entries (admin)
             if objects :
                 self._old_objects = objects
         return self._entries
@@ -220,8 +223,8 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
     def template_iter (self) :
         for t in self.__super.template_iter () :
             yield t
-        if self._admin :
-            for t in self._admin.template_iter () :
+        if self.admin :
+            for t in self.admin.template_iter () :
                 yield t
     # end def template_iter
 

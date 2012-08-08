@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -34,6 +34,7 @@
 #     7-Sep-2011 (CT) `completer` specifications for `country_code`,
 #                     `area_code`, and `number` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     7-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 3
             check          = ("value != '0'", )
+            example        = "43"
             rank           = 1
 
             completer      = Attr.Completer_Spec  (1)
@@ -74,6 +76,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 5
             check          = ("value != '0'", )
+            example        = "1"
             rank           = 2
 
             completer      = Attr.Completer_Spec  \
@@ -87,6 +90,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 14
             check          = ("value != '0'", )
+            example        = "234567"
             rank           = 3
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)

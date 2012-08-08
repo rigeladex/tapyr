@@ -32,6 +32,7 @@
 #    28-Feb-2010 (CT) `extension` is a `A_Numeric_String` (instead of `A_Int`)
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    22-Mar-2012 (CT) Factor `Subject_has_Phone`
+#     7-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,7 @@ class Person_has_Phone (_Ancestor_Essence) :
             """Extension number used in PBX"""
 
             kind            = Attr.Primary_Optional
+            example        = "99"
             max_length      = 5
 
         # end class extension

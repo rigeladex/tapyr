@@ -65,6 +65,7 @@
 #     6-Aug-2012 (CT) Add `blackboard` to `_handle_method_context`
 #     6-Aug-2012 (CT) Add `get_etag`, `get_last_modified`, `rst_etag`, and
 #                     `skip_etag`
+#     7-Aug-2012 (CT) Factor `own_links` and `own_links_transitive` in here
 #    ««revision-date»»···
 #--
 
@@ -300,6 +301,20 @@ class _RST_Base_ (TFL.Meta.Object) :
         ### redefine as necessary
         return set ()
     # end def injected_templates
+
+    @property
+    def own_links (self) :
+        return iter (self.entries)
+    # end def own_links
+
+    @property
+    def own_links_transitive (self) :
+        for e in self.own_links :
+            yield e
+            if isinstance (e, _Dir_) :
+                for ee in e.own_links_transitive :
+                    yield ee
+    # end def own_links_transitive
 
     @property
     def page_template (self) :

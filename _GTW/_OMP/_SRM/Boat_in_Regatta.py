@@ -40,6 +40,7 @@
 #     7-May-2012 (CT) Add predicate `crew_number_valid`, change
 #                     `crew` from `Cached, Computed_Set_Mixin` to `Computed`
 #    23-Jul-2012 (CT) Use `Link_Cacher` for auto-cached `boats`
+#     7-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Place of boat in this regatta."""
 
             kind               = Attr.Optional
+            example            = 2
             min_value          = 1
 
         # end class place
@@ -113,6 +115,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Total points of boat in this regatta."""
 
             kind               = Attr.Optional
+            example            = 25
             min_value          = 1
 
         # end class points
@@ -122,6 +125,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
             kind               = Attr.Internal
             default            = 0
+            example            = 13
 
         # end class rank
 

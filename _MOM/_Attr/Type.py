@@ -236,6 +236,8 @@
 #     3-Aug-2012 (CT) Redefine `A_Link_Role.E_Type` and `.P_Type` as aliases
 #                     for `role_type`
 #     5-Aug-2012 (CT) Change `_A_Id_Entity_.from_string` to allow pid
+#     7-Aug-2012 (CT) Return `result.epk_raw` from `_A_Id_Entity_.example`
+#     7-Aug-2012 (CT) Add `_A_Composite_.example`
 #    ««revision-date»»···
 #--
 
@@ -660,6 +662,15 @@ class _A_Composite_ (_A_Entity_) :
             return cls.kind.epk_def_set (form % dict (name = cls.name))
     # end def epk_def_set_ckd
 
+    @TFL.Meta.Once_Property
+    def example (self) :
+        E_Type = self.E_Type
+        if E_Type :
+            result = E_Type.example_attrs (True)
+            if result :
+                return result
+    # end def example
+
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         t = s or {}
         if isinstance (t, basestring) :
@@ -944,13 +955,12 @@ class _A_Id_Entity_ (_A_Entity_) :
 
     @TFL.Meta.Once_Property
     def example (self) :
-        result = None
         etm    = self.etype_manager ()
         if etm and etm.is_partial :
             etm = etm.default_child
         if etm :
             result = etm.example ()
-        return self.as_string (result)
+            return result.epk_raw
     # end def example
 
     @TFL.Meta.Once_Property

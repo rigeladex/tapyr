@@ -138,6 +138,7 @@
 #     1-Aug-2012 (CT) Use `MOM._Id_Entity_Destroyed_Mixin_`
 #     3-Aug-2012 (CT) Add `Ref_Opt_Map` and `Ref_Req_Map`, remove `link_map`
 #     4-Aug-2012 (CT) Add `E_Type` to `M_E_Type` instances
+#     7-Aug-2012 (CT) Add `parents`
 #    ««revision-date»»···
 #--
 
@@ -325,6 +326,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             ( cls.__dict__
             , app_type      = app_type
             , children      = {}
+            , parents       = []
             , M_E_Type      = cls.M_E_Type
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
@@ -725,9 +727,11 @@ class M_E_Type (M_E_Mixin) :
 
     def _m_setup_children (cls, bases, dct) :
         cls.children = {}
+        cls.parents  = parents = []
         for b in bases :
             if isinstance (b, M_E_Type) :
                 b.children [cls.type_name] = cls
+                parents.append (b)
     # end def _m_setup_children
 
     def _m_setup_relevant_roots (cls) :

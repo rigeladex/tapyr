@@ -36,6 +36,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    11-May-2012 (CT) Add `RSA` to `A_Nation`
 #    14-May-2012 (CT) Add `A_Nation.P_Type`
+#     7-Aug-2012 (CT) Add `example` to attributes of `Regatta_Result`
 #    ««revision-date»»···
 #--
 
@@ -118,6 +119,7 @@ class Regatta_Result (_Ancestor_Essence) :
             """Date of regatta result."""
 
             kind               = Attr.Necessary
+            example            = "1979/08/18"
 
         # end class date
 
@@ -125,6 +127,7 @@ class Regatta_Result (_Ancestor_Essence) :
             """Name of software used for managing the regatta."""
 
             kind               = Attr.Optional
+            example            = "Blowing Bits Inc."
 
         # end class software
 
@@ -132,6 +135,7 @@ class Regatta_Result (_Ancestor_Essence) :
             """Status of result (e.g., `preliminary` or `final`)."""
 
             kind               = Attr.Optional
+            example            = "Final"
 
         # end class status
 

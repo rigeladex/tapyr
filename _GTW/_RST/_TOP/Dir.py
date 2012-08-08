@@ -34,6 +34,7 @@
 #    23-Jul-2012 (CT) Redefine `Dir_V.has_children`
 #     3-Aug-2012 (CT) Change `is_current_dir` to use `href`, not `prefix`
 #     6-Aug-2012 (MG) Consider `hidden` in  `is_current_dir`
+#     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
 #     8-Aug-2012 (MG) Consider `hidden` in `_effective`
 #    ««revision-date»»···
 #--
@@ -86,20 +87,6 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
         else :
             return True
     # end def has_children
-
-    @property
-    def own_links (self) :
-        return iter (self.entries)
-    # end def own_links
-
-    @property
-    def own_links_transitive (self) :
-        for e in self.own_links :
-            yield e
-            if isinstance (e, _Dir_) :
-                for ee in e.own_links_transitive :
-                    yield ee
-    # end def own_links_transitive
 
     @property
     def _effective (self) :

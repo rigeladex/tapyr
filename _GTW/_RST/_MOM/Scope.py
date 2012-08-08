@@ -28,6 +28,8 @@
 # Revision Dates
 #    22-Jun-2012 (CT) Creation
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
+#     7-Aug-2012 (CT) Change class prefix from `RST_` to `RST_MOM_`
+#     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #    ««revision-date»»···
 #--
 
@@ -43,7 +45,7 @@ from   _MOM.import_MOM          import MOM, Q
 
 _Ancestor = GTW.RST.Dir
 
-class RST_Scope (_Ancestor) :
+class _RST_MOM_Scope_ (_Ancestor) :
     """RESTful node for a scope."""
 
     _real_name                 = "Scope"
@@ -70,7 +72,7 @@ class RST_Scope (_Ancestor) :
         return self.__super._get_child (child, * grandchildren)
     # end def _get_child
 
-Scope = RST_Scope # end class
+Scope = _RST_MOM_Scope_ # end class
 
 if __name__ != "__main__" :
     GTW.RST.MOM._Export ("*")

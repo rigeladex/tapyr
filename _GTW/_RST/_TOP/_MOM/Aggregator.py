@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Jul-2012 (CT) Creation
+#     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ from   posixpath                import join as pp_join
 
 _Ancestor = GTW.RST.TOP.Page
 
-class Aggregator (GTW.RST.MOM.RST_Mixin, _Ancestor) :
+class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     """Page aggregating the most recent instances of one or more E_Types."""
 
     css_class             = "news-clip"

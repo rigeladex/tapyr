@@ -37,6 +37,7 @@
 #     4-Aug-2012 (MG) Add missing import
 #     6-Aug-2012 (MG) Enhance `is_current_page`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
+#     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
 #    ««revision-date»»···
 #--
 
@@ -112,7 +113,6 @@ class _TOP_Base_ (_Ancestor) :
 
     _real_name                 = "_Base_"
 
-    own_links                  = []
     short_title                = ""
     title                      = ""
 
@@ -185,7 +185,7 @@ class _TOP_Base_ (_Ancestor) :
 
     @property
     def has_children (self) :
-        return bool (getattr (self, "own_links", []))
+        return bool (getattr (self, "entries", []))
     # end def has_children
 
     @property

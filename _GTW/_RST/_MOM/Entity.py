@@ -33,6 +33,8 @@
 #     6-Jul-2012 (CT) Change `Entity.GET` to use `seen` to show each entity
 #                     once only
 #    19-Jul-2012 (CT) Factor `RST_Entity_Mixin`
+#     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
+#     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #    ««revision-date»»···
 #--
 
@@ -52,14 +54,14 @@ import _TFL._Meta.Object
 
 _Ancestor = GTW.RST.Leaf
 
-class RST_Entity (GTW.RST.MOM.RST_Entity_Mixin, _Ancestor) :
+class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
 
     _real_name                 = "Entity"
 
     implicit                   = True
 
-    class RST_Entity_DELETE (GTW.RST.DELETE) :
+    class _RST_MOM_Entity_DELETE_ (GTW.RST.DELETE) :
 
         _real_name             = "DELETE"
 
@@ -75,9 +77,9 @@ class RST_Entity (GTW.RST.MOM.RST_Entity_Mixin, _Ancestor) :
             return result
         # end def _response_body
 
-    DELETE = RST_Entity_DELETE # end class
+    DELETE = _RST_MOM_Entity_DELETE_ # end class
 
-    class RST_Entity_GET (_Ancestor.GET) :
+    class _RST_MOM_Entity_GET_ (_Ancestor.GET) :
 
         _real_name             = "GET"
 
@@ -131,9 +133,9 @@ class RST_Entity (GTW.RST.MOM.RST_Entity_Mixin, _Ancestor) :
                 )
         # end def _response_obj_attrs
 
-    GET = RST_Entity_GET # end class
+    GET = _RST_MOM_Entity_GET_ # end class
 
-    class RST_Entity_PUT (GTW.RST.MOM._PUT_POST_Mixin_, GTW.RST.PUT) :
+    class _RST_MOM_Entity_PUT_ (GTW.RST.MOM._PUT_POST_Mixin_, GTW.RST.PUT) :
 
         _real_name                 = "PUT"
 
@@ -150,7 +152,7 @@ class RST_Entity (GTW.RST.MOM.RST_Entity_Mixin, _Ancestor) :
             return obj
         # end def _apply_attrs
 
-    PUT = RST_Entity_PUT # end class
+    PUT = _RST_MOM_Entity_PUT_ # end class
 
     def __init__ (self, ** kw) :
         assert "name" not in kw
@@ -190,7 +192,7 @@ class RST_Entity (GTW.RST.MOM.RST_Entity_Mixin, _Ancestor) :
         return not error
     # end def _check_cid
 
-Entity = RST_Entity # end class
+Entity = _RST_MOM_Entity_ # end class
 
 if __name__ != "__main__" :
     GTW.RST.MOM._Export ("*")

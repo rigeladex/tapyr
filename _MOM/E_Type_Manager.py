@@ -113,6 +113,7 @@
 #                     (to make it consistent with `query`)
 #     4-Aug-2012 (CT) Add `pid` to `Id_Entity.__call__`
 #     5-Aug-2012 (CT) Change `_cooked_role` to accept `int`
+#     7-Aug-2012 (CT) Change `An_Entity.example` default of `full` to `True`
 #    ««revision-date»»···
 #--
 
@@ -183,7 +184,7 @@ class Entity (TFL.Meta.Object) :
 class An_Entity (Entity) :
     """Scope-specific manager for a specific type of anonymous entities."""
 
-    def example (self, full = False) :
+    def example (self, full = True) :
         return self (raw = True, ** self._etype.example_attrs (full))
     # end def example
 

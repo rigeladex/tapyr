@@ -46,6 +46,7 @@
 #    20-Apr-2012 (CT) Add `Regatta_H.handicap` to fix jinja template that
 #                     depends on it
 #    30-May-2012 (CT) Add attribute `is_cancelled`
+#     7-Aug-2012 (CT) Define `Regatta.default_child`
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Regatta_Event
 
 from   _TFL.I18N                import _, _T, _Tn
+import _TFL.Decorator
 
 _Ancestor_Essence = GTW.OMP.SRM.Link1
 
@@ -117,6 +119,7 @@ class Regatta (_Ancestor_Essence) :
             """Kind of regatta."""
 
             kind               = Attr.Optional
+            example            = "One race, one beer"
             max_length         = 32
             completer          = Attr.Completer_Spec  (1)
 
@@ -204,6 +207,7 @@ class Regatta (_Ancestor_Essence) :
 
 _Ancestor_Essence = Regatta
 
+@TFL.Add_To_Class ("default_child", Regatta)
 class Regatta_C (_Ancestor_Essence) :
     """Regatta for a single class of sail boats."""
 
