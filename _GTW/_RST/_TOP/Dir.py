@@ -33,7 +33,9 @@
 #    20-Jul-2012 (CT) Factor `_add_index`
 #    23-Jul-2012 (CT) Redefine `Dir_V.has_children`
 #     3-Aug-2012 (CT) Change `is_current_dir` to use `href`, not `prefix`
+#     6-Aug-2012 (MG) Consider `hidden` in  `is_current_dir`
 #     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
+#     8-Aug-2012 (MG) Consider `hidden` in `_effective`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +61,7 @@ class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
     # end def add_entries
 
     def is_current_dir (self, page) :
-        return page.href.startswith (self.href)
+        return not self.hidden and page.href.startswith (self.href)
     # end def is_current_dir
 
     def _add_index (self, l) :
@@ -91,7 +93,7 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
         dt = self.dir_template
         if dt is None :
             try :
-                page = first (self.entries)
+                page = first (e for e in self.entries if not e.hidden)
             except IndexError :
                 pass
             else :

@@ -30,6 +30,7 @@
 #    25-Jul-2012 (CT) Fix `Alias`: delegate `ETM` to `target`
 #     2-Aug-2012 (CT) Use `response.renderer`, not `request.renderer`
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
+#     6-Aug-2012 (MG) Consider `hidden`in  `is_current_dir`
 #    ««revision-date»»···
 #--
 
@@ -1075,7 +1076,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     def is_current_dir (self, page) :
         p = page.href
-        return p.startswith (self.href) and p != self.href
+        return not self.hidden and p.startswith (self.href) and p != self.href
     # end def is_current_dir
 
     def rendered (self, context, template = None) :

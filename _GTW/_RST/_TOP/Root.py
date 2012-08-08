@@ -31,6 +31,7 @@
 #    23-Jul-2012 (CT) Redefine `_http_response` to call `_http_response_finish`
 #    30-Jul-2012 (CT) Redefine `Auth_Required`
 #     4-Aug-2012 (MG) Set session cookie before saving the session
+#     8-Aug-2012 (MG) Consider `hidden` in `home`
 #    ««revision-date»»···
 #--
 
@@ -121,7 +122,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     def home (self) :
         if self.dir_template is None :
             try :
-                return first (self.own_links)
+                return first (l for l in self.own_links if not l.hidden)
             except IndexError :
                 pass
         return self

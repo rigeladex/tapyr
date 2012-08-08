@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Jul-2012 (CT) Creation
 #    26-Jul-2012 (CT) Remove `_admin` from `pictures`
+#     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
 #    ««revision-date»»···
 #--
 
@@ -169,7 +170,7 @@ class Gallery \
     # end def is_current_dir
 
     def is_current_page (self, page) :
-        return self.href in (page.href, page.parent.href)
+        return not self.hidden and self.href in (page.href, page.parent.href)
     # end def is_current_page
 
     def _get_child (self, child, * grandchildren) :

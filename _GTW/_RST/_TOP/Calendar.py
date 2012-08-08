@@ -30,6 +30,7 @@
 #     2-Aug-2012 (CT) Redefine `Calendar.Day.rendered` to handle `qx`
 #     3-Aug-2012 (CT) Factor `_render_macro`, add `Calendar.Q`
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
+#     6-Aug-2012 (MG) Consider `hidden`in  `is_current_dir`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ class _Cal_Page_ (_Ancestor) :
     _exclude_robots    = True
 
     def is_current_dir (self, page) :
-        return page.href.startswith (self.calendar.href)
+        return not self.hidden and page.href.startswith (self.calendar.href)
     # end def is_current_dir
 
     def _render_macro (self, t_name, m_name, * args) :

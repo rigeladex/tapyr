@@ -102,6 +102,7 @@
 //    17-Jul-2012 (MG) Add support for the WYSIWYG editor CKEditor
 //     2-Aug-2012 (MG) Change handling of CKEditor
 //     5-Aug-2012 (MG) Support for `afs-media-button` added
+//     8-Aug-2012 (MG) Add support for WYSIWYG editor Tiny-MCE
 //    ««revision-date»»···
 //--
 
@@ -693,6 +694,21 @@
                                 , function () {
                                     CKEDITOR.replace (id, elem.ckeditor);});
                         };
+                        if (elem.tinymce !== undefined) {
+                            /* hide the element to avoid showing the RAW HTML
+                            ** code until the javascript for the editor has
+                            ** been loaded
+                            */
+                            var root = options.url.tinymce;
+                            //inp$.hide ();
+                            $.getScript
+                                ( root + "jquery.tinymce.js"
+                                , function () {
+                                    elem.tinymce ["script_url"] =
+                                        root + "tiny_mce.js"
+                                    inp$.tinymce (elem.tinymce);
+                                });
+                        };
                     };
                   }
                 );
@@ -1021,6 +1037,11 @@
                                        .trigger ("change");
                 }
             };
+            $(":tinymce").each (function (idx, elem) {
+                var elem$ = $(elem);
+                elem$.val     (elem$.tinymce ().getContent ())
+                     .trigger ("change");
+            });
             var target$      = $(ev.target);
             var name         = target$.attr ("name");
             var pvs          = $AFS_E.root.packed_values ();

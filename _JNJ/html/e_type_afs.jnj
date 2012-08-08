@@ -49,6 +49,7 @@
 ##                     `page.parent.parent.abs_href`
 ##     2-Aug-2012 (MG) Add url for `ckeditor`
 ##     5-Aug-2012 (MG) Add url for `filemanager`
+##     8-Aug-2012 (MG) Add url for `tinymce`
 ##    ««revision-date»»···
 ##--
 #}
@@ -104,6 +105,7 @@
             , qx_esf_completer : "{{ page.href_qx_esf_completer () }}" {# -#}
             , qx_esf : "{{ page.href_qx_esf () }}" {# -#}
             , ckedior : "/media/X/js/ckeditor/"
+            , tinymce : "/media/X/js/tiny_mce/"
             , filemanager : "/media/X/js/filemanager/index.html"
             }
         }

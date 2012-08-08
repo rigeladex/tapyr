@@ -83,7 +83,7 @@
 {%- endmacro -%} {#- id_entity -#}
 
 {%- macro media_browser (elem) -%}
-  {{ _field (X.input.text, elem, class="afs-media-url") }}
+  {{ _field (X.input.hidden, elem, class="afs-media-url") }}
   <button class="ui-button ui-state-default afs-media-button" id="B::{{ elem.id }}">
     {{ GTW._T ("Choose file") }}
   </button>
