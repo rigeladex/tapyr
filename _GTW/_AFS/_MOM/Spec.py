@@ -74,6 +74,7 @@
 #                     `FGR.fields` if `allow_new`
 #     4-Apr-2012 (CT) Add `Field_Group_Required.defaults` with
 #                     `collapsed = False`
+#     8-Aug-2012 (MG) Add `css_class` and `name` to `kw`
 #    ««revision-date»»···
 #--
 
@@ -407,11 +408,14 @@ class Field_Role_Hidden (_Field_Entity_Mixin_) :
 class Field_Group (_Base_) :
     """Specification of a Field_Group of a AFS form."""
 
-    defaults = dict (collapsed = True)
-    Type     = Element.Fieldset
+    defaults  = dict (collapsed = True)
+    Type      = Element.Fieldset
+    css_class = "field_group"
 
     def __init__ (self, attr_selector, ** kw) :
         self.attr_selector = attr_selector
+        kw.setdefault ("css_class", self.css_class)
+        kw.setdefault ("name",      self.__class__.__name__)
         self.__super.__init__ (** kw)
     # end def __init__
 
