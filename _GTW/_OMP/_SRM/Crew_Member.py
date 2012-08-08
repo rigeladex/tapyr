@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -31,6 +31,7 @@
 #     1-Dec-2010 (CT) `key` added
 #     9-Feb-2011 (CT) `right.ui_allow_new` set to `True`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     8-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,7 @@ class Crew_Member (_Ancestor_Essence) :
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
             default            = 0
+            example            = 7
 
         # end class key
 
@@ -90,6 +92,7 @@ class Crew_Member (_Ancestor_Essence) :
             """Role of crew member."""
 
             kind               = Attr.Optional
+            example            = _ ("trimmer")
             max_length         = 32
 
             completer          = Attr.Completer_Spec  (1)

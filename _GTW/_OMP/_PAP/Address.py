@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -33,6 +33,7 @@
 #    23-Mar-2011 (CT) `region` made `Optional`, not `Primary_Optional`
 #     7-Sep-2011 (CT) `completer` specifications for primary attributes added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     8-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """Street (or place) and house number"""
 
             kind           = Attr.Primary
+            example        = "Mystery Lane 42"
             ignore_case    = True
             max_length     = 60
             rank           = 1
@@ -72,6 +74,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """Zip code of address"""
 
             kind           = Attr.Primary
+            example        = "9876"
             ignore_case    = True
             max_length     = 6
             rank           = 2
@@ -86,6 +89,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """City, town, or village"""
 
             kind           = Attr.Primary
+            example        = "Middletown"
             ignore_case    = True
             max_length     = 30
             rank           = 3
@@ -99,6 +103,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             "Country"
 
             kind           = Attr.Primary
+            example        = "Land of the Brave"
             ignore_case    = True
             max_length     = 20
             rank           = 4

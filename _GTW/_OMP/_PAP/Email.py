@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -32,6 +32,7 @@
 #    26-Feb-2010 (CT) `address` is a `A_Email`, not `A_String`
 #     7-Sep-2011 (CT) `address.completer` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#     8-Aug-2012 (CT) Add `example`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ class _PAP_Email_ (PAP.Entity, _Ancestor_Essence) :
             """Email address (including domain)"""
 
             kind           = Attr.Primary
+            example        = "john.doe@example.com"
             ignore_case    = True
             max_length     = 80
             rank           = 1
