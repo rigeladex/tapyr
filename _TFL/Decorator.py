@@ -252,7 +252,6 @@ def getattr_safe (f) :
                 ( "Property %s [module %s] triggered AttributeError"
                 , f.__name__, f.__module__
                 )
-            ### raise RuntimeError (exc)
     return _
 # end def getattr_safe
 
