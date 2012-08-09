@@ -42,6 +42,7 @@ import _GTW._RST.Resource
 import _GTW._RST._TOP.Base
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 
 class TOP_Page (GTW.RST.TOP._Base_, GTW.RST.Leaf) :
     """Leaf of tree of pages."""
@@ -81,6 +82,7 @@ class Page_O (_Page_O_) :
     # end def __init__
 
     @property
+    @getattr_safe
     def obj (self) :
         return self.top.scope [self.ETM_name].instance (* self.epk)
     # end def obj
@@ -96,6 +98,7 @@ class Page_P (_Page_O_) :
     # end def __init__
 
     @property
+    @getattr_safe
     def obj (self) :
         base_page = self.top.resource_from_href (self.base_href)
         if base_page is not None :
@@ -110,6 +113,7 @@ class TOP_Alias (GTW.RST.Alias) :
     _real_name                 = "Alias"
 
     @Once_Property
+    @getattr_safe
     def login_required (self) :
         return (not self.target) or self.target.login_required
     # end def login_required

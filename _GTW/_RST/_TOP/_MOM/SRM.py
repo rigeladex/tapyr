@@ -45,6 +45,7 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 
@@ -85,6 +86,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     # end class Result_Teamrace
 
     @Once_Property
+    @getattr_safe
     def change_query_filters (self) :
         pid    = self.obj.pid
         rq     = self.scope.Boat_in_Regatta.query (Q.right == pid).attr ("pid")
@@ -93,6 +95,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     # end def change_query_filters
 
     @property
+    @getattr_safe
     def entries (self) :
         cid = self._changed_cid ()
         if cid is not None or not self._entries :
@@ -270,11 +273,13 @@ class Regatta_Event \
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def ETM_P (self) :
         return self.top.scope.SRM.Page
     # end def ETM_P
 
     @Once_Property
+    @getattr_safe
     def change_query_filters (self) :
         pid    = self.obj.pid
         pq     = self.ETM_P.query (Q.event == pid).attr ("pid")
@@ -284,6 +289,7 @@ class Regatta_Event \
     # end def change_query_filters
 
     @property
+    @getattr_safe
     def entries (self) :
         today = datetime.date.today ()
         if today == self._old_date :
@@ -307,6 +313,7 @@ class Regatta_Event \
     # end def entries
 
     @Once_Property
+    @getattr_safe
     def query_filters (self) :
         return (Q.left == self.obj.pid, )
     # end def query_filters
@@ -342,6 +349,7 @@ class Archive (_Ancestor) :
         Entity            = Regatta_Event
 
         @property
+        @getattr_safe
         def regattas (self) :
             result = self.entries
             if result and result is self._admin :

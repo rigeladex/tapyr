@@ -44,6 +44,7 @@ import _GTW._RST.Resource
 import _GTW._RST._TOP.Dir
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 
 import _TFL._Meta.Object
 import _TFL.defaultdict
@@ -119,6 +120,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     # end def allow
 
     @Once_Property
+    @getattr_safe
     def home (self) :
         if self.dir_template is None :
             try :
@@ -129,17 +131,20 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     # end def home
 
     @property
+    @getattr_safe
     def h_title (self) :
         return unicode (self.owner or self.name)
     # end def h_title
 
     @Once_Property
+    @getattr_safe
     def login_url (self) :
         if "Auth" in self.SC :
             return self.SC.Auth.href_login
     # end def login_url
 
     @Once_Property
+    @getattr_safe
     def static_handler (self) :
         result = self._static_handler
         if result is None :

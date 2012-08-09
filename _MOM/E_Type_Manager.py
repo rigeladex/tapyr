@@ -125,6 +125,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 from   _TFL.predicate        import first, paired
+from   _TFL.Decorator        import getattr_safe
 from   _TFL.I18N             import _, _T, _Tn
 
 import itertools
@@ -143,6 +144,7 @@ class Entity (TFL.Meta.Object) :
     # end def __call__
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def default_child (self) :
         dc = self._etype.default_child
         if dc is not None :
@@ -153,11 +155,13 @@ class Entity (TFL.Meta.Object) :
     # end def default_child
 
     @property
+    @getattr_safe
     def E_Type (self) :
         return self._etype
     # end def E_Type
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def is_partial (self) :
         return self._etype.is_partial
     # end def is_partial
@@ -210,12 +214,14 @@ class Id_Entity (Entity) :
     # end def __call__
 
     @property
+    @getattr_safe
     def count (self) :
         """Return the transitive count of objects or links."""
         return self.ems.count (self._etype, strict = False)
     # end def count
 
     @property
+    @getattr_safe
     def count_strict (self) :
         """Return the strict count of objects or links."""
         result = self.ems.count (self._etype, strict = True)
@@ -224,6 +230,7 @@ class Id_Entity (Entity) :
     # end def count_strict
 
     @property
+    @getattr_safe
     def ems (self) :
         return self.home_scope.ems
     # end def ems
@@ -378,6 +385,7 @@ class Object (Id_Entity) :
     # end def ac_query_auto_split
 
     @property
+    @getattr_safe
     def singleton (self) :
         Type = self._etype
         if Type.max_count == 1 :

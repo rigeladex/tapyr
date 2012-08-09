@@ -44,6 +44,7 @@ import _GTW._RST._TOP.Page
 
 from   _TFL._Meta.Once_Property import Once_Property
 
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 
 from   posixpath                import join  as pp_join
@@ -104,6 +105,7 @@ class L10N (GTW.RST.TOP.Dir) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def languages (self) :
         return self._entry_map
     # end def languages

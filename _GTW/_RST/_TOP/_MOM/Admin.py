@@ -63,6 +63,7 @@ from   _MOM.import_MOM          import MOM, Q
 import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import uniq
 
@@ -94,6 +95,7 @@ class _Action_ (_Ancestor) :
     POST = _Action_POST_ # end class
 
     @property
+    @getattr_safe
     def obj (self) :
         ETM = self.ETM
         pid = self.args [0] if self.args else None
@@ -357,6 +359,7 @@ class _Changer_ (_HTML_Action_) :
     page_template_name   = "e_type_afs"
 
     @property
+    @getattr_safe
     def injected_templates (self) :
         return self.parent.changer_injected_templates
     # end def injected_templates
@@ -856,6 +859,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         # end def __init__
 
         @Once_Property
+        @getattr_safe
         def fields (self) :
             admin = self.admin
             FO    = self.FO
@@ -888,21 +892,25 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         # end def __init__
 
         @Once_Property
+        @getattr_safe
         def attr (self) :
             return self.aq._attr
         # end def attr
 
         @property ### depends on currently selected language (I18N/L10N)
+        @getattr_safe
         def description (self) :
             return _T (self.attr.description)
         # end def description
 
         @Once_Property
+        @getattr_safe
         def name (self) :
             return self.aq._full_name
         # end def name
 
         @property ### depends on currently selected language (I18N/L10N)
+        @getattr_safe
         def ui_name (self) :
             return self.attr.ui_name_T
         # end def ui_name
@@ -929,17 +937,20 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def changer_injected_templates (self) :
         renderers = set (self.Form.renderer_iter () if self.Form else ())
         return tuple (self.top.Templateer.get_template (r) for r in renderers)
     # end def changer_injected_templates
 
     @property
+    @getattr_safe
     def entries (self) :
         return ()
     # end def entries
 
     @Once_Property
+    @getattr_safe
     def Form (self) :
         try :
             result = AFS_Form [self.form_id]
@@ -951,6 +962,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def Form
 
     @property
+    @getattr_safe
     def form_id (self) :
         _form_id = self._form_id
         return self.E_Type.GTW.afs_id if (_form_id is None) else _form_id
@@ -962,6 +974,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def form_id
 
     @property
+    @getattr_safe
     def head_line (self) :
         co      = getattr (self, "query_size", None)
         if co is None :
@@ -981,6 +994,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def head_line
 
     @property
+    @getattr_safe
     def sort_key (self) :
         result = self._sort_key
         if result is None :
@@ -994,6 +1008,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def sort_key
 
     @Once_Property
+    @getattr_safe
     def list_display (self) :
         result = self._list_display
         if result is None :
@@ -1002,16 +1017,19 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def list_display
 
     @Once_Property
+    @getattr_safe
     def manager (self) :
         return self.etype_manager (self.E_Type)
     # end def manager
 
     @Once_Property
+    @getattr_safe
     def qr_spec (self) :
         return QRS (self.E_Type)
     # end def qr_spec
 
     @Once_Property
+    @getattr_safe
     def _auto_list_display (self, ) :
         return tuple (a.name for a in self.E_Type.edit_attr)
     # end def _auto_list_display
@@ -1223,6 +1241,7 @@ class Group (_Ancestor) :
     # end def __init__
 
     @property
+    @getattr_safe
     def entries (self) :
         if not self._entries :
             entries = self._filter_etype_entries \

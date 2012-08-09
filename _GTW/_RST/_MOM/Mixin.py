@@ -65,6 +65,7 @@ import _GTW._RST._MOM.Query_Restriction
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.Formatter           import formatted_1
 from   _TFL.I18N                import _, _T, _Tn
 
@@ -154,6 +155,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     _attributes                = None
 
     @Once_Property
+    @getattr_safe
     def E_Type (self) :
         ETM = self._ETM
         if isinstance (ETM, basestring) :
@@ -164,6 +166,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     # end def E_Type
 
     @property
+    @getattr_safe
     def attributes (self) :
         result = self._attributes
         if result is None :
@@ -188,6 +191,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     # end def attributes
 
     @Once_Property
+    @getattr_safe
     def type_name (self) :
         return self.E_Type.type_name
     # end def type_name
@@ -207,6 +211,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     @Once_Property
+    @getattr_safe
     def ETM (self) :
         result = self._ETM
         if isinstance (result, basestring) :
@@ -215,6 +220,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     # end def ETM
 
     @property
+    @getattr_safe
     def change_info (self) :
         result = self._change_info
         if result is None :
@@ -223,6 +229,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     # end def change_info
 
     @property
+    @getattr_safe
     def _change_info (self) :
         return self.top._change_infos.get (self.href)
     # end def _change_info
@@ -321,6 +328,7 @@ class _RST_MOM_Entity_Mixin_ (Mixin) :
     _real_name                 = "Entity_Mixin"
 
     @Once_Property
+    @getattr_safe
     def change_query_filters (self) :
         result = ()
         obj    = self.obj
@@ -361,6 +369,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
     # end def __init__
 
     @property
+    @getattr_safe
     def count (self) :
         if self.query_filters :
             result = self.query ().count ()
@@ -370,6 +379,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
     # end def count
 
     @Once_Property
+    @getattr_safe
     def change_query_filters (self) :
         result = ()
         E_Type = self.E_Type
@@ -382,6 +392,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
     # end def change_query_filters
 
     @Once_Property
+    @getattr_safe
     def query_filters (self) :
         return tuple ()
     # end def query_filters

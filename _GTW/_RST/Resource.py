@@ -80,6 +80,7 @@ import _GTW._RST.Template_Media_Cache
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.Filename            import Filename
 from   _TFL.predicate           import callable, first, uniq
 
@@ -226,12 +227,14 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def _after__init__
 
     @classmethod
+    @getattr_safe
     def _m_after__init__ (cls, name, bases, dct) :
         """Called by metaclass's __init__: redefine as necessary."""
         pass
     # end def _m_after__init__
 
     @Once_Property
+    @getattr_safe
     def abs_href (self) :
         result = self.href
         if not result.startswith ("/") :
@@ -240,6 +243,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def abs_href
 
     @Once_Property
+    @getattr_safe
     def account_manager (self) :
         scope = self.top.scope
         if scope :
@@ -247,12 +251,14 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def account_manager
 
     @property
+    @getattr_safe
     def change_info (self) :
         ### Redefine as necessary
         pass
     # end def change_info
 
     @property
+    @getattr_safe
     def email_from (self) :
         result = self._email_from
         if result is None :
@@ -269,21 +275,25 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def email_from
 
     @property
+    @getattr_safe
     def entries (self) :
         return ()
     # end def entries
 
     @property
+    @getattr_safe
     def entries_transitive (self) :
         return ()
     # end def entries_transitive
 
     @Once_Property
+    @getattr_safe
     def exclude_robots (self) :
         return self.r_permissions or self.hidden or self._exclude_robots
     # end def exclude_robots
 
     @Once_Property
+    @getattr_safe
     def href (self) :
         pp   = self.parent.href if self.parent else self.prefix
         href = pp_join (pp, self.name)
@@ -293,22 +303,26 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def href
 
     @property
+    @getattr_safe
     def href_pat_frag (self) :
         pass ### redefine as necessary
     # end def href_pat_frag
 
     @Once_Property
+    @getattr_safe
     def injected_templates (self) :
         ### redefine as necessary
         return set ()
     # end def injected_templates
 
     @property
+    @getattr_safe
     def own_links (self) :
         return iter (self.entries)
     # end def own_links
 
     @property
+    @getattr_safe
     def own_links_transitive (self) :
         for e in self.own_links :
             yield e
@@ -318,6 +332,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def own_links_transitive
 
     @property
+    @getattr_safe
     def page_template (self) :
         if self._page_template is None :
             t_name = getattr (self, "page_template_name", None)
@@ -340,11 +355,13 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def page_template
 
     @Once_Property
+    @getattr_safe
     def permalink (self) :
         return self.abs_href
     # end def permalink
 
     @property
+    @getattr_safe
     def permission (self) :
         if self._r_permission :
             return self._r_permission
@@ -358,23 +375,27 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def permission
 
     @Once_Property
+    @getattr_safe
     def r_permissions (self) :
         return sorted \
             (self._get_permissions ("r_permission"), key = TFL.Getter.rank)
     # end def r_permissions
 
     @property
+    @getattr_safe
     def Type (self) :
         return self.__class__.__name__
     # end def Type
 
     @Once_Property
+    @getattr_safe
     def w_permissions (self) :
         return sorted \
             (self._get_permissions ("w_permission"), key = TFL.Getter.rank)
     # end def w_permissions
 
     @Once_Property
+    @getattr_safe
     def _effective (self) :
         return self
     # end def _effective
@@ -596,6 +617,7 @@ class RST_Alias (_Ancestor) :
     # end def __init__
 
     @property
+    @getattr_safe
     def target (self) :
         result = self._target_page
         t_href = self._target_href
@@ -708,6 +730,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     # end def __init__
 
     @property
+    @getattr_safe
     def dir_template (self) :
         if self._dir_template is None :
             t_name = getattr (self, "dir_template_name", None)
@@ -729,6 +752,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     # end def dir_template
 
     @property
+    @getattr_safe
     def href_pat_frag (self) :
         result = self._href_pat_frag
         if result is None :
@@ -738,6 +762,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     # end def href_pat_frag
 
     @Once_Property
+    @getattr_safe
     def injected_dir_templates (self) :
         ### redefine as necessary
         return set ()
@@ -802,11 +827,13 @@ class _RST_Dir_ (_Ancestor) :
     # end def __init__
 
     @property
+    @getattr_safe
     def entries (self) :
         return self._entries
     # end def entries
 
     @property
+    @getattr_safe
     def entries_transitive (self) :
         for e in self.entries :
             yield e
@@ -816,6 +843,7 @@ class _RST_Dir_ (_Ancestor) :
     # end def entries_transitive
 
     @property
+    @getattr_safe
     def template (self) :
         eff = self._effective
         result = self.dir_template if eff is self else eff.template
@@ -870,6 +898,7 @@ class RST_Dir (_Ancestor) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def href (self) :
         return self.prefix.rstrip ("/")
     # end def href
@@ -886,6 +915,7 @@ class RST_Dir_V (_Ancestor) :
     _entry_type_map = None
 
     @property
+    @getattr_safe
     def entries (self) :
         return ()
     # end def entries
@@ -967,11 +997,13 @@ class RST_Root (_Ancestor) :
         # end def __init__
 
         @Once_Property
+        @getattr_safe
         def cache_rank (self) :
             return GTW.RST.Template_Media_Cache.cache_rank
         # end def cache_rank
 
         @Once_Property
+        @getattr_safe
         def tmc (self) :
             return GTW.RST.Template_Media_Cache (* self._args, ** self._kw)
         # end def tmc
@@ -1044,6 +1076,7 @@ class RST_Root (_Ancestor) :
     # end def __call__
 
     @property
+    @getattr_safe
     def href_pat (self) :
         result = self._href_pat
         if result is None :
@@ -1059,6 +1092,7 @@ class RST_Root (_Ancestor) :
     # end def href_pat
 
     @Once_Property
+    @getattr_safe
     def lang_pat (self) :
         if self.i18n and "L10N" in self.SC :
             return re.compile \
@@ -1066,6 +1100,7 @@ class RST_Root (_Ancestor) :
     # end def lang_pat
 
     @Once_Property
+    @getattr_safe
     def rst_etag (self) :
         result = [self.href_pat_frag]
         T = self.Templateer
@@ -1075,6 +1110,7 @@ class RST_Root (_Ancestor) :
     # end def rst_etag
 
     @property
+    @getattr_safe
     def smtp (self) :
         if self._smtp is None :
             from _TFL.SMTP import SMTP_Logger
@@ -1083,6 +1119,7 @@ class RST_Root (_Ancestor) :
     # end def smtp
 
     @Once_Property
+    @getattr_safe
     def scope (self) :
         CS = self.Create_Scope
         if CS is not None :
@@ -1093,6 +1130,7 @@ class RST_Root (_Ancestor) :
     # end def scope
 
     @property
+    @getattr_safe
     def webmaster (self) :
         result = self._webmaster
         if result is None :

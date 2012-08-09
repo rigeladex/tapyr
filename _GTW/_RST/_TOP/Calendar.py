@@ -49,6 +49,7 @@ import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
 
 from   _TFL.defaultdict         import defaultdict_kd
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Regexp              import Regexp, re
 from   _TFL._Meta.Once_Property import Once_Property
@@ -59,6 +60,7 @@ from   posixpath                import join  as pp_join
 class _Mixin_ (GTW.RST.TOP._Base_) :
 
     @property
+    @getattr_safe
     def weeks (self) :
         n = self.week_roller_size
         w = self.anchor.wk_ordinal
@@ -195,6 +197,7 @@ class _Year_ (_Cal_Page_) :
     """Page displaying calendar for a specific year."""
 
     @property
+    @getattr_safe
     def anchor (self) :
         return self._cal.day [datetime.date (self.year, 1, 1).toordinal ()]
     # end def anchor
@@ -258,6 +261,7 @@ class Calendar (_Mixin_, _Ancestor) :
     # end def day_href
 
     @Once_Property
+    @getattr_safe
     def event_manager (self) :
         scope = self.top.scope
         if scope and self.event_manager_name :
@@ -265,21 +269,25 @@ class Calendar (_Mixin_, _Ancestor) :
     # end def event_manager
 
     @property
+    @getattr_safe
     def max_year (self) :
         return self.anchor.year + self.year_window_size
     # end def max_year
 
     @property
+    @getattr_safe
     def min_year (self) :
         return self.anchor.year - self.year_window_size
     # end def min_year
 
     @property
+    @getattr_safe
     def today (self) :
         return self._cal.day [datetime.date.today ().toordinal ()]
     # end def today
 
     @property
+    @getattr_safe
     def year (self) :
         return self._cal.year [self.anchor.year]
     # end def year

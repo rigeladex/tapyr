@@ -38,6 +38,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 
 import _GTW._RST.HTTP_Method
 import _GTW._RST._TOP.Dir
@@ -382,6 +383,7 @@ class Console (_Ancestor) :
     GET = Console_GET # end class
 
     @Once_Property
+    @getattr_safe
     def console (self) :
         top = self.top
         return _Py_Console_ \

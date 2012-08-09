@@ -45,6 +45,7 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 
@@ -64,16 +65,19 @@ class Picture (_Ancestor) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def permalink (self) :
         return self.parent.href_display (self.obj)
     # end def permalink
 
     @Once_Property
+    @getattr_safe
     def photo (self) :
         return self.obj.photo
     # end def photo
 
     @Once_Property
+    @getattr_safe
     def short_title (self) :
         return "%s: %s %s/%s" % \
             ( self.parent.obj.short_title
@@ -84,6 +88,7 @@ class Picture (_Ancestor) :
     # end def short_title
 
     @Once_Property
+    @getattr_safe
     def thumb (self) :
         return self.obj.thumb
     # end def thumb
@@ -113,6 +118,7 @@ class Gallery \
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def change_query_filters (self) :
         pid    = self.obj.pid
         rq     = self.ETM.query (Q.left == pid).attr ("pid")
@@ -121,6 +127,7 @@ class Gallery \
     # end def change_query_filters
 
     @Once_Property
+    @getattr_safe
     def max_height_photo (self) :
         if self.pictures :
             return max (p.photo.height for p in self.pictures)
@@ -128,6 +135,7 @@ class Gallery \
     # end def max_height_photo
 
     @Once_Property
+    @getattr_safe
     def max_height_thumb (self) :
         if self.pictures :
             return max (p.thumb.height for p in self.pictures)
@@ -135,6 +143,7 @@ class Gallery \
     # end def max_height_thumb
 
     @Once_Property
+    @getattr_safe
     def max_width_photo (self) :
         if self.pictures :
             return max (p.photo.width for p in self.pictures)
@@ -142,6 +151,7 @@ class Gallery \
     # end def max_width_photo
 
     @Once_Property
+    @getattr_safe
     def max_width_thumb (self) :
         if self.pictures :
             return max (p.thumb.width for p in self.pictures)
@@ -149,6 +159,7 @@ class Gallery \
     # end def max_width_thumb
 
     @property
+    @getattr_safe
     def pictures (self) :
         result = self.entries
         if result and result [-1] is self._admin :
@@ -157,6 +168,7 @@ class Gallery \
     # end def pictures
 
     @Once_Property
+    @getattr_safe
     def query_filters (self) :
         return (Q.left == self.obj.pid, )
     # end def query_filters

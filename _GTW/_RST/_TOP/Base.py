@@ -53,6 +53,7 @@ import _GTW._RST._TOP
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.predicate           import uniq
 
 import _TFL.I18N
@@ -172,6 +173,7 @@ class _TOP_Base_ (_Ancestor) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def copyright (self) :
         year  = time.localtime ().tm_year
         start = int (self.copyright_start)
@@ -184,11 +186,13 @@ class _TOP_Base_ (_Ancestor) :
     # end def copyright
 
     @property
+    @getattr_safe
     def has_children (self) :
         return bool (getattr (self, "entries", []))
     # end def has_children
 
     @property
+    @getattr_safe
     def h_title (self) :
         name = self.short_title or self.name or self.href
         if self.parent :
@@ -201,6 +205,7 @@ class _TOP_Base_ (_Ancestor) :
     # end def h_title
 
     @Once_Property
+    @getattr_safe
     def login_required (self) :
         ### if a parent requires login, all children do too (even if they
         ### claim otherwise!)
@@ -212,11 +217,13 @@ class _TOP_Base_ (_Ancestor) :
     # end def login_required
 
     @Once_Property
+    @getattr_safe
     def Media (self) :
         return self._get_media ()
     # end def Media
 
     @property
+    @getattr_safe
     def next (self) :
         index = self._index
         if index is not None :
@@ -224,11 +231,13 @@ class _TOP_Base_ (_Ancestor) :
     # end def next
 
     @Once_Property
+    @getattr_safe
     def permalink (self) :
         return self.abs_href
     # end def permalink
 
     @property
+    @getattr_safe
     def prev (self) :
         index = self._index
         if index is not None :
@@ -236,6 +245,7 @@ class _TOP_Base_ (_Ancestor) :
     # end def prev
 
     @property
+    @getattr_safe
     def q_href (self) :
         return pp_join (self.abs_href, self.q_prefix)
     # end def q_href

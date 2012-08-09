@@ -43,6 +43,7 @@ import _GTW._RST._MOM.Mixin
 
 from   _MOM.import_MOM          import MOM
 
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
@@ -56,6 +57,7 @@ class _RST_MOM_Doc_Mixin_ (TFL.Meta.Object) :
     _real_name                 = "Mixin"
 
     @Once_Property
+    @getattr_safe
     def change_info (self) :
         return TFL.Record (etag = self.top.App_Type.db_version_hash)
     # end def change_info
@@ -76,6 +78,7 @@ class _RST_MOM_Doc_Dir_Mixin_ (Mixin) :
     _real_name                 = "Dir_Mixin"
 
     @property
+    @getattr_safe
     def entries (self) :
         if not self._entries :
             try :

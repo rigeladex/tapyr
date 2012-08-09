@@ -44,6 +44,7 @@ import _GTW._RST._TOP.Page
 
 from   _TFL._Meta.Once_Property import Once_Property
 
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 
 from   posixpath                import join  as pp_join
@@ -84,6 +85,7 @@ class _Form_Cmd_ (_Cmd_) :
     POST = _Form_Cmd__POST_ # end class
 
     @Once_Property
+    @getattr_safe
     def form (self) :
         name = self.__class__.__name__.strip ("_")
         T    = getattr (GTW.Form.Auth, name)
@@ -469,26 +471,31 @@ class Auth (_Ancestor) :
         )
 
     @property
+    @getattr_safe
     def href_login (self) :
         return pp_join (self.abs_href, "login")
     # end def href_login
 
     @property
+    @getattr_safe
     def href_logout (self) :
         return pp_join (self.abs_href, "logout")
     # end def href_logout
 
     @property
+    @getattr_safe
     def href_register (self) :
         return pp_join (self.abs_href, "register")
     # end def href_register
 
     @property
+    @getattr_safe
     def href_reset_password (self) :
         return pp_join (self.abs_href, "request_reset_password")
     # end def href_reset_password
 
     @Once_Property
+    @getattr_safe
     def _effective (self) :
         return self._get_child ("login")
     # end def _effective

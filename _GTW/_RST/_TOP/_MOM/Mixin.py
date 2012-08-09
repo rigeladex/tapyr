@@ -47,6 +47,7 @@ import _GTW._RST._TOP._MOM.Query_Restriction
 from   _MOM.import_MOM          import Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 
 import _TFL.Ascii
@@ -79,6 +80,7 @@ class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.Entity_Mixin) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def FO (self) :
         return GTW.FO (self.obj, self.top.encoding)
     # end def FO
@@ -107,16 +109,19 @@ class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def E_Type (self) :
         return self.obj.__class__
     # end def E_Type
 
     @property
+    @getattr_safe
     def admin (self) :
         return self.manager.admin
     # end def admin
 
     @Once_Property
+    @getattr_safe
     def permalink (self) :
         return self.manager.href_display (self.obj)
     # end def permalink
@@ -173,11 +178,13 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
     _old_objects    = None
 
     @Once_Property
+    @getattr_safe
     def admin (self) :
         return self.top.ET_Map [self.type_name].admin
     # end def admin
 
     @property
+    @getattr_safe
     def entries (self) :
         objects = self.objects
         if self._old_objects is not objects :
@@ -194,6 +201,7 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
     # end def entries
 
     @Once_Property
+    @getattr_safe
     def query_filters (self) :
         result = list (self.__super.query_filters)
         if self.disp_filter is not None :

@@ -44,6 +44,7 @@ import _GTW._RST._TOP.Page
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 
 from   posixpath                import join  as pp_join
@@ -58,11 +59,13 @@ class TOP_MOM_Entity (GTW.RST.TOP.MOM.Entity_Mixin, _Ancestor) :
     _real_name      = "Entity"
 
     @property
+    @getattr_safe
     def contents (self) :
         return self.obj.contents
     # end def contents
 
     @property
+    @getattr_safe
     def changer (self) :
         admin = self.admin
         if admin :
@@ -145,6 +148,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
         """Display instances of a specific year."""
 
         @Once_Property
+        @getattr_safe
         def query_filters (self) :
             return \
                 ( self.parent._year_filter (self.year)
@@ -155,6 +159,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
     # end class Year
 
     @property
+    @getattr_safe
     def entries (self) :
         if self._old_year != self.year or self._changed_cid () is not None :
             self._entry_map = {}
@@ -179,6 +184,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
     # end def entries
 
     @property
+    @getattr_safe
     def year (self) :
         return datetime.date.today ().year
     # end def year

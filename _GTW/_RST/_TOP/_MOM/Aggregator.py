@@ -43,6 +43,7 @@ import _GTW._RST._TOP.Page
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 
@@ -106,11 +107,13 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def calendar (self) :
         return getattr (self.top.SC, "Cal", None)
     # end def calendar
 
     @Once_Property
+    @getattr_safe
     def change_query_filters (self) :
         def _gen (ETMS) :
             for ETM in ETMS :
@@ -125,6 +128,7 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     # end def change_query_filters
 
     @property
+    @getattr_safe
     def clips (self) :
         objects = self.objects
         if self._old_objects is not objects :
@@ -136,6 +140,7 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     # end def clips
 
     @Once_Property
+    @getattr_safe
     def ETMS (self) :
         result = []
         for etm in self._kw ["_ETMS"] :
@@ -146,6 +151,7 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     # end def ETMS
 
     @Once_Property
+    @getattr_safe
     def query_filters (self) :
         return (Q.date.alive, )
     # end def query_filters

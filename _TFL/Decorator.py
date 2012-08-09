@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,10 +52,13 @@
 #     4-Nov-2009 (CT)  `decorator` keyword argument added to `Add_Method` and
 #                      `Add_New_Method`
 #    13-Mar-2010 (CT)  `decorator` keyword argument added to `Add_To_Class`, too
+#     9-Aug-2012 (CT)  Add `getattr_safe`
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
+
+import logging
 
 def Decorator (decorator) :
     """Decorate `decorator` so that `__name__`, `__doc__`, and `__dict__` of
@@ -237,6 +240,21 @@ def Add_To_Class (name, * classes, ** kw) :
         return x
     return decorator
 # end def Add_To_Class
+
+@Decorator
+def getattr_safe (f) :
+    """Protect `f` from raising `AttributeError` (to avoid `__getattr__`)."""
+    def _ (* args, ** kw) :
+        try :
+            return f (* args, ** kw)
+        except AttributeError as exc :
+            logging.exception \
+                ( "Property %s [module %s] triggered AttributeError"
+                , f.__name__, f.__module__
+                )
+            ### raise RuntimeError (exc)
+    return _
+# end def getattr_safe
 
 @Decorator
 def Override_Method (cls) :

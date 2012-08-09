@@ -36,6 +36,7 @@
 #     6-Aug-2012 (MG) Consider `hidden` in  `is_current_dir`
 #     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
 #     8-Aug-2012 (MG) Consider `hidden` in `_effective`
+#     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ import _GTW._RST.Resource
 import _GTW._RST._TOP.Base
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.predicate           import enumerate_slice, first
 
 class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
@@ -82,6 +84,7 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
     _real_name                 = "_Dir_"
 
     @property
+    @getattr_safe
     def has_children (self) :
         try :
             first (self.own_links)
@@ -92,6 +95,7 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
     # end def has_children
 
     @property
+    @getattr_safe
     def _effective (self) :
         dt = self.dir_template
         if dt is None :
@@ -128,6 +132,7 @@ class TOP_Dir_V (_Dir_Base_, GTW.RST.Dir_V) :
     _real_name                 = "Dir_V"
 
     @property
+    @getattr_safe
     def has_children (self) :
         return False
     # end def has_children

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -54,6 +54,7 @@ from   _MOM._Attr            import Filter
 
 import _TFL._Meta.Object
 
+from   _TFL.Decorator        import getattr_safe
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.predicate        import filtered_join, split_hst, uniq
 
@@ -140,6 +141,7 @@ class _Type_ (TFL.Meta.Object) :
     # end def __init__
 
     @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
     def As_Json_Cargo (self) :
         Attrs = self.Attrs
         result   = dict \
@@ -152,6 +154,7 @@ class _Type_ (TFL.Meta.Object) :
     # end def As_Json_Cargo
 
     @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
     def As_Template_Elem (self) :
         Attrs = self.Attrs
         result   = dict \
@@ -164,42 +167,50 @@ class _Type_ (TFL.Meta.Object) :
     # end def As_Template_Elem
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Atoms (self) :
         return (self, )
     # end def Atoms
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Attrs (self) :
         return ()
     # end def Attrs
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Attrs_Transitive (self) :
         return tuple (self._attrs_transitive ())
     # end def Attrs_Transitive
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def E_Type (self) :
         return self._attr.E_Type
     # end def E_Type
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def QC (self, ) :
         return getattr (Filter.Q, self._q_name)
     # end def QC
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def QR (self, ) :
         return getattr (Filter.Q, self._q_name_raw)
     # end def QR
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Sig_Key (self) :
         if self.Op_Keys :
             return self.Signatures [self.Op_Keys]
     # end def Sig_Key
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Unwrapped (self) :
         result = self
         if self._outer :
@@ -208,11 +219,13 @@ class _Type_ (TFL.Meta.Object) :
     # end def Unwrapped
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Unwrapped_Atoms (self) :
         return (self.Unwrapped, )
     # end def Unwrapped_Atoms
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _as_json_cargo_inv (self) :
         attr     = self._attr
         Class    = self.Class
@@ -226,6 +239,7 @@ class _Type_ (TFL.Meta.Object) :
     # end def _as_json_cargo_inv
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _as_template_elem_inv (self) :
         attr     = self._attr
         result   = dict \
@@ -240,16 +254,19 @@ class _Type_ (TFL.Meta.Object) :
     # end def _as_template_elem_inv
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _attr_name (self) :
         return self._attr.name
     # end def _attr_name
 
     @property
+    @getattr_safe
     def _attr_selector (self) :
         return getattr (self, "__attr_selector", None) or MOM.Attr.Selector.sig
     # end def _attr_selector
 
     @_attr_selector.setter
+    @getattr_safe
     def _attr_selector (self, value) :
         if value is None :
             value = MOM.Attr.Selector.sig
@@ -261,29 +278,34 @@ class _Type_ (TFL.Meta.Object) :
     # end def _attr_selector
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _cooker (self) :
         return self._attr.cooked
     # end def _cooker
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _full_name (self) :
         outer = self._outer
         return filtered_join (".", (outer and outer._q_name, self._attr.name))
     # end def _full_name
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _id (self) :
         outer = self._outer
         return filtered_join (id_sep, (outer and outer._id, self._attr.name))
     # end def _id
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _q_name (self) :
         outer = self._outer
         return filtered_join (".", (outer and outer._q_name, self._attr_name))
     # end def _q_name
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _q_name_raw (self) :
         outer = self._outer
         return filtered_join \
@@ -291,6 +313,7 @@ class _Type_ (TFL.Meta.Object) :
     # end def _q_name_raw
 
     @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
     def _ui_name_T (self) :
         outer = self._outer
         return filtered_join \
@@ -432,11 +455,13 @@ class String (_Type_) :
 class Raw (String) :
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _attr_name (self) :
         return self._attr.raw_name
     # end def _attr_name
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _cooker (self) :
         return unicode
     # end def _cooker
