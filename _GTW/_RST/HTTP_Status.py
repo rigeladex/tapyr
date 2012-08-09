@@ -30,6 +30,7 @@
 #    23-Jul-2012 (CT) Add argument `response` to `__call__`
 #    30-Jul-2012 (CT) Add `template_name`, `Login_Required`
 #     6-Aug-2012 (CT) Let `blackboard`
+#     8-Aug-2012 (MG) Use a dict for `blackboard`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class Status (StandardError, TFL.Meta.Object) :
                     , NAV             = root
                     , request         = request
                     )
-                with Templateer.GTW.LET (blackboard = TFL.Record ()) :
+                with Templateer.GTW.LET (blackboard = dict ()) :
                     body = template.render (context)
             else :
                 body = _T (self.description)

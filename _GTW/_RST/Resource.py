@@ -66,6 +66,7 @@
 #     6-Aug-2012 (CT) Add `get_etag`, `get_last_modified`, `rst_etag`, and
 #                     `skip_etag`
 #     7-Aug-2012 (CT) Factor `own_links` and `own_links_transitive` in here
+#     8-Aug-2012 (MG) Use a dict for `blackboard`
 #    ««revision-date»»···
 #--
 
@@ -540,7 +541,7 @@ class _RST_Base_ (TFL.Meta.Object) :
         ### for instance, `self.change_info`
         T = self.Templateer
         if T :
-            with T.GTW.LET (blackboard = TFL.Record ()) :
+            with T.GTW.LET (blackboard = dict ()) :
                 yield
         else :
             yield

@@ -59,6 +59,7 @@
 #    16-Jul-2012 (MG) `log_stdout` enhanced
 #     6-Aug-2012 (MG) Add `update_blackboard`
 #     8-Aug-2012 (MG) Remove debug code
+#     9-Aug-2012 (MG) Use `** kw` notation for `update_blackboard`
 #    ««revision-date»»···
 #--
 
@@ -239,8 +240,8 @@ class GTW (TFL.Meta.Object) :
         return self.uri (scheme = "tel", uri = phone_number, text = text, ** kw)
     # end def tel_uri
 
-    def update_blackboard (self, name, value) :
-        self.blackboard [name] = value
+    def update_blackboard (self, ** kw) :
+        self.blackboard.update (kw)
         return ""
     # end def update_blackboard
 
