@@ -61,7 +61,10 @@ class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
     # end def add_entries
 
     def is_current_dir (self, page) :
-        return not self.hidden and page.href.startswith (self.href)
+        if not self.hidden :
+            p = page.href
+            s = self.href
+            return p == s or (p.startswith (s) and p [len (s)] == "/")
     # end def is_current_dir
 
     def _add_index (self, l) :

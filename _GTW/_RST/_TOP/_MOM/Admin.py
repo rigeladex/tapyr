@@ -31,6 +31,8 @@
 #     2-Aug-2012 (CT) Use `response.renderer`, not `request.renderer`
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_dir`
+#     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
+#     9-Aug-2012 (CT) Redefine `E_Type.entries` to avoid version from mixin
 #    ««revision-date»»···
 #--
 
@@ -932,6 +934,11 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         return tuple (self.top.Templateer.get_template (r) for r in renderers)
     # end def changer_injected_templates
 
+    @property
+    def entries (self) :
+        return ()
+    # end def entries
+
     @Once_Property
     def Form (self) :
         try :
@@ -1075,8 +1082,10 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def href_qx_obf
 
     def is_current_dir (self, page) :
-        p = page.href
-        return not self.hidden and p.startswith (self.href) and p != self.href
+        if not self.hidden :
+            p = page.href
+            s = self.href
+            return p == s or (p.startswith (s) and p [len (s)] == "/")
     # end def is_current_dir
 
     def rendered (self, context, template = None) :

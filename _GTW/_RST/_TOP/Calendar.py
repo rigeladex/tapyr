@@ -31,6 +31,7 @@
 #     3-Aug-2012 (CT) Factor `_render_macro`, add `Calendar.Q`
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_dir`
+#     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,10 @@ class _Cal_Page_ (_Ancestor) :
     _exclude_robots    = True
 
     def is_current_dir (self, page) :
-        return not self.hidden and page.href.startswith (self.calendar.href)
+        if not self.hidden :
+            p = page.href
+            s = self.calendar.href
+            return p == s or (p.startswith (s) and p [len (s)] == "/")
     # end def is_current_dir
 
     def _render_macro (self, t_name, m_name, * args) :
