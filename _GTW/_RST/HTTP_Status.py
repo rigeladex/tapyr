@@ -50,7 +50,6 @@ from   _TFL.I18N                import _, _T, _Tn
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
-import _TFL.Record
 
 import json
 

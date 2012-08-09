@@ -1038,7 +1038,7 @@
                                        .trigger ("change");
                 }
             };
-            typeof (tinymce) !== "undefined" {
+            if (typeof (tinymce) !== "undefined") {
                 $(":tinymce").each (function (idx, elem) {
                     var elem$ = $(elem);
                     elem$.val     (elem$.tinymce ().getContent ())
