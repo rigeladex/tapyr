@@ -1042,7 +1042,7 @@ class Service_Unavailable (Server_Error) :
             pass
         else :
             if isinstance (retry_after, CAL.Date_Time_Delta) :
-                retry_after = CAL.Date_Time ().as_utc + retry_after
+                retry_after = CAL.Date_Time ().as_utc () + retry_after
             if retry_after is not None :
                 response.headers ["Retry-After"] = retry_after
     # end def _add_response_headers
