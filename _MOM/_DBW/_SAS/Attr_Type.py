@@ -62,6 +62,7 @@
 #                     `A_Boolean`, `A_Date`, `A_Date_Time`, `A_Float`,
 #                     `A_Int`, and `A_Time` by generic `_sa_type` for
 #                     `A_Attr_Type`
+#    10-Aug-2012 (MG) Add support of Sall/BigInteger types
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ from sqlalchemy     import types, schema
 from sqlalchemy.sql import extract, expression
 
 import datetime
+import math
 
 _sa_type_map = \
     { bool              : types.Boolean
@@ -194,6 +196,28 @@ def _sa_type_generic (cls, attr, kind, ** kw) :
     else :
         return T ()
 # end def _sa_type_generic
+
+int_map = \
+ ( (-0x8000,             0x7FFF,            types.SmallInteger)
+ , (-0x80000000,         0x7FFFFFFF,        types.Integer)
+ , (-0x8000000000000000,0X7FFFFFFFFFFFFFFF, types.BigInteger)
+ )
+@Add_Classmedthod ("_sa_type", Attr.A_Int)
+def _sa_type_int (cls, attr, kind, ** kw) :
+    result    = None
+    max_value = cls.max_value or  0x7FFFFFFF
+    min_value = cls.min_value or -0x80000000
+    for tmin, tmax, result in int_map :
+        if (tmin < min_value) and (tmax <= max_value) :
+            break
+    if result is None :
+        raise TypeError \
+            ( "Cannot map integer type with max-value %d and min-value %d "
+              "to a database value"
+            % (max_value, min_value)
+            )
+    return result
+# end def _sa_type_int
 
 @Add_Classmedthod ("_sa_type", Attr.A_Decimal)
 def _sa_numeric (cls, attr, kind, ** kw) :
