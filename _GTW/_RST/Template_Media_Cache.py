@@ -31,6 +31,7 @@
 #     5-Aug-2012 (MG) Fix filename cache (use `templates` instead of
 #                     `templates_i` )
 #     6-Aug-2012 (CT) Add `etag`
+#    10-Aug-2012 (CT) Add `verbose`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
     def __init__ ( self, media_dir, prefix
                  , clear_dir       = False
                  , cache_filenames = False
+                 , verbose         = False
                  ) :
         if not prefix.startswith ("/") :
             prefix           = "/%s" % (prefix, )
@@ -64,6 +66,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
         self.cache_filenames = cache_filenames
         self.filenames       = set ()
         self.templates_seen  = set ()
+        self.verbose         = verbose
     # end def __init__
 
     def as_pickle_cargo (self, root) :
@@ -151,6 +154,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
                 if minifier is not None :
                     attr = minifier (attr)
                 file.write (attr)
+                if self.verbose :
+                    print "Wrote template media cache file", fn
     # end def _create_cache
 
     def _get_etag (self, css_map, js_map, t_set) :

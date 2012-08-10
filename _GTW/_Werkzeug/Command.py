@@ -61,6 +61,7 @@
 #     2-Aug-2012 (MG) Correct implementation of `watch_media_files`
 #     5-Aug-2012 (MG) Change handling of `watch_media_files`
 #     6-Aug-2012 (CT) Move `-watch_media_files` to `_GT2W_Server_Base_`
+#    10-Aug-2012 (CT) Pass `verbose` to `root.Cacher` and `App_Cache`
 #    ««revision-date»»···
 #--
 
@@ -311,14 +312,16 @@ class GT2W_Command (GTW.OMP.Command) :
                     ( result.Cacher
                         ( mc_dir, mc_fix
                         , cache_filenames = cmd.watch_media_files
+                        , verbose         = cmd.verbose
                         )
                     )
                 self._tmc_filenames = cachers [-1].tmc.filenames
             self.cacher = GTW.Werkzeug.App_Cache \
                 ( self.cache_path (UTP)
                 , * cachers
-                , root  = result
-                , DEBUG = result.DEBUG
+                , root    = result
+                , DEBUG   = result.DEBUG
+                , verbose = cmd.verbose
                 )
         return result
     # end def _get_root

@@ -29,6 +29,7 @@
 #    28-Jun-2012 (CT) Creation
 #    26-Jul-2012 (CT) Add and use `_stored_p`
 #    26-Jul-2012 (CT) Fix typo
+#    10-Aug-2012 (CT) Add `verbose`
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,8 @@ class App_Cache (TFL.Meta.Object) :
     def __init__ (self, cache_path, * cachers, ** kw) :
         self.cache_path = cache_path
         self.cachers    = set (cachers)
-        self.DEBUG      = kw.pop ("DEBUG", False)
+        self.DEBUG      = kw.pop ("DEBUG",   False)
+        self.verbose    = kw.pop ("verbose", False)
         self.kw         = kw
         self._stored_p  = False
     # end def __init__
@@ -77,7 +79,8 @@ class App_Cache (TFL.Meta.Object) :
                 )
             raise
         else :
-            logging.info ("Loaded pickle dump %s successfully" % (path, ))
+            if self.verbose :
+                logging.info ("Loaded pickle dump %s successfully" % (path, ))
             for cp in self._gen_cachers ("Unpickling", "Regenerate cache...") :
                 cp.from_pickle_cargo (cargo = cargo, ** kw)
     # end def load
@@ -97,6 +100,8 @@ class App_Cache (TFL.Meta.Object) :
             try :
                 with open (path, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                if self.verbose :
+                    print ("Stored pickle dump %s successfully" % path)
             except StandardError as exc :
                 logging.warning \
                     ( "Storing pickle dump %s failed with exception: %s"
