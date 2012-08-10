@@ -68,6 +68,7 @@
 #     7-Aug-2012 (CT) Factor `own_links` and `own_links_transitive` in here
 #     8-Aug-2012 (MG) Use a dict for `blackboard`
 #    10-Aug-2012 (CT) Define `name` as `property`, split off `ext` there
+#    10-Aug-2012 (CT) Rename `Permission.rank` to `_rank`
 #    ««revision-date»»···
 #--
 
@@ -391,7 +392,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     @getattr_safe
     def r_permissions (self) :
         return sorted \
-            (self._get_permissions ("r_permission"), key = TFL.Getter.rank)
+            (self._get_permissions ("r_permission"), key = TFL.Getter._rank)
     # end def r_permissions
 
     @property
@@ -404,7 +405,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     @getattr_safe
     def w_permissions (self) :
         return sorted \
-            (self._get_permissions ("w_permission"), key = TFL.Getter.rank)
+            (self._get_permissions ("w_permission"), key = TFL.Getter._rank)
     # end def w_permissions
 
     @Once_Property

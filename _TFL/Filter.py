@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,6 +46,7 @@
 #    12-Sep-2011 (CT) `Attr_Query.And` changed to `Attr_Query.AND`, ditto 4 `Or`
 #    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #    19-Dec-2011 (CT) Add shortcut `Attr_Query.NOT`
+#    10-Aug-2012 (CT) Add `_rank` to allow defined order
 #    ««revision-date»»···
 #--
 
@@ -183,6 +184,7 @@ class _Filter_ (TFL.Meta.Object) :
     """Base class for filters."""
 
     attrs = {}
+    _rank = 0
 
     def filter (self, iterable, * args, ** kw) :
         return list (self.filter_iter (iterable, * args, ** kw))

@@ -33,6 +33,7 @@
 #    11-Jun-2012 (CT) Add `rank`
 #    20-Jun-2012 (CT) Remove dependency on `GTW.NAV.Root.top`
 #     5-Jul-2012 (CT) Move from `GTW.NAV` to `GTW.RST`
+#    10-Aug-2012 (CT) Rename `rank` to `_rank`
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,7 @@ import _TFL.Filter
 
 class _Permission_ (TFL._.Filter._Filter_S_) :
 
-    rank = 0
+    _rank = 0
 
 # end class _Permission_
 
@@ -92,7 +93,7 @@ class Is_Superuser (_Permission_) :
 
 class Login_Required (_Permission_) :
 
-    rank = -100
+    _rank = -100
 
     def predicate (self, user, page, * args, ** kw) :
         return user and user.authenticated and user.active
