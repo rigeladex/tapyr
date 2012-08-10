@@ -1089,6 +1089,13 @@ class RST_Root (_Ancestor) :
         return self.wsgi_app (environ, start_response)
     # end def __call__
 
+    @Once_Property
+    @getattr_safe
+    def first_time (self) :
+        ### Short term hack to load all entries once to fill `Table`
+        return list (self.entries_transitive)
+    # end def first_time
+
     @property
     @getattr_safe
     def href_pat (self) :
@@ -1264,6 +1271,7 @@ class RST_Root (_Ancestor) :
         HTTP     = self.HTTP
         request  = self.Request  (environ)
         response = self.Response (request)
+        entries_transitive = self.first_time
         with self.LET (_change_infos = {}) :
             try :
                 result  = self._http_response (request, response)
