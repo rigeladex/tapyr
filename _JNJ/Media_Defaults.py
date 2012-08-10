@@ -44,6 +44,7 @@
 #    23-Feb-2012 (CT) Add `color_bg_bad` and `color_bg_missing`
 #     1-Mar-2012 (CT) Change `pg_main_max_width` from `Em (50)` to `Em (45)`
 #     8-Mar-2012 (CT) Add `color_bg_menu`
+#    10-Aug-2012 (CT) Add `color_spec_sub_heading`, `color_spec_term`
 #    ««revision-date»»···
 #--
 
@@ -288,13 +289,13 @@ class Media_Defaults (Definition) :
         ( background_color = P.background_color
         , color            = P.color_status_bad
         )
-    color_spec_heading     = P_dict \
-        ( background_color = P.background_color
-        , color            = P.color_selected
-        )
     color_spec_gallery_heading = P_dict \
         ( background_color = RGB_P     (50, 75, 100)
         , color            = P.nav_col.background_color
+        )
+    color_spec_heading     = P_dict \
+        ( background_color = P.background_color
+        , color            = P.color_selected
         )
     color_spec_normal      = P_dict \
         ( background_color = P.background_color
@@ -323,6 +324,14 @@ class Media_Defaults (Definition) :
     color_spec_strong      = P_dict \
         ( background_color = P.background_color
         , color            = SVG_Color ("blue")
+        )
+    color_spec_sub_heading = P_dict \
+        ( background_color = P.background_color
+        , color            = P.color_dark_grey
+        )
+    color_spec_term        = P_dict \
+        ( background_color = RGB_X ("#E6E6E6")
+        , color            = P.color_dark_grey
         )
 
     del_spec               = P_dict \

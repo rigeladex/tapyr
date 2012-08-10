@@ -28,15 +28,134 @@
 ##
 ## Revision Dates
 ##     8-Aug-2012 (CT) Creation
+##    10-Aug-2012 (CT) Continue creation
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X %}
 
+{%- macro attr_name (name, css_class = "attr-name") -%}
+  <b class="{{ css_class }}">{{ name }}</b>
+{%- endmacro -%} {#- attr_name -#}
+
+{%- macro attr_table (resource, attrs) -%}
+  {%- set cols = ("name", "type", "kind", "is_required", "default_value") %}
+  {%- set E_Type = resource.E_Type %}
+  <table class="Attr-Table">
+    <thead>
+      <tr>
+        {%- for c in cols %}
+          <th class="{{ c }}" scope="col">{{ c }}</th>
+        {% endfor -%}
+      </tr>
+    </thead>
+    <tbody>
+      {%- for a in attrs %}
+        {%- set ak = GTW.getattr (E_Type, a.name) %}
+        <tr>
+          {%- for c in cols %}
+            {%- set align =
+                   (" align-%s" % (ak.attr.css_align, ))
+                if ak.attr.css_align and c == "default_value" else ""
+            -%}
+            <td class="{{ c }}{{ align }}">
+              <a href="#attr-{{ a.name }}">{{ a [c] }}</a>
+            </td>
+          {% endfor -%}
+        </tr>
+      {% endfor -%}
+    </tbody>
+  </table>
+{%- endmacro -%} {#- attr_table -#}
+
+{%- macro attributes (resource, attrs, level = 0, show_header = True) -%}
+  {%- for a in attrs %}
+    {%- if show_header %}
+      {%- set tag = GTW.formatted ("h%s", level + 3)  %}
+      {{ header (a.name, tag = tag, id = "attr-" + a.name) }}
+    {% endif -%}
+
+    <dl class="Attr-Spec">
+      <dt>Name</dt>
+      <dd>
+        {{- attr_name (a.name) -}}
+      </dd>
+      {%- if a.role_name -%}
+        <dd>
+          Can also be accessed with the role name
+          {{ attr_name (a.role_name, css_class = "role-name") -}}
+        </dd>
+      {%- endif -%}
+      <dt>Type</dt>
+      <dd>
+        {%- onion a.url %}
+          {%- head %}
+            <a href="{{ a.url }}">
+          {%- body %}
+            {{- a.type_name or a.type -}}
+          {%- tail %}
+            </a>
+          {%- endonion %}
+      </dd>
+      <dt>Kind</dt>
+      <dd>
+        {{- a.kind -}}
+      </dd>
+      <dt>Is required</dt>
+      <dd>
+        {{- a.is_required -}}
+      </dd>
+      {%- if "is_changeable" in a %}
+        <dt>Is changeable</dt>
+        <dd>
+          {{- a.is_changeable -}}
+        </dd>
+      {% endif -%}
+      {%- if a.default_value %}
+        <dt>Default</dt>
+        <dd>
+          {{- a.default_value -}}
+        </dd>
+      {% endif -%}
+      {%- if a.example %}
+        <dt>Example</dt>
+        <dd>
+          {{- a.example -}}
+        </dd>
+      {% endif -%}
+      <dt>Description</dt>
+      <dd>
+        {{- a.description -}}
+      </dd>
+      {%- if a.explanation %}
+        <dt>Explanation</dt>
+        <dd>
+          {{- a.explanation -}}
+        </dd>
+      {% endif -%}
+      {%- if a.syntax %}
+        <dt>Syntax</dt>
+        <dd>
+          {{- a.syntax -}}
+        </dd>
+      {% endif -%}
+      {%- if a.attributes %}
+        <dt>Attributes</dt>
+        <dd>
+          Nested attributes of composite attribute type {{ a.type }}
+        </dd>
+        <dd>
+          {{ attributes (resource, a.attributes, level = level + 1) }}
+        </dd>
+      {% endif -%}
+    </dl>
+  {% endfor -%}
+{%- endmacro -%} {#- attributes -#}
+
 {%- macro header (name) -%}
-  {%- set tag = kwargs.get ("tag", "h2") -%}
-  <{{ tag }}>{{ GTW._T (name.capitalize ()).replace ("_", " ") }}</{{ tag }}>
+  {%- set tag = kwargs.pop ("tag", "h2") -%}
+  <{{ tag }} {{ kwargs|xmlattr -}}>{{ name.capitalize ().replace ("_", " ") }}</{{ tag }}>
 {%- endmacro -%} {#- header -#}
 
 {%- macro e_type_ref (et) -%}
@@ -75,8 +194,15 @@
 {%- endmacro -%} {#- section -#}
 
 {%- macro e_type (resource, rst_cargo) -%}
-  <h1 class="headline">{{ resource.title or resource.short_title }}</h1>
+  <h1 class="headline">
+    {{- resource.title or resource.short_title }}
+    [{{ rst_cargo ["type_name"] }}] {#-#}
+  </h1>
+  {{ section (resource, rst_cargo, "type_name") }}
   {{ section (resource, rst_cargo, "description") }}
+  {% call(attrs) section (resource, rst_cargo, "attributes") -%}
+    {{ attr_table (resource, attrs) }}
+  {% endcall %} {# section #}
   {% call(rr) section (resource, rst_cargo, "relevant_root") -%}
     {{ e_type_ref (rr) }}
   {% endcall %} {# section #}
@@ -84,7 +210,10 @@
     {{ e_type_refs (ps) }}
   {% endcall %} {# section #}
   {% call(cs) section (resource, rst_cargo, "children") -%}
-    {{ e_type_ref (cs) }}
+    {{ e_type_refs (cs) }}
+  {% endcall %} {# section #}
+  {% call(attrs) section (resource, rst_cargo, "attributes") -%}
+    {{ attributes (resource, attrs) }}
   {% endcall %} {# section #}
 {%- endmacro -%} {#- e_type -#}
 

@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #     8-Aug-2012 (CT) Creation
+#    10-Aug-2012 (CT) Continue creation
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
 
     _real_name                 = "E_Type"
 
+    document_class             = "E-Type-Doc"
     page_template_name         = "e_type_doc"
 
     class _RST_TOP_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
@@ -60,9 +62,10 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
 
         def _render_context (self, resource, request, response, ** kw) :
             get    = GTW.RST.MOM.Doc.E_Type.GET ()
+            cargo  = get._response_body (resource, request, response)
             result = self.__super._render_context \
                 ( resource, request, response
-                , rst_cargo = get._response_body (resource, request, response)
+                , rst_cargo = cargo
                 , ** kw
                 )
             result ["resource"] = resource
@@ -138,7 +141,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     def resource_from_e_type (self, e_type) :
         if isinstance (e_type, basestring) :
             e_type = self.App_Type.entity_type (e_type)
-        names  = e_type.PNS.__name__.split (".") + [e_type.type_base_name]
+        names  = e_type.type_name.split (".")
         result = self._get_child (* names)
         return result
     # end def resource_from_e_type
