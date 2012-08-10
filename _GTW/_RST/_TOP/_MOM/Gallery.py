@@ -29,6 +29,7 @@
 #    18-Jul-2012 (CT) Creation
 #    26-Jul-2012 (CT) Remove `_admin` from `pictures`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
+#    10-Aug-2012 (CT) Fix `_admin` removal in `pictures` (use `isinstance`)
 #    ««revision-date»»···
 #--
 
@@ -162,7 +163,7 @@ class Gallery \
     @getattr_safe
     def pictures (self) :
         result = self.entries
-        if result and result [-1] is self._admin :
+        if result and not isinstance (result [-1], self.Entity):
             result = result [:-1]
         return result
     # end def pictures
