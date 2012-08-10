@@ -29,6 +29,7 @@
 #    18-Jul-2012 (CT) Creation
 #    26-Jul-2012 (CT) Add `Archive.Year.regattas`
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
+#    10-Aug-2012 (CT) Add missing `SRM.` to `change_query_filters`
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,8 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     @getattr_safe
     def change_query_filters (self) :
         pid    = self.obj.pid
-        rq     = self.scope.Boat_in_Regatta.query (Q.right == pid).attr ("pid")
+        rq     = self.scope.SRM.Boat_in_Regatta.query \
+            (Q.right == pid).attr ("pid")
         result = (Q.OR (Q.pid.IN (rq), Q.pid == pid), )
         return result
     # end def change_query_filters
