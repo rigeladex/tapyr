@@ -71,6 +71,8 @@
 #     2-Jul-2012 (MG) `Q_Result_Reload`: not cache the `session` object
 #    18-Jul-2012 (MG) Export `_Q_Result_`
 #     8-Aug-2012 (CT) Fix typo (`.__class__.__name__`, not `.__class__.__name`)
+#    10-Aug-2012 (MG) Change handling of composite attributes in
+#                     `_Q_Result_Attrs_.sa_query`
 #    ««revision-date»»···
 #--
 
@@ -485,7 +487,13 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                     else :
                         q_j, q_o = attr_q._sa_order_by (self.e_type._SAQ)
                         joins.extend (q_j)
-                        cols     = [getattr (oc, "element", oc) for oc in q_o]
+                        cols = []
+                        for col in q_o :
+                            if isinstance \
+                                   (col, MOM.DBW.SAS._MOM_Composite_Query_) :
+                                cols.extend (col._COLUMNS)
+                            else :
+                                cols.append (getattr (col, "element", col))
                         columns.extend (cols)
                         if len (cols) > 1 :
                             kinds.append   ((cols [0].MOM_C_Kind, cols))

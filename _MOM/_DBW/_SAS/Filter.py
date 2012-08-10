@@ -46,6 +46,7 @@
 #                     `MOM_Composite_Query` added
 #    18-Jul-2012 (MG) `TFL.Attr_Query._Call_._sa_filter` Support subqueries
 #                     for `in_` operator
+#    10-Aug-2012 (MG) Change handling of composite attributes
 #    ««revision-date»»···
 #--
 
@@ -76,10 +77,10 @@ def _sa_filter (self, SAQ) :
     else :
         columns        = (result, )
         col            = columns [0]
+        if isinstance (col, MOM.DBW.SAS._MOM_Composite_Query_) :
+            pass
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well
-        if isinstance (col, MOM.DBW.SAS.MOM_Composite_Query) :
-            columns = col._COLUMNS
         elif col.table != SAQ._SA_TABLE :
            joins.append ((SAQ._SA_TABLE, col.table, None, False))
     return joins, columns
@@ -101,7 +102,7 @@ def _sa_filter (self, SAQ) :
                and args [0].MOM_Kind
                ) :
                 arg = args [0].MOM_Kind.from_string (arg)
-            if isinstance (arg, MOM.Entity) :
+            if isinstance (arg, MOM.Id_Entity) :
                 arg = arg.pid
             args.append (arg)
     return joins, (getattr (args [0], self.op.__name__) (args [1]), )
