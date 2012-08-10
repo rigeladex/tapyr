@@ -30,6 +30,8 @@
 #    24-Jul-2012 (CT) Add `TXT`
 #    31-Jul-2012 (CT) Add and use `mime_type_parameters`
 #     8-Aug-2012 (CT) Add `rst_cargo` to `_Template_Mixin_.rendered`
+#    10-Aug-2012 (CT) Consider `resource.ext` in `Render_Man.__call__`
+#    10-Aug-2012 (CT) Fix `Render_Man.render_acceptable`
 #    ««revision-date»»···
 #--
 
@@ -286,7 +288,7 @@ class Render_Man (TFL.Meta.Object) :
     def __call__ (self, method, resource, request) :
         result = None
         _, ext = pp_splitext (request.path)
-        ext    = ext.strip (".")
+        ext    = (ext or resource.ext or "").strip (".")
         if ext :
             rs = self.by_extension [ext]
             if rs :
@@ -314,12 +316,12 @@ class Render_Man (TFL.Meta.Object) :
         body = dict (accept_mimetypes = l)
         urlb, ext = pp_splitext (request.url)
         for r in self.renderers :
-            url = ".".join (urlb, r.extensions [0]) if r.extensions else urlb
+            url = ".".join ((urlb, r.extensions [0])) if r.extensions else urlb
             l.append \
                 ( dict
                     ( extensions = r.extensions
                     , mime_types = r.mime_types
-                    , url        = ".".join (urlb, r.extensions [0])
+                    , url        = url
                     )
                 )
         renderer = getattr (method, "accept_mimetypes_renderer", JSON) \
