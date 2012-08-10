@@ -28,6 +28,7 @@
 # Revision Dates
 #     7-Aug-2012 (CT) Creation
 #     8-Aug-2012 (CT) Continue creation
+#    10-Aug-2012 (CT) Continue creation..
 #    ««revision-date»»···
 #--
 
@@ -188,7 +189,10 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 v = self._response_ref_e_type (resource, rel_root)
                 if v :
                     result ["relevant_root"] = v
-            resource.scope.rollback () ### Remove example objects, if any
+            try :
+                resource.scope.rollback () ### Remove example objects, if any
+            except Exception as exc :
+                logging.exception ("Rollback error")
             return result
         # end def _response_body
 
