@@ -32,6 +32,8 @@
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_dir`
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
+#    10-Aug-2012 (CT) Move `_Cal_Page_.is_current_dir` to
+#                     `Calendar.is_current_page`
 #    ««revision-date»»···
 #--
 
@@ -78,13 +80,6 @@ class _Cal_Page_ (_Ancestor) :
     skip_etag          = True
 
     _exclude_robots    = True
-
-    def is_current_dir (self, page) :
-        if not self.hidden :
-            p = page.href
-            s = self.calendar.href
-            return p == s or (p.startswith (s) and p [len (s)] == "/")
-    # end def is_current_dir
 
     def _render_macro (self, t_name, m_name, * args) :
         T          = self.top.Templateer
@@ -256,10 +251,6 @@ class Calendar (_Mixin_, _Ancestor) :
             _CAL.Year.Day.events = property (_day_get_events)
     # end def __init__
 
-    def day_href (self, day) :
-        return pp_join (self.abs_href, day.formatted ("%Y/%m/%d"))
-    # end def day_href
-
     @Once_Property
     @getattr_safe
     def event_manager (self) :
@@ -291,6 +282,17 @@ class Calendar (_Mixin_, _Ancestor) :
     def year (self) :
         return self._cal.year [self.anchor.year]
     # end def year
+
+    def day_href (self, day) :
+        return pp_join (self.abs_href, day.formatted ("%Y/%m/%d"))
+    # end def day_href
+
+    def is_current_page (self, page) :
+        ### don't guard against hidden !!!
+        p = page.href
+        s = self.calendar.href
+        return p == s or (p.startswith (s) and p [len (s)] == "/")
+    # end def is_current_dir
 
     def _get_child (self, child, * grandchildren) :
         qx_p = child == self.qx_prefix
