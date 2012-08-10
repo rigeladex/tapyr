@@ -31,6 +31,7 @@
 #    30-Jul-2012 (CT) Add `template_name`, `Login_Required`
 #     6-Aug-2012 (CT) Let `blackboard`
 #     8-Aug-2012 (MG) Use a dict for `blackboard`
+#    10-Aug-2012 (CT) Add missing import for `CAL.Date_Time`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _CAL.Delta
+import _CAL.Date_Time
 
 import _GTW._RST
 
