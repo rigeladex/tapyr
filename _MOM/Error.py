@@ -71,6 +71,7 @@
 #     1-Aug-2012 (CT) Add `Destroyed_Entity`
 #     8-Aug-2012 (CT) Derive base class from `StandardError`, not `Exception`
 #                     (too many exception clauses still use `StandardError`)
+#    10-Aug-2012 (MG) Use `getattr` too access pid `Invariant.__init__`
 #    ««revision-date»»···
 #--
 
@@ -518,7 +519,8 @@ class Invariant (_Invariant_) :
 
     def __init__ (self, obj, inv) :
         self.__super.__init__ (obj)
-        self.args         = (obj, inv) if obj.pid else (_T (obj.ui_name), inv)
+        pid               = getattr (obj, "pid", None)
+        self.args         = (obj, inv) if pid else (_T (obj.ui_name), inv)
         self.inv          = inv
         self.is_required  = inv.is_required
         self.attributes   = sorted (inv.attributes + inv.attr_none)
