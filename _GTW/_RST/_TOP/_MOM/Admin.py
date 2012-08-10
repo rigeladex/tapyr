@@ -33,6 +33,7 @@
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_dir`
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #     9-Aug-2012 (CT) Redefine `E_Type.entries` to avoid version from mixin
+#    10-Aug-2012 (CT) Use `logging.exception` instead of `print`
 #    ««revision-date»»···
 #--
 
@@ -227,7 +228,7 @@ class _HTML_Action_ (_Ancestor) :
             raise self.top.Status.Conflict (conflicts = fv.as_json_cargo)
         except Exception as exc :
             if __debug__ :
-                import traceback; traceback.print_exc ()
+                logging.exception ("form_value_apply: %s", fv)
             raise self.top.Status.Bad_Request (error = "%s" % (exc, ))
     # end def form_value_apply
 
@@ -445,7 +446,10 @@ class _Changer_ (_HTML_Action_) :
                         self.submit_callback \
                             (request, response, scope, fv, result)
                     except Exception as exc :
-                        import traceback; traceback.print_exc ()
+                        logging.exception \
+                            ( "%s._rendered_post: %s -> %s"
+                            , self.__call__, json ["cargo"], result
+                            )
         return result
     # end def _rendered_post
 
@@ -955,7 +959,10 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         try :
             result = AFS_Form [self.form_id]
         except Exception as exc :
-            print (exc, self.href, self.E_Type, self.form_id)
+            logging.exception \
+                ( "Getting form failed : %s %s %s"
+                , self.href, self.E_Type, self.form_id
+                )
             raise
         else :
             return result
