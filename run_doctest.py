@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #                     `format_f` and `format_s`
 #    17-Aug-2010 (CT) `__test__` added to `_doctest_pat`
 #    14-Jun-2011 (MG) `timing` command line option added
+#    10-Aug-2012 (MG) Add new command line option for `exclude`
 #    ««revision-date»»···
 #--
 
@@ -74,13 +75,15 @@ import  sys
 import  subprocess
 import  os
 import  time
+import  fnmatch
 
 TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 
 _doctest_pat   = Regexp (r"^( *>>> |__test__ *=)", re.MULTILINE)
 
 summary        = TFL.Record \
-    ( failed   = 0
+    ( excluded = []
+    , failed   = 0
     , failures = []
     , modules  = 0
     , total    = 0
@@ -205,8 +208,12 @@ def _main (cmd) :
         else :
             run_cmd = run_command
         def run_mod (a) :
-            summary.modules += 1
-            run_cmd ("%s %s" % (head, a))
+            if cmd.exclude and fnmatch.fnmatch (a, cmd.exclude):
+                summary.excluded.append (a)
+                print "%s excluded" % (a, )
+            else :
+                summary.modules += 1
+                run_cmd ("%s %s" % (head, a))
         def run_mods (d) :
             for f in sorted (sos.listdir_exts (d, ".py")) :
                 if has_doctest (f) :
@@ -240,13 +247,16 @@ def _main (cmd) :
                 (len (summary.failures), summary.modules)
             print "    %s" % \
                 ("\n    ".join ("%-68s : %s" % f for f in summary.failures))
+            if summary.excluded :
+                print "    %s excluded" % (", ".join (summary.excluded), )
 # end def _main
 
 _Command = TFL.CAO.Cmd \
     ( handler      = _main
     , args         = ("module:P?Module(s) to test", )
     , opts         =
-        ( "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
+        ( "exclude:S?Glob pattern toexclude certain tests"
+        , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"
         , "summary:B?Summary of failed tests"
         , "timing:B?Add timing information"
