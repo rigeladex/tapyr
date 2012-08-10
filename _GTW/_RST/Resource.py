@@ -67,6 +67,7 @@
 #                     `skip_etag`
 #     7-Aug-2012 (CT) Factor `own_links` and `own_links_transitive` in here
 #     8-Aug-2012 (MG) Use a dict for `blackboard`
+#    10-Aug-2012 (CT) Define `name` as `property`, split off `ext` there
 #    ««revision-date»»···
 #--
 
@@ -158,6 +159,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     Status                     = GTW.RST.HTTP_Status
     Auth_Required              = Status.Unauthorized
 
+    ext                        = None
     hidden                     = False
     implicit                   = False
     pid                        = None
@@ -314,6 +316,17 @@ class _RST_Base_ (TFL.Meta.Object) :
         ### redefine as necessary
         return set ()
     # end def injected_templates
+
+    @property
+    @getattr_safe
+    def name (self) :
+        return self._name
+    # end def name
+
+    @name.setter
+    def name (self, value) :
+        self._name, self.ext = pp_splitext (value)
+    # end def name
 
     @property
     @getattr_safe
@@ -1040,7 +1053,6 @@ class RST_Root (_Ancestor) :
     input_encoding             = "iso-8859-15"
     language                   = "en"
     languages                  = set (("en", ))
-    name                       = ""
     prefix                     = ""
     site_url                   = ""
     skip_etag                  = False
@@ -1048,6 +1060,7 @@ class RST_Root (_Ancestor) :
 
     _exclude_robots            = True
     _href_pat                  = None
+    _name                      = ""
     _needs_parent              = False
 
     _email_from                = None   ### default from address
