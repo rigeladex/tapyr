@@ -30,6 +30,7 @@
 #    26-Jul-2012 (CT) Add `Archive.Year.regattas`
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    10-Aug-2012 (CT) Add missing `SRM.` to `change_query_filters`
+#    10-Aug-2012 (CT) Add `skip_etag` to various classes
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
 
     bir_admin               = None
     register_email_template = "regatta_register_email"
+    skip_etag           = True
 
     class _Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
 
@@ -259,13 +261,15 @@ class Regatta_Event \
 
     dir_template_name   = None
     page_template_name  = "regatta_page"
+    skip_etag           = True
     sort_key            = TFL.Sorted_By ("perma_name")
 
     _old_date           = None
 
     class Page (GTW.RST.TOP.MOM.Display.Entity) :
 
-        page_template_name = "regatta_page"
+        skip_etag           = True
+        page_template_name  = "regatta_page"
 
     # end class Page
 
@@ -345,10 +349,11 @@ class Archive (_Ancestor) :
 
     class _SRM_Year_ (_Ancestor.Year) :
 
-        _real_name        = "Year"
+        _real_name          = "Year"
 
-        dir_template_name = "regatta_calendar"
-        Entity            = Regatta_Event
+        dir_template_name   = "regatta_calendar"
+        Entity              = Regatta_Event
+        skip_etag           = True
 
         @property
         @getattr_safe
