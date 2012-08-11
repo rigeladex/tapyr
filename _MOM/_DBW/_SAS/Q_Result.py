@@ -73,6 +73,7 @@
 #     8-Aug-2012 (CT) Fix typo (`.__class__.__name__`, not `.__class__.__name`)
 #    10-Aug-2012 (MG) Change handling of composite attributes in
 #                     `_Q_Result_Attrs_.sa_query`
+#    11-Aug-2012 (MG) Change result of `_Q_Result_Attrs_` to namedtuple
 #    ««revision-date»»···
 #--
 
@@ -402,6 +403,18 @@ class _Q_Result_Attrs_ (_Q_Result_) :
         , _attr_qs  = (_Q_Result_.List (), True)
         )
 
+    class Attr_Result (tuple) :
+
+        def __getattr__ (self, name) :
+            if name in self._NAME_MAP :
+                result = self [self._NAME_MAP [name]]
+                setattr (self, name, result)
+                return result
+            self.__super.__getattr__ (name)
+        # end def __getattr__
+
+    # end class Attr_Result
+
     def __init__ ( self, e_type, session, parent
                  , getter_or_getters = None
                  , raw               = False
@@ -415,6 +428,8 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                 getters        = getter_or_getters
                 self._from_row = self._from_row_tuple
             self._attr_qs.extend (self._getters_to_columns (getters, raw))
+        else :
+            self.attr_names = [a for a in getattr (parent, "attr_names", ())]
     # end def __init__
 
     def _clone (self) :
@@ -444,16 +459,31 @@ class _Q_Result_Attrs_ (_Q_Result_) :
         if raw :
             Q = Q.RAW
         SAQ   = self.e_type._SAQ
+        self.attr_names = []
         for getter in getters :
             if isinstance (getter, basestring) :
                 getter = getattr (Q, getter)
             if isinstance (getter, TFL.Q_Exp._Sum_) :
                     result          = sql.func.SUM (getter.rhs)
                     result.MOM_Kind = None
+                    self.attr_names.append ("sum")
                     yield result
             else :
+                self.attr_names.append (getter._name.rsplit (".",1)[-1])
                 yield getter
     # end def _getters_to_columns
+
+    @TFL.Meta.Once_Property
+    def Result_Class (self) :
+        return self.Attr_Result.__class__ \
+            ( "Attr_Result"
+            , (self.Attr_Result, )
+            , dict
+                ( _NAME_MAP =
+                    dict ((n, i) for (i, n) in enumerate (self.attr_names))
+                )
+            )
+    # end def Result_Class
 
     def _from_row_tuple (self, row) :
         result = []
@@ -467,7 +497,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                 result.append (k.from_pickle_cargo (scope, (pc, )))
             else :
                 result.append (pc)
-        return tuple (result)
+        return self.Result_Class (result)
     # end def _from_row_tuple
 
     def _from_row_single (self, row) :
