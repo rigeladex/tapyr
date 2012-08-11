@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -29,6 +29,7 @@
 #    13-Oct-2010 (CT) Creation
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `_Attributes`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    11-Aug-2012 (CT) Add `refuse_links`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,11 @@ _Ancestor_Essence = MOM.Link2
 
 class Entity_created_by_Person (PAP.Entity, _Ancestor_Essence) :
     """Created-By association for all kinds of entities"""
+
+    refuse_links = set \
+        (( "GTW.OMP.PAP.Entity_created_by_Person"
+         , "PAP.Entity_created_by_Person"
+        ))
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

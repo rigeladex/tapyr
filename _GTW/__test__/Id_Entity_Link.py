@@ -221,8 +221,6 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Company_has_Phone
         ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Entity_created_by_Person
-        ('PAP.Entity_created_by_Person', ['left'])
     PAP.Person_has_Address
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Person_has_Email

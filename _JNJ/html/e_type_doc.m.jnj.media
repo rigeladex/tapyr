@@ -44,6 +44,14 @@ style_sheet = Style_Sheet \
                     (r = Em (0.3), b = Em (0.1), l = Em (0.2))
                 )
             , Rule
+                ( "a .attr-name", "a .role-name"
+                , padding          = TRBL
+                    (Em (0.1), Em (2.5), Em (0.2), Em (0.5))
+                , children             =
+                    [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                    ]
+                )
+            , Rule
                 ( ".Attr-Table"
                 , margin_left              = Em (2.5)
                 , children                 =

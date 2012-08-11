@@ -862,6 +862,28 @@ _test_doc = r"""
               , 'ui_name' : 'Points'
               }
             ]
+        , 'cross_references' :
+            [ { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'PAP.Entity_created_by_Person'
+              , 'url' : '/Doc/PAP-Entity_created_by_Person'
+              }
+            , { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'SRM.Crew_Member'
+              , 'url' : '/Doc/SRM-Crew_Member'
+              }
+            , { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'SRM.Race_Result'
+              , 'url' : '/Doc/SRM-Race_Result'
+              }
+            , { 'attributes' :
+    [ 'right' ]
+              , 'type_name' : 'SRM.Team_has_Boat_in_Regatta'
+              , 'url' : '/Doc/SRM-Team_has_Boat_in_Regatta'
+              }
+            ]
         , 'description' : 'Boat racing in a regatta.'
         , 'type_name' : 'SRM.Boat_in_Regatta'
         , 'ui_name' : 'SRM.Boat_in_Regatta'
@@ -991,6 +1013,18 @@ _test_doc = r"""
               }
             , { 'type_name' : 'SRM.Regatta_H'
               , 'url' : '/Doc/SRM-Regatta_H'
+              }
+            ]
+        , 'cross_references' :
+            [ { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'PAP.Entity_created_by_Person'
+              , 'url' : '/Doc/PAP-Entity_created_by_Person'
+              }
+            , { 'attributes' :
+    [ 'right' ]
+              , 'type_name' : 'SRM.Boat_in_Regatta'
+              , 'url' : '/Doc/SRM-Boat_in_Regatta'
               }
             ]
         , 'description' : 'Sailing regatta for one class or handicap.'
@@ -1127,6 +1161,23 @@ _test_doc = r"""
               , 'ui_name' : 'Is team race'
               }
             ]
+        , 'cross_references' :
+            [ { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'PAP.Entity_created_by_Person'
+              , 'url' : '/Doc/PAP-Entity_created_by_Person'
+              }
+            , { 'attributes' :
+    [ 'right' ]
+              , 'type_name' : 'SRM.Boat_in_Regatta'
+              , 'url' : '/Doc/SRM-Boat_in_Regatta'
+              }
+            , { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'SRM.Team'
+              , 'url' : '/Doc/SRM-Team'
+              }
+            ]
         , 'description' : 'Regatta for a single class of sail boats.'
         , 'parents' :
             [ { 'type_name' : 'SRM.Regatta'
@@ -1259,6 +1310,18 @@ _test_doc = r"""
               , 'ui_name' : 'Result'
               }
             ]
+        , 'cross_references' :
+            [ { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'PAP.Entity_created_by_Person'
+              , 'url' : '/Doc/PAP-Entity_created_by_Person'
+              }
+            , { 'attributes' :
+    [ 'right' ]
+              , 'type_name' : 'SRM.Boat_in_Regatta'
+              , 'url' : '/Doc/SRM-Boat_in_Regatta'
+              }
+            ]
         , 'description' : 'Regatta for boats in a handicap system.'
         , 'parents' :
             [ { 'type_name' : 'SRM.Regatta'
@@ -1324,6 +1387,13 @@ _test_doc = r"""
               , 'p_type' : 'unicode'
               , 'type' : 'String'
               , 'ui_name' : 'Role'
+              }
+            ]
+        , 'cross_references' :
+            [ { 'attributes' :
+    [ 'left' ]
+              , 'type_name' : 'PAP.Entity_created_by_Person'
+              , 'url' : '/Doc/PAP-Entity_created_by_Person'
               }
             ]
         , 'description' : 'Crew member of a `Boat_in_Regatta`.'

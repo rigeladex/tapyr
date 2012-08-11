@@ -29,6 +29,7 @@
 ## Revision Dates
 ##     8-Aug-2012 (CT) Creation
 ##    10-Aug-2012 (CT) Continue creation
+##    11-Aug-2012 (CT) Continue creation..
 ##    ««revision-date»»···
 ##--
 #}
@@ -53,14 +54,14 @@
     <tbody>
       {%- for a in attrs %}
         {%- set ak = GTW.getattr (E_Type, a.name) %}
-        <tr>
+        <tr id="attr-t-{{ a.name }}">
           {%- for c in cols %}
             {%- set align =
                    (" align-%s" % (ak.attr.css_align, ))
                 if ak.attr.css_align and c == "default_value" else ""
             -%}
             <td class="{{ c }}{{ align }}">
-              <a href="#attr-{{ a.name }}">{{ a [c] }}</a>
+              <a href="#attr-s-{{ a.name }}">{{ a [c] }}</a>
             </td>
           {% endfor -%}
         </tr>
@@ -72,8 +73,17 @@
 {%- macro attributes (resource, attrs, level = 0, show_header = True) -%}
   {%- for a in attrs %}
     {%- if show_header %}
-      {%- set tag = GTW.formatted ("h%s", level + 3)  %}
-      {{ header (a.name, tag = tag, id = "attr-" + a.name) }}
+      {%- set tag = GTW.formatted ("h%s", level + 3)  -%}
+      {%- if level == 0 %}
+        {%- set hd  =
+            "<a href=\"#attr-t-" + a.name + "\">" + attr_name (a.name) + "</a>"
+        -%}
+        {%- set id = "attr-s-" + a.name %}
+      {%- else %}
+        {%- set hd = attr_name (a.name) %}
+        {%- set id = None %}
+      {% endif -%}
+      {{ header (hd, tag = tag, id = id) }}
     {% endif -%}
 
     <dl class="Attr-Spec">
@@ -155,8 +165,17 @@
 
 {%- macro header (name) -%}
   {%- set tag = kwargs.pop ("tag", "h2") -%}
-  <{{ tag }} {{ kwargs|xmlattr -}}>{{ name.capitalize ().replace ("_", " ") }}</{{ tag }}>
+  <{{ tag }} {{ kwargs|xmlattr -}}>{{ name }}</{{ tag }}>
 {%- endmacro -%} {#- header -#}
+
+{%- macro e_type_cross_refs (cross_refs) -%}
+  {% call(cr) e_type_refs (cross_refs) -%}
+    {{ e_type_ref (cr) -}}:
+    {%- for a in cr.attributes %}
+      <a href="{{ cr.url }}#attr-s-{{ a }}">{{ attr_name (a) }}</a>
+    {% endfor -%}
+  {% endcall %} {# e_type_refs #}
+{%- endmacro -%} {#- e_type_cross_refs -#}
 
 {%- macro e_type_ref (et) -%}
   {%- if et -%}
@@ -169,11 +188,16 @@
 {%- endmacro -%} {#- e_type_ref -#}
 
 {%- macro e_type_refs (refs) -%}
+  {%- set caller = kwargs.pop ("caller",   None) -%}
   {%- if refs %}
     <ul>
       {%- for r in refs %}
         <li>
-          {{ e_type_ref (r) }}
+          {%- if caller %}
+            {{- caller (r) -}}
+          {%- else %}
+            {{ e_type_ref (r) }}
+          {%- endif -%}
         </li>
       {% endfor -%}
     </ul>
@@ -184,7 +208,11 @@
   {%- set caller = kwargs.pop ("caller",   None) -%}
   {%- set body   = rst_cargo [name] -%}
   {%- if body %}
-    {{ header (name, tag = kwargs.get ("tag", "h2")) }}
+    {{ header
+          ( name.capitalize ().replace ("_", " ")
+          , tag = kwargs.get ("tag", "h2")
+          )
+    }}
     {%- if caller %}
       {{- caller (body) -}}
     {%- else %}
@@ -214,6 +242,9 @@
   {% endcall %} {# section #}
   {% call(attrs) section (resource, rst_cargo, "attributes") -%}
     {{ attributes (resource, attrs) }}
+  {% endcall %} {# section #}
+  {% call(crs) section (resource, rst_cargo, "cross_references") -%}
+    {{ e_type_cross_refs (crs) }}
   {% endcall %} {# section #}
 {%- endmacro -%} {#- e_type -#}
 

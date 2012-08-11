@@ -29,6 +29,7 @@
 #     7-Aug-2012 (CT) Creation
 #     8-Aug-2012 (CT) Continue creation
 #    10-Aug-2012 (CT) Continue creation..
+#    11-Aug-2012 (CT) Add `cross_references`
 #    ««revision-date»»···
 #--
 
@@ -163,6 +164,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             attrs    = resource.attributes
             children = E_Type.children
             parents  = E_Type.parents
+            ref_map  = E_Type.Ref_Map
             rel_root = E_Type.relevant_root
             result   = dict \
                 ( description = _T (E_Type.__doc__)
@@ -189,6 +191,10 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 v = self._response_ref_e_type (resource, rel_root)
                 if v :
                     result ["relevant_root"] = v
+            if ref_map :
+                v = list (self._response_ref_map (resource, ref_map))
+                if v :
+                    result ["cross_references"] = v
             try :
                 resource.scope.rollback () ### Remove example objects, if any
             except Exception as exc :
@@ -213,14 +219,24 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                         yield ref
         # end def _response_ref_e_types
 
-        def _response_ref_e_type (self, resource, e_type) :
+        def _response_ref_e_type (self, resource, e_type, ** kw) :
             url = resource.e_type_href (e_type)
             if url :
                 return dict \
                     ( type_name = e_type.type_name
                     , url       = url
+                    , ** kw
                     )
         # end def _response_ref_e_type
+
+        def _response_ref_map (self, resource, ref_map) :
+            for et in sorted (ref_map, key = TFL.Getter.type_name) :
+                eias = ref_map [et]
+                ref = self._response_ref_e_type \
+                    (resource, et, attributes = sorted (eias))
+                if ref :
+                    yield ref
+        # end def _response_ref_map
 
     GET = _RST_MOM_Doc_E_Type_GET_ # end class
 

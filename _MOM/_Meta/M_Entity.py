@@ -139,6 +139,8 @@
 #     3-Aug-2012 (CT) Add `Ref_Opt_Map` and `Ref_Req_Map`, remove `link_map`
 #     4-Aug-2012 (CT) Add `E_Type` to `M_E_Type` instances
 #     7-Aug-2012 (CT) Add `parents`
+#    11-Aug-2012 (CT) Add `Ref_Map` (union of `Ref_Opt_Map` and `Ref_Req_Map`)
+#    11-Aug-2012 (CT) Fix `_calc_ref_map` (`k.type_name`, `if v`)
 #    ««revision-date»»···
 #--
 
@@ -540,6 +542,7 @@ class M_Id_Entity (M_Entity) :
             , epkified_raw     = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
             , is_relevant      = cls.is_relevant or (not cls.is_partial)
+            , _all_ref_map     = None
             , _all_ref_opt_map = None
             , _all_ref_req_map = None
             , _own_ref_opt_map = TFL.defaultdict (set)
@@ -781,6 +784,16 @@ class M_E_Type_Id (M_E_Type) :
     Manager        = MOM.E_Type_Manager.Id_Entity
 
     @property
+    def Ref_Map (cls) :
+        result = cls._all_ref_map
+        if result is None :
+            result = cls._all_ref_map = {}
+            result.update (cls.Ref_Opt_Map)
+            result.update (cls.Ref_Req_Map)
+        return result
+    # end def Ref_Map
+
+    @property
     def Ref_Opt_Map (cls) :
         result = cls._all_ref_opt_map
         if result is None :
@@ -822,14 +835,15 @@ class M_E_Type_Id (M_E_Type) :
         result = TFL.defaultdict (set)
         for b in cls.__bases__ :
             for k, v in getattr (b, name, {}).iteritems () :
-                if refuse and k in refuse :
+                if refuse and k.type_name in refuse :
                     def _filter (k, v):
                         for n in v :
                             a = getattr (k, n, None)
                             if not isinstance (a, MOM.Attr.Link_Role) :
                                 yield a
-                    v = _filter (k, v)
-                result [k].update (v)
+                    v = tuple (_filter (k, v))
+                if v :
+                    result [k].update (v)
         for k, v in getattr (cls, _name).iteritems () :
             if not k.is_partial :
                 result [k].update (v)
