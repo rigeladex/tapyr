@@ -60,6 +60,10 @@ style_sheet = Style_Sheet \
                         , color            = "inherit"
                         , display          = "block"
                         )
+                    , Rule
+                        ( "td + td"
+                        , border_left      = "2px solid " + P.color_medium_grey
+                        )
                     ]
                 )
             , Rule

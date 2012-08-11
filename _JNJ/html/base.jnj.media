@@ -141,6 +141,7 @@ style_sheet = Style_Sheet \
                 , font_size        = "small"
                 , line_height      = 1.35
                 , margin_left      = Percent (-100)
+                , overflow         = "hidden"
                 , padding          = TRBL (Em (1./4), P.col_padding, 0)
                 , right            = P.nav_col.width + 3 * P.col_padding
                 , width            = P.nav_col.width

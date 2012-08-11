@@ -218,7 +218,8 @@ style_sheet = Style_Sheet \
                 , font_weight    = "normal"
                 , list_style     = "none"
                 , margin         = 0
-                , padding        = 0
+                , overflow       = "hidden"
+                , padding        = TRBL0 (l = Em (1./8))
                 , children       =
                     [ Rule ("label", ** P.nav_col.color_spec_label)
                     ]

@@ -79,8 +79,10 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
         if "name" not in kw :
             kw ["name"] = self.E_Type.type_base_name
         if "short_title" not in kw :
-            kw ["short_title"] = _T (self.E_Type.type_base_name)
+            kw ["short_title"] = self.E_Type.type_base_name
         self.__super.__init__ (** kw)
+        if not self.title :
+            self.title = self.E_Type.__doc__
     # end def __init__
 
 E_Type = _RST_TOP_MOM_Doc_E_Type_ # end class
@@ -101,7 +103,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         self.__super.__init__ (** kw)
         if not self.short_title :
             self.short_title = self.PNS._._bname
-        if not self.title:
+        if not self.title :
             self.title = self.PNS.__doc__
     # end def __init__
 

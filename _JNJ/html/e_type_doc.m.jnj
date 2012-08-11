@@ -223,8 +223,7 @@
 
 {%- macro e_type (resource, rst_cargo) -%}
   <h1 class="headline">
-    {{- resource.title or resource.short_title }}
-    [{{ rst_cargo ["type_name"] }}] {#-#}
+    {{- rst_cargo ["type_name"] -}}
   </h1>
   {{ section (resource, rst_cargo, "type_name") }}
   {{ section (resource, rst_cargo, "description") }}
@@ -240,11 +239,11 @@
   {% call(cs) section (resource, rst_cargo, "children") -%}
     {{ e_type_refs (cs) }}
   {% endcall %} {# section #}
-  {% call(attrs) section (resource, rst_cargo, "attributes") -%}
-    {{ attributes (resource, attrs) }}
-  {% endcall %} {# section #}
   {% call(crs) section (resource, rst_cargo, "cross_references") -%}
     {{ e_type_cross_refs (crs) }}
+  {% endcall %} {# section #}
+  {% call(attrs) section (resource, rst_cargo, "attributes") -%}
+    {{ attributes (resource, attrs) }}
   {% endcall %} {# section #}
 {%- endmacro -%} {#- e_type -#}
 

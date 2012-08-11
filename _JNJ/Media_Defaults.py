@@ -327,7 +327,7 @@ class Media_Defaults (Definition) :
         )
     color_spec_sub_heading = P_dict \
         ( background_color = P.background_color
-        , color            = P.color_dark_grey
+        , color            = P.color_half_grey
         )
     color_spec_term        = P_dict \
         ( background_color = RGB_X ("#E6E6E6")
