@@ -74,6 +74,7 @@
 #    10-Aug-2012 (MG) Change handling of composite attributes in
 #                     `_Q_Result_Attrs_.sa_query`
 #    11-Aug-2012 (MG) Change result of `_Q_Result_Attrs_` to namedtuple
+#    11-Aug-2012 (MG) Fix `namedtuple` of `_Q_Result_Attrs_`
 #    ««revision-date»»···
 #--
 
@@ -406,11 +407,11 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     class Attr_Result (tuple) :
 
         def __getattr__ (self, name) :
-            if name in self._NAME_MAP :
-                result = self [self._NAME_MAP [name]]
+            if name in self._NAMES :
+                result = self [self._NAMES [name]]
                 setattr (self, name, result)
                 return result
-            self.__super.__getattr__ (name)
+            raise AttributeError (name)
         # end def __getattr__
 
     # end class Attr_Result
@@ -479,7 +480,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
             ( "Attr_Result"
             , (self.Attr_Result, )
             , dict
-                ( _NAME_MAP =
+                ( _NAMES =
                     dict ((n, i) for (i, n) in enumerate (self.attr_names))
                 )
             )
@@ -528,7 +529,11 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                         if len (cols) > 1 :
                             kinds.append   ((cols [0].MOM_C_Kind, cols))
                         else :
-                            kinds.append   ((cols [0].MOM_Kind, cols [0]))
+                            kinds.append \
+                                ( ( getattr (cols [0], "MOM_Kind", None)
+                                  , cols [0]
+                                  )
+                                )
             else :
                 joins       = True
                 kinds       = [(None, c) for c in columns]
