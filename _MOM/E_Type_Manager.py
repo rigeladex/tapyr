@@ -256,12 +256,13 @@ class Id_Entity (Entity) :
     # end def cooked_epk
 
     def example (self, full = False) :
-        try :
-            return self.instance_or_new \
-                (raw = True, ** self._etype.example_attrs (full))
-        except Exception as exc :
-            if __debug__ :
-                logging.exception ("\n    %s.example", self.type_name)
+        with self.home_scope.example_etm (self) as x_etm :
+            try :
+                return x_etm.instance_or_new \
+                    (raw = True, ** x_etm._etype.example_attrs (full))
+            except Exception as exc :
+                if __debug__ :
+                    logging.exception ("\n    %s.example", self.type_name)
     # end def example
 
     def exists (self, * epk, ** kw) :

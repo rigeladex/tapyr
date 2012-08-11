@@ -139,6 +139,54 @@ def _atexit () :
             pass
 # end def _atexit
 
+class _Example_ (TFL.Meta.Object) :
+    """Encapsulate example app_type and scope."""
+
+    Table = {}
+
+    def __init__ (self, p_scope, db_url = "sqlite:///:memory:") :
+        self.p_scope   = p_scope
+        self.db_url    = db_url
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def app_type (self) :
+        p_scope = self.p_scope
+        p_apt   = p_scope.app_type.parent
+        try :
+            result = self.Table [p_apt.name]
+        except KeyError :
+            import _MOM._EMS.Backends
+            import _MOM.App_Type
+            EMS, DBW, DBS = MOM.EMS.Backends.get (self.db_url)
+            result = self.Table [p_apt.name] = p_apt.Derived (EMS, DBW)
+        return result
+    # end def app_type
+
+    @TFL.Contextmanager
+    def context (self, current_scope) :
+        if getattr (current_scope, "_is_example_scope", False) :
+            yield current_scope
+        else :
+            scope = self.scope
+            try :
+                scope.rollback ()
+            except Exception :
+                logging.exception ("Example scope rollback error")
+            with scope.as_active () :
+                yield scope
+    # end def context
+
+    @TFL.Meta.Once_Property
+    def scope (self) :
+        result = Scope.new (self.app_type, self.db_url)
+        result._is_example_scope = True
+        result.stop_change_recorder ()
+        return result
+    # end def scope
+
+# end class _Example_
+
 class Scope (TFL.Meta.Object) :
 
     active                 = None
@@ -169,6 +217,11 @@ class Scope (TFL.Meta.Object) :
     uncommitted_changes    = property (TFL.Getter.ems.uncommitted_changes)
 
     PNS_Proxy              = None
+
+    @TFL.Meta.Once_Property
+    def _Example (self) :
+        return _Example_ (self)
+    # end def _Example
 
     class Pkg_NS :
         """Just a container for the scope-specific etype-proxies for the
@@ -464,6 +517,14 @@ class Scope (TFL.Meta.Object) :
             name = entity.type_name
         return self.app_type.entity_type (self.canonical_type_name (name))
     # end def entity_type
+
+    @TFL.Contextmanager
+    def example_etm (self, etm) :
+        """Return a E_Type_Manager for the E_Type of `etm` in an example scope."""
+        with self._Example.context (self) as x_scope :
+            x_etm = x_scope [etm.type_name]
+            yield x_etm
+    # end def example_etm
 
     @TFL.Meta.Lazy_Method_RLV
     def g_incorrect (self, gauge = Gauge_Logger ()) :

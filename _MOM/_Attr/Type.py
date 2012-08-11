@@ -236,7 +236,6 @@
 #     3-Aug-2012 (CT) Redefine `A_Link_Role.E_Type` and `.P_Type` as aliases
 #                     for `role_type`
 #     5-Aug-2012 (CT) Change `_A_Id_Entity_.from_string` to allow pid
-#     7-Aug-2012 (CT) Return `result.epk_raw` from `_A_Id_Entity_.example`
 #     7-Aug-2012 (CT) Add `_A_Composite_.example`
 #     8-Aug-2012 (CT) Robustify `A_Link_Role.ui_name`
 #     8-Aug-2012 (CT) Guard against exceptions in `example`
@@ -969,7 +968,7 @@ class _A_Id_Entity_ (_A_Entity_) :
                     logging.exception \
                         ("\n    %s [%s] .example", self, self.E_Type)
             else :
-                return result.epk_raw
+                return self.as_string (result)
     # end def example
 
     @TFL.Meta.Once_Property
