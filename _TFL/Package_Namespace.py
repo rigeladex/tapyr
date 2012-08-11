@@ -137,6 +137,7 @@
 #     8-Aug-2012 (CT) Add `__doc__` to `Package_Namespace`
 #    11-Aug-2012 (MG) Add support for import callbacks
 #    11-Aug-2012 (MG) Support args/kw for import callback
+#    11-Aug-2012 (MG) Fix import callback
 #    ««revision-date»»···
 #--
 
@@ -319,10 +320,9 @@ class Package_Namespace (object) :
             ### run the callbacks immediately
             self._run_import_callback (module, (callback, args, kw))
         else :
-            module_name = module.__name__
             package     = "__main__"
             if "." in module_name :
-                package, module_name = module.__name__.rsplit (".", 1)
+                package, module_name = module_name.rsplit (".", 1)
             cls._Import_Callback_Map [package] [module].append \
                 ((callback, args, kw))
     # end def _Add_Import_Callback
@@ -457,10 +457,10 @@ class Package_Namespace (object) :
             module_name = module.__name__
             package     = "__main__"
             if "." in module_name :
-                package, module_name = module.__name__.rsplit (".", 1)
+                package, module_name = module_name.rsplit (".", 1)
             if package in self._Import_Callback_Map :
                 pkg_map       = self._Import_Callback_Map [package]
-                callback_spec = pkg_map.pop (module_name)
+                callback_spec = pkg_map.pop (module_name, ())
         if callback_spec :
             cb, args, kw          = callback_spec
             cb (module, * args, ** kw)
