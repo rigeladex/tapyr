@@ -1,6 +1,14 @@
 MOM To-Do
 =========
 
+- MOM.Meta.M_Attr_Spec
+
+  * check for redefinition of attributes to unrelated types (raise TypeError)
+
+    + a redefinition must inherit from the parent's attribute
+
+    + Parent.foo (A_String) <-error-> Child.foo (A_Int)
+
 - Query expressions (http://lucumr.pocoo.org/2011/7/19/sqlachemy-and-you/)
 
   * extract
