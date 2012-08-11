@@ -135,11 +135,14 @@
 #    30-Aug-2010 (CT) `_import_names` changed to check against `basestring`
 #     8-Aug-2012 (CT) Improve names of name-attributes
 #     8-Aug-2012 (CT) Add `__doc__` to `Package_Namespace`
+#    11-Aug-2012 (MG) Add support for import callbacks
 #    ««revision-date»»···
 #--
 
 import re
 import sys
+
+from   collections import defaultdict
 
 def _caller_globals () :
     return sys._getframe (1).f_back.f_globals
@@ -277,6 +280,8 @@ class Package_Namespace (object) :
     _leading_underscores = re.compile (r"(\.|^)_+")
     _check_clashes       = True
 
+    _Import_Callback_Map = defaultdict (lambda : defaultdict (list))
+
     def __init__ (self, module_name = None, name = None) :
         c_scope = _caller_globals ()
         if not module_name :
@@ -305,6 +310,17 @@ class Package_Namespace (object) :
         for s, p in kw.items () :
             self._import_1 (mod, s, s, p, self.__dict__, check_clashes)
     # end def _Add
+
+    @classmethod
+    def _Add_Import_Callback (cls, module_name, * callbacks) :
+        module = sys.modules.get (module_name)
+        if module is not None :
+            ### run the callbacks immediately
+            self._run_import_callbacks (module, cb)
+        else :
+            package, module = module_name.rsplit (".", 1)
+            cls._Import_Callback_Map [package] [module].extend (callbacks)
+    # end def _Add_Import_Callback
 
     def _Cache_Module (self, module_name, mod) :
         if not module_name in self.__modules :
@@ -345,7 +361,8 @@ class Package_Namespace (object) :
             symbols = symbols [1:]
         if symbols :
             self._import_names (mod, symbols, result, check_clashes)
-        self.__dict__.update (result)
+        self.__dict__.update       (result)
+        self._run_import_callbacks (mod)
     # end def _Export
 
     def _Export_Module (self) :
@@ -362,7 +379,8 @@ class Package_Namespace (object) :
                     % (module_name, mod, old)
                     )
         self.__dict__  [module_name] = mod
-        self._Cache_Module (module_name, mod)
+        self._Cache_Module         (module_name, mod)
+        self._run_import_callbacks (mod)
     # end def _Export_Module
 
     def _Import_Module (self, module) :
@@ -428,6 +446,17 @@ class Package_Namespace (object) :
         import linecache
         linecache.clearcache ()
     # end def _Reload
+
+    def _run_import_callbacks (self, module, callbacks = ()) :
+        if not callbacks :
+            package, module_name = module.__name__.rsplit (".", 1)
+            if package in self._Import_Callback_Map :
+                pkg_map = self._Import_Callback_Map [package]
+                if module_name in pkg_map :
+                    callbacks = pkg_map.pop (module_name)
+        for cb in callbacks :
+            cb (module)
+    # end def _run_import_callbacks
 
     def __repr__ (self) :
         return "<%s %s>" % (self.__class__.__name__, self.__name__)
