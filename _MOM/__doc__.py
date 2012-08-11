@@ -1186,10 +1186,7 @@ inherit from, a `relevant_root`:
       ...
     TypeError: Object needs the arguments (), got (u'mighty_mouse',) instead
     >>> scope.MOM.Named_Object.instance ("mighty_mouse")
-    Traceback (most recent call last):
-      ...
-    TypeError: Cannot query `instance` of non-root type `Named_Object`.
-    Use one of the types BMT.Rodent, BMT.Trap instead.
+    BMT.Mouse (u'mighty_mouse')
 
     >>> scope.BMT.Rodent.instance ("mighty_mouse")
     BMT.Mouse (u'mighty_mouse')

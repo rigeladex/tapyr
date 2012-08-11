@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -41,6 +41,7 @@
 #    10-May-2011 (CT) `hidden` added
 #    14-Jul-2011 (CT) `head_line.max_length` increased to 256 (from 120)
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    11-Aug-2012 (CT) Set `Page` as `Object_PN.default_child`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ import _GTW._OMP._SWP.Entity
 from   _GTW._OMP._SWP.Format    import A_Format
 
 from   _TFL.I18N                import _, _T, _Tn
+
+import _TFL.Decorator
 
 import datetime
 
@@ -128,6 +131,7 @@ class Page_Mixin (_Ancestor_Essence) :
 
 _Ancestor_Essence = GTW.OMP.SWP.Object_PN
 
+@TFL.Add_To_Class ("default_child", _Ancestor_Essence)
 class Page (_Ancestor_Essence, Page_Mixin) :
     """Model a static web page."""
 

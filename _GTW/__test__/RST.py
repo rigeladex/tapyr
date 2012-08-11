@@ -1420,7 +1420,6 @@ _test_example_1 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    ...     scope.rollback ()
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
@@ -1429,25 +1428,25 @@ _test_example_1 = r"""
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
-    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
-    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
     SRM.Crew_Member : ------
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
     SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ------
-    SRM.Regatta_C : ------
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'43', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ------
-    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
-    SRM.Team : ------
-    SRM.Team_has_Boat_in_Regatta : ------
-    SWP.Clip_O : ------
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999.5', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1467,7 +1466,6 @@ _test_example_2 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    ...     scope.rollback ()
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
@@ -1476,25 +1474,25 @@ _test_example_2 = r"""
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
-    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
-    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
     SRM.Crew_Member : ------
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
     SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ------
-    SRM.Regatta_C : ------
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'43', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ------
-    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
-    SRM.Team : ------
-    SRM.Team_has_Boat_in_Regatta : ------
-    SWP.Clip_O : ------
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999.5', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1511,25 +1509,24 @@ _test_example_3 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    ...     scope.rollback ()
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
-    SWP.Clip_O : ------
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
     SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SRM.Team : (u'', u'foo', 'SRM.Team')
-    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
-    SRM.Regatta_H : ------
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999.5', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
     SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_C : ------
-    SRM.Race_Result : ------
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'43', 'SRM.Race_Result')
     SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
     SRM.Crew_Member : ------
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Boat_in_Regatta : ------
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat : (u'', u'AUT', u'2827', u'X', 'SRM.Boat')
+    SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
@@ -1537,9 +1534,9 @@ _test_example_3 = r"""
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Entity_created_by_Person : ------
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
-    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Phone')
-    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Email')
-    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Address')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), 'PAP.Company_has_Phone')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 
@@ -1558,7 +1555,6 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    ...     scope.rollback ()
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
@@ -1567,25 +1563,25 @@ _test_example_4 = r"""
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
-    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
-    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
     SRM.Crew_Member : ------
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
     SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ------
-    SRM.Regatta_C : ------
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'43', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ------
-    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
-    SRM.Team : ------
-    SRM.Team_has_Boat_in_Regatta : ------
-    SWP.Clip_O : ------
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999.5', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1599,7 +1595,6 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    ...     scope.rollback ()
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
@@ -1608,25 +1603,25 @@ _test_example_4 = r"""
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Address')
-    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', 'PAP.Person_has_Email')
-    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'', u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : ((u'', u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
     SRM.Crew_Member : ------
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
     SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ------
-    SRM.Regatta_C : ------
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'43', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ------
-    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
-    SRM.Team : ------
-    SRM.Team_has_Boat_in_Regatta : ------
-    SWP.Clip_O : ------
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999.5', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1640,25 +1635,24 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    ...     scope.rollback ()
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
-    SWP.Clip_O : ------
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
     SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SRM.Team : (u'', u'foo', 'SRM.Team')
-    SRM.Sailor : (u'', u'AUT', u'499999.5', u'', 'SRM.Sailor')
-    SRM.Regatta_H : ------
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999.5', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
     SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_C : ------
-    SRM.Race_Result : ------
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'43', 'SRM.Race_Result')
     SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
     SRM.Crew_Member : ------
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Boat_in_Regatta : ------
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat : (u'', u'AUT', u'2827', u'X', 'SRM.Boat')
+    SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
@@ -1666,9 +1660,9 @@ _test_example_4 = r"""
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Entity_created_by_Person : ------
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
-    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Phone')
-    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Email')
-    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), u'', 'PAP.Company_has_Address')
+    PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), 'PAP.Company_has_Phone')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 

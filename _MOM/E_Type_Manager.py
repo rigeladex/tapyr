@@ -115,6 +115,7 @@
 #     5-Aug-2012 (CT) Change `_cooked_role` to accept `int`
 #     7-Aug-2012 (CT) Change `An_Entity.example` default of `full` to `True`
 #     8-Aug-2012 (CT) Guard against exceptions in `example`
+#    11-Aug-2012 (CT) Change `Id_Entity.example` to ignore `Partial_Type`
 #    ««revision-date»»···
 #--
 
@@ -260,6 +261,8 @@ class Id_Entity (Entity) :
             try :
                 return x_etm.instance_or_new \
                     (raw = True, ** x_etm._etype.example_attrs (full))
+            except MOM.Error.Partial_Type as exc :
+                pass
             except Exception as exc :
                 if __debug__ :
                     logging.exception ("\n    %s.example", self.type_name)

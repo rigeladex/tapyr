@@ -84,6 +84,7 @@
 #     4-Aug-2012 (CT) Call `_rollback_uncommitted_changes`
 #     8-Aug-2012 (CT) Change `add` to check roles amiss before touching tables
 #                     (ditto for `_remove`)
+#    11-Aug-2012 (CT) Change `instance` to delegate non-root types to `__super`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,7 @@ from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.predicate        import intersection_n
 
 import itertools
+import logging
 
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
@@ -194,21 +196,19 @@ class Manager (MOM.EMS._Manager_) :
     # end def exists
 
     def instance (self, Type, epk) :
-        root   = Type.relevant_root
-        hpk    = Type.epk_to_hpk (* epk)
+        root = Type.relevant_root
+        hpk  = Type.epk_to_hpk (* epk)
         if root :
             result = self._tables [root.type_name].get (hpk)
             if not isinstance (result, Type.Essence) :
+                logging.error \
+                    ( "Got %r that's not an instance of %s"
+                    , result, Type.type_name
+                    )
                 result = None
-            return result
-        raise TypeError \
-            ( "\n".join
-                ( ( _T ("Cannot query `instance` of non-root type `%s`.")
-                  , _T ("Use one of the types %s instead.")
-                  )
-                )
-            % (_T (Type.ui_name), ", ".join (sorted (Type.relevant_roots)))
-            )
+        else :
+            return self.__super.instance (Type, epk)
+        return result
     # end def instance
 
     def load_root (self) :

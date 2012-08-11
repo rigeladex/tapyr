@@ -71,6 +71,7 @@
 #     2-Jul-2012 (MG) `add` removed again
 #     4-Aug-2012 (CT) Add `remove` and `restored`, factor `_reset_transaction`
 #     4-Aug-2012 (CT) Add `_rollback_uncommitted_changes`
+#    11-Aug-2012 (CT) Allow non-root queries in `instance`
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,7 @@ import _TFL.Q_Result
 from   _TFL.I18N             import _, _T, _Tn
 
 import itertools
+import logging
 
 class _Manager_ (TFL.Meta.Object) :
     """Base class for entity managers."""
@@ -175,25 +177,20 @@ class _Manager_ (TFL.Meta.Object) :
     # end def exists
 
     def instance (self, Type, epk) :
-        root = Type.relevant_root
-        if root :
-            epk_dict = dict (zip (Type.epk_sig, epk))
-            try :
-                result = self.query (Type).filter (** epk_dict).one ()
-            except IndexError :
+        result   = None
+        epk_dict = dict (zip (Type.epk_sig, epk))
+        try :
+            result = self.query (Type, ** epk_dict).one ()
+        except IndexError :
+            pass
+        else :
+            if not isinstance (result, Type.Essence) :
+                logging.error \
+                    ( "Got %r that's not an instance of %s"
+                    , result, Type.type_name
+                    )
                 result = None
-            else :
-                if not isinstance (result, Type.Essence) :
-                    result = None
-            return result
-        raise TypeError \
-            ( "\n".join
-                ( ( _T ("Cannot query `instance` of non-root type `%s`.")
-                  , _T ("Use one of the types %s instead.")
-                  )
-                )
-            % (_T (Type.ui_name), ", ".join (sorted (Type.relevant_roots)))
-            )
+        return result
     # end def instance
 
     def load_root (self) :

@@ -239,6 +239,8 @@
 #     7-Aug-2012 (CT) Add `_A_Composite_.example`
 #     8-Aug-2012 (CT) Robustify `A_Link_Role.ui_name`
 #     8-Aug-2012 (CT) Guard against exceptions in `example`
+#    11-Aug-2012 (CT) Define `_A_Id_Entity_.example` as `property`,
+#                     not `Once_Property` (result might be `rollback`-ed)
 #    ««revision-date»»···
 #--
 
@@ -955,7 +957,7 @@ class _A_Id_Entity_ (_A_Entity_) :
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
 
-    @TFL.Meta.Once_Property
+    @property
     def example (self) :
         etm = self.etype_manager ()
         if etm and etm.is_partial :
@@ -969,6 +971,11 @@ class _A_Id_Entity_ (_A_Entity_) :
                         ("\n    %s [%s] .example", self, self.E_Type)
             else :
                 return self.as_string (result)
+        else :
+            raise MOM.Error.Partial_Type \
+                ( "Partial E_Type %s needs a default child"
+                % self.E_Type.type_name
+                )
     # end def example
 
     @TFL.Meta.Once_Property
