@@ -32,6 +32,7 @@
 #    23-May-2012 (RS) Rename `A_IP_Address` -> `_A_IP_Address_`
 #    23-May-2012 (RS) Add `_syntax_re` for `_A_IP_Address_`
 #    10-Aug-2012 (RS) make all IP-related types decendants of `_A_Composite_`
+#    11-Aug-2012 (MG) Preparation for special SAS query functions
 #    ««revision-date»»···
 #--
 
@@ -585,6 +586,30 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
         )
 
 # end class A_MAC_Address
+
+class _SAS_IP4_Address_Query_Mixin_ (TFL.Meta.Object) :
+    """Special quey code for IP4 address objects"""
+
+    _Handled_Compare_Operations = set (("eq", "ne"))
+
+    @TFL.Meta.Once_Property
+    def _QUERY_ATTRIBUTES (self) :
+        return ("numeric_address", )
+    # end def _QUERY_ATTRIBUTES
+
+    def in_ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.func.IP4_Address_IN ()
+    # end def in_
+
+# end class _SAS_IP4_Address_Query_Mixin_
+
+def _add_query_mixins (module) :
+    A2C = TFL.Add_To_Class
+    A2C ("SAS_Query_Mixin", A_IP4_Address) (_SAS_IP4_Address_Query_Mixin_)
+# end def _add_query_mixins
+
+GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAS.Query", _add_query_mixins)
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()

@@ -29,6 +29,7 @@
 #    22-May-2012 (RS) Creation
 #    10-Aug-2012 (RS) IP addresses are now composite. Fix tests for new
 #                     check of subnet mask (bits right of mask must be 0)
+#    11-Aug-2012 (MG) New tests for query functions added
 #    ««revision-date»»···
 #--
 
@@ -421,10 +422,35 @@ _test_code = """
          expected type  : `IP6-network`
          got      value : `1:2:3::/1290`
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask must be zero.
+    >>> scope.destroy ()
 """
 
+_query_test = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> NET = scope.GTW.OMP.NET
+    >>> IP4_Address = NET.IP4_Address
+    >>> IP4_Network = NET.IP4_Network
+    >>> IP6_Address = NET.IP6_Address
+    >>> IP6_Network = NET.IP6_Network
+    >>> i41 = IP4_Address (dict (address = '192.168.1.1'))
+    >>> i42 = IP4_Address (dict (address = '192.168.1.2'))
+    >>> i43 = IP4_Address (dict (address = '192.168.1.20'))
+    >>> nm4 = IP4_Network (dict (address = '192.168.1.0/28'))
+    >>> scope.commit ()
+
+    >>> address = i41.address
+    >>> mask    = nm4.address
+    >>> IP4_Address.query (Q.address == address).count ()
+    1
+    >>> IP4_Address.query (Q.address != address).count ()
+    2
+    >>> IP4_Address.query (Q.address.IN (mask)).count ()
+    >>> scope.destroy ()
+"""
 from _GTW.__test__.model import *
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict \
+    ( dict (test_code = _test_code, query_test = _query_test))
 
 ### __END__ GTW.__test__.Attr_Net

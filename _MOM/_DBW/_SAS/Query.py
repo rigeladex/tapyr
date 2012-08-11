@@ -61,6 +61,7 @@
 #                     fixed
 #    10-Jun-2012 (MG) `Join_Query` Support for `tn_pid` added
 #    29-Jun-2012 (MG) `Query.__init__` map `type_name` to `Type_Name`
+#    11-Aug-2012 (MG) Change composite query handling
 #    ««revision-date»»···
 #--
 
@@ -161,8 +162,12 @@ class MOM_Query (_MOM_Query_) :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
-                comp_query = MOM_Composite_Query \
-                    (e_type, attr.P_Type, kind, sa_table)
+                qclass = _MOM_Composite_Query_.__class__ \
+                    ( "%s_%s_Query_Class" % (e_type.type_name, name)
+                    , (kind.SAS_Query_Mixin, _MOM_Composite_Query_)
+                    , {}
+                    )
+                comp_query = qclass (e_type, attr.P_Type, kind, sa_table)
                 self._add_q (comp_query, kind, name, attr.ckd_name)
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind, attr))
@@ -217,8 +222,10 @@ class MOM_Query (_MOM_Query_) :
 
 # end class MOM_Query
 
-class MOM_Composite_Query (_MOM_Query_) :
-    """Query attributes of an composite attribite"""
+class _MOM_Composite_Query_ (_MOM_Query_) :
+    """Base class for query attributes of a composite attribute"""
+
+    _Handled_Compare_Operations = set ()
 
     def __init__ (self, owner_etype, e_type, kind, sa_table) :
         self._E_TYPE      = (e_type, )
@@ -269,38 +276,47 @@ class MOM_Composite_Query (_MOM_Query_) :
                     setattr (self, name, col)
     # end def __init__
 
-    def _compare (self, op, rhs) :
-        result = []
-        for an in self._ATTRIBUTES :
-            result.append (op (getattr (self, an), getattr (rhs, an, rhs)))
-        return sql.and_ (* result)
-    # end def _compare
+    def _handle_operator_ (self, rhs, op, op_desc) :
+        if op in self._Handled_Compare_Operations :
+            result = []
+            op     = getattr (operator, op)
+            for an in self._QUERY_ATTRIBUTES :
+                result.append \
+                    (op (getattr (self, an), getattr (rhs, an, rhs)))
+            return sql.and_ (* result)
+        raise TypeError \
+            ("`%s` is not supported for composites" % (op_desc, ))
+    # end def _handle_operator_
 
     def __eq__ (self, rhs) :
-        return self._compare (operator.eq, rhs)
+        return self._handle_operator_ (rhs, "eq",  "==")
     # end def __eq__
 
     def __ne__ (self, rhs) :
-        return self._compare (operator.ne, rhs)
+        return self._handle_operator_ (rhs, "ne",  "!=")
     # end def __ne__
 
     def __le__ (self, rhs) :
-        raise TypeError ("`<` is not supported for composits")
+        return self._handle_operator_ (rhs, "le",  "<=")
     # end def __le__
 
     def __lt__ (self, rhs) :
-        raise TypeError ("`<=` is not supported for composits")
+        return self._handle_operator_ (rhs, "lt",  "<")
     # end def __lt__
 
     def __gt__ (self, rhs) :
-        raise TypeError ("`>` is not supported for composits")
+        return self._handle_operator_ (rhs, "gt",  ">")
     # end def __gt__
 
     def __ge__ (self, rhs) :
-        raise TypeError ("`>=` is not supported for composits")
+        return self._handle_operator_ (rhs, "ge",  ">=")
     # end def __ge__
 
-# end class MOM_Composite_Query
+    def in_ (self, rhs) :
+        return self._handle_operator_ (rhs, "in_", "in")
+    # end def in_
+
+# end class _MOM_Composite_Query_
 
 class Join_Query (_MOM_Query_) :
     """A query which requires the joining of two tables."""
@@ -361,6 +377,21 @@ class Join_Query (_MOM_Query_) :
 
 # end class Join_Query
 
+@TFL.Add_To_Class ("SAS_Query_Mixin", MOM.Attr._A_Composite_)
+class _Default_Comp_Mixin_ (TFL.Meta.Object) :
+    """Default implementation of the compare operations for composite
+       attributes.
+    """
+
+    _Handled_Compare_Operations = set (("eq", "ne"))
+
+    @Once_Property
+    def _QUERY_ATTRIBUTES (self) :
+        return self._ATTRIBUTES
+    # end def _QUERY_ATTRIBUTES
+
+# end class _Default_Comp_Mixin_
+
 if __name__ != "__main__" :
-    MOM.DBW.SAS._Export ("*")
+    MOM.DBW.SAS._Export ("*", "_MOM_Composite_Query_")
 ### __END__ MOM.DBW.SAS.Query
