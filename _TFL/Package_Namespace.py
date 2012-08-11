@@ -136,6 +136,7 @@
 #     8-Aug-2012 (CT) Improve names of name-attributes
 #     8-Aug-2012 (CT) Add `__doc__` to `Package_Namespace`
 #    11-Aug-2012 (MG) Add support for import callbacks
+#    11-Aug-2012 (MG) Support args/kw for import callback
 #    ««revision-date»»···
 #--
 
@@ -312,14 +313,18 @@ class Package_Namespace (object) :
     # end def _Add
 
     @classmethod
-    def _Add_Import_Callback (cls, module_name, * callbacks) :
+    def _Add_Import_Callback (cls, module_name, callback, * args, ** kw) :
         module = sys.modules.get (module_name)
         if module is not None :
             ### run the callbacks immediately
-            self._run_import_callbacks (module, cb)
+            self._run_import_callback (module, (callback, args, kw))
         else :
-            package, module = module_name.rsplit (".", 1)
-            cls._Import_Callback_Map [package] [module].extend (callbacks)
+            module_name = module.__name__
+            package     = "__main__"
+            if "." in module_name :
+                package, module_name = module.__name__.rsplit (".", 1)
+            cls._Import_Callback_Map [package] [module].append \
+                ((callback, args, kw))
     # end def _Add_Import_Callback
 
     def _Cache_Module (self, module_name, mod) :
@@ -361,8 +366,8 @@ class Package_Namespace (object) :
             symbols = symbols [1:]
         if symbols :
             self._import_names (mod, symbols, result, check_clashes)
-        self.__dict__.update       (result)
-        self._run_import_callbacks (mod)
+        self.__dict__.update      (result)
+        self._run_import_callback (mod)
     # end def _Export
 
     def _Export_Module (self) :
@@ -379,8 +384,8 @@ class Package_Namespace (object) :
                     % (module_name, mod, old)
                     )
         self.__dict__  [module_name] = mod
-        self._Cache_Module         (module_name, mod)
-        self._run_import_callbacks (mod)
+        self._Cache_Module        (module_name, mod)
+        self._run_import_callback (mod)
     # end def _Export_Module
 
     def _Import_Module (self, module) :
@@ -447,15 +452,18 @@ class Package_Namespace (object) :
         linecache.clearcache ()
     # end def _Reload
 
-    def _run_import_callbacks (self, module, callbacks = ()) :
-        if not callbacks :
-            package, module_name = module.__name__.rsplit (".", 1)
+    def _run_import_callback (self, module, callback_spec = ()) :
+        if not callback_spec :
+            module_name = module.__name__
+            package     = "__main__"
+            if "." in module_name :
+                package, module_name = module.__name__.rsplit (".", 1)
             if package in self._Import_Callback_Map :
-                pkg_map = self._Import_Callback_Map [package]
-                if module_name in pkg_map :
-                    callbacks = pkg_map.pop (module_name)
-        for cb in callbacks :
-            cb (module)
+                pkg_map       = self._Import_Callback_Map [package]
+                callback_spec = pkg_map.pop (module_name)
+        if callback_spec :
+            cb, args, kw          = callback_spec
+            cb (module, * args, ** kw)
     # end def _run_import_callbacks
 
     def __repr__ (self) :
