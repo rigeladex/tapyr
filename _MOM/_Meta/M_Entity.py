@@ -141,6 +141,7 @@
 #     7-Aug-2012 (CT) Add `parents`
 #    11-Aug-2012 (CT) Add `Ref_Map` (union of `Ref_Opt_Map` and `Ref_Req_Map`)
 #    11-Aug-2012 (CT) Fix `_calc_ref_map` (`k.type_name`, `if v`)
+#    12-Aug-2012 (CT) Add `use_indices`
 #    ««revision-date»»···
 #--
 
@@ -329,6 +330,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , app_type      = app_type
             , children      = {}
             , parents       = []
+            , use_indices   = set (cls.use_indices)
             , M_E_Type      = cls.M_E_Type
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
@@ -367,6 +369,7 @@ class M_Entity (M_E_Mixin) :
 
     def __new__ (mcls, name, bases, dct) :
         dct ["_default_child"] = dct.pop ("default_child", None)
+        dct ["use_indices"]    = dct.pop ("use_indices",   None) or []
         result = super (M_Entity, mcls).__new__ (mcls, name, bases, dct)
         return result
     # end def __new__
