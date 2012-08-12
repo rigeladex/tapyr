@@ -73,6 +73,7 @@
 #     4-Aug-2012 (CT) Add `_rollback_uncommitted_changes`
 #    11-Aug-2012 (CT) Allow non-root queries in `instance`
 #    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
+#    12-Aug-2012 (CT) Add `commit_context`
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,7 @@ import _MOM._SCM.Summary
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL.Decorator
 import _TFL.Q_Result
 
 from   _TFL.I18N             import _, _T, _Tn
@@ -158,6 +160,12 @@ class _Manager_ (TFL.Meta.Object) :
             self.session.commit     ()
             self._reset_transaction ()
     # end def commit
+
+    @TFL.Contextmanager
+    def commit_context (self) :
+        ### override as necessary, e.g., to lock tables in a database
+        yield
+    # end def commit_context
 
     def compact (self) :
         if self.uncommitted_changes :

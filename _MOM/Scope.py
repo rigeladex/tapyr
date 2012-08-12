@@ -103,6 +103,7 @@
 #     1-Aug-2012 (CT) Change `remove` to set __class__ to `._DESTROYED_E_TYPE`
 #     1-Aug-2012 (CT) Remove call to `.ems.rollback` from `commit`
 #     4-Aug-2012 (CT) Move `_DESTROYED_E_TYPE` to `.ems.remove`
+#    12-Aug-2012 (CT) Use `ems.commit_context`
 #    ««revision-date»»···
 #--
 
@@ -396,12 +397,13 @@ class Scope (TFL.Meta.Object) :
     def commit (self) :
         ems = self.ems
         ucc = ems.uncommitted_changes
-        if ucc :
-            errs = self.r_incorrect (eiter = ucc.entities_transitive (ems))
-            if errs :
-                exc = MOM.Error.Invariants (errs.errors)
-                raise exc
-        self.ems.commit ()
+        with ems.commit_context () :
+            if ucc :
+                errs = self.r_incorrect (eiter = ucc.entities_transitive (ems))
+                if errs :
+                    exc = MOM.Error.Invariants (errs.errors)
+                    raise exc
+            ems.commit ()
     # end def commit
 
     @TFL.Meta.Lazy_Method_RLV
