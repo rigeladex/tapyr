@@ -72,6 +72,7 @@
 #     4-Aug-2012 (CT) Add `remove` and `restored`, factor `_reset_transaction`
 #     4-Aug-2012 (CT) Add `_rollback_uncommitted_changes`
 #    11-Aug-2012 (CT) Allow non-root queries in `instance`
+#    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
 #    ««revision-date»»···
 #--
 
@@ -185,10 +186,6 @@ class _Manager_ (TFL.Meta.Object) :
             pass
         else :
             if not isinstance (result, Type.Essence) :
-                logging.error \
-                    ( "Got %r that's not an instance of %s"
-                    , result, Type.type_name
-                    )
                 result = None
         return result
     # end def instance

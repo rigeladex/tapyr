@@ -85,6 +85,7 @@
 #     8-Aug-2012 (CT) Change `add` to check roles amiss before touching tables
 #                     (ditto for `_remove`)
 #    11-Aug-2012 (CT) Change `instance` to delegate non-root types to `__super`
+#    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
 #    ««revision-date»»···
 #--
 
@@ -201,10 +202,6 @@ class Manager (MOM.EMS._Manager_) :
         if root :
             result = self._tables [root.type_name].get (hpk)
             if not isinstance (result, Type.Essence) :
-                logging.error \
-                    ( "Got %r that's not an instance of %s"
-                    , result, Type.type_name
-                    )
                 result = None
         else :
             return self.__super.instance (Type, epk)

@@ -1192,6 +1192,8 @@ inherit from, a `relevant_root`:
     BMT.Mouse (u'mighty_mouse')
     >>> print scope.BMT.Rat.instance ("mighty_mouse")
     None
+    >>> print scope.BMT.Rat.query (name = "mighty_mouse").all ()
+    []
 
     >>> PoT.query_s ().all ()
     [BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
