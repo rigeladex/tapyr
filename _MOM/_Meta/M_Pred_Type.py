@@ -28,6 +28,8 @@
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Meta.M_Pred_Type)
 #    16-Apr-2012 (CT) Fix stylo
+#    12-Aug-2012 (CT) Add `Unique`
+#    12-Aug-2012 (CT) Use `_Export_Module`, DRY class names
 #    ««revision-date»»···
 #--
 
@@ -36,13 +38,13 @@ from   _TFL                import TFL
 
 import _MOM._Meta.M_Prop_Type
 
-class M_Pred_Type (MOM.Meta.M_Prop_Type) :
+class _Condition_ (MOM.Meta.M_Prop_Type) :
     """Meta class for :mod:`~_MOM._Pred.Type` classes.
 
-       `M_Pred_Type` sets several class attributes needed by
+       `_Condition_` sets several class attributes needed by
        :class:`~_MOM._Pred.Kind.Kind`.
 
-       `M_Pred_Type` converts all properties listed in `_force_tuple` from
+       `_Condition_` converts all properties listed in `_force_tuple` from
        strings to tuples.
     """
 
@@ -58,16 +60,16 @@ class M_Pred_Type (MOM.Meta.M_Prop_Type) :
         for a in meta._force_tuple :
             if a in dict and isinstance (dict [a], (str, unicode)) :
                 dict [a] = (dict [a], )
-        return super (M_Pred_Type, meta).__new__ \
+        return super (_Condition_, meta).__new__ \
             (meta, name, bases, dict)
     # end def __new__
 
-# end class M_Pred_Type
+# end class _Condition_
 
-class M_Pred_Type_Condition (M_Pred_Type) :
+class Condition (_Condition_) :
     """Meta class for :class:`~_MOM._Pred.Type.Condition`
 
-       `M_Pred_Type_Condition` compiles `assertion` into `assert_code` and
+       `Condition` compiles `assertion` into `assert_code` and
        `guard` into `guard_code`.
     """
 
@@ -98,12 +100,12 @@ class M_Pred_Type_Condition (M_Pred_Type) :
             )
     # end def __repr__
 
-# end class M_Pred_Type_Condition
+# end class Condition
 
-class M_Pred_Type_Quantifier (M_Pred_Type) :
+class Quantifier (_Condition_) :
     """Meta class for quantifier predicates.
 
-       `M_Pred_Type_Quantifier` compiles several class attributes into code
+       `Quantifier` compiles several class attributes into code
        objects:
 
        .. attribute:: assert_code
@@ -170,9 +172,9 @@ class M_Pred_Type_Quantifier (M_Pred_Type) :
             )
     # end def __repr__
 
-# end class M_Pred_Type_Quantifier
+# end class Quantifier
 
-class M_Pred_Type_N_Quantifier (M_Pred_Type_Quantifier) :
+class N_Quantifier (Quantifier) :
     """Meta class for :class:`~_MOM._Pred.Type.N_Quant`"""
 
     def __init__ (cls, name, bases, dict) :
@@ -181,31 +183,66 @@ class M_Pred_Type_N_Quantifier (M_Pred_Type_Quantifier) :
             setattr (cls, "upper_limit", cls.lower_limit)
     # end def __init__
 
-# end class M_Pred_Type_N_Quantifier
+# end class N_Quantifier
 
-class M_Pred_Type_U_Quantifier (M_Pred_Type_Quantifier) :
+class U_Quantifier (Quantifier) :
     """Meta class for :class:`~_MOM._Pred.Type.U_Quant`"""
 
     ### `this=this' is needed to make the object containing the quantifier
     ### visible inside the `lambda' evaluating the quantifier's `assertion'
     quantifier_fmt = "map (lambda %s, this=this : not (%s), seq)"
 
-# end class M_Pred_Type_U_Quantifier
+# end class U_Quantifier
+
+class Unique (_Condition_) :
+    """Meta class for :class:`~_MOM._Pred.Type.Unique`"""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        import _MOM._Pred.Kind
+        if cls.kind is None :
+            cls.kind = MOM.Pred.Region
+        elif cls.kind is not MOM.Pred.Region :
+            raise TypeError \
+                ( "Unique predicate %s *must* have kind Region, not %s"
+                % (cls, cls.kind)
+                )
+        if cls.attr_none :
+            raise TypeError \
+                ( "Unique predicate %s cannot define attr_none, got %s"
+                % (cls, cls.attr_none)
+                )
+        if cls.attributes :
+            from _MOM._Attr.Filter import Q
+            setattr (cls, "aqs", tuple (getattr (Q, a) for a in cls.attributes))
+    # end def __init__
+
+    def __str__  (cls) :
+        return "%s : %s" % (cls.name, ", ".join (cls.attributes))
+    # end def __str__
+
+    def __repr__ (cls) :
+        return '%s (%r)' % (cls.__class__.__name__, cls.attributes)
+    # end def __repr__
+
+# end class Unique
 
 __doc__ = """
-Class `MOM.Meta.M_Pred_Type`
+Module `MOM.Meta.M_Pred_Type`
 ============================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-.. autoclass:: M_Pred_Type
-.. autoclass:: M_Pred_Type_Condition
-.. autoclass:: M_Pred_Type_Quantifier
-.. autoclass:: M_Pred_Type_N_Quantifier
-.. autoclass:: M_Pred_Type_U_Quantifier
+.. autoclass:: _Condition_
+.. autoclass:: Condition
+.. autoclass:: Quantifier
+.. autoclass:: N_Quantifier
+.. autoclass:: U_Quantifier
+.. autoclass:: Unique
+
 
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("*")
+    MOM.Meta._Export_Module ()
 ### __END__ MOM.Meta.M_Pred_Type

@@ -72,6 +72,7 @@
 #     8-Aug-2012 (CT) Derive base class from `StandardError`, not `Exception`
 #                     (too many exception clauses still use `StandardError`)
 #    10-Aug-2012 (MG) Use `getattr` too access pid `Invariant.__init__`
+#    12-Aug-2012 (CT) Add `Not_Unique`
 #    ««revision-date»»···
 #--
 
@@ -694,6 +695,20 @@ class No_Such_Entity (Error) :
 class No_Such_File (Error) :
     """Raised for a file specification of a non-existing file."""
 # end class No_Such_File
+
+class Not_Unique (Error) :
+    """Set of attributes is not unique for each entity."""
+
+    def __init__ (self, obj, clashes) :
+        self.__super.__init__ \
+            ( _T ("new definition of %s %s clashes with existing entities %s")
+            % ( _T (new.ui_name), new
+              , ", ".join ("%s %s" % (_T (c.ui_name), c) for c in clashes)
+              )
+            )
+    # end def __init__
+
+# end class Not_Unique
 
 class Partial_Type (Error) :
     """Raised when creation of an object of a partial type is tried."""

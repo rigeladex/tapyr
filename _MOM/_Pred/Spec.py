@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -32,6 +32,7 @@
 #                     `attr._checkers` instead of home-grown code
 #     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
 #     8-Nov-2011 (CT) Remove `attr_none` from `_setup_attr_checker`
+#    12-Aug-2012 (CT) Add `MOM.Pred.Unique.New_Pred` to `_setup_attr_checker`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,12 @@ class Spec (MOM.Prop.Spec) :
                 self._setup_prop (e_type, name, kind.kind, checker)
             else :
                 print e_type, attr, check
+        if e_type.epk_sig :
+            u = MOM.Pred.Unique.New_Pred \
+                ( * e_type.epk_sig
+                , name_suffix = "epk"
+                , __module__  = e_type.__module__
+                )
     # end def _setup_attr_checker
 
 # end class Spec

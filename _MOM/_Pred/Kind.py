@@ -110,6 +110,11 @@ class Region (Kind) :
 
        Region predicates can refer to other objects and their predicates and
        must be satisfied before an object can be committed to the database.
+
+       Region predicates are checked by `scope.commit` before attempting to
+       actually do the commit. Some backends might move the checks of
+       some regional predicates to the database engine, e.g., checks for
+       uniqueness constraints.
     """
 
     kind = "region"

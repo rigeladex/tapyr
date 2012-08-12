@@ -45,6 +45,8 @@
 #    16-Apr-2012 (CT) Convert `error_info` and `extra_links` to property
 #    17-Apr-2012 (CT) Remove `val_desc`, use `val_disp` instead
 #    27-Apr-2012 (CT) Add argument `obj` to `_add_entities_to_extra_links`
+#    12-Aug-2012 (CT) Add `Unique`
+#    12-Aug-2012 (CT) Adapt to export-change of `MOM.Meta.M_Pred_Type`
 #    ««revision-date»»···
 #--
 
@@ -53,18 +55,21 @@ from   __future__  import unicode_literals
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
+from   _MOM._Attr.Filter     import Q
+
 import _MOM._Meta.M_Pred_Type
 import _MOM._Pred
 
 import _TFL._Meta.Object
+import _TFL.Caller
 import _TFL.d_dict
 
 import traceback
 
 class _Condition_ (object):
-    ### Base class for all invariants (atomic and quantifiers).
+    ### Base class for all predicates (atomic and quantifiers).
 
-    __metaclass__   = MOM.Meta.M_Pred_Type
+    __metaclass__   = MOM.Meta.M_Pred_Type._Condition_
 
     assertion       = ""
     assert_code     = None
@@ -78,6 +83,7 @@ class _Condition_ (object):
     guard_attr      = ()
     guard_code      = None
     is_required     = False ### set by meta machinery
+    kind            = None
     parameters      = ()
     rank            = 1
     renameds        = () ### only for compatibility with MOM.Attr.Type
@@ -111,10 +117,10 @@ class _Condition_ (object):
     # end def extra_links
 
     def satisfied (self, obj, attr_dict = {}) :
-        """Checks if `obj' satisfies the invariant.
+        """Checks if `obj' satisfies the predicate.
            `attr_dict' can provide values for `self.attributes'.
 
-           If there is a `self.guard' the invariant is checked only if
+           If there is a `self.guard' the predicate is checked only if
            `self.guard' evaluates to true.
         """
         glob_dict = obj.globals ()
@@ -157,7 +163,7 @@ class _Condition_ (object):
                 result = getattr (result, a, None)
             else :
                 raise AttributeError \
-                    ( "Invalid invariant: references undefined attribute "
+                    ( "Invalid predicate: references undefined attribute "
                       "`%s'\n    %s: %s"
                     % (attr, obj, self.assertion)
                     )
@@ -181,7 +187,7 @@ class _Condition_ (object):
             result = self.kind.get_attr_value (obj, name)
         else :
             raise AttributeError \
-                ( "Invalid invariant `%s` references undefined attribute `%s`"
+                ( "Invalid predicate `%s` references undefined attribute `%s`"
                   "\n    %s:"
                   "\n    %s"
                 % (self.name, name, obj, self.assertion)
@@ -200,7 +206,7 @@ class _Condition_ (object):
         try :
             val = eval (expr, glob_dict, val_dict)
         except StandardError as exc :
-            print "Exception `%s` in %s `%s` of %s for invariant %s" \
+            print "Exception `%s` in %s `%s` of %s for predicate %s" \
                 % (exc, kind, text or expr, obj, self)
             return exc, True
         return None, val
@@ -247,7 +253,7 @@ class _Condition_ (object):
 class Condition (_Condition_) :
     """A predicate defined by a simple assertion."""
 
-    __metaclass__ = MOM.Meta.M_Pred_Type_Condition
+    __metaclass__ = MOM.Meta.M_Pred_Type.Condition
 
     Error_Type    = MOM.Error.Invariant
 
@@ -287,7 +293,7 @@ class Condition (_Condition_) :
     # end def eval_condition_assert_code_as_function
 
     def _satisfied (self, obj, glob_dict, val_dict) :
-        """Checks if `obj' satisfies the invariant.
+        """Checks if `obj' satisfies the predicate.
            `attr_dict' can provide values for `self.attributes'.
         """
         try    :
@@ -306,9 +312,9 @@ class Condition (_Condition_) :
 # end class Condition
 
 class _Quantifier_ (_Condition_) :
-    ### Base class for quantifier invariants of the MOM object model.
+    ### Base class for quantifier predicates of the MOM object model.
 
-    __metaclass__   = MOM.Meta.M_Pred_Type_Quantifier
+    __metaclass__   = MOM.Meta.M_Pred_Type.Quantifier
 
     Error_Type      = MOM.Error.Quant
 
@@ -410,7 +416,7 @@ class N_Quant (_Quantifier_) :
        values or objects.
     """
 
-    __metaclass__ = MOM.Meta.M_Pred_Type_N_Quantifier
+    __metaclass__ = MOM.Meta.M_Pred_Type.N_Quantifier
 
     lower_limit = None
     upper_limit = None
@@ -433,7 +439,7 @@ class U_Quant (_Quantifier_) :
        values or objects.
     """
 
-    __metaclass__ = MOM.Meta.M_Pred_Type_U_Quantifier
+    __metaclass__ = MOM.Meta.M_Pred_Type.U_Quantifier
 
     def _is_correct (self, res) :
         return not any (res)
@@ -445,10 +451,75 @@ class U_Quant (_Quantifier_) :
 
 # end class U_Quant
 
+class Unique (_Condition_) :
+    """A predicate defining a uniqueness constraint over a set of attributes.
+
+       For Unique predicates, the predicate is evaluated even if some
+       `attributes` have a value equal to `None`; `attr_none` cannot be used
+       for this type of predicate.
+    """
+
+    __metaclass__   = MOM.Meta.M_Pred_Type.Unique
+
+    @classmethod
+    def New_Pred (cls, * attrs, ** kw) :
+        """Return a new Unique predicate class for the attributes specified."""
+        name = kw.get ("name")
+        if not name:
+            suffix = kw.pop ("name_suffix", None) or \
+                "__" + "___".join (a.replace (".", "__") for a in attrs)
+            name = "unique_%s" % (suffix, )
+        if not kw.get ("__doc__") :
+            kw ["doc"] = \
+                ( "The attribute values for %r must be unique for each object"
+                % (attrs, )
+                )
+        if not kw.get ("__module__") :
+            kw ["__module__"] = TFL.Caller.globals () ["__name__"]
+        kw.update (attributes = attrs)
+        return cls.__class__ (name, (cls, ), kw)
+    # end def New_Pred
+
+    ### DBW backend may set `do_check` to `False` if database performs the check
+    do_check = True
+
+    def query_filters (self, obj, attr_dict = {}) :
+        result = []
+        if obj.pid :
+            result.append (Q.pid != obj.pid)
+        attr_values = tuple (self._attr_values (obj, attr_dict))
+        result.extend (aq == v for aq, v in zip (self.aqs, attr_values))
+        return result
+    # end def query_filters
+
+    def satisfied (self, obj, attr_dict = {}) :
+        if self.do_check :
+            qfs = self.query_filters (obj, attr_dict)
+            q   = obj.ETM.query_s (* qfs)
+            result = q.count () == 0
+            if not result :
+                self.val_dict = dict \
+                    (zip (self.attributes, self._attr_values (obj, attr_dict)))
+                self._extra_links_d = clashes = q.all ()
+                self.error = MOM.Error.Not_Unique (obj, clashes)
+            return result
+    # end def satisfied
+
+    def _attr_values (self, obj, attr_dict) :
+        for a in self.attributes :
+            try :
+                v = attr_dict [a]
+            except KeyError :
+                v = getattr (obj, a, None)
+            yield v
+    # end def _attr_values
+
+# end class Unique
+
 def Attribute_Check (name, attr, assertion, attr_none = (), ** kw) :
     attributes = () if attr_none else (attr, )
     try :
-        result = MOM.Meta.M_Pred_Type_Condition \
+        result = MOM.Meta.M_Pred_Type.Condition \
             ( name, (Condition, )
             , dict
                 ( assertion  = assertion.replace ("value", attr)
@@ -472,7 +543,7 @@ Module `MOM.Pred.Type`
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 The module `MOM.Pred.Type` provides the framework for defining the
-type of predicates of essential objects and links. There are four
+type of predicates of essential objects and links. There are five
 different predicate types:
 
 * :class:`Condition`: a simple assertion
@@ -482,6 +553,8 @@ different predicate types:
 * :class:`E_Quant`: an `existential quantifier`_
 
 * :class:`N_Quant`: a `numeric quantifier`_
+
+* :class:`Unique`: a uniqueness constraint
 
 Concrete predicates are specified by defining a class derived from the
 appropriate predicate type, e.g., :class:`Condition` or :class:`U_Quant`.
@@ -619,7 +692,7 @@ required properties:
 .. autoclass:: U_Quant()
 .. autoclass:: E_Quant()
 .. autoclass:: N_Quant()
-
+.. autoclass:: Unique()
 
 Namespace for evaluation of `assertion` (and `seq`)
 ----------------------------------------------------

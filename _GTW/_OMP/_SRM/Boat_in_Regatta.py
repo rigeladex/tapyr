@@ -41,6 +41,7 @@
 #                     `crew` from `Cached, Computed_Set_Mixin` to `Computed`
 #    23-Jul-2012 (CT) Use `Link_Cacher` for auto-cached `boats`
 #     7-Aug-2012 (CT) Add `example`
+#    12-Aug-2012 (CT) Add predicate `unique_boat_regatta_skipper`
 #    ««revision-date»»···
 #--
 
@@ -207,6 +208,11 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             # end def _add_entities_to_extra_links
 
         # end class skipper_not_multiplexed
+
+        unique_boat_regatta_skipper = Pred.Unique.New_Pred \
+            ( "boat", "regatta", "skipper"
+            , name = "unique_boat_regatta_skipper"
+            )
 
     # end class _Predicates
 
