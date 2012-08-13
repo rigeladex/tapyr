@@ -34,6 +34,7 @@
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #     9-Aug-2012 (CT) Redefine `E_Type.entries` to avoid version from mixin
 #    10-Aug-2012 (CT) Use `logging.exception` instead of `print`
+#    13-Aug-2012 (CT) Guard access to `Form` in `changer_injected_templates`
 #    ««revision-date»»···
 #--
 
@@ -943,7 +944,12 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     @Once_Property
     @getattr_safe
     def changer_injected_templates (self) :
-        renderers = set (self.Form.renderer_iter () if self.Form else ())
+        try :
+            form = self.Form
+        except LookupError :
+            renderers = set ()
+        else :
+            renderers = set (self.Form.renderer_iter ())
         return tuple (self.top.Templateer.get_template (r) for r in renderers)
     # end def changer_injected_templates
 
