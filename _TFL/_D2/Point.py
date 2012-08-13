@@ -40,6 +40,7 @@
 #    29-Nov-2007 (CT) Use `sum` instead of `reduce/operator.add`
 #    29-Nov-2007 (CT) Use `@property` instead of `__getattr__`
 #    15-Apr-2012 (CT) Add `import _TFL._D2.Line` to doctest of `R_Point_L`
+#    13-Aug-2012 (CT) Add class variable `Point` to `_R_Point_`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class _Point_ (TFL.Meta.Object) :
     # end def __str__
 
     def __repr__ (self) :
-        return "%s %s" % (self.__class__.__name__, str (self))
+        return "%s %s" % (self.__class__.__name__, tuple (self))
     # end def __repr__
 
     def list (self) :
@@ -151,9 +152,11 @@ class Point (_Point_) :
 class _R_Point_ (_Point_) :
     """Base class for Points positioned relative to another point."""
 
+    Point = Point
+
     def __init__ (self, offset = None, scale = None) :
-        self._offset = offset or Point (0, 0)
-        self._scale  = scale  or Point (1, 1)
+        self._offset = offset or self.Point (0, 0)
+        self._scale  = scale  or self.Point (1, 1)
     # end def __init__
 
     def scale (self, right) :
@@ -362,5 +365,5 @@ Pr = R_Point_R
 Pn = R_Point_nP
 
 if __name__ != "__main__" :
-    D2._Export ("*", "P", "Pp", "Pl", "Pr", "Pn")
+    D2._Export ("*", "_Point_", "_R_Point_", "P", "Pp", "Pl", "Pr", "Pn")
 ### __END__ TFL.D2.Point
