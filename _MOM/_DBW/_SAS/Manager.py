@@ -96,6 +96,9 @@
 #    27-Jun-2012 (CT) Use `.Essence.type_name` as key for `role_cacher`
 #     2-Jul-2012 (MG) `_RELOAD_INSTANCE` `session` is now a parameter of the
 #                     `reload` method and not of the constructor
+#    13-Aug-2012 (MG) Add support for user specified indices
+#    13-Aug-2012 (MG) Add support for additional unique constraints checked
+#                     by the database
 #    ««revision-date»»···
 #--
 
@@ -169,6 +172,32 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     cached_role_attr_classes = \
         (MOM.Attr.A_Cached_Role, MOM.Attr.A_Cached_Role_Set)
 
+    @classmethod
+    def _add_check_constraints (cls, e_type, sa_table) :
+        for name, pred in e_type._Predicates._own_names.iteritems () :
+            if issubclass (pred, MOM.Pred.Unique) :
+                columns = []
+                tables  = set ((sa_table, ))
+                for qs in pred.aqs :
+                    aj, ac = qs._sa_filter (e_type._SAQ)
+                    tables.update  (aj)
+                    columns.extend (ac)
+                if len (tables) == 1 :
+                    unique = schema.UniqueConstraint (* columns)
+                    sa_table.append_constraint       (unique)
+                    pred.do_check = False
+                else :
+                    pred._sa_affected_tables = tables
+    # end def _add_check_constraints
+
+    def _add_user_defined_indices (cls, e_type, sa_table) :
+        for col_names in e_type.use_indices :
+            if not isinstance (col_names, (tuple, list)) :
+                col_names = (col_names, )
+            columns       = [getattr (sa_table.c, cn) for cn in col_names]
+            schema.Index ("__".join (col_names), * columns)
+    # end def _add_user_defined_indices
+
     def create_database (cls, db_url, scope) :
         dbs = cls.DBS_map [db_url.scheme]
         dbs.create_database          (db_url, cls)
@@ -204,10 +233,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             e_type._sa_pk_base   = {}
             db_attrs             = cls._attr_dicts (e_type, bases)
             columns   = cls._setup_columns (e_type, db_attrs, bases, unique)
-            if unique :
-                unique = schema.UniqueConstraint (* unique)
-            else :
-                unique = None
             e_type._sa_table = schema.Table \
                 ( e_type.type_name.replace (".", "__")
                 , cls.metadata
@@ -264,9 +289,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             del e_type._sa_save_attrs
             MOM.DBW.SAS.MOM_Query     (e_type, sa_table, db_attrs, bases)
             e_type._SAS.finish        ()
-            if unique is not None and not e_type.polymorphic_epk :
-                sa_table.append_constraint (unique)
-            e_type._Reload_Mixin_.define_e_type (e_type, _Reload_Mixin_)
+            if unique and not e_type.polymorphic_epk :
+                sa_table.append_constraint (schema.UniqueConstraint (* unique))
+                schema.Index (sa_table, "primary_key", * unique)
+            e_type._Reload_Mixin_.define_e_type    (e_type, _Reload_Mixin_)
+            cls._add_check_constraints             (e_type, sa_table)
+            cls._add_user_defined_indices          (e_type, sa_table)
         for cr, assoc_et in cls.role_cacher.get (e_type.Essence.type_name, ()) :
             if cr.attr_name in e_type._Attributes._own_names :
                 ### setup cached role only for the etype first defining the
