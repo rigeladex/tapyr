@@ -33,6 +33,8 @@
 #    23-May-2012 (RS) Add `_syntax_re` for `_A_IP_Address_`
 #    10-Aug-2012 (RS) make all IP-related types decendants of `_A_Composite_`
 #    11-Aug-2012 (MG) Preparation for special SAS query functions
+#    13-Aug-2012 (RS) Add `mask_len` to `IP4_Network` and `IP6_Network`,
+#                     create common ancestor of all composite ip types
 #    ««revision-date»»···
 #--
 
@@ -52,18 +54,13 @@ def _inverted_mask_ (adrlen, mask) :
     return (2 ** (adrlen - mask)) - 1
 # end def _inverted_mask_
 
-def _netmask_ (adrlen, adr) :
-    """ Compute netmask from given address string.
-        adrlen is 32 for IPv4 and 128 for IPv6
-        we don't check for correct masklen, should have been done by
-        check method.
-    """
-    adr     = adr.split ('/', 1)
-    masklen = 32
-    if len (adr) == 2 :
+def _masklen_ (adrlen, adr) :
+    masklen = adrlen
+    adr = adr.split ('/', 1)
+    if len (adr) > 1 :
         masklen = int (adr [-1], 10)
-    return ((2 ** adrlen) - 1) & ~_inverted_mask_ (adrlen, masklen)
-# end def _netmask_
+    return masklen
+# end def _masklen_
 
 def _numeric_ip4_address_ (adr) :
     val = 0
@@ -198,7 +195,7 @@ class _A_IP4_Network_ (_A_IP4_Address_) :
         # mask check (bits not included in mask must be 0)
         if val and mask :
             i = _numeric_ip4_address_ (val)
-            m = _inverted_mask_ (32, int (mask))
+            m = _inverted_mask_ (32, int (mask, 10))
             r = i & m
             if r :
                 v = '/'.join ((val, mask))
@@ -292,7 +289,7 @@ class _A_IP6_Network_ (_A_IP6_Address_) :
         # mask check (bits not included in mask must be 0)
         if val and mask :
             i = _numeric_ip6_address_ (val)
-            m = _inverted_mask_ (128, int (mask))
+            m = _inverted_mask_ (128, int (mask, 10))
             r = i & m
             if r :
                 v = '/'.join ((val, mask))
@@ -303,6 +300,26 @@ class _A_IP6_Network_ (_A_IP6_Address_) :
 
 
 _Ancestor_Essence = MOM.An_Entity
+
+class IP_Address (_Ancestor_Essence) :
+    """Model an abstract IP Address."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class address (_A_IP_Address_) :
+            """IP Address"""
+
+            kind = Attr.Necessary
+
+        # end class address
+
+    # end class _Attributes
+
+# end class IP4_Address
+
+_Ancestor_Essence = IP_Address
 
 class IP4_Address (_Ancestor_Essence) :
     """Model an IPv4 Address (without netmask)."""
@@ -360,6 +377,20 @@ class IP4_Network (_Ancestor_Essence) :
 
         # end class address
 
+        class mask_len (A_Int) :
+            """ Length of network mask. """
+
+            kind            = Attr.Internal
+            auto_up_depends = ("address", )
+            min_value       = 0
+            max_value       = 32
+
+            def computed (self, obj) :
+                return _masklen_ (self.max_value, obj.address)
+            # end def computed
+
+        # end class mask_len
+
         class upper_bound (A_Int) :
             """ Numeric IP address of upper bound of network range. """
 
@@ -394,7 +425,7 @@ class IP4_Network (_Ancestor_Essence) :
 
 # end class IP4_Network
 
-_Ancestor_Essence = MOM.An_Entity
+_Ancestor_Essence = IP_Address
 
 class IP6_Address (_Ancestor_Essence) :
     """Model an IPv6 Address (without netmask)."""
@@ -472,6 +503,20 @@ class IP6_Network (_Ancestor_Essence) :
 
         # end class address
 
+        class mask_len (A_Int) :
+            """ Length of network mask. """
+
+            kind            = Attr.Internal
+            auto_up_depends = ("address", )
+            min_value       = 0
+            max_value       = 128
+
+            def computed (self, obj) :
+                return _masklen_ (self.max_value, obj.address)
+            # end def computed
+
+        # end class mask_len
+
         class upper_bound_low (A_Int) :
             """ Numeric IP address of upper bound of network range low 64 bit.
                 We must fit the 64 bit part into the signed integer
@@ -534,8 +579,14 @@ class IP6_Network (_Ancestor_Essence) :
 
 # end class IP6_Network
 
+class _A_Composite_IP_Address_ (_A_Composite_) :
 
-class A_IP4_Address (_A_Composite_) :
+    P_Type = IP_Address
+    typ    = "IP_Address"
+
+# end class _A_Composite_IP_Address_
+
+class A_IP4_Address (_A_Composite_IP_Address_) :
     """IPv4 Address (without netmask)."""
 
     P_Type = IP4_Address
@@ -543,7 +594,7 @@ class A_IP4_Address (_A_Composite_) :
 
 # end class A_IP4_Address
 
-class A_IP4_Network (_A_Composite_) :
+class A_IP4_Network (_A_Composite_IP_Address_) :
     """IPv4 Address with netmask."""
 
     P_Type = IP4_Network
@@ -551,7 +602,7 @@ class A_IP4_Network (_A_Composite_) :
 
 # end class A_IP4_Network
 
-class A_IP6_Address (_A_Composite_) :
+class A_IP6_Address (_A_Composite_IP_Address_) :
     """IPv6 Address (without netmask)."""
 
     P_Type = IP6_Address
@@ -559,7 +610,7 @@ class A_IP6_Address (_A_Composite_) :
 
 # end class A_IP6_Address
 
-class A_IP6_Network (_A_Composite_) :
+class A_IP6_Network (_A_Composite_IP_Address_) :
     """IPv6 Address with netmask."""
 
     P_Type = IP6_Network
