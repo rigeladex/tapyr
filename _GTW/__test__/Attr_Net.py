@@ -30,6 +30,7 @@
 #    10-Aug-2012 (RS) IP addresses are now composite. Fix tests for new
 #                     check of subnet mask (bits right of mask must be 0)
 #    11-Aug-2012 (MG) New tests for query functions added
+#    13-Aug-2012 (RS) Test `IP6_Network` with default mask_len 128
 #    ««revision-date»»···
 #--
 
@@ -399,6 +400,11 @@ _test_code = """
     GTW.OMP.NET.IP6_Network (dict (address = u'1:2:3::/48'))
     >>> IP6_Network (dict (address = '1:2:3::/128'))
     GTW.OMP.NET.IP6_Network (dict (address = u'1:2:3::/128'))
+    >>> n = IP6_Network (dict (address = '2001:db8:a::123'))
+    >>> n
+    GTW.OMP.NET.IP6_Network (dict (address = u'2001:db8:a::123'))
+    >>> n.address.mask_len
+    128
     >>> IP6_Network (dict (address = '::/0'))
     GTW.OMP.NET.IP6_Network (dict (address = u'::/0'))
     >>> IP6_Network (dict (address = '1:2:3::/0'))
