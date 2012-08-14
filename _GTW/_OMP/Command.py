@@ -54,6 +54,7 @@
 #    26-Jul-2012 (CT) Add local variables `Q` and `root` to `_handle_shell`
 #    30-Jul-2012 (CT) Remove import of `HTTP.Application`
 #    30-Jul-2012 (CT) Remove option `-port`
+#    14-Aug-2012 (MG) Add option `media_domain`
 #    ««revision-date»»···
 #--
 
@@ -129,6 +130,7 @@ class GTW_Command (MOM.Command) :
         , input_encoding    = "iso-8859-15"
         , languages         = "en,de"
         , local_code        = "en_US"
+        , media_domain      = None
         , output_encoding   = "utf-8"
         , template_file     = "html/static.jnj"
         , user_session_ttl  = CAL.Date_Time_Delta (days = 3)
@@ -150,6 +152,7 @@ class GTW_Command (MOM.Command) :
                 "by the app"
             , "-languages:T,?Languages for which to load translations"
             , "-locale_code:S?Code of locale to use"
+            , "-media_domain:S?Serve media content from the domain specified"
             , "-serve_static_files:B?Serve static files"
             , "-smtp_server:S=localhost?SMTP server used to send emails"
             , "-template_file:S"

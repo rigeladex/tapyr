@@ -62,6 +62,7 @@
 #     5-Aug-2012 (MG) Change handling of `watch_media_files`
 #     6-Aug-2012 (CT) Move `-watch_media_files` to `_GT2W_Server_Base_`
 #    10-Aug-2012 (CT) Pass `verbose` to `root.Cacher` and `App_Cache`
+#    14-Aug-2012 (MG) Add option `media_domain`
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,7 @@ import _GTW.File_Session
 import _GTW._OMP.Command
 import _GTW._Werkzeug.App_Cache
 import _GTW._Werkzeug.Static_File_App
+import _GTW.Media
 
 import _JNJ.Templateer
 
@@ -379,6 +381,8 @@ class GT2W_Command (GTW.OMP.Command) :
     # end def _static_file_app
 
     def _wsgi_app (self, cmd) :
+        if cmd.media_domain :
+            GTW.Media_Base.Domain = cmd.media_domain
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N (cmd)
         sf_app = self._static_file_app (cmd)

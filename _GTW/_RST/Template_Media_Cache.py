@@ -32,6 +32,7 @@
 #                     `templates_i` )
 #     6-Aug-2012 (CT) Add `etag`
 #    10-Aug-2012 (CT) Add `verbose`
+#    14-Aug-2012 (MG) Consider `Media_Base.Domain` for href creation
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _GTW                   import GTW
 from   _TFL                   import TFL
 
 import _GTW._RST
+import _GTW.Media
 
 from   _TFL                   import sos
 
@@ -60,6 +62,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
                  ) :
         if not prefix.startswith ("/") :
             prefix           = "/%s" % (prefix, )
+        if GTW.Media_Base.Domain :
+            prefix           = "".join ((GTW.Media_Base.Domain, prefix))
         self.media_dir       = media_dir
         self.prefix          = prefix
         self.clear_dir       = clear_dir
