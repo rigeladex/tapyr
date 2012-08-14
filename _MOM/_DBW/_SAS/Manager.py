@@ -99,6 +99,7 @@
 #    13-Aug-2012 (MG) Add support for user specified indices
 #    13-Aug-2012 (MG) Add support for additional unique constraints checked
 #                     by the database
+#    14-Aug-2012 (MG) Index creation requires column objects
 #    ««revision-date»»···
 #--
 
@@ -291,7 +292,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             e_type._SAS.finish        ()
             if unique and not e_type.polymorphic_epk :
                 sa_table.append_constraint (schema.UniqueConstraint (* unique))
-                schema.Index (sa_table, "primary_key", * unique)
+                schema.Index \
+                    ( "primary_key"
+                    , * (getattr (sa_table.c, cn) for cn in unique)
+                    )
             e_type._Reload_Mixin_.define_e_type    (e_type, _Reload_Mixin_)
             cls._add_check_constraints             (e_type, sa_table)
             cls._add_user_defined_indices          (e_type, sa_table)
