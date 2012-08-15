@@ -100,6 +100,7 @@
 #    13-Aug-2012 (MG) Add support for additional unique constraints checked
 #                     by the database
 #    14-Aug-2012 (MG) Index creation requires column objects
+#    15-Aug-2012 (MG) Create unique name of Index for primary key
 #    ««revision-date»»···
 #--
 
@@ -196,6 +197,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if not isinstance (col_names, (tuple, list)) :
                 col_names = (col_names, )
             columns       = [getattr (sa_table.c, cn) for cn in col_names]
+            ### add the table name to ensure uniqueness of the index name
+            col_names.insert (sa_table.name, 0)
             schema.Index ("__".join (col_names), * columns)
     # end def _add_user_defined_indices
 
@@ -293,7 +296,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if unique and not e_type.polymorphic_epk :
                 sa_table.append_constraint (schema.UniqueConstraint (* unique))
                 schema.Index \
-                    ( "primary_key"
+                    ( "%s_PK" % (sa_table.name, )
                     , * (getattr (sa_table.c, cn) for cn in unique)
                     )
             e_type._Reload_Mixin_.define_e_type    (e_type, _Reload_Mixin_)
