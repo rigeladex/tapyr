@@ -27,52 +27,62 @@
 #
 # Revision Dates
 #    13-Aug-2012 (CT) Creation
+#    16-Aug-2012 (CT) Add `Point.from_name` and `.as_name`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__     import absolute_import, division, print_function, unicode_literals
 
-from   _TFL     import TFL
-from   _TFL._D2 import D2
+from   _TFL           import TFL
+from   _TFL._D2       import D2
 
 from   _TFL.Math_Func import sign
+from   _TFL.Regexp    import Regexp, re
 
 import _TFL._D2.Point
 
 class _Cardinal_Direction_ (D2._Point_) :
     """Base class for points expressed by cardinal directions in 2D space."""
 
-    ordinal_map =  \
-        { (+1, +1) : "NE"
+    value_map      = \
+        { ( 0, +1) : "N"
+        , (+1, +1) : "NE"
+        , (+1,  0) : "E"
         , (+1, -1) : "SE"
+        , ( 0, -1) : "S"
         , (-1, -1) : "SW"
+        , (-1,  0) : "W"
         , (-1, +1) : "NW"
         }
 
-    def _formatted (self) :
-        x, y = tuple (self)
-        sx   = sign (x)
-        sy   = sign (y)
-        ax   = abs  (x)
-        ay   = abs (y)
+    name_map        = dict ((v, k) for k, v in value_map.iteritems ())
+
+    def _directions (self) :
+        v_map = self.value_map
+        x, y  = tuple (self)
+        sx    = sign  (x)
+        sy    = sign  (y)
+        ax    = abs   (x)
+        ay    = abs   (y)
         if ax == ay :
             if ax :
-                od = self.ordinal_map [(sx, sy)]
-                result = self._formatted_dir (od, ax)
+                yield (v_map [sx, sy], ax)
             else :
-                result = "E + W"
+                yield ("E + W", 1)
         else :
-            rs = []
-            if x :
-                rs.append (self._formatted_dir (("E", "W") [x < 0], ax))
-            if y :
-                rs.append (self._formatted_dir (("N", "S") [y < 0], ay))
-            result = " + ".join (rs)
-        return result
+            if ax :
+                yield (v_map [sx,  0], ax)
+            if ay :
+                yield (v_map [ 0, sy], ay)
+    # end def _directions
+
+    def _formatted (self) :
+        _fd = self._formatted_dir
+        return " + ".join (_fd (* d) for d in self._directions ())
     # end def _formatted
 
-    def _formatted_dir (self, d, v) :
-        return ("%s*%s" % (d, v)) if v != 1 else d
+    def _formatted_dir (self, d, f) :
+        return ("%s*%s" % (d, f)) if f != 1 else d
     # end def _formatted_dir
 
     def __str__ (self) :
@@ -107,6 +117,9 @@ class Cardinal_Direction (_Cardinal_Direction_, D2.Point) :
     >>> print ("q =", q)
     q = E*5 + N*6
 
+    >>> print (p.as_name ())
+    E2_N5
+
     >>> print ("p =", p.scale (Point (2, 0.5)))
     p = E*4 + N*2.5
     >>> print ("q =", q)
@@ -136,7 +149,62 @@ class Cardinal_Direction (_Cardinal_Direction_, D2.Point) :
     >>> print ("r =", r)
     r = W*17.0 + S*12.0
 
+    >>> print (Point.from_name ("W2_S1"))
+    W*2 + S
+    >>> print (Point.from_name ("S1_E3"))
+    E*3 + S
+    >>> print (Point.from_name ("E3_S3"))
+    SE*3
+    >>> print (Point.from_name ("NE3_E1"))
+    E*4 + N*3
+
+    >>> for n in sorted (Point.name_map) :
+    ...     p = Point.from_name (n)
+    ...     print ("positive:", p, ", negative:", -p)
+    positive: E , negative: W
+    positive: N , negative: S
+    positive: NE , negative: SW
+    positive: NW , negative: SE
+    positive: S , negative: N
+    positive: SE , negative: NW
+    positive: SW , negative: NE
+    positive: W , negative: E
+
     """
+
+    _name_pattern  = Regexp \
+        ( r"^"
+        + r"(?P<dir> "
+        + "|".join (sorted (_Cardinal_Direction_.name_map, reverse = True))
+        + r")"
+        + r"(?P<f> \d*)"
+        + r"$"
+        , re.VERBOSE | re.IGNORECASE
+        )
+
+    @classmethod
+    def from_name (cls, v) :
+        def _gen (v, pat, map) :
+            for p in v.split ("_") :
+                if pat.match (p) :
+                    d = map [pat.dir]
+                    f = int (pat.f or 1)
+                    if f != 1:
+                        d = tuple (c*f for c in d)
+                    yield d
+                else :
+                    raise ValueError ("Invalid direction name %s" % (p, ))
+        ps = tuple (_gen (v, cls._name_pattern, cls.name_map))
+        if ps :
+            return sum ((cls (* p) for p in ps), cls ())
+        else :
+            raise ValueError ("Invalid direction name %s" % (v, ))
+    # end def from_name
+
+    def as_name (self) :
+        return "_".join \
+            (("%s%s" % (d, f) if f != 1 else d) for d, f in self._directions ())
+    # end def as_name
 
 Point = Cardinal_Direction # end class
 
