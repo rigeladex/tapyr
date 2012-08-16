@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Jul-2012 (CT) Creation (based on GTW.NAV.Auth)
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
+#    16-Aug-2012 (MG) Remove form dependecy
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,6 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW.Notification
-import _GTW._Form.Auth
 import _GTW._RST.HTTP_Method
 import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
@@ -51,6 +51,17 @@ from   posixpath                import join  as pp_join
 from   urllib                   import urlencode
 
 import urlparse
+import collections
+
+class Errors (collections.defaultdict) :
+
+    __metaclass__ = TFL.Meta.M_Class
+
+    def __init__ (self) :
+        self.__super.__init__ (list)
+    # end def __init__
+
+# end class Errors
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -62,35 +73,117 @@ class _Cmd_ (_Ancestor) :
 
 class _Form_Cmd_ (_Cmd_) :
 
-    skip_etag             = True
+    skip_etag               = True
+    active_account_required = True
+
 
     class _Form_Cmd__GET_ (_Ancestor.GET) :
 
         _real_name             = "GET"
 
-        _rc_form_name          = "form"
-
         def _render_context (self, resource, request, response, ** kw) :
-            kw [self._rc_form_name] = resource.form
+            pid         = int (request.req_data.get ("p", "-1"))
+            try :
+                account = resource.scope.pid_query (pid)
+            except LookupError :
+                account = getattr (response, "account", None)
             return self.__super._render_context \
-                (resource, request, response, ** kw)
+                ( resource, request, response
+                , errors  = getattr (response, "errors", Errors ())
+                , account = account
+                , ** kw
+                )
         # end def _render_context
 
     GET = _Form_Cmd__GET_ # end class
 
     class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.POST) :
 
-        _real_name             = "POST"
+        _real_name              = "POST"
+
+        def get_account (self, resource, username, debug = False) :
+            try :
+                self.account = resource.account_manager.query \
+                    (name = username).one ()
+            except IndexError :
+                self.account = None
+                if debug :
+                    self.errors ["username"].append \
+                        ("No account with username `%s` found" % (username, ))
+                ### look's like no account with this username exists
+                return False
+            return True
+        # end def get_account
+
+        def _authenticate (self, resource, username, password, debug = False) :
+            result = False
+            self.get_account (resource, username, debug)
+            if password :
+                result = self.account.verify_password (password)
+                if not result and debug :
+                    self.errors ["password"].append \
+                        ( "Password is wrong:\n"
+                               "  %s\n"
+                               "  hash db `%s`\n"
+                               "  hash in `%s`"
+                            % ( password
+                              , self.account.password
+                              , self.account.password_hash
+                                    (password, self.account.salt)
+                              )
+                        )
+            return result
+        # end def _authenticate
+
+        def get_required (self, request, field_name, error) :
+            value = request.req_data.get (field_name)
+            if not value :
+                self.errors [field_name].append (error)
+            return value
+        # end def get_required
+
+        def get_username (self, request, field_name = "username") :
+            return self.get_required \
+                (request, field_name, _T ("A user name is required to login."))
+        # end def get_required
+
+        def get_password ( self, request
+                         , field_name   = "password"
+                         , verify_field = None
+                         ) :
+            password = self.get_required \
+                (request, field_name, _T ("The password is required."))
+            if verify_field :
+                verify = self.get_required \
+                ( request, verify_field
+                , _T ("Repeat the password for verification.")
+                )
+                if password and verify and (password != verify) :
+                    self.errors [field_name].append \
+                        (_T ("The passwords don't match."))
+            return password
+        # end def get_password
+
+        def _credetials_validation ( self
+                                   , resource
+                                   , request
+                                   , username = "username"
+                                   , password = "password"
+                                   , debug    = False
+                                   ) :
+            username     = self.get_username (request, username)
+            password     = self.get_password (request, password)
+            error_add    = lambda e : self.errors [None].append (e)
+            if not self._authenticate \
+                   (resource, username, password, debug) :
+                error_add (_T ("Username or password incorrect"))
+            elif resource.active_account_required and not self.account.active :
+                error_add (_T ("This account is currently inactive"))
+            elif debug :
+                error_add (repr (request.req_data))
+        # end def _credetials_validation
 
     POST = _Form_Cmd__POST_ # end class
-
-    @Once_Property
-    @getattr_safe
-    def form (self) :
-        name = self.__class__.__name__.strip ("_")
-        T    = getattr (GTW.Form.Auth, name)
-        return T (self.top.account_manager, self.abs_href)
-    # end def form
 
 # end class _Form_Cmd_
 
@@ -100,7 +193,8 @@ class _Action_ (_Ancestor) :
 
     class _Action__GET_ (_Ancestor.GET) :
 
-        ### XXX should be done with POST, not GET !!!
+        ### actions are handle by GTE because the links are sent to the user
+        ### as email's and they should only click these links !
 
         _real_name             = "GET"
 
@@ -114,11 +208,10 @@ class _Action_ (_Ancestor) :
                 (account = account, token = req_data ["t"]).first ()
             if action :
                 try :
-                    next = action.handle (resource)
+                    description = action.description
+                    next        = action.handle (resource)
                     response.add_notification \
-                        ( GTW.Notification
-                            (_T ("Email verification successful."))
-                        )
+                        (GTW.Notification (_T (description)))
                     raise HTTP_Status.See_Other (next)
                 except GTW.OMP.Auth.Action_Exipred :
                     action.destroy      ()
@@ -134,29 +227,77 @@ _Ancestor = _Form_Cmd_
 
 class _Activate_ (_Ancestor) :
 
-    page_template_name = "account_activate"
+    page_template_name      = "account_activate"
+    active_account_required = False
+
+    def _check_account (self, account, errors) :
+        if account and not account.activation :
+            if errors :
+                errors [None].append \
+                    (_T ("No activation request for this account"))
+            return False
+        return True
+    # end def _check_account
+
+    def _send_notification (self, response) :
+        response.add_notification \
+            (GTW.Notification (_T ("Activation successful.")))
+    # end def _send_notification
+
+    class _Activate__GET_ (_Ancestor.GET) :
+
+        _real_name             = "GET"
+
+        def _render_context (self, resource, request, response, ** kw) :
+            result = self.__super._render_context \
+                (resource, request, response, **kw)
+            HTTP_Status = resource.top.Status
+            pid                 = int (request.req_data.get ("p", "-1"))
+            ###import pdb; pdb.set_trace ()
+            try :
+                account = resource.scope.pid_query (pid)
+            except LookupError :
+                ### if this called fromthe post, the account is set on the
+                ### response cobject
+                account = getattr (response, "account", None)
+                if not account :
+                    raise HTTP_Status.Not_Found ()
+                result ["account"] = account
+            else :
+                if not resource._check_account (account, None) :
+                    raise HTTP_Status.Forbidden ()
+            return result
+        # end def _render_context
+
+    GET = _Activate__GET_ # end class
 
     class _Activate__POST_ (_Ancestor.POST) :
 
-        _real_name             = "POST"
+        _real_name              = "POST"
 
         def _response_body (self, resource, request, response) :
-            req_data    = request.req_data
-            top         = resource.top
-            HTTP_Status = top.Status
-            form        = resource.form
-            errors      = form (req_data)
-            if errors :
-                result  = resource.GET ()._response_body \
+            debug        = getattr (resource.top, "DEBUG", False)
+            req_data     = request.req_data
+            top          = resource.top
+            HTTP_Status  = top.Status
+            self.errors  = Errors ()
+            ### import pdb; pdb.set_trace ()
+            self._credetials_validation (resource, request, debug = debug)
+            new_password = self.get_password \
+                (request, "npassword", verify_field = "vpassword")
+            account      = self.account
+            resource._check_account (account, self.errors)
+            if self.errors :
+                response.errors  = self.errors
+                response.account = self.account
+                result           = resource.GET ()._response_body \
                     (resource, request, response)
                 return result
             else :
-                account = form.account
-                next    = req_data.get ("next", "/")
-                account.change_password (form.new_password, suspended = False)
+                next    = req_data.get      ("next", "/")
+                account.change_password     (new_password, suspended = False)
                 response.username = account.name
-                response.add_notification \
-                    (GTW.Notification (_T ("Activation successful.")))
+                resource._send_notification (response)
                 raise HTTP_Status.See_Other (next)
         # end def _response_body
 
@@ -176,23 +317,42 @@ class _Change_Email_ (_Ancestor) :
 
         _real_name             = "POST"
 
+        def get_email ( self, request
+                      , field_name   = "nemail"
+                      , verify_field = "vemail"
+                      ) :
+            email = self.get_required \
+                (request, field_name, _T ("The Email is required."))
+            if verify_field :
+                verify = self.get_required \
+                ( request, verify_field
+                , _T ("Repeat the EMail for verification.")
+                )
+                if email and verify and (email != verify) :
+                    self.errors [field_name].append \
+                        (_T ("The Email's don't match."))
+            return email
+        # end def get_email
+
         def _response_body (self, resource, request, response) :
+            debug       = getattr (resource.top, "DEBUG", False)
             req_data    = request.req_data
             top         = resource.top
             HTTP_Status = top.Status
-            ETM         = top.account_manager
-            account     = ETM.pid_query (req_data ["p"])
-            form        = resource.form
-            errors      = form (req_data)
-            if not errors :
-                next  = req_data.get ("next", "/")
-                host  = request.host
-                token = account.change_email_prepare (form.new_email)
-                link  = resource.parent.href_action (account, token, request)
+            self.errors = Errors         ()
+            ###import pdb; pdb.set_trace ()
+            self._credetials_validation  (resource, request, debug = debug)
+            new_email   = self.get_email (request)
+            if not self.errors :
+                account = self.account
+                next    = req_data.get ("next", "/")
+                host    = request.host
+                token   = account.change_email_prepare (new_email)
+                link    = resource.parent.href_action  (account, token, request)
                 try :
                     resource.send_email \
                         ( resource.new_email_template
-                        , email_to      = form.new_email
+                        , email_to      = new_email
                         , email_subject =
                             _T ("Email confirmation for %s") % (host, )
                         , email_from    = resource.email_from
@@ -202,7 +362,7 @@ class _Change_Email_ (_Ancestor) :
                         , host          = host
                         )
                 except Exception as exc :
-                    form.errors.add (form, None, str (exc))
+                    self.errors [None].append (str (exc))
                 else :
                     response.add_notification \
                         ( GTW.Notification
@@ -213,6 +373,8 @@ class _Change_Email_ (_Ancestor) :
                         )
                     ### XXX Send info email to old email
                     raise HTTP_Status.See_Other (next)
+            response.errors  = self.errors
+            response.account = self.account
             result = resource.GET ()._response_body \
                 (resource, request, response)
             return result
@@ -222,38 +384,21 @@ class _Change_Email_ (_Ancestor) :
 
 # end class _Change_Email_
 
-_Ancestor = _Form_Cmd_
+_Ancestor = _Activate_
 
 class _Change_Password_ (_Ancestor) :
 
-    page_template_name = "account_change_password"
+    page_template_name      = "account_change_password"
+    active_account_required = True
 
-    class _Change_Password__POST_ (_Ancestor.POST) :
+    def _check_account (self, account, errors) :
+        return True
+    # end def _check_account
 
-        _real_name             = "POST"
-
-        def _response_body (self, resource, request, response) :
-            req_data    = request.req_data
-            top         = resource.top
-            HTTP_Status = top.Status
-            ETM         = top.account_manager
-            account     = ETM.pid_query (req_data ["p"])
-            form        = resource.form
-            errors      = form (req_data)
-            if errors :
-                result  = resource.GET ()._response_body \
-                    (resource, request, response)
-                return result
-            else :
-                next = req_data.get ("next", "/")
-                account.change_password (form.new_password, suspended = False)
-                response.username = account.name
-                response.add_notification \
-                    (GTW.Notification (_T ("The password has been changed.")))
-                raise HTTP_Status.See_Other (next)
-        # end def _response_body
-
-    # end class _Change_Password__POST_
+    def _send_notification (self, response) :
+        response.add_notification \
+            (GTW.Notification (_T ("The password has been changed.")))
+    # end def _send_notification
 
 # end class _Change_Password_
 
@@ -267,8 +412,6 @@ class _Login_ (_Ancestor) :
     class _Login__GET_ (_Ancestor.GET) :
 
         _real_name             = "GET"
-
-        _rc_form_name          = "login_form"
 
         def _render_context (self, resource, request, response, ** kw) :
             kw.setdefault ("next", request.referrer or "/")
@@ -290,20 +433,23 @@ class _Login_ (_Ancestor) :
                     (resetter, request, response)
                 return result
             else :
-                form   = resource.form
-                errors = form (req_data)
-                if errors :
+                self.errors = Errors ()
+                debug       = getattr (resource.top, "DEBUG", False)
+                self._credetials_validation (resource, request, debug = debug)
+                if self.errors :
                     ### clear `username` in re-displayed form
                     response.username = None
+                    response.errors   = self.errors
+                    response.account  = self.account
                     result = resource.GET ()._response_body \
                         (resource, request, response)
                     return result
                 else :
                     next = req_data.get ("next", "/")
-                    if form.account.password_change_required :
+                    if self.account.password_change_required :
                         ### a password change is required -> redirect to
                         ### that page
-                        next = resource.href_change_pass (form.account)
+                        next = resource.href_change_pass (self.account)
                     else :
                         username          = req_data ["username"]
                         response.username = username
@@ -328,7 +474,7 @@ class _Logout_ (_Ancestor) :
 
         def _response_body (self, resource, request, response) :
             top       = resource.top
-            next      = request.referrer or "/"
+            next      = request.req_data.get ("next", request.referrer or "/")
             next_page = top.resource_from_href (urlparse.urlsplit (next).path)
             if getattr (next_page, "login_required", False) :
                 next = "/"
@@ -346,28 +492,38 @@ _Ancestor = _Form_Cmd_
 class _Register_ (_Ancestor) :
 
     page_template_name = "account_register"
-    email_template     = "account_verify_email"
+    email_template     = "account_verify_new_email"
 
     class _Register__POST_ (_Ancestor.POST) :
 
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            req_data  = request.req_data
-            top       = resource.top
-            form      = resource.form
-            errors    = form (req_data)
-            if not errors :
-                next  = req_data.get ("next", "/")
-                host  = request.host
-                Auth  = top.scope.GTW.OMP.Auth
+            req_data      = request.req_data
+            top           = resource.top
+            self.errors   = Errors            ()
+            username      = self.get_username (request)
+            if username :
+                self.get_account              (resource, username)
+                if self.account :
+                    self.errors ["username"].append \
+                        (_T ( "Account with this Email address already "
+                              "registered"
+                            )
+                        )
+            new_password  = self.get_password \
+                (request, "npassword", verify_field = "vpassword")
+            if not self.errors :
+                next           = req_data.get ("next", "/")
+                host           = request.host
+                Auth           = top.scope.Auth
                 account, token = Auth.Account_P.create_new_account \
-                    (form.username, form.new_password)
+                    (username, new_password)
                 link  = resource.parent.href_action (account, token, request)
                 try :
                     resource.send_email \
                         ( resource.email_template
-                        , email_to      = form.username
+                        , email_to      = username
                         , email_subject =
                             _T ("Email confirmation for %s") % (host, )
                         , email_from    = resource.email_from
@@ -377,7 +533,7 @@ class _Register_ (_Ancestor) :
                         , host          = host
                         )
                 except Exception as exc :
-                    form.errors.add (form, None, str (exc))
+                    self.errors [None].append (str (exc))
                 else :
                     response.add_notification \
                         (_T ( "A confirmation has been sent to your email "
@@ -386,6 +542,7 @@ class _Register_ (_Ancestor) :
                         )
                     raise top.Status.See_Other (next)
             response.username = None
+            response.errors   = self.errors
             result = resource.GET ()._response_body \
                 (resource, request, response)
             return result
@@ -407,28 +564,35 @@ class _Request_Reset_Password_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            req_data  = request.req_data
-            top       = resource.top
-            form      = resource.form
-            errors    = form (req_data)
-            if errors :
+            req_data    = request.req_data
+            top         = resource.top
+            self.errors = Errors ()
+            username    = self.get_username (request, "username")
+            self.get_account \
+                (resource, username, getattr (top, "DEBUG", False))
+            if not self.account and not self.errors :
+                self.errors [None].append \
+                   (_T ("Account could not be found"))
+            if self.errors :
+                response.errors = self.errors
                 result  = resource.GET ()._response_body \
                     (resource, request, response)
                 return result
             else :
-                Auth      = top.scope.GTW.OMP.Auth
-                account   = form.account
-                host      = request.host
-                next      = request.referrer or "/"
-                next_page = top.page_from_href (urlparse.urlsplit (next).path)
+                Auth          = top.scope.GTW.OMP.Auth
+                account       = self.account
+                host          = request.host
+                next          = request.referrer or "/"
+                next_page     = top.resource_from_href \
+                    (urlparse.urlsplit (next).path)
                 passwd, token = Auth.Account_P.reset_password (account)
                 link = resource.parent.href_action (account, token, request)
                 resource.send_email \
                     ( resource.email_template
-                    , email_to      = form.username
+                    , email_to      = username
                     , email_subject =
                         ( _T ("Password reset for user %s on website %s")
-                        % (form.username, host)
+                        % (username, host)
                         )
                     , email_from    = resource.email_from
                     , new_password  = passwd
@@ -509,6 +673,12 @@ class Auth (_Ancestor) :
         return result
     # end def href_action
 
+    @property
+    @getattr_safe
+    def href_activate (self) :
+        return self._href_q (self.abs_href, "activate")
+    # end def href_activate
+
     def href_change_email (self, obj) :
         return self._href_q \
             (self.abs_href, "change_email", p = str (obj.pid))
@@ -520,7 +690,7 @@ class Auth (_Ancestor) :
     # end def href_change_pass
 
     def _href_q (self, * args, ** kw) :
-        return "%s?%s" % (pp_join (args), urlencode (kw))
+        return "%s?%s" % (pp_join (* args), urlencode (kw))
     # end def _href_q
 
     def _new_child (self, T, child, grandchildren) :
