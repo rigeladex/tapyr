@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,6 +40,7 @@
 #                     composite names (e.g., `.x.y.z`)
 #    18-Sep-2009 (CT) `_call_1` and `_call_n` changed back to *not* call
 #                     callable results (breaks too many users)
+#    16-Aug-2012 (CT) Simplify `_Getter_`: get rid of `_Getter_[01n]_`
 #    ««revision-date»»···
 #--
 
@@ -96,35 +97,38 @@ class _Getter_ (TFL.Meta.Object) :
        3
      """
 
-    def __init__ (self, getters, doc) :
-        self.__getters = getters
+    def __init__ (self, getters = None, doc = None) :
+        self.__getters = getters or ()
         self.__doc__   = doc
     # end def __init__
 
-    def _call_1 (self, o) :
-        assert len (self.__getters) == 1
-        return self.__getters [0] (o)
-    # end def _call_1
-
-    def _call_n (self, o) :
-        result = o
-        for g in self.__getters :
-            result = g (result)
-        return result
+    def __call__ (self, o) :
+        getters = self.__getters
+        if getters :
+            result = o
+            for g in getters :
+                result = g (result)
+            return result
+        else :
+            raise TypeError ("Getter isn't directly callable")
     # end def _call_n
 
     def __getattr__ (self, name) :
-        return _Getter_n_ \
-            ( self.__getters + (operator.attrgetter (name), )
-            , "%s.%s`" % (self.__doc__ [:-1], name)
-            )
+        if self.__doc__ :
+            doc = "%s.%s`" % (self.__doc__ [:-1], name)
+        else :
+            doc = "Getter function for `.%s`" % name
+        return self.__class__ \
+            (self.__getters + (operator.attrgetter (name), ), doc)
     # end def __getattr__
 
     def __getitem__ (self, key) :
-        return _Getter_n_ \
-            (self.__getters + (operator.itemgetter (key), )
-            , "%s [%s]`" % (self.__doc__ [:-1], key)
-            )
+        if self.__doc__ :
+            doc = "%s [%s]`" % (self.__doc__ [:-1], key)
+        else :
+            doc = "Getter function for `[%s]`" % key
+        return self.__class__ \
+            (self.__getters + (operator.itemgetter (key), ), doc)
     # end def __getitem__
 
     def __repr__ (self) :
@@ -132,40 +136,6 @@ class _Getter_ (TFL.Meta.Object) :
     # end def __repr__
 
 # end class _Getter_
-
-class _Getter_0_ (TFL.Meta.Object) :
-    """Generalized (and transitive) accessor to attributes and items."""
-
-    def __getattr__ (self, name) :
-        if "." in name :
-            ### Accommodate explicit calls to `getattr` with composite `name`
-            result = self
-            for n in name.split (".") :
-                result = getattr (result, n)
-            return result
-        else :
-            return _Getter_1_ \
-                ( (operator.attrgetter (name), )
-                , "Getter function for `.%s`" % name
-                )
-    # end def __getattr__
-
-    def __getitem__ (self, key) :
-        return _Getter_1_ \
-            ( (operator.itemgetter (key), )
-            ,  "Getter function for `[%s]`" % key
-            )
-    # end def __getitem__
-
-# end class _Getter_0_
-
-class _Getter_1_ (_Getter_) :
-    __call__ = _Getter_._call_1
-# end class _Getter_1_
-
-class _Getter_n_ (_Getter_) :
-    __call__ = _Getter_._call_n
-# end class _Getter_n_
 
 class _Method_ (TFL.Meta.Object) :
     """Accessor to dynamically-bound methods (allows passing such as
@@ -191,7 +161,7 @@ class _Method_ (TFL.Meta.Object) :
 
 # end class _Method_
 
-Getter = Attribute = Item = _Getter_0_ ()
+Getter = Attribute = Item = _Getter_ ()
 Method = _Method_ ()
 
 if __name__ != "__main__" :
