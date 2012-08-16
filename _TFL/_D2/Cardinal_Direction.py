@@ -46,12 +46,12 @@ class _Cardinal_Direction_ (D2._Point_) :
 
     value_map      = \
         { ( 0, +1) : "N"
-        , (+1,  0) : "E"
-        , ( 0, -1) : "S"
-        , (-1,  0) : "W"
         , (+1, +1) : "NE"
+        , (+1,  0) : "E"
         , (+1, -1) : "SE"
+        , ( 0, -1) : "S"
         , (-1, -1) : "SW"
+        , (-1,  0) : "W"
         , (-1, +1) : "NW"
         }
 
@@ -157,6 +157,18 @@ class Cardinal_Direction (_Cardinal_Direction_, D2.Point) :
     SE*3
     >>> print (Point.from_name ("NE3_E1"))
     E*4 + N*3
+
+    >>> for n in sorted (Point.name_map) :
+    ...     p = Point.from_name (n)
+    ...     print ("positive:", p, ", negative:", -p)
+    positive: E , negative: W
+    positive: N , negative: S
+    positive: NE , negative: SW
+    positive: NW , negative: SE
+    positive: S , negative: N
+    positive: SE , negative: NW
+    positive: SW , negative: NE
+    positive: W , negative: E
 
     """
 
