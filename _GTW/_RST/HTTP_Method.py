@@ -40,6 +40,7 @@
 #     6-Aug-2012 (CT) Change `_do_change_info` to use `resource.get_etag` and
 #                     `.get_last_modified`, not `.change_info`
 #     6-Aug-2012 (CT) Use `resource.skip_etag`, remove `_do_change_info_skip`
+#    15-Aug-2012 (MG) Use bytes string for `X-last-cid` header
 #    ««revision-date»»···
 #--
 
@@ -159,7 +160,7 @@ class _HTTP_Method_R_ (HTTP_Method) :
         if ci is not None :
             cid  = getattr (ci, "cid", None)
             if cid is not None :
-                response.headers ["X-last-cid"] = cid
+                response.headers [b"X-last-cid"] = cid
         if not result :
             response.status_code = 304
         return result

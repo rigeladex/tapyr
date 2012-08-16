@@ -118,6 +118,7 @@
 #     3-Aug-2012 (MG) Consider new `Ref_Opt_Map` in delete
 #     4-Aug-2012 (CT) Factor `_rollback_uncommitted_changes` to `EMS`
 #     4-Aug-2012 (CT) Change `delete` not to set `entity.pid` to None
+#    15-Aug-2012 (MG) Convert `last_cid` to int
 #    ««revision-date»»···
 #--
 
@@ -285,6 +286,8 @@ class SAS_Interface (TFL.Meta.Object) :
     def reconstruct (self, session, row) :
         scope        = session.scope
         pickle_cargo = self.pickle_cargo (row)
+        if "last_cid" in pickle_cargo :
+            pickle_cargo ["last_cid"] = [int (pickle_cargo ["last_cid"] [0])]
         entity       = self.e_type.from_attr_pickle_cargo (scope, pickle_cargo)
         entity.pid   = row [self.e_type._SAQ.pid]
         entity.r_last_cid = entity.last_cid
