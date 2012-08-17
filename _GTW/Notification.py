@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Feb-2010 (MG) Creation
+#    17-Aug-2012 (MG) Add new `Cached` property and adapt pickle behavior
 #    ««revision-date»»···
 #--
 """
@@ -64,7 +65,7 @@ from   _GTW                import GTW
 
 import  datetime
 
-class M_Notification_Collection (list.__class__) :
+class M_Notification_Collection (TFL.Meta.Object.__class__) :
     """Meta class implementing a singleton pattern"""
 
     session_key = "notifications"
@@ -78,19 +79,44 @@ class M_Notification_Collection (list.__class__) :
 
 # end class M_Notification_Collection
 
-class Notification_Collection (list) :
+class Notification_Collection (TFL.Meta.Object) :
     """Collection of all notifications for a session."""
 
     __metaclass__ = M_Notification_Collection
 
+    def __init__ (self) :
+        self._notifications = []
+    # end def __init__
+
+    def append (self, arg) :
+        self._notifications.append (arg)
+    # end def append
+
+    def __iter__ (self) :
+        return iter (self._notifications)
+    # end def __iter__
+
+    def __getstate__ (self) :
+        self.__dict__.pop ("Cached", ())
+        return self.__dict__
+    # end def __getstate__
+
+    @TFL.Meta.Once_Property
+    def Cached (self) :
+        return tuple (self)
+    # end def Cached
+
     def discarge (self, head = "", joiner = "\n", tail = "") :
+        self.Cached = tuple (self._notifications)
         result = [head]
         result.append \
             ( joiner.join
-                (unicode (s) for s in sorted (self, key = lambda n : n.time))
+                (  unicode (s)
+                for s in sorted (self._notifications, key = lambda n : n.time)
+                )
             )
         result.append (tail)
-        self [:] = []
+        self._notifications = []
         return "".join (result)
     # end def discarge
 
