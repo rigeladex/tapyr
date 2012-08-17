@@ -101,6 +101,8 @@
 #                     by the database
 #    14-Aug-2012 (MG) Index creation requires column objects
 #    15-Aug-2012 (MG) Create unique name of Index for primary key
+#    17-Aug-2012 (MG) Add `_Change_._SAS` to allow `.attr` queries for chang
+#                     objects
 #    ««revision-date»»···
 #--
 
@@ -393,6 +395,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             )
         MOM.DBW.SAS.Query \
             (MOM.SCM.Change._Change_, Table, parent = "parent_cid")
+        class _Fake_SAS_ (object) :
+            joined_tables = []
+        # end class _Fake_SAS_
+        MOM.SCM.Change._Change_._SAS = _Fake_SAS_
     # end def _create_SCM_table
 
     def _create_scope_table (cls, metadata) :
