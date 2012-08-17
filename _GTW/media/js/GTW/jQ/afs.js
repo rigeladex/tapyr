@@ -104,6 +104,8 @@
 //     5-Aug-2012 (MG) Support for `afs-media-button` added
 //     8-Aug-2012 (MG) Add support for WYSIWYG editor Tiny-MCE
 //     9-Aug-2012 (MG) Fix tinymce support
+//    17-Aug-2012 (MG) Replace special code for CKEditor, TinyMCE and
+//                     afs-media-button by callin of `elem._setup_field`
 //    ««revision-date»»···
 //--
 
@@ -155,6 +157,7 @@
         };
         return result;
     };
+    $AFS_E.Element.prototype._setup_field = function (inp$) {};
     $.fn.gtw_afs_form = function (afs_form, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
@@ -683,45 +686,10 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        if (elem.ckeditor !== undefined) {
-                            /* hide the element to avoid showing the RAW HTML
-                            ** code until the javascript for the editor has
-                            ** been loaded
-                            */
-                            inp$.hide ();
-                            window.CKEDITOR_BASEPATH = options.url.ckedior;
-                            $.getScript
-                                ( window.CKEDITOR_BASEPATH + "ckeditor.js"
-                                , function () {
-                                    CKEDITOR.replace (id, elem.ckeditor);});
-                        };
-                        if (elem.tinymce !== undefined) {
-                            /* hide the element to avoid showing the RAW HTML
-                            ** code until the javascript for the editor has
-                            ** been loaded
-                            */
-                            var root = options.url.tinymce;
-                            //inp$.hide ();
-                            $.getScript
-                                ( root + "jquery.tinymce.js"
-                                , function () {
-                                    elem.tinymce ["script_url"] =
-                                        root + "tiny_mce.js"
-                                    inp$.tinymce (elem.tinymce);
-                                });
-                        };
+                        elem._setup_field (inp$);
                     };
                   }
                 );
-            $(".afs-media-button", context).click (function (ev) {
-                var this$ = $(this);
-                window.SetUrl = function (url) {
-                    var   id = this$.attr ("id").split ("::") [1];
-                    id       = id.replace (/([:-])/g,"\\$1");
-                    $("#" + id).val (url).trigger ("change");
-                };
-                window.open (options.url.filemanager, "_blank");
-            });
             $(".cmd-button", context).each
                 ( function (n) {
                     _setup_cmd_buttons ($(this));
