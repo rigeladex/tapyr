@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    17-Aug-2012 (MG) Creation
+//    17-Aug-2012 (MG) Make selection window url configurable
 //    ««revision-date»»···
 //--
 
@@ -26,6 +27,7 @@
               this._super (spec);
           }
         , _setup_field : function _setup_field (inp$) {
+            var selection_url = this.selection_url;
             var url = inp$.val ();
             var img$ = $("<img />").attr ({ src : url, alt : this.label})
                                   .addClass ("afs-media-button");
@@ -37,7 +39,7 @@
                     img$.attr ("src", url);
                     inp$.val  (url).trigger ("change");
                 };
-                window.open ("/image-selection", "_blank");
+                window.open (selection_url, "_blank");
             });
           }
         }
