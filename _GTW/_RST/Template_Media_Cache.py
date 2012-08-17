@@ -33,6 +33,7 @@
 #     6-Aug-2012 (CT) Add `etag`
 #    10-Aug-2012 (CT) Add `verbose`
 #    14-Aug-2012 (MG) Consider `Media_Base.Domain` for href creation
+#    17-Aug-2012 (MG) Set `etag`during cache creation
 #    ««revision-date»»···
 #--
 
@@ -91,10 +92,10 @@ class Template_Media_Cache (TFL.Meta.Object) :
         self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
         if not TEST :
             self._create_cache ("js", js_map, GTW.minified_js)
-        etag = self._get_etag (css_map, js_map, t_set)
+        TT.etag = self._get_etag (css_map, js_map, t_set)
         return dict \
             ( css_href_map = TT.css_href_map
-            , etag         = etag
+            , etag         = TT.etag
             , Media_Map    = TT.Media_Map
             )
     # end def as_pickle_cargo
