@@ -29,6 +29,7 @@
 #     9-Jul-2012 (CT) Creation (based on GTW.NAV.Auth)
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    16-Aug-2012 (MG) Remove form dependecy
+#    17-Aug-2012 (MG) Fix bug in `_Login_.POST`
 #    ««revision-date»»···
 #--
 
@@ -179,7 +180,7 @@ class _Form_Cmd_ (_Cmd_) :
                 error_add (_T ("Username or password incorrect"))
             elif resource.active_account_required and not self.account.active :
                 error_add (_T ("This account is currently inactive"))
-            elif debug :
+            elif self.errors and debug :
                 error_add (repr (request.req_data))
         # end def _credetials_validation
 
