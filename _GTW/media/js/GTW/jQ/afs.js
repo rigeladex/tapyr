@@ -106,6 +106,7 @@
 //     9-Aug-2012 (MG) Fix tinymce support
 //    17-Aug-2012 (MG) Replace special code for CKEditor, TinyMCE and
 //                     afs-media-button by callin of `elem._setup_field`
+//    17-Aug-2012 (MG) Add `pre_submit_callbacks`
 //    ««revision-date»»···
 //--
 
@@ -179,6 +180,7 @@
               , selectors : selectors
               }
             );
+        var pre_submit_callbacks = []
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
                 var anchor    = elem;
@@ -686,7 +688,9 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        elem._setup_field (inp$);
+                        var cb = elem._setup_field (inp$);
+                        if (cb !== undefined)
+                            pre_submit_callbacks.push (cb);
                     };
                   }
                 );
@@ -999,20 +1003,9 @@
             }
         };
         var submit_cb = function submit_cb (ev) {
-            if (typeof (CKEDITOR) !== "undefined") {
-                for (var name in CKEDITOR.instances) {
-                    var editor = CKEDITOR.instances [name];
-                    $(editor.element.$).val     (editor.getData ())
-                                       .trigger ("change");
-                }
-            };
-            if (typeof (tinymce) !== "undefined") {
-                $(":tinymce").each (function (idx, elem) {
-                    var elem$ = $(elem);
-                    elem$.val     (elem$.tinymce ().getContent ())
-                         .trigger ("change");
-                });
-            };
+            for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
+                pre_submit_callbacks [i] ();
+            }
             var target$      = $(ev.target);
             var name         = target$.attr ("name");
             var pvs          = $AFS_E.root.packed_values ();

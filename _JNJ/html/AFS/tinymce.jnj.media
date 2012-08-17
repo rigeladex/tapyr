@@ -1,0 +1,27 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2012 Martin Glueck All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# ««license»»
+#
+#++
+# Name
+#    JNJ.html.AFS.tinymce.jnj.media
+#
+# Purpose
+#    Media framents for the Tiny-MCE Wysiwyg editor
+#
+# Revision Dates
+#    16-Aug-2012 (MG) Creation
+#    ««revision-date»»···
+#--
+
+from   __future__ import absolute_import, division, print_function, unicode_literals
+
+Script ( "/media/GTW/js/GTW/jQ/TinyMCE.js"
+       , requires =
+           ( GTW.Script._.GTW_afs_elements
+           , GTW.Script._.GTW_jq_afs
+           )
+       )
+Script ( "/media/X/tiny_mce/tiny_mce.js")
+### __END__ JNJ.html.AFS.tinymce.jnj.media

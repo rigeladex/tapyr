@@ -23,10 +23,7 @@
 
 ( function ($) {
     var Image_Selection_Field = $GTW.AFS.Elements.Field.extend (
-        { init      : function init (spec) {
-              this._super (spec);
-          }
-        , _setup_field : function _setup_field (inp$) {
+        { _setup_field : function _setup_field (inp$) {
             var selection_url = this.selection_url;
             var url = inp$.val ();
             var img$ = $("<img />").attr ({ src : url, alt : this.label})
