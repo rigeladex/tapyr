@@ -108,6 +108,7 @@
 //                     afs-media-button by callin of `elem._setup_field`
 //    17-Aug-2012 (MG) Add `pre_submit_callbacks`
 //    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
+//    18-Aug-2012 (MG) Fix `_response_replace`
 //    ««revision-date»»···
 //--
 
@@ -661,10 +662,10 @@
                 new_elem.setup_value
                     ( { anchor : anchor
                       , root   : root || anchor
-                      , roots  : []
+                      , roots  : $AFS_E.root.roots
                       }
                     );
-                anchor.value [new_elem.$id] = new_elem.value;
+                //anchor.value [new_elem.$id] = new_elem.value;
                 _setup_callbacks (s$);
             } else {
                 anchor = $AFS_E.get (elem.anchor_id);
@@ -722,6 +723,7 @@
                           ).click
                               ( function cmd_click (ev) {
                                   cmd.callback.call (cmc$, s$, elem, id, ev);
+                                  return false;
                                 }
                               )
                         );
