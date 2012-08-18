@@ -107,6 +107,7 @@
 //    17-Aug-2012 (MG) Replace special code for CKEditor, TinyMCE and
 //                     afs-media-button by callin of `elem._setup_field`
 //    17-Aug-2012 (MG) Add `pre_submit_callbacks`
+//    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
 //    ««revision-date»»···
 //--
 
@@ -180,7 +181,7 @@
               , selectors : selectors
               }
             );
-        var pre_submit_callbacks = []
+        $AFS_E.root.pre_submit_callbacks = [];
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
                 var anchor    = elem;
@@ -688,9 +689,7 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        var cb = elem._setup_field (inp$);
-                        if (cb !== undefined)
-                            pre_submit_callbacks.push (cb);
+                        elem._setup_field (inp$);
                     };
                   }
                 );
@@ -861,6 +860,10 @@
                       );
               }
             , Save                      : function save_cb (s$, elem, id, ev) {
+                    var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
+                    for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
+                        pre_submit_callbacks [i] ();
+                    }
                   var pvs = $AFS_E.root.packed_values (elem);
                   var json_data =
                         { cargo       : pvs
@@ -1003,6 +1006,7 @@
             }
         };
         var submit_cb = function submit_cb (ev) {
+            var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
             for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
                 pre_submit_callbacks [i] ();
             }
