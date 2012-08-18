@@ -1,0 +1,41 @@
+{#- jinja template: html/AFS/img_selection.jnj -#}
+{#
+## Copyright (C) 2012 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is licensed under the terms of either the
+## MIT License or the GNU Affero General Public License (AGPL) Version 3.
+## http://www.c-tanzer.at/license/mit_or_agpl.html
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/AFS/img_selection
+##
+## Purpose
+##    Special widgets for the selection of an image-url as an attribute value
+##
+## Revision Dates
+##    17-Aug-2012 (MG) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- import  html_version          as X -%}
+{%- import "html/AFS/input.jnj"   as IN %}
+{%- import "html/AFS/div_seq.jnj" as DS %}
+
+{%- macro Image_Selection_Field (form, elem, renderer) -%}
+  {{- DS.Field (form, elem, renderer) -}}
+{%- endmacro -%} {#- Image_Selection_Field -#}
+                  #
+{%- macro media_browser (elem) -%}
+  {{ IN.field (X.input.hidden, elem, class="afs-media-url") }}
+  <img alt="{{ elem.ui_name }}" src="{{ elem.edit }}"
+       class="afs-media-button"
+       id="B::{{ elem.id }}"
+  />
+{%- endmacro -%} {#- media_browser -#}
+
+{#- __END__ jinja template: html/AFS/img_selection.jnj -#}

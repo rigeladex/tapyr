@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: login.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -31,6 +31,7 @@
 ##    27-Jan-2010 (CT) Creation
 ##    23-Feb-2010 (CT) `New password` added
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
+##    16-Aug-2012 (MG) Use `form.login_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,32 +48,7 @@
 {%- block document -%}
   <h1>{{ title|safe }}</h1>
 
-  {%- if not next %}
-    {%- set next = page.abs_href %}
-  {%- elif next.endswith (page.SC.Auth.href_login) -%}
-    {%- set next = page.top.abs_href -%}
-  {%- endif -%}
-
-  {{ Form.object
-      ( login_form
-      , submit_kws =
-          [ dict
-              ( title = GTW._T
-                  ("Log into website with username and password specified")
-              , value = GTW._T ("Login")
-              , name  = "Submit"
-              )
-          , dict
-              ( title = GTW._T ("Get a new password for the username specified")
-              , value = GTW._T ("New password")
-              , name  = "Reset"
-              )
-          ]
-      , next_form_kw = dict (name = "next", value = next)
-      , class        = "login"
-      )
-  }}
-
+  {{ Form.login_inline (page, request, next = next, errors = errors) }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: login.jnj -#}

@@ -69,6 +69,7 @@
 #     8-Aug-2012 (MG) Use a dict for `blackboard`
 #    10-Aug-2012 (CT) Define `name` as `property`, split off `ext` there
 #    10-Aug-2012 (CT) Rename `Permission.rank` to `_rank`
+#    16-Aug-2012 (MG) Guard against empty languages in `_request_href`
 #    ««revision-date»»···
 #--
 
@@ -1351,7 +1352,7 @@ class RST_Root (_Ancestor) :
                 langs  = (prefix.strip ("/"), )
                 result = result [len (prefix):]
             if request is not None :
-                request.use_language (langs or request.locale_codes)
+                request.use_language (langs or request.locale_codes or ())
         return result
     # end def _request_href
 

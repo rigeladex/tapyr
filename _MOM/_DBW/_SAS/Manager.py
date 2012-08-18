@@ -348,6 +348,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             def computed_crn (self) :
                 ETM     = self.home_scope [assoc_tn]
                 query   = ETM.query (query_attr == self).attr (attr_name)
+                #import pdb;pdb.set_trace ()
                 if singleton :
                     return query.first ()
                 return query

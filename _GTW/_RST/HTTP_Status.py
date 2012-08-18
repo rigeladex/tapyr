@@ -32,6 +32,7 @@
 #     6-Aug-2012 (CT) Let `blackboard`
 #     8-Aug-2012 (MG) Use a dict for `blackboard`
 #    10-Aug-2012 (CT) Add missing import for `CAL.Date_Time`
+#    17-Aug-2012 (MG) Use byte data-type for response headers
 #    ««revision-date»»···
 #--
 
@@ -400,7 +401,7 @@ class Redirection (Status) :
 
     def _add_response_headers (self, resource, request, response) :
         self.__super._add_response_headers (resource, request, response)
-        response.headers ["Location"] = self.location
+        response.headers [b"Location"] = bytes (self.location)
     # end def _add_response_headers
 
 # end class Redirection
@@ -674,7 +675,7 @@ class Unauthorized (Client_Error) :
             auth = self.auth
         except AttributeError :
             auth = '%s realm="%s"' % (self.scheme, self.realm)
-        response.headers ["WWW-Authenticate"] = auth
+        response.headers [b"WWW-Authenticate"] = bytes (auth)
     # end def _add_response_headers
 
 # end class Unauthorized
@@ -731,7 +732,7 @@ class Method_Not_Allowed (Client_Error) :
             valid_methods = self.valid_methods
         except AttributeError :
             valid_methods = resource.SUPPORTED_METHODS
-        response.headers ["Allow"] = ", ".join (sorted (valid_methods))
+        response.headers [b"Allow"] = b", ".join (sorted (valid_methods))
     # end def _add_response_headers
 
 # end class Method_Not_Allowed
@@ -907,7 +908,7 @@ class Request_Entity_Too_Large (Client_Error) :
         except AttributeError :
             pass
         else :
-            response.headers ["Retry-After"] = retry_after
+            response.headers [b"Retry-After"] = bytes (retry_after)
     # end def _add_response_headers
 
 # end class Request_Entity_Too_Large
@@ -1044,7 +1045,7 @@ class Service_Unavailable (Server_Error) :
             if isinstance (retry_after, CAL.Date_Time_Delta) :
                 retry_after = CAL.Date_Time ().as_utc () + retry_after
             if retry_after is not None :
-                response.headers ["Retry-After"] = retry_after
+                response.headers [b"Retry-After"] = bytes (retry_after)
     # end def _add_response_headers
 
 # end class Service_Unavailable
