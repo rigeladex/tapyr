@@ -51,6 +51,10 @@ import  _TFL._Meta.Object
 class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
 
+    def list (self) :
+        return (self.x, self.y)
+    # end def list
+
     def __getitem__ (self, index) :
         """Returns `x' for `index == 0' and `y' for `index == 1'"""
         return (self.x, self.y) [index]
@@ -65,6 +69,10 @@ class _Point_ (TFL.Meta.Object) :
         return 2
     # end def __len__
 
+    def __nonzero__ (self) :
+        return not (self.x == self.y == 0)
+    # end def __nonzero__
+
     def __str__  (self) :
         return "(%s, %s)" % (self.x, self.y)
     # end def __str__
@@ -72,10 +80,6 @@ class _Point_ (TFL.Meta.Object) :
     def __repr__ (self) :
         return "%s %s" % (self.__class__.__name__, tuple (self))
     # end def __repr__
-
-    def list (self) :
-        return (self.x, self.y)
-    # end def list
 
 # end class _Point_
 

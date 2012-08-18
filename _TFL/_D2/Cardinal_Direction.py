@@ -68,7 +68,7 @@ class _Cardinal_Direction_ (D2._Point_) :
             if ax :
                 yield (v_map [sx, sy], ax)
             else :
-                yield ("E + W", 1)
+                yield ("(0,0)", 1)
         else :
             if ax :
                 yield (v_map [sx,  0], ax)
@@ -133,7 +133,7 @@ class Cardinal_Direction (_Cardinal_Direction_, D2.Point) :
     >>> q = R_Point_L (l, 0.5, NE * 2)
     >>> r = -q
     >>> print ("l =", l)
-    l = (E + W, E*20 + N*10)
+    l = ((0,0), E*20 + N*10)
     >>> print ("q =", q)
     q = E*12.0 + N*7.0
     >>> print ("r =", r)

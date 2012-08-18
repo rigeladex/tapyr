@@ -35,6 +35,7 @@
 #     9-Jun-2011 (MG) `epk_split_pat` added
 #    18-Jun-2012 (CT) Add `M_E_Type_Object_Reload`
 #     1-Aug-2012 (CT) Add `M_E_Type_Object_Destroyed`
+#    17-Aug-2012 (CT) Add `role_map`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,8 @@ class M_Object (MOM.Meta.M_Id_Entity) :
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
-            , Roles         = None
+            , Roles         = ()
+            , role_map      = {}
             , ** kw
             )
         return result
