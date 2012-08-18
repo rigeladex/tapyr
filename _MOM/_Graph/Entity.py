@@ -36,7 +36,7 @@ from   _MOM                   import MOM
 from   _TFL                   import TFL
 
 import _MOM.import_MOM
-import _MOM._Graph
+import _MOM._Graph.Relation
 
 from   _TFL._D2               import Cardinal_Direction as CD
 
@@ -106,10 +106,11 @@ class Entity (TFL.Meta.Object) :
     # end def type_name
 
     def __init__ (self, graph, e_type) :
-        self.graph  = graph
-        self.e_type = e_type
-        self.index  = len (graph.map)
-        self.links  = {}
+        self.graph      = graph
+        self.e_type     = e_type
+        self.index      = len (graph.map)
+        self.relations  = {}
+        self.is_a_count = 0
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
@@ -120,29 +121,35 @@ class Entity (TFL.Meta.Object) :
         for a in args :
             self._add (a)
         for k, v in sorted (kw.iteritems ()) :
-            try :
-                attr = getattr (e_type, k)
-            except AttributeError :
-                off  = CD.Point.from_name (k)
-                self._add (v, offset = off)
+            if k == "IS_A" :
+                rel = "IS_A_%d" % self.is_a_count
+                self.is_a_count += 1
+                self._add (v, rel)
             else :
-                if attr.E_Type :
-                    if isinstance (v, CD._Cardinal_Direction_) :
-                        self._add \
-                            (graph [attr.E_Type.type_name], attr, offset = v)
-                    else :
-                        self._add (v, attr)
+                try :
+                    attr = getattr (e_type, k)
+                except AttributeError :
+                    off  = CD.Point.from_name (k)
+                    self._add (v, offset = off)
                 else :
-                    raise TypeError ("Unknown kw argument: %s = %r" % (k, v))
+                    if attr.E_Type :
+                        if isinstance (v, CD._Cardinal_Direction_) :
+                            e = graph [attr.E_Type.type_name]
+                            self._add (e, attr, offset = v)
+                        else :
+                            self._add (v, attr)
+                    else :
+                        raise TypeError \
+                            ("Unknown kw argument: %s = %r" % (k, v))
         return self
     # end def __call__
 
     def auto_add_roles (self) :
-        graph  = self.graph
-        e_type = self.e_type
-        links  = self.links
+        graph     = self.graph
+        e_type    = self.e_type
+        relations = self.relations
         for role in e_type.Roles :
-            if role.name not in links :
+            if role.name not in relations :
                 e = graph [role.E_Type.type_name]
                 self._add (e, role, auto = True)
     # end def auto_add_roles
@@ -158,17 +165,18 @@ class Entity (TFL.Meta.Object) :
         return self (** kw)
     # end def instantiate
 
-    def _add (self, et, attr = None, ** kw) :
+    def _add (self, et, rel = None, ** kw) :
         auto = kw.pop ("auto", False)
         ikw  = dict (kw)
         if not (auto or et.anchor)  :
             ikw ["anchor"] = self
         result = et.instantiate (self.graph, ** ikw)
         rtn    = result.type_name
-        if attr is None and rtn in self.e_type.role_map :
-            attr = self.e_type.Roles [self.e_type.role_map [rtn]]
-        if attr is not None :
-            self.links [attr.name] = result
+        if rel is None and rtn in self.e_type.role_map :
+            rel = self.e_type.Roles [self.e_type.role_map [rtn]]
+        if rel is not None :
+            self.relations [getattr (rel, "name", rel)] = \
+                MOM.Graph.Relation.new (rel, self, result)
         return result
     # end def _add
 

@@ -59,6 +59,8 @@ def graph (app_type) :
                 ( club   = ET.SRM.Club
                 , offset = CD.N * 2
                 , N      = ET.PAP.Person
+                    ( IS_A   = ET.PAP.Subject (offset = CD.E * 2)
+                    )
                 )
             )
         )

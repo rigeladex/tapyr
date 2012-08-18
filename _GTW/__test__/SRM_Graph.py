@@ -37,9 +37,24 @@ _test_code = """
     Creating new scope MOMT__...
 
     >>> g = graph (scope.app_type)
+
+    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    ...   print v
+    <Graph.Link2  SRM.Boat_in_Regatta>
+    <Graph.Link1  SRM.Regatta>
+    <Graph.Object SRM.Regatta_Event>
+    <Graph.Object SRM.Club>
+    <Graph.Link2  SRM.Crew_Member>
+    <Graph.Link1  SRM.Boat>
+    <Graph.Object SRM.Boat_Class>
+    <Graph.Link1  SRM.Sailor>
+    <Graph.Object PAP.Person>
+    <Graph.Object PAP.Subject>
+
     >>> for k, v in sorted (g.map.iteritems ()) :
     ...   print "%%-34s %%-34s %%s" %% (v, v.anchor, v.pos)
     <Graph.Object PAP.Person>          <Graph.Link1  SRM.Sailor>          N*3
+    <Graph.Object PAP.Subject>         <Graph.Object PAP.Person>          E*2 + N*3
     <Graph.Link1  SRM.Boat>            <Graph.Link2  SRM.Boat_in_Regatta> W
     <Graph.Object SRM.Boat_Class>      <Graph.Link1  SRM.Boat>            W*2
     <Graph.Link2  SRM.Boat_in_Regatta> None                               (0,0)
@@ -52,6 +67,7 @@ _test_code = """
     >>> for k, v in sorted (g.map.iteritems ()) :
     ...     print v.type_name, v.e_type.Roles
     PAP.Person ()
+    PAP.Subject ()
     SRM.Boat (Boat_Class `left`,)
     SRM.Boat_Class ()
     SRM.Boat_in_Regatta (Boat `left`, Regatta `right`)
@@ -61,28 +77,37 @@ _test_code = """
     SRM.Regatta_Event ()
     SRM.Sailor (Person `left`,)
 
-    >>> for k, v in sorted (g.map.iteritems ()) :
-    ...     if v.links :
-    ...         print v.type_name
-    ...         for a, l in sorted (v.links.iteritems ()) :
-    ...             print "   ", a, l
-    SRM.Boat
-        left <Graph.Object SRM.Boat_Class>
-    SRM.Boat_in_Regatta
-        left <Graph.Link1  SRM.Boat>
-        right <Graph.Link1  SRM.Regatta>
-        skipper <Graph.Link1  SRM.Sailor>
-    SRM.Crew_Member
-        left <Graph.Link2  SRM.Boat_in_Regatta>
-        right <Graph.Link1  SRM.Sailor>
-    SRM.Regatta
-        left <Graph.Object SRM.Regatta_Event>
-    SRM.Regatta_Event
-        club <Graph.Object SRM.Club>
-    SRM.Sailor
-        club <Graph.Object SRM.Club>
-        left <Graph.Object PAP.Person>
+    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    ...     if v.relations :
+    ...         for a, l in sorted (v.relations.iteritems ()) :
+    ...             print l
+    <Graph.Relation.Role SRM.Boat_in_Regatta.left -> SRM.Boat>
+    <Graph.Relation.Role SRM.Boat_in_Regatta.right -> SRM.Regatta>
+    <Graph.Relation.Attr SRM.Boat_in_Regatta.skipper -> SRM.Sailor>
+    <Graph.Relation.Role SRM.Regatta.left -> SRM.Regatta_Event>
+    <Graph.Relation.Attr SRM.Regatta_Event.club -> SRM.Club>
+    <Graph.Relation.Role SRM.Crew_Member.left -> SRM.Boat_in_Regatta>
+    <Graph.Relation.Role SRM.Crew_Member.right -> SRM.Sailor>
+    <Graph.Relation.Role SRM.Boat.left -> SRM.Boat_Class>
+    <Graph.Relation.Attr SRM.Sailor.club -> SRM.Club>
+    <Graph.Relation.Role SRM.Sailor.left -> PAP.Person>
+    <Graph.Relation PAP.Person IS A PAP.Subject>
 
+    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    ...     if v.relations :
+    ...         for a, l in sorted (v.relations.iteritems ()) :
+    ...             print l.kind, l.source, l.target
+    Role <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Boat>
+    Role <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Regatta>
+    Attr <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Sailor>
+    Role <Graph.Link1  SRM.Regatta> <Graph.Object SRM.Regatta_Event>
+    Attr <Graph.Object SRM.Regatta_Event> <Graph.Object SRM.Club>
+    Role <Graph.Link2  SRM.Crew_Member> <Graph.Link2  SRM.Boat_in_Regatta>
+    Role <Graph.Link2  SRM.Crew_Member> <Graph.Link1  SRM.Sailor>
+    Role <Graph.Link1  SRM.Boat> <Graph.Object SRM.Boat_Class>
+    Attr <Graph.Link1  SRM.Sailor> <Graph.Object SRM.Club>
+    Role <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
+    Is_A <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
 """
 
