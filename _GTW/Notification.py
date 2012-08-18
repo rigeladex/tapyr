@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-Feb-2010 (MG) Creation
 #    17-Aug-2012 (MG) Add new `Cached` property and adapt pickle behavior
+#    18-Aug-2012 (MG) Fix `discarge` to avoid `empty` head/tail result
 #    ««revision-date»»···
 #--
 """
@@ -107,16 +108,18 @@ class Notification_Collection (TFL.Meta.Object) :
     # end def Cached
 
     def discarge (self, head = "", joiner = "\n", tail = "") :
-        self.Cached = tuple (self._notifications)
-        result = [head]
-        result.append \
-            ( joiner.join
-                (  unicode (s)
-                for s in sorted (self._notifications, key = lambda n : n.time)
+        self.Cached = items = tuple (self._notifications)
+        result      = []
+        if items :
+            result.append (head)
+            result.append \
+                ( joiner.join
+                    (  unicode (s)
+                    for s in sorted (items, key = lambda n : n.time)
+                    )
                 )
-            )
-        result.append (tail)
-        self._notifications = []
+            result.append (tail)
+            self._notifications = []
         return "".join (result)
     # end def discarge
 
