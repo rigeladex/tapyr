@@ -107,6 +107,8 @@
 //    17-Aug-2012 (MG) Replace special code for CKEditor, TinyMCE and
 //                     afs-media-button by callin of `elem._setup_field`
 //    17-Aug-2012 (MG) Add `pre_submit_callbacks`
+//    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
+//    18-Aug-2012 (MG) Fix `_response_replace`
 //    ««revision-date»»···
 //--
 
@@ -180,7 +182,7 @@
               , selectors : selectors
               }
             );
-        var pre_submit_callbacks = []
+        $AFS_E.root.pre_submit_callbacks = [];
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
                 var anchor    = elem;
@@ -660,10 +662,10 @@
                 new_elem.setup_value
                     ( { anchor : anchor
                       , root   : root || anchor
-                      , roots  : []
+                      , roots  : $AFS_E.root.roots
                       }
                     );
-                anchor.value [new_elem.$id] = new_elem.value;
+                //anchor.value [new_elem.$id] = new_elem.value;
                 _setup_callbacks (s$);
             } else {
                 anchor = $AFS_E.get (elem.anchor_id);
@@ -688,9 +690,7 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        var cb = elem._setup_field (inp$);
-                        if (cb !== undefined)
-                            pre_submit_callbacks.push (cb);
+                        elem._setup_field (inp$);
                     };
                   }
                 );
@@ -723,6 +723,7 @@
                           ).click
                               ( function cmd_click (ev) {
                                   cmd.callback.call (cmc$, s$, elem, id, ev);
+                                  return false;
                                 }
                               )
                         );
@@ -861,6 +862,10 @@
                       );
               }
             , Save                      : function save_cb (s$, elem, id, ev) {
+                    var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
+                    for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
+                        pre_submit_callbacks [i] ();
+                    }
                   var pvs = $AFS_E.root.packed_values (elem);
                   var json_data =
                         { cargo       : pvs
@@ -1003,6 +1008,7 @@
             }
         };
         var submit_cb = function submit_cb (ev) {
+            var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
             for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
                 pre_submit_callbacks [i] ();
             }

@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    16-Aug-2012 (MG) Creation
+//    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
 //    ««revision-date»»···
 //--
 
@@ -54,7 +55,7 @@
                 tinymce.get  (options.elements).save ();
                 inp$.trigger ("change");
             };
-            return pre_submit;
+            $GTW.AFS.Elements.root.pre_submit_callbacks.push (pre_submit);
           }
         }
       , { type_name : "TinyMCE_Field" }
