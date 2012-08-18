@@ -32,11 +32,13 @@
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _MOM               import MOM
-from   _TFL               import TFL
+from   _MOM                   import MOM
+from   _TFL                   import TFL
 
 import _MOM.import_MOM
 import _MOM._Graph
+
+from   _TFL._D2               import Cardinal_Direction as CD
 
 import _TFL.Decorator
 import _TFL._Meta.Object
@@ -44,14 +46,141 @@ import _TFL._Meta.Once_Property
 
 class Entity (TFL.Meta.Object) :
 
-    def __init__ (self, graph) :
-        self.graph = graph
+    attr     = None
+
+    _anchor  = None
+    _cid     = -1
+    _offset  = None
+    _pos     = None
+
+    @property
+    def anchor (self) :
+        return self._anchor
+    # end def anchor
+
+    @anchor.setter
+    def anchor (self, value) :
+        if self._anchor is not None and value is not None :
+            raise TypeError \
+                ( "%s cannot have multiple anchors: %s <-> %s"
+                % (self.type_name, self._anchor, value)
+                )
+        self.graph.cid +=1
+        self._anchor = value
+    # end def anchor
+
+    @property
+    def offset (self) :
+        result = self._offset
+        if result is None :
+            anchor = self.anchor
+            if anchor is not None :
+                pass ### XXX calculate automatic offset
+        return result
+    # end def offset
+
+    @offset.setter
+    def offset (self, value) :
+        if value != self._offset :
+            self.graph.cid +=1
+            self._offset = value
+    # end def offset
+
+    @property
+    def pos (self) :
+        result = self._pos
+        if result is None or self._cid != self.graph.cid :
+            self._cid = self.graph.cid
+            anchor = self.anchor
+            if anchor is not None :
+                result = CD.Pp    (anchor.pos, self.offset)
+            else :
+                result = CD.Point (* (self.offset or ()))
+            self._pos = result
+        return result
+    # end def pos
+
+    @TFL.Meta.Once_Property
+    def type_name (self) :
+        return self.e_type.type_name
+    # end def type_name
+
+    def __init__ (self, graph, e_type) :
+        self.graph  = graph
+        self.e_type = e_type
+        self.index  = len (graph.map)
+        self.links  = {}
     # end def __init__
 
-    def __call__ (self, ** kw) :
-        ### XXX
+    def __call__ (self, * args, ** kw) :
+        self.pop_to_self (kw, "anchor", "offset")
+        anchor = self.anchor
+        graph  = self.graph
+        e_type = self.e_type
+        for a in args :
+            self._add (a)
+        for k, v in sorted (kw.iteritems ()) :
+            try :
+                attr = getattr (e_type, k)
+            except AttributeError :
+                off  = CD.Point.from_name (k)
+                self._add (v, offset = off)
+            else :
+                if attr.E_Type :
+                    if isinstance (v, CD._Cardinal_Direction_) :
+                        self._add \
+                            (graph [attr.E_Type.type_name], attr, offset = v)
+                    else :
+                        self._add (v, attr)
+                else :
+                    raise TypeError ("Unknown kw argument: %s = %r" % (k, v))
         return self
     # end def __call__
+
+    def auto_add_roles (self) :
+        graph  = self.graph
+        e_type = self.e_type
+        links  = self.links
+        for role in e_type.Roles :
+            if role.name not in links :
+                e = graph [role.E_Type.type_name]
+                self._add (e, role, auto = True)
+    # end def auto_add_roles
+
+    def instantiate (self, graph, anchor = None, offset = None) :
+        if graph != self.graph :
+            raise ValueError ("Non-matching graph")
+        kw = {}
+        if anchor is not None :
+            kw ["anchor"] = anchor
+        if offset is not None :
+            kw ["offset"] = offset
+        return self (** kw)
+    # end def instantiate
+
+    def _add (self, et, attr = None, ** kw) :
+        auto = kw.pop ("auto", False)
+        ikw  = dict (kw)
+        if not (auto or et.anchor)  :
+            ikw ["anchor"] = self
+        result = et.instantiate (self.graph, ** ikw)
+        rtn    = result.type_name
+        if attr is None and rtn in self.e_type.role_map :
+            attr = self.e_type.Roles [self.e_type.role_map [rtn]]
+        if attr is not None :
+            self.links [attr.name] = result
+        return result
+    # end def _add
+
+    def __repr__ (self) :
+        return "%s @ %s" % (self, self.pos)
+    # end def __repr__
+
+    def __str__ (self) :
+        result = "<Graph.%-6s %s>" % (self.__class__.__name__, self.type_name)
+        return result
+    # end def __str__
+
 # end class Entity
 
 @TFL.Add_To_Class ("Graph_Type", MOM.Object)
