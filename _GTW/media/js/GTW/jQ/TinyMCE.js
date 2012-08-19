@@ -16,6 +16,8 @@
 // Revision Dates
 //    16-Aug-2012 (MG) Creation
 //    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
+//    19-Aug-2012 (MG) Set `domain` to allow serving of tinymce from a
+//                     different subdomain
 //    ««revision-date»»···
 //--
 
@@ -42,14 +44,12 @@
                   );
                 return false;
             };
-            var options = this.tinymce;
+            var options  = this.tinymce;
+            var domain_a = document.domain.split (".").slice (-2);
             options.file_browser_callback = _open_selector;
             options.mode                  = "exact";
             options.elements              = inp$.attr ("id");
-            if (options.domain !== undefined) {
-                document.domain           = options.domain;
-                delete options.domain;
-            }
+            document.domain               = domain_a.join (".");
             var TE = tinyMCE.init (options);
             var pre_submit = function pre_submit () {
                 tinymce.get  (options.elements).save ();
