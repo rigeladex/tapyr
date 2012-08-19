@@ -30,6 +30,7 @@
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    16-Aug-2012 (MG) Remove form dependecy
 #    17-Aug-2012 (MG) Fix bug in `_Login_.POST`
+#    19-Aug-2012 (MG) Big in _Login_ fixed
 #    ««revision-date»»···
 #--
 
@@ -119,7 +120,7 @@ class _Form_Cmd_ (_Cmd_) :
         def _authenticate (self, resource, username, password, debug = False) :
             result = False
             self.get_account (resource, username, debug)
-            if password :
+            if password and self.account :
                 result = self.account.verify_password (password)
                 if not result and debug :
                     self.errors ["password"].append \
