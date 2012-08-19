@@ -177,7 +177,6 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
             ### this response contains notifications ->
             ### clear the Etag and the last_modified to prevent caching of
             ### responses with notifications
-            print ("Clear Etag")
             response.set_etag        ("")
             response.last_modified = datetime.datetime.utcfromtimestamp (0)
         response._set_session_cookie ()
