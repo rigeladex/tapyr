@@ -51,6 +51,19 @@ _test_code = """
     <Graph.Object PAP.Person>          PAP.Person
     <Graph.Object PAP.Subject>         PAP.Subject
 
+    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    ...   print "%%-34s %%s" %% (v, v.label_parts)
+    <Graph.Link2  SRM.Boat_in_Regatta> (u'_in_',)
+    <Graph.Link1  SRM.Regatta>         (u'SRM', u'.Regatta')
+    <Graph.Object SRM.Regatta_Event>   (u'SRM', u'.Regatta', u'_Event')
+    <Graph.Object SRM.Club>            (u'SRM', u'.Club')
+    <Graph.Link2  SRM.Crew_Member>     (u'SRM', u'.Crew', u'_Member')
+    <Graph.Link1  SRM.Boat>            (u'SRM', u'.Boat')
+    <Graph.Object SRM.Boat_Class>      (u'SRM', u'.Boat', u'_Class')
+    <Graph.Link1  SRM.Sailor>          (u'SRM', u'.Sailor')
+    <Graph.Object PAP.Person>          (u'PAP', u'.Person')
+    <Graph.Object PAP.Subject>         (u'PAP', u'.Subject')
+
     >>> for k, v in sorted (g.map.iteritems ()) :
     ...   print "%%-34s %%-34s %%s" %% (v, v.anchor, v.pos)
     <Graph.Object PAP.Person>          <Graph.Link1  SRM.Sailor>          N*3

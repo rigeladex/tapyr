@@ -31,6 +31,7 @@
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
@@ -38,10 +39,13 @@ import _MOM.import_MOM
 import _MOM._Graph.Relation
 
 from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL.Regexp            import Regexp, re
 
 import _TFL.Decorator
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+
+_word_sep = Regexp("([^A-Za-z0-9])")
 
 class Entity (TFL.Meta.Object) :
 
@@ -76,6 +80,26 @@ class Entity (TFL.Meta.Object) :
             result = self._label = self.type_name
         return result
     # end def label
+
+    @TFL.Meta.Once_Property
+    def label_parts (self) :
+        def _gen (label) :
+            parts = _word_sep.split (label)
+            yield parts [0]
+            it = iter (parts [1:])
+            while True :
+                try :
+                    s = it.next ()
+                    p = it.next ()
+                except StopIteration :
+                    break
+                yield s + p
+        label = self.label
+        if label.startswith ("_") :
+            return (label, )
+        else :
+            return tuple (_gen (label))
+    # end def label_parts
 
     @property
     def offset (self) :
