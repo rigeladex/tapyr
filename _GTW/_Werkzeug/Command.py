@@ -228,7 +228,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 load_cache    ()
         else :
             load_cache        ()
-       self.root.scope.commit ()
+        self.root.scope.commit ()
     # end def init_app_cache
 
     def nav_admin_group (self, name, title, * pnss, ** kw) :
