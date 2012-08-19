@@ -105,6 +105,7 @@
 #                     `query_s` and `ETM ()` instead of `ETM.instance_or_new`
 #                     (to protect against ambiguous input)
 #    22-May-2012 (CT) Remove `Form.cache_rank` (belongs to `Form_Cache`)
+#    19-Aug-2012 (MG) Quick fix for type conversion for `last_cid`
 #    ««revision-date»»···
 #--
 
@@ -238,8 +239,8 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
         result = {}
         if entity and not kw.get ("copy", False) :
             result = dict \
-                ( cid = entity.last_cid
-                , pid = entity.pid
+                ( cid = int (entity.last_cid)
+                , pid = int (entity.pid)
                 )
         return result
     # end def _value_cp
