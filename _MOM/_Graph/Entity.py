@@ -31,7 +31,6 @@
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
-
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
@@ -50,6 +49,7 @@ class Entity (TFL.Meta.Object) :
 
     _anchor  = None
     _cid     = -1
+    _label   = None
     _offset  = None
     _pos     = None
 
@@ -68,6 +68,14 @@ class Entity (TFL.Meta.Object) :
         self.graph.cid +=1
         self._anchor = value
     # end def anchor
+
+    @property
+    def label (self) :
+        result = self._label
+        if result is None :
+            result = self._label = self.type_name
+        return result
+    # end def label
 
     @property
     def offset (self) :
@@ -115,6 +123,7 @@ class Entity (TFL.Meta.Object) :
 
     def __call__ (self, * args, ** kw) :
         self.pop_to_self (kw, "anchor", "offset")
+        self.pop_to_self (kw, "label", prefix = "_")
         anchor = self.anchor
         graph  = self.graph
         e_type = self.e_type
@@ -194,6 +203,7 @@ class Entity (TFL.Meta.Object) :
 @TFL.Add_To_Class ("Graph_Type", MOM.Object)
 class Object (Entity) :
     """Model display of a MOM.Object in a MOM graph"""
+
 # end class Object
 
 @TFL.Add_To_Class ("Graph_Type", MOM.Link1)
@@ -204,6 +214,25 @@ class Link1 (Entity) :
 @TFL.Add_To_Class ("Graph_Type", MOM.Link2)
 class Link2 (Entity) :
     """Model display of a MOM.Link2 in a MOM graph"""
+
+    @property
+    def label (self) :
+        result = self._label
+        if result is None :
+            e_type = self.e_type
+            label  = e_type.type_base_name
+            l_tbn  = e_type.left.E_Type.type_base_name
+            if label.startswith (l_tbn) :
+                label = label [len (l_tbn):]
+            r_tbn  = e_type.right.E_Type.type_base_name
+            if label.endswith (r_tbn) :
+                label = label [:- len (r_tbn)]
+            if label == e_type.type_base_name :
+                label = e_type.type_name
+            result = self._label = label
+        return result
+    # end def label
+
 # end class Link2
 
 @TFL.Add_To_Class ("Graph_Type", MOM.Link3)

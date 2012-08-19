@@ -39,17 +39,17 @@ _test_code = """
     >>> g = graph (scope.app_type)
 
     >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
-    ...   print v
-    <Graph.Link2  SRM.Boat_in_Regatta>
-    <Graph.Link1  SRM.Regatta>
-    <Graph.Object SRM.Regatta_Event>
-    <Graph.Object SRM.Club>
-    <Graph.Link2  SRM.Crew_Member>
-    <Graph.Link1  SRM.Boat>
-    <Graph.Object SRM.Boat_Class>
-    <Graph.Link1  SRM.Sailor>
-    <Graph.Object PAP.Person>
-    <Graph.Object PAP.Subject>
+    ...   print "%%-34s %%s" %% (v, v.label)
+    <Graph.Link2  SRM.Boat_in_Regatta> _in_
+    <Graph.Link1  SRM.Regatta>         SRM.Regatta
+    <Graph.Object SRM.Regatta_Event>   SRM.Regatta_Event
+    <Graph.Object SRM.Club>            SRM.Club
+    <Graph.Link2  SRM.Crew_Member>     SRM.Crew_Member
+    <Graph.Link1  SRM.Boat>            SRM.Boat
+    <Graph.Object SRM.Boat_Class>      SRM.Boat_Class
+    <Graph.Link1  SRM.Sailor>          SRM.Sailor
+    <Graph.Object PAP.Person>          PAP.Person
+    <Graph.Object PAP.Subject>         PAP.Subject
 
     >>> for k, v in sorted (g.map.iteritems ()) :
     ...   print "%%-34s %%-34s %%s" %% (v, v.anchor, v.pos)
