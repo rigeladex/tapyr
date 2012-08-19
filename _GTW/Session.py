@@ -46,6 +46,7 @@
 #    26-Apr-2012 (CT) Change `_date` to create `User()` if `._load` returns `{}`
 #    23-Jul-2012 (CT) Call `renew_session_id` in `username.setter`
 #     4-Aug-2012 (MG) Don't save session on session id renewal
+#    19-Aug-2012 (MG) Add repr for User class
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,10 @@ class User (TFL.Meta.Object) :
     def __nonzero__ (self) :
         return self._name is not None
     # end def __nonzero__
+
+    def __repr__ (self) :
+        return "GTW.Session.User (%s)" % self._name
+    # end def __repr__
 
 # end class User
 
