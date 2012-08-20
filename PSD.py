@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,8 +50,8 @@ from   _TFL.Numeric_Interval import Numeric_Interval as Ival
 from   _TFL.predicate        import *
 from   _TFL.Regexp           import *
 from   _TFL._D2              import D2
+from   _TFL._D2.Screen       import Rect
 import _TFL._D2.Point
-import _TFL._D2.Rect
 import _TFL._Meta.Object
 
 from   _TFL                  import sos
@@ -113,7 +113,7 @@ class H_Bar (_Bar_) :
 
     def _scaled_rect (self, rect, value) :
         v = self.r_map (value)
-        return D2.Rect (rect.top_left, D2.Point (v, rect.size.y))
+        return Rect (rect.top_left, D2.Point (v, rect.size.y))
     # end def _scaled_rect
 
 # end class H_Bar
@@ -128,7 +128,7 @@ class V_Bar (_Bar_) :
 
     def _scaled_rect (self, rect, value) :
         v = self.r_map (value)
-        return D2.Rect \
+        return Rect \
             (rect.bottom_left - D2.Point (0, v), D2.Point (rect.size.x, v))
     # end def _scaled_pos
 
@@ -305,7 +305,7 @@ class Entry (TFL.Meta.Object) :
         self.canvas = canvas
         self.pos    = D2.Point (pos.x, pos.y + self.spacer)
         self.size   = size = D2.Point (width,    self.height)
-        self.rect   = rect = D2.Rect  (self.pos, size)
+        self.rect   = rect = Rect  (self.pos, size)
         self.widget = CTK.Rectangle \
             ( canvas, rect.top_left.list (), rect.bottom_right.list ()
             , fill    = self.background
@@ -498,7 +498,7 @@ class CPU_Entry (Text_LR_Entry) :
         self.__super.__init__ (canvas, ** kw)
         rect          = self.rect
         self.sg_size  = gs = D2.Point (self.speed_width  + 2, self.height)
-        self.sg_rect  = gr = D2.Rect  (rect.bottom_right - gs, gs)
+        self.sg_rect  = gr = Rect  (rect.bottom_right - gs, gs)
         self.s_gauge  = CTK.Rectangle \
             ( canvas, gr.top_left.list (), gr.bottom_right.list ()
             , fill    = self.speed_background
@@ -510,7 +510,7 @@ class CPU_Entry (Text_LR_Entry) :
         max_speed     = self._get_speed ("max")
         if min_speed is not None and max_speed is not None :
             bs = D2.Point (self.speed_width, self.height - 2)
-            br = D2.Rect  (rect.bottom_right - bs - D2.Point (1, 1), bs)
+            br = Rect  (rect.bottom_right - bs - D2.Point (1, 1), bs)
             self.s_bar = V_Bar \
                 (canvas, br, self.speed_color, "speedbar", Ival (0, max_speed))
         else :

@@ -41,6 +41,7 @@
 #    29-Nov-2007 (CT) Use `@property` instead of `__getattr__`
 #    15-Apr-2012 (CT) Add `import _TFL._D2.Line` to doctest of `R_Point_L`
 #    13-Aug-2012 (CT) Add class variable `Point` to `_R_Point_`
+#    20-Aug-2012 (CT) Add `norm`
 #    ««revision-date»»···
 #--
 
@@ -48,8 +49,16 @@ from    _TFL     import TFL
 from    _TFL._D2 import D2
 import  _TFL._Meta.Object
 
+import  math
+
 class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
+
+    @property
+    def norm (self) :
+        x, y = self
+        return math.sqrt (x*x + y*y)
+    # end def norm
 
     def list (self) :
         return (self.x, self.y)
@@ -287,9 +296,9 @@ class R_Point_L (_R_Point_) :
 class R_Point_R (_R_Point_) :
     """Point positioned relative to a rectangle.
 
-       >>> import _TFL._D2.Rect
-       >>> r = D2.Rect   (Point (0, 10), Point (20, 10))
-       >>> p = R_Point_R (r, D2.Rect.Center_Top, Point (0, 2))
+       >>> from _TFL._D2.Screen import Rect
+       >>> r = Rect   (Point (0, 10), Point (20, 10))
+       >>> p = R_Point_R (r, Rect.Center_Top, Point (0, 2))
        >>> print r, p
        ((0, 10), (20, 10)) (10.0, 12.0)
        >>> r.shift (Point (5.0, 5.0))

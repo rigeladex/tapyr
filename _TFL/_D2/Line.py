@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,8 @@
 #    11-Jun-2004 (GKH) Deprecation warning removed [10140]
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     5-Apr-2005 (CT)  Breakage in unit-test introduced by GKH removed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from    _TFL           import TFL
 from    _TFL._D2       import D2
