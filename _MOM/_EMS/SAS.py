@@ -56,6 +56,7 @@
 #     2-Aug-2012 (CT) Add `dependent_attrs` to `Change_Summary.add_pending`
 #     4-Aug-2012 (CT) Rename `remove` to `_remove`
 #     6-Aug-2012 (CT) Fix `add_pending`: use `E_Type`, not `E_Type_Manager`
+#    19-Aug-2012 (MG) Keep cache during rollback due to no changes
 #    ««revision-date»»···
 #--
 
@@ -175,7 +176,7 @@ class Manager (MOM.EMS._Manager_) :
             ### there was no commit -> we have to issue a rollback to the
             ### session to enure that the db resources will be released
             ### properly
-            self.session.rollback ()
+            self.session.rollback (True)
     # end def commit
 
     def load_root (self) :

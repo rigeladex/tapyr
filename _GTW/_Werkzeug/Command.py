@@ -63,6 +63,7 @@
 #     6-Aug-2012 (CT) Move `-watch_media_files` to `_GT2W_Server_Base_`
 #    10-Aug-2012 (CT) Pass `verbose` to `root.Cacher` and `App_Cache`
 #    14-Aug-2012 (MG) Add option `media_domain`
+#    19-Aug-2012 (MG) Commit scope after cache init
 #    ««revision-date»»···
 #--
 
@@ -224,9 +225,10 @@ class GT2W_Command (GTW.OMP.Command) :
             try :
                 self.cacher.store ()
             except EnvironmentError as exc :
-                load_cache ()
+                load_cache    ()
         else :
-            load_cache ()
+            load_cache        ()
+        self.root.scope.commit ()
     # end def init_app_cache
 
     def nav_admin_group (self, name, title, * pnss, ** kw) :
