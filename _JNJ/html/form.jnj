@@ -74,6 +74,10 @@
 ##    12-Nov-2010 (CT) `form` changed to include `div.buttons` only if necessary
 ##    26-Jan-2012 (CT) Use `request.path_x` for `next`, if available
 ##    16-Feb-2012 (CT) Add `class="button"` to `login_inline`, `logout_inline`
+##    16-Aug-2012 (MG) Add support for errors to `login_inline`
+##    16-Aug-2012 (MG) Add `password_change` form
+##    17-Aug-2012 (MG) Add custoization options to `login_inline` and
+                       `logout_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -278,17 +282,28 @@
   </fieldset>
 {%- endmacro -%} {#- inlines_as_table -#}
 
+{%- macro display_errors (errors, field_name) -%}
+      {%- for err in errors.get (field_name, ()) %}
+        <li class="error">
+          {{ err }}
+        </li>
+      {% endfor -%}
+{%- endmacro -%} {#- display_errors -#}
+
 {%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
   {%- set Auth     = page.SC.Auth %}
   {%- set l_caller = kwargs.pop ("caller", None) -%}
   {%- set action   = kwargs.pop ("action", Auth.href_login) -%}
   {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
+  {%- set errors   = kwargs.pop ("errors", {}) %}
+  {%- set allow_new_pass = kwargs.pop ("allow_new_password", True) %}
   {%- if next.endswith (Auth.href_login) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
   {% call form (action = action, ** kwargs) -%}
     {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
+      {{- display_errors (errors, None) -}}
       <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
       <li>
         {{ X.input.text
@@ -298,6 +313,7 @@
             )
         }}
       </li>
+      {{- display_errors (errors, "username") -}}
       <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
       <li>
         {{ X.input.password
@@ -306,6 +322,7 @@
             )
         }}
       </li>
+      {{- display_errors (errors, "password") -}}
       <li>
         {{ X.input.submit
             ( title = GTW._T ("Log into website or go to account page")
@@ -315,14 +332,16 @@
         }}
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
-      <li>
-        {{ X.input.submit
-            ( title = GTW._T ("Get a new password for the username specified")
-            , value = GTW._T ("New password")
-            , name  = "Reset"
-            )
-        }}
-      </li>
+      {%- if allow_new_pass %}
+        <li>
+          {{ X.input.submit
+              ( title = GTW._T ("Get a new password for the username specified")
+              , value = GTW._T ("New password")
+              , name  = "Reset"
+              )
+          }}
+        </li>
+      {% endif -%}
       {%- if allow_register %}
         <li class="nav-link level-0">
           <a href="{{ Auth.href_register }}" class="button"
@@ -339,6 +358,8 @@
   {%- set l_caller = kwargs.pop ("caller", None) -%}
   {%- set action   = kwargs.pop ("action", Auth.href_logout) -%}
   {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
+  {%- set allow_change_email = kwargs.pop ("allow_change_email", True) %}
+  {%- set allow_register     = kwargs.pop ("allow_register", True) %}
   {%- if next.endswith (Auth.href_logout) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
@@ -354,19 +375,59 @@
         }}
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
-      <li>
-        <a href="{{ Auth.href_change_email (request.user) }}" class="button"
-          title="{{ GTW._T ("Change email of account %s") % request.user.name }}"
-        >{{ GTW._T ("Change email") }}</a>
-      </li>
-      <li>
-        <a href="{{ Auth.href_change_pass (request.user) }}" class="button"
-          title="{{ GTW._T ("Change password of account %s") % request.user.name }}"
-        >{{ GTW._T ("Change password") }}</a>
-      </li>
+      {%- if allow_change_email %}
+        <li>
+          <a href="{{ Auth.href_change_email (request.user) }}" class="button"
+            title="{{ GTW._T ("Change email of account %s") % request.user.name }}"
+          >{{ GTW._T ("Change email") }}</a>
+        </li>
+      {% endif -%}
+      {%- if allow_register %}
+        <li>
+          <a href="{{ Auth.href_change_pass (request.user) }}" class="button"
+            title="{{ GTW._T ("Change password of account %s") % request.user.name }}"
+          >{{ GTW._T ("Change password") }}</a>
+        </li>
+      {% endif -%}
     </ul>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- logout_inline -#}
+
+{%- macro password_change (page, request, action) -%}
+  {%- set Auth     = page.SC.Auth -%}
+  {%- set l_caller = kwargs.pop ("caller", None) -%}
+  {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
+  {%- set errors   = kwargs.pop ("errors", {}) -%}
+  {% call form (action = action) -%}
+    {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
+    <ul>
+      <li id="account-name">{{ account.name }}</li>
+      {{- display_errors (errors, None) -}}
+
+      <li><label for="F_password">{{ GTW._T ("Current Password") }}</label></li>
+      <li>{{ X.input.password (id = "F_password", name = "password") }}</li>
+      {{- display_errors (errors, "password") -}}
+
+      <li><label for="F_npassword">{{ GTW._T ("New Password") }}</label></li>
+      <li>{{ X.input.password (id = "F_npassword", name = "npassword") }}</li>
+      {{- display_errors (errors, "npassword") -}}
+
+      <li><label for="F_vpassword">{{ GTW._T ("Repeat Password") }}</label></li>
+      <li>{{ X.input.password (id = "F_vpassword", name = "vpassword") }}</li>
+      {{- display_errors (errors, "vpassword") -}}
+
+      <li>
+        {{ X.input.submit
+            ( title = (GTW._T ("Update password"))
+            , value = (GTW._T ("Update password"))
+            )
+        }}
+        {{ X.input.hidden (name  = "next",     value = next        ) }}
+        {{ X.input.hidden (name  = "username", value = account.name) }}
+      </li>
+    </ul>
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- password_change -#}
 
 {%- macro object (fo) -%}
   {#- Create a form for a form-object `fo` -#}

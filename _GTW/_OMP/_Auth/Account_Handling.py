@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -38,6 +38,7 @@
 #                     `suspended`
 #    22-Dec-2010 (CT) `_Account_Action_.electric` redefined to `True`
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
+#    16-Aug-2012 (MG) Add `description` attribute to Action links
 #    ««revision-date»»···
 #--
 
@@ -75,7 +76,7 @@ class _Account_Action_ (Auth.Entity, _Ancestor_Essence) :
         class electric (_Ancestor.electric) :
 
             kind               = Attr.Const
-            default            = True
+            default            = False
 
         # end class electric
 
@@ -154,6 +155,7 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
 
     expire_duration_default = datetime.timedelta (hours = 1)
 
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
@@ -165,6 +167,14 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
             Kind_Mixins   = (Attr.Init_Only_Mixin, )
 
         # end class token
+
+        class description (A_String) :
+
+            kind               = Attr.Const
+            default            = "Email verification successful."
+            max_length         = 100
+
+        # end class description
 
         class expires (A_Date_Time) :
             """Exipre time of this action"""

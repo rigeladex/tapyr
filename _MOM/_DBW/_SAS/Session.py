@@ -119,6 +119,7 @@
 #     4-Aug-2012 (CT) Factor `_rollback_uncommitted_changes` to `EMS`
 #     4-Aug-2012 (CT) Change `delete` not to set `entity.pid` to None
 #    15-Aug-2012 (MG) Convert `last_cid` to int
+#    19-Aug-2012 (MG) Support keeping of cache during rollback
 #    ««revision-date»»···
 #--
 
@@ -706,7 +707,7 @@ class Session_S (_Session_) :
         return self._cid_map [cid]
     # end def recreate_change
 
-    def rollback (self) :
+    def rollback (self, keep_object_cache = False) :
         if self.transaction :
             self._in_rollback += 1
             scope              = self.scope
@@ -714,7 +715,8 @@ class Session_S (_Session_) :
                 scope.ems._rollback_uncommitted_changes ()
             self.__super.rollback ()
             self._in_rollback -= 1
-            self._pid_map      = self._saved ["pid_map"]
+            if not keep_object_cache :
+                self._pid_map  = self._saved ["pid_map"]
             self._cid_map      = self._saved ["cid_map"]
     # end def rollback
 

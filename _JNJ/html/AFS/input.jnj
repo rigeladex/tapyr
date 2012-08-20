@@ -36,6 +36,8 @@
 ##     5-Dec-2011 (CT) Add support for keyword arguments to all macros here
 ##    21-Dec-2011 (CT) Add `title` to display-input of `id_entity`
 ##     5-Aug-2012 (MG) Add `media_browser`
+##    17-Aug-2012 (MG) Move `media_browser` into seperate file
+##    17-Aug-2012 (MG) Rename `_field` to `field`
 ##    ««revision-date»»···
 ##--
 #}
@@ -44,23 +46,23 @@
 
 {%- macro boolean (elem) -%}
   {%- set kw = {} if not elem.cooked else dict (checked = "checked") %}
-  {{ _field (X.input.checkbox, elem, ** kw) }}
+  {{ field (X.input.checkbox, elem, ** kw) }}
 {%- endmacro -%} {#- boolean -#}
 
 {%- macro date (elem) -%}
-  {{ _field (X.input.date, elem, ** kwargs) }}
+  {{ field (X.input.date, elem, ** kwargs) }}
 {%- endmacro -%} {#- date -#}
 
 {%- macro datetime (elem) -%}
-  {{ _field (X.input.datetime, elem, ** kwargs) }}
+  {{ field (X.input.datetime, elem, ** kwargs) }}
 {%- endmacro -%} {#- datetime -#}
 
 {%- macro email (elem) -%}
-  {{ _field (X.input.email, elem, ** kwargs) }}
+  {{ field (X.input.email, elem, ** kwargs) }}
 {%- endmacro -%} {#- email -#}
 
 {%- macro hidden (elem) -%}
-  {{ _field (X.input.hidden, elem, ** kwargs) }}
+  {{ field (X.input.hidden, elem, ** kwargs) }}
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro id_entity (elem) -%}
@@ -71,7 +73,7 @@
       , value     = elem.edit
       )
   }}
-  {{ _field
+  {{ field
       ( X.input.text, elem
       , class     = GTW.filtered_join (" ", (class, "display"))
       , disabled  = True
@@ -81,13 +83,6 @@
       )
   }}
 {%- endmacro -%} {#- id_entity -#}
-
-{%- macro media_browser (elem) -%}
-  {{ _field (X.input.hidden, elem, class="afs-media-url") }}
-  <button class="ui-button ui-state-default afs-media-button" id="B::{{ elem.id }}">
-    {{ GTW._T ("Choose file") }}
-  </button>
-{%- endmacro -%} {#- media_browser -#}
 
 {%- macro named_value (elem) -%}
   {%- set kw = GTW.dict
@@ -120,17 +115,17 @@
       )
   -%}
   {%- do kw.update (kwargs) %}
-  {{ _field (X.input.number, elem, ** kw) }}
+  {{ field (X.input.number, elem, ** kw) }}
 {%- endmacro -%} {#- number -#}
 
 {%- macro password (elem) -%}
-  {{ _field (X.input.password, elem, ** kwargs) }}
+  {{ field (X.input.password, elem, ** kwargs) }}
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (elem) -%}
   {%- set kw = GTW.dict (max_length = elem.max_length) -%}
   {%- do kw.update (kwargs) %}
-  {{ _field (X.input.text, elem, ** kw) }}
+  {{ field (X.input.text, elem, ** kw) }}
 {%- endmacro -%} {#- string -#}
 
 {%- macro text (elem) -%}
@@ -141,15 +136,15 @@
       )
   -%}
   {%- do kw.update (kwargs) %}
-  {{ _field (X.input.textarea, elem, ** kw)
+  {{ field (X.input.textarea, elem, ** kw)
   }}
 {%- endmacro -%} {#- text -#}
 
 {%- macro time (elem) -%}
-  {{ _field (X.input.time, elem, ** kwargs) }}
+  {{ field (X.input.time, elem, ** kwargs) }}
 {%- endmacro -%} {#- time -#}
 
-{%- macro _field (typ, elem) -%}
+{%- macro field (typ, elem) -%}
   {%- set id = elem.id -%}
   {%- set kw = GTW.dict
       ( id            = id
@@ -171,6 +166,6 @@
     {%- do kw.update (required = True) %}
   {% endif -%}
   {{ typ (** kw) }}
-{%- endmacro -%} {#- _field -#}
+{%- endmacro -%} {#- field -#}
 
 {#- __END__ jinja template: html/AFS/input.jnj -#}

@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: change_email.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,14 +29,15 @@
 ##
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
+##    16-Aug-2012 (MG) Adapt to formless new GTW.RST.TOP.Auth
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
-{%- import "STD::html/form.jnj" as Form %}
+{%- import "STD::html/form.jnj" as Form with context %}
 
-{%- set title = GTW._T ("Change email for") + " " + form.account.name %}
+{%- set title = GTW._T ("Change email for") + " " + account.name %}
 
 {%- block title -%}
   <title>{{ title|safe }}</title>
@@ -45,11 +46,35 @@
 {%- block document -%}
   <h1>{{ title|safe }}</h1>
 
-  {{ Form.object
-      ( form
-      , next_form_kw = dict(name = "next", value = page.abs_href)
-      )
-  }}
+  {%- set Auth     = page.SC.Auth -%}
+  {% call Form.form (action = Auth.href_change_email (account)) -%}
+    <ul>
+      <li id="account-name">{{ account.name }}</li>
+      {{- Form.display_errors (errors, None) -}}
+
+      <li><label for="F_password">{{ GTW._T ("Current Password") }}</label></li>
+      <li>{{ X.input.password (id = "F_password", name = "password") }}</li>
+      {{- Form.display_errors (errors, "password") -}}
+
+      <li><label for="F_nemail">{{ GTW._T ("New Email") }}</label></li>
+      <li>{{ X.input.email (id = "F_nemail", name = "nemail") }}</li>
+      {{- Form.display_errors (errors, "nemail") -}}
+
+      <li><label for="F_vemail">{{ GTW._T ("Repeat Email") }}</label></li>
+      <li>{{ X.input.password (id = "F_vemail", name = "vemail") }}</li>
+      {{- Form.display_errors (errors, "vemail") -}}
+
+      <li>
+        {{ X.input.submit
+            ( title = (GTW._T ("Update Email"))
+            , value = (GTW._T ("Update Email"))
+            )
+        }}
+        {{ X.input.hidden (name  = "next",     value = next        ) }}
+        {{ X.input.hidden (name  = "username", value = account.name) }}
+      </li>
+    </ul>
+  {% endcall %} {# form #}
 
 {%- endblock document -%}
 

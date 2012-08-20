@@ -104,6 +104,11 @@
 //     5-Aug-2012 (MG) Support for `afs-media-button` added
 //     8-Aug-2012 (MG) Add support for WYSIWYG editor Tiny-MCE
 //     9-Aug-2012 (MG) Fix tinymce support
+//    17-Aug-2012 (MG) Replace special code for CKEditor, TinyMCE and
+//                     afs-media-button by callin of `elem._setup_field`
+//    17-Aug-2012 (MG) Add `pre_submit_callbacks`
+//    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
+//    18-Aug-2012 (MG) Fix `_response_replace`
 //    ««revision-date»»···
 //--
 
@@ -155,6 +160,7 @@
         };
         return result;
     };
+    $AFS_E.Element.prototype._setup_field = function (inp$) {};
     $.fn.gtw_afs_form = function (afs_form, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
@@ -176,6 +182,7 @@
               , selectors : selectors
               }
             );
+        $AFS_E.root.pre_submit_callbacks = [];
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
                 var anchor    = elem;
@@ -655,10 +662,10 @@
                 new_elem.setup_value
                     ( { anchor : anchor
                       , root   : root || anchor
-                      , roots  : []
+                      , roots  : $AFS_E.root.roots
                       }
                     );
-                anchor.value [new_elem.$id] = new_elem.value;
+                //anchor.value [new_elem.$id] = new_elem.value;
                 _setup_callbacks (s$);
             } else {
                 anchor = $AFS_E.get (elem.anchor_id);
@@ -683,45 +690,10 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        if (elem.ckeditor !== undefined) {
-                            /* hide the element to avoid showing the RAW HTML
-                            ** code until the javascript for the editor has
-                            ** been loaded
-                            */
-                            inp$.hide ();
-                            window.CKEDITOR_BASEPATH = options.url.ckedior;
-                            $.getScript
-                                ( window.CKEDITOR_BASEPATH + "ckeditor.js"
-                                , function () {
-                                    CKEDITOR.replace (id, elem.ckeditor);});
-                        };
-                        if (elem.tinymce !== undefined) {
-                            /* hide the element to avoid showing the RAW HTML
-                            ** code until the javascript for the editor has
-                            ** been loaded
-                            */
-                            var root = options.url.tinymce;
-                            //inp$.hide ();
-                            $.getScript
-                                ( root + "jquery.tinymce.js"
-                                , function () {
-                                    elem.tinymce ["script_url"] =
-                                        root + "tiny_mce.js"
-                                    inp$.tinymce (elem.tinymce);
-                                });
-                        };
+                        elem._setup_field (inp$);
                     };
                   }
                 );
-            $(".afs-media-button", context).click (function (ev) {
-                var this$ = $(this);
-                window.SetUrl = function (url) {
-                    var   id = this$.attr ("id").split ("::") [1];
-                    id       = id.replace (/([:-])/g,"\\$1");
-                    $("#" + id).val (url).trigger ("change");
-                };
-                window.open (options.url.filemanager, "_blank");
-            });
             $(".cmd-button", context).each
                 ( function (n) {
                     _setup_cmd_buttons ($(this));
@@ -751,6 +723,7 @@
                           ).click
                               ( function cmd_click (ev) {
                                   cmd.callback.call (cmc$, s$, elem, id, ev);
+                                  return false;
                                 }
                               )
                         );
@@ -889,6 +862,10 @@
                       );
               }
             , Save                      : function save_cb (s$, elem, id, ev) {
+                    var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
+                    for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
+                        pre_submit_callbacks [i] ();
+                    }
                   var pvs = $AFS_E.root.packed_values (elem);
                   var json_data =
                         { cargo       : pvs
@@ -1031,20 +1008,10 @@
             }
         };
         var submit_cb = function submit_cb (ev) {
-            if (typeof (CKEDITOR) !== "undefined") {
-                for (var name in CKEDITOR.instances) {
-                    var editor = CKEDITOR.instances [name];
-                    $(editor.element.$).val     (editor.getData ())
-                                       .trigger ("change");
-                }
-            };
-            if (typeof (tinymce) !== "undefined") {
-                $(":tinymce").each (function (idx, elem) {
-                    var elem$ = $(elem);
-                    elem$.val     (elem$.tinymce ().getContent ())
-                         .trigger ("change");
-                });
-            };
+            var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
+            for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
+                pre_submit_callbacks [i] ();
+            }
             var target$      = $(ev.target);
             var name         = target$.attr ("name");
             var pvs          = $AFS_E.root.packed_values ();

@@ -41,6 +41,7 @@
 #                     `.get_last_modified`, not `.change_info`
 #     6-Aug-2012 (CT) Use `resource.skip_etag`, remove `_do_change_info_skip`
 #    15-Aug-2012 (MG) Use bytes string for `X-last-cid` header
+#    18-Aug-2012 (CT) Fix `_do_change_info`: apply `or` to `last`, `etag`
 #    ««revision-date»»···
 #--
 
@@ -103,18 +104,19 @@ class HTTP_Method (TFL.Meta.Object) :
     # end def __call__
 
     def _do_change_info (self, resource, request, response) :
-        result = True
-        if not resource.skip_etag :
-            etag = resource.get_etag          (request)
-            last = resource.get_last_modified (request)
-            if last :
-                result = self._check_modified \
-                    (resource, request, response, last)
-            if etag :
-                result = result and self._check_etag \
-                    (resource, request, response, etag)
-            if last or etag :
+        result = resource.skip_etag
+        if not result :
+            etag   = resource.get_etag          (request)
+            last   = resource.get_last_modified (request)
+            result = not (last or etag)
+            if not result :
                 response.cache_control.no_cache = True
+                if last :
+                    result = self._check_modified \
+                        (resource, request, response, last)
+                if etag :
+                    result = result or self._check_etag \
+                        (resource, request, response, etag)
         return result
     # end def _do_change_info
 

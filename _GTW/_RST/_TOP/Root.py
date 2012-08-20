@@ -32,6 +32,7 @@
 #    30-Jul-2012 (CT) Redefine `Auth_Required`
 #     4-Aug-2012 (MG) Set session cookie before saving the session
 #     8-Aug-2012 (MG) Consider `hidden` in `home`
+#    17-Aug-2012 (MG) Clear Etag if notifications are part of the response
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ import _TFL._Meta.Object
 import _TFL.defaultdict
 
 import time
+import datetime
 
 class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     """Root of tree of pages."""
@@ -170,6 +172,13 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     # end def _http_response
 
     def _http_response_finish (self, request, response) :
+        notifications = response.session.notifications
+        if notifications and notifications.Cached :
+            ### this response contains notifications ->
+            ### clear the Etag and the last_modified to prevent caching of
+            ### responses with notifications
+            response.set_etag        ("")
+            response.last_modified = datetime.datetime.utcfromtimestamp (0)
         response._set_session_cookie ()
         response.session.save        ()
         scope = self.scope

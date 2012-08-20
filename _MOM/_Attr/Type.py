@@ -241,6 +241,7 @@
 #     8-Aug-2012 (CT) Guard against exceptions in `example`
 #    11-Aug-2012 (CT) Define `_A_Id_Entity_.example` as `property`,
 #                     not `Once_Property` (result might be `rollback`-ed)
+#    17-Aug-2012 (CT) Add `is_link_role` to `_A_Id_Entity_`, `A_Link_Role`
 #    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
 #    ««revision-date»»···
 #--
@@ -954,6 +955,8 @@ class _A_Id_Entity_ (_A_Entity_) :
     """Attribute referring to an entity."""
 
     Q_Ckd_Type        = MOM.Attr.Querier.Id_Entity
+
+    is_link_role      = False
 
     ### allow creation of new entity for this attribute
     ui_allow_new      = True
@@ -1835,6 +1838,7 @@ class A_Link_Role (_A_Id_Entity_) :
     auto_cache        = False
     Cacher_Type       = None
     dfc_synthesizer   = None
+    is_link_role      = True
     kind              = MOM.Attr.Link_Role
     max_links         = -1
     role_name         = None

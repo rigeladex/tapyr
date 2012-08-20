@@ -75,6 +75,7 @@
 #     4-Apr-2012 (CT) Add `Field_Group_Required.defaults` with
 #                     `collapsed = False`
 #     8-Aug-2012 (MG) Add `css_class` and `name` to `kw`
+#    17-Aug-2012 (MG) Add support for overriding of `Type`
 #    ««revision-date»»···
 #--
 
@@ -124,7 +125,7 @@ class _Base_ (TFL.Meta.Object) :
     rank     = 0
 
     def __init__ (self, ** kw) :
-        self.pop_to_self (kw, "rank")
+        self.pop_to_self (kw, "rank", "Type")
         self.kw = dict (kw)
     # end def __init__
 

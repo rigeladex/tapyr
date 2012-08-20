@@ -56,6 +56,7 @@
 #    21-Feb-2012 (CT) Add `GTW_L`
 #    29-Feb-2012 (CT) Add more `requires` to `GTW_jq_af`
 #     7-Mar-2012 (CT) Add `GTW_e_type_selector` to `GTW_jq_afs`
+#    17-Aug-2012 (MG) Remove `jqPlot`
 #    ««revision-date»»···
 #--
 
@@ -296,38 +297,6 @@ GTW.Script \
 GTW.JS_On_Ready \
     ( """$(".week-roller").gtw_week_roller (); """
     , name = "GTW_week_roller"
-    )
-
-### definitions for jqPlot
-GTW.CSS_Link ("/media/GTW/css/jquery.jqplot.min.css", name = "jqPlot")
-GTW.Script \
-    ( src  = "/media/GTW/js/jqPlot/jquery.jqplot.js"
-    , name = "jqPlot"
-    )
-GTW.Script \
-    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.cursor.min.js"
-    , name = "jqPlot_cursor"
-    )
-GTW.Script \
-    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.dateAxisRenderer.min.js"
-    , name = "jqPlot_dateaxis"
-    )
-GTW.Script \
-    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js"
-    , name = "jqPlot_canvastick"
-    )
-GTW.Script \
-    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.canvasTextRenderer.min.js"
-    , name = "jqPlot_canvastext"
-    )
-GTW.Script \
-    ( src  = "/media/GTW/js/jqPlot/plugins/jqplot.enhancedLegendRenderer.min.js"
-    , name = "jqPlot_legend"
-    )
-GTW.Script \
-    ( src = "/media/GTW/js/jqPlot/excanvas.js"
-    , condition = "IE"
-    , name = "jqPlot_excanvas"
     )
 
 if __name__ != "__main__" :
