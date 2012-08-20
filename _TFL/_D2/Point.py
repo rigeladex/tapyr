@@ -42,6 +42,7 @@
 #    15-Apr-2012 (CT) Add `import _TFL._D2.Line` to doctest of `R_Point_L`
 #    13-Aug-2012 (CT) Add class variable `Point` to `_R_Point_`
 #    20-Aug-2012 (CT) Add `norm`
+#    20-Aug-2012 (CT) Add `transformed`
 #    ««revision-date»»···
 #--
 
@@ -113,6 +114,13 @@ class Point (_Point_) :
         return self
     # end def scale
 
+    def transformed (self, affine) :
+        """Return another point whose coordinates are derived via `affine`
+           transform from `self`.
+        """
+        return self.__class__ (* affine (* self))
+    # end def transformed
+
     def __neg__ (self) :
         return self.__class__ (- self.x, - self.y)
     # end def __neg__
@@ -181,6 +189,19 @@ class _R_Point_ (_Point_) :
         self._offset.shift (right)
         return self
     # end def shift
+
+    def transformed (self, affine) :
+        """Return another point whose coordinates are derived via `affine`
+           transform from `self`.
+        """
+        args = \
+            ( tuple ( r.transformed (affine) for r in self._reference ())
+            + ( self._offset.transformed (affine)
+              , self._scale.transformed (affine)
+              )
+            )
+        return self.__class__ (* args)
+    # end def transformed
 
     @property
     def x (self) :
@@ -352,6 +373,20 @@ class R_Point_nP (_R_Point_) :
         self._y_weights   = y_weights
         self.__super.__init__ (offset, scale)
     # end def __init__
+
+    def transformed (self, affine) :
+        """Return another point whose coordinates are derived via `affine`
+           transform from `self`.
+        """
+        args = \
+            ( tuple ( r.transformed (affine) for r in self._ref_points)
+            + ( self._x_weights, self._y_weights
+              , self._offset.transformed (affine)
+              , self._scale.transformed (affine)
+              )
+            )
+        return self.__class__ (* args)
+    # end def transformed
 
     def _reference (self) :
         return (self._ref_points, self._x_weights, self._y_weights)

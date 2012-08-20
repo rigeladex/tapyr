@@ -32,14 +32,15 @@
 #    11-Jun-2004 (GKH) Deprecation warning removed [10140]
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     5-Apr-2005 (CT)  Breakage in unit-test introduced by GKH removed
+#    20-Aug-2012 (CT) Add `transformed`
 #    ««revision-date»»···
 #--
 
-from    _TFL           import TFL
-from    _TFL._D2       import D2
-import  _TFL._D2.Point
-import  _TFL._Meta.Object
-import  math
+from   _TFL           import TFL
+from   _TFL._D2       import D2
+import _TFL._D2.Point
+import _TFL._Meta.Object
+import math
 
 class Normal_Form (TFL.Meta.Object) :
     """Normal form of straight line: `a*x + b*y + c = 0'"""
@@ -120,9 +121,7 @@ class Line (TFL.Meta.Object) :
     # end def shift
 
     def length (self) :
-        dx = self.tail.x - self.head.x
-        dy = self.tail.y - self.head.y
-        return math.sqrt ((dx * dx) + (dy * dy))
+        return (self.tail - self.head).norm
     # end def length
 
     def point (self, shift) :
@@ -167,6 +166,14 @@ class Line (TFL.Meta.Object) :
             if self._contains (p) and other._contains (p) : return p
         return None
     # end def intersection
+
+    def transformed (self, affine) :
+        """Return another point whose coordinateare derived via `affine`
+           transform from `self`.
+        """
+        return self.__class__ \
+            (self.head.transformed (affine), self.tail.transformed (affine))
+    # end def transformed
 
     def __str__ (self) :
         return "(%s, %s)" % (self.head, self.tail)

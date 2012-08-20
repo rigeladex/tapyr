@@ -35,6 +35,7 @@
 #    20-Aug-2012 (CT) Add `M_Rect` to set `corner_dict`
 #    20-Aug-2012 (CT) Change to use real cartesian coordinates, not screen
 #                     coordinates
+#    20-Aug-2012 (CT) Add `transformed`
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,14 @@ class Rect (TFL.Meta.Object) :
         self.size.scale (right)
         return self
     # end def scale
+
+    def transformed (self, affine) :
+        """Return another rectangle whose coordinates are derived via `affine`
+           transform from `self`.
+        """
+        return self.__class__ \
+            (self.ref_point.transform (affine), self.size.transformed (affine))
+    # end def transformed
 
     def connection_point (self, point_1, point_2) :
         """Returns the intersection point between the rectangle and the line
