@@ -179,6 +179,7 @@
 #                     (I don't know what I'd smoked on 11-Apr-2012 :-( )
 #     5-Aug-2012 (CT) Add/use `get_raw_pid`
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
+#    20-Aug-2012 (RS) import `logging`
 #    ««revision-date»»···
 #--
 
@@ -197,6 +198,7 @@ import _MOM._Prop.Kind
 
 from   _TFL.I18N             import _, _T, _Tn
 
+import logging
 import pickle
 
 class Kind (MOM.Prop.Kind) :
