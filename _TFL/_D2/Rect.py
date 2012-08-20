@@ -36,6 +36,7 @@
 #    20-Aug-2012 (CT) Change to use real cartesian coordinates, not screen
 #                     coordinates
 #    20-Aug-2012 (CT) Add `transformed`
+#    20-Aug-2012 (CT) Sort methods alphabetically
 #    ««revision-date»»···
 #--
 
@@ -189,28 +190,15 @@ class Rect (TFL.Meta.Object) :
         self.size      = size
     # end def __init__
 
-    def point (self, p = Center) :
-        """Return point at position `p' relative to the rectangle."""
-        return self.ref_point + (self.size * p)
-    # end def point
-
-    def shift (self, right) :
-        self.ref_point.shift (right)
-        return self
-    # end def shift
-
-    def scale (self, right) :
-        self.size.scale (right)
-        return self
-    # end def scale
-
-    def transformed (self, affine) :
-        """Return another rectangle whose coordinates are derived via `affine`
-           transform from `self`.
+    @classmethod
+    def Sides (cls, diagonal, ratio) :
+        """Return the sides `(a, b)` of a rectangle with `diagonal` and `ratio`
+           between the sides.
         """
-        return self.__class__ \
-            (self.ref_point.transform (affine), self.size.transformed (affine))
-    # end def transformed
+        b = math.sqrt (diagonal * diagonal / (1 + ratio * ratio))
+        a = b * ratio
+        return a, b
+    # end def Sides
 
     def connection_point (self, point_1, point_2) :
         """Returns the intersection point between the rectangle and the line
@@ -226,6 +214,11 @@ class Rect (TFL.Meta.Object) :
         return None
     # end def connection_point
 
+    def point (self, p = Center) :
+        """Return point at position `p' relative to the rectangle."""
+        return self.ref_point + (self.size * p)
+    # end def point
+
     def point_in_rect (self, point) :
         if isinstance (point, (list, tuple)) :
             point = D2.Point (* point)
@@ -238,23 +231,23 @@ class Rect (TFL.Meta.Object) :
         return 1
     # end def point_in_rect
 
-    @classmethod
-    def Sides (cls, diagonal, ratio) :
-        """Return the sides `(a, b)` of a rectangle with `diagonal` and `ratio`
-           between the sides.
+    def scale (self, right) :
+        self.size.scale (right)
+        return self
+    # end def scale
+
+    def shift (self, right) :
+        self.ref_point.shift (right)
+        return self
+    # end def shift
+
+    def transformed (self, affine) :
+        """Return another rectangle whose coordinates are derived via `affine`
+           transform from `self`.
         """
-        b = math.sqrt (diagonal * diagonal / (1 + ratio * ratio))
-        a = b * ratio
-        return a, b
-    # end def Sides
-
-    def __str__ (self) :
-        return "(%s, %s)" % (self.ref_point, self.size)
-    # end def __str__
-
-    def __repr__ (self) :
-        return "%s %s" % (self.__class__.__name__, str (self))
-    # end def __repr__
+        return self.__class__ \
+            (self.ref_point.transform (affine), self.size.transformed (affine))
+    # end def transformed
 
     def __getattr__ (self, name) :
         """Return the point or side `name'. The possible names are defined by
@@ -267,6 +260,14 @@ class Rect (TFL.Meta.Object) :
         else :
             raise  AttributeError, name
     # end def __getattr__
+
+    def __repr__ (self) :
+        return "%s %s" % (self.__class__.__name__, str (self))
+    # end def __repr__
+
+    def __str__ (self) :
+        return "(%s, %s)" % (self.ref_point, self.size)
+    # end def __str__
 
 # end class Rect
 

@@ -41,8 +41,8 @@
 #    29-Nov-2007 (CT) Use `@property` instead of `__getattr__`
 #    15-Apr-2012 (CT) Add `import _TFL._D2.Line` to doctest of `R_Point_L`
 #    13-Aug-2012 (CT) Add class variable `Point` to `_R_Point_`
-#    20-Aug-2012 (CT) Add `norm`
-#    20-Aug-2012 (CT) Add `transformed`
+#    20-Aug-2012 (CT) Add `norm`, `transformed`
+#    20-Aug-2012 (CT) Sort methods alphabetically
 #    ««revision-date»»···
 #--
 
@@ -83,13 +83,13 @@ class _Point_ (TFL.Meta.Object) :
         return not (self.x == self.y == 0)
     # end def __nonzero__
 
-    def __str__  (self) :
-        return "(%s, %s)" % (self.x, self.y)
-    # end def __str__
-
     def __repr__ (self) :
         return "%s %s" % (self.__class__.__name__, tuple (self))
     # end def __repr__
+
+    def __str__  (self) :
+        return "(%s, %s)" % (self.x, self.y)
+    # end def __str__
 
 # end class _Point_
 
@@ -100,11 +100,6 @@ class Point (_Point_) :
         (self.x, self.y) = (x, y)
     # end def __init__
 
-    def shift (self, right) :
-        (self.x, self.y) = (self.x + right.x, self.y + right.y)
-        return self
-    # end def shift
-
     def scale (self, right) :
         """Scale by point or number `right'"""
         try :
@@ -114,16 +109,17 @@ class Point (_Point_) :
         return self
     # end def scale
 
+    def shift (self, right) :
+        (self.x, self.y) = (self.x + right.x, self.y + right.y)
+        return self
+    # end def shift
+
     def transformed (self, affine) :
         """Return another point whose coordinates are derived via `affine`
            transform from `self`.
         """
         return self.__class__ (* affine (* self))
     # end def transformed
-
-    def __neg__ (self) :
-        return self.__class__ (- self.x, - self.y)
-    # end def __neg__
 
     def __add__  (self, right) :
         try :
@@ -134,14 +130,14 @@ class Point (_Point_) :
 
     __radd__ = __add__
 
-    def __sub__  (self, right) :
+    def __div__  (self, right) :
         try :
-            return self.__class__ (self.x - right.x, self.y - right.y)
+            return self.__class__ \
+                (float (self.x) / right.x, float (self.y) / right.y)
         except AttributeError :
-            return self.__class__ (self.x - right,   self.y - right)
-    # end def __sub__
-
-    __rsub__ = __sub__
+            return self.__class__ \
+                (float (self.x) / right,   float (self.y) / right)
+    # end def __div__
 
     def __mul__  (self, right) :
         try :
@@ -152,14 +148,9 @@ class Point (_Point_) :
 
     __rmul__ = __mul__
 
-    def __div__  (self, right) :
-        try :
-            return self.__class__ \
-                (float (self.x) / right.x, float (self.y) / right.y)
-        except AttributeError :
-            return self.__class__ \
-                (float (self.x) / right,   float (self.y) / right)
-    # end def __div__
+    def __neg__ (self) :
+        return self.__class__ (- self.x, - self.y)
+    # end def __neg__
 
     def __setitem__ (self, index, value) :
         """Set `x' (for `index == 0') or `y' (for `index == 1') to `value'."""
@@ -168,12 +159,31 @@ class Point (_Point_) :
         else            : raise IndexError, index
     # end def __setitem__
 
+    def __sub__  (self, right) :
+        try :
+            return self.__class__ (self.x - right.x, self.y - right.y)
+        except AttributeError :
+            return self.__class__ (self.x - right,   self.y - right)
+    # end def __sub__
+
+    __rsub__ = __sub__
+
 # end class Point
 
 class _R_Point_ (_Point_) :
     """Base class for Points positioned relative to another point."""
 
     Point = Point
+
+    @property
+    def x (self) :
+        return (self._ref_point.x + self._offset.x) * self._scale.x
+    # end def x
+
+    @property
+    def y (self) :
+        return (self._ref_point.y + self._offset.y) * self._scale.y
+    # end def y
 
     def __init__ (self, offset = None, scale = None) :
         self._offset = offset or self.Point (0, 0)
@@ -203,54 +213,44 @@ class _R_Point_ (_Point_) :
         return self.__class__ (* args)
     # end def transformed
 
-    @property
-    def x (self) :
-        return (self._ref_point.x + self._offset.x) * self._scale.x
-    # end def x
-
-    @property
-    def y (self) :
-        return (self._ref_point.y + self._offset.y) * self._scale.y
-    # end def y
-
     def _reference (self) :
         raise NotImplementedError
     # end def _reference
-
-    def __neg__ (self) :
-        return self.__class__ \
-            (* self._reference () + (self._offset, - self._scale))
-    # end def __neg__
 
     def __add__  (self, right) :
         return self.__class__ \
             (* self._reference () + (self._offset + right, self._scale))
     # end def __add__
 
-    def __sub__  (self, right) :
+    def __div__  (self, right) :
         return self.__class__ \
-            (* self._reference () + (self._offset - right, self._scale))
-    # end def __sub__
+            (* self._reference () + (self._offset, self._scale / right))
+    # end def __div__
 
     def __mul__  (self, right) :
         return self.__class__ \
             (* self._reference () + (self._offset, self._scale * right))
     # end def __mul__
 
-    def __rmul__ (self, left) :
+    def __neg__ (self) :
         return self.__class__ \
-            (* self._reference () + (self._offset, self._scale * left))
-    # end def __rmul__
-
-    def __div__  (self, right) :
-        return self.__class__ \
-            (* self._reference () + (self._offset, self._scale / right))
-    # end def __div__
+            (* self._reference () + (self._offset, - self._scale))
+    # end def __neg__
 
     def __rdiv__ (self, left) :
         return self.__class__ \
             (* self._reference () + (self._offset, self._scale / left))
     # end def __rdiv__
+
+    def __rmul__ (self, left) :
+        return self.__class__ \
+            (* self._reference () + (self._offset, self._scale * left))
+    # end def __rmul__
+
+    def __sub__  (self, right) :
+        return self.__class__ \
+            (* self._reference () + (self._offset - right, self._scale))
+    # end def __sub__
 
 # end class _R_Point_
 
@@ -297,6 +297,11 @@ class R_Point_L (_R_Point_) :
        ((5, 5), (25, 15)) (17.0, 12.0) (-17.0, -12.0)
     """
 
+    @property
+    def _ref_point (self) :
+        return self._ref_line.point (self._shift)
+    # end def _ref_point
+
     def __init__ (self, ref_line, shift, offset = None, scale = None) :
         self._ref_line = ref_line
         self._shift    = shift
@@ -306,11 +311,6 @@ class R_Point_L (_R_Point_) :
     def _reference (self) :
         return self._ref_line, self._shift
     # end def _reference
-
-    @property
-    def _ref_point (self) :
-        return self._ref_line.point (self._shift)
-    # end def _ref_point
 
 # end class R_Point_L
 
@@ -328,6 +328,11 @@ class R_Point_R (_R_Point_) :
        ((5.0, 15.0), (20, 10)) (15.0, 17.0)
     """
 
+    @property
+    def _ref_point (self) :
+        return self._ref_rectangle.point (self._rect_point)
+    # end def _ref_point
+
     def __init__ \
         (self, ref_rectangle, rect_point, offset = None, scale = None) :
         self._ref_rectangle = ref_rectangle
@@ -338,11 +343,6 @@ class R_Point_R (_R_Point_) :
     def _reference (self) :
         return self._ref_rectangle, self._rect_point
     # end def _reference
-
-    @property
-    def _ref_point (self) :
-        return self._ref_rectangle.point (self._rect_point)
-    # end def _ref_point
 
 # end class R_Point_R
 
@@ -358,6 +358,18 @@ class R_Point_nP (_R_Point_) :
        >>> print p, q, a, b
        (5, 42) (8, 49) (6.5, 42.0) (6.5, 44.8)
     """
+
+    @property
+    def _ref_point (self) :
+        return Point \
+            ( sum (   (p.x * w)
+                  for (p, w) in zip (self._ref_points, self._x_weights)
+                  )
+            , sum (   (p.y * w)
+                  for (p, w) in zip (self._ref_points, self._y_weights)
+                  )
+            )
+    # end def _ref_point
 
     def __init__ \
         ( self, ref_points, x_weights, y_weights
@@ -391,18 +403,6 @@ class R_Point_nP (_R_Point_) :
     def _reference (self) :
         return (self._ref_points, self._x_weights, self._y_weights)
     # end def _reference
-
-    @property
-    def _ref_point (self) :
-        return Point \
-            ( sum (   (p.x * w)
-                  for (p, w) in zip (self._ref_points, self._x_weights)
-                  )
-            , sum (   (p.y * w)
-                  for (p, w) in zip (self._ref_points, self._y_weights)
-                  )
-            )
-    # end def _ref_point
 
 # end class R_Point_nP
 

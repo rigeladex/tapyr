@@ -33,6 +33,7 @@
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     5-Apr-2005 (CT)  Breakage in unit-test introduced by GKH removed
 #    20-Aug-2012 (CT) Add `transformed`
+#    20-Aug-2012 (CT) Sort methods alphabetically
 #    ««revision-date»»···
 #--
 
@@ -65,13 +66,13 @@ class Normal_Form (TFL.Meta.Object) :
             return None
     # end def intersection
 
-    def __str__ (self) :
-        return "(%s, %s, %s)" % (self.a, self.b, self.c)
-    # end def __str__
-
     def __repr__ (self) :
         return "%s %r" (self.__class__.__name__, self.line)
     # end def __repr__
+
+    def __str__ (self) :
+        return "(%s, %s, %s)" % (self.a, self.b, self.c)
+    # end def __str__
 
 # end class Normal_Form
 
@@ -113,23 +114,9 @@ class Line (TFL.Meta.Object) :
         self.tail = tail
     # end def __init__
 
-    def shift (self, right) :
-        """Shifts the complete line by vector `right'."""
-        self.head.shift (right)
-        self.tail.shift (right)
-        return self
-    # end def shift
-
-    def length (self) :
-        return (self.tail - self.head).norm
-    # end def length
-
-    def point (self, shift) :
-        """Returns the point at the linear position `shift' between the head
-           and the tail of the line.
-        """
-        return (self.head * (1. - shift)) + (self.tail * shift)
-    # end def point
+    def contains (self, p) :
+        return (not self.distance (p)) and self._contains (p)
+    # end def contains
 
     def distance (self, p) :
         """Returns the distance between point `p' and the line `self'.
@@ -146,9 +133,38 @@ class Line (TFL.Meta.Object) :
                )
     # end def distance
 
-    def contains (self, p) :
-        return (not self.distance (p)) and self._contains (p)
-    # end def contains
+    def intersection (self, other) :
+        p = Normal_Form (self).intersection (Normal_Form (other))
+        if p is not None :
+            if self._contains (p) and other._contains (p) : return p
+        return None
+    # end def intersection
+
+    def length (self) :
+        return (self.tail - self.head).norm
+    # end def length
+
+    def point (self, shift) :
+        """Returns the point at the linear position `shift' between the head
+           and the tail of the line.
+        """
+        return (self.head * (1. - shift)) + (self.tail * shift)
+    # end def point
+
+    def shift (self, right) :
+        """Shifts the complete line by vector `right'."""
+        self.head.shift (right)
+        self.tail.shift (right)
+        return self
+    # end def shift
+
+    def transformed (self, affine) :
+        """Return another point whose coordinateare derived via `affine`
+           transform from `self`.
+        """
+        return self.__class__ \
+            (self.head.transformed (affine), self.tail.transformed (affine))
+    # end def transformed
 
     def _contains (self, p) :
         v = p         - self.tail
@@ -160,28 +176,13 @@ class Line (TFL.Meta.Object) :
         return r
     # end def _contains
 
-    def intersection (self, other) :
-        p = Normal_Form (self).intersection (Normal_Form (other))
-        if p is not None :
-            if self._contains (p) and other._contains (p) : return p
-        return None
-    # end def intersection
-
-    def transformed (self, affine) :
-        """Return another point whose coordinateare derived via `affine`
-           transform from `self`.
-        """
-        return self.__class__ \
-            (self.head.transformed (affine), self.tail.transformed (affine))
-    # end def transformed
+    def __repr__ (self) :
+        return "%s %s" % (self.__class__.__name__, str (self))
+    # end def __repr__
 
     def __str__ (self) :
         return "(%s, %s)" % (self.head, self.tail)
     # end def __str__
-
-    def __repr__ (self) :
-        return "%s %s" % (self.__class__.__name__, str (self))
-    # end def __repr__
 
 # end class Line
 
