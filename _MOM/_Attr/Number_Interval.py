@@ -29,6 +29,7 @@
 #    28-Mar-2012 (CT) Creation (factored from un-DRY `Float_Interval`)
 #    29-Mar-2012 (CT) Add `__module__` to `__class__` calls
 #    29-Mar-2012 (CT) Rename `new_interval_attr_type` to `make`, add doctest
+#    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
 #    ««revision-date»»···
 #--
 
@@ -120,7 +121,7 @@ def make (bounds_type, name = None) :
     <type 'float'>
 
     >>> Frequency_Interval._Attributes.lower.mro () [:2]
-    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Freqency'>]
+    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Frequency'>]
     >>> Frequency_Interval._Attributes.lower.P_Type
     <type 'float'>
 
@@ -167,7 +168,7 @@ def make (bounds_type, name = None) :
 # end def make
 
 Float_Interval,     A_Float_Interval     = make (A_Float)
-Frequency_Interval, A_Frequency_Interval = make (A_Freqency)
+Frequency_Interval, A_Frequency_Interval = make (A_Frequency)
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()

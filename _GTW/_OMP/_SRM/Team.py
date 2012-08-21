@@ -80,7 +80,7 @@ class Team (_Ancestor_Essence) :
         ### Non-primary attributes
 
         class club (A_Id_Entity) :
-            """Club the sailor is starting for."""
+            """Club the team is starting for."""
 
             P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Optional

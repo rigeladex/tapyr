@@ -242,6 +242,7 @@
 #    11-Aug-2012 (CT) Define `_A_Id_Entity_.example` as `property`,
 #                     not `Once_Property` (result might be `rollback`-ed)
 #    17-Aug-2012 (CT) Add `is_link_role` to `_A_Id_Entity_`, `A_Link_Role`
+#    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
 #    ««revision-date»»···
 #--
 
@@ -1782,7 +1783,7 @@ class A_Float (_A_Float_) :
     code_format    = "%s"
 # end class A_Float
 
-class A_Freqency (_A_Unit_, _A_Float_) :
+class A_Frequency (_A_Unit_, _A_Float_) :
     """Frequency with unit information (e.g. 2.437 GHz)."""
 
     typ              = _ ("Frequency")
@@ -1795,7 +1796,7 @@ class A_Freqency (_A_Unit_, _A_Float_) :
         , THz        = 1.E12
         )
 
-# end class A_Freqency
+# end class A_Frequency
 
 class A_Int (_A_Int_) :
     pass

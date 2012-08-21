@@ -39,19 +39,23 @@ import _MOM.import_MOM
 import _MOM._Graph.Relation
 
 from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL.Regexp            import Regexp, re
 
 import _TFL.Decorator
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
+_word_sep = Regexp("([^A-Za-z0-9])")
+
 class Entity (TFL.Meta.Object) :
 
-    attr     = None
+    attr       = None
 
-    _anchor  = None
-    _cid     = -1
-    _offset  = None
-    _pos     = None
+    _anchor    = None
+    _label     = None
+    _offset    = None
+    _pos       = None
+    _sync_cid  = -1
 
     @property
     def anchor (self) :
@@ -68,6 +72,34 @@ class Entity (TFL.Meta.Object) :
         self.graph.cid +=1
         self._anchor = value
     # end def anchor
+
+    @property
+    def label (self) :
+        result = self._label
+        if result is None :
+            result = self._label = self.type_name
+        return result
+    # end def label
+
+    @TFL.Meta.Once_Property
+    def label_parts (self) :
+        def _gen (label) :
+            parts = _word_sep.split (label)
+            yield parts [0]
+            it = iter (parts [1:])
+            while True :
+                try :
+                    s = it.next ()
+                    p = it.next ()
+                except StopIteration :
+                    break
+                yield s + p
+        label = self.label
+        if label.startswith ("_") :
+            return (label, )
+        else :
+            return tuple (_gen (label))
+    # end def label_parts
 
     @property
     def offset (self) :
@@ -89,8 +121,8 @@ class Entity (TFL.Meta.Object) :
     @property
     def pos (self) :
         result = self._pos
-        if result is None or self._cid != self.graph.cid :
-            self._cid = self.graph.cid
+        if result is None or self._sync_cid != self.graph.cid :
+            self._sync_cid = self.graph.cid
             anchor = self.anchor
             if anchor is not None :
                 result = CD.Pp    (anchor.pos, self.offset)
@@ -108,13 +140,14 @@ class Entity (TFL.Meta.Object) :
     def __init__ (self, graph, e_type) :
         self.graph      = graph
         self.e_type     = e_type
-        self.index      = len (graph.map)
-        self.relations  = {}
+        self.index      = len (graph.node_map)
+        self.rel_map    = {}
         self.is_a_count = 0
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
         self.pop_to_self (kw, "anchor", "offset")
+        self.pop_to_self (kw, "label", prefix = "_")
         anchor = self.anchor
         graph  = self.graph
         e_type = self.e_type
@@ -145,11 +178,11 @@ class Entity (TFL.Meta.Object) :
     # end def __call__
 
     def auto_add_roles (self) :
-        graph     = self.graph
-        e_type    = self.e_type
-        relations = self.relations
+        graph   = self.graph
+        e_type  = self.e_type
+        rel_map = self.rel_map
         for role in e_type.Roles :
-            if role.name not in relations :
+            if role.name not in rel_map :
                 e = graph [role.E_Type.type_name]
                 self._add (e, role, auto = True)
     # end def auto_add_roles
@@ -175,7 +208,7 @@ class Entity (TFL.Meta.Object) :
         if rel is None and rtn in self.e_type.role_map :
             rel = self.e_type.Roles [self.e_type.role_map [rtn]]
         if rel is not None :
-            self.relations [getattr (rel, "name", rel)] = \
+            self.rel_map [getattr (rel, "name", rel)] = \
                 MOM.Graph.Relation.new (rel, self, result)
         return result
     # end def _add
@@ -194,6 +227,7 @@ class Entity (TFL.Meta.Object) :
 @TFL.Add_To_Class ("Graph_Type", MOM.Object)
 class Object (Entity) :
     """Model display of a MOM.Object in a MOM graph"""
+
 # end class Object
 
 @TFL.Add_To_Class ("Graph_Type", MOM.Link1)
@@ -204,6 +238,25 @@ class Link1 (Entity) :
 @TFL.Add_To_Class ("Graph_Type", MOM.Link2)
 class Link2 (Entity) :
     """Model display of a MOM.Link2 in a MOM graph"""
+
+    @property
+    def label (self) :
+        result = self._label
+        if result is None :
+            e_type = self.e_type
+            label  = e_type.type_base_name
+            l_tbn  = e_type.left.E_Type.type_base_name
+            if label.startswith (l_tbn) :
+                label = label [len (l_tbn):]
+            r_tbn  = e_type.right.E_Type.type_base_name
+            if label.endswith (r_tbn) :
+                label = label [:- len (r_tbn)]
+            if label == e_type.type_base_name :
+                label = e_type.type_name
+            result = self._label = label
+        return result
+    # end def label
+
 # end class Link2
 
 @TFL.Add_To_Class ("Graph_Type", MOM.Link3)

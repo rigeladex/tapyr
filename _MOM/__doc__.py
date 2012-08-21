@@ -765,7 +765,7 @@ Each entity_type knows about its children:
     MOM.Date_Interval
         ['MOM.Date_Interval_C', 'MOM.Date_Interval_N']
     MOM._Interval_
-        ['MOM.Float_Interval', 'MOM.Freqency_Interval']
+        ['MOM.Float_Interval', 'MOM.Frequency_Interval']
     BMT.Rodent
         ['BMT.Mouse', 'BMT.Rat']
     BMT.Mouse
@@ -870,9 +870,9 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> print formatted1 (sorted (apt.etypes))
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Freqency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
     >>> print formatted1 ([t.type_name for t in apt._T_Extension])
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Freqency_Interval', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
@@ -889,7 +889,7 @@ The app-type specific entity-types are ready to be used by
     MOM.Date_Interval_N                 ()
     MOM._Interval_                      ()
     MOM.Float_Interval                  ()
-    MOM.Freqency_Interval               ()
+    MOM.Frequency_Interval              ()
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -934,7 +934,7 @@ The app-type specific entity-types are ready to be used by
         ('lower', 'upper')
     MOM.Float_Interval
         (u'lower', u'upper')
-    MOM.Freqency_Interval
+    MOM.Frequency_Interval
         (u'lower', u'upper')
     BMT.Location
         ('lon', 'lat')
@@ -984,7 +984,7 @@ The app-type specific entity-types are ready to be used by
           MOM.Date_Interval_N
         MOM._Interval_
           MOM.Float_Interval
-          MOM.Freqency_Interval
+          MOM.Frequency_Interval
       MOM.Id_Entity
         MOM.Link
           MOM.Link1

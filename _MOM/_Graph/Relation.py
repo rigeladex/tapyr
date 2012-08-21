@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Aug-2012 (CT) Creation
+#    21-Aug-2012 (CT) Add `info` and `label`
 #    ««revision-date»»···
 #--
 
@@ -47,10 +48,17 @@ import _TFL._Meta.Once_Property
 class _Relation_ (TFL.Meta.Object) :
     """Base class for relations between MOM entities."""
 
+    info = None
+
     @TFL.Meta.Once_Property
     def kind (self) :
         return self.__class__.__name__
     # end def kind
+
+    @TFL.Meta.Once_Property
+    def label (self) :
+        return self.name
+    # end def label
 
 # end class _Relation_
 
@@ -90,6 +98,19 @@ class Is_A (_Relation_) :
 
 class Role (Attr) :
     """Model a link role relation between MOM entities."""
+
+    @TFL.Meta.Once_Property
+    def info (self) :
+        result = self.attr.max_links
+        if result and result > 0 :
+            return result
+    # end def info
+
+    @TFL.Meta.Once_Property
+    def label (self) :
+        return self.attr.role_abbreviation
+    # end def label
+
 # end class Role
 
 def new (rel, source, target) :
