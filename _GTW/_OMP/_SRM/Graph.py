@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Aug-2012 (CT) Creation
+#    21-Aug-2012 (CT) Add `Team_has_Boat_in_Regatta`, `Race_Result`
 #    ««revision-date»»···
 #--
 
@@ -54,7 +55,15 @@ def graph (app_type) :
                     , offset = CD.E
                     )
                 )
-            , N_E    = ET.SRM.Crew_Member
+            , NE     = ET.SRM.Crew_Member
+            , S      = ET.SRM.Team_has_Boat_in_Regatta
+                ( S    = ET.SRM.Team
+                    ( E      = ET.SRM.Regatta_C
+                        ( IS_A     = ET.SRM.Regatta
+                        )
+                    )
+                )
+            , SW     = ET.SRM.Race_Result
             , skipper  = ET.SRM.Sailor
                 ( club   = ET.SRM.Club
                 , offset = CD.N * 2
