@@ -172,47 +172,47 @@ _test_code = """
     (2, 3)
 
     >>> ar.grid_size, ar.node_size
-    (Point (24, 18), Point (12, 6))
+    (Point (32, 12), Point (16, 4))
 
     >>> ar.transform
-    Affine (24, 0, 72, 0, -18, 72)
+    Affine (32, 0, 96, 0, -12, 48)
 
     >>> ar.max_x, ar.max_y
-    (156, 132)
+    (208, 88)
 
     >>> for n in ar.nodes :
     ...     print "%%-45s %%-12s %%s" %% (n.entity, tuple (n.pos), tuple (n.entity.pos))
-    <Graph.Link2  SRM.Boat_in_Regatta>            (72, 72)     (0, 0)
-    <Graph.Link1  SRM.Regatta>                    (96, 72)     (1, 0)
-    <Graph.Object SRM.Regatta_Event>              (120, 72)    (2, 0)
-    <Graph.Object SRM.Club>                       (120, 36)    (2, 2)
-    <Graph.Link2  SRM.Crew_Member>                (96, 54)     (1, 1)
-    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (72, 90)     (0, -1)
-    <Graph.Link1  SRM.Team>                       (72, 108)    (0, -2)
-    <Graph.Link1  SRM.Regatta_C>                  (96, 108)    (1, -2)
-    <Graph.Link1  SRM.Race_Result>                (48, 90)     (-1, -1)
-    <Graph.Link1  SRM.Boat>                       (48, 72)     (-1, 0)
-    <Graph.Object SRM.Boat_Class>                 (24, 72)     (-2, 0)
-    <Graph.Link1  SRM.Sailor>                     (72, 36)     (0, 2)
-    <Graph.Object PAP.Person>                     (72, 18)     (0, 3)
-    <Graph.Object PAP.Subject>                    (120, 18)    (2, 3)
+    <Graph.Link2  SRM.Boat_in_Regatta>            (96, 48)     (0, 0)
+    <Graph.Link1  SRM.Regatta>                    (128, 48)    (1, 0)
+    <Graph.Object SRM.Regatta_Event>              (160, 48)    (2, 0)
+    <Graph.Object SRM.Club>                       (160, 24)    (2, 2)
+    <Graph.Link2  SRM.Crew_Member>                (128, 36)    (1, 1)
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (96, 60)     (0, -1)
+    <Graph.Link1  SRM.Team>                       (96, 72)     (0, -2)
+    <Graph.Link1  SRM.Regatta_C>                  (128, 72)    (1, -2)
+    <Graph.Link1  SRM.Race_Result>                (64, 60)     (-1, -1)
+    <Graph.Link1  SRM.Boat>                       (64, 48)     (-1, 0)
+    <Graph.Object SRM.Boat_Class>                 (32, 48)     (-2, 0)
+    <Graph.Link1  SRM.Sailor>                     (96, 24)     (0, 2)
+    <Graph.Object PAP.Person>                     (96, 12)     (0, 3)
+    <Graph.Object PAP.Subject>                    (160, 12)    (2, 3)
 
     >>> for n in ar.nodes :
     ...     print "%%-45s %%-12s %%s" %% (n.entity, n.box.top_left, (n.max_x, n.max_y))
-    <Graph.Link2  SRM.Boat_in_Regatta>            (72, 72)     (84.0, 78.0)
-    <Graph.Link1  SRM.Regatta>                    (96, 72)     (108.0, 78.0)
-    <Graph.Object SRM.Regatta_Event>              (120, 72)    (132.0, 78.0)
-    <Graph.Object SRM.Club>                       (120, 36)    (132.0, 42.0)
-    <Graph.Link2  SRM.Crew_Member>                (96, 54)     (108.0, 60.0)
-    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (72, 90)     (84.0, 96.0)
-    <Graph.Link1  SRM.Team>                       (72, 108)    (84.0, 114.0)
-    <Graph.Link1  SRM.Regatta_C>                  (96, 108)    (108.0, 114.0)
-    <Graph.Link1  SRM.Race_Result>                (48, 90)     (60.0, 96.0)
-    <Graph.Link1  SRM.Boat>                       (48, 72)     (60.0, 78.0)
-    <Graph.Object SRM.Boat_Class>                 (24, 72)     (36.0, 78.0)
-    <Graph.Link1  SRM.Sailor>                     (72, 36)     (84.0, 42.0)
-    <Graph.Object PAP.Person>                     (72, 18)     (84.0, 24.0)
-    <Graph.Object PAP.Subject>                    (120, 18)    (132.0, 24.0)
+    <Graph.Link2  SRM.Boat_in_Regatta>            (96, 48)     (112.0, 52.0)
+    <Graph.Link1  SRM.Regatta>                    (128, 48)    (144.0, 52.0)
+    <Graph.Object SRM.Regatta_Event>              (160, 48)    (176.0, 52.0)
+    <Graph.Object SRM.Club>                       (160, 24)    (176.0, 28.0)
+    <Graph.Link2  SRM.Crew_Member>                (128, 36)    (144.0, 40.0)
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (96, 60)     (112.0, 64.0)
+    <Graph.Link1  SRM.Team>                       (96, 72)     (112.0, 76.0)
+    <Graph.Link1  SRM.Regatta_C>                  (128, 72)    (144.0, 76.0)
+    <Graph.Link1  SRM.Race_Result>                (64, 60)     (80.0, 64.0)
+    <Graph.Link1  SRM.Boat>                       (64, 48)     (80.0, 52.0)
+    <Graph.Object SRM.Boat_Class>                 (32, 48)     (48.0, 52.0)
+    <Graph.Link1  SRM.Sailor>                     (96, 24)     (112.0, 28.0)
+    <Graph.Object PAP.Person>                     (96, 12)     (112.0, 16.0)
+    <Graph.Object PAP.Subject>                    (160, 12)    (176.0, 16.0)
 
     >>> for n in ar.nodes :
     ...     for k, l in sorted (n.link_map.iteritems ()) :
@@ -235,14 +235,12 @@ _test_code = """
     Role left <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
     Is_A IS_A_0 <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
-    >>> print ar.render ()
-                                                                            +-----------+                                   +-----------+
-                                                                            | PAP       |                                   | PAP       |
-                                                                            | .Person   |                                   | .Subject  |
-                                                                            |           |                                   |           |
-                                                                            |           |                                   |           |
-                                                                            |           |                                   |           |
-                                                                            +-----------+                                   +-----------+
+    >>> print clean_rendered (ar.render ())
+                                                                                                    +---------------+                                               +---------------+
+                                                                                                    | PAP.Person    |                                               | PAP.Subject   |
+                                                                                                    |               |                                               |               |
+                                                                                                    |               |                                               |               |
+                                                                                                    +---------------+                                               +---------------+
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
@@ -250,17 +248,11 @@ _test_code = """
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-                                                                            +-----------+                                   +-----------+
-                                                                            | SRM       |                                   | SRM       |
-                                                                            | .Sailor   |                                   | .Club     |
-                                                                            |           |                                   |           |
-                                                                            |           |                                   |           |
-                                                                            |           |                                   |           |
-                                                                            +-----------+                                   +-----------+
+                                                                                                    +---------------+                                               +---------------+
+                                                                                                    | SRM.Sailor    |                                               | SRM.Club      |
+                                                                                                    |               |                                               |               |
+                                                                                                    |               |                                               |               |
+                                                                                                    +---------------+                                               +---------------+
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
@@ -268,17 +260,11 @@ _test_code = """
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-                                                                                                    +-----------+
-                                                                                                    | SRM       |
-                                                                                                    | .Crew     |
-                                                                                                    | _Member   |
-                                                                                                    |           |
-                                                                                                    |           |
-                                                                                                    +-----------+
+                                                                                                                                    +---------------+
+                                                                                                                                    | SRM.Crew      |
+                                                                                                                                    |  _Member      |
+                                                                                                                                    |               |
+                                                                                                                                    +---------------+
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
@@ -286,17 +272,11 @@ _test_code = """
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-                            +-----------+           +-----------+           +-----------+           +-----------+           +-----------+
-                            | SRM       |           | SRM       |           | _in_      |           | SRM       |           | SRM       |
-                            | .Boat     |           | .Boat     |           |           |           | .Regatta  |           | .Regatta  |
-                            | _Class    |           |           |           |           |           |           |           | _Event    |
-                            |           |           |           |           |           |           |           |           |           |
-                            |           |           |           |           |           |           |           |           |           |
-                            +-----------+           +-----------+           +-----------+           +-----------+           +-----------+
+                                    +---------------+               +---------------+               +---------------+               +---------------+               +---------------+
+                                    | SRM.Boat      |               | SRM.Boat      |               | _in_          |               | SRM.Regatta   |               | SRM.Regatta   |
+                                    |  _Class       |               |               |               |               |               |               |               |  _Event       |
+                                    |               |               |               |               |               |               |               |               |               |
+                                    +---------------+               +---------------+               +---------------+               +---------------+               +---------------+
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
@@ -304,17 +284,11 @@ _test_code = """
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-                                                    +-----------+           +-----------+
-                                                    | SRM       |           | _has_     |
-                                                    | .Race     |           |           |
-                                                    | _Result   |           |           |
-                                                    |           |           |           |
-                                                    |           |           |           |
-                                                    +-----------+           +-----------+
+                                                                    +---------------+               +---------------+
+                                                                    | SRM.Race      |               | _has_         |
+                                                                    |  _Result      |               |               |
+                                                                    |               |               |               |
+                                                                    +---------------+               +---------------+
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
@@ -322,24 +296,26 @@ _test_code = """
     <BLANKLINE>
     <BLANKLINE>
     <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
-                                                                            +-----------+           +-----------+
-                                                                            | SRM       |           | SRM       |
-                                                                            | .Team     |           | .Regatta  |
-                                                                            |           |           | _C        |
-                                                                            |           |           |           |
-                                                                            |           |           |           |
-                                                                            +-----------+           +-----------+
+                                                                                                    +---------------+               +---------------+
+                                                                                                    | SRM.Team      |               | SRM.Regatta_C |
+                                                                                                    |               |               |               |
+                                                                                                    |               |               |               |
+                                                                                                    +---------------+               +---------------+
 
 
 """
 
 from _GTW.__test__.model        import *
 from _GTW._OMP._SRM.Graph       import graph
+
 from _MOM._Graph.Ascii          import Renderer as Ascii_Renderer
+
+from _TFL.Regexp                import Regexp, Multi_Re_Replacer, Re_Replacer, re
+
+clean_rendered = Multi_Re_Replacer \
+    ( Re_Replacer ("^( *\n)+", "")
+    , Re_Replacer ("(\n *)+$", "")
+    )
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

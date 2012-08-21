@@ -50,7 +50,7 @@ class Canvas (TFL.Meta.Object) :
     """Canvas for ASCII renderer"""
 
     def __init__ (self, max_x, max_y) :
-        self._body = list ([" "] * max_y for i in range (max_x))
+        self._body = list ([" "] * max_x for i in range (max_y))
     # end def __init__
 
     def rectangle (self, rect) :
@@ -104,12 +104,12 @@ class Renderer (MOM.Graph._Renderer_) :
     """ASCII renderer for MOM.Graph"""
 
     Canvas             = Canvas
-    node_size          = D2.Point (12,  6) ### in characters
+    node_size          = D2.Point (16,  4) ### in characters
     default_grid_scale = D2.Point ( 2,  3)
 
     def render (self) :
         self.__super.render ()
-        return self.canvas.rendered ().strip ()
+        return self.canvas.rendered ()
     # end def render
 
 # end class Renderer

@@ -84,13 +84,14 @@ class Node (TFL.Meta.Object) :
     def render (self, canvas) :
         box    = self.box
         pos    = box.top_left + D2.Point (2, 1)
-        width  = box.size.x   - 4
+        width  = box.size.x   - 2
         height = box.size.y   - 2
         def _label_parts (parts, width, height) :
             i = 0
             l = len (parts)
+            x = ""
             while i < l and height > 0:
-                p  = parts [i]
+                p  = x + parts [i]
                 i += 1
                 while i < l and len (p) < width :
                     if len (p) + len (parts [i]) < width :
@@ -100,6 +101,7 @@ class Node (TFL.Meta.Object) :
                         break
                 yield p
                 height -= 1
+                x = " "
         for lp in _label_parts (self.entity.label_parts, width, height) :
             canvas.text (pos, lp)
             pos.shift ((0, 1))
