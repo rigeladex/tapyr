@@ -180,6 +180,7 @@
 #     5-Aug-2012 (CT) Add/use `get_raw_pid`
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
 #    20-Aug-2012 (RS) import `logging`
+#    21-Aug-2012 (RS) Expand logged args in place, fix format string arg count
 #    ««revision-date»»···
 #--
 
@@ -377,7 +378,7 @@ class Kind (MOM.Prop.Kind) :
                 if dont_raise :
                     if __debug__ :
                         logging.exception \
-                            ("set_raw %s %r -> %r", obj, raw_value, value)
+                            ("set_raw %s %r -> %r" % (obj, raw_value, value))
                 else :
                     raise
         return self._set_raw (obj, raw_value, value, changed)
@@ -455,7 +456,7 @@ class Kind (MOM.Prop.Kind) :
                 if __debug__ :
                     logging.exception \
                         ( "%s: %s.%s, value `%s` [%r]"
-                        , obj.type_base_name, self.name, value, obj
+                        % (self.attr, obj.type_base_name, self.name, value, obj)
                         )
                 raise
         return self._set_cooked_value (obj, value, changed)
@@ -717,7 +718,7 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
                     logging.exception \
                         ( "%s: R_Type %r doesn't have a correspondence in "
                           "MOM.Attr.Coll; is it immutable?"
-                        , attr, attr.R_Type
+                        % (attr, attr.R_Type)
                         )
     # end def __init__
 
@@ -851,7 +852,7 @@ class _Raw_Value_Mixin_ (Kind) :
             except StandardError as exc :
                 if __debug__ :
                     logging.exception \
-                        ("%s._sync: %s -> %r", self, obj, raw_value)
+                        ("%s._sync: %s -> %r" % (self, obj, raw_value))
         self._set_cooked_inner (obj, value)
         obj._attr_man.needs_sync [self.name] = False
     # end def _sync
