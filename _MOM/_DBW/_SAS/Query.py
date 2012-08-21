@@ -62,6 +62,7 @@
 #    10-Jun-2012 (MG) `Join_Query` Support for `tn_pid` added
 #    29-Jun-2012 (MG) `Query.__init__` map `type_name` to `Type_Name`
 #    11-Aug-2012 (MG) Change composite query handling
+#    21-Aug-2012 (MG) Add support for `type_name` queries on joined tables
 #    ««revision-date»»···
 #--
 
@@ -342,6 +343,17 @@ class Join_Query (_MOM_Query_) :
                         ,
                         )
                 oc    = (pid_Table.c.Type_Name, column)
+            elif sub_attr == "type_name" :
+                ### special handling of type_name queries
+                pid_Table = MOM.DBW.SAS.Manager.sa_pid
+                joins = ( ( column.table
+                          , pid_Table
+                          , column == pid_Table.c.pid
+                          , False
+                          )
+                        ,
+                        )
+                oc    = (pid_Table.c.Type_Name, )
             else :
                 type_name  = column.mom_kind.P_Type.type_name
                 raise TypeError \

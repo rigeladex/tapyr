@@ -250,7 +250,31 @@ _sub_query = """
     >>> q  = scope.PAP.Person.query_s (Q.pid.IN (q1))
     >>> print q.all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 1', u'fn 2', u'', u'')]
+
+    >>> scope.destroy ()
 """
+
+_type_name_query = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> p1 = scope.SWP.Page   (perma_name = "page-1", text = "page-1")
+    >>> p2 = scope.SWP.Page   (perma_name = "page-2", text = "page-2")
+    >>> y1 = scope.SWP.Page_Y (perma_name = "year-1", text = "year-1", year = 2011)
+    >>> y2 = scope.SWP.Page_Y (perma_name = "year-2", text = "year-2", year = 2012)
+    >>> c1 = scope.SWP.Clip_O (left = p1, abstract = "abstract-p1.1")
+    >>> c2 = scope.SWP.Clip_O (left = p2, abstract = "abstract-p2.1")
+    >>> c3 = scope.SWP.Clip_O (left = y1, abstract = "abstract-y1.1")
+    >>> c4 = scope.SWP.Clip_O (left = y2, abstract = "abstract-y2.1")
+    >>> scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page").all ()
+    [SWP.Clip_O ((u'page-1', ), dict ()), SWP.Clip_O ((u'page-2', ), dict ())]
+
+    >>> scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page_Y").all ()
+    [SWP.Clip_O ((u'year-1', 2011), dict ()), SWP.Clip_O ((u'year-2', 2012), dict ())]
+
+    >>> scope.destroy ()
+"""
+
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 import  datetime
@@ -259,6 +283,7 @@ _tests = Scaffold.create_test_dict \
     ( dict
         ( date_queries = _date_queries
         , sub_query    = _sub_query
+        , type_name    = _type_name_query
         )
     )
 
