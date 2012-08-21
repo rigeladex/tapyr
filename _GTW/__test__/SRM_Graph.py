@@ -38,7 +38,7 @@ _test_code = """
 
     >>> g = graph (scope.app_type)
 
-    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    >>> for v in g.nodes () :
     ...   print "%%-45s %%s" %% (v, v.label)
     <Graph.Link2  SRM.Boat_in_Regatta>            _in_
     <Graph.Link1  SRM.Regatta>                    SRM.Regatta
@@ -55,7 +55,7 @@ _test_code = """
     <Graph.Object PAP.Person>                     PAP.Person
     <Graph.Object PAP.Subject>                    PAP.Subject
 
-    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    >>> for v in g.nodes () :
     ...   print "%%-45s %%s" %% (v, v.label_parts)
     <Graph.Link2  SRM.Boat_in_Regatta>            (u'_in_',)
     <Graph.Link1  SRM.Regatta>                    (u'SRM', u'.Regatta')
@@ -72,7 +72,7 @@ _test_code = """
     <Graph.Object PAP.Person>                     (u'PAP', u'.Person')
     <Graph.Object PAP.Subject>                    (u'PAP', u'.Subject')
 
-    >>> for k, v in sorted (g.map.iteritems ()) :
+    >>> for v in g.nodes (sort_key = TFL.Getter.type_name) :
     ...   print "%%-45s %%-45s %%s" %% (v, v.anchor, v.pos)
     <Graph.Object PAP.Person>                     <Graph.Link1  SRM.Sailor>                     N*3
     <Graph.Object PAP.Subject>                    <Graph.Object PAP.Person>                     E*2 + N*3
@@ -89,7 +89,7 @@ _test_code = """
     <Graph.Link1  SRM.Team>                       <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   S*2
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   <Graph.Link2  SRM.Boat_in_Regatta>            S
 
-    >>> for k, v in sorted (g.map.iteritems ()) :
+    >>> for v in g.nodes (sort_key = TFL.Getter.type_name) :
     ...     print v.type_name, v.e_type.Roles
     PAP.Person ()
     PAP.Subject ()
@@ -106,9 +106,9 @@ _test_code = """
     SRM.Team (Regatta_C `left`,)
     SRM.Team_has_Boat_in_Regatta (Team `left`, Boat_in_Regatta `right`)
 
-    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
-    ...     if v.relations :
-    ...         for a, l in sorted (v.relations.iteritems ()) :
+    >>> for v in g.nodes () :
+    ...     if v.rel_map :
+    ...         for a, l in sorted (v.rel_map.iteritems ()) :
     ...             print l
     <Graph.Relation.Role SRM.Boat_in_Regatta.left -> SRM.Boat>
     <Graph.Relation.Role SRM.Boat_in_Regatta.right -> SRM.Regatta>
@@ -128,9 +128,9 @@ _test_code = """
     <Graph.Relation.Role SRM.Sailor.left -> PAP.Person>
     <Graph.Relation PAP.Person IS A PAP.Subject>
 
-    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
-    ...     if v.relations :
-    ...         for a, l in sorted (v.relations.iteritems ()) :
+    >>> for v in g.nodes () :
+    ...     if v.rel_map :
+    ...         for a, l in sorted (v.rel_map.iteritems ()) :
     ...             print l.kind, l.source, l.target
     Role <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Boat>
     Role <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Regatta>
@@ -150,7 +150,7 @@ _test_code = """
     Role <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
     Is_A <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
-    >>> for v in sorted (g.map.itervalues (), key = TFL.Getter.index) :
+    >>> for v in g.nodes () :
     ...     print "%%-45s %%-12s %%s" %% (v, v.pos, tuple (v.pos))
     <Graph.Link2  SRM.Boat_in_Regatta>            (0,0)        (0, 0)
     <Graph.Link1  SRM.Regatta>                    E            (1, 0)
@@ -167,10 +167,179 @@ _test_code = """
     <Graph.Object PAP.Person>                     N*3          (0, 3)
     <Graph.Object PAP.Subject>                    E*2 + N*3    (2, 3)
 
+    >>> ar = Ascii_Renderer (g)
+    >>> ar.max_x_spec, ar.max_y_spec
+    (2, 3)
+
+    >>> ar.grid_size, ar.node_size
+    (Point (24, 18), Point (12, 6))
+
+    >>> ar.transform
+    Affine (24, 0, 72, 0, -18, 72)
+
+    >>> ar.max_x, ar.max_y
+    (156, 132)
+
+    >>> for n in ar.nodes :
+    ...     print "%%-45s %%-12s %%s" %% (n.entity, tuple (n.pos), tuple (n.entity.pos))
+    <Graph.Link2  SRM.Boat_in_Regatta>            (72, 72)     (0, 0)
+    <Graph.Link1  SRM.Regatta>                    (96, 72)     (1, 0)
+    <Graph.Object SRM.Regatta_Event>              (120, 72)    (2, 0)
+    <Graph.Object SRM.Club>                       (120, 36)    (2, 2)
+    <Graph.Link2  SRM.Crew_Member>                (96, 54)     (1, 1)
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (72, 90)     (0, -1)
+    <Graph.Link1  SRM.Team>                       (72, 108)    (0, -2)
+    <Graph.Link1  SRM.Regatta_C>                  (96, 108)    (1, -2)
+    <Graph.Link1  SRM.Race_Result>                (48, 90)     (-1, -1)
+    <Graph.Link1  SRM.Boat>                       (48, 72)     (-1, 0)
+    <Graph.Object SRM.Boat_Class>                 (24, 72)     (-2, 0)
+    <Graph.Link1  SRM.Sailor>                     (72, 36)     (0, 2)
+    <Graph.Object PAP.Person>                     (72, 18)     (0, 3)
+    <Graph.Object PAP.Subject>                    (120, 18)    (2, 3)
+
+    >>> for n in ar.nodes :
+    ...     print "%%-45s %%-12s %%s" %% (n.entity, n.box.top_left, (n.max_x, n.max_y))
+    <Graph.Link2  SRM.Boat_in_Regatta>            (72, 72)     (84.0, 78.0)
+    <Graph.Link1  SRM.Regatta>                    (96, 72)     (108.0, 78.0)
+    <Graph.Object SRM.Regatta_Event>              (120, 72)    (132.0, 78.0)
+    <Graph.Object SRM.Club>                       (120, 36)    (132.0, 42.0)
+    <Graph.Link2  SRM.Crew_Member>                (96, 54)     (108.0, 60.0)
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (72, 90)     (84.0, 96.0)
+    <Graph.Link1  SRM.Team>                       (72, 108)    (84.0, 114.0)
+    <Graph.Link1  SRM.Regatta_C>                  (96, 108)    (108.0, 114.0)
+    <Graph.Link1  SRM.Race_Result>                (48, 90)     (60.0, 96.0)
+    <Graph.Link1  SRM.Boat>                       (48, 72)     (60.0, 78.0)
+    <Graph.Object SRM.Boat_Class>                 (24, 72)     (36.0, 78.0)
+    <Graph.Link1  SRM.Sailor>                     (72, 36)     (84.0, 42.0)
+    <Graph.Object PAP.Person>                     (72, 18)     (84.0, 24.0)
+    <Graph.Object PAP.Subject>                    (120, 18)    (132.0, 24.0)
+
+    >>> for n in ar.nodes :
+    ...     for k, l in sorted (n.link_map.iteritems ()) :
+    ...         print l.relation.kind, k, l.source.entity, l.target.entity
+    Role left <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Boat>
+    Role right <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Regatta>
+    Attr skipper <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Sailor>
+    Role left <Graph.Link1  SRM.Regatta> <Graph.Object SRM.Regatta_Event>
+    Attr club <Graph.Object SRM.Regatta_Event> <Graph.Object SRM.Club>
+    Role left <Graph.Link2  SRM.Crew_Member> <Graph.Link2  SRM.Boat_in_Regatta>
+    Role right <Graph.Link2  SRM.Crew_Member> <Graph.Link1  SRM.Sailor>
+    Role left <Graph.Link2  SRM.Team_has_Boat_in_Regatta> <Graph.Link1  SRM.Team>
+    Role right <Graph.Link2  SRM.Team_has_Boat_in_Regatta> <Graph.Link2  SRM.Boat_in_Regatta>
+    Role left <Graph.Link1  SRM.Team> <Graph.Link1  SRM.Regatta_C>
+    Is_A IS_A_0 <Graph.Link1  SRM.Regatta_C> <Graph.Link1  SRM.Regatta>
+    Role left <Graph.Link1  SRM.Regatta_C> <Graph.Object SRM.Regatta_Event>
+    Role left <Graph.Link1  SRM.Race_Result> <Graph.Link2  SRM.Boat_in_Regatta>
+    Role left <Graph.Link1  SRM.Boat> <Graph.Object SRM.Boat_Class>
+    Attr club <Graph.Link1  SRM.Sailor> <Graph.Object SRM.Club>
+    Role left <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
+    Is_A IS_A_0 <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
+
+    >>> print ar.render ()
+                                                                            +-----------+                                   +-----------+
+                                                                            | PAP       |                                   | PAP       |
+                                                                            | .Person   |                                   | .Subject  |
+                                                                            |           |                                   |           |
+                                                                            |           |                                   |           |
+                                                                            |           |                                   |           |
+                                                                            +-----------+                                   +-----------+
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+                                                                            +-----------+                                   +-----------+
+                                                                            | SRM       |                                   | SRM       |
+                                                                            | .Sailor   |                                   | .Club     |
+                                                                            |           |                                   |           |
+                                                                            |           |                                   |           |
+                                                                            |           |                                   |           |
+                                                                            +-----------+                                   +-----------+
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+                                                                                                    +-----------+
+                                                                                                    | SRM       |
+                                                                                                    | .Crew     |
+                                                                                                    | _Member   |
+                                                                                                    |           |
+                                                                                                    |           |
+                                                                                                    +-----------+
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+                            +-----------+           +-----------+           +-----------+           +-----------+           +-----------+
+                            | SRM       |           | SRM       |           | _in_      |           | SRM       |           | SRM       |
+                            | .Boat     |           | .Boat     |           |           |           | .Regatta  |           | .Regatta  |
+                            | _Class    |           |           |           |           |           |           |           | _Event    |
+                            |           |           |           |           |           |           |           |           |           |
+                            |           |           |           |           |           |           |           |           |           |
+                            +-----------+           +-----------+           +-----------+           +-----------+           +-----------+
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+                                                    +-----------+           +-----------+
+                                                    | SRM       |           | _has_     |
+                                                    | .Race     |           |           |
+                                                    | _Result   |           |           |
+                                                    |           |           |           |
+                                                    |           |           |           |
+                                                    +-----------+           +-----------+
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+                                                                            +-----------+           +-----------+
+                                                                            | SRM       |           | SRM       |
+                                                                            | .Team     |           | .Regatta  |
+                                                                            |           |           | _C        |
+                                                                            |           |           |           |
+                                                                            |           |           |           |
+                                                                            +-----------+           +-----------+
+
+
 """
 
-from _GTW.__test__.model  import *
-from _GTW._OMP._SRM.Graph import graph
+from _GTW.__test__.model        import *
+from _GTW._OMP._SRM.Graph       import graph
+from _MOM._Graph.Ascii          import Renderer as Ascii_Renderer
 
 __test__ = Scaffold.create_test_dict (_test_code)
 

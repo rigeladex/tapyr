@@ -49,13 +49,13 @@ _word_sep = Regexp("([^A-Za-z0-9])")
 
 class Entity (TFL.Meta.Object) :
 
-    attr     = None
+    attr       = None
 
-    _anchor  = None
-    _cid     = -1
-    _label   = None
-    _offset  = None
-    _pos     = None
+    _anchor    = None
+    _label     = None
+    _offset    = None
+    _pos       = None
+    _sync_cid  = -1
 
     @property
     def anchor (self) :
@@ -121,8 +121,8 @@ class Entity (TFL.Meta.Object) :
     @property
     def pos (self) :
         result = self._pos
-        if result is None or self._cid != self.graph.cid :
-            self._cid = self.graph.cid
+        if result is None or self._sync_cid != self.graph.cid :
+            self._sync_cid = self.graph.cid
             anchor = self.anchor
             if anchor is not None :
                 result = CD.Pp    (anchor.pos, self.offset)
@@ -140,8 +140,8 @@ class Entity (TFL.Meta.Object) :
     def __init__ (self, graph, e_type) :
         self.graph      = graph
         self.e_type     = e_type
-        self.index      = len (graph.map)
-        self.relations  = {}
+        self.index      = len (graph.node_map)
+        self.rel_map    = {}
         self.is_a_count = 0
     # end def __init__
 
@@ -178,11 +178,11 @@ class Entity (TFL.Meta.Object) :
     # end def __call__
 
     def auto_add_roles (self) :
-        graph     = self.graph
-        e_type    = self.e_type
-        relations = self.relations
+        graph   = self.graph
+        e_type  = self.e_type
+        rel_map = self.rel_map
         for role in e_type.Roles :
-            if role.name not in relations :
+            if role.name not in rel_map :
                 e = graph [role.E_Type.type_name]
                 self._add (e, role, auto = True)
     # end def auto_add_roles
@@ -208,7 +208,7 @@ class Entity (TFL.Meta.Object) :
         if rel is None and rtn in self.e_type.role_map :
             rel = self.e_type.Roles [self.e_type.role_map [rtn]]
         if rel is not None :
-            self.relations [getattr (rel, "name", rel)] = \
+            self.rel_map [getattr (rel, "name", rel)] = \
                 MOM.Graph.Relation.new (rel, self, result)
         return result
     # end def _add

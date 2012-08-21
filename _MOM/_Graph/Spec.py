@@ -92,34 +92,37 @@ class Graph (TFL.Meta.Object) :
     def __init__ (self, app_type, * entities) :
         self.app_type = app_type
         self.cid      = 0
-        self.map      = {}
+        self.node_map = {}
         self.add (* entities)
     # end def __init__
 
     def add (self, * entities) :
-        i = len (self.map)
+        i = len (self.node_map)
         for e_spec in entities :
             e_spec.instantiate (self)
-        for e in sorted (self.map.itervalues (), key = TFL.Getter.index) :
-            if e.index >= i :
-                e.auto_add_roles ()
+        for e in self.nodes () [i:] :
+            e.auto_add_roles ()
     # end def add
 
+    def nodes (self, sort_key = TFL.Getter.index) :
+        return sorted (self.node_map.itervalues (), key = sort_key)
+    # end def nodes
+
     def __contains__ (self, item) :
-        return item in self.map
+        return item in self.node_map
     # end def __contains__
 
     def __getitem__ (self, key) :
         try :
-            result = self.map      [key]
+            result = self.node_map [key]
         except KeyError :
             e_type = self.app_type [key]
-            result = self.map      [key] = e_type.Graph_Type (self, e_type)
+            result = self.node_map [key] = e_type.Graph_Type (self, e_type)
         return result
     # end def __getitem__
 
     def __len__ (self) :
-        return len (self.map)
+        return len (self.node_map)
     # end def __len__
 
 # end class Graph

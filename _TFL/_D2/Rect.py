@@ -37,6 +37,7 @@
 #                     coordinates
 #    20-Aug-2012 (CT) Add `transformed`
 #    20-Aug-2012 (CT) Sort methods alphabetically
+#    21-Aug-2012 (CT) Add `corners`
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,12 @@ class Rect (TFL.Meta.Object) :
         , "right"  : (lambda r : D2.Line (r.bottom_right, r.top_right))
         , "top"    : (lambda r : D2.Line (r.top_right,    r.top_left))
         }
+
+    @property
+    def corners (self) :
+        return \
+            self.bottom_left, self. bottom_right, self.top_left, self.top_right
+    # end def sides
 
     @property
     def ref_point (self) :

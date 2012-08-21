@@ -34,6 +34,7 @@
 #     5-Apr-2005 (CT)  Breakage in unit-test introduced by GKH removed
 #    20-Aug-2012 (CT) Add `transformed`
 #    20-Aug-2012 (CT) Sort methods alphabetically
+#    21-Aug-2012 (CT) Add `__iter__`
 #    ««revision-date»»···
 #--
 
@@ -175,6 +176,11 @@ class Line (TFL.Meta.Object) :
             else          : r = r and (v [i] == 0)
         return r
     # end def _contains
+
+    def __iter__ (self) :
+        yield self.head
+        yield self.tail
+    # end def __iter__
 
     def __repr__ (self) :
         return "%s %s" % (self.__class__.__name__, str (self))

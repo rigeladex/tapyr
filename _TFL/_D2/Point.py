@@ -43,6 +43,8 @@
 #    13-Aug-2012 (CT) Add class variable `Point` to `_R_Point_`
 #    20-Aug-2012 (CT) Add `norm`, `transformed`
 #    20-Aug-2012 (CT) Sort methods alphabetically
+#    21-Aug-2012 (CT) Move `transformed` to `_Point_`, let it return `Point`
+#    21-Aug-2012 (CT) Change shift to unpack `right`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +66,13 @@ class _Point_ (TFL.Meta.Object) :
     def list (self) :
         return (self.x, self.y)
     # end def list
+
+    def transformed (self, affine) :
+        """Return another `Point` whose coordinates are derived via `affine`
+           transform from `self`.
+        """
+        return Point (* affine (self))
+    # end def transformed
 
     def __getitem__ (self, index) :
         """Returns `x' for `index == 0' and `y' for `index == 1'"""
@@ -110,16 +119,10 @@ class Point (_Point_) :
     # end def scale
 
     def shift (self, right) :
-        (self.x, self.y) = (self.x + right.x, self.y + right.y)
+        dx, dy = right
+        (self.x, self.y) = (self.x + dx, self.y + dy)
         return self
     # end def shift
-
-    def transformed (self, affine) :
-        """Return another point whose coordinates are derived via `affine`
-           transform from `self`.
-        """
-        return self.__class__ (* affine (* self))
-    # end def transformed
 
     def __add__  (self, right) :
         try :
@@ -199,19 +202,6 @@ class _R_Point_ (_Point_) :
         self._offset.shift (right)
         return self
     # end def shift
-
-    def transformed (self, affine) :
-        """Return another point whose coordinates are derived via `affine`
-           transform from `self`.
-        """
-        args = \
-            ( tuple ( r.transformed (affine) for r in self._reference ())
-            + ( self._offset.transformed (affine)
-              , self._scale.transformed (affine)
-              )
-            )
-        return self.__class__ (* args)
-    # end def transformed
 
     def _reference (self) :
         raise NotImplementedError
@@ -385,20 +375,6 @@ class R_Point_nP (_R_Point_) :
         self._y_weights   = y_weights
         self.__super.__init__ (offset, scale)
     # end def __init__
-
-    def transformed (self, affine) :
-        """Return another point whose coordinates are derived via `affine`
-           transform from `self`.
-        """
-        args = \
-            ( tuple ( r.transformed (affine) for r in self._ref_points)
-            + ( self._x_weights, self._y_weights
-              , self._offset.transformed (affine)
-              , self._scale.transformed (affine)
-              )
-            )
-        return self.__class__ (* args)
-    # end def transformed
 
     def _reference (self) :
         return (self._ref_points, self._x_weights, self._y_weights)
