@@ -39,23 +39,189 @@ import _MOM.import_MOM
 import _MOM._Graph.Relation
 
 from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL.predicate         import dusplit
 from   _TFL.Regexp            import Regexp, re
 
 import _TFL.Decorator
+import _TFL.Sorted_By
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 _word_sep = Regexp("([^A-Za-z0-9])")
 
+class Rel_Placer (TFL.Meta.Object) :
+    """Place attachement points of all relations of an Entity."""
+
+    class Dir_Placer (TFL.Meta.Object) :
+        """Placer for relations in one cardinal direction"""
+
+        _offset_7       = [0.125, 0.250, 0.375, 0.500, 0.625, 0.750, 0.875]
+        _offset_map     = \
+            { 1         : [0.500]
+            , 2         : [0.250, 0.750]
+            , 3         : [0.250, 0.500, 0.750]
+            , 4         : [0.125, 0.375, 0.625, 0.875]
+            , 5         : [0.125, 0.375, 0.500, 0.625, 0.875]
+            , 6         : [0.125, 0.250, 0.375, 0.625, 0.750, 0.875]
+            , 7         : _offset_7
+            , "default" : _offset_7
+            }
+
+        def __init__ (self, rp) :
+            self.rp    = rp
+            P          = self.predicate
+            self.rels  = list (r for r in rp.entity.all_rels if P (r))
+            self.slack = self.max_rels - len (self.rels)
+        # end def __init__
+
+        @TFL.Meta.Once_Property
+        def neighbors (self) :
+            placers = self.rp.placers
+            return [placers [n] for n in self.neighbor_names]
+        # end def neighbors
+
+        @property
+        def willing_neighbor (self) :
+            result = max (self.neighbors, key = TFL.Getter.slack)
+            if result.slack > 0 :
+                return result
+        # end def willing_neighbor
+
+        def add (self, rel) :
+            self.rels.append (rels)
+            self.slack -= 1
+        # end def add
+
+        def place (self) :
+            rels  = self.rels
+            n     = len (rels)
+            try :
+                offset_s = self._offset_map [n]
+            except IndexError :
+                raise NotImplementedError \
+                    ("Too many relations for automatic placement: %s" % (n, ))
+            rels.sort (key = self.sort_key_p)
+            side = self.side
+            for o, r in zip (offset_s, rels) :
+                r.set_connector (side, o)
+        # end def place
+
+        def slacker (self) :
+            """Try to improve slack"""
+            rels  = self.rels
+            slack = self.slack
+            while slack < 0 :
+                willing = self.willing_neighbor
+                if willing :
+                    willing.add (rels.pop ())
+                    slack += 1
+                else :
+                    break
+            self.slack = slack
+            return slack
+        # end def slacker
+
+        def __nonzero__ (self) :
+            return bool (self.rels)
+        # end def __nonzero__
+
+    # end class Dir_Placer
+
+    class N_Placer (Dir_Placer) :
+        """Placer for relations in direction north."""
+
+        max_rels       = 7
+        name           = "N"
+        neighbor_names = ("E", "W")
+        prio           = 3
+        side           = "bottom"
+        sort_key_p     = TFL.Sorted_By ("-delta.x")
+
+        def predicate (self, r) :
+            return r.delta.y > 0
+        # end def predicate
+
+    # end class N_Placer
+
+    class E_Placer (Dir_Placer) :
+        """Placer for relations in direction east."""
+
+        max_rels       = 3
+        name           = "E"
+        neighbor_names = ("N", "S")
+        prio           = 1
+        side           = "left"
+        sort_key_p     = TFL.Sorted_By ("delta.y")
+
+        def predicate (self, r) :
+            return r.delta.y == 0 and r.delta.x > 0
+        # end def predicate
+
+    # end class E_Placer
+
+    class S_Placer (Dir_Placer) :
+        """Placer for relations in direction south."""
+
+        max_rels       = 7
+        name           = "S"
+        neighbor_names = ("E", "W")
+        prio           = 4
+        side           = "top"
+        sort_key_p     = TFL.Sorted_By ("-delta.x")
+
+        def predicate (self, r) :
+            return r.delta.y < 0
+        # end def predicate
+
+    # end class S_Placer
+
+    class W_Placer (Dir_Placer) :
+        """Placer for relations in direction west."""
+
+        max_rels       = 3
+        name           = "W"
+        neighbor_names = ("N", "S")
+        prio           = 2
+        side           = "right"
+        sort_key_p     = TFL.Sorted_By ("delta.y")
+
+        def predicate (self, r) :
+            return r.delta.y == 0 and r.delta.x < 0
+        # end def predicate
+
+    # end class W_Placer
+
+    def __init__ (self, entity) :
+        self.entity  = entity
+        self.placers = placers = dict \
+            ( (p.name, p) for p in
+                ( self.N_Placer (self)
+                , self.E_Placer (self)
+                , self.S_Placer (self)
+                , self.W_Placer (self)
+                )
+            )
+        by_slack = sorted (placers.itervalues (), key = TFL.Getter.slack)
+        for dp in by_slack :
+            if dp.slack < 0 :
+                dp.slacker ()
+        by_slack.sort (key = TFL.Getter.slack)
+        for dp in by_slack :
+            if dp :
+                dp.place ()
+    # end def __init__
+
+# end class Rel_Placer
+
 class Entity (TFL.Meta.Object) :
 
-    attr       = None
+    attr            = None
 
-    _anchor    = None
-    _label     = None
-    _offset    = None
-    _pos       = None
-    _sync_cid  = -1
+    _anchor         = None
+    _label          = None
+    _offset         = None
+    _pos            = None
+    _sync_cid       = -1
 
     @property
     def anchor (self) :
@@ -141,6 +307,7 @@ class Entity (TFL.Meta.Object) :
         self.graph      = graph
         self.e_type     = e_type
         self.index      = len (graph.node_map)
+        self.all_rels   = []
         self.rel_map    = {}
         self.is_a_count = 0
     # end def __init__
@@ -198,6 +365,10 @@ class Entity (TFL.Meta.Object) :
         return self (** kw)
     # end def instantiate
 
+    def setup_links (self) :
+        Rel_Placer (self)
+    # end def setup_links
+
     def _add (self, et, rel = None, ** kw) :
         auto = kw.pop ("auto", False)
         ikw  = dict (kw)
@@ -208,8 +379,10 @@ class Entity (TFL.Meta.Object) :
         if rel is None and rtn in self.e_type.role_map :
             rel = self.e_type.Roles [self.e_type.role_map [rtn]]
         if rel is not None :
-            self.rel_map [getattr (rel, "name", rel)] = \
+            relation = self.rel_map [getattr (rel, "name", rel)] = \
                 MOM.Graph.Relation.new (rel, self, result)
+            self.all_rels.append   (relation)
+            result.all_rels.append (relation.reverse)
         return result
     # end def _add
 

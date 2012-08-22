@@ -168,6 +168,31 @@ _test_code = """
     <Graph.Object PAP.Subject>                    E*2 + N*3    (2, 3)
 
     >>> ar = Ascii_Renderer (g)
+
+    >>> for v in g.nodes () :
+    ...     for a, l in sorted (v.rel_map.iteritems ()) :
+    ...       if l.source_connector and l.target_connector :
+    ...         print "%%-30s %%-30s %%-10s %%-10s %%-10s %%1.1s %%5.3f %%1.1s %%5.3f" %% ((
+    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta) + l.source_connector + l.target_connector)
+    SRM.Boat_in_Regatta            SRM.Boat                       (0,0)      W          E          l 0.500 r 0.500
+    SRM.Boat_in_Regatta            SRM.Regatta                    (0,0)      E          W          r 0.500 l 0.500
+    SRM.Boat_in_Regatta            SRM.Sailor                     (0,0)      N*2        S*2        t 0.250 b 0.250
+    SRM.Regatta                    SRM.Regatta_Event              E          E*2        W          r 0.500 l 0.500
+    SRM.Regatta_Event              SRM.Club                       E*2        NE*2       S*2        t 0.500 b 0.500
+    SRM.Crew_Member                SRM.Boat_in_Regatta            NE         (0,0)      NE         b 0.500 t 0.750
+    SRM.Crew_Member                SRM.Sailor                     NE         N*2        SE         t 0.500 b 0.750
+    SRM.Team_has_Boat_in_Regatta   SRM.Team                       S          S*2        N          b 0.500 t 0.500
+    SRM.Team_has_Boat_in_Regatta   SRM.Boat_in_Regatta            S          (0,0)      S          t 0.500 b 0.750
+    SRM.Team                       SRM.Regatta_C                  S*2        E + S*2    W          r 0.500 l 0.500
+    SRM.Regatta_C                  SRM.Regatta                    E + S*2    E          S*2        t 0.250 b 0.500
+    SRM.Regatta_C                  SRM.Regatta_Event              E + S*2    E*2        W + S*2    t 0.750 b 0.500
+    SRM.Race_Result                SRM.Boat_in_Regatta            SW         (0,0)      SW         t 0.500 b 0.250
+    SRM.Boat                       SRM.Boat_Class                 W          W*2        E          l 0.500 r 0.500
+    SRM.Sailor                     SRM.Club                       N*2        NE*2       W*2        r 0.500 l 0.500
+    SRM.Sailor                     PAP.Person                     N*2        N*3        S          t 0.500 b 0.500
+    PAP.Person                     PAP.Subject                    N*3        E*2 + N*3  W*2        r 0.500 l 0.500
+
+
     >>> ar.max_x_spec, ar.max_y_spec
     (2, 3)
 

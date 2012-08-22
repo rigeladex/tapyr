@@ -86,6 +86,7 @@ class Node (TFL.Meta.Object) :
         pos    = box.top_left + D2.Point (2, 1)
         width  = box.size.x   - 2
         height = box.size.y   - 2
+        ### XXX factor to concrete subclass
         def _label_parts (parts, width, height) :
             i = 0
             l = len (parts)
@@ -137,6 +138,7 @@ class _Renderer_ (TFL.Meta.Object) :
         self.graph      = graph
         self.nodes = ns = list (Node (e, self) for e in self.graph.nodes ())
         self.node_map   = dict ((n.entity.type_name, n) for n in ns)
+        graph.setup_links ()
         for n in ns :
             n.setup_links ()
         self.canvas = self.Canvas (self.max_x, self.max_y)

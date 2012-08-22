@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Aug-2012 (CT) Creation
 #    21-Aug-2012 (CT) Add `info` and `label`
+#    22-Aug-2012 (CT) Add `delta`, `reverse`, `set_connector`
 #    ««revision-date»»···
 #--
 
@@ -45,10 +46,52 @@ import _TFL.Decorator
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
+class _Reverse_ (TFL.Meta.Object) :
+    """Reverse relation"""
+
+    reverse = None
+
+    def __init__ (self, relation) :
+        self.reverse = relation
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def delta (self) :
+        return - self.reverse.delta
+    # end def delta
+
+    @property
+    def ref (self) :
+        return self.target
+    # end def pos
+
+    def set_connector (self, side, offset) :
+        assert self.reverse.target_connector is None
+        self.reverse.target_connector = (side, offset)
+    # end def set_connector
+
+    def __getattr__ (self, name) :
+        return getattr (self.reverse (name))
+    # end def __getattr__
+
+    def __repr__ (self) :
+        return "<Graph.Reverse_Relation.%s %s.%s <- %s>" % \
+            (self.kind, self.source.type_name, self.name, self.target.type_name)
+    # end def __repr__
+
+# end class _Reverse_
+
 class _Relation_ (TFL.Meta.Object) :
     """Base class for relations between MOM entities."""
 
-    info = None
+    info              = None
+    source_connector  = None
+    target_connector  = None
+
+    @TFL.Meta.Once_Property
+    def delta (self) :
+        return self.source.pos - self.target.pos
+    # end def delta
 
     @TFL.Meta.Once_Property
     def kind (self) :
@@ -59,6 +102,21 @@ class _Relation_ (TFL.Meta.Object) :
     def label (self) :
         return self.name
     # end def label
+
+    @property
+    def ref (self) :
+        return self.source
+    # end def pos
+
+    @TFL.Meta.Once_Property
+    def reverse (self) :
+        return _Reverse_ (self)
+    # end def reverse
+
+    def set_connector (self, side, offset) :
+        assert self.source_connector is None
+        self.source_connector = (side, offset)
+    # end def set_connector
 
 # end class _Relation_
 

@@ -108,6 +108,11 @@ class Graph (TFL.Meta.Object) :
         return sorted (self.node_map.itervalues (), key = sort_key)
     # end def nodes
 
+    def setup_links (self) :
+        for n in self.node_map.itervalues () :
+            n.setup_links ()
+    # end def setup_links
+
     def __contains__ (self, item) :
         return item in self.node_map
     # end def __contains__
