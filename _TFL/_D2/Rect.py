@@ -209,7 +209,7 @@ class Rect (TFL.Meta.Object) :
 
     def connection_point (self, point_1, point_2) :
         """Returns the intersection point between the rectangle and the line
-           between `point_1' and `point_2'. If no intersection exists
+           between `point_1` and `point_2`. If no intersection exists
            (both points are either inside or outside) than
            None is returned.
         """
@@ -222,7 +222,7 @@ class Rect (TFL.Meta.Object) :
     # end def connection_point
 
     def point (self, p = Center) :
-        """Return point at position `p' relative to the rectangle."""
+        """Return point at position `p` relative to the rectangle."""
         return self.ref_point + (self.size * p)
     # end def point
 
@@ -257,8 +257,8 @@ class Rect (TFL.Meta.Object) :
     # end def transformed
 
     def __getattr__ (self, name) :
-        """Return the point or side `name'. The possible names are defined by
-           `corner_dict' and `side_dict'.
+        """Return the point or side `name`. The possible names are defined by
+           `corner_dict` and `side_dict`.
         """
         if   name in self.corner_dict :
             return self.point (self.corner_dict [name])
@@ -279,7 +279,7 @@ class Rect (TFL.Meta.Object) :
 # end class Rect
 
 def rectangle (x, y, w, h) :
-    """Return a `Rect' at position `(x, y)' with size `(w, h)'"""
+    """Return a `Rect` at position `(x, y)` with size `(w, h)`"""
     return Rect (D2.Point (x, y), D2.Point (w, h))
 # end def rectangle
 

@@ -75,7 +75,7 @@ class _Point_ (TFL.Meta.Object) :
     # end def transformed
 
     def __getitem__ (self, index) :
-        """Returns `x' for `index == 0' and `y' for `index == 1'"""
+        """Returns `x` for `index == 0` and `y` for `index == 1`"""
         return (self.x, self.y) [index]
     # end def __getitem__
 
@@ -110,7 +110,7 @@ class Point (_Point_) :
     # end def __init__
 
     def scale (self, right) :
-        """Scale by point or number `right'"""
+        """Scale by point or number `right`"""
         try :
             (self.x, self.y) = (self.x * right.x, self.y * right.y)
         except AttributeError :
@@ -156,7 +156,7 @@ class Point (_Point_) :
     # end def __neg__
 
     def __setitem__ (self, index, value) :
-        """Set `x' (for `index == 0') or `y' (for `index == 1') to `value'."""
+        """Set `x` (for `index == 0`) or `y` (for `index == 1`) to `value`."""
         if   index == 0 : self.x = value
         elif index == 1 : self.y = value
         else            : raise IndexError, index

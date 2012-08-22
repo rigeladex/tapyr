@@ -45,7 +45,7 @@ import _TFL._Meta.Object
 import math
 
 class Normal_Form (TFL.Meta.Object) :
-    """Normal form of straight line: `a*x + b*y + c = 0'"""
+    """Normal form of straight line: `a*x + b*y + c = 0`"""
 
     def __init__ (self, line) :
         self.line = line
@@ -120,7 +120,7 @@ class Line (TFL.Meta.Object) :
     # end def contains
 
     def distance (self, p) :
-        """Returns the distance between point `p' and the line `self'.
+        """Returns the distance between point `p` and the line `self`.
            Attention: This method calculates only the distance to the
            INFINITE line. That means, if the distance to
            the point lies on a line normal that is outside [head, tail] of
@@ -146,14 +146,14 @@ class Line (TFL.Meta.Object) :
     # end def length
 
     def point (self, shift) :
-        """Returns the point at the linear position `shift' between the head
+        """Returns the point at the linear position `shift` between the head
            and the tail of the line.
         """
         return (self.head * (1. - shift)) + (self.tail * shift)
     # end def point
 
     def shift (self, right) :
-        """Shifts the complete line by vector `right'."""
+        """Shifts the complete line by vector `right`."""
         self.head.shift (right)
         self.tail.shift (right)
         return self
