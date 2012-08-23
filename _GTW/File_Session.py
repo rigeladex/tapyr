@@ -38,6 +38,7 @@
 #     5-Apr-2012 (CT) Sort alphabetically
 #    26-Apr-2012 (CT) Add debug output to `_load`, split its exception handler
 #    19-Aug-2012 (MG) Add locking of session file
+#    23-Aug-2012 (CT) Add missing import for `fcntl`
 #    ««revision-date»»···
 #--
 
@@ -46,9 +47,10 @@ from   _TFL                     import pyk
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _GTW.Session
-import  cPickle
-import  os
-import  sys
+import cPickle
+import fcntl
+import os
+import sys
 
 class Lock_Failed (StandardError) :
     pass
