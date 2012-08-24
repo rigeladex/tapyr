@@ -70,9 +70,9 @@
 #    10-Aug-2012 (CT) Define `name` as `property`, split off `ext` there
 #    10-Aug-2012 (CT) Rename `Permission.rank` to `_rank`
 #    16-Aug-2012 (MG) Guard against empty languages in `_request_href`
-#    24-Aug-2012 (CT) Change `send_error_email` to display unformatted data, too
 #    24-Aug-2012 (CT) Set `Raiser.skip_etag` to `True`
 #    24-Aug-2012 (CT) Change `wsgi_app` to `send_error_email` for `Server_Error`
+#    24-Aug-2012 (CT) Change `send_error_email` to display `req_data`, too
 #    ««revision-date»»···
 #--
 
@@ -465,12 +465,18 @@ class _RST_Base_ (TFL.Meta.Object) :
         from _TFL.Formatter import formatted
         email     = self.email_from
         headers   = request.headers
-        message   = "Headers:\n    %s\n\nData:\n    %s\n\nRaw Data:\n    %s\n\n=====\n\n%s" % \
-            ( "\n    ".join
-                ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
-            , formatted (request.data)
-            , request.data
-            , tbi
+        message   = \
+            ( "Headers:\n    %s"
+              "\n\nBody:\n    %s"
+              "\n\nRequest data:\n%s"
+              "\n\n====="
+              "\n\n%s"
+            %   ( "\n    ".join
+                    ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
+                , formatted (request.body)
+                , formatted (request.req_data.data)
+                , tbi
+                )
             )
         if not self.Templateer :
             print ("Exception:", exc)
