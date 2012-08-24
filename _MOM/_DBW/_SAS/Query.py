@@ -63,6 +63,7 @@
 #    29-Jun-2012 (MG) `Query.__init__` map `type_name` to `Type_Name`
 #    11-Aug-2012 (MG) Change composite query handling
 #    21-Aug-2012 (MG) Add support for `type_name` queries on joined tables
+#    24-Aug-2012 (MG) Fix raw attribute queries for composites
 #    ««revision-date»»···
 #--
 
@@ -252,12 +253,13 @@ class _MOM_Composite_Query_ (_MOM_Query_) :
             setattr                (self, c_kind.ckd_name, col)
             self._COLUMNS.append   (col)
             if c_kind.needs_raw_value :
+                c_kind                      = getattr (e_type, name)
                 col                         = columns [idx + 1]
-                col.MOM_Kind                = getattr (e_type, name)
+                col.MOM_Kind                = c_kind
                 col.MOM_C_Kind              = kind
                 col.IS_RAW_COL              = True
                 self._RAW_ATTRIBUTES [name] = col
-                setattr (self, kind.raw_name, col)
+                setattr (self, c_kind.raw_name, col)
         self._query_fct = {}
         for name, c_kind in db_attrs.iteritems () :
             if isinstance (c_kind, MOM.Attr.Query) :
