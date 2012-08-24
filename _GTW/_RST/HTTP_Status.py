@@ -33,6 +33,7 @@
 #     8-Aug-2012 (MG) Use a dict for `blackboard`
 #    10-Aug-2012 (CT) Add missing import for `CAL.Date_Time`
 #    17-Aug-2012 (MG) Use byte data-type for response headers
+#    24-Aug-2012 (CT) Change `Status.__repr__` to convert `_msg` to `str`
 #    ««revision-date»»···
 #--
 
@@ -156,8 +157,11 @@ class Status (StandardError, TFL.Meta.Object) :
 
     def __repr__ (self) :
         result = [repr (self.__class__)]
-        if self._msg :
-            result.append (self._msg)
+        msg    = self._msg
+        if msg :
+            if not isinstance (msg, basestring) :
+                msg = str (msg)
+            result.append (msg)
         return " ".join (result)
     # end def __repr__
 

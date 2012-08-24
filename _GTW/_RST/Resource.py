@@ -70,6 +70,9 @@
 #    10-Aug-2012 (CT) Define `name` as `property`, split off `ext` there
 #    10-Aug-2012 (CT) Rename `Permission.rank` to `_rank`
 #    16-Aug-2012 (MG) Guard against empty languages in `_request_href`
+#    24-Aug-2012 (CT) Change `send_error_email` to display unformatted data, too
+#    24-Aug-2012 (CT) Set `Raiser.skip_etag` to `True`
+#    24-Aug-2012 (CT) Change `wsgi_app` to `send_error_email` for `Server_Error`
 #    ««revision-date»»···
 #--
 
@@ -462,10 +465,11 @@ class _RST_Base_ (TFL.Meta.Object) :
         from _TFL.Formatter import formatted
         email     = self.email_from
         headers   = request.headers
-        message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
+        message   = "Headers:\n    %s\n\nData:\n    %s\n\nRaw Data:\n    %s\n\n=====\n\n%s" % \
             ( "\n    ".join
                 ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
             , formatted (request.data)
+            , request.data
             , tbi
             )
         if not self.Templateer :
@@ -982,6 +986,7 @@ class RST_Raiser (_Ancestor) :
     _real_name                 = "Raiser"
 
     hidden                     = True
+    skip_etag                  = True
 
     class RST_Raiser_GET (_Ancestor.GET) :
 
@@ -1277,6 +1282,9 @@ class RST_Root (_Ancestor) :
             try :
                 result  = self._http_response (request, response)
             except Status as status :
+                if isinstance (status, self.Status.Server_Error) :
+                    self.send_error_email \
+                        (request, status, traceback.format_exc ())
                 result  = status (self, request, response)
             except HTTP.HTTP_Exception as exc :
                 ### works for werkzeug.exceptions.HTTPException
