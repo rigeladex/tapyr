@@ -120,6 +120,7 @@
 #     4-Aug-2012 (CT) Change `delete` not to set `entity.pid` to None
 #    15-Aug-2012 (MG) Convert `last_cid` to int
 #    19-Aug-2012 (MG) Support keeping of cache during rollback
+#    24-Aug-2012 (CT) Fix `_Session_.rollback`
 #    ««revision-date»»···
 #--
 
@@ -541,8 +542,8 @@ class _Session_ (TFL.Meta.Object) :
         self._scope_pk   = result.inserted_primary_key [0]
     # end def register_scope
 
-    def rollback (self) :
-        self._close_connection  (TFL.Method.rollback)
+    def rollback (self, * args, ** kw) :
+        self._close_connection (TFL.Method.rollback)
     # end def rollback
 
     def _new_db_meta_data (self, scope) :
