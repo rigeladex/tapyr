@@ -29,13 +29,14 @@
 ##
 ## Revision Dates
 ##    30-Apr-2012 (CT) Creation
+##    24-Aug-2012 (CT) Add `request.url` to message
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block body -%}
 User {{ request.user }} connecting from {{ request.remote_addr }}
-registered for regatta
+to {{ request.url }} registered for regatta
 {{ page.obj.event.FO.short_title }}, {{ page.obj.event.ui_date }}:
 
 {{ message }}
