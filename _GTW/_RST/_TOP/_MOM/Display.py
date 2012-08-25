@@ -29,6 +29,7 @@
 #    15-Jul-2012 (CT) Creation
 #    18-Jul-2012 (CT) Factor properties from `_E_Type_` to `E_Type_Mixin`
 #    25-Jul-2012 (CT) Simplify `_admin_page`
+#    25-Aug-2012 (CT) Change `_E_Type_Archive_.entries` to update `_old_cid`
 #    ««revision-date»»···
 #--
 
@@ -161,7 +162,8 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
     @property
     @getattr_safe
     def entries (self) :
-        if self._old_year != self.year or self._changed_cid () is not None :
+        cid = self._changed_cid ()
+        if self._old_year != self.year or cid is not None :
             self._entry_map = {}
             self._entries   = []
             def _years (self) :
@@ -179,6 +181,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
             if self._entries :
                 if self._admin :
                     self.add_entries (self._admin)
+                self._old_cid  = cid
                 self._old_year = self.year
         return self._entries
     # end def entries

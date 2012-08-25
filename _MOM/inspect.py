@@ -29,6 +29,7 @@
 #    14-May-2012 (CT) Creation
 #     3-Aug-2012 (CT) Add `show_ref_map` and `show_ref_maps`
 #     7-Aug-2012 (CT) Rename `parents` to `ancestors`
+#    25-Aug-2012 (CT) Add `definers`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,20 @@ def ancestors (T) :
     """Return the essential ancestors of essential type `T`."""
     return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
 # end def ancestors
+
+def definers (ioc, name) :
+    """Return the classes defining `name` in `mro` of `ioc`"""
+    try :
+        mro = ioc.mro
+    except AttributeError :
+        mro = ioc.__class__.mro
+    def _gen (mro, name) :
+        for c in mro () :
+            v = c.__dict__.get (name)
+            if v is not None :
+                yield c, v
+    return tuple (_gen (mro, name))
+# end def definers
 
 def show_children (T, bi = "  ", level = 0, seen = None) :
     """Display tree of children of essential type `T`."""

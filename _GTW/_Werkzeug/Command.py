@@ -64,6 +64,7 @@
 #    10-Aug-2012 (CT) Pass `verbose` to `root.Cacher` and `App_Cache`
 #    14-Aug-2012 (MG) Add option `media_domain`
 #    19-Aug-2012 (MG) Commit scope after cache init
+#    25-Aug-2012 (CT) Import `_MOM.inspect` if `cmd.debug`
 #    ««revision-date»»···
 #--
 
@@ -398,6 +399,8 @@ class GT2W_Command (GTW.OMP.Command) :
         scope = root.__dict__.get ("scope")
         if scope is not None :
             scope.close_connections ()
+        if cmd.debug :
+            import _MOM.inspect
         if cmd.Break :
             TFL.Environment.py_shell (vars ())
         return result
