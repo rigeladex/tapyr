@@ -29,6 +29,7 @@
 #    18-Aug-2012 (CT) Creation
 #    21-Aug-2012 (CT) Add `info` and `label`
 #    22-Aug-2012 (CT) Add `delta`, `reverse`, `set_connector`
+#    26-Aug-2012 (CT) Add `add_guides`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,8 @@ import _TFL._Meta.Once_Property
 class _Reverse_ (TFL.Meta.Object) :
     """Reverse relation"""
 
-    reverse = None
+    is_reverse        = True
+    reverse           = None
 
     def __init__ (self, relation) :
         self.reverse = relation
@@ -59,6 +61,11 @@ class _Reverse_ (TFL.Meta.Object) :
     def delta (self) :
         return - self.reverse.delta
     # end def delta
+
+    @property
+    def other_connector (self) :
+        return self.reverse.source_connector
+    # end def other_connector
 
     @property
     def ref (self) :
@@ -71,7 +78,7 @@ class _Reverse_ (TFL.Meta.Object) :
     # end def set_connector
 
     def __getattr__ (self, name) :
-        return getattr (self.reverse (name))
+        return getattr (self.reverse, name)
     # end def __getattr__
 
     def __repr__ (self) :
@@ -84,9 +91,16 @@ class _Reverse_ (TFL.Meta.Object) :
 class _Relation_ (TFL.Meta.Object) :
     """Base class for relations between MOM entities."""
 
+    guides            = None
     info              = None
+    is_reverse        = False
     source_connector  = None
     target_connector  = None
+
+    def __init__ (self, source, target) :
+        self.source   = source
+        self.target   = target
+    # end def __init__
 
     @TFL.Meta.Once_Property
     def delta (self) :
@@ -104,6 +118,11 @@ class _Relation_ (TFL.Meta.Object) :
     # end def label
 
     @property
+    def other_connector (self) :
+        return self.target_connector
+    # end def other_connector
+
+    @property
     def ref (self) :
         return self.source
     # end def pos
@@ -112,6 +131,27 @@ class _Relation_ (TFL.Meta.Object) :
     def reverse (self) :
         return _Reverse_ (self)
     # end def reverse
+
+    def add_guides (self) :
+        if self.source_connector and self.target_connector :
+            src_c, trg_c = self.source_connector [0], self.target_connector [0]
+            dim    = src_c.dim
+            delta  = self.delta
+            dd     = getattr (delta, dim)
+            guides = self.guides = []
+            add    = guides.append
+            if src_c.is_opposite (trg_c) :
+                if getattr (delta, src_c.other_dim) != 0 :
+                    p2_a = CD.Point (** {dim : 1})
+                    p2_b = CD.Point (* reversed (p2_a))
+                    off  = src_c.guide_offset (1)
+                    add ((CD.Point (1, 1), CD.Point (0, 0), off))
+                    add ((p2_a,            p2_b,            off))
+            else :
+                p2_a = src_c.guide_point (0)
+                p2_b = CD.Point (* reversed (p2_a))
+                add ((p2_a, p2_b))
+    # end def add_guides
 
     def set_connector (self, side, offset) :
         assert self.source_connector is None
@@ -126,8 +166,7 @@ class Attr (_Relation_) :
     def __init__ (self, attr, source, target) :
         self.attr   = attr
         self.name   = attr.name
-        self.source = source
-        self.target = target
+        self.__super.__init__ (source, target)
     # end def __init__
 
     def __repr__ (self) :
@@ -142,17 +181,12 @@ class Is_A (_Relation_) :
 
     name = "IS_A"
 
-    def __init__ (self, source, target) :
-        self.source = source
-        self.target = target
-    # end def __init__
-
     def __repr__ (self) :
         return "<Graph.Relation %s IS A %s>" % \
             (self.source.type_name, self.target.type_name)
     # end def __repr__
 
-# end class IS_A
+# end class Is_A
 
 class Role (Attr) :
     """Model a link role relation between MOM entities."""

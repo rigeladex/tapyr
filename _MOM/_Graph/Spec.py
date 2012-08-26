@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Aug-2012 (CT) Creation
+#    26-Aug-2012 (CT) Change `setup_links` to use `sorted`
 #    ««revision-date»»···
 #--
 
@@ -109,7 +110,8 @@ class Graph (TFL.Meta.Object) :
     # end def nodes
 
     def setup_links (self) :
-        for n in self.node_map.itervalues () :
+        sort_key = TFL.Sorted_By ("slack", "type_name")
+        for n in sorted (self.node_map.itervalues (), key = sort_key) :
             n.setup_links ()
     # end def setup_links
 

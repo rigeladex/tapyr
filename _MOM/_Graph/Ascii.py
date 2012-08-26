@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Aug-2012 (CT) Creation
+#    26-Aug-2012 (CT) Add `Canvas.line`, `Ascii.render_link`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ import _MOM._Graph._Renderer_
 import _MOM._Graph.Entity
 import _MOM._Graph.Relation
 
+from   _TFL.predicate         import pairwise
 from   _TFL._D2               import D2, Cardinal_Direction as CD
 import _TFL._D2.Point
 import _TFL._D2.Rect
@@ -53,6 +55,17 @@ class Canvas (TFL.Meta.Object) :
         self._body = list ([" "] * max_x for i in range (max_y))
     # end def __init__
 
+    def line (self, line, chars = {}) :
+        h, t = line
+        d    = t - h
+        if d.x == 0 :
+            return self._line_v (line, chars.get ("y"))
+        elif d.y == 0 :
+            return self._line_h (line, chars.get ("x"))
+        else :
+            print ("Slanted line [%s -> %s] not implemented " % (h, t))
+    # end def line
+
     def rectangle (self, rect) :
         self._line_h (rect.top)
         self._line_h (rect.bottom)
@@ -63,30 +76,34 @@ class Canvas (TFL.Meta.Object) :
     # end def rectangle
 
     def rendered (self) :
-        return "\n".join ("".join (l) for l in self._body)
+        return "\n".join ("".join (l).rstrip () for l in self._body)
     # end def rendered
 
     def text (self, p, v) :
         self [p] = v
     # end def text
 
-    def _line_h (self, line) :
+    def _line_h (self, line, char = None) :
+        if char is None :
+            char = "-"
         head, tail = line
         assert head.y == tail.y
         if head.x > tail.x :
             head, tail = tail, head
         l = int (tail.x - head.x)
-        self [head] = "-" * l
+        self [head] = char * l
     # end def _line_h
 
-    def _line_v (self, line) :
+    def _line_v (self, line, char = None) :
+        if char is None :
+            char = "|"
         head, tail = line
         assert head.x == tail.x
         if head.y > tail.y :
             head, tail = tail, head
         x, y = head
         while y <= tail.y :
-            self [x, y] = "|"
+            self [x, y] = char
             y += 1
     # end def _line_v
 
@@ -107,10 +124,41 @@ class Renderer (MOM.Graph._Renderer_) :
     node_size          = D2.Point (16,  4) ### in characters
     default_grid_scale = D2.Point ( 2,  3)
 
+    conn_chars         = dict \
+        ( bottom       = "v"
+        , left         = "<"
+        , right        = ">"
+        , top          = "^"
+        )
+    link_chars         = dict \
+        ( Attr         = dict (x = "_", y = ":")
+        , Is_A         = dict (x = ".", y = ".")
+        , Role         = dict (x = "-", y = "|")
+        )
+    rect_chars         = dict \
+        ( bottom       = "-"
+        , left         = "|"
+        , right        = "|"
+        , top          = "-"
+        )
+
     def render (self) :
         self.__super.render ()
         return self.canvas.rendered ()
     # end def render
+
+    def render_link (self, link, canvas) :
+        chars = self.link_chars [link.relation.kind]
+        head  = link.points [ 0]
+        tail  = link.points [-1]
+        side  = link.relation.source_connector [0].side
+        for line in pairwise (link.points) :
+            canvas.line (line, chars = chars)
+        for p in link.points [1:-1] :
+            canvas.text (p, "+")
+        canvas.text (head, self.conn_chars [side])
+        canvas.text (tail, self.conn_chars [side])
+    # end def render_link
 
 # end class Renderer
 

@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    20-Aug-2012 (CT) Creation (factored from TFL.D2.Rect)
+#    26-Aug-2012 (CT) Redefine `side_dict`
 #    ««revision-date»»···
 #--
 
@@ -99,8 +100,8 @@ class _Screen_Rect_ (D2.Rect) :
     >>> rect_sides (q)
     bottom               : ((2.0, 4.0), (6.0, 4.0))
     left                 : ((2.0, 2.0), (2.0, 4.0))
-    right                : ((6.0, 4.0), (6.0, 2.0))
-    top                  : ((6.0, 2.0), (2.0, 2.0))
+    right                : ((6.0, 2.0), (6.0, 4.0))
+    top                  : ((2.0, 2.0), (6.0, 2.0))
     >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (1.0, 1.0))
     >>> connection_points (q)
     (0.5, 1.0) : (1.0, 1.25)
@@ -125,6 +126,13 @@ class _Screen_Rect_ (D2.Rect) :
     Center_Top    = D2.Point (0.5, 0.0)
     Top_Left      = D2.Point (0.0, 0.0)
     Top_Right     = D2.Point (1.0, 0.0)
+
+    side_dict = \
+        { "bottom" : (lambda r : D2.Line (r.bottom_left,  r.bottom_right))
+        , "left"   : (lambda r : D2.Line (r.top_left,     r.bottom_left))
+        , "right"  : (lambda r : D2.Line (r.top_right,    r.bottom_right))
+        , "top"    : (lambda r : D2.Line (r.top_left,     r.top_right))
+        }
 
     @property
     def ref_point (self) :

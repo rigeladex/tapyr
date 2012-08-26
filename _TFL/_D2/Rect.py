@@ -38,6 +38,7 @@
 #    20-Aug-2012 (CT) Add `transformed`
 #    20-Aug-2012 (CT) Sort methods alphabetically
 #    21-Aug-2012 (CT) Add `corners`
+#    26-Aug-2012 (CT) Change `side_dict` to get nice sides
 #    ««revision-date»»···
 #--
 
@@ -136,9 +137,9 @@ class Rect (TFL.Meta.Object) :
 
     >>> rect_sides (q)
     bottom               : ((2.0, 2.0), (6.0, 2.0))
-    left                 : ((2.0, 4.0), (2.0, 2.0))
+    left                 : ((2.0, 2.0), (2.0, 4.0))
     right                : ((6.0, 2.0), (6.0, 4.0))
-    top                  : ((6.0, 4.0), (2.0, 4.0))
+    top                  : ((2.0, 4.0), (6.0, 4.0))
 
     >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (1.0, 1.0))
     >>> connection_points (q)
@@ -167,9 +168,9 @@ class Rect (TFL.Meta.Object) :
 
     side_dict = \
         { "bottom" : (lambda r : D2.Line (r.bottom_left,  r.bottom_right))
-        , "left"   : (lambda r : D2.Line (r.top_left,     r.bottom_left))
+        , "left"   : (lambda r : D2.Line (r.bottom_left,  r.top_left))
         , "right"  : (lambda r : D2.Line (r.bottom_right, r.top_right))
-        , "top"    : (lambda r : D2.Line (r.top_right,    r.top_left))
+        , "top"    : (lambda r : D2.Line (r.top_left,     r.top_right))
         }
 
     @property

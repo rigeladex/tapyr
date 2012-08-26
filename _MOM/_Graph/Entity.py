@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Aug-2012 (CT) Creation
+#    26-Aug-2012 (CT) Add `add_guides`, improve placing
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,11 @@ class Rel_Placer (TFL.Meta.Object) :
         # end def neighbors
 
         @property
+        def opposite (self) :
+            return self.rp [self.opposite_name]
+        # end def opposite
+
+        @property
         def willing_neighbor (self) :
             result = max (self.neighbors, key = TFL.Getter.slack)
             if result.slack > 0 :
@@ -92,7 +98,19 @@ class Rel_Placer (TFL.Meta.Object) :
             self.slack -= 1
         # end def add
 
+        def add_guides (self) :
+            """Add guide points to relations in `rels`."""
+            for r in self.rels :
+                if (not r.is_reverse) or r.guides is None :
+                    r.add_guides ()
+        # end def guide
+
+        def is_opposite (self, other) :
+            return self.opposite_name == other.name
+        # end def is_opposite
+
         def place (self) :
+            """Place connectors of relations in `rels`."""
             rels  = self.rels
             n     = len (rels)
             try :
@@ -100,10 +118,35 @@ class Rel_Placer (TFL.Meta.Object) :
             except IndexError :
                 raise NotImplementedError \
                     ("Too many relations for automatic placement: %s" % (n, ))
-            rels.sort (key = self.sort_key_p)
+            rels.sort (key = TFL.Sorted_By (self.sort_key_p, "type_name"))
             side = self.side
-            for o, r in zip (offset_s, rels) :
-                r.set_connector (side, o)
+            seen = set ()
+            def gen_offset (offset_s, seen) :
+                for o in offset_s :
+                    if o not in seen :
+                        seen.add (o)
+                        yield o
+            offset = gen_offset (offset_s, seen)
+            for r in rels :
+                o  = None
+                oc = r.other_connector
+                if oc is not None :
+                    odp, oof = oc
+                    if self.is_opposite (odp) :
+                        delta = getattr (r.delta, self.other_dim)
+                        if delta == 0 :
+                            o = oof
+                        else :
+                            o = 1 - oof
+                        if o in seen :
+                            o = offset.next ()
+                    else :
+                        pass ### XXX what do we need to do here ???
+                if o is None :
+                    o = offset.next ()
+                else :
+                    seen.add (o)
+                r.set_connector (self, o)
         # end def place
 
         def slacker (self) :
@@ -121,20 +164,61 @@ class Rel_Placer (TFL.Meta.Object) :
             return slack
         # end def slacker
 
+        def __getattr__ (self, name) :
+            return getattr (self.rp, name)
+        # end def __getattr__
+
         def __nonzero__ (self) :
             return bool (self.rels)
         # end def __nonzero__
 
+        def __str__ (self) :
+            return self.side
+        # end def __str__
+
     # end class Dir_Placer
 
-    class N_Placer (Dir_Placer) :
+    class Dir_Placer_X (Dir_Placer) :
+
+        dim            = "x"
+        max_rels       = 3
+        other_dim      = "y"
+
+        def guide_offset (self, v) :
+            return CD.Point (self.sign * v, 0)
+        # end def guide_offset
+
+        def guide_point (self, v) :
+            return CD.Point (v, 1)
+        # end def guide_point
+
+    # end class Dir_Placer_X
+
+    class Dir_Placer_Y (Dir_Placer) :
+
+        dim            = "y"
+        max_rels       = 7
+        other_dim      = "x"
+
+        def guide_offset (self, v) :
+            return CD.Point (0, self.sign * v)
+        # end def guide_offset
+
+        def guide_point (self, v) :
+            return CD.Point (1, v)
+        # end def guide_point
+
+    # end class Dir_Placer_Y
+
+    class N_Placer (Dir_Placer_Y) :
         """Placer for relations in direction north."""
 
-        max_rels       = 7
         name           = "N"
         neighbor_names = ("E", "W")
+        opposite_name  = "S"
         prio           = 3
         side           = "bottom"
+        sign           = +1
         sort_key_p     = TFL.Sorted_By ("-delta.x")
 
         def predicate (self, r) :
@@ -143,14 +227,15 @@ class Rel_Placer (TFL.Meta.Object) :
 
     # end class N_Placer
 
-    class E_Placer (Dir_Placer) :
+    class E_Placer (Dir_Placer_X) :
         """Placer for relations in direction east."""
 
-        max_rels       = 3
         name           = "E"
         neighbor_names = ("N", "S")
+        opposite_name  = "W"
         prio           = 1
         side           = "left"
+        sign           = -1
         sort_key_p     = TFL.Sorted_By ("delta.y")
 
         def predicate (self, r) :
@@ -159,14 +244,15 @@ class Rel_Placer (TFL.Meta.Object) :
 
     # end class E_Placer
 
-    class S_Placer (Dir_Placer) :
+    class S_Placer (Dir_Placer_Y) :
         """Placer for relations in direction south."""
 
-        max_rels       = 7
         name           = "S"
         neighbor_names = ("E", "W")
+        opposite_name  = "N"
         prio           = 4
         side           = "top"
+        sign           = -1
         sort_key_p     = TFL.Sorted_By ("-delta.x")
 
         def predicate (self, r) :
@@ -175,14 +261,15 @@ class Rel_Placer (TFL.Meta.Object) :
 
     # end class S_Placer
 
-    class W_Placer (Dir_Placer) :
+    class W_Placer (Dir_Placer_X) :
         """Placer for relations in direction west."""
 
-        max_rels       = 3
         name           = "W"
         neighbor_names = ("N", "S")
+        opposite_name  = "E"
         prio           = 2
         side           = "right"
+        sign           = +1
         sort_key_p     = TFL.Sorted_By ("delta.y")
 
         def predicate (self, r) :
@@ -201,15 +288,26 @@ class Rel_Placer (TFL.Meta.Object) :
                 , self.W_Placer (self)
                 )
             )
-        by_slack = sorted (placers.itervalues (), key = TFL.Getter.slack)
+        sort_key = TFL.Sorted_By ("slack", "max_rels", "name")
+        by_slack = sorted (placers.itervalues (), key = sort_key)
         for dp in by_slack :
             if dp.slack < 0 :
                 dp.slacker ()
-        by_slack.sort (key = TFL.Getter.slack)
+        by_slack.sort (key = sort_key)
         for dp in by_slack :
             if dp :
                 dp.place ()
+        for dp in by_slack :
+            dp.add_guides ()
     # end def __init__
+
+    def __getattr__ (self, name) :
+        return self.placers [name]
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return self.placers [key]
+    # end def __getitem__
 
 # end class Rel_Placer
 
@@ -297,6 +395,11 @@ class Entity (TFL.Meta.Object) :
             self._pos = result
         return result
     # end def pos
+
+    @property
+    def slack (self) :
+        return - len (self.all_rels)
+    # end def slack
 
     @TFL.Meta.Once_Property
     def type_name (self) :

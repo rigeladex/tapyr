@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Aug-2012 (CT) Creation
+#    26-Aug-2012 (CT) Add `Link.points`, `_Renderer_.render_link`
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,7 @@ from   _TFL                   import TFL
 import _MOM._Graph.Entity
 import _MOM._Graph.Relation
 
+from   _TFL.predicate         import pairwise
 from   _TFL._D2               import D2, Cardinal_Direction as CD
 from   _TFL._D2.Screen        import Rect
 
@@ -56,7 +58,32 @@ class Link (TFL.Meta.Object) :
         self.relation = relation
         self.source   = source
         self.target   = target
+        self.points   = tuple (self._points (relation, source, target))
     # end def __init__
+
+    def _points (self, relation, source, target) :
+        guides   = relation.guides
+        head     = self._ref_point (source, relation.source_connector)
+        tail     = self._ref_point (target, relation.target_connector)
+        yield head
+        if guides :
+            for g in guides :
+                if len (g) == 3 :
+                    wh, wt = g [:2]
+                    offset = source.renderer.node_size * g [-1]
+                else :
+                    wh, wt = g
+                    offset = D2.Point (0, 0)
+                yield head * wh + tail * wt + offset
+        yield tail
+    # end def _points
+
+    def _ref_point (self, node, connector) :
+        side, offset = connector
+        line         = getattr (node.box, side.side)
+        result       = line.point (offset)
+        return result
+    # end def _ref_point
 
 # end class Link
 
@@ -80,34 +107,6 @@ class Node (TFL.Meta.Object) :
     def max_y (self) :
         return self.box.bottom_right.y
     # end def max_y
-
-    def render (self, canvas) :
-        box    = self.box
-        pos    = box.top_left + D2.Point (2, 1)
-        width  = box.size.x   - 2
-        height = box.size.y   - 2
-        ### XXX factor to concrete subclass
-        def _label_parts (parts, width, height) :
-            i = 0
-            l = len (parts)
-            x = ""
-            while i < l and height > 0:
-                p  = x + parts [i]
-                i += 1
-                while i < l and len (p) < width :
-                    if len (p) + len (parts [i]) < width :
-                        p += parts [i]
-                        i += 1
-                    else :
-                        break
-                yield p
-                height -= 1
-                x = " "
-        for lp in _label_parts (self.entity.label_parts, width, height) :
-            canvas.text (pos, lp)
-            pos.shift ((0, 1))
-        canvas.rectangle (self.box)
-    # end def render
 
     def setup_links (self) :
         renderer = self.renderer
@@ -192,8 +191,45 @@ class _Renderer_ (TFL.Meta.Object) :
     def render (self) :
         canvas = self.canvas
         for n in self.nodes :
-            n.render (canvas)
+            self.render_node (n, canvas)
     # end def render
+
+    def render_link (self, link, canvas) :
+        for line in pairwise (link.points) :
+            canvas.line (line)
+            ### connector details, label...
+    # end def render_link
+
+    def render_node (self, node, canvas) :
+        box    = node.box
+        pos    = box.top_left + D2.Point (2, 1)
+        width  = box.size.x   - 2
+        height = box.size.y   - 2
+        ### XXX factor to concrete subclass
+        def _label_parts (parts, width, height) :
+            i = 0
+            l = len (parts)
+            x = ""
+            while i < l and height > 0:
+                p  = x + parts [i]
+                i += 1
+                while i < l and len (p) < width :
+                    if len (p) + len (parts [i]) < width :
+                        p += parts [i]
+                        i += 1
+                    else :
+                        break
+                yield p
+                height -= 1
+                x = " "
+        for lp in _label_parts (node.entity.label_parts, width, height) :
+            canvas.text (pos, lp)
+            pos.shift ((0, 1))
+        canvas.rectangle (box)
+        sort_key = TFL.Sorted_By ("slack", "type_name")
+        for l in sorted (node.link_map.itervalues (), key = sort_key) :
+            self.render_link (l, canvas)
+    # end def render_node
 
 # end class _Renderer_
 
