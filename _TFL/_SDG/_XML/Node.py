@@ -39,10 +39,12 @@
 #    29-Nov-2007 (CT)  `_attr_values` changed to not use `textwrap` (quoted
 #                      values should *not* be wrapped)
 #    26-Feb-2012 (MG) `__future__` imports added
+#    27-Aug-2012 (CT) Add and use `attr_name_translate`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL              import TFL
 import _TFL._SDG._XML
 import _TFL._SDG.Node
@@ -55,6 +57,7 @@ class _XML_Node_ (TFL.SDG.Node) :
     _real_name           = "Node"
 
     attr_names           = ()
+    attr_name_translate  = {}
     base_indent          = "  "
     enconding            = "iso-8859-15"
     init_arg_defaults    = dict \
@@ -92,10 +95,12 @@ class _XML_Node_ (TFL.SDG.Node) :
             + sorted (self.x_attrs.iteritems ())
             )
         if attr_values :
+            translate = lambda a : self.attr_name_translate.get (a, a)
             for a, v in attr_values :
                 if v is not None :
+                    k = translate (a)
                     v = unicode (v).replace ("'", "&quot;")
-                    yield u'''%s="%s"''' % (a, v)
+                    yield u'''%s="%s"''' % (k, v)
     # end def _attr_iter
 
     def _attr_values (self, * args, ** kw) :

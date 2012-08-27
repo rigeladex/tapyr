@@ -31,10 +31,10 @@
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #     5-Sep-2005 (CT) Doctest fixed (`x_attrs` sorted alphabetically)
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
-#    20-Nov-2007 (MG)  Imports fixed
+#    20-Nov-2007 (MG) Imports fixed
 #    26-Feb-2012 (MG) `__future__` imports added
+#    27-Aug-2012 (CT) Add `init_arg_defaults` as argument
+#    29-Aug-2012 (CT) Add `_autoconvert` as argument
 #    ««revision-date»»···
 #--
 
@@ -74,39 +74,38 @@ import _TFL.Caller
 
 from   _TFL.predicate         import *
 
-def Elem_Type (elem_type, bases = None, front_args = (), rest_args = None, ** attributes) :
+def Elem_Type \
+        ( elem_type
+        , bases             = None
+        , front_args        = ()
+        , rest_args         = None
+        , init_arg_defaults = {}
+        , _autoconvert      = {}
+        , ** attributes
+        ) :
     """Return a new subclass of XML.Element"""
     if bases is None :
         bases         = (TFL.SDG.XML.Element, )
     attr_names        = []
     front_dict        = dict_from_list (front_args)
-    init_arg_defaults = {}
+    init_arg_defaults = dict (init_arg_defaults)
     for k, v in attributes.iteritems () :
         init_arg_defaults [k] = v
         if not (k in front_dict or k == rest_args) :
             attr_names.append (k)
     return TFL.SDG.XML.Element.__class__ \
         ( elem_type, bases
-        , dict ( attr_names        = tuple (sorted (attr_names))
-               , elem_type         = elem_type
-               , front_args        = front_args
-               , init_arg_defaults = init_arg_defaults
-               , __module__        = TFL.Caller.globals () ["__name__"]
-               , rest_args         = rest_args
-               )
+        , dict
+            ( attr_names        = tuple (sorted (attr_names))
+            , _autoconvert      = _autoconvert
+            , elem_type         = elem_type
+            , front_args        = front_args
+            , init_arg_defaults = init_arg_defaults
+            , rest_args         = rest_args
+            , __module__        = TFL.Caller.globals () ["__name__"]
+            )
         )
 # end def Elem_Type
-
-"""
-from _TFL._SDG._XML.Document import *
-from _TFL._SDG._XML.Elem_Type import *
-d = Document ("Test", "Test for TFL.SDG.XML.Elem_Type creation and use")
-X = Elem_Type ("X", foo = None, bar = 42, baz = "quuux")
-d.add (X ("A foo-carrying X", foo = "wibble"))
-d.add (X ("A bar-carrying X", bar = "wobble"))
-d.add (X ("A bar-less X", bar = None))
-d.write_to_xml_stream ()
-"""
 
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")

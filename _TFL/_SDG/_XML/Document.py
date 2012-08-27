@@ -165,12 +165,12 @@ class Document (TFL.SDG.XML.Node) :
     _autoconvert         = dict \
         ( doctype        = lambda s, k, v : s._convert (v, TFL.SDG.XML.Doctype)
         , root_element   = lambda s, k, v : s._convert (v, TFL.SDG.XML.Element)
-        , standalone     = lambda s, k, v
-                         : { "yes" : "yes"
-                           , True  : "yes"
-                           , False : "no"
-                           , "no"  : "no"
-                           } [v]
+        , standalone     = lambda s, k, v :
+            { "yes" : "yes"
+            , True  : "yes"
+            , False : "no"
+            , "no"  : "no"
+            } [v]
         )
 
     def formatted (self, format_name, * args, ** kw) :
