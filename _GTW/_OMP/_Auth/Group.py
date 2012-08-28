@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -40,7 +40,7 @@ from   _GTW                   import GTW
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
-_Ancestor_Essence = Auth.Object
+_Ancestor_Essence = Auth.Named_Object
 
 class _Auth_Group_ (_Ancestor_Essence) :
     """Model a group of accounts."""

@@ -69,9 +69,9 @@ import _GTW._OMP._Auth.Entity
 import  hashlib
 import  uuid
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = Auth.Object
 
-class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
+class _Auth_Account_ (_Ancestor_Essence) :
     """Model an user account."""
 
     _real_name  = "Account"

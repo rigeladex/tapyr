@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -40,49 +40,17 @@ from   __future__            import unicode_literals
 
 from   _MOM.import_MOM          import *
 from   _MOM._Attr.Date_Interval import *
+
+import _MOM.derive_pns_bases
+
 from   _GTW                     import GTW
 
 import _GTW._OMP._PAP.Person
 import _GTW._OMP._SWP
 
-class _SWP_Entity_ (MOM.Entity) :
-    """Common base class for essential classes of GTW.OMP.SWP"""
+MOM.derive_pns_bases (GTW.OMP.SWP, MOM)
 
-    _real_name = "Entity"
-
-    PNS        = GTW.OMP.SWP
-    is_partial = True
-
-Entity = _SWP_Entity_ # end class
-
-class _SWP_Link1_ (Entity, MOM.Link1) :
-    """Common base class for essential unary links of GTW.OMP.SWP"""
-
-    _real_name  = "Link1"
-
-    is_partial  = True
-
-Link1 = _SWP_Link1_ # end class
-
-class _SWP_Link2_ (Entity, MOM.Link2) :
-    """Common base class for essential binary links of GTW.OMP.SWP"""
-
-    _real_name  = "Link2"
-
-    is_partial  = True
-
-Link2 = _SWP_Link2_ # end class
-
-class _SWP_Object_ (Entity, MOM.Object) :
-    """Common base class for essential objects of GTW.OMP.SWP"""
-
-    _real_name  = "Object"
-
-    is_partial  = True
-
-Object = _SWP_Object_ # end class
-
-_Ancestor_Essence = Object
+_Ancestor_Essence = GTW.OMP.SWP.Object
 
 class Object_PN (_Ancestor_Essence) :
     """Object with a perma_name."""

@@ -45,9 +45,9 @@ from   _GTW._OMP._PAP         import PAP
 import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Subject import Subject
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = PAP.Link2
 
-class Subject_has_Property (PAP.Entity, _Ancestor_Essence) :
+class Subject_has_Property (_Ancestor_Essence) :
     """Base class for link between Subject and some other object"""
 
     is_partial = True

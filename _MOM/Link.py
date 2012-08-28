@@ -126,9 +126,7 @@ Link = _MOM_Link_ # end class
 _Ancestor_Essence = Link
 
 class Link1 (_Ancestor_Essence) :
-    """Model an entity-based link of a unary association of the MOM meta
-       object model.
-    """
+    """Common base class for essential unary links of MOM"""
 
     __metaclass__         = MOM.Meta.M_Link1
     is_partial            = True
@@ -169,9 +167,7 @@ class _MOM_Link_n_ (_Ancestor_Essence) :
 _Ancestor_Essence = _MOM_Link_n_
 
 class Link2 (_Ancestor_Essence) :
-    """Model an entity-based link of a binary association of the MOM meta
-       object model.
-    """
+    """Common base class for essential binary links of MOM."""
 
     __metaclass__         = MOM.Meta.M_Link2
     is_partial            = True
@@ -181,9 +177,7 @@ class Link2 (_Ancestor_Essence) :
 _Ancestor_Essence = Link2
 
 class Link2_Ordered (_Ancestor_Essence) :
-    """Model a link of a binary ordered essential association of the MOM meta
-       object model.
-    """
+    """Common base class for essential binary ordered links of MOM."""
 
     is_partial            = True
 
@@ -203,9 +197,7 @@ class Link2_Ordered (_Ancestor_Essence) :
 _Ancestor_Essence = _MOM_Link_n_
 
 class Link3 (_Ancestor_Essence) :
-    """Model a link of a ternary essential association of the MOM meta
-       object model.
-    """
+    """Common base class for essential ternary links of MOM."""
 
     __metaclass__         = MOM.Meta.M_Link3
     is_partial            = True

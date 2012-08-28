@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 #
@@ -35,29 +35,11 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 
+import _MOM.derive_pns_bases
+
 import _GTW._OMP._Auth
 
-class _Auth_Entity_ (MOM.Entity) :
-    """Common base class for essential classes of GTW.OMP.Auth"""
-
-    _real_name = "Entity"
-
-    is_partial = True
-    PNS        = GTW.OMP.Auth
-
-Entity = _Auth_Entity_ # end class
-
-class _Auth_Object_ (Entity, MOM.Named_Object) :
-    """Common base class for essential objects of GTW.OMP.Auth"""
-
-    is_partial = True
-    _real_name = "Object"
-
-    class _Attributes (MOM.Named_Object._Attributes) :
-        pass
-    # end class _Attributes
-
-Object = _Auth_Object_ # end class
+MOM.derive_pns_bases (GTW.OMP.Auth, MOM)
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

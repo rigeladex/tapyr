@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -41,9 +41,9 @@ import _GTW._OMP._Auth.Group
 
 from   _TFL.I18N              import _, _T, _Tn
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = Auth.Link2
 
-class Account_in_Group (Auth.Entity, _Ancestor_Essence) :
+class Account_in_Group (_Ancestor_Essence) :
     """Model association Account_in_Group"""
 
     class _Attributes (_Ancestor_Essence._Attributes) :

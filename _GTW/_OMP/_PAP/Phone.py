@@ -46,9 +46,9 @@ from   _GTW._OMP._PAP         import PAP
 
 import _GTW._OMP._PAP.Entity
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = PAP.Object
 
-class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
+class _PAP_Phone_ (_Ancestor_Essence) :
     """Model a phone number"""
 
     _real_name     = "Phone"

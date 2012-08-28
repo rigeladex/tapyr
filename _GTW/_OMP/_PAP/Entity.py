@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -29,24 +29,20 @@
 #    30-Dec-2009 (CT) Creation
 #     3-Feb-2010 (MG) `is_partial` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    28-Aug-2012 (CT) Use `MOM.derive_pns_bases` instead of home-grown code
 #    ««revision-date»»···
 #--
 
 from   __future__            import unicode_literals
 
-from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
+
+from   _MOM.import_MOM        import *
+import _MOM.derive_pns_bases
 
 import _GTW._OMP._PAP
 
-class _PAP_Entity_ (MOM.Entity) :
-    """Common base class for essential classes of GTW.OMP.PAP"""
-
-    _real_name = "Entity"
-    is_partial = True
-    PNS        = GTW.OMP.PAP
-
-Entity = _PAP_Entity_ # end class
+MOM.derive_pns_bases (GTW.OMP.PAP, MOM)
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")

@@ -104,7 +104,17 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     MOM.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Link1
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Link2
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Link2_Ordered
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Link3
+        ('PAP.Entity_created_by_Person', ['left'])
     Auth.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
     Auth.Account
         ('Auth.Account_Activation', ['left'])
@@ -144,13 +154,31 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     Auth.Account_Password_Reset
         ('PAP.Entity_created_by_Person', ['left'])
-    EVT.Object
-        ('PAP.Entity_created_by_Person', ['left'])
     EVT.Link1
         ('PAP.Entity_created_by_Person', ['left'])
     EVT.Link2
         ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Link2_Ordered
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Link3
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Named_Object
+        ('PAP.Entity_created_by_Person', ['left'])
     EVT.Calendar
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Link1
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Link2
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Link2_Ordered
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Link3
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject
         ('PAP.Entity_created_by_Person', ['left'])
@@ -164,7 +192,13 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     SWP.Link2
         ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Link2_Ordered
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Link3
+        ('PAP.Entity_created_by_Person', ['left'])
     SWP.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
     SWP.Object_PN
         ('PAP.Entity_created_by_Person', ['left'])
@@ -231,7 +265,13 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Link2
         ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Link2_Ordered
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Link3
+        ('PAP.Entity_created_by_Person', ['left'])
     SRM.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
     SRM._Boat_Class_
         ('PAP.Entity_created_by_Person', ['left'])

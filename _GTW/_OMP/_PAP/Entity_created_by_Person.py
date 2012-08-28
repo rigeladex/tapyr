@@ -42,9 +42,9 @@ from   _GTW._OMP._PAP         import PAP
 import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Person  import Person
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = PAP.Link2
 
-class Entity_created_by_Person (PAP.Entity, _Ancestor_Essence) :
+class Entity_created_by_Person (_Ancestor_Essence) :
     """Created-By association for all kinds of entities"""
 
     refuse_links = set \

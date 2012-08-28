@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -33,47 +33,14 @@
 
 from   __future__            import unicode_literals
 
-from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
+from   _MOM.import_MOM        import *
+
+import _MOM.derive_pns_bases
 
 import _GTW._OMP._EVT
 
-class _EVT_Entity_ (MOM.Entity) :
-    """Common base class for essential classes of GTW.OMP.EVT"""
-
-    _real_name = "Entity"
-
-    PNS        = GTW.OMP.EVT
-    is_partial = True
-
-Entity = _EVT_Entity_ # end class
-
-class _EVT_Object_ (Entity, MOM.Object) :
-    """Common base class for essential objects of GTW.OMP.EVT"""
-
-    _real_name  = "Object"
-
-    is_partial  = True
-
-Object = _EVT_Object_ # end class
-
-class _EVT_Link1_ (Entity, MOM.Link1) :
-    """Common base class for essential unary links of GTW.OMP.EVT"""
-
-    _real_name  = "Link1"
-
-    is_partial  = True
-
-Link1 = _EVT_Link1_ # end class
-
-class _EVT_Link2_ (Entity, MOM.Link2) :
-    """Common base class for essential binary links of GTW.OMP.EVT"""
-
-    _real_name  = "Link2"
-
-    is_partial  = True
-
-Link2 = _EVT_Link2_ # end class
+MOM.derive_pns_bases (GTW.OMP.EVT, MOM)
 
 if __name__ != "__main__" :
     GTW.OMP.EVT._Export ("*")

@@ -39,7 +39,6 @@ from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 
-import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Subject_has_Property   import Subject_has_Property
 from   _GTW._OMP._PAP.Email                  import Email
 
