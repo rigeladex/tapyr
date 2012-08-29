@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -43,9 +43,9 @@ from   _GTW._OMP._PAP         import PAP
 import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Person  import Person
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = PAP.Link2
 
-class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
+class _Person_has_Property_ (_Ancestor_Essence) :
     """Base class for link between Person and some other object"""
 
     is_partial = True

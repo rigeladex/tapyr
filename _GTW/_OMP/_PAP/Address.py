@@ -46,9 +46,9 @@ from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 import _GTW._OMP._PAP.Entity
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = PAP.Object
 
-class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
+class _PAP_Address_ (_Ancestor_Essence) :
     """Model a (postal) address."""
 
     _real_name = "Address"

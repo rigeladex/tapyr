@@ -56,7 +56,7 @@ import _MOM.Entity
 import itertools
 
 class _MOM_Object_ (MOM.Id_Entity) :
-    """Root class for object-types of MOM meta object model."""
+    """Common base class for essential objects of MOM."""
 
     __metaclass__         = MOM.Meta.M_Object
     _real_name            = "Object"
@@ -96,7 +96,7 @@ class _Object_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
 # end class _Object_Reload_Mixin_
 
 class Named_Object (Object) :
-    """Root class for named object-types of MOM meta object model."""
+    """Common base class for essential named objects of MOM."""
 
     is_partial            = True
 

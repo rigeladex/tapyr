@@ -43,7 +43,6 @@ from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 from   _TFL.I18N              import _
 
-import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Person                 import Person
 from   _GTW._OMP._PAP.Subject_has_Phone      import Subject_has_Phone
 

@@ -42,7 +42,6 @@ from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 from   _TFL.I18N              import _
 
-import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Subject_has_Property   import Subject_has_Property
 from   _GTW._OMP._PAP.Phone                  import Phone
 

@@ -137,7 +137,12 @@ _test_code = r"""
     type_name                                      relev  p_epk  p_epks
     ======================================================================
     Auth.Entity                                    False  False  False
+    Auth.Link1                                     False  False  False
+    Auth.Link2                                     False  False  False
+    Auth.Link2_Ordered                             False  False  False
+    Auth.Link3                                     False  False  False
     Auth.Object                                    False  False  False
+    Auth.Named_Object                              False  False  False
     Auth.Account                                   True   False  False
     Auth.Account_Anonymous                         True   False  False
     Auth.Account_P                                 True   False  False
@@ -150,17 +155,29 @@ _test_code = r"""
     Auth.Account_EMail_Verification                True   False  False
     Auth.Account_Password_Reset                    True   False  False
     EVT.Entity                                     False  False  False
-    EVT.Object                                     False  False  False
     EVT.Link1                                      False  False  False
     EVT.Link2                                      False  False  False
+    EVT.Link2_Ordered                              False  False  False
+    EVT.Link3                                      False  False  False
+    EVT.Object                                     False  False  False
+    EVT.Named_Object                               False  False  False
     EVT.Calendar                                   True   False  False
     PAP.Entity                                     False  False  False
+    PAP.Link1                                      False  False  False
+    PAP.Link2                                      False  False  False
+    PAP.Link2_Ordered                              False  False  False
+    PAP.Link3                                      False  False  False
+    PAP.Object                                     False  False  False
+    PAP.Named_Object                               False  False  False
     PAP.Subject                                    False  False  False
     PAP.Person                                     True   False  False
     SWP.Entity                                     False  False  False
     SWP.Link1                                      False  False  False
     SWP.Link2                                      False  False  False
+    SWP.Link2_Ordered                              False  False  False
+    SWP.Link3                                      False  False  False
     SWP.Object                                     False  False  False
+    SWP.Named_Object                               False  False  False
     SWP.Object_PN                                  False  False  False
     SWP.Page_Mixin                                 False  False  False
     SWP.Page                                       True   True   True
@@ -189,7 +206,10 @@ _test_code = r"""
     SRM.Entity                                     False  False  False
     SRM.Link1                                      False  False  False
     SRM.Link2                                      False  False  False
+    SRM.Link2_Ordered                              False  False  False
+    SRM.Link3                                      False  False  False
     SRM.Object                                     False  False  False
+    SRM.Named_Object                               False  False  False
     SRM._Boat_Class_                               True   False  False
     SRM.Boat_Class                                 True   False  False
     SRM.Handicap                                   True   False  False
@@ -225,73 +245,78 @@ _test_code = r"""
     MOM.Link2                                      ['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     MOM.Object                                     ['Auth.Account', 'Auth.Group', 'EVT.Calendar', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'SRM.Club', 'SRM.Regatta_Event', 'SRM._Boat_Class_', 'SWP.Gallery', 'SWP.Page']
     MOM.Named_Object                               ['Auth.Group']
-    Auth.Object                            ['Auth.Group']
-    Auth.Account                           Auth.Account
-    Auth.Account_Anonymous                 Auth.Account
-    Auth.Account_P                         Auth.Account
-    Auth.Group                             Auth.Group
-    Auth.Account_in_Group                  Auth.Account_in_Group
-    Auth._Account_Action_                  ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset']
-    Auth.Account_Activation                Auth.Account_Activation
-    Auth.Account_Password_Change_Required  Auth.Account_Password_Change_Required
-    Auth._Account_Token_Action_            ['Auth.Account_EMail_Verification', 'Auth.Account_Password_Reset']
-    Auth.Account_EMail_Verification        Auth.Account_EMail_Verification
-    Auth.Account_Password_Reset            Auth.Account_Password_Reset
-    EVT.Object                             ['EVT.Calendar']
-    EVT.Link1                              ['EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
-    EVT.Calendar                           EVT.Calendar
-    PAP.Subject                            ['PAP.Company', 'PAP.Person']
-    PAP.Person                             PAP.Person
-    SWP.Link1                              ['SWP.Clip_O', 'SWP.Picture']
-    SWP.Object                             ['SWP.Gallery', 'SWP.Page']
-    SWP.Object_PN                          ['SWP.Gallery', 'SWP.Page']
-    SWP.Page                               SWP.Page
-    SWP.Page_Y                             SWP.Page
-    EVT.Event                              EVT.Event
-    EVT.Event_occurs                       EVT.Event_occurs
-    EVT._Recurrence_Mixin_                 ['EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
-    EVT.Recurrence_Spec                    EVT.Recurrence_Spec
-    EVT.Recurrence_Rule                    EVT.Recurrence_Rule
-    PAP.Address                            PAP.Address
-    PAP.Company                            PAP.Company
-    PAP.Email                              PAP.Email
-    PAP.Phone                              PAP.Phone
-    PAP.Subject_has_Property               ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
-    PAP.Subject_has_Address                ['PAP.Company_has_Address', 'PAP.Person_has_Address']
-    PAP.Company_has_Address                PAP.Company_has_Address
-    PAP.Subject_has_Email                  ['PAP.Company_has_Email', 'PAP.Person_has_Email']
-    PAP.Company_has_Email                  PAP.Company_has_Email
-    PAP.Subject_has_Phone                  ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
-    PAP.Company_has_Phone                  PAP.Company_has_Phone
-    PAP.Entity_created_by_Person           PAP.Entity_created_by_Person
-    PAP.Person_has_Address                 PAP.Person_has_Address
-    PAP.Person_has_Email                   PAP.Person_has_Email
-    PAP.Person_has_Phone                   PAP.Person_has_Phone
-    SRM.Link1                              ['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team']
-    SRM.Link2                              ['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
-    SRM.Object                             ['SRM.Club', 'SRM.Regatta_Event', 'SRM._Boat_Class_']
-    SRM._Boat_Class_                       SRM._Boat_Class_
-    SRM.Boat_Class                         SRM._Boat_Class_
-    SRM.Handicap                           SRM._Boat_Class_
-    SRM.Boat                               SRM.Boat
-    SRM.Club                               SRM.Club
-    SRM.Regatta_Event                      SRM.Regatta_Event
-    SWP.Clip_O                             SWP.Clip_O
-    SWP.Clip_X                             SWP.Page
-    SWP.Gallery                            SWP.Gallery
-    SWP.Picture                            SWP.Picture
-    SRM.Page                               SWP.Page
-    SRM.Regatta                            SRM.Regatta
-    SRM.Regatta_C                          SRM.Regatta
-    SRM.Regatta_H                          SRM.Regatta
-    SRM.Sailor                             SRM.Sailor
-    SRM.Boat_in_Regatta                    SRM.Boat_in_Regatta
-    SRM.Race_Result                        SRM.Race_Result
-    SRM.Team                               SRM.Team
-    SRM.Crew_Member                        SRM.Crew_Member
-    SRM.Team_has_Boat_in_Regatta           SRM.Team_has_Boat_in_Regatta
-    SWP.Page_U                             SWP.Page
-    SWP.Page_V                             SWP.Page
+    Auth.Link1                                     ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset']
+    Auth.Link2                                     ['Auth.Account_in_Group']
+    Auth.Object                                    ['Auth.Account', 'Auth.Group']
+    Auth.Named_Object                              ['Auth.Group']
+    Auth.Account                                   Auth.Account
+    Auth.Account_Anonymous                         Auth.Account
+    Auth.Account_P                                 Auth.Account
+    Auth.Group                                     Auth.Group
+    Auth.Account_in_Group                          Auth.Account_in_Group
+    Auth._Account_Action_                          ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset']
+    Auth.Account_Activation                        Auth.Account_Activation
+    Auth.Account_Password_Change_Required          Auth.Account_Password_Change_Required
+    Auth._Account_Token_Action_                    ['Auth.Account_EMail_Verification', 'Auth.Account_Password_Reset']
+    Auth.Account_EMail_Verification                Auth.Account_EMail_Verification
+    Auth.Account_Password_Reset                    Auth.Account_Password_Reset
+    EVT.Link1                                      ['EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
+    EVT.Object                                     ['EVT.Calendar']
+    EVT.Calendar                                   EVT.Calendar
+    PAP.Link2                                      ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
+    PAP.Object                                     ['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone']
+    PAP.Subject                                    ['PAP.Company', 'PAP.Person']
+    PAP.Person                                     PAP.Person
+    SWP.Link1                                      ['SWP.Clip_O', 'SWP.Picture']
+    SWP.Object                                     ['SWP.Gallery', 'SWP.Page']
+    SWP.Object_PN                                  ['SWP.Gallery', 'SWP.Page']
+    SWP.Page                                       SWP.Page
+    SWP.Page_Y                                     SWP.Page
+    EVT.Event                                      EVT.Event
+    EVT.Event_occurs                               EVT.Event_occurs
+    EVT._Recurrence_Mixin_                         ['EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
+    EVT.Recurrence_Spec                            EVT.Recurrence_Spec
+    EVT.Recurrence_Rule                            EVT.Recurrence_Rule
+    PAP.Address                                    PAP.Address
+    PAP.Company                                    PAP.Company
+    PAP.Email                                      PAP.Email
+    PAP.Phone                                      PAP.Phone
+    PAP.Subject_has_Property                       ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
+    PAP.Subject_has_Address                        ['PAP.Company_has_Address', 'PAP.Person_has_Address']
+    PAP.Company_has_Address                        PAP.Company_has_Address
+    PAP.Subject_has_Email                          ['PAP.Company_has_Email', 'PAP.Person_has_Email']
+    PAP.Company_has_Email                          PAP.Company_has_Email
+    PAP.Subject_has_Phone                          ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
+    PAP.Company_has_Phone                          PAP.Company_has_Phone
+    PAP.Entity_created_by_Person                   PAP.Entity_created_by_Person
+    PAP.Person_has_Address                         PAP.Person_has_Address
+    PAP.Person_has_Email                           PAP.Person_has_Email
+    PAP.Person_has_Phone                           PAP.Person_has_Phone
+    SRM.Link1                                      ['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team']
+    SRM.Link2                                      ['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
+    SRM.Object                                     ['SRM.Club', 'SRM.Regatta_Event', 'SRM._Boat_Class_']
+    SRM._Boat_Class_                               SRM._Boat_Class_
+    SRM.Boat_Class                                 SRM._Boat_Class_
+    SRM.Handicap                                   SRM._Boat_Class_
+    SRM.Boat                                       SRM.Boat
+    SRM.Club                                       SRM.Club
+    SRM.Regatta_Event                              SRM.Regatta_Event
+    SWP.Clip_O                                     SWP.Clip_O
+    SWP.Clip_X                                     SWP.Page
+    SWP.Gallery                                    SWP.Gallery
+    SWP.Picture                                    SWP.Picture
+    SRM.Page                                       SWP.Page
+    SRM.Regatta                                    SRM.Regatta
+    SRM.Regatta_C                                  SRM.Regatta
+    SRM.Regatta_H                                  SRM.Regatta
+    SRM.Sailor                                     SRM.Sailor
+    SRM.Boat_in_Regatta                            SRM.Boat_in_Regatta
+    SRM.Race_Result                                SRM.Race_Result
+    SRM.Team                                       SRM.Team
+    SRM.Crew_Member                                SRM.Crew_Member
+    SRM.Team_has_Boat_in_Regatta                   SRM.Team_has_Boat_in_Regatta
+    SWP.Page_U                                     SWP.Page
+    SWP.Page_V                                     SWP.Page
 
     >>> print (sorted (rr.type_name for rr in scope.relevant_roots))
     ['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']

@@ -44,9 +44,9 @@ from   _TFL.I18N                   import _
 
 import _GTW._OMP._PAP.Entity
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = PAP.Object
 
-class _PAP_Subject_ (PAP.Entity, _Ancestor_Essence) :
+class _PAP_Subject_ (_Ancestor_Essence) :
     """Model a legal subject, i.e., a person or company."""
 
     _real_name  = "Subject"

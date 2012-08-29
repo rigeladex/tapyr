@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -35,46 +35,12 @@ from   __future__            import unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
+import _MOM.derive_pns_bases
 
 import _GTW._OMP._PAP.Person
 import _GTW._OMP._SRM
 
-class _SRM_Entity_ (MOM.Entity) :
-    """Common base class for essential classes of GTW.OMP.SRM"""
-
-    _real_name = "Entity"
-
-    PNS        = GTW.OMP.SRM
-    is_partial = True
-
-Entity = _SRM_Entity_ # end class
-
-class _SRM_Link1_ (Entity, MOM.Link1) :
-    """Common base class for essential unary links of GTW.OMP.SRM"""
-
-    _real_name  = "Link1"
-
-    is_partial  = True
-
-Link1 = _SRM_Link1_ # end class
-
-class _SRM_Link2_ (Entity, MOM.Link2) :
-    """Common base class for essential binary links of GTW.OMP.SRM"""
-
-    _real_name  = "Link2"
-
-    is_partial  = True
-
-Link2 = _SRM_Link2_ # end class
-
-class _SRM_Object_ (Entity, MOM.Object) :
-    """Common base class for essential objects of GTW.OMP.SRM"""
-
-    _real_name  = "Object"
-
-    is_partial  = True
-
-Object = _SRM_Object_ # end class
+MOM.derive_pns_bases (GTW.OMP.SRM, MOM)
 
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")

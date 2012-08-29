@@ -266,10 +266,10 @@ _type_name_query = r"""
     >>> c2 = scope.SWP.Clip_O (left = p2, abstract = "abstract-p2.1")
     >>> c3 = scope.SWP.Clip_O (left = y1, abstract = "abstract-y1.1")
     >>> c4 = scope.SWP.Clip_O (left = y2, abstract = "abstract-y2.1")
-    >>> scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page").all ()
+    >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page").all ()
     [SWP.Clip_O ((u'page-1', ), dict ()), SWP.Clip_O ((u'page-2', ), dict ())]
 
-    >>> scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page_Y").all ()
+    >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page_Y").all ()
     [SWP.Clip_O ((u'year-1', 2011), dict ()), SWP.Clip_O ((u'year-2', 2012), dict ())]
 
     >>> scope.destroy ()

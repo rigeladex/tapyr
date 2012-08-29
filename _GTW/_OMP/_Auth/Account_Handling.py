@@ -57,7 +57,7 @@ class Action_Exipred (StandardError) : pass
 
 _Ancestor_Essence = Auth.Link1
 
-class _Account_Action_ (Auth.Entity, _Ancestor_Essence) :
+class _Account_Action_ (_Ancestor_Essence) :
     """Base class for different actions for a account."""
 
     is_partial = True
