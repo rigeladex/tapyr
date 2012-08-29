@@ -51,7 +51,7 @@ import _TFL._Meta.Once_Property
 class Canvas (TFL.Meta.Object) :
     """Canvas for ASCII renderer"""
 
-    def __init__ (self, max_x, max_y) :
+    def __init__ (self, min_x, min_y, max_x, max_y) :
         self._body = list ([" "] * max_x for i in range (max_y))
     # end def __init__
 
@@ -159,6 +159,33 @@ class Renderer (MOM.Graph._Renderer_) :
         canvas.text (head, self.conn_chars [side])
         canvas.text (tail, self.conn_chars [side])
     # end def render_link
+
+    def _render_node (self, node, canvas) :
+        box    = node.box
+        pos    = box.top_left + D2.Point (2, 1)
+        width  = box.size.x   - 2
+        height = box.size.y   - 2
+        def _label_parts (parts, width, height) :
+            i = 0
+            l = len (parts)
+            x = ""
+            while i < l and height > 0:
+                p  = x + parts [i]
+                i += 1
+                while i < l and len (p) < width :
+                    if len (p) + len (parts [i]) < width :
+                        p += parts [i]
+                        i += 1
+                    else :
+                        break
+                yield p
+                height -= 1
+                x = " "
+        for lp in _label_parts (node.entity.label_parts, width, height) :
+            canvas.text (pos, lp)
+            pos.shift   ((0, 1))
+        canvas.rectangle (box)
+    # end def _render_node
 
 # end class Renderer
 

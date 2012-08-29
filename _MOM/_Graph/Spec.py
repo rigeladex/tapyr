@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Change `setup_links` to use `sorted`
+#    29-Aug-2012 (CT) Add and use `_setup_links_p`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,8 @@ ET = _E_Type_ ()
 class Graph (TFL.Meta.Object) :
     """Specification of a graph describing (part of) a MOM-based object model."""
 
+    _setup_links_p = False
+
     def __init__ (self, app_type, * entities) :
         self.app_type = app_type
         self.cid      = 0
@@ -110,9 +113,11 @@ class Graph (TFL.Meta.Object) :
     # end def nodes
 
     def setup_links (self) :
-        sort_key = TFL.Sorted_By ("slack", "type_name")
-        for n in sorted (self.node_map.itervalues (), key = sort_key) :
-            n.setup_links ()
+        if not self._setup_links_p :
+            sort_key = TFL.Sorted_By ("slack", "type_name")
+            for n in sorted (self.node_map.itervalues (), key = sort_key) :
+                n.setup_links ()
+            self._setup_links_p = True
     # end def setup_links
 
     def __contains__ (self, item) :

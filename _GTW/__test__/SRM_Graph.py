@@ -225,7 +225,7 @@ _test_code = """
     Affine (32, 0, 96, 0, -12, 48)
 
     >>> ar.max_x, ar.max_y
-    (208, 88)
+    (184, 79)
 
     >>> for n in ar.nodes :
     ...     print "%%-45s %%-12s %%s" %% (n.entity, tuple (n.pos), tuple (n.entity.pos))
@@ -245,21 +245,21 @@ _test_code = """
     <Graph.Object PAP.Subject>                    (160, 12)    (2, 3)
 
     >>> for n in ar.nodes :
-    ...     print "%%-45s %%-12s %%s" %% (n.entity, n.box.top_left, (n.max_x, n.max_y))
-    <Graph.Link2  SRM.Boat_in_Regatta>            (96, 48)     (112.0, 52.0)
-    <Graph.Link1  SRM.Regatta>                    (128, 48)    (144.0, 52.0)
-    <Graph.Object SRM.Regatta_Event>              (160, 48)    (176.0, 52.0)
-    <Graph.Object SRM.Club>                       (160, 24)    (176.0, 28.0)
-    <Graph.Link2  SRM.Crew_Member>                (128, 36)    (144.0, 40.0)
-    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (96, 60)     (112.0, 64.0)
-    <Graph.Link1  SRM.Team>                       (96, 72)     (112.0, 76.0)
-    <Graph.Link1  SRM.Regatta_C>                  (128, 72)    (144.0, 76.0)
-    <Graph.Link1  SRM.Race_Result>                (64, 60)     (80.0, 64.0)
-    <Graph.Link1  SRM.Boat>                       (64, 48)     (80.0, 52.0)
-    <Graph.Object SRM.Boat_Class>                 (32, 48)     (48.0, 52.0)
-    <Graph.Link1  SRM.Sailor>                     (96, 24)     (112.0, 28.0)
-    <Graph.Object PAP.Person>                     (96, 12)     (112.0, 16.0)
-    <Graph.Object PAP.Subject>                    (160, 12)    (176.0, 16.0)
+    ...     print "%%-45s %%-12s %%s %%s" %% (n.entity, n.box.top_left, (n.min_x, n.min_y), (n.max_x, n.max_y))
+    <Graph.Link2  SRM.Boat_in_Regatta>            (96, 48)     (80.0, 28.0) (128.0, 52.0)
+    <Graph.Link1  SRM.Regatta>                    (128, 48)    (128, 48) (160.0, 52.0)
+    <Graph.Object SRM.Regatta_Event>              (160, 48)    (160, 28.0) (176.0, 52.0)
+    <Graph.Object SRM.Club>                       (160, 24)    (160, 24) (176.0, 28.0)
+    <Graph.Link2  SRM.Crew_Member>                (128, 36)    (108.0, 28.0) (144.0, 48.0)
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (96, 60)     (96, 52.0) (112.0, 72.0)
+    <Graph.Link1  SRM.Team>                       (96, 72)     (96, 72) (128.0, 76.0)
+    <Graph.Link1  SRM.Regatta_C>                  (128, 72)    (128, 52.0) (172.0, 76.0)
+    <Graph.Link1  SRM.Race_Result>                (64, 60)     (64, 52.0) (100.0, 64.0)
+    <Graph.Link1  SRM.Boat>                       (64, 48)     (48.0, 48) (80.0, 52.0)
+    <Graph.Object SRM.Boat_Class>                 (32, 48)     (32, 48) (48.0, 52.0)
+    <Graph.Link1  SRM.Sailor>                     (96, 24)     (96, 16.0) (160.0, 28.0)
+    <Graph.Object PAP.Person>                     (96, 12)     (96, 12) (160.0, 16.0)
+    <Graph.Object PAP.Subject>                    (160, 12)    (160, 12) (176.0, 16.0)
 
     >>> for n in ar.nodes :
     ...     for k, l in sorted (n.link_map.iteritems ()) :
@@ -339,7 +339,7 @@ _test_code = """
                                                                                                             |                               .                                   |
                                                                                                             |                               .                                   |
                                                                                                             |                               .                                   |
-                                                                                                            |                           +---.-----------------------------------+
+                                                                                                            |                           +---------------------------------------+
                                                                                                             |                           |   .
                                                                                                             |                           |   .
                                                                                                             |                           |   .
@@ -350,12 +350,39 @@ _test_code = """
                                                                                                     +---------------+               +---------------+
 
 
+    >>> sr = SVG_Renderer (g)
+    >>> _ = sr.render ()
+    >>> sr.min_x, sr.min_y, sr.max_x, sr.max_y
+    (240, 225, 1840, 1975)
+
+    >>> for n in sr.nodes :
+    ...     print "%%-45s %%-12s %%s %%s" %% (n.entity, n.box.top_left, (n.min_x, n.min_y), (n.max_x, n.max_y))
+    <Graph.Link2  SRM.Boat_in_Regatta>            (960, 1200)  (800.0, 700.0) (1280.0, 1300.0)
+    <Graph.Link1  SRM.Regatta>                    (1280, 1200) (1280, 1200) (1600.0, 1300.0)
+    <Graph.Object SRM.Regatta_Event>              (1600, 1200) (1600, 700.0) (1760.0, 1300.0)
+    <Graph.Object SRM.Club>                       (1600, 600)  (1600, 600) (1760.0, 700.0)
+    <Graph.Link2  SRM.Crew_Member>                (1280, 900)  (1080.0, 700.0) (1440.0, 1200.0)
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (960, 1500)  (960, 1300.0) (1120.0, 1800.0)
+    <Graph.Link1  SRM.Team>                       (960, 1800)  (960, 1800) (1280.0, 1900.0)
+    <Graph.Link1  SRM.Regatta_C>                  (1280, 1800) (1280, 1300.0) (1720.0, 1900.0)
+    <Graph.Link1  SRM.Race_Result>                (640, 1500)  (640, 1300.0) (1000.0, 1600.0)
+    <Graph.Link1  SRM.Boat>                       (640, 1200)  (480.0, 1200) (800.0, 1300.0)
+    <Graph.Object SRM.Boat_Class>                 (320, 1200)  (320, 1200) (480.0, 1300.0)
+    <Graph.Link1  SRM.Sailor>                     (960, 600)   (960, 400.0) (1600.0, 700.0)
+    <Graph.Object PAP.Person>                     (960, 300)   (960, 300) (1600.0, 400.0)
+    <Graph.Object PAP.Subject>                    (1600, 300)  (1600, 300) (1760.0, 400.0)
+
+    >>> with open ("/tmp/srm.svg", "wb") as f :
+    ...    sr.canvas.write_to_xml_stream (f)
+
+
 """
 
 from _GTW.__test__.model        import *
 from _GTW._OMP._SRM.Graph       import graph
 
 from _MOM._Graph.Ascii          import Renderer as Ascii_Renderer
+from _MOM._Graph.SVG            import Renderer as SVG_Renderer
 
 from _TFL.Regexp                import Regexp, Multi_Re_Replacer, Re_Replacer, re
 

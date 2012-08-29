@@ -30,6 +30,7 @@
 #    21-Aug-2012 (CT) Add `info` and `label`
 #    22-Aug-2012 (CT) Add `delta`, `reverse`, `set_connector`
 #    26-Aug-2012 (CT) Add `add_guides`
+#    29-Aug-2012 (CT) Add `desc` and `title`
 #    ««revision-date»»···
 #--
 
@@ -169,6 +170,29 @@ class Attr (_Relation_) :
         self.__super.__init__ (source, target)
     # end def __init__
 
+    @TFL.Meta.Once_Property
+    def desc (self) :
+        return self.attr.description
+    # end def desc
+
+    @TFL.Meta.Once_Property
+    def info (self) :
+        result = self.attr.kind
+        if result :
+            return "[%s]" % (result, )
+    # end def info
+
+    @TFL.Meta.Once_Property
+    def rid (self) :
+        return "%s.%s:%s" % \
+            (self.source.type_name, self.name, self.target.type_name)
+    # end def rid
+
+    @TFL.Meta.Once_Property
+    def title (self) :
+        return "%s attribute %s" % (self.source.type_name, self.name)
+    # end def title
+
     def __repr__ (self) :
         return "<Graph.Relation.%s %s.%s -> %s>" % \
             (self.kind, self.source.type_name, self.name, self.target.type_name)
@@ -180,6 +204,22 @@ class Is_A (_Relation_) :
     """Model an inheritance relation between MOM entities."""
 
     name = "IS_A"
+
+    @TFL.Meta.Once_Property
+    def desc (self) :
+        return "%s is derived from %s" % \
+            (self.source.type_name, self.target.type_name)
+    # end def desc
+
+    @TFL.Meta.Once_Property
+    def rid (self) :
+        return "%s:is_a:%s" % (self.source.type_name, self.target.type_name)
+    # end def rid
+
+    @TFL.Meta.Once_Property
+    def title (self) :
+        return "%s is-a %s" % (self.source.type_name, self.target.type_name)
+    # end def desc
 
     def __repr__ (self) :
         return "<Graph.Relation %s IS A %s>" % \
@@ -195,13 +235,24 @@ class Role (Attr) :
     def info (self) :
         result = self.attr.max_links
         if result and result > 0 :
-            return result
+            return "0 .. %s" % (result, )
     # end def info
 
     @TFL.Meta.Once_Property
     def label (self) :
-        return self.attr.role_abbreviation
+        return self.attr.generic_role_name
     # end def label
+
+    @TFL.Meta.Once_Property
+    def rid (self) :
+        return "%s.%s:%s" % \
+            (self.source.type_name, self.attr.role_name, self.target.type_name)
+    # end def rid
+
+    @TFL.Meta.Once_Property
+    def title (self) :
+        return "%s role %s" % (self.source.type_name, self.attr.role_name)
+    # end def title
 
 # end class Role
 

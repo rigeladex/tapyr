@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Add `add_guides`, improve placing
+#    29-Aug-2012 (CT) Add `desc`, `rid`, and `title`
 #    ««revision-date»»···
 #--
 
@@ -337,6 +338,11 @@ class Entity (TFL.Meta.Object) :
         self._anchor = value
     # end def anchor
 
+    @TFL.Meta.Once_Property
+    def desc (self) :
+        return self.e_type.__doc__
+    # end def desc
+
     @property
     def label (self) :
         result = self._label
@@ -400,6 +406,11 @@ class Entity (TFL.Meta.Object) :
     def slack (self) :
         return - len (self.all_rels)
     # end def slack
+
+    @TFL.Meta.Once_Property
+    def title (self) :
+        return self.e_type.type_name
+    # end def title
 
     @TFL.Meta.Once_Property
     def type_name (self) :

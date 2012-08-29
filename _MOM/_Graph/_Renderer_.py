@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Add `Link.points`, `_Renderer_.render_link`
+#    29-Aug-2012 (CT) Factor `render_link`, `_render_node` to descendants
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,26 @@ class Link (TFL.Meta.Object) :
         self.target   = target
         self.points   = tuple (self._points (relation, source, target))
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def max_x (self) :
+        return max (p.x for p in self.points)
+    # end def max_x
+
+    @TFL.Meta.Once_Property
+    def max_y (self) :
+        return max (p.y for p in self.points)
+    # end def max_y
+
+    @TFL.Meta.Once_Property
+    def min_x (self) :
+        return min (p.x for p in self.points)
+    # end def min_x
+
+    @TFL.Meta.Once_Property
+    def min_y (self) :
+        return min (p.y for p in self.points)
+    # end def min_y
 
     def _points (self, relation, source, target) :
         guides   = relation.guides
@@ -100,13 +121,35 @@ class Node (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def max_x (self) :
-        return self.box.bottom_right.x
+        link_map = self.link_map
+        max_x_links = \
+            max (l.max_x for l in link_map.itervalues ()) if link_map else 0
+        return max (self.box.bottom_right.x, max_x_links)
     # end def max_x
 
     @TFL.Meta.Once_Property
     def max_y (self) :
-        return self.box.bottom_right.y
+        link_map = self.link_map
+        max_y_links = \
+            max (l.max_y for l in link_map.itervalues ()) if link_map else 0
+        return max (self.box.bottom_right.y, max_y_links)
     # end def max_y
+
+    @TFL.Meta.Once_Property
+    def min_x (self) :
+        link_map = self.link_map
+        min_x_links = min (l.min_x for l in link_map.itervalues ()) \
+            if link_map else self.max_x
+        return min (self.box.top_left.x, min_x_links)
+    # end def min_x
+
+    @TFL.Meta.Once_Property
+    def min_y (self) :
+        link_map = self.link_map
+        min_y_links = min (l.min_y for l in link_map.itervalues ()) \
+            if link_map else self.max_y
+        return min (self.box.top_left.y, min_y_links)
+    # end def min_y
 
     def setup_links (self) :
         renderer = self.renderer
@@ -140,7 +183,8 @@ class _Renderer_ (TFL.Meta.Object) :
         graph.setup_links ()
         for n in ns :
             n.setup_links ()
-        self.canvas = self.Canvas (self.max_x, self.max_y)
+        self.canvas = self.Canvas \
+            (self.min_x, self.min_y, self.max_x, self.max_y)
     # end def __init__
 
     @property
@@ -158,7 +202,7 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def max_x (self) :
-        return int (max (n.max_x for n in self.nodes) + self.grid_size.x)
+        return int (max (n.max_x for n in self.nodes) + self.grid_size.x // 4)
     # end def max_x
 
     @TFL.Meta.Once_Property
@@ -168,13 +212,23 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def max_y (self) :
-        return int (max (n.max_y for n in self.nodes) + self.grid_size.y)
+        return int (max (n.max_y for n in self.nodes) + self.grid_size.y // 4)
     # end def max_y
 
     @TFL.Meta.Once_Property
     def max_y_spec (self) :
         return max (v.pos.y for v in self.graph.node_map.itervalues ())
     # end def max_y_spec
+
+    @TFL.Meta.Once_Property
+    def min_x (self) :
+        return int (min (n.min_x for n in self.nodes) - self.grid_size.x // 4)
+    # end def min_x
+
+    @TFL.Meta.Once_Property
+    def min_y (self) :
+        return int (min (n.min_y for n in self.nodes) - self.grid_size.y // 4)
+    # end def min_y
 
     @TFL.Meta.Once_Property
     def transform (self) :
@@ -195,41 +249,21 @@ class _Renderer_ (TFL.Meta.Object) :
     # end def render
 
     def render_link (self, link, canvas) :
-        for line in pairwise (link.points) :
-            canvas.line (line)
-            ### connector details, label...
+        raise NotImplementedError \
+            ("%s needs to implement render_link" % (self.__class__.__name__, ))
     # end def render_link
 
     def render_node (self, node, canvas) :
-        box    = node.box
-        pos    = box.top_left + D2.Point (2, 1)
-        width  = box.size.x   - 2
-        height = box.size.y   - 2
-        ### XXX factor to concrete subclass
-        def _label_parts (parts, width, height) :
-            i = 0
-            l = len (parts)
-            x = ""
-            while i < l and height > 0:
-                p  = x + parts [i]
-                i += 1
-                while i < l and len (p) < width :
-                    if len (p) + len (parts [i]) < width :
-                        p += parts [i]
-                        i += 1
-                    else :
-                        break
-                yield p
-                height -= 1
-                x = " "
-        for lp in _label_parts (node.entity.label_parts, width, height) :
-            canvas.text (pos, lp)
-            pos.shift ((0, 1))
-        canvas.rectangle (box)
+        self._render_node (node, canvas)
         sort_key = TFL.Sorted_By ("slack", "type_name")
         for l in sorted (node.link_map.itervalues (), key = sort_key) :
             self.render_link (l, canvas)
     # end def render_node
+
+    def _render_node (self, node, canvas) :
+        raise NotImplementedError \
+            ("%s needs to implement _render_node" % (self.__class__.__name__, ))
+    # end def _render_node
 
 # end class _Renderer_
 
