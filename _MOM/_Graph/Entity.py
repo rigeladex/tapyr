@@ -29,6 +29,7 @@
 #    16-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Add `add_guides`, improve placing
 #    29-Aug-2012 (CT) Add `desc`, `rid`, and `title`
+#    30-Aug-2012 (CT) Add and use `skip`
 #    ««revision-date»»···
 #--
 
@@ -334,6 +335,11 @@ class Entity (TFL.Meta.Object) :
                 ( "%s cannot have multiple anchors: %s <-> %s"
                 % (self.type_name, self._anchor, value)
                 )
+        if value is not None and value.anchor is self :
+            raise TypeError \
+                ( "Anchor cycle not allowed: %s <-> %s"
+                % (self.type_name, value)
+                )
         self.graph.cid +=1
         self._anchor = value
     # end def anchor
@@ -423,6 +429,7 @@ class Entity (TFL.Meta.Object) :
         self.index      = len (graph.node_map)
         self.all_rels   = []
         self.rel_map    = {}
+        self.skip       = set ()
         self.is_a_count = 0
     # end def __init__
 
@@ -451,7 +458,10 @@ class Entity (TFL.Meta.Object) :
                             e = graph [attr.E_Type.type_name]
                             self._add (e, attr, offset = v)
                         else :
-                            self._add (v, attr)
+                            if v is not None :
+                                self._add (v, attr)
+                            else :
+                                self.skip.add (attr)
                     else :
                         raise TypeError \
                             ("Unknown kw argument: %s = %r" % (k, v))
@@ -462,8 +472,9 @@ class Entity (TFL.Meta.Object) :
         graph   = self.graph
         e_type  = self.e_type
         rel_map = self.rel_map
+        skip    = self.skip
         for role in e_type.Roles :
-            if role.name not in rel_map :
+            if role.name not in rel_map and role not in skip :
                 e = graph [role.E_Type.type_name]
                 self._add (e, role, auto = True)
     # end def auto_add_roles
@@ -488,16 +499,15 @@ class Entity (TFL.Meta.Object) :
         ikw  = dict (kw)
         if not (auto or et.anchor)  :
             ikw ["anchor"] = self
-        result = et.instantiate (self.graph, ** ikw)
-        rtn    = result.type_name
+        other = et.instantiate (self.graph, ** ikw)
+        rtn    = other.type_name
         if rel is None and rtn in self.e_type.role_map :
             rel = self.e_type.Roles [self.e_type.role_map [rtn]]
         if rel is not None :
             relation = self.rel_map [getattr (rel, "name", rel)] = \
-                MOM.Graph.Relation.new (rel, self, result)
+                MOM.Graph.Relation.new (rel, self, other)
             self.all_rels.append   (relation)
-            result.all_rels.append (relation.reverse)
-        return result
+            other.all_rels.append (relation.reverse)
     # end def _add
 
     def __repr__ (self) :
