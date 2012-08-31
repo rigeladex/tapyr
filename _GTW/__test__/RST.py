@@ -414,6 +414,10 @@ _test_cqf = r"""
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
+    PAP-Link2
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone'],),)
+    PAP-Object
+        (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone'],),)
     PAP-Address
         (Q.type_name == PAP.Address,)
     PAP-Subject
@@ -513,18 +517,20 @@ _test_cqf = r"""
     MOM-_MOM_Link_n_    (Left `left`, Right `right`)
     MOM-Link2    (Left `left`, Right `right`)
     MOM-Object    ()
+    PAP-Link2    (Left `left`, Right `right`)
+    PAP-Object    ()
     PAP-Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, Position `position`, String `region`)
     PAP-Subject    (Date_Interval `lifetime`,)
     PAP-Company    (String `name`, Date_Interval `lifetime`, String `short_name`)
     PAP-Email    (Email `address`, String `desc`)
     PAP-Phone    (Numeric_String `country_code`, Numeric_String `area_code`, Numeric_String `number`, String `desc`)
     PAP-Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
-    PAP-Subject_has_Property    (Subject `left`, Right `right`, String `desc`)
-    PAP-Subject_has_Address    (Subject `left`, Address `right`, String `desc`)
+    PAP-Subject_has_Property    (Left `left`, Right `right`, String `desc`)
+    PAP-Subject_has_Address    (Left `left`, Address `right`, String `desc`)
     PAP-Company_has_Address    (Company `left`, Address `right`, String `desc`)
-    PAP-Subject_has_Email    (Subject `left`, Email `right`, String `desc`)
+    PAP-Subject_has_Email    (Left `left`, Email `right`, String `desc`)
     PAP-Company_has_Email    (Company `left`, Email `right`, String `desc`)
-    PAP-Subject_has_Phone    (Subject `left`, Phone `right`, String `desc`)
+    PAP-Subject_has_Phone    (Left `left`, Phone `right`, String `desc`)
     PAP-Company_has_Phone    (Company `left`, Phone `right`, String `desc`)
     PAP-Entity_created_by_Person    (Id_Entity `left`, Person `right`)
     PAP-Person_has_Address    (Person `left`, Address `right`, String `desc`)
@@ -560,7 +566,7 @@ _test_cqf = r"""
     SRM-Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -1739,6 +1745,8 @@ _test_get = r"""
             , 'MOM-_MOM_Link_n_'
             , 'MOM-Link2'
             , 'MOM-Object'
+            , 'PAP-Link2'
+            , 'PAP-Object'
             , 'PAP-Address'
             , 'PAP-Subject'
             , 'PAP-Company'
@@ -1800,6 +1808,8 @@ _test_get = r"""
             , '/v1/MOM-_MOM_Link_n_'
             , '/v1/MOM-Link2'
             , '/v1/MOM-Object'
+            , '/v1/PAP-Link2'
+            , '/v1/PAP-Object'
             , '/v1/PAP-Address'
             , '/v1/PAP-Subject'
             , '/v1/PAP-Company'

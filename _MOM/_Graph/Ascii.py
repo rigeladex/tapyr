@@ -132,7 +132,7 @@ class Renderer (MOM.Graph._Renderer_) :
         )
     link_chars         = dict \
         ( Attr         = dict (x = "_", y = ":")
-        , Is_A         = dict (x = ".", y = ".")
+        , IS_A         = dict (x = ".", y = ".")
         , Role         = dict (x = "-", y = "|")
         )
     rect_chars         = dict \

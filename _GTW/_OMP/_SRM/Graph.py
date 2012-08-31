@@ -28,6 +28,7 @@
 # Revision Dates
 #    17-Aug-2012 (CT) Creation
 #    21-Aug-2012 (CT) Add `Team_has_Boat_in_Regatta`, `Race_Result`
+#    31-Aug-2012 (CT) Adapt to MOM.Graph.Spec API change
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ from   _TFL                   import TFL
 
 import _GTW._OMP._SRM
 
-from   _MOM._Graph.Spec       import ET
+from   _MOM._Graph.Spec       import Attr, Child, ET, IS_A, Role, Skip
 import _MOM._Graph.Entity
 
 from   _TFL._D2               import Cardinal_Direction as CD
@@ -48,28 +49,36 @@ def graph (app_type) :
     return MOM.Graph.Spec.Graph \
         ( app_type
         , ET.SRM.Boat_in_Regatta
-            ( W      = ET.SRM.Boat    (left  = CD.W)
-            , E      = ET.SRM.Regatta
-                ( left   = ET.SRM.Regatta_Event
-                    ( club   = ET.SRM.Club (offset = CD.N * 2)
+            ( Role.left
+                ( Role.left (offset = CD.W)
+                , offset = CD.W
+                )
+            , Role.right
+                ( Role.left
+                    ( Attr.club (offset = CD.N * 2)
                     , offset = CD.E
                     )
+                , offset = CD.E
                 )
-            , NE     = ET.SRM.Crew_Member
-            , S      = ET.SRM.Team_has_Boat_in_Regatta
-                ( S    = ET.SRM.Team
-                    ( E      = ET.SRM.Regatta_C
-                        ( IS_A     = ET.SRM.Regatta
+            , ET.SRM.Crew_Member (offset = CD.NE)
+            , ET.SRM.Team_has_Boat_in_Regatta
+                ( Role.left
+                    ( ET.SRM.Regatta_C
+                        ( IS_A.SRM.Regatta
+                        , offset = CD.E
                         )
+                    , offset = CD.S
                     )
+                , offset = CD.S
                 )
-            , SW     = ET.SRM.Race_Result
-            , skipper  = ET.SRM.Sailor
-                ( club   = ET.SRM.Club
-                , offset = CD.N * 2
-                , N      = ET.PAP.Person
-                    ( IS_A   = ET.PAP.Subject (offset = CD.E * 2)
+            , ET.SRM.Race_Result (offset = CD.SW)
+            , Attr.skipper
+                ( Role.left
+                    ( IS_A.PAP.Subject (offset = CD.E * 2)
+                    , offset = CD.N
                     )
+                , Attr.club (IS_A.PAP.Subject)
+                , offset = CD.N * 2
                 )
             )
         )

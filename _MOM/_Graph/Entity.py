@@ -30,6 +30,7 @@
 #    26-Aug-2012 (CT) Add `add_guides`, improve placing
 #    29-Aug-2012 (CT) Add `desc`, `rid`, and `title`
 #    30-Aug-2012 (CT) Add and use `skip`
+#    31-Aug-2012 (CT) Restructure API, auto-skip inherited roles
 #    ««revision-date»»···
 #--
 
@@ -341,6 +342,8 @@ class Entity (TFL.Meta.Object) :
                 % (self.type_name, value)
                 )
         self.graph.cid +=1
+        if isinstance (value, MOM.Graph.Spec._Spec_Item_) :
+            value = value.instantiate (self.graph, self)
         self._anchor = value
     # end def anchor
 
@@ -430,53 +433,51 @@ class Entity (TFL.Meta.Object) :
         self.all_rels   = []
         self.rel_map    = {}
         self.skip       = set ()
-        self.is_a_count = 0
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
         self.pop_to_self (kw, "anchor", "offset")
         self.pop_to_self (kw, "label", prefix = "_")
-        anchor = self.anchor
-        graph  = self.graph
-        e_type = self.e_type
+        if kw :
+            raise TypeError \
+                ("Unknown arguments: %s" % (sorted (kw.iteritems ()), ))
         for a in args :
             self._add (a)
-        for k, v in sorted (kw.iteritems ()) :
-            if k == "IS_A" :
-                rel = "IS_A_%d" % self.is_a_count
-                self.is_a_count += 1
-                self._add (v, rel)
-            else :
-                try :
-                    attr = getattr (e_type, k)
-                except AttributeError :
-                    off  = CD.Point.from_name (k)
-                    self._add (v, offset = off)
-                else :
-                    if attr.E_Type :
-                        if isinstance (v, CD._Cardinal_Direction_) :
-                            e = graph [attr.E_Type.type_name]
-                            self._add (e, attr, offset = v)
-                        else :
-                            if v is not None :
-                                self._add (v, attr)
-                            else :
-                                self.skip.add (attr)
-                    else :
-                        raise TypeError \
-                            ("Unknown kw argument: %s = %r" % (k, v))
         return self
     # end def __call__
 
+    def add_relation (self, rel, other, R_Type) :
+        r_name = getattr (rel, "name", rel)
+        try :
+            result = self.rel_map [r_name]
+        except KeyError :
+            result = self.rel_map [r_name] = \
+                R_Type (self, other, rel)
+            self.all_rels.append  (result)
+            other.all_rels.append (result.reverse)
+        return result
+    # end def add_relation
+
     def auto_add_roles (self) :
-        graph   = self.graph
-        e_type  = self.e_type
-        rel_map = self.rel_map
-        skip    = self.skip
+        graph    = self.graph
+        e_type   = self.e_type
+        rel_map  = self.rel_map
+        skip     = self.skip
         for role in e_type.Roles :
-            if role.name not in rel_map and role not in skip :
-                e = graph [role.E_Type.type_name]
-                self._add (e, role, auto = True)
+            ra_tn = role.assoc.type_name
+            if ra_tn in graph :
+                assoc = graph [ra_tn]
+                if role.name in assoc.rel_map :
+                    continue
+            r_etn = role.E_Type.type_name
+            if (   role.name not in rel_map
+               and role      not in skip
+               ) :
+                is_new = r_etn not in graph
+                e      = graph [r_etn]
+                if is_new :
+                    e.instantiate (graph, anchor = self)
+                self.add_relation (role, e, MOM.Graph.Relation.Role)
     # end def auto_add_roles
 
     def instantiate (self, graph, anchor = None, offset = None) :
@@ -494,20 +495,17 @@ class Entity (TFL.Meta.Object) :
         Rel_Placer (self)
     # end def setup_links
 
-    def _add (self, et, rel = None, ** kw) :
-        auto = kw.pop ("auto", False)
-        ikw  = dict (kw)
-        if not (auto or et.anchor)  :
-            ikw ["anchor"] = self
-        other = et.instantiate (self.graph, ** ikw)
-        rtn    = other.type_name
-        if rel is None and rtn in self.e_type.role_map :
-            rel = self.e_type.Roles [self.e_type.role_map [rtn]]
-        if rel is not None :
-            relation = self.rel_map [getattr (rel, "name", rel)] = \
-                MOM.Graph.Relation.new (rel, self, other)
-            self.all_rels.append   (relation)
-            other.all_rels.append (relation.reverse)
+    def _add (self, et, ** kw) :
+        ikw     = dict (kw, anchor = et.anchor or self)
+        result  = et.instantiate (self.graph, ** ikw)
+        if result is not None :
+            e_type = self.e_type
+            try :
+                rel = e_type.Roles [e_type.role_map [result.type_name]]
+            except KeyError :
+                pass
+            else :
+                self.add_relation (rel, result, MOM.Graph.Relation.Role)
     # end def _add
 
     def __repr__ (self) :

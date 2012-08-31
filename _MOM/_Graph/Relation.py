@@ -98,7 +98,7 @@ class _Relation_ (TFL.Meta.Object) :
     source_connector  = None
     target_connector  = None
 
-    def __init__ (self, source, target) :
+    def __init__ (self, source, target, * args) :
         self.source   = source
         self.target   = target
     # end def __init__
@@ -164,7 +164,7 @@ class _Relation_ (TFL.Meta.Object) :
 class Attr (_Relation_) :
     """Model an attribute relation between MOM entities."""
 
-    def __init__ (self, attr, source, target) :
+    def __init__ (self, source, target, attr) :
         self.attr   = attr
         self.name   = attr.name
         self.__super.__init__ (source, target)
@@ -200,7 +200,7 @@ class Attr (_Relation_) :
 
 # end class Attr
 
-class Is_A (_Relation_) :
+class IS_A (_Relation_) :
     """Model an inheritance relation between MOM entities."""
 
     name = "IS_A"
@@ -226,7 +226,7 @@ class Is_A (_Relation_) :
             (self.source.type_name, self.target.type_name)
     # end def __repr__
 
-# end class Is_A
+# end class IS_A
 
 class Role (Attr) :
     """Model a link role relation between MOM entities."""
@@ -255,18 +255,6 @@ class Role (Attr) :
     # end def title
 
 # end class Role
-
-def new (rel, source, target) :
-    """Return a Relation instance for `rel`, `source`, `target`."""
-    if isinstance (rel, basestring) :
-        if rel.startswith ("IS_A") :
-            return Is_A (source, target)
-        else :
-            raise ValueError ("Don't understand relation %s" % (rel, ))
-    else :
-        T = Role if rel.is_link_role else Attr
-        return T (rel, source, target)
-# end def new
 
 if __name__ != "__main__" :
     MOM.Graph._Export_Module ()

@@ -61,7 +61,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
                       )
                 for et in self.top.scope._T_Extension
                 if  issubclass (et, MOM.Id_Entity)
-                        and (et.children or not et.is_partial)
+                        and (et.children_np or not et.is_partial)
                 )
         self.__super.__init__ (** kw)
     # end def __init__

@@ -29,6 +29,7 @@
 #    16-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Change `setup_links` to use `sorted`
 #    29-Aug-2012 (CT) Add and use `_setup_links_p`
+#    31-Aug-2012 (CT) Add `Attr`, `IS_A`, `Child`, `Role`, and `Skip`
 #    ««revision-date»»···
 #--
 
@@ -37,16 +38,21 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _MOM               import MOM
 from   _TFL               import TFL
 
-import _MOM._Graph
+import _MOM._Graph.Relation
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
 
-class _E_Type_ (TFL.Meta.Object) :
-    """Specification of an essential entity as part of a Graph."""
+def _Instance (cls) :
+    return cls ()
+# end def _Instance
 
-    anchor = None
+class _Spec_Item_ (TFL.Meta.Object) :
+    """Base class for specs of entity, attribute, role, is_a"""
+
+    anchor   = None
+    r_offset = None
 
     def __init__ (self, name = None) :
         self._name = name
@@ -54,39 +60,130 @@ class _E_Type_ (TFL.Meta.Object) :
         self._kw   = {}
     # end def __init__
 
+    def instantiate (self, graph, anchor = None, offset = None) :
+        result = self._instantiate (graph, anchor = anchor, offset = offset)
+        if result and anchor and self.r_offset and not anchor._offset :
+            anchor.offset = self.r_offset
+        return result
+    # end def instantiate
+
     def __call__ (self, * args, ** kw) :
         if self._args or self._kw  :
             raise TypeError ("Can't call with args/kw twice")
         else :
+            self.pop_to_self (kw, "r_offset")
             self._args = args
             self._kw   = kw
         return self
     # end def __call__
 
-    def instantiate (self, graph, anchor = None, offset = None) :
-        e_type = graph    [self._name]
-        kw     = dict     (self._kw)
-        if e_type.anchor is None :
-            if anchor is not None :
-                kw.setdefault ("anchor", anchor)
-            if offset is not None :
-                kw.setdefault ("offset", offset)
-        result = e_type   (** kw)
-        return result
-    # end def instantiate
-
     def __getattr__ (self, name) :
+        if self._args or self._kw  :
+            raise TypeError \
+                ( "Can't dereference %s after setting args/kw of %s"
+                % (name, self)
+                )
         full_name = ".".join ((self._name, name)) if self._name else name
         return self.__class__ (full_name)
     # end def __getattr__
 
     def __str__ (self) :
-        return "<E.%s %s>" % (self._name, sorted (self._kw.iteritems ()))
+        return "<ET.%s %s %s>" % \
+            (self._name, self._args, sorted (self._kw.iteritems ()))
     # end def __str__
 
-# end class _E_Type_
+# end class _Spec_Item_
 
-ET = _E_Type_ ()
+@_Instance
+class Attr (_Spec_Item_) :
+    """Specification of an attribute referring to another essential entity."""
+
+    R_Type = MOM.Graph.Relation.Attr
+
+    def _instantiate (self, graph, anchor, offset = None) :
+        attr = getattr (anchor.e_type, self._name)
+        if attr.E_Type :
+            spec = getattr (ET, attr.E_Type.type_name)
+            if self._args or self._kw  :
+                spec (* self._args, ** self._kw)
+            result = spec._instantiate (graph, anchor = anchor, offset = offset)
+            if result is not None :
+                anchor.add_relation   (attr, result, self.R_Type)
+            return result
+        else :
+            raise TypeError \
+                ("Unknown attr %s for e_type %s" % (self, anchor))
+    # end def _instantiate
+
+# end class Attr
+
+@_Instance
+class ET (_Spec_Item_) :
+    """Specification of an essential entity as part of a Graph."""
+
+    def _instantiate (self, graph, anchor = None, offset = None) :
+        e_type = graph [self._name]
+        kw     = dict  (self._kw)
+        if e_type.anchor is None :
+            if anchor is not None :
+                kw.setdefault ("anchor", anchor)
+            if offset is not None :
+                kw.setdefault ("offset", offset)
+        result = e_type (* self._args, ** kw)
+        return result
+    # end def _instantiate
+
+# end class ET
+
+@_Instance
+class IS_A (ET.__class__) :
+    """Specification of an inheritance relationship."""
+
+    R_Type = MOM.Graph.Relation.IS_A
+
+    def _instantiate (self, graph, anchor, offset = None) :
+        result = self.__super._instantiate \
+            (graph, anchor = anchor, offset = offset)
+        if result is not None :
+            self._add_relation (result, anchor)
+        return result
+    # end def _instantiate
+
+    def _add_relation (self, parent, child) :
+        rel = "IS_A_%s" %  (parent.type_name, )
+        child.add_relation (rel, parent, self.R_Type)
+    # end def _add_relation
+
+# end class IS_A
+
+@_Instance
+class Child (IS_A.__class__) :
+    """Reverse specification of an inheritance relationship."""
+
+    def _add_relation (self, child, parent) :
+        self.__super._add_relation (parent, child)
+    # end def _add_relation
+
+# end class Child
+
+@_Instance
+class Role (Attr.__class__) :
+    """Specification of a role attribute referring to another essential entity."""
+
+    R_Type = MOM.Graph.Relation.Role
+
+# end class Role
+
+@_Instance
+class Skip (_Spec_Item_) :
+    """Specify that a role should be skipped"""
+
+    def _instantiate (self, graph, anchor, offset = None) :
+        attr = getattr (anchor.e_type, self._name)
+        anchor.skip.add (attr)
+    # end def _instantiate
+
+# end class Skip
 
 class Graph (TFL.Meta.Object) :
     """Specification of a graph describing (part of) a MOM-based object model."""
