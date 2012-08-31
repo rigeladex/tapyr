@@ -29,6 +29,7 @@
 #    29-Aug-2012 (CT) Creation
 #    31-Aug-2012 (RS) Add kludge to appease inkscape
 #    31-Aug-2012 (CT) Put lipstick on the kludge (use `no_alpha`)
+#    31-Aug-2012 (RS) store `link_markers` in lowercase, fixes missing markers
 #    ««revision-date»»···
 #--
 
@@ -58,9 +59,9 @@ class Renderer (MOM.Graph._Renderer_) :
     default_grid_scale = D2.Point ( 2,  3)
     encoding           = "utf-8"
     link_markers       = dict \
-        ( Attr         = dict (start = "MOM:AM")
-        , Is_A         = dict (end   = "MOM:IM")
-        , Role         = dict (start = "MOM:RM")
+        ( attr         = dict (start = "MOM:AM")
+        , is_a         = dict (end   = "MOM:IM")
+        , role         = dict (start = "MOM:RM")
         )
     node_size          = D2.Point (160, 100)
 
@@ -129,12 +130,12 @@ class Renderer (MOM.Graph._Renderer_) :
             ( elid         = rel.rid
             , opacity      = P.link_opacity
             )
-        kind = link.relation.kind
+        lkind = link.relation.kind.lower ()
         kw   = dict \
             (   ("marker_%s" % (k, ), "url(#%s)" % (v, ))
-            for k, v in self.link_markers.get (kind, {}).iteritems ()
+            for k, v in self.link_markers.get (lkind, {}).iteritems ()
             )
-        colr = getattr (P.color, "%s_link" % kind.lower ())
+        colr = getattr (P.color, "%s_link" % lkind)
         paid = "%s::path" % (rel.rid, )
         p, q = link.points [:2]
         anchor, offset = "start", "10%"
