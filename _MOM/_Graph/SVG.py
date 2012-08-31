@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    29-Aug-2012 (CT) Creation
+#    31-Aug-2012 (RS) Handle opacity with stroke-opacity and an RGB
+#                     color, inkscape doesn't support RGBA
 #    ««revision-date»»···
 #--
 
@@ -142,16 +144,19 @@ class Renderer (MOM.Graph._Renderer_) :
             , fill         = "none"
             , stroke       = "none"
             )
+        polyline = SVG.Polyline \
+            ( fill           = "none"
+            , points         = link.points
+            , stroke         = colr._formatted_values ()
+            , stroke_width   = P.link_stroke_width
+            , ** kw
+            )
+        if colr.alpha :
+            polyline.stroke_opacity = colr.alpha
         grp.add \
             ( SVG.Title (rel.title)
             , SVG.Desc  (rel.desc)
-            , SVG.Polyline
-                ( fill         = "none"
-                , points       = link.points
-                , stroke       = colr
-                , stroke_width = P.link_stroke_width
-                , ** kw
-                )
+            , polyline
             , path
             , SVG.Text
                 ( SVG.Text_Path
