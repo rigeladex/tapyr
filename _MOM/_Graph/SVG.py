@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    29-Aug-2012 (CT) Creation
+#    31-Aug-2012 (RS) Handle opacity with stroke-opacity and an RGB
+#                     color, inkscape doesn't support RGBA
+#    31-Aug-2012 (RS) Add stroke-opacity and fill-opacity to other classes
 #    ««revision-date»»···
 #--
 
@@ -92,20 +95,23 @@ class Renderer (MOM.Graph._Renderer_) :
             )
         defs = SVG.Defs \
             ( SVG.Marker.Arrow_Head
-                ( elid    = "MOM:AM"
-                , ref_x   = 0
-                , size    = P.attr_marker_size
-                , stroke  = P.color.attr_link
+                ( elid           = "MOM:AM"
+                , ref_x          = 0
+                , size           = P.attr_marker_size
+                , stroke         = P.color.attr_link._formatted_values ()
+                , stroke_opacity = P.color.attr_link.alpha
                 )
             , SVG.Marker.Arrow_Head
-                ( elid    = "MOM:IM"
-                , ref_x   = P.is_a_marker_size
-                , size    = P.is_a_marker_size
-                , stroke  = P.color.is_a_link
+                ( elid           = "MOM:IM"
+                , ref_x          = P.is_a_marker_size
+                , size           = P.is_a_marker_size
+                , stroke         = P.color.is_a_link._formatted_values ()
+                , stroke_opacity = P.color.is_a_link.alpha
                 )
             , SVG.Marker.Plug
-                ( elid    = "MOM:RM"
-                , stroke  = P.color.role_link
+                ( elid           = "MOM:RM"
+                , stroke         = P.color.role_link._formatted_values ()
+                , stroke_opacity = P.color.role_link.alpha
                 )
             )
         result.add (defs)
@@ -146,10 +152,11 @@ class Renderer (MOM.Graph._Renderer_) :
             ( SVG.Title (rel.title)
             , SVG.Desc  (rel.desc)
             , SVG.Polyline
-                ( fill         = "none"
-                , points       = link.points
-                , stroke       = colr
-                , stroke_width = P.link_stroke_width
+                ( fill           = "none"
+                , points         = link.points
+                , stroke         = colr._formatted_values ()
+                , stroke_width   = P.link_stroke_width
+                , stroke_opacity = colr.alpha
                 , ** kw
                 )
             , path
@@ -161,9 +168,10 @@ class Renderer (MOM.Graph._Renderer_) :
                     , text_anchor        = anchor
                     , xlink_href         = "#%s" % paid
                     )
-                , fill         = colr
-                , font_family = P.font_family
-                , font_size   = P.font_size
+                , fill         = colr._formatted_values ()
+                , fill_opacity = colr.alpha
+                , font_family  = P.font_family
+                , font_size    = P.font_size
                 )
             # rel.info
             )
@@ -177,9 +185,10 @@ class Renderer (MOM.Graph._Renderer_) :
                         , text_anchor        = anchor
                         , xlink_href         = "#%s" % paid
                         )
-                    , fill         = colr
-                    , font_family = P.font_family
-                    , font_size   = P.font_size
+                    , fill         = colr._formatted_values ()
+                    , fill_opacity = colr.alpha
+                    , font_family  = P.font_family
+                    , font_size    = P.font_size
                     )
                 )
         canvas.add (grp)

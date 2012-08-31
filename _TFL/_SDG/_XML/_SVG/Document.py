@@ -30,6 +30,7 @@
 #     6-Sep-2005 (CT) Creation continued
 #    29-Aug-2008 (CT) Doctest corrected
 #    27-Aug-2012 (CT) Add lots of Elem_Types and attributes
+#    31-Aug-2012 (RS) Add `**kw` in `cls` instantiation of `Marker.Plug`
 #    ««revision-date»»···
 #--
 
@@ -500,6 +501,7 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", size = 10, ref_x = None, stroke = 
         , ref_y         = size_2
         , stroke        = stroke
         , view_box      = "0 0 %(size)s %(size)s" % scope
+        , ** kw
         )
     return result
 # end def Arrow_Head
