@@ -34,6 +34,7 @@
 #    18-Jan-2012 (CT) Add `_Color_.__eq__` and `__hash__`
 #    18-Jan-2012 (CT) Return `name`, not `"name"`, from `SVG_Color.formatted`
 #    16-Apr-2012 (CT) Add `sorted` to `.iteritems`
+#    31-Aug-2012 (CT) Add property `no_alpha`
 #    ««revision-date»»···
 #--
 
@@ -302,6 +303,24 @@ class _Color_ (TFL.Meta.Object) :
             self.alpha = float (alpha)
     # end def __init__
 
+    @classmethod
+    def cast (cls, v) :
+        result = cls.__new__ (cls)
+        result.value = v.value
+        if v.alpha is not None :
+            result.alpha = v.alpha
+        return result
+    # end def cast
+
+    @classmethod
+    def from_value (cls, value, alpha = None) :
+        result = cls.__new__ (cls)
+        result.value = value
+        if alpha is not None :
+            result.alpha = alpha
+        return result
+    # end def from_value
+
     @property
     def as_HSL (self) :
         return HSL.cast (self)
@@ -326,24 +345,6 @@ class _Color_ (TFL.Meta.Object) :
     def as_RGB_X (self) :
         return RGB_X.cast (self)
     # end def as_RGB_X
-
-    @classmethod
-    def cast (cls, v) :
-        result = cls.__new__ (cls)
-        result.value = v.value
-        if v.alpha is not None :
-            result.alpha = v.alpha
-        return result
-    # end def cast
-
-    @classmethod
-    def from_value (cls, value, alpha = None) :
-        result = cls.__new__ (cls)
-        result.value = value
-        if alpha is not None :
-            result.alpha = alpha
-        return result
-    # end def from_value
 
     @property
     def blue (self) :
@@ -404,6 +405,12 @@ class _Color_ (TFL.Meta.Object) :
         h, s, l = self.value.hsl
         self.value = Value (hsl = (h, s, float (value)))
     # end def lightness
+
+    @property
+    def no_alpha (self) :
+        """Return a color instance without `alpha`."""
+        return self if self.alpha is None else self.from_value (self.value)
+    # end def no_alpha
 
     @property
     def red (self) :

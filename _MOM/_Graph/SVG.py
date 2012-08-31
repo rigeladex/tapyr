@@ -27,9 +27,8 @@
 #
 # Revision Dates
 #    29-Aug-2012 (CT) Creation
-#    31-Aug-2012 (RS) Handle opacity with stroke-opacity and an RGB
-#                     color, inkscape doesn't support RGBA
-#    31-Aug-2012 (RS) Add stroke-opacity and fill-opacity to other classes
+#    31-Aug-2012 (RS) Add kludge to appease inkscape
+#    31-Aug-2012 (CT) Put lipstick on the kludge (use `no_alpha`)
 #    ««revision-date»»···
 #--
 
@@ -98,19 +97,19 @@ class Renderer (MOM.Graph._Renderer_) :
                 ( elid           = "MOM:AM"
                 , ref_x          = 0
                 , size           = P.attr_marker_size
-                , stroke         = P.color.attr_link._formatted_values ()
+                , stroke         = P.color.attr_link.no_alpha
                 , stroke_opacity = P.color.attr_link.alpha
                 )
             , SVG.Marker.Arrow_Head
                 ( elid           = "MOM:IM"
                 , ref_x          = P.is_a_marker_size
                 , size           = P.is_a_marker_size
-                , stroke         = P.color.is_a_link._formatted_values ()
+                , stroke         = P.color.is_a_link.no_alpha
                 , stroke_opacity = P.color.is_a_link.alpha
                 )
             , SVG.Marker.Plug
                 ( elid           = "MOM:RM"
-                , stroke         = P.color.role_link._formatted_values ()
+                , stroke         = P.color.role_link.no_alpha
                 , stroke_opacity = P.color.role_link.alpha
                 )
             )
@@ -154,7 +153,7 @@ class Renderer (MOM.Graph._Renderer_) :
             , SVG.Polyline
                 ( fill           = "none"
                 , points         = link.points
-                , stroke         = colr._formatted_values ()
+                , stroke         = colr.no_alpha
                 , stroke_width   = P.link_stroke_width
                 , stroke_opacity = colr.alpha
                 , ** kw
@@ -168,7 +167,7 @@ class Renderer (MOM.Graph._Renderer_) :
                     , text_anchor        = anchor
                     , xlink_href         = "#%s" % paid
                     )
-                , fill         = colr._formatted_values ()
+                , fill         = colr.no_alpha
                 , fill_opacity = colr.alpha
                 , font_family  = P.font_family
                 , font_size    = P.font_size
@@ -185,7 +184,7 @@ class Renderer (MOM.Graph._Renderer_) :
                         , text_anchor        = anchor
                         , xlink_href         = "#%s" % paid
                         )
-                    , fill         = colr._formatted_values ()
+                    , fill         = colr.no_alpha
                     , fill_opacity = colr.alpha
                     , font_family  = P.font_family
                     , font_size    = P.font_size
