@@ -73,6 +73,7 @@
 #    23-Jul-2012 (CT) Change `M_Link._m_setup_etype_auto_props` to consider
 #                     `a.Cacher_Type`
 #     1-Aug-2012 (CT) Add `M_E_Type_Link[123]_Destroyed`
+#    31-Aug-2012 (CT) Restrict `_m_setup_roles` to roles in `_own_names`
 #    ««revision-date»»···
 #--
 
@@ -197,24 +198,27 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             cls.number_of_roles = nor      = len (Roles)
             cls.role_map        = role_map = {}
             for i, r in enumerate (Roles) :
-                r.role_index = i
-                ### Replace by app-type specific e-type
-                r.attr.assoc     = r.assoc       = cls
-                r.attr.role_type = r.attr.P_Type = rt = \
-                    cls.app_type.entity_type (r.role_type)
-                r.attr.typ       = rt.type_base_name
-                ac      = cls.acr_map.get (r.attr.name)
-                cr_attr = ac and ac.cr_attr
-                if cr_attr and cr_attr.P_Type :
-                    cr_attr.P_Type = cls.app_type.entity_type (cr_attr.P_Type)
+                if r.attr.name in cls._Attributes._own_names :
+                    ### Replace by app-type specific e-type
+                    r.attr.assoc     = r.assoc       = cls
+                    r.attr.role_type = r.attr.P_Type = rt = \
+                        cls.app_type.entity_type (r.role_type)
+                    r.attr.typ       = rt.type_base_name
+                    ac      = cls.acr_map.get (r.attr.name)
+                    cr_attr = ac and ac.cr_attr
+                    if cr_attr and cr_attr.P_Type :
+                        cr_attr.P_Type = cls.app_type.entity_type \
+                            (cr_attr.P_Type)
                 if r.role_name != r.generic_role_name :
                     setattr \
                         ( cls, r.role_name
                         , TFL.Meta.Alias_Property (r.generic_role_name)
                         )
+                r.role_index = i
                 for key in set \
-                        (( r.default_role_name, r.generic_role_name, r.role_name
-                         , r.role_type.type_name, r.role_type.type_base_name
+                        (( r.default_role_name, r.generic_role_name
+                         , r.role_name, r.role_type.type_name
+                         , r.role_type.type_base_name
                         )) :
                     role_map [key] = r.role_index
     # end def _m_setup_roles
