@@ -29,6 +29,7 @@
 #    17-Aug-2012 (CT) Creation
 #    21-Aug-2012 (CT) Add `Team_has_Boat_in_Regatta`, `Race_Result`
 #    31-Aug-2012 (CT) Adapt to MOM.Graph.Spec API change
+#     3-Sep-2012 (CT) Add `Page`, specify `source_side` for `Crew_Member`
 #    ««revision-date»»···
 #--
 
@@ -56,11 +57,19 @@ def graph (app_type) :
             , Role.right
                 ( Role.left
                     ( Attr.club (offset = CD.N * 2)
+                    , ET.SRM.Page
+                        ( Attr.event
+                        , offset = CD.S
+                        )
                     , offset = CD.E
                     )
                 , offset = CD.E
                 )
-            , ET.SRM.Crew_Member (offset = CD.NE)
+            , ET.SRM.Crew_Member
+                ( Role.left  (anchor = False, source_side = "W")
+                , Role.right (anchor = False, source_side = "W")
+                , offset = CD.NE
+                )
             , ET.SRM.Team_has_Boat_in_Regatta
                 ( Role.left
                     ( ET.SRM.Regatta_C

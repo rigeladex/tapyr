@@ -31,6 +31,9 @@
 #    22-Aug-2012 (CT) Add `delta`, `reverse`, `set_connector`
 #    26-Aug-2012 (CT) Add `add_guides`
 #    29-Aug-2012 (CT) Add `desc` and `title`
+#     3-Sep-2012 (CT) Add `side`, `source_side`, and `target_side`
+#     3-Sep-2012 (CT) Add same-side support to `add_guides`
+#     3-Sep-2012 (CT) Reify `Connector`, factor in `points_gen`, add `points`
 #    ««revision-date»»···
 #--
 
@@ -42,13 +45,65 @@ from   _TFL                   import TFL
 import _MOM.import_MOM
 import _MOM._Graph
 
-from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL._D2               import D2, Cardinal_Direction as CD
+from   _TFL.Math_Func         import sign
 
 import _TFL.Decorator
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
-class _Reverse_ (TFL.Meta.Object) :
+class Connector (TFL.Meta.Object) :
+    """Connector of a relation to a node."""
+
+    def __init__ (self, side, offset = None) :
+        self.side   = side
+        self.offset = offset
+    # end def __init__
+
+    def __getitem__ (self, index) :
+        return (self.side, self.offset) [index]
+    # end def __getitem__
+
+    def __iter__ (self) :
+        yield self.side
+        yield self.offset
+    # end def __iter__
+
+    def __len__ (self) :
+        return 2
+    # end def __len__
+
+    def __repr__ (self) :
+        return "%s %s" % (self.__class__.__name__, tuple (self))
+    # end def __repr__
+
+    def __str__  (self) :
+        return "%s" % (tuple (self), )
+    # end def __str__
+
+# end class Connector
+
+class _R_Base_ (TFL.Meta.Object) :
+
+    @TFL.Meta.Once_Property
+    def guide_sort_key (self) :
+        points = self.points
+        p0     = points [ 0].free
+        p      = points [ 1].free
+        q      = points [-1].free
+        p0_q   = p0 - q
+        p_q    = p  - q
+        side   = self.connector.side
+        p0_q_y = getattr (p0_q, side.other_dim)
+        p_q_x  = getattr (p_q,  side.dim)
+        p_q_y  = getattr (p_q,  side.other_dim)
+        result = (side.sort_sign * p0_q_y, abs (p_q_y), - p_q_x)
+        return result
+    # end def guide_sort
+
+# end class _R_Base_
+
+class _Reverse_ (_R_Base_) :
     """Reverse relation"""
 
     is_reverse        = True
@@ -64,18 +119,33 @@ class _Reverse_ (TFL.Meta.Object) :
     # end def delta
 
     @property
+    def connector (self) :
+        return self.target_connector
+    # end def connector
+
+    @property
     def other_connector (self) :
         return self.reverse.source_connector
     # end def other_connector
 
     @property
+    def points (self) :
+        return self.reverse.points [::-1]
+    # end def points
+
+    @property
     def ref (self) :
-        return self.target
+        return self.reverse.target
     # end def pos
 
-    def set_connector (self, side, offset) :
+    @property
+    def side (self) :
+        return self.reverse.target_side
+    # end def side
+
+    def set_connector (self, connector) :
         assert self.reverse.target_connector is None
-        self.reverse.target_connector = (side, offset)
+        self.reverse.target_connector = connector
     # end def set_connector
 
     def __getattr__ (self, name) :
@@ -89,16 +159,24 @@ class _Reverse_ (TFL.Meta.Object) :
 
 # end class _Reverse_
 
-class _Relation_ (TFL.Meta.Object) :
+class _Relation_ (_R_Base_) :
     """Base class for relations between MOM entities."""
 
     guides            = None
     info              = None
     is_reverse        = False
     source_connector  = None
+    source_side       = None
     target_connector  = None
+    target_side       = None
 
-    def __init__ (self, source, target, * args) :
+    _points           = None
+
+    def __init__ (self, source, target, * args, ** kw) :
+        self.pop_to_self (kw, "source_side", "target_side")
+        if kw :
+            raise TypeError \
+                ("Unknown arguments %s" % (sorted (kw.iteritems ())))
         self.source   = source
         self.target   = target
     # end def __init__
@@ -119,9 +197,23 @@ class _Relation_ (TFL.Meta.Object) :
     # end def label
 
     @property
+    def connector (self) :
+        return self.source_connector
+    # end def connector
+
+    @property
     def other_connector (self) :
         return self.target_connector
     # end def other_connector
+
+    @property
+    def points (self) :
+        if self.guides is not None :
+            result = self._points
+            if result is None :
+                result = self._points = tuple (self.points_gen ())
+            return result
+    # end def points
 
     @property
     def ref (self) :
@@ -133,30 +225,58 @@ class _Relation_ (TFL.Meta.Object) :
         return _Reverse_ (self)
     # end def reverse
 
+    @property
+    def side (self) :
+        return self.source_side
+    # end def side
+
     def add_guides (self) :
-        if self.source_connector and self.target_connector :
-            src_c, trg_c = self.source_connector [0], self.target_connector [0]
-            dim    = src_c.dim
-            delta  = self.delta
-            dd     = getattr (delta, dim)
-            guides = self.guides = []
-            add    = guides.append
-            if src_c.is_opposite (trg_c) :
-                if getattr (delta, src_c.other_dim) != 0 :
-                    p2_a = CD.Point (** {dim : 1})
-                    p2_b = CD.Point (* reversed (p2_a))
-                    off  = src_c.guide_offset (1)
-                    add ((CD.Point (1, 1), CD.Point (0, 0), off))
-                    add ((p2_a,            p2_b,            off))
-            else :
-                p2_a = src_c.guide_point (0)
-                p2_b = CD.Point (* reversed (p2_a))
-                add ((p2_a, p2_b))
+        src_c, trg_c = self.source_connector.side, self.target_connector.side
+        dim          = src_c.dim
+        delta        = self.delta
+        guides       = self.guides = []
+        add          = guides.append
+        if src_c.is_opposite (trg_c) :
+            if getattr (delta, src_c.other_dim) != 0 :
+                p2_a = D2.Point (** {dim : 1})
+                p2_b = D2.Point (* reversed (p2_a))
+                off  = src_c.guide_offset (0.5)
+                add ((D2.Point (1, 1), D2.Point (0, 0), off))
+                add ((p2_a,            p2_b,            off))
+        elif src_c.side == trg_c.side :
+            if getattr (delta, dim) == 0 :
+                off  = src_c.guide_offset (0.25)
+                add ((D2.Point (1, 1), D2.Point (0, 0), off))
+                add ((D2.Point (0, 0), D2.Point (1, 1), off))
+        else :
+            p2_a = src_c.guide_point (0)
+            p2_b = D2.Point (* reversed (p2_a))
+            add ((p2_a, p2_b))
     # end def add_guides
 
-    def set_connector (self, side, offset) :
+    def points_gen (self, head = None, tail = None, off_scale = 1) :
+        if head is None :
+            head = self.source.pos
+        if tail is None :
+            tail = self.target.pos
+        guides = self.guides
+        zero   = D2.Point (0, 0)
+        yield head
+        if guides :
+            for g in guides :
+                if len (g) == 3 :
+                    wh, wt = g [:2]
+                    offset = off_scale * g [-1]
+                else :
+                    wh, wt = g
+                    offset = zero
+                yield head * wh + tail * wt + offset
+        yield tail
+    # end def points_gen
+
+    def set_connector (self, connector) :
         assert self.source_connector is None
-        self.source_connector = (side, offset)
+        self.source_connector = connector
     # end def set_connector
 
 # end class _Relation_
@@ -164,10 +284,10 @@ class _Relation_ (TFL.Meta.Object) :
 class Attr (_Relation_) :
     """Model an attribute relation between MOM entities."""
 
-    def __init__ (self, source, target, attr) :
+    def __init__ (self, source, target, attr, ** kw) :
         self.attr   = attr
         self.name   = attr.name
-        self.__super.__init__ (source, target)
+        self.__super.__init__ (source, target, ** kw)
     # end def __init__
 
     @TFL.Meta.Once_Property

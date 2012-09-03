@@ -30,6 +30,8 @@
 #    26-Aug-2012 (CT) Change `setup_links` to use `sorted`
 #    29-Aug-2012 (CT) Add and use `_setup_links_p`
 #    31-Aug-2012 (CT) Add `Attr`, `IS_A`, `Child`, `Role`, and `Skip`
+#     3-Sep-2012 (CT) Factor `_Spec_Rel_`, add `source_side`, `target_side`
+#     3-Sep-2012 (CT) Call `add_guides`, `place_connectors` in `setup_links`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +45,8 @@ import _MOM._Graph.Relation
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
+
+import itertools
 
 def _Instance (cls) :
     return cls ()
@@ -88,14 +92,37 @@ class _Spec_Item_ (TFL.Meta.Object) :
     # end def __getattr__
 
     def __str__ (self) :
-        return "<ET.%s %s %s>" % \
-            (self._name, self._args, sorted (self._kw.iteritems ()))
+        return "<%s.%s %s %s>" % \
+            ( self.__class__.__name__, self._name
+            , self._args, sorted (self._kw.iteritems ())
+            )
     # end def __str__
 
 # end class _Spec_Item_
 
+class _Spec_Rel_ (_Spec_Item_) :
+    """Base class for specs of relations"""
+
+    source_side = None
+    target_side = None
+
+    def __call__ (self, * args, ** kw) :
+        self.pop_to_self (kw, "source_side", "target_side")
+        return self.__super.__call__ (* args, ** kw)
+    # end def __call__
+
+    @property
+    def _rel_kw (self) :
+        return dict \
+            ( source_side = self.source_side
+            , target_side = self.target_side
+            )
+    # end def _rel_kw
+
+# end class _Spec_Rel_
+
 @_Instance
-class Attr (_Spec_Item_) :
+class Attr (_Spec_Rel_) :
     """Specification of an attribute referring to another essential entity."""
 
     R_Type = MOM.Graph.Relation.Attr
@@ -108,7 +135,7 @@ class Attr (_Spec_Item_) :
                 spec (* self._args, ** self._kw)
             result = spec._instantiate (graph, anchor = anchor, offset = offset)
             if result is not None :
-                anchor.add_relation   (attr, result, self.R_Type)
+                anchor.add_relation (attr, result, self.R_Type, ** self._rel_kw)
             return result
         else :
             raise TypeError \
@@ -136,7 +163,7 @@ class ET (_Spec_Item_) :
 # end class ET
 
 @_Instance
-class IS_A (ET.__class__) :
+class IS_A (_Spec_Rel_, ET.__class__) :
     """Specification of an inheritance relationship."""
 
     R_Type = MOM.Graph.Relation.IS_A
@@ -151,7 +178,7 @@ class IS_A (ET.__class__) :
 
     def _add_relation (self, parent, child) :
         rel = "IS_A_%s" %  (parent.type_name, )
-        child.add_relation (rel, parent, self.R_Type)
+        child.add_relation (rel, parent, self.R_Type, ** self._rel_kw)
     # end def _add_relation
 
 # end class IS_A
@@ -212,8 +239,16 @@ class Graph (TFL.Meta.Object) :
     def setup_links (self) :
         if not self._setup_links_p :
             sort_key = TFL.Sorted_By ("slack", "type_name")
-            for n in sorted (self.node_map.itervalues (), key = sort_key) :
+            nodes    = sorted (self.node_map.itervalues (), key = sort_key)
+            for n in nodes :
                 n.setup_links ()
+            for n in nodes :
+                n.add_guides ()
+            for p in sorted \
+                    ( itertools.chain (*  (n.placers for n in nodes))
+                    , key = TFL.Sorted_By ("prio")
+                    ) :
+                p.place_connectors ()
             self._setup_links_p = True
     # end def setup_links
 

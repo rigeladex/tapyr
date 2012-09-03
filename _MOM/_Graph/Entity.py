@@ -31,6 +31,8 @@
 #    29-Aug-2012 (CT) Add `desc`, `rid`, and `title`
 #    30-Aug-2012 (CT) Add and use `skip`
 #    31-Aug-2012 (CT) Restructure API, auto-skip inherited roles
+#     3-Sep-2012 (CT) Add support for `relation.side`
+#     3-Sep-2012 (CT) Revamp placing of relations connectors and guides
 #    ««revision-date»»···
 #--
 
@@ -74,7 +76,11 @@ class Rel_Placer (TFL.Meta.Object) :
         def __init__ (self, rp) :
             self.rp    = rp
             P          = self.predicate
-            self.rels  = list (r for r in rp.entity.all_rels if P (r))
+            self.rels  = list \
+                ( r for r in rp.entity.all_rels
+                if r.side in (self.opposite_name, self.side)
+                or (r.side is None and P (r))
+                )
             self.slack = self.max_rels - len (self.rels)
         # end def __init__
 
@@ -90,6 +96,11 @@ class Rel_Placer (TFL.Meta.Object) :
         # end def opposite
 
         @property
+        def prio (self) :
+            return - len (self.rels)
+        # end def prio
+
+        @property
         def willing_neighbor (self) :
             result = max (self.neighbors, key = TFL.Getter.slack)
             if result.slack > 0 :
@@ -101,29 +112,37 @@ class Rel_Placer (TFL.Meta.Object) :
             self.slack -= 1
         # end def add
 
-        def add_guides (self) :
-            """Add guide points to relations in `rels`."""
-            for r in self.rels :
-                if (not r.is_reverse) or r.guides is None :
-                    r.add_guides ()
-        # end def guide
-
         def is_opposite (self, other) :
             return self.opposite_name == other.name
         # end def is_opposite
 
-        def place (self) :
-            """Place connectors of relations in `rels`."""
-            rels  = self.rels
-            n     = len (rels)
+        def place_connectors (self) :
+            def _opposites (self, rels) :
+                for r in rels :
+                    o = r.reverse
+                    if self.is_opposite (o.connector.side) :
+                        yield r, o.connector.side
+            rels      = self.rels
+            opposites = tuple (_opposites (self, rels))
+            rels.sort (key = TFL.Sorted_By ("guide_sort_key", "type_name"))
+            n         = max \
+                ( len (rels)
+                , max (len (o.rels) for r, o in opposites) if opposites else 0
+                )
             try :
                 offset_s = self._offset_map [n]
             except IndexError :
                 raise NotImplementedError \
                     ("Too many relations for automatic placement: %s" % (n, ))
-            rels.sort (key = TFL.Sorted_By (self.sort_key_p, "type_name"))
             side = self.side
             seen = set ()
+            for r, o in opposites :
+                other_offset = r.other_connector.offset
+                if other_offset is not None :
+                    delta = getattr (r.delta, self.other_dim)
+                    r.connector.offset = o = \
+                        1 - other_offset if delta else other_offset
+                    seen.add (o)
             def gen_offset (offset_s, seen) :
                 for o in offset_s :
                     if o not in seen :
@@ -131,26 +150,14 @@ class Rel_Placer (TFL.Meta.Object) :
                         yield o
             offset = gen_offset (offset_s, seen)
             for r in rels :
-                o  = None
-                oc = r.other_connector
-                if oc is not None :
-                    odp, oof = oc
-                    if self.is_opposite (odp) :
-                        delta = getattr (r.delta, self.other_dim)
-                        if delta == 0 :
-                            o = oof
-                        else :
-                            o = 1 - oof
-                        if o in seen :
-                            o = offset.next ()
-                    else :
-                        pass ### XXX what do we need to do here ???
-                if o is None :
-                    o = offset.next ()
-                else :
-                    seen.add (o)
-                r.set_connector (self, o)
-        # end def place
+                if r.connector.offset is None :
+                    r.connector.offset = offset.next ()
+        # end def place_connectors
+
+        def setup_connectors (self) :
+            for r in self.rels :
+                r.set_connector (MOM.Graph.Relation.Connector (self))
+        # end def setup_connectors
 
         def slacker (self) :
             """Try to improve slack"""
@@ -219,9 +226,9 @@ class Rel_Placer (TFL.Meta.Object) :
         name           = "N"
         neighbor_names = ("E", "W")
         opposite_name  = "S"
-        prio           = 3
         side           = "bottom"
         sign           = +1
+        sort_sign      = -1
         sort_key_p     = TFL.Sorted_By ("-delta.x")
 
         def predicate (self, r) :
@@ -236,9 +243,9 @@ class Rel_Placer (TFL.Meta.Object) :
         name           = "E"
         neighbor_names = ("N", "S")
         opposite_name  = "W"
-        prio           = 1
         side           = "left"
         sign           = -1
+        sort_sign      = +1
         sort_key_p     = TFL.Sorted_By ("delta.y")
 
         def predicate (self, r) :
@@ -253,9 +260,9 @@ class Rel_Placer (TFL.Meta.Object) :
         name           = "S"
         neighbor_names = ("E", "W")
         opposite_name  = "N"
-        prio           = 4
         side           = "top"
         sign           = -1
+        sort_sign      = -1
         sort_key_p     = TFL.Sorted_By ("-delta.x")
 
         def predicate (self, r) :
@@ -270,9 +277,9 @@ class Rel_Placer (TFL.Meta.Object) :
         name           = "W"
         neighbor_names = ("N", "S")
         opposite_name  = "E"
-        prio           = 2
         side           = "right"
         sign           = +1
+        sort_sign      = +1
         sort_key_p     = TFL.Sorted_By ("delta.y")
 
         def predicate (self, r) :
@@ -296,12 +303,9 @@ class Rel_Placer (TFL.Meta.Object) :
         for dp in by_slack :
             if dp.slack < 0 :
                 dp.slacker ()
-        by_slack.sort (key = sort_key)
+        by_slack = sorted ((dp for dp in by_slack if dp), key = sort_key)
         for dp in by_slack :
-            if dp :
-                dp.place ()
-        for dp in by_slack :
-            dp.add_guides ()
+            dp.setup_connectors ()
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -331,20 +335,21 @@ class Entity (TFL.Meta.Object) :
 
     @anchor.setter
     def anchor (self, value) :
-        if self._anchor is not None and value is not None :
-            raise TypeError \
-                ( "%s cannot have multiple anchors: %s <-> %s"
-                % (self.type_name, self._anchor, value)
-                )
-        if value is not None and value.anchor is self :
-            raise TypeError \
-                ( "Anchor cycle not allowed: %s <-> %s"
-                % (self.type_name, value)
-                )
-        self.graph.cid +=1
-        if isinstance (value, MOM.Graph.Spec._Spec_Item_) :
-            value = value.instantiate (self.graph, self)
-        self._anchor = value
+        if value :
+            if self._anchor is not None :
+                raise TypeError \
+                    ( "%s cannot have multiple anchors: %s <-> %s"
+                    % (self.type_name, self._anchor, value)
+                    )
+            if isinstance (value, MOM.Graph.Spec._Spec_Item_) :
+                value = value.instantiate (self.graph, self)
+            if value.anchor is self :
+                raise TypeError \
+                    ( "Anchor cycle not allowed: %s <-> %s"
+                    % (self.type_name, value)
+                    )
+            self.graph.cid +=1
+            self._anchor = value
     # end def anchor
 
     @TFL.Meta.Once_Property
@@ -398,6 +403,13 @@ class Entity (TFL.Meta.Object) :
     # end def offset
 
     @property
+    def placers (self) :
+        for p in self.placer.placers.itervalues () :
+            if p :
+                yield p
+    # end def placers
+
+    @property
     def pos (self) :
         result = self._pos
         if result is None or self._sync_cid != self.graph.cid :
@@ -432,6 +444,7 @@ class Entity (TFL.Meta.Object) :
         self.index      = len (graph.node_map)
         self.all_rels   = []
         self.rel_map    = {}
+        self.placer     = None
         self.skip       = set ()
     # end def __init__
 
@@ -446,13 +459,19 @@ class Entity (TFL.Meta.Object) :
         return self
     # end def __call__
 
-    def add_relation (self, rel, other, R_Type) :
+    def add_guides (self) :
+        """Add guide points to relations in `self.rel_map`."""
+        for r in self.rel_map.itervalues () :
+            r.add_guides ()
+    # end def add_guides
+
+    def add_relation (self, rel, other, R_Type, ** kw) :
         r_name = getattr (rel, "name", rel)
         try :
             result = self.rel_map [r_name]
         except KeyError :
             result = self.rel_map [r_name] = \
-                R_Type (self, other, rel)
+                R_Type (self, other, rel, ** kw)
             self.all_rels.append  (result)
             other.all_rels.append (result.reverse)
         return result
@@ -492,7 +511,7 @@ class Entity (TFL.Meta.Object) :
     # end def instantiate
 
     def setup_links (self) :
-        Rel_Placer (self)
+        self.placer = Rel_Placer (self)
     # end def setup_links
 
     def _add (self, et, ** kw) :

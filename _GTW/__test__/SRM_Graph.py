@@ -47,11 +47,11 @@ _test_code = """
     <Graph.Object SRM.Regatta_Event>              SRM.Regatta_Event
     <Graph.Object SRM.Club>                       SRM.Club
     <Graph.Link2  SRM.Crew_Member>                SRM.Crew_Member
+    <Graph.Link1  SRM.Sailor>                     SRM.Sailor
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   _has_
     <Graph.Link1  SRM.Team>                       SRM.Team
     <Graph.Link1  SRM.Regatta_C>                  SRM.Regatta_C
     <Graph.Link1  SRM.Race_Result>                SRM.Race_Result
-    <Graph.Link1  SRM.Sailor>                     SRM.Sailor
     <Graph.Object PAP.Person>                     PAP.Person
     <Graph.Object PAP.Subject>                    PAP.Subject
 
@@ -64,11 +64,11 @@ _test_code = """
     <Graph.Object SRM.Regatta_Event>              (u'SRM', u'.Regatta', u'_Event')
     <Graph.Object SRM.Club>                       (u'SRM', u'.Club')
     <Graph.Link2  SRM.Crew_Member>                (u'SRM', u'.Crew', u'_Member')
+    <Graph.Link1  SRM.Sailor>                     (u'SRM', u'.Sailor')
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (u'_has_',)
     <Graph.Link1  SRM.Team>                       (u'SRM', u'.Team')
     <Graph.Link1  SRM.Regatta_C>                  (u'SRM', u'.Regatta', u'_C')
     <Graph.Link1  SRM.Race_Result>                (u'SRM', u'.Race', u'_Result')
-    <Graph.Link1  SRM.Sailor>                     (u'SRM', u'.Sailor')
     <Graph.Object PAP.Person>                     (u'PAP', u'.Person')
     <Graph.Object PAP.Subject>                    (u'PAP', u'.Subject')
 
@@ -119,13 +119,13 @@ _test_code = """
     <Graph.Relation SRM.Club IS A PAP.Subject>
     <Graph.Relation.Role SRM.Crew_Member.left -> SRM.Boat_in_Regatta>
     <Graph.Relation.Role SRM.Crew_Member.right -> SRM.Sailor>
+    <Graph.Relation.Attr SRM.Sailor.club -> SRM.Club>
+    <Graph.Relation.Role SRM.Sailor.left -> PAP.Person>
     <Graph.Relation.Role SRM.Team_has_Boat_in_Regatta.left -> SRM.Team>
     <Graph.Relation.Role SRM.Team_has_Boat_in_Regatta.right -> SRM.Boat_in_Regatta>
     <Graph.Relation.Role SRM.Team.left -> SRM.Regatta_C>
     <Graph.Relation SRM.Regatta_C IS A SRM.Regatta>
     <Graph.Relation.Role SRM.Race_Result.left -> SRM.Boat_in_Regatta>
-    <Graph.Relation.Attr SRM.Sailor.club -> SRM.Club>
-    <Graph.Relation.Role SRM.Sailor.left -> PAP.Person>
     <Graph.Relation PAP.Person IS A PAP.Subject>
 
     >>> for v in g.nodes () :
@@ -141,13 +141,13 @@ _test_code = """
     IS_A <Graph.Object SRM.Club> <Graph.Object PAP.Subject>
     Role <Graph.Link2  SRM.Crew_Member> <Graph.Link2  SRM.Boat_in_Regatta>
     Role <Graph.Link2  SRM.Crew_Member> <Graph.Link1  SRM.Sailor>
+    Attr <Graph.Link1  SRM.Sailor> <Graph.Object SRM.Club>
+    Role <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
     Role <Graph.Link2  SRM.Team_has_Boat_in_Regatta> <Graph.Link1  SRM.Team>
     Role <Graph.Link2  SRM.Team_has_Boat_in_Regatta> <Graph.Link2  SRM.Boat_in_Regatta>
     Role <Graph.Link1  SRM.Team> <Graph.Link1  SRM.Regatta_C>
     IS_A <Graph.Link1  SRM.Regatta_C> <Graph.Link1  SRM.Regatta>
     Role <Graph.Link1  SRM.Race_Result> <Graph.Link2  SRM.Boat_in_Regatta>
-    Attr <Graph.Link1  SRM.Sailor> <Graph.Object SRM.Club>
-    Role <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
     IS_A <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
     >>> for v in g.nodes () :
@@ -159,11 +159,11 @@ _test_code = """
     <Graph.Object SRM.Regatta_Event>              E*2          (2, 0)
     <Graph.Object SRM.Club>                       NE*2         (2, 2)
     <Graph.Link2  SRM.Crew_Member>                NE           (1, 1)
+    <Graph.Link1  SRM.Sailor>                     N*2          (0, 2)
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   S            (0, -1)
     <Graph.Link1  SRM.Team>                       S*2          (0, -2)
     <Graph.Link1  SRM.Regatta_C>                  E + S*2      (1, -2)
     <Graph.Link1  SRM.Race_Result>                SW           (-1, -1)
-    <Graph.Link1  SRM.Sailor>                     N*2          (0, 2)
     <Graph.Object PAP.Person>                     N*3          (0, 3)
     <Graph.Object PAP.Subject>                    E*2 + N*3    (2, 3)
 
@@ -173,7 +173,7 @@ _test_code = """
     ...     for a, l in sorted (v.rel_map.iteritems ()) :
     ...       if l.source_connector and l.target_connector :
     ...         print "%%-30s %%-30s %%-10s %%-10s %%-10s %%1.1s %%5.3f %%1.1s %%5.3f" %% ((
-    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta) + l.source_connector + l.target_connector)
+    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta) + tuple(l.source_connector) + tuple(l.target_connector))
     SRM.Boat_in_Regatta            SRM.Boat                       (0,0)      W          E          l 0.500 r 0.500
     SRM.Boat_in_Regatta            SRM.Regatta                    (0,0)      E          W          r 0.500 l 0.500
     SRM.Boat_in_Regatta            SRM.Sailor                     (0,0)      N*2        S*2        t 0.250 b 0.250
@@ -181,15 +181,15 @@ _test_code = """
     SRM.Regatta                    SRM.Regatta_Event              E          E*2        W          r 0.500 l 0.500
     SRM.Regatta_Event              SRM.Club                       E*2        NE*2       S*2        t 0.500 b 0.500
     SRM.Club                       PAP.Subject                    NE*2       E*2 + N*3  S          t 0.500 b 0.500
-    SRM.Crew_Member                SRM.Boat_in_Regatta            NE         (0,0)      NE         b 0.250 t 0.750
-    SRM.Crew_Member                SRM.Sailor                     NE         N*2        SE         t 0.250 b 0.750
+    SRM.Crew_Member                SRM.Boat_in_Regatta            NE         (0,0)      NE         l 0.750 t 0.750
+    SRM.Crew_Member                SRM.Sailor                     NE         N*2        SE         l 0.250 b 0.750
+    SRM.Sailor                     SRM.Club                       N*2        NE*2       W*2        r 0.500 l 0.500
+    SRM.Sailor                     PAP.Person                     N*2        N*3        S          t 0.500 b 0.500
     SRM.Team_has_Boat_in_Regatta   SRM.Team                       S          S*2        N          b 0.500 t 0.500
     SRM.Team_has_Boat_in_Regatta   SRM.Boat_in_Regatta            S          (0,0)      S          t 0.750 b 0.750
     SRM.Team                       SRM.Regatta_C                  S*2        E + S*2    W          r 0.500 l 0.500
     SRM.Regatta_C                  SRM.Regatta                    E + S*2    E          S*2        t 0.500 b 0.500
     SRM.Race_Result                SRM.Boat_in_Regatta            SW         (0,0)      SW         t 0.750 b 0.250
-    SRM.Sailor                     SRM.Club                       N*2        NE*2       W*2        r 0.500 l 0.500
-    SRM.Sailor                     PAP.Person                     N*2        N*3        S          t 0.500 b 0.500
     PAP.Person                     PAP.Subject                    N*3        E*2 + N*3  W*2        r 0.500 l 0.500
 
     >>> for v in g.nodes () :
@@ -204,15 +204,15 @@ _test_code = """
     SRM.Regatta                    SRM.Regatta_Event              E          E*2        W          ()
     SRM.Regatta_Event              SRM.Club                       E*2        NE*2       S*2        ()
     SRM.Club                       PAP.Subject                    NE*2       E*2 + N*3  S          ()
-    SRM.Crew_Member                SRM.Boat_in_Regatta            NE         (0,0)      NE         (((1, 1), (0, 0), (0, 1)), ((0, 1), (1, 0), (0, 1)))
-    SRM.Crew_Member                SRM.Sailor                     NE         N*2        SE         (((1, 1), (0, 0), (0, -1)), ((0, 1), (1, 0), (0, -1)))
+    SRM.Crew_Member                SRM.Boat_in_Regatta            NE         (0,0)      NE         (((0, 1), (1, 0)),)
+    SRM.Crew_Member                SRM.Sailor                     NE         N*2        SE         (((0, 1), (1, 0)),)
+    SRM.Sailor                     SRM.Club                       N*2        NE*2       W*2        ()
+    SRM.Sailor                     PAP.Person                     N*2        N*3        S          ()
     SRM.Team_has_Boat_in_Regatta   SRM.Team                       S          S*2        N          ()
     SRM.Team_has_Boat_in_Regatta   SRM.Boat_in_Regatta            S          (0,0)      S          ()
     SRM.Team                       SRM.Regatta_C                  S*2        E + S*2    W          ()
     SRM.Regatta_C                  SRM.Regatta                    E + S*2    E          S*2        ()
-    SRM.Race_Result                SRM.Boat_in_Regatta            SW         (0,0)      SW         (((1, 1), (0, 0), (0, -1)), ((0, 1), (1, 0), (0, -1)))
-    SRM.Sailor                     SRM.Club                       N*2        NE*2       W*2        ()
-    SRM.Sailor                     PAP.Person                     N*2        N*3        S          ()
+    SRM.Race_Result                SRM.Boat_in_Regatta            SW         (0,0)      SW         (((1, 1), (0, 0), (0, -0.5)), ((0, 1), (1, 0), (0, -0.5)))
     PAP.Person                     PAP.Subject                    N*3        E*2 + N*3  W*2        ()
 
     >>> ar.max_x_spec, ar.max_y_spec
@@ -236,11 +236,11 @@ _test_code = """
     <Graph.Object SRM.Regatta_Event>              (160, 48)    (2, 0)
     <Graph.Object SRM.Club>                       (160, 24)    (2, 2)
     <Graph.Link2  SRM.Crew_Member>                (128, 36)    (1, 1)
+    <Graph.Link1  SRM.Sailor>                     (96, 24)     (0, 2)
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (96, 60)     (0, -1)
     <Graph.Link1  SRM.Team>                       (96, 72)     (0, -2)
     <Graph.Link1  SRM.Regatta_C>                  (128, 72)    (1, -2)
     <Graph.Link1  SRM.Race_Result>                (64, 60)     (-1, -1)
-    <Graph.Link1  SRM.Sailor>                     (96, 24)     (0, 2)
     <Graph.Object PAP.Person>                     (96, 12)     (0, 3)
     <Graph.Object PAP.Subject>                    (160, 12)    (2, 3)
 
@@ -253,11 +253,11 @@ _test_code = """
     <Graph.Object SRM.Regatta_Event>              (160, 48)    (160, 28.0) (176.0, 52.0)
     <Graph.Object SRM.Club>                       (160, 24)    (160, 16.0) (176.0, 28.0)
     <Graph.Link2  SRM.Crew_Member>                (128, 36)    (108.0, 28.0) (144.0, 48.0)
+    <Graph.Link1  SRM.Sailor>                     (96, 24)     (96, 16.0) (160.0, 28.0)
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (96, 60)     (96, 52.0) (112.0, 72.0)
     <Graph.Link1  SRM.Team>                       (96, 72)     (96, 72) (128.0, 76.0)
     <Graph.Link1  SRM.Regatta_C>                  (128, 72)    (128, 52.0) (144.0, 76.0)
     <Graph.Link1  SRM.Race_Result>                (64, 60)     (64, 52.0) (100.0, 64.0)
-    <Graph.Link1  SRM.Sailor>                     (96, 24)     (96, 16.0) (160.0, 28.0)
     <Graph.Object PAP.Person>                     (96, 12)     (96, 12) (160.0, 16.0)
     <Graph.Object PAP.Subject>                    (160, 12)    (160, 12) (176.0, 16.0)
 
@@ -273,13 +273,13 @@ _test_code = """
     IS_A IS_A_PAP.Subject <Graph.Object SRM.Club> <Graph.Object PAP.Subject>
     Role left <Graph.Link2  SRM.Crew_Member> <Graph.Link2  SRM.Boat_in_Regatta>
     Role right <Graph.Link2  SRM.Crew_Member> <Graph.Link1  SRM.Sailor>
+    Attr club <Graph.Link1  SRM.Sailor> <Graph.Object SRM.Club>
+    Role left <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
     Role left <Graph.Link2  SRM.Team_has_Boat_in_Regatta> <Graph.Link1  SRM.Team>
     Role right <Graph.Link2  SRM.Team_has_Boat_in_Regatta> <Graph.Link2  SRM.Boat_in_Regatta>
     Role left <Graph.Link1  SRM.Team> <Graph.Link1  SRM.Regatta_C>
     IS_A IS_A_SRM.Regatta <Graph.Link1  SRM.Regatta_C> <Graph.Link1  SRM.Regatta>
     Role left <Graph.Link1  SRM.Race_Result> <Graph.Link2  SRM.Boat_in_Regatta>
-    Attr club <Graph.Link1  SRM.Sailor> <Graph.Object SRM.Club>
-    Role left <Graph.Link1  SRM.Sailor> <Graph.Object PAP.Person>
     IS_A IS_A_PAP.Subject <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
     >>> print clean_rendered (ar.render ())
@@ -303,23 +303,23 @@ _test_code = """
                                                                                                         :       |                                                           :
                                                                                                         :       |                                                           :
                                                                                                         :       |                                                           :
-                                                                                                        :       +-----------------------+                                   :
-                                                                                                        :                               |                                   :
-                                                                                                        :                               |                                   :
-                                                                                                        :                               |                                   :
-                                                                                                        :                           +---^-----------+                       :
-                                                                                                        :                           | SRM.Crew      |                       :
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                   +---------------+                       :
+                                                                                                        :       +-------------------< SRM.Crew      |                       :
                                                                                                         :                           |  _Member      |                       :
-                                                                                                        :                           |               |                       :
-                                                                                                        :                           +---v-----------+                       :
-                                                                                                        :                               |                                   :
-                                                                                                        :                               |                                   :
-                                                                                                        :                               |                                   :
-                                                                                                        :       +-----------------------+                                   :
+                                                                                                        :       +-------------------<               |                       :
+                                                                                                        :       |                   +---------------+                       :
                                                                                                         :       |                                                           :
                                                                                                         :       |                                                           :
                                                                                                         :       |                                                           :
-                                    +---------------+               +---------------+               +---^-------v---+               +---------------+               +-------^-------+
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                                                           :
+                                                                                                        :       |                                                           :
+                                    +---------------+               +---------------+               +---^-------<---+               +---------------+               +-------^-------+
                                     | SRM.Boat      |               | SRM.Boat      |               | _in_          |               | SRM.Regatta   |               | SRM.Regatta   |
                                     |  _Class       |---------------<               |---------------<               >---------------|               >---------------|  _Event       |
                                     |               |               |               |               |               |               |               |               |               |
@@ -327,9 +327,9 @@ _test_code = """
                                                                                                         |       |                           .
                                                                                                         |       |                           .
                                                                                                         |       |                           .
+                                                                                                        |       |                           .
+                                                                                                        |       |                           .
                                                                                 +-----------------------+       |                           .
-                                                                                |                               |                           .
-                                                                                |                               |                           .
                                                                                 |                               |                           .
                                                                     +-----------^---+               +-----------^---+                       .
                                                                     | SRM.Race      |               | _has_         |                       .
@@ -364,25 +364,37 @@ _test_code = """
     <Graph.Object SRM.Regatta_Event>              (1600, 1200) (1600, 700.0) (1760.0, 1300.0)
     <Graph.Object SRM.Club>                       (1600, 600)  (1600, 400.0) (1760.0, 700.0)
     <Graph.Link2  SRM.Crew_Member>                (1280, 900)  (1080.0, 700.0) (1440.0, 1200.0)
+    <Graph.Link1  SRM.Sailor>                     (960, 600)   (960, 400.0) (1600.0, 700.0)
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (960, 1500)  (960, 1300.0) (1120.0, 1800.0)
     <Graph.Link1  SRM.Team>                       (960, 1800)  (960, 1800) (1280.0, 1900.0)
     <Graph.Link1  SRM.Regatta_C>                  (1280, 1800) (1280, 1300.0) (1440.0, 1900.0)
     <Graph.Link1  SRM.Race_Result>                (640, 1500)  (640, 1300.0) (1000.0, 1600.0)
-    <Graph.Link1  SRM.Sailor>                     (960, 600)   (960, 400.0) (1600.0, 700.0)
     <Graph.Object PAP.Person>                     (960, 300)   (960, 300) (1600.0, 400.0)
     <Graph.Object PAP.Subject>                    (1600, 300)  (1600, 300) (1760.0, 400.0)
-
-    >>> with open ("/tmp/srm.svg", "wb") as f :
-    ...    sr.canvas.write_to_xml_stream (f)
 
 
 """
 
+_test_svg = """
+    >>> from _GTW._OMP._SRM.Graph import graph
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> g  = graph (scope.app_type)
+    >>> sr = SVG_Renderer (g)
+    >>> _  = sr.render ()
+    >>> with open ("/tmp/srm.svg", "wb") as f :
+    ...    sr.canvas.write_to_xml_stream (f)
+
+"""
+
 from _GTW.__test__.model        import *
-from _GTW._OMP._SRM.Graph       import graph
 
 from _MOM._Graph.Ascii          import Renderer as Ascii_Renderer
 from _MOM._Graph.SVG            import Renderer as SVG_Renderer
+from _MOM._Graph.Spec           import Attr, Child, ET, IS_A, Role, Skip
+
+from _TFL._D2                   import Cardinal_Direction as CD
 
 from _TFL.Regexp                import Regexp, Multi_Re_Replacer, Re_Replacer, re
 
@@ -391,6 +403,54 @@ clean_rendered = Multi_Re_Replacer \
     , Re_Replacer ("(\n *)+$", "")
     )
 
-__test__ = Scaffold.create_test_dict (_test_code)
+def graph (app_type) :
+    return MOM.Graph.Spec.Graph \
+        ( app_type
+        , ET.SRM.Boat_in_Regatta
+            ( Role.left
+                ( Role.left (offset = CD.W)
+                , offset = CD.W
+                )
+            , Role.right
+                ( Role.left
+                    ( Attr.club (offset = CD.N * 2)
+                    , offset = CD.E
+                    )
+                , offset = CD.E
+                )
+            , ET.SRM.Crew_Member
+                ( Role.left  (anchor = False, source_side = "W")
+                , Role.right (anchor = False, source_side = "W")
+                , offset = CD.NE
+                )
+            , ET.SRM.Team_has_Boat_in_Regatta
+                ( Role.left
+                    ( ET.SRM.Regatta_C
+                        ( IS_A.SRM.Regatta
+                        , offset = CD.E
+                        )
+                    , offset = CD.S
+                    )
+                , offset = CD.S
+                )
+            , ET.SRM.Race_Result (offset = CD.SW)
+            , Attr.skipper
+                ( Role.left
+                    ( IS_A.PAP.Subject (offset = CD.E * 2)
+                    , offset = CD.N
+                    )
+                , Attr.club (IS_A.PAP.Subject)
+                , offset = CD.N * 2
+                )
+            )
+        )
+# end def graph
+
+__test__ = Scaffold.create_test_dict \
+  ( dict
+      ( main = _test_code
+      , svg  = _test_svg
+      )
+  )
 
 ### __END__ GTW.__test__.SRM_Graph

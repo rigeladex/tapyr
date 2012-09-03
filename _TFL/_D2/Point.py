@@ -45,6 +45,7 @@
 #    20-Aug-2012 (CT) Sort methods alphabetically
 #    21-Aug-2012 (CT) Move `transformed` to `_Point_`, let it return `Point`
 #    21-Aug-2012 (CT) Change shift to unpack `right`
+#     3-Sep-2012 (CT) Add `_Point_.free`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,11 @@ import  math
 
 class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
+
+    @property
+    def free (self) :
+        return Point (self.x, self.y)
+    # end def free
 
     @property
     def norm (self) :
@@ -177,6 +183,11 @@ class _R_Point_ (_Point_) :
     """Base class for Points positioned relative to another point."""
 
     Point = Point
+
+    @property
+    def free (self) :
+        return self.Point (self.x, self.y)
+    # end def free
 
     @property
     def x (self) :

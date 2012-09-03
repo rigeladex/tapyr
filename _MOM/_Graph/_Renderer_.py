@@ -29,6 +29,7 @@
 #    19-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Add `Link.points`, `_Renderer_.render_link`
 #    29-Aug-2012 (CT) Factor `render_link`, `_render_node` to descendants
+#     3-Sep-2012 (CT) Factor `points_gen` to `Relation`
 #    ««revision-date»»···
 #--
 
@@ -83,20 +84,11 @@ class Link (TFL.Meta.Object) :
     # end def min_y
 
     def _points (self, relation, source, target) :
-        guides   = relation.guides
-        head     = self._ref_point (source, relation.source_connector)
-        tail     = self._ref_point (target, relation.target_connector)
-        yield head
-        if guides :
-            for g in guides :
-                if len (g) == 3 :
-                    wh, wt = g [:2]
-                    offset = source.renderer.node_size * g [-1]
-                else :
-                    wh, wt = g
-                    offset = D2.Point (0, 0)
-                yield head * wh + tail * wt + offset
-        yield tail
+        return relation.points_gen \
+            ( self._ref_point (source, relation.source_connector)
+            , self._ref_point (target, relation.target_connector)
+            , source.renderer.node_size
+            )
     # end def _points
 
     def _ref_point (self, node, connector) :
