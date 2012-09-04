@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2000-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -88,7 +88,6 @@ class Regexp (TFL.Meta.Object) :
             pattern      = re.compile (pattern, flags or self.default_flags)
         self._pattern    = pattern
         self.last_match  = None
-        self.all_matches = None
     # end def __init__
 
     def match (self, string, pos = 0, endpos = None) :
@@ -181,7 +180,6 @@ class Multi_Regexp :
     def __init__ (self, * patterns, ** kw) :
         self.patterns    = []
         self.last_match  = None
-        self.all_matches = None
         add              = self.patterns.append
         for p in patterns :
             if isinstance (p, (str, unicode)) :
