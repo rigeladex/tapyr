@@ -36,6 +36,7 @@
 #    18-Jun-2012 (CT) Add `M_E_Type_Object_Reload`
 #     1-Aug-2012 (CT) Add `M_E_Type_Object_Destroyed`
 #    17-Aug-2012 (CT) Add `role_map`
+#     4-Sep-2012 (CT) Move `Roles` and `role_map` to `M_Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -56,16 +57,6 @@ class M_Object (MOM.Meta.M_Id_Entity) :
         cls.__m_super.__init__         (name, bases, dct)
         cls.epk_split_pat = TFL.Regexp (cls.epk_split_characters)
     # end def __init__
-
-    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
-        result = cls.__m_super._m_new_e_type_dict \
-            ( app_type, etypes, bases
-            , Roles         = ()
-            , role_map      = {}
-            , ** kw
-            )
-        return result
-    # end def _m_new_e_type_dict
 
 # end class M_Object
 

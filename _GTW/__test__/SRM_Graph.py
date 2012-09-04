@@ -375,6 +375,18 @@ _test_code = """
 
 """
 
+_test_guides = """
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> g  = graph_guides (scope.app_type)
+    >>> sr = SVG_Renderer (g)
+    >>> _  = sr.render ()
+    >>> with open ("/tmp/guides.svg", "wb") as f :
+    ...    sr.canvas.write_to_xml_stream (f)
+"""
+
 _test_svg = """
     >>> from _GTW._OMP._SRM.Graph import graph
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -402,6 +414,31 @@ clean_rendered = Multi_Re_Replacer \
     ( Re_Replacer ("^( *\n)+", "")
     , Re_Replacer ("(\n *)+$", "")
     )
+
+def graph_guides (app_type) :
+    return MOM.Graph.Spec.Graph \
+        ( app_type
+        , ET.PAP.Entity_created_by_Person
+           ( Role.left (offset = CD.S)
+           , Role.right
+               ( IS_A.PAP.Subject (offset = CD.N)
+               , ET.PAP.Person_has_Address
+                   ( Role.right (offset = CD.N)
+                   , offset = CD.NE
+                   )
+               , ET.PAP.Person_has_Email
+                   ( Role.right (offset = CD.N)
+                   , offset = CD.N + CD.E * 2
+                   )
+               , ET.PAP.Person_has_Phone
+                   ( Role.right (offset = CD.N)
+                   , offset = CD.N + CD.E * 3
+                   )
+               , offset = CD.S + CD.E
+               )
+           )
+        )
+# end def graph_guides
 
 def graph (app_type) :
     return MOM.Graph.Spec.Graph \
@@ -448,8 +485,9 @@ def graph (app_type) :
 
 __test__ = Scaffold.create_test_dict \
   ( dict
-      ( main = _test_code
-      , svg  = _test_svg
+      ( main    = _test_code
+      , guides  = _test_guides
+      , svg     = _test_svg
       )
   )
 

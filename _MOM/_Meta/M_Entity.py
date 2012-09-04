@@ -142,6 +142,8 @@
 #    11-Aug-2012 (CT) Add `Ref_Map` (union of `Ref_Opt_Map` and `Ref_Req_Map`)
 #    11-Aug-2012 (CT) Fix `_calc_ref_map` (`k.type_name`, `if v`)
 #    12-Aug-2012 (CT) Add `use_indices`
+#     4-Sep-2012 (CT) Add `Roles` and `role_map` to
+#                     `M_Id_Entity._m_new_e_type_dict`
 #    ««revision-date»»···
 #--
 
@@ -545,6 +547,8 @@ class M_Id_Entity (M_Entity) :
             , epkified_raw     = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
             , is_relevant      = cls.is_relevant or (not cls.is_partial)
+            , Roles            = ()
+            , role_map         = {}
             , _all_ref_map     = None
             , _all_ref_opt_map = None
             , _all_ref_req_map = None

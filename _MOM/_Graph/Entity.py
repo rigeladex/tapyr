@@ -33,6 +33,7 @@
 #    31-Aug-2012 (CT) Restructure API, auto-skip inherited roles
 #     3-Sep-2012 (CT) Add support for `relation.side`
 #     3-Sep-2012 (CT) Revamp placing of relations connectors and guides
+#     4-Sep-2012 (CT) Add `Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -537,6 +538,12 @@ class Entity (TFL.Meta.Object) :
     # end def __str__
 
 # end class Entity
+
+@TFL.Add_To_Class ("Graph_Type", MOM.Id_Entity)
+class Id_Entity (Entity) :
+    """Model display of a MOM.Id_Entity in a MOM graph"""
+
+# end class Id_Entity
 
 @TFL.Add_To_Class ("Graph_Type", MOM.Object)
 class Object (Entity) :
