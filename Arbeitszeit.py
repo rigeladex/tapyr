@@ -32,6 +32,7 @@
 #                     `before` (and display the [corrected] `vacation`)
 #     4-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#     4-Sep-2012 (CT) Fix bugs, factor functions, add optional fields
 #    ««revision-date»»···
 #--
 
@@ -55,12 +56,18 @@ import _CAL.Year
 class _Entry_ (TFL.Meta.Object) :
     """Base class for entries"""
 
-    free = 0.0
-    sick = 0.0
-    work = 0.0
+    free    = 0.0
+    sick    = 0.0
+    work    = 0.0
 
-    def __init__ (self, date, text = "") :
-        if isinstance (date, str) :
+    project = None
+    start   = None
+    task    = None
+
+    def __init__ (self, date, text = "", ** kw) :
+        self.pop_to_self (kw, "project", "start", "task")
+        self._kw = kw
+        if isinstance (date, basestring) :
             date = CAL.Date.from_string (date)
         self.date = date
         self.text = text
@@ -71,6 +78,13 @@ class _Entry_ (TFL.Meta.Object) :
         return self.date.formatted ("%d-%m-%Y")
     # end def formatted_date
 
+    def __getattr__ (self, name) :
+        try :
+            return self._kw [name]
+        except KeyError :
+            raise AttributeError (name)
+    # end def __getattr__
+
 # end class _Entry_
 
 class _Hour_Entry_ (_Entry_) :
@@ -79,8 +93,8 @@ class _Hour_Entry_ (_Entry_) :
     default_hours = 5
     granularity   = 0.25
 
-    def __init__ (self, date, hours = None, text = "") :
-        self.__super.__init__ (date, text)
+    def __init__ (self, date, hours = None, text = "", ** kw) :
+        self.__super.__init__ (date, text, ** kw)
         if hours is None :
             hours = self.default_hours
         self.hours = rounded_to (float (hours), self.granularity)
@@ -117,8 +131,8 @@ class Free (_Entry_) :
     free        = property (TFL.Getter.days)
     granularity = 1.0
 
-    def __init__ (self, date, days, text = "") :
-        self.__super.__init__ (date, text)
+    def __init__ (self, date, days, text = "", ** kw) :
+        self.__super.__init__ (date, text, ** kw)
         self.days = rounded_to (float (days), self.granularity)
     # end def __init__
 
@@ -152,12 +166,14 @@ class Period (TFL.Meta.Object) :
     def formatted_date (self) :
         h, t   = self.entries [0], self.entries [-1]
         hd, td = h.date, t.date
-        if hd.week == td.week :
-            return "KW %2.2d/%4d" % (hd.week, hd.year)
+        if len (self.entries) == 1 :
+            return "%2.2d/%2.2d/%4d" % (hd.day, hd.month, hd.year)
+        elif hd.week == td.week :
+            return "KW %2.2d/%4d"    % (hd.week, hd.year)
         elif hd.month == td.month :
-            return "%2.2d/%4d"    % (hd.month, hd.year)
+            return "MJ %2.2d/%4d"    % (hd.month, hd.year)
         else:
-            return "%s .. %s" % (h.formatted_date, t.formatted_date)
+            return "%s .. %s"        % (h.formatted_date, t.formatted_date)
     # end def formatted_date
 
     @Once_Property
@@ -196,6 +212,45 @@ class Period (TFL.Meta.Object) :
     # end def __str__
 
 # end class Period
+
+def eval_scope (** kw) :
+    result = dict \
+        ( Work = Work
+        , Sick = Sick
+        , Free = Free
+        )
+    result.update (kw)
+    return result
+# end def eval_scope
+
+def load_entries (file_name) :
+    with open (file_name) as f :
+         return TFL.r_eval (f.read (), ** eval_scope ())
+# end def load_entries
+
+def load_period \
+        ( file_name
+        , splitter = None
+        , before   = None
+        , after    = None
+        , D_Period = Period
+        ) :
+    entries  = load_entries (file_name)
+    if after :
+        entries = filter (lambda e : e.date >= after, entries)
+    if before :
+        entries = filter (lambda e : e.date <= before, entries)
+    days  = [D_Period (d) for d in dusplit (entries, TFL.Getter.date)]
+    units = [Period (w) for w in dusplit (days, splitter)] if splitter else days
+    return Period (units)
+# end def load_period
+
+def load_periods (file_names, splitter = None, before = None, after = None) :
+    result = []
+    for f in file_names :
+        result.extend (load_period (f, splitter, before, after).entries)
+    return Period (result)
+# end def load_periods
 
 def _main (cmd) :
     from _TGL.load_config_file import load_config_file
@@ -248,19 +303,9 @@ def _main (cmd) :
             )
         print form % \
             (year, d_range, workdays, holidays, vacation, workdays * cmd.hpd)
-    if cmd.zeiterfassung :
-        with open (cmd.zeiterfassung) as f :
-            entries = TFL.r_eval (f.read ())
-        splitter = TFL.Getter.date.month
-        if cmd.Weekly :
-            splitter = TFL.Getter.date.week
-        if cmd.after :
-            entries = filter (lambda e : e.date >= cmd.after, entries)
-        if cmd.before :
-            entries = filter (lambda e : e.date <= cmd.before, entries)
-        days  = [Period (d) for d in dusplit (entries, TFL.Getter.date)]
-        units = [Period (w) for w in dusplit (days, splitter)]
-        P = Period (units)
+    if cmd.argv :
+        splitter = TFL.Getter.date.week if cmd.Weekly else TFL.Getter.date.month
+        P   = load_periods (cmd.argv, splitter, cmd.before, cmd.after)
         tot = str (P)
         print P.format % \
             ("Periode", "Arbeit [h]", "Krank [h]", "Total [h]", "Urlaubstage")
@@ -278,7 +323,6 @@ _Command = TFL.CAO.Cmd \
         ,
         )
     , min_args    = 0
-    , max_args    = 1
     , opts        =
         ( TFL.CAO.Opt.Date
             ( name        = "after"
