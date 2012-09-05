@@ -80,6 +80,10 @@ class _Point_ (TFL.Meta.Object) :
         return Point (* affine (self))
     # end def transformed
 
+    def __abs__ (self) :
+        return Point (abs (self.x), abs (self.y))
+    # end def __abs__
+
     def __getitem__ (self, index) :
         """Returns `x` for `index == 0` and `y` for `index == 1`"""
         return (self.x, self.y) [index]
@@ -129,6 +133,10 @@ class Point (_Point_) :
         (self.x, self.y) = (self.x + dx, self.y + dy)
         return self
     # end def shift
+
+    def __abs__ (self) :
+        return self.__class__ (abs (self.x), abs (self.y))
+    # end def __abs__
 
     def __add__  (self, right) :
         try :

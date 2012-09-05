@@ -29,7 +29,8 @@
 #    29-Aug-2012 (CT) Creation
 #    31-Aug-2012 (RS) Add kludge to appease inkscape
 #    31-Aug-2012 (CT) Put lipstick on the kludge (use `no_alpha`)
-#    31-Aug-2012 (RS) store `link_markers` in lowercase, fixes missing markers
+#    31-Aug-2012 (RS) Store `link_markers` in lowercase, fixes missing markers
+#     5-Sep-2012 (CT) Move `label` to second segment of link if first is short
 #    ««revision-date»»···
 #--
 
@@ -138,11 +139,17 @@ class Renderer (MOM.Graph._Renderer_) :
         colr = getattr (P.color, "%s_link" % lkind)
         paid = "%s::path" % (rel.rid, )
         p, q = link.points [:2]
-        anchor, offset = "start", "10%"
-        if p.x > q.x :
+        p_q  = p - q
+        anchor, off = "start", 10
+        if max (abs (p_q)) < 5 * P.font_char_width and len (link.points) > 2 :
+            p, q = link.points [1:3]
+            p_q  = p - q
+            off  = 2
+        if p_q.x > 0 :
             p, q = q, p
-            anchor, offset = "end", "90%"
-        path = SVG.Path \
+            anchor, off = "end", 90
+        offset = "%d%%" % off
+        path   = SVG.Path \
             ( d            = (p, q)
             , elid         = paid
             , fill         = "none"
@@ -163,7 +170,7 @@ class Renderer (MOM.Graph._Renderer_) :
             , SVG.Text
                 ( SVG.Text_Path
                     ( SVG.Tspan
-                        (rel.label, dy = - P.font_char_width)
+                        (rel.label, dy = - P.font_char_width * 3 // 4)
                     , start_offset       = offset
                     , text_anchor        = anchor
                     , xlink_href         = "#%s" % paid
