@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Aug-2012 (CT) Creation
 #    26-Aug-2012 (CT) Add `Canvas.line`, `Ascii.render_link`
+#     5-Sep-2012 (CT) Add `_clean_rendered`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ import _MOM._Graph.Entity
 import _MOM._Graph.Relation
 
 from   _TFL.predicate         import pairwise
+from   _TFL.Regexp            import Regexp, Multi_Re_Replacer, Re_Replacer, re
 from   _TFL._D2               import D2, Cardinal_Direction as CD
 import _TFL._D2.Point
 import _TFL._D2.Rect
@@ -50,6 +52,13 @@ import _TFL._Meta.Once_Property
 
 class Canvas (TFL.Meta.Object) :
     """Canvas for ASCII renderer"""
+
+    _clean_empty = Multi_Re_Replacer \
+        ( Re_Replacer ("^( *\n)+", "")
+        , Re_Replacer ("(\n *)+$", "")
+        )
+
+    _leading_ws = Regexp ( r"^( +)\S", re.MULTILINE)
 
     def __init__ (self, min_x, min_y, max_x, max_y) :
         self._body = list ([" "] * max_x for i in range (max_y))
@@ -76,12 +85,24 @@ class Canvas (TFL.Meta.Object) :
     # end def rectangle
 
     def rendered (self) :
-        return "\n".join ("".join (l).rstrip () for l in self._body)
+        result = "\n".join ("".join (l).rstrip () for l in self._body)
+        return self._clean_rendered (result)
     # end def rendered
 
     def text (self, p, v) :
         self [p] = v
     # end def text
+
+    def _clean_rendered (self, s) :
+        result = self._clean_empty (s)
+        leads  = tuple \
+            (len (m.group (1)) for m in self._leading_ws.search_iter (result))
+        if leads :
+            l = min (leads)
+            regexp = Regexp ("^( {%d})" % l, re.MULTILINE)
+            result = regexp.sub ("", result)
+        return result
+    # end def _clean_rendered
 
     def _line_h (self, line, char = None) :
         if char is None :

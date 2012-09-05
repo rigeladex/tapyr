@@ -34,6 +34,7 @@
 #     3-Sep-2012 (CT) Add support for `relation.side`
 #     3-Sep-2012 (CT) Revamp placing of relations connectors and guides
 #     4-Sep-2012 (CT) Add `Id_Entity`
+#     5-Sep-2012 (CT) Add `improve_connectors`, `add_guides` -> `set_guides`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,8 @@ import _MOM.import_MOM
 import _MOM._Graph.Relation
 
 from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL.Math_Func         import sign
+from   _TFL.multimap          import mm_list
 from   _TFL.predicate         import dusplit
 from   _TFL.Regexp            import Regexp, re
 
@@ -112,6 +115,23 @@ class Rel_Placer (TFL.Meta.Object) :
             self.rels.append (rels)
             self.slack -= 1
         # end def add
+
+        def improve_connectors (self) :
+            map = mm_list ()
+            for r in self.rels :
+                if len (r.points) > 3 :
+                    p   = r.points [-2]
+                    key = \
+                        ( sign (getattr (r.delta, self.other_dim))
+                        , getattr (p, self.dim)
+                        )
+                    map [key].append (r)
+            for k, rs in map.iteritems () :
+                step = k [0] * self.sort_sign
+                if len (rs) > 1 :
+                    for i, r in enumerate (rs [1::step]) :
+                        r.shift_guide (i + 1)
+        # end def improve_connectors
 
         def is_opposite (self, other) :
             return self.opposite_name == other.name
@@ -460,12 +480,6 @@ class Entity (TFL.Meta.Object) :
         return self
     # end def __call__
 
-    def add_guides (self) :
-        """Add guide points to relations in `self.rel_map`."""
-        for r in self.rel_map.itervalues () :
-            r.add_guides ()
-    # end def add_guides
-
     def add_relation (self, rel, other, R_Type, ** kw) :
         r_name = getattr (rel, "name", rel)
         try :
@@ -510,6 +524,12 @@ class Entity (TFL.Meta.Object) :
             kw ["offset"] = offset
         return self (** kw)
     # end def instantiate
+
+    def set_guides (self) :
+        """Set guide points to relations in `self.rel_map`."""
+        for r in self.rel_map.itervalues () :
+            r.set_guides ()
+    # end def set_guides
 
     def setup_links (self) :
         self.placer = Rel_Placer (self)

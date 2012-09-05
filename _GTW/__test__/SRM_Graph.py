@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Aug-2012 (CT) Creation
+#     5-Sep-2012 (CT) Add tests for connection guides
 #    ««revision-date»»···
 #--
 
@@ -212,7 +213,7 @@ _test_code = """
     SRM.Team_has_Boat_in_Regatta   SRM.Boat_in_Regatta            S          (0,0)      S          ()
     SRM.Team                       SRM.Regatta_C                  S*2        E + S*2    W          ()
     SRM.Regatta_C                  SRM.Regatta                    E + S*2    E          S*2        ()
-    SRM.Race_Result                SRM.Boat_in_Regatta            SW         (0,0)      SW         (((1, 1), (0, 0), (0, -0.5)), ((0, 1), (1, 0), (0, -0.5)))
+    SRM.Race_Result                SRM.Boat_in_Regatta            SW         (0,0)      SW         (((1, 1), (0, 0), (0, -0.25)), ((0, 1), (1, 0), (0, -0.25)))
     PAP.Person                     PAP.Subject                    N*3        E*2 + N*3  W*2        ()
 
     >>> ar.max_x_spec, ar.max_y_spec
@@ -282,72 +283,72 @@ _test_code = """
     Role left <Graph.Link1  SRM.Race_Result> <Graph.Link2  SRM.Boat_in_Regatta>
     IS_A IS_A_PAP.Subject <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
-    >>> print clean_rendered (ar.render ())
-                                                                                                    +---------------+                                               +---------------+
-                                                                                                    | PAP.Person    |                                               | PAP.Subject   |
-                                                                                                    |               >...............................................|               |
-                                                                                                    |               |                                               |               |
-                                                                                                    +---------------+                                               +---------------+
-                                                                                                            |                                                               .
-                                                                                                            |                                                               .
-                                                                                                            |                                                               .
-                                                                                                            |                                                               .
-                                                                                                            |                                                               .
-                                                                                                            |                                                               .
-                                                                                                            |                                                               .
-                                                                                                    +-------^-------+                                               +-------^-------+
-                                                                                                    | SRM.Sailor    |                                               | SRM.Club      |
-                                                                                                    |               >_______________________________________________>               |
-                                                                                                    |               |                                               |               |
-                                                                                                    +---------------+                                               +---------------+
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                   +---------------+                       :
-                                                                                                        :       +-------------------< SRM.Crew      |                       :
-                                                                                                        :                           |  _Member      |                       :
-                                                                                                        :       +-------------------<               |                       :
-                                                                                                        :       |                   +---------------+                       :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                                                                                        :       |                                                           :
-                                    +---------------+               +---------------+               +---^-------<---+               +---------------+               +-------^-------+
-                                    | SRM.Boat      |               | SRM.Boat      |               | _in_          |               | SRM.Regatta   |               | SRM.Regatta   |
-                                    |  _Class       |---------------<               |---------------<               >---------------|               >---------------|  _Event       |
-                                    |               |               |               |               |               |               |               |               |               |
-                                    +---------------+               +---------------+               +---^-------^---+               +-------^-------+               +---------------+
-                                                                                                        |       |                           .
-                                                                                                        |       |                           .
-                                                                                                        |       |                           .
-                                                                                                        |       |                           .
-                                                                                                        |       |                           .
-                                                                                +-----------------------+       |                           .
-                                                                                |                               |                           .
-                                                                    +-----------^---+               +-----------^---+                       .
-                                                                    | SRM.Race      |               | _has_         |                       .
-                                                                    |  _Result      |               |               |                       .
-                                                                    |               |               |               |                       .
-                                                                    +---------------+               +-------v-------+                       .
-                                                                                                            |                               .
-                                                                                                            |                               .
-                                                                                                            |                               .
-                                                                                                            |                               .
-                                                                                                            |                               .
-                                                                                                            |                               .
-                                                                                                            |                               .
-                                                                                                    +---------------+               +-------^-------+
-                                                                                                    | SRM.Team      |               | SRM.Regatta_C |
-                                                                                                    |               >---------------|               |
-                                                                                                    |               |               |               |
-                                                                                                    +---------------+               +---------------+
+    >>> print ar.render ()
+                                                                    +---------------+                                               +---------------+
+                                                                    | PAP.Person    |                                               | PAP.Subject   |
+                                                                    |               >...............................................|               |
+                                                                    |               |                                               |               |
+                                                                    +---------------+                                               +---------------+
+                                                                            |                                                               .
+                                                                            |                                                               .
+                                                                            |                                                               .
+                                                                            |                                                               .
+                                                                            |                                                               .
+                                                                            |                                                               .
+                                                                            |                                                               .
+                                                                    +-------^-------+                                               +-------^-------+
+                                                                    | SRM.Sailor    |                                               | SRM.Club      |
+                                                                    |               >_______________________________________________>               |
+                                                                    |               |                                               |               |
+                                                                    +---------------+                                               +---------------+
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                   +---------------+                       :
+                                                                        :       +-------------------< SRM.Crew      |                       :
+                                                                        :                           |  _Member      |                       :
+                                                                        :       +-------------------<               |                       :
+                                                                        :       |                   +---------------+                       :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+                                                                        :       |                                                           :
+    +---------------+               +---------------+               +---^-------<---+               +---------------+               +-------^-------+
+    | SRM.Boat      |               | SRM.Boat      |               | _in_          |               | SRM.Regatta   |               | SRM.Regatta   |
+    |  _Class       |---------------<               |---------------<               >---------------|               >---------------|  _Event       |
+    |               |               |               |               |               |               |               |               |               |
+    +---------------+               +---------------+               +---^-------^---+               +-------^-------+               +---------------+
+                                                                        |       |                           .
+                                                                        |       |                           .
+                                                                        |       |                           .
+                                                                        |       |                           .
+                                                                        |       |                           .
+                                                                        |       |                           .
+                                                +-----------------------+       |                           .
+                                    +-----------^---+               +-----------^---+                       .
+                                    | SRM.Race      |               | _has_         |                       .
+                                    |  _Result      |               |               |                       .
+                                    |               |               |               |                       .
+                                    +---------------+               +-------v-------+                       .
+                                                                            |                               .
+                                                                            |                               .
+                                                                            |                               .
+                                                                            |                               .
+                                                                            |                               .
+                                                                            |                               .
+                                                                            |                               .
+                                                                    +---------------+               +-------^-------+
+                                                                    | SRM.Team      |               | SRM.Regatta_C |
+                                                                    |               >---------------|               |
+                                                                    |               |               |               |
+                                                                    +---------------+               +---------------+
 
 
     >>> sr = SVG_Renderer (g)
@@ -375,16 +376,237 @@ _test_code = """
 
 """
 
-_test_guides = """
+_test_guides_EN = """
 
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> g  = graph_guides (scope.app_type)
-    >>> sr = SVG_Renderer (g)
-    >>> _  = sr.render ()
-    >>> with open ("/tmp/guides.svg", "wb") as f :
+    >>> g_EN = graph_guides (scope.app_type, "E", "N")
+    >>> ar   = Ascii_Renderer (g_EN)
+    >>> sr   = SVG_Renderer (g_EN)
+    >>> _    = sr.render ()
+    >>> with open ("/tmp/guides_EN.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
+    >>> print ar.render () ### EN
+                                    +---------------+               +---------------+
+                                    | _has_         |               | PAP.Phone     |
+                                    |               >---------------|               |
+                        +-----------<               |               |               |
+                        |           +---------------+               +---------------+
+                        |
+                        |
+                        |
+                        |
+                        |
+                        |
+                        |
+                        |           +---------------+               +---------------+
+                        |           | _has_         |               | PAP.Email     |
+                        |   +-------<               >---------------|               |
+                        |   |       |               |               |               |
+                        |   |       +---------------+               +---------------+
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |       +---------------+               +---------------+
+                        |   |   +---< _has_         |               | PAP.Address   |
+                        |   |   |   |               >---------------|               |
+                        |   |   |   |               |               |               |
+                        |   |   |   +---------------+               +---------------+
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+    +---------------<---+   |   |   +---------------+
+    | PAP.Person    <-------+   |   | PAP.Subject   |
+    |               <-----------+   |               |
+    |               >...............|               |
+    +---------------+               +---------------+
+            |
+            |
+            |
+            |
+            |
+            |
+            +-------------------------------+
+    +---------------+               +-------^-------+
+    | MOM.Id_Entity |               | Entity        |
+    |       |       |               |  _created_by_ |
+    |       |       |               |               |
+    +---------------+               +-------v-------+
+            +-------------------------------+
+
+    >>> scope.destroy ()
+
+"""
+
+_test_guides_ES = """
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> g_ES = graph_guides (scope.app_type, "E", "S")
+    >>> ar   = Ascii_Renderer (g_ES)
+    >>> sr   = SVG_Renderer (g_ES)
+    >>> _    = sr.render ()
+    >>> with open ("/tmp/guides_ES.svg", "wb") as f :
+    ...    sr.canvas.write_to_xml_stream (f)
+    >>> print ar.render () ### ES
+            +-------------------------------+
+    +---------------+               +-------^-------+
+    | MOM.Id_Entity |               | Entity        |
+    |       |       |               |  _created_by_ |
+    |       |       |               |               |
+    +---------------+               +-------v-------+
+            +-------------------------------+
+            |
+            |
+            |
+            |
+            |
+            |
+    +--------------->...............+---------------+
+    | PAP.Person    <-----------+   | PAP.Subject   |
+    |               <-------+   |   |               |
+    |               <---+   |   |   |               |
+    +---------------+   |   |   |   +---------------+
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |
+                        |   |   |   +---------------+               +---------------+
+                        |   |   |   | _has_         |               | PAP.Address   |
+                        |   |   +---<               >---------------|               |
+                        |   |       |               |               |               |
+                        |   |       +---------------+               +---------------+
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |
+                        |   |       +---------------+               +---------------+
+                        |   +-------< _has_         |               | PAP.Email     |
+                        |           |               >---------------|               |
+                        |           |               |               |               |
+                        |           +---------------+               +---------------+
+                        |
+                        |
+                        |
+                        |
+                        |
+                        |
+                        |
+                        +-----------<---------------+               +---------------+
+                                    | _has_         |               | PAP.Phone     |
+                                    |               >---------------|               |
+                                    |               |               |               |
+                                    +---------------+               +---------------+
+
+    >>> scope.destroy ()
+
+"""
+
+_test_guides_NE = """
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> g_NE = graph_guides (scope.app_type, "N", "E")
+    >>> ar   = Ascii_Renderer (g_NE)
+    >>> sr   = SVG_Renderer (g_NE)
+    >>> _    = sr.render ()
+    >>> with open ("/tmp/guides_NE.svg", "wb") as f :
+    ...    sr.canvas.write_to_xml_stream (f)
+    >>> print ar.render () ### NE
+                                                                        +---------------+               +---------------+               +---------------+
+                                                                        | PAP.Address   |               | PAP.Email     |               | PAP.Phone     |
+                                                                        |               |               |               |               |               |
+                                                                        |               |               |               |               |               |
+                                                                        +---------------+               +---------------+               +---------------+
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+        +---------------+               +---------------+               +-------^-------+               +-------^-------+               +-------^-------+
+        | Entity        |               | PAP.Subject   |               | _has_         |               | _has_         |               | _has_         |
+    +---<  _created_by_ |               |               |               |               |               |               |               |               |
+    |   |               |               |               |               |               |               |               |               |               |
+    |   +-------------v-+               +---------------+               +-------v-------+               +-----v---------+               +-v-------------+
+    |                 +-------------------+   . +-------------------------------+                             |                           |
+    |                                     |   . | +-----------------------------------------------------------+                           |
+    |                                     |   . | |   +-----------------------------------------------------------------------------------+
+    |                                     |   . | |   |
+    |                                     |   . | |   |
+    |                                     |   . | |   |
+    |                                     |   . | |   |
+    |   +---------------+               +-----^-v-v---v-+
+    |   | MOM.Id_Entity |               | PAP.Person    |
+    +---|---------------|               |               |
+        |               |               |               |
+        +---------------+               +---------------+
+
+    >>> scope.destroy ()
+"""
+
+_test_guides_SE = """
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> g_SE = graph_guides (scope.app_type, "S", "E")
+    >>> ar   = Ascii_Renderer (g_SE)
+    >>> sr   = SVG_Renderer (g_SE)
+    >>> _    = sr.render ()
+    >>> with open ("/tmp/guides_SE.svg", "wb") as f :
+    ...    sr.canvas.write_to_xml_stream (f)
+    >>> print ar.render () ### SE
+        +---------------+               +---------------+
+        | MOM.Id_Entity |               | PAP.Person    |
+    +---|---------------|               |               |
+    |   |               |               |               |
+    |   +---------------+               +-----v-^-^---^-+
+    |                                     |   . | |   |
+    |                                     |   . | |   |
+    |                                     |   . | |   |
+    |                                     |   . | |   |
+    |                                     |   . | |   +-----------------------------------------------------------------------------------+
+    |                                     |   . | +-----------------------------------------------------------+                           |
+    |                 +-------------------+   . +-------------------------------+                             |                           |
+    |   +-------------^-+               +---------------+               +-------^-------+               +-----^---------+               +-^-------------+
+    |   | Entity        |               | PAP.Subject   |               | _has_         |               | _has_         |               | _has_         |
+    +---<  _created_by_ |               |               |               |               |               |               |               |               |
+        |               |               |               |               |               |               |               |               |               |
+        +---------------+               +---------------+               +-------v-------+               +-------v-------+               +-------v-------+
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                                |                               |                               |
+                                                                        +---------------+               +---------------+               +---------------+
+                                                                        | PAP.Address   |               | PAP.Email     |               | PAP.Phone     |
+                                                                        |               |               |               |               |               |
+                                                                        |               |               |               |               |               |
+                                                                        +---------------+               +---------------+               +---------------+
+
+    >>> scope.destroy ()
+
 """
 
 _test_svg = """
@@ -408,33 +630,34 @@ from _MOM._Graph.Spec           import Attr, Child, ET, IS_A, Role, Skip
 
 from _TFL._D2                   import Cardinal_Direction as CD
 
-from _TFL.Regexp                import Regexp, Multi_Re_Replacer, Re_Replacer, re
-
-clean_rendered = Multi_Re_Replacer \
-    ( Re_Replacer ("^( *\n)+", "")
-    , Re_Replacer ("(\n *)+$", "")
-    )
-
-def graph_guides (app_type) :
+def graph_guides (app_type, n1 = "N", n2 = "E") :
+    d1 = getattr (CD, n1)
+    d2 = getattr (CD, n2)
     return MOM.Graph.Spec.Graph \
         ( app_type
         , ET.PAP.Entity_created_by_Person
-           ( Role.left (offset = CD.S)
+           ( Role.left (offset = -d1, source_side = str (-d2), target_side = n2)
            , Role.right
-               ( IS_A.PAP.Subject (offset = CD.N)
+               ( IS_A.PAP.Subject
+                   ( offset = d1
+                   , source_side = n1
+                   )
                , ET.PAP.Person_has_Address
-                   ( Role.right (offset = CD.N)
-                   , offset = CD.NE
+                   ( Role.left  (source_side = str (-d1), target_side = n1)
+                   , Role.right (offset = d1)
+                   , offset = d1 + d2
                    )
                , ET.PAP.Person_has_Email
-                   ( Role.right (offset = CD.N)
-                   , offset = CD.N + CD.E * 2
+                   ( Role.left  (source_side = str (-d1), target_side = n1)
+                   , Role.right (offset = d1)
+                   , offset = d1 + d2 * 2
                    )
                , ET.PAP.Person_has_Phone
-                   ( Role.right (offset = CD.N)
-                   , offset = CD.N + CD.E * 3
+                   ( Role.left  (source_side = str (-d1), target_side = n1)
+                   , Role.right (offset = d1)
+                   , offset = d1 + d2 * 3
                    )
-               , offset = CD.S + CD.E
+               , offset = - d1 + d2
                )
            )
         )
@@ -485,9 +708,12 @@ def graph (app_type) :
 
 __test__ = Scaffold.create_test_dict \
   ( dict
-      ( main    = _test_code
-      , guides  = _test_guides
-      , svg     = _test_svg
+      ( main       = _test_code
+      , guides_NE  = _test_guides_NE
+      , guides_EN  = _test_guides_EN
+      , guides_SE  = _test_guides_SE
+      , guides_ES  = _test_guides_ES
+      , svg        = _test_svg
       )
   )
 

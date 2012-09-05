@@ -34,6 +34,7 @@
 #     3-Sep-2012 (CT) Add `side`, `source_side`, and `target_side`
 #     3-Sep-2012 (CT) Add same-side support to `add_guides`
 #     3-Sep-2012 (CT) Reify `Connector`, factor in `points_gen`, add `points`
+#     5-Sep-2012 (CT) Add `shift_guide`, rename `add_guides` to `set_guides`
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,10 @@ class _Reverse_ (_R_Base_) :
         self.reverse.target_connector = connector
     # end def set_connector
 
+    def shift_guide (self, factor) :
+        self.reverse.shift_guide (factor)
+    # end def shift_guide
+
     def __getattr__ (self, name) :
         return getattr (self.reverse, name)
     # end def __getattr__
@@ -162,6 +167,7 @@ class _Reverse_ (_R_Base_) :
 class _Relation_ (_R_Base_) :
     """Base class for relations between MOM entities."""
 
+    guide_offset      = 0.25
     guides            = None
     info              = None
     is_reverse        = False
@@ -173,7 +179,7 @@ class _Relation_ (_R_Base_) :
     _points           = None
 
     def __init__ (self, source, target, * args, ** kw) :
-        self.pop_to_self (kw, "source_side", "target_side")
+        self.pop_to_self (kw, "guide_offset", "source_side", "target_side")
         if kw :
             raise TypeError \
                 ("Unknown arguments %s" % (sorted (kw.iteritems ())))
@@ -230,30 +236,6 @@ class _Relation_ (_R_Base_) :
         return self.source_side
     # end def side
 
-    def add_guides (self) :
-        src_c, trg_c = self.source_connector.side, self.target_connector.side
-        dim          = src_c.dim
-        delta        = self.delta
-        guides       = self.guides = []
-        add          = guides.append
-        if src_c.is_opposite (trg_c) :
-            if getattr (delta, src_c.other_dim) != 0 :
-                p2_a = D2.Point (** {dim : 1})
-                p2_b = D2.Point (* reversed (p2_a))
-                off  = src_c.guide_offset (0.5)
-                add ((D2.Point (1, 1), D2.Point (0, 0), off))
-                add ((p2_a,            p2_b,            off))
-        elif src_c.side == trg_c.side :
-            if getattr (delta, dim) == 0 :
-                off  = src_c.guide_offset (0.25)
-                add ((D2.Point (1, 1), D2.Point (0, 0), off))
-                add ((D2.Point (0, 0), D2.Point (1, 1), off))
-        else :
-            p2_a = src_c.guide_point (0)
-            p2_b = D2.Point (* reversed (p2_a))
-            add ((p2_a, p2_b))
-    # end def add_guides
-
     def points_gen (self, head = None, tail = None, off_scale = 1) :
         if head is None :
             head = self.source.pos
@@ -278,6 +260,37 @@ class _Relation_ (_R_Base_) :
         assert self.source_connector is None
         self.source_connector = connector
     # end def set_connector
+
+    def set_guides (self) :
+        src_c, trg_c = self.source_connector.side, self.target_connector.side
+        dim          = src_c.dim
+        delta        = self.delta
+        guides       = self.guides = []
+        g_offset     = self.guide_offset
+        add          = guides.append
+        self._points = None
+        if src_c.is_opposite (trg_c) :
+            if getattr (delta, src_c.other_dim) != 0 :
+                p2_a = D2.Point (** {dim : 1})
+                p2_b = D2.Point (* reversed (p2_a))
+                off  = src_c.guide_offset (g_offset)
+                add ((D2.Point (1, 1), D2.Point (0, 0), off))
+                add ((p2_a,            p2_b,            off))
+        elif src_c.side == trg_c.side :
+            if getattr (delta, dim) == 0 :
+                off  = src_c.guide_offset (g_offset)
+                add ((D2.Point (1, 1), D2.Point (0, 0), off))
+                add ((D2.Point (0, 0), D2.Point (1, 1), off))
+        else :
+            p2_a = src_c.guide_point (0)
+            p2_b = D2.Point (* reversed (p2_a))
+            add ((p2_a, p2_b))
+    # end def set_guides
+
+    def shift_guide (self, factor) :
+        self.guide_offset = self.__class__.guide_offset * (factor + 1)
+        self.set_guides ()
+    # end def shift_guide
 
 # end class _Relation_
 

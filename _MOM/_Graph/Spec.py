@@ -32,6 +32,7 @@
 #    31-Aug-2012 (CT) Add `Attr`, `IS_A`, `Child`, `Role`, and `Skip`
 #     3-Sep-2012 (CT) Factor `_Spec_Rel_`, add `source_side`, `target_side`
 #     3-Sep-2012 (CT) Call `add_guides`, `place_connectors` in `setup_links`
+#     5-Sep-2012 (CT) Call `improve_connectors`, `add_guides` -> `set_guides`
 #    ««revision-date»»···
 #--
 
@@ -243,12 +244,15 @@ class Graph (TFL.Meta.Object) :
             for n in nodes :
                 n.setup_links ()
             for n in nodes :
-                n.add_guides ()
-            for p in sorted \
-                    ( itertools.chain (*  (n.placers for n in nodes))
-                    , key = TFL.Sorted_By ("prio")
-                    ) :
+                n.set_guides ()
+            placers = sorted \
+                ( itertools.chain (*  (n.placers for n in nodes))
+                , key = TFL.Sorted_By ("prio")
+                )
+            for p in placers :
                 p.place_connectors ()
+            for p in placers :
+                p.improve_connectors ()
             self._setup_links_p = True
     # end def setup_links
 
