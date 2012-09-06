@@ -317,7 +317,7 @@ class IP_Address (_Ancestor_Essence) :
 
     # end class _Attributes
 
-# end class IP4_Address
+# end class IP_Address
 
 _Ancestor_Essence = IP_Address
 
