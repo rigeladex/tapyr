@@ -567,7 +567,8 @@ class Deleter (_JSON_Action_PO_) :
 
     def _rendered_post (self, request, response) :
         self._check_readonly (request)
-        if self.args and self.args [0] :
+        args = self.args
+        if args and args [0] :
             E_Type         = self.E_Type
             sra            = self._set_result_args
             pid            = args [0]
