@@ -66,6 +66,7 @@
 #    19-Aug-2012 (MG) Commit scope after cache init
 #    25-Aug-2012 (CT) Import `_MOM.inspect` if `cmd.debug`
 #     6-Sep-2012 (CT) Pass `verbose` to `GTW.AFS.MOM.Form_Cache`
+#     6-Sep-2012 (CT) Add and use `_create_cache_p`
 #    ««revision-date»»···
 #--
 
@@ -152,6 +153,7 @@ class GT2W_Command (GTW.OMP.Command) :
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
     root                    = None
 
+    _create_cache_p         = False
     _defaults               = dict \
         ( host              = "localhost"
         , load_I18N         = "yes"
@@ -223,7 +225,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 self.cacher.load ()
             except IOError :
                 pass
-        if self.cacher.DEBUG :
+        if self._create_cache_p or self.cacher.DEBUG :
             try :
                 self.cacher.store ()
             except EnvironmentError as exc :
@@ -347,8 +349,8 @@ class GT2W_Command (GTW.OMP.Command) :
     # end def _handle_run_server
 
     def _handle_setup_cache (self, cmd) :
+        self._create_cache_p = True
         self._wsgi_app    (cmd)
-        self.cacher.store ()
     # end def _handle_setup_cache
 
     def _handle_wsgi (self, cmd) :

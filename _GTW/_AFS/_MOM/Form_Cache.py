@@ -110,7 +110,7 @@ class _Form_Cache_ (TFL.Meta.Object) :
         table = cargo.get ("AFS_Form_Table", {})
         table.update      (Form.Table)
         ### We want to set `Table` for `GTW.AFS.Element.Form`, not for a
-        ### possible descedent class
+        ### possible descendent class
         GTW.AFS.Element.Form.Table = table
     # end def from_pickle_cargo
 
