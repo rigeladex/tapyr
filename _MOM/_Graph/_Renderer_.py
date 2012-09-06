@@ -30,6 +30,7 @@
 #    26-Aug-2012 (CT) Add `Link.points`, `_Renderer_.render_link`
 #    29-Aug-2012 (CT) Factor `render_link`, `_render_node` to descendants
 #     3-Sep-2012 (CT) Factor `points_gen` to `Relation`
+#     6-Sep-2012 (CT) Fix `transform`, `min_x`, `min_y`
 #    ««revision-date»»···
 #--
 
@@ -214,12 +215,14 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def min_x (self) :
-        return int (min (n.min_x for n in self.nodes) - self.grid_size.x // 4)
+        result = int (min (n.min_x for n in self.nodes) - self.grid_size.x // 4)
+        return max (result, 0)
     # end def min_x
 
     @TFL.Meta.Once_Property
     def min_y (self) :
-        return int (min (n.min_y for n in self.nodes) - self.grid_size.y // 4)
+        result = int (min (n.min_y for n in self.nodes) - self.grid_size.y // 4)
+        return max (result, 0)
     # end def min_y
 
     @TFL.Meta.Once_Property
@@ -228,7 +231,9 @@ class _Renderer_ (TFL.Meta.Object) :
         dy = self.max_y_spec + 1
         gs = self.grid_size
         return \
-            ( D2.Affine.Scale      (gs.x, gs.y)
+            ( D2.Affine.Trans
+                (self.grid_size.x // 4, self.grid_size.y // 4)
+            * D2.Affine.Scale      (gs.x, gs.y)
             * D2.Affine.Trans      (dx,   dy)
             * D2.Affine.Reflection (1,    0)
             )
