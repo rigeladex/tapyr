@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-11 17:51+0200\n"
+"POT-Creation-Date: 2012-09-06 18:22+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.4\n"
+"Generated-By: Babel 0.9.6\n"
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Abstract"
@@ -220,11 +220,11 @@ msgid ""
 "belongs to."
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title"
 msgstr "Kurztitel"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Short title (used in navigation)."
 msgstr "Kurztitel (wird in Navigation verwendet)."
 
@@ -248,7 +248,7 @@ msgstr "Miniaturbild"
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Entity:0 _GTW._OMP._SWP.Clip:0
 msgid "Title"
 msgstr "Titel"
 
