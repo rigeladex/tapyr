@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-05-11 17:51+0200\n"
+"POT-Creation-Date: 2012-09-06 18:22+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -16,18 +16,18 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.4\n"
+"Generated-By: Babel 0.9.6\n"
 
-#: _JNJ/html/e_type_afs.jnj:89
+#: _JNJ/html/e_type_afs.jnj:93
 msgid "Accept changes"
 msgstr "Akzeptiere Änderungen"
 
-#: _JNJ/html/activate.jnj:40
+#: _JNJ/html/activate.jnj:41
 msgid "Activation for"
 msgstr "Aktivierung für"
 
 #: _JNJ/html/e_type.m.jnj:147 _JNJ/html/e_type.m.jnj:257
-#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:71
+#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:75
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr "Erzeuge"
@@ -58,29 +58,29 @@ msgstr "Zusätzliches Kriterium"
 msgid "Add restriction"
 msgstr "Zusätzliche Sucheinschränkung"
 
-#: _JNJ/html/cal/wr.jnj:102
+#: _JNJ/html/cal/wr.jnj:103
 msgid "Anchor"
 msgstr "Anker"
 
-#: _JNJ/html/cal/wr.jnj:99
+#: _JNJ/html/cal/wr.jnj:100
 msgid "Anchor date for calendar display"
 msgstr "Anker-Datum für Kalenderansicht"
 
-#: _JNJ/html/cal/wr.jnj:130
+#: _JNJ/html/cal/wr.jnj:131
 msgid "Anchor day for calendar display"
 msgstr "Anker-Tag für Kalenderansicht"
 
-#: _JNJ/html/cal/wr.jnj:120
+#: _JNJ/html/cal/wr.jnj:121
 msgid "Anchor month for calendar display"
 msgstr "Anker-Monat für Kalenderansicht"
 
-#: _JNJ/html/cal/wr.jnj:110
+#: _JNJ/html/cal/wr.jnj:111
 msgid "Anchor year for calendar display"
 msgstr "Anker-Jahr für Kalenderansicht"
 
 #: _JNJ/html/e_type.m.jnj:91 _JNJ/html/e_type.m.jnj:132
 #: _JNJ/html/e_type.m.jnj:240 _JNJ/html/e_type.m.jnj:315
-#: _JNJ/html/cal/wr.jnj:178
+#: _JNJ/html/cal/wr.jnj:179
 msgid "Apply"
 msgstr "Los"
 
@@ -89,12 +89,12 @@ msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
 #: _JNJ/html/e_type.m.jnj:97 _JNJ/html/e_type.m.jnj:137
-#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:72
-#: _JNJ/html/form.jnj:164 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
+#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:76
+#: _JNJ/html/form.jnj:168 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: _JNJ/html/AFS/input.jnj:160
+#: _JNJ/html/AFS/input.jnj:163
 msgid "Cannot be changed"
 msgstr "Kann nicht geändert werden."
 
@@ -102,23 +102,23 @@ msgstr "Kann nicht geändert werden."
 msgid "Change"
 msgstr "Ändern"
 
-#: _JNJ/html/change_password.jnj:39
+#: _JNJ/html/change_password.jnj:40
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/e_type_afs.jnj:90
+#: _JNJ/html/e_type_afs.jnj:94
 msgid "Change attributes of this object"
 msgstr "Ändere Attribute des Objekts"
 
-#: _JNJ/html/form.jnj:360
+#: _JNJ/html/form.jnj:382
 msgid "Change email"
 msgstr "Ändere Email"
 
-#: _JNJ/html/change_email.jnj:39
+#: _JNJ/html/change_email.jnj:40
 msgid "Change email for"
 msgstr "Ändere Email für"
 
-#: _JNJ/html/form.jnj:359
+#: _JNJ/html/form.jnj:381
 #, python-format
 msgid "Change email of account %s"
 msgstr "Ändere Email für Benutzerkonto %s"
@@ -127,11 +127,11 @@ msgstr "Ändere Email für Benutzerkonto %s"
 msgid "Change object"
 msgstr "Ändere Objekt"
 
-#: _JNJ/html/form.jnj:365
+#: _JNJ/html/form.jnj:389
 msgid "Change password"
 msgstr "Ändere Kennwort"
 
-#: _JNJ/html/form.jnj:364
+#: _JNJ/html/form.jnj:388
 #, python-format
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
@@ -157,14 +157,18 @@ msgstr "Konfiguriere"
 msgid "Confirm new email address"
 msgstr "Bestätigung der neuen Email Adresse"
 
-#: _JNJ/html/e_type_afs.jnj:73
+#: _JNJ/html/e_type_afs.jnj:77
 msgid "Copy"
 msgstr "Kopiere"
 
 #: _JNJ/html/e_type.m.jnj:343 _JNJ/html/e_type.m.jnj:347
-#: _JNJ/html/e_type_afs.jnj:85
+#: _JNJ/html/e_type_afs.jnj:89
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
+
+#: _JNJ/html/change_email.jnj:55 _JNJ/html/form.jnj:407
+msgid "Current Password"
+msgstr "Aktuelles Kennwort"
 
 #: _JNJ/html/cal/wr_body.jnj:50
 msgid "Currently selected day"
@@ -175,7 +179,7 @@ msgstr "Gegenwärtig ausgewählter Tag"
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/e_type_afs.jnj:74
+#: _JNJ/html/e_type_afs.jnj:78
 msgid "Delete"
 msgstr "Lösche"
 
@@ -183,11 +187,11 @@ msgstr "Lösche"
 msgid "Delete object"
 msgstr "Lösche Objekt"
 
-#: _JNJ/html/e_type_afs.jnj:88
+#: _JNJ/html/e_type_afs.jnj:92
 msgid "Delete this object"
 msgstr "Lösche dieses Objekt"
 
-#: _JNJ/html/cal/wr.jnj:151
+#: _JNJ/html/cal/wr.jnj:152
 msgid "Delta"
 msgstr "Delta"
 
@@ -195,11 +199,11 @@ msgstr "Delta"
 msgid "Disable"
 msgstr "Schalte aus"
 
-#: _JNJ/html/form.jnj:386 _JNJ/html/rform.jnj:431
+#: _JNJ/html/form.jnj:447 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:163 _JNJ/html/form.jnj:377 _JNJ/html/rform.jnj:258
+#: _JNJ/html/form.jnj:167 _JNJ/html/form.jnj:438 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Formulars"
@@ -212,15 +216,15 @@ msgstr "Verwerfen aller Änderungen im Sub-Formular"
 msgid "Discard all changes made and leave popup-form"
 msgstr "Verwerfen aller Änderungen und Verlassen des Sub-Formulars"
 
-#: _JNJ/html/e_type_afs.jnj:86
+#: _JNJ/html/e_type_afs.jnj:90
 msgid "Discard changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/cal/wr.jnj:184
+#: _JNJ/html/cal/wr.jnj:185
 msgid "Display calendar anchored on today"
 msgstr "Verankere die Kalenderansicht am heutigen Tag"
 
-#: _JNJ/html/cal/wr.jnj:177
+#: _JNJ/html/cal/wr.jnj:178
 msgid "Display calendar for the selected values"
 msgstr "Passe Kalenderansicht an die ausgewählten Werte an"
 
@@ -252,7 +256,7 @@ msgstr "Stelle Objekte in absteigender Reihenfolge bezogen auf das Attribut dar"
 msgid "Display previous batch of objects matching the restriction"
 msgstr "Stelle vorige Seite dar"
 
-#: _JNJ/html/e_type_afs.jnj:75
+#: _JNJ/html/e_type_afs.jnj:79
 msgid "Done"
 msgstr "Fertig"
 
@@ -268,13 +272,17 @@ msgstr ""
 "Ziehe die Ordnungskriterien mit der Maus an eine andere Position um die "
 "Priorität zu ändern"
 
-#: _JNJ/html/e_type_afs.jnj:76 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:80 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr "Ändere"
 
 #: _JNJ/html/news.jnj:59
 msgid "Edit this entry"
 msgstr "Ändere diesen Eintrag"
+
+#: _JNJ/html/register.jnj:55
+msgid "Email address"
+msgstr "Emailadresse"
 
 #: _JNJ/html/rform.jnj:95 _JNJ/html/rform.jnj:375
 msgid "Error"
@@ -298,7 +306,7 @@ msgstr "Erstes Bild"
 msgid "Gallery"
 msgstr "Gallerie"
 
-#: _JNJ/html/form.jnj:320 _JNJ/html/login.jnj:66
+#: _JNJ/html/form.jnj:338
 msgid "Get a new password for the username specified"
 msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
 
@@ -311,7 +319,7 @@ msgstr "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem %s."
 msgid "Javascript is needed to fully use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
-#: _JNJ/html/e_type_afs.jnj:60
+#: _JNJ/html/e_type_afs.jnj:64
 msgid "Javascript is needed to use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
@@ -350,13 +358,9 @@ msgstr "Verlasse das Formular ohne eine Entität auszuwählen "
 msgid "Limit number of entities displayed"
 msgstr "Anzahl der dargestellten Entitäten"
 
-#: _JNJ/html/form.jnj:311
+#: _JNJ/html/form.jnj:328
 msgid "Log into website or go to account page"
 msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
-
-#: _JNJ/html/login.jnj:61
-msgid "Log into website with username and password specified"
-msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
 #: _JNJ/html/navigation.jnj:172
 msgid "Logged in"
@@ -367,11 +371,11 @@ msgstr "Angemeldet"
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:312 _JNJ/html/login.jnj:62 _JNJ/html/navigation.jnj:177
+#: _JNJ/html/form.jnj:329 _JNJ/html/navigation.jnj:177
 msgid "Login"
 msgstr "Anmelden"
 
-#: _JNJ/html/login.jnj:41
+#: _JNJ/html/login.jnj:42
 msgid "Login for"
 msgstr "Anmeldung für"
 
@@ -379,12 +383,12 @@ msgstr "Anmeldung für"
 msgid "Login required"
 msgstr "Anmeldung erforderlich"
 
-#: _JNJ/html/form.jnj:350 _JNJ/html/form.jnj:351
+#: _JNJ/html/form.jnj:371 _JNJ/html/form.jnj:372
 #, python-format
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
-#: _JNJ/html/e_type_afs.jnj:87
+#: _JNJ/html/e_type_afs.jnj:91
 msgid "Make a copy of this object"
 msgstr "Kopiere dieses Objekt"
 
@@ -400,9 +404,17 @@ msgstr "Monat (des letzten Tags der Woche)"
 msgid "More"
 msgstr "Mehr"
 
-#: _JNJ/html/cal/wr.jnj:149 _JNJ/html/cal/wr.jnj:158
+#: _JNJ/html/cal/wr.jnj:150 _JNJ/html/cal/wr.jnj:159
 msgid "Move calendar display by delta units"
 msgstr "Verschiebe die Kalenderansicht um `delta` Einheiten"
+
+#: _JNJ/html/change_email.jnj:59
+msgid "New Email"
+msgstr "Neue Emailadresse"
+
+#: _JNJ/html/form.jnj:411 _JNJ/html/register.jnj:59
+msgid "New Password"
+msgstr "Neues Kennwort"
 
 #: _JNJ/html/e_type.m.jnj:197 _JNJ/html/gallery.jnj:52
 msgid "Next"
@@ -420,7 +432,7 @@ msgstr "Nächstes Bild"
 msgid "Number of first entity to display"
 msgstr "Position der ersten dargestellten Entität"
 
-#: _JNJ/html/cal/wr.jnj:136 _JNJ/html/cal/wr.jnj:144
+#: _JNJ/html/cal/wr.jnj:137 _JNJ/html/cal/wr.jnj:145
 msgid "Number of weeks displayed"
 msgstr "Anzahl der dargestellten Wochen"
 
@@ -449,7 +461,7 @@ msgstr "Dauerhafter Verweis"
 msgid "Play"
 msgstr "Lauf"
 
-#: _JNJ/html/e_type_afs.jnj:82
+#: _JNJ/html/e_type_afs.jnj:86
 msgid "Please change the fields that have errors"
 msgstr "Bitte ändern sie die fehlerbehafteten Eingabefelder"
 
@@ -485,23 +497,37 @@ msgstr "Lies den vollständigen Bericht unter"
 msgid "Reenable"
 msgstr "Schalte ein"
 
-#: _JNJ/html/form.jnj:330
+#: _JNJ/html/form.jnj:349
 msgid "Register"
 msgstr "Registrieren"
 
-#: _JNJ/html/form.jnj:329
+#: _JNJ/html/form.jnj:348
 msgid "Register a new account"
 msgstr "Registrieren eines neuen Benutzerkontos"
 
-#: _JNJ/html/register.jnj:40
+#: _JNJ/html/register.jnj:41
 msgid "Register a new account for "
 msgstr "Registrieren eines neuen Benutzerkontos für "
+
+#: _JNJ/html/change_email.jnj:63
+msgid "Repeat Email"
+msgstr "Wiederhole Emailadresse"
+
+#: _JNJ/html/form.jnj:415 _JNJ/html/register.jnj:63
+#, python-format
+msgid "Repeat Password"
+msgstr "Wiederhole Kennwort"
 
 #: _JNJ/html/error_408.jnj:36
 msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
-#: _JNJ/html/e_type_afs.jnj:77 _JNJ/html/form.jnj:387 _JNJ/html/rform.jnj:432
+#: _JNJ/html/reset_password.jnj:65 _JNJ/html/reset_password.jnj:66
+#, python-format
+msgid "Request password reset"
+msgstr "Setze Kennwort zurück"
+
+#: _JNJ/html/e_type_afs.jnj:81 _JNJ/html/form.jnj:448 _JNJ/html/rform.jnj:432
 #: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -510,7 +536,7 @@ msgstr "Zurücksetzen"
 msgid "Reset fields"
 msgstr "Lösche Eingabefelder"
 
-#: _JNJ/html/e_type_afs.jnj:91
+#: _JNJ/html/e_type_afs.jnj:95
 msgid "Reset fields to start values"
 msgstr "Setze Eingabefelder auf Startwerte zurück"
 
@@ -522,16 +548,16 @@ msgstr "Setze das Formular auf Ausgangswerte zurück"
 msgid "Reset order-by criteria"
 msgstr "Entferne alle dargestellten Ordnungskriterien aus dem Formular"
 
-#: _JNJ/html/reset_password.jnj:39
+#: _JNJ/html/reset_password.jnj:40
 #, python-format
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/e_type_afs.jnj:79 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:83 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr "Sichern"
 
-#: _JNJ/html/e_type_afs.jnj:93
+#: _JNJ/html/e_type_afs.jnj:97
 msgid "Save the attribute values as displayed in form fields"
 msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 
@@ -539,16 +565,16 @@ msgstr "Verwende die Attribute die momentan im Formular ausgewählt sind"
 msgid "Save values in form entries"
 msgstr "Sicher alle Werte in den Formularfeldern"
 
-#: _JNJ/html/cal/wr.jnj:201
+#: _JNJ/html/cal/wr.jnj:202
 #, python-format
 msgid "Scroll by %s weeks to anchor %s."
 msgstr "Verschiebe Ansicht um %s Wochen auf Anker-Datum %s."
 
-#: _JNJ/html/e_type_afs.jnj:78
+#: _JNJ/html/e_type_afs.jnj:82
 msgid "Select"
 msgstr "Wähle aus"
 
-#: _JNJ/html/e_type_afs.jnj:92
+#: _JNJ/html/e_type_afs.jnj:96
 msgid "Select an object as value for this field"
 msgstr "Wähle ein Objekt als Wert dieses Felds aus"
 
@@ -574,7 +600,7 @@ msgstr "Wähle die Attribute die für jedes Objekt dargestellt werden sollen"
 msgid "Selected picture"
 msgstr "Ausgewähltes Bild"
 
-#: _JNJ/html/afs.jnj:157 _JNJ/html/form.jnj:391 _JNJ/html/rform.jnj:436
+#: _JNJ/html/afs.jnj:157 _JNJ/html/form.jnj:452 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr "Schicke Daten an den Server und beende das Formular"
 
@@ -594,7 +620,7 @@ msgstr "Die Dienstleistung ist momentan nicht verfügbar."
 msgid "Slide show"
 msgstr "Dia show"
 
-#: _JNJ/html/afs.jnj:158 _JNJ/html/form.jnj:392 _JNJ/html/rform.jnj:437
+#: _JNJ/html/afs.jnj:158 _JNJ/html/form.jnj:453 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr "Absenden"
 
@@ -623,13 +649,22 @@ msgstr ""
 "Zur Bestätigung der neuen Email Adresse folgen Sie bitte dem "
 "nachfolgenden Verweis"
 
-#: _JNJ/html/cal/wr.jnj:185
+#: _JNJ/html/cal/wr.jnj:186
 msgid "Today"
 msgstr "Heute"
 
-#: _JNJ/html/cal/wr.jnj:171
+#: _JNJ/html/cal/wr.jnj:172
 msgid "Units for `delta` movement of calendar display"
 msgstr "Einheiten für die Verschiebung der Kalenderansicht um `delta`"
+
+#: _JNJ/html/change_email.jnj:69 _JNJ/html/change_email.jnj:70
+#: _JNJ/html/register.jnj:69 _JNJ/html/register.jnj:70
+msgid "Update Email"
+msgstr "Ändere Email"
+
+#: _JNJ/html/form.jnj:421 _JNJ/html/form.jnj:422
+msgid "Update password"
+msgstr "Ändere Kennwort"
 
 #: _JNJ/html/error_405.jnj:57
 #, python-format
@@ -661,7 +696,7 @@ msgstr ""
 "Wir entschuldigen uns für die Unannehmlichkeit und hoffen, das Problem "
 "ehebaldigst zu beheben. "
 
-#: _JNJ/html/cal/day.jnj:40 _JNJ/html/cal/wr_body.jnj:95
+#: _JNJ/html/cal/day.jnj:41 _JNJ/html/cal/wr_body.jnj:95
 msgid "Week"
 msgstr "Woche"
 
@@ -670,7 +705,7 @@ msgstr "Woche"
 msgid "Week %2.2d/%s"
 msgstr "Woche %2.2d/%s"
 
-#: _JNJ/html/cal/wr.jnj:137
+#: _JNJ/html/cal/wr.jnj:138
 msgid "Weeks"
 msgstr "Wochen"
 
@@ -699,11 +734,11 @@ msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
 msgid "Your password was reset to the temporary value"
 msgstr "Ihr Kennwort wurde auf einen temporären Wert zurückgesetzt"
 
-#: _JNJ/html/cal/wr.jnj:164
+#: _JNJ/html/cal/wr.jnj:165
 msgid "day"
 msgstr "Tag"
 
-#: _JNJ/html/cal/wr.jnj:166
+#: _JNJ/html/cal/wr.jnj:167
 msgid "month"
 msgstr "Monat"
 
@@ -711,11 +746,16 @@ msgstr "Monat"
 msgid "webmaster"
 msgstr "Webmaster"
 
-#: _JNJ/html/cal/wr.jnj:165
+#: _JNJ/html/cal/wr.jnj:166
 msgid "week"
 msgstr "Woche"
 
-#: _JNJ/html/cal/wr.jnj:167
+#: _JNJ/html/cal/wr.jnj:168
 msgid "year"
 msgstr "Jahr"
+
+#~ msgid "Log into website with username and password specified"
+#~ msgstr ""
+#~ "Melde mit dem angegebenen Benutzernamen "
+#~ "und Kennwort bei der Webseite an"
 
