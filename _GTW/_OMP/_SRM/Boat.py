@@ -106,7 +106,7 @@ class Boat (_Ancestor_Essence) :
         # end class sail_number
 
         class sail_number_x (A_String) :
-            """Sail number prefix of boat."""
+            """Sail number prefix of boat (e.g., "X", not the nation code!)."""
 
             kind               = Attr.Primary_Optional
             example            = "X"
