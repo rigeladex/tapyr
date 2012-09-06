@@ -33,6 +33,7 @@
 #     3-Sep-2012 (CT) Factor `_Spec_Rel_`, add `source_side`, `target_side`
 #     3-Sep-2012 (CT) Call `add_guides`, `place_connectors` in `setup_links`
 #     5-Sep-2012 (CT) Call `improve_connectors`, `add_guides` -> `set_guides`
+#     6-Sep-2012 (CT) Add `guide_offset`
 #    ««revision-date»»···
 #--
 
@@ -104,19 +105,21 @@ class _Spec_Item_ (TFL.Meta.Object) :
 class _Spec_Rel_ (_Spec_Item_) :
     """Base class for specs of relations"""
 
-    source_side = None
-    target_side = None
+    guide_offset = None
+    source_side  = None
+    target_side  = None
 
     def __call__ (self, * args, ** kw) :
-        self.pop_to_self (kw, "source_side", "target_side")
+        self.pop_to_self (kw, "guide_offset", "source_side", "target_side")
         return self.__super.__call__ (* args, ** kw)
     # end def __call__
 
     @property
     def _rel_kw (self) :
         return dict \
-            ( source_side = self.source_side
-            , target_side = self.target_side
+            (  (rn, getattr (self, rn))
+            for rn in ("guide_offset", "source_side", "target_side")
+            if  getattr (self, rn) is not None
             )
     # end def _rel_kw
 
