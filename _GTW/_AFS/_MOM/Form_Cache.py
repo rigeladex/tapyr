@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Feb-2012 (CT) Creation (factored from GTW.AFS.MOM.Element.Form)
 #     1-Feb-2012 (CT) Add `Extra`
+#     6-Sep-2012 (CT) Add `verbose`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ class _Form_Cache_ (TFL.Meta.Object) :
     """Handle cache for AFS forms"""
 
     cache_rank = -500
+    verbose    = False
 
     def __init__ (self) :
         self._extras = []
@@ -87,7 +89,8 @@ class _Form_Cache_ (TFL.Meta.Object) :
 
     def __call__ (self, * args, ** kw) :
         """Just for compatibility with other cachers"""
-        pass
+        self.pop_to_self (kw, "verbose")
+        return self
     # end def __call__
 
     def add (self, * extras) :
@@ -112,9 +115,13 @@ class _Form_Cache_ (TFL.Meta.Object) :
     # end def from_pickle_cargo
 
     def _create_auto_forms (self, app_type) :
+        verbose = self.verbose
         for T in app_type._T_Extension :
             if T.GTW.afs_id is not None and T.GTW.afs_spec is not None :
-                Form (T.GTW.afs_id, children = [T.GTW.afs_spec (T)])
+                f = Form (T.GTW.afs_id, children = [T.GTW.afs_spec (T)])
+                if verbose :
+                    print \
+                        ("Created form %s for E_Type %s" % (f.id, T.type_name))
     # end def _create_auto_forms
 
     def _create_extra_forms (self, app_type) :

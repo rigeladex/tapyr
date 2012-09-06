@@ -65,6 +65,7 @@
 #    14-Aug-2012 (MG) Add option `media_domain`
 #    19-Aug-2012 (MG) Commit scope after cache init
 #    25-Aug-2012 (CT) Import `_MOM.inspect` if `cmd.debug`
+#     6-Sep-2012 (CT) Pass `verbose` to `GTW.AFS.MOM.Form_Cache`
 #    ««revision-date»»···
 #--
 
@@ -117,7 +118,7 @@ class TOP_App (TFL.Meta.Object) :
 
     def cachers (self, command, cmd) :
         import _GTW._AFS._MOM.Form_Cache
-        return [GTW.AFS.MOM.Form_Cache]
+        return [GTW.AFS.MOM.Form_Cache (verbose = cmd.verbose)]
     # end def cachers
 
     def create (self, command, cmd, * args, ** kw) :
