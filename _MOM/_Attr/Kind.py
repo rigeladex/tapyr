@@ -181,6 +181,7 @@
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
 #    20-Aug-2012 (RS) import `logging`
 #    21-Aug-2012 (RS) Expand logged args in place, fix format string arg count
+#     8-Sep-2012 (CT) Consider `init_finished` in `Link_Role._set_cooked_value`
 #    ««revision-date»»···
 #--
 
@@ -1015,12 +1016,13 @@ class Link_Role (_EPK_Mixin_, Primary) :
     get_role               = TFL.Meta.Alias_Property ("get_value")
 
     def _set_cooked_value (self, obj, value, changed = 42) :
-        ac = obj.__class__.acr_map.get (self.name)
-        if ac :
-            old_value = self.get_value (obj)
-            if old_value is not None :
-                ### remove old value from `auto_cache`
-                ac (obj, no_value = True)
+        if obj.init_finished :
+            ac = obj.__class__.acr_map.get (self.name)
+            if ac :
+                old_value = self.get_value (obj)
+                if old_value is not None :
+                    ### remove old value from `auto_cache`
+                    ac (obj, no_value = True)
         return self.__super._set_cooked_value (obj, value, changed = changed)
     # end def _set_cooked_value
 
