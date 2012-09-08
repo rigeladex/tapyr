@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -61,6 +61,8 @@
 #    13-Dec-2011 (CT) Set `raw_name` to `ckd_name` unless `needs_raw_value`
 #    16-Dec-2011 (CT) Set `raw_name` to `name` unless `needs_raw_value`
 #                     (`name` because that will trigger `computed` if necessary)
+#     8-Sep-2012 (CT) Add `M_Attr_Type_Enum`
+#     8-Sep-2012 (CT) Add `_unicode_ignore_case`
 #    ««revision-date»»···
 #--
 
@@ -143,6 +145,17 @@ class M_Attr_Type_Decimal (M_Attr_Type) :
 
 # end class M_Attr_Type_Decimal
 
+class M_Attr_Type_Enum (M_Attr_Type) :
+    """Meta class for MOM.Attr.A_Enum."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if cls.C_Type is not None :
+            cls.P_Type = cls.C_Type.P_Type
+    # end def __init__
+
+# end class M_Attr_Type_Enum
+
 class M_Attr_Type_Link_Role (M_Attr_Type) :
     """Meta class for MOM.Attr.A_Link_Role classes."""
 
@@ -219,6 +232,16 @@ def _unicode_lower (s) :
     return unicode (s).lower ()
 # end def _unicode_lower
 
+def _unicode_upper (s) :
+    return unicode (s).upper ()
+# end def _unicode_upper
+
+_unicode_ignore_case = dict \
+    ( { True         : _unicode_lower }
+    , lower          = _unicode_lower
+    , upper          = _unicode_upper
+    )
+
 class M_Attr_Type_String (M_Attr_Type) :
     """Meta class for MOM.Attr._A_String_ classes.
 
@@ -230,7 +253,7 @@ class M_Attr_Type_String (M_Attr_Type) :
         cls.needs_raw_value = bool (cls.ignore_case)
         cls.__m_super.__init__ (name, bases, dct)
         if cls.ignore_case :
-            cls.cooked = staticmethod (_unicode_lower)
+            cls.cooked = staticmethod (_unicode_ignore_case [cls.ignore_case])
         else :
             cls.cooked = unicode
     # end def __init__

@@ -46,6 +46,8 @@
 #    17-Nov-2011 (CT) Redefine `ui_display_format` and `ui_display_sep`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    20-Jan-2012 (CT) Add `sail_number.max_value`
+#     8-Sep-2012 (CT) Add `valid_sail_number_x`
+#     8-Sep-2012 (CT) Set `sail_number_x.ignore_case` to `"upper"`
 #    ««revision-date»»···
 #--
 
@@ -110,7 +112,7 @@ class Boat (_Ancestor_Essence) :
 
             kind               = Attr.Primary_Optional
             example            = "X"
-            ignore_case        = True
+            ignore_case        = "upper"
             max_length         = 8
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
@@ -158,6 +160,15 @@ class Boat (_Ancestor_Essence) :
     class _Predicates (_Ancestor_Essence._Predicates) :
 
         _Ancestor = _Ancestor_Essence._Predicates
+
+        class valid_sail_number_x (Pred.Condition) :
+            """`sail_number_x` must not repeat `nation`."""
+
+            kind               = Pred.Object
+            assertion          = "sail_number_x != nation"
+            attributes         = ("sail_number_x", "nation")
+
+        # end class valid_sail_number_x
 
         class valid_vintage (Pred.Condition) :
             """`vintage` must not lie in the future."""

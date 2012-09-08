@@ -37,6 +37,8 @@
 #    11-May-2012 (CT) Add `RSA` to `A_Nation`
 #    14-May-2012 (CT) Add `A_Nation.P_Type`
 #     7-Aug-2012 (CT) Add `example` to attributes of `Regatta_Result`
+#     8-Sep-2012 (CT) Derive `A_Nation` from `A_Enum`, not `_A_Named_Object_`
+#     8-Sep-2012 (CT) Redefine `A_Nation.cooked` to call `upper`
 #    ««revision-date»»···
 #--
 
@@ -50,14 +52,17 @@ import _GTW._OMP._SRM
 
 from   _TFL.I18N                import _, _T, _Tn
 
-class A_Nation (_A_Named_Object_) :
+class A_Nation (A_Enum) :
     """Nation a boat or sailor sails for."""
 
     ### http://en.wikipedia.org/wiki/List_of_IOC_country_codes
 
     example    = "AUT"
     typ        = "Nation"
-    P_Type     = unicode
+
+    C_Type     = A_String
+    max_length = 3
+
     Table      = \
         { "AUS" :  _("Australia")
         , "AUT" :  _("Austria")
@@ -101,6 +106,12 @@ class A_Nation (_A_Named_Object_) :
         , "UKR" :  _("Ukraine")
         , "USA" :  _(u"United States")
         }
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if value :
+            return super (A_Nation, soc).cooked (value).upper ()
+    # end def cooked
 
 # end class A_Nation
 

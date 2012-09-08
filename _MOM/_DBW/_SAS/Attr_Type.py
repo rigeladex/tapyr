@@ -63,6 +63,7 @@
 #                     `A_Int`, and `A_Time` by generic `_sa_type` for
 #                     `A_Attr_Type`
 #    10-Aug-2012 (MG) Add support of Sall/BigInteger types
+#     8-Sep-2012 (CT) Change `_sa_type_generic` to allow `unicode`
 #    ««revision-date»»···
 #--
 
@@ -186,15 +187,27 @@ class Case_Sensitive_String (types.TypeDecorator) :
 @Add_Classmedthod ("_sa_type", Attr.A_Attr_Type)
 def _sa_type_generic (cls, attr, kind, ** kw) :
     P_Type = attr.P_Type
-    try :
-        T = _sa_type_map [P_Type]
-    except KeyError :
-        raise AttributeError \
-            ( "Attribute %s needs either a `Pickler` or a `P_Type` definition"
-            % (kind, )
-            )
+    if P_Type is unicode :
+        return _sa_string (cls, attr, kind, ** kw)
     else :
-        return T ()
+        try :
+            T = _sa_type_map [P_Type]
+        except KeyError :
+            if P_Type is None :
+                msg = \
+                    ( "Attribute %s needs either a `Pickler` or "
+                      "a `P_Type` definition"
+                    % (kind, )
+                    )
+            else :
+                msg = \
+                    ( "`P_Type` %s is not supported for `%s`; use one of `%s`"
+                      " or extend MOM.DBW.SAS.Attr_Type"
+                    % (P_Type, kind, sorted (_sa_type_map))
+                    )
+            raise AttributeError (msg)
+        else :
+            return T ()
 # end def _sa_type_generic
 
 int_map = \

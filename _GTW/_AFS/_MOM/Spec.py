@@ -76,6 +76,7 @@
 #                     `collapsed = False`
 #     8-Aug-2012 (MG) Add `css_class` and `name` to `kw`
 #    17-Aug-2012 (MG) Add support for overriding of `Type`
+#     8-Sep-2012 (CT) Set `MAT.A_Enum.input_widget`
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,7 @@ MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
 MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
 MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
 MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")
+MAT.A_Enum.input_widget              = WS ("html/AFS/input.jnj,  named_object")
 MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj,  text")
 MAT._A_Id_Entity_.input_widget       = WS ("html/AFS/input.jnj,  id_entity")
 MAT._A_Named_Object_.input_widget    = WS ("html/AFS/input.jnj,  named_object")

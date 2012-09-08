@@ -77,7 +77,7 @@ _test_code = """
     >>> print scope.SRM.Boat.count ### 5
     2
     >>> scope.SRM.Boat.query_s ().all ()
-    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'OE'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print (c.sail_number, c.sail_number_head, c.sail_number_tail)
     (42, u'OE', u'42')
@@ -107,7 +107,7 @@ _test_code = """
 
     >>> bq = SRM.Boat.query_s ()
     >>> bq.all ()
-    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'OE'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.EQ ("1107")).all ()
     [SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.AC ("11")).all ()
@@ -126,7 +126,7 @@ _test_code = """
     >>> scope.commit ()
 
     >>> SRM.Boat.query_s ().all () ### before Name_Clash
-    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'OE'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> laser.max_crew ### before name clash, before change
     1
@@ -144,7 +144,7 @@ _test_code = """
     2
 
     >>> SRM.Boat.query_s ().all () ### after Name_Clash
-    [SRM.Boat ((u'optimist', ), '', 42, u'oe'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
+    [SRM.Boat ((u'optimist', ), '', 42, u'OE'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### before invariant errors
     [('object', []), ('region', []), ('system', [])]

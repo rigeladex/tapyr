@@ -38,19 +38,19 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> bc = SRM.Boat_Class ("Optimist", max_crew = 2)
-    >>> b1 = SRM.Boat       (bc, "Austria", 1)
+    >>> b1 = SRM.Boat       (bc, "AUT", 1)
     >>> int (bc.pid), int (b1.pid)
     (1, 2)
     >>> scope.ems.pm.reserve (None, 100)
     100
-    >>> b2 = SRM.Boat       (bc, "Austria", 2)
+    >>> b2 = SRM.Boat       (bc, "AUT", 2)
     >>> int (b2.pid)
     101
-    >>> b3 = SRM.Boat       (bc, "Austria", 2) # doctest:+ELLIPSIS
+    >>> b3 = SRM.Boat       (bc, "AUT", 2) # doctest:+ELLIPSIS
     Traceback (most recent call last):
         ...
     Duplicate_Link: There already exists a link: Boat Optimist, AUT 2
-    >>> b3 = SRM.Boat       (bc, "Austria", 3)
+    >>> b3 = SRM.Boat       (bc, "AUT", 3)
     >>> int (b3.pid)
     102
 """

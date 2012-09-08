@@ -736,6 +736,3 @@ msgstr "Gültige Regatta"
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
 
-#~ msgid "Sail number prefix of boat."
-#~ msgstr "Segelnummerprefix des Boots."
-

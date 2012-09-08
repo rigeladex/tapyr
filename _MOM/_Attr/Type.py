@@ -243,6 +243,9 @@
 #                     not `Once_Property` (result might be `rollback`-ed)
 #    17-Aug-2012 (CT) Add `is_link_role` to `_A_Id_Entity_`, `A_Link_Role`
 #    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
+#     8-Sep-2012 (CT) Add `A_Enum`
+#     8-Sep-2012 (CT) Convert more `_from_string` definitions to
+#                     Class_and_Instance_Method
 #    ««revision-date»»···
 #--
 
@@ -469,8 +472,9 @@ class A_Attr_Type (TFL.Meta.Object) :
         pass
     # end def _fix_P_Type
 
-    def _from_string (self, s, obj, glob, locl) :
-        return self.cooked (s)
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
+        return soc.cooked (s)
     # end def _from_string
 
     def __repr__ (self) :
@@ -791,16 +795,18 @@ class _A_Named_Value_ (A_Attr_Type) :
         return sorted (self.Table)
     # end def Choices
 
-    def eligible_raw_values (self, obj = None) :
-        return sorted (self.__class__.Table)
+    @TFL.Meta.Class_and_Instance_Method
+    def eligible_raw_values (soc, obj = None) :
+        return sorted (soc.Table)
     # end def eligible_raw_values
 
-    def _from_string (self, s, obj, glob, locl) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
         try :
-            return self.__class__.Table [s]
+            return soc.Table [s]
         except KeyError :
             raise ValueError \
-                (u"%s not in %s" % (s, self.eligible_raw_values ()))
+                (u"%s not in %s" % (s, soc.eligible_raw_values ()))
     # end def _from_string
 
 # end class _A_Named_Value_
@@ -1318,10 +1324,11 @@ class _A_Typed_Collection_ (_A_Collection_) :
         return (soc.C_Type.as_string (v) for v in value)
     # end def _C_as_string
 
-    def _from_string (self, s, obj, glob, locl) :
-        C_fs  = self.C_Type._from_string
-        comps = self._C_split (s.strip ())
-        return self.R_Type (C_fs (c, obj, glob, locl) for c in comps)
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
+        C_fs  = soc.C_Type._from_string
+        comps = soc._C_split (s.strip ())
+        return soc.R_Type (C_fs (c, obj, glob, locl) for c in comps)
     # end def _from_string
 
 # end class _A_Typed_Collection_
@@ -1722,6 +1729,49 @@ class A_Email (_A_String_) :
     ### XXX check_syntax
 
 # end class A_Email
+
+class A_Enum (A_Attr_Type) :
+    """Base class for enumeration attributes. An enumeration is defined by a
+       `Table` mapping the keys (used as raw and cooked values) to their
+       description.
+    """
+
+    __metaclass__     = MOM.Meta.M_Attr_Type_Enum
+
+    C_Type            = None ### Attribute type applicable to cooked values
+    needs_raw_value   = False
+
+    @property
+    def Choices (self) :
+        ### cannot cache this because of L10N
+        ### XXX cache by language
+        return sorted \
+            ((k, "%s [%s]" % (k, _T (v))) for k, v in self.Table .iteritems ())
+    # end def Choices
+
+    def as_code (self, value) :
+        if value is not None :
+            return self.C_Type.code_format % (value, )
+        return "''"
+    # end def as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        return soc.C_Type.cooked (value)
+    # end def cooked
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
+        if s :
+            Table  = soc.Table
+            result = soc.cooked (soc.C_Type._from_string (s, obj, glob, locl))
+            if result in Table :
+                return result
+            else :
+                raise ValueError (u"%s not in %s" % (s, sorted (Table)))
+    # end def _from_string
+
+# end class A_Enum
 
 class A_Euro_Amount (_A_Decimal_) :
     """Amount in Euro."""

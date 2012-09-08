@@ -408,171 +408,171 @@ _test_code = """
           , Record
             ( attr = Nation `nation`
             , choices =
-                [
-                  ( 'AUS'
-                  , 'Australia'
-                  )
-                ,
-                  ( 'AUT'
-                  , 'Austria'
-                  )
-                ,
-                  ( 'BEL'
-                  , 'Belgium'
-                  )
-                ,
-                  ( 'CAN'
-                  , 'Canada'
-                  )
-                ,
-                  ( 'CRO'
-                  , 'Croatia'
-                  )
-                ,
-                  ( 'CYP'
-                  , 'Cyprus'
-                  )
-                ,
-                  ( 'CZE'
-                  , 'Czech Republic'
-                  )
-                ,
-                  ( 'DEN'
-                  , 'Denmark'
-                  )
-                ,
-                  ( 'EST'
-                  , 'Estonia'
-                  )
-                ,
-                  ( 'FIN'
-                  , 'Finland'
-                  )
-                ,
-                  ( 'FRA'
-                  , 'France'
-                  )
-                ,
-                  ( 'GER'
-                  , 'Germany'
-                  )
-                ,
-                  ( 'GBR'
-                  , 'Great Britain'
-                  )
-                ,
-                  ( 'GRE'
-                  , 'Greece'
-                  )
-                ,
-                  ( 'HUN'
-                  , 'Hungary'
-                  )
-                ,
-                  ( 'ISL'
-                  , 'Iceland'
-                  )
-                ,
-                  ( 'IRL'
-                  , 'Ireland'
-                  )
-                ,
-                  ( 'ITA'
-                  , 'Italy'
-                  )
-                ,
-                  ( 'LAT'
-                  , 'Latvia'
-                  )
-                ,
-                  ( 'LIE'
-                  , 'Lichtenstein'
-                  )
-                ,
-                  ( 'LTU'
-                  , 'Lithuania'
-                  )
-                ,
-                  ( 'LUX'
-                  , 'Luxembourg'
-                  )
-                ,
-                  ( 'MLT'
-                  , 'Malta'
-                  )
-                ,
-                  ( 'MON'
-                  , 'Monaco'
-                  )
-                ,
-                  ( 'MNE'
-                  , 'Montenegro'
-                  )
-                ,
-                  ( 'NED'
-                  , 'Netherlands'
-                  )
-                ,
-                  ( 'NZL'
-                  , 'New Zealand'
-                  )
-                ,
-                  ( 'NOR'
-                  , 'Norway'
-                  )
-                ,
-                  ( 'POL'
-                  , 'Poland'
-                  )
-                ,
-                  ( 'POR'
-                  , 'Portugal'
-                  )
-                ,
-                  ( 'ROU'
-                  , 'Romania'
-                  )
-                ,
-                  ( 'RUS'
-                  , 'Russia'
-                  )
-                ,
-                  ( 'SRB'
-                  , 'Serbia'
-                  )
-                ,
-                  ( 'SVK'
-                  , 'Slovakia'
-                  )
-                ,
-                  ( 'SLO'
-                  , 'Slovenia'
-                  )
-                ,
-                  ( 'RSA'
-                  , 'South Africa'
-                  )
-                ,
-                  ( 'ESP'
-                  , 'Spain'
-                  )
-                ,
-                  ( 'SWE'
-                  , 'Sweden'
-                  )
-                ,
-                  ( 'SUI'
-                  , 'Switzerland'
-                  )
-                ,
-                  ( 'UKR'
-                  , 'Ukraine'
-                  )
-                ,
-                  ( 'USA'
-                  , 'United States'
-                  )
-                ]
+               [
+                 ( 'AUS'
+                 , 'AUS [Australia]'
+                 )
+               ,
+                 ( 'AUT'
+                 , 'AUT [Austria]'
+                 )
+               ,
+                 ( 'BEL'
+                 , 'BEL [Belgium]'
+                 )
+               ,
+                 ( 'CAN'
+                 , 'CAN [Canada]'
+                 )
+               ,
+                 ( 'CRO'
+                 , 'CRO [Croatia]'
+                 )
+               ,
+                 ( 'CYP'
+                 , 'CYP [Cyprus]'
+                 )
+               ,
+                 ( 'CZE'
+                 , 'CZE [Czech Republic]'
+                 )
+               ,
+                 ( 'DEN'
+                 , 'DEN [Denmark]'
+                 )
+               ,
+                 ( 'ESP'
+                 , 'ESP [Spain]'
+                 )
+               ,
+                 ( 'EST'
+                 , 'EST [Estonia]'
+                 )
+               ,
+                 ( 'FIN'
+                 , 'FIN [Finland]'
+                 )
+               ,
+                 ( 'FRA'
+                 , 'FRA [France]'
+                 )
+               ,
+                 ( 'GBR'
+                 , 'GBR [Great Britain]'
+                 )
+               ,
+                 ( 'GER'
+                 , 'GER [Germany]'
+                 )
+               ,
+                 ( 'GRE'
+                 , 'GRE [Greece]'
+                 )
+               ,
+                 ( 'HUN'
+                 , 'HUN [Hungary]'
+                 )
+               ,
+                 ( 'IRL'
+                 , 'IRL [Ireland]'
+                 )
+               ,
+                 ( 'ISL'
+                 , 'ISL [Iceland]'
+                 )
+               ,
+                 ( 'ITA'
+                 , 'ITA [Italy]'
+                 )
+               ,
+                 ( 'LAT'
+                 , 'LAT [Latvia]'
+                 )
+               ,
+                 ( 'LIE'
+                 , 'LIE [Lichtenstein]'
+                 )
+               ,
+                 ( 'LTU'
+                 , 'LTU [Lithuania]'
+                 )
+               ,
+                 ( 'LUX'
+                 , 'LUX [Luxembourg]'
+                 )
+               ,
+                 ( 'MLT'
+                 , 'MLT [Malta]'
+                 )
+               ,
+                 ( 'MNE'
+                 , 'MNE [Montenegro]'
+                 )
+               ,
+                 ( 'MON'
+                 , 'MON [Monaco]'
+                 )
+               ,
+                 ( 'NED'
+                 , 'NED [Netherlands]'
+                 )
+               ,
+                 ( 'NOR'
+                 , 'NOR [Norway]'
+                 )
+               ,
+                 ( 'NZL'
+                 , 'NZL [New Zealand]'
+                 )
+               ,
+                 ( 'POL'
+                 , 'POL [Poland]'
+                 )
+               ,
+                 ( 'POR'
+                 , 'POR [Portugal]'
+                 )
+               ,
+                 ( 'ROU'
+                 , 'ROU [Romania]'
+                 )
+               ,
+                 ( 'RSA'
+                 , 'RSA [South Africa]'
+                 )
+               ,
+                 ( 'RUS'
+                 , 'RUS [Russia]'
+                 )
+               ,
+                 ( 'SLO'
+                 , 'SLO [Slovenia]'
+                 )
+               ,
+                 ( 'SRB'
+                 , 'SRB [Serbia]'
+                 )
+               ,
+                 ( 'SUI'
+                 , 'SUI [Switzerland]'
+                 )
+               ,
+                 ( 'SVK'
+                 , 'SVK [Slovakia]'
+                 )
+               ,
+                 ( 'SWE'
+                 , 'SWE [Sweden]'
+                 )
+               ,
+                 ( 'UKR'
+                 , 'UKR [Ukraine]'
+                 )
+               ,
+                 ( 'USA'
+                 , 'USA [United States]'
+                 )
+               ]
             , full_name = 'left.nation'
             , id = 'left__nation'
             , name = 'nation'
