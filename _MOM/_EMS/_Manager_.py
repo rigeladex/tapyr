@@ -190,7 +190,7 @@ class _Manager_ (TFL.Meta.Object) :
                 % (sorted (kw), )
                 )
         cc.__dict__.update (ckw)
-        self._commit_creation_change (cc, kw)
+        self.session._commit_creation_change (cc, kw)
     # end def convert_creation_change
 
     def count (self, Type, strict) :
