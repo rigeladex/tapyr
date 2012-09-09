@@ -121,6 +121,7 @@
 #    15-Aug-2012 (MG) Convert `last_cid` to int
 #    19-Aug-2012 (MG) Support keeping of cache during rollback
 #    24-Aug-2012 (CT) Fix `_Session_.rollback`
+#     9-Sep-2012 (MG) `_commit_creation_change` added
 #    ««revision-date»»···
 #--
 
@@ -596,6 +597,10 @@ class Session_S (_Session_) :
             self.scope.rollback             ()
             raise MOM.Error.Commit_Conflict ()
     # end def commit
+
+    def _commit_creation_change (self, change, kw) :
+        self.update_change (change)
+    # end def _commit_creation_change
 
     @TFL.Meta.Once_Property
     def connection (self) :

@@ -36,6 +36,7 @@
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    17-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
 #     2-Jul-2012 (MG) Additional tests for handling of execptions added
+#     9-Sep-2012 (MG) Test for `convert_creation_change` added
 #    ««revision-date»»···
 #--
 
@@ -44,8 +45,18 @@ _test_code = """
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
 
-    >>> SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> bc = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> bc
     SRM.Boat_Class (u'optimist')
+    >>> change = scope.query_changes (pid = bc.pid).one ()
+    >>> change.c_time == change.time, change.c_user ==change.user
+    (True, True)
+    >>> c_time = datetime.datetime (2012, 1, 1,  0, 0, 0)
+    >>> time   = datetime.datetime (2012, 4, 1, 10, 0, 0)
+    >>> scope.ems.convert_creation_change \
+        (bc.pid, c_time = c_time, time = time, user = "changed", c_user = "created")
+    >>> change.c_user, change.c_time, change.user, change.time
+        ('created', datetime.datetime(2012, 1, 1, 0, 0), 'changed', datetime.datetime(2012, 4, 1, 10, 0))
     >>> print scope.SRM.Boat_Class.count ### 1
     1
     >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
@@ -63,6 +74,10 @@ _test_code = """
     >>> scope.SRM.Boat.query_s ().all ()
     [SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
     >>> scope.commit ()
+
+    >>> change = scope.query_changes (pid = bc.pid).one ()
+    >>> change.c_user, change.c_time, change.user, change.time
+        ('created', datetime.datetime(2012, 1, 1, 0, 0), 'changed', datetime.datetime(2012, 4, 1, 10, 0))
 
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 2
     SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
@@ -328,6 +343,7 @@ _test_code = """
 """
 
 from _GTW.__test__.model import *
+import datetime
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
