@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,7 @@
 #    27-Jan-2010 (MG) `update_etype` parameter `app_type` added
 #    11-May-2010 (CT) `Pid_Manager` added
 #    23-Jun-2010 (CT) `DBS_map` added
+#     9-Sep-2012 (CT) Add `_commit_creation_change`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,10 @@ class _Manager_ (TFL.Meta.Object) :
     def commit (self) :
         raise NotImplementedError
     # end def commit
+
+    def _commit_creation_change (self, cc, kw) :
+        pass ### redefine as necessary for descendents
+    # end def _commit_creation_change
 
 # end class _Manager_
 

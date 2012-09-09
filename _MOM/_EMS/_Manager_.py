@@ -74,6 +74,7 @@
 #    11-Aug-2012 (CT) Allow non-root queries in `instance`
 #    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
 #    12-Aug-2012 (CT) Add `commit_context`
+#     9-Sep-2012 (CT) Add `convert_creation_change`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,25 @@ class _Manager_ (TFL.Meta.Object) :
             self.commit ()
         self.session.compact ()
     # end def compact
+
+    def convert_creation_change (self, pid, ** kw) :
+        """Convert creation-change for `pid` to passed values of `kw`"""
+        cc  = self.changes (pid = pid).one ()
+        ckw = dict \
+            ( (n, v) for n, v in
+                ( (n, kw.pop (n, None)) for n in
+                    ("c_time", "c_user", "time", "user")
+                )
+            if v is not None
+            )
+        if kw :
+            raise TypeError \
+                ( "Unknown arguments to convert_creation_change: %s"
+                % (sorted (kw), )
+                )
+        cc.__dict__.update (ckw)
+        self._commit_creation_change (cc, kw)
+    # end def convert_creation_change
 
     def count (self, Type, strict) :
         return self.query (Type, strict = strict).count ()

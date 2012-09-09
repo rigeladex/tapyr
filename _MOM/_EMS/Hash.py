@@ -160,7 +160,7 @@ class Manager (MOM.EMS._Manager_) :
     def async_changes (self, * filters, ** kw) :
         return False
         raise NotImplementedError
-    # end def changes
+    # end def async_changes
 
     def changes (self, * filters, ** kw) :
         if self.cm.to_load :

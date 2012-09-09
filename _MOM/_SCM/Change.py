@@ -77,6 +77,7 @@
 #     4-Aug-2012 (CT) Change `Destroy.undo` to use `ems.restored`
 #     4-Aug-2012 (CT) Change `_create` to use `entity.restore` if applicable
 #     5-Aug-2012 (CT) Use `epk_raw_pid`, `get_raw_pid`
+#     9-Sep-2012 (CT) Add `Create.c_time`, `.c_user`
 #    ««revision-date»»···
 #--
 
@@ -405,6 +406,8 @@ class Create (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
+        self.c_time       = self.time
+        self.c_user       = self.user
         self._new_attr    = self._to_save (entity)
         self.pickle_cargo = entity.as_pickle_cargo ()
     # end def __init__
@@ -427,6 +430,8 @@ class Create (_Entity_) :
     def _pickle_attrs (self) :
         return dict \
             ( self.__super._pickle_attrs ()
+            , c_time       = self.c_time
+            , c_user       = self.c_user
             , pickle_cargo = self.pickle_cargo
             )
     # end def _pickle_attrs

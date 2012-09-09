@@ -212,6 +212,7 @@
 #     5-Aug-2012 (CT) Change `_record_iter_raw` to include `raw_pid`
 #     7-Aug-2012 (CT) Use `Add_To_Class` instead of home-grown code
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
+#     9-Sep-2012 (CT) Add `creation_date`
 #    ««revision-date»»···
 #--
 
@@ -909,6 +910,24 @@ class Id_Entity (Entity) :
     _sets_to_combine      = ("refuse_links", )
 
     class _Attributes (Entity._Attributes) :
+
+        class creation_date (A_Date_Time) :
+            """Date/time of creation."""
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                try :
+                    lc = obj.changes ().order_by \
+                        (TFL.Sorted_By ("cid")).first ()
+                except IndexError :
+                    pass
+                else :
+                    if lc is not None :
+                        return lc.time
+            # end def computed
+
+        # end class creation_date
 
         class electric (A_Boolean) :
             """Indicates if object/link was created automatically or not."""
