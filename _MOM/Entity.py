@@ -213,6 +213,7 @@
 #     7-Aug-2012 (CT) Use `Add_To_Class` instead of home-grown code
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
 #     9-Sep-2012 (CT) Add `creation_date`
+#    10-Sep-2012 (CT) Fix `creation_date.computed`
 #    ««revision-date»»···
 #--
 
@@ -924,7 +925,7 @@ class Id_Entity (Entity) :
                     pass
                 else :
                     if lc is not None :
-                        return lc.time
+                        return lc.c_time
             # end def computed
 
         # end class creation_date
