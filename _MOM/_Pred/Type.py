@@ -47,6 +47,7 @@
 #    27-Apr-2012 (CT) Add argument `obj` to `_add_entities_to_extra_links`
 #    12-Aug-2012 (CT) Add `Unique`
 #    12-Aug-2012 (CT) Adapt to export-change of `MOM.Meta.M_Pred_Type`
+#    10-Sep-2012 (CT) Move `do_check` fo `_Condition_`
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,9 @@ class _Condition_ (object):
     renameds        = () ### only for compatibility with MOM.Attr.Type
     severe          = True
 
+    ### DBW backend may set `do_check` to `False` if database performs the check
+    do_check = True
+
     def __init__ (self, kind, obj, attr_dict = {}) :
         self.kind           = kind
         self.obj            = obj
@@ -98,7 +102,8 @@ class _Condition_ (object):
         self.error          = None
         self._error_info    = []
         self._extra_links_d = []
-        self.satisfied (obj, attr_dict)
+        if self.do_check :
+            self.satisfied (obj, attr_dict)
     # end def __init__
 
     @property
@@ -480,9 +485,6 @@ class Unique (_Condition_) :
         return cls.__class__ (name, (cls, ), kw)
     # end def New_Pred
 
-    ### DBW backend may set `do_check` to `False` if database performs the check
-    do_check = True
-
     def query_filters (self, obj, attr_dict = {}) :
         result = []
         if obj.pid :
@@ -493,16 +495,15 @@ class Unique (_Condition_) :
     # end def query_filters
 
     def satisfied (self, obj, attr_dict = {}) :
-        if self.do_check :
-            qfs = self.query_filters (obj, attr_dict)
-            q   = obj.ETM.query_s (* qfs)
-            result = q.count () == 0
-            if not result :
-                self.val_dict = dict \
-                    (zip (self.attributes, self._attr_values (obj, attr_dict)))
-                self._extra_links_d = clashes = q.all ()
-                self.error = MOM.Error.Not_Unique (obj, clashes)
-            return result
+        qfs = self.query_filters (obj, attr_dict)
+        q   = obj.ETM.query_s (* qfs)
+        result = q.count () == 0
+        if not result :
+            self.val_dict = dict \
+                (zip (self.attributes, self._attr_values (obj, attr_dict)))
+            self._extra_links_d = clashes = q.all ()
+            self.error = MOM.Error.Not_Unique (obj, clashes)
+        return result
     # end def satisfied
 
     def _attr_values (self, obj, attr_dict) :

@@ -73,6 +73,7 @@
 #                     (too many exception clauses still use `StandardError`)
 #    10-Aug-2012 (MG) Use `getattr` too access pid `Invariant.__init__`
 #    12-Aug-2012 (CT) Add `Not_Unique`
+#    10-Sep-2012 (CT) Fix name error in `Not_Unique`
 #    ««revision-date»»···
 #--
 
@@ -702,7 +703,7 @@ class Not_Unique (Error) :
     def __init__ (self, obj, clashes) :
         self.__super.__init__ \
             ( _T ("new definition of %s %s clashes with existing entities %s")
-            % ( _T (new.ui_name), new
+            % ( _T (obj.ui_name), obj
               , ", ".join ("%s %s" % (_T (c.ui_name), c) for c in clashes)
               )
             )

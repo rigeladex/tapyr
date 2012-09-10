@@ -193,12 +193,7 @@ _test_code = r"""
     >>> scope.commit ()
     Traceback (most recent call last):
     ...
-    Invariants: Condition `skipper_not_multiplexed` : A sailor can't be skipper of more than one boat in a single
-    regatta event. (other_boots_skippered_count == 0)
-        boat = Optimist, AUT 1108
-        other_boots_skippered_count = 1 << other_boots_skippered.count ()
-        regatta = Himmelfahrt 2008/05/01, Optimist
-        skipper = Tanzer Christian, AUT, 29676
+    Invariants: new definition of Boat_in_Regatta (((u'optimist', ), u'AUT', 1108, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) clashes with existing entities Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
 
     >>> show_dep (bir.skipper) ### after commit failing `skipper_not_multiplexed`
     (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))) : 1
@@ -206,7 +201,7 @@ _test_code = r"""
 
     >>> err =  first (bir8.errors)
     >>> print formatted_1 (err.as_json_cargo)
-    {'attributes' : ['boat', 'regatta', 'skipper'], 'bindings' : [('boat', 'Optimist, AUT 1108'), ('other_boots_skippered_count', '1 << this.other_boots_skippered.count ()'), ('regatta', 'Himmelfahrt 2008/05/01, Optimist'), ('skipper', 'Tanzer Christian, AUT, 29676')], 'description' : '(other_boots_skippered_count == 0)', 'extra_links' : [(9, 'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist')], 'head' : "A sailor can't be skipper of more than one boat in a single\nregatta event."}
+    {'description' : "new definition of Boat_in_Regatta (((u'optimist',), u'AUT', 1108, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist',))) clashes with existing entities Boat_in_Regatta (((u'optimist',), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist',)))"}
 
     >>> scope.rollback ()
 
