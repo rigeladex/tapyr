@@ -42,6 +42,7 @@
 #     6-Aug-2012 (CT) Use `resource.skip_etag`, remove `_do_change_info_skip`
 #    15-Aug-2012 (MG) Use bytes string for `X-last-cid` header
 #    18-Aug-2012 (CT) Fix `_do_change_info`: apply `or` to `last`, `etag`
+#    10-Sep-2012 (CT) Replace `_do_change_info` by `_skip_render`
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,7 @@ class HTTP_Method (TFL.Meta.Object) :
     _renderers                 = (GTW.RST.Mime_Type.JSON, )
 
     def __call__ (self, resource, request, response) :
-        if self._do_change_info (resource, request, response) :
+        if not self._skip_render (resource, request, response) :
             response.renderer = self._get_renderer (resource, request, response)
             body = self._response_body (resource, request, response)
             if body is not None and response.renderer is not None :
@@ -103,23 +104,6 @@ class HTTP_Method (TFL.Meta.Object) :
         return response
     # end def __call__
 
-    def _do_change_info (self, resource, request, response) :
-        result = resource.skip_etag
-        if not result :
-            etag   = resource.get_etag          (request)
-            last   = resource.get_last_modified (request)
-            result = not (last or etag)
-            if not result :
-                response.cache_control.no_cache = True
-                if last :
-                    result = self._check_modified \
-                        (resource, request, response, last)
-                if etag :
-                    result = result or self._check_etag \
-                        (resource, request, response, etag)
-        return result
-    # end def _do_change_info
-
     def _get_renderer (self, resource, request, response) :
         result = self.render_man (self, resource, request)
         if result is None and self.needs_body :
@@ -135,6 +119,29 @@ class HTTP_Method (TFL.Meta.Object) :
             )
     # end def _response_body
 
+    def _skip_render (self, resource, request, response) :
+        result = False
+        if not resource.skip_etag :
+            etag   = resource.get_etag           (request)
+            last   = resource.get_last_modified  (request)
+            r_etag = self._request_etag_attr     (request)
+            r_last = self._request_modified_attr (request)
+            if last :
+                response.last_modified = last
+            if etag :
+                response.set_etag (etag)
+            if last or etag :
+                response.cache_control.no_cache = True
+            matches = []
+            if last and r_last :
+                matches.append (not self._check_modified (last, r_last))
+            if etag and r_etag :
+                matches.append (r_etag.contains (etag))
+            if matches :
+                result = all (matches)
+        return result
+    # end def _skip_render
+
 # end class HTTP_Method
 
 class _HTTP_Method_R_ (HTTP_Method) :
@@ -142,31 +149,29 @@ class _HTTP_Method_R_ (HTTP_Method) :
 
     mode                       = "r"
 
-    def _check_etag (self, resource, request, response, etag) :
-        n_match = request.if_none_match
-        result  = n_match is None or not n_match.contains (etag)
-        response.set_etag (etag)
-        return result
-    # end def _check_etag
-
-    def _check_modified (self, resource, request, response, last_modified) :
-        ims    = request.if_modified_since
-        result = ims is None or last_modified > ims
-        response.last_modified = last_modified
-        return result
+    def _check_modified (self, last_modified, ims) :
+        return last_modified > ims
     # end def _check_modified
 
-    def _do_change_info (self, resource, request, response) :
-        result = self.__super._do_change_info (resource, request, response)
+    def _request_etag_attr (self, request) :
+        return request.if_none_match
+    # end def _request_etag_attr
+
+    def _request_modified_attr (self, request) :
+        return request.if_modified_since
+    # end def _request_modified_attr
+
+    def _skip_render (self, resource, request, response) :
+        result = self.__super._skip_render (resource, request, response)
         ci     = resource.change_info
         if ci is not None :
             cid  = getattr (ci, "cid", None)
             if cid is not None :
                 response.headers [b"X-last-cid"] = cid
-        if not result :
+        if result :
             response.status_code = 304
         return result
-    # end def _do_change_info
+    # end def _skip_render
 
 # end class _HTTP_Method_R_
 
@@ -175,26 +180,24 @@ class _HTTP_Method_W_ (HTTP_Method) :
 
     mode                       = "w"
 
-    def _check_etag (self, resource, request, response, etag) :
-        match  = request.if_match
-        result = match is None or not match.contains (etag)
-        response.set_etag (etag)
-        return result
-    # end def _check_etag
-
-    def _check_modified (self, resource, request, response, last_modified) :
-        ums    = request.if_unmodified_since
-        result = ums is None or last_modified != ums
-        response.last_modified = last_modified
-        return result
+    def _check_modified (self, last_modified, ums) :
+        return last_modified != ums
     # end def _check_modified
 
-    def _do_change_info (self, resource, request, response) :
-        result = self.__super._do_change_info (resource, request, response)
-        if not result :
+    def _request_etag_attr (self, request) :
+        return request.if_match
+    # end def _request_etag_attr
+
+    def _request_modified_attr (self, request) :
+        return request.if_unmodified_since
+    # end def _request_modified_attr
+
+    def _skip_render (self, resource, request, response) :
+        result = self.__super._skip_render (resource, request, response)
+        if result :
             response.status_code = 412
         return result
-    # end def _do_change_info
+    # end def _skip_render
 
 # end class _HTTP_Method_W_
 

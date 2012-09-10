@@ -2027,6 +2027,7 @@ _test_get = r"""
         { 'cache-control' : 'no-cache'
         , 'connection' : 'close'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
