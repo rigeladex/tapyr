@@ -48,6 +48,7 @@
 #    12-Aug-2012 (CT) Add `Unique`
 #    12-Aug-2012 (CT) Adapt to export-change of `MOM.Meta.M_Pred_Type`
 #    10-Sep-2012 (CT) Move `do_check` fo `_Condition_`
+#    11-Sep-2012 (CT) Change `Unique` to use `attr_none`, not `attributes`
 #    ««revision-date»»···
 #--
 
@@ -481,7 +482,7 @@ class Unique (_Condition_) :
                 )
         if not kw.get ("__module__") :
             kw ["__module__"] = TFL.Caller.globals () ["__name__"]
-        kw.update (attributes = attrs)
+        kw.update (attr_none = attrs)
         return cls.__class__ (name, (cls, ), kw)
     # end def New_Pred
 
@@ -499,20 +500,20 @@ class Unique (_Condition_) :
         q   = obj.ETM.query_s (* qfs)
         result = q.count () == 0
         if not result :
-            self.val_dict = dict \
-                (zip (self.attributes, self._attr_values (obj, attr_dict)))
+            self.val_disp = dict \
+                (zip (self.attr_none, self._attr_values (obj, attr_dict)))
             self._extra_links_d = clashes = q.all ()
-            self.error = MOM.Error.Not_Unique (obj, clashes)
+            self.error = MOM.Error.Not_Unique (obj, self)
         return result
     # end def satisfied
 
     def _attr_values (self, obj, attr_dict) :
-        for a in self.attributes :
+        for a in self.attr_none :
             try :
                 v = attr_dict [a]
             except KeyError :
                 v = getattr (obj, a, None)
-            yield v
+            yield obj.FO (a, v)
     # end def _attr_values
 
 # end class Unique

@@ -74,6 +74,7 @@
 #    10-Aug-2012 (MG) Use `getattr` too access pid `Invariant.__init__`
 #    12-Aug-2012 (CT) Add `Not_Unique`
 #    10-Sep-2012 (CT) Fix name error in `Not_Unique`
+#    11-Sep-2012 (CT) Derive `Not_Unique` from `_Invariant_`
 #    ««revision-date»»···
 #--
 
@@ -91,6 +92,7 @@ import _TFL._Meta.Object
 import _TFL.Caller
 import _TFL.Accessor
 import _TFL.I18N
+import _TFL.Record
 
 import itertools
 
@@ -697,17 +699,50 @@ class No_Such_File (Error) :
     """Raised for a file specification of a non-existing file."""
 # end class No_Such_File
 
-class Not_Unique (Error) :
+class Not_Unique (_Invariant_) :
     """Set of attributes is not unique for each entity."""
 
-    def __init__ (self, obj, clashes) :
-        self.__super.__init__ \
-            ( _T ("new definition of %s %s clashes with existing entities %s")
-            % ( _T (obj.ui_name), obj
-              , ", ".join ("%s %s" % (_T (c.ui_name), c) for c in clashes)
-              )
+    def __init__ (self, obj, inv) :
+        self.__super.__init__ (obj)
+        self.attributes   = sorted (inv.attributes + inv.attr_none)
+        self.count        = len (clashes)
+        self.extra_links  = tuple \
+            ( TFL.Record
+                ( pid        = getattr (x, "pid", None)
+                , ui_display = x.ui_display
+                , type_name  = _T (x.ui_name)
+                )
+            for x in inv.extra_links
             )
+        self.inv          = inv
+        self.type_name    = _T (obj.ui_name)
+        self.ui_display   = obj.ui_display
+        self.args         = (self.type_name, self.ui_display, inv)
+        description       = _T (inv.description)
+        try :
+            self.inv_desc = description % TFL.Caller.Object_Scope (obj)
+        except TypeError :
+            self.inv_desc = description
     # end def __init__
+
+    @Once_Property
+    def head (self) :
+        return \
+            ( _T
+              ("The new definition of %s %s clashed with %s existing entities")
+            % (self.type_name, self.ui_display, self.count)
+            )
+    # end def head
+
+    @Once_Property
+    def description (self) :
+        result = [self.inv_desc] if self.inv_desc else []
+        extras = tuple \
+            ("%s %s" % (x.type_name, x.ui_display) for x in self.extra_links)
+        result.append \
+            ( _T ("Clashing entities: %s") % ("; ".join (extras), ))
+        return "\n\n".join (result)
+    # end def description
 
 # end class Not_Unique
 

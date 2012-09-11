@@ -30,6 +30,7 @@
 #    16-Apr-2012 (CT) Fix stylo
 #    12-Aug-2012 (CT) Add `Unique`
 #    12-Aug-2012 (CT) Use `_Export_Module`, DRY class names
+#    11-Sep-2012 (CT) Change `Unique` to use `attr_none`, not `attributes`
 #    ««revision-date»»···
 #--
 
@@ -207,22 +208,22 @@ class Unique (_Condition_) :
                 ( "Unique predicate %s *must* have kind Region, not %s"
                 % (cls, cls.kind)
                 )
-        if cls.attr_none :
-            raise TypeError \
-                ( "Unique predicate %s cannot define attr_none, got %s"
-                % (cls, cls.attr_none)
-                )
         if cls.attributes :
+            raise TypeError \
+                ( "Unique predicate %s cannot define attributes, got %s"
+                % (cls, cls.attributes)
+                )
+        if cls.attr_none :
             from _MOM._Attr.Filter import Q
-            setattr (cls, "aqs", tuple (getattr (Q, a) for a in cls.attributes))
+            setattr (cls, "aqs", tuple (getattr (Q, a) for a in cls.attr_none))
     # end def __init__
 
     def __str__  (cls) :
-        return "%s : %s" % (cls.name, ", ".join (cls.attributes))
+        return "%s : %s" % (cls.name, ", ".join (cls.attr_none))
     # end def __str__
 
     def __repr__ (cls) :
-        return '%s (%r)' % (cls.__class__.__name__, cls.attributes)
+        return '%s (%r)' % (cls.__class__.__name__, cls.attr_none)
     # end def __repr__
 
 # end class Unique
