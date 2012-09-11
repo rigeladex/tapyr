@@ -104,6 +104,7 @@
 #     1-Aug-2012 (CT) Remove call to `.ems.rollback` from `commit`
 #     4-Aug-2012 (CT) Move `_DESTROYED_E_TYPE` to `.ems.remove`
 #    12-Aug-2012 (CT) Use `ems.commit_context`
+#    11-Sep-2012 (CT) Add `rollback_pending_change`; factored from `MOM.EMS.SAS`
 #    ««revision-date»»···
 #--
 
@@ -620,6 +621,13 @@ class Scope (TFL.Meta.Object) :
         self.ems.rollback ()
         self.count_change ()
     # end def rollback
+
+    def rollback_pending_change (self) :
+        changes = tuple (self.uncommitted_changes.changes)
+        self.rollback ()
+        for c in changes :
+            c.redo (self)
+    # end def rollback_pending_change
 
     def start_change_recorder (self) :
         if not self.historian._rec_stack :

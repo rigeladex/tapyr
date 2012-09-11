@@ -57,6 +57,7 @@
 #     4-Aug-2012 (CT) Rename `remove` to `_remove`
 #     6-Aug-2012 (CT) Fix `add_pending`: use `E_Type`, not `E_Type_Manager`
 #    19-Aug-2012 (MG) Keep cache during rollback due to no changes
+#    11-Sep-2012 (CT) Factor `rollback_pending_change` to `MOM.Scope`
 #    ««revision-date»»···
 #--
 
@@ -155,11 +156,7 @@ class Manager (MOM.EMS._Manager_) :
             ses.add   (entity, pid)
         except SAS_Exception.IntegrityError as exc :
             ### XXX introduce nested transactions
-            scope   = self.scope
-            changes = tuple (scope.uncommitted_changes.changes)
-            scope.rollback ()
-            for c in changes :
-                c.redo (scope)
+            self.scope.rollback_pending_change ()
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))
     # end def add
