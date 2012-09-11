@@ -41,9 +41,7 @@
 #                     `crew` from `Cached, Computed_Set_Mixin` to `Computed`
 #    23-Jul-2012 (CT) Use `Link_Cacher` for auto-cached `boats`
 #     7-Aug-2012 (CT) Add `example`
-#    10-Sep-2012 (CT) Add predicates `unique_boat_regatta`,
-#                     `unique_regatta_skipper`,
-#                     disable `skipper_not_multiplexed`
+#    12-Aug-2012 (CT) Add predicate `unique_boat_regatta_skipper`
 #    ««revision-date»»···
 #--
 
@@ -201,8 +199,6 @@ class Boat_in_Regatta (_Ancestor_Essence) :
                 )
             _xtra_added        = False
 
-            do_check = False
-
             def _add_entities_to_extra_links (self, obj, lst) :
                 self.__super._add_entities_to_extra_links (obj, lst)
                 if not self._xtra_added :
@@ -213,20 +209,9 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class skipper_not_multiplexed
 
-        unique_boat_regatta = Pred.Unique.New_Pred \
-            ( "boat", "regatta"
-            , name    = "unique_boat_regatta_skipper"
-            , __doc__ =
-                """A boat can't enter a single regatta event more than once."""
-            )
-
-        unique_regatta_skipper = Pred.Unique.New_Pred \
-            ( "regatta", "skipper"
-            , name    = "unique_regatta_skipper"
-            , __doc__ =
-                """A sailor can't be skipper of more than one boat in a single
-                   regatta event.
-                """
+        unique_boat_regatta_skipper = Pred.Unique.New_Pred \
+            ( "boat", "regatta", "skipper"
+            , name = "unique_boat_regatta_skipper"
             )
 
     # end class _Predicates
