@@ -48,6 +48,7 @@
 #    20-Jan-2012 (CT) Add `sail_number.max_value`
 #     8-Sep-2012 (CT) Add `valid_sail_number_x`
 #     8-Sep-2012 (CT) Set `sail_number_x.ignore_case` to `"upper"`
+#    11-Sep-2012 (CT) Add add `sail_number` to `valid_sail_number_x`
 #    ««revision-date»»···
 #--
 
@@ -162,11 +163,12 @@ class Boat (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Predicates
 
         class valid_sail_number_x (Pred.Condition) :
-            """`sail_number_x` must not repeat `nation`."""
+            """`sail_number_x` must not repeat either `nation` or `sail_number`."""
 
             kind               = Pred.Object
-            assertion          = "sail_number_x != nation"
-            attributes         = ("sail_number_x", "nation")
+            assertion          =
+              "sail_number_x not in (nation, str (sail_number))"
+            attributes         = ("nation", "sail_number", "sail_number_x")
 
         # end class valid_sail_number_x
 
