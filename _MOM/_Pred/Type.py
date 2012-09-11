@@ -458,12 +458,11 @@ class U_Quant (_Quantifier_) :
 # end class U_Quant
 
 class Unique (_Condition_) :
-    """A predicate defining a uniqueness constraint over a set of attributes.
-
-       For Unique predicates, the predicate is evaluated even if some
-       `attributes` have a value equal to `None`; `attr_none` cannot be used
-       for this type of predicate.
-    """
+    ### A predicate defining a uniqueness constraint over a set of attributes.
+    ###
+    ### For Unique predicates, the predicate is evaluated even if some
+    ### attributes have a value equal to `None`, i.e., all attributes must be
+    ### listed listed in `attr_none`.
 
     __metaclass__   = MOM.Meta.M_Pred_Type.Unique
 

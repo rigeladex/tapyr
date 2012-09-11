@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-06 18:22+0200\n"
+"POT-Creation-Date: 2012-09-11 17:33+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -514,7 +514,6 @@ msgid "Repeat Email"
 msgstr "Wiederhole Emailadresse"
 
 #: _JNJ/html/form.jnj:415 _JNJ/html/register.jnj:63
-#, python-format
 msgid "Repeat Password"
 msgstr "Wiederhole Kennwort"
 
@@ -523,7 +522,6 @@ msgid "Request Timeout"
 msgstr "Zeitüberschreitung"
 
 #: _JNJ/html/reset_password.jnj:65 _JNJ/html/reset_password.jnj:66
-#, python-format
 msgid "Request password reset"
 msgstr "Setze Kennwort zurück"
 
@@ -753,9 +751,4 @@ msgstr "Woche"
 #: _JNJ/html/cal/wr.jnj:168
 msgid "year"
 msgstr "Jahr"
-
-#~ msgid "Log into website with username and password specified"
-#~ msgstr ""
-#~ "Melde mit dem angegebenen Benutzernamen "
-#~ "und Kennwort bei der Webseite an"
 
