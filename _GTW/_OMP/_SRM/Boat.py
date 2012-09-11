@@ -49,6 +49,7 @@
 #     8-Sep-2012 (CT) Add `valid_sail_number_x`
 #     8-Sep-2012 (CT) Set `sail_number_x.ignore_case` to `"upper"`
 #    11-Sep-2012 (CT) Add add `sail_number` to `valid_sail_number_x`
+#    11-Sep-2012 (CT) Fix typo introduced in last change
 #    ««revision-date»»···
 #--
 
@@ -166,7 +167,7 @@ class Boat (_Ancestor_Essence) :
             """`sail_number_x` must not repeat either `nation` or `sail_number`."""
 
             kind               = Pred.Object
-            assertion          =
+            assertion          = \
               "sail_number_x not in (nation, str (sail_number))"
             attributes         = ("nation", "sail_number", "sail_number_x")
 
