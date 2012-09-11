@@ -116,9 +116,10 @@ class _MOM_Link_ (_Ancestor_Essence) :
     # end def _destroy
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
-        self.__super._rename (new_epk, pkas_raw, pkas_ckd)
+        result = self.__super._rename (new_epk, pkas_raw, pkas_ckd)
         for role_cacher in self.auto_cache_roles :
             role_cacher (self, no_value = False)
+        return result
     # end def _rename
 
 Link = _MOM_Link_ # end class

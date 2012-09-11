@@ -248,6 +248,7 @@ import _TFL.Sorted_By
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.object_globals   import object_globals
+from   _TFL.predicate        import paired
 
 import itertools
 import logging
@@ -676,7 +677,7 @@ class Entity (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def _record_context (self, gen, Change) :
-        if self.electric or not self._home_scope :
+        if not self._home_scope :
             yield
         else :
             rvr = dict (gen)
@@ -1419,20 +1420,22 @@ class Id_Entity (Entity) :
     # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
-        def _renamer () :
-            attributes = self.attributes
-            for k, v in pkas_ckd.iteritems () :
-                attr = attributes [k]
-                attr._set_cooked_inner (self, v)
-                attr._set_raw_inner    (self, pkas_raw [k], v)
-            self._reset_epk ()
-        self._kw_check_predicates (on_error = None, ** pkas_ckd)
-        self.home_scope.rename    (self, tuple (new_epk), _renamer)
+        diffs = sum ((n != o) for n, o in paired (new_epk, self.epk [:-1]))
+        if diffs :
+            def _renamer () :
+                attributes = self.attributes
+                for k, v in pkas_ckd.iteritems () :
+                    attr = attributes [k]
+                    attr._set_cooked_inner (self, v)
+                    attr._set_raw_inner    (self, pkas_raw [k], v)
+                self._reset_epk ()
+            self._kw_check_predicates (on_error = None, ** pkas_ckd)
+            self.home_scope.rename    (self, tuple (new_epk), _renamer)
+        return diffs
     # end def _rename
 
     def _repr (self, type_name) :
-        return "%s (%s)" % \
-            (type_name, ", ".join (self.epk_as_code))
+        return "%s (%s)" % (type_name, ", ".join (self.epk_as_code))
     # end def _repr
 
     def _reset_epk (self) :
@@ -1443,25 +1446,23 @@ class Id_Entity (Entity) :
     # end def _reset_epk
 
     def _set_ckd (self, on_error = None, ** kw) :
-        if not kw :
-            return 0
-        new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
-        if pkas_ckd :
-            self._rename (new_epk, pkas_raw, pkas_ckd)
-        result = self.__super._set_ckd (on_error, ** kw)
-        return result + len (pkas_ckd)
+        result = 0
+        if kw :
+            new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
+            if pkas_ckd :
+                result += self._rename (new_epk, pkas_raw, pkas_ckd)
+            result += self.__super._set_ckd (on_error, ** kw)
+        return result
     # end def _set_ckd
 
     def _set_raw (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from raw values"""
-        if not kw :
-            return 0
-        new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
-        if pkas_ckd :
-            if tuple (new_epk) != self.epk [:-1] :
-                self._rename (new_epk, pkas_raw, pkas_ckd)
-        result = self.__super._set_raw (on_error, ** kw)
-        return result + len (pkas_ckd)
+        result = 0
+        if kw :
+            new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
+            if pkas_ckd :
+                result += self._rename (new_epk, pkas_raw, pkas_ckd)
+            result += self.__super._set_raw (on_error, ** kw)
+        return result
     # end def _set_raw
 
     def __eq__ (self, rhs) :
