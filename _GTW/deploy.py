@@ -48,6 +48,7 @@
 #     4-Jun-2012 (CT) Fix `app_dir` in `_handle_babel_compile`
 #     4-Jun-2012 (CT) Change `Shell.handler` to `_handle_shell`
 #     4-Jun-2012 (CT) Rewrite `_handle_update` to use `_handle_vc`
+#    11-Sep-2012 (CT) Fix `_handle_babel_extract` (assign `P`)
 #    ««revision-date»»···
 #--
 
@@ -306,6 +307,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
     # end def _handle_babel_compile
 
     def _handle_babel_extract (self, cmd) :
+        P       = self._P (cmd)
         head_args = ("-m", "_TFL.Babel")
         tail_args = ("-sort", ) + tuple (cmd.package_dirs)
         extr_args = \
