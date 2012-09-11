@@ -75,6 +75,7 @@
 #    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
 #    12-Aug-2012 (CT) Add `commit_context`
 #     9-Sep-2012 (CT) Add `convert_creation_change`
+#    11-Sep-2012 (CT) Add `update` (and a stub for `add`)
 #    ««revision-date»»···
 #--
 
@@ -136,6 +137,9 @@ class _Manager_ (TFL.Meta.Object) :
         self._reset_transaction ()
     # end def __init__
 
+    def add (self, entity, pid = None) :
+        raise NotImplementedError ("%s must implement `add`" % self.__class__)
+    # end def add
     def async_changes (self, * filters, ** kw) :
         from _MOM.import_MOM import Q
         result = self.changes (Q.cid > self.scope.db_cid)
@@ -281,6 +285,10 @@ class _Manager_ (TFL.Meta.Object) :
             self._rollback ()
         self._reset_transaction ()
     # end def rollback
+
+    def update (self, entity, change) :
+        pass ### redefine as necessary in descendents
+    # end def update
 
     def _query_multi_root (self, Type) :
         raise NotImplementedError \

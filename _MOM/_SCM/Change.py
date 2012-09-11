@@ -78,6 +78,7 @@
 #     4-Aug-2012 (CT) Change `_create` to use `entity.restore` if applicable
 #     5-Aug-2012 (CT) Use `epk_raw_pid`, `get_raw_pid`
 #     9-Sep-2012 (CT) Add `Create.c_time`, `.c_user`
+#    11-Sep-2012 (CT) Add `_Attr_.do_callbacks` to call `ems.update`
 #     6-Dec-2012 (CT) Store `user.pid`, if any, else `user`
 #    ««revision-date»»···
 #--
@@ -497,6 +498,12 @@ class _Attr_ (_Entity_) :
         self.__super.__init__ (entity)
         self.old_attr = dict (old_attr, last_cid = str (entity.last_cid))
     # end def __init__
+
+    def do_callbacks (self, scope) :
+        entity = self.entity (scope)
+        scope.ems.update (entity, self)
+        self.__super.do_callbacks (scope)
+    # end def do_callbacks
 
     def redo (self, scope) :
         self._restore     (scope)
