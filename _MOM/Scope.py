@@ -105,6 +105,7 @@
 #     4-Aug-2012 (CT) Move `_DESTROYED_E_TYPE` to `.ems.remove`
 #    12-Aug-2012 (CT) Use `ems.commit_context`
 #    11-Sep-2012 (CT) Add `rollback_pending_change`; factored from `MOM.EMS.SAS`
+#    12-Sep-2012 (CT) Call `record_change` and `do_callbacks` unconditionally
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #     6-Dec-2012 (CT) Don't set `change.user` in `nested_change_recorder`
 #    21-Jan-2013 (CT) Add `destroy_all`, populate `Scope.Table`
@@ -350,8 +351,7 @@ class Scope (TFL.Meta.Object) :
         self.ems.add (entity, pid = pid)
         if not entity.init_finished :
             entity._finish__init__ ()
-        if not entity.electric :
-            self.record_change (MOM.SCM.Change.Create, entity)
+        self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
 
     def add_from_pickle_cargo (self, type_name, cargo, pid) :
@@ -621,23 +621,17 @@ class Scope (TFL.Meta.Object) :
         if result is not None :
             result.user = self.user
             self.ems.register_change (result)
-            if result.callbacks :
-                result.do_callbacks (self)
+            result.do_callbacks (self)
         return result
     # end def record_change
 
     def remove (self, entity) :
         """Remove `entity` from scope `self`"""
         assert (entity != self.root)
-        def remove () :
+        Change = MOM.SCM.Change.Destroy
+        with self.nested_change_recorder (Change, entity) :
             entity._destroy ()
             self.ems.remove (entity)
-        if entity.electric :
-            remove ()
-        else :
-            Change = MOM.SCM.Change.Destroy
-            with self.nested_change_recorder (Change, entity) :
-                remove ()
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :

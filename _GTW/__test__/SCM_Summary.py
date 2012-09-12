@@ -31,6 +31,7 @@
 #     9-Sep-2010 (CT) Creation continued...
 #    14-Sep-2010 (CT) Creation continued....
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    12-Sep-2012 (CT) Adapt to recording of electric changes
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
@@ -82,22 +83,91 @@ _basic = r"""
     >>> xtn = x.type_name
     >>> sort_by_cid = TFL.Sorted_By ("-cid")
     >>> int (scope.query_changes (Q.type_name == xtn).order_by (sort_by_cid).first().cid) ### before x.destroy ()
-    23
+    31
     >>> x.destroy ()
     >>> int (scope.query_changes (Q.type_name == xtn).order_by (sort_by_cid).first().cid) ### after x.destroy ()
-    27
+    35
 
     >>> rev.date.finish = datetime.date (2010, 05, 13)
     >>> rs1.dates.append (datetime.datetime (2010, 9, 8, 0, 0))
     >>> rs1.dates.append (datetime.datetime (2010, 10, 8, 0, 0))
-    >>>
+
     >>> ucc  = csm1 = scope.uncommitted_changes
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+
+    >>> for csp in ucc.changes :
     ...     print csp
-    ...
+    <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '2', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '3', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '4', 'max_crew' : u'4'}>
+    <Create SRM.Handicap (u'Yardstick', 'SRM.Handicap'), new-values = {'last_cid' : '5'}>
+    <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), new-values = {'last_cid' : '6'}>
+    <Copy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1134', u'', 'SRM.Boat'), new-values = {'last_cid' : '8'}>
+        <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1134', u'', 'SRM.Boat'), new-values = {'last_cid' : '7'}>
+    <Create PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '9'}>
+    <Create SRM.Sailor ((u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '10'}>
+    <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '11', 'perma_name' : u'himmelfahrt'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '12', 'perma_name' : u'optimist'}>
+    <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '13', 'perma_name' : u'yardstick'}>
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 9}>
+    <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), new-values = {'last_cid' : '15', 'points' : u'8'}>
+    <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), new-values = {'last_cid' : '16', 'points' : u'4'}>
+    <Create SWP.Page (u'event-1-text', 'SWP.Page'), new-values = {'contents' : u'<p>Text for the 1. event</p>\n', 'date' : (('start', u'2010/09/08'),), 'last_cid' : '17', 'text' : u'Text for the 1. event'}>
+    <Create SWP.Page (u'event-2-text', 'SWP.Page'), new-values = {'contents' : u'<p>Text for the 2. event</p>\n', 'date' : (('start', u'2010/09/08'),), 'last_cid' : '18', 'text' : u'Text for the 2. event'}>
+    <Create EVT.Event ((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), new-values = {'last_cid' : '19'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/18', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '20'}>
+    <Create EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), new-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '21'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/18', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '20'}>
+    <Create EVT.Recurrence_Rule ((((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), u'', u'', 'EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '23', 'start' : u'2010/08/01', 'unit' : u'Weekly'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '24'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '25'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '26'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '27'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '28'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '29'}>
+    <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'last_cid' : '11'}, new-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '30'}>
+    <Modify SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), old-values = {'last_cid' : '1', 'loa' : u''}, new-values = {'last_cid' : '31', 'loa' : u'2.43'}>
+    <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '9', 'salutation' : u'', 'title' : u''}, new-values = {'last_cid' : '32', 'salutation' : u'Dear L.', 'title' : u'Mr.'}>
+    <Modify SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '15'}, new-values = {'discarded' : u'yes', 'last_cid' : '33'}>
+    <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '30'}, new-values = {'date' : (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'last_cid' : '34'}>
+    <Destroy SRM.Boat_Class (u'Seascape 18', 'SRM.Boat_Class'), old-values = {'last_cid' : '4', 'max_crew' : u'4'}>
+    <Modify/C SRM.Regatta_Event.date (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'finish' : u'2010/05/14', 'last_cid' : '34'}, new-values = {'finish' : u'2010/05/13', 'last_cid' : '36'}>
+    <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'', 'last_cid' : '21'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '37'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '24'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '25'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '26'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '27'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '28'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '29'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '44'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '45'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '46'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '47'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '48'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '49'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '50'}>
+    <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08', 'last_cid' : '37'}, new-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '51'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '44'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '45'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '46'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '47'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '48'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '49'}>
+    <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '50'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '59'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '60'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '61'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '62'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '63'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '64'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '65'}>
+    <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '66'}>
+
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 1
+    ...     print csp
     <Change Summary for pid 1: newborn, 1 change>
         <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'1'}>
-        <Modify SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), old-values = {'last_cid' : '1', 'loa' : u''}, new-values = {'last_cid' : '23', 'loa' : u'2.43'}>
+        <Modify SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), old-values = {'last_cid' : '1', 'loa' : u''}, new-values = {'last_cid' : '31', 'loa' : u'2.43'}>
     <Change Summary for pid 2: newborn>
         <Create SRM.Boat_Class (u'420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '2', 'max_crew' : u'2'}>
     <Change Summary for pid 3: newborn>
@@ -115,14 +185,14 @@ _basic = r"""
           <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1134', u'', 'SRM.Boat'), new-values = {'last_cid' : '7'}>
     <Change Summary for pid 8: newborn, 1 change>
         <Create PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '9'}>
-        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '9', 'salutation' : u'', 'title' : u''}, new-values = {'last_cid' : '24', 'salutation' : u'Dear L.', 'title' : u'Mr.'}>
+        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '9', 'salutation' : u'', 'title' : u''}, new-values = {'last_cid' : '32', 'salutation' : u'Dear L.', 'title' : u'Mr.'}>
     <Change Summary for pid 9: newborn>
         <Create SRM.Sailor ((u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '10'}>
     <Change Summary for pid 10: newborn, 3 changes>
         <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '11', 'perma_name' : u'himmelfahrt'}>
-        <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'last_cid' : '11'}, new-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '22'}>
-        <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '22'}, new-values = {'date' : (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'last_cid' : '26'}>
-        <Modify/C SRM.Regatta_Event.date (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'finish' : u'2010/05/14', 'last_cid' : '26'}, new-values = {'finish' : u'2010/05/13', 'last_cid' : '28'}>
+        <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'last_cid' : '11'}, new-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '30'}>
+        <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '30'}, new-values = {'date' : (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'last_cid' : '34'}>
+        <Modify/C SRM.Regatta_Event.date (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'finish' : u'2010/05/14', 'last_cid' : '34'}, new-values = {'finish' : u'2010/05/13', 'last_cid' : '36'}>
     <Change Summary for pid 11: newborn>
         <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '12', 'perma_name' : u'optimist'}>
     <Change Summary for pid 12: newborn>
@@ -131,7 +201,7 @@ _basic = r"""
         <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 9}>
     <Change Summary for pid 14: newborn, 1 change>
         <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), new-values = {'last_cid' : '15', 'points' : u'8'}>
-        <Modify SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '15'}, new-values = {'discarded' : u'yes', 'last_cid' : '25'}>
+        <Modify SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '15'}, new-values = {'discarded' : u'yes', 'last_cid' : '33'}>
     <Change Summary for pid 15: newborn>
         <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), new-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 16: newborn>
@@ -140,36 +210,115 @@ _basic = r"""
         <Create SWP.Page (u'event-2-text', 'SWP.Page'), new-values = {'contents' : u'<p>Text for the 2. event</p>\n', 'date' : (('start', u'2010/09/08'),), 'last_cid' : '18', 'text' : u'Text for the 2. event'}>
     <Change Summary for pid 18: newborn>
         <Create EVT.Event ((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), new-values = {'last_cid' : '19'}>
+    <Change Summary for pid 19: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/18', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '20'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/18', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '20'}>
     <Change Summary for pid 20: newborn, 2 changes>
-        <Create EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), new-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '20'}>
-        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'', 'last_cid' : '20'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '29'}>
-        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08', 'last_cid' : '29'}, new-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '30'}>
+        <Create EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), new-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '21'}>
+        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'', 'last_cid' : '21'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '37'}>
+        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08', 'last_cid' : '37'}, new-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '51'}>
     <Change Summary for pid 21: newborn>
-        <Create EVT.Recurrence_Rule ((((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), u'', u'', 'EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '21', 'start' : u'2010/08/01', 'unit' : u'Weekly'}>
+        <Create EVT.Recurrence_Rule ((((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), u'', u'', 'EVT.Recurrence_Rule'), new-values = {'count' : u'7', 'last_cid' : '23', 'start' : u'2010/08/01', 'unit' : u'Weekly'}>
+    <Change Summary for pid 22: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '24'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '24'}>
+    <Change Summary for pid 23: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '25'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '25'}>
+    <Change Summary for pid 24: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '26'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '26'}>
+    <Change Summary for pid 25: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '27'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '27'}>
+    <Change Summary for pid 26: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '28'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '28'}>
+    <Change Summary for pid 27: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '29'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '29'}>
+    <Change Summary for pid 28: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '44'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '44'}>
+    <Change Summary for pid 29: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '45'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '45'}>
+    <Change Summary for pid 30: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '46'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '46'}>
+    <Change Summary for pid 31: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '47'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '47'}>
+    <Change Summary for pid 32: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '48'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '48'}>
+    <Change Summary for pid 33: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '49'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '49'}>
+    <Change Summary for pid 34: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '50'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '50'}>
+    <Change Summary for pid 35: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '59'}>
+    <Change Summary for pid 36: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '60'}>
+    <Change Summary for pid 37: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '61'}>
+    <Change Summary for pid 38: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '62'}>
+    <Change Summary for pid 39: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '63'}>
+    <Change Summary for pid 40: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '64'}>
+    <Change Summary for pid 41: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '65'}>
+    <Change Summary for pid 42: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '66'}>
 
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 2
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
-    ...
-    1 [('last_cid', (old = None, new = '23')), ('loa', (old = u'', new = u'2.43')), ('max_crew', (old = None, new = u'1'))]
+    1 [('last_cid', (old = None, new = '31')), ('loa', (old = u'', new = u'2.43')), ('max_crew', (old = None, new = u'1'))]
     2 [('last_cid', (old = None, new = '2')), ('max_crew', (old = None, new = u'2'))]
     3 [('last_cid', (old = None, new = '3')), ('max_crew', (old = None, new = u'1'))]
     4 [('last_cid', (old = None, new = None)), ('max_crew', (old = None, new = None))]
     5 [('last_cid', (old = None, new = '5'))]
     6 [('last_cid', (old = None, new = '6'))]
     7 [('last_cid', (old = None, new = '8'))]
-    8 [('last_cid', (old = None, new = '24')), ('salutation', (old = u'', new = u'Dear L.')), ('title', (old = u'', new = u'Mr.'))]
+    8 [('last_cid', (old = None, new = '32')), ('salutation', (old = u'', new = u'Dear L.')), ('title', (old = u'', new = u'Mr.'))]
     9 [('last_cid', (old = None, new = '10'))]
-    10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '28')), ('perma_name', (old = None, new = u'himmelfahrt'))]
+    10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '36')), ('perma_name', (old = None, new = u'himmelfahrt'))]
     11 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
     12 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
     13 [('last_cid', (old = None, new = '14')), ('skipper', (old = None, new = 9))]
-    14 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '25')), ('points', (old = None, new = u'8'))]
+    14 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '33')), ('points', (old = None, new = u'8'))]
     15 [('last_cid', (old = None, new = '16')), ('points', (old = None, new = u'4'))]
     16 [('contents', (old = None, new = u'<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = u'Text for the 1. event'))]
     17 [('contents', (old = None, new = u'<p>Text for the 2. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '18')), ('text', (old = None, new = u'Text for the 2. event'))]
     18 [('last_cid', (old = None, new = '19'))]
-    20 [('date_exceptions', (old = None, new = u'2010/08/15')), ('dates', (old = u'', new = u'2010/09/08,2010/10/08')), ('last_cid', (old = None, new = '30'))]
-    21 [('count', (old = None, new = u'7')), ('last_cid', (old = None, new = '21')), ('start', (old = None, new = u'2010/08/01')), ('unit', (old = None, new = u'Weekly'))]
+    19 [('last_cid', (old = None, new = None))]
+    20 [('date_exceptions', (old = None, new = u'2010/08/15')), ('dates', (old = u'', new = u'2010/09/08,2010/10/08')), ('last_cid', (old = None, new = '51'))]
+    21 [('count', (old = None, new = u'7')), ('last_cid', (old = None, new = '23')), ('start', (old = None, new = u'2010/08/01')), ('unit', (old = None, new = u'Weekly'))]
+    22 [('last_cid', (old = None, new = None))]
+    23 [('last_cid', (old = None, new = None))]
+    24 [('last_cid', (old = None, new = None))]
+    25 [('last_cid', (old = None, new = None))]
+    26 [('last_cid', (old = None, new = None))]
+    27 [('last_cid', (old = None, new = None))]
+    28 [('last_cid', (old = None, new = None))]
+    29 [('last_cid', (old = None, new = None))]
+    30 [('last_cid', (old = None, new = None))]
+    31 [('last_cid', (old = None, new = None))]
+    32 [('last_cid', (old = None, new = None))]
+    33 [('last_cid', (old = None, new = None))]
+    34 [('last_cid', (old = None, new = None))]
+    35 [('last_cid', (old = None, new = '59'))]
+    36 [('last_cid', (old = None, new = '60'))]
+    37 [('last_cid', (old = None, new = '61'))]
+    38 [('last_cid', (old = None, new = '62'))]
+    39 [('last_cid', (old = None, new = '63'))]
+    40 [('last_cid', (old = None, new = '64'))]
+    41 [('last_cid', (old = None, new = '65'))]
+    42 [('last_cid', (old = None, new = '66'))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
@@ -192,6 +341,14 @@ _basic = r"""
     18 ['last_cid']
     20 ['dates', 'last_cid']
     21 ['last_cid']
+    35 ['last_cid']
+    36 ['last_cid']
+    37 ['last_cid']
+    38 ['last_cid']
+    39 ['last_cid']
+    40 ['last_cid']
+    41 ['last_cid']
+    42 ['last_cid']
 
     >>> scope.commit ()
 
@@ -205,25 +362,119 @@ _basic = r"""
     datetime.datetime(2010, 10, 8, 0, 0)
 
     >>> ucc = scope.uncommitted_changes
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 3
     ...     print csp
-    ...
     <Change Summary for pid 18: 1 change>
-        <Modify EVT.Event ((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), old-values = {'date' : (('start', u'2010/08/18'),), 'last_cid' : '19'}, new-values = {'date' : (('finish', u'2010/08/19'), ('start', u'2010/08/13')), 'last_cid' : '32'}>
+        <Modify EVT.Event ((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), old-values = {'date' : (('start', u'2010/08/18'),), 'last_cid' : '19'}, new-values = {'date' : (('finish', u'2010/08/19'), ('start', u'2010/08/13')), 'last_cid' : '85'}>
     <Change Summary for pid 20: 2 changes>
-        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '30'}, new-values = {'date_exceptions' : u'', 'last_cid' : '31'}>
-        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '31'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '33'}>
+        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'date_exceptions' : u'2010/08/15', 'last_cid' : '51'}, new-values = {'date_exceptions' : u'', 'last_cid' : '67'}>
+        <Modify EVT.Recurrence_Spec (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), 'EVT.Recurrence_Spec'), old-values = {'dates' : u'2010/09/08,2010/10/08', 'last_cid' : '67'}, new-values = {'dates' : u'2010/09/08', 'last_cid' : '100'}>
+    <Change Summary for pid 35: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '59'}>
+    <Change Summary for pid 36: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '60'}>
+    <Change Summary for pid 37: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '61'}>
+    <Change Summary for pid 38: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '62'}>
+    <Change Summary for pid 39: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '63'}>
+    <Change Summary for pid 40: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '64'}>
+    <Change Summary for pid 41: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '65'}>
+    <Change Summary for pid 42: just died>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '66'}>
+    <Change Summary for pid 43: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '76'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '76'}>
+    <Change Summary for pid 44: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '77'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '77'}>
+    <Change Summary for pid 45: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/15', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '78'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/15', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '78'}>
+    <Change Summary for pid 46: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '79'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/22', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '79'}>
+    <Change Summary for pid 47: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '80'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/29', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '80'}>
+    <Change Summary for pid 48: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '81'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/05', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '81'}>
+    <Change Summary for pid 49: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '82'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '82'}>
+    <Change Summary for pid 50: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '83'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '83'}>
+    <Change Summary for pid 51: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '84'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '84'}>
+    <Change Summary for pid 52: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '95'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '95'}>
+    <Change Summary for pid 53: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '96'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '96'}>
+    <Change Summary for pid 54: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/15', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '97'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/15', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '97'}>
+    <Change Summary for pid 55: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '98'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '98'}>
+    <Change Summary for pid 56: newborn, just died>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '99'}>
+        <Destroy EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), old-values = {'last_cid' : '99'}>
+    <Change Summary for pid 57: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/01', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '106'}>
+    <Change Summary for pid 58: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '107'}>
+    <Change Summary for pid 59: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/08/15', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '108'}>
+    <Change Summary for pid 60: newborn>
+        <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '109'}>
 
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 4
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
-    ...
-    18 [('date', (old = (('start', u'2010/08/18'),), new = (('finish', u'2010/08/19'), ('start', u'2010/08/13')))), ('last_cid', (old = '19', new = '32'))]
-    20 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '30', new = '33'))]
+    18 [('date', (old = (('start', u'2010/08/18'),), new = (('finish', u'2010/08/19'), ('start', u'2010/08/13')))), ('last_cid', (old = '19', new = '85'))]
+    20 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '51', new = '100'))]
+    35 [('last_cid', (old = '59', new = None))]
+    36 [('last_cid', (old = '60', new = None))]
+    37 [('last_cid', (old = '61', new = None))]
+    38 [('last_cid', (old = '62', new = None))]
+    39 [('last_cid', (old = '63', new = None))]
+    40 [('last_cid', (old = '64', new = None))]
+    41 [('last_cid', (old = '65', new = None))]
+    42 [('last_cid', (old = '66', new = None))]
+    43 [('last_cid', (old = None, new = None))]
+    44 [('last_cid', (old = None, new = None))]
+    45 [('last_cid', (old = None, new = None))]
+    46 [('last_cid', (old = None, new = None))]
+    47 [('last_cid', (old = None, new = None))]
+    48 [('last_cid', (old = None, new = None))]
+    49 [('last_cid', (old = None, new = None))]
+    50 [('last_cid', (old = None, new = None))]
+    51 [('last_cid', (old = None, new = None))]
+    52 [('last_cid', (old = None, new = None))]
+    53 [('last_cid', (old = None, new = None))]
+    54 [('last_cid', (old = None, new = None))]
+    55 [('last_cid', (old = None, new = None))]
+    56 [('last_cid', (old = None, new = None))]
+    57 [('last_cid', (old = None, new = '106'))]
+    58 [('last_cid', (old = None, new = '107'))]
+    59 [('last_cid', (old = None, new = '108'))]
+    60 [('last_cid', (old = None, new = '109'))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
     18 ['date', 'last_cid']
     20 ['date_exceptions', 'dates', 'last_cid']
+    57 ['last_cid']
+    58 ['last_cid']
+    59 ['last_cid']
+    60 ['last_cid']
 
     >>> scope.commit ()
 
@@ -231,32 +482,30 @@ _basic = r"""
     >>> b.destroy ()
 
     >>> ucc = scope.uncommitted_changes
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 5
     ...     print csp
-    ...
     <Change Summary for pid 6: just died>
         <Destroy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), old-values = {'last_cid' : '6'}>
           <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : 9}>
-            <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '25', 'points' : u'8'}>
+            <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '33', 'points' : u'8'}>
             <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 7: just died>
         <Destroy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1134', u'', 'SRM.Boat'), old-values = {'last_cid' : '8'}>
     <Change Summary for pid 13: just died>
         <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : 9}>
-          <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '25', 'points' : u'8'}>
+          <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '33', 'points' : u'8'}>
           <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 14: just died>
-        <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '25', 'points' : u'8'}>
+        <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '33', 'points' : u'8'}>
     <Change Summary for pid 15: just died>
         <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
 
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 6
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
-    ...
     6 [('last_cid', (old = '6', new = None))]
     7 [('last_cid', (old = '8', new = None))]
     13 [('last_cid', (old = '14', new = None)), ('skipper', (old = 9, new = None))]
-    14 [('discarded', (old = u'yes', new = None)), ('last_cid', (old = '25', new = None)), ('points', (old = u'8', new = None))]
+    14 [('discarded', (old = u'yes', new = None)), ('last_cid', (old = '33', new = None)), ('points', (old = u'8', new = None))]
     15 [('last_cid', (old = '16', new = None)), ('points', (old = u'4', new = None))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
@@ -268,24 +517,22 @@ _basic = r"""
     >>> _ = p.lifetime.set (finish = "2077/11/30")
 
     >>> ucc = scope.uncommitted_changes
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 7
     ...     print csp
-    ...
     <Change Summary for pid 8: 2 changes>
-        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '24', 'start' : u''}, new-values = {'last_cid' : '39', 'start' : u'1997/11/16'}>
-        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'finish' : u'', 'last_cid' : '39'}, new-values = {'finish' : u'2077/11/30', 'last_cid' : '40'}>
+        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '32', 'start' : u''}, new-values = {'last_cid' : '115', 'start' : u'1997/11/16'}>
+        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'finish' : u'', 'last_cid' : '115'}, new-values = {'finish' : u'2077/11/30', 'last_cid' : '116'}>
 
-    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) :
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 8
     ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
-    ...
-    8 [('last_cid', (old = '24', new = '40')), ('lifetime', (old = (('finish', u''), ('start', u'')), new = (('finish', u'2077/11/30'), ('start', u'1997/11/16'))))]
+    8 [('last_cid', (old = '32', new = '116')), ('lifetime', (old = (('finish', u''), ('start', u'')), new = (('finish', u'2077/11/30'), ('start', u'1997/11/16'))))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
     8 ['last_cid', 'lifetime']
 
     >>> len (csm1)
-    29
+    65
     >>> conflicts, merges = csm1.change_conflicts ({}, scope)
     >>> sorted (conflicts), sorted (merges)
     ([], [])

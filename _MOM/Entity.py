@@ -214,6 +214,7 @@
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
 #     9-Sep-2012 (CT) Add `creation_date`
 #    10-Sep-2012 (CT) Fix `creation_date.computed`
+#    12-Sep-2012 (CT) Call `record_change` unconditionally
 #    24-Sep-2012 (CT) Don't wrap `Error.Attribute_Value`
 #    27-Sep-2012 (CT) Remove `rank` (never used in MOM)
 #    12-Oct-2012 (CT) Use `signified` in `An_Entity._main__init__` to (allow
@@ -542,7 +543,7 @@ class Entity (TFL.Meta.Object) :
     # end def raw_attr
 
     def record_attr_change (self, kw) :
-        if kw and self._home_scope and not self.electric :
+        if kw and self._home_scope :
             self.home_scope.record_change (self.SCM_Change_Attr, self, kw)
     # end def record_attr_change
 

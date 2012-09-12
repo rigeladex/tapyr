@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -45,6 +45,8 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #     8-Nov-2011 (CT) Add `calendar`, `left.completer`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    12-Sep-2012 (CT) Change `compute_occurrences` to use `sorted`
+#                     (to achieve determistic test output)
 #    ««revision-date»»···
 #--
 
@@ -171,7 +173,7 @@ class Event (_Ancestor_Essence) :
     def compute_occurrences (self) :
         scope = self.home_scope
         ETM   = self.home_scope ["GTW.OMP.EVT.Event_occurs"]
-        for o in list (self.occurs) :
+        for o in sorted (self.occurs, key = TFL.Getter.pid) :
             o.destroy ()
         for d in self.dates :
             ETM (self, date = d, time = self.time)

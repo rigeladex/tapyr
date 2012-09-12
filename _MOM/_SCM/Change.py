@@ -79,6 +79,7 @@
 #     5-Aug-2012 (CT) Use `epk_raw_pid`, `get_raw_pid`
 #     9-Sep-2012 (CT) Add `Create.c_time`, `.c_user`
 #    11-Sep-2012 (CT) Add `_Attr_.do_callbacks` to call `ems.update`
+#    12-Sep-2012 (CT) Streamline `_Entity_.do_callbacks`
 #     6-Dec-2012 (CT) Store `user.pid`, if any, else `user`
 #    ««revision-date»»···
 #--
@@ -260,10 +261,11 @@ class _Entity_ (Undoable) :
 
     def do_callbacks (self, scope) :
         callbacks = self.callbacks
-        etype     = scope.entity_type (self.type_name)
-        type_name = etype.Essence.type_name
-        if callbacks and type_name in callbacks :
-            callbacks [type_name] (scope, self)
+        if callbacks :
+            etype     = scope.entity_type (self.type_name)
+            type_name = etype.Essence.type_name
+            if type_name in callbacks :
+                callbacks [type_name] (scope, self)
     # end def do_callbacks
 
     def entity (self, scope) :
