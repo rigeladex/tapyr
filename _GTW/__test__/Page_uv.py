@@ -30,6 +30,7 @@
 #    19-Mar-2012 (CT) Adapt to factoring of `PAP.Subject`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #     2-Aug-2012 (MG) New test for `auto_up_depends` attributes added
+#    12-Sep-2012 (RS) Add `Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -142,6 +143,7 @@ _test_code = r"""
     Auth.Link2_Ordered                             False  False  False
     Auth.Link3                                     False  False  False
     Auth.Object                                    False  False  False
+    Auth.Id_Entity                                 False  False  False
     Auth.Named_Object                              False  False  False
     Auth.Account                                   True   False  False
     Auth.Account_Anonymous                         True   False  False
@@ -160,6 +162,7 @@ _test_code = r"""
     EVT.Link2_Ordered                              False  False  False
     EVT.Link3                                      False  False  False
     EVT.Object                                     False  False  False
+    EVT.Id_Entity                                  False  False  False
     EVT.Named_Object                               False  False  False
     EVT.Calendar                                   True   False  False
     PAP.Entity                                     False  False  False
@@ -168,6 +171,7 @@ _test_code = r"""
     PAP.Link2_Ordered                              False  False  False
     PAP.Link3                                      False  False  False
     PAP.Object                                     False  False  False
+    PAP.Id_Entity                                  False  False  False
     PAP.Named_Object                               False  False  False
     PAP.Subject                                    False  False  False
     PAP.Person                                     True   False  False
@@ -177,6 +181,7 @@ _test_code = r"""
     SWP.Link2_Ordered                              False  False  False
     SWP.Link3                                      False  False  False
     SWP.Object                                     False  False  False
+    SWP.Id_Entity                                  False  False  False
     SWP.Named_Object                               False  False  False
     SWP.Object_PN                                  False  False  False
     SWP.Page_Mixin                                 False  False  False
@@ -209,6 +214,7 @@ _test_code = r"""
     SRM.Link2_Ordered                              False  False  False
     SRM.Link3                                      False  False  False
     SRM.Object                                     False  False  False
+    SRM.Id_Entity                                  False  False  False
     SRM.Named_Object                               False  False  False
     SRM._Boat_Class_                               True   False  False
     SRM.Boat_Class                                 True   False  False
