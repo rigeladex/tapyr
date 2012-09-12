@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -174,6 +174,7 @@
 #     8-Sep-2010 (MG)  `dotted_dict` added
 #     9-Oct-2010 (MG)  `undotted_dict`and `dotted_dict`: Parameter `sep` added
 #     8-Sep-2011 (CT)  `first_n` added
+#    12-Sep-2012 (CT)  Use `itertools.product` for `cartesian`, if available
 #    ««revision-date»»···
 #--
 
@@ -292,37 +293,62 @@ def callable (obj) :
     return hasattr (obj, "__call__")
 # end def callable
 
-def cartesian (s1, s2, combiner = None) :
-    """Returns the cartesian product of the sequences `s1' and `s2'.
+try :
+    itertools.product
+except AttributeError :
+    def cartesian (s1, s2, combiner = None) :
+        """Returns the cartesian product of the sequences `s1' and `s2'.
 
-       >>> l = (3, 1, 7)
-       >>> cartesian (l, l)
-       [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
-    """
-    if combiner is None :
-        combiner = paired
-    result = [combiner ((x, ) * len (s2), s2) for x in s1]
-    return flattened (result)
-# end def cartesian
+           >>> l = (3, 1, 7)
+           >>> cartesian (l, l)
+           [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
+        """
+        if combiner is None :
+            combiner = paired
+        result = [combiner ((x, ) * len (s2), s2) for x in s1]
+        return flattened (result)
+    # end def cartesian
 
-def cartesian_n (s1, s2, * si) :
-    """Returns the cartesian product of all the sequences given.
+    def cartesian_n (s1, s2, * si) :
+        """Returns the cartesian product of all the sequences given.
 
-       >>> l = (3, 1, 7)
-       >>> cartesian_n (l, l)
-       [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
-       >>> l = (3, 1)
-       >>> cartesian_n (l, l, l)
-       [(3, 3, 3), (3, 3, 1), (3, 1, 3), (3, 1, 1), (1, 3, 3), (1, 3, 1), (1, 1, 3), (1, 1, 1)]
-    """
-    result = cartesian (s1, s2)
-    for s in si :
-        result = cartesian \
-            ( result, s
-            , lambda a, b : map (lambda l, r : l + (r, ), a, b)
-            )
-    return result
-# end def cartesian_n
+           >>> l = (3, 1, 7)
+           >>> cartesian_n (l, l)
+           [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
+           >>> l = (3, 1)
+           >>> cartesian_n (l, l, l)
+           [(3, 3, 3), (3, 3, 1), (3, 1, 3), (3, 1, 1), (1, 3, 3), (1, 3, 1), (1, 1, 3), (1, 1, 1)]
+        """
+        result = cartesian (s1, s2)
+        for s in si :
+            result = cartesian \
+                ( result, s
+                , lambda a, b : map (lambda l, r : l + (r, ), a, b)
+                )
+        return result
+    # end def cartesian_n
+else :
+    def cartesian (* iterables) :
+        """Cartesian product of `iterables`.
+
+           >>> l = (3, 1, 7)
+           >>> cartesian (l)
+           [(3,), (1,), (7,)]
+
+           >>> cartesian (l, l)
+           [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
+
+           >>> cartesian_n ((1,2), ("a", "b"))
+           [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]
+
+           >>> cartesian ((1,2), ("a", "b"), ("x", "y"))
+           [(1, 'a', 'x'), (1, 'a', 'y'), (1, 'b', 'x'), (1, 'b', 'y'), (2, 'a', 'x'), (2, 'a', 'y'), (2, 'b', 'x'), (2, 'b', 'y')]
+
+        """
+        return list (itertools.product (* iterables))
+    # end def cartesian
+
+    cartesian_n = cartesian
 
 def common_head (list) :
     """Return common head of all strings in `list'.
