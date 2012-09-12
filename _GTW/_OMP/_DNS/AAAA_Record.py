@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    06-Sep-2012 (RS) Creation
+#    12-Sep-2012 (RS) Fix cut&paste error `A_Record` -> `AAAA_Record`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ import _GTW._OMP._DNS.Record
 
 _Ancestor_Essence = DNS.Record
 
-class A_Record (_Ancestor_Essence) :
+class AAAA_Record (_Ancestor_Essence) :
     """A DNS AAAA record (IPv6)"""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
