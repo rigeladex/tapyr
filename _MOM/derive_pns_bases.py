@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Aug-2012 (CT) Creation
+#    12-Sep-2012 (RS) Add `Id_Entity` needed by `FFM.Firmware`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ def derive_pns_bases (PNS, parent_PNS = MOM) :
     E          = _derived (PNS, postfix, pPNS.Entity, __module__ = __module__)
     for base in \
             ( pPNS.Link1, pPNS.Link2, pPNS.Link2_Ordered, pPNS.Link3
-            , pPNS.Object
+            , pPNS.Object, pPNS.Id_Entity
             ) :
         _derived (PNS, postfix, base, E, __module__ = __module__)
     _derived \
