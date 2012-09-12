@@ -35,6 +35,7 @@
 #    22-Jul-2011 (CT) Completer tests adapted to changes in `MOM.Attr.Completer`
 #    15-Sep-2011 (CT) Move instantiation of `attr.completer` to `MOM.Attr.Spec`
 #    12-Jun-2012 (CT) Add test for `.attrs ("pid", "type_name")`
+#    12-Sep-2012 (CT) Add `_test_partial_roles`
 #    ««revision-date»»···
 #--
 
@@ -173,6 +174,34 @@ _test_code = """
 
 """
 
+_test_partial_roles = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> for ET in scope.T_Extension :
+    ...     for pr in ET.Partial_Roles :
+    ...         pret = scope.entity_type (pr.E_Type)
+    ...         print ET.type_name, pr, pret.type_name, sorted (pret.children_np)
+    Auth.Account_in_Group <class '_GTW._OMP._Auth.Account_in_Group.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    Auth._Account_Action_ <class '_GTW._OMP._Auth.Account_Handling.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    Auth.Account_Activation <class '_GTW._OMP._Auth.Account_Handling.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    Auth.Account_Password_Change_Required <class '_GTW._OMP._Auth.Account_Handling.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    Auth._Account_Token_Action_ <class '_GTW._OMP._Auth.Account_Handling.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    Auth.Account_EMail_Verification <class '_GTW._OMP._Auth.Account_Handling.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    Auth.Account_Password_Reset <class '_GTW._OMP._Auth.Account_Handling.left'> Auth.Account ['Auth.Account_Anonymous', 'Auth.Account_P']
+    PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Subject_has_Address <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Subject_has_Email <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Subject_has_Phone <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Entity_created_by_Person <class '_GTW._OMP._PAP.Entity_created_by_Person.left'> MOM.Id_Entity ['Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_P', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_Class', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Handicap', 'SRM.Page', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_Event', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
+    SWP.Clip_O <class '_GTW._OMP._SWP.Clip.left'> SWP.Object_PN ['SWP.Gallery', 'SWP.Page']
+    SRM.Boat_in_Regatta <class '_GTW._OMP._SRM.Boat_in_Regatta.right'> SRM.Regatta ['SRM.Regatta_C', 'SRM.Regatta_H']
+
+    >>> scope.destroy ()
+
+"""
+
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
 
@@ -189,23 +218,11 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
     attrs = tuple (getattr (Q.RAW, a) for a in deps)
     print "\n".join (_gen (q.attrs (* attrs)))
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( main          = _test_code
+        , partial_roles = _test_partial_roles
+        )
+    )
 
-if __name__ == "__main__" :
-    scope = Scaffold.scope ("sqlite:///")
-
-    PAP   = scope.PAP
-    p1    = PAP.Person ("l", "f1")
-    p2    = PAP.Person ("l", "f2")
-    e1    = PAP.Email  ("l.f1@test.com")
-    e2    = PAP.Email  ("l.f2@test.com")
-    e3    = PAP.Email  ("office@test.com")
-    PAP.Person_has_Email (p1, e1)
-    PAP.Person_has_Email (p2, e2)
-    PAP.Person_has_Email (p1, e3)
-    PAP.Person_has_Email (p2, e3)
-
-    print "Emails", p1.emails
-    print "Persons", e3.persons
-    print "Persons", e2.persons
 ### __END__ GTW.__test__.Person

@@ -144,6 +144,9 @@
 #    12-Aug-2012 (CT) Add `use_indices`
 #     4-Sep-2012 (CT) Add `Roles` and `role_map` to
 #                     `M_Id_Entity._m_new_e_type_dict`
+#    12-Sep-2012 (CT) Move `children_np` and `_m_setup_children` from
+#                     `M_E_Type` to `M_E_Mixin`
+#    12-Sep-2012 (CT) Do `_m_setup_auto_props` before `_m_create_base_e_types`
 #    ««revision-date»»···
 #--
 
@@ -184,14 +187,18 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 
     _S_Extension   = []     ### List of E_Spec
     _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
+    _type_names    = set ()
 
     m_sorted_by    = TFL.Sorted_By ("rank", "i_rank")
 
+    M_Root         = None
     Type_Name_Type = Type_Name_Type
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__      (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls._children_np = None
+        cls.__m_super.__init__      (name, bases, dct)
         cls._m_init_name_attributes ()
+        cls._m_setup_children       (bases, dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -200,6 +207,22 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             % (cls.type_name, args, cls.type_name, args)
             )
     # end def __call__
+
+    @property
+    def children_np (cls) :
+        """Closest non-partial descendents of `cls`."""
+        result = cls._children_np
+        if result is None :
+            def _gen (cls) :
+                for k, c in cls.children.iteritems () :
+                    if c.is_partial :
+                        for knp, cnp in c.children_np.iteritems () :
+                            yield knp, cnp
+                    else :
+                        yield k, c
+            result = cls._children_np = dict (_gen (cls))
+        return result
+    # end def children_np
 
     @property
     def default_child (cls) :
@@ -342,6 +365,17 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             )
     # end def _m_new_e_type_dict
 
+    def _m_setup_children (cls, bases, dct) :
+        M_Root = cls.M_Root
+        if M_Root is not None :
+            cls.children = {}
+            cls.parents  = parents = []
+            for b in bases :
+                if isinstance (b, M_Root) :
+                    b.children [cls.type_name] = cls
+                    parents.append (b)
+    # end def _m_setup_children
+
     def _m_setup_prop_names (cls) :
         for P in cls._Attributes, cls._Predicates :
             P.m_setup_names ()
@@ -350,7 +384,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     def _set_type_names (cls, base_name) :
         cls.type_base_name = cls.Type_Name_Type (base_name)
         cls.type_name      = cls.Type_Name_Type (cls.pns_qualified (base_name))
-        cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
+        cls.set_ui_name      (cls.__dict__.get ("ui_name", base_name))
+        cls._type_names.add  (cls.type_name)
     # end def _set_type_names
 
     def __repr__ (cls) :
@@ -415,8 +450,8 @@ class M_Entity (M_E_Mixin) :
         """Initialize bare essential types for all classes in `cls._S_Extension`."""
         if not cls._BET_map :
             SX = cls._S_Extension
-            cls._m_create_base_e_types (SX)
             cls._m_setup_auto_props    (SX)
+            cls._m_create_base_e_types (SX)
     # end def m_setup_etypes
 
     def _m_add_prop (cls, prop, _Properties, verbose, override = False) :
@@ -477,10 +512,13 @@ class M_Entity (M_E_Mixin) :
     # end def _m_setup_auto_props
 
     def _m_setup_etype_auto_props (cls) :
+        cls.Partial_Roles = ()
         cls._m_setup_prop_names ()
     # end def _m_setup_etype_auto_props
 
 # end class M_Entity
+
+M_Entity.M_Root = M_Entity
 
 class M_An_Entity (M_Entity) :
     """Meta class for MOM.An_Entity"""
@@ -573,22 +611,6 @@ class M_E_Type (M_E_Mixin) :
 
     _Class_Kind = "Essence"
 
-    @property
-    def children_np (cls) :
-        """Closest non-partial descendents of `cls`."""
-        result = cls._children_np
-        if result is None :
-            def _gen (cls) :
-                for k, c in cls.children.iteritems () :
-                    if c.is_partial :
-                        for knp, cnp in c.children_np.iteritems () :
-                            yield knp, cnp
-                    else :
-                        yield k, c
-            result = cls._children_np = dict (_gen (cls))
-        return result
-    # end def children_np
-
     @TFL.Meta.Once_Property
     def db_sig (cls) :
         return (cls.type_name, tuple (a.db_sig for a in cls.db_attr))
@@ -607,7 +629,6 @@ class M_E_Type (M_E_Mixin) :
         else :
             cls.E_Type = cls.P_Type = cls
             cls.__m_super.__init__  (name, bases, dct)
-            cls._m_setup_children   (bases, dct)
             cls._m_setup_attributes (bases, dct)
     # end def __init__
 
@@ -735,15 +756,6 @@ class M_E_Type (M_E_Mixin) :
             ]
     # end def _m_setup_attributes
 
-    def _m_setup_children (cls, bases, dct) :
-        cls.children = {}
-        cls.parents  = parents = []
-        for b in bases :
-            if isinstance (b, M_E_Type) :
-                b.children [cls.type_name] = cls
-                parents.append (b)
-    # end def _m_setup_children
-
     def _m_setup_relevant_roots (cls) :
         pass
     # end def _m_setup_relevant_roots
@@ -758,6 +770,8 @@ class M_E_Type (M_E_Mixin) :
     # end def __getattr__
 
 # end class M_E_Type
+
+M_E_Type.M_Root = M_E_Type
 
 @TFL.Add_To_Class ("M_E_Type", M_An_Entity)
 class M_E_Type_An (M_E_Type) :

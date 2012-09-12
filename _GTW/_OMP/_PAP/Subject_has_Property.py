@@ -59,6 +59,7 @@ class Subject_has_Property (_Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type      = Subject
+            auto_derive_np = False
 
         # end class left
 

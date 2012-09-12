@@ -246,6 +246,7 @@
 #     8-Sep-2012 (CT) Add `A_Enum`
 #     8-Sep-2012 (CT) Convert more `_from_string` definitions to
 #                     Class_and_Instance_Method
+#    12-Sep-2012 (CT) Add `A_Link_Role.auto_derive_np`, `.auto_cache_np`
 #    ««revision-date»»···
 #--
 
@@ -1886,6 +1887,9 @@ class A_Link_Role (_A_Id_Entity_) :
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
 
     auto_cache        = False
+    auto_cache_np     = False
+    auto_derive_np    = False
+    auto_derive_npt   = False
     Cacher_Type       = None
     dfc_synthesizer   = None
     is_link_role      = True
