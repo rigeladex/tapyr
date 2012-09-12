@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -40,6 +40,8 @@
 #                     from (essential) class to (app-type specific) instance
 #    14-Oct-2010 (CT) `Kind_Mixins` added as `Spec` variable
 #    22-Dec-2011 (CT) Change `_effective_prop_kind` to set `kind` to `kind.kind`
+#    12-Sep-2012 (CT) Add `e_type` to `kind.__init__`
+#    12-Sep-2012 (CT) Add support for `dyn_doc_p`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +95,9 @@ class _Prop_Spec_ (TFL.Meta.Object) :
             if prop_type is not None :
                 self._add_prop (e_type, n, prop_type)
         for n, prop_type in self._names.iteritems () :
-            if n not in self._prop_dict :
+            if prop_type is not None and prop_type.dyn_doc_p :
+                self._add_prop (e_type, n, prop_type)
+            elif n not in self._prop_dict :
                 ### Inherited property: include in `_prop_dict` and `_prop_kind`
                 prop = getattr (e_type, n, None)
                 if prop is not None :
@@ -131,7 +135,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def _kind_list_name
 
     def _new_prop (self, name, kind, prop_type, e_type) :
-        return kind (prop_type)
+        return kind (prop_type, e_type)
     # end def _new_prop
 
     def _setup_prop (self, e_type, name, kind, prop) :

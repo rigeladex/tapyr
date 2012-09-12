@@ -182,6 +182,7 @@
 #    20-Aug-2012 (RS) import `logging`
 #    21-Aug-2012 (RS) Expand logged args in place, fix format string arg count
 #     8-Sep-2012 (CT) Consider `init_finished` in `Link_Role._set_cooked_value`
+#    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    ««revision-date»»···
 #--
 
@@ -228,9 +229,9 @@ class Kind (MOM.Prop.Kind) :
 
     _k_rank               = 0
 
-    def __init__ (self, Attr_Type) :
-        attr = Attr_Type      (self)
-        self.__super.__init__ (attr)
+    def __init__ (self, Attr_Type, e_type) :
+        attr = Attr_Type      (self, e_type)
+        self.__super.__init__ (attr, e_type)
         self._check_sanity    (attr)
         self.dependent_attrs = set ()
         self.rank            = \
@@ -707,8 +708,8 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
     void_values = property \
         (lambda s : ("", s.attr.raw_default, s.attr.R_Type ()))
 
-    def __init__ (self, Attr_Type) :
-        self.__super.__init__ (Attr_Type)
+    def __init__ (self, Attr_Type, e_type) :
+        self.__super.__init__ (Attr_Type, e_type)
         attr = self.attr
         if self.record_changes :
             PT = MOM.Attr.M_Coll.Table.get (attr.R_Type)

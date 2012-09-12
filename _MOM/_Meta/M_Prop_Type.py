@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -23,11 +23,12 @@
 #    MOM.Meta.M_Prop_Type
 #
 # Purpose
-#    «text»···
+#    Base meta class for metaclasses for MOM.Attr.Type and MOM.Pred.Type
 #
 # Revision Dates
 #    28-Sep-2009 (CT) Creation  (factored from TOM.Meta.M_Prop_Type)
 #     5-Jan-2010 (CT) Use `TFL._Meta.M_Auto_Combine` as base class
+#    12-Sep-2012 (CT) Add `dyn_doc_p`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
     """Root of metaclasses for MOM.Attr.Type and MOM.Pred.Type"""
 
     def __new__ (meta, name, bases, dct) :
+        dyn_doc_p = False
         doc = dct.get ("__doc__")
         if not doc :
             if "__doc__" in dct :
@@ -50,8 +52,11 @@ class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
             dct ["description"] = doc
         for n in "description", "explanation", "syntax":
             if n in dct :
-                dct [n] = TFL.normalized_indent (dct [n])
-        dct ["name"] = name
+                v          = dct [n]
+                dct [n]    = TFL.normalized_indent (v)
+                dyn_doc_p += "%(" in v
+        dct ["name"]       = name
+        dct ["dyn_doc_p"]  = dyn_doc_p
         return super (M_Prop_Type, meta).__new__ (meta, name, bases, dct)
     # end def __new__
 

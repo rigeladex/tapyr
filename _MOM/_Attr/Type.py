@@ -247,6 +247,7 @@
 #     8-Sep-2012 (CT) Convert more `_from_string` definitions to
 #                     Class_and_Instance_Method
 #    12-Sep-2012 (CT) Add `A_Link_Role.auto_derive_np`, `.auto_cache_np`
+#    12-Sep-2012 (CT) Add `__init__` argument `e_type`, support `dyn_doc_p`
 #    ««revision-date»»···
 #--
 
@@ -262,7 +263,6 @@ import _MOM._Attr.Coll
 import _MOM._Attr.Completer
 import _MOM._Attr.Kind
 import _MOM._Attr.Querier
-import _TFL.r_eval
 import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
 
@@ -272,7 +272,9 @@ from   _TFL                  import sos
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
+import _TFL.Caller
 import _TFL.Currency
+import _TFL.r_eval
 
 import datetime
 import decimal
@@ -366,9 +368,17 @@ class A_Attr_Type (TFL.Meta.Object) :
         return _T (self.ui_name)
     # end def ui_name_T
 
-    def __init__ (self, kind) :
+    def __init__ (self, kind, e_type) :
         self.kind        = kind
         self.is_required = kind.is_required
+        if self.dyn_doc_p :
+            scope = TFL.Caller.Object_Scope (e_type)
+            if "%(" in self.description :
+                self.description = self.__doc__ = self.description % scope
+            if "%(" in self.explanation :
+                self.explanation = self.explanation % scope
+            if "%(" in self.syntax :
+                self.syntax = self.syntax % scope
     # end def __init__
 
     def ac_ui_display (self, value) :
@@ -555,9 +565,9 @@ class _A_Collection_ (A_Attr_Type) :
 
     needs_raw_value = False
 
-    def __init__ (self, kind) :
-        self.__super.__init__     (kind)
-        self.C_Type = self.C_Type (kind)
+    def __init__ (self, kind, e_type) :
+        self.__super.__init__     (kind, e_type)
+        self.C_Type = self.C_Type (kind, e_type)
     # end def __init__
 
     def as_code (self, value) :

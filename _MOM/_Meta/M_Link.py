@@ -175,7 +175,10 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         cls.Partial_Roles = PRs = []
         cls.Roles         = Rs  = []
         cls.acr_map = acr_map = dict (getattr (cls, "acr_map", {}))
-        for a in cls._Attributes._names.itervalues () :
+        for a in sorted \
+                ( cls._Attributes._names.itervalues ()
+                , key = TFL.Sorted_By ("rank", "name")
+                ) :
             if issubclass (a, MOM.Attr.A_Link_Role) :
                 Rs.append (a)
                 if a.role_type :
