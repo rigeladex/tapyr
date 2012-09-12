@@ -33,6 +33,7 @@
 #    12-Jun-2012 (CT) Add `date` to get deterministic output
 #     3-Aug-2012 (CT) Add tests for `Ref_Req_Map` and `Ref_Opt_Map`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
+#    12-Sep-2012 (RS) Add `Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,8 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     Auth.Object
         ('PAP.Entity_created_by_Person', ['left'])
+    Auth.Id_Entity
+        ('PAP.Entity_created_by_Person', ['left'])
     Auth.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
     Auth.Account
@@ -164,6 +167,8 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     EVT.Object
         ('PAP.Entity_created_by_Person', ['left'])
+    EVT.Id_Entity
+        ('PAP.Entity_created_by_Person', ['left'])
     EVT.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
     EVT.Calendar
@@ -177,6 +182,8 @@ test_code = r"""
     PAP.Link3
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Id_Entity
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
@@ -197,6 +204,8 @@ test_code = r"""
     SWP.Link3
         ('PAP.Entity_created_by_Person', ['left'])
     SWP.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    SWP.Id_Entity
         ('PAP.Entity_created_by_Person', ['left'])
     SWP.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
@@ -270,6 +279,8 @@ test_code = r"""
     SRM.Link3
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Object
+        ('PAP.Entity_created_by_Person', ['left'])
+    SRM.Id_Entity
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Named_Object
         ('PAP.Entity_created_by_Person', ['left'])
