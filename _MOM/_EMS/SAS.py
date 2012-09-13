@@ -58,6 +58,7 @@
 #     6-Aug-2012 (CT) Fix `add_pending`: use `E_Type`, not `E_Type_Manager`
 #    19-Aug-2012 (MG) Keep cache during rollback due to no changes
 #    11-Sep-2012 (CT) Factor `rollback_pending_change` to `MOM.Scope`
+#    14-Sep-2012 (MG) Change object update handling
 #    ««revision-date»»···
 #--
 
@@ -221,6 +222,10 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Name_Clash (entity, old_entity)
         renamer ()
     # end def rename
+
+    def update (self, entity, change) :
+        self.session.update (entity, change)
+    # end def update
 
     def _query_multi_root (self, Type) :
         QR = self.Q_Result

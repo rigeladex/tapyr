@@ -73,7 +73,7 @@ _test_code = r"""
     >>> x = SRM.Boat_Class (u"470er",             max_crew = 2)
     >>> x = SRM.Boat_Class (u"49er",              max_crew = 2)
     >>> x = SRM.Boat_Class (u"Aquila Kiel",       max_crew = 3)
-    >>> x = x.copy         (u"Aquila Schwert",    max_crew = 3)
+    >>> sw= x.copy         (u"Aquila Schwert",    max_crew = 3)
     >>> x = SRM.Boat_Class (u"Fam",               max_crew = 3)
     >>> x = SRM.Boat_Class (u"Finn-Dinghy",       max_crew = 1)
     >>> x = SRM.Boat_Class (u"Korsar",            max_crew = 2)
@@ -90,6 +90,34 @@ _test_code = r"""
     >>> x = SRM.Boat_Class (u"Robby Jolle",       max_crew = 2)
     >>> x = SRM.Boat_Class (u"Seascape 18",       max_crew = 4)
     >>> x = SRM.Boat_Class (u"Zoom8",             max_crew = 1)
+
+    >>> sw.last_cid
+    7
+    >>> for c in scope.uncommitted_changes :
+    ...     print c
+    <Create SRM.Boat_Class (u'29er', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '2', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'470er', 'SRM.Boat_Class'), new-values = {'last_cid' : '3', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'49er', 'SRM.Boat_Class'), new-values = {'last_cid' : '4', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Aquila Kiel', 'SRM.Boat_Class'), new-values = {'last_cid' : '5', 'max_crew' : u'3'}>
+    <Copy SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
+        <Create SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : u'3'}>
+    <Create SRM.Boat_Class (u'Fam', 'SRM.Boat_Class'), new-values = {'last_cid' : '8', 'max_crew' : u'3'}>
+    <Create SRM.Boat_Class (u'Finn-Dinghy', 'SRM.Boat_Class'), new-values = {'last_cid' : '9', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Korsar', 'SRM.Boat_Class'), new-values = {'last_cid' : '10', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '11', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Laser 4.7', 'SRM.Boat_Class'), new-values = {'last_cid' : '12', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Laser Master', 'SRM.Boat_Class'), new-values = {'last_cid' : '13', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Laser Radial', 'SRM.Boat_Class'), new-values = {'last_cid' : '14', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'O-Jolle', 'SRM.Boat_Class'), new-values = {'last_cid' : '15', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '16', 'max_crew' : u'1'}>
+    <Create SRM.Boat_Class (u'Pirat Regatta', 'SRM.Boat_Class'), new-values = {'last_cid' : '17', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Pirat Klassik', 'SRM.Boat_Class'), new-values = {'last_cid' : '18', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Pirat Schulboot', 'SRM.Boat_Class'), new-values = {'last_cid' : '19', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Pirat', 'SRM.Boat_Class'), new-values = {'last_cid' : '20', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Robby Jolle', 'SRM.Boat_Class'), new-values = {'last_cid' : '21', 'max_crew' : u'2'}>
+    <Create SRM.Boat_Class (u'Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '22', 'max_crew' : u'4'}>
+    <Create SRM.Boat_Class (u'Zoom8', 'SRM.Boat_Class'), new-values = {'last_cid' : '23', 'max_crew' : u'1'}>
 
     >>> scope.commit ()
 
@@ -114,6 +142,8 @@ _test_code = r"""
     >>> rr2 = SRM.Race_Result (bir, 2, points = 4)
 
     >>> scope.commit ()
+    >>> sw.last_cid
+    7
     >>> scope.MOM.Id_Entity.count
     36
     >>> int (scope.query_changes (parent = None).count ())
@@ -131,8 +161,14 @@ _test_code = r"""
     3
     >>> scope.commit ()
 
+    >>> MOM.B = True
+    >>> print sw.last_cid ### X
+    7
     >>> scope.MOM.Id_Entity.count
     36
+    >>> print sw.last_cid ### Y
+    7
+    >>> MOM.B = False
     >>> int (scope.query_changes ().count ())
     40
     >>> int (scope.ems.max_cid)
@@ -140,8 +176,8 @@ _test_code = r"""
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> b = SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
-    >>> print b.last_cid
-    7
+    >>> print b.last_cid, sw.last_cid, b is sw
+    7 7 True
     >>> c = scope.query_changes (cid = b.last_cid).one ()
     >>> print c ### change in source scope
     <Copy SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>

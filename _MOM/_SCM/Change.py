@@ -80,6 +80,8 @@
 #     9-Sep-2012 (CT) Add `Create.c_time`, `.c_user`
 #    11-Sep-2012 (CT) Add `_Attr_.do_callbacks` to call `ems.update`
 #    12-Sep-2012 (CT) Streamline `_Entity_.do_callbacks`
+#    14-Sep-2012 (MG) Change `do_callbacks` to support early update of
+#                     entites
 #     6-Dec-2012 (CT) Store `user.pid`, if any, else `user`
 #    ««revision-date»»···
 #--
@@ -416,6 +418,12 @@ class Create (_Entity_) :
         self.pickle_cargo = entity.as_pickle_cargo ()
     # end def __init__
 
+    def do_callbacks (self, scope) :
+        entity = self.entity      (scope)
+        scope.ems.update          (entity, ("last_cid", ))
+        self.__super.do_callbacks (scope)
+    # end def do_callbacks
+
     @TFL.Meta.Once_Property
     def modified_attrs (self) :
         return set (("last_cid", ))
@@ -502,8 +510,7 @@ class _Attr_ (_Entity_) :
     # end def __init__
 
     def do_callbacks (self, scope) :
-        entity = self.entity (scope)
-        scope.ems.update (entity, self)
+        self._update_entity       (scope)
         self.__super.do_callbacks (scope)
     # end def do_callbacks
 
@@ -526,6 +533,11 @@ class _Attr_ (_Entity_) :
             print "   ", self.pid, self.epk, sorted (cargo.iteritems())
             raise
     # end def _restore
+
+    def _update_entity (self, scope) :
+        entity = self.entity (scope)
+        scope.ems.update     (entity, self.new_attr)
+    # end def _update_entity
 
 # end class _Attr_
 
@@ -596,6 +608,11 @@ class Attr_Composite (_Attr_) :
             , attr_name   = self.attr_name
             )
     # end def _pickle_attrs
+
+    def _update_entity (self, scope) :
+        entity = self.__super.entity (scope)
+        scope.ems.update     (entity, (self.attr_name, ))
+    # end def _update_entity
 
 # end class Attr_Composite
 

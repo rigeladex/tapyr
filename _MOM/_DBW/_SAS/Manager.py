@@ -103,6 +103,7 @@
 #    15-Aug-2012 (MG) Create unique name of Index for primary key
 #    17-Aug-2012 (MG) Add `_Change_._SAS` to allow `.attr` queries for chang
 #                     objects
+#    14-Sep-2012 (MG) Fix `_add_user_defined_indices`
 #    21-Jan-2013 (MG) Fix `_add_user_defined_indices`
 #    22-Jan-2013 (MG) Set `autoincrement` for sqlite for the change history
 #    26-Jan-2013 (MG) Handle cached roles in `MOM_Query`

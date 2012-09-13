@@ -122,6 +122,7 @@
 #    19-Aug-2012 (MG) Support keeping of cache during rollback
 #    24-Aug-2012 (CT) Fix `_Session_.rollback`
 #     9-Sep-2012 (MG) `_commit_creation_change` added
+#    14-Sep-2012 (MG) Change object update handling
 #    16-Oct-2012 (CT) Protect `_pickle_cargo_for_table` against missing
 #                     composite attribute to support migrations
 #    11-Jan-2013 (CT) Remove empty `A_AIS_Value` values from `value_dict`
@@ -381,8 +382,9 @@ class SAS_Interface (TFL.Meta.Object) :
         result      = defaults or {}
         attrs       = attrs or set (kind.attr.name for kind in columns)
         for attr_name in tuple (attrs) :
-            attrs.remove (attr_name)
             kind = getattr (e_type, attr_name, Type_Name)
+            if kind is not Type_Name :
+                attrs.remove (attr_name)
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \
                     ( self.value_dict
@@ -654,10 +656,10 @@ class Session_S (_Session_) :
     def flush (self) :
         #self.engine.echo = True
         pending = self.scope.uncommitted_changes.pending_attr_changes
-        for pid, attrs in pending.iteritems () :
-            entity = self._pid_map.get (pid)
-            if entity is not None :
-                entity.__class__._SAS.update (self, entity, attrs)
+        #for pid, attrs in pending.iteritems () :
+        #    entity = self._pid_map.get (pid)
+        #    if entity is not None :
+        #        entity.__class__._SAS.update (self, entity, attrs)
         pending.clear ()
         #self.engine.echo = False
     # end def flush
@@ -745,6 +747,17 @@ class Session_S (_Session_) :
                 for cc in self._modify_change_iter (c.children) :
                     yield cc
     # end def _modify_change_iter
+
+    def update (self, entity, new_attr) :
+        attrs    = set (new_attr)
+        ET       = entity.__class__
+        for an in new_attr :
+            a = getattr (ET, an, None)
+            if a is not None :
+                attrs.update (d.name for d in a.dependent_attrs)
+        ### import pdb; pdb.set_trace ()
+        entity._SAS.update (self, entity, attrs)
+    # end def update
 
     def update_change (self, change) :
         table  = MOM.SCM.Change._Change_._sa_table

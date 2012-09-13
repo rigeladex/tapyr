@@ -234,14 +234,16 @@ _raw_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
-    >>> p   = scope.PAP.Person  ("LN 2", "FN 2")
+    >>> p1   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> p  = scope.PAP.Person  ("LN 2", "FN 2")
     >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
     >>> p   = scope.PAP.Person  ("Lname 4", "Fn 3")
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
 
-
+    >>> p1.last_cid
+    1
+    >>> scope.commit ()
     >>> scope.PAP.Person.query (Q.RAW.last_cid == "1").all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.pid == "1").all ()
@@ -259,6 +261,32 @@ _raw_query = """
 
 """
 
+_destroy_test = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> p = scope.PAP.Person ("ln", "fn")
+    >>> for c in scope.uncommitted_changes :
+    ...     print (c)
+    <Create PAP.Person (u'ln', u'fn', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '1'}>
+    >>> p.destroy ()
+    >>> for c in scope.uncommitted_changes :
+    ...     print (c)
+    <Create PAP.Person (u'ln', u'fn', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '1'}>
+    <Destroy PAP.Person (u'ln', u'fn', u'', u'', 'PAP.Person'), old-values = {'last_cid' : '1'}>
+    """
+
+_copy_test = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> p1 = scope.PAP.Person ("ln", "fn")
+    >>> p2 = p1.copy ("ln 2", "gn 2")
+    >>> p1.last_cid, p2.last_cid
+    (1, 3)
+    >>> scope.commit ()
+    >>> p1.last_cid, p2.last_cid
+    (1, 3)
+    """
+
 from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 from   _TFL.predicate      import first
@@ -273,6 +301,8 @@ __test__ = Scaffold.create_test_dict \
         ( q_result    = _q_result
         , raw_query   = _raw_query
         , attrs_query = _attrs_query
+        , destroy     = _destroy_test
+        , copy        = _copy_test
         )
     )
 
