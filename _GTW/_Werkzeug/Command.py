@@ -67,6 +67,8 @@
 #    25-Aug-2012 (CT) Import `_MOM.inspect` if `cmd.debug`
 #     6-Sep-2012 (CT) Pass `verbose` to `GTW.AFS.MOM.Form_Cache`
 #     6-Sep-2012 (CT) Add and use `_create_cache_p`
+#    13-Sep-2012 (CT) Redefine `app_type` to call
+#                     `GTW.AFS.MOM.Spec.setup_defaults`, if the module is loaded
 #    ««revision-date»»···
 #--
 
@@ -210,6 +212,17 @@ class GT2W_Command (GTW.OMP.Command) :
     class _GT2W_WSGI_ (_GT2W_Server_Base_, GTW.OMP.Command._WSGI_) :
         pass
     _WSGI_ = _GT2W_WSGI_ # end class
+
+    def app_type (self, * ems_dbw) :
+        result = self.__super.app_type (* ems_dbw)
+        try :
+            Spec = GTW.AFS.MOM.Spec
+        except AttributeError :
+            pass
+        else :
+            Spec.setup_defaults ()
+        return result
+    # end def app_type
 
     def cache_path (self, UTP) :
         return sos.path.join (self.src_dir, UTP.cache_prefix + "app_cache.pck")
