@@ -94,8 +94,6 @@ from   posixpath import join  as pjoin
 
 import _GTW._AFS._MOM.Spec
 
-GTW.AFS.MOM.Spec.setup_defaults ()
-
 model_src        = sos.path.dirname (__file__)
 form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
 

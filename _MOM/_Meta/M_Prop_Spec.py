@@ -30,6 +30,7 @@
 #    26-Nov-2009 (CT) `_m_add_prop` added
 #    23-Mar-2010 (CT) Remove names in `renameds` from `_names`
 #     9-Apr-2010 (CT) `m_setup_names` changed to ignore attributes set to `None`
+#    12-Sep-2012 (CT) Add support for `dyn_doc_p`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,10 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
         setattr (cls, "_own_names", _own_names)
         for b in reversed (cls.__bases__) :
             _names.update (getattr (b, "_names", {}))
+        _own_names.update \
+            (  (n, v)
+            for n, v in _names.iteritems () if v.dyn_doc_p
+            )
         for n, v in dct.iteritems () :
             if n.startswith ("_") and n.endswith ("_") :
                 continue

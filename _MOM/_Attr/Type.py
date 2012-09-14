@@ -247,7 +247,8 @@
 #     8-Sep-2012 (CT) Convert more `_from_string` definitions to
 #                     Class_and_Instance_Method
 #    12-Sep-2012 (CT) Add `A_Link_Role.auto_derive_np`, `.auto_cache_np`
-#    12-Sep-2012 (CT) Add `__init__` argument `e_type`, support `dyn_doc_p`
+#    12-Sep-2012 (CT) Add `__init__` argument `e_type`
+#    13-Sep-2012 (CT) Add `fix_doc`
 #    ««revision-date»»···
 #--
 
@@ -371,14 +372,6 @@ class A_Attr_Type (TFL.Meta.Object) :
     def __init__ (self, kind, e_type) :
         self.kind        = kind
         self.is_required = kind.is_required
-        if self.dyn_doc_p :
-            scope = TFL.Caller.Object_Scope (e_type)
-            if "%(" in self.description :
-                self.description = self.__doc__ = self.description % scope
-            if "%(" in self.explanation :
-                self.explanation = self.explanation % scope
-            if "%(" in self.syntax :
-                self.syntax = self.syntax % scope
     # end def __init__
 
     def ac_ui_display (self, value) :
@@ -451,6 +444,23 @@ class A_Attr_Type (TFL.Meta.Object) :
     def epk_def_set_raw (cls) :
         pass
     # end def epk_def_set_raw
+
+    def fix_doc (self, e_type) :
+        def fix (self, name, et_scope) :
+            v = getattr (self, name)
+            if v and "%(" in v :
+                try :
+                    v = v % et_scope
+                except Exception :
+                    pass
+                else :
+                    setattr (self, name, v)
+        et_scope = TFL.Caller.Object_Scope (e_type)
+        for k in "description", "explanation", "syntax" :
+            fix (self, k, et_scope)
+        if self.description :
+            self.__doc__ = self.description
+    # end def fix_doc
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         try :

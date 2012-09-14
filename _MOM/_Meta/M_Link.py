@@ -75,6 +75,9 @@
 #     1-Aug-2012 (CT) Add `M_E_Type_Link[123]_Destroyed`
 #    31-Aug-2012 (CT) Restrict `_m_setup_roles` to roles in `_own_names`
 #    12-Sep-2012 (CT) Add `Partial_Roles`, `_m_create_auto_children`
+#    13-Sep-2012 (CT) Factor `m_create_role_child`, add `m_create_role_children`
+#    13-Sep-2012 (CT) Call `_m_setup_roles` before `_m_setup_ref_maps`
+#    14-Sep-2012 (CT) Add `fix_doc` for `auto_cache_roles` to `_m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -93,18 +96,15 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 
     _orn = {}
 
-    def other_role_name (cls, role_name) :
-        raise TypeError \
-            ( "%s.%s.other_role_name needs to be explicitly defined"
-            % (cls.type_name, role_name)
-            )
-    # end def other_role_name
-
-    def _m_create_auto_child (cls, * role_etype_s) :
-        rkw = dict (__module__ = cls.__module__)
+    def m_create_role_child (cls, * role_etype_s) :
+        """Create derived link classes for the (role, e_type) combinations
+           specified.
+        """
+        rkw = {}
         tn  = cls.type_name
         tbn = cls.type_base_name
-        for role, etype in role_etype_s :
+        for role_name, etype in role_etype_s :
+            role = getattr (cls._Attributes, role_name)
             tbn = tbn.replace (role.E_Type.type_base_name, etype.type_base_name)
             tn  = tn.replace  (role.E_Type.type_base_name, etype.type_base_name)
             rkw [role.name] = role.__class__ \
@@ -118,16 +118,9 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                     )
                 )
         if tn == cls.type_name :
-            TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
             raise NameError \
                 ("Cannot auto-derive from %s for %s" % (cls, role_etype_s))
-        if tn in cls._type_names :
-            if __debug__ :
-                print \
-                    ( "Essential type %s is already defined [%s: %s]"
-                    % (tn, cls, role_etype_s)
-                    )
-        else :
+        if tn not in cls._type_names :
             result = cls.__class__ \
                 ( tbn
                 , (cls, )
@@ -135,18 +128,42 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                     ( _Attributes    = cls._Attributes.__class__
                         ( "_Attributes"
                         , (cls._Attributes, )
-                        , rkw
+                        , dict (rkw, __module__ = cls.__module__)
                         )
+                    , PNS            = cls.PNS
                     , __module__     = cls.__module__
                     )
                 )
             return result
+    # end def m_create_role_child
+
+    def m_create_role_children (cls, role) :
+        if isinstance (role, basestring) :
+           role = getattr (cls._Attributes, role)
+        children = sorted \
+            (role.E_Type.children_np.itervalues (), key = TFL.Getter.i_rank)
+        for c in children :
+            cls.m_create_role_child ((role.name, c))
+    # end def m_create_role_children
+
+    def other_role_name (cls, role_name) :
+        raise TypeError \
+            ( "%s.%s.other_role_name needs to be explicitly defined"
+            % (cls.type_name, role_name)
+            )
+    # end def other_role_name
+
+    def _m_create_auto_child (cls, * role_etype_s) :
+        result = cls.m_create_role_child (* role_etype_s)
+        if result :
+            result._m_setup_etype_auto_props ()
+        return result
     # end def _m_create_auto_child
 
     def _m_create_auto_children (cls) :
         adrs = tuple \
             ( tuple
-                ( (r, c)
+                ( (r.name, c)
                 for c in sorted
                     ( r.E_Type.children_np.itervalues ()
                     , key = TFL.Getter.i_rank
@@ -198,8 +215,10 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             elif cls.type_name != rc.link_type_name :
                 rc = rc.copy (cls, a)
             acr_map [a.name] = rc
-        cls.auto_cache_roles = tuple (acr_map.get (a.name) for a in roles)
-        cls._m_create_auto_children ()
+        cls.auto_cache_roles = tuple \
+            (   acr_map.get (a.name)
+            for a in sorted (roles, key = TFL.Getter.rank)
+            )
     # end def _m_setup_etype_auto_props
 
 # end class M_Link
@@ -258,10 +277,10 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             scope.remove (l)
     # end def destroy_links
 
-    def _m_setup_attributes (cls, bases, dct) :
-        cls.__m_super._m_setup_attributes (bases, dct)
-        cls._m_setup_roles                (bases, dct)
-    # end def _m_setup_attributes
+    def _m_setup_ref_maps (cls, bases, dct) :
+        cls._m_setup_roles              (bases, dct)
+        cls.__m_super._m_setup_ref_maps (bases, dct)
+    # end def _m_setup_ref_maps
 
     def _m_setup_roles (cls, bases, dct) :
         cls.Roles  = Roles  = tuple \

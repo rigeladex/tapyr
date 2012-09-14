@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Mar-2012 (CT) Creation
+#    14-Sep-2012 (CT) Add test for role attributes of `Person_has_Address`
 #    ««revision-date»»···
 #--
 
@@ -124,16 +125,28 @@ _test_code = """
     [<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>]
 
     >>> def show_emails (ET) :
-    ...     attr = ET._Attributes._own_names.get ("emails")
-    ...     print (attr, attr and attr.assoc, ":", attr and attr.description)
+    ...     attr = ET.emails
+    ...     print (attr.attr.__class__, ":", attr.description, "[", attr.assoc, "]")
     >>> show_emails (PAP.Subject)
-    <class '_GTW._OMP._PAP.Subject.emails'> GTW.OMP.PAP.Subject_has_Email : `Email` linked to `subject`
+    <class '_GTW._OMP._PAP.Subject.emails'> : `Emails` linked to `subject` [ GTW.OMP.PAP.Subject_has_Email ]
 
     >>> show_emails (PAP.Company)
-    <class '_GTW._OMP._PAP.Company.emails'> GTW.OMP.PAP.Company_has_Email : `Email` linked to `company`
+    <class '_GTW._OMP._PAP.Company.emails'> : `Emails` linked to `company` [ GTW.OMP.PAP.Company_has_Email ]
 
     >>> show_emails (PAP.Person)
-    <class '_GTW._OMP._PAP.Person.emails'> GTW.OMP.PAP.Person_has_Email : `Email` linked to `person`
+    <class '_GTW._OMP._PAP.Person.emails'> : `Emails` linked to `person` [ GTW.OMP.PAP.Person_has_Email ]
+
+    >>> ET = PAP.Person_has_Address.E_Type
+    >>> sorted (ET.role_map)
+    ['Address', 'PAP.Address', 'PAP.Person', 'Person', u'address', u'left', u'person', u'right']
+    >>> ET.Roles
+    (Person `left`, Address `right`)
+    >>> ET.edit_attr
+    (Person `left`, Address `right`, String `desc`)
+    >>> ET.left, ET.person
+    (Person `left`, Person `left`)
+    >>> ET.right, ET.address
+    (Address `right`, Address `right`)
 
 """
 

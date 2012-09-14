@@ -33,22 +33,27 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    22-Mar-2012 (CT) Change from `_Person_has_Property_` to
 #                     `Subject_has_Property`
+#    12-Sep-2012 (CT) Set `right.role_type` to `Property`
+#    12-Sep-2012 (CT) Add `auto_cache_np`, `auto_derive_np` to `left`, `right`
 #    ««revision-date»»···
 #--
 
 from   __future__            import unicode_literals
 
-from   _MOM.import_MOM        import *
-from   _GTW                   import GTW
-from   _GTW._OMP._PAP         import PAP
+from   _MOM.import_MOM             import *
+from   _GTW                        import GTW
+from   _GTW._OMP._PAP              import PAP
 
 import _GTW._OMP._PAP.Entity
-from   _GTW._OMP._PAP.Subject import Subject
+import _GTW._OMP._PAP.Property
+import _GTW._OMP._PAP.Subject
+
+from   _TFL.I18N                   import _
 
 _Ancestor_Essence = PAP.Link2
 
 class Subject_has_Property (_Ancestor_Essence) :
-    """Base class for link between Subject and some other object"""
+    """Link a %(left.role_name)s to a %(right.role_name)s"""
 
     is_partial = True
 
@@ -57,14 +62,20 @@ class Subject_has_Property (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Attributes
 
         class left (_Ancestor.left) :
+            """%(left.role_type.ui_name)s linked to %(right.role_type.ui_name)s"""
 
-            role_type      = Subject
-            auto_derive_np = False
+            role_type      = PAP.Subject
+            auto_cache_np  = True
+            auto_derive_np = True
 
         # end class left
 
         class right (_Ancestor.right) :
+            """%(right.role_type.ui_name)s of %(left.role_type.ui_name.lower())s"""
 
+            role_type      = PAP.Property
+            auto_cache_np  = True
+            auto_derive_np = True
             ui_allow_new   = True
 
         # end class right
@@ -75,7 +86,7 @@ class Subject_has_Property (_Ancestor_Essence) :
             kind           = Attr.Optional
             Kind_Mixins    = (Attr.Computed_Mixin, )
             max_length     = 20
-            ui_name        = "Description"
+            ui_name        = _("Description")
 
             completer      = Attr.Completer_Spec  (1)
 

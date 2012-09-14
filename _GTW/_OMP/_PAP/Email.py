@@ -33,6 +33,7 @@
 #     7-Sep-2011 (CT) `address.completer` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     8-Aug-2012 (CT) Add `example`
+#    12-Sep-2012 (CT) Derive from `Property`
 #    ««revision-date»»···
 #--
 
@@ -43,9 +44,9 @@ from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 from   _TFL.I18N              import _
 
-import _GTW._OMP._PAP.Entity
+import _GTW._OMP._PAP.Property
 
-_Ancestor_Essence = PAP.Object
+_Ancestor_Essence = PAP.Property
 
 class _PAP_Email_ (_Ancestor_Essence) :
     """Model an email address"""
@@ -67,17 +68,6 @@ class _PAP_Email_ (_Ancestor_Essence) :
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class address
-
-        class desc (A_String) :
-            """Short description of the email address"""
-
-            kind           = Attr.Optional
-            max_length     = 20
-            ui_name        = _("Description")
-
-            completer      = Attr.Completer_Spec  (1)
-
-        # end class desc
 
     # end class _Attributes
 
