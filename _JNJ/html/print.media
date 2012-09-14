@@ -56,7 +56,8 @@ print_sheet = Style_Sheet \
                         )
                     , Rule_Class
                         ( "button"
-                        , display   = "none"
+                        , display    = "none !important"
+                        , visibility = "collapse !important"
                         )
                     ]
                 )
