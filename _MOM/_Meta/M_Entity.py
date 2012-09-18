@@ -148,6 +148,7 @@
 #                     `M_E_Type` to `M_E_Mixin`
 #    12-Sep-2012 (CT) Do `_m_setup_auto_props` before `_m_create_base_e_types`
 #    12-Sep-2012 (CT) Add `_m_create_auto_children`
+#    18-Sep-2012 (CT) Add `_m_fix_refuse_links`
 #    ««revision-date»»···
 #--
 
@@ -320,7 +321,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
                 for pka in t.primary
                 if  isinstance (pka.attr, MOM.Attr._A_Id_Entity_) and pka.P_Type
                 )
-            t._m_setup_sorted_by ()
+            t._m_fix_refuse_links (app_type)
+            t._m_setup_sorted_by  ()
         for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
             ### `Ref_Req_Map` that are only available after *all* etypes have
@@ -733,6 +735,10 @@ class M_E_Type (M_E_Mixin) :
             a.attr.fix_doc (cls)
     # end def _m_fix_doc
 
+    def _m_fix_refuse_links (cls, app_type) :
+        pass
+    # end def _m_fix_refuse_links
+
     def _m_get_attribute (cls, etype, name) :
         return getattr (etype, name)
     # end def _m_get_attribute
@@ -894,6 +900,18 @@ class M_E_Type_Id (M_E_Type) :
                 result [k].update (v)
         return result
     # end def _calc_ref_map
+
+    def _m_fix_refuse_links (cls, app_type) :
+        refuse_links = cls.refuse_links
+        for tn in tuple (refuse_links) :
+            ET = app_type.etypes.get (tn)
+            if ET is not None :
+                if ET.type_name not in refuse_links :
+                    refuse_links.add (ET.type_name)
+            else :
+                if __debug__ :
+                    print "*" * 3, "Unknown typename in %s.refuse_links" % cls
+    # end def _m_fix_refuse_links
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)

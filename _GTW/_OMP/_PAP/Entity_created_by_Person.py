@@ -30,6 +30,7 @@
 #    14-Oct-2010 (CT) `Init_Only_Mixin` added to `_Attributes`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    11-Aug-2012 (CT) Add `refuse_links`
+#    18-Sep-2012 (CT) DRY `refuse_links`
 #    ««revision-date»»···
 #--
 
@@ -47,10 +48,7 @@ _Ancestor_Essence = PAP.Link2
 class Entity_created_by_Person (_Ancestor_Essence) :
     """Created-By association for all kinds of entities"""
 
-    refuse_links = set \
-        (( "GTW.OMP.PAP.Entity_created_by_Person"
-         , "PAP.Entity_created_by_Person"
-        ))
+    refuse_links = set (( "GTW.OMP.PAP.Entity_created_by_Person", ))
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

@@ -131,8 +131,6 @@ test_code = r"""
         ('Auth.Account_EMail_Verification', ['left'])
         ('Auth.Account_Password_Change_Required', ['left'])
         ('Auth.Account_Password_Reset', ['left'])
-        ('Auth.Account_in_Group', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
     Auth.Account_P
         ('Auth.Account_Activation', ['left'])
         ('Auth.Account_EMail_Verification', ['left'])
