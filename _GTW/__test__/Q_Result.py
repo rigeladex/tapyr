@@ -95,8 +95,16 @@ _q_result = r"""
     >>> sorted (PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
     [(u'fn 1', MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01))]
 
+    >>> sorted (PAP.Person_has_Address.query ().attr ("left"))
+    [PAP.Person (u'ln 3', u'fn 3', u'', u'')]
     >>> sorted (PAP.Person_has_Address.query ().attr ("person"))
     [PAP.Person (u'ln 3', u'fn 3', u'', u'')]
+    >>> sorted (PAP.Person_has_Address.query ().attrs ("right"))
+    [(PAP.Address (u's', u'c', u'z', u'c'),)]
+    >>> sorted (PAP.Person_has_Address.query ().attrs ("address"))
+    [(PAP.Address (u's', u'c', u'z', u'c'),)]
+    >>> sorted (PAP.Person_has_Address.query ().attrs ("left", "address"))
+    [(PAP.Person (u'ln 3', u'fn 3', u'', u''), PAP.Address (u's', u'c', u'z', u'c'))]
     >>> sorted (PAP.Person_has_Address.query ().attrs ("person", "address"))
     [(PAP.Person (u'ln 3', u'fn 3', u'', u''), PAP.Address (u's', u'c', u'z', u'c'))]
 
