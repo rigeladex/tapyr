@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Sep-2012 (CT) Creation (factored from _GTW/__test__/model.py)
+#    18-Sep-2012 (CT) Redefine `__init__` to set `ANS.Version`
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,7 @@ import _TFL.Generators
 model_src        = sos.path.dirname (__file__)
 form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
 
-GTW.Version = Product_Version \
+Version = Product_Version \
     ( productid           = u"MOM/GTW Test Cases"
     , productnick         = u"MOM-Test"
     , productdesc         = u"Test application for the regressiontest"
@@ -135,6 +136,11 @@ class GTW_Test_Command (_Ancestor) :
     def web_src_root (self) :
         return "/tmp/test"
     # end def web_src_root
+
+    def __init__ (self, * args, ** kw) :
+        self.ANS.Version = Version
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
 
     def combiner (self, backends, bpt) :
         if bpt > 1 :
