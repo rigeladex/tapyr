@@ -56,8 +56,9 @@ _test_code = """
     >>> time   = datetime.datetime (2012, 4, 1, 10, 0, 0)
     >>> scope.ems.convert_creation_change \
         (bc.pid, c_time = c_time, time = time, user = "changed", c_user = "created")
-    >>> change.c_user, change.c_time, change.user, change.time
-        ('created', datetime.datetime(2012, 1, 1, 0, 0), 'changed', datetime.datetime(2012, 4, 1, 10, 0))
+    >>> print formatted_1 ((change.c_user, change.c_time, change.user, change.time))
+    ('created', datetime.datetime(2012, 1, 1, 0, 0), 'changed', datetime.datetime(2012, 4, 1, 10, 0))
+
     >>> bc.last_changed
     datetime.datetime(2012, 4, 1, 10, 0)
     >>> bc.creation_date
@@ -81,8 +82,8 @@ _test_code = """
     >>> scope.commit ()
 
     >>> change = scope.query_changes (pid = bc.pid).one ()
-    >>> change.c_user, change.c_time, change.user, change.time
-        ('created', datetime.datetime(2012, 1, 1, 0, 0), 'changed', datetime.datetime(2012, 4, 1, 10, 0))
+    >>> print formatted_1 ((change.c_user, change.c_time, change.user, change.time))
+    ('created', datetime.datetime(2012, 1, 1, 0, 0), 'changed', datetime.datetime(2012, 4, 1, 10, 0))
 
     >>> SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 2
     SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')
@@ -102,7 +103,7 @@ _test_code = """
     >>> print (c.sail_number, c.sail_number_head, c.sail_number_tail)
     (42, u'OE', u'42')
     >>> print (c.FO.sail_number, c.FO.sail_number_head, c.FO.sail_number_tail)
-    ('42', u'OE', u'42')
+    (u'42', u'OE', u'42')
     >>> print (b.sail_number, b.sail_number_head, b.sail_number_tail)
     (1107, u'', u'1107')
 
