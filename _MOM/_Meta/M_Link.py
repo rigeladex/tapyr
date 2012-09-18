@@ -78,6 +78,7 @@
 #    13-Sep-2012 (CT) Factor `m_create_role_child`, add `m_create_role_children`
 #    13-Sep-2012 (CT) Call `_m_setup_roles` before `_m_setup_ref_maps`
 #    14-Sep-2012 (CT) Add `fix_doc` for `auto_cache_roles` to `_m_setup_roles`
+#    18-Sep-2012 (CT) Change `m_create_role_child` to obey `refuse_links`
 #    ««revision-date»»···
 #--
 
@@ -100,13 +101,18 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         """Create derived link classes for the (role, e_type) combinations
            specified.
         """
-        rkw = {}
-        tn  = cls.type_name
-        tbn = cls.type_base_name
+        rets = []
+        rkw  = {}
+        tn   = cls.type_name
+        tbn  = cls.type_base_name
         for role_name, etype in role_etype_s :
             role = getattr (cls._Attributes, role_name)
-            tbn = tbn.replace (role.E_Type.type_base_name, etype.type_base_name)
-            tn  = tn.replace  (role.E_Type.type_base_name, etype.type_base_name)
+            rET  = role.E_Type
+            tbn  = tbn.replace (rET.type_base_name, etype.type_base_name)
+            tn   = tn.replace  (rET.type_base_name, etype.type_base_name)
+            if cls.type_name in rET.refuse_links :
+                return
+            rets.append (rET)
             rkw [role.name] = role.__class__ \
                 ( role.name
                 , (role, )
@@ -120,7 +126,9 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         if tn == cls.type_name :
             raise NameError \
                 ("Cannot auto-derive from %s for %s" % (cls, role_etype_s))
-        if tn not in cls._type_names :
+        if any ((tn in rET.refuse_links) for rET in rets) :
+            pass
+        elif tn not in cls._type_names :
             result = cls.__class__ \
                 ( tbn
                 , (cls, )
