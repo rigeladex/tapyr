@@ -37,6 +37,7 @@
 #     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
 #     8-Aug-2012 (MG) Consider `hidden` in `_effective`
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
+#    17-Sep-2012 (CT) Ignore `TypeError` in `_effective`
 #    ««revision-date»»···
 #--
 
@@ -101,7 +102,7 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
         if dt is None :
             try :
                 page = first (e for e in self.entries if not e.hidden)
-            except IndexError :
+            except (IndexError, TypeError) :
                 pass
             else :
                 return page._effective

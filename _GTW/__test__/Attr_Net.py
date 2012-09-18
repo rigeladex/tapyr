@@ -31,6 +31,7 @@
 #                     check of subnet mask (bits right of mask must be 0)
 #    11-Aug-2012 (MG) New tests for query functions added
 #    13-Aug-2012 (RS) Test `IP6_Network` with default mask_len 128
+#    13-Sep-2012 (RS) Comment doctest for unimplemented feature
 #    ««revision-date»»···
 #--
 
@@ -451,7 +452,9 @@ _query_test = r"""
     1
     >>> IP4_Address.query (Q.address != address).count ()
     2
-    >>> IP4_Address.query (Q.address.IN (mask)).count ()
+
+    #>>> IP4_Address.query (Q.address.IN (mask)).count ()
+
     >>> scope.destroy ()
 """
 from _GTW.__test__.model import *

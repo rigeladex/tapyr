@@ -31,6 +31,7 @@
 #     6-Aug-2012 (CT) Replace `_do_change_info_skip` by `skip_etag`
 #    10-Aug-2012 (CT) Add missing `SRM.` to `change_query_filters`
 #    10-Aug-2012 (CT) Add `skip_etag` to various classes
+#    17-Sep-2012 (CT) Add `is_cancelled` to `Regatta_Event.sort_key`
 #    ««revision-date»»···
 #--
 
@@ -262,7 +263,7 @@ class Regatta_Event \
     dir_template_name   = None
     page_template_name  = "regatta_page"
     skip_etag           = True
-    sort_key            = TFL.Sorted_By ("perma_name")
+    sort_key            = TFL.Sorted_By ("is_cancelled", "perma_name")
 
     _old_date           = None
 
