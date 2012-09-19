@@ -64,6 +64,8 @@
 #    11-Aug-2012 (MG) Change composite query handling
 #    21-Aug-2012 (MG) Add support for `type_name` queries on joined tables
 #    24-Aug-2012 (MG) Fix raw attribute queries for composites
+#    19-Sep-2012 (MG) Change handling of role names to support redefinition
+#                     in descantents
 #    ««revision-date»»···
 #--
 
@@ -149,11 +151,14 @@ class MOM_Query (_MOM_Query_) :
         columns               = sa_table.columns
         self.pid              = columns [e_type._sa_pk_name]
         self._ATTRIBUTES      = []
+        self._ROLE_ATTRIBUTES = {}
         self._RAW_ATTRIBUTES  = {}
         self._COMPOSITES      = []
         self._ID_ENTITY_ATTRS = {}
         self._query_fct       = {}
         delayed               = []
+        #if e_type.type_name in ("PAP.Person_has_Address", "PAP.Person_has_Phone") :
+        #    import pdb; pdb.set_trace ()
         if e_type is e_type.relevant_root :
             self.Type_Name    = columns.Type_Name
             self.pid          = columns.pid
@@ -183,7 +188,7 @@ class MOM_Query (_MOM_Query_) :
                     self._RAW_ATTRIBUTES [name] = rcol
                     self._add_q (rcol, kind, attr.raw_name)
                 if isinstance (kind, MOM.Attr.Link_Role) :
-                    self._add_q (col, kind, attr.role_name)
+                    self._ROLE_ATTRIBUTES [name] = col
                     attr_names.append (attr.role_name)
                 if isinstance (attr, MOM.Attr._A_Id_Entity_) :
                     join_query = Join_Query (self)
@@ -191,6 +196,7 @@ class MOM_Query (_MOM_Query_) :
                         self._ID_ENTITY_ATTRS [an] = join_query
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
             self._COMPOSITES.extend (b_saq._COMPOSITES)
+            self._ROLE_ATTRIBUTES.update (b_saq._ROLE_ATTRIBUTES)
             self._RAW_ATTRIBUTES = dict \
                 (b_saq._RAW_ATTRIBUTES, ** self._RAW_ATTRIBUTES)
             for name in b_saq._ATTRIBUTES :
@@ -202,6 +208,9 @@ class MOM_Query (_MOM_Query_) :
             for an, attr in b_saq._query_fct.iteritems () :
                 if an not in self._query_fct :
                     self._query_fct [an] = attr
+        for rname, col in self._ROLE_ATTRIBUTES.iteritems () :
+            kind = getattr (e_type, rname)
+            setattr        (self, kind.role_name, col)
         for name, kind, attr in delayed :
             query_fct = getattr (attr, "query_fct")
             if query_fct :
