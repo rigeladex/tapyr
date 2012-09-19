@@ -75,6 +75,7 @@
 #     1-Aug-2012 (CT) Add `M_E_Type_Link[123]_Destroyed`
 #    31-Aug-2012 (CT) Restrict `_m_setup_roles` to roles in `_own_names`
 #    12-Sep-2012 (CT) Add `Partial_Roles`, `_m_create_auto_children`
+#    19-Sep-2012 (CT) Add guard against role_name clashes to `_m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -265,11 +266,22 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             (p for p in cls.primary if isinstance (p, MOM.Attr.Link_Role))
         role_types = tuple \
             (r.role_type for r in Roles if r.role_type is not None)
+        rns = set ()
         if len (role_types) == len (Roles) :
             type_base_names = [rt.type_base_name for rt in role_types]
             cls.number_of_roles = nor      = len (Roles)
             cls.role_map        = role_map = {}
             for i, r in enumerate (Roles) :
+                if r.role_name in rns :
+                    crs = tuple (s for s in Roles if s.role_name == r.role_name)
+                    raise TypeError \
+                        ( "%s: role name `%s` cannot be used for %s roles %s"
+                        % ( cls.type_name, r.role_name, len (crs)
+                          , ", ".join
+                              ("`%s`" % r.generic_role_name for r in crs)
+                          )
+                        )
+                rns.add (r.role_name)
                 if r.attr.name in cls._Attributes._own_names :
                     ### Replace by app-type specific e-type
                     r.attr.assoc     = r.assoc       = cls

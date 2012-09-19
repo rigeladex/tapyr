@@ -247,6 +247,7 @@
 #     8-Sep-2012 (CT) Convert more `_from_string` definitions to
 #                     Class_and_Instance_Method
 #    12-Sep-2012 (CT) Add `A_Link_Role.auto_derive_np`, `.auto_cache_np`
+#    19-Sep-2012 (CT) Add `A_Link_Role.force_role_name`
 #    ««revision-date»»···
 #--
 
@@ -1892,6 +1893,7 @@ class A_Link_Role (_A_Id_Entity_) :
     auto_derive_npt   = False
     Cacher_Type       = None
     dfc_synthesizer   = None
+    force_role_name   = None
     is_link_role      = True
     kind              = MOM.Attr.Link_Role
     max_links         = -1
