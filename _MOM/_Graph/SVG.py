@@ -31,6 +31,7 @@
 #    31-Aug-2012 (CT) Put lipstick on the kludge (use `no_alpha`)
 #    31-Aug-2012 (RS) Store `link_markers` in lowercase, fixes missing markers
 #     5-Sep-2012 (CT) Move `label` to second segment of link if first is short
+#    19-Sep-2012 (RS) Fix `view_box`: x, y, width, heigth
 #    ««revision-date»»···
 #--
 
@@ -85,8 +86,9 @@ class Renderer (MOM.Graph._Renderer_) :
 
     def Canvas (self, min_x, min_y, max_x, max_y) :
         P      = self.Parameters
+        w, h   = (max_x - min_x, max_y - min_y)
         root   = SVG.Root \
-            ( view_box    = "%d %d %d %d" % (min_x, min_y, max_x, max_y)
+            ( view_box    = "%d %d %d %d" % (min_x, min_y, w, h)
             , width       = "100%"
             )
         result = SVG.Document \
