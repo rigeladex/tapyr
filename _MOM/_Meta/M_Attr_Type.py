@@ -63,6 +63,7 @@
 #                     (`name` because that will trigger `computed` if necessary)
 #     8-Sep-2012 (CT) Add `M_Attr_Type_Enum`
 #     8-Sep-2012 (CT) Add `_unicode_ignore_case`
+#    19-Sep-2012 (CT) Add `force_role_name` to `M_Attr_Type_Link_Role`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,7 @@ class M_Attr_Type_Link_Role (M_Attr_Type) :
         if cls.role_type :
             cls.default_role_name = drn = cls.role_type.type_base_name.lower ()
             if dct.get ("role_name") is None :
-                cls.role_name = drn
+                cls.role_name = cls.force_role_name or drn
         else :
             cls.description = None
     # end def __init__

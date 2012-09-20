@@ -79,6 +79,7 @@
 #    13-Sep-2012 (CT) Call `_m_setup_roles` before `_m_setup_ref_maps`
 #    14-Sep-2012 (CT) Add `fix_doc` for `auto_cache_roles` to `_m_setup_roles`
 #    18-Sep-2012 (CT) Change `m_create_role_child` to obey `refuse_links`
+#    19-Sep-2012 (CT) Add guard against role_name clashes to `_m_setup_roles`
 #    20-Sep-2012 (CT) Change `m_create_role_child` to set `is_partial`
 #    20-Sep-2012 (CT) Redefine `_m_init_prop_specs` to set `Role_Attrs`
 #    20-Sep-2012 (CT) Rename `M_Link._m_setup_etype_auto_props` to
@@ -314,11 +315,22 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             (p for p in cls.primary if isinstance (p, MOM.Attr.Link_Role))
         role_types = tuple \
             (r.role_type for r in Roles if r.role_type is not None)
+        rns = set ()
         if len (role_types) == len (Roles) :
             type_base_names = [rt.type_base_name for rt in role_types]
             cls.number_of_roles = nor      = len (Roles)
             cls.role_map        = role_map = {}
             for i, r in enumerate (Roles) :
+                if r.role_name in rns :
+                    crs = tuple (s for s in Roles if s.role_name == r.role_name)
+                    raise TypeError \
+                        ( "%s: role name `%s` cannot be used for %s roles %s"
+                        % ( cls.type_name, r.role_name, len (crs)
+                          , ", ".join
+                              ("`%s`" % r.generic_role_name for r in crs)
+                          )
+                        )
+                rns.add (r.role_name)
                 if r.attr.name in cls._Attributes._own_names :
                     ### Replace by app-type specific e-type
                     r.attr.assoc     = r.assoc       = cls

@@ -249,6 +249,7 @@
 #    12-Sep-2012 (CT) Add `A_Link_Role.auto_derive_np`, `.auto_cache_np`
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    13-Sep-2012 (CT) Add `fix_doc`
+#    19-Sep-2012 (CT) Add `A_Link_Role.force_role_name`
 #    ««revision-date»»···
 #--
 
@@ -1912,6 +1913,7 @@ class A_Link_Role (_A_Id_Entity_) :
     auto_derive_npt   = False
     Cacher_Type       = None
     dfc_synthesizer   = None
+    force_role_name   = None
     is_link_role      = True
     kind              = MOM.Attr.Link_Role
     max_links         = -1

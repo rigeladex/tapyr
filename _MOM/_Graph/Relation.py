@@ -35,6 +35,7 @@
 #     3-Sep-2012 (CT) Add same-side support to `add_guides`
 #     3-Sep-2012 (CT) Reify `Connector`, factor in `points_gen`, add `points`
 #     5-Sep-2012 (CT) Add `shift_guide`, rename `add_guides` to `set_guides`
+#    19-Sep-2012 (CT) Use `generic_role_name`, not `role_name`, for `Role.rid`
 #    ««revision-date»»···
 #--
 
@@ -379,7 +380,10 @@ class Role (Attr) :
     @TFL.Meta.Once_Property
     def rid (self) :
         return "%s.%s:%s" % \
-            (self.source.type_name, self.attr.role_name, self.target.type_name)
+            ( self.source.type_name
+            , self.attr.generic_role_name
+            , self.target.type_name
+            )
     # end def rid
 
     @TFL.Meta.Once_Property
