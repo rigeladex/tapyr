@@ -30,6 +30,7 @@
 #     3-Jul-2012 (CT) Factored from _GTW/_RST/MOM.py
 #     7-Aug-2012 (CT) Change class prefix from `RST_` to `RST_MOM_`
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
+#    13-Sep-2012 (CT) Sort `Scope.entries` by `type_name`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,8 @@ class _RST_MOM_Scope_ (_Ancestor) :
                       ( ETM  = et.type_name
                       , name = et.type_name.replace (".", "-")
                       )
-                for et in self.top.scope._T_Extension
+                for et in sorted \
+                    (self.top.scope.T_Extension, key = TFL.Getter.type_name)
                 if  issubclass (et, MOM.Id_Entity)
                         and (et.children_np or not et.is_partial)
                 )

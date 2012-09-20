@@ -29,6 +29,8 @@
 #    30-Dec-2009 (CT) Creation
 #    13-Oct-2010 (CT) `Entity_created_by_Person` added
 #    22-Mar-2012 (CT) Add `Company` and its links
+#    12-Sep-2012 (CT) Add `Property`, `Subject`, and `Subject_has_Property`,
+#                     remove `Company_has_...`, `Person_has_...`
 #    ««revision-date»»···
 #--
 
@@ -42,13 +44,13 @@ import _GTW._OMP._PAP.Email
 import _GTW._OMP._PAP.Entity
 import _GTW._OMP._PAP.Phone
 import _GTW._OMP._PAP.Person
+import _GTW._OMP._PAP.Property
+import _GTW._OMP._PAP.Subject
 
-import _GTW._OMP._PAP.Company_has_Address
-import _GTW._OMP._PAP.Company_has_Email
-import _GTW._OMP._PAP.Company_has_Phone
 import _GTW._OMP._PAP.Entity_created_by_Person
-import _GTW._OMP._PAP.Person_has_Address
-import _GTW._OMP._PAP.Person_has_Email
-import _GTW._OMP._PAP.Person_has_Phone
+import _GTW._OMP._PAP.Subject_has_Property
+import _GTW._OMP._PAP.Subject_has_Phone
+
+GTW.OMP.PAP.Subject_has_Property.m_create_role_children ("right")
 
 ### __END__ GTW.OMP.PAP.import_PAP

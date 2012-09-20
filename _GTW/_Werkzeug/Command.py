@@ -67,7 +67,8 @@
 #    25-Aug-2012 (CT) Import `_MOM.inspect` if `cmd.debug`
 #     6-Sep-2012 (CT) Pass `verbose` to `GTW.AFS.MOM.Form_Cache`
 #     6-Sep-2012 (CT) Add and use `_create_cache_p`
-#    14-Sep-2012 (CT) Redefine `app_type` to call `GTW.AFS.MOM.Spec.setup`
+#    13-Sep-2012 (CT) Redefine `app_type` to call
+#                     `GTW.AFS.MOM.Spec.setup_defaults`, if the module is loaded
 #    ««revision-date»»···
 #--
 

@@ -210,7 +210,7 @@ class Renderer (MOM.Graph._Renderer_) :
         canvas.add (grp)
     # end def render_link
 
-    def _render_node (self, node, canvas) :
+    def render_node (self, node, canvas) :
         P   = self.Parameters
         box = node.box
         grp = SVG.Group \
@@ -232,7 +232,7 @@ class Renderer (MOM.Graph._Renderer_) :
             )
         self._render_node_labels (node, grp)
         canvas.add (grp)
-    # end def _render_node
+    # end def render_node
 
     def _render_node_labels (self, node, grp) :
         P      = self.Parameters

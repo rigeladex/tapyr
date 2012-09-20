@@ -181,7 +181,7 @@ class Renderer (MOM.Graph._Renderer_) :
         canvas.text (tail, self.conn_chars [side])
     # end def render_link
 
-    def _render_node (self, node, canvas) :
+    def render_node (self, node, canvas) :
         box    = node.box
         pos    = box.top_left + D2.Point (2, 1)
         width  = box.size.x   - 2
@@ -206,7 +206,7 @@ class Renderer (MOM.Graph._Renderer_) :
             canvas.text (pos, lp)
             pos.shift   ((0, 1))
         canvas.rectangle (box)
-    # end def _render_node
+    # end def render_node
 
 # end class Renderer
 

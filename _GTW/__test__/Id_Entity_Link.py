@@ -131,8 +131,6 @@ test_code = r"""
         ('Auth.Account_EMail_Verification', ['left'])
         ('Auth.Account_Password_Change_Required', ['left'])
         ('Auth.Account_Password_Reset', ['left'])
-        ('Auth.Account_in_Group', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
     Auth.Account_P
         ('Auth.Account_Activation', ['left'])
         ('Auth.Account_EMail_Verification', ['left'])
@@ -233,6 +231,8 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     EVT.Recurrence_Rule
         ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Property
+        ('PAP.Entity_created_by_Person', ['left'])
     PAP.Address
         ('PAP.Company_has_Address', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
@@ -252,23 +252,11 @@ test_code = r"""
         ('PAP.Person_has_Phone', ['right'])
     PAP.Subject_has_Property
         ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Subject_has_Address
-        ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Company_has_Address
-        ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Subject_has_Email
-        ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Company_has_Email
-        ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject_has_Phone
         ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Company_has_Phone
+    PAP.Subject_has_Address
         ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Person_has_Address
-        ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Person_has_Email
-        ('PAP.Entity_created_by_Person', ['left'])
-    PAP.Person_has_Phone
+    PAP.Subject_has_Email
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Link1
         ('PAP.Entity_created_by_Person', ['left'])
@@ -346,6 +334,18 @@ test_code = r"""
     SRM.Crew_Member
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Team_has_Boat_in_Regatta
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Email
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Email
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Address
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Address
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Phone
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Phone
         ('PAP.Entity_created_by_Person', ['left'])
 
     >>> show_ref_maps (scope, "Ref_Opt_Map")

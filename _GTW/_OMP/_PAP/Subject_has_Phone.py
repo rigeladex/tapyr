@@ -32,6 +32,7 @@
 #    28-Feb-2010 (CT) `extension` is a `A_Numeric_String` (instead of `A_Int`)
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    22-Mar-2012 (CT) Change from `Person_has_Phone` to `Subject_has_Phone`
+#    12-Sep-2012 (CT) Add `extension`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ from   _GTW._OMP._PAP.Phone                  import Phone
 _Ancestor_Essence = Subject_has_Property
 
 class Subject_has_Phone (_Ancestor_Essence) :
-    """Model the link between a subject and a phone number"""
+    """Link a %(left.role_name)s to a phone number"""
 
     is_partial = True
 
@@ -57,12 +58,21 @@ class Subject_has_Phone (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Attributes
 
         class right (_Ancestor.right) :
-            """Phone number of subject"""
+            """Phone number of %(left.role_name)s"""
 
-            role_type     = Phone
-            auto_cache    = True
+            role_type       = Phone
+            auto_cache      = True
 
         # end class right
+
+        class extension (A_Numeric_String) :
+            """Extension number used in PBX"""
+
+            kind            = Attr.Primary_Optional
+            example         = "99"
+            max_length      = 5
+
+        # end class extension
 
     # end class _Attributes
 

@@ -113,7 +113,7 @@ _test_code = """
 
     >>> NL = chr (10)
     >>> for e in xl.transitive_iter () :
-    ...   print e.__class__.__name__, e._name, getattr (e, "ui_name", None), repr (getattr (e, "description", "").replace (NL, " ")), e.renderer
+    ...   print e.__class__.__name__, e._name, getattr (e, "ui_name", None), repr ((getattr (e, "description", "")or "").replace (NL, " ")), e.renderer
     Entity Person Person u'Model a person.' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field last_name Last name u'Last name of person' None
@@ -127,30 +127,30 @@ _test_code = """
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
-    Entity_List Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
-    Entity_Link Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
-    Field_Role_Hidden left Person u'' afs_div_seq
+    Entity_List Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
+    Entity_Link Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
+    Field_Role_Hidden left Person u'Person linked to Address' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Address u'Address where subject lives or works' afs_div_seq
+    Field_Entity right Address u'Address of subject' afs_div_seq
     Field street Street u'Street (or place) and house number' None
     Field zip Zip code u'Zip code of address' None
     Field city City u'City, town, or village' None
     Field country Country u'Country' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
-    Entity_Link Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
-    Field_Role_Hidden left Person u'' afs_div_seq
+    Entity_List Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
+    Entity_Link Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
+    Field_Role_Hidden left Person u'Person linked to Email' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Email u'Email address of subject' afs_div_seq
+    Field_Entity right Email u'Email of subject' afs_div_seq
     Field address Email address u'Email address (including domain)' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
-    Entity_Link Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
-    Field_Role_Hidden left Person u'' afs_div_seq
+    Entity_List Person_has_Phone Person_has_Phone u'Link a person to a phone number' afs_div_seq
+    Entity_Link Person_has_Phone Person_has_Phone u'Link a person to a phone number' afs_div_seq
+    Field_Role_Hidden left Person u'Person linked to Phone' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Phone u'Phone number of subject' afs_div_seq
+    Field_Entity right Phone u'Phone number of person' afs_div_seq
     Field country_code Country code u'International country code of phone number (without prefix)' None
     Field area_code Area code u'National area code of phone number (without prefix)' None
     Field number Number u'Phone number proper (without country code, area code, extension)' None
@@ -1376,7 +1376,7 @@ _person_test = """
 
     >>> for i in fip.transitive_iter () :
     ...     e = i.elem
-    ...     print e.__class__.__name__, e._name, getattr (e, "ui_name", ""), repr (getattr (e, "description", "").replace (NL, " ")), e.renderer
+    ...     print e.__class__.__name__, e._name, getattr (e, "ui_name", ""), repr ((getattr (e, "description", "")or "").replace (NL, " ")), e.renderer
     Form None  u'' afs_div_seq
     Entity Person Person u'Model a person.' afs_div_seq
     Fieldset primary  u'' afs_div_seq
@@ -1391,16 +1391,17 @@ _person_test = """
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
     Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
-    Entity_List Person_has_Address Person_has_Address u'Model the link between a person and an address' afs_div_seq
-    Entity_List Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
-    Entity_Link Person_has_Email Person_has_Email u'Model the link between a person and an email address' afs_div_seq
-    Field_Role_Hidden left Person u'' afs_div_seq
+    Entity_List Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
+    Entity_List Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
+    Entity_Link Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
+    Field_Role_Hidden left Person u'Person linked to Email' afs_div_seq
     Fieldset primary  u'' afs_div_seq
-    Field_Entity right Email u'Email address of subject' afs_div_seq
+    Field_Entity right Email u'Email of subject' afs_div_seq
     Field address Email address u'Email address (including domain)' None
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None
-    Entity_List Person_has_Phone Person_has_Phone u'Model the link between a person and a phone number' afs_div_seq
+    Entity_List Person_has_Phone Person_has_Phone u'Link a person to a phone number' afs_div_seq
+
 """
 
 _prefilled_test = """

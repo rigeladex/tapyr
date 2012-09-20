@@ -135,7 +135,10 @@ class Account_Anonymous (_Ancestor_Essence) :
     """Default account for users which are not logging in."""
 
     max_count    = 1
-    refuse_links = set (("GTW.OMP.Auth.Account_in_Group", ))
+    refuse_links = set \
+        (( "GTW.OMP.Auth.Account_in_Group"
+         , "GTW.OMP.PAP.Entity_created_by_Person"
+        ))
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

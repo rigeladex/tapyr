@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    24-Mar-2012 (CT) Creation
+#    14-Sep-2012 (CT) Add test for role attributes of `Person_has_Address`
+#    20-Sep-2012 (CT) Add tests for `Person_has_Phone`, `Subject_has_Property`
 #    ««revision-date»»···
 #--
 
@@ -58,13 +60,18 @@ _test_code = """
     >>> PAP.Person.query_s ().all ()
     [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
 
-    >>> _ = PAP.Person_has_Email (pg, PAP.Email ("martin@mangari.org"))
-    >>> _ = PAP.Person_has_Email (ps, PAP.Email ("ralf@runtux.com"))
-    >>> _ = PAP.Person_has_Email (pt, PAP.Email ("tanzer@swing.co.at"))
-    >>> _ = PAP.Person_has_Email (pt, PAP.Email ("tanzer@gg32.com"))
+    >>> _ = PAP.Person_has_Email  (pg, PAP.Email ("martin@mangari.org"))
+    >>> _ = PAP.Person_has_Email  (ps, PAP.Email ("ralf@runtux.com"))
+    >>> _ = PAP.Person_has_Email  (pt, PAP.Email ("tanzer@swing.co.at"))
+    >>> _ = PAP.Person_has_Email  (pt, PAP.Email ("tanzer@gg32.com"))
 
     >>> _ = PAP.Company_has_Email (cl, PAP.Email ("lucky@mangari.org"))
     >>> _ = PAP.Company_has_Email (co, PAP.Email ("office@runtux.com"))
+
+    >>> _ = PAP.Person_has_Phone  (pg, PAP.Phone ("43", "1", "234567", raw = True))
+    >>> _ = PAP.Person_has_Phone  (ps, PAP.Phone ("43", "1", "987654", raw = True))
+    >>> _ = PAP.Person_has_Phone  (pt, PAP.Phone ("43", "1", "135790", raw = True))
+    >>> _ = PAP.Company_has_Phone (co, PAP.Phone ("43", "1", "246802", raw = True), extension = "16", raw = True)
 
     >>> PAP.Subject_has_Email.query_s ().all ()
     [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
@@ -102,6 +109,20 @@ _test_code = """
     >>> sorted (rr.companies, key = PAP.Company.sorted_by)
     [PAP.Company (u'open source consulting')]
 
+    >>> PAP.Subject_has_Property.query_s ().all ()
+    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Phone ((u'open source consulting', ), (u'43', u'1', u'246802'), u'16'), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Company_has_Email ((u'open source consulting', ), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'schlatterbeck', u'ralf', u'', u''), (u'43', u'1', u'987654'), u''), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    >>> PAP.Subject_has_Property.query_s (left = pt).all ()
+    [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+
+    #>>> PAP.Subject_has_Property.query_s (subject = pt).all ()
+    [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+
+    >>> PAP.Subject_has_Phone.query_s (Q.right.number.CONTAINS ("2")).all ()
+    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Company_has_Phone ((u'open source consulting', ), (u'43', u'1', u'246802'), u'16')]
+
+    >>> PAP.Subject_has_Phone.query_s (Q.extension != "").all ()
+    [PAP.Company_has_Phone ((u'open source consulting', ), (u'43', u'1', u'246802'), u'16')]
+
     >>> PAP.Subject_has_Email.acr_map.get ("left", False)
     False
     >>> PAP.Company_has_Email.acr_map.get ("left", False)
@@ -124,21 +145,48 @@ _test_code = """
     [<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>]
 
     >>> def show_emails (ET) :
-    ...     attr = ET._Attributes._own_names.get ("emails")
-    ...     print (attr, attr and attr.assoc, ":", attr and attr.description)
+    ...     attr = ET.emails
+    ...     print (attr.attr.__class__, ":", attr.description, "[", attr.assoc, "]")
     >>> show_emails (PAP.Subject)
-    <class '_GTW._OMP._PAP.Subject.emails'> GTW.OMP.PAP.Subject_has_Email : `Email` linked to `subject`
+    <class '_GTW._OMP._PAP.Subject.emails'> : `Emails` linked to `subject` [ GTW.OMP.PAP.Subject_has_Email ]
 
     >>> show_emails (PAP.Company)
-    <class '_GTW._OMP._PAP.Company.emails'> GTW.OMP.PAP.Company_has_Email : `Email` linked to `company`
+    <class '_GTW._OMP._PAP.Company.emails'> : `Emails` linked to `company` [ GTW.OMP.PAP.Company_has_Email ]
 
     >>> show_emails (PAP.Person)
-    <class '_GTW._OMP._PAP.Person.emails'> GTW.OMP.PAP.Person_has_Email : `Email` linked to `person`
+    <class '_GTW._OMP._PAP.Person.emails'> : `Emails` linked to `person` [ GTW.OMP.PAP.Person_has_Email ]
+
+    >>> ET = PAP.Person_has_Address.E_Type
+    >>> sorted (ET.role_map)
+    ['Address', 'PAP.Address', 'PAP.Person', 'Person', u'address', u'left', u'person', u'right']
+    >>> ET.Roles
+    (Person `left`, Address `right`)
+    >>> ET.edit_attr
+    (Person `left`, Address `right`, String `desc`)
+    >>> ET.left, ET.person
+    (Person `left`, Person `left`)
+    >>> ET.right, ET.address
+    (Address `right`, Address `right`)
+
+    >>> for T, l in children_trans_iter (scope.PAP.Subject_has_Property) :
+    ...     rr = T.relevant_root.type_name if T.relevant_root else sorted (T.relevant_roots)
+    ...     print ("%%-30s %%-5s %%s" %% ("%%s%%s" %% ("  " * l, T.type_name), T.is_partial, rr))
+    PAP.Subject_has_Property       True  ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
+      PAP.Subject_has_Phone        True  ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
+        PAP.Person_has_Phone       False PAP.Person_has_Phone
+        PAP.Company_has_Phone      False PAP.Company_has_Phone
+      PAP.Subject_has_Address      True  ['PAP.Company_has_Address', 'PAP.Person_has_Address']
+        PAP.Person_has_Address     False PAP.Person_has_Address
+        PAP.Company_has_Address    False PAP.Company_has_Address
+      PAP.Subject_has_Email        True  ['PAP.Company_has_Email', 'PAP.Person_has_Email']
+        PAP.Person_has_Email       False PAP.Person_has_Email
+        PAP.Company_has_Email      False PAP.Company_has_Email
 
 """
 
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
+from   _MOM.inspect             import children_trans_iter
 
 from   itertools                import chain as ichain
 

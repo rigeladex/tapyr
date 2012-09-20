@@ -64,6 +64,8 @@
 #    26-Jun-2012 (CT) Add `if cache` to `Role_Cacher_n.__call__`
 #     1-Aug-2012 (CT) Add `_Link[123]_Destroyed_Mixin_`
 #     4-Aug-2012 (CT) Guard `cache.remove` in `Link_Cacher_n.__call__`
+#    13-Sep-2012 (CT) Add `_suffixed`
+#    14-Sep-2012 (CT) Add `cr_name` to `Link_Cacher`, `Role_Cacher`
 #    ««revision-date»»···
 #--
 
@@ -292,7 +294,7 @@ class _Cacher_ (TFL.Meta.Object) :
         self.grn            = role.generic_role_name
         attr_name           = self.attr_name
         if attr_name is None or attr_name == True :
-            self.attr_name = self._auto_attr_name (Link, role) + self._suffix
+            self.attr_name = self._suffixed (self._auto_attr_name (Link, role))
         assert isinstance (self.attr_name, basestring)
     # end def setup
 
@@ -323,6 +325,19 @@ class _Cacher_ (TFL.Meta.Object) :
             role_type.add_attribute (cr, override = True)
     # end def _setup_attr
 
+    def _suffixed (self, name) :
+        suffix = self._suffix
+        result = name
+        if suffix :
+            if name.endswith (suffix) :
+                result += "e" + suffix
+            elif name.endswith ("y") and suffix == "s" :
+                result = name [:-1] + "ies"
+            else :
+                result += suffix
+        return result
+    # end def _suffixed
+
     def __repr__ (self) :
         return "<%s (%s) %s --> %s%s>" % \
             ( self.__class__.__name__, self.link_type_name
@@ -341,6 +356,11 @@ class Link_Cacher (_Cacher_) :
         return (self.attr_name, )
     # end def copy_args
 
+    @property
+    def cr_name (self) :
+        return self.role_name
+    # end def cr_name
+
     def setup (self, Link, role) :
         self.max_links = max_links = role.max_links
         if max_links == 1 :
@@ -349,9 +369,7 @@ class Link_Cacher (_Cacher_) :
         else :
             self.__class__ = Link_Cacher_n
             CR             = MOM.Attr.A_Cached_Role_Set
-        desc = getattr (role, "description", None)
-        if desc is None :
-            desc = "`%s` link%s" % (Link.type_base_name, self._suffix)
+        desc = "`%s` link%s" % (Link.type_base_name, self._suffix)
         self.__super.setup (Link, role)
         self._setup_attr   (CR, Link, role, role.role_type, Link, desc)
     # end def setup
@@ -414,6 +432,14 @@ class Role_Cacher (_Cacher_) :
         return (self.attr_name, self._orn)
     # end def copy_args
 
+    @property
+    def cr_name (self) :
+        try :
+            return self.other_role.name
+        except AttributeError :
+            return self.other_role_name
+    # end def cr_name
+
     def setup (self, Link, role) :
         other_role_name = \
             self.other_role_name or Link.other_role_name (role.name)
@@ -441,10 +467,10 @@ class Role_Cacher (_Cacher_) :
                 ( "XXX Can't create attribute for auto_cache of role: %s.%s"
                 % (Link, self.role_name)
                 )
-        desc = getattr (other_role, "description", None)
-        if desc is None :
-            desc = "`%s` linked to `%s`" % \
-                (self.role_name.capitalize (), other_role.role_name)
+        desc = "`%s` linked to `%s`" % \
+            ( self._suffixed (self.role_name.capitalize ())
+            , other_role.role_name
+            )
         self._setup_attr (CR, Link, role, other_type, role.role_type, desc)
     # end def setup
 

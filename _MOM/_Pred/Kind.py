@@ -31,6 +31,7 @@
 #    11-Mar-2010 (CT) `check_pred_p` removed (was a Bad Idea (tm))
 #     2-Sep-2010 (CT) `Region` added
 #    27-Apr-2012 (CT) Add `Region` to last paragraph of `__doc__`
+#    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    ««revision-date»»···
 #--
 
@@ -52,8 +53,8 @@ class Kind (MOM.Prop.Kind) :
     prop                  = TFL.Meta.Alias_Property ("pred")
     Table                 = dict ()
 
-    def __init__ (self, pred_type) :
-        self.__super.__init__ (pred_type)
+    def __init__ (self, pred_type, e_type) :
+        self.__super.__init__ (pred_type, e_type)
         self.attrs = set      (pred_type.attributes + pred_type.attr_none)
     # end def __init__
 
@@ -84,8 +85,8 @@ class Object (Kind) :
 
     kind = "object"
 
-    def __init__ (self, pred_type) :
-        self.__super.__init__ (pred_type)
+    def __init__ (self, pred_type, e_type) :
+        self.__super.__init__ (pred_type, e_type)
         assert "is_used" not in self.pred.guard_attr, \
             ( "System-dependent attribute `is_used` can't be used in guard "
               "of object invariant %s!"

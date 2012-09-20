@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,7 @@
 #    26-Nov-2009 (CT) `_m_add_prop` added
 #    23-Mar-2010 (CT) Remove names in `renameds` from `_names`
 #     9-Apr-2010 (CT) `m_setup_names` changed to ignore attributes set to `None`
+#    12-Sep-2012 (CT) Add support for `dyn_doc_p`
 #    ««revision-date»»···
 #--
 
@@ -44,14 +45,18 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
     """
 
     def m_setup_names (cls) :
-        dict       = cls.__dict__
+        dct        = cls.__dict__
         _names     = {}
         _own_names = {}
         setattr (cls, "_names",     _names)
         setattr (cls, "_own_names", _own_names)
         for b in reversed (cls.__bases__) :
             _names.update (getattr (b, "_names", {}))
-        for n, v in dict.iteritems () :
+        _own_names.update \
+            (  (n, v)
+            for n, v in _names.iteritems () if v.dyn_doc_p
+            )
+        for n, v in dct.iteritems () :
             if n.startswith ("_") and n.endswith ("_") :
                 continue
             if v is None or isinstance (v, MOM.Meta.M_Prop_Type) :
@@ -64,7 +69,7 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
                             print cls, v, n, bn
                             raise
             elif n in _names :
-                raise cls._m_inconsistent_prop (n, v, _names, dict)
+                raise cls._m_inconsistent_prop (n, v, _names, dct)
     # end def m_setup_names
 
     def _m_add_prop (cls, e_type, name, prop_type) :

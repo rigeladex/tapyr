@@ -301,7 +301,8 @@ class Entity_Link (Entity) :
     def _get_assoc (self, name, E_Type) :
         cached_role = getattr (E_Type, name, None)
         if cached_role is not None :
-            name = cached_role.assoc
+            assoc = cached_role.assoc
+            name  = getattr (assoc, "type_name", assoc)
         return E_Type.app_type.etypes [name]
     # end def _get_assoc
 

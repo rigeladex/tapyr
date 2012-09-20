@@ -147,6 +147,9 @@
 #    12-Sep-2012 (CT) Move `children_np` and `_m_setup_children` from
 #                     `M_E_Type` to `M_E_Mixin`
 #    12-Sep-2012 (CT) Do `_m_setup_auto_props` before `_m_create_base_e_types`
+#    12-Sep-2012 (CT) Add `_m_create_auto_children`
+#    18-Sep-2012 (CT) Add `_m_fix_refuse_links`
+#    20-Sep-2012 (CT) Factor `_m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -155,6 +158,7 @@ from   _TFL import TFL
 
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Once_Property
+import _TFL.Caller
 import _TFL.Decorator
 import _TFL.Sorted_By
 
@@ -318,7 +322,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
                 for pka in t.primary
                 if  isinstance (pka.attr, MOM.Attr._A_Id_Entity_) and pka.P_Type
                 )
-            t._m_setup_sorted_by ()
+            t._m_fix_refuse_links (app_type)
+            t._m_setup_sorted_by  ()
         for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
             ### `Ref_Req_Map` that are only available after *all* etypes have
@@ -361,6 +366,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
             , _real_name    = str (cls.type_base_name)     ### M_Autorename
             , _children_np  = None
+            , _dyn_doc      = cls._dyn_doc
             , ** kw
             )
     # end def _m_new_e_type_dict
@@ -402,11 +408,15 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
 
+    _dyn_doc                   = None
     _nested_classes_to_combine = ("_Attributes", "_Predicates")
 
     def __new__ (mcls, name, bases, dct) :
         dct ["_default_child"] = dct.pop ("default_child", None)
         dct ["use_indices"]    = dct.pop ("use_indices",   None) or []
+        doc = dct.get ("__doc__")
+        if doc and "%(" in doc :
+            dct ["_dyn_doc"] = doc
         result = super (M_Entity, mcls).__new__ (mcls, name, bases, dct)
         return result
     # end def __new__
@@ -469,6 +479,10 @@ class M_Entity (M_E_Mixin) :
             _Properties._m_add_prop (cls, name, prop)
     # end def _m_add_prop
 
+    def _m_create_auto_children (cls) :
+        pass
+    # end def _m_create_auto_children
+
     def _m_create_base_e_types (cls, SX) :
         BX = cls._BET_map
         for s in SX :
@@ -509,12 +523,19 @@ class M_Entity (M_E_Mixin) :
     def _m_setup_auto_props (cls, SX) :
         for c in SX :
             c._m_setup_etype_auto_props ()
+        for c in SX [::-1] :
+            c._m_create_auto_children ()
     # end def _m_setup_auto_props
 
     def _m_setup_etype_auto_props (cls) :
-        cls.Partial_Roles = ()
         cls._m_setup_prop_names ()
+        cls._m_setup_roles      ()
     # end def _m_setup_etype_auto_props
+
+    def _m_setup_roles (cls) :
+        cls.Roles         = ()
+        cls.Partial_Roles = ()
+    # end def _m_setup_roles
 
 # end class M_Entity
 
@@ -630,6 +651,7 @@ class M_E_Type (M_E_Mixin) :
             cls.E_Type = cls.P_Type = cls
             cls.__m_super.__init__  (name, bases, dct)
             cls._m_setup_attributes (bases, dct)
+            cls._m_fix_doc          (dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -708,6 +730,19 @@ class M_E_Type (M_E_Mixin) :
         if scope is not None :
             return scope.entity_type (cls)
     # end def _m_entity_type
+
+    def _m_fix_doc (cls, dct) :
+        doc = cls._dyn_doc
+        if doc :
+            os          = TFL.Caller.Object_Scope (cls)
+            cls.__doc__ = doc % os
+        for a in cls.attributes.itervalues () :
+            a.attr.fix_doc (cls)
+    # end def _m_fix_doc
+
+    def _m_fix_refuse_links (cls, app_type) :
+        pass
+    # end def _m_fix_refuse_links
 
     def _m_get_attribute (cls, etype, name) :
         return getattr (etype, name)
@@ -871,6 +906,18 @@ class M_E_Type_Id (M_E_Type) :
         return result
     # end def _calc_ref_map
 
+    def _m_fix_refuse_links (cls, app_type) :
+        refuse_links = cls.refuse_links
+        for tn in tuple (refuse_links) :
+            ET = app_type.etypes.get (tn)
+            if ET is not None :
+                if ET.type_name not in refuse_links :
+                    refuse_links.add (ET.type_name)
+            else :
+                if __debug__ :
+                    print "*" * 3, "Unknown typename in %s.refuse_links" % cls
+    # end def _m_fix_refuse_links
+
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
         cls.is_editable = (not cls.electric.default) and cls.user_attr
@@ -923,8 +970,8 @@ class M_E_Type_Id (M_E_Type) :
         for eia in cls.id_entity_attr :
             ET = eia.E_Type
             if ET :
-                map = ET._own_ref_req_map \
-                    if eia.is_required else ET._own_ref_opt_map
+                req = eia.is_required
+                map = ET._own_ref_req_map if req else ET._own_ref_opt_map
                 map [cls].add (eia.name)
     # end def _m_setup_ref_maps
 

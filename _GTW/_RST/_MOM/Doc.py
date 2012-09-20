@@ -30,6 +30,7 @@
 #     8-Aug-2012 (CT) Continue creation
 #    10-Aug-2012 (CT) Continue creation..
 #    11-Aug-2012 (CT) Add `cross_references`
+#    13-Sep-2012 (CT) Sort `App_Type._gen_entries` by `type_name`
 #    ««revision-date»»···
 #--
 
@@ -270,7 +271,8 @@ class _RST_MOM_Doc_App_Type_ (Dir_Mixin, _Ancestor) :
 
     def _gen_entries (self) :
         etf = self.e_type_filter
-        for et in self.top.App_Type._T_Extension :
+        for et in sorted \
+                (self.top.App_Type._T_Extension, key = TFL.Getter.type_name) :
             if etf (et) :
                 yield self.E_Type (ETM = str (et.type_name), parent = self)
     # end def _gen_entries

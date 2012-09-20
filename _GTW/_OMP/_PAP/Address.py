@@ -34,6 +34,7 @@
 #     7-Sep-2011 (CT) `completer` specifications for primary attributes added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     8-Aug-2012 (CT) Add `example`
+#    12-Sep-2012 (CT) Derive from `Property`
 #    ««revision-date»»···
 #--
 
@@ -44,9 +45,9 @@ from   _MOM._Attr.Position    import *
 
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-import _GTW._OMP._PAP.Entity
+import _GTW._OMP._PAP.Property
 
-_Ancestor_Essence = PAP.Object
+_Ancestor_Essence = PAP.Property
 
 class _PAP_Address_ (_Ancestor_Essence) :
     """Model a (postal) address."""
@@ -124,17 +125,6 @@ class _PAP_Address_ (_Ancestor_Essence) :
             rank           = 5
 
         # end class region
-
-        class desc (A_String) :
-            """Short description of the address"""
-
-            kind           = Attr.Optional
-            max_length     = 20
-            ui_name        = "Description"
-
-            completer      = Attr.Completer_Spec  (1)
-
-        # end class desc
 
         class position (A_Position) :
             """Geographical position"""

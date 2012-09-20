@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2009 (CT) Creation
+#    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ class _Prop_Kind_ (property) :
     __metaclass__ = MOM.Meta.M_Prop_Kind
     _real_name    = "Kind"
 
-    def __init__ (self, prop) :
+    def __init__ (self, prop, e_type) :
         self.prop    = prop
         self.name    = prop.name
         self.__doc__ = prop.description
