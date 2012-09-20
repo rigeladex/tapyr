@@ -66,8 +66,6 @@ import _GTW._OMP._PAP.Nav
 import _GTW._OMP._SRM.Nav
 import _GTW._OMP._SWP.Nav
 
-GTW.AFS.MOM.Spec.setup_defaults ()
-
 class _GTW_Test_Command_ (GTW_Test_Command) :
 
     _rn_prefix            = "_GTW_Test"
