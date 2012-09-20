@@ -29,6 +29,7 @@
 #    29-Aug-2012 (CT) Creation
 #    20-Sep-2012 (RS) Add `link_bg`, change `attr_marker_size`
 #    20-Sep-2012 (RS) Fix marker parameters for new size computation
+#    20-Sep-2012 (RS) smaller `attr_marker_size`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class SVG_Parameters (Definition) :
 
     # end class color
 
-    attr_marker_size    = 6
+    attr_marker_size    = 4
     attr_marker_ref_x   = None
     font_family         = "sans-serif"
     font_size           = 18
