@@ -32,6 +32,7 @@
 #    31-Aug-2012 (RS) Store `link_markers` in lowercase, fixes missing markers
 #     5-Sep-2012 (CT) Move `label` to second segment of link if first is short
 #    19-Sep-2012 (RS) Fix `view_box`: x, y, width, heigth
+#    19-Sep-2012 (RS) Use `Arrow_Head_A` for `MOM:AM` marker
 #    ««revision-date»»···
 #--
 
@@ -97,12 +98,14 @@ class Renderer (MOM.Graph._Renderer_) :
             , standalone  = False
             )
         defs = SVG.Defs \
-            ( SVG.Marker.Arrow_Head
+            ( SVG.Marker.Arrow_Head_A
                 ( elid           = "MOM:AM"
                 , ref_x          = 0
                 , size           = P.attr_marker_size
                 , stroke         = P.color.attr_link.no_alpha
                 , stroke_opacity = P.color.attr_link.alpha
+                , fill           = P.color.link_bg.no_alpha
+                , fill_opacity   = P.color.link_bg.alpha
                 )
             , SVG.Marker.Arrow_Head
                 ( elid           = "MOM:IM"

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Aug-2012 (CT) Creation
+#    20-Sep-2012 (RS) Add `link_bg`, change `attr_marker_size`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ class SVG_Parameters (Definition) :
 
         attr_link       = RGB_X     ("#FFA022", alpha = 0.70)
         is_a_link       = RGB_X     ("#0088DD", alpha = 0.45)
+        link_bg         = RGB_X     ("#FFFFFF")
         node_bg         = RGB_X     ("#EDEDED")
         node_border     = RGB_X     ("#999999")
         role_link       = RGB_X     ("#666666")
@@ -52,7 +54,7 @@ class SVG_Parameters (Definition) :
 
     # end class color
 
-    attr_marker_size    = 4
+    attr_marker_size    = 12
     font_family         = "sans-serif"
     font_size           = 18
     font_char_width     = font_size  / 2.0
