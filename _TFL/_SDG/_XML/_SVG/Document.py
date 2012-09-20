@@ -32,6 +32,8 @@
 #    27-Aug-2012 (CT) Add lots of Elem_Types and attributes
 #    31-Aug-2012 (RS) Add `**kw` in `cls` instantiation of `Marker.Plug`
 #    19-Sep-2012 (RS) Add `Arrow_Head_A`
+#    20-Sep-2012 (RS) marker `size` is now `design_size` use
+#                     `marker_width`, `marker_height` for scaling
 #    ««revision-date»»···
 #--
 
@@ -441,7 +443,7 @@ Use                         = TFL.SDG.XML.Elem_Type \
     )
 
 @TFL.Add_New_Method (Marker, decorator = classmethod)
-def Arrow_Head (cls, elid = "SVG:Arrow_Head", size = 10, ref_x = None, stroke = "black", marker_height = 3, marker_width = 3, ** kw) :
+def Arrow_Head (cls, elid = "SVG:Arrow_Head", design_size = 10, ref_x = None, stroke = "black", marker_height = 3, marker_width = 3, ** kw) :
     """Return a marker that is an arrow head.
 
     >>> mrk = Marker.Arrow_Head ()
@@ -461,8 +463,8 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", size = 10, ref_x = None, stroke = 
     >
       <defs>
         <marker id="SVG:Arrow_Head" fill="none" markerHeight="3"
-                markerUnits="strokeWidth" markerWidth="3" orient="auto" refX="5"
-                refY="5" stroke="black" viewBox="0 0 10 10"
+                markerUnits="strokeWidth" markerWidth="3" orient="auto"
+                refX="10" refY="5" stroke="black" viewBox="0 0 10 10"
         >
           <path d="M 0  0 L 10 5 0 2 z">
           </path>
@@ -484,10 +486,11 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", size = 10, ref_x = None, stroke = 
     </svg>
 
     """
+    size   = design_size
     size_2 = size // 2
     scope  = Scope ()
     if ref_x is None :
-        ref_x = size_2
+        ref_x = size
     result = cls \
         ( Path (d = "M 0  0 L %(size)s %(size_2)s 0 2 z" % scope)
         , Path
@@ -508,7 +511,7 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", size = 10, ref_x = None, stroke = 
 # end def Arrow_Head
 
 @TFL.Add_New_Method (Marker, decorator = classmethod)
-def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", size = 12, ref_x = None, stroke = "black", marker_height = 6, marker_width = 6, fill = "white", fill_opacity = 1,  ** kw) :
+def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", design_size = 12, ref_x = None, stroke = "black", marker_height = 6, marker_width = 6, fill = "white", fill_opacity = 1,  ** kw) :
     """Return a marker that is an arrow head with an A-Shape.
 
     >>> mrk = Marker.Arrow_Head_A ()
@@ -516,8 +519,8 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", size = 12, ref_x = None, strok
     >>> svg = Document (Root (view_box="0 0 1000 500"))
     >>> svg.add (Defs (mrk))
     >>> svg.add (Rect (x = 5, y = 5, width = 990, height = 490, fill = "none", stroke = "orange", stroke_width = 5))
-    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head)", d = "M 100 200 L 500 200 900 400"))
-    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head)", d = "M 100 100 L 500 100 900 50"))
+    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head_A)", d = "M 100 200 L 500 200 900 400"))
+    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head_A)", d = "M 100 100 L 500 100 900 50"))
     >>> svg.write_to_xml_stream ()
     <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
@@ -545,11 +548,12 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", size = 12, ref_x = None, strok
             width="990" x="5" y="5"
       />
       <path d="M 100 200 L 500 200 900 400" fill="none"
-            marker-end="url(#SVG:Arrow_Head)" stroke="red" stroke-width="25"
+            marker-end="url(#SVG:Arrow_Head_A)" stroke="red" stroke-width="25"
       >
       </path>
       <path d="M 100 100 L 500 100 900 50" fill="none"
-            marker-start="url(#SVG:Arrow_Head)" stroke="blue" stroke-width="10"
+            marker-start="url(#SVG:Arrow_Head_A)" stroke="blue"
+            stroke-width="10"
       >
       </path>
     </svg>
@@ -557,11 +561,11 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", size = 12, ref_x = None, strok
     """
     # modifying design size will draw with different line-strength
     # compared to the shape
-    size = 12
+    size   = design_size
     size_2 = size // 2
     scope  = Scope ()
     if ref_x is None :
-        ref_x = size
+        ref_x = 0
     result = cls \
         ( Path
             ( d = "m %s,%s 0,%s %s,%s %s,%s z" % 
