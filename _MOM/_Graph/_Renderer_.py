@@ -31,6 +31,7 @@
 #    29-Aug-2012 (CT) Factor `render_link`, `_render_node` to descendants
 #     3-Sep-2012 (CT) Factor `points_gen` to `Relation`
 #     6-Sep-2012 (CT) Fix `transform`, `min_x`, `min_y`
+#    20-Sep-2012 (CT) Call `render_link` in `render`, not in `render_node`
 #    ««revision-date»»···
 #--
 
@@ -243,6 +244,10 @@ class _Renderer_ (TFL.Meta.Object) :
         canvas = self.canvas
         for n in self.nodes :
             self.render_node (n, canvas)
+        link_sort_key = TFL.Sorted_By ("slack", "type_name")
+        for n in self.nodes :
+            for l in sorted (n.link_map.itervalues (), key = link_sort_key) :
+                self.render_link (l, canvas)
     # end def render
 
     def render_link (self, link, canvas) :
@@ -251,16 +256,9 @@ class _Renderer_ (TFL.Meta.Object) :
     # end def render_link
 
     def render_node (self, node, canvas) :
-        self._render_node (node, canvas)
-        sort_key = TFL.Sorted_By ("slack", "type_name")
-        for l in sorted (node.link_map.itervalues (), key = sort_key) :
-            self.render_link (l, canvas)
-    # end def render_node
-
-    def _render_node (self, node, canvas) :
         raise NotImplementedError \
-            ("%s needs to implement _render_node" % (self.__class__.__name__, ))
-    # end def _render_node
+            ("%s needs to implement render_node" % (self.__class__.__name__, ))
+    # end def render_node
 
 # end class _Renderer_
 
