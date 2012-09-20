@@ -79,6 +79,11 @@
 #    13-Sep-2012 (CT) Call `_m_setup_roles` before `_m_setup_ref_maps`
 #    14-Sep-2012 (CT) Add `fix_doc` for `auto_cache_roles` to `_m_setup_roles`
 #    18-Sep-2012 (CT) Change `m_create_role_child` to obey `refuse_links`
+#    20-Sep-2012 (CT) Change `m_create_role_child` to set `is_partial`
+#    20-Sep-2012 (CT) Redefine `_m_init_prop_specs` to set `Role_Attrs`
+#    20-Sep-2012 (CT) Rename `M_Link._m_setup_etype_auto_props` to
+#                     `_m_setup_roles`, use `Role_Attrs` instead of
+#                     home-grown code
 #    ««revision-date»»···
 #--
 
@@ -129,6 +134,13 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         if any ((tn in rET.refuse_links) for rET in rets) :
             pass
         elif tn not in cls._type_names :
+            is_partial = \
+                (  any (r.role_type.is_partial for r in rkw.itervalues ())
+                or any
+                    (   (not r.role_type) or r.role_type.is_partial
+                    for r in cls.Role_Attrs if r.name not in rkw
+                    )
+                )
             result = cls.__class__ \
                 ( tbn
                 , (cls, )
@@ -138,6 +150,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                         , (cls._Attributes, )
                         , dict (rkw, __module__ = cls.__module__)
                         )
+                    , is_partial     = is_partial
                     , PNS            = cls.PNS
                     , __module__     = cls.__module__
                     )
@@ -185,6 +198,20 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 cls._m_create_auto_child (* adr)
     # end def _m_create_auto_children
 
+    def _m_init_prop_specs (cls, name, bases, dct) :
+        result = cls.__m_super._m_init_prop_specs (name, bases, dct)
+        cls._Attributes.m_setup_names ()
+        def _gen_roles (cls) :
+            for a in sorted \
+                    ( cls._Attributes._names.itervalues ()
+                    , key = TFL.Sorted_By ("rank", "name")
+                    ) :
+                if issubclass (a, MOM.Attr.A_Link_Role) :
+                    yield a
+        cls.Role_Attrs = tuple (_gen_roles (cls))
+        return result
+    # end def _m_init_prop_specs
+
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
@@ -194,26 +221,21 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         return result
     # end def _m_new_e_type_dict
 
-    def _m_setup_etype_auto_props (cls) :
-        cls.__m_super._m_setup_etype_auto_props ()
-        roles = set ()
+    def _m_setup_roles (cls) :
+        ac_roles = []
         cls.Partial_Roles = PRs = []
         cls.Roles         = Rs  = []
         cls.acr_map = acr_map = dict (getattr (cls, "acr_map", {}))
-        for a in sorted \
-                ( cls._Attributes._names.itervalues ()
-                , key = TFL.Sorted_By ("rank", "name")
-                ) :
-            if issubclass (a, MOM.Attr.A_Link_Role) :
-                Rs.append (a)
-                if a.role_type :
-                    if a.auto_cache :
-                        roles.add (a)
-                    if a.role_type.is_partial :
-                        PRs.append (a)
-                else :
-                    cls.is_partial = True
-        for a in roles :
+        for a in cls.Role_Attrs :
+            Rs.append (a)
+            if a.role_type :
+                if a.auto_cache :
+                    ac_roles.append (a)
+                if a.role_type.is_partial :
+                    PRs.append (a)
+            else :
+                cls.is_partial = True
+        for a in ac_roles :
             rc = acr_map.get (a.name) or a.auto_cache
             if not isinstance (rc, MOM._.Link._Cacher_) :
                 Cacher = a.Cacher_Type or cls.Cacher
@@ -223,11 +245,8 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             elif cls.type_name != rc.link_type_name :
                 rc = rc.copy (cls, a)
             acr_map [a.name] = rc
-        cls.auto_cache_roles = tuple \
-            (   acr_map.get (a.name)
-            for a in sorted (roles, key = TFL.Getter.rank)
-            )
-    # end def _m_setup_etype_auto_props
+        cls.auto_cache_roles = tuple (acr_map.get (a.name) for a in ac_roles)
+    # end def _m_setup_roles
 
 # end class M_Link
 

@@ -149,6 +149,7 @@
 #    12-Sep-2012 (CT) Do `_m_setup_auto_props` before `_m_create_base_e_types`
 #    12-Sep-2012 (CT) Add `_m_create_auto_children`
 #    18-Sep-2012 (CT) Add `_m_fix_refuse_links`
+#    20-Sep-2012 (CT) Factor `_m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -527,10 +528,14 @@ class M_Entity (M_E_Mixin) :
     # end def _m_setup_auto_props
 
     def _m_setup_etype_auto_props (cls) :
+        cls._m_setup_prop_names ()
+        cls._m_setup_roles      ()
+    # end def _m_setup_etype_auto_props
+
+    def _m_setup_roles (cls) :
         cls.Roles         = ()
         cls.Partial_Roles = ()
-        cls._m_setup_prop_names ()
-    # end def _m_setup_etype_auto_props
+    # end def _m_setup_roles
 
 # end class M_Entity
 

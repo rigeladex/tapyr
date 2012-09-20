@@ -405,15 +405,15 @@ _test_cqf = r"""
     MOM-Id_Entity
         ()
     MOM-Link
-        (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Phone', 'PAP.Subject_has_Address', 'PAP.Subject_has_Email', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link1
         (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link2
-        (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Phone', 'PAP.Subject_has_Address', 'PAP.Subject_has_Email', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
     MOM-_MOM_Link_n_
-        (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Phone', 'PAP.Subject_has_Address', 'PAP.Subject_has_Email', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
         (Q.type_name == PAP.Address,)
     PAP-Company
@@ -429,7 +429,7 @@ _test_cqf = r"""
     PAP-Entity_created_by_Person
         (Q.type_name == PAP.Entity_created_by_Person,)
     PAP-Link2
-        (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Phone', 'PAP.Subject_has_Address', 'PAP.Subject_has_Email'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone'],),)
     PAP-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone'],),)
     PAP-Person
@@ -447,13 +447,13 @@ _test_cqf = r"""
     PAP-Subject
         (Q.type_name.in_ (['PAP.Company', 'PAP.Person'],),)
     PAP-Subject_has_Address
-        (Q.type_name == PAP.Subject_has_Address,)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Person_has_Address'],),)
     PAP-Subject_has_Email
-        (Q.type_name == PAP.Subject_has_Email,)
+        (Q.type_name.in_ (['PAP.Company_has_Email', 'PAP.Person_has_Email'],),)
     PAP-Subject_has_Phone
         (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Person_has_Phone'],),)
     PAP-Subject_has_Property
-        (Q.type_name.in_ (['PAP.Company_has_Phone', 'PAP.Person_has_Phone', 'PAP.Subject_has_Address', 'PAP.Subject_has_Email'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone'],),)
     SRM-Boat
         (Q.type_name == SRM.Boat,)
     SRM-Boat_Class
@@ -783,8 +783,6 @@ _test_doc = r"""
             , 'PAP-Person_has_Email'
             , 'PAP-Person_has_Phone'
             , 'PAP-Phone'
-            , 'PAP-Subject_has_Address'
-            , 'PAP-Subject_has_Email'
             , 'SRM-Boat'
             , 'SRM-Boat_Class'
             , 'SRM-Boat_in_Regatta'
@@ -1433,14 +1431,16 @@ _test_example_1 = r"""
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
-    PAP.Subject_has_Address : ------
-    PAP.Subject_has_Email : ------
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
@@ -1477,14 +1477,16 @@ _test_example_2 = r"""
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
-    PAP.Subject_has_Address : ------
-    PAP.Subject_has_Email : ------
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
@@ -1534,14 +1536,16 @@ _test_example_3 = r"""
     SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
-    PAP.Subject_has_Email : ------
-    PAP.Subject_has_Address : ------
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Entity_created_by_Person : ------
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 
@@ -1562,14 +1566,16 @@ _test_example_4 = r"""
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
-    PAP.Subject_has_Address : ------
-    PAP.Subject_has_Email : ------
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
@@ -1600,14 +1606,16 @@ _test_example_4 = r"""
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
-    PAP.Subject_has_Address : ------
-    PAP.Subject_has_Email : ------
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
@@ -1632,7 +1640,7 @@ _test_example_4 = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> for tn in sorted (scope.MOM.Id_Entity.children_np, reverse = True) :
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np, reverse = True) : ### nummero 3
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
@@ -1654,14 +1662,16 @@ _test_example_4 = r"""
     SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'AUT', u'2827', u'X', 'SRM.Boat')
-    PAP.Subject_has_Email : ------
-    PAP.Subject_has_Address : ------
     PAP.Phone : (u'43', u'1', u'234567', 'PAP.Phone')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
+    PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
+    PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Entity_created_by_Person : ------
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
+    PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
+    PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 

@@ -30,6 +30,7 @@
 #     3-Aug-2012 (CT) Add `show_ref_map` and `show_ref_maps`
 #     7-Aug-2012 (CT) Rename `parents` to `ancestors`
 #    25-Aug-2012 (CT) Add `definers`
+#    20-Sep-2012 (CT) Add `children_trans_iter`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,17 @@ def ancestors (T) :
     """Return the essential ancestors of essential type `T`."""
     return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
 # end def ancestors
+
+def children_trans_iter (T, level = 0, seen = None) :
+    if seen is None :
+        seen = set ()
+    yield T, level
+    for c in sorted (T.children.itervalues (), key = TFL.Getter.i_rank) :
+        if c not in seen :
+            seen.add (c)
+            for cc, l in children_trans_iter (c, level + 1, seen) :
+                yield cc, l
+# end def children_trans_iter
 
 def definers (ioc, name) :
     """Return the classes defining `name` in `mro` of `ioc`"""

@@ -187,15 +187,11 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject
         ('PAP.Entity_created_by_Person', ['left'])
-        ('PAP.Subject_has_Address', ['left'])
-        ('PAP.Subject_has_Email', ['left'])
     PAP.Person
         ('PAP.Entity_created_by_Person', ['left', 'right'])
         ('PAP.Person_has_Address', ['left'])
         ('PAP.Person_has_Email', ['left'])
         ('PAP.Person_has_Phone', ['left'])
-        ('PAP.Subject_has_Address', ['left'])
-        ('PAP.Subject_has_Email', ['left'])
         ('SRM.Sailor', ['left'])
     SWP.Link1
         ('PAP.Entity_created_by_Person', ['left'])
@@ -241,19 +237,15 @@ test_code = r"""
         ('PAP.Company_has_Address', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Address', ['right'])
-        ('PAP.Subject_has_Address', ['right'])
     PAP.Company
         ('PAP.Company_has_Address', ['left'])
         ('PAP.Company_has_Email', ['left'])
         ('PAP.Company_has_Phone', ['left'])
         ('PAP.Entity_created_by_Person', ['left'])
-        ('PAP.Subject_has_Address', ['left'])
-        ('PAP.Subject_has_Email', ['left'])
     PAP.Email
         ('PAP.Company_has_Email', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Email', ['right'])
-        ('PAP.Subject_has_Email', ['right'])
     PAP.Phone
         ('PAP.Company_has_Phone', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
