@@ -31,6 +31,7 @@
 #    29-Aug-2008 (CT) Doctest corrected
 #    27-Aug-2012 (CT) Add lots of Elem_Types and attributes
 #    31-Aug-2012 (RS) Add `**kw` in `cls` instantiation of `Marker.Plug`
+#    19-Sep-2012 (RS) Add `Arrow_Head_A`
 #    ««revision-date»»···
 #--
 
@@ -505,6 +506,108 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", size = 10, ref_x = None, stroke = 
         )
     return result
 # end def Arrow_Head
+
+@TFL.Add_New_Method (Marker, decorator = classmethod)
+def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", size = 12, ref_x = None, stroke = "black", marker_height = 6, marker_width = 6, fill = "white", fill_opacity = 1,  ** kw) :
+    """Return a marker that is an arrow head with an A-Shape.
+
+    >>> mrk = Marker.Arrow_Head_A ()
+
+    >>> svg = Document (Root (view_box="0 0 1000 500"))
+    >>> svg.add (Defs (mrk))
+    >>> svg.add (Rect (x = 5, y = 5, width = 990, height = 490, fill = "none", stroke = "orange", stroke_width = 5))
+    >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head)", d = "M 100 200 L 500 200 900 400"))
+    >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head)", d = "M 100 100 L 500 100 900 50"))
+    >>> svg.write_to_xml_stream ()
+    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <!DOCTYPE svg PUBLIC
+        "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+    <svg version="1.1" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <defs>
+        <marker id="SVG:Arrow_Head_A" fill="none" markerHeight="6"
+                markerUnits="strokeWidth" markerWidth="6" orient="auto"
+                refX="12" refY="6" stroke="black" viewBox="0 0 12 12"
+        >
+          <path d="m 0,9.0 0,-6.0 6.0,3.0 -6.0,3.0 z" fill="white"
+                fill-opacity="1" stroke="none"
+          >
+          </path>
+          <path d="m 0,9.0 5.0,-3.0 -5.0,-3.0">
+          </path>
+          <path d="m 2.0,4.0 0,4.0">
+          </path>
+        </marker>
+      </defs>
+      <rect fill="none" height="490" stroke="orange" stroke-width="5"
+            width="990" x="5" y="5"
+      />
+      <path d="M 100 200 L 500 200 900 400" fill="none"
+            marker-end="url(#SVG:Arrow_Head)" stroke="red" stroke-width="25"
+      >
+      </path>
+      <path d="M 100 100 L 500 100 900 50" fill="none"
+            marker-start="url(#SVG:Arrow_Head)" stroke="blue" stroke-width="10"
+      >
+      </path>
+    </svg>
+
+    """
+    # modifying design size will draw with different line-strength
+    # compared to the shape
+    size = 12
+    size_2 = size // 2
+    scope  = Scope ()
+    if ref_x is None :
+        ref_x = size
+    result = cls \
+        ( Path
+            ( d = "m %s,%s 0,%s %s,%s %s,%s z" % 
+                ( 0
+                , size * 3 / 4.
+                , -(size / 2.)
+                , size / 2.
+                , size / 4.
+                , -(size / 2.)
+                , size / 4.
+                )
+            , fill         = fill
+            , fill_opacity = fill_opacity
+            , stroke       = "none"
+            )
+        , Path
+            ( d = "m %s,%s %s,%s %s,%s" %
+                ( 0
+                , size * 3 / 4.
+                , size * 5 / 12.
+                , -(size / 4.)
+                , -(size * 5 / 12.)
+                , -(size / 4.)
+                )
+            )
+        , Path
+            ( d = "m %s,%s 0,%s" %
+                ( size / 6.
+                , size / 3.
+                , size / 3.
+                )
+            )
+        , elid          = elid
+        , fill          = "none"
+        , marker_units  = "strokeWidth"
+        , marker_height = marker_height
+        , marker_width  = marker_width
+        , orient        = "auto"
+        , ref_x         = ref_x
+        , ref_y         = size_2
+        , stroke        = stroke
+        , view_box      = "0 0 %(size)s %(size)s" % scope
+        , ** kw
+        )
+    return result
+# end def Arrow_Head_A
 
 @TFL.Add_New_Method (Marker, decorator = classmethod)
 def Plug (cls, elid = "SVG:Plug", size = 2, stroke = "black", marker_height = 3, marker_width = 3, ** kw) :
