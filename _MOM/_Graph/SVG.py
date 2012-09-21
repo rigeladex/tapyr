@@ -33,6 +33,8 @@
 #     5-Sep-2012 (CT) Move `label` to second segment of link if first is short
 #    19-Sep-2012 (RS) Fix `view_box`: x, y, width, heigth
 #    19-Sep-2012 (RS) Use `Arrow_Head_A` for `MOM:AM` marker
+#    20-Sep-2012 (RS) Use `marker_width` and `marker_width` for scaling
+#    20-Sep-2012 (RS) Use new `Arrow_Head_Bar` for `MOM:AM`
 #    ««revision-date»»···
 #--
 
@@ -98,10 +100,11 @@ class Renderer (MOM.Graph._Renderer_) :
             , standalone  = False
             )
         defs = SVG.Defs \
-            ( SVG.Marker.Arrow_Head_A
+            ( SVG.Marker.Arrow_Head_Bar
                 ( elid           = "MOM:AM"
-                , ref_x          = 0
-                , size           = P.attr_marker_size
+                , ref_x          = P.attr_marker_ref_x
+                , marker_width   = P.attr_marker_size
+                , marker_height  = P.attr_marker_size
                 , stroke         = P.color.attr_link.no_alpha
                 , stroke_opacity = P.color.attr_link.alpha
                 , fill           = P.color.link_bg.no_alpha
@@ -109,8 +112,9 @@ class Renderer (MOM.Graph._Renderer_) :
                 )
             , SVG.Marker.Arrow_Head
                 ( elid           = "MOM:IM"
-                , ref_x          = P.is_a_marker_size
-                , size           = P.is_a_marker_size
+                , ref_x          = P.is_a_marker_ref_x
+                , marker_width   = P.is_a_marker_size
+                , marker_height  = P.is_a_marker_size
                 , stroke         = P.color.is_a_link.no_alpha
                 , stroke_opacity = P.color.is_a_link.alpha
                 )
