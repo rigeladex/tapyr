@@ -116,6 +116,7 @@
 #     7-Aug-2012 (CT) Change `An_Entity.example` default of `full` to `True`
 #     8-Aug-2012 (CT) Guard against exceptions in `example`
 #    11-Aug-2012 (CT) Change `Id_Entity.example` to ignore `Partial_Type`
+#    21-Sep-2012 (CT) Change `Link.__call__` to call `E_Type.child_np`
 #    ««revision-date»»···
 #--
 
@@ -438,6 +439,17 @@ class Link (Id_Entity) :
         except MOM.Error.Required_Missing :
             ### let MOM.Entity handle this case
             pass
+        else :
+            E_Type = self.E_Type
+            if E_Type.is_partial :
+                ### try to find non-partial child fitting e-types of `roles`
+                roles = args [:E_Type.number_of_roles]
+                scope = self.home_scope
+                BT    = scope.MOM.Id_Entity.E_Type
+                if all (isinstance (r, BT) for r in roles) :
+                    CT = E_Type.child_np (roles)
+                    if CT is not None :
+                        return scope [CT.type_name] (* args, ** kw)
         return self.__super.__call__ (* args, ** kw)
     # end def __call__
 

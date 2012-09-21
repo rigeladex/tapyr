@@ -29,6 +29,7 @@
 #    24-Mar-2012 (CT) Creation
 #    14-Sep-2012 (CT) Add test for role attributes of `Person_has_Address`
 #    20-Sep-2012 (CT) Add tests for `Person_has_Phone`, `Subject_has_Property`
+#    21-Sep-2012 (CT) Add test for polymorphic link creation
 #    ««revision-date»»···
 #--
 
@@ -60,10 +61,15 @@ _test_code = """
     >>> PAP.Person.query_s ().all ()
     [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
 
-    >>> _ = PAP.Person_has_Email  (pg, PAP.Email ("martin@mangari.org"))
-    >>> _ = PAP.Person_has_Email  (ps, PAP.Email ("ralf@runtux.com"))
-    >>> _ = PAP.Person_has_Email  (pt, PAP.Email ("tanzer@swing.co.at"))
-    >>> _ = PAP.Person_has_Email  (pt, PAP.Email ("tanzer@gg32.com"))
+    >>> eg  = PAP.Email ("martin@mangari.org")
+    >>> es  = PAP.Email ("ralf@runtux.com")
+    >>> et1 = PAP.Email ("tanzer@swing.co.at")
+    >>> et2 = PAP.Email ("tanzer@gg32.com")
+
+    >>> _ = PAP.Subject_has_Property (pg, eg)
+    >>> _ = PAP.Subject_has_Property (ps, es)
+    >>> _ = PAP.Subject_has_Property (pt, et1)
+    >>> _ = PAP.Subject_has_Property (pt, et2)
 
     >>> _ = PAP.Company_has_Email (cl, PAP.Email ("lucky@mangari.org"))
     >>> _ = PAP.Company_has_Email (co, PAP.Email ("office@runtux.com"))

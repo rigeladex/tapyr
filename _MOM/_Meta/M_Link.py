@@ -85,6 +85,7 @@
 #    20-Sep-2012 (CT) Rename `M_Link._m_setup_etype_auto_props` to
 #                     `_m_setup_roles`, use `Role_Attrs` instead of
 #                     home-grown code
+#    21-Sep-2012 (CT) Add `child_np`, `child_np_map`
 #    ««revision-date»»···
 #--
 
@@ -216,6 +217,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
+            , child_np_map    = {}
             , other_role_name = cls._orn
             , ** kw
             )
@@ -296,6 +298,23 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     ### - called as instance method it refers to `destroy_dependency` defined
     ###   in `Link` (or one of its ancestors)
     destroy_dependency = TFL.Meta.Alias_Property ("destroy_links")
+
+    def child_np (cls, roles) :
+        """Return non-partial descendent for e-types of `roles`, if any."""
+        etypes = tuple (r.__class__  for r  in roles)
+        etns   = tuple (et.type_name for et in etypes)
+        try :
+            result = cls.child_np_map [etns]
+        except KeyError :
+            for cnp in cls.children_np.itervalues () :
+                if etypes == tuple (r.role_type for r in cnp.Roles) :
+                    result = cls.child_np_map [etns] = cnp
+                    break
+            else :
+                ### cache non-existence, too
+                result = cls.child_np_map [etns] = None
+        return result
+    # end def child_np
 
     def destroy_links (cls, obj) :
         """Destroy all links where `obj` participates."""
