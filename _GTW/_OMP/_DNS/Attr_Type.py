@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Aug-2012 (RS) Creation
+#    22-Sep-2012 (RS) Factor `A_DNS_Label` and correct syntax
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,24 @@ class A_DNS_Time (_A_Unit_, _A_Int_) :
 
 # end class A_DNS_Time
 
+class A_DNS_Label (Syntax_Re_Mixin, A_String) :
+    """ A single DNS label (without dots)
+        See rfc1034 for details.
+    """
+
+    max_length      = 63
+    ignore_case     = True
+    syntax          = _ \
+        ( u"A label starts"
+           " with a letter and is optionally followed by letters,"
+           " digits or dashes and ends with a letter or digit. "
+           "A label may be up to 63 characters long."
+        )
+    _label          = r"[a-zA-Z](?:[-a-zA-Z0-9]{0,61}[a-zA-Z0-9])?"
+    _syntax_re      = Regexp (_label)
+
+# end class A_DNS_Label
+
 class A_DNS_Name (Syntax_Re_Mixin, A_String) :
     """ DNS name consisting of labels separated by '.'
         See rfc1034 for details.
@@ -65,13 +84,9 @@ class A_DNS_Name (Syntax_Re_Mixin, A_String) :
     max_length      = 253
     ignore_case     = True
     syntax          = _ \
-        ( u"DNS name must consist of up to 127 labels. A label starts"
-           " with a letter and is optionally followed by letters,"
-           " digits or dashes. A label may be up to 63 characters long."
-        )
-    _label          = r"[a-z][-a-z0-9]{0,62}"
+        ( u"DNS name must consist of up to 127 labels. ") + A_DNS_Label.syntax
     _syntax_re      = Regexp \
-        (r"%s([.]%s){0,126}" % (_label, _label))
+        (r"%s([.]%s){0,126}" % (A_DNS_Label._label, A_DNS_Label._label))
 
 # end class A_DNS_Name
 
