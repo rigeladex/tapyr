@@ -64,6 +64,7 @@
 #                     `A_Attr_Type`
 #    10-Aug-2012 (MG) Add support of Sall/BigInteger types
 #     8-Sep-2012 (CT) Change `_sa_type_generic` to allow `unicode`
+#    23-Sep-2012 (RS) Fix integer type selection
 #    ««revision-date»»···
 #--
 
@@ -211,9 +212,9 @@ def _sa_type_generic (cls, attr, kind, ** kw) :
 # end def _sa_type_generic
 
 int_map = \
- ( (-0x8000,             0x7FFF,            types.SmallInteger)
- , (-0x80000000,         0x7FFFFFFF,        types.Integer)
- , (-0x8000000000000000,0X7FFFFFFFFFFFFFFF, types.BigInteger)
+ ( (-0x8000,             0x7FFF,             types.SmallInteger)
+ , (-0x80000000,         0x7FFFFFFF,         types.Integer)
+ , (-0x8000000000000000, 0x7FFFFFFFFFFFFFFF, types.BigInteger)
  )
 @Add_Classmedthod ("_sa_type", Attr.A_Int)
 def _sa_type_int (cls, attr, kind, ** kw) :
@@ -221,7 +222,7 @@ def _sa_type_int (cls, attr, kind, ** kw) :
     max_value = cls.max_value or  0x7FFFFFFF
     min_value = cls.min_value or -0x80000000
     for tmin, tmax, result in int_map :
-        if (tmin < min_value) and (tmax <= max_value) :
+        if (tmin <= min_value) and (max_value <= tmax) :
             break
     if result is None :
         raise TypeError \
