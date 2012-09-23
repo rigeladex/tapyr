@@ -453,7 +453,7 @@ _query_test = r"""
     >>> IP4_Address.query (Q.address != address).count ()
     2
 
-    #>>> IP4_Address.query (Q.address.IN (mask)).count ()
+    >>> IP4_Address.query (Q.address.IN (mask)).count ()
 
     >>> scope.destroy ()
 """

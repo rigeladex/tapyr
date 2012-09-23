@@ -650,7 +650,10 @@ class _SAS_IP4_Address_Query_Mixin_ (TFL.Meta.Object) :
 
     def in_ (self, rhs) :
         from    sqlalchemy              import sql
-        return sql.func.IP4_Address_IN ()
+        return sql.and_ \
+            ( rhs.numeric_address <= self.numeric_address
+            , rhs.upper_bound     <= self.numeric_address
+            )
     # end def in_
 
 # end class _SAS_IP4_Address_Query_Mixin_
