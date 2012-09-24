@@ -610,7 +610,7 @@ _test_guides_SE = """
 """
 
 _test_svg = """
-    >>> from _GTW._OMP._SRM.Graph import graph
+    >>> from _GTW._OMP._SRM.graph import graph
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 

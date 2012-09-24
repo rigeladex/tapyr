@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.OMP.SRM.Graph
+#    GTW.OMP.SRM.graph
 #
 # Purpose
 #    Graph describing SRM (partial) object model
@@ -30,6 +30,7 @@
 #    21-Aug-2012 (CT) Add `Team_has_Boat_in_Regatta`, `Race_Result`
 #    31-Aug-2012 (CT) Adapt to MOM.Graph.Spec API change
 #     3-Sep-2012 (CT) Add `Page`, specify `source_side` for `Crew_Member`
+#    24-Sep-2012 (CT) Add `Command`, rename from `Graph.py` to `graph.py`
 #    ««revision-date»»···
 #--
 
@@ -95,4 +96,22 @@ def graph (app_type) :
 
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")
-### __END__ GTW.OMP.SRM.Graph
+else :
+    import _GTW._OMP._PAP.import_PAP
+    import _GTW._OMP._SRM.import_SRM
+    import _MOM._Graph.Command
+
+    class Command (MOM.Graph.Command) :
+
+        PNS                   = GTW.OMP.SRM
+
+        PNS_Aliases           = dict \
+            ( PAP             = GTW.OMP.PAP
+            , SRM             = GTW.OMP.SRM
+            )
+
+    # end class Command
+
+    command = Command ()
+    command ()
+### __END__ GTW.OMP.SRM.graph
