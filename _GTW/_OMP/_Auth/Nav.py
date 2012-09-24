@@ -48,8 +48,8 @@ from   _GTW._RST.Permission     import Is_Superuser
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    Account_P        = dict \
-        ( ETM        = "GTW.OMP.Auth.Account_P"
+    Account          = dict \
+        ( ETM        = "GTW.OMP.Auth.Account"
         , permission = Is_Superuser ()
         )
 

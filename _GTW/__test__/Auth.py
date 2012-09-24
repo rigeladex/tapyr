@@ -85,7 +85,7 @@ _login_logout = r"""
           This account is currently inactive
         </li>
 
-    >>> a2 = Auth.Account_P.query (name = "a2").one ()
+    >>> a2 = Auth.Account.query (name = "a2").one ()
     >>> a2.password_change_required
     >>> data ["username"] = "a2"
     >>> data ["password"] = "p2"
@@ -95,7 +95,7 @@ _login_logout = r"""
     >>> resp.headers ["Location"] ### login a2
     'http://localhost/after/login'
 
-    >>> Auth.Account_P.force_password_change (a2)
+    >>> Auth.Account.force_password_change (a2)
     >>> a2.password_change_required
     Auth.Account_Password_Change_Required ((u'a2', ))
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
@@ -223,7 +223,7 @@ _register        = r"""
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
 
-    >>> a = Auth.Account_P.query (name = "new-account").one ()
+    >>> a = Auth.Account.query (name = "new-account").one ()
     >>> links = Auth._Account_Token_Action_.query ().all ()
     >>> len (links)
     1
@@ -409,13 +409,13 @@ from  _TFL.User_Config   import user_config
 
 def fixtures (self, scope) :
     Auth  = scope.Auth
-    a1    = Auth.Account_P.create_new_account_x \
+    a1    = Auth.Account.create_new_account_x \
         ("a1", "p1", enabled = True,  suspended = False, superuser = True)
-    a2    = Auth.Account_P.create_new_account_x \
+    a2    = Auth.Account.create_new_account_x \
         ("a2", "p2", enabled = True,  suspended = False, superuser = False)
-    a3    = Auth.Account_P.create_new_account_x \
+    a3    = Auth.Account.create_new_account_x \
         ("a3", "p3", enabled = True,  suspended = True,  superuser = False)
-    a3    = Auth.Account_P.create_new_account_x \
+    a3    = Auth.Account.create_new_account_x \
         ("a4", "p4", enabled = False, suspended = True , superuser = False)
     scope.commit ()
 # end def fixtures

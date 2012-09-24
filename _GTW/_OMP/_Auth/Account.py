@@ -55,6 +55,7 @@
 #    29-Mar-2012 (CT) Redefine `Account_Anonymous.x_locked` instead of
 #                     `.electric`
 #     7-Aug-2012 (CT) Set `Account_Anonymous.electric` to True
+#    24-Sep-2012 (CT) Rename `Account` to `_Account_`, `Account_P` to `Account`
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ _Ancestor_Essence = Auth.Object
 class _Auth_Account_ (_Ancestor_Essence) :
     """Model an user account."""
 
-    _real_name  = "Account"
+    _real_name  = "_Account_"
 
     is_partial  = True
     is_relevant = True
@@ -127,18 +128,15 @@ class _Auth_Account_ (_Ancestor_Essence) :
 
     authenticated = TFL.Meta.Alias_Property ("active")
 
-Account = _Auth_Account_ # end class _Auth_Account_
+_Account_ = _Auth_Account_ # end class _Auth_Account_
 
-_Ancestor_Essence = Account
+_Ancestor_Essence = _Account_
 
 class Account_Anonymous (_Ancestor_Essence) :
     """Default account for users which are not logging in."""
 
     max_count    = 1
-    refuse_links = set \
-        (( "GTW.OMP.Auth.Account_in_Group"
-         , "GTW.OMP.PAP.Entity_created_by_Person"
-        ))
+    refuse_links = set (( "GTW.OMP.PAP.Entity_created_by_Person", ))
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -174,9 +172,9 @@ class Account_Anonymous (_Ancestor_Essence) :
 
 # end class Account_Anonymous
 
-_Ancestor_Essence = Account
+_Ancestor_Essence = _Account_
 
-class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
+class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for password accounts"""
 
     def create_new_account_x (self, name, password, ** kw) :
@@ -220,13 +218,13 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         return apr.password, apr.token
     # end def reset_password
 
-# end class Account_P_Manager
+# end class Account_Manager
 
-class Account_P (_Ancestor_Essence) :
+class Account (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
     Hash_Method = "sha224"
-    Manager     = Account_P_Manager
+    Manager     = Account_Manager
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -296,7 +294,7 @@ class Account_P (_Ancestor_Essence) :
         return self.password == self.password_hash (password, self.salt)
     # end def verify_password
 
-# end class Account_P
+# end class Account
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

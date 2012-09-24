@@ -519,7 +519,7 @@ class _Register_ (_Ancestor) :
                 next           = req_data.get ("next", "/")
                 host           = request.host
                 Auth           = top.scope.Auth
-                account, token = Auth.Account_P.create_new_account \
+                account, token = Auth.Account.create_new_account \
                     (username, new_password)
                 link  = resource.parent.href_action (account, token, request)
                 try :
@@ -587,7 +587,7 @@ class _Request_Reset_Password_ (_Ancestor) :
                 next          = request.referrer or "/"
                 next_page     = top.resource_from_href \
                     (urlparse.urlsplit (next).path)
-                passwd, token = Auth.Account_P.reset_password (account)
+                passwd, token = Auth.Account.reset_password (account)
                 link = resource.parent.href_action (account, token, request)
                 resource.send_email \
                     ( resource.email_template

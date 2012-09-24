@@ -35,15 +35,15 @@
 
 """
 Test if we can set a e-type specific manager class
-    >>> scope.Auth.Account_P.__class__
-    <class '_GTW._OMP._Auth.Account.Account_P_Manager'>
+    >>> scope.Auth.Account.__class__
+    <class '_GTW._OMP._Auth.Account.Account_Manager'>
     >>> scope.Auth.Account_EMail_Verification.__class__
     <class '_GTW._OMP._Auth.Account_Handling.Account_Token_Manager'>
 
 let's create some accounts
-    >>> acc1 = scope.Auth.Account_P.create_new_account_x  \\
+    >>> acc1 = scope.Auth.Account.create_new_account_x  \\
     ...     ("user1@example.com", password = "passwd1", enabled = True)
-    >>> acc2 = scope.Auth.Account_P.create_new_account_x  \\
+    >>> acc2 = scope.Auth.Account.create_new_account_x  \\
     ...     ("user2@example.com", password = "passwd1", enabled = True)
     >>> acc1.suspended = acc2.suspended = False
     >>> acc1.name, acc2.name
@@ -110,10 +110,10 @@ Now, let's test the login/logout handlers
     True
 
 Now we test the password change required action
-    >>> scope.Auth.Account_P.force_password_change (acc1)
+    >>> scope.Auth.Account.force_password_change (acc1)
     >>> scope.Auth.Account_Password_Change_Required.query (account = acc1).count ()
     1
-    >>> scope.Auth.Account_P.force_password_change (acc1)
+    >>> scope.Auth.Account.force_password_change (acc1)
     >>> scope.Auth.Account_Password_Change_Required.query (account = acc1).count ()
     1
     >>> handler = POST \\
@@ -204,7 +204,7 @@ Try to verify the `new` passwords
     1
     >>> acc1.set (enabled = False)
     1
-    >>> new_password_1 = scope.Auth.Account_P.reset_password (acc1)
+    >>> new_password_1 = scope.Auth.Account.reset_password (acc1)
     Traceback (most recent call last):
         ....
     TypeError: Account has been disabled
@@ -212,7 +212,7 @@ Try to verify the `new` passwords
     1
 
 Account activation
-    >>> acc3 = scope.Auth.Account_P ("user3@example.com", enabled = True)
+    >>> acc3 = scope.Auth.Account ("user3@example.com", enabled = True)
     >>> acc3.active, acc3.suspended
     (False, True)
     >>> acc3.activation
@@ -319,7 +319,7 @@ Register account
         ...
     Redirect_302: /
     >>> form = handler.context ["form"]
-    >>> acc5 = scope.Auth.Account_P.query (name = form.username).one ()
+    >>> acc5 = scope.Auth.Account.query (name = form.username).one ()
     >>> acc5.active, acc5.enabled, acc5.suspended
     (False, True, True)
     >>> links = scope.Auth.Account_EMail_Verification.query \\
