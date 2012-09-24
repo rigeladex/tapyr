@@ -38,6 +38,7 @@
 #    23-Sep-2012 (RS) Use `rsclib.IP_Address` for `_A_IP_Address_`
 #    24-Sep-2012 (RS) Fix/add mixins for SAS backend
 #    24-Sep-2012 (CT) Raise `Attribute_Value` in `_A_IP4_Address_.check_syntax`
+#    24-Sep-2012 (RS) Move `SAS` specific stuff to `SAS_Attr_Type`
 #    ««revision-date»»···
 #--
 
@@ -81,10 +82,8 @@ class _A_IP_Address_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, value, obj, glob, locl) :
         if value :
-            try :
-                return soc.P_Type (value)
-            except ValueError, err :
-                raise # MOM.Error.Attribute_Syntax (obj, soc, value)
+            # this may raise a ValueError
+            return soc.P_Type (value)
     # end def _from_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -499,217 +498,14 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
 
 # end class A_MAC_Address
 
-class _SAS_IP_Address_Query_Mixin_ (TFL.Meta.Object) :
+def _import_sas_mixins (module) :
+    import _GTW._OMP._NET.SAS_Attr_Type
+# end def _import_sas_mixins
 
-    def __ne__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.not_ (self.__eq__ (rhs))
-    # end def __ne__
-
-# end class _SAS_IP_Address_Query_Mixin_
-
-class _Net_Cmp_Mixin_ (TFL.Meta.Object) :
-
-    def in_ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ \
-            ( self.__super.in_ (rhs)
-            , rhs.mask_len <= self.mask_len
-            )
-    # end def in_
-
-    def __eq__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ \
-            ( self.__super.__eq__ (rhs)
-            , self.mask_len == rhs.mask_len
-            )
-    # end def __eq__
-
-    def __ge__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.__super.__gt__ (rhs) # yes, really __gt__
-            , sql.and_
-                ( self.mask_len <= rhs.mask_len
-                , self.adr_eq (rhs)
-                )
-            )
-    # end def __ge__
-
-    def __gt__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.__super.__gt__ (rhs)
-            , sql.and_
-                ( self.mask_len < rhs.mask_len
-                , self.adr_eq (rhs)
-                )
-            )
-    # end def __gt__
-
-    def __le__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.__super.__lt__ (rhs) # yes, really __lt__
-            , sql.and_
-                ( self.mask_len >= rhs.mask_len
-                , self.adr_eq (rhs)
-                )
-            )
-    # end def __le__
-
-    def __lt__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.__super.__lt__ (rhs)
-            , sql.and_
-                ( self.mask_len > rhs.mask_len
-                , self.adr_eq (rhs)
-                )
-            )
-    # end def __lt__
-
-# end class _Net_Cmp_Mixin_
-
-class _SAS_IP4_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
-    """Special query code for IP4 address objects"""
-
-    def in_ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ \
-            ( rhs .numeric_address <= self.numeric_address
-            , self.numeric_address <= rhs .upper_bound
-            )
-    # end def in_
-
-    # explicit definition of comparisons, otherwise inheritance (and
-    # consequently the _Net_Cmp_Mixin_) won't work.
-
-    def __eq__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ (self.numeric_address == rhs.numeric_address)
-    # end def __eq__
-    adr_eq = __eq__ # this is used in network comparison
-
-    def __ge__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ (self.numeric_address >= rhs.numeric_address)
-    # end def __ge__
-
-    def __gt__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ (self.numeric_address >  rhs.numeric_address)
-    # end def __ge__
-
-    def __le__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ (self.numeric_address <= rhs.numeric_address)
-    # end def __ge__
-
-    def __lt__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ (self.numeric_address <  rhs.numeric_address)
-    # end def __ge__
-
-# end class _SAS_IP4_Address_Query_Mixin_
-
-class _SAS_IP4_Network_Query_Mixin_ (_Net_Cmp_Mixin_, _SAS_IP4_Address_Query_Mixin_) :
-    pass
-# end class _SAS_IP4_Network_Query_Mixin_
-
-class _SAS_IP6_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
-    """Special query code for IP6 address objects"""
-
-    def in_ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( sql.and_
-                ( rhs .numeric_address_high <  self.numeric_address_high
-                , self.numeric_address_high <  rhs .upper_bound_high
-                )
-            , sql.and_
-                ( rhs .numeric_address_high == self.numeric_address_high
-                , rhs .numeric_address_low  <= self.numeric_address_low
-                , self.numeric_address_low  <= rhs .upper_bound_low
-                )
-            , sql.and_
-                ( self.numeric_address_high == rhs .upper_bound_high
-                , rhs .numeric_address_low  <= self.numeric_address_low
-                , self.numeric_address_low  <= rhs .upper_bound_low
-                )
-            )
-    # end def in_
-
-    def __eq__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.and_ \
-            ( self.numeric_address_high == rhs.numeric_address_high
-            , self.numeric_address_low  == rhs.numeric_address_low
-            )
-    # end def __eq__
-    adr_eq = __eq__ # this is used in network comparison
-
-    def __ge__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.numeric_address_high > rhs.numeric_address_high
-            , sql.and_
-                ( self.numeric_address_high == rhs.numeric_address_high
-                , self.numeric_address_low  >= rhs.numeric_address_low
-                )
-            )
-    # end def __ge__
-
-    def __gt__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.numeric_address_high > rhs.numeric_address_high
-            , sql.and_
-                ( self.numeric_address_high == rhs.numeric_address_high
-                , self.numeric_address_low  >  rhs.numeric_address_low
-                )
-            )
-    # end def __gt__
-
-    def __le__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.numeric_address_high < rhs.numeric_address_high
-            , sql.and_
-                ( self.numeric_address_high == rhs.numeric_address_high
-                , self.numeric_address_low  <= rhs.numeric_address_low
-                )
-            )
-    # end def __le__
-
-    def __lt__ (self, rhs) :
-        from    sqlalchemy              import sql
-        return sql.or_ \
-            ( self.numeric_address_high < rhs.numeric_address_high
-            , sql.and_
-                ( self.numeric_address_high == rhs.numeric_address_high
-                , self.numeric_address_low  <  rhs.numeric_address_low
-                )
-            )
-    # end def __lt__
-
-# end class _SAS_IP6_Address_Query_Mixin_
-
-class _SAS_IP6_Network_Query_Mixin_ (_Net_Cmp_Mixin_, _SAS_IP6_Address_Query_Mixin_) :
-    pass
-# end class _SAS_IP6_Network_Query_Mixin_
-
-
-def _add_query_mixins (module) :
-    A2C = TFL.Add_To_Class
-    A2C ("SAS_Query_Mixin", A_IP4_Address) (_SAS_IP4_Address_Query_Mixin_)
-    A2C ("SAS_Query_Mixin", A_IP4_Network) (_SAS_IP4_Network_Query_Mixin_)
-    A2C ("SAS_Query_Mixin", A_IP6_Address) (_SAS_IP6_Address_Query_Mixin_)
-    A2C ("SAS_Query_Mixin", A_IP6_Network) (_SAS_IP6_Network_Query_Mixin_)
-# end def _add_query_mixins
-
-GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAS.Query", _add_query_mixins)
+GTW.OMP.NET._Add_Import_Callback \
+    ("_MOM._DBW._SAS.Attr_Type", _import_sas_mixins)
+GTW.OMP.NET._Add_Import_Callback \
+    ("_MOM._DBW._SAS.Query",     _import_sas_mixins)
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()

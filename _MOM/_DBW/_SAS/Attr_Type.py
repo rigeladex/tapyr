@@ -66,6 +66,7 @@
 #     8-Sep-2012 (CT) Change `_sa_type_generic` to allow `unicode`
 #    23-Sep-2012 (RS) Fix integer type selection
 #    23-Sep-2012 (RS) Add `_sa_ip`
+#    24-Sep-2012 (RS) SAS magic for `_A_IP_Address` now in `GTW.OMP.NET`
 #    ««revision-date»»···
 #--
 
@@ -76,8 +77,6 @@ import _MOM._Attr.Type
 import _MOM._Attr
 import  cPickle
 from   _MOM._DBW._SAS.Date_Column import Date_Column
-from   _GTW._OMP._NET.Attr_Type   import _A_IP_Address_
-from   rsclib.IP_Address          import IP_Address as R_IP_Address
 
 from sqlalchemy     import types, schema
 from sqlalchemy.sql import extract, expression
@@ -193,8 +192,6 @@ def _sa_type_generic (cls, attr, kind, ** kw) :
     P_Type = attr.P_Type
     if P_Type is unicode :
         return _sa_string (cls, attr, kind, ** kw)
-    elif isinstance (P_Type, R_IP_Address) :
-        return _sa_ip (cls, attr, kind, ** kw)
     else :
         try :
             T = _sa_type_map [P_Type]
@@ -263,14 +260,6 @@ def _sa_file_name (cls, attr, kind, ** kw) :
 def _sa_blob (cls, attr, kind, ** kw) :
     return types.LargeBinary (getattr (attr, "max_length", None))
 # end def _sa_blob
-
-@Add_Classmethod ("_sa_type", _A_IP_Address_)
-def _sa_ip (cls, attr, kind, ** kw) :
-    length = getattr (attr, "max_length", None)
-    if length :
-        return Case_Sensitive_String (length, convert_unicode = False)
-    return types.Text (convert_unicode = False)
-# end def _sa_ip
 
 class Python_Pickle_Transform (object) :
     """Pickle the pickle cargo of the object model and store it as string."""
