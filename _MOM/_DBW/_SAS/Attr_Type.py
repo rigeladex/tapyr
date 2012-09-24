@@ -65,6 +65,7 @@
 #    10-Aug-2012 (MG) Add support of Sall/BigInteger types
 #     8-Sep-2012 (CT) Change `_sa_type_generic` to allow `unicode`
 #    23-Sep-2012 (RS) Fix integer type selection
+#    23-Sep-2012 (RS) Add `_sa_ip`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,8 @@ import _MOM._Attr.Type
 import _MOM._Attr
 import  cPickle
 from   _MOM._DBW._SAS.Date_Column import Date_Column
+from   _GTW._OMP._NET.Attr_Type   import _A_IP_Address_
+from   rsclib.IP_Address          import IP_Address as R_IP_Address
 
 from sqlalchemy     import types, schema
 from sqlalchemy.sql import extract, expression
@@ -96,7 +99,7 @@ Attr = MOM.Attr
 Attr.A_Attr_Type.SAS_Column_Class = schema.Column
 Attr.A_Date     .SAS_Column_Class = Date_Column
 
-def Add_Classmedthod  (name, * classes) :
+def Add_Classmethod  (name, * classes) :
     """Adds decorated function/class to `classes` using `name`.
     """
     def decorator (x) :
@@ -104,7 +107,7 @@ def Add_Classmedthod  (name, * classes) :
             setattr (cls, name, classmethod (x))
         return x
     return decorator
-# end def Add_Classmedthod
+# end def Add_Classmethod
 
 @TFL.Add_To_Class ("_sa_column_name", Attr.A_Attr_Type)
 def _sa_normal_attr (self) :
@@ -116,7 +119,7 @@ def _sa_object (self) :
     return "%s_pid" % (self.name, )
 # end def _sa_object
 
-@Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
+@Add_Classmethod ("_sa_columns", Attr.A_Attr_Type)
 def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     Pickler      = attr.Pickler
     Type         = getattr (Pickler, "Type", attr)
@@ -126,7 +129,7 @@ def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     return (col, )
 # end def _sa_columns_simple
 
-@Add_Classmedthod ("_sa_columns", Attr._A_Id_Entity_)
+@Add_Classmethod ("_sa_columns", Attr._A_Id_Entity_)
 def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name
@@ -140,7 +143,7 @@ def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     return (col, )
 # end def _sa_columns_a_object
 
-@Add_Classmedthod ("_sa_columns", Attr._A_Named_Value_)
+@Add_Classmethod ("_sa_columns", Attr._A_Named_Value_)
 def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :
     Type = attr.C_Type
     if Type :
@@ -151,7 +154,7 @@ def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :
     return _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw)
 # end def _sa_columns_named_value
 
-@Add_Classmedthod ("_sa_columns", Attr._A_Composite_)
+@Add_Classmethod ("_sa_columns", Attr._A_Composite_)
 def _sa_columns_composite (cls, attr, kind, unique, owner_etype, ** kw) :
     e_type   = kind.P_Type
     bases    = e_type.__bases__
@@ -185,11 +188,13 @@ class Case_Sensitive_String (types.TypeDecorator) :
 
 # end class Case_Sensitive_String
 
-@Add_Classmedthod ("_sa_type", Attr.A_Attr_Type)
+@Add_Classmethod ("_sa_type", Attr.A_Attr_Type)
 def _sa_type_generic (cls, attr, kind, ** kw) :
     P_Type = attr.P_Type
     if P_Type is unicode :
         return _sa_string (cls, attr, kind, ** kw)
+    elif isinstance (P_Type, R_IP_Address) :
+        return _sa_ip (cls, attr, kind, ** kw)
     else :
         try :
             T = _sa_type_map [P_Type]
@@ -216,7 +221,7 @@ int_map = \
  , (-0x80000000,         0x7FFFFFFF,         types.Integer)
  , (-0x8000000000000000, 0x7FFFFFFFFFFFFFFF, types.BigInteger)
  )
-@Add_Classmedthod ("_sa_type", Attr.A_Int)
+@Add_Classmethod ("_sa_type", Attr.A_Int)
 def _sa_type_int (cls, attr, kind, ** kw) :
     result    = None
     max_value = cls.max_value or  0x7FFFFFFF
@@ -233,12 +238,12 @@ def _sa_type_int (cls, attr, kind, ** kw) :
     return result
 # end def _sa_type_int
 
-@Add_Classmedthod ("_sa_type", Attr.A_Decimal)
+@Add_Classmethod ("_sa_type", Attr.A_Decimal)
 def _sa_numeric (cls, attr, kind, ** kw) :
     return types.Numeric (attr.max_digits, attr.decimal_places)
 # end def _sa_numeric
 
-@Add_Classmedthod ("_sa_type", Attr._A_String_Base_)
+@Add_Classmethod ("_sa_type", Attr._A_String_Base_)
 def _sa_string (cls, attr, kind, ** kw) :
     length = getattr (attr, "max_length", None)
     if length :
@@ -246,7 +251,7 @@ def _sa_string (cls, attr, kind, ** kw) :
     return types.Text (convert_unicode = True)
 # end def _sa_string
 
-@Add_Classmedthod ("_sa_type", Attr._A_Filename_)
+@Add_Classmethod ("_sa_type", Attr._A_Filename_)
 def _sa_file_name (cls, attr, kind, ** kw) :
     length = getattr (attr, "max_length", None)
     if length :
@@ -254,10 +259,18 @@ def _sa_file_name (cls, attr, kind, ** kw) :
     return types.Text (convert_unicode = False)
 # end def _sa_file_name
 
-@Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
+@Add_Classmethod ("_sa_type", Attr._A_Binary_String_)
 def _sa_blob (cls, attr, kind, ** kw) :
     return types.LargeBinary (getattr (attr, "max_length", None))
 # end def _sa_blob
+
+@Add_Classmethod ("_sa_type", _A_IP_Address_)
+def _sa_ip (cls, attr, kind, ** kw) :
+    length = getattr (attr, "max_length", None)
+    if length :
+        return Case_Sensitive_String (length, convert_unicode = False)
+    return types.Text (convert_unicode = False)
+# end def _sa_ip
 
 class Python_Pickle_Transform (object) :
     """Pickle the pickle cargo of the object model and store it as string."""
