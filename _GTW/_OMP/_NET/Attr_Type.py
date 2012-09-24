@@ -31,12 +31,13 @@
 #                     ancestor `A_IP_Address`, extend syntax checks
 #    23-May-2012 (RS) Rename `A_IP_Address` -> `_A_IP_Address_`
 #    23-May-2012 (RS) Add `_syntax_re` for `_A_IP_Address_`
-#    10-Aug-2012 (RS) make all IP-related types decendants of `_A_Composite_`
+#    10-Aug-2012 (RS) Make all IP-related types decendants of `_A_Composite_`
 #    11-Aug-2012 (MG) Preparation for special SAS query functions
 #    13-Aug-2012 (RS) Add `mask_len` to `IP4_Network` and `IP6_Network`,
 #                     create common ancestor of all composite ip types
-#    23-Sep-2012 (RS) `_A_IP_Address_` and descendants use `rsclib.IP_Address`
-#    24-Sep-2012 (RS) fix/add mixins for SAS backend
+#    23-Sep-2012 (RS) Use `rsclib.IP_Address` for `_A_IP_Address_`
+#    24-Sep-2012 (RS) Fix/add mixins for SAS backend
+#    24-Sep-2012 (CT) Raise `Attribute_Value` in `_A_IP4_Address_.check_syntax`
 #    ««revision-date»»···
 #--
 
@@ -109,8 +110,13 @@ class _A_IP4_Address_ (_A_IP_Address_) :
 
     def check_syntax (self, obj, val) :
         if val and val.mask != self.P_Type.bitlen :
-            raise ValueError, "Invalid netmask"
-            raise MOM.Error.Attribute_Syntax (obj, self, val)
+            raise MOM.Error.Attribute_Value \
+                ( obj, self.name, val, self.kind
+                , ValueError
+                    ( "Invalid netmask: %s; must be empty or %s"
+                    % (val.mask, self.P_Type.bitlen)
+                    )
+                )
     # end def check_syntax
 
 # end class _A_IP4_Address_
@@ -195,7 +201,7 @@ class IP_Address (_Ancestor_Essence) :
     def __contains__ (self, rhs) :
         return rhs.address in self.address
     # end def __contains__
-    
+
 # end class IP_Address
 
 _Ancestor_Essence = IP_Address

@@ -34,6 +34,7 @@
 #    13-Sep-2012 (RS) Comment doctest for unimplemented feature
 #    24-Sep-2012 (RS) Fix doctest for `in`, add relational operators
 #                     fix error messages now coming from rsclib
+#    24-Sep-2012 (CT) Adapt tests
 #    ««revision-date»»···
 #--
 
@@ -180,18 +181,17 @@ _test_code = """
     >>> IP4_Address (dict (address = '111.222.233.244/22'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP4_Address.address to `{u'raw': True, 'address': u'111.222.233.244/22'}`
-        Invalid netmask
+    Attribute_Value: Can't set IP4-address `address` attribute IP4_Address.address to `111.222.232.0/22`
+        Invalid netmask: 22; must be empty or 32
     >>> IP4_Address (dict (address = '1.2.3.4/22'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP4_Address.address to `{u'raw': True, 'address': u'1.2.3.4/22'}`
-        Invalid netmask
+    Attribute_Value: Can't set IP4-address `address` attribute IP4_Address.address to `1.2.0.0/22`
+        Invalid netmask: 22; must be empty or 32
     >>> IP4_Address (dict (address = '256.255.255.2'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP4_Address.address to `{u'raw': True, 'address': u'256.255.255.2'}`
-        Can't set necessary attribute IP4_Address.address to `u'256.255.255.2'`
+    Attribute_Value: Can't set necessary attribute IP4_Address.address to `u'256.255.255.2'`
         `Invalid octet: 256` for : `IP4-address `address``
          expected type  : `IP4-address`
          got      value : `256.255.255.2`
@@ -199,8 +199,7 @@ _test_code = """
     >>> IP4_Address (dict (address = '2560.255.2.2'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP4_Address.address to `{u'raw': True, 'address': u'2560.255.2.2'}`
-        Can't set necessary attribute IP4_Address.address to `u'2560.255.2.2'`
+    Attribute_Value: Can't set necessary attribute IP4_Address.address to `u'2560.255.2.2'`
         `Invalid octet: 2560` for : `IP4-address `address``
         expected type  : `IP4-address`
         got      value : `2560.255.2.2`
@@ -218,8 +217,7 @@ _test_code = """
     >>> IP4_Network (dict (address = '1.2.3.4/33'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP4_Network.address to `{u'raw': True, 'address': u'1.2.3.4/33'}`
-        Can't set necessary attribute IP4_Network.address to `u'1.2.3.4/33'`
+    Attribute_Value: Can't set necessary attribute IP4_Network.address to `u'1.2.3.4/33'`
         `Invalid netmask: 33` for : `IP4-network `address``
          expected type  : `IP4-network`
          got      value : `1.2.3.4/33`
@@ -227,8 +225,7 @@ _test_code = """
     >>> IP4_Network (dict (address = '1.2.3.4/333'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP4_Network.address to `{u'raw': True, 'address': u'1.2.3.4/333'}`
-        Can't set necessary attribute IP4_Network.address to `u'1.2.3.4/333'`
+    Attribute_Value: Can't set necessary attribute IP4_Network.address to `u'1.2.3.4/333'`
         `Invalid netmask: 333` for : `IP4-network `address``
          expected type  : `IP4-network`
          got      value : `1.2.3.4/333`
@@ -296,8 +293,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '::ffff:12.34.56.78'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'::ffff:12.34.56.78'}`
-        Can't set necessary attribute IP6_Address.address to `u'::ffff:12.34.56.78'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:12.34.56.78'`
         `Hex value too long: 12.34.56.78` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:12.34.56.78`
@@ -305,8 +301,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '::ffff:192.0.2.128'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'::ffff:192.0.2.128'}`
-        Can't set necessary attribute IP6_Address.address to `u'::ffff:192.0.2.128'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:192.0.2.128'`
         `Hex value too long: 192.0.2.128` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:192.0.2.128`
@@ -314,8 +309,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '123'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'123'}`
-        Can't set necessary attribute IP6_Address.address to `u'123'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'123'`
         `Not enough hex parts in address: 123` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `123`
@@ -323,8 +317,7 @@ _test_code = """
     >>> IP6_Address (dict (address = 'ldkfj'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'ldkfj'}`
-        Can't set necessary attribute IP6_Address.address to `u'ldkfj'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'ldkfj'`
         `Hex value too long: ldkfj` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `ldkfj`
@@ -332,8 +325,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '2001::FFD3::57ab'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'2001::FFD3::57ab'}`
-        Can't set necessary attribute IP6_Address.address to `u'2001::FFD3::57ab'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'2001::FFD3::57ab'`
         `Only one '::' allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `2001::FFD3::57ab`
@@ -344,8 +336,7 @@ _test_code = """
     ...     )
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'2001:db8:85a3::8a2e:37023:7334'}`
-        Can't set necessary attribute IP6_Address.address to `u'2001:db8:85a3::8a2e:37023:7334'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'2001:db8:85a3::8a2e:37023:7334'`
         `Hex value too long: 37023` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `2001:db8:85a3::8a2e:37023:7334`
@@ -356,8 +347,7 @@ _test_code = """
     ...     )
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'2001:db8:85a3::8a2e:370k:7334'}`
-        Can't set necessary attribute IP6_Address.address to `u'2001:db8:85a3::8a2e:370k:7334'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'2001:db8:85a3::8a2e:370k:7334'`
         `invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `2001:db8:85a3::8a2e:370k:7334`
@@ -365,8 +355,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '1:2:3:4:5:6:7:8:9'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1:2:3:4:5:6:7:8:9'}`
-        Can't set necessary attribute IP6_Address.address to `u'1:2:3:4:5:6:7:8:9'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:2:3:4:5:6:7:8:9'`
         `Too many hex parts in address: 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:2:3:4:5:6:7:8:9`
@@ -374,8 +363,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '1::2::3'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1::2::3'}`
-        Can't set necessary attribute IP6_Address.address to `u'1::2::3'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1::2::3'`
         `Only one '::' allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1::2::3`
@@ -383,8 +371,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '1:::3:4:5'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1:::3:4:5'}`
-        Can't set necessary attribute IP6_Address.address to `u'1:::3:4:5'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:::3:4:5'`
         `Too many ':': 1:::3:4:5` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:::3:4:5`
@@ -392,8 +379,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '1:2:3::4:5:6:7:8:9'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1:2:3::4:5:6:7:8:9'}`
-        Can't set necessary attribute IP6_Address.address to `u'1:2:3::4:5:6:7:8:9'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:2:3::4:5:6:7:8:9'`
         `Too many hex parts in address: 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:2:3::4:5:6:7:8:9`
@@ -401,8 +387,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '::ffff:2.3.4'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'::ffff:2.3.4'}`
-        Can't set necessary attribute IP6_Address.address to `u'::ffff:2.3.4'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:2.3.4'`
         `Hex value too long: 2.3.4` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:2.3.4`
@@ -410,8 +395,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '::ffff:257.1.2.3'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'::ffff:257.1.2.3'}`
-        Can't set necessary attribute IP6_Address.address to `u'::ffff:257.1.2.3'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:257.1.2.3'`
         `Hex value too long: 257.1.2.3` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:257.1.2.3`
@@ -419,8 +403,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '1.2.3.4'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1.2.3.4'}`
-        Can't set necessary attribute IP6_Address.address to `u'1.2.3.4'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1.2.3.4'`
         `Hex value too long: 1.2.3.4` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1.2.3.4`
@@ -428,8 +411,7 @@ _test_code = """
     >>> IP6_Address (dict (address = ':aa:aa:aa'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u':aa:aa:aa'}`
-        Can't set necessary attribute IP6_Address.address to `u':aa:aa:aa'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u':aa:aa:aa'`
         `No single ':' at start allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `:aa:aa:aa`
@@ -437,8 +419,7 @@ _test_code = """
     >>> IP6_Address (dict (address = 'aa:aa:aa:'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'aa:aa:aa:'}`
-        Can't set necessary attribute IP6_Address.address to `u'aa:aa:aa:'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'aa:aa:aa:'`
         `No single ':' at end allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `aa:aa:aa:`
@@ -446,8 +427,7 @@ _test_code = """
     >>> IP6_Address (dict (address = '1:2:3:4:5:6:7'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1:2:3:4:5:6:7'}`
-        Can't set necessary attribute IP6_Address.address to `u'1:2:3:4:5:6:7'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:2:3:4:5:6:7'`
         `Not enough hex parts in address: 1:2:3:4:5:6:7` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:2:3:4:5:6:7`
@@ -455,8 +435,7 @@ _test_code = """
     >>> IP6_Address (dict (address = ':::'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u':::'}`
-        Can't set necessary attribute IP6_Address.address to `u':::'`
+    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u':::'`
         `No ':' at start and end` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `:::`
@@ -464,8 +443,8 @@ _test_code = """
     >>> IP6_Address (dict (address = '1:2:3::/127'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Address.address to `{u'raw': True, 'address': u'1:2:3::/127'}`
-        Invalid netmask
+    Attribute_Value: Can't set IP6-address `address` attribute IP6_Address.address to `1:2:3::/127`
+        Invalid netmask: 127; must be empty or 128
 
     >>> IP6_Network (dict (address = '1:2:3::/48'), raw = True)
     GTW.OMP.NET.IP6_Network (dict (address = 1:2:3::/48))
@@ -483,8 +462,7 @@ _test_code = """
     >>> IP6_Network (dict (address = '1:2:3::/129'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Network.address to `{u'raw': True, 'address': u'1:2:3::/129'}`
-        Can't set necessary attribute IP6_Network.address to `u'1:2:3::/129'`
+    Attribute_Value: Can't set necessary attribute IP6_Network.address to `u'1:2:3::/129'`
         `Invalid netmask: 129` for : `IP6-network `address``
          expected type  : `IP6-network`
          got      value : `1:2:3::/129`
@@ -492,8 +470,7 @@ _test_code = """
     >>> IP6_Network (dict (address = '1:2:3::/1290'), raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute IP6_Network.address to `{u'raw': True, 'address': u'1:2:3::/1290'}`
-        Can't set necessary attribute IP6_Network.address to `u'1:2:3::/1290'`
+    Attribute_Value: Can't set necessary attribute IP6_Network.address to `u'1:2:3::/1290'`
         `Invalid netmask: 1290` for : `IP6-network `address``
          expected type  : `IP6-network`
          got      value : `1:2:3::/1290`

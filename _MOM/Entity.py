@@ -214,6 +214,7 @@
 #     8-Aug-2012 (CT) Use `logging` instead of `print`
 #     9-Sep-2012 (CT) Add `creation_date`
 #    10-Sep-2012 (CT) Fix `creation_date.computed`
+#    24-Sep-2012 (CT) Don't wrap `Error.Attribute_Value`
 #    ««revision-date»»···
 #--
 
@@ -475,9 +476,11 @@ class Entity (TFL.Meta.Object) :
                 try :
                     try :
                         result [name] = attr.from_string (value)
-                    except (TypeError, ValueError) as err :
+                    except MOM.Error.Attribute_Value as exc :
+                        raise
+                    except (TypeError, ValueError) as exc :
                         raise MOM.Error.Attribute_Value \
-                            (soc, name, value, attr.kind, err)
+                            (soc, name, value, attr.kind, exc)
                 except Exception as exc :
                     on_error (exc)
         return result
@@ -638,10 +641,13 @@ class Entity (TFL.Meta.Object) :
             if val is not None :
                 try :
                     ckd_kw [name] = ckd_val = attr.from_string (val, self)
-                except (TypeError, ValueError) as err:
+                except MOM.Error.Attribute_Value as exc :
+                    on_error (exc)
+                    to_do.append ((attr, u"", None))
+                except (TypeError, ValueError) as exc :
                     on_error \
                         ( MOM.Error.Attribute_Value
-                            (self, name, val, attr.kind, err)
+                            (self, name, val, attr.kind, exc)
                         )
                     if __debug__ :
                         logging.exception  \
