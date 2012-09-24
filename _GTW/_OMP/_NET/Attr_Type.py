@@ -35,107 +35,63 @@
 #    11-Aug-2012 (MG) Preparation for special SAS query functions
 #    13-Aug-2012 (RS) Add `mask_len` to `IP4_Network` and `IP6_Network`,
 #                     create common ancestor of all composite ip types
+#    23-Sep-2012 (RS) `_A_IP_Address_` and descendants use `rsclib.IP_Address`
+#    24-Sep-2012 (RS) fix/add mixins for SAS backend
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, unicode_literals
 
 from   _MOM.import_MOM       import *
-from   _MOM.import_MOM       import _A_Composite_
+from   _MOM.import_MOM       import _A_Composite_, _A_String_
 
 from   _GTW                  import GTW
 
 from   _TFL.I18N             import _
 from   _TFL.Regexp           import Regexp, re
 
+from   rsclib.IP_Address     import IP_Address  as R_IP_Address
+from   rsclib.IP_Address     import IP4_Address as R_IP4_Address
+from   rsclib.IP_Address     import IP6_Address as R_IP6_Address
+
 import _GTW._OMP._NET
 
-def _inverted_mask_ (adrlen, mask) :
-    return (2 ** (adrlen - mask)) - 1
-# end def _inverted_mask_
-
-def _masklen_ (adrlen, adr) :
-    masklen = adrlen
-    adr = adr.split ('/', 1)
-    if len (adr) > 1 :
-        masklen = int (adr [-1], 10)
-    return masklen
-# end def _masklen_
-
-def _numeric_ip4_address_ (adr) :
-    val = 0
-    for a in adr.split ('.') :
-        val <<= 8
-        val |=  int (a, 10)
-    return val
-# end def _numeric_ip4_address_
-
-def _numeric_ip6_address_ (adr) :
-    """ Compute numeric ipv6 address from adr without netmask.
-        We assume the address is well-formed.
-        >>> n = _numeric_ip6_address_
-        >>> print "%X" % n ("::")
-        0
-        >>> print "%X" % n ("::1")
-        1
-        >>> print "%X" % n ("2001:0db8:85a3:0000:0000:8a2e:0370:7334")
-        20010DB885A3000000008A2E03707334
-        >>> print "%X" % n ("2001:db8:85a3:0:0:8a2e:370:7334")
-        20010DB885A3000000008A2E03707334
-        >>> print "%X" % n ("2001:db8:85a3::8a2e:370:7334")
-        20010DB885A3000000008A2E03707334
-        >>> print "%X" % n ("2001:db8:85a3::")
-        20010DB885A300000000000000000000
-        >>> print "%X" % n ("::8a2e:370:7334")
-        8A2E03707334
-    """
-    lower = ''
-    upper = adr.split ('::', 1)
-    if len (upper) > 1 :
-        upper, lower = upper
-    else :
-        upper = upper [0]
-
-    value = 0L
-    shift = 128 - 16
-
-    if upper :
-        for v in upper.split (':') :
-            assert (v)
-            v = long (v, 16)
-            value |= v << shift
-            shift -= 16
-    if lower :
-        lv = 0L
-        for v in lower.split (':') :
-            assert (v)
-            v = long (v, 16)
-            lv <<= 16
-            lv |=  v
-        value |= lv
-    return value
-# end def _numeric_ip6_address_
-
-class _A_IP_Address_ (Syntax_Re_Mixin, A_String) :
+class _A_IP_Address_ (A_Attr_Type) :
     """Model abstract address of IP network."""
 
-    def check_syntax (self, obj, val) :
-        self.__super.check_syntax (obj, val)
-        if val :
-            v = val.split ('/')
-            mask = ''
-            if len (v) > 1 :
-                mask = v [-1]
-                self.check_netmask (obj, mask)
-            self.check_address (obj, v [0], mask)
-    # end def check_syntax
+    P_Type = R_IP_Address
 
-    def check_netmask (self, obj, val) :
-        if int (val) > self._bits :
-            raise MOM.Error.Attribute_Syntax (obj, self, val)
-    # end def check_netmask
+    class Pickler (TFL.Meta.Object) :
 
-    _syntax_re = Regexp (r"^[0-9a-fA-F.:/]+$")
+        @classmethod
+        def as_cargo (cls, attr_kind, attr_type, value) :
+            if value is not None :
+                return str (value)
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
+            if cargo is not None :
+                return attr_type.P_Type (cargo)
+        # end def from_cargo
+
+    # end class Pickler
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, value, obj, glob, locl) :
+        if value :
+            try :
+                return soc.P_Type (value)
+            except ValueError, err :
+                raise # MOM.Error.Attribute_Syntax (obj, soc, value)
+    # end def _from_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if not isinstance (value, R_IP_Address) :
+            raise TypeError, "Invalid type for cooked -- forgot `raw = True`?"
+        return value
+    # end def cooked
 
 # end class _A_IP_Address_
 
@@ -143,158 +99,73 @@ class _A_IP4_Address_ (_A_IP_Address_) :
     """Models an address in a IP4 network."""
     ### MGL: Use inet type for the _A_IP4_Address_
 
-    _bits             = 32
+    P_Type            = R_IP4_Address
     example           = "192.168.42.137"
     typ               = "IP4-address"
     max_length        = 15
-    P_Type            = str
     syntax            = _ \
         ( u"IP4 address must contain 4 decimal octets separated by `.`."
         )
 
-    _pattern          = "(?: \d{1,3}\.){3} \d{1,3}"
-    _syntax_re        = Regexp \
-        ( r"^" + _pattern + "$"
-        , re.VERBOSE
-        )
-
-    def check_address (self, obj, val, mask) :
-        if val :
-            for octet in val.split ('.') :
-                if int (octet) > 255 :
-                    raise MOM.Error.Attribute_Syntax (obj, self, val)
-    # end def check_address
+    def check_syntax (self, obj, val) :
+        if val and val.mask != self.P_Type.bitlen :
+            raise ValueError, "Invalid netmask"
+            raise MOM.Error.Attribute_Syntax (obj, self, val)
+    # end def check_syntax
 
 # end class _A_IP4_Address_
 
-class _A_IP4_Network_ (_A_IP4_Address_) :
+class _A_IP4_Network_ (_A_IP_Address_) :
     """Model a IP4 network in CIDRR notation."""
     ### MGL: Use cidr type for the _A_IP4_Network_
 
+    P_Type            = R_IP4_Address
     _adr_type         = _A_IP4_Address_
-    _mask_len         = len (str (_adr_type._bits - 1))
+    _mask_len         = len (str (P_Type.bitlen))
     example           = "192.168.42.0/28"
     typ               = "IP4-network"
     max_length        = _adr_type.max_length + _mask_len + 1
-    P_Type            = str
     syntax            = _ \
         ( u"IP4 network must contain 4 decimal octets separated by `.`, "
           "optionally followed by `/` and a number between 0 and 32."
-          " The bits right of the netmask must be zero."
+          " The bits right of the netmask are automatically set to zero."
         )
-    _syntax_re        = Regexp \
-        ( "^"
-        + _adr_type._pattern
-        + r"(?: / \d{1,%s})?" % _mask_len
-        + "$"
-        , re.VERBOSE
-        )
-
-    def check_address (self, obj, val, mask) :
-        self.__super.check_address (obj, val, mask)
-        # mask check (bits not included in mask must be 0)
-        if val and mask :
-            i = _numeric_ip4_address_ (val)
-            m = _inverted_mask_ (32, int (mask, 10))
-            r = i & m
-            if r :
-                v = '/'.join ((val, mask))
-                raise MOM.Error.Attribute_Syntax (obj, self, v)
-    # end def check_address
 
 # end class _A_IP4_Network_
 
-class _A_IP6_Address_ (_A_IP_Address_) :
+class _A_IP6_Address_ (_A_IP4_Address_) :
     """Models an address in a IP6 network."""
     ### MGL: Use inet type for the _A_IP6_Address_
 
-    _bits             = 128
+    P_Type            = R_IP6_Address
     example           = "2001:db8:85a3::8a2e:370:7334"
     typ               = "IP6-address"
     max_length        = 39
-    P_Type            = str
     syntax            = _ \
         ( u"IP6 address must contain up to 8 hexadecimal "
           u"numbers with up to 4 digits separated by `:`. "
           u"A single empty group `::` can be used."
         )
 
-    _pattern          = "(?: [0-9A-Fa-f]{0,4} :){2,7} [0-9A-Fa-f]{0,4}"
-    _syntax_re        = Regexp \
-        ( r"^" + _pattern + "$"
-        , re.VERBOSE
-        )
-
-    def check_address (self, obj, val, mask) :
-        """ First check regular expression, then do some more checks on
-            the IPv6 Address -- doing it all with a regex will produce
-            an unmaintainable regex, see for example
-            https://rt.cpan.org/Public/Bug/Display.html?id=50693
-            Many Test-cases stolen from link above.
-            Note that we currently don't allow mixed ':' and '.' notation.
-        """
-        if val :
-            empty_count = 0
-            if val.startswith (':') :
-                if not val.startswith ('::') :
-                    raise MOM.Error.Attribute_Syntax (obj, self, val)
-                if val != '::' and val.endswith (':') :
-                    raise MOM.Error.Attribute_Syntax (obj, self, val)
-                empty_count = 1
-            elif val.endswith (':') :
-                if not val.endswith ('::') :
-                    raise MOM.Error.Attribute_Syntax (obj, self, val)
-                empty_count = 1
-            numbers = val.strip (':') or []
-            if numbers :
-                numbers = numbers.split (':')
-            for v in numbers :
-                if not v :
-                    if empty_count :
-                        raise MOM.Error.Attribute_Syntax (obj, self, val)
-                    empty_count += 1
-            if not empty_count and len (numbers) != 8 :
-                raise MOM.Error.Attribute_Syntax (obj, self, val)
-    # end def check_address
-
 # end class _A_IP6_Address_
 
-class _A_IP6_Network_ (_A_IP6_Address_) :
+class _A_IP6_Network_ (_A_IP_Address_) :
     """Model a IP6 network in CIDRR notation."""
     ### MGL: Use cidr type for the _A_IP6_Network_
 
+    P_Type            = R_IP6_Address
     _adr_type         = _A_IP6_Address_
-    _mask_len         = len (str (_adr_type._bits - 1))
+    _mask_len         = len (str (P_Type.bitlen))
     example           = "2001:db8::/32"
     typ               = "IP6-network"
     max_length        = _adr_type.max_length + _mask_len + 1
-    P_Type            = str
     syntax            = _ \
         ( u"IP6 network must contain up to 8 hexadecimal "
           u"numbers with up to 4 digits separated by `:`. "
           u"A single empty group `::` can be used."
           u" This is optionally followed by `/` and a number between 0 and 128."
-          u" The bits right of the netmask must be zero."
+          u" The bits right of the netmask are automatically set to zero."
         )
-    _syntax_re        = Regexp \
-        ( "^"
-        + _adr_type._pattern
-        + r"(?: / \d{1,%s})?" % _mask_len
-        + "$"
-        , re.VERBOSE
-        )
-
-    def check_address (self, obj, val, mask) :
-        self.__super.check_address (obj, val, mask)
-        # mask check (bits not included in mask must be 0)
-        if val and mask :
-            i = _numeric_ip6_address_ (val)
-            m = _inverted_mask_ (128, int (mask, 10))
-            r = i & m
-            if r :
-                v = '/'.join ((val, mask))
-                raise MOM.Error.Attribute_Syntax (obj, self, v)
-    # end def check_address
 
 # end class _A_IP6_Network_
 
@@ -317,6 +188,14 @@ class IP_Address (_Ancestor_Essence) :
 
     # end class _Attributes
 
+    def __cmp__ (self, rhs) :
+        return cmp (self.address, rhs.address)
+    # end def cmp
+
+    def __contains__ (self, rhs) :
+        return rhs.address in self.address
+    # end def __contains__
+    
 # end class IP_Address
 
 _Ancestor_Essence = IP_Address
@@ -351,7 +230,7 @@ class IP4_Address (_Ancestor_Essence) :
                     0x80000000 -- so we don't use the usual 2-complement
                     here!
                 """
-                a = _numeric_ip4_address_ (obj.address.split ('/', 1) [0])
+                a = obj.address.ip
                 return a - 0x80000000
             # end def computed
 
@@ -386,7 +265,7 @@ class IP4_Network (_Ancestor_Essence) :
             max_value       = 32
 
             def computed (self, obj) :
-                return _masklen_ (self.max_value, obj.address)
+                return obj.address.mask
             # end def computed
 
         # end class mask_len
@@ -407,15 +286,7 @@ class IP4_Network (_Ancestor_Essence) :
                     0x80000000 -- so we don't use the usual 2-complement
                     here!
                 """
-                i = obj.address.split ('/', 1)
-                if len (i) > 1 :
-                    i, m = i
-                else :
-                    i = i [0]
-                    m = None
-                a = _numeric_ip4_address_ (i)
-                if m :
-                    a += _inverted_mask_ (32, long (m, 10))
+                a = obj.address._broadcast
                 return a - 0x80000000
             # end def computed
 
@@ -456,11 +327,11 @@ class IP6_Address (_Ancestor_Essence) :
             max_value       = 0x7FFFFFFFFFFFFFFF
 
             def computed (self, obj) :
-                adr = _numeric_ip6_address_ (obj.address.split ('/') [0])
+                adr = obj.address.ip
                 return (adr & 0xFFFFFFFFFFFFFFFF) - 0x8000000000000000
             # end def computed
 
-        # end class numeric_address_high
+        # end class numeric_address_low
 
         class numeric_address_high (A_Int) :
             """ Numeric IP address -- high 64 bit.
@@ -477,7 +348,7 @@ class IP6_Address (_Ancestor_Essence) :
             max_value       = 0x7FFFFFFFFFFFFFFF
 
             def computed (self, obj) :
-                adr = _numeric_ip6_address_ (obj.address.split ('/') [0])
+                adr = obj.address.ip
                 return (adr >> 64) - 0x8000000000000000
             # end def computed
 
@@ -512,7 +383,7 @@ class IP6_Network (_Ancestor_Essence) :
             max_value       = 128
 
             def computed (self, obj) :
-                return _masklen_ (self.max_value, obj.address)
+                return obj.address.mask
             # end def computed
 
         # end class mask_len
@@ -532,15 +403,7 @@ class IP6_Network (_Ancestor_Essence) :
             max_value       = 0x7FFFFFFFFFFFFFFF
 
             def computed (self, obj) :
-                i = obj.address.split ('/', 1)
-                if len (i) > 1 :
-                    i, m = i
-                else :
-                    i = i [0]
-                    m = None
-                a = _numeric_ip6_address_ (i)
-                if m :
-                    a += _inverted_mask_ (128, long (m, 10))
+                a = obj.address._broadcast
                 return (a & 0xFFFFFFFFFFFFFFFF) - 0x8000000000000000
             # end def computed
 
@@ -561,15 +424,7 @@ class IP6_Network (_Ancestor_Essence) :
             max_value       = 0x7FFFFFFFFFFFFFFF
 
             def computed (self, obj) :
-                i = obj.address.split ('/', 1)
-                if len (i) > 1 :
-                    i, m = i
-                else :
-                    i = i [0]
-                    m = None
-                a = _numeric_ip6_address_ (i)
-                if m :
-                    a += _inverted_mask_ (128, long (m, 10))
+                a = obj.address._broadcast
                 return (a >> 64) - 0x8000000000000000
             # end def computed
 
@@ -638,29 +493,214 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
 
 # end class A_MAC_Address
 
-class _SAS_IP4_Address_Query_Mixin_ (TFL.Meta.Object) :
-    """Special quey code for IP4 address objects"""
+class _SAS_IP_Address_Query_Mixin_ (TFL.Meta.Object) :
 
-    _Handled_Compare_Operations = set (("eq", "ne"))
+    def __ne__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.not_ (self.__eq__ (rhs))
+    # end def __ne__
 
-    @TFL.Meta.Once_Property
-    def _QUERY_ATTRIBUTES (self) :
-        return ("numeric_address", )
-    # end def _QUERY_ATTRIBUTES
+# end class _SAS_IP_Address_Query_Mixin_
+
+class _Net_Cmp_Mixin_ (TFL.Meta.Object) :
 
     def in_ (self, rhs) :
         from    sqlalchemy              import sql
         return sql.and_ \
-            ( rhs.numeric_address <= self.numeric_address
-            , rhs.upper_bound     <= self.numeric_address
+            ( self.__super.in_ (rhs)
+            , rhs.mask_len <= self.mask_len
             )
     # end def in_
 
+    def __eq__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ \
+            ( self.__super.__eq__ (rhs)
+            , self.mask_len == rhs.mask_len
+            )
+    # end def __eq__
+
+    def __ge__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.__super.__gt__ (rhs) # yes, really __gt__
+            , sql.and_
+                ( self.mask_len <= rhs.mask_len
+                , self.adr_eq (rhs)
+                )
+            )
+    # end def __ge__
+
+    def __gt__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.__super.__gt__ (rhs)
+            , sql.and_
+                ( self.mask_len < rhs.mask_len
+                , self.adr_eq (rhs)
+                )
+            )
+    # end def __gt__
+
+    def __le__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.__super.__lt__ (rhs) # yes, really __lt__
+            , sql.and_
+                ( self.mask_len >= rhs.mask_len
+                , self.adr_eq (rhs)
+                )
+            )
+    # end def __le__
+
+    def __lt__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.__super.__lt__ (rhs)
+            , sql.and_
+                ( self.mask_len > rhs.mask_len
+                , self.adr_eq (rhs)
+                )
+            )
+    # end def __lt__
+
+# end class _Net_Cmp_Mixin_
+
+class _SAS_IP4_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
+    """Special query code for IP4 address objects"""
+
+    def in_ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ \
+            ( rhs .numeric_address <= self.numeric_address
+            , self.numeric_address <= rhs .upper_bound
+            )
+    # end def in_
+
+    # explicit definition of comparisons, otherwise inheritance (and
+    # consequently the _Net_Cmp_Mixin_) won't work.
+
+    def __eq__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ (self.numeric_address == rhs.numeric_address)
+    # end def __eq__
+    adr_eq = __eq__ # this is used in network comparison
+
+    def __ge__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ (self.numeric_address >= rhs.numeric_address)
+    # end def __ge__
+
+    def __gt__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ (self.numeric_address >  rhs.numeric_address)
+    # end def __ge__
+
+    def __le__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ (self.numeric_address <= rhs.numeric_address)
+    # end def __ge__
+
+    def __lt__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ (self.numeric_address <  rhs.numeric_address)
+    # end def __ge__
+
 # end class _SAS_IP4_Address_Query_Mixin_
+
+class _SAS_IP4_Network_Query_Mixin_ (_Net_Cmp_Mixin_, _SAS_IP4_Address_Query_Mixin_) :
+    pass
+# end class _SAS_IP4_Network_Query_Mixin_
+
+class _SAS_IP6_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
+    """Special query code for IP6 address objects"""
+
+    def in_ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( sql.and_
+                ( rhs .numeric_address_high <  self.numeric_address_high
+                , self.numeric_address_high <  rhs .upper_bound_high
+                )
+            , sql.and_
+                ( rhs .numeric_address_high == self.numeric_address_high
+                , rhs .numeric_address_low  <= self.numeric_address_low
+                , self.numeric_address_low  <= rhs .upper_bound_low
+                )
+            , sql.and_
+                ( self.numeric_address_high == rhs .upper_bound_high
+                , rhs .numeric_address_low  <= self.numeric_address_low
+                , self.numeric_address_low  <= rhs .upper_bound_low
+                )
+            )
+    # end def in_
+
+    def __eq__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.and_ \
+            ( self.numeric_address_high == rhs.numeric_address_high
+            , self.numeric_address_low  == rhs.numeric_address_low
+            )
+    # end def __eq__
+    adr_eq = __eq__ # this is used in network comparison
+
+    def __ge__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.numeric_address_high > rhs.numeric_address_high
+            , sql.and_
+                ( self.numeric_address_high == rhs.numeric_address_high
+                , self.numeric_address_low  >= rhs.numeric_address_low
+                )
+            )
+    # end def __ge__
+
+    def __gt__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.numeric_address_high > rhs.numeric_address_high
+            , sql.and_
+                ( self.numeric_address_high == rhs.numeric_address_high
+                , self.numeric_address_low  >  rhs.numeric_address_low
+                )
+            )
+    # end def __gt__
+
+    def __le__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.numeric_address_high < rhs.numeric_address_high
+            , sql.and_
+                ( self.numeric_address_high == rhs.numeric_address_high
+                , self.numeric_address_low  <= rhs.numeric_address_low
+                )
+            )
+    # end def __le__
+
+    def __lt__ (self, rhs) :
+        from    sqlalchemy              import sql
+        return sql.or_ \
+            ( self.numeric_address_high < rhs.numeric_address_high
+            , sql.and_
+                ( self.numeric_address_high == rhs.numeric_address_high
+                , self.numeric_address_low  <  rhs.numeric_address_low
+                )
+            )
+    # end def __lt__
+
+# end class _SAS_IP6_Address_Query_Mixin_
+
+class _SAS_IP6_Network_Query_Mixin_ (_Net_Cmp_Mixin_, _SAS_IP6_Address_Query_Mixin_) :
+    pass
+# end class _SAS_IP6_Network_Query_Mixin_
+
 
 def _add_query_mixins (module) :
     A2C = TFL.Add_To_Class
     A2C ("SAS_Query_Mixin", A_IP4_Address) (_SAS_IP4_Address_Query_Mixin_)
+    A2C ("SAS_Query_Mixin", A_IP4_Network) (_SAS_IP4_Network_Query_Mixin_)
+    A2C ("SAS_Query_Mixin", A_IP6_Address) (_SAS_IP6_Address_Query_Mixin_)
+    A2C ("SAS_Query_Mixin", A_IP6_Network) (_SAS_IP6_Network_Query_Mixin_)
 # end def _add_query_mixins
 
 GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAS.Query", _add_query_mixins)

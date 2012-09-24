@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    06-Sep-2012 (RS) Creation
+#    23-Sep-2012 (RS) Add `raw = True` to records
 #    ««revision-date»»···
 #--
 
@@ -44,21 +45,25 @@ _test_code = """
     ...     ( left    = z
     ...     , name    = "test.example.com"
     ...     , address = dict (address = "1.2.3.4")
+    ...     , raw     = True
     ...     )
     >>> dnsa1b = DNS.A_Record \\
     ...     ( left    = z
     ...     , name    = "test.example.com"
     ...     , address = dict (address = "1.2.3.5")
+    ...     , raw     = True
     ...     )
     >>> dnsa2 = DNS.A_Record \\
     ...     ( left    = z
     ...     , name    = "test2.example.com"
     ...     , address = dict (address = "2.3.4.5")
+    ...     , raw     = True
     ...     )
     >>> cn1 = DNS.CNAME_Record \\
     ...     ( left    = z
     ...     , name    = "test3.example.com"
     ...     , target  = "test2.example.com"
+    ...     , raw     = True
     ...     )
 """
 
