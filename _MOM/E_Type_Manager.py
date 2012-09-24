@@ -117,6 +117,7 @@
 #     8-Aug-2012 (CT) Guard against exceptions in `example`
 #    11-Aug-2012 (CT) Change `Id_Entity.example` to ignore `Partial_Type`
 #    21-Sep-2012 (CT) Change `Link.__call__` to call `E_Type.child_np`
+#    24-Sep-2012 (CT) Remove `Link._role_to_raw_iter`
 #    ««revision-date»»···
 #--
 
@@ -431,9 +432,7 @@ class Link (Id_Entity) :
         try :
             (args, kw), this = self._epkified (* args, ** kw)
             self._checked_roles (* args, ** kw)
-            if kw.get ("raw", False) :
-                args = tuple (self._role_to_raw_iter (args))
-            else :
+            if not kw.get ("raw", False) :
                 args = tuple \
                     (self._role_to_cooked_iter (args, auto_create = True))
         except MOM.Error.Required_Missing :
@@ -607,16 +606,6 @@ class Link (Id_Entity) :
     # end def _role_to_cooked_iter
 
     _cooked_epk_iter = _role_to_cooked_iter
-
-    def _role_to_raw_iter (self, epk) :
-        for (r, v) in paired (self._etype.Roles, epk) :
-            if r is not None :
-                ### Allow role attributes to be passed as objects even if
-                ### `raw` is specified
-                if isinstance (v, MOM.Entity) :
-                    v = v.epk_raw
-            yield v
-    # end def _role_to_raw_iter
 
 # end class Link
 
