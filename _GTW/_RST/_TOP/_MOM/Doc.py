@@ -30,6 +30,7 @@
 #     8-Aug-2012 (CT) Creation
 #    10-Aug-2012 (CT) Continue creation
 #    25-Sep-2012 (CT) Add support for `graph.svg` to `PNS`
+#    25-Sep-2012 (CT) Split `PNS_svg` and `PNS_svg_doc`
 #    ««revision-date»»···
 #--
 
@@ -111,7 +112,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
             _renderers             = (GTW.RST.Mime_Type.SVG, )
 
             def _response_body (self, resource, request, response) :
-                return resource.PNS_svg
+                return resource.PNS_svg_doc
             # end def _response_body
 
         GET = Grapher_GET # end class
@@ -154,17 +155,14 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     @Once_Property
     @getattr_safe
     def PNS_svg (self) :
-        PNS_graph = self.PNS_graph
-        if PNS_graph is not None :
-            from _MOM._Graph.SVG import Renderer as SVG_Renderer
-            from StringIO import StringIO
-            g = PNS_graph.graph (self.top.App_Type)
-            r = SVG_Renderer (g)
-            f = StringIO ()
-            r.render ()
-            r.canvas.write_to_xml_stream (f)
-            return f.getvalue ()
+        return self._get_svg (want_document = False)
     # end def PNS_svg
+
+    @Once_Property
+    @getattr_safe
+    def PNS_svg_doc (self) :
+        return self._get_svg (want_document = True)
+    # end def PNS_svg_doc
 
     @property
     @getattr_safe
@@ -175,10 +173,10 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     dir_template.setter (_Ancestor.dir_template.fset)
 
-    @property
+    @Once_Property
     @getattr_safe
     def href_svg (self) :
-        if self.PNS_svg is not None :
+        if self.PNS_svg_doc is not None :
             return pp_join (self.abs_href, "graph.svg")
     # end def href_svg
 
@@ -204,6 +202,19 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         return result
     # end def _get_child
 
+    def _get_svg (self, want_document) :
+        PNS_graph = self.PNS_graph
+        if PNS_graph is not None :
+            from _MOM._Graph.SVG import Renderer as SVG_Renderer
+            from StringIO import StringIO
+            g = PNS_graph.graph (self.top.App_Type)
+            r = SVG_Renderer (g, want_document = want_document)
+            f = StringIO ()
+            r.render ()
+            r.canvas.write_to_xml_stream (f)
+            return f.getvalue ()
+    # end def _get_svg
+
 PNS = _RST_TOP_MOM_Doc_PNS_ # end class
 
 _Ancestor = GTW.RST.TOP.Dir
@@ -223,7 +234,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         return result
     # end def resource_from_e_type
 
-    def _gen_entries (self, ) :
+    def _gen_entries (self) :
         app_type = self.top.App_Type
         for k, pns in sorted (app_type.PNS_Map.iteritems ()) :
             k      = app_type.PNS_Aliases_R.get (k, k)

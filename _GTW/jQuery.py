@@ -57,6 +57,7 @@
 #    29-Feb-2012 (CT) Add more `requires` to `GTW_jq_af`
 #     7-Mar-2012 (CT) Add `GTW_e_type_selector` to `GTW_jq_afs`
 #    17-Aug-2012 (MG) Remove `jqPlot`
+#    25-Sep-2012 (CT) Add `GTW_pns_doc_graph`
 #    ««revision-date»»···
 #--
 
@@ -182,6 +183,12 @@ GTW.Script \
     , name     = "GTW_buttonify"
     , rank     = -10
     , requires = (GTW.Script._.jQuery_UI, GTW.Script._.GTW_UI_Icon_Map)
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/jQ/pns_doc_graph.js"
+    , name     = "GTW_pns_doc_graph"
+    , requires = (GTW.Script._.jQuery, )
     )
 
 GTW.Script \

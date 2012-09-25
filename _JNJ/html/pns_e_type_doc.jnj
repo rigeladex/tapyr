@@ -37,12 +37,30 @@
 {%- block document -%}
   <h1>{{ page.title }}</h1>
 
-  {%- if page.href_svg %}
+  {%- if page.PNS_svg %}
+    <div class="MOM-Graph" width="100%">
+      {{ page.PNS_svg }}
+    </div>
+  {%- elif page.href_svg %}
     <div class="MOM-Graph" width="100%">
       <img alt="Graph displaying the essential types of page.name"
         src="{{ page.href_svg }}"/>
     </div>
   {% endif -%}
 {%- endblock document -%}
+
+{%- block body_tail_scripts -%}
+  {{ super () }}
+  {%- if page.PNS_svg %}
+    <script>
+      $(".MOM-Graph svg").gtw_pns_doc_graph
+        ( { name   : "{{ page.name }}"
+          , prefix : "{{ page.name }}."
+          , url    : "{{ page.abs_href }}"
+          }
+        )
+    </script>
+  {% endif -%}
+{% endblock body_tail_scripts -%}
 
 {#- __END__ jinja template: html/pns_e_type_doc.jnj -#}

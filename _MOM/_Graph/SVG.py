@@ -37,6 +37,9 @@
 #    20-Sep-2012 (RS) Use new `Arrow_Head_Bar` for `MOM:AM`
 #    25-Sep-2012 (CT) Add `Title` and `Desc` to `Canvas`
 #    25-Sep-2012 (CT) Use `partial_node_opacity`
+#    25-Sep-2012 (CT) Set `klass` of `Group` in `render_node`
+#    25-Sep-2012 (CT) Add and use `want_document`
+#    25-Sep-2012 (CT) Put `.desc` into `Title`
 #    ««revision-date»»···
 #--
 
@@ -71,11 +74,12 @@ class Renderer (MOM.Graph._Renderer_) :
         , role         = dict (start = "MOM:RM")
         )
     node_size          = D2.Point (160, 100)
+    want_document      = True
 
     _Parameters        = None
 
     def __init__ (self, graph, ** kw) :
-        self.pop_to_self (kw, "encoding")
+        self.pop_to_self (kw, "encoding", "want_document")
         self.pop_to_self (kw, "Parameters", prefix = "_")
         self.__super.__init__ (graph, ** kw)
     # end def __init__
@@ -91,16 +95,22 @@ class Renderer (MOM.Graph._Renderer_) :
 
     def Canvas (self, min_x, min_y, max_x, max_y) :
         P      = self.Parameters
+        graph  = self.graph
         w, h   = (max_x - min_x, max_y - min_y)
-        root   = SVG.Root \
+        result = SVG.Root \
             ( view_box    = "%d %d %d %d" % (min_x, min_y, w, h)
             , width       = "100%"
             )
-        result = SVG.Document \
-            ( root
-            , encoding    = self.encoding
-            , standalone  = False
-            )
+        if self.want_document :
+            result = SVG.Document \
+                ( result
+                , encoding    = self.encoding
+                , standalone  = False
+                )
+            if graph.title :
+                result.add (SVG.Title (graph.title))
+        elif graph.desc :
+            result.add (SVG.Title (graph.desc))
         defs = SVG.Defs \
             ( SVG.Marker.Arrow_Head_Bar
                 ( elid           = "MOM:AM"
@@ -127,11 +137,6 @@ class Renderer (MOM.Graph._Renderer_) :
                 )
             )
         result.add (defs)
-        graph = self.graph
-        if graph.title :
-            result.add (SVG.Title (graph.title))
-        if graph.desc :
-            result.add (SVG.Desc  (graph.desc))
         return result
     # end def Canvas
 
@@ -172,8 +177,7 @@ class Renderer (MOM.Graph._Renderer_) :
             , stroke       = "none"
             )
         grp.add \
-            ( SVG.Title (rel.title)
-            , SVG.Desc  (rel.desc)
+            ( SVG.Title ("%s: %s" % (rel.title, rel.desc))
             , SVG.Polyline
                 ( fill           = "none"
                 , points         = link.points
@@ -223,12 +227,12 @@ class Renderer (MOM.Graph._Renderer_) :
         grp = SVG.Group \
             ( elid         = node.entity.type_name
             , fill         = P.color.node_bg
+            , klass        = None if node.entity.is_partial else "E_Type"
             , opacity      = P.partial_node_opacity
                 if node.entity.is_partial else P.node_opacity
             )
         grp.add \
-            ( SVG.Title (node.entity.title)
-            , SVG.Desc  (node.entity.desc)
+            ( SVG.Title ("%s: %s" % (node.entity.title, node.entity.desc))
             , SVG.Rect
                 ( x            = box.ref_point.x
                 , y            = box.ref_point.y
