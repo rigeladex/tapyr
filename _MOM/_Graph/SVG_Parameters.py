@@ -30,6 +30,7 @@
 #    20-Sep-2012 (RS) Add `link_bg`, change `attr_marker_size`
 #    20-Sep-2012 (RS) Fix marker parameters for new size computation
 #    20-Sep-2012 (RS) smaller `attr_marker_size`
+#    25-Sep-2012 (CT) Add `partial_node_opacity`
 #    ««revision-date»»···
 #--
 
@@ -46,28 +47,29 @@ class SVG_Parameters (Definition) :
 
     class color (Definition) :
 
-        attr_link       = RGB_X     ("#FFA022", alpha = 0.70)
-        is_a_link       = RGB_X     ("#0088DD", alpha = 0.45)
-        link_bg         = RGB_X     ("#FFFFFF")
-        node_bg         = RGB_X     ("#EDEDED")
-        node_border     = RGB_X     ("#999999")
-        role_link       = RGB_X     ("#666666")
-        text            = RGB_X     ("#000033")
+        attr_link           = RGB_X     ("#FFA022", alpha = 0.70)
+        is_a_link           = RGB_X     ("#0088DD", alpha = 0.45)
+        link_bg             = RGB_X     ("#FFFFFF")
+        node_bg             = RGB_X     ("#EDEDED")
+        node_border         = RGB_X     ("#999999")
+        role_link           = RGB_X     ("#666666")
+        text                = RGB_X     ("#000033")
 
     # end class color
 
-    attr_marker_size    = 4
-    attr_marker_ref_x   = None
-    font_family         = "sans-serif"
-    font_size           = 18
-    font_char_width     = font_size  / 2.0
-    is_a_marker_size    = 3
-    is_a_marker_ref_x   = 8
-    line_height         = font_size  * 1.5
-    link_opacity        = 1.0
-    node_opacity        = 1.0
-    link_stroke_width   = 5
-    node_border_width   = 4
+    attr_marker_ref_x       = None
+    attr_marker_size        = 4
+    font_family             = "sans-serif"
+    font_size               = 18
+    font_char_width         = font_size  / 2.0
+    is_a_marker_ref_x       = 8
+    is_a_marker_size        = 3
+    line_height             = font_size  * 1.5
+    link_opacity            = 1.0
+    link_stroke_width       = 5
+    node_border_width       = 4
+    node_opacity            = 1.0
+    partial_node_opacity    = 0.6
 
 # end class SVG_Parameters
 

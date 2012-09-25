@@ -2,7 +2,7 @@
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.OMP.PAP.
+# This module is part of the package GTW.OMP.SWP.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,13 +20,13 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.graph
+#    GTW.OMP.SWP.graph
 #
 # Purpose
-#    Graph describing PAP (partial) object model
+#    Graph describing SWP (partial) object model
 #
 # Revision Dates
-#    24-Sep-2012 (CT) Creation
+#    25-Sep-2012 (CT) Creation
 #    ««revision-date»»···
 #--
 
@@ -36,7 +36,7 @@ from   _GTW                   import GTW
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
-import _GTW._OMP._SRM
+import _GTW._OMP._SWP
 
 from   _MOM._Graph.Spec       import Attr, Child, ET, IS_A, Role, Skip
 
@@ -49,44 +49,20 @@ from   _TFL.I18N              import _, _T
 def graph (app_type) :
     return MOM.Graph.Spec.Graph \
         ( app_type
-        , ET.PAP.Subject_has_Property
-            ( Role.left
-                ( Child.PAP.Company
-                    ( offset      = CD.NW
-                    , source_side = "E"
-                    , target_side = "W"
+        , ET.SWP.Gallery
+            ( IS_A.SWP.Object_PN
+                ( Child.SWP.Page
+                    ( Child.SWP.Page_Y (offset = CD.W)
+                    , Child.SWP.Clip_X (offset = CD.E)
+                    , offset = CD.S
                     )
-                , Child.PAP.Person
-                    ( ET.PAP.Entity_created_by_Person
-                        ( Role.left (offset = CD.S)
-                        , label   = "_created_by_"
-                        , offset  = CD.S
-                        )
-                    , offset      = CD.SW
-                    , source_side = "E"
-                    , target_side = "W"
-                    )
-                , offset = CD.W
+                , ET.SWP.Clip_O  (offset = CD.E)
+                , offset = CD.S
                 )
-            , Role.right
-                ( Child.PAP.Address
-                    ( offset      = CD.N
-                    )
-                , Child.PAP.Email
-                    ( offset      = CD.E
-                    )
-                , Child.PAP.Phone
-                    ( offset      = CD.S
-                    )
-                , offset = CD.E
-                )
-            , Child.PAP.Subject_has_Phone
-                ( Role.left (source_side = "W", target_side = "E")
-                , offset      = CD.S
-                )
+            , ET.SWP.Picture (offset = CD.E)
             )
-        , desc  = _T ("Graph displaying PAP partial object model")
-        , title = _T ("PAP graph")
+        , desc  = _T ("Graph displaying SWP partial object model")
+        , title = _T ("SWP graph")
         )
 # end def graph
 
@@ -94,21 +70,21 @@ class Command (MOM.Graph.Command) :
 
     @property
     def PNS (self) :
-        return GTW.OMP.PAP
+        return GTW.OMP.SWP
     # end def PNS
 
     @property
     def PNS_Aliases (self) :
         return dict \
-            ( PAP             = GTW.OMP.PAP
+            ( SWP             = GTW.OMP.SWP
             )
     # end def PNS_Aliases
 
 # end class Command
 
 if __name__ != "__main__" :
-    GTW.OMP.PAP._Export ("*")
+    GTW.OMP.SWP._Export ("*")
 else :
-    import _GTW._OMP._PAP.import_PAP
+    import _GTW._OMP._SWP.import_SWP
     Command () ()
-### __END__ GTW.OMP.PAP.graph
+### __END__ GTW.OMP.SWP.graph

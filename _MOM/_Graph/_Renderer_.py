@@ -32,6 +32,7 @@
 #     3-Sep-2012 (CT) Factor `points_gen` to `Relation`
 #     6-Sep-2012 (CT) Fix `transform`, `min_x`, `min_y`
 #    20-Sep-2012 (CT) Call `render_link` in `render`, not in `render_node`
+#    25-Sep-2012 (CT) Change `render` to sort by `type_name`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,7 @@ class _Renderer_ (TFL.Meta.Object) :
         self.pop_to_self (kw, "node_size", "default_grid_scale")
         self.pop_to_self (kw, "grid_size", prefix = "_")
         self.graph      = graph
+        Node            = self.Node
         self.nodes = ns = list (Node (e, self) for e in self.graph.nodes ())
         self.node_map   = dict ((n.entity.type_name, n) for n in ns)
         graph.setup_links ()
@@ -242,10 +244,11 @@ class _Renderer_ (TFL.Meta.Object) :
 
     def render (self) :
         canvas = self.canvas
-        for n in self.nodes :
+        nodes  = sorted (self.nodes, key = TFL.Getter.entity.type_name)
+        for n in nodes :
             self.render_node (n, canvas)
-        link_sort_key = TFL.Sorted_By ("slack", "type_name")
-        for n in self.nodes :
+        link_sort_key = TFL.Sorted_By ("source.type_name", "target.type_name")
+        for n in nodes :
             for l in sorted (n.link_map.itervalues (), key = link_sort_key) :
                 self.render_link (l, canvas)
     # end def render

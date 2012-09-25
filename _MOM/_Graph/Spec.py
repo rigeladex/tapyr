@@ -34,6 +34,7 @@
 #     3-Sep-2012 (CT) Call `add_guides`, `place_connectors` in `setup_links`
 #     5-Sep-2012 (CT) Call `improve_connectors`, `add_guides` -> `set_guides`
 #     6-Sep-2012 (CT) Add `guide_offset`
+#    25-Sep-2012 (CT) Add `desc` and `title` to `Graph`
 #    ««revision-date»»···
 #--
 
@@ -221,7 +222,11 @@ class Graph (TFL.Meta.Object) :
 
     _setup_links_p = False
 
-    def __init__ (self, app_type, * entities) :
+    desc           = None
+    title          = None
+
+    def __init__ (self, app_type, * entities, ** kw) :
+        self.pop_to_self (kw, "desc", "title")
         self.app_type = app_type
         self.cid      = 0
         self.node_map = {}

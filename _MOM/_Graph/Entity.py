@@ -35,6 +35,7 @@
 #     3-Sep-2012 (CT) Revamp placing of relations connectors and guides
 #     4-Sep-2012 (CT) Add `Id_Entity`
 #     5-Sep-2012 (CT) Add `improve_connectors`, `add_guides` -> `set_guides`
+#    25-Sep-2012 (CT) Add `is_partial`
 #    ««revision-date»»···
 #--
 
@@ -377,6 +378,11 @@ class Entity (TFL.Meta.Object) :
     def desc (self) :
         return self.e_type.__doc__
     # end def desc
+
+    @TFL.Meta.Once_Property
+    def is_partial (self) :
+        return self.e_type.is_partial
+    # end def is_partial
 
     @property
     def label (self) :

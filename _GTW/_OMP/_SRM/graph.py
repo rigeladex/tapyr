@@ -43,9 +43,12 @@ from   _TFL                   import TFL
 import _GTW._OMP._SRM
 
 from   _MOM._Graph.Spec       import Attr, Child, ET, IS_A, Role, Skip
+
+import _MOM._Graph.Command
 import _MOM._Graph.Entity
 
 from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL.I18N              import _, _T
 
 def graph (app_type) :
     return MOM.Graph.Spec.Graph \
@@ -91,27 +94,32 @@ def graph (app_type) :
                 , offset = CD.N * 2
                 )
             )
+        , desc  = _T ("Graph displaying SRM partial object model")
+        , title = _T ("SRM graph")
         )
 # end def graph
+
+class Command (MOM.Graph.Command) :
+
+    @property
+    def PNS (self) :
+        return GTW.OMP.SRM
+    # end def PNS
+
+    @property
+    def PNS_Aliases (self) :
+        return dict \
+            ( PAP             = GTW.OMP.PAP
+            , SRM             = GTW.OMP.SRM
+            )
+    # end def PNS_Aliases
+
+# end class Command
 
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")
 else :
     import _GTW._OMP._PAP.import_PAP
     import _GTW._OMP._SRM.import_SRM
-    import _MOM._Graph.Command
-
-    class Command (MOM.Graph.Command) :
-
-        PNS                   = GTW.OMP.SRM
-
-        PNS_Aliases           = dict \
-            ( PAP             = GTW.OMP.PAP
-            , SRM             = GTW.OMP.SRM
-            )
-
-    # end class Command
-
-    command = Command ()
-    command ()
+    Command () ()
 ### __END__ GTW.OMP.SRM.graph

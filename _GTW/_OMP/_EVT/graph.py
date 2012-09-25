@@ -39,9 +39,12 @@ from   _TFL                   import TFL
 import _GTW._OMP._SRM
 
 from   _MOM._Graph.Spec       import Attr, Child, ET, IS_A, Role, Skip
+
+import _MOM._Graph.Command
 import _MOM._Graph.Entity
 
 from   _TFL._D2               import Cardinal_Direction as CD
+from   _TFL.I18N              import _, _T
 
 def graph (app_type) :
     return MOM.Graph.Spec.Graph \
@@ -54,27 +57,32 @@ def graph (app_type) :
                 , offset = CD.E
                 )
             )
+        , desc  = _T ("Graph displaying EVT partial object model")
+        , title = _T ("EVT graph")
         )
 # end def graph
+
+class Command (MOM.Graph.Command) :
+
+    @property
+    def PNS (self) :
+        return GTW.OMP.EVT
+    # end def PNS
+
+    @property
+    def PNS_Aliases (self) :
+        return dict \
+            ( EVT             = GTW.OMP.EVT
+            , SWP             = GTW.OMP.SWP
+            )
+    # end def PNS_Aliases
+
+# end class Command
 
 if __name__ != "__main__" :
     GTW.OMP.EVT._Export ("*")
 else :
     import _GTW._OMP._EVT.import_EVT
     import _GTW._OMP._SWP.import_SWP
-    import _MOM._Graph.Command
-
-    class Command (MOM.Graph.Command) :
-
-        PNS                   = GTW.OMP.EVT
-
-        PNS_Aliases           = dict \
-            ( EVT             = GTW.OMP.EVT
-            , SWP             = GTW.OMP.SWP
-            )
-
-    # end class Command
-
-    command = Command ()
-    command ()
+    Command () ()
 ### __END__ GTW.OMP.EVT.graph

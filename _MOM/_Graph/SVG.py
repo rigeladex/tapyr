@@ -35,6 +35,8 @@
 #    19-Sep-2012 (RS) Use `Arrow_Head_A` for `MOM:AM` marker
 #    20-Sep-2012 (RS) Use `marker_width` and `marker_width` for scaling
 #    20-Sep-2012 (RS) Use new `Arrow_Head_Bar` for `MOM:AM`
+#    25-Sep-2012 (CT) Add `Title` and `Desc` to `Canvas`
+#    25-Sep-2012 (CT) Use `partial_node_opacity`
 #    ««revision-date»»···
 #--
 
@@ -125,6 +127,11 @@ class Renderer (MOM.Graph._Renderer_) :
                 )
             )
         result.add (defs)
+        graph = self.graph
+        if graph.title :
+            result.add (SVG.Title (graph.title))
+        if graph.desc :
+            result.add (SVG.Desc  (graph.desc))
         return result
     # end def Canvas
 
@@ -216,7 +223,8 @@ class Renderer (MOM.Graph._Renderer_) :
         grp = SVG.Group \
             ( elid         = node.entity.type_name
             , fill         = P.color.node_bg
-            , opacity      = P.node_opacity
+            , opacity      = P.partial_node_opacity
+                if node.entity.is_partial else P.node_opacity
             )
         grp.add \
             ( SVG.Title (node.entity.title)
