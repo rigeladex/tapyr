@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Aug-2012 (MG) Creation
+#    25-Sep-2012 (CT) Fix `_register` errors
 #    ««revision-date»»···
 #--
 
@@ -169,12 +170,17 @@ _activate        = r"""
 """
 
 _register        = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"])
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> resp   = simulate_get (root, "/Auth/register.html")
-    >>> print ("".join (str (t) for t in find_tag (resp, "input")))
-        <input type="text" id="F_username" name="username" /><input type="password" id="F_npassword" name="npassword" /><input type="password" id="F_vpassword" name="vpassword" /><input type="submit" value="Update Email" title="Update Email" /><input type="hidden" name="next" />
+    >>> print ("\n".join (str (sorted (t.attrs)) for t in find_tag (resp, "input")))
+    [(u'id', u'F_username'), (u'name', u'username'), (u'type', u'text')]
+    [(u'id', u'F_npassword'), (u'name', u'npassword'), (u'type', u'password')]
+    [(u'id', u'F_vpassword'), (u'name', u'vpassword'), (u'type', u'password')]
+    [(u'title', u'Update Email'), (u'type', u'submit'), (u'value', u'Update Email')]
+    [(u'name', u'next'), (u'type', u'hidden')]
 
     >>> data   = dict ()
     >>> resp   = simulate_post (root, "/Auth/register.html", data = data)
@@ -218,7 +224,17 @@ _register        = r"""
         </li>
 
     >>> data ["vpassword"] = "new-pass"
-    >>> resp   = simulate_post (root, "/Auth/register.html", data = data)
+    >>> resp   = simulate_post (root, "/Auth/register.html", data = data) # doctest:+ELLIPSIS
+    Email via localhost from webmaster@ to ['new-account']
+    Content-type: text/plain; charset=utf-8
+    Date: ...
+    Subject: Email confirmation for localhost
+    To: new-account
+    From: webmaster@
+    <BLANKLINE>
+    Confirm new email address new-account
+    <BLANKLINE>
+    To verify the new email address, please click the following link: http://localhost/Auth/action?...
     >>> errors = find_tag (resp, "li", class_ = "error")
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>

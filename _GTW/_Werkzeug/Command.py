@@ -69,6 +69,8 @@
 #     6-Sep-2012 (CT) Add and use `_create_cache_p`
 #    13-Sep-2012 (CT) Redefine `app_type` to call
 #                     `GTW.AFS.MOM.Spec.setup_defaults`, if the module is loaded
+#    25-Sep-2012 (CT) Add `_get_smtp` to honor `<Tester>` and `<Logger>`
+#    25-Sep-2012 (CT) Pass `cmd.log_level` to `I18N.load`
 #    ««revision-date»»···
 #--
 
@@ -320,8 +322,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , log_level           = cmd.log_level
                 , page_template_name  = cmd.template_file
                 , session_id          = bytes ("SESSION_ID")
-                , smtp                =
-                    TFL.SMTP (cmd.smtp_server) if cmd.smtp_server else None
+                , smtp                = self._get_smtp (cmd)
                 , use_www_debugger    = cmd.debug
                 , user_session_ttl    = cmd.user_session_ttl.date_time_delta
                 , ** kw
@@ -346,6 +347,18 @@ class GT2W_Command (GTW.OMP.Command) :
                 )
         return result
     # end def _get_root
+
+    def _get_smtp (self, cmd) :
+        name   = cmd.smtp_server
+        result = None
+        if name == "<Tester>" :
+            result = TFL.SMTP_Tester ()
+        elif name == "<Logger>" :
+            result = TFL.SMTP_Logger ()
+        elif name :
+            result = TFL.SMTP (name)
+        return result
+    # end def _get_smtp
 
     def _handle_run_server (self, cmd) :
         import werkzeug.serving
@@ -379,6 +392,7 @@ class GT2W_Command (GTW.OMP.Command) :
                     , domains    = ("messages", )
                     , use        = cmd.locale_code or "en"
                     , locale_dir = sos.path.join (self.app_dir, "locale")
+                    , log_level  = cmd.log_level
                     )
             except ImportError :
                 pass

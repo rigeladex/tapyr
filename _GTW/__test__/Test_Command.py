@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Sep-2012 (CT) Creation (factored from _GTW/__test__/model.py)
 #    18-Sep-2012 (CT) Redefine `__init__` to set `ANS.Version`
+#    25-Sep-2012 (CT) Add `smtp_server` default `<Tester>`
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,7 @@ class GTW_Test_Command (_Ancestor) :
 
     _defaults             = dict \
         ( config          = "~/.gtw-test.config"
+        , smtp_server     = "<Tester>"
         )
 
     Backend_Parameters    = dict \
