@@ -1,0 +1,48 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: pns_e_type_doc.jnj -#}
+{#
+## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/pns_e_type_doc.jnj
+##
+## Purpose
+##    Template for a page documenting the E_Types of a specific package
+##    namespace
+##
+## Revision Dates
+##    25-Sep-2012 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- block document -%}
+  <h1>{{ page.title }}</h1>
+
+  {%- if page.href_svg %}
+    <div class="MOM-Graph" width="100%">
+      <img alt="Graph displaying the essential types of page.name"
+        src="{{ page.href_svg }}"/>
+    </div>
+  {% endif -%}
+{%- endblock document -%}
+
+{#- __END__ jinja template: html/pns_e_type_doc.jnj -#}

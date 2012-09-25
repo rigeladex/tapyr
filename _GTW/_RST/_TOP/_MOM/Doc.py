@@ -29,6 +29,7 @@
 # Revision Dates
 #     8-Aug-2012 (CT) Creation
 #    10-Aug-2012 (CT) Continue creation
+#    25-Sep-2012 (CT) Add support for `graph.svg` to `PNS`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,9 @@ from   _MOM.import_MOM          import MOM
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.Decorator           import getattr_safe
+
+from   posixpath                import join as pp_join
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -96,7 +100,23 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     _real_name                 = "PNS"
 
+    dir_template_name          = "pns_e_type_doc"
     E_Type                     = E_Type
+
+    class Grapher (GTW.RST.TOP.Page) :
+
+        class Grapher_GET (GTW.RST.TOP.Page.GET) :
+
+            _real_name             = "GET"
+            _renderers             = (GTW.RST.Mime_Type.SVG, )
+
+            def _response_body (self, resource, request, response) :
+                return resource.PNS_svg
+            # end def _response_body
+
+        GET = Grapher_GET # end class
+
+    # end class Grapher
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "PNS", prefix = "_")
@@ -104,16 +124,63 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         if not self.short_title :
             self.short_title = self.PNS._._bname
         if not self.title :
-            self.title = self.PNS.__doc__
+            self.title = \
+                (  self.PNS.__doc__
+                or _T ("Documentation for package namespace %s")
+                     % (self.short_title, )
+                )
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def PNS (self) :
         result = self._PNS
         if isinstance (result, basestring) :
             result = self._PNS = self.top.App_Type.PNS_Map [result]
         return result
     # end def PNS
+
+    @Once_Property
+    @getattr_safe
+    def PNS_graph (self) :
+        PNS = self.PNS
+        if PNS :
+            try :
+                return PNS._Import_Module ("graph")
+            except ImportError :
+                pass
+    # end def PNS_graph
+
+    @Once_Property
+    @getattr_safe
+    def PNS_svg (self) :
+        PNS_graph = self.PNS_graph
+        if PNS_graph is not None :
+            from _MOM._Graph.SVG import Renderer as SVG_Renderer
+            from StringIO import StringIO
+            g = PNS_graph.graph (self.top.App_Type)
+            r = SVG_Renderer (g)
+            f = StringIO ()
+            r.render ()
+            r.canvas.write_to_xml_stream (f)
+            return f.getvalue ()
+    # end def PNS_svg
+
+    @property
+    @getattr_safe
+    def dir_template (self) :
+        if self.PNS_graph :
+            return self.__super.dir_template
+    # end def dir_template
+
+    dir_template.setter (_Ancestor.dir_template.fset)
+
+    @property
+    @getattr_safe
+    def href_svg (self) :
+        if self.PNS_svg is not None :
+            return pp_join (self.abs_href, "graph.svg")
+    # end def href_svg
 
     def _add_index (self, l) :
         self._entries.sort (key = TFL.Getter.short_title)
@@ -128,6 +195,14 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
             if etf (ET) :
                 yield self.E_Type (ETM = str (ET.type_name), parent = self)
     # end def _gen_entries
+
+    def _get_child (self, child, * grandchildren) :
+        if child == "graph" and not grandchildren :
+            result = self.Grapher (name = child, parent = self)
+        else :
+            result = self.__super._get_child (child, * grandchildren)
+        return result
+    # end def _get_child
 
 PNS = _RST_TOP_MOM_Doc_PNS_ # end class
 

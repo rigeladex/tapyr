@@ -32,6 +32,7 @@
 #     8-Aug-2012 (CT) Add `rst_cargo` to `_Template_Mixin_.rendered`
 #    10-Aug-2012 (CT) Consider `resource.ext` in `Render_Man.__call__`
 #    10-Aug-2012 (CT) Fix `Render_Man.render_acceptable`
+#    25-Sep-2012 (CT) Add `SVG`
 #    ««revision-date»»···
 #--
 
@@ -218,6 +219,23 @@ class RST_JSON (_Base_) :
     # end def rendered
 
 JSON = RST_JSON # end class
+
+class RST_SVG (_Base_) :
+    """Renderer for XML mime types.
+
+       http://tools.ietf.org/html/rfc3023
+    """
+
+    _real_name                 = "SVG"
+    mime_types                 = ("image/svg+xml", )
+
+    def rendered (self, request, response, body) :
+        if not isinstance (body, basestring) :
+            raise TypeError ("Expected string; got: %r" % (body, ))
+        return body
+    # end def rendered
+
+SVG = RST_SVG # end class
 
 class RST_TXT (_Base_) :
     """Renderer for mime type text."""

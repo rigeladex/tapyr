@@ -75,6 +75,7 @@
 #     6-Aug-2012 (CT) Add `etag`
 #     6-Aug-2012 (CT) Remove `e_type_aggregator` (template doesn't exist)
 #     8-Aug-2012 (CT) Add `e_type_doc`
+#    25-Sep-2012 (CT) Add `pns_e_type_doc`
 #    ««revision-date»»···
 #--
 
@@ -564,6 +565,7 @@ Template ("e_type_change",                "html/e_type_change.jnj")
 Template ("gallery",                      "html/gallery.jnj")
 Template ("login",                        "html/login.jnj")
 Template ("photo",                        "html/photo.jnj")
+Template ("pns_e_type_doc",               "html/pns_e_type_doc.jnj")
 Template ("regatta_calendar",             "html/regatta_calendar.jnj")
 Template ("regatta_page",                 "html/regatta_page.jnj")
 Template ("regatta_register_email",       "email/regatta_register.jnj")
