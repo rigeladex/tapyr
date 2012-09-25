@@ -33,6 +33,7 @@
 #     6-Sep-2012 (CT) Fix `transform`, `min_x`, `min_y`
 #    20-Sep-2012 (CT) Call `render_link` in `render`, not in `render_node`
 #    25-Sep-2012 (CT) Change `render` to sort by `type_name`
+#    25-Sep-2012 (CT) Change `render` to sort links by `rid`
 #    ««revision-date»»···
 #--
 
@@ -247,7 +248,7 @@ class _Renderer_ (TFL.Meta.Object) :
         nodes  = sorted (self.nodes, key = TFL.Getter.entity.type_name)
         for n in nodes :
             self.render_node (n, canvas)
-        link_sort_key = TFL.Sorted_By ("source.type_name", "target.type_name")
+        link_sort_key = TFL.Sorted_By ("relation.rid")
         for n in nodes :
             for l in sorted (n.link_map.itervalues (), key = link_sort_key) :
                 self.render_link (l, canvas)
