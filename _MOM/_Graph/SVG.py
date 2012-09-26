@@ -41,6 +41,7 @@
 #    25-Sep-2012 (CT) Add and use `want_document`
 #    25-Sep-2012 (CT) Put `.desc` into `Title`
 #    26-Sep-2012 (CT) Don't consider `is_partial` for `klass`
+#    26-Sep-2012 (CT) Add class `MOM-Graph` to `Root` element
 #    ««revision-date»»···
 #--
 
@@ -99,7 +100,8 @@ class Renderer (MOM.Graph._Renderer_) :
         graph  = self.graph
         w, h   = (max_x - min_x, max_y - min_y)
         result = SVG.Root \
-            ( view_box    = "%d %d %d %d" % (min_x, min_y, w, h)
+            ( klass       = "MOM-Graph"
+            , view_box    = "%d %d %d %d" % (min_x, min_y, w, h)
             , width       = "100%"
             )
         if self.want_document :

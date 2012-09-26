@@ -30,6 +30,7 @@
 ##
 ## Revision Dates
 ##    25-Sep-2012 (CT) Creation
+##    26-Sep-2012 (CT) Don't wrap inline svg in `div`
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,9 +39,7 @@
   <h1>{{ page.title }}</h1>
 
   {%- if page.PNS_svg %}
-    <div class="MOM-Graph" width="100%">
-      {{ page.PNS_svg }}
-    </div>
+    {{ page.PNS_svg }}
   {%- elif page.href_svg %}
     <div class="MOM-Graph" width="100%">
       <img alt="Graph displaying the essential types of page.name"
@@ -53,7 +52,7 @@
   {{ super () }}
   {%- if page.PNS_svg %}
     <script>
-      $(".MOM-Graph svg").gtw_pns_doc_graph
+      $("svg.MOM-Graph").gtw_pns_doc_graph
           ({ qurl : "{{ page.parent.abs_href }}?E_Type=" })
     </script>
   {% endif -%}

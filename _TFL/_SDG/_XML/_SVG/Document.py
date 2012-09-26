@@ -35,6 +35,7 @@
 #    20-Sep-2012 (RS) marker `size` is now `design_size` use
 #                     `marker_width`, `marker_height` for scaling
 #    20-Sep-2012 (RS) Add `Arrow_Head_Bar`
+#    26-Sep-2012 (CT) Add `klass` to `Root`
 #    ««revision-date»»···
 #--
 
@@ -391,6 +392,7 @@ Root                        = TFL.SDG.XML.Elem_Type \
     , height                = None
     , init_arg_defaults     = dict
         (x_attrs            = { "xmlns:xlink" : "http://www.w3.org/1999/xlink"})
+    , klass                 = None
     , version               = "1.1"
     , view_box              = None
     , width                 = None
@@ -569,7 +571,7 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", design_size = 12, ref_x = None
         ref_x = 0
     result = cls \
         ( Path
-            ( d = "m %s,%s 0,%s %s,%s %s,%s z" % 
+            ( d = "m %s,%s 0,%s %s,%s %s,%s z" %
                 ( 0
                 , size * 3 / 4.
                 , -(size / 2.)

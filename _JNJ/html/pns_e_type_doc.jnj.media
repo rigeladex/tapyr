@@ -32,15 +32,9 @@
 
 style_sheet = Style_Sheet \
     ( Rule
-        ( ".MOM-Graph"
-        , position           = "relative"
+        ( "svg.MOM-Graph"
+        , display            = "block"
         , vertical_align     = "top"
-        )
-    ,  Rule
-        ( "svg"
-        , left               = 0
-        , position           = "absolute"
-        , top                = 0
         )
     )
 
