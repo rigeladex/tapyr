@@ -16,6 +16,7 @@
 //
 // Revision Dates
 //    25-Sep-2012 (CT) Creation
+//    26-Sep-2012 (CT) Use `.click` not `.on` to bind `cb_click_node`
 //    ««revision-date»»···
 //--
 
@@ -42,8 +43,9 @@
             window.open (url).focus ();
         };
         options.svg$ = this;
-        this.find (selectors.node).css ("cursor", "pointer");
-        this.on ("click", selectors.node, cb_click_node);
+        this.find  (selectors.node)
+            .click (cb_click_node)
+            .css   ("cursor", "pointer");
         return this;
     };
   } (jQuery)
