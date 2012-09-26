@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
+#    26-Sep-2012 (CT) Fix typo in `_Export`
 #    ««revision-date»»···
 #--
 
@@ -96,7 +97,7 @@ class Command (MOM.Graph.Command) :
 # end class Command
 
 if __name__ != "__main__" :
-    GTW.OMP.PAP._Export ("*")
+    GTW.OMP.Auth._Export ("*")
 else :
     import _GTW._OMP._Auth.import_Auth
     Command () ()
