@@ -649,24 +649,53 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc"))
     { 'json' :
         { 'entries' :
-            [ 'PAP-Address'
+            [ 'MOM-Id_Entity'
+            , 'MOM-Link'
+            , 'MOM-Link1'
+            , 'MOM-Link2'
+            , 'MOM-Link2_Ordered'
+            , 'MOM-Link3'
+            , 'MOM-Named_Object'
+            , 'MOM-Object'
+            , 'MOM-_MOM_Link_n_'
+            , 'PAP-Address'
             , 'PAP-Company'
             , 'PAP-Company_has_Address'
             , 'PAP-Company_has_Email'
             , 'PAP-Company_has_Phone'
             , 'PAP-Email'
             , 'PAP-Entity_created_by_Person'
+            , 'PAP-Id_Entity'
+            , 'PAP-Link1'
+            , 'PAP-Link2'
+            , 'PAP-Link2_Ordered'
+            , 'PAP-Link3'
+            , 'PAP-Named_Object'
+            , 'PAP-Object'
             , 'PAP-Person'
             , 'PAP-Person_has_Address'
             , 'PAP-Person_has_Email'
             , 'PAP-Person_has_Phone'
             , 'PAP-Phone'
+            , 'PAP-Property'
+            , 'PAP-Subject'
+            , 'PAP-Subject_has_Address'
+            , 'PAP-Subject_has_Email'
+            , 'PAP-Subject_has_Phone'
+            , 'PAP-Subject_has_Property'
             , 'SRM-Boat'
             , 'SRM-Boat_Class'
             , 'SRM-Boat_in_Regatta'
             , 'SRM-Club'
             , 'SRM-Crew_Member'
             , 'SRM-Handicap'
+            , 'SRM-Id_Entity'
+            , 'SRM-Link1'
+            , 'SRM-Link2'
+            , 'SRM-Link2_Ordered'
+            , 'SRM-Link3'
+            , 'SRM-Named_Object'
+            , 'SRM-Object'
             , 'SRM-Page'
             , 'SRM-Race_Result'
             , 'SRM-Regatta'
@@ -680,6 +709,14 @@ _test_doc = r"""
             , 'SWP-Clip_O'
             , 'SWP-Clip_X'
             , 'SWP-Gallery'
+            , 'SWP-Id_Entity'
+            , 'SWP-Link1'
+            , 'SWP-Link2'
+            , 'SWP-Link2_Ordered'
+            , 'SWP-Link3'
+            , 'SWP-Named_Object'
+            , 'SWP-Object'
+            , 'SWP-Object_PN'
             , 'SWP-Page'
             , 'SWP-Page_Y'
             , 'SWP-Picture'
@@ -772,6 +809,12 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Boat racing in a regatta.'
+        , 'is_partial' : False
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Link2'
+              , 'url' : '/Doc/SRM-Link2'
+              }
+            ]
         , 'type_name' : 'SRM.Boat_in_Regatta'
         , 'ui_name' : 'SRM.Boat_in_Regatta'
         , 'url' : '/Doc/SRM-Boat_in_Regatta'
@@ -915,6 +958,12 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Sailing regatta for one class or handicap.'
+        , 'is_partial' : True
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Link1'
+              , 'url' : '/Doc/SRM-Link1'
+              }
+            ]
         , 'type_name' : 'SRM.Regatta'
         , 'ui_name' : 'SRM.Regatta'
         , 'url' : '/Doc/SRM-Regatta'
@@ -1066,6 +1115,7 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Regatta for a single class of sail boats.'
+        , 'is_partial' : False
         , 'parents' :
             [ { 'type_name' : 'SRM.Regatta'
               , 'url' : '/Doc/SRM-Regatta'
@@ -1210,6 +1260,7 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Regatta for boats in a handicap system.'
+        , 'is_partial' : False
         , 'parents' :
             [ { 'type_name' : 'SRM.Regatta'
               , 'url' : '/Doc/SRM-Regatta'
@@ -1284,6 +1335,12 @@ _test_doc = r"""
               }
             ]
         , 'description' : 'Crew member of a `Boat_in_Regatta`.'
+        , 'is_partial' : False
+        , 'parents' :
+            [ { 'type_name' : 'SRM.Link2'
+              , 'url' : '/Doc/SRM-Link2'
+              }
+            ]
         , 'type_name' : 'SRM.Crew_Member'
         , 'ui_name' : 'SRM.Crew_Member'
         , 'url' : '/Doc/SRM-Crew_Member'

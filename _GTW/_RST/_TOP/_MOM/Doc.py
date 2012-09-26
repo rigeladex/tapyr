@@ -32,6 +32,7 @@
 #    25-Sep-2012 (CT) Add support for `graph.svg` to `PNS`
 #    25-Sep-2012 (CT) Split `PNS_svg` and `PNS_svg_doc`
 #    26-Sep-2012 (CT) Add `App_Type.GET` to handle `?E_Type` queries
+#    26-Sep-2012 (CT) Set `hidden` dependent on `is_relevant`
 #    ««revision-date»»···
 #--
 
@@ -192,7 +193,11 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         etf      = self.e_type_filter
         for ET in app_type.etypes_by_pns [PNS.__name__] :
             if etf (ET) :
-                yield self.E_Type (ETM = str (ET.type_name), parent = self)
+                yield self.E_Type \
+                    ( ETM    = str (ET.type_name)
+                    , hidden = not ET.is_relevant
+                    , parent = self
+                    )
     # end def _gen_entries
 
     def _get_child (self, child, * grandchildren) :
@@ -273,6 +278,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
                 parent = self._get_child (* names [:-1])
             entry = self.PNS (PNS = pns, name = pns._._bname, parent = parent)
             if entry.entries :
+                entry.hidden = all (e.hidden for e in entry.entries)
                 if parent is self :
                     yield entry
                 else :

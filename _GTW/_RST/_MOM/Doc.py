@@ -31,6 +31,8 @@
 #    10-Aug-2012 (CT) Continue creation..
 #    11-Aug-2012 (CT) Add `cross_references`
 #    13-Sep-2012 (CT) Sort `App_Type._gen_entries` by `type_name`
+#    26-Sep-2012 (CT) Remove `is_relevant` from `e_type_filter`
+#    26-Sep-2012 (CT) Add `is_partial` to `_response_body`
 #    ««revision-date»»···
 #--
 
@@ -66,11 +68,7 @@ class _RST_MOM_Doc_Mixin_ (TFL.Meta.Object) :
     # end def change_info
 
     def e_type_filter (self, e_type) :
-        return \
-            (   issubclass (e_type, MOM.Id_Entity)
-            and not e_type.is_locked ()
-            and e_type.is_relevant
-            )
+        return issubclass (e_type, MOM.Id_Entity) and not e_type.is_locked ()
     # end def e_type_filter
 
 Mixin = _RST_MOM_Doc_Mixin_ # end class
@@ -169,6 +167,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             rel_root = E_Type.relevant_root
             result   = dict \
                 ( description = _T (E_Type.__doc__)
+                , is_partial  = E_Type.is_partial
                 , type_name   = E_Type.type_name
                 , ui_name     = _T (E_Type.type_name)
                 , url         = resource.abs_href

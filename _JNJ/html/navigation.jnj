@@ -114,7 +114,7 @@
 {%- macro entries (link_list, level = 0) -%}
   {% if link_list -%}
   <ul>
-    {%- for link in link_list if not link.hidden %}
+    {%- for link in link_list if (not link.show_in_nav) or link.show_in_nav (nav_page) %}
       {{ entry (link, level) }}
     {% endfor -%}
   </ul>
@@ -236,7 +236,7 @@
           <p>Desc: {{ link.desc }}</p>
           <p>Template: {{ link.template }}</p>
           <p>Type: {{ link.Type }}</p>
-          <p>Target: {{ link.target.href }}</p>
+          <p>Target: {{ link.target }}</p>
           <p>Object: {{ link.obj }}</p>
           {% if link.pictures %}
             <p>Picture Url: {{ link.pictures [0].href }}</p>

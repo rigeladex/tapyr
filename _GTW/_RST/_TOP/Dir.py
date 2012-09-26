@@ -39,6 +39,9 @@
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #    17-Sep-2012 (CT) Ignore `TypeError` in `_effective`
 #    26-Sep-2012 (CT) Factor `_effective_entry`
+#    26-Sep-2012 (CT) Change `_effective_entry` to consider `self.hidden`
+#    26-Sep-2012 (CT) Remove `hidden` from `is_current_dir`
+#    26-Sep-2012 (CT) Redefine `show_in_nav`
 #    ««revision-date»»···
 #--
 
@@ -65,10 +68,9 @@ class _TOP_Dir_Base_ (GTW.RST.TOP._Base_, GTW.RST._Dir_Base_) :
     # end def add_entries
 
     def is_current_dir (self, page) :
-        if not self.hidden :
-            p = page.href
-            s = self.href
-            return p == s or (p.startswith (s) and p [len (s)] == "/")
+        p = page.href
+        s = self.href
+        return p == s or (p.startswith (s) and p [len (s)] == "/")
     # end def is_current_dir
 
     def _add_index (self, l) :
@@ -111,9 +113,20 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
     @property
     @getattr_safe
     def _effective_entry (self) :
-        page = first (e for e in self.entries if not e.hidden)
+        entries = self.entries
+        if self.hidden :
+            page = first (entries)
+        else :
+            page = first (e for e in entries if not e.hidden)
         return page._effective
     # end def _effective_entry
+
+    def show_in_nav (self, nav_page) :
+        return \
+            (  self.__super.show_in_nav (nav_page)
+            or self.is_current_dir (nav_page)
+            )
+    # end def show_in_nav
 
     def _get_child (self, child, * grandchildren) :
         result = self.__super._get_child (child, * grandchildren)

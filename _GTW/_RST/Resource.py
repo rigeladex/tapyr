@@ -75,6 +75,7 @@
 #    24-Aug-2012 (CT) Change `send_error_email` to display `req_data`, too
 #    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
 #                     (move some code from `_http_response` to `wsgi_app`)
+#    26-Sep-2012 (CT) Add `show_in_nav`
 #    ««revision-date»»···
 #--
 
@@ -540,6 +541,10 @@ class _RST_Base_ (TFL.Meta.Object) :
             except Exception :
                 pass
     # end def send_email
+
+    def show_in_nav (self, nav_page) :
+        return not self.hidden
+    # end def show_in_nav
 
     def template_iter (self) :
         t = self.page_template

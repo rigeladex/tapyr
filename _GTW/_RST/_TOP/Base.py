@@ -38,6 +38,7 @@
 #     6-Aug-2012 (MG) Enhance `is_current_page`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
 #     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
+#    26-Sep-2012 (CT) Remove `hidden` from `is_current_page`
 #    ««revision-date»»···
 #--
 
@@ -275,10 +276,8 @@ class _TOP_Base_ (_Ancestor) :
 
     def is_current_page (self, page) :
         return \
-            ( not self.hidden
-            and (  (self.permalink == page.permalink)
-                or (self.href      == page.href)
-                )
+            (  (self.permalink == page.permalink)
+            or (self.href      == page.href)
             )
     # end def is_current_page
 

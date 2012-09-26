@@ -30,6 +30,7 @@
 #    20-Jul-2012 (CT) Add `Alias`
 #     6-Aug-2012 (MG) Add `Alias.is_current_page`
 #     8-Aug-2012 (MG) Fix `Alias.is_current_page`
+#    26-Sep-2012 (CT) Redefine `show_in_nav`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,13 @@ class TOP_Page (GTW.RST.TOP._Base_, GTW.RST.Leaf) :
     _real_name                 = "Page"
 
     dir_template_name          = None
+
+    def show_in_nav (self, nav_page) :
+        return \
+            (  self.__super.show_in_nav (nav_page)
+            or self.is_current_page (nav_page)
+            )
+    # end def show_in_nav
 
 Page = TOP_Page # end class
 

@@ -40,6 +40,7 @@
 #    25-Sep-2012 (CT) Set `klass` of `Group` in `render_node`
 #    25-Sep-2012 (CT) Add and use `want_document`
 #    25-Sep-2012 (CT) Put `.desc` into `Title`
+#    26-Sep-2012 (CT) Don't consider `is_partial` for `klass`
 #    ««revision-date»»···
 #--
 
@@ -227,7 +228,7 @@ class Renderer (MOM.Graph._Renderer_) :
         grp = SVG.Group \
             ( elid         = node.entity.type_name
             , fill         = P.color.node_bg
-            , klass        = None if node.entity.is_partial else "E_Type"
+            , klass        = "E_Type"
             , opacity      = P.partial_node_opacity
                 if node.entity.is_partial else P.node_opacity
             )
