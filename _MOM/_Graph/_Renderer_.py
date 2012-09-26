@@ -34,6 +34,7 @@
 #    20-Sep-2012 (CT) Call `render_link` in `render`, not in `render_node`
 #    25-Sep-2012 (CT) Change `render` to sort by `type_name`
 #    25-Sep-2012 (CT) Change `render` to sort links by `rid`
+#    26-Sep-2012 (CT) Change `transform` to minimum render coordinates to 0
 #    ««revision-date»»···
 #--
 
@@ -224,23 +225,33 @@ class _Renderer_ (TFL.Meta.Object) :
     # end def min_x
 
     @TFL.Meta.Once_Property
+    def min_x_spec (self) :
+        return min (v.pos.x for v in self.graph.node_map.itervalues ())
+    # end def min_x_spec
+
+    @TFL.Meta.Once_Property
     def min_y (self) :
         result = int (min (n.min_y for n in self.nodes) - self.grid_size.y // 4)
         return max (result, 0)
     # end def min_y
 
     @TFL.Meta.Once_Property
+    def min_y_spec (self) :
+        return min (v.pos.y for v in self.graph.node_map.itervalues ())
+    # end def min_y_spec
+
+    @TFL.Meta.Once_Property
     def transform (self) :
-        dx = self.max_x_spec + 1
-        dy = self.max_y_spec + 1
-        gs = self.grid_size
-        return \
-            ( D2.Affine.Trans
-                (self.grid_size.x // 4, self.grid_size.y // 4)
-            * D2.Affine.Scale      (gs.x, gs.y)
-            * D2.Affine.Trans      (dx,   dy)
-            * D2.Affine.Reflection (1,    0)
+        dx     = - self.min_x_spec ### shift minimum to zero
+        dy     = - self.max_y_spec ### shift maximum to zero: to be reflected
+        gs     = self.grid_size
+        result = \
+            ( D2.Affine.Trans      (gs.x // 4,  gs.y // 4)
+            * D2.Affine.Scale      (gs.x,       gs.y)
+            * D2.Affine.Reflection (1,          0)
+            * D2.Affine.Trans      (dx,         dy)
             )
+        return result
     # end def transform
 
     def render (self) :
