@@ -38,6 +38,7 @@
 #     8-Aug-2012 (MG) Consider `hidden` in `_effective`
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #    17-Sep-2012 (CT) Ignore `TypeError` in `_effective`
+#    26-Sep-2012 (CT) Factor `_effective_entry`
 #    ««revision-date»»···
 #--
 
@@ -101,13 +102,18 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
         dt = self.dir_template
         if dt is None :
             try :
-                page = first (e for e in self.entries if not e.hidden)
+                return self._effective_entry
             except (IndexError, TypeError) :
                 pass
-            else :
-                return page._effective
         return self
     # end def _effective
+
+    @property
+    @getattr_safe
+    def _effective_entry (self) :
+        page = first (e for e in self.entries if not e.hidden)
+        return page._effective
+    # end def _effective_entry
 
     def _get_child (self, child, * grandchildren) :
         result = self.__super._get_child (child, * grandchildren)

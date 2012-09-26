@@ -33,6 +33,7 @@
 #     4-Aug-2012 (MG) Set session cookie before saving the session
 #     8-Aug-2012 (MG) Consider `hidden` in `home`
 #    17-Aug-2012 (MG) Clear Etag if notifications are part of the response
+#    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
 #    ««revision-date»»···
 #--
 
@@ -156,10 +157,10 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
         return result
     # end def static_handler
 
-    def _http_response (self, request, response) :
+    def _http_response (self, resource, request, response) :
         Status = self.Status
         try :
-            result = self.__super._http_response (request, response)
+            result = self.__super._http_response (resource, request, response)
         except (Status.Informational, Status.Redirection, Status.Successful) :
             self._http_response_finish (request, response)
             raise

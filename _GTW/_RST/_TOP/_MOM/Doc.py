@@ -31,6 +31,7 @@
 #    10-Aug-2012 (CT) Continue creation
 #    25-Sep-2012 (CT) Add support for `graph.svg` to `PNS`
 #    25-Sep-2012 (CT) Split `PNS_svg` and `PNS_svg_doc`
+#    26-Sep-2012 (CT) Add `App_Type.GET` to handle `?E_Type` queries
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         if PNS :
             try :
                 return PNS._Import_Module ("graph")
-            except ImportError :
+            except ImportError as exc :
                 pass
     # end def PNS_graph
 
@@ -226,6 +227,29 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     PNS                        = PNS
 
+    class _RST_TOP_MOM_Doc_App_Type_GET (_Ancestor.GET) :
+
+        _real_name             = "GET"
+
+        def __call__ (self, resource, request, response) :
+            req_data = request.req_data
+            if "E_Type" in req_data :
+                name = req_data ["E_Type"]
+                etr  = resource.resource_from_e_type (name)
+                if etr is not None :
+                    return etr.top._http_response (etr, request, response)
+                else :
+                    raise resource.top.Status.Not_Found ()
+            else :
+                if resource.dir_template is None :
+                    eff = resource._effective_entry
+                    return eff.top._http_response (eff, request, response)
+                else :
+                    return self.__super.__call__ (resource, request, response)
+        # end def __call__
+
+    GET = _RST_TOP_MOM_Doc_App_Type_GET # end class
+
     def resource_from_e_type (self, e_type) :
         if isinstance (e_type, basestring) :
             e_type = self.App_Type.entity_type (e_type)
@@ -233,6 +257,11 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         result = self._get_child (* names)
         return result
     # end def resource_from_e_type
+
+    @property
+    def _effective (self) :
+        return self
+    # end def _effective
 
     def _gen_entries (self) :
         app_type = self.top.App_Type

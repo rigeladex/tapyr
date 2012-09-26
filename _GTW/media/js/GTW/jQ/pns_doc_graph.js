@@ -24,7 +24,7 @@
     "use strict";
     $.fn.gtw_pns_doc_graph = function gtw_pns_doc_graph (opts) {
         var selectors = $.extend
-            ( { node  : "g.E_Type[id^='" + opts ["prefix"] + "']"
+            ( { node  : "g.E_Type[id]"
               }
             , opts && opts ["selectors"] || {}
             );
@@ -37,13 +37,12 @@
             );
         var cb_click_node = function cb_click_node (ev) {
             var target$ = $(ev.target).closest (selectors.node);
-            var name    = target$.attr ("id").substr (options.prefix.length);
-            var url     = options.url + "/" + name;
+            var name    = target$.attr ("id");
+            var url     = options.qurl + name;
             window.open (url).focus ();
         };
         options.svg$ = this;
-        this.find (selectors.node)
-                .css  ("cursor", "pointer");
+        this.find (selectors.node).css ("cursor", "pointer");
         this.on ("click", selectors.node, cb_click_node);
         return this;
     };

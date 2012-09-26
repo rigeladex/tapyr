@@ -73,6 +73,8 @@
 #    24-Aug-2012 (CT) Set `Raiser.skip_etag` to `True`
 #    24-Aug-2012 (CT) Change `wsgi_app` to `send_error_email` for `Server_Error`
 #    24-Aug-2012 (CT) Change `send_error_email` to display `req_data`, too
+#    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
+#                     (move some code from `_http_response` to `wsgi_app`)
 #    ««revision-date»»···
 #--
 
@@ -1279,16 +1281,21 @@ class RST_Root (_Ancestor) :
 
     def wsgi_app (self, environ, start_response) :
         """WSGI application responding to http[s] requests."""
-        Status   = self.Status.Status
+        Status   = self.Status
         HTTP     = self.HTTP
         request  = self.Request  (environ)
         response = self.Response (request)
         entries_transitive = self.first_time
         with self.LET (_change_infos = {}) :
             try :
-                result  = self._http_response (request, response)
-            except Status as status :
-                if isinstance (status, self.Status.Server_Error) :
+                href     = request.path
+                resource = self.resource_from_href (href, request)
+                if resource :
+                    result  = self._http_response (resource, request, response)
+                else :
+                    raise Status.Not_Found ()
+            except Status.Status as status :
+                if isinstance (status, Status.Server_Error) :
                     self.send_error_email \
                         (request, status, traceback.format_exc ())
                 result  = status (self, request, response)
@@ -1309,41 +1316,37 @@ class RST_Root (_Ancestor) :
             return result (environ, start_response)
     # end def wsgi_app
 
-    def _http_response (self, request, response) :
-        Status   = self.Status
-        href     = request.path
-        resource = self.resource_from_href (href, request)
-        if resource :
-            user      = request.user
-            auth      = user and user.authenticated
-            resource  = resource._effective
-            meth_name = request.method
-            if meth_name not in resource.SUPPORTED_METHODS :
-                raise Status.Method_Not_Allowed \
-                    (valid_methods = resource.SUPPORTED_METHODS)
-            Method = resource._get_method (meth_name)
-            if Method is not None :
-                method = Method ()
-                if resource.allow_method (method, user) :
-                    if resource.DEBUG :
-                        context = TFL.Context.time_block
-                        fmt     = "[%s] %s %s: execution time = %%s" % \
-                            ( time.strftime
-                                ( "%d-%b-%Y %H:%M:%S"
-                                , time.localtime (time.time ())
-                                )
-                            , method.name, href
+    def _http_response (self, resource, request, response) :
+        Status    = self.Status
+        user      = request.user
+        auth      = user and user.authenticated
+        resource  = resource._effective
+        meth_name = request.method
+        if meth_name not in resource.SUPPORTED_METHODS :
+            raise Status.Method_Not_Allowed \
+                (valid_methods = resource.SUPPORTED_METHODS)
+        Method = resource._get_method (meth_name)
+        if Method is not None :
+            method = Method ()
+            if resource.allow_method (method, user) :
+                if resource.DEBUG :
+                    context = TFL.Context.time_block
+                    fmt     = "[%s] %s %s: execution time = %%s" % \
+                        ( time.strftime
+                            ( "%d-%b-%Y %H:%M:%S"
+                            , time.localtime (time.time ())
                             )
-                    else :
-                        context = TFL.Context.relaxed
-                        fmt     = None
-                    with context (fmt, sys.stderr) :
-                        return resource._handle_method \
-                            (method, request, response)
+                        , method.name, request.url
+                        )
                 else :
-                    self._http_response_need_auth \
-                        (resource, request, response, auth)
-        raise Status.Not_Found ()
+                    context = TFL.Context.relaxed
+                    fmt     = None
+                with context (fmt, sys.stderr) :
+                    return resource._handle_method \
+                        (method, request, response)
+            else :
+                self._http_response_need_auth \
+                    (resource, request, response, auth)
     # end def _http_response
 
     def _http_response_error (self, request, response, exc, tbi = None) :

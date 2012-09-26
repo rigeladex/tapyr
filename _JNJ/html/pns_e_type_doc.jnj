@@ -54,11 +54,7 @@
   {%- if page.PNS_svg %}
     <script>
       $(".MOM-Graph svg").gtw_pns_doc_graph
-        ( { name   : "{{ page.name }}"
-          , prefix : "{{ page.name }}."
-          , url    : "{{ page.abs_href }}"
-          }
-        )
+          ({ qurl : "{{ page.parent.abs_href }}?E_Type=" })
     </script>
   {% endif -%}
 {% endblock body_tail_scripts -%}
