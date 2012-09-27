@@ -2,7 +2,7 @@
 # Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package _MOM.
+# This module is part of the package GTW.__test__.
 #
 # This module is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public
@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    MOM.__doc__
+#    GTW.__test__.MOM
 #
 # Purpose
-#    Documentation and test for MOM meta object model
+#    Test for MOM meta object model
 #
 # Revision Dates
 #    18-Oct-2009 (CT) Creation
@@ -589,8 +589,8 @@ Before an essential object model can be used, the
 :class:`derived application type<_MOM.App_Type._App_Type_D_>` must be
 defined:
 
-    >>> from _MOM._DBW._HPS.Manager import Manager as DBW
-    >>> from _MOM._EMS.Hash         import Manager as EMS
+    >>> %(import_EMS)s as EMS
+    >>> %(import_DBW)s as DBW
     >>> try :
     ...   apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
     ... except Exception as exc :
@@ -1015,8 +1015,7 @@ object and link types.
 
 Specifying `None` as `db_url` will create an in memory database::
 
-    >>> db_scheme = "hps://"
-    >>> scope = MOM.Scope.new (apt, db_scheme)
+    >>> scope = MOM.Scope.new (apt, %(db_scheme)s)
 
 For each :attr:`~_MOM.Entity.PNS` defining essential
 classes, the `scope` provides an object holding
@@ -1751,7 +1750,7 @@ Scope queries
 Replaying changes
 -----------------
 
-    >>> scop2 = MOM.Scope.new (apt, db_scheme)
+    >>> scop2 = MOM.Scope.new (apt, %(db_scheme)s)
     >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop2))
     (16, 0)
     >>> for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
@@ -1781,8 +1780,8 @@ Replaying changes
 Saving and re-loading changes from a database
 ----------------------------------------------
 
-    >>> db_path   = "/tmp/bmt_test.bmt"
-    >>> db_url    = "/".join ((db_scheme, db_path))
+    >>> db_path   = %(db_path)s
+    >>> db_url    = "/".join ((%(db_scheme)s, %(db_path)s))
     >>> db_path_x = db_path + ".x"
     >>> if sos.path.exists (db_path) :
     ...     sos.remove (db_path)
@@ -1818,7 +1817,7 @@ Migrating all entities and the complete change history
     12
     >>> scope.query_changes ().count ()
     50
-    >>> scop5 = scope.copy (apt, db_scheme)
+    >>> scop5 = scope.copy (apt, %(db_scheme)s)
     >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop5))
     (12, 12)
     >>> tuple (s.query_changes ().count () for s in (scope, scop5))
@@ -1973,4 +1972,4 @@ __doc__ = doctest = dt_form % dict \
     , db_path    = "'/tmp/bmt_test.bmt'"
     , db_scheme  = "'hps://'"
     )
-### __END__ MOM.__doc__
+### __END__ GTW.__test__.MOM
