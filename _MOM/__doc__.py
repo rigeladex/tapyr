@@ -546,9 +546,8 @@ How to define and use essential object models
 ==============================================
 
 Using `MOM`, an essential object model is specified by deriving
-classes from :class:`MOM.Object<_MOM.Object.Object>`,
-:class:`MOM.Named_Object<_MOM.Object.Named_Object>`, or from one of
-the descendants of :class:`MOM.Link<_MOM.Link.Link>`.
+classes from :class:`MOM.Object<_MOM.Object.Object>` or from one of
+the arity-specific descendants of :class:`MOM.Link<_MOM.Link.Link>`.
 
 Each essential class must be defined inside a
 :class:`TFL.Package_Namespace<_TFL.Package_Namespace.Package_Namespace>`
