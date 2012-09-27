@@ -21,5 +21,6 @@ MOM Sub-package namespaces
    Pred/index
    SCM/index
    Meta/index
+   bib
 
 .. \__END__ index.rst
