@@ -2213,6 +2213,13 @@ Class `MOM.Attr.A_Attr_Type`
       Specifies whether the default value should be
       stored in the database (unless explicitly specified, it isn't).
 
+    Attribute types provide the computed property:
+
+    .. attribute:: db_sig
+
+      Specifies the database signature of the attribute type. This includes
+      properties like `max_length`, `needs_raw_value`, etc.
+
 """
 
 __all__ = tuple \

@@ -126,6 +126,7 @@ class _App_Type_D_ (_App_Type_) :
 
     @TFL.Meta.Once_Property
     def attribute_types (self) :
+        """List of all attribute types used by the etypes of the application."""
         result = set ()
         for T in self._T_Extension :
             if not T.is_partial :
@@ -279,10 +280,25 @@ Class `MOM.App_Type`
       Specifies the package namespace of the application (Application
       Name Space).
 
+    .. attribute:: PNS_Aliases
+
+      Specifies an optional mapping of package namespace aliases to
+      the canonical package namespace name. This allows the decoupling
+      of the concrete package structure from the abstract view of the
+      object model.
+
+      For instance::
+
+          PNS_Aliases = dict \\
+              ( PAP             = GTW.OMP.PAP
+              , SRM             = GTW.OMP.SRM
+              , SWP             = GTW.OMP.SWP
+              )
+
     .. attribute:: Root_Type_Name
 
       Specifies the name of the `root type` of the application, if
-      any. If there is a root type, each sscope created has its own
+      any. If there is a root type, each scope created has its own
       specific root object which is an instance of the root type.
 
     `App_Type` provides the methods:
@@ -297,7 +313,7 @@ Class `MOM.App_Type`
     `EMS` and a specific data base wrapper `DBW` to a parent
     `App_Type`.
 
-    For each essential objecta nd link tyoe of an application, a
+    For each essential object and link type of an application, a
     derived `App_Type` holds an app-type specifc entity type (short
     `etype`) derived from the essential type. For some `DBWs`, the
     etype might contain additional properties injected by the `DBW`.
@@ -312,6 +328,23 @@ Class `MOM.App_Type`
     .. attribute:: Root_Type
 
       The entity type of the root object, if any.
+
+    .. attribute:: attribute_types
+
+      List of all attribute types used by the etypes of the application.
+
+    .. attribute:: db_sig
+
+      A tuple of all the :attr:`db_sig<MOM.Meta.M_E_Type.db_sig>`
+      values of all relevant etypes of the application.
+
+    .. attribute:: db_version_hash
+
+      Hash value of the app-type's :attr:`db_sig`. Some `DBWs` use
+      the `db_version_hash` to identify incompatibilities between the
+      application version and the database version.
+
+          The `db_version_hash` is implemented as a SHA checksum.
 
     .. attribute:: etypes
 

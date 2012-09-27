@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This file is part of the package _MOM.
@@ -42,7 +42,7 @@ __doc__ = """
 `MOM` provides a framework for the definition and
 implementation of essential object models.
 
-An essential (see [McP84]_) object model is one, IMHO the best, way of
+An essential (see [McP84]_) object model is one way of
 capturing the results of an object oriented analysis. An essential
 object model comprises classes and associations.
 
@@ -68,7 +68,8 @@ and predicates, most of the behavior of
 :class:`MOM.Link<_MOM.Link.Link>` is defined by their common ancestor
 :class:`MOM.Id_Entity<_MOM.Entity.Id_Entity>`.
 
-A specific meta object model is defined for a well-defined application. Each
+A specific meta object model is defined for a well-defined application and
+encapsulated by :class:`MOM.App_Type<_MOM.App_Type.App_Type>`. Each
 instance of a meta object model is managed by a scope object (modelled by the
 class :class:`MOM.Scope<_MOM.Scope.Scope>`).
 

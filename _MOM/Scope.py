@@ -222,6 +222,14 @@ class Scope (TFL.Meta.Object) :
     PNS_Proxy              = None
 
     @TFL.Meta.Once_Property
+    def relevant_roots (self) :
+        """Return the relevant roots of the application."""
+        Top = self.MOM.Id_Entity.E_Type
+        return sorted \
+            (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
+    # end def relevant_roots
+
+    @TFL.Meta.Once_Property
     def _Example (self) :
         return _Example_ (self)
     # end def _Example
@@ -261,6 +269,12 @@ class Scope (TFL.Meta.Object) :
 
     @classmethod
     def load (cls, app_type, db_url, user = None) :
+        """Load a scope for `app_type` from `db_url`.
+
+           Depending on `app_type.EMS`, `load` might load all instances from
+           `db_url` into the application or it might just connect to the
+           database and load instances on demand in answer to queries.
+        """
         db_url = app_type.Url (db_url)
         with cls._init_context (app_type, db_url, user) as self :
             app_type  = self.app_type
@@ -272,6 +286,11 @@ class Scope (TFL.Meta.Object) :
 
     @classmethod
     def new (cls, app_type, db_url, root_epk = (), user = None) :
+        """Create a scope for `app_type` for a new database `db_url`.
+
+           If `app_type` has a :attr:`~_MOM.App_Type.App_Type.Root_Type`,
+           `new` requires a proper `root_epk` tuple to be passed in.
+        """
         db_url = app_type.Url (db_url)
         with cls._init_context (app_type, db_url, user, root_epk) as self :
             app_type  = self.app_type
@@ -397,6 +416,7 @@ class Scope (TFL.Meta.Object) :
     # end def canonical_type_name
 
     def commit (self) :
+        """Commit all outstanding changes to the database."""
         ems = self.ems
         ucc = ems.uncommitted_changes
         with ems.commit_context () :
@@ -468,6 +488,7 @@ class Scope (TFL.Meta.Object) :
     # end def close_connections
 
     def destroy (self) :
+        """Close connection to database and destroy all cached instances."""
         self.ems.close ()
         if self.qname in Scope.Table :
             del Scope.Table [self.qname]
@@ -515,6 +536,7 @@ class Scope (TFL.Meta.Object) :
     # end def entity_iter_gauge
 
     def entity_type (self, entity) :
+        """Return scope specific entity type for `entity` (-name)."""
         if isinstance (entity, basestring) :
             name = entity
         else :
@@ -544,7 +566,9 @@ class Scope (TFL.Meta.Object) :
     # end def g_incorrect
 
     def has_changed (self) :
-        """Indicates whether something saveworthy has changed"""
+        """Indicates whether something saveworthy has changed, i.e., there if
+           there are outstanding changes to be commited.
+        """
         return bool (self.ems.uncommitted_changes)
     # end def has_changed
 
@@ -559,6 +583,9 @@ class Scope (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def nested_change_recorder (self, Change, * args, ** kw) :
+        """Return context with `Change (* args, ** kw)` acting as nested
+           change recorder.
+        """
         with self.historian.nested_recorder (Change, * args, ** kw) as c :
             yield c
             if c :
@@ -567,10 +594,12 @@ class Scope (TFL.Meta.Object) :
     # end def nested_change_recorder
 
     def pid_query (self, pid) :
+        """Returns entity with permanent id `pid`, if any."""
         return self.ems.pid_query (pid)
     # end def pid_query
 
     def query_changes (self, * filter, ** kw) :
+        """Return changes matching `filter` and `kw`"""
         return self.ems.changes (* filter, ** kw)
     # end def query_changes
 
@@ -584,6 +613,7 @@ class Scope (TFL.Meta.Object) :
     # end def i_incorrect
 
     def record_change (self, Change, * args, ** kw) :
+        """Record the `Change` specified by `args` and `kw`"""
         result = self.historian.record (Change, * args, ** kw)
         if result is not None :
             result.user = self.user
@@ -592,13 +622,6 @@ class Scope (TFL.Meta.Object) :
                 result.do_callbacks (self)
         return result
     # end def record_change
-
-    @TFL.Meta.Once_Property
-    def relevant_roots (self) :
-        Top = self.MOM.Id_Entity.E_Type
-        return sorted \
-            (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
-    # end def relevant_roots
 
     def remove (self, entity) :
         """Remove `entity` from scope `self`"""
@@ -619,11 +642,15 @@ class Scope (TFL.Meta.Object) :
     # end def rename
 
     def rollback (self) :
+        """Rollback and discard the outstanding changes."""
         self.ems.rollback ()
         self.count_change ()
     # end def rollback
 
     def rollback_pending_change (self) :
+        """Rollback the last, not yet recorded, change but keep all earlier
+           outstanding changes.
+        """
         changes = tuple (self.uncommitted_changes.changes)
         self.rollback ()
         for c in changes :
@@ -804,6 +831,7 @@ class Scope (TFL.Meta.Object) :
     # end def __getitem__
 
     def __iter__ (self) :
+        """Generate all essential instances stored in database"""
         return iter (self.ems)
     # end def __iter__
 
@@ -814,6 +842,117 @@ class Scope (TFL.Meta.Object) :
 
 # end class Scope
 
+__doc__ = """
+Class `MOM.Scope`
+====================
+
+.. class:: Scope
+
+    `MOM.Scope` maps the object model of a specific derived
+    :class:`~_MOM.App_Type.App_Type` to a concrete database storing
+    instances of the essential objects and links.
+
+    `Scope` instances cannot be created by just calling the `Scope` class,
+    like normal Python types. Instead, :meth:`load` and method:`new` create
+    scopes connected to existing or newly created databases, respectively.
+
+    **`Scope` provides the class attributes:**
+
+    .. attribute:: app_type
+
+        The derived app_type of the scope.
+
+    .. attribute:: changes
+
+        The number of changes up to now.
+
+    .. attribute:: changes_to_save
+
+        The number of outstanding changes waiting to be commited (or
+        rollbacked).
+
+    .. attribute:: db_meta_data
+
+        Meta data about the scope and its database.
+
+    .. attribute:: db_url
+
+        The URL of the database the scope is connected to.
+
+    .. attribute:: max_cid
+
+        The currently maximum change-id.
+
+    .. attribute:: max_pid
+
+        The currently maximum permanent id in use.
+
+    .. attribute:: relevant_roots
+
+        A list of all relevant roots of the application.
+
+            A relevant root is an etype that has its own table in the
+            database.
+
+    .. attribute:: uncommitted_changes
+
+       The list of outstanding changes waiting to be commited (or
+       rollbacked).
+
+    **`Scope` provides the class methods:**
+
+    .. automethod:: load
+
+    .. automethod:: new
+
+    .. automethod:: add_init_callback
+
+    .. automethod:: add_kill_callback
+
+    **`Scope` provides the instance methods:**
+
+    .. automethod:: add
+
+    .. automethod:: as_active
+
+    .. automethod:: commit
+
+    .. automethod:: copy
+
+    .. automethod:: destroy
+
+    .. automethod:: entity_iter
+
+    .. automethod:: entity_iter_gauge
+
+    .. automethod:: entity_type
+
+    .. automethod:: g_incorrect
+
+    .. automethod:: has_changed
+
+    .. automethod:: i_incorrect
+
+    .. automethod:: nested_change_recorder
+
+    .. automethod:: pid_query
+
+    .. automethod:: query_changes
+
+    .. automethod:: r_incorrect
+
+    .. automethod:: record_change
+
+    .. automethod:: remove
+
+    .. automethod:: rollback
+
+    .. automethod:: rollback_pending_change
+
+    .. automethod:: __iter__
+
+
+"""
 if __name__ != "__main__" :
     MOM._Export ("*")
 ### __END__ MOM.Scope

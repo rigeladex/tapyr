@@ -565,7 +565,7 @@ essential object or link types and is meant to be imported like::
     >>> from _MOM.import_MOM import *
 
 An essential class as defined by its module isn't usable before an
-app-type is created.
+:ref:`app-type<application-type>` is created.
 
     >>> BMT.Person
     <class 'BMT.Person' [Spec Essence]>
@@ -581,6 +581,8 @@ app-type is created.
     AttributeError: type object 'Person' has no attribute 'last_name'
 
 
+.. _`application-type`:
+
 Application type
 ----------------
 
@@ -591,11 +593,7 @@ defined:
 
     >>> from _MOM._DBW._HPS.Manager import Manager as DBW
     >>> from _MOM._EMS.Hash         import Manager as EMS
-    >>> try :
-    ...   apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
-    ... except Exception as exc :
-    ...   import traceback; traceback.print_exc ()
-    ...   import os; os.abort ()
+    >>> apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
 
 Creating a derived app-type replaces the specification of the
 essential classes with bare essential classes:
@@ -622,189 +620,68 @@ classes:
     >>> ET_Trap      = apt ["BMT.Trap"]
     >>> ET_Supertrap = apt ["BMT.Supertrap"]
 
+Identity
+--------
+
+.. _`essential-primary-keys`:
+
+Essential objects and links have identity, i.e., each object or link
+can be uniquely identified. This identity is specified by a set of (so
+called `primary`) attributes that together define the
+`essential primary key`, short `epk`, for the entity in question. If
+there is more than one primary attribute, the sequence of the
+attributes is defined by their :attr:`rank` and :attr:`name`.
+
+In addition to the `epk`, each object is also uniquely identified by a
+surrogate key, named `pid` (for `permanent id`). The `pid` is a purely
+internal feature of a MOM model. The `pid` is unique in the context of a
+specific database, but not globally unique. Once an object is created, its
+`pid` will never change and it won't ever be reused to refer to a different
+object.
+
+Essential objects identified by a simple, unstructured `name` are
+defined by classes derived from
+:class:`MOM.Named_Object<_MOM.Object.Named_Object>`. All other
+essential objects are defined by classes derived from
+:class:`MOM.Object<_MOM.Object.Object>` that specify one or more
+essential attributes of kind :class:`~_MOM._Attr.Kind.Primary`.
+
+Essential links are identified by the associated objects (the link's
+roles) and any other, if any, primary attributes defined for the link
+in question:
+
+- Unary links are derived from :class:`MOM.Link1<_MOM.Link.Link1>`
+  and identified by the link role :attr:`left<_MOM.Link.Link1.left>`
+  plus any other primary attributes.
+
+- Binary links are derived from :class:`MOM.Link2<_MOM.Link.Link2>`
+  and identified by the link roles :attr:`left<_MOM.Link.Link2.left>`
+  and :attr:`right<_MOM.Link.Link2.right>` plus any other primary
+  attributes.
+
+- Binary ordered links are derived from
+  :class:`MOM.Link2_Ordered<_MOM.Link.Link2_Ordered>`
+  and identified by the link roles
+  :attr:`left<_MOM.Link.Link2_Ordered.left>`,
+  :attr:`right<_MOM.Link.Link2_Ordered.right>`, and
+  :attr:`seq_no<_MOM.Link.Link2_Ordered.seq_no>` plus any other primary
+  attributes.
+
+- Ternary links are derived from :class:`MOM.Link3<_MOM.Link.Link3>`
+  and identified by the link roles :attr:`left<_MOM.Link.Link3.left>`,
+  :attr:`middle<_MOM.Link.Link3.middle>`,
+  and :attr:`right<_MOM.Link.Link3.right>` plus any other primary
+  attributes.
+
 For each `entity_type` with a unique :attr:`epk_sig`, the meta
 machinery automatically creates methods `epkified_ckd` and
 `epkified_raw` matching the `epk_sig`. These auto-generated methods
 are used by `__init__` to ensure that the required parameters are
 passed for the :ref:`essential primary keys<essential-primary-keys>`.
 
-    >>> for et in apt._T_Extension :
-    ...   if et.epk_sig and "epkified_ckd" in et.__dict__ :
-    ...     print "***", et.type_name, "***", et.epk_sig
-    ...     print et.epkified_ckd.source_code.rstrip ()
-    ...     print et.epkified_raw.source_code.rstrip ()
-    ...
-    *** MOM.Link *** ('left',)
-    def epkified_ckd (cls, left, ** kw) :
-        return (left,), kw
-    def epkified_raw (cls, left, ** kw) :
-        return (left,), kw
-    *** MOM.Link1 *** ('left',)
-    def epkified_ckd (cls, left, ** kw) :
-        return (left,), kw
-    def epkified_raw (cls, left, ** kw) :
-        return (left,), kw
-    *** MOM._MOM_Link_n_ *** ('left', 'right')
-    def epkified_ckd (cls, left, right, ** kw) :
-        return (left, right), kw
-    def epkified_raw (cls, left, right, ** kw) :
-        return (left, right), kw
-    *** MOM.Link2 *** ('left', 'right')
-    def epkified_ckd (cls, left, right, ** kw) :
-        return (left, right), kw
-    def epkified_raw (cls, left, right, ** kw) :
-        return (left, right), kw
-    *** MOM.Link2_Ordered *** ('left', 'right', 'seq_no')
-    def epkified_ckd (cls, left, right, seq_no, ** kw) :
-        return (left, right, seq_no), kw
-    def epkified_raw (cls, left, right, seq_no, ** kw) :
-        return (left, right, seq_no), kw
-    *** MOM.Link3 *** ('left', 'middle', 'right')
-    def epkified_ckd (cls, left, middle, right, ** kw) :
-        return (left, middle, right), kw
-    def epkified_raw (cls, left, middle, right, ** kw) :
-        return (left, middle, right), kw
-    *** MOM.Named_Object *** ('name',)
-    def epkified_ckd (cls, name, ** kw) :
-        return (name,), kw
-    def epkified_raw (cls, name, ** kw) :
-        return (name,), kw
-    *** BMT.Location *** ('lon', 'lat')
-    def epkified_ckd (cls, lon, lat, ** kw) :
-        return (lon, lat), kw
-    def epkified_raw (cls, lon, lat, ** kw) :
-        return (lon, lat), kw
-    *** BMT.Person *** ('last_name', 'first_name', 'middle_name')
-    def epkified_ckd (cls, last_name, first_name, middle_name = u'', ** kw) :
-        return (last_name, first_name, middle_name), kw
-    def epkified_raw (cls, last_name, first_name, middle_name = u'', ** kw) :
-        return (last_name, first_name, middle_name), kw
-    *** BMT.Rodent *** ('name',)
-    def epkified_ckd (cls, name, ** kw) :
-        return (name,), kw
-    def epkified_raw (cls, name, ** kw) :
-        return (name,), kw
-    *** BMT.Mouse *** ('name',)
-    def epkified_ckd (cls, name, ** kw) :
-        return (name,), kw
-    def epkified_raw (cls, name, ** kw) :
-        return (name,), kw
-    *** BMT.Rat *** ('name',)
-    def epkified_ckd (cls, name, ** kw) :
-        return (name,), kw
-    def epkified_raw (cls, name, ** kw) :
-        return (name,), kw
-    *** BMT.Beaver *** ('name',)
-    def epkified_ckd (cls, name, ** kw) :
-        return (name,), kw
-    def epkified_raw (cls, name, ** kw) :
-        return (name,), kw
-    *** BMT.Otter *** ('name',)
-    def epkified_ckd (cls, name, ** kw) :
-        return (name,), kw
-    def epkified_raw (cls, name, ** kw) :
-        return (name,), kw
-    *** BMT.Trap *** ('name', 'serial_no')
-    def epkified_ckd (cls, name, serial_no, ** kw) :
-        return (name, serial_no), kw
-    def epkified_raw (cls, name, serial_no, ** kw) :
-        return (name, serial_no), kw
-    *** BMT.Supertrap *** ('name', 'serial_no')
-    def epkified_ckd (cls, name, serial_no, ** kw) :
-        return (name, serial_no), kw
-    def epkified_raw (cls, name, serial_no, ** kw) :
-        return (name, serial_no), kw
-    *** BMT.Rodent_is_sick *** ('left', 'sick_leave')
-    def epkified_ckd (cls, left, sick_leave, ** kw) :
-        return (left, sick_leave), kw
-    def epkified_raw (cls, left, sick_leave, ** kw) :
-        return (left, sick_leave), kw
-    *** BMT.Rodent_in_Trap *** ('left', 'right')
-    def epkified_ckd (cls, left, right, ** kw) :
-        return (left, right), kw
-    def epkified_raw (cls, left, right, ** kw) :
-        return (left, right), kw
-    *** BMT.Person_owns_Trap *** ('left', 'right')
-    def epkified_ckd (cls, left, right, ** kw) :
-        return (left, right), kw
-    def epkified_raw (cls, left, right, ** kw) :
-        return (left, right), kw
-    *** BMT.Person_sets_Trap_at_Location *** ('left', 'middle', 'right')
-    def epkified_ckd (cls, left, middle, right, ** kw) :
-        return (left, middle, right), kw
-    def epkified_raw (cls, left, middle, right, ** kw) :
-        return (left, middle, right), kw
-
-Each entity_type knows about its children:
-
-    >>> for et in apt._T_Extension :
-    ...   if et.children :
-    ...     print et.type_name
-    ...     print "   ", sorted (et.children)
-    MOM.Entity
-        ['MOM.An_Entity', 'MOM.Id_Entity']
-    MOM.An_Entity
-        ['MOM.Date_Interval', 'MOM._Interval_']
-    MOM.Id_Entity
-        ['MOM.Link', 'MOM.Object']
-    MOM.Link
-        ['MOM.Link1', 'MOM._MOM_Link_n_']
-    MOM.Link1
-        ['BMT.Rodent_is_sick']
-    MOM._MOM_Link_n_
-        ['MOM.Link2', 'MOM.Link3']
-    MOM.Link2
-        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap', 'MOM.Link2_Ordered']
-    MOM.Link3
-        ['BMT.Person_sets_Trap_at_Location']
-    MOM.Object
-        ['BMT.Location', 'BMT.Person', 'MOM.Named_Object']
-    MOM.Named_Object
-        ['BMT.Rodent', 'BMT.Trap']
-    MOM.Date_Interval
-        ['MOM.Date_Interval_C', 'MOM.Date_Interval_N']
-    MOM._Interval_
-        ['MOM.Float_Interval', 'MOM.Frequency_Interval']
-    BMT.Rodent
-        ['BMT.Mouse', 'BMT.Rat']
-    BMT.Mouse
-        ['BMT.Beaver']
-    BMT.Beaver
-        ['BMT.Otter']
-    BMT.Trap
-        ['BMT.Supertrap']
-
-    >>> for et in apt._T_Extension :
-    ...   if et.children and et.children != et.children_np :
-    ...     print et.type_name
-    ...     print "   ", sorted (et.children)
-    ...     print "   ", sorted (et.children_np)
-    MOM.Entity
-        ['MOM.An_Entity', 'MOM.Id_Entity']
-        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM._Interval_']
-    MOM.Id_Entity
-        ['MOM.Link', 'MOM.Object']
-        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
-    MOM.Link
-        ['MOM.Link1', 'MOM._MOM_Link_n_']
-        ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick']
-    MOM._MOM_Link_n_
-        ['MOM.Link2', 'MOM.Link3']
-        ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
-    MOM.Link2
-        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap', 'MOM.Link2_Ordered']
-        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap']
-    MOM.Object
-        ['BMT.Location', 'BMT.Person', 'MOM.Named_Object']
-        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Rat', 'BMT.Trap']
-    MOM.Named_Object
-        ['BMT.Rodent', 'BMT.Trap']
-        ['BMT.Mouse', 'BMT.Rat', 'BMT.Trap']
-
-
 The app-type specific entity-types are ready to be used by
-:class:`scopes<_MOM.Scope.Scope>` and their
-:mod:`etype managers<_MOM.E_Type_Manager>`:
+:mod:`scopes<_MOM.Scope>` and their :mod:`etype
+managers<_MOM.E_Type_Manager>`::
 
     >>> ET_Person
     <class 'BMT.Person' [BMT__Hash__HPS]>
@@ -975,6 +852,13 @@ The app-type specific entity-types are ready to be used by
     >>> show_ref_map (ET_Person, "Ref_Opt_Map")
     >>> show_ref_map (ET_Trap,   "Ref_Opt_Map")
 
+Inheritance introspection
++++++++++++++++++++++++++++
+
+Each entity_type knows about its children. :attr:`children` maps type_names
+to the direct children of the entity_type in question; :attr:`children_np`
+maps type_names to the non-partial descendents of the entity_type::
+
     >>> show_children (ET_Entity)
     MOM.Entity
       MOM.An_Entity
@@ -1007,6 +891,34 @@ The app-type specific entity-types are ready to be used by
           BMT.Location
           BMT.Person
 
+    >>> for et in apt._T_Extension :
+    ...   if et.children and et.children != et.children_np :
+    ...     print et.type_name
+    ...     print "   ", sorted (et.children)
+    ...     print "   ", sorted (et.children_np)
+    MOM.Entity
+        ['MOM.An_Entity', 'MOM.Id_Entity']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM._Interval_']
+    MOM.Id_Entity
+        ['MOM.Link', 'MOM.Object']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
+    MOM.Link
+        ['MOM.Link1', 'MOM._MOM_Link_n_']
+        ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick']
+    MOM._MOM_Link_n_
+        ['MOM.Link2', 'MOM.Link3']
+        ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
+    MOM.Link2
+        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap', 'MOM.Link2_Ordered']
+        ['BMT.Person_owns_Trap', 'BMT.Rodent_in_Trap']
+    MOM.Object
+        ['BMT.Location', 'BMT.Person', 'MOM.Named_Object']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Rat', 'BMT.Trap']
+    MOM.Named_Object
+        ['BMT.Rodent', 'BMT.Trap']
+        ['BMT.Mouse', 'BMT.Rat', 'BMT.Trap']
+
+
 Scope
 -----
 
@@ -1016,15 +928,13 @@ object and link types.
 Specifying `None` as `db_url` will create an in memory database::
 
     >>> db_scheme = "hps://"
-    >>> scope = MOM.Scope.new (apt, db_scheme)
+    >>> scope = MOM.Scope.new (apt, db_url = db_scheme)
 
 For each :attr:`~_MOM.Entity.PNS` defining essential
 classes, the `scope` provides an object holding
 :class:`object managers<_MOM.E_Type_Manager.Object>` and
 :class:`link managers<_MOM.E_Type_Manager.Link>`
-that support instance creation and queries:
-
-    .. ### DBW-specific start
+that support instance creation and queries::
 
     >>> scope.MOM.Id_Entity
     <E_Type_Manager for MOM.Id_Entity of scope BMT__Hash__HPS>
@@ -1033,59 +943,11 @@ that support instance creation and queries:
     >>> scope.BMT.Person_owns_Trap
     <E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__HPS>
 
-    .. ### DBW-specific finish
-
-.. _`essential-primary-keys`:
-
-Identity
---------
-
-Essential objects and links have identity, i.e., each object or link
-can be uniquely identified. This identity is specified by a set of (so
-called `primary`) attributes that together define the
-`essential primary key`, short `epk`, for the entity in question. If
-there is more than one primary attribute, the sequence of the
-attributes is defined by their :attr:`rank` and :attr:`name`.
-
-Essential objects identified by a simple, unstructured `name` are
-defined by classes derived from
-:class:`MOM.Named_Object<_MOM.Object.Named_Object>`. All other
-essential objects are defined by classes derived from
-:class:`MOM.Object<_MOM.Object.Object>` that specify one or more
-essential attributes of kind :class:`~_MOM._Attr.Kind.Primary`.
-
-Essential links are identified by the associated objects (the link's
-roles) and any other, if any, primary attributes defined for the link
-in question:
-
-- Unary links are derived from :class:`MOM.Link1<_MOM.Link.Link1>`
-  and identified by the link role :attr:`left<_MOM.Link.Link1.left>`
-  plus any other primary attributes.
-
-- Binary links are derived from :class:`MOM.Link2<_MOM.Link.Link2>`
-  and identified by the link roles :attr:`left<_MOM.Link.Link2.left>`
-  and :attr:`right<_MOM.Link.Link2.right>` plus any other primary
-  attributes.
-
-- Binary ordered links are derived from
-  :class:`MOM.Link2_Ordered<_MOM.Link.Link2_Ordered>`
-  and identified by the link roles
-  :attr:`left<_MOM.Link.Link2_Ordered.left>`,
-  :attr:`right<_MOM.Link.Link2_Ordered.right>`, and
-  :attr:`seq_no<_MOM.Link.Link2_Ordered.seq_no>` plus any other primary
-  attributes.
-
-- Ternary links are derived from :class:`MOM.Link3<_MOM.Link.Link3>`
-  and identified by the link roles :attr:`left<_MOM.Link.Link3.left>`,
-  :attr:`middle<_MOM.Link.Link3.middle>`,
-  and :attr:`right<_MOM.Link.Link3.right>` plus any other primary
-  attributes.
-
 Object and link creation
 -------------------------
 
 One creates objects or links by calling the etype manager of the
-appropriate class:
+appropriate class::
 
     >>> scope.MOM.Named_Object ("foo")
     Traceback (most recent call last):
@@ -1179,7 +1041,7 @@ Passing `strict = True` to a query makes it strict.
 
 The query :meth:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
 only be applied to `E_Type_Managers` for essential types that are, or
-inherit from, a `relevant_root`:
+inherit from, a `relevant_root`::
 
     >>> scope.MOM.Object.instance ("mighty_mouse")
     Traceback (most recent call last):
@@ -1205,7 +1067,7 @@ inherit from, a `relevant_root`:
 
 The query :meth:`exists<_MOM.E_Type_Manager.E_Type_Manager.exists>`
 returns a list of all `E_Type_Managers` for which an object or link
-with the specified `epk` exists:
+with the specified `epk` exists::
 
     >>> scope.MOM.Named_Object.exists ("mighty_mouse")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
@@ -1224,7 +1086,7 @@ The queries :attr:`~_MOM.E_Type_Manager.E_Type_Manager.count_strict`,
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.query`, and
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.r_query` return the
 number, or list, of instances of the specified
-etype:
+etype::
 
     >>> scope.BMT.Mouse.count_strict
     1
@@ -1269,7 +1131,7 @@ etype:
 
     >>> scope.MOM.Link.count
     10
-    >>> list (scope.MOM.Link.query_s ())
+    >>> list (scope.MOM.Link.query_s ()) ### 1
     [BMT.Rodent_in_Trap ((u'axel', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> scope.MOM.Link2.count
@@ -1403,6 +1265,8 @@ etype:
 Changing objects and links
 ---------------------------
 
+Primary attributes must be changed by calling `set` or `set_raw`::
+
     >>> old_id = axel.pid
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap ((u'axel', ), (u'x', 2))]
@@ -1428,6 +1292,9 @@ Changing objects and links
     Invariants: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 (length <= 5)
         length = 9 << len (middle_name)
         middle_name = 'zacharias'
+
+Non-primary attributes can be changed by direct assignment or by calling
+`set` or `set_raw`::
 
     >>> m
     BMT.Mouse (u'mighty_mouse')
@@ -1473,6 +1340,9 @@ Changing objects and links
     (u'yellow', 42.0)
     >>> print m.as_code ()
     BMT.Mouse (u'mighty_mouse', color = u'yellow', weight = 42.0)
+
+:meth:`_MOM.Entity.Entity.changes` returns all changes that were applied to
+the object in question::
 
     >>> csk = TFL.Sorted_By (Q.parent != None, Q.cid)
     >>> for c in m.changes ().order_by (csk).all () : ### ???
@@ -1532,27 +1402,66 @@ Changing objects and links
     >>> print pot.as_code ()
     BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1), price = 1.2)
 
-    >>> lcp = scope.query_changes (type_name = "BMT.Person").order_by (TFL.Sorted_By ("-cid")).first ()
-    >>> lcp.cid, lcp.epk
-    (20, (u'tin', u'tin', u'', 'BMT.Person'))
-    >>> lcp
-    <Create BMT.Person (u'tin', u'tin', u'', 'BMT.Person'), new-values = {'last_cid' : '20'}>
+Unary links
+-----------
 
-    >>> lct = scope.query_changes (type_name = "BMT.Trap").order_by (TFL.Sorted_By ("-cid")).first ()
-    >>> lct.cid, lct.epk
-    (33, (u'x', u'1', 'BMT.Trap'))
-    >>> lct
-    <Modify BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '9', 'max_weight' : u''}, new-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
+An unary link is a link with only one object::
 
-Attribute queries
-------------------
+    >>> sr = scope.BMT.Mouse ("Sick_Rodent")
+    >>> osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
+    >>> osm.as_code ()
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), )"
+    >>> osm.fever = 42
+    >>> osm.as_code ()
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), fever = 42.0)"
+    >>> sorted (sr.sickness)
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))]
+
+Changing a composite primary attribute
+--------------------------------------
+
+A composite attribute has more than one value, each value with its own name
+and attribute type::
+
+    >>> old_epk = osm.epk
+    >>> old_epk
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18), 'BMT.Rodent_is_sick')
+    >>> Ris.instance (* old_epk)
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))
+
+    >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
+    [(26, (datetime.date(2010, 2, 18), None))]
+
+    >>> osm.sick_leave.set_raw (start = "2010/03/01")
+    1
+    >>> print Ris.instance (* old_epk)
+    None
+    >>> osm.epk
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01), 'BMT.Rodent_is_sick')
+    >>> Ris.instance (* osm.epk)
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))
+
+    >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
+    [(26, (datetime.date(2010, 3, 1), None))]
+
+Attribute query expression
+----------------------------
+
+Queries that simply select entities with a specific attribute value can use
+Python's keyword notation to specify the value::
+
+    >>> scope.BMT.Rodent.query_s (weight = None).all ()
+    [BMT.Mouse (u'Sick_Rodent'), BMT.Rat (u'betty'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver')]
+
+Queries that select entities with more complex expressions need to use
+Q-expressions::
 
     >>> scope.BMT.Person.query_s (Q.last_name == Q.first_name).all ()
     [BMT.Person (u'tin', u'tin', u'')]
     >>> scope.BMT.Rodent.query_s (Q.weight != None).all ()
     [BMT.Mouse (u'Magic_Mouse'), BMT.Mouse (u'mighty_mouse')]
     >>> scope.BMT.Rodent.query_s (Q.weight == None).all ()
-    [BMT.Rat (u'betty'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver')]
+    [BMT.Mouse (u'Sick_Rodent'), BMT.Rat (u'betty'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver')]
     >>> scope.BMT.Rodent.query_s (Q.weight > 0).all ()
     [BMT.Mouse (u'Magic_Mouse'), BMT.Mouse (u'mighty_mouse')]
     >>> scope.BMT.Trap.query_s (Q.serial_no > 1).all ()
@@ -1567,12 +1476,22 @@ Attribute queries
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight))
     (42.0, 42.0)
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight == None).attrs (Q.name, "color"))
-    ((u'betty', u''), (u'rutty_rat', u''), (u'toothy_beaver', u''))
+    ((u'Sick_Rodent', u''), (u'betty', u''), (u'rutty_rat', u''), (u'toothy_beaver', u''))
     >>> tuple (scope.BMT.Trap.query_s (Q.serial_no %% 2).attr (Q.up_ex_q))
     (20.0, None, None)
 
+    >>> Ris.query_s (Q.sick_leave.start.D.YEAR (2010)).count ()
+    1
+    >>> Ris.query_s (Q.sick_leave.start.D.MONTH (4, 2010)).count ()
+    0
+    >>> Ris.query_s (Q.sick_leave.start != None).all ()
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))]
+
 Renaming objects and links
 --------------------------
+
+Changing the value of one role attribute of a link is analogous to renaming
+an object::
 
     >>> b.all_links ()
     []
@@ -1593,10 +1512,10 @@ Renaming objects and links
 Deleting objects and links
 --------------------------
 
-    >>> scope.MOM.Link.query_s ().all ()
-    [BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+Deleting an object removes all links in which that object participates::
 
-    .. ### DBW-specific start
+    >>> scope.MOM.Link.query_s ().all () ### 2
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> m.object_referring_attributes
     defaultdict(<type 'list'>, {})
@@ -1611,8 +1530,6 @@ Deleting objects and links
     >>> show (scope.ems.all_links (m_id))
     [((u'mighty_mouse', ), (u'x', 1))]
 
-    .. ### DBW-specific finish
-
     >>> show (t1.all_links ())
     [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), ((u'mighty_mouse', ), (u'x', 1))]
 
@@ -1626,48 +1543,38 @@ Deleting objects and links
     >>> show (t1.all_links ())
     [((u'luke', u'lucky', u''), (u'x', 1)), ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956))]
 
-    .. ### DBW-specific start
-
     >>> show (scope.ems.all_links (m_id))
     []
 
     >>> print formatted1 (sorted (d.type_name for d in t1.dependencies)) ### 2
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
 
-    .. ### DBW-specific finish
-
-    >>> scope.MOM.Link.query_s ().count ()
-    9
+    >>> scope.MOM.Link.query_s ().count () ### 3
+    10
     >>> scope.MOM.Link.r_query_s ().all ()
-    [BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> t1.destroy ()
-
-    .. ### DBW-specific start
 
     >>> show (scope.ems.all_links (t1_id))
     []
     >>> show (scope.ems.all_links (t2_id))
     [((u'luke', u'lucky', u''), (u'x', 2)), ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), ((u'betty', ), (u'x', 2))]
 
-    .. ### DBW-specific finish
-
-    >>> scope.MOM.Link.query_s ().all ()
-    [BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    >>> scope.MOM.Link.query_s ().all () ### 4
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> t2.destroy ()
-    >>> scope.MOM.Link.query_s ().all ()
-    [BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
-
-    .. ### DBW-specific start
+    >>> scope.MOM.Link.query_s ().all () ### 5
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> show (scope.ems.all_links (t2_id))
     []
 
-    .. ### DBW-specific finish
-
 Scope queries
 --------------
+
+:class:`~_MOM.Scope.Scope` provides methods for checking predicates::
 
     >>> for e in scope.i_incorrect () :
     ...     print list (e.errors)
@@ -1677,9 +1584,31 @@ Scope queries
     [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
     [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
     [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
+    [u'Condition `completely_defined` : All necessary attributes must be defined. Necessary attribute Float `weight` is not defined']
+
+:meth:`query_changes<_MOM.Scope.Scope.query_changes>` selects the changes
+specified via the arguments::
+
+    >>> lcp = scope.query_changes (type_name = "BMT.Location").order_by (TFL.Sorted_By ("-cid")).first ()
+    >>> lcp.cid, lcp.epk
+    (4, (u'-16.74077', u'48.463313', 'BMT.Location'))
+    >>> lcp
+    <Create BMT.Location (u'-16.74077', u'48.463313', 'BMT.Location'), new-values = {'last_cid' : '4'}>
+
+    >>> lct = scope.query_changes (type_name = "BMT.Trap").order_by (TFL.Sorted_By ("-cid")).first ()
+    >>> lct.cid, lct.epk
+    (49, (u'x', u'2', 'BMT.Trap'))
+    >>> lct
+    <Destroy BMT.Trap (u'x', u'2', 'BMT.Trap'), old-values = {'last_cid' : '10'}>
+        <Destroy BMT.Person_owns_Trap ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'2', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '18'}>
+        <Destroy BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'2', 'BMT.Trap'), (u'-16.74077', u'48.463313', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '23'}>
+        <Destroy BMT.Rodent_in_Trap ((u'betty', 'BMT.Rat'), (u'x', u'2', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '16'}>
+
+:class:`~_MOM.Scope.Scope` manages a list of outstanding changes waiting to
+be committed (or rollbacked):
 
     >>> len (scope.uncommitted_changes)
-    37
+    41
     >>> for c in scope.uncommitted_changes :
     ...     print c
     <Create BMT.Person (u'luke', u'lucky', u'', 'BMT.Person'), new-values = {'last_cid' : '1'}>
@@ -1716,10 +1645,14 @@ Scope queries
         <Modify BMT.Mouse (u'Magic_Mouse', 'BMT.Mouse'), old-values = {'color' : u'', 'last_cid' : '30', 'weight' : u''}, new-values = {'color' : u'yellow', 'last_cid' : '31', 'weight' : u'42.0'}>
     <Modify BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '9', 'max_weight' : u''}, new-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
     <Modify BMT.Person_owns_Trap ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '17', 'price' : u'42.0'}, new-values = {'last_cid' : '34', 'price' : u'1.2'}>
-    <Modify BMT.Rodent_in_Trap ((u'toothy_beaver', 'BMT.Beaver'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : 5}, new-values = {'last_cid' : '35', 'left' : 6}>
-    <Modify BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '35', 'left' : 6}, new-values = {'last_cid' : '36', 'left' : 5}>
+    <Create BMT.Mouse (u'Sick_Rodent', 'BMT.Mouse'), new-values = {'last_cid' : '35'}>
+    <Create BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010/02/18'),), 'BMT.Rodent_is_sick'), new-values = {'last_cid' : '36'}>
+    <Modify BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010/02/18'),), 'BMT.Rodent_is_sick'), old-values = {'fever' : u'', 'last_cid' : '36'}, new-values = {'fever' : u'42.0', 'last_cid' : '37'}>
+    <Modify BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010/03/01'),), 'BMT.Rodent_is_sick'), old-values = {'last_cid' : '37', 'sick_leave' : (('start', u'2010/02/18'),)}, new-values = {'last_cid' : '38', 'sick_leave' : (('start', u'2010/03/01'),)}>
+    <Modify BMT.Rodent_in_Trap ((u'toothy_beaver', 'BMT.Beaver'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : 5}, new-values = {'last_cid' : '39', 'left' : 6}>
+    <Modify BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '39', 'left' : 6}, new-values = {'last_cid' : '40', 'left' : 5}>
     <Destroy BMT.Mouse (u'mighty_mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'last_cid' : '29', 'weight' : u'42.0'}>
-        <Destroy BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '36'}>
+        <Destroy BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '40'}>
     <Destroy BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
         <Destroy BMT.Person_owns_Trap ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '34', 'price' : u'1.2'}>
         <Destroy BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'1', 'BMT.Trap'), (u'-16.268799', u'48.189956', 'BMT.Location'), 'BMT.Person_sets_Trap_at_Location'), old-values = {'last_cid' : '22'}>
@@ -1751,13 +1684,16 @@ Scope queries
 Replaying changes
 -----------------
 
+Changes can be undone and redone. Redoing changes in a different scope
+recreates the objects of one scope in another scope::
+
     >>> scop2 = MOM.Scope.new (apt, db_scheme)
     >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop2))
-    (16, 0)
+    (18, 0)
     >>> for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
     ...     c.redo (scop2)
     >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop2))
-    (16, 16)
+    (18, 18)
     >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
     []
 
@@ -1781,6 +1717,8 @@ Replaying changes
 Saving and re-loading changes from a database
 ----------------------------------------------
 
+Committing a scope saves all outstanding changes to the database::
+
     >>> db_path   = "/tmp/bmt_test.bmt"
     >>> db_url    = "/".join ((db_scheme, db_path))
     >>> db_path_x = db_path + ".x"
@@ -1790,10 +1728,11 @@ Saving and re-loading changes from a database
     ...     sos.rmdir (db_path_x, deletefiles = True)
 
     >>> scope.MOM.Id_Entity.count
-    12
+    14
     >>> scop3 = scope.copy (apt, db_url)
+    >>> scop3.commit ()
     >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop3))
-    (12, 12)
+    (14, 14)
     >>> sorted (scop3.user_diff (scope).iteritems ())
     []
     >>> all ((s.pid, s.as_pickle_cargo ()) == (t.pid, t.as_pickle_cargo ()) for (s, t) in zip (scope, scop3))
@@ -1802,7 +1741,7 @@ Saving and re-loading changes from a database
 
     >>> scop4 = MOM.Scope.load (apt, db_url)
     >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop4))
-    (12, 12)
+    (14, 14)
     >>> sorted (scope.user_diff (scop4).iteritems ())
     []
     >>> all ((s.pid, s.as_pickle_cargo ()) == (t.pid, t.as_pickle_cargo ()) for (s, t) in zip (scope, scop4))
@@ -1811,26 +1750,33 @@ Saving and re-loading changes from a database
 
     >>> if sos.path.exists (db_path) : sos.remove (db_path)
 
-Migrating all entities and the complete change history
-------------------------------------------------------
+Rollback of uncommited changes
+------------------------------
 
-    >>> scope.MOM.Id_Entity.count
-    12
-    >>> scope.query_changes ().count ()
-    50
-    >>> scop5 = scope.copy (apt, db_scheme)
-    >>> tuple (s.MOM.Id_Entity.count for s in (scope, scop5))
-    (12, 12)
-    >>> tuple (s.query_changes ().count () for s in (scope, scop5))
-    (50, 50)
-    >>> all ((s.pid, s.as_pickle_cargo ()) == (t.pid, t.as_pickle_cargo ()) for (s, t) in zip (scope, scop5))
-    True
-    >>> all ((s.cid, s.pid) == (t.cid, t.pid) for (s, t) in zip (* (s.query_changes () for s in (scope, scop5))))
-    True
-    >>> scop5.destroy ()
+Instead of committing, `rollback` discards all outstanding changes::
+
+    >>> scope.changes_to_save
+    2
+    >>> scope.commit ()
+    >>> scope.changes_to_save, scope.ems.max_cid ### before rollback
+    (0, 54)
+    >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
+    >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
+    >>> rbl = scope.BMT.Rodent_in_Trap (rbm, rbt)
+    >>> scope.changes_to_save, scope.ems.max_cid
+    (3, 57)
+    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
+    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
+    >>> scope.rollback ()
+    >>> scope.changes_to_save, scope.ems.max_cid ### after rollback
+    (0, 54)
+    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
+    []
 
 Primary key attributes
 -----------------------
+
+Non-optional primary key attributes must not be empty::
 
     >>> scope.BMT.Trap ("", None)
     Traceback (most recent call last):
@@ -1865,27 +1811,6 @@ Primary key attributes
     Invariants: Condition `name_not_empty` : name is not None and name != ''
         name = ''
 
-Rollback of uncommited changes
-------------------------------
-
-    >>> scope.changes_to_save
-    2
-    >>> scope.commit ()
-    >>> scope.changes_to_save, scope.ems.max_cid ### before rollback
-    (0, 50)
-    >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
-    >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
-    >>> rbl = scope.BMT.Rodent_in_Trap (rbm, rbt)
-    >>> scope.changes_to_save, scope.ems.max_cid
-    (3, 53)
-    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
-    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
-    >>> scope.rollback ()
-    >>> scope.changes_to_save, scope.ems.max_cid ### after rollback
-    (0, 50)
-    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
-    []
-
 Auto-updating attributes
 -------------------------
 
@@ -1906,53 +1831,11 @@ specify the (names of the) attributes it depends on in
     >>> t4.up_ex, t4.up_ex_q
     (None, None)
 
-Unary links
------------
-
-    >>> sr = scope.BMT.Mouse ("Sick_Rodent")
-    >>> osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
-    >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), )"
-    >>> osm.fever = 42
-    >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), fever = 42.0)"
-    >>> sorted (sr.sickness)
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))]
-
-Changing a composite primary attribute
---------------------------------------
-
-    >>> old_epk = osm.epk
-    >>> old_epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18), 'BMT.Rodent_is_sick')
-    >>> Ris.instance (* old_epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))
-
-    .. ### DBW-specific start
-
-    >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
-    [(26, (datetime.date(2010, 2, 18), None))]
-
-    .. ### DBW-specific finish
-
-    >>> osm.sick_leave.set_raw (start = "2010/03/01")
-    1
-    >>> print Ris.instance (* old_epk)
-    None
-    >>> osm.epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01), 'BMT.Rodent_is_sick')
-    >>> Ris.instance (* osm.epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))
-
-    .. ### DBW-specific start
-
-    >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
-    [(26, (datetime.date(2010, 3, 1), None))]
-
-    .. ### DBW-specific finish
-
 Setting attribute values with Queries
 -------------------------------------
+
+Queries can set the values of attributes in the database, without the need
+to load the objects involved into memory::
 
     >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
     ((2, None, None), (3, None, None))

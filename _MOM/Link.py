@@ -569,8 +569,12 @@ behavior of :class:`Link3`.
 An essential association is modelled by a class that inherits from the
 proper arity-specific descendent of :class:`Link_EB`.
 
+.. autoclass:: Link1()
+
 .. autoclass:: Link2()
+
 .. autoclass:: Link2_Ordered()
+
 .. autoclass:: Link3()
 
 Roles
@@ -595,8 +599,6 @@ Each object participating in a link of an association plays a specific
 * Multiplicity constraint, if any.
 
 * Non-essential properties:
-
-  - `dfc_synthesizer` (see `dfc-synthesis`_)
 
   - `auto_cache` (see `auto-caching`_)
 
@@ -646,33 +648,38 @@ Common multiplicities (of binary associations) are:
 Associations with at least one role with multiplicity 1 could be
 implemented by an attribute of the respective object instead of an
 association. Any change of requirements might invalidate that
-implementation, though. Therefore, `Link2_AB` should be used instead
-to implement such associations (changing `Link2_AB` to `Link2` does
-not invalidate clients of the association).
+implementation, though.
 
 Simple multiplicity constraints are implemented by defining
 `max_links` for the appropriate role. In this case, the `Link` class
 will enforce the constraint.
 
-Entity-based Links
-------------------
+Auto-Caching
+------------
 
-Entity-based links are implemented as independent entities, e.g., for
-each life link of the association a separate instance of `Link`
-exists.
+By specifying `auto_cache` for one of the `roles` of an entity-based
+association, an attribute caching the objects linked via this
+association is automagically added to another role of the association.
 
-This is the fully general way to implement associations and supports:
+`auto_cache` can be set to one of the values:
 
-- any kind of arity
+- `True`. This only works for binary associations without any
+  non-default properties for auto-caching. As it is the simplest case,
+  it should be preferred over the other possibilities, if possible.
 
-- link attributes
+- A string specifying the name of the attribute used for caching.
 
-- link predicates
+- A tuple of strings specifying the name of the attribute used for
+  caching and the name of the other role holding the cache.
 
-The downside is increased memory consumption which in turn might mean
-increased run-time.
+- XXX An instance of :class:`_MOM.Link_Role.Role_Cacher<MOM.Link_Role.Role_Cacher>`.
 
-:class:`Link_EB` provides the framework for entity-based links.
+In all cases, an instance of `Role_Cacher` will manage the automatic
+cache for the role in question.
+
+"""
+
+future_features = """
 
 DFC-Synthesis
 -------------
@@ -717,28 +724,6 @@ DFC-synthesis for an association `X_has_P` would be defined like::
         # end class _Attributes
 
 
-Auto-Caching
-------------
-
-By specifying `auto_cache` for one of the `roles` of an entity-based
-association, an attribute caching the objects linked via this
-association is automagically added to another role of the association.
-
-`auto_cache` can be set to one of the values:
-
-- `True`. This only works for binary associations without any
-  non-default properties for auto-caching. As it is the simplest case,
-  it should be preferred over the other possibilities, if possible.
-
-- A string specifying the name of the attribute used for caching.
-
-- A tuple of strings specifying the name of the attribute used for
-  caching and the name of the other role holding the cache.
-
-- XXX An instance of :class:`_MOM.Link_Role.Role_Cacher<MOM.Link_Role.Role_Cacher>`.
-
-In all cases, an instance of `Role_Cacher` will manage the automatic
-cache for the role in question.
 
 """
 

@@ -273,7 +273,7 @@ class Entity (TFL.Meta.Object) :
     polymorphic_epks      = False  ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
     show_in_ui            = True   ### Modified by meta machinery
-    show_package_prefix   = False
+    show_package_prefix   = False  ### Include `PNS` in `ui_name` ???
     ui_display_sep        = ", "
     x_locked              = False
 
@@ -1589,184 +1589,207 @@ Class `MOM.Id_Entity`
 
 .. class:: Id_Entity
 
-   `MOM.Id_Entity` provides the framework for defining essential classes and
-   associations. Each essential class or association is characterized by
+    `MOM.Id_Entity` provides the framework for defining essential classes and
+    associations. Each essential class or association is characterized by
 
-   - `essential attributes`_
+    - `essential attributes`_
 
-   - `essential predicates`_
+    - `essential predicates`_
 
-   - `class attributes`_
+    - `class attributes`_
 
-   - `methods`_
+    - `methods`_
 
-   Each instance of `Id_Entity` has a attribute :attr:`home_scope` that
-   refers to the :class:`~_MOM.Scope.Scope` in which the instance lives.
+    Each instance of `Id_Entity` has a attribute :attr:`home_scope` that
+    refers to the :class:`~_MOM.Scope.Scope` in which the instance lives.
 
-   `Id_Entity` is normally not directly used as a base class. Instead,
-   `Id_Entity`'s subclasses :class:`~_MOM.Object.Object` and
-   :class:`~_MOM.Link.Link` serve as root classes for the hierarchies
-   of essential classes and associations, respectively.
+    `Id_Entity` is normally not directly used as a base class. Instead,
+    `Id_Entity`'s subclasses :class:`~_MOM.Object.Object` and
+    :class:`~_MOM.Link.Link` serve as root classes for the hierarchies
+    of essential classes and associations, respectively.
 
-Essential Attributes
---------------------
+    .. _`essential attributes`:
 
-Essential attributes are defined inside the class `_Attributes`
-that is nested in `Id_Entity` (or one of its derived classes).
+    **Essential Attributes**
 
-Any essential class derived (directly or indirectly) from `Id_Entity`
-needs to define a `_Attributes` class that's derived from its
-ancestors `_Attributes`. The top-most `_Attributes` class is
-derived from :class:`MOM.Attr.Spec<_MOM._Attr.Spec.Spec>`.
+    Essential attributes are defined inside the class `_Attributes`
+    that is nested in `Id_Entity` (or one of its derived classes).
 
-Each essential attribute is defined by a class derived from one of
-the attribute types in :mod:`MOM.Attr.Type<_MOM._Attr.Type>`.
+    Any essential class derived (directly or indirectly) from `Id_Entity`
+    needs to define a `_Attributes` class that's derived from its
+    ancestors `_Attributes`. The top-most `_Attributes` class is
+    derived from :class:`MOM.Attr.Spec<_MOM._Attr.Spec.Spec>`.
 
-`MOM.Id_Entity` defines a number of attributes that can be overriden by
-descendant classes:
+    Each essential attribute is defined by a class derived from one of
+    the attribute types in :mod:`MOM.Attr.Type<_MOM._Attr.Type>`.
 
-- electric
+    `MOM.Id_Entity` defines a number of attributes that can be overriden by
+    descendant classes:
 
-- x_locked
+    - electric
 
-- is_used
+    - x_locked
 
-Essential Predicates
---------------------
+    - is_used
 
-Essential predicates are defined inside the class `_Predicates` that
-is nested in `Id_Entity` (or one of its derived classes).
+    .. _`essential predicates`:
 
-Any essential class derived (directly or indirectly) from `Id_Entity`
-needs to define a `_Predicates` class that's derived from its
-ancestors `_Predicates`. The top-most `_Predicates` class is
-derived from :class:`MOM.Pred.Spec<_MOM._Pred.Spec.Spec>`.
+    **Essential Predicates**
 
-Each essential predicate is defined by a class derived from one of
-the predicate types in :mod:`MOM.Pred.Type<_MOM._Pred.Type>`.
+    Essential predicates are defined inside the class `_Predicates` that
+    is nested in `Id_Entity` (or one of its derived classes).
 
-`MOM.Id_Entity` defines two predicates that should not be overriden by
-descendant classes:
+    Any essential class derived (directly or indirectly) from `Id_Entity`
+    needs to define a `_Predicates` class that's derived from its
+    ancestors `_Predicates`. The top-most `_Predicates` class is
+    derived from :class:`MOM.Pred.Spec<_MOM._Pred.Spec.Spec>`.
 
-- completely_defined
+    Each essential predicate is defined by a class derived from one of
+    the predicate types in :mod:`MOM.Pred.Type<_MOM._Pred.Type>`.
 
-- object_correct
+    `MOM.Id_Entity` defines two predicates that should not be overriden by
+    descendant classes:
 
-Please note that these two predicates are *not* to be used as examples
-of how predicates should be defined. Normally, predicates define
-`assertion`, not `eval_condition`! This is explained in more detail in
-:mod:`MOM.Pred.Type<_MOM._Pred.Type>`.
+    - completely_defined
 
-Class Attributes
-----------------
+    - object_correct
 
-`MOM.Id_Entity` provides a number of class attributes that control various
-aspects of the use of an essential class by the framework.
+    Please note that these two predicates are *not* to be used as examples
+    of how predicates should be defined. Normally, predicates define
+    `assertion`, not `eval_condition`! This is explained in more detail in
+    :mod:`MOM.Pred.Type<_MOM._Pred.Type>`.
 
-.. attribute:: default_child
+    .. _`class attributes`:
 
-  Specifies which child of a partial class should be used by the UI by
-  default. The value of this attribute is set for the partial class by
-  one specific derived class.
+    **Class Attributes**
 
-.. attribute:: deprecated_attr_names
+    `MOM.Id_Entity` provides a number of class attributes that control various
+    aspects of the use of an essential class by the framework.
 
-  This is a dictionary that maps deprecated names
-  of attributes to the currently preferred names (this is used to
-  allow the reading of older databases without loss of information).
+    .. attribute:: default_child
 
-.. attribute:: is_partial
+      Specifies which child of a partial class should be used by the UI by
+      default. The value of this attribute is set for the partial class by
+      one specific derived class.
 
-  Specifies if objects/links can be created for the essential
-  class in question.
+    .. attribute:: deprecated_attr_names
 
-  `is_partial` must be explicitly set to `True` for each essential
-  class that doesn't allow the creation of objects or links. If
-  `is_partial` isn't defined for a class, `False` is assumed.
+      This is a dictionary that maps deprecated names
+      of attributes to the currently preferred names (this is used to
+      allow the reading of older databases without loss of information).
 
-.. attribute:: max_count
+    .. attribute:: home_scope
 
-  Restricts the number of instances that can be created.
+      The scope to which the entity belongs.
 
-.. attribute:: PNS
+    .. attribute:: is_partial
 
-  The package namespace in which this class is defined.
+      Specifies if objects/links can be created for the essential
+      class in question.
 
-  Ideally, each package namespace defining essential classes defines a
-  common root for these, e.g., `SPN.Entity`, that defines
-  `PNS`, e.g., ::
+      `is_partial` must be explicitly set to `True` for each essential
+      class that doesn't allow the creation of objects or links. If
+      `is_partial` isn't defined for a class, `False` is assumed.
 
-      class _SPN_Entity_ (MOM.Id_Entity) :
+    .. attribute:: max_count
 
-          _real_name = "Entity"
+      Restricts the number of instances that can be created.
 
-          PNS = SPN
-          ...
+    .. attribute:: PNS
 
-.. attribute:: record_changes
+      The package namespace in which this class is defined.
 
-  Changes of the entity will only be recorded if `record_changes` is True.
+      Ideally, each package namespace defining essential classes defines a
+      common root for these, e.g., `SPN.Entity`, that defines
+      `PNS`, e.g., ::
 
-.. attribute:: refuse_links
+          class _SPN_Entity_ (MOM.Id_Entity) :
 
-  This is a set of (names of) classes that must not be linked
-  to instances of the essential class in question. This can be used if
-  objects of a derived class should not participate in associations of
-  a base class.
+              _real_name = "Entity"
 
-.. attribute:: show_in_ui
+              PNS = SPN
+              ...
 
-  Class is shown in the UI only if `show_in_ui` is True.
+    .. attribute:: recordable_attrs
 
-  `show_in_ui` is not inherited --- it must be set to `False` for every single
-  class that shouldn't be shown in the UI.
+      Set of attributes stored in the database for the entity.
 
-  The meta machinery modifies `show_in_ui` by combining it with
-  `record_changes` and `not is_partial`.
+    .. attribute:: record_changes
 
-.. attribute:: show_package_prefix
+      Changes of the entity will only be recorded if `record_changes` is True.
 
-  Specifies whether the class name should be prefixed by the name of
-  the package namespace in the UI.
+    .. attribute:: refuse_links
 
-.. attribute:: tutorial
+      This is a set of (names of) classes that must not be linked
+      to instances of the essential class in question. This can be used if
+      objects of a derived class should not participate in associations of
+      a base class.
 
-  Describes why and how to define instances of the essential class and
-  is used in step-by-step tutorials.
+    .. attribute:: show_in_ui
 
-Methods
--------
+      Class is shown in the UI only if `show_in_ui` is True.
 
-Descendents of `MOM.Id_Entity` can redefine a number of methods to
-influence how instances of the class are handled by the framework. If
-you redefine one of these methods, you'll normally need to call the
-`super` method somewhere in the redefinition.
+      `show_in_ui` is not inherited --- it must be set to `False` for every single
+      class that shouldn't be shown in the UI.
 
-.. method:: after_init
+      The meta machinery modifies `show_in_ui` by combining it with
+      `record_changes` and `not is_partial`.
 
-  Is called by the GUI after an instance of the class was
-  (successfully) created. `after_init` can create additional objects
-  automatically to ease the life of the interactive user of the
-  application.
+    .. attribute:: show_package_prefix
 
-.. method:: compute_defaults_internal
+      Specifies whether the class name should be prefixed by the name of
+      the package namespace in the UI.
 
-  Is called whenever object attributes
-  needs to synchronized and can be used to set attributes to computed
-  default values. Please note that it is better to use
-  `compute_default` defined for a specific attribute than to compute that
-  value in `compute_defaults_internal`.
+    .. attribute:: tutorial
 
-  `compute_defaults_internal` should only be used when the default
-  values for several different attributes need to be computed together.
+      Describes why and how to define instances of the essential class and
+      is used in step-by-step tutorials.
 
-.. method:: compute_type_defaults_internal
+    .. _`methods`:
 
-  Is a class method that is called to
-  compute a default value of an attribute that is based on all
-  instances of the class. The value of such an attribute must be
-  stored as a class attribute (or in the root object of the scope).
+    **Methods**
 
+    Descendents of `MOM.Id_Entity` can redefine a number of methods to
+    influence how instances of the class are handled by the framework. If
+    you redefine one of these methods, you'll normally need to call the
+    `super` method somewhere in the redefinition.
+
+    .. method:: after_init
+
+      Is called by the GUI after an instance of the class was
+      (successfully) created. `after_init` can create additional objects
+      automatically to ease the life of the interactive user of the
+      application.
+
+    .. automethod:: all_referrers
+
+    .. automethod:: changes
+
+    .. method:: compute_defaults_internal
+
+      Is called whenever object attributes
+      needs to synchronized and can be used to set attributes to computed
+      default values. Please note that it is better to use
+      `compute_default` defined for a specific attribute than to compute that
+      value in `compute_defaults_internal`.
+
+      `compute_defaults_internal` should only be used when the default
+      values for several different attributes need to be computed together.
+
+    .. method:: compute_type_defaults_internal
+
+      Is a class method that is called to
+      compute a default value of an attribute that is based on all
+      instances of the class. The value of such an attribute must be
+      stored as a class attribute (or in the root object of the scope).
+
+    .. automethod:: copy
+
+    .. automethod:: destroy
+
+    .. automethod:: set
+
+    .. automethod:: set_raw
 
 """
 
