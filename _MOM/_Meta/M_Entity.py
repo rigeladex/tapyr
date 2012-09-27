@@ -150,6 +150,7 @@
 #    12-Sep-2012 (CT) Add `_m_create_auto_children`
 #    18-Sep-2012 (CT) Add `_m_fix_refuse_links`
 #    20-Sep-2012 (CT) Factor `_m_setup_roles`
+#    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #    ««revision-date»»···
 #--
 
@@ -193,7 +194,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
     _type_names    = set ()
 
-    m_sorted_by    = TFL.Sorted_By ("rank", "i_rank")
+    m_sorted_by    = TFL.Sorted_By ("i_rank")
 
     M_Root         = None
     Type_Name_Type = Type_Name_Type
@@ -1058,7 +1059,13 @@ XXX
 
     * Adds the `etype` to the `children` dictionary of all its base classes.
 
-    `M_E_Type` provides the attribute:
+    `M_E_Type` provides the attributes:
+
+    .. attribute:: db_sig
+
+      `db_sig` defines the database signature of the `etype`. The `db_sig`
+      comprises the `type_name` and the :attr:`db_sig<MOM.Attr.Type.db_sig>`
+      of a attributes stored in the database.
 
     .. attribute:: default_child
 

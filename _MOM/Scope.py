@@ -105,6 +105,7 @@
 #     4-Aug-2012 (CT) Move `_DESTROYED_E_TYPE` to `.ems.remove`
 #    12-Aug-2012 (CT) Use `ems.commit_context`
 #    11-Sep-2012 (CT) Add `rollback_pending_change`; factored from `MOM.EMS.SAS`
+#    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #    ««revision-date»»···
 #--
 
@@ -411,9 +412,9 @@ class Scope (TFL.Meta.Object) :
     def compute_defaults_internal (self, gauge = Gauge_Logger ()) :
         """Lazily call `compute_defaults_internal` for all entities."""
         with self.as_active () :
-            sk = TFL.Sorted_By ("rank", "id")
+            sk = TFL.Sorted_By ("id")
             gauge.reset ("Compute default internal attributes")
-            for et in sorted (self.T_Extension, key = TFL.Getter.rank) :
+            for et in self.T_Extension :
                 et.compute_type_defaults_internal ()
             for e in self.entity_iter_gauge \
                     (gauge, label = "Reset syncable attributes") :

@@ -215,6 +215,7 @@
 #     9-Sep-2012 (CT) Add `creation_date`
 #    10-Sep-2012 (CT) Fix `creation_date.computed`
 #    24-Sep-2012 (CT) Don't wrap `Error.Attribute_Value`
+#    27-Sep-2012 (CT) Remove `rank` (never used in MOM)
 #    ««revision-date»»···
 #--
 
@@ -268,7 +269,6 @@ class Entity (TFL.Meta.Object) :
     is_partial            = True
     is_relevant           = False
     is_used               = True
-    rank                  = 0
     polymorphic_epk       = False  ### Set by meta machinery
     polymorphic_epks      = False  ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
@@ -1702,14 +1702,6 @@ aspects of the use of an essential class by the framework.
 
           PNS = SPN
           ...
-
-.. attribute:: rank
-
-  Defines a relative order between essential classes and associations.
-  Entities of lower rank are stored and retrieved from the database
-  before entities of higher rank. If instances of a specific type
-  depend on the existance of instances of another type, the dependent
-  type should have higher rank.
 
 .. attribute:: record_changes
 
