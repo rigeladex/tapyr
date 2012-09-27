@@ -230,7 +230,7 @@ class Unique (_Condition_) :
 
 __doc__ = """
 Module `MOM.Meta.M_Pred_Type`
-============================
+==============================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
