@@ -66,6 +66,7 @@
 #     4-Aug-2012 (CT) Guard `cache.remove` in `Link_Cacher_n.__call__`
 #    13-Sep-2012 (CT) Add `_suffixed`
 #    14-Sep-2012 (CT) Add `cr_name` to `Link_Cacher`, `Role_Cacher`
+#    27-Sep-2012 (CT) Remove un-implemented `Link_AB` from docstring
 #    ««revision-date»»···
 #--
 
@@ -553,16 +554,6 @@ Class `MOM.Link`
 
     - `multiplicity`_
 
-    Each association can be implemented in one of two ways:
-
-    - `entity-based links`_ (derived from a `arity`_-specific descendent
-      of :class:`Link_EB`)
-
-    - `attribute-based links`_ (derived from :class:`~_MOM.Link_AB.Link2_AB`)
-
-    From a client's point of view, entity-based links and
-    attribute-based links are compatible to each other.
-
 Arity
 -----
 
@@ -576,14 +567,11 @@ its own arity-specific metaclass, e.g., :class:`M_Link3` defines the
 behavior of :class:`Link3`.
 
 An essential association is modelled by a class that inherits from the
-proper arity-specific descendent of :class:`Link_EB` or
-:class:`~_MOM.Link_AB.Link_AB`.
+proper arity-specific descendent of :class:`Link_EB`.
 
 .. autoclass:: Link2()
 .. autoclass:: Link2_Ordered()
 .. autoclass:: Link3()
-
-.. autoclass:: _MOM.Link_AB.Link2_AB()
 
 Roles
 -----
@@ -685,31 +673,6 @@ The downside is increased memory consumption which in turn might mean
 increased run-time.
 
 :class:`Link_EB` provides the framework for entity-based links.
-
-Attribute-based Links
----------------------
-
-Attribute-based links are implemented by storing the information about
-a specific link in attributes of the linked objects instead of a
-independent link instance.
-
-Attribute-based links are applicable only for binary links
-
-- with at least one role restricted to `multiplicity`_ 1
-
-- without link attributes
-
-- without link predicates
-
-The upside is greatly reduced memory consumption which might reduce
-run-time.
-
-:class:`~_MOM.Link_AB.Link_AB` provides the framework for
-attribute-based links.
-
-Queries to associations implemented with attribute-based links will
-return synthetic link instances that live only as long as the client
-retains the query result.
 
 DFC-Synthesis
 -------------
