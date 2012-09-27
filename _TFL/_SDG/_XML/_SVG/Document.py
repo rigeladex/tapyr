@@ -36,6 +36,7 @@
 #                     `marker_width`, `marker_height` for scaling
 #    20-Sep-2012 (RS) Add `Arrow_Head_Bar`
 #    26-Sep-2012 (CT) Add `klass` to `Root`
+#    27-Sep-2012 (CT) Add `preserve_aspect_ratio` to `Root`
 #    ««revision-date»»···
 #--
 
@@ -393,6 +394,7 @@ Root                        = TFL.SDG.XML.Elem_Type \
     , init_arg_defaults     = dict
         (x_attrs            = { "xmlns:xlink" : "http://www.w3.org/1999/xlink"})
     , klass                 = None
+    , preserve_aspect_ratio = None
     , version               = "1.1"
     , view_box              = None
     , width                 = None

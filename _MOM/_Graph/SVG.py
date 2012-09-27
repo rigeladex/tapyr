@@ -42,6 +42,7 @@
 #    25-Sep-2012 (CT) Put `.desc` into `Title`
 #    26-Sep-2012 (CT) Don't consider `is_partial` for `klass`
 #    26-Sep-2012 (CT) Add class `MOM-Graph` to `Root` element
+#    27-Sep-2012 (CT) Set `preserve_aspect_ratio` to `xMinYMin`
 #    ««revision-date»»···
 #--
 
@@ -100,9 +101,10 @@ class Renderer (MOM.Graph._Renderer_) :
         graph  = self.graph
         w, h   = (max_x - min_x, max_y - min_y)
         result = SVG.Root \
-            ( klass       = "MOM-Graph"
-            , view_box    = "%d %d %d %d" % (min_x, min_y, w, h)
-            , width       = "100%"
+            ( klass                 = "MOM-Graph"
+            , preserve_aspect_ratio = "xMinYMin"
+            , view_box              = "%d %d %d %d" % (min_x, min_y, w, h)
+            , width                 = "100%"
             )
         if self.want_document :
             result = SVG.Document \
