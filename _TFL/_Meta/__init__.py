@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -100,6 +100,18 @@ Module `Lazy_Method`
 ====================
 
 .. automodule:: _TFL._Meta.Lazy_Method
+   :members:
+
+Module `Mixin_NS`
+====================
+
+.. automodule:: _TFL._Meta.Mixin_NS
+   :members:
+
+Module `totally_ordered`
+=========================
+
+.. automodule:: _TFL._Meta.totally_ordered
    :members:
 
 """

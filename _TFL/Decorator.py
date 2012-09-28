@@ -64,34 +64,36 @@ def Decorator (decorator) :
     """Decorate `decorator` so that `__name__`, `__doc__`, and `__dict__` of
        decorated functions/methods are preserved.
 
-       >>> def deco (f) :
-       ...     def wrapper () :
-       ...         "Wrapper around decorated function"
-       ...         return f ()
-       ...     return wrapper
-       ...
-       >>> @deco
-       ... def foo () :
-       ...     "Function to test decoration"
-       ...     pass
-       ...
-       >>> foo.__name__, foo.__doc__
-       ('wrapper', 'Wrapper around decorated function')
+       ::
 
-       >>> @Decorator
-       ... def deco (f) :
-       ...     def wrapper () :
-       ...         "Wrapper around decorated function"
-       ...         return f ()
-       ...     return wrapper
-       ...
-       >>> @deco
-       ... def foo () :
-       ...     "Function to test decoration"
-       ...     pass
-       ...
-       >>> foo.__name__, foo.__doc__
-       ('foo', 'Function to test decoration')
+           >>> def deco (f) :
+           ...     def wrapper () :
+           ...         "Wrapper around decorated function"
+           ...         return f ()
+           ...     return wrapper
+           ...
+           >>> @deco
+           ... def foo () :
+           ...     "Function to test decoration"
+           ...     pass
+           ...
+           >>> foo.__name__, foo.__doc__
+           ('wrapper', 'Wrapper around decorated function')
+
+           >>> @Decorator
+           ... def deco (f) :
+           ...     def wrapper () :
+           ...         "Wrapper around decorated function"
+           ...         return f ()
+           ...     return wrapper
+           ...
+           >>> @deco
+           ... def foo () :
+           ...     "Function to test decoration"
+           ...     pass
+           ...
+           >>> foo.__name__, foo.__doc__
+           ('foo', 'Function to test decoration')
     """
     def wrapper (f) :
         decorated             = decorator (f)
@@ -119,24 +121,24 @@ def Annotated (RETURN = _undefined, ** kw) :
        http://www.python.org/dev/peps/pep-3107/.
 
        Each key of `kw` must be the name of an argument of the function to be
-       annotated.
+       annotated::
 
-       >>> @TFL.Annotated (bar = "Arg 1", baz = 42)
-       ... def foo (bar, baz) : pass
-       ...
-       >>> sorted (foo.func_annotations.items ())
-       [('bar', 'Arg 1'), ('baz', 42)]
-       >>> @TFL.Annotated (bar = "Arg 1", baz = 42, RETURN = None)
-       ... def foo (bar, baz) : pass
-       ...
-       >>> sorted (foo.func_annotations.items ())
-       [('bar', 'Arg 1'), ('baz', 42), ('return', None)]
-       >>> @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
-       ... def foo (bar, baz) : pass
-       ...
-       Traceback (most recent call last):
-         ...
-       TypeError: Function `foo` doesn't have an argument named `qux`
+           >>> @TFL.Annotated (bar = "Arg 1", baz = 42)
+           ... def foo (bar, baz) : pass
+           ...
+           >>> sorted (foo.func_annotations.items ())
+           [('bar', 'Arg 1'), ('baz', 42)]
+           >>> @TFL.Annotated (bar = "Arg 1", baz = 42, RETURN = None)
+           ... def foo (bar, baz) : pass
+           ...
+           >>> sorted (foo.func_annotations.items ())
+           [('bar', 'Arg 1'), ('baz', 42), ('return', None)]
+           >>> @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
+           ... def foo (bar, baz) : pass
+           ...
+           Traceback (most recent call last):
+             ...
+           TypeError: Function `foo` doesn't have an argument named `qux`
     """
     def decorator (f) :
         from inspect import getargspec
@@ -162,21 +164,23 @@ def Annotated (RETURN = _undefined, ** kw) :
 def Attributed (** kw) :
     """Add all elements of `kw` as function attribute to decorated function.
 
-       >>> from _TFL.Decorator import *
-       >>> @Attributed (foo = 1, bar = 42)
-       ... def f () :
-       ...     pass
-       ...
-       >>> sorted (f.__dict__.iteritems ())
-       [('bar', 42), ('foo', 1)]
-       >>> @Attributed (a = "WTF", b = 137)
-       ... def g () :
-       ...     "Test `Attributed` decorator"
-       ...
-       >>> sorted (g.__dict__.iteritems ())
-       [('a', 'WTF'), ('b', 137)]
-       >>> g.__doc__
-       'Test `Attributed` decorator'
+       ::
+
+           >>> from _TFL.Decorator import *
+           >>> @Attributed (foo = 1, bar = 42)
+           ... def f () :
+           ...     pass
+           ...
+           >>> sorted (f.__dict__.iteritems ())
+           [('bar', 42), ('foo', 1)]
+           >>> @Attributed (a = "WTF", b = 137)
+           ... def g () :
+           ...     "Test `Attributed` decorator"
+           ...
+           >>> sorted (g.__dict__.iteritems ())
+           [('a', 'WTF'), ('b', 137)]
+           >>> g.__doc__
+           'Test `Attributed` decorator'
     """
     def decorator (f) :
         for k, v in kw.iteritems () :
@@ -268,6 +272,16 @@ def Override_Method (cls) :
         return f
     return decorator
 # end def Override_Method
+
+__doc__ = """
+Module `Decorator`
+==========================
+
+Library of decorator functions.
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("*")

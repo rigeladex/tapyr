@@ -55,97 +55,105 @@
 #--
 
 """
->>> qr = Q_Result ([x for x in range (10)])
->>> qr.count ()
-10
->>> qr [5]
-5
->>> qr [5:9].all ()
-[5, 6, 7, 8]
->>> qr.slice (3).all ()
-[3, 4, 5, 6, 7, 8, 9]
->>> qr.slice (3, 5).all ()
-[3, 4]
->>> qr.slice (3, 8).all ()
-[3, 4, 5, 6, 7]
->>> qq = qr.order_by (lambda x : x % 2)
->>> qq [4]
-8
->>> qq.all ()
-[0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
->>> qq.filter (lambda x : x % 2).all ()
-[1, 3, 5, 7, 9]
->>> qq.distinct (lambda x : x % 2).all ()
-[0, 1]
->>> qq.all ()
-[0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
->>> qq.distinct (lambda x : x % 3 == 0).all ()
-[0, 2]
->>> qs = qr.filter (lambda x : x % 2 == 0)
->>> qs.count ()
-5
->>> qs.all ()
-[0, 2, 4, 6, 8]
->>> qt = qs.filter (lambda x : x % 3 == 0)
->>> qt.count ()
-2
->>> qt.all ()
-[0, 6]
->>> qt.first ()
-0
->>> qt.one ()
-Traceback (most recent call last):
-  ...
-IndexError: Query result contains 2 entries
->>> qu = qt.limit (1)
->>> qu.all ()
-[0]
->>> qu.one ()
-0
->>> qv = qt.offset (1)
->>> qv.all ()
-[6]
->>> qv.one ()
-6
+Module `Q_Result`
+==================
 
->>> qr = Q_Result (list (range (1, 100, 10)))
->>> qs = Q_Result (list (range (10, 200, 20)))
->>> qt = Q_Result (list (x*x for x in range (10)))
->>> qc = Q_Result_Composite ((qr, qs, qt))
->>> qr.count ()
-10
->>> qs.count ()
-10
->>> qt.count ()
-10
->>> qc.count ()
-30
->>> qc.all ()
-[1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
->>> qc.distinct ().count ()
-28
->>> qc.distinct ().all ()
-[1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 4, 9, 16, 25, 36, 49, 64]
->>> qc.distinct ().order_by (lambda x : x % 10).all ()
-[10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 4, 64, 25, 16, 36, 9, 49]
->>> qc.distinct (lambda x : x % 10).all ()
-[1, 10, 4, 9, 16, 25]
->>> qc.distinct (lambda x : x % 10).count ()
-6
->>> qc [5:15].all ()
-[51, 61, 71, 81, 91, 10, 30, 50, 70, 90]
->>> qc.limit (5).all ()
-[1, 11, 21, 31, 41]
->>> qc.distinct (lambda x : x % 10).limit (3).all ()
-[1, 10, 4]
->>> qc.limit (15).distinct (lambda x : x % 10).all ()
-[1, 10]
+Provide filtering and ordering functions over query result::
 
->>> qg = Q_Result ((1, 2, 3, 4, 2, 3, 4, 4,5))
->>> qg.all        ()
-[1, 2, 3, 4, 2, 3, 4, 4, 5]
->>> qg.group_by (lambda x : x).all ()
-[1, 2, 3, 4, 5]
+    >>> qr = Q_Result ([x for x in range (10)])
+    >>> qr.count ()
+    10
+    >>> qr [5]
+    5
+    >>> qr [5:9].all ()
+    [5, 6, 7, 8]
+    >>> qr.slice (3).all ()
+    [3, 4, 5, 6, 7, 8, 9]
+    >>> qr.slice (3, 5).all ()
+    [3, 4]
+    >>> qr.slice (3, 8).all ()
+    [3, 4, 5, 6, 7]
+    >>> qq = qr.order_by (lambda x : x % 2)
+    >>> qq [4]
+    8
+    >>> qq.all ()
+    [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
+    >>> qq.filter (lambda x : x % 2).all ()
+    [1, 3, 5, 7, 9]
+    >>> qq.distinct (lambda x : x % 2).all ()
+    [0, 1]
+    >>> qq.all ()
+    [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
+    >>> qq.distinct (lambda x : x % 3 == 0).all ()
+    [0, 2]
+    >>> qs = qr.filter (lambda x : x % 2 == 0)
+    >>> qs.count ()
+    5
+    >>> qs.all ()
+    [0, 2, 4, 6, 8]
+    >>> qt = qs.filter (lambda x : x % 3 == 0)
+    >>> qt.count ()
+    2
+    >>> qt.all ()
+    [0, 6]
+    >>> qt.first ()
+    0
+    >>> qt.one ()
+    Traceback (most recent call last):
+      ...
+    IndexError: Query result contains 2 entries
+    >>> qu = qt.limit (1)
+    >>> qu.all ()
+    [0]
+    >>> qu.one ()
+    0
+    >>> qv = qt.offset (1)
+    >>> qv.all ()
+    [6]
+    >>> qv.one ()
+    6
+
+    >>> qr = Q_Result (list (range (1, 100, 10)))
+    >>> qs = Q_Result (list (range (10, 200, 20)))
+    >>> qt = Q_Result (list (x*x for x in range (10)))
+    >>> qc = Q_Result_Composite ((qr, qs, qt))
+    >>> qr.count ()
+    10
+    >>> qs.count ()
+    10
+    >>> qt.count ()
+    10
+    >>> qc.count ()
+    30
+    >>> qc.all ()
+    [1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+    >>> qc.distinct ().count ()
+    28
+    >>> qc.distinct ().all ()
+    [1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 4, 9, 16, 25, 36, 49, 64]
+    >>> qc.distinct ().order_by (lambda x : x % 10).all ()
+    [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 4, 64, 25, 16, 36, 9, 49]
+    >>> qc.distinct (lambda x : x % 10).all ()
+    [1, 10, 4, 9, 16, 25]
+    >>> qc.distinct (lambda x : x % 10).count ()
+    6
+    >>> qc [5:15].all ()
+    [51, 61, 71, 81, 91, 10, 30, 50, 70, 90]
+    >>> qc.limit (5).all ()
+    [1, 11, 21, 31, 41]
+    >>> qc.distinct (lambda x : x % 10).limit (3).all ()
+    [1, 10, 4]
+    >>> qc.limit (15).distinct (lambda x : x % 10).all ()
+    [1, 10]
+
+    >>> qg = Q_Result ((1, 2, 3, 4, 2, 3, 4, 4,5))
+    >>> qg.all        ()
+    [1, 2, 3, 4, 2, 3, 4, 4, 5]
+    >>> qg.group_by (lambda x : x).all ()
+    [1, 2, 3, 4, 5]
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
 """
 
 from   _TFL                       import TFL

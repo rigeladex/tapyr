@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -113,6 +113,14 @@ def sanitized_filename (s, translate_table = None) :
    s = _graph_rep         (s)
    return s
 # end def sanitized_filename
+
+__doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+Module `Ascii`
+==========================
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

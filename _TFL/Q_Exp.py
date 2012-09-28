@@ -56,6 +56,9 @@
 #--
 
 """
+Module `Q_Exp`
+===============
+
 This module implements a query expression language::
 
     >>> from _TFL.Record import Record as R
@@ -276,6 +279,8 @@ Q.SUM needs documenting::
     95
     >>> Q.SUM (Q.foo - Q.bar)  (r1)
     -95
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -117,7 +117,7 @@ class Mixin_NS (object) :
         return self.__class__ (obj)
     # end def __get__
 
-    def __getattr__(self, name):
+    def __getattr__ (self, name):
         obj = self._obj
         if obj is None :
             raise TypeError \
@@ -125,7 +125,7 @@ class Mixin_NS (object) :
         return getattr (obj, name)
     # end def __getattr__
 
-    def __repr__(self):
+    def __repr__ (self):
         obj = self._obj
         if obj is None :
             msg = "unbound"
@@ -144,5 +144,3 @@ class Mixin_NS (object) :
 if __name__ != "__main__" :
     TFL.Meta._Export ("*")
 ### __END__ Mixin_NS
-
-

@@ -3,15 +3,29 @@
 Documentation for Tanzer's Python packages
 ==========================================
 
+Package-NS `MOM`
+======================
+
+.. toctree::
+
+   MOM/index
+
+
+Package-NS `TFL`
+======================
+
 .. toctree::
 
    TFL/index
-   MOM/index
 
-Indices and tables
+Module Index
 ==================
 
-* :ref:`genindex`
 * :ref:`modindex`
+
+Property Index
+================
+
+* :ref:`genindex`
 
 .. \__END__ index.rst

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -89,144 +89,146 @@ class Desc_Getter (TFL.Meta.Object) :
 class Sorted_By (TFL.Meta.Object) :
     """Composite sort key for list of sort criteria.
 
-       >>> from _TFL.Record import Record as R
-       >>> NL = chr (10)
-       >>> def show (l, key) :
-       ...     print NL.join (str (s) for s in sorted (l, key = key))
-       ...
-       >>> l = [ R (a = 1, b = 1, c = "abcd")
-       ...     , R (a = 1, b = 2, c = "ABCD")
-       ...     , R (a = 1, b = 2, c = "efg")
-       ...     , R (a = 2, b = 1, c = "xyz")
-       ...     , R (a = 2, b = 1, c = " xyzz")
-       ...     , R (a = 2, b = 1, c = "  xyzzz")
-       ...     ]
-       >>> print NL.join (str (s) for s in l)
-       (a = 1, b = 1, c = 'abcd')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, key = Sorted_By ("a"))
-       (a = 1, b = 1, c = 'abcd')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, key = Sorted_By ("a", "b"))
-       (a = 1, b = 1, c = 'abcd')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, key = Sorted_By ("a", "-b"))
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, key = Sorted_By ("b", "a"))
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       >>> show (l, key = Sorted_By ("-b", "a"))
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, key = Sorted_By ("-b", "-a"))
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 1, b = 1, c = 'abcd')
-       >>> show (l, key = Sorted_By ("b", "c"))
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       >>> show (l, key = Sorted_By ("b", "-c"))
-       (a = 2, b = 1, c = 'xyz')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 1, b = 2, c = 'efg')
-       (a = 1, b = 2, c = 'ABCD')
-       >>> show (l, key = Sorted_By ("-b", "c"))
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 2, c = 'efg')
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = 'xyz')
-       >>> show (l, key = Sorted_By ("-b", "-c"))
-       (a = 1, b = 2, c = 'efg')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 2, b = 1, c = 'xyz')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, key = Sorted_By ("c"))
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 1, b = 2, c = 'ABCD')
-       (a = 1, b = 1, c = 'abcd')
-       (a = 1, b = 2, c = 'efg')
-       (a = 2, b = 1, c = 'xyz')
-       >>> show (["1", 0, "42", 2.4], Sorted_By (int))
-       0
-       1
-       2.4
-       42
-       >>> show ([3, "1", 0, "42", 2.4], Sorted_By (lambda x : x))
-       0
-       2.4
-       3
-       1
-       42
+       ::
 
-       >>> import warnings; warnings.filterwarnings ( "error",  "comparing unequal types not supported in 3.x")
-       >>> l = [ R (a = 1, b = 1, c = "abcd", d = "foo")
-       ...     , R (a = 1, b = 2, c = "ABCD", d = "bar")
-       ...     , R (a = 1, b = 2, c = "efg",  d = 42)
-       ...     , R (a = 2, b = 1, c = "xyz",  d = 137)
-       ...     , R (a = 2, b = 1, c = " xyzz")
-       ...     , R (a = 2, b = 1, c = "  xyzzz")
-       ...     ]
-       >>> show (l, Sorted_By ("d"))
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       (a = 1, b = 2, c = 'efg', d = 42)
-       (a = 2, b = 1, c = 'xyz', d = 137)
-       (a = 1, b = 2, c = 'ABCD', d = 'bar')
-       (a = 1, b = 1, c = 'abcd', d = 'foo')
-       >>> show (l, Sorted_By ("-d"))
-       (a = 1, b = 1, c = 'abcd', d = 'foo')
-       (a = 1, b = 2, c = 'ABCD', d = 'bar')
-       (a = 2, b = 1, c = 'xyz', d = 137)
-       (a = 1, b = 2, c = 'efg', d = 42)
-       (a = 2, b = 1, c = ' xyzz')
-       (a = 2, b = 1, c = '  xyzzz')
-       >>> show (l, Sorted_By_Strict ("d"))
-       Traceback (most recent call last):
-         ...
-       AttributeError: d
-       >>> show (l, Sorted_By_Strict ("-d"))
-       Traceback (most recent call last):
-         ...
-       AttributeError: d
+           >>> from _TFL.Record import Record as R
+           >>> NL = chr (10)
+           >>> def show (l, key) :
+           ...     print NL.join (str (s) for s in sorted (l, key = key))
+           ...
+           >>> l = [ R (a = 1, b = 1, c = "abcd")
+           ...     , R (a = 1, b = 2, c = "ABCD")
+           ...     , R (a = 1, b = 2, c = "efg")
+           ...     , R (a = 2, b = 1, c = "xyz")
+           ...     , R (a = 2, b = 1, c = " xyzz")
+           ...     , R (a = 2, b = 1, c = "  xyzzz")
+           ...     ]
+           >>> print NL.join (str (s) for s in l)
+           (a = 1, b = 1, c = 'abcd')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, key = Sorted_By ("a"))
+           (a = 1, b = 1, c = 'abcd')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, key = Sorted_By ("a", "b"))
+           (a = 1, b = 1, c = 'abcd')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, key = Sorted_By ("a", "-b"))
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, key = Sorted_By ("b", "a"))
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           >>> show (l, key = Sorted_By ("-b", "a"))
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, key = Sorted_By ("-b", "-a"))
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 1, b = 1, c = 'abcd')
+           >>> show (l, key = Sorted_By ("b", "c"))
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           >>> show (l, key = Sorted_By ("b", "-c"))
+           (a = 2, b = 1, c = 'xyz')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 1, b = 2, c = 'efg')
+           (a = 1, b = 2, c = 'ABCD')
+           >>> show (l, key = Sorted_By ("-b", "c"))
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 2, c = 'efg')
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = 'xyz')
+           >>> show (l, key = Sorted_By ("-b", "-c"))
+           (a = 1, b = 2, c = 'efg')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 2, b = 1, c = 'xyz')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, key = Sorted_By ("c"))
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 1, b = 2, c = 'ABCD')
+           (a = 1, b = 1, c = 'abcd')
+           (a = 1, b = 2, c = 'efg')
+           (a = 2, b = 1, c = 'xyz')
+           >>> show (["1", 0, "42", 2.4], Sorted_By (int))
+           0
+           1
+           2.4
+           42
+           >>> show ([3, "1", 0, "42", 2.4], Sorted_By (lambda x : x))
+           0
+           2.4
+           3
+           1
+           42
+
+           >>> import warnings; warnings.filterwarnings ( "error",  "comparing unequal types not supported in 3.x")
+           >>> l = [ R (a = 1, b = 1, c = "abcd", d = "foo")
+           ...     , R (a = 1, b = 2, c = "ABCD", d = "bar")
+           ...     , R (a = 1, b = 2, c = "efg",  d = 42)
+           ...     , R (a = 2, b = 1, c = "xyz",  d = 137)
+           ...     , R (a = 2, b = 1, c = " xyzz")
+           ...     , R (a = 2, b = 1, c = "  xyzzz")
+           ...     ]
+           >>> show (l, Sorted_By ("d"))
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           (a = 1, b = 2, c = 'efg', d = 42)
+           (a = 2, b = 1, c = 'xyz', d = 137)
+           (a = 1, b = 2, c = 'ABCD', d = 'bar')
+           (a = 1, b = 1, c = 'abcd', d = 'foo')
+           >>> show (l, Sorted_By ("-d"))
+           (a = 1, b = 1, c = 'abcd', d = 'foo')
+           (a = 1, b = 2, c = 'ABCD', d = 'bar')
+           (a = 2, b = 1, c = 'xyz', d = 137)
+           (a = 1, b = 2, c = 'efg', d = 42)
+           (a = 2, b = 1, c = ' xyzz')
+           (a = 2, b = 1, c = '  xyzzz')
+           >>> show (l, Sorted_By_Strict ("d"))
+           Traceback (most recent call last):
+             ...
+           AttributeError: d
+           >>> show (l, Sorted_By_Strict ("-d"))
+           Traceback (most recent call last):
+             ...
+           AttributeError: d
 
     """
 
@@ -289,6 +291,18 @@ class Sorted_By_Strict (Sorted_By) :
     class Ignore_Exception (StandardError) : pass
 
 # end class Sorted_By_Strict
+
+__doc__ = """
+
+Module `Sorted_By`
+====================
+
+Easy declaration of composite sort-keys for list of sort criteria, some of
+which might be reversed.
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("*")

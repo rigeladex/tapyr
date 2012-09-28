@@ -168,116 +168,10 @@ class _Module_Space_ :
 # end class _Module_Space_
 
 class Package_Namespace (object) :
-    """Implements a namespace that provides direct access to classes and
+    """Namespace that provides direct access to classes and
        functions implemented in the modules of a Python package.
 
-       In the following, a package Foo_Package and module Bar are assumed as
-       example.
-
-       A Python package encapsulates a number of modules. Packages are useful
-       for avoiding name clashes between modules of different domains. For
-       instance, `Frame` might be used as module name by a GUI package and by
-       a communications package.
-
-       Many modules define a class or function with the same name as
-       the module name. There are different styles how to access such a
-       class::
-
-           #1
-           import Bar
-           instance = Bar.Bar ()
-
-           #2
-           from Bar import Bar
-           instance = Bar ()
-
-       Many Pythoneers use the `Bar.Bar` notation to refer to the class `Bar`
-       defined by module `Bar`. I strongly prefer to use `Bar` to refer to
-       the class.
-
-       In the presence of packages, there are even more possibilities::
-
-           #3
-           import Foo_Package.Bar
-           instance = Foo_Package.Bar.Bar ()
-
-           #4
-           from Foo_Package import Bar
-           instance = Bar.Bar ()
-
-           #5
-           from Foo_Package.Bar import Bar
-           instance = Bar ()
-
-       If one wants to avoid name clashes only #3 is usable. Unfortunately,
-       this makes for very verbose and unreadable code. One way to avoid this
-       is to import all classes/functions of all modules of the package in
-       the `__init__.py`. The disadvantages of this approach are
-
-       - Import bloat. Importing the package will pull in the entire contents
-         of the package even if only a tiny part of it is needed.
-
-       - If the package qualifier is to used inside the package too (strongly
-         recommended), circular imports will result.
-
-         Using the package name to qualify class and function names defined
-         by the modules of the package considerably eases using grep for
-         finding occurences of their use.
-
-       `Package_Namespace` provides another option::
-
-           #6
-           from   Foo_Package import Foo
-           import Foo_Package.Bar
-           instance = Foo.Bar ()
-
-       In order to support this, `Foo_Package/__init__.py` must export an
-       instance `Foo` of class `Package_Namespace`::
-
-           ### Foo_Package/__init__.py
-           from _TFL.Package_Namespace import Package_Namespace
-           Foo = Package_Namespace ()
-
-       The Package_Namespace provides the `_Export` method called by modules
-       of the package to export classes/functions module into the namespace::
-
-           ### Foo_Package.Bar puts `Bar` and `Baz` into the Package_Namespace
-           Foo._Export ("Bar", "Baz")
-
-       `_Export` accepts "*" as a wild card and uses Python's rules to expand
-       that with the important caveat, that here "*" only includes functions
-       and classes defined by the calling module (i.e., "*" doesn't work
-       transitively).
-
-       If a module prefers to put itself instead of some of its attributes
-       (functions/classes/whatever) into the Package_Namespace, it can do so
-       by calling::
-
-           Foo._Export_Module ()
-
-       The modules of the package can be accessed via the `_` attribute of
-       the package namespace.
-
-       The standard naming convention for packages exporting a
-       Package_Namespace is::
-
-           _TFL           ### the Python package
-           TFL            ### the Package_Namespace
-
-       i.e., use the same name but with a leading underscore for the package.
-
-       So, the canonical use of Package_Namespaces looks like::
-
-           #7
-           from   _TFL import TFL
-           import _TFL.Filename
-           fn = TFL.Filename ("/some/very/important/file.name")
-
-       .. note::
-         The methods `_Export`, `_Export_Module`, and `_Reload` are part
-         of the public interface of `Package_Namespaces` (they start with an
-         underscore to avoid name clashes with user-defined attributes of
-         package namespaces).
+       You can access the modules of the package via the attribute `_`.
     """
 
     _leading_underscores = re.compile (r"(\.|^)_+")
@@ -389,10 +283,11 @@ class Package_Namespace (object) :
         self._run_import_callback (mod)
     # end def _Export_Module
 
-    def _Import_Module (self, module) :
+    def _Import_Module (self, name) :
+        """Import module `name` from thois package namespace"""
         import _TFL.import_module ### avoid circular imports !!!
         return _TFL.import_module.import_module \
-            (".".join ((self.__module_name, module)))
+            (".".join ((self.__module_name, name)))
     # end def _Import_Module
 
     def _import_names (self, mod, names, result, check_clashes) :
@@ -505,6 +400,7 @@ class Derived_Package_Namespace (Package_Namespace) :
        For derived imports to work, the Derived_Package_Namespace must be
        imported before the module needing import derivation is imported (this
        only is important for nested Package_Namespaces).
+
     """
 
     def __init__ (self, parent, name = None) :
@@ -535,5 +431,129 @@ class Derived_Package_Namespace (Package_Namespace) :
     # end def __getattr__
 
 # end class Derived_Package_Namespace
+
+__doc__ = """
+Module `Package_Namespace`
+==========================
+
+Implements a namespace that provides direct access to classes and
+functions implemented in the modules of a Python package.
+
+In the following, a package Foo_Package and module Bar are assumed as
+example.
+
+A Python package encapsulates a number of modules. Packages are useful
+for avoiding name clashes between modules of different domains. For
+instance, `Frame` might be used as module name by a GUI package and by
+a communications package.
+
+Many modules define a class or function with the same name as
+the module name. There are different styles how to access such a
+class::
+
+   #1
+   import Bar
+   instance = Bar.Bar ()
+
+   #2
+   from Bar import Bar
+   instance = Bar ()
+
+Many Pythoneers use the `Bar.Bar` notation to refer to the class `Bar`
+defined by module `Bar`. I strongly prefer to use `Bar` to refer to
+the class.
+
+In the presence of packages, there are even more possibilities::
+
+   #3
+   import Foo_Package.Bar
+   instance = Foo_Package.Bar.Bar ()
+
+   #4
+   from Foo_Package import Bar
+   instance = Bar.Bar ()
+
+   #5
+   from Foo_Package.Bar import Bar
+   instance = Bar ()
+
+If one wants to avoid name clashes only #3 is usable. Unfortunately,
+this makes for very verbose and unreadable code. One way to avoid this
+is to import all classes/functions of all modules of the package in
+the `__init__.py`. The disadvantages of this approach are
+
+- Import bloat. Importing the package will pull in the entire contents
+  of the package even if only a tiny part of it is needed.
+
+- If the package qualifier is to used inside the package too (strongly
+  recommended), circular imports will result.
+
+  Using the package name to qualify class and function names defined
+  by the modules of the package considerably eases using grep for
+  finding occurences of their use.
+
+`Package_Namespace` provides another option::
+
+   #6
+   from   Foo_Package import Foo
+   import Foo_Package.Bar
+   instance = Foo.Bar ()
+
+In order to support this, `Foo_Package/__init__.py` must export an
+instance `Foo` of class `Package_Namespace`::
+
+   ### Foo_Package/__init__.py
+   from _TFL.Package_Namespace import Package_Namespace
+   Foo = Package_Namespace ()
+
+The Package_Namespace provides the `_Export` method called by modules
+of the package to export classes/functions module into the namespace::
+
+   ### Foo_Package.Bar puts `Bar` and `Baz` into the Package_Namespace
+   Foo._Export ("Bar", "Baz")
+
+`_Export` accepts "*" as a wild card and uses Python's rules to expand
+that with the important caveat, that here "*" only includes functions
+and classes defined by the calling module (i.e., "*" doesn't work
+transitively).
+
+If a module prefers to put itself instead of some of its attributes
+(functions/classes/whatever) into the Package_Namespace, it can do so
+by calling::
+
+   Foo._Export_Module ()
+
+The modules of the package can be accessed via the `_` attribute of
+the package namespace.
+
+The standard naming convention for packages exporting a
+Package_Namespace is::
+
+   _TFL           ### the Python package
+   TFL            ### the Package_Namespace
+
+i.e., use the same name but with a leading underscore for the package.
+
+So, the canonical use of Package_Namespaces looks like::
+
+   #7
+   from   _TFL import TFL
+   import _TFL.Filename
+   fn = TFL.Filename ("/some/very/important/file.name")
+
+.. note::
+
+ The methods `_Export`, `_Export_Module`, `_Import_Module`, and
+ `_Reload` are part of the public interface of `Package_Namespaces`
+ (they start with an underscore to avoid name clashes with
+ user-defined attributes of package namespaces).
+
+.. autoclass:: _TFL.Package_Namespace.Package_Namespace
+   :members: _Export, _Export_Module, _Import_Module, _Reload
+
+.. autoclass:: _TFL.Package_Namespace.Derived_Package_Namespace
+   :members:
+
+"""
 
 ### __END__ TFL.Package_Namespace

@@ -1679,7 +1679,7 @@ Usage examples
 
 Many of the following tests/examples pass a simple `show` function as
 `handler`. `show` just displays some information about the command and the
-values passed to it.
+values passed to it::
 
     >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
     >>> cmd._arg_list
@@ -2029,6 +2029,9 @@ values passed to it.
             @c2b
                 ccc    : 42
                 struct : False
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
 """
 
 if __name__ != "__main__" :

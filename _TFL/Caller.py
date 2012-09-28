@@ -89,19 +89,19 @@ def frame (depth = 0) :
 # end def frame
 
 def globals (depth = 0) :
-    """Return the `globals ()' of the caller's caller (larger values of
-       `depth' return caller's farther up the call stack).
+    """Return the `globals ()` of the caller's caller (larger values of
+       `depth` return caller's farther up the call stack).
 
        This is useful for evaluating an expression in the context of a
        function's caller or for changing the context of a functions caller
-       (e.g., for implementing a Common Lisp like `trace' function)
+       (e.g., for implementing a Common Lisp like `trace` function)
     """
     return frame (depth).f_back.f_globals
 # end def globals
 
 def locals (depth = 0) :
-    """Return the `locals ()' of the caller's caller (larger values of
-       `depth' return caller's farther up the call stack).
+    """Return the `locals ()` of the caller's caller (larger values of
+       `depth` return caller's farther up the call stack).
 
        This is useful for evaluating an expression in the context of a
        function's caller.
@@ -111,15 +111,15 @@ def locals (depth = 0) :
 
 def code (depth = 0) :
     """Returns the code object of the caller's caller (larger values of
-       `depth' return caller's farther up the call stack).
+       `depth` return caller's farther up the call stack).
     """
     return frame (depth).f_back.f_code
 # end def code
 
 def info (level = -3) :
-    """Returns `file-name', `line-number', `function-name' of caller at
-       position `level' in the call stack (-3 being the caller of
-       `info's caller).
+    """Returns `file-name`, `line-number`, and `function-name` of caller at
+       position `level` in the call stack (-3 being the caller of
+       `infos` caller).
     """
     return traceback.extract_stack () [level] [:3]
 # end def info
@@ -133,19 +133,22 @@ class Scope (TFL.Meta.Object) :
        scope.
 
        The supplied index operator allows Scope objects to be used as mapping
-       arguments for the string formatting operator `%s':
+       arguments for the string formatting operator "%"::
 
-       >>> "42*3 == %(42*3)d" % Scope ()
-       '42*3 == 126'
-       >>> a,b,c = 2,3,4
-       >>> "a = %(a)s, b = %(b)d, c = %(c)f, d = %(b*c)s" % Scope ()
-       'a = 2, b = 3, c = 4.000000, d = 12'
-       >>> list = [x*x for x in range (10)]
-       >>> "%(list)s, %(list [2:4])s, %(list [-1])s" % Scope ()
-       '[0, 1, 4, 9, 16, 25, 36, 49, 64, 81], [4, 9], 81'
-       >>> square = lambda n : n * n
-       >>> "%(square (%(3*4)s))s" % Scope ()
-       '144'
+           >>> print "42*3 == %(42*3)s" % Scope ()
+           42*3 == 126
+
+           >>> a,b,c = 2,3,4
+           >>> print "a = %(a)s, b = %(b)d, c = %(c)f, d = %(b*c)s" % Scope ()
+           a = 2, b = 3, c = 4.000000, d = 12
+
+           >>> list = [x*x for x in range (10)]
+           >>> print "%(list)s, %(list [2:4])s, %(list [-1])s" % Scope ()
+           [0, 1, 4, 9, 16, 25, 36, 49, 64, 81], [4, 9], 81
+
+           >>> square = lambda n : n * n
+           >>> print "%(square (%(3*4)s))s" % Scope ()
+           144
 
     """
 
@@ -209,7 +212,6 @@ class Object_Scope (Scope) :
        <bound method Filename.directories of Filename (/foo/bar/baz.dat)>
        >>> c.directories()
        ['foo', 'bar']
-
        >>> from _TFL.Record import Record
        >>> c = Record (x = 1)
        >>> o = Record (a = 42, b = Record (a = 137, b = "foo", c = c))
@@ -282,6 +284,14 @@ class Object_Scope_Mutable (Object_Scope) :
     # end def __setitem__
 
 # end class Object_Scope_Mutable
+
+__doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+Module `Caller`
+==========================
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

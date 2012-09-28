@@ -52,10 +52,13 @@ import operator
 class _Getter_ (TFL.Meta.Object) :
     """Generalized (and transitive) accessor to attributes and items.
 
-       *** Beware: this can't be used to refer to magic methods
+       .. note::
+           Beware!
+
+           This can't be used to refer to magic methods
            (like `__cmp__` or `__str__`)
 
-       >>> from Record import *
+       >>> from _TFL.Record import Record
        >>> r = Record (a = 1, b = "2", foo = 42, bar = Record (x = 0, y = 137))
        >>> r.bar.z = [1, 42, 137]
        >>> g1 = Getter.foo
@@ -72,6 +75,7 @@ class _Getter_ (TFL.Meta.Object) :
        'howdi'
 
        `Attribute` is a legacy spelling of `Getter`
+
        >>> r = Record (a = 1, b = "2", foo = 42)
        >>> a = Attribute.foo
        >>> a (r)
@@ -83,6 +87,7 @@ class _Getter_ (TFL.Meta.Object) :
        AttributeError: foo
 
        `Item` is another legacy spelling of `Getter`
+
        >>> last = Item [-1]
        >>> last (range (2))
        1
@@ -95,7 +100,7 @@ class _Getter_ (TFL.Meta.Object) :
        IndexError: list index out of range
        >>> third (range (5))
        3
-     """
+    """
 
     def __init__ (self, getters = None, doc = None) :
         self.__getters = getters or ()
@@ -163,6 +168,14 @@ class _Method_ (TFL.Meta.Object) :
 
 Getter = Attribute = Item = _Getter_ ()
 Method = _Method_ ()
+
+__doc__ = """
+Module `Accessor`
+==========================
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("Attribute", "Getter", "Item", "Method")

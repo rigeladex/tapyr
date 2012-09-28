@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,7 +23,7 @@
 #    TFL.sos
 #
 # Purpose
-#    Provide shell around module `os' and make some functions more portable
+#    Provide shell around module `os` and make some functions more portable
 #
 # Revision Dates
 #    20-Apr-1998 (CT) Creation
@@ -125,7 +125,7 @@ def changed_dir (dir) :
 # end def changed_dir
 
 def expanded_glob (pathname) :
-    """Return a list of file names matching `expanded_path (pathname)'."""
+    """Return a list of file names matching `expanded_path (pathname)`."""
     from glob import glob
     result = glob (expanded_path (pathname))
     if (not result) and "*" not in pathname :
@@ -134,7 +134,7 @@ def expanded_glob (pathname) :
 # end def expanded_glob
 
 def expanded_path (pathname) :
-    """Return `pathname' with tilde and shell variables expanded."""
+    """Return `pathname` with tilde and shell variables expanded."""
     return path.expandvars (path.expanduser (pathname))
 # end def expanded_path
 
@@ -146,14 +146,14 @@ def expanded_globs (* pathnames) :
 # end def expanded_globs
 
 def filesize (path) :
-    """Return size of file `path' in bytes."""
+    """Return size of file `path` in bytes."""
     import os
     import stat
     return os.stat (path) [stat.ST_SIZE]
 # end def filesize
 
 def forced_unlink (* file) :
-    """Delete all `file's passed as arguments without raising exceptions for
+    """Delete all `file` arguments without raising exceptions for
        non-existing files.
     """
     for f in file :
@@ -162,7 +162,7 @@ def forced_unlink (* file) :
 # end def forced_unlink
 
 def listdir_full (in_dir) :
-    """Returns the result of `listdir (in_dir)' augmented by `in_dir'
+    """Returns the result of `listdir (in_dir)` augmented by `in_dir`
        (i.e., each element in the result is a full path).
     """
     if in_dir and in_dir != curdir :
@@ -172,11 +172,11 @@ def listdir_full (in_dir) :
 # end def listdir_full
 
 def listdir_ext  (in_dir, ext) :
-    """Returns a list of all files with extension `ext' contained in
-       directory `in_dir'.
+    """Returns a list of all files with extension `ext` contained in
+       directory `in_dir`.
 
-       Unlike the result of `listdir', the files returned by this function
-       are full-blown pathes (i.e., they include `in_dir').
+       Unlike the result of `listdir`, the files returned by this function
+       are full-blown pathes (i.e., they include `in_dir`).
     """
     result = listdir_full (in_dir)
     if "*" not in ext :
@@ -195,10 +195,10 @@ def _ext_filter (f) :
 
 def listdir_exts (in_dir, * extensions) :
     """Returns a list of all files with one of the extensions specified by
-       `extensions' contained in directory `in_dir'.
+       `extensions` contained in directory `in_dir`.
 
-       Unlike the result of `listdir', the files returned by this function
-       are full-blown pathes (i.e., they include `in_dir').
+       Unlike the result of `listdir`, the files returned by this function
+       are full-blown pathes (i.e., they include `in_dir`).
     """
     from _TFL.predicate import un_nested
     extensions = un_nested (extensions)
@@ -232,7 +232,7 @@ def rmdir (dir, deletefiles = 0) :
 # end def rmdir
 
 def system_info_env () :
-    """Returns a dictionary containing the subset of `os.environ' providing
+    """Returns a dictionary containing the subset of `os.environ` providing
        information about the system.
     """
     import re
@@ -254,8 +254,8 @@ def system_info_env () :
 # end def system_info_env
 
 def tempfile_name (in_dir = None, create_dir = False) :
-    """Return a unqiue temporary filename. If `in_dir' is specified, the
-       filename returned resides in the directory `in_dir'.
+    """Return a unqiue temporary filename. If `in_dir` is specified, the
+       filename returned resides in the directory `in_dir`.
     """
     from warnings import warn as w
     w   ( "`TFL.sos.tempfile_name` uses the deprecated function "
@@ -275,6 +275,16 @@ def tempfile_name (in_dir = None, create_dir = False) :
     return result
 # end def tempfile_name
 
+__doc__ = """
+
+Module `sos`
+=============
+
+Wrapper around module `os`; improves portability of some functions.
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 if __name__ != "__main__" :
     TFL._Export_Module ()
 ### __END__ TFL.sos

@@ -59,20 +59,26 @@ import re
 if hasattr (re, "RegexObject") :
     re_RegexObject = re.RegexObject
 else :
-    ### `sre' returns a type
+    ### `sre` returns a type
     re_RegexObject = type (re.compile (""))
 
 class Regexp (TFL.Meta.Object) :
     """Wrap a regular expression pattern and the last match, if any.
 
        The last result of match/search is available in the instance attribute
-       `last_match'. `match' and `search' return the result of the match
-       *and* store it into `last_match'.
+       `last_match`. `match` and `search` return the result of the match
+       *and* store it into `last_match`.
 
-       This allows constructions like:
+       This allows constructions like::
 
-       if pat.match (some_string) :
-           (g1, g2, g3) = pat.last_match.groups ()
+           if pat.match (some_string) :
+               (g1, g2, g3) = pat.last_match.groups ()
+
+       `Regexp` instances support access to named match groups via attribute
+       syntax::
+
+           if pat.match (some_string) :
+              g1 = pat.group_1
     """
 
     default_flags = 0
@@ -91,11 +97,11 @@ class Regexp (TFL.Meta.Object) :
     # end def __init__
 
     def match (self, string, pos = 0, endpos = None) :
-        """Try to match `self._pattern' at the beginning of `string'.
+        """Try to match `self._pattern` at the beginning of `string`.
 
-           The result is returned and stored in `self.last_match'.
+           The result is returned and stored in `self.last_match`.
 
-           `pos' and `endpos' determine the region of the string included in
+           `pos` and `endpos` determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
         endpos = endpos or self.max_index
@@ -104,12 +110,12 @@ class Regexp (TFL.Meta.Object) :
     # end def match
 
     def search (self, string, pos = 0, endpos = None) :
-        """Scan through `string' looking for a location where `self._pattern'
+        """Scan through `string` looking for a location where `self._pattern`
            produces a match.
 
-           The result is returned and stored in `self.last_match'.
+           The result is returned and stored in `self.last_match`.
 
-           `pos' and `endpos' determine the region of the string included in
+           `pos` and `endpos` determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
         endpos = endpos or self.max_index
@@ -298,6 +304,15 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
     # end def __call__
 
 # end class Multi_Re_Replacer
+
+__doc__ = """
+
+Module `Regexp`
+=================
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("*", "re")

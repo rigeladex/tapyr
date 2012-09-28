@@ -53,10 +53,11 @@
 #     4-Feb-2009 (CT)  s/_fixed_type_/M_M_Class/ and clarified implementation
 #    11-Jun-2009 (CT)  `head_mixins` and `tail_mixins` added to `New`
 #    24-Sep-2009 (CT)  Use `_TFL.callable` to avoid `-3` warnings
-#    30-Aug-2010 (CT) `M_Autorename.__name__` changed to pass `name` through
-#                     `str` (`unicode` gives `type()` a sissy-fit)
-#    10-Feb-2011 (CT) `_m_combine_nested_class` added to `M_Base`
-#    20-Jul-2012 (CT) Add debug output to `M_Autorename.__new__`
+#    30-Aug-2010 (CT)  `M_Autorename.__name__` changed to pass `name` through
+#                      `str` (`unicode` gives `type()` a sissy-fit)
+#    10-Feb-2011 (CT)  `_m_combine_nested_class` added to `M_Base`
+#    20-Jul-2012 (CT)  Add debug output to `M_Autorename.__new__`
+#    28-Sep-2012 (CT)  Improve TypeError message from `_most_specific_meta`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,7 @@ class M_M_Class (type) :
        This class chooses the most specific metaclass of the `bases`
        (instead of the metaclass of the first element of `bases` as
        standard Python does; for a discussion of this problem, see:
-       http://groups.google.de/group/comp.lang.python/tree/browse_frm/thread/2b7a60d08d4a99c4/72346462866e6497?rnum=1&q=eder&_done=%2Fgroup%2Fcomp.lang.python%2Fbrowse_frm%2Fthread%2F2b7a60d08d4a99c4%2F36e83cab80f1dbaf%3Fq%3Deder%26rnum%3D2%26#doc_72346462866e6497).
+       http://groups.google.com/group/comp.lang.python/tree/browse_frm/thread/2b7a60d08d4a99c4/72346462866e6497).
     """
 
     def __init__ (cls, name, bases, dict) :
@@ -104,13 +105,13 @@ class M_M_Class (type) :
     # end def __init__
 
     def __call__ (meta, name, bases, dict) :
-        meta = meta._most_specific_meta (bases, dict)
+        meta = meta._most_specific_meta (name, bases, dict)
         cls  = meta.__new__ (meta, name, bases, dict)
         meta.__init__       (cls,  name, bases, dict)
         return cls
     # end def __call__
 
-    def _most_specific_meta (meta, bases, dict) :
+    def _most_specific_meta (meta, name, bases, dict) :
         result = dict.get ("__metaclass__")
         if result is None :
             from types import ClassType as Classic
@@ -123,8 +124,8 @@ class M_M_Class (type) :
                     result = b_meta
                 else :
                     raise TypeError \
-                        ( "Metatype conflict among bases: %s, %s"
-                        % (result, b_meta)
+                        ( "Metatype conflict among bases: %s %s vs. %s %s"
+                        % (result, name, b_meta, b)
                         )
         return result
     # end def _most_specific_meta

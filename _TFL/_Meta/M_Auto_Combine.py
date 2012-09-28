@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,8 +38,8 @@
 #                      `TFL.Meta.M_Auto_Combine_Lists` factored
 #    18-Feb-2005 (CT)  Moved to `TFL.Meta`
 #    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
-#    13-Jul-2005 (CED) Missing import added
 #     3-Feb-2009 (CT)  Documentation added
+#    28-Sep-2012 (CT)  Add `M_Auto_Combine_Nested_Classes`
 #    ««revision-date»»···
 #--
 
@@ -47,11 +47,13 @@ from   _TFL                import TFL
 
 import _TFL._Meta.M_Auto_Combine_Dicts
 import _TFL._Meta.M_Auto_Combine_Lists
+import _TFL._Meta.M_Auto_Combine_Nested_Classes
 import _TFL._Meta.M_Auto_Combine_Sets
 import _TFL._Meta.M_Class
 
 class M_Auto_Combine ( TFL.Meta.M_Auto_Combine_Dicts
                      , TFL.Meta.M_Auto_Combine_Lists
+                     , TFL.Meta.M_Auto_Combine_Nested_Classes
                      , TFL.Meta.M_Auto_Combine_Sets
                      , TFL.Meta.M_Class
                      ) :
@@ -63,27 +65,38 @@ Meta class for auto-combining
 
 * the list-attributes mentioned in `_lists_to_combine`
   (see :class:`~_TFL._Meta.M_Auto_Combine_Lists.M_Auto_Combine_Lists`)
+
 * the dict-attributes mentioned in `_dicts_to_combine`
   (see :class:`~_TFL._Meta.M_Auto_Combine_Dicts.M_Auto_Combine_Dicts`)
+
+* the class-valued--attributes mentioned in `_nested_classes_to_combine`
+  (see :class:`~_TFL._Meta.M_Auto_Combine_Nested_Classes.M_Auto_Combine_Nested_Classes`)
+
 * the set-attributes  mentioned in `_sets_to_combine`
   (see :class:`~_TFL._Meta.M_Auto_Combine_Sets.M_Auto_Combine_Sets`)
 
 between a class and its ancestors.
 
-Module `M_Auto_Combine_Dicts`
+`M_Auto_Combine_Dicts`
 =============================
 
 .. automodule:: _TFL._Meta.M_Auto_Combine_Dicts
    :members:
 
-Module `M_Auto_Combine_Lists`
+`M_Auto_Combine_Lists`
 =============================
 
 .. automodule:: _TFL._Meta.M_Auto_Combine_Lists
    :members:
 
-Module `M_Auto_Combine_Sets`
-============================
+`M_Auto_Combine_Nested_Classes`
+======================================
+
+.. automodule:: _TFL._Meta.M_Auto_Combine_Nested_Classes
+   :members:
+
+`M_Auto_Combine_Sets`
+=============================
 
 .. automodule:: _TFL._Meta.M_Auto_Combine_Sets
    :members:

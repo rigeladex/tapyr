@@ -51,7 +51,10 @@
 #--
 
 """
-This module provides some classes for filtering iterables.
+Module `Filter`
+================
+
+This module provides some classes for filtering iterables::
 
     >>> def pprint (x) :
     ...     import textwrap
@@ -169,6 +172,8 @@ operators short-circuit::
     ...
     Filter_And Filter_Or Filter_And
     Filter_Or Filter_And Filter_Or
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
 
@@ -331,65 +336,67 @@ class Filter_Or (_Filter_Q_) :
 class Attr_Query (TFL.Q_Exp.Base) :
     """Syntactic sugar for creating Filter objects based on attribute queries.
 
-       >>> from _TFL.Record import Record as R
-       >>> Q  = Attr_Query ()
-       >>> r1 = R (foo = 42, bar = 137, baz = 11)
-       >>> q0 = Q.foo
-       >>> q0
-       Q.foo
-       >>> q0._name
-       'foo'
-       >>> q0.predicate (r1)
-       42
+       ::
 
-       >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
-       True
-       >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
-       False
-       >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
-       True
-       >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
-       False
-       >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
-       False
-       >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
-       True
-       >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
-       True
-       >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
-       True
-       >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
-       False
-       >>> (Q.fool == "barfly") (R (fool = "barfly"))
-       True
-       >>> (Q.fool != "barfly") (R (fool = "barfly"))
-       False
-       >>> (Q.fool != "barflyz") (R (fool = "barfly"))
-       True
-       >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
-       True
-       >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
-       False
-       >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
-       True
-       >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
-       False
-       >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
-       True
-       >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
-       False
-       >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
-       True
-       >>> (Q.fool % 2) (R (fool = 20))
-       0
+           >>> from _TFL.Record import Record as R
+           >>> Q  = Attr_Query ()
+           >>> r1 = R (foo = 42, bar = 137, baz = 11)
+           >>> q0 = Q.foo
+           >>> q0
+           Q.foo
+           >>> q0._name
+           'foo'
+           >>> q0.predicate (r1)
+           42
 
-       >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
-       >>> (Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)
-       <Filter_And [Q.bar.lower () == Q.baz.lower (), Q.baz.lower () == Q.qux.lower ()]>
-       >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
-       False
-       >>> ((Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)) (r3)
-       True
+           >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
+           True
+           >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
+           False
+           >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
+           True
+           >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
+           False
+           >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
+           False
+           >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
+           True
+           >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
+           True
+           >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
+           True
+           >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
+           False
+           >>> (Q.fool == "barfly") (R (fool = "barfly"))
+           True
+           >>> (Q.fool != "barfly") (R (fool = "barfly"))
+           False
+           >>> (Q.fool != "barflyz") (R (fool = "barfly"))
+           True
+           >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
+           True
+           >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
+           False
+           >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
+           True
+           >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
+           False
+           >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
+           True
+           >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
+           False
+           >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
+           True
+           >>> (Q.fool % 2) (R (fool = 20))
+           0
+
+           >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
+           >>> (Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)
+           <Filter_And [Q.bar.lower () == Q.baz.lower (), Q.baz.lower () == Q.qux.lower ()]>
+           >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
+           False
+           >>> ((Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)) (r3)
+           True
 
     """
 

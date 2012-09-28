@@ -1843,6 +1843,20 @@ to load the objects involved into memory::
     >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
     ((2, 25.0, 50.0), (3, 25.0, 75.0))
 
+Modules and nested package namespaces
+=======================================
+
+.. toctree::
+
+   modules
+   Attr/index
+   Pred/index
+   SCM/index
+   Meta/index
+   bib
+
+
+
 """
 
 from   _TFL.Formatter           import Formatter, formatted_1 as formatted1

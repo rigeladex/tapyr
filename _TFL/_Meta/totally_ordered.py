@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,90 +36,90 @@
 """
 `totally_ordered` is a class decorator adding all missing rich comparison
 methods to a class, if at least one of the rich ordering methods or the
-old-style `__cmp__` is defined.
+old-style `__cmp__` is defined::
 
->>> class T (TFL.Meta.Object) :
-...     def __init__ (self, value) :
-...         self.value = value
-...
->>> @totally_ordered
-... class T_ge (T) :
-...     def __ge__ (self, rhs) : return self.value >= rhs.value
-...
->>> @totally_ordered
-... class T_gt (T) :
-...     def __gt__ (self, rhs) : return self.value >  rhs.value
-...
->>> @totally_ordered
-... class T_gtr (T) :
-...     def __gt__ (self, rhs) : return self.value <  rhs.value
-...
->>> @totally_ordered
-... class T_le (T) :
-...     def __le__ (self, rhs) : return self.value <= rhs.value
-...
->>> @totally_ordered
-... class T_lt (T) :
-...     def __lt__ (self, rhs) : return self.value <  rhs.value
-...
->>> @totally_ordered
-... class T_ltr (T) :
-...     def __lt__ (self, rhs) : return self.value >  rhs.value
-...
->>> @totally_ordered
-... class T_cmp (T) :
-...     def __cmp__ (self, rhs) : return self.value - rhs.value
-...
+    >>> class T (TFL.Meta.Object) :
+    ...     def __init__ (self, value) :
+    ...         self.value = value
+    ...
+    >>> @totally_ordered
+    ... class T_ge (T) :
+    ...     def __ge__ (self, rhs) : return self.value >= rhs.value
+    ...
+    >>> @totally_ordered
+    ... class T_gt (T) :
+    ...     def __gt__ (self, rhs) : return self.value >  rhs.value
+    ...
+    >>> @totally_ordered
+    ... class T_gtr (T) :
+    ...     def __gt__ (self, rhs) : return self.value <  rhs.value
+    ...
+    >>> @totally_ordered
+    ... class T_le (T) :
+    ...     def __le__ (self, rhs) : return self.value <= rhs.value
+    ...
+    >>> @totally_ordered
+    ... class T_lt (T) :
+    ...     def __lt__ (self, rhs) : return self.value <  rhs.value
+    ...
+    >>> @totally_ordered
+    ... class T_ltr (T) :
+    ...     def __lt__ (self, rhs) : return self.value >  rhs.value
+    ...
+    >>> @totally_ordered
+    ... class T_cmp (T) :
+    ...     def __cmp__ (self, rhs) : return self.value - rhs.value
+    ...
 
->>> for C in T_cmp, T_ge, T_gt, T_le, T_lt, T_gtr, T_ltr :
-...     a, b, c = C (1), C (2), C (2)
-...     print C.__name__, a<b, a<=b, a>b, a>=b, b<a, b<=a, b>a, b>=a
-...     print "    ", a==b, a!=b, b==c, b!=c
-...
-T_cmp True True False False False False True True
-     False True True False
-T_ge True True False False False False True True
-     False True True False
-T_gt True True False False False False True True
-     False True True False
-T_le True True False False False False True True
-     False True True False
-T_lt True True False False False False True True
-     False True True False
-T_gtr False False True True True True False False
-     False True True False
-T_ltr False False True True True True False False
-     False True True False
->>> for C in T_lt, T_gtr, T_ltr :
-...     a, b, c = C (1), C (2), C (2)
-...     print C.__name__, (a, b) < (a, b), (a, b) <= (a, b), (a, b) == (a, b)
-...     print "    ",     (a, b) > (a, b), (a, b) >= (a, b), (a, b) == (a, b)
-...     print "    ",     (b, c) < (b, c), (b, c) <= (b, c), (b, c) == (b, c)
-...     print "    ",     (b, c) > (b, c), (b, c) >= (b, c), (b, c) == (b, c)
-...     print "    ",     (a, c) < (b, c), (a, c) <= (b, c), (a, c) == (b, c)
-...     print "    ",     (a, c) > (b, c), (a, c) >= (b, c), (a, c) == (b, c)
-T_lt False True True
-     False True True
-     False True True
-     False True True
-     True True False
-     False False False
-T_gtr False True True
-     False True True
-     False True True
-     False True True
-     False False False
-     True True False
-T_ltr False True True
-     False True True
-     False True True
-     False True True
-     False False False
-     True True False
->>> totally_ordered (T)
-Traceback (most recent call last):
-  ...
-TypeError: Totally ordered class `T` must define at least one of: __lt__, __gt__, __le__, __ge__, or __cmp__
+    >>> for C in T_cmp, T_ge, T_gt, T_le, T_lt, T_gtr, T_ltr :
+    ...     a, b, c = C (1), C (2), C (2)
+    ...     print C.__name__, a<b, a<=b, a>b, a>=b, b<a, b<=a, b>a, b>=a
+    ...     print "    ", a==b, a!=b, b==c, b!=c
+    ...
+    T_cmp True True False False False False True True
+         False True True False
+    T_ge True True False False False False True True
+         False True True False
+    T_gt True True False False False False True True
+         False True True False
+    T_le True True False False False False True True
+         False True True False
+    T_lt True True False False False False True True
+         False True True False
+    T_gtr False False True True True True False False
+         False True True False
+    T_ltr False False True True True True False False
+         False True True False
+    >>> for C in T_lt, T_gtr, T_ltr :
+    ...     a, b, c = C (1), C (2), C (2)
+    ...     print C.__name__, (a, b) < (a, b), (a, b) <= (a, b), (a, b) == (a, b)
+    ...     print "    ",     (a, b) > (a, b), (a, b) >= (a, b), (a, b) == (a, b)
+    ...     print "    ",     (b, c) < (b, c), (b, c) <= (b, c), (b, c) == (b, c)
+    ...     print "    ",     (b, c) > (b, c), (b, c) >= (b, c), (b, c) == (b, c)
+    ...     print "    ",     (a, c) < (b, c), (a, c) <= (b, c), (a, c) == (b, c)
+    ...     print "    ",     (a, c) > (b, c), (a, c) >= (b, c), (a, c) == (b, c)
+    T_lt False True True
+         False True True
+         False True True
+         False True True
+         True True False
+         False False False
+    T_gtr False True True
+         False True True
+         False True True
+         False True True
+         False False False
+         True True False
+    T_ltr False True True
+         False True True
+         False True True
+         False True True
+         False False False
+         True True False
+    >>> totally_ordered (T)
+    Traceback (most recent call last):
+      ...
+    TypeError: Totally ordered class `T` must define at least one of: __lt__, __gt__, __le__, __ge__, or __cmp__
 
 """
 

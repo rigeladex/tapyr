@@ -109,6 +109,16 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
         pyk.fprint (msg, file = out)
 # end def time_block
 
+__doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+Module `Context`
+==========================
+
+Library of context manager functions.
+
+"""
+
 if __name__ != "__main__" :
     TFL._Export_Module ()
 ### __END__ TFL.Context

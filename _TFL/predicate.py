@@ -234,7 +234,7 @@ def any_true_p (seq, pred) :
 # end def any_true_p
 
 def bit_alignment (bits) :
-    """Returns alignment in powers of two of data with length `bits'
+    """Returns alignment in powers of two of data with length `bits`
 
        >>> [(i, bit_alignment (i)) for i in range (0, 9)]
        [(0, 0), (1, 0), (2, 0), (3, 0), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1)]
@@ -275,7 +275,7 @@ def bool_split (seq, predicate) :
 # end def bool_split
 
 def byte_alignment (bytes) :
-    """Returns alignment in powers of two of data with length `bytes'
+    """Returns alignment in powers of two of data with length `bytes`
 
        >>> [(i, byte_alignment (i)) for i in range (-3, 3)]
        [(-3, 1), (-2, 2), (-1, 1), (0, 0), (1, 1), (2, 2)]
@@ -297,7 +297,7 @@ try :
     itertools.product
 except AttributeError :
     def cartesian (s1, s2, combiner = None) :
-        """Returns the cartesian product of the sequences `s1' and `s2'.
+        """Returns the cartesian product of the sequences `s1` and `s2`.
 
            >>> l = (3, 1, 7)
            >>> cartesian (l, l)
@@ -331,18 +331,20 @@ else :
     def cartesian (* iterables) :
         """Cartesian product of `iterables`.
 
-           >>> l = (3, 1, 7)
-           >>> cartesian (l)
-           [(3,), (1,), (7,)]
+           ::
 
-           >>> cartesian (l, l)
-           [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
+               >>> l = (3, 1, 7)
+               >>> cartesian (l)
+               [(3,), (1,), (7,)]
 
-           >>> cartesian_n ((1,2), ("a", "b"))
-           [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]
+               >>> cartesian (l, l)
+               [(3, 3), (3, 1), (3, 7), (1, 3), (1, 1), (1, 7), (7, 3), (7, 1), (7, 7)]
 
-           >>> cartesian ((1,2), ("a", "b"), ("x", "y"))
-           [(1, 'a', 'x'), (1, 'a', 'y'), (1, 'b', 'x'), (1, 'b', 'y'), (2, 'a', 'x'), (2, 'a', 'y'), (2, 'b', 'x'), (2, 'b', 'y')]
+               >>> cartesian_n ((1,2), ("a", "b"))
+               [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]
+
+               >>> cartesian ((1,2), ("a", "b"), ("x", "y"))
+               [(1, 'a', 'x'), (1, 'a', 'y'), (1, 'b', 'x'), (1, 'b', 'y'), (2, 'a', 'x'), (2, 'a', 'y'), (2, 'b', 'x'), (2, 'b', 'y')]
 
         """
         return list (itertools.product (* iterables))
@@ -351,7 +353,7 @@ else :
     cartesian_n = cartesian
 
 def common_head (list) :
-    """Return common head of all strings in `list'.
+    """Return common head of all strings in `list`.
        >>> common_head ([])
        ''
        >>> common_head (["a"])
@@ -380,9 +382,9 @@ def common_head (list) :
 # end def common_head
 
 def cross_sum (seq, fct = None) :
-    """Returns the sum over all elements of `seq' passed trough `fct'.
+    """Returns the sum over all elements of `seq` passed trough `fct`.
 
-       `fct' must be a function taking one argument and returning something
+       `fct` must be a function taking one argument and returning something
        that can be added.
     """
     if fct is None :
@@ -424,7 +426,7 @@ else :
     # end def dusort
 
 def dusplit (seq, decorator, min_result_size = 1) :
-    """Returns a list of lists each containing the elements of `seq'
+    """Returns a list of lists each containing the elements of `seq`
        comparing equal under `decorator` (`dusplit` is to `split_by_key` what
        `dusort` is to `sorted`).
 
@@ -448,7 +450,7 @@ def dusplit (seq, decorator, min_result_size = 1) :
 # end def dusplit
 
 def extender (l, tail) :
-    """Return list `l' extended by `tail' (`l' is changed in place!)
+    """Return list `l` extended by `tail` (`l` is changed in place!)
 
        >>> extender ([1, 2, 3], (4, 5))
        [1, 2, 3, 4, 5]
@@ -538,7 +540,7 @@ def first_n (iterable, n, default = None) :
 # end def first
 
 def flatten (* lists) :
-    """Returns a list containing all the elements in `lists'.
+    """Returns a list containing all the elements in `lists`.
 
        >>> flatten (range (3))
        [0, 1, 2]
@@ -554,7 +556,7 @@ def flatten (* lists) :
 # end def flatten
 
 def flattened (* lists) :
-    """Returns a list containing all the elements in `lists'.
+    """Returns a list containing all the elements in `lists`.
 
        >>> flattened (range (3), range (2))
        [0, 1, 2, 0, 1]
@@ -568,12 +570,12 @@ def flattened (* lists) :
 # end def flattened
 
 def has_substr (s, subs) :
-    """Returns true if `s' contains `subs'"""
+    """Returns true if `s` contains `subs`"""
     return subs in s
 # end def has_substr
 
 def head_slices (l) :
-    """Returns the list of all slices anchored at head of `l'
+    """Returns the list of all slices anchored at head of `l`
 
        >>> head_slices ("abcdef")
        ['a', 'ab', 'abc', 'abcd', 'abcde', 'abcdef']
@@ -587,7 +589,7 @@ def identity (x) :
 # end def identity
 
 def intersection (l, r) :
-    """Compute intersection of lists `l' and `r'.
+    """Compute intersection of lists `l` and `r`.
 
        >>> intersection (range (4), range (2,5))
        [2, 3]
@@ -684,10 +686,10 @@ def lists_equal (l, r) :
 # end def lists_equal
 
 def matches (list, txt, prefix = "^") :
-    """Returns all strings in `list' starting with `txt'.
+    """Returns all strings in `list` starting with `txt`.
 
-       If you pass an empty string for `prefix', `matches' returns all
-       elements containing `txt'.
+       If you pass an empty string for `prefix`, `matches` returns all
+       elements containing `txt`.
     """
     import re
     return re_matches (list, re.compile (prefix + re.escape (txt)))
@@ -695,7 +697,7 @@ def matches (list, txt, prefix = "^") :
 
 def paired (s1, s2) :
     """Returns a list of pairs
-       `((s1 [0], s2 [0]), ... (s1 [n-1], s2 [n-1]))'.
+       `((s1 [0], s2 [0]), ... (s1 [n-1], s2 [n-1]))`.
 
        >>> paired ([1, 2, 3], [1, 2, 3])
        [(1, 1), (2, 2), (3, 3)]
@@ -758,8 +760,8 @@ def predecessor_of (element, iterable, pairwise = pairwise) :
 # end def predecessor_of
 
 def random_string (length, char_range = 127, char_offset = 128) :
-    """Returns a string of `length' random characters in the interval
-       (`char_offset', `char_offset + char_range').
+    """Returns a string of `length` random characters in the interval
+       (`char_offset`, `char_offset + char_range`).
     """
     from random import random
     return "".join \
@@ -774,7 +776,7 @@ def relax (* args, ** kw) :
 # end def relax
 
 def reversed_list (seq) :
-    """Returns a reversed copy of `seq'.
+    """Returns a reversed copy of `seq`.
 
        >>> reversed_list ([1, 2, 3, 4, 5])
        [5, 4, 3, 2, 1]
@@ -794,7 +796,7 @@ except NameError :
     reversed = reversed_list
 
 def re_matches (list, pat) :
-    """Returns all strings in `list' matching the regular expression `pat'."""
+    """Returns all strings in `list` matching the regular expression `pat`."""
     if isinstance (pat, (str, unicode)) :
         import re
         pat = re.compile (pat)
@@ -927,10 +929,10 @@ def sliced (iterable, length) :
 sorted = sorted
 
 def split_by_key (seq, key_cmp, min_result_size = 1) :
-    """Returns a list of lists each containing the elements of `seq' with a
-       single key as determined by `key_cmp'.
+    """Returns a list of lists each containing the elements of `seq` with a
+       single key as determined by `key_cmp`.
 
-       The result is sorted by `key_cmp'.
+       The result is sorted by `key_cmp`.
     """
     result = [[]]
     source = sorted (seq, key_cmp)
@@ -1033,7 +1035,7 @@ def successor_of (element, iterable, pairwise = pairwise) :
 # end def successor_of
 
 def tail_slices (l) :
-    """Returns the list of all slices anchored at tail of `l'
+    """Returns the list of all slices anchored at tail of `l`
 
        >>> tail_slices ("abcdef")
        ['abcdef', 'bcdef', 'cdef', 'def', 'ef', 'f']
@@ -1100,7 +1102,7 @@ def undotted_dict (d, sep = ".") :
 
 def dotted_dict (d, prefix = "", sep = ".") :
     """Return a flat dict where sub-dicts will be merged into the top level
-       dict and the keys will be combined with `.`s
+       dict and the keys will be combined with `.`
 
        >>> def show (d) :
        ...     for k, v in sorted (d.iteritems ()) :
@@ -1176,11 +1178,11 @@ def uniq_p (seq, pred) :
 # end def uniq_p
 
 def un_nested (l) :
-    """Returns list `l' in un-nested form (i.e., if it is a one-element list
+    """Returns list `l` in un-nested form (i.e., if it is a one-element list
        whose first element is a list, returns l [0]).
 
        This is handy if you want to support the passing of a list to a `*
-       args' argument without using `apply'.
+       args' argument without using `apply`.
 
        >>> un_nested (range (3))
        [0, 1, 2]
@@ -1198,6 +1200,15 @@ def xored_string (source, salt = "ß") :
     salt = ord (salt)
     return "".join (chr (ord (c) ^ salt) for c in source)
 # end def xored_string
+
+__doc__ = """
+
+Module `predicate`
+===================
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("*", "sorted", "reversed")
