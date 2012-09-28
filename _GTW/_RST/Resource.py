@@ -76,6 +76,7 @@
 #    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
 #                     (move some code from `_http_response` to `wsgi_app`)
 #    26-Sep-2012 (CT) Add `show_in_nav`
+#    28-Sep-2012 (CT) Protect `%` in `fmt` of `_http_response`
 #    ««revision-date»»···
 #--
 
@@ -1341,7 +1342,7 @@ class RST_Root (_Ancestor) :
                             ( "%d-%b-%Y %H:%M:%S"
                             , time.localtime (time.time ())
                             )
-                        , method.name, request.url
+                        , method.name, request.url.replace ("%", "%%")
                         )
                 else :
                     context = TFL.Context.relaxed

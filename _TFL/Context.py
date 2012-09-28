@@ -32,6 +32,7 @@
 #    17-Dec-2010 (CT) `time_block` added
 #    28-Jun-2012 (CT) Add `relaxed`
 #    17-Jul-2012 (CT) Augment `AttributeError` info in `attr_let`
+#    28-Sep-2012 (CT) Add `try` for `fmt % delta` to `time_block`
 #    ««revision-date»»···
 #--
 
@@ -100,7 +101,12 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
         cb (start, finish)
     else :
         import pyk
-        pyk.fprint (fmt % (finish - start, ), file = out)
+        delta = finish - start
+        try :
+            msg = fmt % (delta, )
+        except (TypeError, ValueError) as exc :
+            msg = "%s: %s" % (fmt, delta)
+        pyk.fprint (msg, file = out)
 # end def time_block
 
 if __name__ != "__main__" :
