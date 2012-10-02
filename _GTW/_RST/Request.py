@@ -32,6 +32,7 @@
 #    17-Jul-2012 (CT) Add property `user`
 #    24-Jul-2012 (CT) Add `use_language`
 #     6-Aug-2012 (CT) Add attribute `lang`
+#     2-Oct-2012 (CT) Add property `brief`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,11 @@ class _RST_Request_ (TFL.Meta.Object) :
             return result
         raise AttributeError (name)
     # end def __getattr__
+
+    @Once_Property
+    def brief (self) :
+        return self.req_data.has_option ("brief")
+    # end def brief
 
     @Once_Property
     def locale_codes (self) :
