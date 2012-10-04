@@ -34,6 +34,8 @@
 #    31-Jul-2012 (CT) Add `_E_Type_CSV_.mime_type_parameters`
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
+#     4-Oct-2012 (CT) Add `href_obj`
+#     4-Oct-2012 (CT) Add `request.brief` to `E_Type.GET`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +54,8 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
+
+from   posixpath                import join as pp_join
 
 class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
 
@@ -121,8 +125,10 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
             if request.verbose :
                 e = resource._new_entry (pid)
                 result = e.GET ()._response_body (e, request, response)
-            else :
+            elif request.brief :
                 result = pid
+            else :
+                result = resource.href_obj (entry)
             return result
         # end def _response_entry
 
@@ -150,6 +156,10 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
             return False
         return self.__super.allow_method (method, user)
     # end def allow_method
+
+    def href_obj (self, obj) :
+        return pp_join (self.abs_href, str (obj.pid))
+    # end def href_obj
 
 E_Type = _RST_MOM_E_Type_ # end class
 

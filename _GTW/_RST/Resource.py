@@ -77,6 +77,7 @@
 #                     (move some code from `_http_response` to `wsgi_app`)
 #    26-Sep-2012 (CT) Add `show_in_nav`
 #    28-Sep-2012 (CT) Protect `%` in `fmt` of `_http_response`
+#     4-Oct-2012 (CT) Change `_Dir_Base_.GET` to use `request.brief`
 #    ««revision-date»»···
 #--
 
@@ -731,20 +732,16 @@ class _RST_Dir_Base_ (_Ancestor) :
                 ( entries = []
                 , ** kw
                 )
-            if not request.verbose :
+            if request.brief :
                 result ["url_template"] = pp_join (resource.abs_href, "{entry}")
             return result
         # end def _response_dict
 
         def _response_entry (self, resource, request, response, entry) :
-            return entry.name
-        # end def _response_entry
-
-        def _response_entry (self, resource, request, response, entry) :
-            if request.verbose :
-                result = pp_join (resource.abs_href, entry.name)
-            else :
+            if request.brief :
                 result = entry.name
+            else :
+                result = pp_join (resource.abs_href, entry.name)
             return result
         # end def _response_entry
 

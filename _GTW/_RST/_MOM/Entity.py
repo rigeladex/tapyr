@@ -35,6 +35,7 @@
 #    19-Jul-2012 (CT) Factor `RST_Entity_Mixin`
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
+#     4-Oct-2012 (CT) Change `Entity.GET._response_attr` to use `request.brief`
 #    ««revision-date»»···
 #--
 
@@ -92,8 +93,11 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
                     if request.has_option ("closure") and v.pid not in seen :
                         v = self._response_obj \
                             (resource, request, response, v, v.primary, seen)
-                    else :
+                    elif request.brief :
                         v = int (v.pid)
+                    else :
+                        res_vet = resource.resource_from_e_type (v.type_name)
+                        v = res_vet.href_obj (v)
             else :
                 v = attr.get_raw (obj)
             return k, v

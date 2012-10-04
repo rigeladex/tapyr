@@ -31,6 +31,7 @@
 #     7-Aug-2012 (CT) Change class prefix from `RST_` to `RST_MOM_`
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #    13-Sep-2012 (CT) Sort `Scope.entries` by `type_name`
+#     4-Oct-2012 (CT) Add `href_e_type`, `resource_from_e_type`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,8 @@ import _GTW._RST.Resource
 import _GTW._RST._MOM.E_Type
 
 from   _MOM.import_MOM          import MOM, Q
+
+from   posixpath                import join as pp_join
 
 _Ancestor = GTW.RST.Dir
 
@@ -67,6 +70,19 @@ class _RST_MOM_Scope_ (_Ancestor) :
                 )
         self.__super.__init__ (** kw)
     # end def __init__
+
+    def href_e_type (self, e_type) :
+        if not isinstance (e_type, basestring) :
+            e_type = e_type.type_name
+        return pp_join (self.abs_href, e_type.replace (".", "-"))
+    # end def href_obj
+
+    def resource_from_e_type (self, e_type) :
+        if not isinstance (e_type, basestring) :
+            e_type = getattr (e_type, "type_name")
+        result = self._entry_map.get (e_type.replace (".", "-"))
+        return result
+    # end def resource_from_e_type
 
     def _get_child (self, child, * grandchildren) :
         if child == "pid" :
