@@ -78,6 +78,7 @@
 #    26-Sep-2012 (CT) Add `show_in_nav`
 #    28-Sep-2012 (CT) Protect `%` in `fmt` of `_http_response`
 #     4-Oct-2012 (CT) Change `_Dir_Base_.GET` to use `request.brief`
+#     5-Oct-2012 (CT) Fix `_Base_.allow_user` (`self.GET`, not `"GET"`)
 #    ««revision-date»»···
 #--
 
@@ -435,7 +436,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def allow_method
 
     def allow_user (self, user) :
-        return self.allow_method ("GET", user)
+        return self.allow_method (self.GET, user)
     # end def allow_user
 
     def get_etag (self, request) :
