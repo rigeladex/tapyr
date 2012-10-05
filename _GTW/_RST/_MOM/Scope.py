@@ -74,7 +74,9 @@ class _RST_MOM_Scope_ (_Ancestor) :
         if json_indent or self.DEBUG :
             import _GTW._RST.Mime_Type
             GTW.RST.Mime_Type.JSON.json_dump_kw.update \
-                (indent = json_indent or 2)
+                ( indent    = json_indent or 2
+                , sort_keys = True
+                )
     # end def __init__
 
     def href_e_type (self, e_type) :
