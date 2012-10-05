@@ -84,7 +84,8 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     def Filter (cls, E_Type, key, value = None, default_op = "AC") :
         pat = cls._a_pat_opt
         if pat.match (key) :
-            result, _ = cls._setup_attr_match (E_Type, pat, key, value, default_op)
+            result, _ = cls._setup_attr_match \
+                (E_Type, pat, key, value, default_op)
             return result
     # end def Filter
 

@@ -36,6 +36,7 @@
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #     4-Oct-2012 (CT) Change `Entity.GET._response_attr` to use `request.brief`
+#     5-Oct-2012 (CT) Pass `url` to nested `Entity.GET._response_obj` calls
 #    ««revision-date»»···
 #--
 
@@ -90,14 +91,17 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
             if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
                 v = attr.get_value (obj)
                 if v is not None :
+                    res_vet = resource.resource_from_e_type (v.type_name)
+                    url     = res_vet.href_obj (v)
                     if request.has_option ("closure") and v.pid not in seen :
                         v = self._response_obj \
-                            (resource, request, response, v, v.primary, seen)
+                            ( resource, request, response, v, v.primary, seen
+                            , url = url
+                            )
                     elif request.brief :
                         v = int (v.pid)
                     else :
-                        res_vet = resource.resource_from_e_type (v.type_name)
-                        v = res_vet.href_obj (v)
+                        v = url ### ??? v = dict (pid = int (v.pid), url = url)
             else :
                 v = attr.get_raw (obj)
             return k, v

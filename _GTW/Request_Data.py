@@ -43,6 +43,7 @@
 #    20-Jun-2012 (CT) Add `Request_Data_List`; factor/rewrite `_normalized`
 #     2-Jul-2012 (CT) Add `has_option`
 #     3-Jul-2012 (CT) Redefine `Request_Data_List.get` to fix `default`
+#     5-Oct-2012 (CT) Change `Request_Data_List.get` to use `.getlist`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,8 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
            value.
         """
         result = self.get (key)
+        if isinstance (result, (list, tuple)) and result :
+            result = result [-1]
         if result == "" :
             result = True
         elif result and result.lower () in ("no", "false", "0") :
@@ -136,8 +139,16 @@ class _GTW_Request_Data_List_ (_GTW_Request_Data_) :
 
     _real_name = "Request_Data_List"
 
+    def __init__ (self, data) :
+        if isinstance (data, dict) :
+            from werkzeug.datastructures import MultiDict
+            data = MultiDict (data)
+        self.data = data
+    # end def __init__
+
     def get (self, key, default = []) :
-        return self.__super.get (key, default)
+        normalized = self._normalized
+        return list (normalized (x) for x in self.data.getlist (key))
     # end def get
 
     def _convert_element (self, key, value) :

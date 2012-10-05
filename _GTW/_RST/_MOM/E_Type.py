@@ -36,6 +36,7 @@
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #     4-Oct-2012 (CT) Add `href_obj`
 #     4-Oct-2012 (CT) Add `request.brief` to `E_Type.GET`
+#     5-Oct-2012 (CT) Pass `attributes` to `_new_entry`
 #    ««revision-date»»···
 #--
 
@@ -115,7 +116,7 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         def _response_dict (self, resource, request, response, ** kw) :
             if request.verbose :
                 attr_names = tuple (a.name for a in resource.attributes)
-                kw ["attribute_names"] = attr_names
+                kw ["attribute_names"] = self.attributes = attr_names
             return self.__super._response_dict \
                 (resource, request, response, ** kw)
         # end def _response_dict
@@ -123,7 +124,10 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         def _response_entry (self, resource, request, response, entry) :
             pid = int (entry.pid)
             if request.verbose :
-                e = resource._new_entry (pid)
+                ### Restrict `attributes` only for identical types
+                kw = dict (attributes = self.attributes) \
+                    if entry.type_name == resource.E_Type.type_name else {}
+                e = resource._new_entry (pid, ** kw)
                 result = e.GET ()._response_body (e, request, response)
             elif request.brief :
                 result = pid

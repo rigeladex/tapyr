@@ -50,6 +50,8 @@
 #     7-Aug-2012 (CT) Factor `RST_Base_Mixin`
 #     7-Aug-2012 (CT) Change class prefix from `RST_` to `_RST_MOM_`,
 #                     add class suffix `_`, add `_real_name`
+#     5-Oct-2012 (CT) Change `attributes.setter` to pass `Kind` instances
+#     5-Oct-2012 (CT) Add `attributes.deleter`
 #    ««revision-date»»···
 #--
 
@@ -177,7 +179,8 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     @attributes.setter
     def attributes (self, value) :
         def _gen (vs) :
-            AQ = self.E_Type.AQ
+            ET = self.E_Type
+            AQ = ET.AQ
             for v in vs :
                 if isinstance (v, basestring) :
                     try :
@@ -186,8 +189,15 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
                         print ("*" * 4, exc, E_Type, v)
                         pass
                     else :
-                        yield v
+                        yield getattr (ET, v.name)
+                elif isinstance (v, MOM.Attr.Kind) :
+                    yield v
         self._attributes = tuple (_gen (value)) if value is not None else None
+    # end def attributes
+
+    @attributes.deleter
+    def attributes (self) :
+        self._attributes = None
     # end def attributes
 
     @Once_Property

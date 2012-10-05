@@ -42,6 +42,7 @@
 #    22-Dec-2011 (CT) Add `_attr_selector` to `_Type_` and use it in
 #                     `_Container_._attrs`
 #    22-Dec-2011 (CT) Add `E_Type.Select`
+#     5-Oct-2012 (CT) Guard `_Container_._attrs` against missing `E_Type`
 #    ««revision-date»»···
 #--
 
@@ -84,7 +85,11 @@ class _Container_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def _attrs (self) :
-        return self._attr_selector (self.E_Type)
+        ET = self.E_Type
+        if ET is not None :
+            return self._attr_selector (self.E_Type)
+        else :
+            return ()
     # end def _attrs
 
 # end class _Container_
