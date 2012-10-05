@@ -35,6 +35,7 @@
 #     8-Aug-2012 (CT) Add `test_example_*`, continue `test_doc`
 #    18-Sep-2012 (CT) Factor _GTW/__test__/Test_Command.py
 #     4-Oct-2012 (CT) Adapt to `?brief`
+#     5-Oct-2012 (CT) Test `.get ("/v1/SRM-Regatta.csv?verbose")`
 #    ««revision-date»»···
 #--
 
@@ -2187,6 +2188,17 @@ _test_get = r"""
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose&brief'
+    }
+
+    >>> _ = show (R.get ("/v1/SRM-Regatta.csv?verbose"))
+    { 'content' :
+        [ 'left,boat_class,discards,is_cancelled,kind,races,result'
+        , '/v1/SRM-Regatta_Event/10,/v1/SRM-Boat_Class/7,,no,,,'
+        , '/v1/SRM-Regatta_Event/10,/v1/SRM-Handicap/9,,no,,,'
+        , '/v1/SRM-Regatta_Event/13,/v1/SRM-Boat_Class/7,,no,,,'
+        ]
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose'
     }
 
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&closure"))
