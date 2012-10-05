@@ -32,6 +32,7 @@
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #    13-Sep-2012 (CT) Sort `Scope.entries` by `type_name`
 #     4-Oct-2012 (CT) Add `href_e_type`, `resource_from_e_type`
+#     5-Oct-2012 (CT) Add `json_indent` to `JSON.json_dump_kw`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
     E_Type                     = GTW.RST.MOM.E_Type
 
     def __init__ (self, ** kw) :
+        json_indent = kw.pop ("json_indent", None)
         if "entries" not in kw :
             kw ["entries"] = tuple \
                 (   self.E_Type
@@ -69,6 +71,10 @@ class _RST_MOM_Scope_ (_Ancestor) :
                         and (et.children_np or not et.is_partial)
                 )
         self.__super.__init__ (** kw)
+        if json_indent or self.DEBUG :
+            import _GTW._RST.Mime_Type
+            GTW.RST.Mime_Type.JSON.json_dump_kw.update \
+                (indent = json_indent or 2)
     # end def __init__
 
     def href_e_type (self, e_type) :

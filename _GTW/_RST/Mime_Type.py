@@ -33,6 +33,7 @@
 #    10-Aug-2012 (CT) Consider `resource.ext` in `Render_Man.__call__`
 #    10-Aug-2012 (CT) Fix `Render_Man.render_acceptable`
 #    25-Sep-2012 (CT) Add `SVG`
+#     5-Oct-2012 (CT) Add and use `JSON.json_dump_kw`
 #    ««revision-date»»···
 #--
 
@@ -211,11 +212,12 @@ class RST_JSON (_Base_) :
 
     _real_name                 = "JSON"
     force_charset              = "utf-8"
+    json_dump_kw               = {}
     mime_types                 = ("application/json", )
 
     def rendered (self, request, response, body) :
         if isinstance (body, (dict, list, tuple)) :
-            return json.dumps (body)
+            return json.dumps (body, ** self.json_dump_kw)
     # end def rendered
 
 JSON = RST_JSON # end class
