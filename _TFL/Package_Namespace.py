@@ -139,6 +139,7 @@
 #    11-Aug-2012 (MG) Support args/kw for import callback
 #    11-Aug-2012 (MG) Fix import callback
 #    23-Sep-2012 (MG) Fix import callbacks again
+#     9-Oct-2012 (CT) Add `c_scope` to `Package_Namespace.__init__` call
 #    ««revision-date»»···
 #--
 
@@ -179,8 +180,9 @@ class Package_Namespace (object) :
 
     _Import_Callback_Map = defaultdict (lambda : defaultdict (list))
 
-    def __init__ (self, module_name = None, name = None) :
-        c_scope = _caller_globals ()
+    def __init__ (self, module_name = None, name = None, c_scope = None) :
+        if c_scope is None :
+            c_scope = _caller_globals ()
         if not module_name :
             module_name = c_scope ["__name__"]
         if not name :
@@ -404,10 +406,11 @@ class Derived_Package_Namespace (Package_Namespace) :
     """
 
     def __init__ (self, parent, name = None) :
-        module_name = _caller_globals () ["__name__"]
+        c_scope     = _caller_globals ()
+        module_name = c_scope ["__name__"]
         if not name :
             name = module_name
-        Package_Namespace.__init__ (self, module_name, name)
+        Package_Namespace.__init__ (self, module_name, name, c_scope)
         self._parent  = parent
         self.__cached = {}
         mod           = sys.modules [module_name]
