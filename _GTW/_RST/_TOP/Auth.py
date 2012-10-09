@@ -31,6 +31,7 @@
 #    16-Aug-2012 (MG) Remove form dependecy
 #    17-Aug-2012 (MG) Fix bug in `_Login_.POST`
 #    19-Aug-2012 (MG) Big in _Login_ fixed
+#     9-Oct-2012 (CT) Fix `_Login_.POST._response_body` call to `_get_child`
 #    ««revision-date»»···
 #--
 
@@ -430,7 +431,7 @@ class _Login_ (_Ancestor) :
         def _response_body (self, resource, request, response) :
             req_data = request.req_data
             if req_data.get ("Reset") :
-                resetter = resource._get_child ("request_reset_password")
+                resetter = resource.parent._get_child ("request_reset_password")
                 result   = resetter.POST ()._response_body \
                     (resetter, request, response)
                 return result

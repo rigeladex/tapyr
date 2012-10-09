@@ -56,6 +56,7 @@
 #                     `.electric`
 #     7-Aug-2012 (CT) Set `Account_Anonymous.electric` to True
 #    24-Sep-2012 (CT) Rename `Account` to `_Account_`, `Account_P` to `Account`
+#     9-Oct-2012 (CT) Improve attribute docstrings
 #    ««revision-date»»···
 #--
 
@@ -92,7 +93,7 @@ class _Auth_Account_ (_Ancestor_Essence) :
         # end class name
 
         class active (A_Boolean) :
-            """This account is currently active."""
+            """Specifies if this account is currently active."""
 
             kind            = Attr.Query
             auto_up_depends = ("suspended", "enabled")
@@ -101,7 +102,9 @@ class _Auth_Account_ (_Ancestor_Essence) :
         # end class active
 
         class enabled (A_Boolean) :
-            """This account is currently enabled (the user can login)."""
+            """Specifies if this account is currently enabled
+               (the user can login).
+            """
 
             kind       = Attr.Optional
             default    = False
@@ -109,7 +112,7 @@ class _Auth_Account_ (_Ancestor_Essence) :
         # end class enabled
 
         class superuser (A_Boolean) :
-            """This account has super-user permissions."""
+            """Specifies if this account has super-user permissions."""
 
             kind       = Attr.Optional
             default    = False
@@ -117,7 +120,9 @@ class _Auth_Account_ (_Ancestor_Essence) :
         # end class superuser
 
         class suspended (A_Boolean) :
-            """This account is currently suspended (due to a pending action)."""
+            """Specifies if this account is currently suspended
+               (due to a pending action).
+            """
 
             kind       = Attr.Internal
             default    = True
