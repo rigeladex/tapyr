@@ -76,6 +76,7 @@
 #     6-Aug-2012 (CT) Remove `e_type_aggregator` (template doesn't exist)
 #     8-Aug-2012 (CT) Add `e_type_doc`
 #    25-Sep-2012 (CT) Add `pns_e_type_doc`
+#     9-Oct-2012 (CT) Remove `account_activate`
 #    ««revision-date»»···
 #--
 
@@ -534,7 +535,6 @@ error_templates = \
     , Template (503, "html/error_503.jnj")
     ]
 
-Template ("account_activate",             "html/activate.jnj")
 Template ("account_change_email",         "html/change_email.jnj")
 Template ("account_change_password",      "html/change_password.jnj")
 Template ("account_register",             "html/register.jnj")

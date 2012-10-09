@@ -32,6 +32,7 @@
 ##    23-Feb-2010 (CT) `New password` added
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    16-Aug-2012 (MG) Use `form.login_inline`
+##     9-Oct-2012 (CT) Pass `class` and `username` to `Form.login_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -42,13 +43,20 @@
 {%- set title = GTW._T ("Login for") + " " + request.host %}
 
 {%- block title -%}
-  <title>{{ title|safe }}</title>
+  <title>{{ title }}</title>
 {%- endblock -%}
 
 {%- block document -%}
-  <h1>{{ title|safe }}</h1>
+  <h1>{{ title }}</h1>
 
-  {{ Form.login_inline (page, request, next = next, errors = errors) }}
+  {{ Form.login_inline
+      ( page, request
+      , class    = "Login"
+      , next     = next
+      , errors   = errors
+      , username = username
+      )
+  }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: login.jnj -#}

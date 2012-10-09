@@ -45,6 +45,7 @@
 #                     `P.pg_main_max_width` instead of literal
 #     8-Mar-2012 (CT) Add rule for `li.ui-menu-item`
 #    10-Aug-2012 (CT) Use `P.color_spec_sub_heading` for `h1`..`h6`
+#     9-Oct-2012 (CT) Add `bold`, `padding` to `.Error-Message`
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,12 @@ style_sheet = Style_Sheet \
         , width          = Percent (98)
         )
     ### Various classes
-    , Rule (".Error-Message", ** P.color_spec_error)
+    , Rule
+        ( ".Error-Message"
+        , P.color_spec_error
+        , font_weight    = "bold"
+        , padding        = TRBL (Em (0.2), Em (0.5))
+        )
     , Rule
         ( ".centered"
         , clear          = "both"

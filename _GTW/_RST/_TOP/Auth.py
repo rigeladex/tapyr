@@ -32,6 +32,9 @@
 #    17-Aug-2012 (MG) Fix bug in `_Login_.POST`
 #    19-Aug-2012 (MG) Big in _Login_ fixed
 #     9-Oct-2012 (CT) Fix `_Login_.POST._response_body` call to `_get_child`
+#     9-Oct-2012 (CT) Add `get_title` to `_Activate_`, `_Change_Password_`
+#     9-Oct-2012 (CT) Fix error messages, fix typo, display `username` after
+#                     empty `password`
 #    ««revision-date»»···
 #--
 
@@ -92,8 +95,9 @@ class _Form_Cmd_ (_Cmd_) :
                 account = getattr (response, "account", None)
             return self.__super._render_context \
                 ( resource, request, response
-                , errors  = getattr (response, "errors", Errors ())
-                , account = account
+                , account  = account
+                , errors   = getattr (response, "errors",   Errors ())
+                , username = getattr (response, "username", None)
                 , ** kw
                 )
         # end def _render_context
@@ -103,6 +107,7 @@ class _Form_Cmd_ (_Cmd_) :
     class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.POST) :
 
         _real_name              = "POST"
+        account                 = None
 
         def get_account (self, resource, username, debug = False) :
             try :
@@ -112,10 +117,12 @@ class _Form_Cmd_ (_Cmd_) :
                 self.account = None
                 if debug :
                     self.errors ["username"].append \
-                        ("No account with username `%s` found" % (username, ))
-                ### look's like no account with this username exists
+                        ( "No account with username `%s` found"
+                        % (username, )
+                        )
                 return False
-            return True
+            else :
+                return True
         # end def get_account
 
         def _authenticate (self, resource, username, password, debug = False) :
@@ -150,10 +157,11 @@ class _Form_Cmd_ (_Cmd_) :
                 (request, field_name, _T ("A user name is required to login."))
         # end def get_required
 
-        def get_password ( self, request
-                         , field_name   = "password"
-                         , verify_field = None
-                         ) :
+        def get_password \
+                ( self, request
+                , field_name   = "password"
+                , verify_field = None
+                ) :
             password = self.get_required \
                 (request, field_name, _T ("The password is required."))
             if verify_field :
@@ -167,24 +175,26 @@ class _Form_Cmd_ (_Cmd_) :
             return password
         # end def get_password
 
-        def _credetials_validation ( self
-                                   , resource
-                                   , request
-                                   , username = "username"
-                                   , password = "password"
-                                   , debug    = False
-                                   ) :
+        def _credentials_validation \
+                ( self, resource, request
+                , username = "username"
+                , password = "password"
+                , debug    = False
+                ) :
             username     = self.get_username (request, username)
             password     = self.get_password (request, password)
             error_add    = lambda e : self.errors [None].append (e)
-            if not self._authenticate \
+            if not username :
+                error_add (_T ("Please enter a username"))
+            elif not self._authenticate \
                    (resource, username, password, debug) :
                 error_add (_T ("Username or password incorrect"))
             elif resource.active_account_required and not self.account.active :
                 error_add (_T ("This account is currently inactive"))
             elif self.errors and debug :
                 error_add (repr (request.req_data))
-        # end def _credetials_validation
+            return username, password
+        # end def _credentials_validation
 
     POST = _Form_Cmd__POST_ # end class
 
@@ -230,8 +240,13 @@ _Ancestor = _Form_Cmd_
 
 class _Activate_ (_Ancestor) :
 
-    page_template_name      = "account_activate"
+    page_template_name      = "account_change_password"
     active_account_required = False
+
+    def get_title (self, account, request) :
+        return _T ("Activate account for %s on website %s") \
+            % (account.name, request.host)
+    # end def get_title
 
     def _check_account (self, account, errors) :
         if account and not account.activation :
@@ -284,8 +299,7 @@ class _Activate_ (_Ancestor) :
             top          = resource.top
             HTTP_Status  = top.Status
             self.errors  = Errors ()
-            ### import pdb; pdb.set_trace ()
-            self._credetials_validation (resource, request, debug = debug)
+            self._credentials_validation (resource, request, debug = debug)
             new_password = self.get_password \
                 (request, "npassword", verify_field = "vpassword")
             account      = self.account
@@ -343,8 +357,7 @@ class _Change_Email_ (_Ancestor) :
             top         = resource.top
             HTTP_Status = top.Status
             self.errors = Errors         ()
-            ###import pdb; pdb.set_trace ()
-            self._credetials_validation  (resource, request, debug = debug)
+            self._credentials_validation (resource, request, debug = debug)
             new_email   = self.get_email (request)
             if not self.errors :
                 account = self.account
@@ -391,8 +404,12 @@ _Ancestor = _Activate_
 
 class _Change_Password_ (_Ancestor) :
 
-    page_template_name      = "account_change_password"
     active_account_required = True
+
+    def get_title (self, account, request) :
+        return _T ("Change Password for %s on website %s") \
+            % (account.name, request.host)
+    # end def get_title
 
     def _check_account (self, account, errors) :
         return True
@@ -438,10 +455,15 @@ class _Login_ (_Ancestor) :
             else :
                 self.errors = Errors ()
                 debug       = getattr (resource.top, "DEBUG", False)
-                self._credetials_validation (resource, request, debug = debug)
+                username, password = self._credentials_validation \
+                    (resource, request, debug = debug)
                 if self.errors :
-                    ### clear `username` in re-displayed form
-                    response.username = None
+                    if password :
+                        ### clear `username` in re-displayed form
+                        response.username = None
+                    else :
+                        ### keep `username` in re-displayed form
+                        response.username = username
                     response.errors   = self.errors
                     response.account  = self.account
                     result = resource.GET ()._response_body \
@@ -507,7 +529,7 @@ class _Register_ (_Ancestor) :
             self.errors   = Errors            ()
             username      = self.get_username (request)
             if username :
-                self.get_account              (resource, username)
+                self.get_account (resource, username)
                 if self.account :
                     self.errors ["username"].append \
                         (_T ( "Account with this Email address already "

@@ -76,8 +76,13 @@
 ##    16-Feb-2012 (CT) Add `class="button"` to `login_inline`, `logout_inline`
 ##    16-Aug-2012 (MG) Add support for errors to `login_inline`
 ##    16-Aug-2012 (MG) Add `password_change` form
-##    17-Aug-2012 (MG) Add custoization options to `login_inline` and
-                       `logout_inline`
+##    17-Aug-2012 (MG) Add customization options to `login_inline` and
+##                    `logout_inline`
+##     9-Oct-2012 (CT) Use `request.referrer` for `next`
+##     9-Oct-2012 (CT) Change `password_change` to not set `next` to
+##                     `page.abs_href`
+##     9-Oct-2012 (CT) Use class `Error-Message` for errors
+##     9-Oct-2012 (CT) Add `username` to `login_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -284,20 +289,21 @@
 
 {%- macro display_errors (errors, field_name) -%}
       {%- for err in errors.get (field_name, ()) %}
-        <li class="error">
+        <li class="Error-Message">
           {{ err }}
         </li>
       {% endfor -%}
 {%- endmacro -%} {#- display_errors -#}
 
 {%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
-  {%- set Auth     = page.SC.Auth %}
-  {%- set l_caller = kwargs.pop ("caller", None) -%}
-  {%- set action   = kwargs.pop ("action", Auth.href_login) -%}
-  {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
-  {%- set errors   = kwargs.pop ("errors", {}) %}
-  {%- set allow_new_pass = kwargs.pop ("allow_new_password", True) %}
-  {%- if next.endswith (Auth.href_login) -%}
+  {%- set Auth     = page.SC.Auth -%}
+  {%- set l_caller = kwargs.pop ("caller",   None) -%}
+  {%- set action   = kwargs.pop ("action",   Auth.href_login) -%}
+  {%- set next     = kwargs.pop ("next",     request.path_x or request.path) -%}
+  {%- set errors   = kwargs.pop ("errors",   {}) -%}
+  {%- set username = kwargs.pop ("username", None) -%}
+  {%- set allow_new_pass = kwargs.pop ("allow_new_password", True) -%}
+  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_login) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
   {% call form (action = action, ** kwargs) -%}
@@ -310,6 +316,7 @@
             ( id            = "F_username"
             , name          = "username"
             , maxlength     = "30"
+            , value         = username
             )
         }}
       </li>
@@ -357,10 +364,10 @@
   {%- set Auth     = page.SC.Auth %}
   {%- set l_caller = kwargs.pop ("caller", None) -%}
   {%- set action   = kwargs.pop ("action", Auth.href_logout) -%}
-  {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
+  {%- set next     = kwargs.pop ("next",   request.referrer) -%}
   {%- set allow_change_email = kwargs.pop ("allow_change_email", True) %}
   {%- set allow_register     = kwargs.pop ("allow_register", True) %}
-  {%- if next.endswith (Auth.href_logout) -%}
+  {%- if (not next) or next.split ("?") [0].endswith (Auth.href_logout) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
   {% call form (action = action, ** kwargs) -%}
@@ -398,10 +405,13 @@
   {%- set l_caller = kwargs.pop ("caller", None) -%}
   {%- set next     = kwargs.pop ("next",   request.path_x or request.path) -%}
   {%- set errors   = kwargs.pop ("errors", {}) -%}
-  {% call form (action = action) -%}
+  {%- if (not next) or next.split ("?") [0].endswith (page.abs_href) %}
+    {%- set next = page.top.abs_href %}
+  {% endif -%}
+  {% call form (action = action, ** kwargs) -%}
     {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
-      <li id="account-name">{{ account.name }}</li>
+      <li class="account-name">{{ account.name }}</li>
       {{- display_errors (errors, None) -}}
 
       <li><label for="F_password">{{ GTW._T ("Current Password") }}</label></li>

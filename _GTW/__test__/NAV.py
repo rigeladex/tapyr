@@ -51,7 +51,6 @@ _test_code = """
     408
     500
     503
-    account_activate
     account_change_email
     account_change_password
     account_register
@@ -86,7 +85,6 @@ _test_code = """
     408
     500
     503
-    account_activate
     account_change_email
     account_change_password
     account_register
@@ -160,7 +158,6 @@ _test_code = """
       , 408
       , 500
       , 503
-      , 'account_activate'
       , 'account_change_email'
       , 'account_change_password'
       , 'account_register'
