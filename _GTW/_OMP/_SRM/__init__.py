@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package GTW.OMP.
@@ -27,12 +27,17 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#     9-Oct-2012 (CT) Add `_desc_`
 #    ««revision-date»»···
 #--
 
 from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
 from   _TFL.Package_Namespace import Derived_Package_Namespace
+
+_desc_ = """
+Partial object model for the management of sailboat regattas.
+"""
 
 SRM = Derived_Package_Namespace (parent = MOM)
 OMP._Export ("SRM")

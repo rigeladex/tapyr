@@ -140,6 +140,7 @@
 #    11-Aug-2012 (MG) Fix import callback
 #    23-Sep-2012 (MG) Fix import callbacks again
 #     9-Oct-2012 (CT) Add `c_scope` to `Package_Namespace.__init__` call
+#     9-Oct-2012 (CT) Add `_desc_` to `Package_Namespace.__init__`
 #    ««revision-date»»···
 #--
 
@@ -199,6 +200,7 @@ class Package_Namespace (object) :
         self.__reload       = 0
         self._Outer         = None
         self.__doc__        = c_scope.get ("__doc__", str (self))
+        self._desc_         = c_scope.get ("_desc_",  None)
     # end def __init__
 
     def _Add (self, ** kw) :

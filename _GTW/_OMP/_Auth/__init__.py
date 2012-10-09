@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glück. All rights reserved
+# Copyright (C) 2010-2012 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -27,12 +27,17 @@
 #
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
+#     9-Oct-2012 (CT) Add `_desc_`
 #    ««revision-date»»···
 #--
 
 from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
 from   _TFL.Package_Namespace import Derived_Package_Namespace
+
+_desc_ = """
+Partial object model for authentication: accounts, groups, and their relations.
+"""
 
 Auth = Derived_Package_Namespace (parent = MOM)
 OMP._Export ("Auth")

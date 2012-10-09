@@ -33,6 +33,7 @@
 #    25-Sep-2012 (CT) Split `PNS_svg` and `PNS_svg_doc`
 #    26-Sep-2012 (CT) Add `App_Type.GET` to handle `?E_Type` queries
 #    26-Sep-2012 (CT) Set `hidden` dependent on `is_relevant`
+#     9-Oct-2012 (CT) Don't put `__doc__` into `title`; add `PNS_desc`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,8 @@ from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Decorator           import getattr_safe
 
 from   posixpath                import join as pp_join
+
+import logging
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -124,14 +127,11 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "PNS", prefix = "_")
         self.__super.__init__ (** kw)
+        PNS = self.PNS
         if not self.short_title :
-            self.short_title = self.PNS._._bname
+            self.short_title = name = PNS._._bname
         if not self.title :
-            self.title = \
-                (  self.PNS.__doc__
-                or _T ("Documentation for package namespace %s")
-                     % (self.short_title, )
-                )
+            self.title = _T ("Documentation for package namespace %s") % (name,)
     # end def __init__
 
     @Once_Property
@@ -142,6 +142,21 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
             result = self._PNS = self.top.App_Type.PNS_Map [result]
         return result
     # end def PNS
+
+    @Once_Property
+    @getattr_safe
+    def PNS_desc (self) :
+        PNS = self.PNS
+        if PNS :
+            desc = PNS._desc_
+            if desc :
+                from _ReST.To_Html import to_html
+                try :
+                    return to_html (desc, encoding = "utf8")
+                except Exception as exc :
+                    logging.exception \
+                        ("Converting %r to HTML failed with exception" % (r, ))
+    # end def PNS_desc
 
     @Once_Property
     @getattr_safe
