@@ -50,6 +50,7 @@
 ##    21-Oct-2011 (CT) `main` added to wrap code previously at module scope
 ##    11-Apr-2012 (CT) Change `entry_body` to use `GTW._T (link.short_title)`
 ##     3-May-2012 (CT) Add guard, default for `lang` to macro `language_section`
+##     9-Oct-2012 (CT) Add guard for `short_title` to macro `entry`
 ##    ««revision-date»»···
 ##--
 #}
@@ -76,39 +77,41 @@
 {%- endmacro -%} {#- entry_body -#}
 
 {%- macro entry (link, level) -%}
-  {% if NAV.permissive or NAV.allow (link, request.user) %}
-    {%- set href = link.abs_href or link.href %}
-    {%- set isc  = link.is_current_page and link.is_current_page (nav_page) %}
-    {%- if link.is_current_dir and link.is_current_dir (nav_page) %}
-      <li>
-        <a href="{{ href }}"
-               {%- if link.title %} title="{{ link.title }}"{% endif %}
-               class="current-section{%- if isc %} current-link{% endif -%}"
-            ><i></i>{{ entry_body (link) }}</a>
-        {{ entries (link.own_links, level + 1) }}
-      </li>
-    {%- else -%}
-      {% if isc -%}
+  {%- if link.short_title %}
+    {% if NAV.permissive or NAV.allow (link, request.user) %}
+      {%- set href = link.abs_href or link.href %}
+      {%- set isc  = link.is_current_page and link.is_current_page (nav_page) %}
+      {%- if link.is_current_dir and link.is_current_dir (nav_page) %}
         <li>
-          <b class="current-link"><i></i>{{- entry_body (link) -}}</b>
+          <a href="{{ href }}"
+                 {%- if link.title %} title="{{ link.title }}"{% endif %}
+                 class="current-section{%- if isc %} current-link{% endif -%}"
+              ><i></i>{{ entry_body (link) }}</a>
+          {{ entries (link.own_links, level + 1) }}
         </li>
       {%- else -%}
-        {%- if href -%}
-          <li class="nav-link">
-            <a href="{{ href }}"
-               {%- if link.title %} title="{{ link.title }}"{% endif -%}
-            >{{ entry_body (link) }}</a>
+        {% if isc -%}
+          <li>
+            <b class="current-link"><i></i>{{- entry_body (link) -}}</b>
           </li>
         {%- else -%}
-          <li><b class="no-link">{{ entry_body (link) }}</b></li>
+          {%- if href -%}
+            <li class="nav-link">
+              <a href="{{ href }}"
+                 {%- if link.title %} title="{{ link.title }}"{% endif -%}
+              >{{ entry_body (link) }}</a>
+            </li>
+          {%- else -%}
+            <li><b class="no-link">{{ entry_body (link) }}</b></li>
+          {%- endif %}
         {%- endif %}
       {%- endif %}
+    {%- else %}
+      {%- if NAV.DEBUG %}
+        <li><b class="no-link">{{ entry_body (link) }}</b></li>
+      {% endif -%}
     {%- endif %}
-  {%- else %}
-    {%- if NAV.DEBUG %}
-      <li><b class="no-link">{{ entry_body (link) }}</b></li>
-    {% endif -%}
-  {%- endif %}
+  {% endif -%}
 {%- endmacro -%} {# entry #}
 
 {%- macro entries (link_list, level = 0) -%}
