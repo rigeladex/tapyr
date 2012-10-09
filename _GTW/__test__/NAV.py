@@ -159,14 +159,13 @@ _test_code = """
       , 500
       , 503
       , 'account_change_email'
-      , 'account_change_password'
       , 'account_register'
       , 'account_reset_password'
       , 'calendar'
       , 'calendar_day'
       , 'html/static.jnj'
-      , 'login'
       ]
+    , [ 'account_change_password' ]
     , [ 'console' ]
     , [ 'e_type_admin' ]
     ,
@@ -175,6 +174,7 @@ _test_code = """
       , 'e_type_afs|afs_div_seq|afs_fc_horizo'
       ]
     , [ 'gallery' ]
+    , [ 'login' ]
     , [ 'photo' ]
     , [ 'site_admin' ]
     ]

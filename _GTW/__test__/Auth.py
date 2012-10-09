@@ -28,44 +28,50 @@
 # Revision Dates
 #    16-Aug-2012 (MG) Creation
 #    25-Sep-2012 (CT) Fix `_register` errors
+#     9-Oct-2012 (CT) Change "error" class, fix various errors
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 _login_logout = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-smtp=None"])
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-smtp=None"]) # doctest:+ELLIPSIS
+    ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> resp   = simulate_post (root, "/Auth/login.html")
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
-          A user name is required to login.
-        </li><li class="error">
-          The password is required.
-        </li>
+    <li class="Error-Message">
+              Please enter a username
+            </li><li class="Error-Message">
+              A user name is required to login.
+            </li><li class="Error-Message">
+              The password is required.
+            </li>
 
     >>> data   = dict (username = "a1")
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
-          The password is required.
-        </li>
+    <li class="Error-Message">
+              Username or password incorrect
+            </li><li class="Error-Message">
+              The password is required.
+            </li>
 
     >>> data ["password"] = "p2"
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Username or password incorrect
         </li>
 
     >>> data ["password"] = "p1"
     >>> data ["next"]     = "/after/login"
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
     >>> resp.headers ["Location"] ### login
@@ -80,9 +86,9 @@ _login_logout = r"""
     >>> data ["username"] = "a3"
     >>> data ["password"] = "p3"
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           This account is currently inactive
         </li>
 
@@ -91,7 +97,7 @@ _login_logout = r"""
     >>> data ["username"] = "a2"
     >>> data ["password"] = "p2"
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     >>> resp.headers ["Location"] ### login a2
     'http://localhost/after/login'
@@ -100,7 +106,7 @@ _login_logout = r"""
     >>> a2.password_change_required
     Auth.Account_Password_Change_Required ((u'a2', ))
     >>> resp   = simulate_post (root, "/Auth/login.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     >>> resp.headers ["Location"] ### login a2 - redirect to change passwd
     'http://localhost/Auth/change_password?p=2'
@@ -109,7 +115,8 @@ _login_logout = r"""
 """
 
 _activate        = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"])
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> a2     = Auth.Account.query (name = "a2").one ()
@@ -117,52 +124,52 @@ _activate        = r"""
     >>> scope.commit ()
 
     >>> resp   = simulate_get (root, "/Auth/activate.html", query_string = "p=%d" % (a2.pid, ))
-    >>> print ("".join (str (t) for t in find_tag (resp, "li", id = "account-name")))
-    <li id="account-name">a2</li>
+    >>> print ("".join (str (t) for t in find_tag (resp, "li", class_ = "account-name")))
+    <li class="account-name">a2</li>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = simulate_post (root, "/Auth/activate.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Username or password incorrect
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["password"] = passwd
     >>> resp   = simulate_post (root, "/Auth/activate.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["npassword"] = "P2"
     >>> resp   = simulate_post (root, "/Auth/activate.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["vpassword"] = "p2"
     >>> resp   = simulate_post (root, "/Auth/activate.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The passwords don't match.
         </li>
 
     >>> data ["vpassword"] = "P2"
     >>> resp   = simulate_post (root, "/Auth/activate.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
 
@@ -184,42 +191,42 @@ _register        = r"""
 
     >>> data   = dict ()
     >>> resp   = simulate_post (root, "/Auth/register.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           A user name is required to login.
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["username"] = "a2"
     >>> resp   = simulate_post (root, "/Auth/register.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Account with this Email address already registered
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["username"] = "new-account"
     >>> data ["npassword"] = "new-pass"
     >>> resp   = simulate_post (root, "/Auth/register.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["vpassword"] = "newpass"
     >>> resp   = simulate_post (root, "/Auth/register.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The passwords don't match.
         </li>
 
@@ -235,7 +242,7 @@ _register        = r"""
     Confirm new email address new-account
     <BLANKLINE>
     To verify the new email address, please click the following link: http://localhost/Auth/action?...
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
 
@@ -255,7 +262,8 @@ _register        = r"""
 """
 
 _change_email    = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-smtp="])
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> a2     = Auth.Account.query (name = "a2").one ()
@@ -267,47 +275,56 @@ _change_email    = r"""
 
     >>> data   = dict (username = a2.name)
     >>> resp   = simulate_post (root, "/Auth/change_email.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Username or password incorrect
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           The Email is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the EMail for verification.
         </li>
 
     >>> data ["password"] = passwd
     >>> resp   = simulate_post (root, "/Auth/change_email.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The Email is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the EMail for verification.
         </li>
 
     >>> data ["nemail"] = "new-email"
     >>> resp   = simulate_post (root, "/Auth/change_email.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Repeat the EMail for verification.
         </li>
 
     >>> data ["vemail"] = "newemail"
     >>> resp   = simulate_post (root, "/Auth/change_email.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The Email's don't match.
         </li>
 
     >>> data ["vemail"] = "new-email"
-    >>> resp   = simulate_post (root, "/Auth/change_email.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> resp   = simulate_post (root, "/Auth/change_email.html", data = data) # doctest:+ELLIPSIS
+    Email via localhost from webmaster@ to ['new-email']
+    Content-type: text/plain; charset=utf-8
+    ...
+    Subject: Email confirmation for localhost
+    To: new-email
+    From: webmaster@
+    <BLANKLINE>
+    Confirm new email address new-email
+    ...
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
 
@@ -334,52 +351,52 @@ _change_password = r"""
     >>> scope.commit ()
 
     >>> resp   = simulate_get (root, "/Auth/change_password.html", query_string = "p=%d" % (a2.pid, ))
-    >>> print ("".join (str (t) for t in find_tag (resp, "li", id = "account-name")))
-    <li id="account-name">a2</li>
+    >>> print ("".join (str (t) for t in find_tag (resp, "li", class_ = "account-name")))
+    <li class="account-name">a2</li>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = simulate_post (root, "/Auth/change_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Username or password incorrect
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["password"] = passwd
     >>> resp   = simulate_post (root, "/Auth/change_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The password is required.
-        </li><li class="error">
+        </li><li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["npassword"] = "P2"
     >>> resp   = simulate_post (root, "/Auth/change_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Repeat the password for verification.
         </li>
 
     >>> data ["vpassword"] = "p2"
     >>> resp   = simulate_post (root, "/Auth/change_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           The passwords don't match.
         </li>
 
     >>> data ["vpassword"] = "P2"
     >>> resp   = simulate_post (root, "/Auth/change_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
 
@@ -388,40 +405,55 @@ _change_password = r"""
 """
 
 _password_reset  = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-smtp="])
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> data   = dict ()
     >>> resp   = simulate_post (root, "/Auth/request_reset_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           A user name is required to login.
         </li>
 
     >>> data ["username"]= "a5"
     >>> resp   = simulate_post (root, "/Auth/request_reset_password.html", data = data)
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
-    <li class="error">
+    <li class="Error-Message">
           Account could not be found
         </li>
 
     >>> data ["username"]= "a2"
     >>> resp   = simulate_post (root, "/Auth/request_reset_password.html", data = data)# doctest:+ELLIPSIS
-    >>> errors = find_tag (resp, "li", class_ = "error")
+    Email via localhost from webmaster@ to ['a2']
+    Content-type: text/plain; charset=utf-8
+    ...
+    Subject: Password reset for user a2 on website localhost
+    To: a2
+    From: webmaster@
+    <BLANKLINE>
+    Password of a2 reset
+    <BLANKLINE>
+    Your password was reset to the temporary value:
+    <BLANKLINE>
+        ...
+    <BLANKLINE>
+    Please click the following link to change the temporary password to a new value:
+    <BLANKLINE>
+        ...
+    >>> errors = find_tag (resp, "li", class_ = "Error-Message")
     >>> print ("".join (str (e)for e in errors))
 
     >>> scope.destroy ()
 """
-
 
 from  _GTW.__test__.model import *
 import BeautifulSoup
 from   werkzeug.test     import Client
 from   werkzeug.wrappers import BaseResponse
 from  _TFL.User_Config   import user_config
-
 
 def fixtures (self, scope) :
     Auth  = scope.Auth
@@ -460,13 +492,21 @@ def find_tag (response, tag_pat, ** attrs) :
 
 Scaffold.__class__.fixtures = fixtures
 
-__test1__ = dict \
-    ( login_logout    = _login_logout
-    , activate        = _activate
-    , reset_password  = _password_reset
-    , register        = _register
-    , change_password = _change_password
+__test__ = dict \
+    ( activate        = _activate
     , change_email    = _change_email
+    , change_password = _change_password
+    , login_logout    = _login_logout
+    , register        = _register
+    , reset_password  = _password_reset
     )
-__doc__ = _register
+
+### XXX each of the above tests runs correctly if it is the only one
+###     *** but if trying to run several all but the first fail during scope
+###         creation
+
+__test__ = dict \
+    ( activate        = _activate
+    )
+
 ### __END__ GTW.__test__.Auth

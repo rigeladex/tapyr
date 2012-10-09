@@ -35,6 +35,7 @@
 #     9-Oct-2012 (CT) Add `get_title` to `_Activate_`, `_Change_Password_`
 #     9-Oct-2012 (CT) Fix error messages, fix typo, display `username` after
 #                     empty `password`
+#     9-Oct-2012 (CT) Use `.host_url`, not `.url_root`, for `href_action`
 #    ««revision-date»»···
 #--
 
@@ -690,8 +691,9 @@ class Auth (_Ancestor) :
     # end def _effective
 
     def href_action (self, obj, token, request) :
+        ### `request.url_root` doesn't do the right thing for apache/mod_fcgid
         result = self._href_q \
-            ( request.url_root, self.href, "action"
+            ( request.host_url, self.href, "action"
             , p = str (obj.pid)
             , t = token
             )
