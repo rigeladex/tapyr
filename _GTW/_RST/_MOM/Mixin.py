@@ -52,6 +52,7 @@
 #                     add class suffix `_`, add `_real_name`
 #     5-Oct-2012 (CT) Change `attributes.setter` to pass `Kind` instances
 #     5-Oct-2012 (CT) Add `attributes.deleter`
+#    10-Oct-2012 (CT) Pass `error` to `Status.Gone`
 #    ««revision-date»»···
 #--
 
@@ -260,7 +261,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
                     (  _T ("%s `%s` doesn't exist anymore!")
                     % (_T (E_Type.ui_name), pid)
                     )
-                raise Status.Gone
+                raise Status.Gone (error)
         try :
             ipid = int (pid)
         except (ValueError, TypeError) :

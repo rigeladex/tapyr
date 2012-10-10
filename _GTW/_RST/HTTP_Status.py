@@ -34,6 +34,7 @@
 #    10-Aug-2012 (CT) Add missing import for `CAL.Date_Time`
 #    17-Aug-2012 (MG) Use byte data-type for response headers
 #    24-Aug-2012 (CT) Change `Status.__repr__` to convert `_msg` to `str`
+#    10-Oct-2012 (CT) Set `request.Error` in `Status.__call__`
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,10 @@ class Status (StandardError, TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, resource, request, response) :
+        if not hasattr (request, "Error") :
+            if self._msg :
+                ### Backwards compatibility with old-style Jinja templates
+                request.Error = self._msg
         response.status_code = self.status_code
         self._add_response_body    (resource, request, response)
         self._add_response_headers (resource, request, response)

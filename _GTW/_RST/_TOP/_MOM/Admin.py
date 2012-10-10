@@ -35,6 +35,7 @@
 #     9-Aug-2012 (CT) Redefine `E_Type.entries` to avoid version from mixin
 #    10-Aug-2012 (CT) Use `logging.exception` instead of `print`
 #    13-Aug-2012 (CT) Guard access to `Form` in `changer_injected_templates`
+#    10-Oct-2012 (CT) Pass `error` positionally to `Status` classes
 #    ««revision-date»»···
 #--
 
@@ -110,7 +111,7 @@ class _Action_ (_Ancestor) :
             return form  [fid]
         except KeyError :
             error = _T ("Form corrupted, unknown element id %s" % (fid, ))
-            raise self.top.Status.Bad_Request (error  = error)
+            raise self.top.Status.Bad_Request (error)
     # end def field_element
 
     def form_element (self, fid) :
@@ -119,7 +120,7 @@ class _Action_ (_Ancestor) :
             return form, form [fid]
         except KeyError :
             error = _T ("Form corrupted, unknown element id %s" % (fid, ))
-            raise self.top.Status.Bad_Request (error  = error)
+            raise self.top.Status.Bad_Request (error)
     # end def form_element
 
     def instantiated (self, elem, fid, ETM, obj, kw) :
@@ -134,8 +135,7 @@ class _Action_ (_Ancestor) :
             ### XXX re-authorization form (password only)
             raise self.top.Status.Request_Timeout (expired = "%s" % (exc, ))
         except LookupError as exc :
-            raise self.top.Status.Bad_Request \
-                (error = "Session expired: %s" % (exc, ))
+            raise self.top.Status.Bad_Request ("Session expired: %s" % (exc, ))
     # end def session_secret
 
     def _check_readonly (self, request) :
@@ -146,7 +146,7 @@ class _Action_ (_Ancestor) :
                     )
                 )
             raise self.top.Status.Service_Unavailable \
-                ( error = error
+                ( error
                 , retry_after = CAL.Date_Time_Delta (minutes = 15)
                 )
     # end def _check_readonly
@@ -167,12 +167,12 @@ class _Action_ (_Ancestor) :
 
     def _raise_401 (self, request) :
         error = _T ("Not logged in or login-session is expired")
-        raise self.top.Status.Unauthorized (error = error)
+        raise self.top.Status.Unauthorized (error)
     # end def _raise_401
 
     def _raise_403 (self, request) :
         error = _T ("Not authorized for this page")
-        raise self.top.Status.Forbidden (error = error)
+        raise self.top.Status.Forbidden (error)
     # end def _raise_403
 
     def _ui_displayed (self, ETM, names, matches) :
@@ -218,7 +218,7 @@ class _HTML_Action_ (_Ancestor) :
         try :
             return AFS_Value.from_json (json_cargo)
         except Exception as exc :
-            raise self.top.Status.Bad_Request (error = "%s" % (exc, ))
+            raise self.top.Status.Bad_Request ("%s" % (exc, ))
     # end def form_value
 
     def form_value_apply (self, fv, scope, sid, session_secret) :
@@ -230,7 +230,7 @@ class _HTML_Action_ (_Ancestor) :
         except Exception as exc :
             if __debug__ :
                 logging.exception ("form_value_apply: %s", fv)
-            raise self.top.Status.Bad_Request (error = "%s" % (exc, ))
+            raise self.top.Status.Bad_Request ("%s" % (exc, ))
     # end def form_value_apply
 
 # end class _HTML_Action_
