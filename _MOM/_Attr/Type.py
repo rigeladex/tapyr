@@ -250,6 +250,7 @@
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    13-Sep-2012 (CT) Add `fix_doc`
 #    19-Sep-2012 (CT) Add `A_Link_Role.force_role_name`
+#    10-Oct-2012 (CT) Move parsing from `A_Angle.cooked` to `._from_string`
 #    ««revision-date»»···
 #--
 
@@ -1465,21 +1466,29 @@ class A_Angle (_A_Float_) :
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if value is not None :
+            value = super (A_Angle, soc).cooked (value)
+            if soc.max_value == value == 360 and soc.min_value <= 0 :
+                value -= 360
+        return value
+    # end def cooked
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, value, obj, glob, locl) :
+        if value is not None :
             pat = soc._dms_pattern
-            if not value or not soc._dms_pattern.search (value) :
-                value = super (A_Angle, soc).cooked (value)
-            else :
-                value = \
+            if soc._dms_pattern.search (value) :
+                result = \
                     ( (float (pat.degrees or 0.))
                     + (float (pat.minutes or 0.)) /   60.
                     + (float (pat.seconds or 0.)) / 3600.
                     )
                 if pat.sign == '-' :
-                    value = -value
-            if soc.max_value == value == 360 and soc.min_value <= 0 :
-                value -= 360
-        return value
-    # end def cooked
+                    result = -result
+            else :
+                result = super (A_Angle, soc)._from_string \
+                    (value, obj, glob, locl)
+        return soc.cooked (result)
+    # end def _from_string
 
 # end class A_Angle
 

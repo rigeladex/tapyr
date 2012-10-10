@@ -31,6 +31,7 @@
 #    11-Nov-2011 (CT) Add tests for `Q.__eq__` and `Q.CONTAINS`
 #     5-Dec-2011 (CT) Add tests for `Sailor.AQ.left.AC(dict(last_name = "Tan"))`
 #    15-Apr-2012 (CT) Adapt to change of `MOM.Attr.Filter.Composite`
+#    10-Oct-2012 (CT) Add test for `position`
 #    ««revision-date»»···
 #--
 
@@ -161,6 +162,14 @@ _attr_ac_query = """
     11 1208 False
     12 1107 False
     12 1208 True
+
+    >>> a3 = PAP.Address ("Glasauergasse 32/3", "1130", "Wien", "Austria", position = dict (lat = "48.190111", lon = "16.26867"), raw = True)
+    >>> a3.position
+    MOM.Position (lat = 48.190111, lon = 16.26867)
+    >>> a4 = PAP.Address ("Glasauergasse 32/2", "1130", "Wien", "Austria", position = dict (lat = "48d 11m 25s", lon = "16d 16m 7s"), raw = True)
+    >>> a4.position
+    MOM.Position (lat = 48.1902777778, lon = 16.2686111111)
+
     >>> scope.destroy ()
 """
 
