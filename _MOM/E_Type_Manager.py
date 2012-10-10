@@ -118,6 +118,7 @@
 #    11-Aug-2012 (CT) Change `Id_Entity.example` to ignore `Partial_Type`
 #    21-Sep-2012 (CT) Change `Link.__call__` to call `E_Type.child_np`
 #    24-Sep-2012 (CT) Remove `Link._role_to_raw_iter`
+#    10-Oct-2012 (CT) Change `raw_query_attrs` to return `tuple`
 #    ««revision-date»»···
 #--
 
@@ -345,15 +346,17 @@ class Id_Entity (Entity) :
     # end def query_1
 
     def raw_query_attrs (self, names, values = None) :
-        et = self._etype
-        if values is None :
-            for n in names :
-                attr = self.get_etype_attribute (n)
-                yield attr.raw_query
-        else :
-            for n in names :
-                if n in values :
-                    yield getattr (et, n).raw_query_eq (values [n])
+        def _gen (self, names, values) :
+            et = self._etype
+            if values is None :
+                for n in names :
+                    attr = self.get_etype_attribute (n)
+                    yield attr.raw_query
+            else :
+                for n in names :
+                    if n in values :
+                        yield getattr (et, n).raw_query_eq (values [n])
+        return tuple (_gen (self, names, values))
     # end def raw_query_attrs
 
     def _epkified (self, * epk, ** kw) :

@@ -39,6 +39,7 @@
 #    24-Sep-2012 (RS) Fix/add mixins for SAS backend
 #    24-Sep-2012 (CT) Raise `Attribute_Value` in `_A_IP4_Address_.check_syntax`
 #    24-Sep-2012 (RS) Move `SAS` specific stuff to `SAS_Attr_Type`
+#    10-Oct-2012 (CT) Add `PNS` to `IP_Address`
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,7 @@ class _A_IP4_Address_ (_A_IP_Address_) :
 
 class _A_IP4_Network_ (_A_IP_Address_) :
     """Model a IP4 network in CIDRR notation."""
+
     ### MGL: Use cidr type for the _A_IP4_Network_
 
     P_Type            = R_IP4_Address
@@ -174,11 +176,12 @@ class _A_IP6_Network_ (_A_IP_Address_) :
 
 # end class _A_IP6_Network_
 
-
 _Ancestor_Essence = MOM.An_Entity
 
 class IP_Address (_Ancestor_Essence) :
     """Model an abstract IP Address."""
+
+    PNS = GTW.OMP.NET
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

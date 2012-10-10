@@ -106,6 +106,7 @@
 #                     (to protect against ambiguous input)
 #    22-May-2012 (CT) Remove `Form.cache_rank` (belongs to `Form_Cache`)
 #    19-Aug-2012 (MG) Quick fix for type conversion for `last_cid`
+#    10-Oct-2012 (CT) Add `logging.exception` to `_create_instance`
 #    ««revision-date»»···
 #--
 
@@ -119,6 +120,8 @@ from   _GTW._AFS   import Element as AE
 
 import _GTW._AFS._MOM
 import _MOM.Error
+
+import logging
 
 class _MOM_Element_ (AE._Element_) :
 
@@ -192,8 +195,17 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
     def _create_instance (self, ETM, akw, on_error) :
         error = None
         try :
-            matches = ETM.query_s (* ETM.raw_query_attrs (akw, akw))
-            count   = matches.count ()
+            try :
+                matches = ETM.query_s (* ETM.raw_query_attrs (akw, akw))
+            except Exception as exc :
+                logging.exception \
+                    ( "Exception from ETM.query_s "
+                      "(* ETM.raw_query_attrs (akw, akw)) for akw = %s"
+                    % (sorted (akw.iteritems ()), )
+                    )
+                raise
+            else :
+                count   = matches.count ()
             if not count :
                 result = ETM (raw = 1, on_error = on_error, ** akw)
             elif count == 1 :

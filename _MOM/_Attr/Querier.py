@@ -43,6 +43,7 @@
 #                     `_Container_._attrs`
 #    22-Dec-2011 (CT) Add `E_Type.Select`
 #     5-Oct-2012 (CT) Guard `_Container_._attrs` against missing `E_Type`
+#    10-Oct-2012 (CT) Change `_Type_._cooker` to apply `from_string` to strings
 #    ««revision-date»»···
 #--
 
@@ -284,12 +285,6 @@ class _Type_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     @getattr_safe
-    def _cooker (self) :
-        return self._attr.cooked
-    # end def _cooker
-
-    @TFL.Meta.Once_Property
-    @getattr_safe
     def _full_name (self) :
         outer = self._outer
         return filtered_join (".", (outer and outer._q_name, self._attr.name))
@@ -336,6 +331,14 @@ class _Type_ (TFL.Meta.Object) :
             for ct in c.Attrs_Transitive :
                 yield ct
     # end def _attrs_transitive
+
+    def _cooker (self, value) :
+        attr = self._attr
+        if isinstance (value, basestring) :
+            return attr.from_string (value, None, {}, {})
+        else :
+            return attr.cooked (value)
+    # end def _cooker
 
     def __getattr__ (self, name) :
         try :
