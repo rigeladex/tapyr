@@ -177,7 +177,7 @@ _test_code = """
     >>> for T, l in children_trans_iter (scope.PAP.Subject_has_Property) :
     ...     rr = T.relevant_root.type_name if T.relevant_root else sorted (T.relevant_roots)
     ...     print ("%%-30s %%-5s %%s" %% ("%%s%%s" %% ("  " * l, T.type_name), T.is_partial, rr))
-    PAP.Subject_has_Property       True  ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
+    PAP.Subject_has_Property       True  ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
       PAP.Subject_has_Phone        True  ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
         PAP.Person_has_Phone       False PAP.Person_has_Phone
         PAP.Company_has_Phone      False PAP.Company_has_Phone
@@ -187,6 +187,9 @@ _test_code = """
       PAP.Subject_has_Email        True  ['PAP.Company_has_Email', 'PAP.Person_has_Email']
         PAP.Person_has_Email       False PAP.Person_has_Email
         PAP.Company_has_Email      False PAP.Company_has_Email
+      PAP.Subject_has_Url          True  ['PAP.Company_has_Url', 'PAP.Person_has_Url']
+        PAP.Person_has_Url         False PAP.Person_has_Url
+        PAP.Company_has_Url        False PAP.Company_has_Url
 
 """
 

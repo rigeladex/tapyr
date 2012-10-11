@@ -34,6 +34,7 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    14-May-2012 (CT) Add test showing `P_Type` of `scope.attribute_types`
 #    31-Jul-2012 (CT) Add `Angle` to test output
+#    11-Oct-2012 (CT) Change duplicate removal for `Sig_Key` test
 #    ««revision-date»»···
 #--
 
@@ -406,10 +407,10 @@ _test_code = """
 
     >>> seen = set ()
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
-    ...     k = at.typ, at.needs_raw_value
-    ...     if k not in seen :
-    ...         print at.typ, at.AQ.__class__, at.AQ.Sig_Key
-    ...         seen.add (k)
+    ...     msg = "%%s %%s %%s" %% (at.typ, at.AQ.__class__, at.AQ.Sig_Key)
+    ...     if msg not in seen :
+    ...         print msg
+    ...         seen.add (msg)
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Angle <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
@@ -453,13 +454,14 @@ _test_code = """
     Sailor <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Team <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Text <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Thumbnail <Attr.Type.Querier Composite ()> None
     Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Time_Interval <Attr.Type.Querier Composite ()> None
     Unit <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Url <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Url <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Weekday_RR_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     X <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0

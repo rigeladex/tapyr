@@ -114,13 +114,16 @@ _test_code = """
     Admin/Personenverwaltung/Company_has_Address e_type_admin
     Admin/Personenverwaltung/Company_has_Email e_type_admin
     Admin/Personenverwaltung/Company_has_Phone e_type_admin
+    Admin/Personenverwaltung/Company_has_Url e_type_admin
     Admin/Personenverwaltung/Email e_type_admin
     Admin/Personenverwaltung/Entity_created_by_Person e_type_admin
     Admin/Personenverwaltung/Person e_type_admin
     Admin/Personenverwaltung/Person_has_Address e_type_admin
     Admin/Personenverwaltung/Person_has_Email e_type_admin
     Admin/Personenverwaltung/Person_has_Phone e_type_admin
+    Admin/Personenverwaltung/Person_has_Url e_type_admin
     Admin/Personenverwaltung/Phone e_type_admin
+    Admin/Personenverwaltung/Url e_type_admin
     Admin/Regattaverwaltung site_admin
     Admin/Regattaverwaltung/Boat e_type_admin
     Admin/Regattaverwaltung/Boat_Class e_type_admin
