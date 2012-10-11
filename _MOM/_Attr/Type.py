@@ -253,6 +253,7 @@
 #    10-Oct-2012 (CT) Move parsing from `A_Angle.cooked` to `._from_string`
 #    11-Oct-2012 (CT) Add `A_Url_X.example`
 #    11-Oct-2012 (CT) Change `_A_Number_.code_format` to "%s" (inherits "%r")
+#    11-Oct-2012 (CT) Add and use `A_Boolean.Table_X`
 #    ««revision-date»»···
 #--
 
@@ -1507,34 +1508,40 @@ class A_Blob (A_Attr_Type) :
 class A_Boolean (_A_Named_Value_) :
     """Boolean attribute."""
 
-    example        = "no"
-    typ            = _ ("Boolean")
-    Q_Ckd_Type     = MOM.Attr.Querier.Boolean
-    P_Type         = bool
-    ui_length      = 5
+    example           = "no"
+    typ               = _ ("Boolean")
+    Q_Ckd_Type        = MOM.Attr.Querier.Boolean
+    P_Type            = bool
+    ui_length         = 5
 
-    Table          = dict \
-        ( no       = False
-        , yes      = True
+    Table             = dict \
+        ( no          = False
+        , yes         = True
+        )
+
+    ### allow additional raw values without changing `eligible_raw_values`
+    ### (want only canonical values in UI and documentation)
+    Table_X           = dict \
+        ( Table
+        , false       = False
+        , true        = True
         )
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if isinstance (value, basestring) :
             try :
-                return soc.Table [value]
+                return soc.Table_X [value.lower ()]
             except KeyError :
                 raise ValueError \
-                    ("%s not in %s" % (s, sorted (soc.Table)))
+                    ("%s not in %s" % (value, sorted (soc.Table)))
         else :
             return bool (value)
     # end def cooked
 
-    def _from_string (self, s, obj, glob, locl) :
-        if not s :
-            return False
-        else :
-            return self.__super._from_string (s, obj, glob, locl)
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
+        return soc.cooked (s)
     # end def _from_string
 
 # end class A_Boolean
