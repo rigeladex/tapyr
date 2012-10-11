@@ -151,6 +151,7 @@
 #    18-Sep-2012 (CT) Add `_m_fix_refuse_links`
 #    20-Sep-2012 (CT) Factor `_m_setup_roles`
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
+#    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -159,6 +160,7 @@ from   _TFL import TFL
 
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Once_Property
+import _TFL._Meta.Property
 import _TFL.Caller
 import _TFL.Decorator
 import _TFL.Sorted_By
@@ -583,7 +585,7 @@ class M_Id_Entity (M_Entity) :
             ( (  a for a in cls._Attributes._names.itervalues ()
               if a is not None and a.kind.is_primary
               )
-            , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "_d_rank")
+            , key = TFL.Getter.sig_rank
             )
         epk_sig   = tuple (a.name for a in pkas)
         rel_bases = tuple \

@@ -254,6 +254,7 @@
 #    11-Oct-2012 (CT) Add `A_Url_X.example`
 #    11-Oct-2012 (CT) Change `_A_Number_.code_format` to "%s" (inherits "%r")
 #    11-Oct-2012 (CT) Add and use `A_Boolean.Table_X`
+#    11-Oct-2012 (CT) Add `sig_rank`
 #    ««revision-date»»···
 #--
 
@@ -366,6 +367,14 @@ class A_Attr_Type (TFL.Meta.Object) :
     def raw_query_eq (self) :
         return self.AQ.EQ
     # end def raw_query_eq
+
+    @TFL.Meta.Class_Property
+    @TFL.Meta.Once_Property
+    def sig_rank (soc) :
+        """Rank of attribute in signature of `__init__`."""
+        k_rank = getattr (soc.kind, "_k_rank", 0)
+        return (k_rank, soc._t_rank, soc.rank, soc._d_rank)
+    # end def sig_rank
 
     @property
     def ui_name_T (self) :

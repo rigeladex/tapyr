@@ -183,6 +183,7 @@
 #    21-Aug-2012 (RS) Expand logged args in place, fix format string arg count
 #     8-Sep-2012 (CT) Consider `init_finished` in `Link_Role._set_cooked_value`
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
+#    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -191,8 +192,8 @@ from   __future__            import unicode_literals
 from   _TFL                  import TFL
 from   _MOM                  import MOM
 
-import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
+import _TFL._Meta.Property
 import _TFL.Functor
 
 import _MOM._Attr
@@ -234,8 +235,7 @@ class Kind (MOM.Prop.Kind) :
         self.__super.__init__ (attr, e_type)
         self._check_sanity    (attr)
         self.dependent_attrs = set ()
-        self.rank            = \
-            (self._k_rank, attr._t_rank, attr.rank, attr._d_rank)
+        self.rank            = attr.sig_rank
         self.record_changes  = attr.record_changes and self.record_changes
     # end def __init__
 
