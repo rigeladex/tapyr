@@ -37,6 +37,7 @@
 #    24-Sep-2012 (CT) Adapt tests
 #    10-Oct-2012 (CT) Rename test classes to `Test_...`
 #    10-Oct-2012 (CT) Add test for `raw_query_attrs`
+#    11-Oct-2012 (RS) Add type-check for `raw_query_attrs` test
 #    ««revision-date»»···
 #--
 
@@ -633,6 +634,8 @@ _query_test = r"""
     >>> rqs = Test_IP4_Network.raw_query_attrs (qd, qd)
     >>> rqs
     (Q.address.address == 192.168.1.8/29,)
+    >>> type (rqs [0].rhs)
+    <class 'rsclib.IP_Address.IP4_Address'>
     >>> matches = Test_IP4_Network.query_s (* rqs).all ()
     >>> print "\n".join (repr (x) for x in matches)
     GTW.OMP.NET.Test_IP4_Network (dict (address = 192.168.1.8/29))
