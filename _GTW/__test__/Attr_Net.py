@@ -637,6 +637,10 @@ _query_test = r"""
     >>> print "\n".join (repr (x) for x in matches)
     GTW.OMP.NET.Test_IP4_Network (dict (address = 192.168.1.8/29))
 
+    >>> matches2 = Test_IP4_Network.query_s (Q.address.address == n43.address.address).all ()
+    >>> print "\n".join (repr (x) for x in matches2)
+    GTW.OMP.NET.Test_IP4_Network (dict (address = 192.168.1.8/29))
+
     >>> scope.destroy ()
 """
 from _GTW.__test__.model import *
