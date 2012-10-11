@@ -300,18 +300,18 @@ class A_Attr_Type (TFL.Meta.Object) :
     check               = set ()
     check_syntax        = None
     Choices             = None
-    code_format         = u"%r"
+    code_format         = "%r"
     completer           = None
     computed            = None
     computed_default    = None
     db_sig_version      = 0
     default             = None
-    description         = u""
+    description         = ""
     E_Type              = None  ### E_Type of `_A_Entity_`, if any
     electric            = False ### True if created by framework
-    explanation         = u""
-    format              = u"%s"
-    group               = u""
+    explanation         = ""
+    format              = "%s"
+    group               = ""
     hidden              = False
     kind                = None
     Kind_Mixins         = ()
@@ -323,7 +323,7 @@ class A_Attr_Type (TFL.Meta.Object) :
     query               = None
     query_fct           = None
     rank                = 0
-    raw_default         = u""
+    raw_default         = ""
     record_changes      = True
     sort_rank           = 0
     store_default       = False
@@ -410,7 +410,7 @@ class A_Attr_Type (TFL.Meta.Object) :
     def as_string (soc, value) :
         if value is not None :
             return soc.format % (value, )
-        return u""
+        return ""
     # end def as_string
 
     def check_invariant (self, obj, value) :
@@ -587,7 +587,7 @@ class _A_Collection_ (A_Attr_Type) :
         if value is not None :
             return self.__super.as_code \
               (self.C_sep.join (self._C_as_code (value)))
-        return u""
+        return ""
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -667,14 +667,14 @@ class _A_Composite_ (_A_Entity_) :
     def as_code (self, value) :
         if value is not None :
             return "dict (%s)" % (value.attr_as_code (), )
-        return u""
+        return ""
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
             return value.as_string ()
-        return u""
+        return ""
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -763,7 +763,7 @@ class _A_Date_ (A_Attr_Type) :
     def as_string (soc, value) :
         if value is not None :
             return unicode (value.strftime (soc._output_format ()))
-        return u""
+        return ""
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -830,7 +830,7 @@ class _A_Named_Value_ (A_Attr_Type) :
             return soc.Table [s]
         except KeyError :
             raise ValueError \
-                (u"%s not in %s" % (s, soc.eligible_raw_values ()))
+                ("%s not in %s" % (s, soc.eligible_raw_values ()))
     # end def _from_string
 
 # end class _A_Named_Value_
@@ -838,7 +838,7 @@ class _A_Named_Value_ (A_Attr_Type) :
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
 
-    math_dict         = dict \
+    math_dict           = dict \
         ( dict
             (  (k, v) for k, v in math.__dict__.iteritems ()
             if not k.startswith ("_")
@@ -846,10 +846,10 @@ class _A_Number_ (A_Attr_Type) :
         , Decimal = decimal.Decimal
         )
 
-    min_value         = None
-    max_value         = None
+    min_value           = None
+    max_value           = None
 
-    _string_fixer     = None
+    _string_fixer       = None
 
     @TFL.Meta.Once_Property
     def example (self) :
@@ -1021,7 +1021,7 @@ class _A_Id_Entity_ (_A_Entity_) :
         if value is not None :
             return tuple \
                 (a.as_code (a.get_value (value)) for a in value.primary)
-        return repr (u"")
+        return repr ("")
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1032,7 +1032,7 @@ class _A_Id_Entity_ (_A_Entity_) :
                     (a.as_string (a.get_value (value)) for a in value.primary)
                 ,
                 )
-        return u""
+        return ""
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1092,9 +1092,9 @@ class _A_Id_Entity_ (_A_Entity_) :
         if not isinstance (value, etype.Essence) :
             raise ValueError \
                 ( _T
-                    ( u"%s %s not eligible for attribute %s,"
-                      u"\n"
-                      u"    must be instance of %s"
+                    ( "%s %s not eligible for attribute %s,"
+                      "\n"
+                      "    must be instance of %s"
                     )
                 % ( _T (value.ui_name), unicode (value), soc.name
                   , _T (soc.P_Type.ui_name)
@@ -1135,8 +1135,8 @@ class _A_Id_Entity_ (_A_Entity_) :
 class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
-    default           = u""
-    example           = u"foo"
+    default           = ""
+    example           = "foo"
     max_length        = 0
     Q_Ckd_Type        = MOM.Attr.Querier.String
     ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
@@ -1280,7 +1280,7 @@ class _A_Named_Object_ (_A_Named_Value_) :
                 try :
                     return Table [cargo]
                 except KeyError :
-                    raise ValueError (u"%s not in %s" % (cargo, sorted (Table)))
+                    raise ValueError ("%s not in %s" % (cargo, sorted (Table)))
         # end def from_cargo
 
     # end class Pickler
@@ -1310,7 +1310,7 @@ class _A_Typed_Collection_ (_A_Collection_) :
         if value is not None :
             return super (_A_Typed_Collection_, soc).as_string \
                 (soc.C_sep.join (soc._C_as_string (value)))
-        return u""
+        return ""
     # end def as_string
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
@@ -1439,7 +1439,7 @@ class _A_Unit_ (A_Attr_Type) :
                 factor = self._unit_dict [unit]
             except KeyError :
                 raise ValueError \
-                    ( _T (u"Invalid unit %s, specify one of %s")
+                    ( _T ("Invalid unit %s, specify one of %s")
                     % (unit, self.eligible_raw_values ())
                     )
         return self.__super._from_string (s, obj, glob, locl) * factor
@@ -1505,7 +1505,7 @@ class A_Blob (A_Attr_Type) :
 class A_Boolean (_A_Named_Value_) :
     """Boolean attribute."""
 
-    example        = u"no"
+    example        = "no"
     typ            = _ ("Boolean")
     Q_Ckd_Type     = MOM.Attr.Querier.Boolean
     P_Type         = bool
@@ -1523,7 +1523,7 @@ class A_Boolean (_A_Named_Value_) :
                 return soc.Table [value]
             except KeyError :
                 raise ValueError \
-                    (u"%s not in %s" % (s, sorted (soc.Table)))
+                    ("%s not in %s" % (s, sorted (soc.Table)))
         else :
             return bool (value)
     # end def cooked
@@ -1571,7 +1571,7 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
 class A_Char (_A_String_) :
     """A single character."""
 
-    example        = u"X"
+    example        = "X"
     typ            = _ ("Character")
     max_length     = 1
 
@@ -1580,7 +1580,7 @@ class A_Char (_A_String_) :
 class A_Date (_A_Date_) :
     """Date value."""
 
-    example        = u"2010/10/10"
+    example        = "2010/10/10"
     completer      = MOM.Attr.Completer_Spec  (4)
     typ            = _ ("Date")
     P_Type         = datetime.date
@@ -1623,7 +1623,7 @@ class A_Date_Slug (_A_String_) :
     """Unique value based on the date/time of entity creation.
     """
 
-    example        = u"20101010_000042_137"
+    example        = "20101010_000042_137"
     typ            = _ ("Date-Slug")
     ui_length      = 22
 
@@ -1643,7 +1643,7 @@ class A_Date_Slug (_A_String_) :
 class A_Date_Time (_A_Date_) :
     """Date-time value."""
 
-    example        = u"2010/10/10 06:42"
+    example        = "2010/10/10 06:42"
     typ            = _ ("Date-Time")
     P_Type         = datetime.datetime
     ui_length      = 18
@@ -1664,7 +1664,7 @@ class A_Date_Time (_A_Date_) :
             else :
                 v = value + TFL.user_config.time_zone.utcoffset (value)
                 return v.strftime (soc._output_format ())
-        return u""
+        return ""
     # end def as_string
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1800,7 +1800,7 @@ class A_Enum (A_Attr_Type) :
             if result in Table :
                 return result
             else :
-                raise ValueError (u"%s not in %s" % (s, sorted (Table)))
+                raise ValueError ("%s not in %s" % (s, sorted (Table)))
     # end def _from_string
 
 # end class A_Enum
@@ -1983,10 +1983,10 @@ class A_Name (Syntax_Re_Mixin, _A_String_) :
 
     typ                = _ ("Name")
     max_length         = 32
-    _syntax_re         = Regexp (u"^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
+    _syntax_re         = Regexp ("^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
     syntax             = _ \
-        ( u"A name must start with a letter or underscore and continue with "
-          u"letters, digits, and underscores."
+        ( "A name must start with a letter or underscore and continue with "
+          "letters, digits, and underscores."
         )
 
 # end class A_Name
@@ -1995,7 +1995,7 @@ class A_Numeric_String (_A_String_Base_) :
     """String that holds a numeric value.
     """
 
-    example           = u"42"
+    example           = "42"
     typ               = _ ("Numeric_String")
 
     P_Type            = unicode
@@ -2040,7 +2040,7 @@ class A_Text (_A_String_) :
 class A_Time (_A_Date_) :
     """Time value."""
 
-    example        = u"06:42"
+    example        = "06:42"
     typ            = _ ("Time")
     P_Type         = datetime.time
     ui_length      = 8
@@ -2072,7 +2072,7 @@ class A_Time (_A_Date_) :
 class A_Url (_A_String_) :
     """URL (including local file name)."""
 
-    example        = u"/bar"
+    example        = "/bar"
     typ            = _ ("Url")
     max_length     = 160
     check          = ("""value.startswith (("/", "http://", "https://"))""", )
@@ -2082,7 +2082,7 @@ class A_Url (_A_String_) :
 class A_Url_X (A_Url) :
     """External URL."""
 
-    example        = u"http://www.example.com/foo"
+    example        = "http://www.example.com/foo"
     check          = ("""value.startswith (("http://", "https://"))""", )
 
 # end class A_Url_X
