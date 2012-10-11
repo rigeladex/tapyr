@@ -89,6 +89,7 @@ _test_acr = """
     (<Link_Cacher_n (GTW.OMP.EVT.Event_occurs) event --> occurs>,)
     (<Link_Cacher_1 (GTW.OMP.EVT.Recurrence_Spec) event --> recurrence>,)
     (<Link_Cacher_n (GTW.OMP.EVT.Recurrence_Rule) recurrence_spec --> rules>,)
+    (<Link_Cacher_1 (GTW.OMP.PAP.Address_Position) address --> gps>,)
     (<Role_Cacher_1 (GTW.OMP.PAP.Entity_created_by_Person) creator --> creator [MOM.Id_Entity]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Phone) phone --> phones [GTW.OMP.PAP.Subject]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Address) address --> addresses [GTW.OMP.PAP.Subject]>,)

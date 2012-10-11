@@ -31,6 +31,7 @@
 #    22-Mar-2012 (CT) Add `Company` and its links
 #    12-Sep-2012 (CT) Add `Property`, `Subject`, and `Subject_has_Property`,
 #                     remove `Company_has_...`, `Person_has_...`
+#    11-Oct-2012 (CT) Add `Address_Position`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ import _GTW._OMP._PAP.Person
 import _GTW._OMP._PAP.Property
 import _GTW._OMP._PAP.Subject
 
+import _GTW._OMP._PAP.Address_Position
 import _GTW._OMP._PAP.Entity_created_by_Person
 import _GTW._OMP._PAP.Subject_has_Property
 import _GTW._OMP._PAP.Subject_has_Phone

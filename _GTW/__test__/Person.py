@@ -184,7 +184,7 @@ _test_partial_roles = """
     ...     for pr in ET.Partial_Roles :
     ...         pret = scope.entity_type (pr.E_Type)
     ...         print ET.type_name, pr, pret.type_name, sorted (pret.children_np)
-    PAP.Entity_created_by_Person <class '_GTW._OMP._PAP.Entity_created_by_Person.left'> MOM.Id_Entity ['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_Class', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Handicap', 'SRM.Page', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_Event', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
+    PAP.Entity_created_by_Person <class '_GTW._OMP._PAP.Entity_created_by_Person.left'> MOM.Id_Entity ['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_Class', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Handicap', 'SRM.Page', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_Event', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.right'> PAP.Property ['PAP.Address', 'PAP.Email', 'PAP.Phone']
     PAP.Subject_has_Phone <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
@@ -219,6 +219,7 @@ _test_roles = """
     EVT.Event_occurs Event `left` EVT.Event
     EVT.Recurrence_Spec Event `left` EVT.Event
     EVT.Recurrence_Rule Recurrence_Spec `left` EVT.Recurrence_Spec
+    PAP.Address_Position Address `left` PAP.Address
     PAP.Entity_created_by_Person Id_Entity `left` MOM.Id_Entity
     PAP.Entity_created_by_Person Person `right` PAP.Person
     PAP.Subject_has_Property Subject `left` PAP.Subject

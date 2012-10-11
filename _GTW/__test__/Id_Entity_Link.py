@@ -224,6 +224,7 @@ test_code = r"""
     PAP.Property
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Address
+        ('PAP.Address_Position', ['left'])
         ('PAP.Company_has_Address', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Address', ['right'])
@@ -240,6 +241,8 @@ test_code = r"""
         ('PAP.Company_has_Phone', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Phone', ['right'])
+    PAP.Address_Position
+        ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject_has_Property
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject_has_Phone

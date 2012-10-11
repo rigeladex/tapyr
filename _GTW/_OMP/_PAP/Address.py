@@ -35,6 +35,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     8-Aug-2012 (CT) Add `example`
 #    12-Sep-2012 (CT) Derive from `Property`
+#    11-Oct-2012 (CT) Factor attribute `position` to Link1 `Address_Position`
 #    ««revision-date»»···
 #--
 
@@ -125,13 +126,6 @@ class _PAP_Address_ (_Ancestor_Essence) :
             rank           = 5
 
         # end class region
-
-        class position (A_Position) :
-            """Geographical position"""
-
-            kind           = Attr.Optional
-
-        # end class position
 
     # end class _Attributes
 

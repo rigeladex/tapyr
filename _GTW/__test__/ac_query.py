@@ -164,21 +164,25 @@ _attr_ac_query = """
     12 1107 False
     12 1208 True
 
-    >>> a3 = PAP.Address ("Glasauergasse 32/3", "1130", "Wien", "Austria", position = dict (lat = "48.190111", lon = "16.26867"), raw = True)
-    >>> a3.position
+    >>> a3 = PAP.Address ("Glasauergasse 32/3", "1130", "Wien", "Austria", raw = True)
+    >>> a3p = PAP.Address_Position (a3, position = dict (lat = "48.190111", lon = "16.26867"), raw = True)
+    >>> a3p.position
     MOM.Position (lat = 48.190111, lon = 16.26867)
+    >>> a3.gps
+    PAP.Address_Position ((u'glasauergasse 32/3', u'1130', u'wien', u'austria'), dict (lat = 48.190111, lon = 16.26867))
 
-    >>> a4 = PAP.Address ("Glasauergasse 32/2", "1130", "Wien", "Austria", position = dict (lat = "48d 11m 25s", lon = "16d 16m 7s"), raw = True)
-    >>> a4.position
+    >>> a4 = PAP.Address ("Glasauergasse 32/2", "1130", "Wien", "Austria", raw = True)
+    >>> a4p = PAP.Address_Position (a4, position = dict (lat = "48d 11m 25s", lon = "16d 16m 7s"), raw = True)
+    >>> a4p.position
     MOM.Position (lat = 48.1902777778, lon = 16.2686111111)
 
     >>> list (PAP.Person.raw_query_attrs (["first_name"], dict (first_name = "Martin")))
     [Q.first_name == martin]
 
-    >>> list (PAP.Address.raw_query_attrs (["position"], dict (position = dict (lat = "48.190111"))))
+    >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48.190111"))))
     [Q.position.lat == 48.190111]
 
-    >>> list (PAP.Address.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s"))))
+    >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s"))))
     [Q.position.lat == 48.1902777778]
 
     >>> scope.destroy ()

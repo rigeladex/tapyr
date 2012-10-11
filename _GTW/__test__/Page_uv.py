@@ -93,6 +93,7 @@ _test_code = r"""
     SRM.Sailor                                     False  ('left', 'nation', 'mna_number', 'club')
     SRM.Boat                                       False  ('left', 'nation', 'sail_number', 'sail_number_x')
     SWP.Picture                                    False  ('left', 'number')
+    PAP.Address_Position                           False  ('left', 'position')
     SRM.Race_Result                                False  ('left', 'race')
     Auth.Account_in_Group                          False  ('left', 'right')
     PAP.Company_has_Address                        False  ('left', 'right')
@@ -197,6 +198,7 @@ _test_code = r"""
     PAP.Company                                    True   False  False
     PAP.Email                                      True   False  False
     PAP.Phone                                      True   False  False
+    PAP.Address_Position                           True   False  False
     PAP.Entity_created_by_Person                   True   False  True
     PAP.Subject_has_Property                       False  False  True
     PAP.Subject_has_Phone                          False  False  True
@@ -245,9 +247,9 @@ _test_code = r"""
     ...     rr =  et.relevant_root.type_name if et.relevant_root else sorted (getattr (et, "relevant_roots", {}))
     ...     if rr :
     ...         print (fmt %% (et.type_name, rr))
-    MOM.Id_Entity                                  ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
-    MOM.Link                                       ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture']
-    MOM.Link1                                      ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture']
+    MOM.Id_Entity                                  ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
+    MOM.Link                                       ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture']
+    MOM.Link1                                      ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address_Position', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture']
     MOM._MOM_Link_n_                               ['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     MOM.Link2                                      ['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
     MOM.Object                                     ['Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'SRM.Club', 'SRM.Regatta_Event', 'SRM._Boat_Class_', 'SWP.Gallery', 'SWP.Page']
@@ -270,6 +272,7 @@ _test_code = r"""
     EVT.Link1                                      ['EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
     EVT.Object                                     ['EVT.Calendar']
     EVT.Calendar                                   EVT.Calendar
+    PAP.Link1                                      ['PAP.Address_Position']
     PAP.Link2                                      ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
     PAP.Object                                     ['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone']
     PAP.Subject                                    ['PAP.Company', 'PAP.Person']
@@ -289,6 +292,7 @@ _test_code = r"""
     PAP.Company                                    PAP.Company
     PAP.Email                                      PAP.Email
     PAP.Phone                                      PAP.Phone
+    PAP.Address_Position                           PAP.Address_Position
     PAP.Entity_created_by_Person                   PAP.Entity_created_by_Person
     PAP.Subject_has_Property                       ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone']
     PAP.Subject_has_Phone                          ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
@@ -327,7 +331,7 @@ _test_code = r"""
     PAP.Company_has_Phone                          PAP.Company_has_Phone
 
     >>> print (sorted (rr.type_name for rr in scope.relevant_roots))
-    ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
+    ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
 
     >>> fmt = "%%-45s  %%-20s  %%s"
     >>> for et in rets :
@@ -349,6 +353,7 @@ _test_code = r"""
     SRM.Sailor                                     =                     ('left', 'nation', 'mna_number', 'club')
     SRM.Boat                                       =                     ('left', 'nation', 'sail_number', 'sail_number_x')
     SWP.Picture                                    =                     ('left', 'number')
+    PAP.Address_Position                           =                     ('left', 'position')
     SRM.Race_Result                                =                     ('left', 'race')
     Auth.Account_in_Group                          =                     ('left', 'right')
     PAP.Company_has_Address                        =                     ('left', 'right')

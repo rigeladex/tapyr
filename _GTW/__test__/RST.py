@@ -287,9 +287,9 @@ _test_cqf = r"""
     MOM-Id_Entity
         ()
     MOM-Link
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link1
-        (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['PAP.Address_Position', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link2
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
@@ -298,6 +298,8 @@ _test_cqf = r"""
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
         (Q.type_name == PAP.Address,)
+    PAP-Address_Position
+        (Q.type_name == PAP.Address_Position,)
     PAP-Company
         (Q.type_name == PAP.Company,)
     PAP-Company_has_Address
@@ -310,6 +312,8 @@ _test_cqf = r"""
         (Q.type_name == PAP.Email,)
     PAP-Entity_created_by_Person
         (Q.type_name == PAP.Entity_created_by_Person,)
+    PAP-Link1
+        (Q.type_name.in_ (['PAP.Address_Position'],),)
     PAP-Link2
         (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone'],),)
     PAP-Object
@@ -401,13 +405,15 @@ _test_cqf = r"""
     MOM-Link2    (Left `left`, Right `right`)
     MOM-Object    ()
     MOM-_MOM_Link_n_    (Left `left`, Right `right`)
-    PAP-Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, Position `position`, String `region`)
+    PAP-Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, String `region`)
+    PAP-Address_Position    (Address `left`, Position `position`)
     PAP-Company    (String `name`, Date_Interval `lifetime`, String `short_name`)
     PAP-Company_has_Address    (Company `left`, Address `right`, String `desc`)
     PAP-Company_has_Email    (Company `left`, Email `right`, String `desc`)
     PAP-Company_has_Phone    (Company `left`, Phone `right`, Numeric_String `extension`, String `desc`)
     PAP-Email    (Email `address`, String `desc`)
     PAP-Entity_created_by_Person    (Id_Entity `left`, Person `right`)
+    PAP-Link1    (Left `left`,)
     PAP-Link2    (Left `left`, Right `right`)
     PAP-Object    ()
     PAP-Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
@@ -451,7 +457,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -663,6 +669,7 @@ _test_doc = r"""
             , 'MOM-Object'
             , 'MOM-_MOM_Link_n_'
             , 'PAP-Address'
+            , 'PAP-Address_Position'
             , 'PAP-Company'
             , 'PAP-Company_has_Address'
             , 'PAP-Company_has_Email'
@@ -1369,6 +1376,7 @@ _test_example_1 = r"""
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42.0'), ('lon', u'137.0')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -1415,6 +1423,7 @@ _test_example_2 = r"""
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42.0'), ('lon', u'137.0')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -1486,6 +1495,7 @@ _test_example_3 = r"""
     PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42.0'), ('lon', u'137.0')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 
     >>> scope.destroy ()
@@ -1499,11 +1509,12 @@ _test_example_4 = r"""
     >>> print ("Count before loop:", scope.MOM.Id_Entity.count)
     Count before loop: 16
 
-    >>> for tn in sorted (scope.MOM.Id_Entity.children_np) :
+    >>> for tn in sorted (scope.MOM.Id_Entity.children_np) : ### nummero 1
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42.0'), ('lon', u'137.0')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -1544,6 +1555,7 @@ _test_example_4 = r"""
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
+    PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42.0'), ('lon', u'137.0')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
@@ -1612,6 +1624,7 @@ _test_example_4 = r"""
     PAP.Company_has_Email : ((u'John Doe, Inc.', 'PAP.Company'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Company_has_Email')
     PAP.Company_has_Address : ((u'John Doe, Inc.', 'PAP.Company'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Company_has_Address')
     PAP.Company : (u'John Doe, Inc.', 'PAP.Company')
+    PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42.0'), ('lon', u'137.0')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 
     >>> scope.destroy ()
@@ -1700,12 +1713,14 @@ _test_get = r"""
             , 'MOM-Object'
             , 'MOM-_MOM_Link_n_'
             , 'PAP-Address'
+            , 'PAP-Address_Position'
             , 'PAP-Company'
             , 'PAP-Company_has_Address'
             , 'PAP-Company_has_Email'
             , 'PAP-Company_has_Phone'
             , 'PAP-Email'
             , 'PAP-Entity_created_by_Person'
+            , 'PAP-Link1'
             , 'PAP-Link2'
             , 'PAP-Object'
             , 'PAP-Person'
@@ -1764,12 +1779,14 @@ _test_get = r"""
             , '/v1/MOM-Object'
             , '/v1/MOM-_MOM_Link_n_'
             , '/v1/PAP-Address'
+            , '/v1/PAP-Address_Position'
             , '/v1/PAP-Company'
             , '/v1/PAP-Company_has_Address'
             , '/v1/PAP-Company_has_Email'
             , '/v1/PAP-Company_has_Phone'
             , '/v1/PAP-Email'
             , '/v1/PAP-Entity_created_by_Person'
+            , '/v1/PAP-Link1'
             , '/v1/PAP-Link2'
             , '/v1/PAP-Object'
             , '/v1/PAP-Person'

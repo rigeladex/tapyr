@@ -109,6 +109,7 @@ _test_code = """
     Admin/Benutzerverwaltung site_admin
     Admin/Personenverwaltung site_admin
     Admin/Personenverwaltung/Address e_type_admin
+    Admin/Personenverwaltung/Address_Position e_type_admin
     Admin/Personenverwaltung/Company e_type_admin
     Admin/Personenverwaltung/Company_has_Address e_type_admin
     Admin/Personenverwaltung/Company_has_Email e_type_admin

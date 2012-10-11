@@ -45,6 +45,7 @@
 #    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
 #                     i.e., stuff related to non-AFS forms
 #    22-Mar-2012 (CT) Add `Company` and its links
+#    11-Oct-2012 (CT) Add `Address_Position`
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,10 @@ class Admin (object) :
         , list_display   = ("ui_display", "desc")
         )
 
+    Address_Position     = dict \
+        ( ETM            = "GTW.OMP.PAP.Address_Position"
+        )
+
     Company_has_Address  = dict \
         ( ETM            = "GTW.OMP.PAP.Company_has_Address"
         )
@@ -127,7 +132,7 @@ GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     (include_links = ("addresses", "emails", "phones"))
 GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", "companies"))
+    (include_links = ("persons", "companies", "PAP.Address_Position"))
 GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
     (include_links = ("persons", "companies"))
 GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \

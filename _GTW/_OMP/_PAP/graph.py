@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
+#    11-Oct-2012 (CT) Add `Address_Position`
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,11 @@ def graph (app_type) :
                 )
             , Role.right
                 ( Child.PAP.Address
-                    ( offset      = CD.N
+                    ( ET.PAP.Address_Position
+                        ( label  = "_Position"
+                        , offset = CD.E
+                        )
+                    , offset      = CD.N
                     )
                 , Child.PAP.Email
                     ( offset      = CD.E
