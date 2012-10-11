@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2012 (RS) Creation, factored from `GTW.OMP.NET.Attr_Type`
+#    11-Oct-2012 (RS) Insert magic _sa_filter into `rsclib.IP_Address`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ import _GTW._OMP._NET
 from   _GTW._OMP._NET.Attr_Type import *
 
 from   _MOM._DBW._SAS.Attr_Type import Add_Classmethod, _sa_string
+from   rsclib.IP_Address        import IP_Address as R_IP_Address
 
 class _SAS_IP_Address_Query_Mixin_ (TFL.Meta.Object) :
 
@@ -238,6 +240,11 @@ def _sa_col_ip (cls, attr, kind, unique, owner_etype, ** kw) :
     col.mom_kind = kind
     return (col, )
 # end def _sa_col_ip
+
+@TFL.Add_To_Class ("_sa_filter", R_IP_Address)
+def _sa_filter (self, SAQ) :
+    return ((), (str (self),))
+# end def _sa_filter
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
