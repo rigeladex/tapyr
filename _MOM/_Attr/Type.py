@@ -252,6 +252,7 @@
 #    19-Sep-2012 (CT) Add `A_Link_Role.force_role_name`
 #    10-Oct-2012 (CT) Move parsing from `A_Angle.cooked` to `._from_string`
 #    11-Oct-2012 (CT) Add `A_Url_X.example`
+#    11-Oct-2012 (CT) Change `_A_Number_.code_format` to "%s" (inherits "%r")
 #    ««revision-date»»···
 #--
 
@@ -838,6 +839,7 @@ class _A_Named_Value_ (A_Attr_Type) :
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
 
+    code_format         = "%s"
     math_dict           = dict \
         ( dict
             (  (k, v) for k, v in math.__dict__.iteritems ()
