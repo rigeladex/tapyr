@@ -65,6 +65,7 @@
 #                     import `unicode_literals` from `__future__` instead
 #     8-Jun-2012 (CT) Add test for `query_changes` of `type_name`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
+#    11-Oct-2012 (CT) Add test for `signified`, import `MOM.Attr.Position`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,8 @@ from   _MOM.inspect               import show_children
 from   _MOM.Product_Version       import Product_Version, IV_Number
 from   _TFL.Package_Namespace     import Derived_Package_Namespace
 from   _TFL                       import sos
+
+import _MOM._Attr.Position
 
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
@@ -735,6 +738,42 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     def epkified_raw (cls, left, middle, right, ** kw) :
         return (left, middle, right), kw
 
+    >>> for et in apt._T_Extension :
+    ...   if issubclass (et, MOM.An_Entity) :
+    ...     print "***", et.type_name, "***", et.usr_sig
+    ...     print et.signified and et.signified.source_code.rstrip ()
+    *** MOM.An_Entity *** ()
+    None
+    *** MOM.Date_Interval *** ('start', 'finish')
+    def signified (cls, start = None, finish = None) :
+        kw = dict (start = start, finish = finish)
+        return kw
+    *** MOM.Date_Interval_C *** ('start', 'finish')
+    def signified (cls, start = None, finish = None) :
+        kw = dict (start = start, finish = finish)
+        return kw
+    *** MOM.Date_Interval_N *** ('start', 'finish')
+    def signified (cls, start = None, finish = None) :
+        kw = dict (start = start, finish = finish)
+        return kw
+    *** MOM._Interval_ *** ('lower', 'upper')
+    def signified (cls, lower = None, upper = None) :
+        kw = dict (lower = lower, upper = upper)
+        return kw
+    *** MOM.Float_Interval *** (u'lower', u'upper')
+    def signified (cls, lower = None, upper = None) :
+        kw = dict (lower = lower, upper = upper)
+        return kw
+    *** MOM.Frequency_Interval *** (u'lower', u'upper')
+    def signified (cls, lower = None, upper = None) :
+        kw = dict (lower = lower, upper = upper)
+        return kw
+    *** MOM.Position *** ('lat', 'lon', 'height')
+    def signified (cls, lat = None, lon = None, height = None) :
+        kw = dict (lat = lat, lon = lon, height = height)
+        return kw
+
+
 Each entity_type knows about its children:
 
     >>> for et in apt._T_Extension :
@@ -744,7 +783,7 @@ Each entity_type knows about its children:
     MOM.Entity
         ['MOM.An_Entity', 'MOM.Id_Entity']
     MOM.An_Entity
-        ['MOM.Date_Interval', 'MOM._Interval_']
+        ['MOM.Date_Interval', 'MOM.Position', 'MOM._Interval_']
     MOM.Id_Entity
         ['MOM.Link', 'MOM.Object']
     MOM.Link
@@ -781,7 +820,7 @@ Each entity_type knows about its children:
     ...     print "   ", sorted (et.children_np)
     MOM.Entity
         ['MOM.An_Entity', 'MOM.Id_Entity']
-        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM._Interval_']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM.Position', 'MOM._Interval_']
     MOM.Id_Entity
         ['MOM.Link', 'MOM.Object']
         ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -869,9 +908,9 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> print formatted1 (sorted (apt.etypes))
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM.Position', 'MOM._Interval_', 'MOM._MOM_Link_n_']
     >>> print formatted1 ([t.type_name for t in apt._T_Extension])
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Position', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
@@ -889,6 +928,7 @@ The app-type specific entity-types are ready to be used by
     MOM._Interval_                      ()
     MOM.Float_Interval                  ()
     MOM.Frequency_Interval              ()
+    MOM.Position                        ()
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -935,6 +975,8 @@ The app-type specific entity-types are ready to be used by
         (u'lower', u'upper')
     MOM.Frequency_Interval
         (u'lower', u'upper')
+    MOM.Position
+        ('lat', 'lon', 'height')
     BMT.Location
         ('lon', 'lat')
     BMT.Person
@@ -984,6 +1026,7 @@ The app-type specific entity-types are ready to be used by
         MOM._Interval_
           MOM.Float_Interval
           MOM.Frequency_Interval
+        MOM.Position
       MOM.Id_Entity
         MOM.Link
           MOM.Link1

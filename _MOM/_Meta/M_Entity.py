@@ -152,6 +152,7 @@
 #    20-Sep-2012 (CT) Factor `_m_setup_roles`
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
+#    11-Oct-2012 (CT) Add `M_An_Entity._m_new_e_type_dict`, `._m_auto_signified`
 #    ««revision-date»»···
 #--
 
@@ -546,6 +547,49 @@ M_Entity.M_Root = M_Entity
 
 class M_An_Entity (M_Entity) :
     """Meta class for MOM.An_Entity"""
+
+    _signified_sep  = "\n    "
+    _signified_head = """def signified (cls, %(args)s) :"""
+    _signified_body = """%(body)s"""
+    _signified_tail = """return kw\n"""
+
+    def _m_auto_signified (cls, usr_sig, user_attrs) :
+        def _gen_args (user_attrs) :
+            fmt = "%(name)s = %(name)s"
+            for a in user_attrs :
+                yield fmt % dict (name = a.name)
+        args    = ", ".join ("%s = None" % a for a in usr_sig)
+        form    = cls._signified_sep.join \
+            ((cls._signified_head, cls._signified_body, cls._signified_tail))
+        globals = class_globals (cls)
+        scope   = dict          (undefined = object ())
+        code    = form % dict \
+            ( args   = args
+            , body   = "kw = dict (%s)" % (", ".join (_gen_args (user_attrs)), )
+            )
+        exec code in globals, scope
+        result             = scope ["signified"]
+        result.usr_sig     = usr_sig
+        result.args        = args
+        result.source_code = code
+        return classmethod (result)
+    # end def _m_auto_signified
+
+    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        user_attrs = sorted \
+            ( (  a for a in cls._Attributes._names.itervalues ()
+              if a is not None and not a.kind.electric
+              )
+            , key  = TFL.Getter.sig_rank
+            )
+        usr_sig    = tuple (a.name for a in user_attrs)
+        r_kw       = dict (signified = None, usr_sig = usr_sig)
+        if usr_sig and not cls.is_partial :
+            r_kw ["signified"] = cls._m_auto_signified (usr_sig, user_attrs)
+        result     = cls.__m_super._m_new_e_type_dict \
+            (app_type, etypes, bases, ** r_kw)
+        return result
+    # end def _m_new_e_type_dict
 
 # end class M_An_Entity
 
