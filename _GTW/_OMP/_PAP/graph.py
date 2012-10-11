@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
-#    11-Oct-2012 (CT) Add `Address_Position`
+#    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +82,9 @@ def graph (app_type) :
                     )
                 , Child.PAP.Phone
                     ( offset      = CD.S
+                    )
+                , Child.PAP.Url
+                    ( offset      = CD.SE
                     )
                 , offset = CD.E
                 )

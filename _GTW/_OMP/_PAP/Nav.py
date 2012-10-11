@@ -45,7 +45,7 @@
 #    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
 #                     i.e., stuff related to non-AFS forms
 #    22-Mar-2012 (CT) Add `Company` and its links
-#    11-Oct-2012 (CT) Add `Address_Position`
+#    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #    ««revision-date»»···
 #--
 
@@ -88,6 +88,11 @@ class Admin (object) :
         , list_display   = ("ui_display", "desc")
         )
 
+    Url                  = dict \
+        ( ETM            = "GTW.OMP.PAP.Url"
+        , list_display   = ("ui_display", "desc")
+        )
+
     Address_Position     = dict \
         ( ETM            = "GTW.OMP.PAP.Address_Position"
         )
@@ -102,6 +107,10 @@ class Admin (object) :
 
     Company_has_Phone    = dict \
         ( ETM            = "GTW.OMP.PAP.Company_has_Phone"
+        )
+
+    Company_has_Url      = dict \
+        ( ETM            = "GTW.OMP.PAP.Company_has_Url"
         )
 
     Entity_created_by_Person = dict \
@@ -121,6 +130,10 @@ class Admin (object) :
         ( ETM            = "GTW.OMP.PAP.Person_has_Phone"
         )
 
+    Person_has_Url       = dict \
+        ( ETM            = "GTW.OMP.PAP.Person_has_Url"
+        )
+
 # end class Admin
 
 from   _GTW._AFS._MOM import Spec
@@ -136,6 +149,8 @@ GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
 GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
     (include_links = ("persons", "companies"))
 GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \
+    (include_links = ("persons", "companies"))
+GTW.OMP.PAP.Url.GTW.afs_spec = Spec.Entity \
     (include_links = ("persons", "companies"))
 
 from   _MOM import MOM

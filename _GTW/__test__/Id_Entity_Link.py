@@ -182,6 +182,7 @@ test_code = r"""
         ('PAP.Person_has_Address', ['left'])
         ('PAP.Person_has_Email', ['left'])
         ('PAP.Person_has_Phone', ['left'])
+        ('PAP.Person_has_Url', ['left'])
         ('SRM.Sailor', ['left'])
     SWP.Link1
         ('PAP.Entity_created_by_Person', ['left'])
@@ -232,6 +233,7 @@ test_code = r"""
         ('PAP.Company_has_Address', ['left'])
         ('PAP.Company_has_Email', ['left'])
         ('PAP.Company_has_Phone', ['left'])
+        ('PAP.Company_has_Url', ['left'])
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Email
         ('PAP.Company_has_Email', ['right'])
@@ -241,6 +243,10 @@ test_code = r"""
         ('PAP.Company_has_Phone', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Phone', ['right'])
+    PAP.Url
+        ('PAP.Company_has_Url', ['right'])
+        ('PAP.Entity_created_by_Person', ['left'])
+        ('PAP.Person_has_Url', ['right'])
     PAP.Address_Position
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject_has_Property
@@ -250,6 +256,8 @@ test_code = r"""
     PAP.Subject_has_Address
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject_has_Email
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Subject_has_Url
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Link1
         ('PAP.Entity_created_by_Person', ['left'])
@@ -327,6 +335,10 @@ test_code = r"""
     SRM.Crew_Member
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Team_has_Boat_in_Regatta
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Url
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Company_has_Url
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Person_has_Email
         ('PAP.Entity_created_by_Person', ['left'])

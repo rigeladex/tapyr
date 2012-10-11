@@ -251,6 +251,7 @@
 #    13-Sep-2012 (CT) Add `fix_doc`
 #    19-Sep-2012 (CT) Add `A_Link_Role.force_role_name`
 #    10-Oct-2012 (CT) Move parsing from `A_Angle.cooked` to `._from_string`
+#    11-Oct-2012 (CT) Add `A_Url_X.example`
 #    ««revision-date»»···
 #--
 
@@ -2081,6 +2082,7 @@ class A_Url (_A_String_) :
 class A_Url_X (A_Url) :
     """External URL."""
 
+    example        = u"http://www.example.com/foo"
     check          = ("""value.startswith (("http://", "https://"))""", )
 
 # end class A_Url_X
