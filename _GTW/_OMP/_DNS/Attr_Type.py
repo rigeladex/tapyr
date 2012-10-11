@@ -28,6 +28,8 @@
 # Revision Dates
 #    27-Aug-2012 (RS) Creation
 #    22-Sep-2012 (RS) Factor `A_DNS_Label` and correct syntax
+#    11-Oct-2012 (RS) RFC 1123 section 2.1 permits DNS label
+#                     to start with a digit, change `A_DNS_Label` syntax
 #    ««revision-date»»···
 #--
 
@@ -60,18 +62,18 @@ class A_DNS_Time (_A_Unit_, _A_Int_) :
 
 class A_DNS_Label (Syntax_Re_Mixin, A_String) :
     """ A single DNS label (without dots)
-        See rfc1034 for details.
+        See rfc1034 *and* rfc1123 section 2.1 for details.
     """
 
     max_length      = 63
     ignore_case     = True
     syntax          = _ \
         ( u"A label starts"
-           " with a letter and is optionally followed by letters,"
+           " with a letter or digit and is optionally followed by letters,"
            " digits or dashes and ends with a letter or digit. "
            "A label may be up to 63 characters long."
         )
-    _label          = r"[a-zA-Z](?:[-a-zA-Z0-9]{0,61}[a-zA-Z0-9])?"
+    _label          = r"[a-zA-Z0-9](?:[-a-zA-Z0-9]{0,61}[a-zA-Z0-9])?"
     _syntax_re      = Regexp (_label)
 
 # end class A_DNS_Label
