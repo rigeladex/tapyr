@@ -40,6 +40,7 @@
 #    24-Sep-2012 (CT) Raise `Attribute_Value` in `_A_IP4_Address_.check_syntax`
 #    24-Sep-2012 (RS) Move `SAS` specific stuff to `SAS_Attr_Type`
 #    10-Oct-2012 (CT) Add `PNS` to `IP_Address`
+#    12-Oct-2012 (RS) Add `code_format`
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,8 @@ import _GTW._OMP._NET
 class _A_IP_Address_ (A_Attr_Type) :
     """Model abstract address of IP network."""
 
-    P_Type = R_IP_Address
+    P_Type      = R_IP_Address
+    code_format = '"%r"' # rsclib.IP_Address formats without quotes
 
     class Pickler (TFL.Meta.Object) :
 
