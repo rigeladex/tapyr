@@ -28,6 +28,7 @@
 # Revision Dates
 #    12-Sep-2012 (RS) Creation
 #    11-Oct-2012 (RS) Move here from `FFM`, Nickname of `Subject` not `Person`
+#    12-Oct-2012 (RS) Don't `ignore_case`
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,6 @@ class _PAP_Nickname_ (_Ancestor_Essence) :
             """The nickname."""
 
             kind           = Attr.Primary
-            ignore_case    = True
             max_length     = 32
             rank           = 1
 
