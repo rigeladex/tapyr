@@ -31,6 +31,7 @@
 #     9-Sep-2010 (CT) Creation continued...
 #    14-Sep-2010 (CT) Creation continued....
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -58,7 +59,7 @@ _basic = r"""
     >>> c     = b.copy (b.left, b.nation, sail_number = "1134")
     >>> p     = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s     = SRM.Sailor.instance_or_new (p, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
-    >>> rev   = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
+    >>> rev   = SRM.Regatta_Event (u"Himmelfahrt", (u"20080501", ), raw = True)
     >>> reg   = SRM.Regatta_C (rev, bc)
     >>> reh   = SRM.Regatta_H (rev, ys)
     >>> bir   = SRM.Boat_in_Regatta (b, reg, skipper = s)
@@ -66,7 +67,7 @@ _basic = r"""
     >>> r2    = SRM.Race_Result (bir, 2, points = 4)
     >>> p1    = SWP.Page ("event-1-text", text = "Text for the 1. event", date = (("start", "2010/09/08"), ))
     >>> p2    = SWP.Page ("event-2-text", text = "Text for the 2. event", date = (("start", "2010/09/08"), ))
-    >>> e1    = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
+    >>> e1    = EVT.Event (p1.epk, ("2010/08/18", ))
     >>> rs1   = RS (e1, date_exceptions = ["2010/08/15"])
     >>> rr1   = RR (rs1, start = "20100801", count = 7, unit = "Weekly", raw = True)
     >>>
@@ -195,7 +196,7 @@ _basic = r"""
     >>> scope.commit ()
 
     >>> print rs1.attr_as_code()
-    ((u'event-1-text', ), dict (start = u'2010/08/18'), dict (), u''), dates = u"u'2010/09/08',u'2010/10/08'", date_exceptions = u"u'2010/08/15'"
+    ((u'event-1-text', ), (u'2010/08/18', ), (), u''), dates = u"u'2010/09/08',u'2010/10/08'", date_exceptions = u"u'2010/08/15'"
     >>> rs1.set (date_exceptions = None)
     1
     >>> rs1.event.date.set (finish = datetime.date (2010, 8, 19), start = datetime.date (2010, 8, 13))

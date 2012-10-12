@@ -36,6 +36,7 @@
 #    25-Jul-2011 (CT) `_date_queries` corrected (s/query/query_s/)
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    15-Apr-2012 (CT) Use `show` to guarantee deterministic order
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -51,31 +52,27 @@ _composite = r"""
     >>> p2 = SWP.Page ("event-2-text", text = "Text for the 2. event")
     >>> p3 = SWP.Page ("event-3-text", text = "Text for the 3. event")
     >>> p4 = SWP.Page ("event-4-text", text = "Text for the 4. event")
-    >>> e1 = EVT.Event \
-    ...     (p1.epk_raw, dict (start = "1.4.2010", raw = True), raw = True)
-    >>> e2 = EVT.Event \
-    ...     (p2.epk_raw, dict (start = "1.3.2010", raw = True), raw = True)
-    >>> e3 = EVT.Event \
-    ...     (p3.epk_raw, dict (start = "1.2.2010", raw = True), raw = True)
-    >>> e4 = EVT.Event \
-    ...     (p4.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
+    >>> e1 = EVT.Event (p1.epk_raw, ("1.4.2010", ), raw = True)
+    >>> e2 = EVT.Event (p2.epk_raw, ("1.3.2010", ), raw = True)
+    >>> e3 = EVT.Event (p3.epk_raw, ("1.2.2010", ), raw = True)
+    >>> e4 = EVT.Event (p4.epk_raw, ("1.1.2010", ), raw = True)
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event.query ()
     >>> for e in show (q) : print e ### all
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
-    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
-    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')
-    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u'')
+    ((u'event-1-text', ), (u'2010/04/01', ), (), u'')
+    ((u'event-2-text', ), (u'2010/03/01', ), (), u'')
+    ((u'event-3-text', ), (u'2010/02/01', ), (), u'')
+    ((u'event-4-text', ), (u'2010/01/01', ), (), u'')
     >>> q = EVT.Event.query ().filter (Q.date.start > date)
     >>> for e in show (q) : print e ### filtered 1
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
+    ((u'event-1-text', ), (u'2010/04/01', ), (), u'')
     >>> q = EVT.Event.query ().filter (Q.date.start >= date)
     >>> for e in show (q) : print e ### filtered 2
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
-    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
+    ((u'event-1-text', ), (u'2010/04/01', ), (), u'')
+    ((u'event-2-text', ), (u'2010/03/01', ), (), u'')
     >>> q = EVT.Event.query ().filter (left = p1)
     >>> for e in show (q) : print e ### filtered 3
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
+    ((u'event-1-text', ), (u'2010/04/01', ), (), u'')
 
     >>> scope.destroy ()
 """
@@ -89,37 +86,33 @@ _link1_role = r"""
     >>> p2 = SWP.Page ("event-2-text", text = "Text for the 2. event")
     >>> p3 = SWP.Page ("event-3-text", text = "Text for the 3. event")
     >>> p4 = SWP.Page ("event-4-text", text = "Text for the 4. event")
-    >>> e1 = EVT.Event \
-    ...     (p1.epk_raw, dict (start = "1.4.2010", raw = True), raw = True)
-    >>> e2 = EVT.Event \
-    ...     (p2.epk_raw, dict (start = "1.3.2010", raw = True), raw = True)
-    >>> e3 = EVT.Event \
-    ...     (p3.epk_raw, dict (start = "1.2.2010", raw = True), raw = True)
-    >>> e4 = EVT.Event \
-    ...     (p4.epk_raw, dict (start = "1.1.2010", raw = True), raw = True)
+    >>> e1 = EVT.Event (p1.epk_raw, ("1.4.2010", ), raw = True)
+    >>> e2 = EVT.Event (p2.epk_raw, ("1.3.2010", ), raw = True)
+    >>> e3 = EVT.Event (p3.epk_raw, ("1.2.2010", ), raw = True)
+    >>> e4 = EVT.Event (p4.epk_raw, ("1.1.2010", ), raw = True)
     >>> date = datetime.date (2010, 3, 1)
     >>> q = EVT.Event_occurs.query ()
     >>> for e in show (q) : print e ### all
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u''), u'2010/03/01', dict ())
-    (((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u''), u'2010/02/01', dict ())
-    (((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u''), u'2010/01/01', dict ())
+    (((u'event-1-text', ), (u'2010/04/01', ), (), u''), u'2010/04/01', ())
+    (((u'event-2-text', ), (u'2010/03/01', ), (), u''), u'2010/03/01', ())
+    (((u'event-3-text', ), (u'2010/02/01', ), (), u''), u'2010/02/01', ())
+    (((u'event-4-text', ), (u'2010/01/01', ), (), u''), u'2010/01/01', ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start > date)
     >>> for e in show (q) : print e ### filter 1
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
+    (((u'event-1-text', ), (u'2010/04/01', ), (), u''), u'2010/04/01', ())
     >>> q = EVT.Event_occurs.query ().filter (Q.event.date.start >= date)
     >>> for e in show (q) : print e ### filter 2
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
-    (((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u''), u'2010/03/01', dict ())
+    (((u'event-1-text', ), (u'2010/04/01', ), (), u''), u'2010/04/01', ())
+    (((u'event-2-text', ), (u'2010/03/01', ), (), u''), u'2010/03/01', ())
     >>> q = EVT.Event_occurs.query ().filter (event = e1)
     >>> for e in show (q) : print e ### filter 3
-    (((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u''), u'2010/04/01', dict ())
+    (((u'event-1-text', ), (u'2010/04/01', ), (), u''), u'2010/04/01', ())
     >>> q = EVT.Event.query ().filter (Q.date.alive)
     >>> for e in show (q) : print e ### filter 4
-    ((u'event-1-text', ), dict (start = u'2010/04/01'), dict (), u'')
-    ((u'event-2-text', ), dict (start = u'2010/03/01'), dict (), u'')
-    ((u'event-3-text', ), dict (start = u'2010/02/01'), dict (), u'')
-    ((u'event-4-text', ), dict (start = u'2010/01/01'), dict (), u'')
+    ((u'event-1-text', ), (u'2010/04/01', ), (), u'')
+    ((u'event-2-text', ), (u'2010/03/01', ), (), u'')
+    ((u'event-3-text', ), (u'2010/02/01', ), (), u'')
+    ((u'event-4-text', ), (u'2010/01/01', ), (), u'')
 
     >>> scope.destroy ()
 """
@@ -133,39 +126,39 @@ _link2_link1 = r"""
     >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
     >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20090521", raw = True), raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20090521", ), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20100513", raw = True), raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20100513", ), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> date = datetime.date (2009, 1, 1)
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start > date) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', )))
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start < date) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
     >>> date2 = datetime.date (2009, 12, 31)
     >>> qf = (Q.right.left.date.start >= date ) \
     ...    & (Q.right.left.date.start <= date2)
     >>> for r in q.filter (qf) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
 
     >>> date3 = datetime.date (2010, 05, 13)
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
     >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
     >>> scope.destroy ()
 """
@@ -179,27 +172,27 @@ _query_attr = r"""
     >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
     >>> p    = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s    = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20090521", raw = True), raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20090521", ), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20100513", raw = True), raw = True)
+    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20100513", ), raw = True)
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q : print r.year, r
-    2008 ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', ))
-    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
-    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', ))
+    2008 ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
+    2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
+    2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2010)) : print r.year, r
-    2010 ((u'himmelfahrt', dict (start = u'2010/05/13', finish = u'2010/05/13')), (u'optimist', ))
+    2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
-    2009 ((u'himmelfahrt', dict (start = u'2009/05/21', finish = u'2009/05/21')), (u'optimist', ))
+    2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
 
     >>> PAP.Person.query (Q.last_name == "tanzer").all ()
     [PAP.Person (u'tanzer', u'christian', u'', u'')]
@@ -215,7 +208,7 @@ _date_queries = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
+    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
     >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
     >>> p   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = DI ("2010/01/03"))
     >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/02/01"))
@@ -238,7 +231,7 @@ _sub_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
+    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
     >>> p   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
     >>> p   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = DI ("2010/01/03"))
     >>> p   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = DI ("2010/02/01"))
@@ -267,10 +260,10 @@ _type_name_query = r"""
     >>> c3 = scope.SWP.Clip_O (left = y1, abstract = "abstract-y1.1")
     >>> c4 = scope.SWP.Clip_O (left = y2, abstract = "abstract-y2.1")
     >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page").all ()
-    [SWP.Clip_O ((u'page-1', ), dict ()), SWP.Clip_O ((u'page-2', ), dict ())]
+    [SWP.Clip_O ((u'page-1', ), ()), SWP.Clip_O ((u'page-2', ), ())]
 
     >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page_Y").all ()
-    [SWP.Clip_O ((u'year-1', 2011), dict ()), SWP.Clip_O ((u'year-2', 2012), dict ())]
+    [SWP.Clip_O ((u'year-1', 2011), ()), SWP.Clip_O ((u'year-2', 2012), ())]
 
     >>> scope.destroy ()
 """

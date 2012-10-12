@@ -38,6 +38,7 @@
 #     5-Oct-2012 (CT) Test `.get ("/v1/SRM-Regatta.csv?verbose")`
 #     5-Oct-2012 (CT) Test multiple `AQ` arguments for a single `get`
 #     5-Oct-2012 (CT) Test `fields` query argument
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -100,12 +101,11 @@ class _GTW_Test_Command_ (GTW_Test_Command) :
         opti  = SRM.Boat_Class ("Optimist", max_crew = "1")
         b     = SRM.Boat ("Optimist", "AUT", "1107", raw = True)
         ys    = SRM.Handicap ("Yardstick", raw = True)
-        rev   = SRM.Regatta_Event \
-            ("Himmelfahrt", dict (start = "20080501"), raw = True)
+        rev   = SRM.Regatta_Event ("Himmelfahrt", ("20080501", ), raw = True)
         reg   = SRM.Regatta_C (rev, opti)
         reh   = SRM.Regatta_H (rev, ys)
         rev_g = SRM.Regatta_Event \
-            ("Guggenberger", dict (start = "20080620", finish = "20080621"), raw = True)
+            ("Guggenberger", ("20080620", "20080621"), raw = True)
         reg_c = SRM.Regatta_C (rev_g, opti)
         bir   = SRM.Boat_in_Regatta (b, reg,   skipper = lt_s)
         bir_g = SRM.Boat_in_Regatta (b, reg_c, skipper = lt_s)
@@ -3834,23 +3834,23 @@ _test_qr_local = """
     Q.left == 8
 
     >>> SRM.Boat_in_Regatta.query_s ().all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', dict (start = u'2008/06/20', finish = u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
 
     >>> b7 = SRM.Boat.query (sail_number = 1107).one ()
     >>> print (b7.pid, b7)
     8 ((u'optimist', ), u'AUT', 1107, u'')
 
     >>> SRM.Boat_in_Regatta.query_s (boat = b7).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', dict (start = u'2008/06/20', finish = u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
     >>> SRM.Boat_in_Regatta.query_s (boat = 8).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', dict (start = u'2008/06/20', finish = u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
     >>> SRM.Boat_in_Regatta.query_s (boat = "8").all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', dict (start = u'2008/06/20', finish = u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
 
     >>> SRM.Boat_in_Regatta.query_s (SRM.Boat_in_Regatta.AQ.boat.EQ (8)).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', dict (start = u'2008/06/20', finish = u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
     >>> SRM.Boat_in_Regatta.query_s (SRM.Boat_in_Regatta.AQ.boat.EQ ("8")).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', dict (start = u'2008/06/20', finish = u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
 
     >>> SRM.Boat_in_Regatta.query_s (boat = b4).all ()
     []

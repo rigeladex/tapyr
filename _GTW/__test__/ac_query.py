@@ -33,6 +33,7 @@
 #    15-Apr-2012 (CT) Adapt to change of `MOM.Attr.Filter.Composite`
 #    10-Oct-2012 (CT) Add test for `position`
 #    10-Oct-2012 (CT) Add test for `raw_query_attrs`
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -167,14 +168,32 @@ _attr_ac_query = """
     >>> a3 = PAP.Address ("Glasauergasse 32/3", "1130", "Wien", "Austria", raw = True)
     >>> a3p = PAP.Address_Position (a3, position = dict (lat = "48.190111", lon = "16.26867"), raw = True)
     >>> a3p.position
-    MOM.Position (lat = 48.190111, lon = 16.26867)
+    MOM.Position (48.190111, 16.26867)
     >>> a3.gps
-    PAP.Address_Position ((u'glasauergasse 32/3', u'1130', u'wien', u'austria'), dict (lat = 48.190111, lon = 16.26867))
+    PAP.Address_Position ((u'glasauergasse 32/3', u'1130', u'wien', u'austria'), (48.190111, 16.26867))
 
     >>> a4 = PAP.Address ("Glasauergasse 32/2", "1130", "Wien", "Austria", raw = True)
-    >>> a4p = PAP.Address_Position (a4, position = dict (lat = "48d 11m 25s", lon = "16d 16m 7s"), raw = True)
+    >>> a4p = PAP.Address_Position (a4, position = ("48d 11m 25s", "16d 16m 7s"), raw = True)
     >>> a4p.position
-    MOM.Position (lat = 48.1902777778, lon = 16.2686111111)
+    MOM.Position (48.1902777778, 16.2686111111)
+    >>> print a4p
+    ((u'glasauergasse 32/2', u'1130', u'wien', u'austria'), (48.1902777778, 16.2686111111))
+    >>> print a4p.position
+    (48.1902777778, 16.2686111111)
+    >>> print a4p.__class__.position.as_code (a4p.position)
+    (48.1902777778, 16.2686111111)
+
+    >>> p42 = scope.MOM.Position (42.4242, 137.137137)
+    >>> p42
+    MOM.Position (42.4242, 137.137137)
+    >>> print p42.as_code ()
+    MOM.Position (42.4242, 137.137137)
+    >>> print p42.attr_as_code ()
+    42.4242, 137.137137
+
+    >>> p42r = scope.MOM.Position ("42d42m42s", "137d13m7.137s", raw = True)
+    >>> p42r
+    MOM.Position (42.7116666667, 137.218649167)
 
     >>> list (PAP.Person.raw_query_attrs (["first_name"], dict (first_name = "Martin")))
     [Q.first_name == martin]

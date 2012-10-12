@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Jan-2012 (CT) Creation
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -38,9 +39,9 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> SRM  = scope.SRM
     >>> bc   = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> rev0 = SRM.Regatta_Event (u"Teamrace", dict (start = u"20100918", raw = True), raw = True)
+    >>> rev0 = SRM.Regatta_Event (u"Teamrace", (u"20100918", ), raw = True)
     >>> reg0 = SRM.Regatta_C (rev0, boat_class = bc, raw = True)
-    >>> rev1 = SRM.Regatta_Event (u"Teamrace", dict (start = u"20111015", raw = True), raw = True)
+    >>> rev1 = SRM.Regatta_Event (u"Teamrace", (u"20111015", ), raw = True)
     >>> reg1 = SRM.Regatta_C (rev1, boat_class = bc, raw = True)
     >>> t1  = SRM.Team (reg0, "Wien/1")
     >>> t2  = SRM.Team (reg0, "Wien/2")
@@ -57,22 +58,22 @@ _test_code = r"""
     datetime.date(2010, 9, 18)
 
     >>> SRM.Team.query ().order_by (TFL.Sorted_By ("name")).all ()
-    [SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/2'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'wien/4')]
+    [SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/4')]
 
     >>> scope.rollback ()
 
     >>> SRM.Team.query (Q.regatta.event.date.start == t1.regatta.event.date.start).order_by (TFL.Sorted_By ("name")).all ()
-    [SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/2')]
+    [SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/2')]
 
     >>> scope.rollback ()
 
     >>> SRM.Team.query ().order_by (TFL.Sorted_By ("-left.left.date.start", "name")).all ()
-    [SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/2')]
+    [SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/2')]
 
     >>> scope.rollback ()
 
     >>> SRM.Team.query ().order_by (TFL.Sorted_By ("-regatta.event.date.start", "name")).all ()
-    [SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', dict (start = u'2011/10/15', finish = u'2011/10/15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', dict (start = u'2010/09/18', finish = u'2010/09/18')), (u'optimist', )), u'wien/2')]
+    [SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/2')]
 
 
 """

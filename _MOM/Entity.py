@@ -216,6 +216,10 @@
 #    10-Sep-2012 (CT) Fix `creation_date.computed`
 #    24-Sep-2012 (CT) Don't wrap `Error.Attribute_Value`
 #    27-Sep-2012 (CT) Remove `rank` (never used in MOM)
+#    12-Oct-2012 (CT) Use `signified` in `An_Entity._main__init__` to (allow
+#                     `* args`), remove `.__init__` (which disallowed `* args`)
+#    12-Oct-2012 (CT) Call `An_Entity.attr_as_code`, not `_formatted_user_attr`,
+#                     in `An_Entity._repr` and `.__unicode__`
 #    ««revision-date»»···
 #--
 
@@ -783,10 +787,6 @@ class An_Entity (Entity) :
             )
     # end def ui_display_format
 
-    def __init__ (self, ** kw) :
-        self.__super.__init__ (** kw)
-    # end def __init__
-
     @property
     def hash_key (self) :
         return tuple (a.get_hash (self) for a in self.hash_sig)
@@ -804,6 +804,21 @@ class An_Entity (Entity) :
     def as_string (self) :
         return tuple (sorted (self.raw_attr_dict.iteritems ()))
     # end def as_string
+
+    def attr_as_code (self) :
+        attrs   = self.user_attr
+        save_p  = tuple (a.to_save (self) for a in attrs) [::-1]
+        to_drop = tuple (itertools.takewhile ((lambda x : not x), save_p))
+        if to_drop :
+            ### drop trailing attributes that don't need to be saved
+            attrs = attrs [: -len (to_drop)]
+        values  = tuple (a.as_code (a.get_value (self)) for a in attrs)
+        if len (values) == 1 :
+            ### trailing comma for single element tuple
+            values += ("", )
+        result = ", ".join ("%s" % (v, ) for v in values)
+        return result
+    # end def attr_as_code
 
     def copy (self, ** kw) :
         scope  = kw.pop  ("scope", self.home_scope)
@@ -856,28 +871,22 @@ class An_Entity (Entity) :
             return self.__super.set_raw (on_error, ** kw)
     # end def set_raw
 
-    def _formatted_user_attr (self) :
-        return u", ".join \
-            (   u"%s = %s" % (name, raw)
-            for (name, raw) in sorted (self.raw_attr_dict.iteritems ())
-            )
-    # end def _formatted_user_attr
-
     def _init_attributes (self) :
         self.owner = None
         self.__super._init_attributes ()
     # end def _init_attributes_
 
     def _main__init__ (self, * args, ** kw) :
-        raw = bool (kw.pop ("raw", False))
-        self._kw_check_required (* args, ** kw)
-        if kw :
+        skw = self.signified (* args, ** kw)
+        raw = bool (skw.pop ("raw", False))
+        self._kw_check_required (* args, ** skw)
+        if skw :
             set = self._set_raw if raw else self._set_ckd
-            set (** kw)
+            set (** skw)
     # end def _main__init__
 
     def _repr (self, type_name) :
-        return u"%s (%s)" % (type_name, self._formatted_user_attr ())
+        return u"%s (%s)" % (type_name, self.attr_as_code ().rstrip (", "))
     # end def _repr
 
     def __eq__ (self, rhs) :
@@ -894,7 +903,7 @@ class An_Entity (Entity) :
     # end def __nonzero__
 
     def __unicode__ (self) :
-        return u"(%s)" % (self._formatted_user_attr ())
+        return u"(%s)" % (self.attr_as_code ())
     # end def __unicode__
 
 # end class An_Entity
@@ -1049,11 +1058,11 @@ class Id_Entity (Entity) :
     def epk_as_code (self) :
         def _conv (tup) :
             if len (tup) == 1 :
-                tup += (u"", )
+                tup += ("", )
             for t in tup :
                 if isinstance (t, tuple) :
                     if len (t) == 1 :
-                        t += (u"", )
+                        t += ("", )
                     t = "(%s)" % (", ".join (_conv (t)))
                 yield t
         def _gen () :

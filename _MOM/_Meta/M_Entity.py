@@ -153,6 +153,7 @@
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
 #    11-Oct-2012 (CT) Add `M_An_Entity._m_new_e_type_dict`, `._m_auto_signified`
+#    12-Oct-2012 (CT) Add `raw` and use `undefined` in `_m_auto_signified`
 #    ««revision-date»»···
 #--
 
@@ -549,25 +550,34 @@ class M_An_Entity (M_Entity) :
     """Meta class for MOM.An_Entity"""
 
     _signified_sep  = "\n    "
-    _signified_head = """def signified (cls, %(args)s) :"""
+    _signified_head = """def signified (cls, %(args)s, raw = undefined) :"""
     _signified_body = """%(body)s"""
     _signified_tail = """return kw\n"""
 
     def _m_auto_signified (cls, usr_sig, user_attrs) :
-        def _gen_args (user_attrs) :
-            fmt = "%(name)s = %(name)s"
+        def _gen_args (user_attrs, dict) :
+            ### Need to pass `dict` in here to avoid::
+            ###   SyntaxError: unqualified exec is not allowed in
+            ###     function '_m_auto_signified'
+            ###     it contains a nested function with free variables
+            fmt = """("%(name)s", %(name)s)"""
             for a in user_attrs :
                 yield fmt % dict (name = a.name)
-        args    = ", ".join ("%s = None" % a for a in usr_sig)
+            yield fmt % dict (name = "raw")
+        args    = ", ".join ("%s = undefined" % a for a in usr_sig)
         form    = cls._signified_sep.join \
             ((cls._signified_head, cls._signified_body, cls._signified_tail))
-        globals = class_globals (cls)
-        scope   = dict          (undefined = object ())
+        undefined = object ()
+        globals = dict (class_globals (cls), undefined = undefined)
+        scope   = dict ()
         code    = form % dict \
             ( args   = args
-            , body   = "kw = dict (%s)" % (", ".join (_gen_args (user_attrs)), )
+            , body   =
+                ( "kw = dict ((k, v) for k, v in (%s) if v is not undefined)"
+                % (", ".join (_gen_args (user_attrs, dict)), )
+                )
             )
-        exec code in globals, scope
+        exec (code, globals, scope)
         result             = scope ["signified"]
         result.usr_sig     = usr_sig
         result.args        = args

@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Apr-2010 (CT) Creation
 #    14-Nov-2011 (CT) Add tests for `query` and `query_s` with `sort_key`
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -36,13 +37,13 @@ _test_code = """
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> RE  = SRM.Regatta_Event
-    >>> rev = RE (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
+    >>> rev = RE (u"Himmelfahrt", ("20080501", ), raw = True)
     >>> rev.epk_raw
     (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event')
     >>> RE.instance (* rev.epk_raw, raw = True)
-    SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
+    SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))
     >>> RE.instance (* rev.epk)
-    SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))
+    SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))
 
     >>> sort_key = TFL.Sorted_By ("-date.start", "name")
 
@@ -52,9 +53,9 @@ _test_code = """
     <Sorted_By: Getter function for `.relevant_root.type_name`, <Sorted_By: Descending-Getter function for `.date.start`, Getter function for `.name`>>
 
     >>> list (RE.query (sort_key = sort_key))
-    [SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))]
+    [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))]
     >>> list (RE.query_s (sort_key = sort_key))
-    [SRM.Regatta_Event (u'himmelfahrt', dict (start = u'2008/05/01', finish = u'2008/05/01'))]
+    [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))]
 
 """
 

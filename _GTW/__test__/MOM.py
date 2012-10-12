@@ -66,6 +66,7 @@
 #     8-Jun-2012 (CT) Add test for `query_changes` of `type_name`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    11-Oct-2012 (CT) Add test for `signified`, import `MOM.Attr.Position`
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -745,34 +746,33 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     *** MOM.An_Entity *** ()
     None
     *** MOM.Date_Interval *** ('start', 'finish')
-    def signified (cls, start = None, finish = None) :
-        kw = dict (start = start, finish = finish)
+    def signified (cls, start = undefined, finish = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM.Date_Interval_C *** ('start', 'finish')
-    def signified (cls, start = None, finish = None) :
-        kw = dict (start = start, finish = finish)
+    def signified (cls, start = undefined, finish = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM.Date_Interval_N *** ('start', 'finish')
-    def signified (cls, start = None, finish = None) :
-        kw = dict (start = start, finish = finish)
+    def signified (cls, start = undefined, finish = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM._Interval_ *** ('lower', 'upper')
-    def signified (cls, lower = None, upper = None) :
-        kw = dict (lower = lower, upper = upper)
+    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM.Float_Interval *** (u'lower', u'upper')
-    def signified (cls, lower = None, upper = None) :
-        kw = dict (lower = lower, upper = upper)
+    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM.Frequency_Interval *** (u'lower', u'upper')
-    def signified (cls, lower = None, upper = None) :
-        kw = dict (lower = lower, upper = upper)
+    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM.Position *** ('lat', 'lon', 'height')
-    def signified (cls, lat = None, lon = None, height = None) :
-        kw = dict (lat = lat, lon = lon, height = height)
+    def signified (cls, lat = undefined, lon = undefined, height = undefined, raw = undefined) :
+        kw = dict ((k, v) for k, v in (("lat", lat), ("lon", lon), ("height", height), ("raw", raw)) if v is not undefined)
         return kw
-
 
 Each entity_type knows about its children:
 
@@ -1954,21 +1954,21 @@ Unary links
     >>> sr = scope.BMT.Mouse ("Sick_Rodent")
     >>> osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), )"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ), )"
     >>> osm.fever = 42
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), fever = 42.0)"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ), fever = 42.0)"
     >>> sorted (sr.sickness)
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ))]
 
 Changing a composite primary attribute
 --------------------------------------
 
     >>> old_epk = osm.epk
     >>> old_epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18), 'BMT.Rodent_is_sick')
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010/02/18'), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* old_epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ))
 
     .. ### DBW-specific start
 
@@ -1982,9 +1982,9 @@ Changing a composite primary attribute
     >>> print Ris.instance (* old_epk)
     None
     >>> osm.epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01), 'BMT.Rodent_is_sick')
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010/03/01'), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* osm.epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', ))
 
     .. ### DBW-specific start
 

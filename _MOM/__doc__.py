@@ -65,6 +65,7 @@
 #                     import `unicode_literals` from `__future__` instead
 #     8-Jun-2012 (CT) Add test for `query_changes` of `type_name`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -1408,14 +1409,14 @@ Unary links
 An unary link is a link with only one object::
 
     >>> sr = scope.BMT.Mouse ("Sick_Rodent")
-    >>> osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
+    >>> osm = Ris (sr, scope.MOM.Date_Interval ("20100218", raw = True))
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), )"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ), )"
     >>> osm.fever = 42
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'), fever = 42.0)"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ), fever = 42.0)"
     >>> sorted (sr.sickness)
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ))]
 
 Changing a composite primary attribute
 --------------------------------------
@@ -1425,9 +1426,9 @@ and attribute type::
 
     >>> old_epk = osm.epk
     >>> old_epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18), 'BMT.Rodent_is_sick')
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010/02/18'), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* old_epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/02/18'))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ))
 
     >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
     [(26, (datetime.date(2010, 2, 18), None))]
@@ -1437,9 +1438,9 @@ and attribute type::
     >>> print Ris.instance (* old_epk)
     None
     >>> osm.epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01), 'BMT.Rodent_is_sick')
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010/03/01'), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* osm.epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', ))
 
     >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
     [(26, (datetime.date(2010, 3, 1), None))]
@@ -1485,7 +1486,7 @@ Q-expressions::
     >>> Ris.query_s (Q.sick_leave.start.D.MONTH (4, 2010)).count ()
     0
     >>> Ris.query_s (Q.sick_leave.start != None).all ()
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01'))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', ))]
 
 Renaming objects and links
 --------------------------
@@ -1515,7 +1516,7 @@ Deleting objects and links
 Deleting an object removes all links in which that object participates::
 
     >>> scope.MOM.Link.query_s ().all () ### 2
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> m.object_referring_attributes
     defaultdict(<type 'list'>, {})
@@ -1552,7 +1553,7 @@ Deleting an object removes all links in which that object participates::
     >>> scope.MOM.Link.query_s ().count () ### 3
     10
     >>> scope.MOM.Link.r_query_s ().all ()
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> t1.destroy ()
 
@@ -1562,11 +1563,11 @@ Deleting an object removes all links in which that object participates::
     [((u'luke', u'lucky', u''), (u'x', 2)), ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), ((u'betty', ), (u'x', 2))]
 
     >>> scope.MOM.Link.query_s ().all () ### 4
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> t2.destroy ()
     >>> scope.MOM.Link.query_s ().all () ### 5
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = u'2010/03/01')), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_sets_Trap_at_Location ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> show (scope.ems.all_links (t2_id))
     []

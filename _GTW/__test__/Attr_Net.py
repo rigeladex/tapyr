@@ -38,6 +38,7 @@
 #    10-Oct-2012 (CT) Rename test classes to `Test_...`
 #    10-Oct-2012 (CT) Add test for `raw_query_attrs`
 #    11-Oct-2012 (RS) Add type-check for `raw_query_attrs` test
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -178,9 +179,9 @@ _test_code = """
          got      value : `00:11:22:33:44:55:66`
     A MAC address must contain 6 hexadecimal octets separated by `:`.
     >>> Test_IP4_Address (dict (address = '1.2.3.4'), raw = True)
-    GTW.OMP.NET.Test_IP4_Address (dict (address = 1.2.3.4))
+    GTW.OMP.NET.Test_IP4_Address ((1.2.3.4, ))
     >>> Test_IP4_Address (dict (address = '111.222.233.244'), raw = True)
-    GTW.OMP.NET.Test_IP4_Address (dict (address = 111.222.233.244))
+    GTW.OMP.NET.Test_IP4_Address ((111.222.233.244, ))
     >>> Test_IP4_Address (dict (address = '111.222.233.244/22'), raw = True)
     Traceback (most recent call last):
      ...
@@ -208,15 +209,15 @@ _test_code = """
         got      value : `2560.255.2.2`
     IP4 address must contain 4 decimal octets separated by `.`.
     >>> Test_IP4_Network (dict (address = '111.222.233.244/31'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 111.222.233.244/31))
+    GTW.OMP.NET.Test_IP4_Network ((111.222.233.244/31, ))
     >>> Test_IP4_Network (dict (address = '1.2.3.4/30'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 1.2.3.4/30))
+    GTW.OMP.NET.Test_IP4_Network ((1.2.3.4/30, ))
     >>> Test_IP4_Network (dict (address = '1.2.3.4/32'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 1.2.3.4))
+    GTW.OMP.NET.Test_IP4_Network ((1.2.3.4, ))
     >>> Test_IP4_Network (dict (address = '0.0.0.0/0'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 0.0.0.0/0))
+    GTW.OMP.NET.Test_IP4_Network ((0.0.0.0/0, ))
     >>> Test_IP4_Network (dict (address = '1.2.3.4/22'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 1.2.0.0/22))
+    GTW.OMP.NET.Test_IP4_Network ((1.2.0.0/22, ))
     >>> Test_IP4_Network (dict (address = '1.2.3.4/33'), raw = True)
     Traceback (most recent call last):
      ...
@@ -237,62 +238,62 @@ _test_code = """
     ...     ( dict (address = '2001:0db8:85a3:0000:0000:8a2e:0370:7334')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8:85a3::8a2e:370:7334))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8:85a3::8a2e:370:7334, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '2001:db8:85a3:0:0:8a2e:370:7335')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8:85a3::8a2e:370:7335))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8:85a3::8a2e:370:7335, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '2001:db8:85a3::8a2e:370:7336')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8:85a3::8a2e:370:7336))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8:85a3::8a2e:370:7336, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '2001:0db8:0000:0000:0000:0000:1428:57ab')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8::1428:57ab))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8::1428:57ab, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '2001:0db8:0000:0000:0000::1428:57ac')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8::1428:57ac))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8::1428:57ac, ))
     >>> Test_IP6_Address (dict (address = '2001:0db8:0:0:0:0:1428:57ad'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8::1428:57ad))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8::1428:57ad, ))
     >>> Test_IP6_Address (dict (address = '2001:0db8:0:0::1428:57ae'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8::1428:57ae))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8::1428:57ae, ))
     >>> Test_IP6_Address (dict (address = '2001:0db8::1428:57af', raw = True))
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8::1428:57af))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8::1428:57af, ))
     >>> Test_IP6_Address (dict (address = '2001:db8::1428:57b0'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8::1428:57b0))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8::1428:57b0, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '0000:0000:0000:0000:0000:0000:0000:0001')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = ::1))
+    GTW.OMP.NET.Test_IP6_Address ((::1, ))
     >>> Test_IP6_Address (dict (address = '::2'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = ::2))
+    GTW.OMP.NET.Test_IP6_Address ((::2, ))
     >>> Test_IP6_Address (dict (address = '::ffff:0c22:384e'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = ::ffff:c22:384e))
+    GTW.OMP.NET.Test_IP6_Address ((::ffff:c22:384e, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '2001:0db8:1234:0000:0000:0000:0000:0000')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8:1234::))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8:1234::, ))
     >>> Test_IP6_Address \\
     ...     ( dict (address = '2001:0db8:1234:ffff:ffff:ffff:ffff:ffff')
     ...     , raw = True
     ...     )
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8:1234:ffff:ffff:ffff:ffff:ffff))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8:1234:ffff:ffff:ffff:ffff:ffff, ))
     >>> Test_IP6_Address (dict (address = '2001:db8:a::123'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = 2001:db8:a::123))
+    GTW.OMP.NET.Test_IP6_Address ((2001:db8:a::123, ))
     >>> Test_IP6_Address (dict (address = 'fe80::'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = fe80::))
+    GTW.OMP.NET.Test_IP6_Address ((fe80::, ))
     >>> Test_IP6_Address (dict (address = '::ffff:c000:280'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = ::ffff:c000:280))
+    GTW.OMP.NET.Test_IP6_Address ((::ffff:c000:280, ))
     >>> Test_IP6_Address (dict (address = '::'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (dict (address = ::))
+    GTW.OMP.NET.Test_IP6_Address ((::, ))
     >>> Test_IP6_Address (dict (address = '::ffff:12.34.56.78'), raw = True)
     Traceback (most recent call last):
      ...
@@ -450,18 +451,18 @@ _test_code = """
         Invalid netmask: 127; must be empty or 128
 
     >>> Test_IP6_Network (dict (address = '1:2:3::/48'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (dict (address = 1:2:3::/48))
+    GTW.OMP.NET.Test_IP6_Network ((1:2:3::/48, ))
     >>> Test_IP6_Network (dict (address = '1:2:3::/128'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (dict (address = 1:2:3::))
+    GTW.OMP.NET.Test_IP6_Network ((1:2:3::, ))
     >>> n = Test_IP6_Network (dict (address = '2001:db8:a::123'), raw = True)
     >>> n
-    GTW.OMP.NET.Test_IP6_Network (dict (address = 2001:db8:a::123))
+    GTW.OMP.NET.Test_IP6_Network ((2001:db8:a::123, ))
     >>> n.address.mask_len
     128
     >>> Test_IP6_Network (dict (address = '::/0'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (dict (address = ::/0))
+    GTW.OMP.NET.Test_IP6_Network ((::/0, ))
     >>> Test_IP6_Network (dict (address = '1:2:3::/1'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (dict (address = ::/1))
+    GTW.OMP.NET.Test_IP6_Network ((::/1, ))
     >>> Test_IP6_Network (dict (address = '1:2:3::/129'), raw = True)
     Traceback (most recent call last):
      ...
@@ -638,11 +639,11 @@ _query_test = r"""
     <class 'rsclib.IP_Address.IP4_Address'>
     >>> matches = Test_IP4_Network.query_s (* rqs).all ()
     >>> print "\n".join (repr (x) for x in matches)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 192.168.1.8/29))
+    GTW.OMP.NET.Test_IP4_Network ((192.168.1.8/29, ))
 
     >>> matches2 = Test_IP4_Network.query_s (Q.address.address == n43.address.address).all ()
     >>> print "\n".join (repr (x) for x in matches2)
-    GTW.OMP.NET.Test_IP4_Network (dict (address = 192.168.1.8/29))
+    GTW.OMP.NET.Test_IP4_Network ((192.168.1.8/29, ))
 
     >>> scope.destroy ()
 """

@@ -255,6 +255,9 @@
 #    11-Oct-2012 (CT) Change `_A_Number_.code_format` to "%s" (inherits "%r")
 #    11-Oct-2012 (CT) Add and use `A_Boolean.Table_X`
 #    11-Oct-2012 (CT) Add `sig_rank`
+#    12-Oct-2012 (CT) Remove `_call_eval` from `_A_Composite_.from_string`
+#    12-Oct-2012 (CT) Add `signified` to `_A_Composite_.cooked`, `.from_string`
+#    12-Oct-2012 (CT) Remove `dict ` from output of `_A_Composite_.as_code`
 #    ««revision-date»»···
 #--
 
@@ -677,7 +680,7 @@ class _A_Composite_ (_A_Entity_) :
 
     def as_code (self, value) :
         if value is not None :
-            return "dict (%s)" % (value.attr_as_code (), )
+            return "(%s)" % (value.attr_as_code (), )
         return ""
     # end def as_code
 
@@ -690,13 +693,17 @@ class _A_Composite_ (_A_Entity_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
+        P_Type = soc.P_Type
         if isinstance (value, tuple) :
-            value = dict (value)
+            try :
+                value = dict (value)
+            except (TypeError, ValueError) :
+                value = P_Type.signified (* value)
         if isinstance (value, dict) :
-            value = soc.P_Type (** value)
-        if value is not None and not isinstance (value, soc.P_Type) :
+            value = P_Type (** value)
+        if value is not None and not isinstance (value, P_Type) :
             raise ValueError \
-                (_T ("Value `%r` is not of type %s") % (value, soc.P_Type))
+                (_T ("Value `%r` is not of type %s") % (value, P_Type))
         return value
     # end def cooked
 
@@ -716,14 +723,17 @@ class _A_Composite_ (_A_Entity_) :
                 return result
     # end def example
 
-    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+    @TFL.Meta.Class_and_Instance_Method
+    def from_string (soc, s, obj = None, glob = {}, locl = {}) :
+        P_Type = soc.P_Type
         t = s or {}
-        if isinstance (t, basestring) :
-            t = self._call_eval (t)
         if isinstance (t, tuple) :
-            t = dict (t)
+            try :
+                t = dict (t)
+            except (TypeError, ValueError) :
+                t = P_Type.signified (* t)
         t.setdefault ("raw", True)
-        return self.P_Type (** t)
+        return P_Type (** t)
     # end def from_string
 
     def _checkers (self, e_type, kind) :

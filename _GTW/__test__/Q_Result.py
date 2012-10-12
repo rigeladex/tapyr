@@ -35,6 +35,7 @@
 #    26-Jul-2011 (CT) Tests (q1, q2, q3) for `attrs` combined with `count`
 #                     and `all` added
 #    16-Sep-2011 (MG) `attrs_query` test added
+#    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ _q_result = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
-    >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
+    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
     >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
     >>> _   = PAP.Person  ("LN 2", "FN 2", title = "Dr.")
     >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/03/01"))
@@ -82,18 +83,18 @@ _q_result = r"""
     >>> p.salutation
     u'Mr'
     >>> p.lifetime # 1
-    MOM.Date_Interval (start = 2010/01/01)
+    MOM.Date_Interval (u'2010/01/01')
     >>> q.set (("lifetime.finish", datetime.date(2010, 12, 31)), )
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
     >>> p = PAP.Person.query (pid = 1).one ()
     >>> p.lifetime # 2
-    MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
+    MOM.Date_Interval (u'2010/01/01', u'2010/12/31')
     >>> first (PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
     (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
     >>> first (PAP.Person.query (pid = 1).attr (Q.lifetime))
-    MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01)
+    MOM.Date_Interval (u'2010/01/01', u'2010/12/31')
     >>> sorted (PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
-    [(u'fn 1', MOM.Date_Interval (finish = 2010/12/31, start = 2010/01/01))]
+    [(u'fn 1', MOM.Date_Interval (u'2010/01/01', u'2010/12/31'))]
 
     >>> sorted (PAP.Person_has_Address.query ().attr ("left"))
     [PAP.Person (u'ln 3', u'fn 3', u'', u'')]
