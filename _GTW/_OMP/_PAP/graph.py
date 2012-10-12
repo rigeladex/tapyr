@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
+#    12-Oct-2012 (CT) Add `Nickname` if provided by `PAP`, i.e., was imported
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,6 @@ from   _MOM                   import MOM
 from   _TFL                   import TFL
 
 import _GTW._OMP._PAP
-import _GTW._OMP._PAP.Nickname
 
 from   _MOM._Graph.Spec       import Attr, Child, ET, IS_A, Role, Skip
 
@@ -49,7 +49,7 @@ from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
 def graph (app_type) :
-    return MOM.Graph.Spec.Graph \
+    result = MOM.Graph.Spec.Graph \
         ( app_type
         , ET.PAP.Subject_has_Property
             ( Role.left
@@ -89,11 +89,6 @@ def graph (app_type) :
                     , source_side = "W"
                     , target_side = "E"
                     )
-                , Child.PAP.Nickname
-                    ( offset      = CD.S * 2 + CD.E
-                    , source_side = "W"
-                    , target_side = "E"
-                    )
                 , offset = CD.E
                 )
             , Child.PAP.Subject_has_Phone
@@ -104,6 +99,15 @@ def graph (app_type) :
         , desc  = _T ("Graph displaying PAP partial object model")
         , title = _T ("PAP graph")
         )
+    if hasattr (GTW.OMP.PAP, "Nickname") :
+        result ["PAP.Property"]._add \
+            ( Child.PAP.Nickname
+                ( offset      = CD.S * 2 + CD.E
+                , source_side = "W"
+                , target_side = "E"
+                )
+            )
+    return result
 # end def graph
 
 class Command (MOM.Graph.Command) :
