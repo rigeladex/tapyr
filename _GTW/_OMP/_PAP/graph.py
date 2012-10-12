@@ -37,7 +37,8 @@ from   _GTW                   import GTW
 from   _MOM                   import MOM
 from   _TFL                   import TFL
 
-import _GTW._OMP._SRM
+import _GTW._OMP._PAP
+import _GTW._OMP._PAP.Nickname
 
 from   _MOM._Graph.Spec       import Attr, Child, ET, IS_A, Role, Skip
 
@@ -85,6 +86,13 @@ def graph (app_type) :
                     )
                 , Child.PAP.Url
                     ( offset      = CD.SE
+                    , source_side = "W"
+                    , target_side = "E"
+                    )
+                , Child.PAP.Nickname
+                    ( offset      = CD.S * 2 + CD.E
+                    , source_side = "W"
+                    , target_side = "E"
                     )
                 , offset = CD.E
                 )
