@@ -41,7 +41,8 @@ Package `GTW.RST.MOM`
 ======================
 
 This package provides classes implementing a generic `RESTful web service`_
-for an application based on the MOM meta object model.
+(see also [RiR07]_) for applications based on the MOM meta object model (see
+[Tan95]_).
 
 A RESTful web service is a set of URLs, each URL referring to a specific
 resource and supporting one or more of the `standard HTTP methods`_. At a
@@ -55,7 +56,8 @@ specified resource.
 Depending on the setup, a RESTful web service implemented by `GTW.RST.MOM`
 provides access to one or more databases, each holding a different instance
 of a MOM model. In the following documentation, we'll assume the simplest
-case of just a single database, with the web service mapped to `/`.
+case of just a single database, with the web service mapped to `/` ignoring
+the protocol and domain.
 
 `Scope`
 -------
@@ -69,7 +71,7 @@ Use the HTTP method `GET` to retrieve the list of `E-Types` defined by the
 `scope`. `GET` returns a `JSON`_ object with the attribute `entries` listing
 the URLs or URL fragments of the scopes `e-types`.
 
-For instance, the elided result of a `GET` request for the URL `/&verbose`
+For instance, the elided result of a `GET` request for the URL `/`
 might look like::
 
         { 'entries' :
@@ -108,35 +110,28 @@ of the `e-type` in question.
 ~~~~~
 
 Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
-`GET` without any parameters returns a `JSON`_ object with the attribute
-`entries` listing the permanent ids, aka `pids`, of the instances of the
-`e-type`. `GET` with the query parameter `verbose` returns a `JSON`_ object
-with the attributes:
 
-- `attribute_names`: the list of attribute names for instances of the
+* `GET` without any parameters returns a `JSON`_ object with the attribute
+  `entries` listing the URLs of the instances of the
   `e-type`.
 
-- `entries`: the list of instances; for each instance a JSON object
-  containing:
-
-  * `pid`: permanent id of instance.
-
-  * `cid`: id of last change.
-
-  * `attributes`: JSON object mapping attribute names to values.
-
-    - if the value of an attribute refers to an instance of another `e-type`,
-      only the pid is returned, unless the `GET` request contained the query
-      parameter `closure`, in which case a nested JSON object with the
-      information about the nested object is returned here.
-
-  * `type_name`: name of essential entity type.
-
-  * `url`: URL of resource referring to this instance.
-
-For instance (using the Python package `requests`_)::
+  For instance (using the Python package `requests`_)::
 
     >>> requests.get ("/PAP-Person").json
+    { 'entries' :
+        [ '/PAP-Person/1'
+        , '/PAP-Person/2'
+        , '/PAP-Person/3'
+        ]
+    }
+
+* `GET` with the query parameter `brief` returns a `JSON`_ object
+  with the attribute `entries` listing the permanent ids, aka `pids`, of the
+  instances of the `e-type`.
+
+  For instance::
+
+    >>> requests.get ("/PAP-Person?brief").json
     { 'entries' :
         [ 1
         , 2
@@ -145,13 +140,40 @@ For instance (using the Python package `requests`_)::
     , 'url_template' : '/PAP-Person/{entry}'
     }
 
+* `GET` with the query parameter `verbose` returns a `JSON`_ object
+  with the attributes:
+
+  - `attribute_names`: the list of attribute names for instances of the
+    `e-type`.
+
+  - `entries`: the list of instances; for each instance a `JSON`_ object
+    containing:
+
+    * `pid`: permanent id of instance.
+
+    * `cid`: id of last change.
+
+    * `attributes`: `JSON`_ object mapping attribute names to values.
+
+      - if the value of an attribute refers to an instance of another `e-type`,
+        only the pid is returned, unless the `GET` request contained the query
+        parameter `closure`, in which case a nested `JSON`_ object with the
+        information about the nested object is returned here.
+
+    * `type_name`: name of essential entity type.
+
+    * `url`: URL of resource referring to this instance.
+
+  For instance::
+
     >>> requests.get ("/PAP-Person?verbose").json
     { 'attribute_names' :
         [ 'last_name'
         , 'first_name'
         , 'middle_name'
         , 'title'
-        , 'lifetime'
+        , 'lifetime.start'
+        , 'lifetime.finish'
         , 'salutation'
         , 'sex'
         ]
@@ -173,6 +195,77 @@ For instance (using the Python package `requests`_)::
 
 You can use additional query parameters to restrict the number of instances
 returned or to search for specific instances. Possible query parameters are:
+
+- `ckd`: Return cooked values for attributes of types supported by
+  Javascript, i.e., `int`, `float`, and `string`. The cooked attribute
+  values are returned in a `JSON`_ object with name `attributes`.
+
+  For instance::
+
+    >>> requests.get ("/PAP-Person/1").json
+    { 'attributes' :
+        { 'first_name' : 'christian'
+        , 'last_name' : 'tanzer'
+        , 'middle_name' : ''
+        , 'title' : ''
+        }
+    , 'cid' : 1
+    , 'pid' : 1
+    , 'type_name' : 'PAP.Person'
+    , 'url' : '/v1/PAP-Person/1'
+    }
+
+    >>> requests.get ("/PAP-Person/1?ckd").json
+    { 'attributes' :
+        { 'first_name' : 'christian'
+        , 'last_name' : 'tanzer'
+        , 'middle_name' : ''
+        , 'title' : ''
+        }
+    , 'cid' : 1
+    , 'pid' : 1
+    , 'type_name' : 'PAP.Person'
+    , 'url' : '/v1/PAP-Person/1'
+    }
+
+- `raw`: Return raw values for all attributes. The raw attribute values  are
+  returned in a `JSON`_ object with name `attributes_raw`.
+
+  For instance::
+
+    >>> requests.get ("/PAP-Person/1?raw").json
+    { 'attributes_raw' :
+        { 'first_name' : 'Christian'
+        , 'last_name' : 'Tanzer'
+        , 'middle_name' : ''
+        , 'title' : ''
+        }
+    , 'cid' : 1
+    , 'pid' : 1
+    , 'type_name' : 'PAP.Person'
+    , 'url' : '/v1/PAP-Person/1'
+    }
+
+    >>> requests.get ("/PAP-Person/1?ckd&raw").json
+    { 'attributes' :
+        { 'first_name' : 'christian'
+        , 'last_name' : 'tanzer'
+        , 'middle_name' : ''
+        , 'title' : ''
+        }
+    , 'attributes_raw' :
+        { 'first_name' : 'Christian'
+        , 'last_name' : 'Tanzer'
+        , 'middle_name' : ''
+        , 'title' : ''
+        }
+    , 'cid' : 1
+    , 'pid' : 1
+    , 'type_name' : 'PAP.Person'
+    , 'url' : '/v1/PAP-Person/1'
+    }
+
+- `closure`: Return nested objects as `JSON`_ objects, not just references.
 
 - `count`: Return just the count, not the list, of instances.
 
@@ -222,15 +315,16 @@ returned or to search for specific instances. Possible query parameters are:
 ~~~~~~
 
 Use the HTTP method `POST` to create a new instance of the `e-type`. The
-request body for the `POST` must be a JSON object with the attribute
-`attributes` which in turn must be a JSON object that maps attribute names to
-attribute values.
+request body for the `POST` must be a `JSON`_ object with the attribute
+`attributes_raw` which in turn must be a `JSON`_ object that maps attribute
+names to attribute values. The POSTing of cooked attribute values is not
+supported.
 
 For instance::
 
     >>> cargo = json.dumps (
     ...   dict
-    ...     ( attributes = dict
+    ...     ( attributes_raw = dict
     ...         ( last_name   = "Dog"
     ...         , first_name  = "Snoopy"
     ...         , middle_name = "the"
@@ -240,7 +334,7 @@ For instance::
     ... )
     >>> headers = { "Content-Type": "application/json" }
     >>> requests.post ("/PAP-Person", data = cargo, headers = headers).json
-    { 'attributes' :
+    { 'attributes_raw' :
         { 'first_name' : 'Snoopy'
         , 'last_name' : 'Dog'
         , 'lifetime' :
@@ -258,8 +352,8 @@ For instance::
     , 'url' : '/PAP-Person/17'
     }
 
-A successful `POST` request returns a JSON object describing the newly
-created instance. This JSON object has the same format as the result of a
+A successful `POST` request returns a `JSON`_ object describing the newly
+created instance. This `JSON`_ object has the same format as the result of a
 `GET` request for the instance.
 
 `Instance`
@@ -278,8 +372,8 @@ to the resource of the instance's e-type.
 
 For instance::
 
-    >>> requests.get ("/PAP-Person/1")
-    { 'attributes' :
+    >>> requests.get ("/PAP-Person/1?raw")
+    { 'attributes_raw' :
         { 'first_name' : 'Christian'
         , 'last_name' : 'Tanzer'
         , 'middle_name' : ''
@@ -295,7 +389,7 @@ For instance::
 ~~~~~
 
 Use the HTTP method `PUT` to change the value of an instance. The
-request body for the `PUT` must be a JSON object with the attributes:
+request body for the `PUT` must be a `JSON`_ object with the attributes:
 
 - `cid`: the id of the last change of the instance, as returned by a previous
   `GET` (or possibly `POST`) request.
@@ -303,23 +397,42 @@ request body for the `PUT` must be a JSON object with the attributes:
   If the `cid` of the instance has changed in the meantime, the `PUT` request
   will fail with a HTTP status code of 409.
 
-- `attributes`: a JSON object that maps attribute names to
-  changed attribute values. Attributes not listed in `attributes` are not
-  changed by the `PUT` request.
+- `attributes_raw`: a `JSON`_ object that maps attribute names to
+  changed attribute values (in raw form). Attributes not listed in
+  `attributes_raw` are not changed by the `PUT` request.
 
 `DELETE`
----------
+~~~~~~~~~~
 
 Use the HTTP method `DELETE` to remove the instance from the database; this
 will also remove all links to the instance in question. You need to pass
 `cid` as query parameter. If the `cid` of the instance has changed in the
 meantime, the `DELETE` request will fail with a HTTP status code of 409.
 
-
 .. _`RESTful web service`: http://en.wikipedia.org/wiki/Representational_State_Transfer
+.. _`REST`: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 .. _`standard HTTP methods`: http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods
 .. _`JSON`: http://en.wikipedia.org/wiki/JSON
 .. _`requests`: http://pypi.python.org/pypi/requests
+
+Bibliography
+--------------
+
+.. [Fie00] Fielding, R.T.: 2000, Architectural Styles and the Design of
+           Network-based Software Architectures; Chapter 5, Representational
+           State Transfer (REST).
+           http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
+
+.. [Fie08] Fielding, R.T.: 2008, REST APIs must be hypertext-driven.
+           http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
+
+.. [RiR07] Richardson, L., Ruby, S.: 2007, RESTful Web Services.
+           ISBN 978-0-596-52926-0
+           http://oreilly.com/catalog/9780596529260
+
+.. [Tan95] Tanzer, C.: 1995, Remarks on Object-Oriented Modelling of
+           Associations. Journal of Object-Oriented Programming, Vol. 7, No.
+           9, February 1995, pp. 43-46.
 
 """
 

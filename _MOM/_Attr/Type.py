@@ -258,6 +258,8 @@
 #    12-Oct-2012 (CT) Remove `_call_eval` from `_A_Composite_.from_string`
 #    12-Oct-2012 (CT) Add `signified` to `_A_Composite_.cooked`, `.from_string`
 #    12-Oct-2012 (CT) Remove `dict ` from output of `_A_Composite_.as_code`
+#    16-Oct-2012 (CT) Add `as_rest_cargo_ckd`, `as_rest_cargo_raw`;
+#                     add `Atomic_Json_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -420,6 +422,14 @@ class A_Attr_Type (TFL.Meta.Object) :
         return self.code_format % (value, )
     # end def as_code
 
+    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        return self.kind.get_raw_pid (obj)
+    # end def as_rest_cargo_ckd
+
+    def as_rest_cargo_raw (self, obj, * args, ** kw) :
+        return self.kind.get_raw_pid (obj)
+    # end def as_rest_cargo_raw
+
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
@@ -524,6 +534,15 @@ class A_Attr_Type (TFL.Meta.Object) :
     # end def __str__
 
 # end class A_Attr_Type
+
+class Atomic_Json_Mixin (TFL.Meta.Object) :
+    """Mixin for attribute types that map directly to JSON types"""
+
+    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        return self.kind.get_value (obj)
+    # end def as_rest_cargo_ckd
+
+# end class Atomic_Json_Mixin
 
 class Eval_Mixin (TFL.Meta.Object) :
     """Mixin to use `eval` the raw value to convert the raw value."""
@@ -683,6 +702,20 @@ class _A_Composite_ (_A_Entity_) :
             return "(%s)" % (value.attr_as_code (), )
         return ""
     # end def as_code
+
+    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        v = self.kind.get_value (obj)
+        if v is not None :
+            v_attrs = v.attr_tuple_to_save ()
+            return dict ((a.name, a.as_rest_cargo_ckd (v)) for a in v_attrs)
+    # end def as_rest_cargo_ckd
+
+    def as_rest_cargo_raw (self, obj, * args, ** kw) :
+        v = self.kind.get_value (obj)
+        if v is not None :
+            v_attrs = v.attr_tuple_to_save ()
+            return dict ((a.name, a.as_rest_cargo_raw (v)) for a in v_attrs)
+    # end def as_rest_cargo_raw
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
@@ -937,7 +970,7 @@ class _A_Decimal_ (_A_Number_) :
 
 # end class _A_Decimal_
 
-class _A_Float_ (_A_Number_) :
+class _A_Float_ (Atomic_Json_Mixin, _A_Number_) :
     """Floating-point attribute."""
 
     typ         = _ ("Float")
@@ -945,7 +978,7 @@ class _A_Float_ (_A_Number_) :
 
 # end class _A_Float_
 
-class _A_Int_ (_A_Number_) :
+class _A_Int_ (Atomic_Json_Mixin, _A_Number_) :
     """Integer attribute."""
 
     typ         = _ ("Int")
@@ -1242,7 +1275,7 @@ class _A_Filename_ (_A_String_Base_) :
 
 # end class _A_Filename_
 
-class _A_String_ (_A_String_Base_) :
+class _A_String_ (Atomic_Json_Mixin, _A_String_Base_) :
     """Base class for string-valued attributes of an object."""
 
     __metaclass__     = MOM.Meta.M_Attr_Type_String
@@ -1524,7 +1557,7 @@ class A_Blob (A_Attr_Type) :
 
 # end class A_Blob
 
-class A_Boolean (_A_Named_Value_) :
+class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
     """Boolean attribute."""
 
     example           = "no"
@@ -1618,6 +1651,12 @@ class A_Date (_A_Date_) :
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
 
+    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        value = self.kind.get_value (obj)
+        if value is not None :
+            return unicode (value.strftime ("%Y-%m-%d"))
+    # end def as_rest_cargo_ckd
+
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
@@ -1683,6 +1722,16 @@ class A_Date_Time (_A_Date_) :
             )
         )
     _tuple_len     = 6
+
+    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        value = self.kind.get_value (obj)
+        if value is not None :
+            if not value.time () :
+                return unicode (value.strftime ("%Y-%m-%d"))
+            else :
+                v = value + TFL.user_config.time_zone.utcoffset (value)
+                return v.strftime ("%Y-%m-%d %H:%M")
+    # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
@@ -2076,6 +2125,12 @@ class A_Time (_A_Date_) :
     _tuple_len     = 6
     _tuple_off     = 3
 
+    def as_rest_cargo_ckd (self, obj, * args, ** kw) :
+        value = self.kind.get_value (obj)
+        if value is not None :
+            return unicode (value.strftime ("%H:%M:%S"))
+    # end def as_rest_cargo_ckd
+
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
@@ -2124,7 +2179,6 @@ class A_Year (A_Int) :
     max_value      = 2100
 
 # end class A_Year
-
 
 __doc__ = """
 Class `MOM.Attr.A_Attr_Type`

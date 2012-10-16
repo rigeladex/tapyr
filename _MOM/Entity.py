@@ -220,6 +220,7 @@
 #                     `* args`), remove `.__init__` (which disallowed `* args`)
 #    12-Oct-2012 (CT) Call `An_Entity.attr_as_code`, not `_formatted_user_attr`,
 #                     in `An_Entity._repr` and `.__unicode__`
+#    16-Oct-2012 (CT) Factor `attr_tuple_to_save` from `An_Entity.attr_as_code`
 #    ««revision-date»»···
 #--
 
@@ -806,19 +807,24 @@ class An_Entity (Entity) :
     # end def as_string
 
     def attr_as_code (self) :
-        attrs   = self.user_attr
-        save_p  = tuple (a.to_save (self) for a in attrs) [::-1]
-        to_drop = tuple (itertools.takewhile ((lambda x : not x), save_p))
-        if to_drop :
-            ### drop trailing attributes that don't need to be saved
-            attrs = attrs [: -len (to_drop)]
-        values  = tuple (a.as_code (a.get_value (self)) for a in attrs)
+        attrs  = self.attr_tuple_to_save ()
+        values = tuple (a.as_code (a.get_value (self)) for a in attrs)
         if len (values) == 1 :
             ### trailing comma for single element tuple
             values += ("", )
         result = ", ".join ("%s" % (v, ) for v in values)
         return result
     # end def attr_as_code
+
+    def attr_tuple_to_save (self) :
+        result  = self.user_attr
+        save_p  = tuple (a.to_save (self) for a in result) [::-1]
+        to_drop = tuple (itertools.takewhile ((lambda x : not x), save_p))
+        if to_drop :
+            ### drop trailing attributes that don't need to be saved
+            result = result [: -len (to_drop)]
+        return result
+    # end def attr_tuple_to_save
 
     def copy (self, ** kw) :
         scope  = kw.pop  ("scope", self.home_scope)

@@ -37,6 +37,7 @@
 #     4-Oct-2012 (CT) Add `href_obj`
 #     4-Oct-2012 (CT) Add `request.brief` to `E_Type.GET`
 #     5-Oct-2012 (CT) Pass `attributes` to `_new_entry`
+#    16-Oct-2012 (CT) Use dotted names for `attribute_names`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
+from   _TFL.predicate           import dotted_dict
 
 from   posixpath                import join as pp_join
 
@@ -66,10 +68,11 @@ class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
     def rendered (self, request, response, body) :
         import csv
         from   StringIO import StringIO
-        names = body.get ("attribute_names")
+        names  = body.get ("attribute_names")
+        an     = "attributes_raw" if request.raw else "attributes"
         if names :
-            nm = dict           ((n, n) for n in names)
-            rs = list           (e ["attributes"] for e in body ["entries"])
+            nm = dict ((n, n) for n in names)
+            rs = list (dotted_dict (e [an]) for e in body ["entries"])
             f  = StringIO       ()
             dw = csv.DictWriter (f, names)
             dw.writerow         (nm)
@@ -115,8 +118,23 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
 
         def _response_dict (self, resource, request, response, ** kw) :
             if request.verbose :
-                attr_names = tuple (a.name for a in resource.attributes)
-                kw ["attribute_names"] = self.attributes = attr_names
+                def _gen (attributes) :
+                    for a in attributes :
+                        n  = a.name
+                        ts = []
+                        if a.E_Type :
+                            if issubclass (a.E_Type, MOM.Id_Entity) :
+                                if not request.brief :
+                                    ts = ["pid", "url"]
+                            else :
+                                ts = [u.name for u in a.E_Type.user_attr]
+                        if ts :
+                            for t in ts :
+                                yield ".".join ((n, t))
+                        else :
+                            yield n
+                self.attributes = tuple (a.name for a in resource.attributes)
+                kw ["attribute_names"] = tuple (_gen (resource.attributes))
             return self.__super._response_dict \
                 (resource, request, response, ** kw)
         # end def _response_dict

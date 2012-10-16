@@ -37,6 +37,7 @@
 #     7-Aug-2012 (CT) Add prefix and suffix `_` to class names
 #     4-Oct-2012 (CT) Change `Entity.GET._response_attr` to use `request.brief`
 #     5-Oct-2012 (CT) Pass `url` to nested `Entity.GET._response_obj` calls
+#    16-Oct-2012 (CT) Add and use `as_rest_cargo_raw`, use `as_rest_cargo_ckd`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,29 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
+import _TFL.Decorator
+
+@TFL.Add_Method (MOM.Attr._A_Id_Entity_)
+def as_rest_cargo_raw \
+        (self, obj, method, resource, request, response, seen, getter, a_name) :
+    result = self.kind.get_value (obj)
+    if result is not None :
+        res_vet = resource.resource_from_e_type (result.type_name)
+        url     = res_vet.href_obj (result)
+        if request.has_option ("closure") and result.pid not in seen :
+            result = method._response_obj \
+                ( resource, request, response, result, result.primary, seen
+                , getter, a_name
+                , url = url
+                )
+        elif request.brief :
+            result = int (result.pid)
+        else :
+            result = dict (pid = int (result.pid), url = url)
+    return result
+# end def as_rest_cargo_raw
+
+MOM.Attr._A_Id_Entity_.as_rest_cargo_ckd = as_rest_cargo_raw
 
 _Ancestor = GTW.RST.Leaf
 
@@ -86,25 +110,12 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         _real_name             = "GET"
 
         def _response_attr \
-                (self, resource, request, response, obj, attr, seen) :
-            k = attr.name
-            if attr.E_Type and issubclass (attr.E_Type, MOM.Id_Entity) :
-                v = attr.get_value (obj)
-                if v is not None :
-                    res_vet = resource.resource_from_e_type (v.type_name)
-                    url     = res_vet.href_obj (v)
-                    if request.has_option ("closure") and v.pid not in seen :
-                        v = self._response_obj \
-                            ( resource, request, response, v, v.primary, seen
-                            , url = url
-                            )
-                    elif request.brief :
-                        v = int (v.pid)
-                    else :
-                        v = url ### ??? v = dict (pid = int (v.pid), url = url)
-            else :
-                v = attr.get_raw (obj)
-            return k, v
+                ( self, resource, request, response, obj, attr, seen
+                , getter, a_name
+                ) :
+            value = getter (attr) \
+                (obj, self, resource, request, response, seen, getter, a_name)
+            return attr.name, value
         # end def _response_attr
 
         def _response_body (self, resource, request, response) :
@@ -118,24 +129,43 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         # end def _response_body
 
         def _response_obj \
-                (self, resource, request, response, obj, attrs, seen, ** kw) :
+                ( self, resource, request, response, obj, attrs, seen
+                , getter = None, a_name = None
+                , ** kw
+                ) :
             seen.add (obj.pid)
             result = dict \
-                ( attributes = self._response_obj_attrs
-                    (resource, request, response, obj, attrs, seen)
-                , cid        = obj.last_cid
+                ( cid        = obj.last_cid
                 , pid        = obj.pid
                 , type_name  = obj.type_name
                 , ** kw
                 )
+            if getter is not None :
+                result [a_name] = self._response_obj_attrs \
+                    ( resource, request, response, obj, attrs, seen
+                    , getter, a_name
+                    )
+            else :
+                G = TFL.Getter
+                for k, n, g in \
+                        ( ("raw", "attributes_raw", G.as_rest_cargo_raw)
+                        , ("ckd", "attributes",     G.as_rest_cargo_ckd)
+                        ) :
+                    if getattr (request, k) :
+                        result [n] = self._response_obj_attrs \
+                            ( resource, request, response, obj, attrs, seen
+                            , g, n
+                            )
             return result
         # end def _response_obj
 
         def _response_obj_attrs \
-                (self, resource, request, response, obj, attrs, seen) :
+                ( self, resource, request, response, obj, attrs, seen
+                , getter, a_name
+                ) :
             return dict \
-                (   self._response_attr
-                        (resource, request, response, obj, a, seen)
+                ( self._response_attr
+                    (resource, request, response, obj, a, seen, getter, a_name)
                 for a in attrs
                 if  a.to_save (obj)
                 )

@@ -33,6 +33,7 @@
 #    24-Jul-2012 (CT) Add `use_language`
 #     6-Aug-2012 (CT) Add attribute `lang`
 #     2-Oct-2012 (CT) Add property `brief`
+#    16-Oct-2012 (CT) Add properties `ckd` and `raw`
 #    ««revision-date»»···
 #--
 
@@ -78,10 +79,30 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def brief
 
     @Once_Property
+    def ckd (self) :
+        req_data = self.req_data
+        if "ckd" in req_data :
+            return req_data.has_option ("ckd")
+        elif self.method == "GET" :
+            ### for `GET`, `ckd` is default
+            return not req_data.has_option ("raw")
+    # end def ckd
+
+    @Once_Property
     def locale_codes (self) :
         """The locale-code for the current session."""
         return self.get_browser_locale_codes ()
     # end def locale_codes
+
+    @Once_Property
+    def raw (self) :
+        req_data = self.req_data
+        if "raw" in req_data :
+            return req_data.has_option ("raw")
+        elif self.method != "GET" :
+            ### for all methods but `GET`, `raw` is default
+            return not req_data.has_option ("ckd")
+    # end def raw
 
     @property
     def settings (self) :

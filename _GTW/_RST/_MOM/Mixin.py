@@ -53,6 +53,7 @@
 #     5-Oct-2012 (CT) Change `attributes.setter` to pass `Kind` instances
 #     5-Oct-2012 (CT) Add `attributes.deleter`
 #    10-Oct-2012 (CT) Pass `error` to `Status.Gone`
+#    17-Oct-2012 (CT) Change `_PUT_POST_Mixin_` to use `raw`
 #    ««revision-date»»···
 #--
 
@@ -80,12 +81,15 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
     failure_code = 400 ### Bad request
 
     def _request_attrs (self, resource, request, response) :
+        if request.ckd :
+            raise ValueError \
+                ("%s doesn't allow cooked values" % (self.name, ))
         try :
-            result = request.json ["attributes"]
+            result = request.json ["attributes_raw"]
         except KeyError :
             raise ValueError \
                 ("""You need to send the attributes defining """
-                 """the object with the request """
+                 """the object with the request in `attributes_raw`"""
                  """(content-type "application/json")"""
                 )
         else :
