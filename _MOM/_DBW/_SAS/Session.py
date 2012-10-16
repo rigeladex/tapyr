@@ -122,6 +122,8 @@
 #    19-Aug-2012 (MG) Support keeping of cache during rollback
 #    24-Aug-2012 (CT) Fix `_Session_.rollback`
 #     9-Sep-2012 (MG) `_commit_creation_change` added
+#    16-Oct-2012 (CT) Protect `_pickle_cargo_for_table` against missing
+#                     composite attribute to support migrations
 #    ««revision-date»»···
 #--
 
@@ -236,22 +238,23 @@ class SAS_Interface (TFL.Meta.Object) :
                                 , columns = None
                                 , default = None
                                 ) :
+        result = {self.e_type._sa_pk_name : pid}
         if columns is None :
             columns = self.e_type_columns [e_type]
-        result      = {}
-        result [self.e_type._sa_pk_name] = pid
         for kind in columns :
-            attr_name          = kind.attr.name
+            attr_name = kind.attr.name
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
-                result.update \
-                    ( self._pickle_cargo_for_table
-                        ( pickle_cargo [attr_name] [0]
-                        , kind.P_Type
-                        , pid
-                        , default = kind.P_Type.type_name
-                        , columns = columns [kind] [e_type]
+                attr_pc = pickle_cargo.get (attr_name)
+                if attr_pc is not None :
+                    result.update \
+                        ( self._pickle_cargo_for_table
+                            ( attr_pc [0]
+                            , kind.P_Type
+                            , pid
+                            , default = kind.P_Type.type_name
+                            , columns = columns [kind] [e_type]
+                            )
                         )
-                    )
             else :
                 attr_default     = default
                 if hasattr (kind, "get_value") :
