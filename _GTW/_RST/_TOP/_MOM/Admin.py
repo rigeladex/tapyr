@@ -938,8 +938,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         self._field_map = {}
         self.__super.__init__ (** kw)
         if not self.implicit :
-            et_desc = self.top.ET_Map [self.type_name]
-            et_desc.admin = self
+            self.top.ET_Map [self.type_name].admin = self
     # end def __init__
 
     @Once_Property

@@ -79,6 +79,7 @@
 #    28-Sep-2012 (CT) Protect `%` in `fmt` of `_http_response`
 #     4-Oct-2012 (CT) Change `_Dir_Base_.GET` to use `request.brief`
 #     5-Oct-2012 (CT) Fix `_Base_.allow_user` (`self.GET`, not `"GET"`)
+#    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` in here from `.TOP.Root`
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.import_RST
+import _GTW._RST.R_Map
 import _GTW._RST.Template_Media_Cache
 
 from   _TFL._Meta.Once_Property import Once_Property
@@ -100,6 +102,7 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Context
+import _TFL.defaultdict
 import _TFL.Environment
 import _TFL.Record
 
@@ -1089,11 +1092,18 @@ class RST_Root (_Ancestor) :
     from _GTW._RST.Request  import Request  as Request_Type
     from _GTW._RST.Response import Response as Response_Type
 
+    class E_Type_Desc (GTW.RST.R_Map) :
+
+        _prop_names = ()
+
+    # end class E_Type_Desc
+
     def __init__ (self, HTTP, ** kw) :
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
         self.pop_to_self      (kw, "name", "prefix")
         self.pop_to_self      (kw, "smtp", prefix = "_")
+        self.ET_Map         = TFL.defaultdict (self.E_Type_Desc)
         self.HTTP           = HTTP
         self.redirects      = dict (kw.pop ("redirects", {}))
         self.SC             = TFL.Record ()

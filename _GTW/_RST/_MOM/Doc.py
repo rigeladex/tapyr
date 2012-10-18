@@ -33,6 +33,7 @@
 #    13-Sep-2012 (CT) Sort `App_Type._gen_entries` by `type_name`
 #    26-Sep-2012 (CT) Remove `is_relevant` from `e_type_filter`
 #    26-Sep-2012 (CT) Add `is_partial` to `_response_body`
+#    18-Oct-2012 (CT) Register `E_Type` in `top.ET_Map` under `.map_name`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
     _real_name                 = "E_Type"
     _ETM                       = None
 
+    map_name                   = "rest_doc"
     page_template_name         = "e_type_doc_bare"
 
     class _RST_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
@@ -246,6 +248,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
         if "name" not in kw :
             kw ["name"] = etn.replace (".", "-")
         self.__super.__init__ (** kw)
+        setattr (self.top.ET_Map [self.type_name], self.map_name, self)
         if not getattr (self, "short_title", None) :
             self.short_title = _T (etn)
     # end def __init__

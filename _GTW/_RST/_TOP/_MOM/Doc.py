@@ -34,6 +34,7 @@
 #    26-Sep-2012 (CT) Add `App_Type.GET` to handle `?E_Type` queries
 #    26-Sep-2012 (CT) Set `hidden` dependent on `is_relevant`
 #     9-Oct-2012 (CT) Don't put `__doc__` into `title`; add `PNS_desc`
+#    18-Oct-2012 (CT) Redefine `E_Type.map_name` to `doc`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
     _real_name                 = "E_Type"
 
     document_class             = "E-Type-Doc"
+    map_name                   = "doc"
     page_template_name         = "e_type_doc"
 
     class _RST_TOP_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :

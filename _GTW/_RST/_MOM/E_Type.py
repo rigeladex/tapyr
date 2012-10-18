@@ -38,6 +38,7 @@
 #     4-Oct-2012 (CT) Add `request.brief` to `E_Type.GET`
 #     5-Oct-2012 (CT) Pass `attributes` to `_new_entry`
 #    16-Oct-2012 (CT) Use dotted names for `attribute_names`
+#    18-Oct-2012 (CT) Register `E_Type` in `top.ET_Map` under `"rest_api"`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,11 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         # end def _apply_attrs
 
     POST = _RST_MOM_E_Type_POST_ # end class
+
+    def __init__ (self, ** kw) :
+        self.__super.__init__ (** kw)
+        self.top.ET_Map [self.type_name].rest_api = self
+    # end def __init__
 
     def allow_method (self, method, user) :
         if method.name == "POST" and self.ETM.is_partial :

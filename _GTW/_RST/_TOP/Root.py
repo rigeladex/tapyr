@@ -34,6 +34,7 @@
 #     8-Aug-2012 (MG) Consider `hidden` in `home`
 #    17-Aug-2012 (MG) Clear Etag if notifications are part of the response
 #    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
+#    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` to `GTW.RST.Root`
 #    ««revision-date»»···
 #--
 
@@ -49,10 +50,12 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 
 import _TFL._Meta.Object
-import _TFL.defaultdict
 
 import time
 import datetime
+
+GTW.RST.Root.E_Type_Desc.add_properties \
+    ("admin", "doc", "manager", "rest_api", "rest_doc")
 
 class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     """Root of tree of pages."""
@@ -75,40 +78,10 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     from _GTW._RST._TOP.Request  import Request  as Request_Type
     from _GTW._RST._TOP.Response import Response as Response_Type
 
-    class E_Type_Desc (TFL.Meta.Object) :
-
-        _admin   = None
-        _manager = None
-
-        @property
-        def admin (self) :
-            return self._admin
-        # end def admin
-
-        @admin.setter
-        def admin (self, value) :
-            if self._admin is None :
-                self._admin = value
-        # end def admin
-
-        @property
-        def manager (self) :
-            return self._manager
-        # end def manager
-
-        @manager.setter
-        def manager (self, value) :
-            if self._manager is None :
-                self._manager = value
-        # end def manager
-
-    # end class E_Type_Desc
-
     def __init__ (self, HTTP, ** kw) :
         self.pop_to_self (kw, "static_handler", prefix = "_")
         if "copyright_start" not in kw :
             kw ["copyright_start"] = time.localtime ().tm_year
-        self.ET_Map = TFL.defaultdict (self.E_Type_Desc)
         self.__super.__init__ (HTTP = HTTP, ** kw)
     # end def __init__
 
