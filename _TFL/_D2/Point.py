@@ -46,6 +46,7 @@
 #    21-Aug-2012 (CT) Move `transformed` to `_Point_`, let it return `Point`
 #    21-Aug-2012 (CT) Change shift to unpack `right`
 #     3-Sep-2012 (CT) Add `_Point_.free`
+#    19-Oct-2012 (RS) Fix multiplication by `Point (0, 0)` for `_R_Point_`
 #    ««revision-date»»···
 #--
 
@@ -208,8 +209,13 @@ class _R_Point_ (_Point_) :
     # end def y
 
     def __init__ (self, offset = None, scale = None) :
-        self._offset = offset or self.Point (0, 0)
-        self._scale  = scale  or self.Point (1, 1)
+        # need explicit test for None -- bool (Point (0, 0)) == False
+        self._offset = offset
+        self._scale  = scale
+        if self._offset is None :
+            self._offset = self.Point (0, 0)
+        if self._scale  is None :
+            self._scale  = self.Point (1, 1)
     # end def __init__
 
     def scale (self, right) :
@@ -278,6 +284,17 @@ class R_Point_P (_R_Point_) :
        R_Point_P (39, 56.0)
        >>> print p, q
        (10, 21.0) (39, 56.0)
+       >>> x = R_Point_P (Point (5, 42), Point (-3, -32))
+       >>> x
+       R_Point_P (2, 10)
+       >>> x * Point (3, 2)
+       R_Point_P (6, 20)
+       >>> x * Point (0, 0)
+       R_Point_P (0, 0)
+       >>> x * Point (1, 0)
+       R_Point_P (2, 0)
+       >>> x * Point (0, 1)
+       R_Point_P (0, 10)
     """
 
     def __init__ (self, ref_point, offset = None, scale = None) :
