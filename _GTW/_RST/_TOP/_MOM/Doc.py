@@ -35,6 +35,7 @@
 #    26-Sep-2012 (CT) Set `hidden` dependent on `is_relevant`
 #     9-Oct-2012 (CT) Don't put `__doc__` into `title`; add `PNS_desc`
 #    18-Oct-2012 (CT) Redefine `E_Type.map_name` to `doc`
+#    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["doc"]`
 #    ««revision-date»»···
 #--
 
@@ -271,6 +272,11 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         # end def __call__
 
     GET = _RST_TOP_MOM_Doc_App_Type_GET # end class
+
+    def __init__ (self, ** kw) :
+        self.__super.__init__ (** kw)
+        self.top.E_Type_Desc._prop_map ["doc"] = self
+    # end def __init__
 
     def resource_from_e_type (self, e_type) :
         if isinstance (e_type, basestring) :

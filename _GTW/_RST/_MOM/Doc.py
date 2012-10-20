@@ -34,6 +34,7 @@
 #    26-Sep-2012 (CT) Remove `is_relevant` from `e_type_filter`
 #    26-Sep-2012 (CT) Add `is_partial` to `_response_body`
 #    18-Oct-2012 (CT) Register `E_Type` in `top.ET_Map` under `.map_name`
+#    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map [self.E_Type.map_name]`
 #    ««revision-date»»···
 #--
 
@@ -263,6 +264,11 @@ class _RST_MOM_Doc_App_Type_ (Dir_Mixin, _Ancestor) :
     _real_name                 = "App_Type"
 
     E_Type                     = E_Type
+
+    def __init__ (self, ** kw) :
+        self.__super.__init__ (** kw)
+        self.top.E_Type_Desc._prop_map [self.E_Type.map_name] = self
+    # end def __init__
 
     def resource_from_e_type (self, e_type) :
         if not isinstance (e_type, basestring) :

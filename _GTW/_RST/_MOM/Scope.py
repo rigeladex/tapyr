@@ -33,6 +33,7 @@
 #    13-Sep-2012 (CT) Sort `Scope.entries` by `type_name`
 #     4-Oct-2012 (CT) Add `href_e_type`, `resource_from_e_type`
 #     5-Oct-2012 (CT) Add `json_indent` to `JSON.json_dump_kw`
+#    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["rest_api"]`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
                 ( indent    = json_indent or 2
                 , sort_keys = True
                 )
+        self.top.E_Type_Desc._prop_map ["rest_api"] = self
     # end def __init__
 
     def href_e_type (self, e_type) :

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Oct-2012 (CT) Creation
+#    20-Oct-2012 (CT) Add and use `_find_missing`
 #    ««revision-date»»···
 #--
 
@@ -52,10 +53,12 @@ class _M_R_Map_ (TFL.Meta.Object.__class__) :
     def add_property (cls, name) :
         _name = "_" + name
         def _get (self) :
-            return getattr (self, _name)
+            result = getattr (self, _name)
+            if result is None and self._find_missing is not None :
+                result = self._find_missing (name)
+            return result
         def _set (self, value) :
-            if getattr (self, _name) is None :
-                setattr (self, _name, value)
+            setattr (self, _name, value)
         def _del (self) :
             setattr (self, _name, None)
         setattr (cls, name, property (_get, _set, _del))
@@ -68,6 +71,8 @@ class R_Map (TFL.Meta.Object) :
     """Resource map"""
 
     __metaclass__ = _M_R_Map_
+
+    _find_missing = None
     _prop_names   = ()
 
     def __repr__ (self) :

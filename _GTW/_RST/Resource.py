@@ -80,6 +80,7 @@
 #     4-Oct-2012 (CT) Change `_Dir_Base_.GET` to use `request.brief`
 #     5-Oct-2012 (CT) Fix `_Base_.allow_user` (`self.GET`, not `"GET"`)
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` in here from `.TOP.Root`
+#    20-Oct-2012 (CT) Add `E_Type_Desc.type_name`, `_find_missing`, `._prop_map`
 #    ««revision-date»»···
 #--
 
@@ -1094,7 +1095,23 @@ class RST_Root (_Ancestor) :
 
     class E_Type_Desc (GTW.RST.R_Map) :
 
+        _prop_map   = {}
         _prop_names = ()
+
+        def __init__ (self, type_name) :
+            self.type_name = type_name
+        # end def __init__
+
+        def _find_missing (self, name) :
+            if name in self._prop_map :
+                R = self._prop_map [name]
+                try :
+                    getter = R.resource_from_e_type
+                except AttributeError :
+                    pass
+                else :
+                    return getter (self.type_name)
+        # end def _find_missing
 
     # end class E_Type_Desc
 
@@ -1103,7 +1120,8 @@ class RST_Root (_Ancestor) :
             kw ["copyright_start"] = time.localtime ().tm_year
         self.pop_to_self      (kw, "name", "prefix")
         self.pop_to_self      (kw, "smtp", prefix = "_")
-        self.ET_Map         = TFL.defaultdict (self.E_Type_Desc)
+        self.E_Type_Desc    = self.E_Type_Desc.New (_prop_map  = {})
+        self.ET_Map         = TFL.defaultdict_kd (self.E_Type_Desc)
         self.HTTP           = HTTP
         self.redirects      = dict (kw.pop ("redirects", {}))
         self.SC             = TFL.Record ()
