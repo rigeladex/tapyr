@@ -36,6 +36,8 @@
 #     3-Sep-2012 (CT) Reify `Connector`, factor in `points_gen`, add `points`
 #     5-Sep-2012 (CT) Add `shift_guide`, rename `add_guides` to `set_guides`
 #    19-Sep-2012 (CT) Use `generic_role_name`, not `role_name`, for `Role.rid`
+#    22-Oct-2012 (RS) Fix inverted y-direction for default `points_gen`
+#                     Use 0.5 instead of 1 as default `off_scale`
 #    ««revision-date»»···
 #--
 
@@ -218,7 +220,8 @@ class _Relation_ (_R_Base_) :
         if self.guides is not None :
             result = self._points
             if result is None :
-                result = self._points = tuple (self.points_gen ())
+                result = self._points = tuple \
+                    (self.points_gen (y_inverted = True))
             return result
     # end def points
 
@@ -237,19 +240,22 @@ class _Relation_ (_R_Base_) :
         return self.source_side
     # end def side
 
-    def points_gen (self, head = None, tail = None, off_scale = 1) :
+    def points_gen (self, head = None, tail = None, off_scale = 0.5, y_inverted = False) :
         if head is None :
             head = self.source.pos
         if tail is None :
             tail = self.target.pos
         guides = self.guides
         zero   = D2.Point (0, 0)
+        y_corr = D2.Point (1, 1)
+        if y_inverted :
+            y_corr = D2.Point (1, -1)
         yield head
         if guides :
             for g in guides :
                 if len (g) == 3 :
                     wh, wt = g [:2]
-                    offset = off_scale * g [-1]
+                    offset = off_scale * g [-1] * y_corr
                 else :
                     wh, wt = g
                     offset = zero
