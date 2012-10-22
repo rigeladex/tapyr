@@ -46,6 +46,8 @@
 #    21-Aug-2012 (CT) Move `transformed` to `_Point_`, let it return `Point`
 #    21-Aug-2012 (CT) Change shift to unpack `right`
 #     3-Sep-2012 (CT) Add `_Point_.free`
+#    19-Oct-2012 (RS) Fix multiplication by `Point (0, 0)` for `_R_Point_`
+#    19-Oct-2012 (RS) Fix `_R_Point_` arithmetics when `_scale` != (1, 1)
 #    ««revision-date»»···
 #--
 
@@ -208,8 +210,13 @@ class _R_Point_ (_Point_) :
     # end def y
 
     def __init__ (self, offset = None, scale = None) :
-        self._offset = offset or self.Point (0, 0)
-        self._scale  = scale  or self.Point (1, 1)
+        # need explicit test for None -- bool (Point (0, 0)) == False
+        self._offset = offset
+        self._scale  = scale
+        if self._offset is None :
+            self._offset = self.Point (0, 0)
+        if self._scale  is None :
+            self._scale  = self.Point (1, 1)
     # end def __init__
 
     def scale (self, right) :
@@ -227,8 +234,16 @@ class _R_Point_ (_Point_) :
     # end def _reference
 
     def __add__  (self, right) :
+        """ We first normalize to a scale (1, 1) then add. """
         return self.__class__ \
-            (* self._reference () + (self._offset + right, self._scale))
+            (* self._reference ()
+            + ( ( (self._offset + self._ref_point) * self._scale
+                - self._ref_point
+                + right
+                )
+              , Point (1, 1)
+              )
+            )
     # end def __add__
 
     def __div__  (self, right) :
@@ -257,8 +272,16 @@ class _R_Point_ (_Point_) :
     # end def __rmul__
 
     def __sub__  (self, right) :
+        """ We first normalize to a scale (1, 1) then subtract. """
         return self.__class__ \
-            (* self._reference () + (self._offset - right, self._scale))
+            (* self._reference ()
+            + ( ( (self._offset + self._ref_point) * self._scale
+                - self._ref_point
+                - right
+                )
+              , Point (1, 1)
+              )
+            )
     # end def __sub__
 
 # end class _R_Point_
@@ -278,6 +301,35 @@ class R_Point_P (_R_Point_) :
        R_Point_P (39, 56.0)
        >>> print p, q
        (10, 21.0) (39, 56.0)
+       >>> x = R_Point_P (Point (5, 42), Point (-3, -32))
+       >>> x
+       R_Point_P (2, 10)
+       >>> x * Point (3, 2)
+       R_Point_P (6, 20)
+       >>> x * Point (0, 0)
+       R_Point_P (0, 0)
+       >>> x * Point (1, 0)
+       R_Point_P (2, 0)
+       >>> x * Point (0, 1)
+       R_Point_P (0, 10)
+       >>> p1 = R_Point_P (Point (1, 1), Point (4, -2))
+       >>> p1
+       R_Point_P (5, -1)
+       >>> p2 = R_Point_P (Point (1, 1), Point (2, -3))
+       >>> p2
+       R_Point_P (3, -2)
+       >>> x1 = p1 * Point (0, 1)
+       >>> x1
+       R_Point_P (0, -1)
+       >>> x2 = p2 * Point (1, 0)
+       >>> x2
+       R_Point_P (3, 0)
+       >>> x1 + x2
+       R_Point_P (3, -1)
+       >>> x1 - x2
+       R_Point_P (-3, -1)
+       >>> x2 - x1
+       R_Point_P (3, 1)
     """
 
     def __init__ (self, ref_point, offset = None, scale = None) :
@@ -304,6 +356,18 @@ class R_Point_L (_R_Point_) :
        Line ((5, 5), (25, 15))
        >>> print l, q, r
        ((5, 5), (25, 15)) (17.0, 12.0) (-17.0, -12.0)
+       >>> x1 = q * Point (1, 0)
+       >>> x1
+       R_Point_L (17.0, 0.0)
+       >>> x2 = q * Point (0, 1)
+       >>> x2
+       R_Point_L (0.0, 12.0)
+       >>> x1 + x2
+       R_Point_L (17.0, 12.0)
+       >>> x1 - x2
+       R_Point_L (17.0, -12.0)
+       >>> x2 - x1
+       R_Point_L (-17.0, 12.0)
     """
 
     @property
@@ -335,6 +399,18 @@ class R_Point_R (_R_Point_) :
        Rect ((5.0, 15.0), (20, 10))
        >>> print r, p
        ((5.0, 15.0), (20, 10)) (15.0, 17.0)
+       >>> x1 = p * Point (1, 0)
+       >>> x1
+       R_Point_R (15.0, 0.0)
+       >>> x2 = p * Point (0, 1)
+       >>> x2
+       R_Point_R (0.0, 17.0)
+       >>> x1 + x2
+       R_Point_R (15.0, 17.0)
+       >>> x1 - x2
+       R_Point_R (15.0, -17.0)
+       >>> x2 - x1
+       R_Point_R (-15.0, 17.0)
     """
 
     @property
@@ -366,6 +442,18 @@ class R_Point_nP (_R_Point_) :
        >>> b = R_Point_nP ((p, q, a), (0., 0., 1.0), (0.3, 0.4, 0.3))
        >>> print p, q, a, b
        (5, 42) (8, 49) (6.5, 42.0) (6.5, 44.8)
+       >>> x1 = a * Point (1, 0)
+       >>> x1
+       R_Point_nP (6.5, 0.0)
+       >>> x2 = a * Point (0, 1)
+       >>> x2
+       R_Point_nP (0.0, 42.0)
+       >>> x1 + x2
+       R_Point_nP (6.5, 42.0)
+       >>> x1 - x2
+       R_Point_nP (6.5, -42.0)
+       >>> x2 - x1
+       R_Point_nP (-6.5, 42.0)
     """
 
     @property
