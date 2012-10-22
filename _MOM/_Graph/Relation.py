@@ -38,6 +38,7 @@
 #    19-Sep-2012 (CT) Use `generic_role_name`, not `role_name`, for `Role.rid`
 #    22-Oct-2012 (RS) Fix inverted y-direction for default `points_gen`
 #                     Use 0.5 instead of 1 as default `off_scale`
+#    22-Oct-2012 (RS) Fix `guide_sort_key`
 #    ««revision-date»»···
 #--
 
@@ -91,19 +92,39 @@ class _R_Base_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def guide_sort_key (self) :
+        """
+         s1                                                   s1
+                   +--+ +--+      +---+     +--+ +--+
+         0         |4 | |5 |      |6  |     |7 | |8 |         0
+                   ++-+ +-++      +-+-+     ++-+ +-++
+                    |     |         |        |     |
+                    |     +-------+ | +------+     |
+            +--+    +------------+| | |+-----------+   +--+
+        -1  |3 +----------------+|| | ||+--------------+9 |   1
+            +--+    +----------+||| | |||+----------+  +--+
+                    |     +---+|||| | ||||+---+     |
+                   ++-+ +-++ ++++++-+-++++++ ++-+ +-++
+        -2         |2 | |1 | |             | |11| |10|        2
+                   +--+ +--+ +-------------+ +--+ +--+
+        
+        """
+        sgn    = lambda x : cmp (0, x)
         points = self.points
         p0     = points [ 0].free
-        p      = points [ 1].free
         q      = points [-1].free
         p0_q   = p0 - q
-        p_q    = p  - q
         side   = self.connector.side
-        p0_q_y = getattr (p0_q, side.other_dim)
-        p_q_x  = getattr (p_q,  side.dim)
-        p_q_y  = getattr (p_q,  side.other_dim)
-        result = (side.sort_sign * p0_q_y, abs (p_q_y), - p_q_x)
+        p0_q_y = getattr (p0_q, side.dim)
+        p0_q_x = getattr (p0_q, side.other_dim)
+        s1 = 0
+        if self.other_connector.side.side == side.side :
+            s1 = -2 * sgn (p0_q_x) * side.sort_sign
+        elif self.other_connector.side.dim != side.dim :
+            s1 =     -sgn (p0_q_x) * side.sort_sign
+        s2 = sgn (s1) * p0_q_x
+        result = (s1, s2, p0_q_x * side.sort_sign)
         return result
-    # end def guide_sort
+    # end def guide_sort_key
 
 # end class _R_Base_
 
