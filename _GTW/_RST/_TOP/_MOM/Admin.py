@@ -36,6 +36,7 @@
 #    10-Aug-2012 (CT) Use `logging.exception` instead of `print`
 #    13-Aug-2012 (CT) Guard access to `Form` in `changer_injected_templates`
 #    10-Oct-2012 (CT) Pass `error` positionally to `Status` classes
+#    23-Oct-2012 (CT) Fix `E_Type_Alias.short_title`: `.target.ETM.type_name`
 #    ««revision-date»»···
 #--
 
@@ -1221,7 +1222,7 @@ class E_Type_Alias (GTW.RST.TOP.Alias) :
         )
 
     short_title           = property \
-        ( lambda s        : s.target.short_title
+        ( lambda s        : s.target.ETM.type_name
         , lambda s, v     : None
         )
 
@@ -1232,7 +1233,7 @@ class E_Type_Alias (GTW.RST.TOP.Alias) :
 
     _exclude_robots       = True
 
-# end class Admin_Alias
+# end class E_Type_Alias
 
 _Ancestor = GTW.RST.TOP.Dir
 
