@@ -39,6 +39,7 @@
 #    22-Oct-2012 (RS) Fix inverted y-direction for default `points_gen`
 #                     Use 0.5 instead of 1 as default `off_scale`
 #    22-Oct-2012 (RS) Fix `guide_sort_key`
+#    23-Oct-2012 (CT) Change `guide_sort_key` to use `sign`, improve style
 #    ««revision-date»»···
 #--
 
@@ -106,9 +107,8 @@ class _R_Base_ (TFL.Meta.Object) :
                    ++-+ +-++ ++++++-+-++++++ ++-+ +-++
         -2         |2 | |1 | |             | |11| |10|        2
                    +--+ +--+ +-------------+ +--+ +--+
-        
+
         """
-        sgn    = lambda x : cmp (0, x)
         points = self.points
         p0     = points [ 0].free
         q      = points [-1].free
@@ -116,12 +116,12 @@ class _R_Base_ (TFL.Meta.Object) :
         side   = self.connector.side
         p0_q_y = getattr (p0_q, side.dim)
         p0_q_x = getattr (p0_q, side.other_dim)
-        s1 = 0
+        s1     = 0
         if self.other_connector.side.side == side.side :
-            s1 = -2 * sgn (p0_q_x) * side.sort_sign
+            s1 = sign (p0_q_x) * side.sort_sign * 2
         elif self.other_connector.side.dim != side.dim :
-            s1 =     -sgn (p0_q_x) * side.sort_sign
-        s2 = sgn (s1) * p0_q_x
+            s1 = sign (p0_q_x) * side.sort_sign
+        s2     = - sign (s1) * p0_q_x
         result = (s1, s2, p0_q_x * side.sort_sign)
         return result
     # end def guide_sort_key
@@ -261,16 +261,15 @@ class _Relation_ (_R_Base_) :
         return self.source_side
     # end def side
 
-    def points_gen (self, head = None, tail = None, off_scale = 0.5, y_inverted = False) :
+    def points_gen \
+            (self, head=None, tail=None, off_scale=0.5, y_inverted=False) :
         if head is None :
             head = self.source.pos
         if tail is None :
             tail = self.target.pos
-        guides = self.guides
-        zero   = D2.Point (0, 0)
-        y_corr = D2.Point (1, 1)
-        if y_inverted :
-            y_corr = D2.Point (1, -1)
+        guides   = self.guides
+        zero     = D2.Point (0, 0)
+        y_corr   = D2.Point (1, (1, -1) [bool (y_inverted)])
         yield head
         if guides :
             for g in guides :

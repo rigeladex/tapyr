@@ -37,6 +37,8 @@
 #     5-Sep-2012 (CT) Add `improve_connectors`, `add_guides` -> `set_guides`
 #    25-Sep-2012 (CT) Add `is_partial`
 #    22-Oct-2012 (RS) Allocate opposite connector only for `delta` = 0
+#    23-Oct-2012 (CT) Change `_offset_map [5]`
+#    23-Oct-2012 (CT) Always `len (rels)` to index `_offset_map`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +75,7 @@ class Rel_Placer (TFL.Meta.Object) :
             , 2         : [0.250, 0.750]
             , 3         : [0.250, 0.500, 0.750]
             , 4         : [0.125, 0.375, 0.625, 0.875]
-            , 5         : [0.125, 0.375, 0.500, 0.625, 0.875]
+            , 5         : [0.250, 0.375, 0.500, 0.625, 0.750]
             , 6         : [0.125, 0.250, 0.375, 0.625, 0.750, 0.875]
             , 7         : _offset_7
             , "default" : _offset_7
@@ -148,10 +150,7 @@ class Rel_Placer (TFL.Meta.Object) :
             rels      = self.rels
             opposites = tuple (_opposites (self, rels))
             rels.sort (key = TFL.Sorted_By ("guide_sort_key", "type_name"))
-            n         = max \
-                ( len (rels)
-                , max (len (o.rels) for r, o in opposites) if opposites else 0
-                )
+            n = len (rels)
             try :
                 offset_s = self._offset_map [n]
             except IndexError :
@@ -164,8 +163,7 @@ class Rel_Placer (TFL.Meta.Object) :
                 if other_offset is not None :
                     delta = getattr (r.delta, self.other_dim)
                     if not delta :
-                        r.connector.offset = o = \
-                            1 - other_offset if delta else other_offset
+                        r.connector.offset = o = other_offset
                         seen.add (o)
             def gen_offset (offset_s, seen) :
                 for o in offset_s :
