@@ -36,6 +36,7 @@
 #     4-Sep-2012 (CT) Add `Id_Entity`
 #     5-Sep-2012 (CT) Add `improve_connectors`, `add_guides` -> `set_guides`
 #    25-Sep-2012 (CT) Add `is_partial`
+#    22-Oct-2012 (RS) Allocate opposite connector only for `delta` = 0
 #    ««revision-date»»···
 #--
 
@@ -162,9 +163,10 @@ class Rel_Placer (TFL.Meta.Object) :
                 other_offset = r.other_connector.offset
                 if other_offset is not None :
                     delta = getattr (r.delta, self.other_dim)
-                    r.connector.offset = o = \
-                        1 - other_offset if delta else other_offset
-                    seen.add (o)
+                    if not delta :
+                        r.connector.offset = o = \
+                            1 - other_offset if delta else other_offset
+                        seen.add (o)
             def gen_offset (offset_s, seen) :
                 for o in offset_s :
                     if o not in seen :
