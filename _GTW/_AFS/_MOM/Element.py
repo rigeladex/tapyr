@@ -107,6 +107,10 @@
 #    22-May-2012 (CT) Remove `Form.cache_rank` (belongs to `Form_Cache`)
 #    19-Aug-2012 (MG) Quick fix for type conversion for `last_cid`
 #    10-Oct-2012 (CT) Add `logging.exception` to `_create_instance`
+#     6-Nov-2012 (CT) Change `Element._changed_children` to check `c.changed`
+#                     for previously existing `entity`
+#     6-Nov-2012 (CT) Change `Field.applyf` to return `value.edit` for
+#                     previously existing `entity` only if value was changed
 #    ««revision-date»»···
 #--
 
@@ -127,14 +131,16 @@ class _MOM_Element_ (AE._Element_) :
 
     _real_name    = "Element"
 
-    def _changed_children (self, value, results, scope, entity, on_error = None, ** kw) :
+    def _changed_children \
+            (self, value, results, scope, entity, on_error = None, ** kw) :
         result = {}
         for c in value.children :
             v = None
             if c.entity :
                 v = c.entity
-            else :
-                v = c.elem.applyf (c, results, scope, entity, on_error = None, ** kw)
+            elif entity is None or c.changed :
+                v = c.elem.applyf \
+                    (c, results, scope, entity, on_error = None, ** kw)
                 value.conflicts += c.conflicts
             if v is not None :
                 result [c.elem.name] = v
@@ -368,7 +374,7 @@ class _MOM_Field_ (_MOM_Field_MI_, AE.Field) :
             if value.init != dbv:
                 value.conflicts += 1
                 value.asyn       = result = dbv
-            elif value.edit or value.edit != value.init :
+            elif value.edit != value.init :
                 result = value.edit
         elif value.edit or value.edit != value.init :
             result = value.edit
