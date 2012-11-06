@@ -37,6 +37,7 @@
 #    13-Aug-2012 (CT) Guard access to `Form` in `changer_injected_templates`
 #    10-Oct-2012 (CT) Pass `error` positionally to `Status` classes
 #    23-Oct-2012 (CT) Fix `E_Type_Alias.short_title`: `.target.ETM.type_name`
+#     6-Nov-2012 (CT) Remove obsolete code
 #    ««revision-date»»···
 #--
 
@@ -933,8 +934,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end class Field
 
     def __init__ (self, ** kw) :
-        kw ["Form_Spec"] = dict \
-            (args = kw.pop ("Form_args", ()), kw = kw.pop ("Form_kw", {}))
         self.pop_to_self (kw, "list_display", prefix = "_")
         self._field_map = {}
         self.__super.__init__ (** kw)
