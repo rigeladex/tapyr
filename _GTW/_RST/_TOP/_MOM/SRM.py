@@ -32,6 +32,7 @@
 #    10-Aug-2012 (CT) Add missing `SRM.` to `change_query_filters`
 #    10-Aug-2012 (CT) Add `skip_etag` to various classes
 #    17-Sep-2012 (CT) Add `is_cancelled` to `Regatta_Event.sort_key`
+#     6-Nov-2012 (CT) Add `href_regatta` to `Archive`
 #    ««revision-date»»···
 #--
 
@@ -387,6 +388,8 @@ class Archive (_Ancestor) :
         comps.append (obj.perma_name)
         return pp_join (* comps)
     # end def href_display
+
+    href_regatta = href_display
 
 # end class Archive
 
