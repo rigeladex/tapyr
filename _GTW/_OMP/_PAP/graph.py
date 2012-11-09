@@ -29,6 +29,8 @@
 #    24-Sep-2012 (CT) Creation
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #    12-Oct-2012 (CT) Add `Nickname` if provided by `PAP`, i.e., was imported
+#     9-Nov-2012 (CT) Add `IM_Handle` if provided by `PAP`, i.e., was imported
+#     9-Nov-2012 (CT) Rotate graph by roughly 90 degrees
 #    ««revision-date»»···
 #--
 
@@ -54,19 +56,10 @@ def graph (app_type) :
         , ET.PAP.Subject_has_Property
             ( Role.left
                 ( Child.PAP.Company
-                    ( offset      = CD.NW
-                    , source_side = "E"
-                    , target_side = "W"
+                    ( offset      = CD.N
                     )
                 , Child.PAP.Person
-                    ( ET.PAP.Entity_created_by_Person
-                        ( Role.left (offset = CD.S)
-                        , label   = "_created_by_"
-                        , offset  = CD.S
-                        )
-                    , offset      = CD.SW
-                    , source_side = "E"
-                    , target_side = "W"
+                    ( offset      = CD.NE
                     )
                 , offset = CD.W
                 )
@@ -82,29 +75,33 @@ def graph (app_type) :
                     ( offset      = CD.E
                     )
                 , Child.PAP.Phone
-                    ( offset      = CD.S
+                    ( offset      = CD.SW
                     )
                 , Child.PAP.Url
-                    ( offset      = CD.SE
-                    , source_side = "W"
-                    , target_side = "E"
+                    ( offset      = CD.S
                     )
                 , offset = CD.E
                 )
             , Child.PAP.Subject_has_Phone
-                ( Role.left (source_side = "W", target_side = "E")
-                , offset      = CD.S
+                ( guide_offset = 1
+                , offset       = CD.SW
                 )
             )
         , desc  = _T ("Graph displaying PAP partial object model")
         , title = _T ("PAP graph")
         )
+    if hasattr (GTW.OMP.PAP, "IM_Handle") :
+        result ["PAP.Property"]._add \
+            ( Child.PAP.IM_Handle
+                ( offset      = CD.E * 2
+                , source_side = "S"
+                , target_side = "S"
+                )
+            )
     if hasattr (GTW.OMP.PAP, "Nickname") :
         result ["PAP.Property"]._add \
             ( Child.PAP.Nickname
-                ( offset      = CD.S * 2 + CD.E
-                , source_side = "W"
-                , target_side = "E"
+                ( offset      = CD.SE
                 )
             )
     return result
