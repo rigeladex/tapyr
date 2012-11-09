@@ -30,6 +30,8 @@
 #    18-Jul-2012 (CT) Factor properties from `_E_Type_` to `E_Type_Mixin`
 #    25-Jul-2012 (CT) Simplify `_admin_page`
 #    25-Aug-2012 (CT) Change `_E_Type_Archive_.entries` to update `_old_cid`
+#     9-Nov-2012 (CT) Redefine `page_from_obj` for `E_Type_Archive_DSY` and
+#                     `E_Type_Archive_Y`
 #    ««revision-date»»···
 #--
 
@@ -201,6 +203,17 @@ class TOP_MOM_E_Type_Archive_DSY (_E_Type_Archive_) :
 
     _real_name = "E_Type_Archive_DSY"
 
+    def page_from_obj (self, obj) :
+        year  = obj.date.start.year
+        try :
+            d = self._entry_map [str (year)]
+        except KeyError :
+            result = self.__super.page_from_obj (obj)
+        else :
+            result = d.page_from_obj (obj)
+        return result
+    # end def page_from_obj
+
     def _year_filter (self, y) :
         return (Q.date.start.D.YEAR (y), )
     # end def _year_filter
@@ -215,6 +228,17 @@ class TOP_MOM_E_Type_Archive_Y (_E_Type_Archive_) :
     def href_display (self, obj) :
         return pp_join (self.abs_href, str (obj.year), obj.perma_name)
     # end def href_display
+
+    def page_from_obj (self, obj) :
+        year  = obj.year
+        try :
+            d = self._entry_map [str (year)]
+        except KeyError :
+            result = self.__super.page_from_obj (obj)
+        else :
+            result = d.page_from_obj (obj)
+        return result
+    # end def page_from_obj
 
     def _year_filter (self, y) :
         return (Q.year == y, )

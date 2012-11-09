@@ -33,6 +33,7 @@
 #    30-Jul-2012 (CT) Redefine `E_Type_Mixin_Base.QR`
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Aug-2012 (CT) Fix typo (`.admin`, not `._admin`)
+#     9-Nov-2012 (CT) Redefine `E_Type_Mixin._get_child_page`
 #    ««revision-date»»···
 #--
 
@@ -235,6 +236,10 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
             for t in self.admin.template_iter () :
                 yield t
     # end def template_iter
+
+    def _get_child_page (self, obj) :
+        return self.page_from_obj (obj)
+    # end def _get_child_page
 
     def _get_child_query (self, child) :
         try :

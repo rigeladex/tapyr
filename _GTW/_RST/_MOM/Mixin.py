@@ -54,6 +54,7 @@
 #     5-Oct-2012 (CT) Add `attributes.deleter`
 #    10-Oct-2012 (CT) Pass `error` to `Status.Gone`
 #    17-Oct-2012 (CT) Change `_PUT_POST_Mixin_` to use `raw`
+#     9-Nov-2012 (CT) Factor `_get_child_page`
 #    ««revision-date»»···
 #--
 
@@ -426,12 +427,16 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
         if result is None :
             obj = self._get_child_query (child)
             if obj is not None :
-                result = self._new_entry (obj)
+                result = self._get_child_page (obj)
                 if grandchildren :
                     result = result._get_child (* grandchildren)
                 return result
         return result
     # end def _get_child
+
+    def _get_child_page (self, obj) :
+        return self._new_entry (obj)
+    # end def _get_child_page
 
     def _get_child_query (self, child) :
         return self.pid_query_request (child, raise_not_found = False)
