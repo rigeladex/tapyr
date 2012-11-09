@@ -39,6 +39,7 @@
 #    22-Oct-2012 (RS) Allocate opposite connector only for `delta` = 0
 #    23-Oct-2012 (CT) Change `_offset_map [5]`
 #    23-Oct-2012 (CT) Always `len (rels)` to index `_offset_map`
+#     9-Nov-2012 (CT) Fix typo in `Dir_Placer.add`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +117,7 @@ class Rel_Placer (TFL.Meta.Object) :
         # end def willing_neighbor
 
         def add (self, rel) :
-            self.rels.append (rels)
+            self.rels.append (rel)
             self.slack -= 1
         # end def add
 
