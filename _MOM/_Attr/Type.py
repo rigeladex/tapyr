@@ -260,6 +260,7 @@
 #    12-Oct-2012 (CT) Remove `dict ` from output of `_A_Composite_.as_code`
 #    16-Oct-2012 (CT) Add `as_rest_cargo_ckd`, `as_rest_cargo_raw`;
 #                     add `Atomic_Json_Mixin`
+#     9-Nov-2012 (CT) Change arguments to `MOM.Error.Link_Type`
 #    ««revision-date»»···
 #--
 
@@ -2032,12 +2033,13 @@ class A_Link_Role (_A_Id_Entity_) :
         soc.__super._check_type (etype, value)
         tn = soc.assoc.type_name
         if tn in value.refuse_links :
+            value_type = type (value)
             raise MOM.Error.Link_Type \
                 ( tn
-                , soc.role_type
+                , soc.role_type.type_name
                 , _T (soc.role_type.ui_name)
                 , value
-                , type (value)
+                , getattr (value_type, "type_name", value_type)
                 )
     # end def _check_type
 
