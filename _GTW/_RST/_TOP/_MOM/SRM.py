@@ -33,6 +33,8 @@
 #    10-Aug-2012 (CT) Add `skip_etag` to various classes
 #    17-Sep-2012 (CT) Add `is_cancelled` to `Regatta_Event.sort_key`
 #     6-Nov-2012 (CT) Add `href_regatta` to `Archive`
+#    12-Nov-2012 (CT) Redefine `Regatta._get_child` to return `admin`
+#                     factor `_get_bir_admin` for use by `_get_child`
 #    ««revision-date»»···
 #--
 
@@ -125,6 +127,55 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
             ### XXX implement registration for team race, too
     # end def href_register
 
+    def _get_bir_admin (self) :
+        bir = self.top.ET_Map ["SRM.Boat_in_Regatta"]
+        if bir and bir.admin :
+            obj     = self.obj
+            scope   = self.scope
+            form_kw = dict \
+                ( right = dict
+                    ( prefilled   = True
+                    , init        = obj
+                    )
+                )
+            if isinstance (obj, scope.SRM.Regatta_C.E_Type) :
+                form_kw.update \
+                    ( left = dict
+                        ( left = dict
+                            ( prefilled   = True
+                            , init        = obj.boat_class
+                            )
+                        )
+                    , Crew_Member = dict
+                        ( max_links   = obj.boat_class.max_crew - 1
+                        )
+                    )
+            kw = dict \
+                ( bir.admin._orig_kw
+                , default_qr_kw   = dict (right___EQ = obj.pid)
+                , form_id         = "AF_BiR"
+                , form_parameters = dict (form_kw = form_kw)
+                , implicit        = True
+                , name            = "admin"
+                , parent          = self
+                , submit_callback = self._register_submit_callback
+                )
+            self.bir_admin = result = bir.admin.__class__ (** kw)
+            return result
+    # end def _get_bir_admin
+
+    def _get_child (self, child, * grandchildren) :
+        result = self.__super._get_child (child, * grandchildren)
+        if result is None and child == "admin" :
+            result = self._get_bir_admin ()
+            if result :
+                if ((not self._entries) or self._entries [-1] is not result) :
+                    self.add_entries (result)
+                if grandchildren :
+                    result = result._get_child (* grandchildren)
+        return result
+    # end def _get_child
+
     def _get_pages (self) :
         np     = _T (u"Participants")
         nr     = _T (u"Results")
@@ -174,39 +225,9 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                 , title       = u"%s %s"   % (head, self.short_title)
                 )
             )
-        bir = self.top.ET_Map ["SRM.Boat_in_Regatta"]
-        if bir and bir.admin :
-            form_kw   = dict \
-                ( right = dict
-                    ( prefilled   = True
-                    , init        = obj
-                    )
-                )
-            if isinstance (obj, scope.SRM.Regatta_C.E_Type) :
-                form_kw.update \
-                    ( left = dict
-                        ( left = dict
-                            ( prefilled   = True
-                            , init        = obj.boat_class
-                            )
-                        )
-                    , Crew_Member = dict
-                        ( max_links   = obj.boat_class.max_crew - 1
-                        )
-                    )
-            bir.admin = bir.admin
-            kw = dict \
-                ( bir.admin._orig_kw
-                , default_qr_kw   = dict (right___EQ = obj.pid)
-                , form_id         = "AF_BiR"
-                , form_parameters = dict (form_kw = form_kw)
-                , implicit        = True
-                , name            = "admin"
-                , parent          = self
-                , submit_callback = self._register_submit_callback
-                )
-            self.bir_admin = ba = bir.admin.__class__ (** kw)
-            result.append (ba)
+        bir_admin = self._get_bir_admin ()
+        if bir_admin :
+            result.append (bir_admin)
         return result
     # end def _get_pages
 
