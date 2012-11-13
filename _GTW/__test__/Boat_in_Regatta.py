@@ -41,6 +41,7 @@
 #     3-Aug-2012 (MG) Improve `_test_referential_integrity`
 #     4-Aug-2012 (CT) Add `_test_undo`, add `raw = True` to entity creation
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    13-Nov-2012 (CT) Adapt to change of `SRM.Club.name.cooked`
 #    ««revision-date»»···
 #--
 
@@ -333,13 +334,13 @@ _test_referential_integrity = r"""
     >>> print s.pid                                   ### before s.destroy ()
     5
     >>> print bir.skipper                             ### before s.destroy () 1
-    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ))
     >>> bir.last_cid                                  ### before s.destroy ()
     8
     >>> scope.MOM.Id_Entity.query_s ().count ()       ### before s.destroy ()
     8
     >>> scope.MOM.Id_Entity.query_s ().all ()         ### before s.destroy ()
-    [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )), SRM.Boat_Class (u'optimist'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u''), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))), SRM.Club (u'sc-ams'), PAP.Person (u'tanzer', u'christian', u'', u''), SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))]
+    [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )), SRM.Boat_Class (u'optimist'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u''), SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))), SRM.Club (u'scams'), PAP.Person (u'tanzer', u'christian', u'', u''), SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ))]
 
     >>> bir.skipper = None
     Traceback (most recent call last):
@@ -352,13 +353,13 @@ _test_referential_integrity = r"""
     Invariants: Condition `skipper_not_empty` : skipper is not None and skipper != ''
         skipper = None
     >>> print bir.skipper                             ### before s.destroy () 2
-    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))
+    ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ))
 
     >>> scope.max_cid                                 ### before s.destroy ()
     8
 
     >>> print s.club                                  ### before s.destroy ()
-    (u'sc-ams')
+    (u'scams')
 
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
     >>> cl.destroy ()
@@ -447,21 +448,21 @@ _test_undo = r"""
     (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ), is_cancelled = 'no')")
     (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
     (3, u"SRM.Boat ((u'optimist', ), u'AUT', 1107, u'', )")
-    (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), u\'AUT\', 1107, u\'\'), ((u\'himmelfahrt\', (u\'2008/05/01\', u\'2008/05/01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'sc-ams\'",)))')
-    (2, u"SRM.Club (u'sc-ams', )")
+    (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), u\'AUT\', 1107, u\'\'), ((u\'himmelfahrt\', (u\'2008/05/01\', u\'2008/05/01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'scams\'",)))')
+    (2, u"SRM.Club (u'scams', )")
     (4, u"PAP.Person (u'tanzer', u'christian', u'', u'', )")
-    (5, u"SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ), )")
+    (5, u"SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ), )")
 
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 2
     [1, 2, 3, 4, 5, 6, 7, 8]
 
     >>> cl                  ### before first destroy
-    SRM.Club (u'sc-ams')
+    SRM.Club (u'scams')
 
     >>> cl.destroy ()
 
     >>> cl                  ### after first destroy
-    <Destroyed entity SRM.Club (u'sc-ams')>
+    <Destroyed entity SRM.Club (u'scams')>
 
     >>> for c in scope.uncommitted_changes : ### after first destroy
     ...     print (c)
@@ -479,17 +480,17 @@ _test_undo = r"""
     [1, 2, 3, 4, 5, 6, 7, 8]
 
     >>> cl                  ### after first rollback
-    SRM.Club (u'sc-ams')
+    SRM.Club (u'scams')
 
     >>> cl_revived = SRM.Club.instance (u"SC-AMS")
     >>> cl_revived
-    SRM.Club (u'sc-ams')
+    SRM.Club (u'scams')
 
     >>> cl_revived.destroy ()
     >>> s.destroy ()
 
     >>> cl_revived  ### after second destroy
-    <Destroyed entity SRM.Club (u'sc-ams')>
+    <Destroyed entity SRM.Club (u'scams')>
     >>> s  ### after second destroy
     <Destroyed entity SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')>
 
@@ -506,9 +507,9 @@ _test_undo = r"""
     >>> scope.rollback ()   ### second rollback
 
     >>> cl  ### after second rollback
-    SRM.Club (u'sc-ams')
+    SRM.Club (u'scams')
     >>> s   ### after second rollback
-    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ))
+    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ))
 
     >>> for c in scope.uncommitted_changes : ### after second rollback
     ...     print (c)
@@ -520,10 +521,10 @@ _test_undo = r"""
     (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ), is_cancelled = 'no')")
     (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
     (3, u"SRM.Boat ((u'optimist', ), u'AUT', 1107, u'', )")
-    (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), u\'AUT\', 1107, u\'\'), ((u\'himmelfahrt\', (u\'2008/05/01\', u\'2008/05/01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'sc-ams\'",)))')
-    (2, u"SRM.Club (u'sc-ams', )")
+    (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), u\'AUT\', 1107, u\'\'), ((u\'himmelfahrt\', (u\'2008/05/01\', u\'2008/05/01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'scams\'",)))')
+    (2, u"SRM.Club (u'scams', )")
     (4, u"PAP.Person (u'tanzer', u'christian', u'', u'', )")
-    (5, u"SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'sc-ams', ), )")
+    (5, u"SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ), )")
 
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 6
     [1, 2, 3, 4, 5, 6, 7, 8]

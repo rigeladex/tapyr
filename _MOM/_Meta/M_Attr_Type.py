@@ -64,6 +64,7 @@
 #     8-Sep-2012 (CT) Add `M_Attr_Type_Enum`
 #     8-Sep-2012 (CT) Add `_unicode_ignore_case`
 #    19-Sep-2012 (CT) Add `force_role_name` to `M_Attr_Type_Link_Role`
+#    13-Nov-2012 (CT) Add support for redefined `cooked` to `M_Attr_Type_String`
 #    ««revision-date»»···
 #--
 
@@ -238,7 +239,9 @@ def _unicode_upper (s) :
 # end def _unicode_upper
 
 _unicode_ignore_case = dict \
-    ( { True         : _unicode_lower }
+    ( { False        : unicode
+      , True         : _unicode_lower
+      }
     , lower          = _unicode_lower
     , upper          = _unicode_upper
     )
@@ -253,10 +256,18 @@ class M_Attr_Type_String (M_Attr_Type) :
     def __init__ (cls, name, bases, dct) :
         cls.needs_raw_value = bool (cls.ignore_case)
         cls.__m_super.__init__ (name, bases, dct)
-        if cls.ignore_case :
-            cls.cooked = staticmethod (_unicode_ignore_case [cls.ignore_case])
+        cooked = s_cooked = _unicode_ignore_case [cls.ignore_case]
+        if "cooked" in dct :
+            c_name = cls._m_mangled_attr_name ("cooked")
+            setattr (cls, c_name, dct ["cooked"])
+            def cooked (soc, value) :
+                if value is not None :
+                    r_cooked = getattr (soc, c_name)
+                    return s_cooked (r_cooked (value))
+            decorator = TFL.Meta.Class_and_Instance_Method
         else :
-            cls.cooked = unicode
+            decorator = staticmethod
+        cls.cooked = decorator (cooked)
     # end def __init__
 
 # end class M_Attr_Type_String

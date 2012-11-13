@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Sep-2011 (CT) Creation
 #    31-Jul-2012 (CT) Redefine `Club.name.cooked` to filter non-letters
+#    13-Nov-2012 (CT) Fix typo in `name.cooked` (s/self/soc/)
 #    ««revision-date»»···
 #--
 
@@ -66,7 +67,7 @@ class Club (_Ancestor_Essence) :
             @TFL.Meta.Class_and_Instance_Method
             def cooked (soc, value) :
                 if value is not None :
-                    return self._clean (unicode (value))
+                    return soc._clean (unicode (value))
                 return value
             # end def cooked
 
