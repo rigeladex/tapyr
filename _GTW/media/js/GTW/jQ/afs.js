@@ -109,6 +109,7 @@
 //    17-Aug-2012 (MG) Add `pre_submit_callbacks`
 //    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
 //    18-Aug-2012 (MG) Fix `_response_replace`
+//    13-Nov-2012 (CT) Add `_display_error_extra_links`
 //    ««revision-date»»···
 //--
 
@@ -528,6 +529,10 @@
                 _display_error_bindings
                     (err$, err, attrs, field_map, bindings_t);
             };
+            if ("extra_links" in err) {
+                _display_error_extra_links
+                    (err$, err, attrs, field_map, bindings_t);
+            };
             if ("explanation" in err) {
                 err$.append
                     ($(L ("div.explanation", { html : err.explanation })));
@@ -605,8 +610,17 @@
                     };
                 };
             };
-            // XXX add extra_links
         };
+        var _display_error_extra_links = function _display_error_extra_links
+                (err$, err, attrs, field_map, bindings_t) {
+            var xl$ = $(L ("ul.extra_links"));
+            err$.append (xl$);
+            for (var i = 0, li = err.extra_links.length, xl; i < li; i++) {
+                xl = err.extra_links [i];
+                xl$.append ((L ("li.extra_link", { html : xl [1] })));
+                // XXX add hyperlink to pid in `xl [0]`;
+            };
+        } ;
         var _display_error_map = function _display_error_map (error_map) {
             var id, errors, fields$ = [];
             for (id in error_map) {
