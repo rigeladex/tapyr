@@ -38,6 +38,7 @@
 #    10-Oct-2012 (CT) Pass `error` positionally to `Status` classes
 #    23-Oct-2012 (CT) Fix `E_Type_Alias.short_title`: `.target.ETM.type_name`
 #     6-Nov-2012 (CT) Remove obsolete code
+#    13-Nov-2012 (CT) Add `scope.rollback` to `_Changer_._rendered_post`
 #    ««revision-date»»···
 #--
 
@@ -453,6 +454,8 @@ class _Changer_ (_HTML_Action_) :
                             ( "%s._rendered_post: %s -> %s"
                             , self.__call__, json ["cargo"], result
                             )
+        if fv.errors :
+            scope.rollback ()
         return result
     # end def _rendered_post
 
