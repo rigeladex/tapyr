@@ -65,6 +65,7 @@
 #     8-Sep-2012 (CT) Add `_unicode_ignore_case`
 #    19-Sep-2012 (CT) Add `force_role_name` to `M_Attr_Type_Link_Role`
 #    13-Nov-2012 (CT) Add support for redefined `cooked` to `M_Attr_Type_String`
+#    20-Nov-2012 (CT) Change `M_Attr_Type_Unit` to allow manual `_default_unit`
 #    ««revision-date»»···
 #--
 
@@ -374,26 +375,26 @@ class M_Attr_Type_Unit (M_Attr_Type) :
         if name != "_A_Unit_" :
             ud = getattr (cls, "_unit_dict", None)
             if ud :
-                for n, v in ud.iteritems () :
-                    if v == 1.0 :
-                        du = n
-                        setattr (cls, "_default_unit", du)
-                        break
-                else :
-                    du = None
+                du = dct.get ("_default_unit")
+                if du is None :
+                    for n, v in ud.iteritems () :
+                        if v == 1.0 :
+                            du = n
+                            setattr (cls, "_default_unit", du)
+                            break
                 if du and ud [du] == 1.0 :
                     syntax = "\n".join \
-                        ( [s for s in
-                              ( getattr (cls, "_syntax_spec_head", "")
-                              , "The default unit is %s. If you specify "
-                                "another unit, it must be separated from "
-                                "the number by at least one space."
-                                "\n"
-                                "You can use the following units: %s."
-                                % (du, ", ".join (sorted (ud.iterkeys ())))
-                              , getattr (cls, "_syntax_spec_tail", "")
-                              ) if s
-                          ]
+                        ( s for s in
+                            ( getattr (cls, "_syntax_spec_head", "")
+                            , "The default unit is %s. If you specify "
+                              "another unit, it must be separated from "
+                              "the number by at least one space."
+                              "\n"
+                              "You can use the following units: %s."
+                              % (du, ", ".join (sorted (ud.iterkeys ())))
+                            , getattr (cls, "_syntax_spec_tail", "")
+                            )
+                        if s
                         )
                     setattr (cls, "syntax", syntax)
                 elif __debug__ :
