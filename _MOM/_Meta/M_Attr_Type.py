@@ -66,6 +66,7 @@
 #    19-Sep-2012 (CT) Add `force_role_name` to `M_Attr_Type_Link_Role`
 #    13-Nov-2012 (CT) Add support for redefined `cooked` to `M_Attr_Type_String`
 #    20-Nov-2012 (CT) Change `M_Attr_Type_Unit` to allow manual `_default_unit`
+#    20-Nov-2012 (CT) Change `M_Attr_Type_Unit` to use inherited `_default_unit`
 #    ««revision-date»»···
 #--
 
@@ -373,7 +374,7 @@ class M_Attr_Type_Unit (M_Attr_Type) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if name != "_A_Unit_" :
-            ud = getattr (cls, "_unit_dict", None)
+            ud = dct.get ("_unit_dict")
             if ud :
                 du = dct.get ("_default_unit")
                 if du is None :
@@ -403,7 +404,7 @@ class M_Attr_Type_Unit (M_Attr_Type) :
                           "with value 1.0 in `_unit_dict`"
                         ) % name
             elif __debug__ :
-                if not ud :
+                if not getattr (cls, "_unit_dict", None) :
                     print \
                         ( "Attribute type %s doesn't specify a _unit_dict"
                         ) % name
