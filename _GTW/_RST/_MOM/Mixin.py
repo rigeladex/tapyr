@@ -55,6 +55,7 @@
 #    10-Oct-2012 (CT) Pass `error` to `Status.Gone`
 #    17-Oct-2012 (CT) Change `_PUT_POST_Mixin_` to use `raw`
 #     9-Nov-2012 (CT) Factor `_get_child_page`
+#    21-Nov-2012 (CT) Fix `attributes.setter` for composite attributes
 #    ««revision-date»»···
 #--
 
@@ -195,7 +196,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
                         print ("*" * 4, exc, E_Type, v)
                         pass
                     else :
-                        yield getattr (ET, v.name)
+                        yield v.kind
                 elif isinstance (v, MOM.Attr.Kind) :
                     yield v
         self._attributes = tuple (_gen (value)) if value is not None else None
