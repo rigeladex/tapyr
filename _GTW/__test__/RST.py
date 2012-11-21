@@ -39,6 +39,7 @@
 #     5-Oct-2012 (CT) Test multiple `AQ` arguments for a single `get`
 #     5-Oct-2012 (CT) Test `fields` query argument
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    21-Nov-2012 (CT) Test invalid `AQ` argument
 #    ««revision-date»»···
 #--
 
@@ -3894,6 +3895,19 @@ _test_query = r"""
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?left___EQ=8&verbose&raw&brief'
+    }
+
+    >>> r = show (R.get ("/v1/MOM-Object?count&AQ=last_name,EQ,tanzer"))
+    { 'json' :
+        { 'description' : 'Bad request' }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/v1/MOM-Object?count&AQ=last_name,EQ,tanzer'
+    }
+    >>> r = show (R.get ("/v1/PAP-Person?count&AQ=last_name,EQ,tanzer"))
+    { 'json' :
+        { 'count' : 3 }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person?count&AQ=last_name,EQ,tanzer'
     }
 
     >>> server.terminate ()

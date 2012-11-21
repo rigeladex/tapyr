@@ -1374,8 +1374,7 @@ class RST_Root (_Ancestor) :
                     context = TFL.Context.relaxed
                     fmt     = None
                 with context (fmt, sys.stderr) :
-                    return resource._handle_method \
-                        (method, request, response)
+                    return resource._handle_method (method, request, response)
             else :
                 self._http_response_need_auth \
                     (resource, request, response, auth)

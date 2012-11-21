@@ -56,6 +56,8 @@
 #    17-Oct-2012 (CT) Change `_PUT_POST_Mixin_` to use `raw`
 #     9-Nov-2012 (CT) Factor `_get_child_page`
 #    21-Nov-2012 (CT) Fix `attributes.setter` for composite attributes
+#    21-Nov-2012 (CT) Add exception handler to
+#                     `E_Type_Mixin._handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -456,8 +458,12 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
     @TFL.Contextmanager
     def _handle_method_context (self, method, request, response) :
         with self.__super._handle_method_context (method, request, response) :
-            qr = self.QR.from_request \
-                (self.E_Type, request, ** self.default_qr_kw)
+            try :
+                qr = self.QR.from_request \
+                    (self.E_Type, request, ** self.default_qr_kw)
+            except AttributeError as exc :
+                error = _T ("Query restriction triggered error: %s") % (exc, )
+                raise self.Status.Bad_Request (error)
             kw = dict (query_restriction = qr)
             if qr.attributes :
                 kw ["attributes"] = qr.attributes
@@ -474,7 +480,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
                     )
             with self.LET (** kw) :
                 yield
-    # end def _prepare_handle_method
+    # end def _handle_method_context
 
     def _new_entry (self, instance, ** kw) :
         return self.Entity (obj = instance, parent = self, ** kw)
