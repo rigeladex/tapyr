@@ -40,6 +40,7 @@
 #                     Use 0.5 instead of 1 as default `off_scale`
 #    22-Oct-2012 (RS) Fix `guide_sort_key`
 #    23-Oct-2012 (CT) Change `guide_sort_key` to use `sign`, improve style
+#    22-Nov-2012 (CT) Guard `AttributeError` in `_Relation_.set_guides`
 #    ««revision-date»»···
 #--
 
@@ -289,7 +290,16 @@ class _Relation_ (_R_Base_) :
     # end def set_connector
 
     def set_guides (self) :
-        src_c, trg_c = self.source_connector.side, self.target_connector.side
+        try :
+            src_c = self.source_connector.side
+            trg_c = self.target_connector.side
+        except AttributeError :
+            print \
+                ( "Connector missing for %s: source_connector = %s"
+                  ", target_connector = %s"
+                % (self, self.source_connector, self.target_connector)
+                )
+            raise
         dim          = src_c.dim
         delta        = self.delta
         guides       = self.guides = []
