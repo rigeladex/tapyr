@@ -58,6 +58,7 @@
 #    21-Nov-2012 (CT) Fix `attributes.setter` for composite attributes
 #    21-Nov-2012 (CT) Add exception handler to
 #                     `E_Type_Mixin._handle_method_context`
+#    27-Nov-2012 (CT) Factor `_obj_resource_response_body`, add `_POST_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,13 @@ import _TFL.Record
 class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
 
     failure_code = 400 ### Bad request
+
+    def _obj_resource_response_body (self, obj, resource, request, response) :
+        o_resource = resource._new_entry (obj.pid)
+        o_body     = o_resource.GET ()._response_body \
+            (o_resource, request, response)
+        return o_resource, o_body
+    # end def _obj_resource_response_body
 
     def _request_attrs (self, resource, request, response) :
         if request.ckd :
@@ -152,12 +160,23 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
         else :
             resource.scope.commit ()
             response.status_code = self.success_code
-            e      = resource._new_entry (obj.pid)
-            result = e.GET ()._response_body (e, request, response)
+            _, result = self._obj_resource_response_body \
+                (obj, resource, request, response)
         return result
     # end def _response_body
 
 # end class _PUT_POST_Mixin_
+
+class _POST_Mixin_ (_PUT_POST_Mixin_) :
+
+    def _obj_resource_response_body (self, obj, resource, request, response) :
+        o_resource, o_body = self.__super._obj_resource_response_body \
+            (obj, resource, request, response)
+        response.headers ["Location"] = o_resource.abs_href
+        return o_resource, o_body
+    # end def _obj_resource_response_body
+
+# end class _POST_Mixin_
 
 class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     """Base mixin for MOM-specific RST classes."""
@@ -489,5 +508,5 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
 E_Type_Mixin = _RST_MOM_E_Type_Mixin_ # end class
 
 if __name__ != "__main__" :
-    GTW.RST.MOM._Export ("*", "_PUT_POST_Mixin_")
+    GTW.RST.MOM._Export ("*", "_PUT_POST_Mixin_", "_POST_Mixin_")
 ### __END__ GTW.RST.MOM.Mixin

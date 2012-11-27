@@ -39,6 +39,8 @@
 #     5-Oct-2012 (CT) Pass `attributes` to `_new_entry`
 #    16-Oct-2012 (CT) Use dotted names for `attribute_names`
 #    18-Oct-2012 (CT) Register `E_Type` in `top.ET_Map` under `"rest_api"`
+#    27-Nov-2012 (CT) Derive `E_Type.POST` from `GTW.RST.MOM._POST_Mixin_`
+#                     not `GTW.RST.MOM._PUT_POST_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -162,7 +164,7 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
 
     GET = _RST_MOM_E_Type_GET_ # end class
 
-    class _RST_MOM_E_Type_POST_ (GTW.RST.MOM._PUT_POST_Mixin_, GTW.RST.POST) :
+    class _RST_MOM_E_Type_POST_ (GTW.RST.MOM._POST_Mixin_, GTW.RST.POST) :
 
         _real_name                 = "POST"
 

@@ -40,6 +40,7 @@
 #     5-Oct-2012 (CT) Test `fields` query argument
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    21-Nov-2012 (CT) Test invalid `AQ` argument
+#    27-Nov-2012 (CT) Test `location` header of `POST`
 #    ««revision-date»»···
 #--
 
@@ -3524,8 +3525,18 @@ _test_post = r"""
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
-    >>> r = show (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers=headers))
-    { 'json' :
+    >>> r = showf (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers=headers))
+    { 'headers' :
+        { 'cache-control' : 'no-cache'
+        , 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'location' : 'http://localhost:9999/v1/PAP-Person/17'
+        , 'server' : '<server>'
+        }
+    , 'json' :
         { 'attributes_raw' :
             { 'first_name' : 'Snoopy'
             , 'last_name' : 'Dog'
