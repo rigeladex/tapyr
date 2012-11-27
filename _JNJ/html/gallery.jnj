@@ -33,6 +33,8 @@
 ##     7-Oct-2010 (CT) `inline` added
 ##    25-Nov-2010 (CT) `max-width: 100%` added to style for `.inline .photo`
 ##    30-Nov-2010 (CT) `button` changed to use `<button>`
+##    27-Nov-2012 (CT) Put non-empty `src` into `.gallery .inline .img.photo`
+##                     (fix HTML conformance)
 ##    ««revision-date»»···
 ##--
 #}
@@ -57,13 +59,17 @@
 {%- macro gallery (page) -%}
   <div class="gallery">
     <h2>{{ page.obj.title }}</h2>
-    <div class="inline">
-      {{ buttons (page) }}
-      <div class="photo">
-        <img alt="{{ GTW._T ('Selected picture')}}" src=""/>
+    {%- if page.pictures %}
+      <div class="inline">
+        {{ buttons (page) }}
+        <div class="photo">
+          <img alt="{{ GTW._T ('Selected picture')}}"
+               src="{{ "/" + page.pictures [0].thumb.path }}"
+          />
+        </div>
+        {{ buttons (page) }}
       </div>
-      {{ buttons (page) }}
-    </div>
+    {% endif -%}
     <div class="thumbnails">
       <div class="box">
         {%- for pic in page.pictures %}
