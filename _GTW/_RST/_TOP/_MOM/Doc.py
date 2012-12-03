@@ -36,6 +36,7 @@
 #     9-Oct-2012 (CT) Don't put `__doc__` into `title`; add `PNS_desc`
 #    18-Oct-2012 (CT) Redefine `E_Type.map_name` to `doc`
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["doc"]`
+#     3-Dec-2012 (CT) Add guard against unknown E_Type
 #    ««revision-date»»···
 #--
 
@@ -262,7 +263,8 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
                 if etr is not None :
                     return etr.top._http_response (etr, request, response)
                 else :
-                    raise resource.top.Status.Not_Found ()
+                    raise resource.top.Status.Not_Found \
+                        (_T ("Unknown E_Type '%s'") % (name, ))
             else :
                 if resource.dir_template is None :
                     eff = resource._effective_entry
@@ -281,9 +283,10 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     def resource_from_e_type (self, e_type) :
         if isinstance (e_type, basestring) :
             e_type = self.App_Type.entity_type (e_type)
-        names  = e_type.type_name.split (".")
-        result = self._get_child (* names)
-        return result
+        if e_type :
+            names  = e_type.type_name.split (".")
+            result = self._get_child (* names)
+            return result
     # end def resource_from_e_type
 
     @property
