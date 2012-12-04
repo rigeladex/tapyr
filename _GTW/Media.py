@@ -198,7 +198,7 @@ class Script (Media_Base) :
 
     @Once_Property
     def absolute_p (self) :
-        return self.src.startswith (("http://", "https://"))
+        return self.src.startswith (("//", "http://", "https://"))
     # end def absolute_p
 
     @Once_Property

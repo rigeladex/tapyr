@@ -36,6 +36,9 @@
 #    22-Feb-2012 (CT) Add `Video`, `Vimeo` and `Youtube`
 #    22-Feb-2012 (CT) Change `_obfuscator_format` so it's valid html5
 #    28-Feb-2012 (CT) Add `Re_Replacer` for `,--`
+#     4-Dec-2012 (CT) Sort query parameters of `Video`
+#     4-Dec-2012 (CT) Correct `Vimeo.player_url`
+#     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 #    ««revision-date»»···
 #--
 
@@ -202,8 +205,9 @@ class Video (TFL.Meta.Object) :
         height      = kw.pop ("height",      self.height)
         width       = kw.pop ("width",       self.width)
         desc        = kw.pop ("desc",        self.watcher_url + video_id)
-        query       = "?" + urllib.urlencode (dict (self.q_parameters, ** kw))
-        result      =  self.format % TFL.Caller.Object_Scope (self)
+        query       = "?" + urllib.urlencode \
+            (sorted (dict (self.q_parameters, ** kw).iteritems ()))
+        result      = self.format % TFL.Caller.Object_Scope (self)
         result      = self.ws_replacer (result)
         return result
     # end def __call__
@@ -216,12 +220,12 @@ class Vimeo (Video) :
     >>> print vimeo_video ("34480636", desc = "Seascape 18 Gaea+ Christmas Sailing", align = "right")
     <div class="video align-right" style="width:410px">
      <iframe
-     src="http://player/vimeo.com/video/34480636?color=%2300adef&byline=0&title=0&api=1&portrait=0&loop=0&autoplay=0"
+     src="//player.vimeo.com/video/34480636?api=1&autoplay=0&byline=0&color=%2300adef&loop=0&portrait=0&title=0"
      width="400" height="300"
      ></iframe>
      </div>
      <p class="video-desc">
-     <a href="http://vimeo.com/34480636">
+     <a href="//vimeo.com/34480636">
      Seascape 18 Gaea+ Christmas Sailing
      </a>
      </p>
@@ -242,8 +246,8 @@ class Vimeo (Video) :
         , title        = 0     ### show the title on the video
         )
     service_name       = "Vimeo"
-    service_url        = "http://vimeo.com/"
-    player_url         = "http://player/vimeo.com/video/"
+    service_url        = "//vimeo.com/"
+    player_url         = "//player.vimeo.com/video/"
     watcher_url        = service_url
 
 # end class Vimeo
@@ -254,13 +258,13 @@ class Youtube (Video) :
     >>> print youtube_video ("EeMJErxbn1I", css_class = "centered")
     <div class="video centered" style="width:435px">
      <iframe
-     src="http://www.youtube.com/embed/EeMJErxbn1I?showinfo=0&modestbranding=0&controls=1&enablejsapi=1&theme=light&fs=1&autohide=2&rel=0&loop=0&showsearch=0&hd=0&autoplay=0"
+     src="//www.youtube.com/embed/EeMJErxbn1I?autohide=2&autoplay=0&controls=1&enablejsapi=1&fs=1&hd=0&loop=0&modestbranding=0&rel=0&showinfo=0&showsearch=0&theme=light"
      width="425" height="349"
      ></iframe>
      </div>
      <p class="video-desc">
-     <a href="http://www.youtube.com/watch?v=EeMJErxbn1I">
-     http://www.youtube.com/watch?v=EeMJErxbn1I
+     <a href="//www.youtube.com/watch?v=EeMJErxbn1I">
+     //www.youtube.com/watch?v=EeMJErxbn1I
      </a>
      </p>
 
@@ -284,7 +288,7 @@ class Youtube (Video) :
         , theme          = "light" ### valid values: "dark" and "light"
         )
     service_name       = "YouTube"
-    service_url        = "http://www.youtube.com/"
+    service_url        = "//www.youtube.com/"
     player_url         = "".join ((service_url, "embed/"))
     watcher_url        = "".join ((service_url, "watch?v="))
 
