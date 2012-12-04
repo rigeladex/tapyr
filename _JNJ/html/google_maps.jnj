@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: google_maps.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##    24-Feb-2010 (CT) Creation (ported from Django template)
+##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,7 +48,7 @@
 {%- endmacro -%} {#- body -#}
 
 {%- macro head (page) -%}
-  <script src="http://maps.google.com/maps?file=api&v=2&key={{ page.map.google_key }}&language={{ page.map.language|default("en") }}"
+  <script src="//maps.google.com/maps?file=api&v=2&key={{ page.map.google_key }}&language={{ page.map.language|default("en") }}"
           type="text/javascript"></script>
   <script type="text/javascript">
     //<![CDATA[

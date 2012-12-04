@@ -30,6 +30,7 @@
 ##
 ## Revision Dates
 ##     3-Jun-2012 (CT) Creation (based on html/google_maps.jnj)
+##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 ##    ««revision-date»»···
 ##--
 #}
@@ -54,7 +55,7 @@
           }
     </style>
     <script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?key={{ page.map.google_key }}&sensor={{ page.map.use_sensor|default("false") }}">
+      src="//maps.googleapis.com/maps/api/js?key={{ page.map.google_key }}&sensor={{ page.map.use_sensor|default("false") }}">
     </script>
     <script type="text/javascript">
       function initialize () {

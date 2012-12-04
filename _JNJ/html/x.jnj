@@ -1,6 +1,6 @@
 {#- jinja template: html/x.jnj -#}
 {#
-## Copyright (C) 2009-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -30,6 +30,7 @@
 ##    29-Dec-2009 (CT) Creation
 ##    12-Jan-2010 (CT) Creation continued
 ##     2-Dec-2011 (CT) Add macros `script` and `shiv`
+##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,9 +39,9 @@
 
 {%- macro html (lang) -%}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+   "//www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
 >
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ lang }}" lang="{{ lang }}" >
+<html xmlns="//www.w3.org/1999/xhtml" xml:lang="{{ lang }}" lang="{{ lang }}" >
   {{ caller () }}
 </html>
 {%- endmacro -%}

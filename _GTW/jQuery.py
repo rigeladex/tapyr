@@ -58,6 +58,7 @@
 #     7-Mar-2012 (CT) Add `GTW_e_type_selector` to `GTW_jq_afs`
 #    17-Aug-2012 (MG) Remove `jqPlot`
 #    25-Sep-2012 (CT) Add `GTW_pns_doc_graph`
+#     4-Dec-2012 (CT) Add `//` to `JS_On_Ready` of `GTW_Externalize`
 #    ««revision-date»»···
 #--
 
@@ -159,7 +160,7 @@ GTW.Script \
 
 GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 GTW.JS_On_Ready \
-    ( """$("a[href^='http://'], a[href^='https://']").gtw_externalize ();"""
+    ( """$("a[href^='http://'], a[href^='https://', a[href^='//']").gtw_externalize ();"""
     , name = "GTW_Externalize"
     )
 
