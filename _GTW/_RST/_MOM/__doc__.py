@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Jul-2012 (CT) Creation
+#     4-Dec-2012 (CT) Add bib-refs [Amu11] and [WPR10]
 #    ««revision-date»»···
 #--
 
@@ -418,6 +419,10 @@ meantime, the `DELETE` request will fail with a HTTP status code of 409.
 Bibliography
 --------------
 
+.. [Amu11] Amundsen, M.: 2011, Building Hypermedia APIs with HTML5 and Node.
+           ISBN 978-1-4493-0656-4
+           http://oreilly.com/catalog/0636920020530
+
 .. [Fie00] Fielding, R.T.: 2000, Architectural Styles and the Design of
            Network-based Software Architectures; Chapter 5, Representational
            State Transfer (REST).
@@ -433,6 +438,11 @@ Bibliography
 .. [Tan95] Tanzer, C.: 1995, Remarks on Object-Oriented Modelling of
            Associations. Journal of Object-Oriented Programming, Vol. 7, No.
            9, February 1995, pp. 43-46.
+
+.. [WPR10] Webber, J., Parastatidis, S., Robinson, I.: 2010, REST in Practice;
+           Hypermedia and Systems Architecture.
+           ISBN 978-1-4493-9494-3
+           http://oreilly.com/catalog/9780596805838
 
 """
 
