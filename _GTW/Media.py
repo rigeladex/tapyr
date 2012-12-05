@@ -52,6 +52,7 @@
 #     8-Jan-2012 (CT) Use `.pop_to_self` to reduce footprint of media objects
 #     9-Jan-2012 (CT) Add `minified_css` and `minified_js`
 #    14-Aug-2012 (MG) Add support for domains
+#     4-Dec-2012 (MG) Fix media `Domain` handling
 #    ««revision-date»»···
 #--
 
@@ -106,27 +107,20 @@ class CSS_Link (Media_Base) :
     name          = None
 
     def __init__ (self, href, ** kw) :
-        self._href = href
+        self.href = href
         self.pop_to_self (kw, "condition", "media_type", "name", "rank")
     # end def __init__
 
-    @TFL.Meta.Once_Property
-    def href (self) :
-        if self.Domain :
-            return "".join ((self.Domain, self._href))
-        return self._href
-    # end def href
-
     def __eq__ (self, rhs) :
         try :
-            rhs = rhs._href, rhs.media_type
+            rhs = rhs.href, rhs.media_type
         except AttributeError :
             pass
-        return (self._href, self.media_type) == rhs
+        return (self.href, self.media_type) == rhs
     # end def __eq__
 
     def __hash__ (self) :
-        return hash ((self._href, self.media_type))
+        return hash ((self.href, self.media_type))
     # end def __hash__
 
     def __repr__ (self) :
@@ -143,7 +137,7 @@ class Rel_Link (Media_Base) :
     """Model a `rel` link object."""
 
     def __init__ (self, ** kw) :
-        self._href = kw ["href"]
+        self.href = kw ["href"]
         self.pop_to_self (kw, "rank")
         self._kw  = kw
     # end def __init__
@@ -154,13 +148,6 @@ class Rel_Link (Media_Base) :
             for (k, v) in sorted (self._kw.iteritems ())
             )
     # end def attrs
-
-    @TFL.Meta.Once_Property
-    def href (self) :
-        if self.Domain :
-            return "".join ((self.Domain, self._href))
-        return self._href
-    # end def href
 
     def __repr__ (self) :
         return self.attrs ()
@@ -186,7 +173,7 @@ class Script (Media_Base) :
 
     def __init__ (self, src, ** kw) :
         assert src
-        self._src  = src
+        self.src  = src
         self.pop_to_self \
             ( kw
             , "condition", "may_cache", "name", "rank", "requires"
@@ -206,23 +193,16 @@ class Script (Media_Base) :
         return self.may_cache and not (self.condition or self.absolute_p)
     # end def cache_p
 
-    @TFL.Meta.Once_Property
-    def src (self) :
-        if self.Domain :
-            return "".join ((self.Domain, self._src))
-        return self._src
-    # end def src
-
     def __eq__ (self, rhs) :
         try :
-            rhs = (rhs._src, rhs.script_type)
+            rhs = (rhs.src, rhs.script_type)
         except AttributeError :
             pass
-        return (self._src, self.script_type) == rhs
+        return (self.src, self.script_type) == rhs
     # end def __eq__
 
     def __hash__ (self) :
-        return hash ((self._src, self.script_type))
+        return hash ((self.src, self.script_type))
     # end def __hash__
 
     def __repr__ (self) :
@@ -346,8 +326,15 @@ class Media_List_href (Media_List) :
         for mob in self.__super._gen_own () :
             href = mob.href
             if href and not href.startswith (("http://", "https://", "/")) :
-                mob.href = pjoin \
+                href = pjoin \
                     (* (x for x in (url, prefix, href) if x is not None))
+            if (   href
+               and not href.startswith (("http://", "https://"))
+               and mob.Domain
+               ) :
+                sep  = "" if href [0] == "/" else "/"
+                href = sep.join ((mob.Domain, href))
+            mob.href = href
             yield mob
     # end def _gen_own
 
@@ -424,10 +411,12 @@ class Media (TFL.Meta.Object) :
        screen: /test/styles/c.css
        >>> "; ".join (str (l) for l in q.scripts)
        '/test/js/qux.js; /test/js/foo.js; /test/js/bar.js; http://baz.js'
+       >>> m = Media (css_links = ("a.css", "/b/c.css"),
+       ...       scripts = ("foo.js", "bar.js", "http://baz.js"))
        >>> Script.Domain   = "http://js.example.com"
        >>> CSS_Link.Domain = "http://css.example.com"
        >>> tuple (str (l) for l in m.scripts)
-       ('http://js.example.com/test/js/foo.js', 'http://js.example.com/test/js/bar.js', 'http://js.example.comhttp://baz.js')
+       ('http://js.example.com/test/js/foo.js', 'http://js.example.com/test/js/bar.js', 'http://baz.js')
        >>> tuple (str (l) for l in m.css_links)
        ('http://css.example.com/test/styles/a.css', 'http://css.example.com/b/c.css')
     """
