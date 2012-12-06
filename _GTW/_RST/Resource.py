@@ -81,6 +81,7 @@
 #     5-Oct-2012 (CT) Fix `_Base_.allow_user` (`self.GET`, not `"GET"`)
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` in here from `.TOP.Root`
 #    20-Oct-2012 (CT) Add `E_Type_Desc.type_name`, `_find_missing`, `._prop_map`
+#     6-Dec-2012 (CT) Set `user` in `_handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -599,12 +600,13 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        T = self.Templateer
-        if T :
-            with T.GTW.LET (blackboard = dict ()) :
+        with self.LET (user = request.user) : ### XXX language ???
+            T = self.Templateer
+            if T :
+                with T.GTW.LET (blackboard = dict ()) :
+                    yield
+            else :
                 yield
-        else :
-            yield
     # end def _handle_method_context
 
     def __getattr__ (self, name) :
@@ -1386,7 +1388,7 @@ class RST_Root (_Ancestor) :
     # end def _http_response_error
 
     def _http_response_need_auth (self, resource, request, response, auth) :
-        raise (Status.Forbidden if auth else self.Auth_Required) ()
+        raise (self.Status.Forbidden if auth else self.Auth_Required) ()
     # end def _http_response_need_auth
 
     def _request_href (self, href, request) :
