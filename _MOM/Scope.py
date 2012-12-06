@@ -106,6 +106,7 @@
 #    12-Aug-2012 (CT) Use `ems.commit_context`
 #    11-Sep-2012 (CT) Add `rollback_pending_change`; factored from `MOM.EMS.SAS`
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
+#     6-Dec-2012 (CT) Don't set `change.user` in `nested_change_recorder`
 #    ««revision-date»»···
 #--
 
@@ -589,7 +590,6 @@ class Scope (TFL.Meta.Object) :
         with self.historian.nested_recorder (Change, * args, ** kw) as c :
             yield c
             if c :
-                c.user = self.user
                 self.ems.register_change (c)
     # end def nested_change_recorder
 

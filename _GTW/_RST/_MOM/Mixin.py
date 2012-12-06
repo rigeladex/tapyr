@@ -335,10 +335,11 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
         if qc is not None :
             lc = qc.first ()
             if lc is not None :
+                lm = lc.time.replace (microsecond = 0)
                 result  = TFL.Record \
                     ( cid           = lc.cid
                     , etag          = str (lc.cid)
-                    , last_modified = lc.time.replace (microsecond = 0)
+                    , last_modified = lm
                     )
         return result
     # end def _get_change_info

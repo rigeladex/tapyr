@@ -78,6 +78,7 @@
 #     4-Aug-2012 (CT) Change `_create` to use `entity.restore` if applicable
 #     5-Aug-2012 (CT) Use `epk_raw_pid`, `get_raw_pid`
 #     9-Sep-2012 (CT) Add `Create.c_time`, `.c_user`
+#     6-Dec-2012 (CT) Store `user.pid`, if any, else `user`
 #    ««revision-date»»···
 #--
 
@@ -124,8 +125,8 @@ class _Change_ (MOM.SCM.History_Mixin) :
     # end def add_change
 
     def as_pickle (self, transitive = False) :
-        return pickle.dumps \
-            (self.as_pickle_cargo (transitive), pickle.HIGHEST_PROTOCOL)
+        cargo = self.as_pickle_cargo (transitive)
+        return pickle.dumps (cargo, pickle.HIGHEST_PROTOCOL)
     # end def as_pickle
 
     def as_pickle_cargo (self, transitive = False) :
@@ -177,7 +178,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
         return dict \
             ( cid          = self.cid
             , time         = self.time
-            , user         = self.user
+            , user         = getattr (self.user, "pid", self.user)
             )
     # end def _pickle_attrs
 
@@ -431,7 +432,7 @@ class Create (_Entity_) :
         return dict \
             ( self.__super._pickle_attrs ()
             , c_time       = self.c_time
-            , c_user       = self.c_user
+            , c_user       = getattr (self.c_user, "pid", self.c_user)
             , pickle_cargo = self.pickle_cargo
             )
     # end def _pickle_attrs
