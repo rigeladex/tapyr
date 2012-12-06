@@ -141,6 +141,8 @@
 #    23-Sep-2012 (MG) Fix import callbacks again
 #     9-Oct-2012 (CT) Add `c_scope` to `Package_Namespace.__init__` call
 #     9-Oct-2012 (CT) Add `_desc_` to `Package_Namespace.__init__`
+#     6-Dec-2012 (CT) Fix `_Add_Import_Callback`
+#     6-Dec-2012 (CT) Change  `_run_import_callback` to `classmethod`
 #    ««revision-date»»···
 #--
 
@@ -217,9 +219,9 @@ class Package_Namespace (object) :
         module = sys.modules.get (module_name)
         if module is not None :
             ### run the callbacks immediately
-            self._run_import_callback (module, (callback, args, kw))
+            cls._run_import_callback (module, ((callback, args, kw), ))
         else :
-            package     = "__main__"
+            package = "__main__"
             if "." in module_name :
                 package, module_name = module_name.rsplit (".", 1)
             cls._Import_Callback_Map [package] [module_name].append \
@@ -352,14 +354,15 @@ class Package_Namespace (object) :
         linecache.clearcache ()
     # end def _Reload
 
-    def _run_import_callback (self, module, callback_spec = ()) :
+    @classmethod
+    def _run_import_callback (cls, module, callback_spec = ()) :
         if not callback_spec :
             module_name = module.__name__
             package     = "__main__"
             if "." in module_name :
                 package, module_name = module_name.rsplit (".", 1)
-            if package in self._Import_Callback_Map :
-                pkg_map       = self._Import_Callback_Map [package]
+            if package in cls._Import_Callback_Map :
+                pkg_map       = cls._Import_Callback_Map [package]
                 callback_spec = pkg_map.pop (module_name, ())
         if callback_spec :
             for cb, args, kw in callback_spec :
