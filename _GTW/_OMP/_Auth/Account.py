@@ -57,6 +57,7 @@
 #     7-Aug-2012 (CT) Set `Account_Anonymous.electric` to True
 #    24-Sep-2012 (CT) Rename `Account` to `_Account_`, `Account_P` to `Account`
 #     9-Oct-2012 (CT) Improve attribute docstrings
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -141,7 +142,6 @@ class Account_Anonymous (_Ancestor_Essence) :
     """Default account for users which are not logging in."""
 
     max_count    = 1
-    refuse_links = set (( "GTW.OMP.PAP.Entity_created_by_Person", ))
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

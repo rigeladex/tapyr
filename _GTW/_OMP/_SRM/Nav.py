@@ -80,7 +80,7 @@ class Admin (object) :
         ( ETM          = "GTW.OMP.SRM.Page"
         , sort_key     = TFL.Sorted_By ("-date.start", "perma_name")
         , list_display =
-            ( "ui_display", "creator", "date", "format", "last_changed")
+            ( "ui_display", "created_by", "date", "format", "last_changed")
         )
 
     Regatta_C          = dict \

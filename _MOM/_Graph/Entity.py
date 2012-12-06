@@ -40,6 +40,7 @@
 #    23-Oct-2012 (CT) Change `_offset_map [5]`
 #    23-Oct-2012 (CT) Always `len (rels)` to index `_offset_map`
 #     9-Nov-2012 (CT) Fix typo in `Dir_Placer.add`
+#     6-Dec-2012 (CT) Allow anchor cycle in `Entity.anchor.setter`
 #    ««revision-date»»···
 #--
 
@@ -366,13 +367,9 @@ class Entity (TFL.Meta.Object) :
                     )
             if isinstance (value, MOM.Graph.Spec._Spec_Item_) :
                 value = value.instantiate (self.graph, self)
-            if value.anchor is self :
-                raise TypeError \
-                    ( "Anchor cycle not allowed: %s <-> %s"
-                    % (self.type_name, value)
-                    )
-            self.graph.cid +=1
-            self._anchor = value
+            if value.anchor is not self :
+                self.graph.cid +=1
+                self._anchor = value
     # end def anchor
 
     @TFL.Meta.Once_Property

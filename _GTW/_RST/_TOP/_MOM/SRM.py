@@ -35,6 +35,9 @@
 #     6-Nov-2012 (CT) Add `href_regatta` to `Archive`
 #    12-Nov-2012 (CT) Redefine `Regatta._get_child` to return `admin`
 #                     factor `_get_bir_admin` for use by `_get_child`
+#     5-Dec-2012 (CT) Add `Regatta_Event.regattas`
+#     5-Dec-2012 (CT) Fix typo in `Archive.Year.regattas`
+#     5-Dec-2012 (CT) Redefine `Archive.Year.sort_key`
 #    ««revision-date»»···
 #--
 
@@ -66,7 +69,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
 
     bir_admin               = None
     register_email_template = "regatta_register_email"
-    skip_etag           = True
+    skip_etag               = True
 
     class _Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
 
@@ -347,6 +350,12 @@ class Regatta_Event \
         return (Q.left == self.obj.pid, )
     # end def query_filters
 
+    @property
+    @getattr_safe
+    def regattas (self) :
+        return [e for e in self.entries if isinstance (e, Regatta)]
+    # end def regattas
+
     def _add_href_pat_frag_tail \
             (self, head, getter = TFL.Getter.href_pat_frag) :
         ### reduce memory consumption by not traversing into `entries`
@@ -377,16 +386,16 @@ class Archive (_Ancestor) :
         dir_template_name   = "regatta_calendar"
         Entity              = Regatta_Event
         skip_etag           = True
+        sort_key            = TFL.Sorted_By ("date.start", "perma_name")
 
         @property
         @getattr_safe
         def regattas (self) :
             result = self.entries
-            if result and result is self._admin :
+            if result and result [-1] is self._admin :
                 result = result [:-1]
             return result
         # end def regattas
-
 
     Year = _SRM_Year_ # end class
 

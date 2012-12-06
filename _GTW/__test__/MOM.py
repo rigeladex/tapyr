@@ -67,6 +67,7 @@
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    11-Oct-2012 (CT) Add test for `signified`, import `MOM.Attr.Position`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#     6-Dec-2012 (CT) Add attributes `creation_change`, ...
 #    ««revision-date»»···
 #--
 
@@ -867,7 +868,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catcher`, String `color`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Name `name`, Cached_Role_Set `sickness`, String `ui_display`, Float `weight`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catcher`, String `color`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Name `name`, Cached_Role_Set `sickness`, String `ui_display`, Float `weight`, Boolean `x_locked`]
 
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', u'Last name')
@@ -881,13 +882,13 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Supertrap._Attributes._own_names)
     ['ui_display', 'weights']
     >>> sorted (ET_Trap._Attributes._names)
-    ['FO', 'catch', 'creation_date', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'created_by', 'creation_change', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['FO', 'catch', 'creation_date', 'electric', 'is_used', 'last_changed', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
+    ['FO', 'catch', 'created_by', 'creation_change', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catch`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catch`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Date-Time `last_changed`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
 
     >>> print formatted1 (sorted (ET_Id_Entity.relevant_roots))
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']

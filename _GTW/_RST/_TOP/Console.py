@@ -29,6 +29,7 @@
 #    13-Jul-2012 (CT) Creation (based on GTW.NAV.Console)
 #     2-Aug-2012 (CT) Set `response.renderer`, remove `_get_renderer`
 #     6-Aug-2012 (CT) Set `skip_etag` to `True`
+#     5-Dec-2012 (CT) Set `last_page` to `._effective`
 #    ««revision-date»»···
 #--
 
@@ -369,8 +370,9 @@ class Console (_Ancestor) :
                 referer = request.referrer
                 if top and referer :
                     url = TFL.Url (referer)
+                    lp  = top.resource_from_href (url.path)
                     console.update_locals \
-                        ( last_page      = top.resource_from_href (url.path)
+                        ( last_page      = lp._effective if lp else lp
                         , last_request   = request
                         , last_response  = response
                         , referrer       = url

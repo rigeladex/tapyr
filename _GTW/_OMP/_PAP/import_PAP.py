@@ -32,6 +32,8 @@
 #    12-Sep-2012 (CT) Add `Property`, `Subject`, and `Subject_has_Property`,
 #                     remove `Company_has_...`, `Person_has_...`
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
+#     6-Dec-2012 (CT) Add `Person_has_Account` (conditional import)
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -50,10 +52,16 @@ import _GTW._OMP._PAP.Subject
 import _GTW._OMP._PAP.Url
 
 import _GTW._OMP._PAP.Address_Position
-import _GTW._OMP._PAP.Entity_created_by_Person
 import _GTW._OMP._PAP.Subject_has_Property
 import _GTW._OMP._PAP.Subject_has_Phone
 
 GTW.OMP.PAP.Subject_has_Property.m_create_role_children ("right")
+
+def _import_person_has_account (module) :
+    import _GTW._OMP._PAP.Person_has_Account
+# end def _import_person_has_account
+
+GTW.OMP.PAP._Add_Import_Callback \
+    ("_GTW._OMP._Auth.Account", _import_person_has_account)
 
 ### __END__ GTW.OMP.PAP.import_PAP

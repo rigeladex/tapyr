@@ -37,6 +37,8 @@
 #    12-Jun-2012 (CT) Add test for `.attrs ("pid", "type_name")`
 #    12-Sep-2012 (CT) Add `_test_partial_roles`
 #    13-Sep-2012 (CT) Add `_test_roles`
+#     6-Dec-2012 (CT) Add `Person_has_Account`
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -184,7 +186,6 @@ _test_partial_roles = """
     ...     for pr in ET.Partial_Roles :
     ...         pret = scope.entity_type (pr.E_Type)
     ...         print ET.type_name, pr, pret.type_name, sorted (pret.children_np)
-    PAP.Entity_created_by_Person <class '_GTW._OMP._PAP.Entity_created_by_Person.left'> MOM.Id_Entity ['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Group', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Entity_created_by_Person', 'PAP.Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url', 'SRM.Boat', 'SRM.Boat_Class', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Handicap', 'SRM.Page', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_Event', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.right'> PAP.Property ['PAP.Address', 'PAP.Email', 'PAP.Phone', 'PAP.Url']
     PAP.Subject_has_Phone <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
@@ -221,8 +222,6 @@ _test_roles = """
     EVT.Recurrence_Spec Event `left` EVT.Event
     EVT.Recurrence_Rule Recurrence_Spec `left` EVT.Recurrence_Spec
     PAP.Address_Position Address `left` PAP.Address
-    PAP.Entity_created_by_Person Id_Entity `left` MOM.Id_Entity
-    PAP.Entity_created_by_Person Person `right` PAP.Person
     PAP.Subject_has_Property Subject `left` PAP.Subject
     PAP.Subject_has_Property Property `right` PAP.Property
     PAP.Subject_has_Phone Subject `left` PAP.Subject
@@ -233,6 +232,8 @@ _test_roles = """
     PAP.Subject_has_Email Email `right` PAP.Email
     PAP.Subject_has_Url Subject `left` PAP.Subject
     PAP.Subject_has_Url Url `right` PAP.Url
+    PAP.Person_has_Account Person `left` PAP.Person
+    PAP.Person_has_Account Account `right` Auth.Account
     SRM.Boat Boat_Class `left` SRM.Boat_Class
     SWP.Clip_O Object_PN `left` SWP.Object_PN
     SWP.Picture Gallery `left` SWP.Gallery

@@ -29,6 +29,7 @@
 #    27-Jan-2012 (CT) Creation
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +117,6 @@ _test_code = """
     Admin/Personenverwaltung/Company_has_Phone e_type_admin
     Admin/Personenverwaltung/Company_has_Url e_type_admin
     Admin/Personenverwaltung/Email e_type_admin
-    Admin/Personenverwaltung/Entity_created_by_Person e_type_admin
     Admin/Personenverwaltung/Person e_type_admin
     Admin/Personenverwaltung/Person_has_Address e_type_admin
     Admin/Personenverwaltung/Person_has_Email e_type_admin

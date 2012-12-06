@@ -41,6 +41,7 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    21-Nov-2012 (CT) Test invalid `AQ` argument
 #    27-Nov-2012 (CT) Test `location` header of `POST`
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -289,15 +290,15 @@ _test_cqf = r"""
     MOM-Id_Entity
         ()
     MOM-Link
-        (Q.type_name.in_ (['PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link1
         (Q.type_name.in_ (['PAP.Address_Position', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link2
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
     MOM-_MOM_Link_n_
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
         (Q.type_name == PAP.Address,)
     PAP-Address_Position
@@ -314,12 +315,10 @@ _test_cqf = r"""
         (Q.type_name == PAP.Company_has_Url,)
     PAP-Email
         (Q.type_name == PAP.Email,)
-    PAP-Entity_created_by_Person
-        (Q.type_name == PAP.Entity_created_by_Person,)
     PAP-Link1
         (Q.type_name.in_ (['PAP.Address_Position'],),)
     PAP-Link2
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Entity_created_by_Person', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url'],),)
     PAP-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url'],),)
     PAP-Person
@@ -423,7 +422,6 @@ _test_cqf = r"""
     PAP-Company_has_Phone    (Company `left`, Phone `right`, Numeric_String `extension`, String `desc`)
     PAP-Company_has_Url    (Company `left`, Url `right`, String `desc`)
     PAP-Email    (Email `address`, String `desc`)
-    PAP-Entity_created_by_Person    (Id_Entity `left`, Person `right`)
     PAP-Link1    (Left `left`,)
     PAP-Link2    (Left `left`, Right `right`)
     PAP-Object    ()
@@ -471,7 +469,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Entity\_created\_by\_Person|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -690,7 +688,6 @@ _test_doc = r"""
             , 'PAP-Company_has_Phone'
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
-            , 'PAP-Entity_created_by_Person'
             , 'PAP-Id_Entity'
             , 'PAP-Link1'
             , 'PAP-Link2'
@@ -817,11 +814,6 @@ _test_doc = r"""
             ]
         , 'cross_references' :
             [ { 'attributes' :
-    [ 'left' ]
-              , 'type_name' : 'PAP.Entity_created_by_Person'
-              , 'url' : '/Doc/PAP-Entity_created_by_Person'
-              }
-            , { 'attributes' :
     [ 'left' ]
               , 'type_name' : 'SRM.Crew_Member'
               , 'url' : '/Doc/SRM-Crew_Member'
@@ -976,11 +968,6 @@ _test_doc = r"""
             ]
         , 'cross_references' :
             [ { 'attributes' :
-    [ 'left' ]
-              , 'type_name' : 'PAP.Entity_created_by_Person'
-              , 'url' : '/Doc/PAP-Entity_created_by_Person'
-              }
-            , { 'attributes' :
     [ 'right' ]
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
@@ -1128,11 +1115,6 @@ _test_doc = r"""
             ]
         , 'cross_references' :
             [ { 'attributes' :
-    [ 'left' ]
-              , 'type_name' : 'PAP.Entity_created_by_Person'
-              , 'url' : '/Doc/PAP-Entity_created_by_Person'
-              }
-            , { 'attributes' :
     [ 'right' ]
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
@@ -1278,11 +1260,6 @@ _test_doc = r"""
             ]
         , 'cross_references' :
             [ { 'attributes' :
-    [ 'left' ]
-              , 'type_name' : 'PAP.Entity_created_by_Person'
-              , 'url' : '/Doc/PAP-Entity_created_by_Person'
-              }
-            , { 'attributes' :
     [ 'right' ]
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
@@ -1356,13 +1333,6 @@ _test_doc = r"""
               , 'ui_name' : 'Role'
               }
             ]
-        , 'cross_references' :
-            [ { 'attributes' :
-    [ 'left' ]
-              , 'type_name' : 'PAP.Entity_created_by_Person'
-              , 'url' : '/Doc/PAP-Entity_created_by_Person'
-              }
-            ]
         , 'description' : 'Crew member of a `Boat_in_Regatta`.'
         , 'is_partial' : False
         , 'parents' :
@@ -1401,7 +1371,6 @@ _test_example_1 = r"""
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Company_has_Url : ((u'John Doe, Inc.', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
-    PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
@@ -1451,7 +1420,6 @@ _test_example_2 = r"""
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Company_has_Url : ((u'John Doe, Inc.', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
-    PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
@@ -1515,7 +1483,6 @@ _test_example_3 = r"""
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Entity_created_by_Person : ------
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Url : ((u'John Doe, Inc.', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
@@ -1548,7 +1515,6 @@ _test_example_4 = r"""
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Company_has_Url : ((u'John Doe, Inc.', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
-    PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
@@ -1592,7 +1558,6 @@ _test_example_4 = r"""
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
     PAP.Company_has_Url : ((u'John Doe, Inc.', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
-    PAP.Entity_created_by_Person : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
@@ -1653,7 +1618,6 @@ _test_example_4 = r"""
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Entity_created_by_Person : ------
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Url : ((u'John Doe, Inc.', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Company_has_Phone : ((u'John Doe, Inc.', 'PAP.Company'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Company_has_Phone')
@@ -1756,7 +1720,6 @@ _test_get = r"""
             , 'PAP-Company_has_Phone'
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
-            , 'PAP-Entity_created_by_Person'
             , 'PAP-Link1'
             , 'PAP-Link2'
             , 'PAP-Object'
@@ -1826,7 +1789,6 @@ _test_get = r"""
             , '/v1/PAP-Company_has_Phone'
             , '/v1/PAP-Company_has_Url'
             , '/v1/PAP-Email'
-            , '/v1/PAP-Entity_created_by_Person'
             , '/v1/PAP-Link1'
             , '/v1/PAP-Link2'
             , '/v1/PAP-Object'

@@ -46,6 +46,7 @@
 #                     i.e., stuff related to non-AFS forms
 #    22-Mar-2012 (CT) Add `Company` and its links
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -111,11 +112,6 @@ class Admin (object) :
 
     Company_has_Url      = dict \
         ( ETM            = "GTW.OMP.PAP.Company_has_Url"
-        )
-
-    Entity_created_by_Person = dict \
-        ( ETM            = "GTW.OMP.PAP.Entity_created_by_Person"
-        , list_display   = ("entity", "creator", "date")
         )
 
     Person_has_Address   = dict \

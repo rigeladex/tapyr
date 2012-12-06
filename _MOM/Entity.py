@@ -221,6 +221,8 @@
 #    12-Oct-2012 (CT) Call `An_Entity.attr_as_code`, not `_formatted_user_attr`,
 #                     in `An_Entity._repr` and `.__unicode__`
 #    16-Oct-2012 (CT) Factor `attr_tuple_to_save` from `An_Entity.attr_as_code`
+#     6-Dec-2012 (CT) Factor `creation_change` and `last_change`,
+#                     add `created_by` and `last_changed_by`
 #    ««revision-date»»···
 #--
 
@@ -934,20 +936,47 @@ class Id_Entity (Entity) :
 
     class _Attributes (Entity._Attributes) :
 
+        class created_by (A_Id_Entity) :
+            """User that created the entity"""
+
+            kind               = Attr.Computed
+            P_Type             = "MOM.Id_Entity"
+
+            def computed (self, obj) :
+                cc = obj.creation_change
+                if cc is not None :
+                    try :
+                        return obj.home_scope.pid_query (cc.c_user)
+                    except Exception :
+                        pass
+            # end def computed
+
+        # end class created_by
+
+        class creation_change (A_Blob) :
+            """Last change of the object"""
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                try :
+                    return obj.changes ().order_by \
+                        (TFL.Sorted_By ("cid")).first ()
+                except IndexError :
+                    pass
+            # end def computed
+
+        # end class creation_change
+
         class creation_date (A_Date_Time) :
             """Date/time of creation."""
 
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                try :
-                    lc = obj.changes ().order_by \
-                        (TFL.Sorted_By ("cid")).first ()
-                except IndexError :
-                    pass
-                else :
-                    if lc is not None :
-                        return lc.c_time
+                cc = obj.creation_change
+                if cc is not None :
+                    return cc.c_time
             # end def computed
 
         # end class creation_date
@@ -970,23 +999,50 @@ class Id_Entity (Entity) :
 
         # end class is_used
 
+        class last_change (A_Blob) :
+            """Last change of the object"""
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                try :
+                    return obj.changes ().order_by \
+                        (TFL.Sorted_By ("-cid")).first ()
+                except IndexError :
+                    pass
+            # end def computed
+
+        # end class last_change
+
         class last_changed (A_Date_Time) :
             """Date/time of last change."""
 
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                try :
-                    lc = obj.changes ().order_by \
-                        (TFL.Sorted_By ("-cid")).first ()
-                except IndexError :
-                    pass
-                else :
-                    if lc is not None :
-                        return lc.time
+                lc = obj.last_change
+                if lc is not None :
+                    return lc.time
             # end def computed
 
         # end class last_changed
+
+        class last_changed_by (A_Id_Entity) :
+            """User that applied the last change."""
+
+            kind               = Attr.Computed
+            P_Type             = "MOM.Id_Entity"
+
+            def computed (self, obj) :
+                lc = obj.last_change
+                if lc is not None :
+                    try :
+                        return obj.home_scope.pid_query (lc.user)
+                    except Exception :
+                        pass
+            # end def computed
+
+        # end class last_changed_by
 
         class last_cid (A_Int) :
             """Change id of last change for this entity."""

@@ -34,6 +34,7 @@
 #     3-Aug-2012 (CT) Add tests for `Ref_Req_Map` and `Ref_Opt_Map`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    12-Sep-2012 (RS) Add `Id_Entity`
+#     6-Dec-2012 (CT) Add `Person_has_Account`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,7 @@ test_code = r"""
         ('Auth.Account_Password_Reset', ['left'])
         ('Auth.Account_in_Group', ['left'])
         ('PAP.Entity_created_by_Person', ['left'])
+        ('PAP.Person_has_Account', ['right'])
     Auth.Group
         ('Auth.Account_in_Group', ['right'])
         ('PAP.Entity_created_by_Person', ['left'])
@@ -179,6 +181,7 @@ test_code = r"""
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Person
         ('PAP.Entity_created_by_Person', ['left', 'right'])
+        ('PAP.Person_has_Account', ['left'])
         ('PAP.Person_has_Address', ['left'])
         ('PAP.Person_has_Email', ['left'])
         ('PAP.Person_has_Phone', ['left'])
@@ -258,6 +261,8 @@ test_code = r"""
     PAP.Subject_has_Email
         ('PAP.Entity_created_by_Person', ['left'])
     PAP.Subject_has_Url
+        ('PAP.Entity_created_by_Person', ['left'])
+    PAP.Person_has_Account
         ('PAP.Entity_created_by_Person', ['left'])
     SRM.Link1
         ('PAP.Entity_created_by_Person', ['left'])
