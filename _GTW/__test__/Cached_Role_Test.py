@@ -29,6 +29,7 @@
 #    21-Apr-2010 (MG) Creation
 #    20-Jul-2012 (RS) Add several left-sides (more than one `PAP.Person`)
 #    13-Sep-2012 (CT) Add test for `auto_cache_roles`
+#     6-Dec-2012 (CT) Add `Person_has_Account` role-cacher
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,7 @@ _test_acr = """
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Address) address --> addresses [GTW.OMP.PAP.Subject]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Url) url --> urls [GTW.OMP.PAP.Subject]>,)
+    (<Role_Cacher_1 (GTW.OMP.PAP.Person_has_Account) person --> person [GTW.OMP.Auth.Account]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Account) account --> accounts [GTW.OMP.PAP.Person]>)
     (<Link_Cacher_n (GTW.OMP.SWP.Clip_O) object --> clips>,)
     (<Link_Cacher_n (GTW.OMP.SWP.Picture) gallery --> pictures>,)
     (<Link_Cacher_n (GTW.OMP.SRM.Regatta) event --> regattas>,)
