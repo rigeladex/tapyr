@@ -43,6 +43,7 @@ test_code = r"""
     Creating new scope MOMT__...
 
     >>> date = (("start", "2012/06/10"), )
+    >>> MOM  = scope.MOM
     >>> PAP  = scope.PAP
     >>> SWP  = scope.SWP
     >>> per  = PAP.Person ("ln", "fn")
@@ -51,31 +52,24 @@ test_code = r"""
     >>> pa3  = SWP.Page   ("title_3", text = "text 3", date = date, raw = True)
     >>> scope.commit     ()
 
-    >>> PAP.Entity_created_by_Person (pa1, per)
-    PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u''))
+    >>> _ = MOM.Document (per, "//foo.bar/baz")
+    >>> _ = MOM.Document (per, "//foo.bar/qux")
+    >>> _ = MOM.Document (pa1, "//foo.bar/quux.jpg")
     >>> scope.commit ()
 
-    >>> PAP.Entity_created_by_Person (pa3, per)
-    PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))
-    >>> scope.commit ()
-
-    >>> PAP.Entity_created_by_Person (pa2.epk_raw, per.epk_raw, raw = True)
-    PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))
-    >>> scope.commit ()
-
-    >>> EcP = scope.PAP.Entity_created_by_Person
-    >>> q  = EcP.query   ()
-    >>> qs = EcP.query_s ()
+    >>> q  = MOM.Document.query ()
+    >>> qs = MOM.Document.query_s ()
     >>> q.order_by (Q.pid).all ()
-    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
-    >>> q.order_by (TFL.Sorted_By ("pid")).all ()
-    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u''))]
+    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
 
-    >>> q.order_by (EcP.sorted_by).all ()
-    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+    >>> q.order_by (TFL.Sorted_By ("pid")).all ()
+    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
+
+    >>> q.order_by (MOM.Document.sorted_by).all ()
+    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
 
     >>> qs.all ()
-    [PAP.Entity_created_by_Person ((u'title_1', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_2', ), (u'ln', u'fn', u'', u'')), PAP.Entity_created_by_Person ((u'title_3', ), (u'ln', u'fn', u'', u''))]
+    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
 
     >>> q = scope.query_changes (type_name = "SWP.Page").order_by (Q.cid)
     >>> for c in q.all () :
@@ -85,102 +79,106 @@ test_code = r"""
     <Create SWP.Page (u'title_3', 'SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
 
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("tn_pid").all ()
-    [(('PAP.Person', 1),), (('SWP.Page', 2),), (('SWP.Page', 3),), (('SWP.Page', 4),), (('PAP.Entity_created_by_Person', 5),), (('PAP.Entity_created_by_Person', 6),), (('PAP.Entity_created_by_Person', 7),)]
+    [(('PAP.Person', 1),), (('SWP.Page', 2),), (('SWP.Page', 3),), (('SWP.Page', 4),), (('MOM.Document', 5),), (('MOM.Document', 6),), (('MOM.Document', 7),)]
 
     >>> show_ref_maps (scope, "Ref_Req_Map")
     MOM.Id_Entity
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Link
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Link1
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM._MOM_Link_n_
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Link2
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Link2_Ordered
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Link3
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     MOM.Named_Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
+    MOM.Document
+        ('MOM.Document', ['left'])
     Auth.Link1
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Link2
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Link2_Ordered
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Link3
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Id_Entity
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Named_Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth._Account_
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
+    Auth.Account_Anonymous
+        ('MOM.Document', ['left'])
     Auth.Account
         ('Auth.Account_Activation', ['left'])
         ('Auth.Account_EMail_Verification', ['left'])
         ('Auth.Account_Password_Change_Required', ['left'])
         ('Auth.Account_Password_Reset', ['left'])
         ('Auth.Account_in_Group', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('PAP.Person_has_Account', ['right'])
     Auth.Group
         ('Auth.Account_in_Group', ['right'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Account_in_Group
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth._Account_Action_
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Account_Activation
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Account_Password_Change_Required
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth._Account_Token_Action_
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Account_EMail_Verification
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     Auth.Account_Password_Reset
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Link1
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Link2
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Link2_Ordered
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Link3
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Id_Entity
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Named_Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Calendar
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Link1
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Link2
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Link2_Ordered
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Link3
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Id_Entity
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Named_Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Subject
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Person
-        ('PAP.Entity_created_by_Person', ['left', 'right'])
+        ('MOM.Document', ['left'])
         ('PAP.Person_has_Account', ['left'])
         ('PAP.Person_has_Address', ['left'])
         ('PAP.Person_has_Email', ['left'])
@@ -188,175 +186,175 @@ test_code = r"""
         ('PAP.Person_has_Url', ['left'])
         ('SRM.Sailor', ['left'])
     SWP.Link1
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Link2
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Link2_Ordered
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Link3
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Id_Entity
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Named_Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Object_PN
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SWP.Page
         ('EVT.Event', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SWP.Page_Y
         ('EVT.Event', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     EVT.Event
         ('EVT.Event_occurs', ['left'])
         ('EVT.Recurrence_Spec', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Event_occurs
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT._Recurrence_Mixin_
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Recurrence_Spec
         ('EVT.Recurrence_Rule', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     EVT.Recurrence_Rule
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Property
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Address
+        ('MOM.Document', ['left'])
         ('PAP.Address_Position', ['left'])
         ('PAP.Company_has_Address', ['right'])
-        ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Address', ['right'])
     PAP.Company
+        ('MOM.Document', ['left'])
         ('PAP.Company_has_Address', ['left'])
         ('PAP.Company_has_Email', ['left'])
         ('PAP.Company_has_Phone', ['left'])
         ('PAP.Company_has_Url', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
     PAP.Email
+        ('MOM.Document', ['left'])
         ('PAP.Company_has_Email', ['right'])
-        ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Email', ['right'])
     PAP.Phone
+        ('MOM.Document', ['left'])
         ('PAP.Company_has_Phone', ['right'])
-        ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Phone', ['right'])
     PAP.Url
+        ('MOM.Document', ['left'])
         ('PAP.Company_has_Url', ['right'])
-        ('PAP.Entity_created_by_Person', ['left'])
         ('PAP.Person_has_Url', ['right'])
     PAP.Address_Position
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Subject_has_Property
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Subject_has_Phone
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Subject_has_Address
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Subject_has_Email
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Subject_has_Url
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Person_has_Account
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Link1
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Link2
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Link2_Ordered
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Link3
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Id_Entity
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Named_Object
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM._Boat_Class_
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Boat_Class
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Boat', ['left'])
         ('SRM.Regatta_C', ['boat_class'])
     SRM.Handicap
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Regatta_H', ['boat_class'])
     SRM.Boat
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['left'])
     SRM.Club
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Regatta_Event
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Page', ['event'])
         ('SRM.Regatta_C', ['left'])
         ('SRM.Regatta_H', ['left'])
     SWP.Clip_O
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SWP.Clip_X
         ('EVT.Event', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SWP.Gallery
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
         ('SWP.Picture', ['left'])
     SWP.Picture
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Page
         ('EVT.Event', ['left'])
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SRM.Regatta
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
     SRM.Regatta_C
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
         ('SRM.Team', ['left'])
     SRM.Regatta_H
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
     SRM.Sailor
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['skipper'])
         ('SRM.Crew_Member', ['right'])
     SRM.Boat_in_Regatta
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Crew_Member', ['left'])
         ('SRM.Race_Result', ['left'])
         ('SRM.Team_has_Boat_in_Regatta', ['right'])
     SRM.Race_Result
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Team
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
         ('SRM.Team_has_Boat_in_Regatta', ['left'])
     SRM.Crew_Member
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     SRM.Team_has_Boat_in_Regatta
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Person_has_Url
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Company_has_Url
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Person_has_Email
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Company_has_Email
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Person_has_Address
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Company_has_Address
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Person_has_Phone
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
     PAP.Company_has_Phone
-        ('PAP.Entity_created_by_Person', ['left'])
+        ('MOM.Document', ['left'])
 
     >>> show_ref_maps (scope, "Ref_Opt_Map")
     EVT.Calendar
@@ -370,6 +368,7 @@ test_code = r"""
 
 """
 
+import _MOM.Document
 from   _GTW.__test__.model      import *
 from   _TFL.Formatter           import formatted_1
 
