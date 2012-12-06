@@ -44,6 +44,7 @@
 ##    16-Jan-2012 (CT) Continue `qr_control` (`select_attr_form`, `Config`)
 ##    18-Jan-2012 (CT) Continue `qr_control` (Use `GTW.attr_join` for `fields`)
 ##    19-Mar-2012 (CT) Change `obj_button` to use class `ui-state-default`
+##     6-Dec-2012 (CT) Factor `obj_create_button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -115,6 +116,10 @@
     </b>
   </{{ tag }}>
 {%- endmacro -%} {#- obj_button -#}
+
+{%- macro obj_create_button (page, E_Type, tag) -%}
+  {{ obj_button (page, E_Type, tag, page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "plus", "add") }}
+{%- endmacro -%} {#- obj_create_button -#}
 
 {%- macro order_by_form () -%}
   <form class = "QR order-by" {# -#}
@@ -340,11 +345,11 @@
   <table class="Object-List">
     <thead>
       <tr>
-        {{ obj_button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "plus", "add") }}
+        {{ obj_create_button (page, E_Type, "th") }}
         {% for f in fields %}
           <th scope="col" title="{{ f.description }}">{{ f.ui_name }}</th>
         {% endfor %}
-        {{ obj_button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "plus", "add") }}
+        {{ obj_create_button (page, E_Type, "th") }}
       </tr>
     </thead>
     <tbody>
