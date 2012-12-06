@@ -53,7 +53,7 @@ class Admin (object) :
     Clip_X               = dict \
         ( ETM            = "GTW.OMP.SWP.Clip_X"
         , list_display   =
-            ( "ui_display", "short_title", "date", "creator", "format"
+            ( "ui_display", "short_title", "date", "created_by", "format"
             , "last_changed"
             )
         , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
@@ -67,7 +67,7 @@ class Admin (object) :
     Page                 = dict \
         ( ETM            = "GTW.OMP.SWP.Page"
         , list_display   =
-            ( "ui_display", "short_title", "date", "creator", "format"
+            ( "ui_display", "short_title", "date", "created_by", "format"
             , "last_changed"
             )
         , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
@@ -86,8 +86,7 @@ import _GTW._OMP._SWP.Page
 
 GTW.OMP.SWP.Page.GTW.afs_spec = Spec.Entity \
     ( include_links =
-        ( "creator"
-        , Spec.Entity_Link
+        ( Spec.Entity_Link
             ( "events"
             , include_links =
                 ( Spec.Entity_Link ("recurrence", include_links = ("rules", ))

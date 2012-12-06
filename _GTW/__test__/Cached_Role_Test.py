@@ -30,6 +30,7 @@
 #    20-Jul-2012 (RS) Add several left-sides (more than one `PAP.Person`)
 #    13-Sep-2012 (CT) Add test for `auto_cache_roles`
 #     6-Dec-2012 (CT) Add `Person_has_Account` role-cacher
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -91,7 +92,6 @@ _test_acr = """
     (<Link_Cacher_1 (GTW.OMP.EVT.Recurrence_Spec) event --> recurrence>,)
     (<Link_Cacher_n (GTW.OMP.EVT.Recurrence_Rule) recurrence_spec --> rules>,)
     (<Link_Cacher_1 (GTW.OMP.PAP.Address_Position) address --> gps>,)
-    (<Role_Cacher_1 (GTW.OMP.PAP.Entity_created_by_Person) creator --> creator [MOM.Id_Entity]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Phone) phone --> phones [GTW.OMP.PAP.Subject]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Address) address --> addresses [GTW.OMP.PAP.Subject]>,)
     (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>,)

@@ -35,6 +35,7 @@
 #    14-May-2012 (CT) Add test showing `P_Type` of `scope.attribute_types`
 #    31-Jul-2012 (CT) Add `Angle` to test output
 #    11-Oct-2012 (CT) Change duplicate removal for `Sig_Key` test
+#     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    ««revision-date»»···
 #--
 
@@ -433,7 +434,6 @@ _test_code = """
     Format <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Gallery <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Group <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
-    Id_Entity <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Int_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
