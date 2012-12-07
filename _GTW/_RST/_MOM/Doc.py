@@ -35,6 +35,7 @@
 #    26-Sep-2012 (CT) Add `is_partial` to `_response_body`
 #    18-Oct-2012 (CT) Register `E_Type` in `top.ET_Map` under `.map_name`
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map [self.E_Type.map_name]`
+#     7-Dec-2012 (CT) Consider `dont_et_map`
 #    ««revision-date»»···
 #--
 
@@ -107,6 +108,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
     _real_name                 = "E_Type"
     _ETM                       = None
 
+    dont_et_map                = False
     map_name                   = "rest_doc"
     page_template_name         = "e_type_doc_bare"
 
@@ -249,7 +251,8 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
         if "name" not in kw :
             kw ["name"] = etn.replace (".", "-")
         self.__super.__init__ (** kw)
-        setattr (self.top.ET_Map [self.type_name], self.map_name, self)
+        if not self.dont_et_map :
+            setattr (self.top.ET_Map [self.type_name], self.map_name, self)
         if not getattr (self, "short_title", None) :
             self.short_title = _T (etn)
     # end def __init__

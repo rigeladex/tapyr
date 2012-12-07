@@ -40,6 +40,7 @@
 #     6-Nov-2012 (CT) Remove obsolete code
 #    13-Nov-2012 (CT) Add `scope.rollback` to `_Changer_._rendered_post`
 #    21-Nov-2012 (CT) Fix indentation of `scope.rollback` call
+#     7-Dec-2012 (CT) Consider `dont_et_map`
 #    ««revision-date»»···
 #--
 
@@ -941,7 +942,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         self.pop_to_self (kw, "list_display", prefix = "_")
         self._field_map = {}
         self.__super.__init__ (** kw)
-        if not self.implicit :
+        if not (self.implicit or self.dont_et_map) :
             self.top.ET_Map [self.type_name].admin = self
     # end def __init__
 

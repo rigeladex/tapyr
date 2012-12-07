@@ -59,6 +59,7 @@
 #    21-Nov-2012 (CT) Add exception handler to
 #                     `E_Type_Mixin._handle_method_context`
 #    27-Nov-2012 (CT) Factor `_obj_resource_response_body`, add `_POST_Mixin_`
+#     7-Dec-2012 (CT) Add `E_Type_Mixin.dont_et_map`
 #    ««revision-date»»···
 #--
 
@@ -397,6 +398,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
     QR                         = GTW.RST.MOM.Query_Restriction
 
     default_qr_kw              = dict ()
+    dont_et_map                = False
     query_restriction          = None
     sort_key                   = None
 
