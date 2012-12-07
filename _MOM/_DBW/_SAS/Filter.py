@@ -47,6 +47,7 @@
 #    18-Jul-2012 (MG) `TFL.Attr_Query._Call_._sa_filter` Support subqueries
 #                     for `in_` operator
 #    10-Aug-2012 (MG) Change handling of composite attributes
+#     6-Dec-2012 (MG) Fix query attribute handling
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ def _sa_filter (self, SAQ) :
             pass
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well
-        elif col.table != SAQ._SA_TABLE :
+        elif getattr (col, "table", SAQ._SA_TABLE) != SAQ._SA_TABLE :
            joins.append ((SAQ._SA_TABLE, col.table, None, False))
     return joins, columns
 # end def _sa_filter

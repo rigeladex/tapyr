@@ -29,6 +29,7 @@
 #    16-Aug-2012 (MG) Creation
 #    25-Sep-2012 (CT) Fix `_register` errors
 #     9-Oct-2012 (CT) Change "error" class, fix various errors
+#     6-Dec-2012 (MG) Fix test executaion, new test for query attribute added
 #    ««revision-date»»···
 #--
 
@@ -112,10 +113,11 @@ _login_logout = r"""
     'http://localhost/Auth/change_password?p=2'
 
     >>> scope.destroy ()
+    >>> Scaffold.root = None
 """
 
 _activate        = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -174,6 +176,7 @@ _activate        = r"""
     <BLANKLINE>
 
     >>> scope.destroy ()
+    >>> Scaffold.root = None
 """
 
 _register        = r"""
@@ -259,6 +262,7 @@ _register        = r"""
     0
 
     >>> scope.destroy ()
+    >>> Scaffold.root = None
 """
 
 _change_email    = r"""
@@ -340,6 +344,7 @@ _change_email    = r"""
     0
 
     >>> scope.destroy ()
+    >>> Scaffold.root = None
 """
 
 _change_password = r"""
@@ -400,8 +405,8 @@ _change_password = r"""
     >>> print ("".join (str (e)for e in errors))
     <BLANKLINE>
 
-    >>>
     >>> scope.destroy ()
+    >>> Scaffold.root = None
 """
 
 _password_reset  = r"""
@@ -447,6 +452,20 @@ _password_reset  = r"""
     >>> print ("".join (str (e)for e in errors))
 
     >>> scope.destroy ()
+    >>> Scaffold.root = None
+"""
+
+_test_query_attr    = r"""
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    ...
+    >>> scope  = root.scope
+    >>> Auth   = scope.Auth
+
+    >>> Auth.Account.query (Q.active == True).all ()
+    [Auth.Account (u'a1'), Auth.Account (u'a2')]
+
+    >>> scope.destroy ()
+    >>> Scaffold.root = None
 """
 
 from  _GTW.__test__.model import *
@@ -499,14 +518,7 @@ __test__ = dict \
     , login_logout    = _login_logout
     , register        = _register
     , reset_password  = _password_reset
-    )
-
-### XXX each of the above tests runs correctly if it is the only one
-###     *** but if trying to run several all but the first fail during scope
-###         creation
-
-__test__ = dict \
-    ( activate        = _activate
+    , test_query_attr = _test_query_attr
     )
 
 ### __END__ GTW.__test__.Auth
