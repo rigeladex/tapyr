@@ -42,6 +42,7 @@
 #    26-Sep-2012 (CT) Change `_effective_entry` to consider `self.hidden`
 #    26-Sep-2012 (CT) Remove `hidden` from `is_current_dir`
 #    26-Sep-2012 (CT) Redefine `show_in_nav`
+#     7-Dec-2012 (CT) Check `allow_method` in `_effective_entry`
 #    ««revision-date»»···
 #--
 
@@ -113,11 +114,15 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
     @property
     @getattr_safe
     def _effective_entry (self) :
-        entries = self.entries
         if self.hidden :
-            page = first (entries)
+            entries = self.entries
         else :
-            page = first (e for e in entries if not e.hidden)
+            entries = (e for e in self.entries if not e.hidden)
+        if self.request :
+            method  = self.request.method
+            user    = self.user
+            entries = (e for e in entries if e.allow_method (method, user))
+        page = first (entries)
         return page._effective
     # end def _effective_entry
 

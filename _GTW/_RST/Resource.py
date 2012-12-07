@@ -81,7 +81,8 @@
 #     5-Oct-2012 (CT) Fix `_Base_.allow_user` (`self.GET`, not `"GET"`)
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` in here from `.TOP.Root`
 #    20-Oct-2012 (CT) Add `E_Type_Desc.type_name`, `_find_missing`, `._prop_map`
-#     6-Dec-2012 (CT) Set `user` in `_handle_method_context`
+#     6-Dec-2012 (CT) Let `user` in `_handle_method_context`
+#     7-Dec-2012 (CT) Let `request` and `user` in `_http_response`
 #    ««revision-date»»···
 #--
 
@@ -179,8 +180,10 @@ class _RST_Base_ (TFL.Meta.Object) :
     hidden                     = False
     implicit                   = False
     pid                        = None
+    request                    = None
     template                   = Alias_Property ("page_template")
     template_name              = Alias_Property ("page_template_name")
+    user                       = None
 
     _greet_entry               = None
     _needs_parent              = True
@@ -600,7 +603,8 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        with self.LET (user = request.user) : ### XXX language ???
+        with self.LET (request = request, user = request.user) :
+                          ### XXX language ???
             T = self.Templateer
             if T :
                 with T.GTW.LET (blackboard = dict ()) :
@@ -1351,35 +1355,37 @@ class RST_Root (_Ancestor) :
     # end def wsgi_app
 
     def _http_response (self, resource, request, response) :
-        Status    = self.Status
-        user      = request.user
-        auth      = user and user.authenticated
-        resource  = resource._effective
-        meth_name = request.method
-        if meth_name not in resource.SUPPORTED_METHODS :
-            raise Status.Method_Not_Allowed \
-                (valid_methods = resource.SUPPORTED_METHODS)
-        Method = resource._get_method (meth_name)
-        if Method is not None :
-            method = Method ()
-            if resource.allow_method (method, user) :
-                if resource.DEBUG :
-                    context = TFL.Context.time_block
-                    fmt     = "[%s] %s %s: execution time = %%s" % \
-                        ( time.strftime
-                            ( "%d-%b-%Y %H:%M:%S"
-                            , time.localtime (time.time ())
+        Status = self.Status
+        user   = request.user
+        with self.LET (request = request, user = user) : ### XXX language ???
+            auth      = user and user.authenticated
+            resource  = resource._effective
+            meth_name = request.method
+            if meth_name not in resource.SUPPORTED_METHODS :
+                raise Status.Method_Not_Allowed \
+                    (valid_methods = resource.SUPPORTED_METHODS)
+            Method = resource._get_method (meth_name)
+            if Method is not None :
+                method = Method ()
+                if resource.allow_method (method, user) :
+                    if resource.DEBUG :
+                        context = TFL.Context.time_block
+                        fmt     = "[%s] %s %s: execution time = %%s" % \
+                            ( time.strftime
+                                ( "%d-%b-%Y %H:%M:%S"
+                                , time.localtime (time.time ())
+                                )
+                            , method.name, request.url.replace ("%", "%%")
                             )
-                        , method.name, request.url.replace ("%", "%%")
-                        )
+                    else :
+                        context = TFL.Context.relaxed
+                        fmt     = None
+                    with context (fmt, sys.stderr) :
+                        return resource._handle_method \
+                            (method, request, response)
                 else :
-                    context = TFL.Context.relaxed
-                    fmt     = None
-                with context (fmt, sys.stderr) :
-                    return resource._handle_method (method, request, response)
-            else :
-                self._http_response_need_auth \
-                    (resource, request, response, auth)
+                    self._http_response_need_auth \
+                        (resource, request, response, auth)
     # end def _http_response
 
     def _http_response_error (self, request, response, exc, tbi = None) :
