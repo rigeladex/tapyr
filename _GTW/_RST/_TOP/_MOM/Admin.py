@@ -41,6 +41,8 @@
 #    13-Nov-2012 (CT) Add `scope.rollback` to `_Changer_._rendered_post`
 #    21-Nov-2012 (CT) Fix indentation of `scope.rollback` call
 #     7-Dec-2012 (CT) Consider `dont_et_map`
+#     7-Dec-2012 (CT) Convert `form_parameters` to `property` to allow
+#                     redefinition
 #    ««revision-date»»···
 #--
 
@@ -835,7 +837,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         ( limit           = 25
         )
     dir_template_name     = "e_type_admin"
-    form_parameters       = {}
     max_completions       = 20
     skip_etag             = True
     submit_callback       = None
@@ -850,6 +851,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     _exclude_robots       = True
     _greet_entry          = None
     _form_id              = None
+    _form_parameters      = {}
     _list_display         = None
     _sort_key             = None
 
@@ -990,6 +992,17 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     def form_id (self, value) :
         self._form_id = value
     # end def form_id
+
+    @property
+    @getattr_safe
+    def form_parameters (self) :
+        return self._form_parameters
+    # end def form_parameters
+
+    @form_parameters.setter
+    def form_parameters (self, value) :
+        self._form_parameters = value
+    # end def form_parameters
 
     @property
     @getattr_safe

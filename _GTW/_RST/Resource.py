@@ -81,7 +81,6 @@
 #     5-Oct-2012 (CT) Fix `_Base_.allow_user` (`self.GET`, not `"GET"`)
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` in here from `.TOP.Root`
 #    20-Oct-2012 (CT) Add `E_Type_Desc.type_name`, `_find_missing`, `._prop_map`
-#     6-Dec-2012 (CT) Let `user` in `_handle_method_context`
 #     7-Dec-2012 (CT) Let `request` and `user` in `_http_response`
 #    ««revision-date»»···
 #--
@@ -180,10 +179,8 @@ class _RST_Base_ (TFL.Meta.Object) :
     hidden                     = False
     implicit                   = False
     pid                        = None
-    request                    = None
     template                   = Alias_Property ("page_template")
     template_name              = Alias_Property ("page_template_name")
-    user                       = None
 
     _greet_entry               = None
     _needs_parent              = True
@@ -603,14 +600,12 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        with self.LET (request = request, user = request.user) :
-                          ### XXX language ???
-            T = self.Templateer
-            if T :
-                with T.GTW.LET (blackboard = dict ()) :
-                    yield
-            else :
+        T = self.Templateer
+        if T :
+            with T.GTW.LET (blackboard = dict ()) :
                 yield
+        else :
+            yield
     # end def _handle_method_context
 
     def __getattr__ (self, name) :
@@ -1083,9 +1078,11 @@ class RST_Root (_Ancestor) :
     language                   = "en"
     languages                  = set (("en", ))
     prefix                     = ""
+    request                    = None
     site_url                   = ""
     skip_etag                  = False
     use_www_debugger           = False
+    user                       = None
 
     _exclude_robots            = True
     _href_pat                  = None
