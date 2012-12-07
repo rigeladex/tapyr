@@ -34,6 +34,7 @@
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Aug-2012 (CT) Fix typo (`.admin`, not `._admin`)
 #     9-Nov-2012 (CT) Redefine `E_Type_Mixin._get_child_page`
+#     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    ««revision-date»»···
 #--
 
@@ -201,14 +202,14 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
         return self._entries
     # end def entries
 
-    @Once_Property
+    @property
     @getattr_safe
-    def query_filters (self) :
-        result = list (self.__super.query_filters)
+    def query_filters_d (self) :
+        result = list (self.__super.query_filters_d)
         if self.disp_filter is not None :
             result.append (self.disp_filter)
         return tuple (result)
-    # end def query_filters
+    # end def query_filters_d
 
     def href_create (self) :
         admin = self.admin

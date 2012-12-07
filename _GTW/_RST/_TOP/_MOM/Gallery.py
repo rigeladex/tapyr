@@ -30,6 +30,7 @@
 #    26-Jul-2012 (CT) Remove `_admin` from `pictures`
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
 #    10-Aug-2012 (CT) Fix `_admin` removal in `pictures` (use `isinstance`)
+#     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    ««revision-date»»···
 #--
 
@@ -168,11 +169,11 @@ class Gallery \
         return result
     # end def pictures
 
-    @Once_Property
+    @property
     @getattr_safe
-    def query_filters (self) :
-        return (Q.left == self.obj.pid, )
-    # end def query_filters
+    def query_filters_d (self) :
+        return self.__super.query_filters_d + (Q.left == self.obj.pid, )
+    # end def query_filters_d
 
     def href_display (self, obj) :
         return pp_join (self.abs_href, obj.name)

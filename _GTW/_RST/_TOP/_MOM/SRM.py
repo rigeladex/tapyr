@@ -38,6 +38,7 @@
 #     5-Dec-2012 (CT) Add `Regatta_Event.regattas`
 #     5-Dec-2012 (CT) Fix typo in `Archive.Year.regattas`
 #     5-Dec-2012 (CT) Redefine `Archive.Year.sort_key`
+#     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    ««revision-date»»···
 #--
 
@@ -344,11 +345,11 @@ class Regatta_Event \
         return self._entries
     # end def entries
 
-    @Once_Property
+    @property
     @getattr_safe
-    def query_filters (self) :
-        return (Q.left == self.obj.pid, )
-    # end def query_filters
+    def query_filters_d (self) :
+        return self.__super.query_filters_d + (Q.left == self.obj.pid, )
+    # end def query_filters_d
 
     @property
     @getattr_safe

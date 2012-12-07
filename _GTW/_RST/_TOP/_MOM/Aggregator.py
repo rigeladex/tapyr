@@ -28,6 +28,7 @@
 # Revision Dates
 #    17-Jul-2012 (CT) Creation
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
+#     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
 #    ««revision-date»»···
 #--
 
@@ -152,9 +153,9 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
 
     @Once_Property
     @getattr_safe
-    def query_filters (self) :
-        return (Q.date.alive, )
-    # end def query_filters
+    def query_filters_s (self) :
+        return self.__super.query_filters_s + (Q.date.alive, )
+    # end def query_filters_s
 
     def query (self) :
         qs = []

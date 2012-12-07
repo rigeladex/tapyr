@@ -33,6 +33,7 @@
 #     9-Nov-2012 (CT) Redefine `page_from_obj` for `E_Type_Archive_DSY` and
 #                     `E_Type_Archive_Y`
 #     7-Dec-2012 (CT) Consider `dont_et_map`
+#     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
 #    ««revision-date»»···
 #--
 
@@ -154,12 +155,12 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
 
         @Once_Property
         @getattr_safe
-        def query_filters (self) :
+        def query_filters_s (self) :
             return \
                 ( self.parent._year_filter (self.year)
-                + self.__super.query_filters
+                + self.__super.query_filters_s
                 )
-        # end def query_filters
+        # end def query_filters_s
 
     # end class Year
 

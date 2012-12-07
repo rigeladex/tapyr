@@ -60,6 +60,9 @@
 #                     `E_Type_Mixin._handle_method_context`
 #    27-Nov-2012 (CT) Factor `_obj_resource_response_body`, add `_POST_Mixin_`
 #     7-Dec-2012 (CT) Add `E_Type_Mixin.dont_et_map`
+#     7-Dec-2012 (CT) Split `query_filters` into `query_filters_d` and
+#                     `query_filters_s`
+#     7-Dec-2012 (CT) Factor `_change_info_key`
 #    ««revision-date»»···
 #--
 
@@ -270,13 +273,19 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     @property
     @getattr_safe
     def _change_info (self) :
-        return self.top._change_infos.get (self.href)
+        return self.top._change_infos.get (self._change_info_key)
     # end def _change_info
 
     @_change_info.setter
     def _change_info (self, value) :
-        self.top._change_infos [self.href] = value
+        self.top._change_infos [self._change_info_key] = value
     # end def _change_info
+
+    @property
+    @getattr_safe
+    def _change_info_key (self) :
+        return self.href
+    # end def _change_info_key
 
     def pid_query_request (self, pid, E_Type = None, raise_not_found = True) :
         if E_Type is None :
@@ -432,11 +441,25 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
         return result
     # end def change_query_filters
 
-    @Once_Property
+    @property
     @getattr_safe
     def query_filters (self) :
-        return tuple ()
+        return self.query_filters_d + self.query_filters_s
     # end def query_filters
+
+    @property
+    @getattr_safe
+    def query_filters_d (self) :
+        """Dynamic query filters"""
+        return tuple ()
+    # end def query_filters_d
+
+    @Once_Property
+    @getattr_safe
+    def query_filters_s (self) :
+        """Static query filters: evaluated only once and cached"""
+        return tuple ()
+    # end def query_filters_s
 
     def query (self, sort_key = None) :
         result = self.ETM.query \
