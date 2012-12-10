@@ -42,6 +42,7 @@
 #     4-Aug-2012 (CT) Add `_test_undo`, add `raw = True` to entity creation
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    13-Nov-2012 (CT) Adapt to change of `SRM.Club.name.cooked`
+#    10-Dec-2012 (CT) Add tests for `.FO` (nested attributes)
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,46 @@ _test_code = r"""
     (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     >>> BiR.instance (* bir.epk_raw, raw = True)
     SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
+
+    >>> print (bir.FO.pid)
+    9
+    >>> print (bir.FO.right.left.pid)
+    6
+    >>> print (bir.FO.left)
+    Optimist, AUT 1107
+    >>> print (bir.FO.left.left)
+    Optimist
+    >>> print (bir.FO.left.left.name)
+    Optimist
+    >>> print (bir.FO.right)
+    Himmelfahrt 2008/05/01, Optimist
+    >>> print (bir.FO.right.left)
+    Himmelfahrt 2008/05/01
+    >>> print (bir.FO.right.left.date)
+    2008/05/01
+    >>> print (bir.FO.right.left.date.start)
+    2008/05/01
+    >>> print (bir.FO.right.left.date.finish)
+    2008/05/01
+
+    >>> print (getattr (bir.FO, "pid"))
+    9
+    >>> print (getattr (bir.FO, "right.left.pid"))
+    6
+    >>> print (getattr (bir.FO, "left"))
+    Optimist, AUT 1107
+    >>> print (getattr (bir.FO, "left.left"))
+    Optimist
+    >>> print (getattr (bir.FO, "left.left.name"))
+    Optimist
+    >>> print (getattr (bir.FO, "right"))
+    Himmelfahrt 2008/05/01, Optimist
+    >>> print (getattr (bir.FO, "right.left"))
+    Himmelfahrt 2008/05/01
+    >>> print (getattr (bir.FO, "right.left.date"))
+    2008/05/01
+    >>> print (getattr (bir.FO, "right.left.date.finish"))
+    2008/05/01
 
     >>> sorted (reg.boats)
     [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]

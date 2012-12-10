@@ -223,6 +223,7 @@
 #    16-Oct-2012 (CT) Factor `attr_tuple_to_save` from `An_Entity.attr_as_code`
 #     6-Dec-2012 (CT) Factor `creation_change` and `last_change`,
 #                     add `created_by` and `last_changed_by`
+#    10-Dec-2012 (CT) Add support for nested attributes to `FO`
 #    ««revision-date»»···
 #--
 
@@ -335,37 +336,60 @@ class Entity (TFL.Meta.Object) :
             getter   = getattr (TFL.Getter, name)
             obj      = self.__obj
             try :
-                attr = getter (obj.__class__)
+                if "." in name :
+                    obj, attr = self._get_nested_attr (obj, name)
+                else :
+                    attr = getattr (obj.__class__, name)
             except AttributeError :
                 result = repr (getter (obj))
             else :
-                if value is self.undefined :
-                    value   = attr.get_value (obj)
-                    get_raw = lambda : attr.get_raw  (obj)
-                else :
-                    def get_raw () :
-                        result = attr.attr.as_string (value)
-                        if isinstance (value, basestring) :
-                            result = repr (result)
-                            if result.startswith (("u'", 'u"')) :
-                                result = result [1:]
-                        elif result == "" :
-                            result = "None"
-                        return result
-                if isinstance (value, Entity) :
-                    return value.FO
-                else :
-                    uid = getattr (value, "ui_display", None)
-                    if uid :
-                        result = uid
+                if isinstance (attr, MOM.Attr.Kind) :
+                    if value is self.undefined :
+                        value   = attr.get_value (obj)
+                        get_raw = lambda : attr.get_raw  (obj)
                     else :
-                        result = get_raw ()
+                        def get_raw () :
+                            result = attr.attr.as_string (value)
+                            if isinstance (value, basestring) :
+                                result = repr (result)
+                                if result.startswith (("u'", 'u"')) :
+                                    result = result [1:]
+                            elif result == "" :
+                                result = "None"
+                            return result
+                    if isinstance (value, Entity) :
+                        return value.FO
+                    else :
+                        uid = getattr (value, "ui_display", None)
+                        if uid :
+                            result = uid
+                        else :
+                            result = get_raw ()
+                else :
+                    if value is self.undefined :
+                        ### Nested attributes need `self.__obj` here
+                        result = repr (getter (self.__obj))
+                    else :
+                        result = value
             return result
         # end def __call__
 
+        def _get_nested_attr (self, obj, name) :
+            names = name.split (".")
+            p     = names [0]
+            attr  = getattr (obj.__class__, p)
+            for n in names [1:] :
+                obj  = getattr (obj, p)
+                cls  = obj.__class__
+                attr = getattr (cls, n)
+                p    = n
+            return obj, attr
+        # end def _get_nested_attr
+
         def __getattr__ (self, name) :
             result = self (name)
-            setattr (self, name, result)
+            if "." not in name :
+                setattr (self, name, result)
             return result
         # end def __getattr__
 
