@@ -82,6 +82,7 @@
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` in here from `.TOP.Root`
 #    20-Oct-2012 (CT) Add `E_Type_Desc.type_name`, `_find_missing`, `._prop_map`
 #     7-Dec-2012 (CT) Let `request` and `user` in `_http_response`
+#    11-Dec-2012 (CT) Factor `_http_response_context` to let `scope.user`, too
 #    ««revision-date»»···
 #--
 
@@ -1354,7 +1355,7 @@ class RST_Root (_Ancestor) :
     def _http_response (self, resource, request, response) :
         Status = self.Status
         user   = request.user
-        with self.LET (request = request, user = user) : ### XXX language ???
+        with self._http_response_context (resource, request, response) :
             auth      = user and user.authenticated
             resource  = resource._effective
             meth_name = request.method
@@ -1384,6 +1385,21 @@ class RST_Root (_Ancestor) :
                     self._http_response_need_auth \
                         (resource, request, response, auth)
     # end def _http_response
+
+    @TFL.Contextmanager
+    def _http_response_context (self, resource, request, response) :
+        user = request.user
+        if user :
+            scope = self.scope
+            with self.LET (request = request, user = user) : ### XXX language ?
+                if scope and getattr (scope, "LET", None) :
+                    with scope.LET (user = user) :
+                        yield
+                else :
+                    yield
+        else :
+            yield
+    # end def _http_response_context
 
     def _http_response_error (self, request, response, exc, tbi = None) :
         self.send_error_email (request, exc, tbi)
