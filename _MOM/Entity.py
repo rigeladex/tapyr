@@ -224,6 +224,7 @@
 #     6-Dec-2012 (CT) Factor `creation_change` and `last_change`,
 #                     add `created_by` and `last_changed_by`
 #    10-Dec-2012 (CT) Add support for nested attributes to `FO`
+#    11-Dec-2012 (CT) Move `_Class_Kind` from `Entity` to `M_Entity`
 #    ««revision-date»»···
 #--
 
@@ -288,8 +289,6 @@ class Entity (TFL.Meta.Object) :
     _app_globals          = {}
     _dicts_to_combine     = ("deprecated_attr_names", )
     _home_scope           = None
-
-    _Class_Kind           = "Spec Essence"
 
     class _Attributes (MOM.Attr.Spec) :
 

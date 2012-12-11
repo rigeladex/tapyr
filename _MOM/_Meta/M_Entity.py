@@ -154,6 +154,7 @@
 #    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
 #    11-Oct-2012 (CT) Add `M_An_Entity._m_new_e_type_dict`, `._m_auto_signified`
 #    12-Oct-2012 (CT) Add `raw` and use `undefined` in `_m_auto_signified`
+#    11-Dec-2012 (CT) Add `M_E_Type.__instancecheck__`, `.__subclasscheck__`
 #    ««revision-date»»···
 #--
 
@@ -412,6 +413,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
+
+    _Class_Kind                = "Spec Essence"
 
     _dyn_doc                   = None
     _nested_classes_to_combine = ("_Attributes", "_Predicates")
@@ -860,6 +863,14 @@ class M_E_Type (M_E_Mixin) :
         ### just to ease up-chaining in descendents
         raise AttributeError ("%s.%s" % (cls.type_name, name))
     # end def __getattr__
+
+    def __instancecheck__ (cls, instance) :
+        return isinstance (instance, cls.Essence)
+    # end def __instancecheck__
+
+    def __subclasscheck__ (cls, subclass) :
+        return issubclass (subclass, cls.Essence)
+    # end def __subclasscheck__
 
 # end class M_E_Type
 

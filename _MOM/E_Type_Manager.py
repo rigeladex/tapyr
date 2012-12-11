@@ -119,6 +119,7 @@
 #    21-Sep-2012 (CT) Change `Link.__call__` to call `E_Type.child_np`
 #    24-Sep-2012 (CT) Remove `Link._role_to_raw_iter`
 #    10-Oct-2012 (CT) Change `raw_query_attrs` to return `tuple`
+#    11-Dec-2012 (CT) Add `Entity.__instancecheck__`, `.__subclasscheck__`
 #    ««revision-date»»···
 #--
 
@@ -183,6 +184,14 @@ class Entity (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
     # end def __getattr__
+
+    def __instancecheck__ (self, instance) :
+        return isinstance (instance, self.E_Type.Essence)
+    # end def __instancecheck__
+
+    def __subclasscheck__ (self, subclass) :
+        return issubclass (subclass, self.E_Type.Essence)
+    # end def __subclasscheck__
 
     def __repr__ (self) :
         return "<E_Type_Manager for %s of scope %s>" % \

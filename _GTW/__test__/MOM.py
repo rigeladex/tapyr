@@ -627,6 +627,16 @@ classes:
     >>> ET_Trap      = apt ["BMT.Trap"]
     >>> ET_Supertrap = apt ["BMT.Supertrap"]
 
+    >>> issubclass (ET_Mouse, BMT.Rodent)
+    True
+    >>> issubclass (ET_Mouse, BMT.Mouse)
+    True
+    >>> issubclass (ET_Rodent, BMT.Mouse)
+    False
+
+    >>> issubclass (ET_Mouse, BMT.Mouse.E_Spec)
+    False
+
 For each `entity_type` with a unique :attr:`epk_sig`, the meta
 machinery automatically creates methods `epkified_ckd` and
 `epkified_raw` matching the `epk_sig`. These auto-generated methods
@@ -1155,6 +1165,15 @@ appropriate class:
     >>> RiT   = scope.BMT.Rodent_in_Trap
     >>> PoT   = scope.BMT.Person_owns_Trap
     >>> PTL   = scope.BMT.Person_sets_Trap_at_Location
+
+    >>> isinstance (p, scope.BMT.Person)
+    True
+    >>> issubclass (p.__class__, scope.BMT.Person)
+    True
+    >>> isinstance (p, scope.BMT.Rodent)
+    False
+    >>> issubclass (p.__class__, scope.BMT.Rodent)
+    False
 
     >>> m == m, m != m, m == b, m != b, m == "", m != ""
     (True, False, False, True, False, True)
