@@ -42,6 +42,7 @@
 #    21-Nov-2012 (CT) Test invalid `AQ` argument
 #    27-Nov-2012 (CT) Test `location` header of `POST`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#    11-Dec-2012 (CT) Adapt to change in `HTTP_Status` response
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,8 @@ from   _GTW.__test__.Test_Command import *
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
+
+from   _TFL.Regexp                import Re_Replacer, re
 
 import datetime
 import json
@@ -176,6 +179,11 @@ def run_server (db_url = "hps://", db_name = None) :
     return p
 # end def run_server
 
+_date_cleaner = Re_Replacer \
+    ( r"\d{4}[-/]\d{2}[-/]\d{2} \d{2}:\d{2}"
+    , "<datetime instance>"
+    )
+
 def _normal (k, v) :
     if k in ("date", "last-modified") :
         v = "<datetime instance>"
@@ -191,7 +199,10 @@ def _normal (k, v) :
 def show (r, ** kw) :
     json = r.json if r.content else None
     if json is not None :
-        kw ["json"] = json
+        kw ["json"] = dict \
+            (  (k, _date_cleaner (v) if isinstance (v, basestring) else v)
+            for k, v in json.iteritems ()
+            )
     elif r.content :
         kw ["content"] = r.content.replace ("\r", "").strip ().split ("\n")
     output = formatted \
@@ -625,14 +636,20 @@ _test_delete = r"""
 
     >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1))) ### 8
     { 'json' :
-        { 'description' : 'Gone' }
+        { 'description' : 'Gone'
+        , 'info' : 'It was deleted by user `anonymous` on <datetime instance>'
+        , 'message' : "Id_Entity `1` doesn't exist anymore!"
+        }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
 
     >>> _ = show (R.get ("/v1/pid/1")) ### 9
     { 'json' :
-        { 'description' : 'Gone' }
+        { 'description' : 'Gone'
+        , 'info' : 'It was deleted by user `anonymous` on <datetime instance>'
+        , 'message' : "Id_Entity `1` doesn't exist anymore!"
+        }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1'
     }
@@ -3429,9 +3446,9 @@ _test_get = r"""
 
     >>> _ = show (R.get ("/RAISE"))
     { 'json' :
-        { 'content' : 'Wilful raisement'
-        , 'description' : 'Internal server error'
-        }
+        { 'description' : 'Internal server error'
+        , 'message' : 'Wilful raisement'
+          }
     , 'status' : 500
     , 'url' : 'http://localhost:9999/RAISE'
     }
@@ -3872,7 +3889,9 @@ _test_query = r"""
 
     >>> r = show (R.get ("/v1/MOM-Object?count&AQ=last_name,EQ,tanzer"))
     { 'json' :
-        { 'description' : 'Bad request' }
+        { 'description' : 'Bad request'
+        , 'message' : 'Query restriction triggered error: MOM.Object.last_name'
+        }
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/MOM-Object?count&AQ=last_name,EQ,tanzer'
     }

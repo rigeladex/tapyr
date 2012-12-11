@@ -1011,9 +1011,8 @@ class RST_Raiser (_Ancestor) :
         _real_name             = "GET"
 
         def _response_body (self, resource, request, response) :
-            content = "Wilful raisement"
             raise resource.Status.Internal_Server_Error \
-                (RuntimeError (content), content = content)
+                (RuntimeError ("Wilful raisement"))
         # end def _response_body
 
     GET = RST_Raiser_GET # end class

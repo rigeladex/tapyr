@@ -1,9 +1,9 @@
 {%- extends site_base or "html/base.jnj" %}
-{#- jinja template: 404.jnj -#}
+{#- jinja template: error_410.jnj -#}
 {#
-## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
-## ****************************************************************************
+## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
 ##
 ## This template is free software: you can redistribute it and/or modify
@@ -13,29 +13,28 @@
 ##
 ## This template is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ## GNU Affero General Public License for more details.
 ##
 ## You should have received a copy of the GNU Affero General Public License
 ## along with this template. If not, see <http://www.gnu.org/licenses/>.
-## ****************************************************************************
+## #*** </License> ***********************************************************#
 ##
 ##++
 ## Name
-##    html/error_404.jnj
+##    html/error_410.jnj
 ##
 ## Purpose
-##    Error template for HTTP error 404 (Not Found)
+##    Error template for HTTP error 410 (Gone)
 ##
 ## Revision Dates
-##    15-Jan-2010 (CT) Creation
-##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
+##    11-Dec-2012 (CT) Creation
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block title %}
-  <title>{{ GTW._T ("Page doesn't exist") }}</title>
+  <title>{{ GTW._T ("Page doesn't exist anymore") }}</title>
 {% endblock -%}
 
 {%- block document %}
@@ -45,20 +44,22 @@
     </h1>
   {% else %}
     <h1 class="Error-Message">
-      {{ GTW._T ("You requested a page that doesn't exist: ") }}
+      {{ GTW._T ("You requested a page that doesn't exist anymore: ") }}
       {{ request.path }}
     </h1>
-    <p>
-      {%- block error_explanation -%}
-        {{ GTW._T
-            ("If a link under %s refers to %s, please contact the %s.")
-          % ( request.host, request.path
-            , GTW.email_uri (page.webmaster, GTW._T ("webmaster"))
-            )
-        }}
-      {%- endblock error_explanation -%}
-    </p>
   {% endif %}
+  <p class="Error-Message">
+    {%- block error_explanation -%}
+      {%- if exception.info %}
+        {{ exception.info }}
+      {%- else %}
+        {{ GTW._T
+            ("The object referred to by the web address %s was deleted")
+          % (request.path, )
+        }}
+      {% endif -%}
+    {%- endblock error_explanation -%}
+  </p>
 {% endblock document -%}
 
-{#- __END__ jinja template: html/error_404.jnj -#}
+{#- __END__ jinja template: html/error_410.jnj -#}

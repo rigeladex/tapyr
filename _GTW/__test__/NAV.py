@@ -30,6 +30,7 @@
 #     2-Jun-2012 (CT) Rename `suppress_translation_loading` to `load_I18N`
 #    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#    11-Dec-2012 (CT) Add error `410`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ _test_code = """
     404
     405
     408
+    410
     500
     503
     account_change_email
@@ -84,6 +86,7 @@ _test_code = """
     404
     405
     408
+    410
     500
     503
     account_change_email
@@ -160,6 +163,7 @@ _test_code = """
       , 404
       , 405
       , 408
+      , 410
       , 500
       , 503
       , 'account_change_email'

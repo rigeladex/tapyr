@@ -77,6 +77,7 @@
 #     8-Aug-2012 (CT) Add `e_type_doc`
 #    25-Sep-2012 (CT) Add `pns_e_type_doc`
 #     9-Oct-2012 (CT) Remove `account_activate`
+#    11-Dec-2012 (CT) Add `error_410`
 #    ««revision-date»»···
 #--
 
@@ -531,6 +532,7 @@ error_templates = \
     , Template (404, "html/error_404.jnj")
     , Template (405, "html/error_405.jnj")
     , Template (408, "html/error_408.jnj")
+    , Template (410, "html/error_410.jnj")
     , Template (500, "html/error_500.jnj")
     , Template (503, "html/error_503.jnj")
     ]

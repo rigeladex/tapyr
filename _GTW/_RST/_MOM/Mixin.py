@@ -63,6 +63,7 @@
 #     7-Dec-2012 (CT) Split `query_filters` into `query_filters_d` and
 #                     `query_filters_s`
 #     7-Dec-2012 (CT) Factor `_change_info_key`
+#    11-Dec-2012 (CT) Factor `_check_pid_gone`, pass change-info to `Gone`
 #    ««revision-date»»···
 #--
 
@@ -292,13 +293,6 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
             E_Type = self.E_Type
         scope  = self.top.scope
         Status = self.Status
-        def _check_gone (ipid) :
-            if 0 < ipid <= scope.max_pid :
-                error = \
-                    (  _T ("%s `%s` doesn't exist anymore!")
-                    % (_T (E_Type.ui_name), pid)
-                    )
-                raise Status.Gone (error)
         try :
             ipid = int (pid)
         except (ValueError, TypeError) :
@@ -307,10 +301,10 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
             try :
                 result = scope.pid_query (ipid)
             except LookupError as exc :
-                _check_gone (ipid)
+                self._check_pid_gone (ipid, E_Type, scope)
             else :
                 if result is None :
-                    _check_gone (ipid)
+                    self._check_pid_gone (ipid, E_Type, scope)
                 elif isinstance (result, E_Type) :
                     return result
                 elif raise_not_found :
@@ -338,6 +332,31 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
         if self._old_cid != cid :
             return cid
     # end def _changed_cid
+
+    def _check_pid_gone (self, pid, E_Type, scope) :
+        lc = scope.query_changes \
+            (pid = pid).order_by (TFL.Sorted_By ("-cid")).first ()
+        if lc is not None :
+            user = _T ("anonymous")
+            if lc.user :
+                try :
+                    user = scope.pid_query (lc.user)
+                except Exception :
+                    user = lc.user
+                else :
+                    if user.person :
+                        user = user.person
+                    user = unicode (user.FO)
+            error = \
+                (  _T ("%s `%s` doesn't exist anymore!")
+                % (_T (E_Type.ui_name), pid)
+                )
+            info  = \
+                ( _T ("It was deleted by user `%s` on %s")
+                % (user, lc.time.strftime ("%Y-%m-%d %H:%M"))
+                )
+            raise self.Status.Gone (error, info = info)
+    # end def _check_pid_gone
 
     def _get_change_info (self) :
         result = None

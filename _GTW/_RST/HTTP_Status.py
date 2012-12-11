@@ -35,6 +35,9 @@
 #    17-Aug-2012 (MG) Use byte data-type for response headers
 #    24-Aug-2012 (CT) Change `Status.__repr__` to convert `_msg` to `str`
 #    10-Oct-2012 (CT) Set `request.Error` in `Status.__call__`
+#    11-Dec-2012 (CT) Add property `info` to `Status`
+#    11-Dec-2012 (CT) Change `_add_response_body` to include `message`
+#                     (after doing: s/_msg/message/g)
 #    ««revision-date»»···
 #--
 
@@ -95,6 +98,16 @@ class Status (StandardError, TFL.Meta.Object) :
     status_code   = None
 
     @Once_Property
+    def info (self) :
+        return self._kw.get ("info")
+    # end def info
+
+    @property
+    def message (self) :
+        return self._msg
+    # end def info
+
+    @Once_Property
     def render_man (self) :
         import _GTW._RST.Mime_Type
         import _GTW._RST._TOP.Base
@@ -107,20 +120,20 @@ class Status (StandardError, TFL.Meta.Object) :
         return self.status_code
     # end def template_name
 
-    def __init__ (self, msg = None, ** kw) :
+    def __init__ (self, message = None, ** kw) :
         assert self.status_code, self
         self.__dict__.update  (kw)
-        self.__super.__init__ (msg)
-        self._msg = msg
+        self.__super.__init__ (message)
+        self._msg = message
         self._kw  = kw
     # end def __init__
 
     def __call__ (self, resource, request, response) :
         if not hasattr (request, "Error") :
-            if self._msg :
+            if self.message :
                 ### Backwards compatibility with old-style Jinja templates
-                request.Error = self._msg
-        response.status_code = self.status_code
+                request.Error = self.message
+        response.status_code  = self.status_code
         self._add_response_body    (resource, request, response)
         self._add_response_headers (resource, request, response)
         return response
@@ -147,12 +160,18 @@ class Status (StandardError, TFL.Meta.Object) :
                 with Templateer.GTW.LET (blackboard = dict ()) :
                     body = template.render (context)
             else :
-                body = _T (self.description)
+                desc = _T (self.description)
+                body = \
+                    ( "%s: %s"
+                    % (desc, unicode (self.message)) if self.message else desc
+                    )
         else :
             body = dict \
                 ( self._kw
                 , description = self.description
                 )
+            if self.message :
+                body ["message"] = unicode (self.message)
         render (request, response, body)
     # end def _add_response_body
 
@@ -161,12 +180,12 @@ class Status (StandardError, TFL.Meta.Object) :
     # end def _add_response_headers
 
     def __repr__ (self) :
-        result = [repr (self.__class__)]
-        msg    = self._msg
-        if msg :
-            if not isinstance (msg, basestring) :
-                msg = str (msg)
-            result.append (msg)
+        result  = [repr (self.__class__)]
+        message = self.message
+        if message :
+            if not isinstance (message, basestring) :
+                message = str (message)
+            result.append (message)
         return " ".join (result)
     # end def __repr__
 
@@ -403,9 +422,9 @@ class Partial_Content (Successful) :
 class Redirection (Status) :
     """Base class for HTTP status classes indicating redirection [3xx]."""
 
-    def __init__ (self, location, msg = None, ** kw) :
+    def __init__ (self, location, message = None, ** kw) :
         self.location = location
-        self.__super.__init__ (msg, ** kw)
+        self.__super.__init__ (message, ** kw)
     # end def __init__
 
     def _add_response_headers (self, resource, request, response) :
