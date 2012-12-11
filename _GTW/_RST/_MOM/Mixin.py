@@ -64,6 +64,7 @@
 #                     `query_filters_s`
 #     7-Dec-2012 (CT) Factor `_change_info_key`
 #    11-Dec-2012 (CT) Factor `_check_pid_gone`, pass change-info to `Gone`
+#    11-Dec-2012 (CT) Lift `query_filters` from `E_Type_Mixin` to `Mixin`
 #    ««revision-date»»···
 #--
 
@@ -273,6 +274,26 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
 
     @property
     @getattr_safe
+    def query_filters (self) :
+        return self.query_filters_d + self.query_filters_s
+    # end def query_filters
+
+    @property
+    @getattr_safe
+    def query_filters_d (self) :
+        """Dynamic query filters"""
+        return tuple ()
+    # end def query_filters_d
+
+    @Once_Property
+    @getattr_safe
+    def query_filters_s (self) :
+        """Static query filters: evaluated only once and cached"""
+        return tuple ()
+    # end def query_filters_s
+
+    @property
+    @getattr_safe
     def _change_info (self) :
         return self.top._change_infos.get (self._change_info_key)
     # end def _change_info
@@ -459,26 +480,6 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
             result = (Q.type_name == E_Type.type_name, )
         return result
     # end def change_query_filters
-
-    @property
-    @getattr_safe
-    def query_filters (self) :
-        return self.query_filters_d + self.query_filters_s
-    # end def query_filters
-
-    @property
-    @getattr_safe
-    def query_filters_d (self) :
-        """Dynamic query filters"""
-        return tuple ()
-    # end def query_filters_d
-
-    @Once_Property
-    @getattr_safe
-    def query_filters_s (self) :
-        """Static query filters: evaluated only once and cached"""
-        return tuple ()
-    # end def query_filters_s
 
     def query (self, sort_key = None) :
         result = self.ETM.query \
