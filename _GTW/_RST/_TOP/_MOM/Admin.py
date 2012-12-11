@@ -43,6 +43,7 @@
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #     7-Dec-2012 (CT) Convert `form_parameters` to `property` to allow
 #                     redefinition
+#    11-Dec-2012 (CT) Change default for `form.referrer` to `parent.abs_href`
 #    ««revision-date»»···
 #--
 
@@ -390,7 +391,7 @@ class _Changer_ (_HTML_Action_) :
         form = self.form \
             ( obj
             , referrer        = "%s%s" %
-                ( request.referrer or ""
+                ( request.referrer or self.parent.abs_href
                 , "#pk-%s" % (obj.pid, ) if obj else ""
                 )
             , _sid            = sid
