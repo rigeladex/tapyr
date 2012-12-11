@@ -111,6 +111,7 @@
 #                     for previously existing `entity`
 #     6-Nov-2012 (CT) Change `Field.applyf` to return `value.edit` for
 #                     previously existing `entity` only if value was changed
+#    11-Dec-2012 (CT) Change `Field_Composite.applyf` to not return `{}`
 #    ««revision-date»»···
 #--
 
@@ -202,7 +203,8 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
         error = None
         try :
             try :
-                matches = ETM.query_s (* ETM.raw_query_attrs (akw, akw))
+                rqas    = ETM.raw_query_attrs (akw, akw)
+                matches = ETM.query_s (* rqas)
             except Exception as exc :
                 logging.exception \
                     ( "Exception from ETM.query_s "
@@ -432,8 +434,9 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
     def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
         if entity is not None :
             entity = getattr (entity, self.name)
-        return self._changed_children \
+        result = self._changed_children \
             (value, results, scope, entity, on_error = on_error, ** kw)
+        return result or None
     # end def applyf
 
     def _call_iter (self, ETM, entity, ** kw) :
