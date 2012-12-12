@@ -44,6 +44,7 @@
 #     7-Dec-2012 (CT) Convert `form_parameters` to `property` to allow
 #                     redefinition
 #    11-Dec-2012 (CT) Change default for `form.referrer` to `parent.abs_href`
+#    12-Dec-2012 (CT) Fix call to `QR.from_request` in `QX_Completer`
 #    ««revision-date»»···
 #--
 
@@ -725,7 +726,8 @@ class QX_Completer (_JSON_Action_PO_) :
                     )
                 )
             )
-        qr     = QR.from_request (ET, request)
+        qr     = QR.from_request \
+            (ET, request, ** request.json.get ("values", {}))
         ETM    = self.top.scope [ET.type_name]
         query  = qr (ETM.query_s ()).distinct ()
         entity_p = getattr (json, "entity_p", False)
