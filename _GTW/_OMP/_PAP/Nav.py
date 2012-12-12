@@ -47,6 +47,7 @@
 #    22-Mar-2012 (CT) Add `Company` and its links
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#    12-Dec-2012 (CT) Add `Person_has_Account`
 #    ««revision-date»»···
 #--
 
@@ -112,6 +113,10 @@ class Admin (object) :
 
     Company_has_Url      = dict \
         ( ETM            = "GTW.OMP.PAP.Company_has_Url"
+        )
+
+    Person_has_Account   = dict \
+        ( ETM            = "GTW.OMP.PAP.Person_has_Account"
         )
 
     Person_has_Address   = dict \

@@ -31,6 +31,7 @@
 #    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    11-Dec-2012 (CT) Add error `410`
+#    12-Dec-2012 (CT) Add `Person_has_Account`
 #    ««revision-date»»···
 #--
 
@@ -121,6 +122,7 @@ _test_code = """
     Admin/Personenverwaltung/Company_has_Url e_type_admin
     Admin/Personenverwaltung/Email e_type_admin
     Admin/Personenverwaltung/Person e_type_admin
+    Admin/Personenverwaltung/Person_has_Account e_type_admin
     Admin/Personenverwaltung/Person_has_Address e_type_admin
     Admin/Personenverwaltung/Person_has_Email e_type_admin
     Admin/Personenverwaltung/Person_has_Phone e_type_admin
