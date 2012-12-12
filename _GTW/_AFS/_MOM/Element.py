@@ -112,6 +112,9 @@
 #     6-Nov-2012 (CT) Change `Field.applyf` to return `value.edit` for
 #                     previously existing `entity` only if value was changed
 #    11-Dec-2012 (CT) Change `Field_Composite.applyf` to not return `{}`
+#    12-Dec-2012 (CT) Factor `_child_changed_p`, redefine for `Field_Composite`
+#    12-Dec-2012 (CT) Change `Field.applyf` to return `value.edit` if there
+#                     is no conflict (needed for composite attributes)
 #    ««revision-date»»···
 #--
 
@@ -133,20 +136,30 @@ class _MOM_Element_ (AE._Element_) :
     _real_name    = "Element"
 
     def _changed_children \
-            (self, value, results, scope, entity, on_error = None, ** kw) :
+            ( self, value, results, scope, entity
+            , on_error        = None
+            , child_changed_p = None
+            , ** kw
+            ) :
+        if child_changed_p is None :
+            child_changed_p = self._child_changed_p
         result = {}
         for c in value.children :
-            v = None
-            if c.entity :
-                v = c.entity
-            elif entity is None or c.changed :
-                v = c.elem.applyf \
-                    (c, results, scope, entity, on_error = None, ** kw)
-                value.conflicts += c.conflicts
-            if v is not None :
-                result [c.elem.name] = v
+            if entity is None or child_changed_p (c) :
+                if c.entity :
+                    v = c.entity
+                else :
+                    v = c.elem.applyf \
+                        (c, results, scope, entity, on_error = None, ** kw)
+                    value.conflicts += c.conflicts
+                if v is not None :
+                    result [c.elem.name] = v
         return result
     # end def _changed_children
+
+    def _child_changed_p (self, c) :
+        return (c.changes and not c.prefilled)
+    # end def _child_changed_p
 
 Element = _MOM_Element_ # end class
 
@@ -370,16 +383,20 @@ class _MOM_Field_ (_MOM_Field_MI_, AE.Field) :
     # end def __call__
 
     def applyf (self, value, results, scope, entity, on_error = None, ** kw) :
+        ### only called if ::
+        ### * this field has changed
+        ### * or entity is None
+        ### * or another field of the same composite has changed and this field
+        ###   is needed too
         result = None
         if entity is not None :
             dbv = entity.raw_attr (self.name)
             if value.init != dbv:
                 value.conflicts += 1
                 value.asyn       = result = dbv
-            elif value.edit != value.init :
+        if result is None :
+            if value.edit or value.init :
                 result = value.edit
-        elif value.edit or value.edit != value.init :
-            result = value.edit
         return result
     # end def applyf
 
@@ -447,6 +464,12 @@ class _MOM_Field_Composite_ (_MOM_Element_, AE.Field_Composite) :
         for c in self.children :
             yield c (c_type, c_entity, ** kw)
     # end def _call_iter
+
+    def _child_changed_p (self, c) :
+        ### only called if at least one child changed
+        ### --> must include all children, otherwise unchanged values are lost
+        return True
+    # end def _child_changed_p
 
 Field_Composite = _MOM_Field_Composite_ # end class
 
