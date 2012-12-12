@@ -261,6 +261,7 @@
 #    16-Oct-2012 (CT) Add `as_rest_cargo_ckd`, `as_rest_cargo_raw`;
 #                     add `Atomic_Json_Mixin`
 #     9-Nov-2012 (CT) Change arguments to `MOM.Error.Link_Type`
+#    12-Dec-2012 (CT) Add clause for `MOM.Entity` to `A_Id_Entity.from_string`
 #    ««revision-date»»···
 #--
 
@@ -1116,10 +1117,14 @@ class _A_Id_Entity_ (_A_Entity_) :
     # end def etype_manager
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
+        scope = self._get_scope (obj)
         if isinstance (s, self.P_Type) :
             return s
+        elif isinstance (s, MOM.Entity) :
+            ### prevent call of `_call_eval` for `s`
+            ### * `_call_eval` expects a string
+            return self._check_type (s, self.P_Type)
         elif isinstance (s, int) :
-            scope = self._get_scope (obj)
             return scope.pid_query (s)
         elif s :
             assert self.P_Type, "%s needs to define `P_Type`" % self
@@ -1156,6 +1161,7 @@ class _A_Id_Entity_ (_A_Entity_) :
                   , _T (soc.P_Type.ui_name)
                   )
                 )
+        return value
     # end def _check_type
 
     def _get_object (self, obj, epk, raw = False) :

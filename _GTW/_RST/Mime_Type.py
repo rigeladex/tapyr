@@ -217,7 +217,8 @@ class RST_JSON (_Base_) :
 
     def rendered (self, request, response, body) :
         if isinstance (body, (dict, list, tuple)) :
-            return json.dumps (body, ** self.json_dump_kw)
+            result = json.dumps (body, ** self.json_dump_kw)
+            return result
     # end def rendered
 
 JSON = RST_JSON # end class

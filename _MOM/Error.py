@@ -75,6 +75,7 @@
 #    12-Aug-2012 (CT) Add `Not_Unique`
 #    10-Sep-2012 (CT) Fix name error in `Not_Unique`
 #    11-Sep-2012 (CT) Derive `Not_Unique` from `_Invariant_`
+#    12-Dec-2012 (CT) Change `Attribute.bindings` to format `value`
 #    ««revision-date»»···
 #--
 
@@ -226,7 +227,7 @@ class _Invariant_ (Error) :
         result.extend \
             ((a, None) for a in self.attributes if a not in self.val_disp)
         return sorted (result)
-    # end def bindings
+    # end def all_bindings
 
     @Once_Property
     def as_json_cargo (self) :
@@ -312,7 +313,7 @@ class Ambiguous_Epk (_Invariant_) :
             if  a.name not in given
             )
         return sorted (result)
-    # end def bindings
+    # end def all_bindings
 
     @Once_Property
     def args (self) :
@@ -385,7 +386,10 @@ class Attribute (Error) :
 
     @Once_Property
     def bindings (self) :
-        return ((self.attribute, self.value), )
+        FO    = self.entity.FO
+        name  = self.attribute
+        value = str (FO (name, self.value))
+        return ((name, value), )
     # end def bindings
 
     def correct (self) :
