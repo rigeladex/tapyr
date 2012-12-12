@@ -43,6 +43,7 @@
 #    27-Nov-2012 (CT) Test `location` header of `POST`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    11-Dec-2012 (CT) Adapt to change in `HTTP_Status` response
+#    12-Dec-2012 (CT) Use `+ELLIPSIS` instead of `Re_Replacer`
 #    ««revision-date»»···
 #--
 
@@ -52,8 +53,6 @@ from   _GTW.__test__.Test_Command import *
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
-
-from   _TFL.Regexp                import Re_Replacer, re
 
 import datetime
 import json
@@ -179,11 +178,6 @@ def run_server (db_url = "hps://", db_name = None) :
     return p
 # end def run_server
 
-_date_cleaner = Re_Replacer \
-    ( r"\d{4}[-/]\d{2}[-/]\d{2} \d{2}:\d{2}"
-    , "<datetime instance>"
-    )
-
 def _normal (k, v) :
     if k in ("date", "last-modified") :
         v = "<datetime instance>"
@@ -199,10 +193,7 @@ def _normal (k, v) :
 def show (r, ** kw) :
     json = r.json if r.content else None
     if json is not None :
-        kw ["json"] = dict \
-            (  (k, _date_cleaner (v) if isinstance (v, basestring) else v)
-            for k, v in json.iteritems ()
-            )
+        kw ["json"] = json
     elif r.content :
         kw ["content"] = r.content.replace ("\r", "").strip ().split ("\n")
     output = formatted \
@@ -634,20 +625,20 @@ _test_delete = r"""
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
-    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1))) ### 8
+    >>> _ = show (R.delete ("/v1/pid/1", params = dict (cid = 1))) ### 8 #doctest: +ELLIPSIS
     { 'json' :
         { 'description' : 'Gone'
-        , 'info' : 'It was deleted by user `anonymous` on <datetime instance>'
+        , 'info' : 'It was deleted by user `anonymous` on ...'
         , 'message' : "Id_Entity `1` doesn't exist anymore!"
         }
     , 'status' : 410
     , 'url' : 'http://localhost:9999/v1/pid/1?cid=1'
     }
 
-    >>> _ = show (R.get ("/v1/pid/1")) ### 9
+    >>> _ = show (R.get ("/v1/pid/1")) ### 9 #doctest: +ELLIPSIS
     { 'json' :
         { 'description' : 'Gone'
-        , 'info' : 'It was deleted by user `anonymous` on <datetime instance>'
+        , 'info' : 'It was deleted by user `anonymous` on ...'
         , 'message' : "Id_Entity `1` doesn't exist anymore!"
         }
     , 'status' : 410
