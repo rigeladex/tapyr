@@ -77,6 +77,7 @@
 #     8-Aug-2012 (MG) Add `css_class` and `name` to `kw`
 #    17-Aug-2012 (MG) Add support for overriding of `Type`
 #     8-Sep-2012 (CT) Set `MAT.A_Enum.input_widget`
+#    12-Dec-2012 (CT) Ignore `LookupError` in `Entity_Link.__call__`
 #    ««revision-date»»···
 #--
 
@@ -279,23 +280,27 @@ class Entity_Link (Entity) :
     # end def __init__
 
     def __call__ (self, E_Type, spec = None, seen = (), ** kw) :
-        assoc      = self._get_assoc     (self.name, E_Type)
-        role_name  = self._get_role_name (assoc,     E_Type)
-        role       = getattr (assoc, role_name)
-        r_name     = role.generic_role_name
-        max_links  = kw.get ("max_links", role.max_links)
-        seen       = set ([r_name])
-        with self.LET (hidden_role_name = r_name) :
-            result = self.__super.__call__ (assoc, self, seen, ** kw)
-        if max_links not in (0, 1) :
-            elkw = dict (kw)
-            elkw.setdefault ("name",      result.ui_name)
-            elkw.setdefault ("ui_name",   result.ui_name)
-            elkw.setdefault ("type_name", assoc.type_name)
-            if max_links > 1 :
-                elkw.setdefault ("max_links", max_links)
-            result = Element.Entity_List (proto = result, ** elkw)
-        return result
+        try :
+            assoc = self._get_assoc (self.name, E_Type)
+        except LookupError :
+            pass
+        else :
+            role_name  = self._get_role_name (assoc, E_Type)
+            role       = getattr (assoc, role_name)
+            r_name     = role.generic_role_name
+            max_links  = kw.get ("max_links", role.max_links)
+            seen       = set ([r_name])
+            with self.LET (hidden_role_name = r_name) :
+                result = self.__super.__call__ (assoc, self, seen, ** kw)
+            if max_links not in (0, 1) :
+                elkw = dict (kw)
+                elkw.setdefault ("name",      result.ui_name)
+                elkw.setdefault ("ui_name",   result.ui_name)
+                elkw.setdefault ("type_name", assoc.type_name)
+                if max_links > 1 :
+                    elkw.setdefault ("max_links", max_links)
+                result = Element.Entity_List (proto = result, ** elkw)
+            return result
     # end def __call__
 
     def _get_assoc (self, name, E_Type) :

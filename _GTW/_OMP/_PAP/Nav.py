@@ -48,6 +48,7 @@
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    12-Dec-2012 (CT) Add `Person_has_Account`
+#    12-Dec-2012 (CT) Add `accounts` to `include_links` of `Person`
 #    ««revision-date»»···
 #--
 
@@ -144,7 +145,7 @@ import _GTW._OMP._PAP.Person
 GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
     (include_links = ("addresses", "emails", "phones"))
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
-    (include_links = ("addresses", "emails", "phones"))
+    (include_links = ("accounts", "addresses", "emails", "phones"))
 GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
     (include_links = ("persons", "companies", "PAP.Address_Position"))
 GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
