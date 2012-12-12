@@ -83,6 +83,7 @@
 #    20-Oct-2012 (CT) Add `E_Type_Desc.type_name`, `_find_missing`, `._prop_map`
 #     7-Dec-2012 (CT) Let `request` and `user` in `_http_response`
 #    11-Dec-2012 (CT) Factor `_http_response_context` to let `scope.user`, too
+#    12-Dec-2012 (CT) Change `_http_response_context` to always `LET`
 #    ««revision-date»»···
 #--
 
@@ -1388,16 +1389,13 @@ class RST_Root (_Ancestor) :
     @TFL.Contextmanager
     def _http_response_context (self, resource, request, response) :
         user = request.user
-        if user :
-            scope = self.scope
-            with self.LET (request = request, user = user) : ### XXX language ?
-                if scope and getattr (scope, "LET", None) :
-                    with scope.LET (user = user) :
-                        yield
-                else :
+        scope = self.scope
+        with self.LET (request = request, user = user) : ### XXX language ?
+            if scope and getattr (scope, "LET", None) :
+                with scope.LET (user = user) :
                     yield
-        else :
-            yield
+            else :
+                yield
     # end def _http_response_context
 
     def _http_response_error (self, request, response, exc, tbi = None) :
