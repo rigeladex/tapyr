@@ -59,6 +59,7 @@
 #    29-Feb-2012 (CT) Add rule for `cmd-button`, remove rule for `cmd b`
 #     8-Mar-2012 (CT) Factor rules for `.QR` to `html/e_type.m.jnj.media`
 #    19-Apr-2012 (CT) Add rule for `.ui-state-default` to placate Chrome
+#    13-Dec-2012 (CT) Add rule for `td+td` to `.Object-List`
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,12 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     ]
+                )
+            , Rule
+                ( "td+td", "th+th"
+                , border_left   = "2px solid " + P.color_half_grey
+                , padding_left  = Em (0.5)
+                , padding_right = Em (0.5)
                 )
             , Rule
                 ( "th.Group[colspan]"
