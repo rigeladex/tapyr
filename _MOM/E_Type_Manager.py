@@ -120,6 +120,8 @@
 #    24-Sep-2012 (CT) Remove `Link._role_to_raw_iter`
 #    10-Oct-2012 (CT) Change `raw_query_attrs` to return `tuple`
 #    11-Dec-2012 (CT) Add `Entity.__instancecheck__`, `.__subclasscheck__`
+#    13-Dec-2012 (CT) Move `ac_query_attrs` and `raw_query_attrs` to `Entity`,
+#                     add optional argument `AQ` to both
 #    ««revision-date»»···
 #--
 
@@ -171,6 +173,20 @@ class Entity (TFL.Meta.Object) :
         return self._etype.is_partial
     # end def is_partial
 
+    def ac_query_attrs (self, names, values, AQ = None) :
+        if AQ is None :
+            AQ = self._etype.AQ
+        for n in names :
+            if n in values :
+                try :
+                    vq = getattr (AQ, n).AC (values [n])
+                except (ValueError, TypeError) :
+                    pass
+                else :
+                    if vq is not None :
+                        yield vq
+    # end def ac_query_attrs
+
     def get_etype_attribute (self, name) :
         etype = self._etype
         for n in name.split (".") :
@@ -180,6 +196,20 @@ class Entity (TFL.Meta.Object) :
             etype  = getattr (result, "P_Type", None)
         return result
     # end def get_etype_attribute
+
+    def raw_query_attrs (self, names, values = None, AQ = None) :
+        if AQ is None :
+            AQ = self._etype.AQ
+        def _gen (self, names, values, AQ) :
+            if values is None :
+                for n in names :
+                    yield getattr (AQ, n)
+            else :
+                for n in names :
+                    if n in values :
+                        yield getattr (AQ, n).EQ (values [n])
+        return tuple (_gen (self, names, values, AQ))
+    # end def raw_query_attrs
 
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
@@ -247,19 +277,6 @@ class Id_Entity (Entity) :
     def ems (self) :
         return self.home_scope.ems
     # end def ems
-
-    def ac_query_attrs (self, names, values) :
-        AQ = self._etype.AQ
-        for n in names :
-            if n in values :
-                try :
-                    vq = getattr (AQ, n).AC (values [n])
-                except (ValueError, TypeError) :
-                    pass
-                else :
-                    if vq is not None :
-                        yield vq
-    # end def ac_query_attrs
 
     def cooked_epk (self, epk, kw) :
         (epk, kw), this  = self._epkified (* epk, ** kw)
@@ -353,20 +370,6 @@ class Id_Entity (Entity) :
         c = q.count ()
         return c, q.first () if c == 1 else None
     # end def query_1
-
-    def raw_query_attrs (self, names, values = None) :
-        def _gen (self, names, values) :
-            et = self._etype
-            if values is None :
-                for n in names :
-                    attr = self.get_etype_attribute (n)
-                    yield attr.raw_query
-            else :
-                for n in names :
-                    if n in values :
-                        yield getattr (et, n).raw_query_eq (values [n])
-        return tuple (_gen (self, names, values))
-    # end def raw_query_attrs
 
     def _epkified (self, * epk, ** kw) :
         this  = self

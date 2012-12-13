@@ -110,6 +110,7 @@
 //    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
 //    18-Aug-2012 (MG) Fix `_response_replace`
 //    13-Nov-2012 (CT) Add `_display_error_extra_links`
+//    13-Dec-2012 (CT) Add missing `else` to `setup_completer._put`
 //    ««revision-date»»···
 //--
 
@@ -307,6 +308,8 @@
                           }
                         , "Completion"
                         );
+                } else {
+                    _update_field_values (options, elem, match, names);
                 };
             };
             var _put_cb = function put_cb (options, elem, response, entity_p) {

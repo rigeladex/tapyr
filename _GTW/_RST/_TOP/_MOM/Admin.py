@@ -45,6 +45,9 @@
 #                     redefinition
 #    11-Dec-2012 (CT) Change default for `form.referrer` to `parent.abs_href`
 #    12-Dec-2012 (CT) Fix call to `QR.from_request` in `QX_Completer`
+#    13-Dec-2012 (CT) Handle `MOM.An_Entity` in `._rendered_post` of
+#                     `Completer` and `Completed`
+#    13-Dec-2012 (CT) Add argument `AQ` to `_rendered_completions`
 #    ««revision-date»»···
 #--
 
@@ -285,18 +288,19 @@ class _JSON_Action_ (_Ancestor) :
         return QR.Filter (ET, key)
     # end def _get_attr_filter
 
-    def _rendered_completions (self, ETM, query, names, entity_p, json) :
+    def _rendered_completions (self, ETM, query, names, entity_p, json, AQ = None) :
         if entity_p :
             fct = self._rendered_completions_e
         else :
             fct = self._rendered_completions_a
-        return fct (ETM, query, names, json)
+        return fct (ETM, query, names, json, AQ)
     # end def _rendered_completions
 
-    def _rendered_completions_a (self, ETM, query, names, json) :
+    def _rendered_completions_a (self, ETM, query, names, json, AQ = None) :
+        if AQ is None :
+            AQ   = ETM.E_Type.AQ
         result   = dict (matches = [], partial = False)
         max_n    = self.max_completions + 1
-        AQ       = ETM.E_Type.AQ
         fs       = tuple (getattr (AQ, n).QR for n in names)
         matches  = query.attrs (* fs).limit (max_n).all ()
         n        = result ["completions"] = len (matches)
@@ -324,10 +328,9 @@ class _JSON_Action_ (_Ancestor) :
         return result
     # end def _rendered_completions_a
 
-    def _rendered_completions_e (self, ETM, query, names, json) :
+    def _rendered_completions_e (self, ETM, query, names, json, AQ = None) :
         result   = dict (partial = False)
         max_n    = self.max_completions + 1
-        AQ       = ETM.E_Type.AQ
         matches  = query.limit (max_n).all ()
         n        = result ["completions"] = len (matches)
         finished = result ["finished"]    = n == 1
@@ -490,7 +493,7 @@ class Completed (_JSON_Action_PO_) :
         session_secret = self.session_secret (request, json.sid)
         form, elem     = self.form_element   (json.fid)
         field          = self.field_element  (form, json.trigger)
-        ETM            = scope [elem.type_name]
+        ETM = ETM_R    = scope [elem.type_name]
         E_Type         = ETM.E_Type
         if json.complete_entity :
             obj = self.pid_query_request (json.pid, E_Type)
@@ -514,12 +517,16 @@ class Completed (_JSON_Action_PO_) :
             attr      = getattr (E_Type, field.name)
             completer = attr.completer
             if completer is not None :
+                AQ = None
+                if issubclass (E_Type, MOM.An_Entity) :
+                    ETM_R = scope [elem.anchor.type_name]
+                    AQ    = getattr (ETM_R.E_Type.AQ, elem.name)
                 names = completer.names
-                fs    = ETM.raw_query_attrs (names, json.values)
-                query = ETM.query (* fs)
+                fs    = ETM.raw_query_attrs (names, json.values, AQ)
+                query = ETM_R.query (* fs)
                 result ["completions"] = n = query.count ()
                 if n == 1 :
-                    af     = ETM.raw_query_attrs (names)
+                    af     = ETM.raw_query_attrs (names, AQ)
                     values = query.attrs (* af).one ()
                     result.update \
                         ( fields = len (names)
@@ -538,20 +545,24 @@ class Completer (_JSON_Action_PO_) :
     name                 = "complete"
 
     def _rendered_post (self, request, response) :
-        json       = TFL.Record (** request.json)
-        result     = dict (matches = [], partial = False)
-        scope      = self.top.scope
-        form, elem = self.form_element  (json.fid)
-        field      = self.field_element (form, json.trigger)
-        ETM        = scope [elem.type_name]
-        E_Type     = ETM.E_Type
-        attr       = getattr (E_Type, field.name)
-        completer  = attr.completer
+        json        = TFL.Record (** request.json)
+        result      = dict (matches = [], partial = False)
+        scope       = self.top.scope
+        form, elem  = self.form_element  (json.fid)
+        field       = self.field_element (form, json.trigger)
+        ETM = ETM_R = scope [elem.type_name]
+        E_Type      = ETM.E_Type
+        attr        = getattr (E_Type, field.name)
+        completer   = attr.completer
         if completer is not None :
+            AQ = None
+            if issubclass (E_Type, MOM.An_Entity) :
+                ETM_R = scope [elem.anchor.type_name]
+                AQ    = getattr (ETM_R.E_Type.AQ, elem.name)
             names  = completer.names
-            query  = completer (self.top.scope, json.values)
+            query  = completer (scope, json.values, ETM_R, AQ)
             result = self._rendered_completions \
-                (ETM, query, names, completer.entity_p, json)
+                (ETM, query, names, completer.entity_p, json, AQ)
         return result
     # end def _rendered_post
 
