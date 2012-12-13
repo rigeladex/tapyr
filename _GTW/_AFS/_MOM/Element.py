@@ -496,8 +496,10 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
 
     def __call__ (self, ETM, entity, ** kw) :
         f_kw      = self._child_kw (kw)
-        allow_new = f_kw.get ("allow_new", self.allow_new) \
+        allow_new = \
+            (   f_kw.get ("allow_new", self.allow_new)
             and not f_kw.get ("prefilled")
+            )
         if self.type_name == ETM.type_name :
             ### this clause is taken when a part of the form is called
             ### directly like `Form [id].instantiated (...)`

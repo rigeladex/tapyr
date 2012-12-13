@@ -668,12 +668,11 @@ class Expander (_JSON_Action_) :
         new_id_suffix = req_data.get ("new_id_suffix")
         if new_id_suffix is not None :
             ikw ["new_id_suffix"] = new_id_suffix
-        fi = self.instantiated (elem, fid, ETM, obj, ikw)
+        fi       = self.instantiated (elem, fid, ETM, obj, ikw)
         renderer = self.top.Templateer.get_template (fi.renderer)
-        return dict \
-            ( html = renderer.call_macro (fi.widget, fi, fi, fi.renderer)
-            , json = fi.as_json_cargo
-            )
+        html     = renderer.call_macro (fi.widget, form, fi, fi.renderer)
+        json     = fi.as_json_cargo
+        return dict (html = html, json = json)
     # end def rendered
 
 # end class Expander
