@@ -262,6 +262,7 @@
 #                     add `Atomic_Json_Mixin`
 #     9-Nov-2012 (CT) Change arguments to `MOM.Error.Link_Type`
 #    12-Dec-2012 (CT) Add clause for `MOM.Entity` to `A_Id_Entity.from_string`
+#    13-Dec-2012 (CT) Set `A_Angle.needs_raw_value` to `True`
 #    ««revision-date»»···
 #--
 
@@ -1515,6 +1516,7 @@ class A_Angle (_A_Float_) :
     typ              = _ ("Angle")
     max_value        = 360
     min_value        = 0
+    needs_raw_value  = True
 
     _dms_pattern     = Regexp \
         ( r"^\s*"
