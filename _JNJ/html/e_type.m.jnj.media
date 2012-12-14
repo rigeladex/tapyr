@@ -28,6 +28,7 @@
 # Revision Dates
 #     8-Mar-2012 (CT) Creation
 #    19-Mar-2012 (CT) Add rule for `ui-state-default`
+#    14-Dec-2012 (CT) Add rule for `.button.vip`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,28 @@ style_sheet = Style_Sheet \
                         , visibility       = "hidden"
                         )
                     ]
+                )
+            ]
+        )
+    , Rule
+        ( ".button.vip"
+        , background_color     = P.color_heading
+        , color                = P.color_selected
+        , font_size            = Percent (115)
+        , font_weight          = "bold"
+        , display              = "block"
+        , overflow             = "hidden"
+        , text_align           = "center"
+        , width                = Percent (95)
+        , children             =
+            [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+            , Rule_Class
+                ( "bot"
+                , margin       = TRBL (Em (2.0), "auto", Em (0.5))
+                )
+            , Rule_Class
+                ( "top"
+                , margin       = TRBL (Em (0.5), "auto", Em (2.0))
                 )
             ]
         )

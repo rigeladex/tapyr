@@ -45,6 +45,7 @@
 ##    18-Jan-2012 (CT) Continue `qr_control` (Use `GTW.attr_join` for `fields`)
 ##    19-Mar-2012 (CT) Change `obj_button` to use class `ui-state-default`
 ##     6-Dec-2012 (CT) Factor `obj_create_button`
+##    14-Dec-2012 (CT) Add `vip_button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -340,6 +341,18 @@
   </form>
 {%- endmacro -%} {#- select_attr_form -#}
 
+{%- macro vip_button (page, cls ="") -%}
+  {%- if page.vip_button_p %}
+    {%- set text = GTW._T ("Create new %s") % page.E_Type.ui_name.lower () %}
+    <p>
+      <a href="{{ page.href_create () }}"{#--#}
+         title="{{ text }}"{#--#}
+         class="button vip {{ cls }}"{#--#}
+      >{{ text }}</a>
+    </p>
+  {% endif -%}
+{%- endmacro -%} {#- vip_button -#}
+
 {%- macro admin_table (page, fields, objects) -%}
   {%- set E_Type = page.E_Type %}
   <table class="Object-List">
@@ -371,8 +384,10 @@
 {%- endmacro -%} {#- admin_table -#}
 
 {%- macro admin (page, fields, objects) -%}
+  {{ vip_button (page, "top") }}
   {{ qr_control  (page, fields, page.query_restriction) }}
   {{ admin_table (page, fields, objects) }}
+  {{ vip_button (page, "bot") }}
 {%- endmacro -%} {#- admin -#}
 
 {#- __END__ jinja template: html/e_type.m.jnj -#}
