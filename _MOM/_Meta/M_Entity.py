@@ -155,6 +155,7 @@
 #    11-Oct-2012 (CT) Add `M_An_Entity._m_new_e_type_dict`, `._m_auto_signified`
 #    12-Oct-2012 (CT) Add `raw` and use `undefined` in `_m_auto_signified`
 #    11-Dec-2012 (CT) Add `M_E_Type.__instancecheck__`, `.__subclasscheck__`
+#    14-Dec-2012 (CT) Set `.relevant_roots` to `{}` for relevant classes
 #    ««revision-date»»···
 #--
 
@@ -998,6 +999,7 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_setup_children (cls, bases, dct) :
         cls.__m_super._m_setup_children (bases, dct)
+        cls.relevant_roots = {}
         if cls.is_relevant :
             rel_bases = tuple \
                 (b for b in bases if getattr (b, "is_relevant", False))
@@ -1007,8 +1009,6 @@ class M_E_Type_Id (M_E_Type) :
             es_roots = tuple (rb for rb in rel_bases if rb.epk_sig == epk_sig)
             if not es_roots :
                 cls.epk_sig_root = cls
-        else :
-            cls.relevant_roots = {}
     # end def _m_setup_children
 
     def _m_setup_sorted_by (cls) :
