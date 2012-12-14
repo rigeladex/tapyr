@@ -51,6 +51,9 @@
 #    12-Jun-2012 (MG) `Q_Result_Composite._fill_cache`: check for
 #                     `self._order_by` fixed
 #     8-Aug-2012 (CT) Fix typo (`.__class__.__name__`, not `.__class__.__name`)
+#    14-Dec-2012 (CT) Move `order_by` before method in `super_ordered_delegate`
+#    14-Dec-2012 (CT) Redefine `Q_Result_Composite.first` to delegate `first`
+#    14-Dec-2012 (CT) Add guard for `._cache` to `_fill_cache`
 #    ««revision-date»»···
 #--
 
@@ -461,10 +464,11 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def slice
 
     def _fill_cache (self) :
-        iterable = self.iterable
-        if self._distinct :
-            iterable = self._distinct (iterable)
-        self._cache = list (iterable)
+        if self._cache is None :
+            iterable = self.iterable
+            if self._distinct :
+                iterable = self._distinct (iterable)
+            self._cache = list (iterable)
     # end def _fill_cache
 
     def __getitem__ (self, key) :
@@ -502,11 +506,12 @@ class _Q_Result_Filtered_ (_Q_Result_) :
     # end def __init__
 
     def _fill_cache (self) :
-        pred     = self._criterion
-        filtered = (x for x in self.iterable if pred (x))
-        if self._distinct and not self.iterable._distinct :
-            filtered = self._distinct (filtered)
-        self._cache = list (filtered)
+        if self._cache is None :
+            pred     = self._criterion
+            filtered = (x for x in self.iterable if pred (x))
+            if self._distinct and not self.iterable._distinct :
+                filtered = self._distinct (filtered)
+            self._cache = list (filtered)
     # end def _fill_cache
 
 # end class _Q_Result_Filtered_
@@ -515,31 +520,35 @@ class _Q_Result_Filtered_ (_Q_Result_) :
 class _Q_Result_Group_By_ (_Q_Result_Filtered_) :
 
     def _fill_cache (self) :
-        pred        = self._criterion
-        result      = dict        ()
-        sums        = _Sum_Aggr_  ()
-        sum_col     = None
-        for row in self.iterable :
-            key    = pred (row)
-            is_sum = getattr (row, "_IS_SUM", False)
-            if is_sum :
-                sums [key] = is_sum (row)
-                sum_col    = getattr (row, "_SUM_CO", None)
-            result [key]   = row
-        if sums :
-            sum_fixed      = []
-            for key, row in result.iteritems () :
-                if sum_col is None :
-                    sum_fixed.append (sums [key])
-                else :
-                    sum_fixed.append \
-                        (row [:sum_col] + (sums [key], ) + row [sum_col + 1:])
-            result         = sum_fixed
-        else :
-            result         = result.itervalues ()
-        if self._distinct and not self.iterable._distinct :
-            result  = self._distinct (result)
-        self._cache = list (result)
+        if self._cache is None :
+            pred        = self._criterion
+            result      = dict        ()
+            sums        = _Sum_Aggr_  ()
+            sum_col     = None
+            for row in self.iterable :
+                key    = pred (row)
+                is_sum = getattr (row, "_IS_SUM", False)
+                if is_sum :
+                    sums [key] = is_sum (row)
+                    sum_col    = getattr (row, "_SUM_CO", None)
+                result [key]   = row
+            if sums :
+                sum_fixed      = []
+                for key, row in result.iteritems () :
+                    if sum_col is None :
+                        sum_fixed.append (sums [key])
+                    else :
+                        sum_fixed.append \
+                            ( row [:sum_col]
+                            + (sums [key], )
+                            + row [sum_col + 1:]
+                            )
+                result         = sum_fixed
+            else :
+                result         = result.itervalues ()
+            if self._distinct and not self.iterable._distinct :
+                result  = self._distinct (result)
+            self._cache = list (result)
     # end def _fill_cache
 
 # end class _Q_Result_Group_By_
@@ -553,10 +562,11 @@ class _Q_Result_Limited_ (_Q_Result_) :
     # end def __init__
 
     def _fill_cache (self) :
-        iterable = self.iterable
-        if self._distinct and not iterable._distinct :
-            iterable = self._distinct (iterable)
-        self._cache = list (itertools.islice (iterable, None, self._limit))
+        if self._cache is None :
+            iterable = self.iterable
+            if self._distinct and not iterable._distinct :
+                iterable = self._distinct (iterable)
+            self._cache = list (itertools.islice (iterable, None, self._limit))
     # end def _fill_cache
 
 # end class _Q_Result_Limited_
@@ -570,10 +580,11 @@ class _Q_Result_Offset_ (_Q_Result_) :
     # end def __init__
 
     def _fill_cache (self) :
-        iterable = self.iterable
-        if self._distinct and not iterable._distinct :
-            iterable = self._distinct (iterable)
-        self._cache = list (itertools.islice (iterable, self._offset, None))
+        if self._cache is None :
+            iterable = self.iterable
+            if self._distinct and not iterable._distinct :
+                iterable = self._distinct (iterable)
+            self._cache = list (itertools.islice (iterable, self._offset, None))
     # end def _fill_cache
 
 # end class _Q_Result_Offset_
@@ -587,10 +598,11 @@ class _Q_Result_Ordered_ (_Q_Result_) :
     # end def __init__
 
     def _fill_cache (self) :
-        iterable = self.iterable
-        if self._distinct and not iterable._distinct :
-            iterable = self._distinct (iterable)
-        self._cache = sorted (iterable, key = self._criterion)
+        if self._cache is None :
+            iterable = self.iterable
+            if self._distinct and not iterable._distinct :
+                iterable = self._distinct (iterable)
+            self._cache = sorted (iterable, key = self._criterion)
     # end def _fill_cache
 
 # end class _Q_Result_Ordered_
@@ -605,10 +617,12 @@ class _Q_Result_Sliced_ (_Q_Result_) :
     # end def __init__
 
     def _fill_cache (self) :
-        iterable = self.iterable
-        if self._distinct and not iterable._distinct :
-            iterable = self._distinct (iterable)
-        self._cache = list (itertools.islice (iterable, self._start, self._stop))
+        if self._cache is None :
+            iterable = self.iterable
+            if self._distinct and not iterable._distinct :
+                iterable = self._distinct (iterable)
+            self._cache = list \
+                (itertools.islice (iterable, self._start, self._stop))
     # end def _fill_cache
 
 # end class _Q_Result_Sliced_
@@ -651,9 +665,9 @@ class Q_Result_Composite (_Q_Result_) :
                 ( [getattr (sq, name) (* args, ** kw) for sq in self.queries]
                 , _distinct = self._distinct
                 )
-            result = getattr (result.__super, name) (* args, ** kw)
             if self._order_by :
                 result = result.order_by (self._order_by)
+            result = getattr (result.__super, name) (* args, ** kw)
             return result
         return _
     # end def super_ordered_delegate
@@ -677,6 +691,16 @@ class Q_Result_Composite (_Q_Result_) :
             )
     # end def filter
 
+    def first (self) :
+        result = self.__class__ \
+            ( [(sq.first (), ) for sq in self.queries]
+            , _distinct = self._distinct
+            )
+        if self._order_by :
+            result = result.order_by (self._order_by)
+        return result.__super.first ()
+    # end def first
+
     @super_ordered_delegate
     def limit (self, limit) :
         pass
@@ -698,13 +722,14 @@ class Q_Result_Composite (_Q_Result_) :
     # end def slice
 
     def _fill_cache (self) :
-        if self._order_by is not None :
-            iterable = self.iterable
-            if self._distinct :
-                iterable = self._distinct (iterable)
-            self._cache = sorted (iterable, key = self._order_by)
-        else :
-            self.__super._fill_cache ()
+        if self._cache is None :
+            if self._order_by is not None :
+                iterable = self.iterable
+                if self._distinct :
+                    iterable = self._distinct (iterable)
+                self._cache = sorted (iterable, key = self._order_by)
+            else :
+                self.__super._fill_cache ()
     # end def _fill_cache
 
     def __nonzero__ (self) :
