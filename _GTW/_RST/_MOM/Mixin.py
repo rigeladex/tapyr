@@ -397,8 +397,8 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     def _get_objects (self) :
         cid = self._changed_cid ()
         if cid is not None :
-            self._old_cid = cid
             self._objects = self.query ().all ()
+            self._old_cid = cid
         return self._objects
     # end def _get_objects
 
