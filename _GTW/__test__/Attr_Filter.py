@@ -414,7 +414,7 @@ _test_code = """
     ...         seen.add (msg)
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
-    Angle <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Angle <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Boat <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2

@@ -84,6 +84,8 @@
 #     7-Dec-2012 (CT) Let `request` and `user` in `_http_response`
 #    11-Dec-2012 (CT) Factor `_http_response_context` to let `scope.user`, too
 #    12-Dec-2012 (CT) Change `_http_response_context` to always `LET`
+#    14-Dec-2012 (CT) Add `child_permission_map`
+#    14-Dec-2012 (CT) Auto-instantiate permissions in `_get_permissions`
 #    ««revision-date»»···
 #--
 
@@ -177,6 +179,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     Status                     = GTW.RST.HTTP_Status
     Auth_Required              = Status.Unauthorized
 
+    child_permission_map       = {}
     ext                        = None
     hidden                     = False
     implicit                   = False
@@ -186,7 +189,7 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     _greet_entry               = None
     _needs_parent              = True
-    _r_permission              = None             ### read permission
+    _r_permission              = None             ### read  permission
     _w_permission              = None             ### write permission
     _page_template             = None
     _template_names            = set ()
@@ -203,7 +206,7 @@ class _RST_Base_ (TFL.Meta.Object) :
         self._kw = dict (kw)
         self.pop_to_self \
             ( kw
-            , "exclude_robots", "r_permissions", "w_permissions"
+            , "exclude_robots", "r_permission", "w_permission"
             , prefix = "_"
             )
         encoding = kw.get ("input_encoding") or \
@@ -217,6 +220,11 @@ class _RST_Base_ (TFL.Meta.Object) :
                 print (self.href or "/{ROOT}", k, v, "\n   ", exc)
         if self.implicit :
             self.hidden = True
+        name = self.name
+        if (   (not self.permission)
+           and parent and name in parent.child_permission_map
+           ) :
+            self.permission = parent.child_permission_map [name]
     # end def __init__
 
     def _after__init__ (self, kw) :
@@ -570,6 +578,8 @@ class _RST_Base_ (TFL.Meta.Object) :
         def _gen (self, name) :
             p = getattr (self, "_" + name, None)
             if p is not None :
+                if isinstance (p, GTW.RST._Permission_.__class__) :
+                    p = p ()
                 yield p
             if self.parent :
                 for p in getattr (self.parent, name + "s", ()) :

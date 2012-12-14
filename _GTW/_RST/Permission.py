@@ -34,6 +34,9 @@
 #    20-Jun-2012 (CT) Remove dependency on `GTW.NAV.Root.top`
 #     5-Jul-2012 (CT) Move from `GTW.NAV` to `GTW.RST`
 #    10-Aug-2012 (CT) Rename `rank` to `_rank`
+#    14-Dec-2012 (CT) Remove `Login_Required`
+#                     (use `login_required` argument to GTW.Resource instead)
+#    14-Dec-2012 (CT) Adapt `Is_Creator` to changes of `MOM.Entity`
 #    ««revision-date»»···
 #--
 
@@ -72,13 +75,15 @@ class In_Group (_Permission_) :
 # end class In_Group
 
 class Is_Creator (_Permission_) :
+    """Permission if user is the creator of the object associated with the resource"""
 
-    def __init__ (self, attr_name = "creator") :
+    def __init__ (self, attr_name = "created_by") :
         self.attr_name = attr_name
     # end def __init__
 
     def predicate (self, user, page, * args, ** kw) :
-        return user and user == getattr (page.obj, self.attr_name, None)
+        obj = getattr (page, "obj", None)
+        return user and obj and user == getattr (obj, self.attr_name, None)
     # end def predicate
 
 # end class Is_Creator
@@ -91,16 +96,6 @@ class Is_Superuser (_Permission_) :
 
 # end class Is_Superuser
 
-class Login_Required (_Permission_) :
-
-    _rank = -100
-
-    def predicate (self, user, page, * args, ** kw) :
-        return user and user.authenticated and user.active
-    # end def predicate
-
-# end class Login_Required
-
 if __name__ != "__main__":
-    GTW.RST._Export ("*")
+    GTW.RST._Export ("*", "_Permission_")
 ### __END__ GTW.RST.Permission

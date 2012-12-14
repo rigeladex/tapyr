@@ -48,6 +48,7 @@
 #    13-Dec-2012 (CT) Handle `MOM.An_Entity` in `._rendered_post` of
 #                     `Completer` and `Completed`
 #    13-Dec-2012 (CT) Add argument `AQ` to `_rendered_completions`
+#    14-Dec-2012 (CT) Use `child_permission_map` in `_new_child_x`
 #    ««revision-date»»···
 #--
 
@@ -807,6 +808,8 @@ class _NC_Mixin_ (TFL.Meta.Object) :
                 , name   = "%s/%s" % (child, name)
                 , parent = self
                 )
+            if child in self.child_permission_map :
+                kw ["permission"] = self.child_permission_map [child]
             result = T (** kw)
             return result
     # end def _new_child_x

@@ -199,10 +199,10 @@ _attr_ac_query = """
     [Q.first_name == martin]
 
     >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48.190111"))))
-    [Q.position.lat == 48.190111]
+    [Q.position.__raw_lat == 48.190111]
 
     >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s"))))
-    [Q.position.lat == 48.1902777778]
+    [Q.position.__raw_lat == 48d 11m 25s]
 
     >>> scope.destroy ()
 """
