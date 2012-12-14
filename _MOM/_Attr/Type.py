@@ -263,6 +263,7 @@
 #     9-Nov-2012 (CT) Change arguments to `MOM.Error.Link_Type`
 #    12-Dec-2012 (CT) Add clause for `MOM.Entity` to `A_Id_Entity.from_string`
 #    13-Dec-2012 (CT) Set `A_Angle.needs_raw_value` to `True`
+#    14-Dec-2012 (CT) Robustify `_A_Id_Entity_._check_type`
 #    ««revision-date»»···
 #--
 
@@ -1152,13 +1153,14 @@ class _A_Id_Entity_ (_A_Entity_) :
     @TFL.Meta.Class_and_Instance_Method
     def _check_type (soc, etype, value) :
         if not isinstance (value, etype.Essence) :
+            typ = getattr (value, "ui_name", value.__class__)
             raise ValueError \
                 ( _T
                     ( "%s %s not eligible for attribute %s,"
                       "\n"
                       "    must be instance of %s"
                     )
-                % ( _T (value.ui_name), unicode (value), soc.name
+                % ( _T (typ), unicode (value), soc.name
                   , _T (soc.P_Type.ui_name)
                   )
                 )

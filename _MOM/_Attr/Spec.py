@@ -58,6 +58,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    12-Apr-2012 (CT) Add `e_type.primary_required` and `.primary_optional`
 #     7-May-2012 (CT) Add `e_type.edit_attr` and `.id_entity_attr`
+#    14-Dec-2012 (CT) Add `KeyError` guard to `_setup_attrs` (`auto_up_depends`)
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,12 @@ class Spec (MOM.Prop.Spec) :
         attr_dict = self._attr_dict
         for a in attr_dict.itervalues () :
             for d in a.attr.auto_up_depends :
-                attr_dict [d].dependent_attrs.add (a)
+                try :
+                    x = attr_dict [d]
+                except KeyError :
+                    pass
+                else :
+                    x.dependent_attrs.add (a)
             if isinstance (a.completer, MOM.Attr.Completer_Spec) :
                 a.attr.completer = a.completer (a, e_type)
     # end def _setup_attrs

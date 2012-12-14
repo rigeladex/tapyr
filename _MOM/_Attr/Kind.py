@@ -184,6 +184,7 @@
 #     8-Sep-2012 (CT) Consider `init_finished` in `Link_Role._set_cooked_value`
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
+#    14-Dec-2012 (CT) Add guard to `Query._get_computed`
 #    ««revision-date»»···
 #--
 
@@ -1239,7 +1240,8 @@ class Query (_Cached_, _Computed_Mixin_) :
     def _get_computed (self, obj) :
         attr   = self.attr
         result = attr.query (obj)
-        if result is not None :
+        ### `attr.query` sometimes returns a `object` instance instead of None
+        if result is not None and result.__class__ is not object :
             return attr.cooked (result)
     # end def _get_computed
 
