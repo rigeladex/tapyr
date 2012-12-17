@@ -49,6 +49,7 @@
 #                     `Completer` and `Completed`
 #    13-Dec-2012 (CT) Add argument `AQ` to `_rendered_completions`
 #    14-Dec-2012 (CT) Use `child_permission_map` in `_new_child_x`
+#    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
 #    ««revision-date»»···
 #--
 
@@ -960,8 +961,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         self.pop_to_self (kw, "list_display", prefix = "_")
         self._field_map = {}
         self.__super.__init__ (** kw)
-        if not (self.implicit or self.dont_et_map) :
-            self.top.ET_Map [self.type_name].admin = self
     # end def __init__
 
     @Once_Property
@@ -981,6 +980,12 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     def entries (self) :
         return ()
     # end def entries
+
+    @Once_Property
+    def et_map_name (self) :
+        if not self.implicit :
+            return "admin"
+    # end def et_map_name
 
     @Once_Property
     @getattr_safe

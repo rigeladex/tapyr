@@ -42,6 +42,7 @@
 #    27-Nov-2012 (CT) Derive `E_Type.POST` from `GTW.RST.MOM._POST_Mixin_`
 #                     not `GTW.RST.MOM._PUT_POST_Mixin_`
 #     7-Dec-2012 (CT) Consider `dont_et_map`
+#    17-Dec-2012 (CT) Redefine `et_map_name`, remove `__init__`
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,8 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
     _ETM                       = None
 
     Entity                     = GTW.RST.MOM.Entity
+
+    et_map_name                = "rest_api"
 
     class _RST_MOM_E_Type_GET_ (_Ancestor.GET) :
 
@@ -176,12 +179,6 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         # end def _apply_attrs
 
     POST = _RST_MOM_E_Type_POST_ # end class
-
-    def __init__ (self, ** kw) :
-        self.__super.__init__ (** kw)
-        if not self.dont_et_map :
-            self.top.ET_Map [self.type_name].rest_api = self
-    # end def __init__
 
     def allow_method (self, method, user) :
         if method.name == "POST" and self.ETM.is_partial :

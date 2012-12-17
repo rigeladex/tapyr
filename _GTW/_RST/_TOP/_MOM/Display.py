@@ -34,6 +34,7 @@
 #                     `E_Type_Archive_Y`
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
+#    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
 #    ««revision-date»»···
 #--
 
@@ -108,14 +109,13 @@ class TOP_MOM_E_Type (_E_Type_) :
     _real_name      = "E_Type"
 
     admin_args      = {}
+    et_map_name     = "manager"
     sort_key        = TFL.Sorted_By ("-date.start", "perma_name")
 
     _admin          = None
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (** kw)
-        if not self.dont_et_map :
-            self.top.ET_Map [self.type_name].manager = self
         if self.admin_args :
             if "sort_key" in self.admin_args :
                 self.sort_key = self.admin_args ["sort_key"]

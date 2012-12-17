@@ -37,6 +37,7 @@
 #    18-Oct-2012 (CT) Redefine `E_Type.map_name` to `doc`
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["doc"]`
 #     3-Dec-2012 (CT) Add guard against unknown E_Type
+#    17-Dec-2012 (CT) s/map_name/et_map_name/
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,7 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
     _real_name                 = "E_Type"
 
     document_class             = "E-Type-Doc"
-    map_name                   = "doc"
+    et_map_name                = "doc"
     page_template_name         = "e_type_doc"
 
     class _RST_TOP_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
@@ -277,7 +278,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (** kw)
-        self.top.E_Type_Desc._prop_map ["doc"] = self
+        self.top.E_Type_Desc._prop_map [E_Type.et_map_name] = self
     # end def __init__
 
     def resource_from_e_type (self, e_type) :

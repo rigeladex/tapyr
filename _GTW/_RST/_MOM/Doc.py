@@ -36,6 +36,7 @@
 #    18-Oct-2012 (CT) Register `E_Type` in `top.ET_Map` under `.map_name`
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map [self.E_Type.map_name]`
 #     7-Dec-2012 (CT) Consider `dont_et_map`
+#    17-Dec-2012 (CT) s/map_name/et_map_name/
 #    ««revision-date»»···
 #--
 
@@ -109,7 +110,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
     _ETM                       = None
 
     dont_et_map                = False
-    map_name                   = "rest_doc"
+    et_map_name                = "rest_doc"
     page_template_name         = "e_type_doc_bare"
 
     class _RST_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
@@ -252,7 +253,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             kw ["name"] = etn.replace (".", "-")
         self.__super.__init__ (** kw)
         if not self.dont_et_map :
-            setattr (self.top.ET_Map [self.type_name], self.map_name, self)
+            setattr (self.top.ET_Map [self.type_name], self.et_map_name, self)
         if not getattr (self, "short_title", None) :
             self.short_title = _T (etn)
     # end def __init__
@@ -270,7 +271,7 @@ class _RST_MOM_Doc_App_Type_ (Dir_Mixin, _Ancestor) :
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (** kw)
-        self.top.E_Type_Desc._prop_map [self.E_Type.map_name] = self
+        self.top.E_Type_Desc._prop_map [self.E_Type.et_map_name] = self
     # end def __init__
 
     def resource_from_e_type (self, e_type) :

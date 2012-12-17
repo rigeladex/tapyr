@@ -65,6 +65,7 @@
 #     7-Dec-2012 (CT) Factor `_change_info_key`
 #    11-Dec-2012 (CT) Factor `_check_pid_gone`, pass change-info to `Gone`
 #    11-Dec-2012 (CT) Lift `query_filters` from `E_Type_Mixin` to `Mixin`
+#    17-Dec-2012 (CT) Add and use `E_Type_Mixin.et_map_name`
 #    ««revision-date»»···
 #--
 
@@ -448,6 +449,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
 
     default_qr_kw              = dict ()
     dont_et_map                = False
+    et_map_name                = None
     query_restriction          = None
     sort_key                   = None
 
@@ -456,6 +458,8 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
         if "name" not in kw :
             kw ["name"] = self.type_name.replace (".", "-")
         self.__super.__init__ (** kw)
+        if self.et_map_name and not self.dont_et_map :
+            setattr (self.top.ET_Map [self.type_name], self.et_map_name, self)
     # end def __init__
 
     @property
