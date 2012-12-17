@@ -206,6 +206,10 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     M_Root         = None
     Type_Name_Type = Type_Name_Type
 
+    ### `ui_type_name` can be used in docstrings of attribute types, where
+    ### `ui_name` would refer to the attribute's ui-name, not the E_Type's
+    ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
+
     def __init__ (cls, name, bases, dct) :
         cls._children_np = None
         cls.__m_super.__init__      (name, bases, dct)
@@ -420,10 +424,6 @@ class M_Entity (M_E_Mixin) :
 
     _dyn_doc                   = None
     _nested_classes_to_combine = ("_Attributes", "_Predicates")
-
-    ### `ui_type_name` can be used in docstrings of attribute types, where
-    ### `ui_name` would refer to the attribute's ui-name, not the E_Type's
-    ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
 
     def __new__ (mcls, name, bases, dct) :
         dct ["_default_child"] = dct.pop ("default_child", None)
