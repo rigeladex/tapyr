@@ -42,7 +42,7 @@ class E_Type_R (Admin.E_Type) :
 
     _real_name            = "E_Type"
 
-    dont_et_map           = True
+    et_map_name           = None
     skip_etag             = True
     restriction_desc      = _ ("created by")
     vip_button_p          = True
