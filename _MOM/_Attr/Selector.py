@@ -37,6 +37,8 @@
 #     7-May-2012 (CT) Add `editable`
 #     7-May-2012 (CT) Change `Pred`, `Not_Pred`, and `_Pred_Selection_` to
 #                     take a selector, not `kind` as second argument
+#    17-Dec-2012 (CT) Change `_Kind_Selection_.attrs` to honor `hidden` for
+#                     kind `query`
 #    ««revision-date»»···
 #--
 
@@ -117,7 +119,11 @@ class _Kind_Selection_ (_Selection_) :
 
     @TFL.Meta.Once_Property
     def attrs (self) :
-        return tuple (getattr (self.E_Type, self.kind))
+        kind = self.kind
+        result = tuple (getattr (self.E_Type, kind))
+        if kind == "query" :
+            result = tuple (a for a in result if not a.hidden)
+        return result
     # end def attrs
 
 # end class _Kind_Selection_
