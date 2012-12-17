@@ -66,6 +66,7 @@
 #    11-Dec-2012 (CT) Factor `_check_pid_gone`, pass change-info to `Gone`
 #    11-Dec-2012 (CT) Lift `query_filters` from `E_Type_Mixin` to `Mixin`
 #    17-Dec-2012 (CT) Add and use `E_Type_Mixin.et_map_name`
+#    17-Dec-2012 (CT) Make property `objects` `getattr_safe`
 #    ««revision-date»»···
 #--
 
@@ -248,8 +249,6 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
 
     _real_name                 = "Mixin"
 
-    objects                    = property (lambda s : s._get_objects ())
-
     _exclude_robots            = True
     _objects                   = []
     _old_cid                   = -1
@@ -272,6 +271,12 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
             result = self._change_info = self._get_change_info ()
         return result
     # end def change_info
+
+    @property
+    @getattr_safe
+    def objects (self) :
+        return self._get_objects ()
+    # end def objects
 
     @property
     @getattr_safe
