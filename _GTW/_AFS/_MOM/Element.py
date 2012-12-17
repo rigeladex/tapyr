@@ -115,6 +115,7 @@
 #    12-Dec-2012 (CT) Factor `_child_changed_p`, redefine for `Field_Composite`
 #    12-Dec-2012 (CT) Change `Field.applyf` to return `value.edit` if there
 #                     is no conflict (needed for composite attributes)
+#    17-Dec-2012 (CT) Fix `allow_new` in `Field_Entity.__call__`
 #    ««revision-date»»···
 #--
 
@@ -497,7 +498,8 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
     def __call__ (self, ETM, entity, ** kw) :
         f_kw      = self._child_kw (kw)
         allow_new = \
-            (   f_kw.get ("allow_new", self.allow_new)
+            (   f_kw.get ("allow_new", True)
+            and self.allow_new
             and not f_kw.get ("prefilled")
             )
         if self.type_name == ETM.type_name :
