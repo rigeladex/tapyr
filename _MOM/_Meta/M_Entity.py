@@ -156,6 +156,7 @@
 #    12-Oct-2012 (CT) Add `raw` and use `undefined` in `_m_auto_signified`
 #    11-Dec-2012 (CT) Add `M_E_Type.__instancecheck__`, `.__subclasscheck__`
 #    14-Dec-2012 (CT) Set `.relevant_roots` to `{}` for relevant classes
+#    17-Dec-2012 (CT) Add `ui_type_name` as alias for `ui_name`
 #    ««revision-date»»···
 #--
 
@@ -419,6 +420,10 @@ class M_Entity (M_E_Mixin) :
 
     _dyn_doc                   = None
     _nested_classes_to_combine = ("_Attributes", "_Predicates")
+
+    ### `ui_type_name` can be used in docstrings of attribute types, where
+    ### `ui_name` would refer to the attribute's ui-name, not the E_Type's
+    ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
 
     def __new__ (mcls, name, bases, dct) :
         dct ["_default_child"] = dct.pop ("default_child", None)
