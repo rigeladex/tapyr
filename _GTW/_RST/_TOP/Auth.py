@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -36,6 +36,7 @@
 #     9-Oct-2012 (CT) Fix error messages, fix typo, display `username` after
 #                     empty `password`
 #     9-Oct-2012 (CT) Use `.host_url`, not `.url_root`, for `href_action`
+#     5-Jan-2013 (CT) Adapt to change of `password_hash`
 #    ««revision-date»»···
 #--
 
@@ -137,11 +138,10 @@ class _Form_Cmd_ (_Cmd_) :
                                "  %s\n"
                                "  hash db `%s`\n"
                                "  hash in `%s`"
-                            % ( password
-                              , self.account.password
-                              , self.account.password_hash
-                                    (password, self.account.salt)
-                              )
+                        % ( password
+                          , self.account.password
+                          , self.account.password_hash (password, self.account)
+                          )
                         )
             return result
         # end def _authenticate

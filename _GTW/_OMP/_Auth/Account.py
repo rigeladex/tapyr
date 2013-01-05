@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This package is part of the package GTW.
@@ -58,6 +58,7 @@
 #    24-Sep-2012 (CT) Rename `Account` to `_Account_`, `Account_P` to `Account`
 #     9-Oct-2012 (CT) Improve attribute docstrings
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#     5-Jan-2013 (CT) Use `TFL.Password_Hasher`, not homegrown code
 #    ««revision-date»»···
 #--
 
@@ -69,8 +70,7 @@ from   _GTW                   import GTW
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
-import  hashlib
-import  uuid
+import _TFL.Password_Hasher
 
 _Ancestor_Essence = Auth.Object
 
@@ -184,9 +184,13 @@ class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
 
     def create_new_account_x (self, name, password, ** kw) :
         etype    = self._etype
-        salt     = uuid.uuid4 ().hex
-        password = etype.password_hash (password, salt)
-        return self (name, password = password, salt = salt, ** kw)
+        password = etype.password_hash (password)
+        return self \
+            ( name
+            , password = password
+            , ph_name  = etype.default_ph_name
+            , ** kw
+            )
     # end def create_new_account_x
 
     def create_new_account (self, name, password) :
@@ -228,10 +232,28 @@ class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
 class Account (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
-    Hash_Method = "sha224"
     Manager     = Account_Manager
+    charset     = \
+        ( "abcdefghijklmnopqrstuvwxyz"
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+          "0123456789"
+          "!#$%&()*+,-./:;<=>?@[]^_{|}~"
+        )
+    default_ph_name = TFL.Password_Hasher.default.name
 
     class _Attributes (_Ancestor_Essence._Attributes) :
+
+        class ph_name (A_String) :
+            """Name of password hasher used for this account."""
+
+            kind               = Attr.Internal
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+
+            def computed_default (self) :
+                return Account.default_ph_name
+            # end def computed_default
+
+        # end class ph_name
 
         class password (A_String) :
             """Password for this account"""
@@ -240,15 +262,6 @@ class Account (_Ancestor_Essence) :
             max_length = 60
 
         # end class password
-
-        class salt (A_String) :
-            """The salt used for the password hash."""
-
-            kind          = Attr.Internal
-            Kind_Mixins   = (Attr.Init_Only_Mixin, )
-            max_length    = 50
-
-        # end class salt
 
     # end class _Attributes
 
@@ -259,7 +272,7 @@ class Account (_Ancestor_Essence) :
 
     def change_password (self, new_password, remove_actions = True, ** kw) :
         self.set \
-            (password = self.password_hash (new_password, self.salt), ** kw)
+            (password = self.password_hash (new_password, self), ** kw)
         if remove_actions :
             Auth = self.home_scope.GTW.OMP.Auth
             for et in ( Auth.Account_Activation
@@ -270,16 +283,20 @@ class Account (_Ancestor_Essence) :
     # end def change_password
 
     @classmethod
-    def password_hash (cls, password, salt) :
-        hash = hashlib.new    (cls.Hash_Method, salt)
-        hash.update           (password)
-        return hash.hexdigest ()
+    def password_hash (cls, password, obj = None) :
+        ph_name = obj.ph_name if obj else cls.default_ph_name
+        try :
+            hasher = TFL.Password_Hasher [ph_name]
+        except KeyError :
+            pass
+        else :
+            return hasher.hashed (password)
     # end def password_hash
 
     def prepare_activation (self) :
         password = self.random_password (16)
         self.set \
-            ( password  = self.password_hash (password, self.salt)
+            ( password  = self.password_hash (password, self)
             , suspended = True
             )
         self.home_scope.GTW.OMP.Auth.Account_Activation (self)
@@ -290,13 +307,17 @@ class Account (_Ancestor_Essence) :
     def random_password (cls, length = 16) :
         from   random import choice
         import string
-        chars = string.letters + string.digits
-        return "".join \
-            ( [choice (chars) for i in xrange (length)])
+        chars = cls.charset
+        return "".join (choice (chars) for i in xrange (length))
     # end def random_password
 
     def verify_password (self, password) :
-        return self.password == self.password_hash (password, self.salt)
+        try :
+            hasher = TFL.Password_Hasher [self.ph_name]
+        except KeyError :
+            return False
+        else :
+            return hasher.verify (password, self.password)
     # end def verify_password
 
 # end class Account

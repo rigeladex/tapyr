@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Auth.
@@ -43,6 +43,7 @@
 #    29-Jun-2010 (MG) Bug fixing in error handling
 #    15-Dec-2010 (CT) `_Reset_Password_Mixin_._validate` fixed
 #    15-Dec-2010 (CT) Specify `GTW.Form.Widget_Spec` for "html/field.jnj, email"
+#     5-Jan-2013 (CT) Adapt to change of `password_hash`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +117,7 @@ class _Login_Mixin_ (TFL.Meta.Object) :
                      "  hash in `%s`"
                   % ( password
                     , self.account.password
-                    , self.account.password_hash (password, self.account.salt)
+                    , self.account.password_hash (password, self.account)
                     )
                 )
         return result
