@@ -287,7 +287,7 @@ server_args = \
 _test_client = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
-    >>> CC = GTW.RST.MOM.Client.Requester ("http://localhost:9999")
+    >>> CC = GTW.RST.MOM.Client.Requester ("http://localhost:9999", verify = False)
     >>> CR = GTW.RST.MOM.Client.Requester ("http://localhost:9999", raw = True)
 
     >>> r = CC.get ("")

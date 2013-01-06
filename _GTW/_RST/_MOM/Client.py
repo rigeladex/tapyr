@@ -189,9 +189,11 @@ class Requester (TFL.Meta.Object) :
             params.update (raw = True)
         self.prefix  = prefix
         self.raw     = raw
-        self.session = s = requests.Session (** kw)
+        self.session = s = requests.Session ()
         if params :
             s.params.update (params)
+        for k, v in kw.iteritems () :
+            setattr (s, k, v)
         s.headers.update ({ "Content-Type" : "application/json" })
     # end def __init__
 
