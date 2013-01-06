@@ -112,6 +112,8 @@ class _Entity_ (TFL.Meta.Object) :
     def _wrap_dict (self, requester, result) :
         if self._ad_name in result :
             result = requester.Object (requester, result)
+        elif "url" not in result :
+            result = requester.Composite (requester, result)
         else :
             result = requester.get \
                 (result ["url"], params = dict (closure = True))
@@ -158,6 +160,25 @@ class _Entity_ (TFL.Meta.Object) :
 
 # end class _Entity_
 
+class Composite (_Entity_) :
+    """Encapsulate a composite attribute"""
+
+    _url = None
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _json (self) :
+        return self._result
+    # end def _json
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _attrs (self) :
+        return self._json
+    # end def _attrs
+
+# end class Composite
+
 class Object (_Entity_) :
     """Encapsulate a nested object"""
 
@@ -202,8 +223,9 @@ class Resource (_Entity_) :
 class Requester (TFL.Meta.Object) :
     """Wrapper for `requests`"""
 
-    Object   = Object
-    Resource = Resource
+    Composite = Composite
+    Object    = Object
+    Resource  = Resource
 
     class Wrapper (TFL.Meta.Object) :
 
