@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jan-2013 (CT) Creation
+#     6-Jan-2013 (CT) Fix `Bcrypt.verify`
 #    ««revision-date»»···
 #--
 
@@ -174,7 +175,7 @@ else :
         >>> Password_Hasher.Bcrypt.verify (pr, ph)
         True
         >>> Password_Hasher.Bcrypt.verify (pr, salt)
-        True
+        False
         >>> Password_Hasher.Bcrypt.verify (pr, pr)
         False
         """
@@ -199,7 +200,8 @@ else :
         def verify (cls, clear_password, hashed_password) :
             """True if `clear_password` and `hashed_password` match"""
             try :
-                return bool (bcrypt.hashpw (clear_password, hashed_password))
+                hp = bcrypt.hashpw (clear_password, hashed_password)
+                return hp == hashed_password
             except Exception :
                 return False
         # end def verify
