@@ -59,6 +59,7 @@
 #     9-Oct-2012 (CT) Improve attribute docstrings
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #     5-Jan-2013 (CT) Use `TFL.Password_Hasher`, not homegrown code
+#     6-Jan-2013 (CT) Increase `password.max_length` to 120 (from 60)
 #    ««revision-date»»···
 #--
 
@@ -259,7 +260,7 @@ class Account (_Ancestor_Essence) :
             """Password for this account"""
 
             kind       = Attr.Internal
-            max_length = 60
+            max_length = 120
 
         # end class password
 

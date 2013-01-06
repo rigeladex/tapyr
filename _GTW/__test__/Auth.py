@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Martin Glueck All rights reserved
+# Copyright (C) 2012-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -468,11 +468,20 @@ _test_query_attr    = r"""
     >>> Scaffold.root = None
 """
 
-from  _GTW.__test__.model import *
+from   _GTW.__test__.model import *
 import BeautifulSoup
 from   werkzeug.test     import Client
 from   werkzeug.wrappers import BaseResponse
-from  _TFL.User_Config   import user_config
+from   _TFL.User_Config   import user_config
+import _TFL.Password_Hasher
+
+try :
+    Bcrypt = TFL.Password_Hasher.Bcrypt
+except AttributeError :
+    pass
+else :
+    ### reduce CPU time necessary
+    Bcrypt.default_rounds = 6
 
 def fixtures (self, scope) :
     Auth  = scope.Auth
