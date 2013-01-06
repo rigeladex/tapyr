@@ -132,6 +132,17 @@ import subprocess
 import sys
 import time
 
+def req_json (r) :
+    if r is not None and r.content :
+        result = r.json
+        if TFL.callable (result) :
+            try :
+                result = result ()
+            except Exception :
+                result = None
+        return result
+# end def req_json
+
 def _run_server (args = []) :
     print (["run_server"] + server_args + args)
     result = Scaffold (["run_server"] + server_args + args)
@@ -194,9 +205,7 @@ def _normal (k, v) :
 # end def _normal
 
 def show (r, ** kw) :
-    json = r.json if r.content else None
-    if TFL.callable (json) :
-        json = json ()
+    json = req_json (r)
     if json is not None :
         kw ["json"] = json
     elif r.content :
@@ -233,10 +242,8 @@ def traverse (url, level = 0, seen = None) :
             seen .add (allow)
     else :
         print (path, ":", ro.status_code, ro.content)
-    if rg.ok and rg.content :
-        json = rg.json
-        if TFL.callable (json) :
-            json = json ()
+    if rg.ok :
+        json = req_json (rg)
         if json :
             l = level + 1
             for e in json.get ("entries", ()) :
@@ -304,9 +311,32 @@ _test_client = r"""
     >>> sorted (r2._attrs.iteritems ())
     [(u'first_name', u'christian'), (u'last_name', u'tanzer'), (u'middle_name', u''), (u'title', u'')]
 
-    >>> r2r = CR.GET (r2._url)
+    >>> r2c = CC.get (r2._url)
+    >>> r2c._result.url
+    u'http://localhost:9999/v1/MOM-Id_Entity/1'
+    >>> r2r = CR.get (r2._url)
+    >>> r2r._result.url
+    u'http://localhost:9999/v1/MOM-Id_Entity/1?raw=True'
     >>> sorted (r2r._attrs.iteritems ())
     [(u'first_name', u'Christian'), (u'last_name', u'Tanzer'), (u'middle_name', u''), (u'title', u'')]
+
+    >>> r2r._changed_p
+    False
+    >>> r2r.title = "Mag."
+    >>> r2r._changed_p
+    True
+
+    >>> sorted (r2r._attrs.iteritems ())
+    [(u'first_name', u'Christian'), (u'last_name', u'Tanzer'), (u'middle_name', u''), (u'title', u'Mag.')]
+    >>> sorted (r2r._attrs_orig.iteritems ())
+    [(u'first_name', u'Christian'), (u'last_name', u'Tanzer'), (u'middle_name', u''), (u'title', u'')]
+
+    >>> r2r_p = r2r.PUT ()
+    >>> r2r_p._result.url
+    u'http://localhost:9999/v1/MOM-Id_Entity/1?raw=True'
+
+
+    >>> server.terminate ()
 
 """
 
@@ -1963,7 +1993,8 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/PAP-Person.csv'
     }
 
-    >>> for e in rp.json ["entries"] :
+    >>> rp_json = req_json (rp)
+    >>> for e in rp_json ["entries"] :
     ...     _ = show (requests.get ("http://localhost:9999" + e))
     { 'json' :
         { 'attributes' :
@@ -3684,11 +3715,11 @@ _test_post = r"""
     ...         , first_name  = "Rin"
     ...         , middle_name = "Tin"
     ...         )
-    ...     , cid = r.json ["cid"]
+    ...     , cid = req_json (r) ["cid"]
     ...     )
     ... )
     >>> ru = requests.utils.urlparse (r.url)
-    >>> p  = "%%s://%%s%%s" %% (ru.scheme, ru.netloc, r.json ["url"])
+    >>> p  = "%%s://%%s%%s" %% (ru.scheme, ru.netloc, req_json (r) ["url"])
     >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
     { 'json' :
         { 'attributes_raw' :
@@ -3798,7 +3829,7 @@ _test_query = r"""
 
     >>> for i in range (10) :
     ...     r = R.get ("/v1/pid?brief&order_by=pid&limit=4&offset=" + str (i))
-    ...     print (i, ":", formatted_1 (r.json))
+    ...     print (i, ":", formatted_1 (req_json (r)))
     0 : {'entries' : [1, 2, 3, 4], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
     1 : {'entries' : [2, 3, 4, 5], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
     2 : {'entries' : [3, 4, 5, 6], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}

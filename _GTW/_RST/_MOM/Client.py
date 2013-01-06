@@ -40,8 +40,11 @@ import _GTW._RST._MOM
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.predicate           import callable
 
 from   posixpath                import join as pp_join
+
+import json
 import requests
 
 class _Entity_ (TFL.Meta.Object) :
@@ -63,8 +66,22 @@ class _Entity_ (TFL.Meta.Object) :
     def _attrs (self) :
         json = self._json
         if json :
-            return json.get (self._ad_name, {})
+            return dict (json.get (self._ad_name) or {})
     # end def _attrs
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _attrs_orig (self) :
+        json = self._json
+        if json :
+            return json.get (self._ad_name, {})
+    # end def _attrs_orig
+
+    @property
+    @getattr_safe
+    def _changed_p (self) :
+        return self._attrs != self._attrs_orig
+    # end def _changed_p
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -78,15 +95,25 @@ class _Entity_ (TFL.Meta.Object) :
                         if isinstance (e, dict) :
                             yield self._wrap_dict (requester, e)
                         else :
-                            yield requester.GET (e)
+                            yield requester.get (e)
                 return list (gen (self._requester, entries))
     # end def _entries
+
+    def PUT (self) :
+        if self._changed_p :
+            cargo = json.dumps \
+                ( { self._ad_name : self._attrs
+                  , "cid"         : self._json ["cid"]
+                  }
+                )
+            return self._requester.put (self._url, data = cargo)
+    # end def PUT
 
     def _wrap_dict (self, requester, result) :
         if self._ad_name in result :
             result = requester.Object (requester, result)
         else :
-            result = requester.GET \
+            result = requester.get \
                 (result ["url"], params = dict (closure = True))
         return result
     # end def _wrap_dict
@@ -118,6 +145,17 @@ class _Entity_ (TFL.Meta.Object) :
         return bool (self._result)
     # end def __nonzero__
 
+    def __setattr__ (self, name, value) :
+        if name.startswith ("_") :
+            self.__super.__setattr__ (name, value)
+        else :
+            attrs = self._attrs
+            if attrs is not None :
+                attrs [name] = value
+            else :
+                raise TypeError (name)
+    # end def __setattr__
+
 # end class _Entity_
 
 class Object (_Entity_) :
@@ -144,7 +182,7 @@ class Resource (_Entity_) :
     @getattr_safe
     def _json (self) :
         result = self._result.json
-        if TFL.callable (result) :
+        if callable (result) :
             result = result ()
         return result
     # end def _json
@@ -198,7 +236,7 @@ class Requester (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        return self.Wrapper (name.lower (), self)
+        return self.Wrapper (name, self)
     # end def __getattr__
 
 # end class Requester
