@@ -143,7 +143,10 @@ class Resource (_Entity_) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def _json (self) :
-        return self._result.json
+        result = self._result.json
+        if TFL.callable (result) :
+            result = result ()
+        return result
     # end def _json
 
     @TFL.Meta.Once_Property
@@ -181,12 +184,14 @@ class Requester (TFL.Meta.Object) :
     # end class W
 
     def __init__ (self, prefix, raw = False, ** kw) :
+        params = kw.pop ("params", {})
         if raw :
-            kw.setdefault ("params", {})
-            kw ["params"].update (raw = True)
+            params.update (raw = True)
         self.prefix  = prefix
         self.raw     = raw
         self.session = s = requests.Session (** kw)
+        if params :
+            s.params.update (params)
         s.headers.update ({ "Content-Type" : "application/json" })
     # end def __init__
 

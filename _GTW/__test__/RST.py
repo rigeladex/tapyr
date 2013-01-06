@@ -195,6 +195,8 @@ def _normal (k, v) :
 
 def show (r, ** kw) :
     json = r.json if r.content else None
+    if TFL.callable (json) :
+        json = json ()
     if json is not None :
         kw ["json"] = json
     elif r.content :
@@ -231,10 +233,14 @@ def traverse (url, level = 0, seen = None) :
             seen .add (allow)
     else :
         print (path, ":", ro.status_code, ro.content)
-    if rg.ok and rg.content and rg.json :
-        l = level + 1
-        for e in rg.json.get ("entries", ()) :
-            traverse ("http://localhost:9999" + str (e), l, seen)
+    if rg.ok and rg.content :
+        json = rg.json
+        if TFL.callable (json) :
+            json = json ()
+        if json :
+            l = level + 1
+            for e in json.get ("entries", ()) :
+                traverse ("http://localhost:9999" + str (e), l, seen)
 # end def traverse
 
 class Requester (TFL.Meta.Object) :
