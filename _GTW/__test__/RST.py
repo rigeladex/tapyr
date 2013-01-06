@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -44,6 +44,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    11-Dec-2012 (CT) Adapt to change in `HTTP_Status` response
 #    12-Dec-2012 (CT) Use `+ELLIPSIS` instead of `Re_Replacer`
+#     6-Jan-2013 (CT) Add `test_client`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,8 @@ from   _GTW.__test__.Test_Command import *
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
+
+import _GTW._RST._MOM.Client
 
 import datetime
 import json
@@ -274,6 +277,32 @@ server_args = \
     ]
 
 ### «text» ### The doctest follows::
+
+_test_client = r"""
+    >>> server = run_server (%(p1)s, %(n1)s)
+
+    >>> CC = GTW.RST.MOM.Client.Requester ("http://localhost:9999")
+    >>> CR = GTW.RST.MOM.Client.Requester ("http://localhost:9999", raw = True)
+
+    >>> r = CC.get ("")
+    >>> r._url
+    u'http://localhost:9999/'
+    >>> [e._url for e in r]
+    [u'http://localhost:9999/v1', u'http://localhost:9999/Doc', u'http://localhost:9999/RAISE']
+
+    >>> r1 = r [0] [0]
+    >>> [e._url for e in r1._entries [:3]]
+    [u'/v1/MOM-Id_Entity/1', u'/v1/MOM-Id_Entity/2', u'/v1/MOM-Id_Entity/3']
+
+    >>> r2 = r1 [0]
+    >>> sorted (r2._attrs.iteritems ())
+    [(u'first_name', u'christian'), (u'last_name', u'tanzer'), (u'middle_name', u''), (u'title', u'')]
+
+    >>> r2r = CR.GET (r2._url)
+    >>> sorted (r2r._attrs.iteritems ())
+    [(u'first_name', u'Christian'), (u'last_name', u'Tanzer'), (u'middle_name', u''), (u'title', u'')]
+
+"""
 
 _test_cqf = r"""
     >>> server = Scaffold (["wsgi"] + server_args + ["-db_url", %(p1)s, "-db_name", %(n1)s or "test"]) # doctest:+ELLIPSIS
@@ -3946,7 +3975,8 @@ _test_qr_local = """
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( test_cqf        = _test_cqf
+        ( test_client     = _test_client
+        , test_cqf        = _test_cqf
         , test_delete     = _test_delete
         , test_doc        = _test_doc
         , test_example_1  = _test_example_1
