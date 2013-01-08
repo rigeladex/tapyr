@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -78,6 +78,7 @@
 #    25-Sep-2012 (CT) Add `pns_e_type_doc`
 #     9-Oct-2012 (CT) Remove `account_activate`
 #    11-Dec-2012 (CT) Add `error_410`
+#     8-Jan-2013 (CT) Add `account_make_cert`
 #    ««revision-date»»···
 #--
 
@@ -539,6 +540,7 @@ error_templates = \
 
 Template ("account_change_email",         "html/change_email.jnj")
 Template ("account_change_password",      "html/change_password.jnj")
+Template ("account_make_cert",            "html/make_client_cert.jnj")
 Template ("account_register",             "html/register.jnj")
 Template ("account_reset_password",       "html/reset_password.jnj")
 Template ("account_reset_password_email", "email/reset_password.jnj")

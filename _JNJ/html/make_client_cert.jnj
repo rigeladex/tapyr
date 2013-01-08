@@ -1,0 +1,57 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: make_client_cert.jnj -#}
+{#
+## Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This module is part of the package JNJ.
+##
+## This module is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This module is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this module. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    make_client_cert
+##
+## Purpose
+##    Template for a page creating a client certificate
+##
+## Revision Dates
+##     8-Jan-2013 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- import html_version    as X -%}
+{%- import "html/form.jnj" as Form %}
+
+{%- block document -%}
+  {% call Form.form () -%}
+    Keysize: <keygen name="SPKAC" challenge="{{ challenge }}">
+    {{ X.input.hidden
+        ( name  = "challenge"
+        , value = challenge
+        )
+    }}
+    {{ X.input.submit
+        ( title =
+            ( GTW._T ("Create certificate request for user %s")
+            % (request.user.name, )
+            )
+        , value = GTW._T ("Create certificate request")
+        )
+    }}
+  {% endcall %} {# form #}
+{%- endblock document -%}
+
+{#- __END__ jinja template: make_client_cert.jnj -#}

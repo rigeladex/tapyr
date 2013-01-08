@@ -37,6 +37,8 @@
 #                     empty `password`
 #     9-Oct-2012 (CT) Use `.host_url`, not `.url_root`, for `href_action`
 #     5-Jan-2013 (CT) Adapt to change of `password_hash`
+#     8-Jan-2013 (CT) Add `_Make_Cert_`
+#     8-Jan-2013 (CT) Add `_login_required` to various classes
 #    ««revision-date»»···
 #--
 
@@ -58,6 +60,8 @@ from   _TFL.I18N                import _, _T, _Tn
 from   posixpath                import join  as pp_join
 from   urllib                   import urlencode
 
+import base64
+import hashlib
 import urlparse
 import collections
 
@@ -272,11 +276,10 @@ class _Activate_ (_Ancestor) :
                 (resource, request, response, **kw)
             HTTP_Status = resource.top.Status
             pid                 = int (request.req_data.get ("p", "-1"))
-            ###import pdb; pdb.set_trace ()
             try :
                 account = resource.scope.pid_query (pid)
             except LookupError :
-                ### if this called fromthe post, the account is set on the
+                ### if this called from the post, the account is set on the
                 ### response cobject
                 account = getattr (response, "account", None)
                 if not account :
@@ -327,9 +330,10 @@ _Ancestor = _Form_Cmd_
 
 class _Change_Email_ (_Ancestor) :
 
-    page_template_name = "account_change_email"
-    new_email_template = "account_verify_new_email"
-    old_email_template = "account_change_email_info"
+    page_template_name  = "account_change_email"
+    new_email_template  = "account_verify_new_email"
+    old_email_template  = "account_change_email_info"
+    _login_required     = True
 
     class _Change_Email__POST_ (_Ancestor.POST) :
 
@@ -406,6 +410,7 @@ _Ancestor = _Activate_
 class _Change_Password_ (_Ancestor) :
 
     active_account_required = True
+    _login_required         = True
 
     def get_title (self, account, request) :
         return _T ("Change Password for %s on website %s") \
@@ -492,7 +497,8 @@ _Ancestor = _Cmd_
 
 class _Logout_ (_Ancestor) :
 
-    GET = None
+    GET                 = None
+    _login_required     = True
 
     class _Logout__POST_ (_Form_Cmd_.POST) :
 
@@ -512,6 +518,59 @@ class _Logout_ (_Ancestor) :
     POST = _Logout__POST_ # end class
 
 # end class _Logout_
+
+_Ancestor = _Form_Cmd_
+
+class _Make_Cert_ (_Ancestor) :
+
+    page_template_name  = "account_make_cert"
+    _login_required     = True
+
+    class _Make_Cert__GET_ (_Ancestor.GET) :
+
+        _real_name             = "GET"
+
+        def _render_context (self, resource, request, response, ** kw) :
+            result = self.__super._render_context \
+                (resource, request, response, **kw)
+            result ["challenge"] = resource._challenge_hash (request)
+            return result
+        # end def _render_context
+
+    GET = _Make_Cert__GET_ # end class
+
+    class _Make_Cert__POST_ (_Ancestor.POST) :
+
+        _real_name              = "POST"
+
+        def _response_body (self, resource, request, response) :
+            req_data     = request.req_data
+            top          = resource.top
+            HTTP_Status  = top.Status
+            challenge    = req_data.get ("challenge")
+            if challenge != resource._challenge_hash (request) :
+                raise HTTP_Status.Bad_Request \
+                    ("Invalid challenge `%s`" % (challenge, ))
+            spkac = req_data.get ("SPKAC").replace ("\n", "")
+            if not spkac :
+                raise HTTP_Status.Bad_Request ("SPKAC missing")
+            spkac_file = "SPKAC=%s\nemailAddress=%s\n" % \
+                (spkac, request.user.name)
+            TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
+
+        # end def _response_body
+
+    POST = _Make_Cert__POST_ # end class
+
+    def _challenge_hash (self, request) :
+        scope = self.top.scope
+        user  = request.user
+        sig   = "%s:::%s" % (scope.db_meta_data.dbid, user.name)
+        hash  = hashlib.sha224 (sig).digest ()
+        return base64.b64encode (hash, b":-").rstrip (b"=")
+    # end def _challenge_hash
+
+# end class _Make_Cert_
 
 _Ancestor = _Form_Cmd_
 
@@ -656,6 +715,7 @@ class Auth (_Ancestor) :
         , change_password         = _Change_Password_
         , login                   = _Login_
         , logout                  = _Logout_
+        , make_cert               = _Make_Cert_
         , register                = _Register_
         , request_reset_password  = _Request_Reset_Password_
         )
@@ -715,6 +775,11 @@ class Auth (_Ancestor) :
         return self._href_q \
             (self.abs_href, "change_password", p = str (obj.pid))
     # end def href_change_pass
+
+    def href_make_cert (self, obj) :
+        return self._href_q \
+            (self.abs_href, "make_cert", p = str (obj.pid))
+    # end def href_make_cert
 
     def _href_q (self, * args, ** kw) :
         return "%s?%s" % (pp_join (* args), urlencode (kw))
