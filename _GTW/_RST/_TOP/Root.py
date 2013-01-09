@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -65,6 +65,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     Auth_Required              = GTW.RST.HTTP_Status.Login_Required
     Media_Parameters           = None
 
+    allow_make_cert            = False
     copyright_start            = None
     copyright_url              = None
     owner                      = None

@@ -368,7 +368,7 @@
   {%- set next     = kwargs.pop ("next",   request.referrer) -%}
   {%- set allow_change_email = kwargs.pop ("allow_change_email", True) %}
   {%- set allow_register     = kwargs.pop ("allow_register", True) %}
-  {%- set allow_make_cert    = kwargs.pop ("allow_make_cert", True) %}
+  {%- set allow_make_cert    = page.allow_make_cert %}
   {%- if (not next) or next.split ("?") [0].endswith (Auth.href_logout) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}

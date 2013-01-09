@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -172,7 +172,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "-external_media_path:P"
+            ( "-allow_make_cert:B?All creation of client certificates"
+            , "-external_media_path:P"
                 "?Path where the /media/X url should be bound to"
             , "-host:S?Host name or IP-Address the server should be bound to"
             , "-load_I18N:B"
@@ -310,6 +311,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , Session_Class       = GTW.File_Session
                 , Templateer          = self._create_templateer (cmd)
                 , TEST                = cmd.TEST
+                , allow_make_cert     = cmd.allow_make_cert
                 , cookie_salt         = cookie_salt
                 , copyright_start     = cmd.copyright_start
                 , default_locale_code = cmd.locale_code

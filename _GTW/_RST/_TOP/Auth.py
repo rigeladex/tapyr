@@ -777,8 +777,9 @@ class Auth (_Ancestor) :
     # end def href_change_pass
 
     def href_make_cert (self, obj) :
-        return self._href_q \
-            (self.abs_href, "make_cert", p = str (obj.pid))
+        if self.top.allow_make_cert :
+            return self._href_q \
+                (self.abs_href, "make_cert", p = str (obj.pid))
     # end def href_make_cert
 
     def _href_q (self, * args, ** kw) :
