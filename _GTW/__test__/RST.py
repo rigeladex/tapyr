@@ -1952,7 +1952,9 @@ _test_get = r"""
             [ { 'attributes' :
                   { 'boat_class' :
                       { 'attributes' :
-                          { 'name' : 'optimist' }
+                          { 'max_crew' : 1
+                          , 'name' : 'optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2010,7 +2012,9 @@ _test_get = r"""
             , { 'attributes' :
                   { 'boat_class' :
                       { 'attributes' :
-                          { 'name' : 'optimist' }
+                          { 'max_crew' : 1
+                          , 'name' : 'optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2061,7 +2065,9 @@ _test_get = r"""
             [ { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2119,7 +2125,9 @@ _test_get = r"""
             , { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2273,7 +2281,9 @@ _test_get = r"""
             [ { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2331,7 +2341,9 @@ _test_get = r"""
             , { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2433,7 +2445,9 @@ _test_get = r"""
             [ { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2462,7 +2476,9 @@ _test_get = r"""
             , { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2513,7 +2529,9 @@ _test_get = r"""
             [ { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2564,7 +2582,9 @@ _test_get = r"""
             [ { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -2614,7 +2634,9 @@ _test_get = r"""
             [ { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -3007,7 +3029,9 @@ _test_get = r"""
             , { 'attributes_raw' :
                   { 'left' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -3025,7 +3049,9 @@ _test_get = r"""
             , { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -3083,7 +3109,9 @@ _test_get = r"""
             , { 'attributes_raw' :
                   { 'boat_class' :
                       { 'attributes_raw' :
-                          { 'name' : 'Optimist' }
+                          { 'max_crew' : '1'
+                          , 'name' : 'Optimist'
+                          }
                       , 'cid' : 7
                       , 'pid' : 7
                       , 'type_name' : 'SRM.Boat_Class'
@@ -3114,7 +3142,9 @@ _test_get = r"""
                       { 'attributes_raw' :
                           { 'left' :
                               { 'attributes_raw' :
-                                  { 'name' : 'Optimist' }
+                                  { 'max_crew' : '1'
+                                  , 'name' : 'Optimist'
+                                  }
                               , 'cid' : 7
                               , 'pid' : 7
                               , 'type_name' : 'SRM.Boat_Class'
@@ -3135,6 +3165,7 @@ _test_get = r"""
                               { 'pid' : 7
                               , 'url' : '/v1/SRM-Boat_Class/7'
                               }
+                          , 'is_cancelled' : 'no'
                           , 'left' :
                               { 'attributes_raw' :
                                   { 'date' :
@@ -3188,7 +3219,9 @@ _test_get = r"""
                       { 'attributes_raw' :
                           { 'left' :
                               { 'attributes_raw' :
-                                  { 'name' : 'Optimist' }
+                                  { 'max_crew' : '1'
+                                  , 'name' : 'Optimist'
+                                  }
                               , 'cid' : 7
                               , 'pid' : 7
                               , 'type_name' : 'SRM.Boat_Class'
@@ -3209,6 +3242,7 @@ _test_get = r"""
                               { 'pid' : 7
                               , 'url' : '/v1/SRM-Boat_Class/7'
                               }
+                          , 'is_cancelled' : 'no'
                           , 'left' :
                               { 'attributes_raw' :
                                   { 'date' :
@@ -3432,7 +3466,9 @@ _test_post = r"""
                 { 'attributes_raw' :
                     { 'left' :
                         { 'attributes_raw' :
-                            { 'name' : 'Optimist' }
+                            { 'max_crew' : '1'
+                            , 'name' : 'Optimist'
+                            }
                         , 'cid' : 7
                         , 'pid' : 7
                         , 'type_name' : 'SRM.Boat_Class'
@@ -3453,6 +3489,7 @@ _test_post = r"""
                         { 'pid' : 7
                         , 'url' : '/v1/SRM-Boat_Class/7'
                         }
+                    , 'is_cancelled' : 'no'
                     , 'left' :
                         { 'attributes_raw' :
                             { 'date' :

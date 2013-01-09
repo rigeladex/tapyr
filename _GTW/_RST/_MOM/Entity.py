@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -38,6 +38,7 @@
 #     4-Oct-2012 (CT) Change `Entity.GET._response_attr` to use `request.brief`
 #     5-Oct-2012 (CT) Pass `url` to nested `Entity.GET._response_obj` calls
 #    16-Oct-2012 (CT) Add and use `as_rest_cargo_raw`, use `as_rest_cargo_ckd`
+#     9-Jan-2013 (CT) Change `as_rest_cargo_raw`  to use `result.edit_attr`
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ def as_rest_cargo_raw \
         url     = res_vet.href_obj (result)
         if request.has_option ("closure") and result.pid not in seen :
             result = method._response_obj \
-                ( resource, request, response, result, result.primary, seen
+                ( resource, request, response, result, result.edit_attr, seen
                 , getter, a_name
                 , url = url
                 )
