@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -29,6 +29,7 @@
 #    18-Sep-2012 (CT) Creation (factored from _GTW/__test__/model.py)
 #    18-Sep-2012 (CT) Redefine `__init__` to set `ANS.Version`
 #    25-Sep-2012 (CT) Add `smtp_server` default `<Tester>`
+#     9-Jan-2013 (CT) Factor in `GTW_RST_Test_Command` from `RST`
 #    ««revision-date»»···
 #--
 
@@ -255,5 +256,32 @@ class GTW_Test_Command (_Ancestor) :
     # end def _wsgi_app
 
 # end class GTW_Test_Command
+
+class GTW_RST_Test_Command (GTW_Test_Command) :
+
+    _defaults               = dict \
+        ( fixtures          = "yes"
+        , port              = 9090
+        , UTP               = "RST"
+        )
+
+    def create_rst (self, cmd, ** kw) :
+        import _GTW._RST._MOM.Doc
+        import _GTW._RST._MOM.Scope
+        result = GTW.RST.Root \
+            ( language          = "de"
+            , entries           =
+                [ GTW.RST.MOM.Scope        (name = "v1")
+                , GTW.RST.MOM.Doc.App_Type (name = "Doc")
+                , GTW.RST.Raiser           (name = "RAISE")
+                ]
+            , ** kw
+            )
+        if cmd.log_level :
+            print (formatted (result.Table))
+        return result
+    # end def create_rst
+
+# end class GTW_RST_Test_Command
 
 ### __END__ GTW.__test__.Test_Command

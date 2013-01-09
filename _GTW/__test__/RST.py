@@ -45,12 +45,14 @@
 #    11-Dec-2012 (CT) Adapt to change in `HTTP_Status` response
 #    12-Dec-2012 (CT) Use `+ELLIPSIS` instead of `Re_Replacer`
 #     6-Jan-2013 (CT) Add `test_client`
+#     9-Jan-2013 (CT) Factor `GTW_RST_Test_Command`, `rst_harness`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _GTW.__test__.Test_Command import *
+from   _GTW.__test__.rst_harness  import *
+from   _GTW.__test__              import rst_harness
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
@@ -60,7 +62,11 @@ import _GTW._RST._MOM.Client
 import datetime
 import json
 
-class _GTW_Test_Command_ (GTW_Test_Command) :
+def run_server (db_url = "hps://", db_name = None) :
+    return rst_harness.run_server ("_GTW.__test__.RST", db_url, db_name)
+# end def run_server
+
+class _GTW_Test_Command_ (GTW_RST_Test_Command) :
 
     _rn_prefix            = "_GTW_Test"
 
@@ -72,29 +78,6 @@ class _GTW_Test_Command_ (GTW_Test_Command) :
 
     SALT                  = bytes \
         ( "c9cac445-3fd8-451d-9eff-dd56c7a91485")
-
-    _defaults               = dict \
-        ( fixtures          = "yes"
-        , port              = 9090
-        , UTP               = "RST"
-        )
-
-    def create_rst (self, cmd, ** kw) :
-        import _GTW._RST._MOM.Doc
-        import _GTW._RST._MOM.Scope
-        result = GTW.RST.Root \
-            ( language          = "de"
-            , entries           =
-                [ GTW.RST.MOM.Scope        (name = "v1")
-                , GTW.RST.MOM.Doc.App_Type (name = "Doc")
-                , GTW.RST.Raiser           (name = "RAISE")
-                ]
-            , ** kw
-            )
-        if cmd.log_level :
-            print (formatted (result.Table))
-        return result
-    # end def create_rst
 
     def fixtures (self, scope) :
         PAP   = scope.PAP
@@ -123,171 +106,6 @@ class _GTW_Test_Command_ (GTW_Test_Command) :
 _Command_  = _GTW_Test_Command_ # end class
 
 Scaffold   = _Command_ ()
-
-from   posixpath import join as pp_join
-
-import multiprocessing
-import requests
-import subprocess
-import sys
-import time
-
-def req_json (r) :
-    if r is not None and r.content :
-        result = r.json
-        if TFL.callable (result) :
-            try :
-                result = result ()
-            except Exception :
-                result = None
-        return result
-# end def req_json
-
-def _run_server (args = []) :
-    print (["run_server"] + server_args + args)
-    result = Scaffold (["run_server"] + server_args + args)
-    return result
-# end def run_server
-
-def run_server (db_url = "hps://", db_name = None) :
-    import tempfile
-    cmd = \
-        [ sys.executable, "-c"
-        , "; ".join
-            ( ( "from _GTW.__test__ import RST"
-              , "RST.Scaffold "
-              + "( "
-              + repr
-                  ( ["run_server"]
-                  + server_args
-                  + ["-db_url", db_url, "-db_name", db_name or "test"]
-                  )
-              + ")"
-              )
-            )
-        ]
-    tf = tempfile.NamedTemporaryFile (delete = False)
-    print ("Using", tf.name, "as stdout/stderr for server process", file=sys.stderr)
-    p = subprocess.Popen (cmd, stderr = tf, stdout = tf)
-    import socket
-    s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout (1.0)
-    i   = 0
-    while True :
-        try :
-            s.connect (("localhost", 9999))
-        except socket.error as exc :
-            if i < 20 :
-                i += 1
-                time.sleep (1)
-            else :
-                break
-        else :
-            exc = None
-            break
-    s.close ()
-    if exc is not None :
-        print  ("Socket connect gave exception:", exc)
-        p.kill ()
-    return p
-# end def run_server
-
-def _normal (k, v) :
-    if k in ("date", "last-modified") :
-        v = "<datetime instance>"
-    elif k in ("etag",) :
-        v = "ETag value"
-    elif k == "content-length" and int (v) != 0 :
-        v = "<length>"
-    elif k == "server" :
-        v = "<server>"
-    return k, v
-# end def _normal
-
-def show (r, ** kw) :
-    json = req_json (r)
-    if json is not None :
-        kw ["json"] = json
-    elif r.content :
-        kw ["content"] = r.content.replace ("\r", "").strip ().split ("\n")
-    output = formatted \
-        ( dict
-            ( status  = r.status_code
-            , url     = r.url
-            , ** kw
-            )
-        )
-    print (output)
-    return r
-# end def show
-
-def showf (r, ** kw) :
-    return show \
-        ( r
-        , headers = dict (_normal (k, v) for k, v in r.headers.iteritems ())
-        , ** kw
-        )
-# end def showf
-
-def traverse (url, level = 0, seen = None) :
-    if seen is None :
-        seen = set ()
-    rg    = requests.get     (url)
-    ro    = requests.options (url)
-    path  = requests.utils.urlparse (url).path or "/"
-    if ro.ok :
-        allow = ro.headers ["allow"]
-        if allow not in seen :
-            print (path, ":", allow)
-            seen .add (allow)
-    else :
-        print (path, ":", ro.status_code, ro.content)
-    if rg.ok :
-        json = req_json (rg)
-        if json :
-            l = level + 1
-            for e in json.get ("entries", ()) :
-                traverse ("http://localhost:9999" + str (e), l, seen)
-# end def traverse
-
-class Requester (TFL.Meta.Object) :
-    """Wrapper for `requests`"""
-
-    class W (TFL.Meta.Object) :
-
-        def __init__ (self, name, prefix) :
-            self.method = getattr (requests, name)
-            self.prefix = prefix
-        # end def __init__
-
-        def __call__ (self, path, * args, ** kw) :
-            kw.setdefault ("headers", { "Content-Type": "application/json" })
-            url = pp_join (self.prefix, path.lstrip ("/"))
-            return self.method (url, * args, ** kw)
-        # end def __call__
-
-    # end class W
-
-    def __init__ (self, prefix) :
-        self.prefix = prefix
-    # end def __init__
-
-    def __getattr__ (self, name) :
-        return self.W (name, self.prefix)
-    # end def __getattr__
-
-# end class Requester
-
-R = Requester ("http://localhost:9999")
-
-server_args = \
-    [ "-UTP=RST"
-    , "-auto_reload=no"
-    , "-debug=no"
-    , "-load_I18N=no"
-    , "-log_level=0"
-    , "-port=9999"
-    ]
 
 ### «text» ### The doctest follows::
 
@@ -4029,8 +3847,5 @@ __test__ = Scaffold.create_test_dict \
     )
 
 if __name__ == "__main__" :
-    backend = sos.environ.get \
-        ("GTW_test_backends", ("HPS")).split (":") [0].strip ()
-    db_url = Scaffold.Backend_Parameters.get (backend, "hps://").strip ("'")
-    _run_server (["-db_url", db_url, "-db_name", "test", "-debug", "no"])
+    rst_harness._main (Scaffold)
 ### __END__ GTW.__test__.RST
