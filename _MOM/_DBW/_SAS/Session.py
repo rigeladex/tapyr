@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -124,6 +124,7 @@
 #     9-Sep-2012 (MG) `_commit_creation_change` added
 #    16-Oct-2012 (CT) Protect `_pickle_cargo_for_table` against missing
 #                     composite attribute to support migrations
+#    11-Jan-2013 (CT) Remove empty `A_AIS_Value` values from `value_dict`
 #    ««revision-date»»···
 #--
 
@@ -389,6 +390,9 @@ class SAS_Interface (TFL.Meta.Object) :
                         )
                     )
             else :
+                if isinstance (kind.attr, MOM.Attr.A_AIS_Value) :
+                    if getattr (entity, attr_name) is None :
+                        continue
                 pickle_cargo = kind.get_pickle_cargo (entity)
                 pc_transform = kind.attr.SAS_PC_Transform
                 if pc_transform :

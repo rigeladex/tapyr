@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -264,6 +264,7 @@
 #    12-Dec-2012 (CT) Add clause for `MOM.Entity` to `A_Id_Entity.from_string`
 #    13-Dec-2012 (CT) Set `A_Angle.needs_raw_value` to `True`
 #    14-Dec-2012 (CT) Robustify `_A_Id_Entity_._check_type`
+#    11-Jan-2013 (CT) Add `A_AIS_Value`
 #    ««revision-date»»···
 #--
 
@@ -1511,6 +1512,14 @@ class _A_Unit_ (A_Attr_Type) :
     # end def _from_string
 
 # end class _A_Unit_
+
+class A_AIS_Value (_A_Int_) :
+    """Auto-incremented-sequence primary key"""
+
+    typ              = _ ("AIS")
+    kind             = MOM.Attr.Primary_AIS
+
+# end class A_AIS_Value
 
 class A_Angle (_A_Float_) :
     """Angle in degrees."""

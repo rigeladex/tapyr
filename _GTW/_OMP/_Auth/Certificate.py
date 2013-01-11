@@ -1,0 +1,127 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package GTW.OMP.Auth.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    GTW.OMP.Auth.Certificate
+#
+# Purpose
+#    Certificate that can be used to authenticate an account
+#
+# Revision Dates
+#    11-Jan-2013 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   __future__ import absolute_import, division, print_function, unicode_literals
+
+from   _MOM.import_MOM               import *
+from   _GTW                          import GTW
+
+from   _GTW._OMP._Auth               import Auth
+import _GTW._OMP._Auth.Entity
+
+from   _MOM._Attr.Date_Time_Interval import *
+
+from   _TFL.I18N                     import _, _T, _Tn
+
+_Ancestor_Essence = Auth.Object
+
+class Certificate (_Ancestor_Essence) :
+    """Certificate that can be used to authenticate an account."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        ### Primary attributes
+
+        class cert_id (A_AIS_Value) :
+            """Id of certificate"""
+
+        # end class cert_id
+
+        ### Non-primary attributes
+
+        class email (A_Email) :
+            """Email of account"""
+
+            kind               = Attr.Required
+
+        # end class email
+
+        class validity (A_Date_Time_Interval) :
+            """Validity date interval"""
+
+            kind               = Attr.Required
+
+        # end class validity
+
+        class desc (A_String) :
+            """Short description of the certificate"""
+
+            kind               = Attr.Optional
+            max_length         = 40
+            ui_name            = _("Description")
+
+        # end class desc
+
+        class is_revoked (A_Boolean) :
+            """True if certificate has been revoked"""
+
+            kind               = Attr.Optional
+
+        # end class is_revoked
+
+        class pem (Attr._A_Binary_String_) :
+            """Signed certificate"""
+
+            kind               = Attr.Internal
+
+        # end class pem
+
+        class alive (A_Boolean) :
+            """Specifies whether the certificate is currently alive, i.e.,
+               it isn't revoked and the current date lies between
+               `validity.start` and `validity.finish`.
+            """
+
+            kind               = Attr.Query
+            ### need to recompute each time `alive` is accessed
+            Kind_Mixins        = (Attr.Computed, )
+            auto_up_depends    = ("validity", "is_revoked")
+
+            def query_fct (self) :
+                now = A_Date_Time.now ()
+                return \
+                    ( ((Q.validity.start  == None) | (Q.validity.start <= now))
+                    & ((Q.validity.finish == None) | (now <= Q.validity.finish))
+                    ) & (Q.is_revoked != True)
+            # end def query_fct
+
+        # end class alive
+
+    # end class _Attributes
+
+# end class Certificate
+
+if __name__ != "__main__" :
+    GTW.OMP.Auth._Export ("*")
+### __END__ GTW.OMP.Auth.Certificate

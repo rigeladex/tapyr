@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -185,6 +185,8 @@
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #    11-Oct-2012 (CT) Use `sig_rank` instead of home-grown code
 #    14-Dec-2012 (CT) Add guard to `Query._get_computed`
+#    11-Jan-2013 (CT) Add `Primary_AIS`; factor `_Primary_D_`,
+#                     derive `_Primary_` from `Kind`, not `_User_`
 #    ««revision-date»»···
 #--
 
@@ -234,7 +236,7 @@ class Kind (MOM.Prop.Kind) :
     def __init__ (self, Attr_Type, e_type) :
         attr = Attr_Type      (self, e_type)
         self.__super.__init__ (attr, e_type)
-        self._check_sanity    (attr)
+        self._check_sanity    (attr, e_type)
         self.dependent_attrs = set ()
         self.rank            = attr.sig_rank
         self.record_changes  = attr.record_changes and self.record_changes
@@ -404,18 +406,35 @@ class Kind (MOM.Prop.Kind) :
             yield c
     # end def _checkers
 
-    def _check_sanity (self, attr_type) :
+    def _check_sanity (self, attr_type, e_type) :
         if __debug__ :
-            self._check_sanity_default (attr_type)
+            self._check_sanity_default (attr_type, e_type)
             if isinstance (attr_type, attr_type.Syntax_Re_Mixin) :
                 if attr_type._syntax_re is None :
                     raise ValueError \
                         ( "`%s` needs a definition for `_syntax_re`"
                         % (attr_type, )
                         )
+            elif isinstance (attr_type, MOM.Attr.A_AIS_Value) :
+                if not isinstance (self, Primary_AIS) :
+                    raise TypeError \
+                        ( "`%s` needs to be kind Primary_AIS, but is %s"
+                        % (attr_type, self.__class__)
+                        )
+                if attr_type.default is not None :
+                    raise TypeError \
+                        ( "`%s` needs default `None`, but has default `%s`"
+                        % (attr_type, attr_type.default)
+                        )
+                if not e_type.relevant_root :
+                    raise TypeError \
+                        ( "Attribute `%s` cannot be defined for non-relevant "
+                          "E-Type s"
+                        % (attr_type, e_type)
+                        )
     # end def _check_sanity
 
-    def _check_sanity_default (self, attr_type) :
+    def _check_sanity_default (self, attr_type, e_type) :
         default = getattr (attr_type, "raw_default", None)
         if (   default is not None
            and not isinstance (default, basestring)
@@ -592,8 +611,8 @@ class _Auto_Update_Mixin_ (Kind) :
         self._set_cooked (obj, self._get_computed (obj), True)
     # end def update
 
-    def _check_sanity (self, attr_type) :
-        self.__super._check_sanity (attr_type)
+    def _check_sanity (self, attr_type, e_type) :
+        self.__super._check_sanity (attr_type, e_type)
         if __debug__ :
             if not attr_type.auto_up_depends :
                 raise TypeError \
@@ -679,7 +698,7 @@ class _Composite_Mixin_ (_Co_Base_) :
         return self._set_cooked_value (obj, etm (), changed = True)
     # end def reset
 
-    def _check_sanity (self, attr_type) :
+    def _check_sanity (self, attr_type, e_type) :
         if __debug__ :
             if not attr_type.P_Type :
                 raise TypeError \
@@ -691,7 +710,7 @@ class _Composite_Mixin_ (_Co_Base_) :
                         ( "Attribute `%s` of kind %s cannot have %s %r"
                         % (attr_type, self.kind, name, d)
                         )
-        self.__super._check_sanity (attr_type)
+        self.__super._check_sanity (attr_type, e_type)
     # end def _check_sanity
 
     def _update_owner (self, obj, value) :
@@ -730,7 +749,7 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
         return self._set_cooked_value (obj, self.attr.R_Type (), changed = True)
     # end def reset
 
-    def _check_sanity (self, attr_type) :
+    def _check_sanity (self, attr_type, e_type) :
         if __debug__ :
             if isinstance (self, _Primary_) :
                 raise TypeError \
@@ -738,13 +757,13 @@ class _Typed_Collection_Mixin_ (_Co_Base_) :
             C_Type = attr_type.C_Type
             if not C_Type :
                 raise TypeError ("%s needs to define `C_Type`" % attr_type)
-        self.__super._check_sanity (attr_type)
+        self.__super._check_sanity (attr_type, e_type)
     # end def _check_sanity
 
-    def _check_sanity_default (self, attr_type) :
+    def _check_sanity_default (self, attr_type, e_type) :
         default = getattr (attr_type, "raw_default", None)
         if default is not None and default not in ([], ()) :
-            self.__super._check_sanity_default (attr_type)
+            self.__super._check_sanity_default (attr_type, e_type)
     # end def _check_sanity_default
 
 # end class _Typed_Collection_Mixin_
@@ -759,8 +778,8 @@ class _Computed_Mixin_ (Kind) :
         return result
     # end def get_value
 
-    def _check_sanity (self, attr_type) :
-        self.__super._check_sanity (attr_type)
+    def _check_sanity (self, attr_type, e_type) :
+        self.__super._check_sanity (attr_type, e_type)
         default = self.raw_default
         if default :
             kind = self.kind
@@ -933,10 +952,7 @@ class _Cached_ (_Volatile_, _System_) :
 
 # end class _Cached_
 
-class _Primary_ (_User_) :
-    """Primary attribute: must be defined at all times, used as part of the
-       `essential primary key`.
-    """
+class _Primary_ (Kind) :
 
     is_primary  = True
     kind        = _ ("primary")
@@ -965,7 +981,26 @@ class _Primary_ (_User_) :
 
 # end class _Primary_
 
-class Primary (_Required_Mixin_, _Primary_) :
+class _Primary_D_ (_Primary_) :
+
+    @classmethod
+    def as_arg_ckd (cls, attr) :
+        return "%s = %r" % (attr.name, attr.default)
+    # end def as_arg_ckd
+
+    @classmethod
+    def as_arg_raw (cls, attr) :
+        return "%s = %r" % (attr.name, attr.raw_default)
+    # end def as_arg_raw
+
+    @classmethod
+    def epk_def_set (cls, code) :
+        return code
+    # end def epk_def_set
+
+# end class _Primary_D_
+
+class Primary (_Required_Mixin_, _Primary_, _User_) :
     """Primary attribute: must be defined at all times, used as part of the
        `essential primary key`.
     """
@@ -986,27 +1021,22 @@ class Primary (_Required_Mixin_, _Primary_) :
 
 # end class Primary
 
-class Primary_Optional (_Sticky_Mixin_, _Primary_) :
+class Primary_AIS (_Primary_D_, _DB_System_) :
+    """Primary auto-incremented-sequence attribute:
+       cannot be passed to constructor,
+       used as part of the `essential primary key`.
+    """
+
+    _k_rank     = -5
+
+# end class Primary_AIS
+
+class Primary_Optional (_Sticky_Mixin_, _Primary_D_, _User_) :
     """Primary optional attribute: has a default value, used as part
        of the `essential primary key`.
     """
 
     _k_rank     = -10
-
-    @classmethod
-    def as_arg_ckd (cls, attr) :
-        return "%s = %r" % (attr.name, attr.default)
-    # end def as_arg_ckd
-
-    @classmethod
-    def as_arg_raw (cls, attr) :
-        return "%s = %r" % (attr.name, attr.raw_default)
-    # end def as_arg_raw
-
-    @classmethod
-    def epk_def_set (cls, code) :
-        return code
-    # end def epk_def_set
 
 # end class Primary_Optional
 
@@ -1245,8 +1275,8 @@ class Query (_Cached_, _Computed_Mixin_) :
             return attr.cooked (result)
     # end def _get_computed
 
-    def _check_sanity (self, attr_type) :
-        self.__super._check_sanity (attr_type)
+    def _check_sanity (self, attr_type, e_type) :
+        self.__super._check_sanity (attr_type, e_type)
         if __debug__ :
             if not attr_type.auto_up_depends :
                 raise TypeError \
@@ -1330,8 +1360,8 @@ class Sticky_Mixin (_Sticky_Mixin_) :
        user enters an empty value.
     """
 
-    def _check_sanity (self, attr_type) :
-        self.__super._check_sanity (attr_type)
+    def _check_sanity (self, attr_type, e_type) :
+        self.__super._check_sanity (attr_type, e_type)
         if not (TFL.callable (self.computed_default) or self.raw_default) :
             raise TypeError \
                 ("%s is sticky but lacks `default`" % (attr_type, ))
@@ -1367,12 +1397,12 @@ class _Id_Entity_Reference_Mixin_ (_EPK_Mixin_) :
 class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     """Kind mixin for handling object references correctly."""
 
-    def _check_sanity (self, attr_type) :
+    def _check_sanity (self, attr_type, e_type) :
         if __debug__ :
             if not attr_type.P_Type :
                 raise TypeError \
                     ("%s needs to define `P_Type`" % attr_type)
-        self.__super._check_sanity (attr_type)
+        self.__super._check_sanity (attr_type, e_type)
     # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42) :

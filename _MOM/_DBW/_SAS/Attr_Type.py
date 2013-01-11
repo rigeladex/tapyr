@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2013 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -67,6 +67,7 @@
 #    23-Sep-2012 (RS) Fix integer type selection
 #    23-Sep-2012 (RS) Add `_sa_ip`
 #    24-Sep-2012 (RS) SAS magic for `_A_IP_Address` now in `GTW.OMP.NET`
+#    11-Jan-2013 (CT) Add support for `A_AIS_Value`
 #    ««revision-date»»···
 #--
 
@@ -133,14 +134,23 @@ def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name
         , types.Integer ()
-#        , schema.ForeignKey
-#            ( "%s.%s"
-#            % (attr.Class._sa_table.name, attr.Class._sa_pk_name)
-#            )
         )
     col.mom_kind = kind
     return (col, )
 # end def _sa_columns_a_object
+
+@Add_Classmethod ("_sa_columns", Attr.A_AIS_Value)
+def _sa_columns_ais_value (cls, attr, kind, unique, owner_etype, ** kw) :
+    seq = schema.Sequence \
+        ("%s_%s_seq" % (owner_etype.type_name.replace (".", "_"), attr.name))
+    col = schema.Column \
+        ( attr._sa_col_name
+        , types.Integer ()
+        , seq
+        , primary_key = True
+        )
+    return (col, )
+# end def _sa_columns_ais_value
 
 @Add_Classmethod ("_sa_columns", Attr._A_Named_Value_)
 def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :
@@ -214,10 +224,11 @@ def _sa_type_generic (cls, attr, kind, ** kw) :
 # end def _sa_type_generic
 
 int_map = \
- ( (-0x8000,             0x7FFF,             types.SmallInteger)
- , (-0x80000000,         0x7FFFFFFF,         types.Integer)
- , (-0x8000000000000000, 0x7FFFFFFFFFFFFFFF, types.BigInteger)
- )
+    ( (-0x8000,             0x7FFF,             types.SmallInteger)
+    , (-0x80000000,         0x7FFFFFFF,         types.Integer)
+    , (-0x8000000000000000, 0x7FFFFFFFFFFFFFFF, types.BigInteger)
+    )
+
 @Add_Classmethod ("_sa_type", Attr.A_Int)
 def _sa_type_int (cls, attr, kind, ** kw) :
     result    = None

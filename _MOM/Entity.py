@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -225,6 +225,7 @@
 #                     add `created_by` and `last_changed_by`
 #    10-Dec-2012 (CT) Add support for nested attributes to `FO`
 #    11-Dec-2012 (CT) Move `_Class_Kind` from `Entity` to `M_Entity`
+#    11-Jan-2013 (CT) Check `primary_ais` in `_main__init__`
 #    ««revision-date»»···
 #--
 
@@ -1512,6 +1513,12 @@ class Id_Entity (Entity) :
                 )
             checker (** kw)
             raise MOM.Error.Invariants (self._pred_man)
+        if self.primary_ais :
+            if epk [-1] is not None :
+                raise TypeError \
+                    ( "Cannot pass value for attribute `%s` of %s, got `%s`"
+                    % (self.primary_ais.name, self.type_name, epk [-1])
+                    )
         kw.update (self._init_epk (epk))
         setter (** kw)
         required_errors = self._pred_man.required_errors

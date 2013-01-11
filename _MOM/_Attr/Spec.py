@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -59,6 +59,7 @@
 #    12-Apr-2012 (CT) Add `e_type.primary_required` and `.primary_optional`
 #     7-May-2012 (CT) Add `e_type.edit_attr` and `.id_entity_attr`
 #    14-Dec-2012 (CT) Add `KeyError` guard to `_setup_attrs` (`auto_up_depends`)
+#    11-Jan-2013 (CT) Add support for `primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -119,10 +120,19 @@ class Spec (MOM.Prop.Spec) :
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)
             )
-        e_type.primary_required = list \
+        e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)
-        e_type.primary_optional = e_type.primary \
-            [len (e_type.primary_required): ]
+        e_type.primary_optional = po = list \
+            (p for p in e_type.primary [len (pr): ] if not p.electric)
+        pais = e_type.primary [len (pr) + len (po): ]
+        if len (pais) > 1 :
+            raise TypeError \
+                ( "E_Type %s cannot define more than 1 primary ais attribute"
+                  "; but got %s"
+                % (e_type, pais)
+                )
+        else :
+            e_type.primary_ais = pais [0] if pais else None
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

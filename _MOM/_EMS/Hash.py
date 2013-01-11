@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -86,6 +86,7 @@
 #                     (ditto for `_remove`)
 #    11-Aug-2012 (CT) Change `instance` to delegate non-root types to `__super`
 #    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
+#    11-Jan-2013 (CT) Add support for `primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -120,16 +121,26 @@ class Manager (MOM.EMS._Manager_) :
 
     def __init__ (self, scope, db_url) :
         self.__super.__init__ (scope, db_url)
-        self._counts  = TFL.defaultdict (int)
-        self._r_map   = TFL.defaultdict (lambda : TFL.defaultdict (set))
-        self._tables  = TFL.defaultdict (dict)
+        self._counts    = TFL.defaultdict (int)
+        self._ias_seeds = TFL.defaultdict (int)
+        self._r_map     = TFL.defaultdict (lambda : TFL.defaultdict (set))
+        self._tables    = TFL.defaultdict (dict)
     # end def __init__
 
     def add (self, entity, pid = None) :
         count = self._counts
-        hpk   = entity.hpk
         root  = entity.relevant_root
         table = self._tables [root.type_name]
+        if entity.primary_ais :
+            ias_n = entity.primary_ais.name
+            ias_s = self._ias_seeds
+            ias_v = getattr (entity, ias_n)
+            if ias_v is None :
+                ias_s [root.type_name] += 1
+                entity.set (** { ias_n : ias_s [root.type_name] })
+            else :
+                ias_s [root.type_name] = max (ias_v, ias_s [root.type_name])
+        hpk = entity.hpk
         if hpk in table :
             raise MOM.Error.Name_Clash (entity, table [hpk])
         if entity.max_count and entity.max_count <= count [entity.type_name] :
