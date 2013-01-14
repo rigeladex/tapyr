@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##     8-Jan-2013 (CT) Creation
+##    14-Jan-2013 (CT) Remove hidden `input` element for `challenge`
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,11 +39,6 @@
 {%- block document -%}
   {% call Form.form () -%}
     Keysize: <keygen name="SPKAC" challenge="{{ challenge }}">
-    {{ X.input.hidden
-        ( name  = "challenge"
-        , value = challenge
-        )
-    }}
     {{ X.input.submit
         ( title =
             ( GTW._T ("Create certificate request for user %s")
