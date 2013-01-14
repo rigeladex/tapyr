@@ -83,7 +83,7 @@
 ##                     `page.abs_href`
 ##     9-Oct-2012 (CT) Use class `Error-Message` for errors
 ##     9-Oct-2012 (CT) Add `username` to `login_inline`
-##     8-Jan-2013 (CT) Add `allow_make_cert` to `logout_inline`
+##     8-Jan-2013 (CT) Add `cert_auth_path` to `logout_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -368,7 +368,7 @@
   {%- set next     = kwargs.pop ("next",   request.referrer) -%}
   {%- set allow_change_email = kwargs.pop ("allow_change_email", True) %}
   {%- set allow_register     = kwargs.pop ("allow_register", True) %}
-  {%- set allow_make_cert    = page.allow_make_cert %}
+  {%- set cert_auth_path     = page.cert_auth_path %}
   {%- if (not next) or next.split ("?") [0].endswith (Auth.href_logout) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
@@ -398,7 +398,7 @@
           >{{ GTW._T ("Change password") }}</a>
         </li>
       {% endif -%}
-      {%- if allow_make_cert %}
+      {%- if cert_auth_path %}
         <li>
           <a href="{{ Auth.href_make_cert (request.user) }}" class="button"
             title="{{ GTW._T ("Make a client certificate for account %s") % request.user.name }}"
