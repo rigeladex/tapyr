@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Jan-2013 (CT) Creation
+#    14-Jan-2013 (CT) Add `pem` to `alive.query_fct`
 #    ««revision-date»»···
 #--
 
@@ -106,14 +107,14 @@ class Certificate (_Ancestor_Essence) :
             kind               = Attr.Query
             ### need to recompute each time `alive` is accessed
             Kind_Mixins        = (Attr.Computed, )
-            auto_up_depends    = ("validity", "is_revoked")
+            auto_up_depends    = ("validity", "is_revoked", "pem")
 
             def query_fct (self) :
                 now = A_Date_Time.now ()
                 return \
                     ( ((Q.validity.start  == None) | (Q.validity.start <= now))
                     & ((Q.validity.finish == None) | (now <= Q.validity.finish))
-                    ) & (Q.is_revoked != True)
+                    ) & (Q.is_revoked != True) & (Q.pem != None)
             # end def query_fct
 
         # end class alive

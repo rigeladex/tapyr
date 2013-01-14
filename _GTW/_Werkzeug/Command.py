@@ -172,7 +172,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "-allow_make_cert:B?All creation of client certificates"
+            ( "-cert_auth_path:P"
+                "?Path of certification authority .crt and .key files"
             , "-external_media_path:P"
                 "?Path where the /media/X url should be bound to"
             , "-host:S?Host name or IP-Address the server should be bound to"
@@ -311,7 +312,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , Session_Class       = GTW.File_Session
                 , Templateer          = self._create_templateer (cmd)
                 , TEST                = cmd.TEST
-                , allow_make_cert     = cmd.allow_make_cert
+                , cert_auth_path      = cmd.cert_auth_path
                 , cookie_salt         = cookie_salt
                 , copyright_start     = cmd.copyright_start
                 , default_locale_code = cmd.locale_code

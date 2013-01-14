@@ -65,7 +65,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     Auth_Required              = GTW.RST.HTTP_Status.Login_Required
     Media_Parameters           = None
 
-    allow_make_cert            = False
+    cert_auth_path             = None
     copyright_start            = None
     copyright_url              = None
     owner                      = None

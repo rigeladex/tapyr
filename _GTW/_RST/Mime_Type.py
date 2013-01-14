@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -34,6 +34,7 @@
 #    10-Aug-2012 (CT) Fix `Render_Man.render_acceptable`
 #    25-Sep-2012 (CT) Add `SVG`
 #     5-Oct-2012 (CT) Add and use `JSON.json_dump_kw`
+#    14-Jan-2013 (CT) Add `User_Cert`
 #    ««revision-date»»···
 #--
 
@@ -258,6 +259,18 @@ class RST_TXT (_Base_) :
     # end def rendered
 
 TXT = RST_TXT # end class RST_TXT
+
+class RST_User_Cert (_Base_) :
+    """Renderer for mime type x509-user-cert."""
+
+    _real_name                = "User_Cert"
+    mime_types                = ("application/x-x509-user-cert", )
+
+    def rendered (self, request, response, body) :
+        return body
+    # end def rendered
+
+User_Cert = RST_User_Cert # end class
 
 class RST_XHTML (_Base_) :
     """Renderer for mime type XHTML.

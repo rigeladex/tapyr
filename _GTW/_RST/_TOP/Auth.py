@@ -55,12 +55,14 @@ import _GTW._RST._TOP.Page
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.Filename            import Filename
 from   _TFL.I18N                import _, _T, _Tn
 
 from   posixpath                import join  as pp_join
 from   urllib                   import urlencode
 
 import base64
+import datetime
 import hashlib
 import urlparse
 import collections
@@ -533,7 +535,9 @@ class _Make_Cert_ (_Ancestor) :
         def _render_context (self, resource, request, response, ** kw) :
             result = self.__super._render_context \
                 (resource, request, response, **kw)
-            result ["challenge"] = resource._challenge_hash (request)
+            result ["challenge"] = challenge = resource._challenge_hash \
+                (request)
+            request.session ["spkac_challenge"] = challenge
             return result
         # end def _render_context
 
@@ -542,22 +546,54 @@ class _Make_Cert_ (_Ancestor) :
     class _Make_Cert__POST_ (_Ancestor.POST) :
 
         _real_name              = "POST"
+        _renderers              = (GTW.RST.Mime_Type.User_Cert, )
 
         def _response_body (self, resource, request, response) :
-            req_data     = request.req_data
             top          = resource.top
             HTTP_Status  = top.Status
-            challenge    = req_data.get ("challenge")
-            if challenge != resource._challenge_hash (request) :
-                raise HTTP_Status.Bad_Request \
-                    ("Invalid challenge `%s`" % (challenge, ))
-            spkac = req_data.get ("SPKAC").replace ("\n", "")
+            try :
+                from pyspkac.spkac import SPKAC
+                from M2Crypto      import EVP, X509
+            except ImportError as exc :
+                raise HTTP_Status.Internal_Server_Error (exc)
+            ca_path      = top.cert_auth_path
+            if not ca_path :
+                raise HTTP_Status.Not_Found ()
+            try :
+                cert  = X509.load_cert (Filename (".crt", ca_path).name)
+                pkey  = EVP.load_key   (Filename (".key", ca_path).name)
+            except Exception :
+                raise HTTP_Status.Not_Found ()
+            req_data     = request.req_data
+            challenge    = request.session.get ("spkac_challenge")
+            spkac        = req_data.get ("SPKAC").replace ("\n", "")
+            email        = request.user.name
             if not spkac :
                 raise HTTP_Status.Bad_Request ("SPKAC missing")
-            spkac_file = "SPKAC=%s\nemailAddress=%s\n" % \
-                (spkac, request.user.name)
-            TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
-
+            X = X509.new_extension
+            s = SPKAC \
+                ( spkac
+                , challenge
+                , X ( "basicConstraints", "CA:FALSE", critical = True)
+                , X ( 'keyUsage'
+                    , ("digitalSignature, keyEncipherment, keyAgreement")
+                    , critical = True
+                    )
+                , X ( "extendedKeyUsage", "clientAuth, emailProtection, nsSGC")
+                , CN     = email
+                , Email  = email
+                )
+            scope = top.scope
+            CTM   = scope.Auth.Certificate
+            start = CTM.E_Type.validity.start.now ()
+            finis = start + datetime.timedelta (days = 365 * 2)
+            c_obj = CTM  (email = email, validity = (start, finis))
+            scope.commit ()
+            result = c_obj.pem = s.gen_crt (pkey, cert, c_obj.pid).as_pem ()
+            response.headers [b"content-disposition"] = \
+                'inline; filename="%s.crt"' % (email, )
+            scope.commit ()
+            return result
         # end def _response_body
 
     POST = _Make_Cert__POST_ # end class
@@ -777,7 +813,7 @@ class Auth (_Ancestor) :
     # end def href_change_pass
 
     def href_make_cert (self, obj) :
-        if self.top.allow_make_cert :
+        if self.top.cert_auth_path :
             return self._href_q \
                 (self.abs_href, "make_cert", p = str (obj.pid))
     # end def href_make_cert
