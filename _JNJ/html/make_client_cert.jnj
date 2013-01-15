@@ -30,6 +30,7 @@
 ## Revision Dates
 ##     8-Jan-2013 (CT) Creation
 ##    14-Jan-2013 (CT) Remove hidden `input` element for `challenge`
+##    15-Jan-2013 (CT) Add `desc`
 ##    ««revision-date»»···
 ##--
 #}
@@ -38,15 +39,34 @@
 
 {%- block document -%}
   {% call Form.form () -%}
-    Keysize: <keygen name="SPKAC" challenge="{{ challenge }}">
-    {{ X.input.submit
-        ( title =
-            ( GTW._T ("Create certificate request for user %s")
-            % (request.user.name, )
+    <p>
+      <label for="F_challenge">
+        {{- GTW._T ("Keysize") }}:
+        <keygen id="F_challenge" name="SPKAC" challenge="{{ challenge }}">
+        {#- -#}
+      </label>
+    </p>
+    <p>
+      <label for="F_desc">
+        {{- GTW._T ("Description") }}:
+        {{ X.input.text
+            ( title = GTW._T ("Optional descritpion for client certificate")
+            , id    = "F_desc"
+            , name  = "desc"
             )
-        , value = GTW._T ("Create certificate request")
-        )
-    }}
+        -}}
+      </label>
+    </p>
+    <p>
+      {{ X.input.submit
+          ( title =
+              ( GTW._T ("Create certificate request for user %s")
+              % (request.user.name, )
+              )
+          , value = GTW._T ("Create certificate request")
+          )
+      }}
+    </p>
   {% endcall %} {# form #}
 {%- endblock document -%}
 

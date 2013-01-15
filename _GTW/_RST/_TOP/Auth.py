@@ -39,6 +39,7 @@
 #     5-Jan-2013 (CT) Adapt to change of `password_hash`
 #     8-Jan-2013 (CT) Add `_Make_Cert_`
 #     8-Jan-2013 (CT) Add `_login_required` to various classes
+#    15-Jan-2013 (CT) Implement `_Make_Cert_.POST._response_body`
 #    ««revision-date»»···
 #--
 
@@ -62,10 +63,11 @@ from   posixpath                import join  as pp_join
 from   urllib                   import urlencode
 
 import base64
+import collections
 import datetime
 import hashlib
+import time
 import urlparse
-import collections
 
 class Errors (collections.defaultdict) :
 
@@ -561,40 +563,54 @@ class _Make_Cert_ (_Ancestor) :
                 raise HTTP_Status.Not_Found ()
             try :
                 cert  = X509.load_cert (Filename (".crt", ca_path).name)
-                pkey  = EVP.load_key   (Filename (".key", ca_path).name)
+                ### Unicode argument to `EVP.load_key` fails [15-Jan-2013]
+                pkey  = EVP.load_key (str (Filename (".key", ca_path).name))
             except Exception :
                 raise HTTP_Status.Not_Found ()
             req_data     = request.req_data
             challenge    = request.session.get ("spkac_challenge")
             spkac        = req_data.get ("SPKAC").replace ("\n", "")
+            desc         = req_data.get ("desc")
             email        = request.user.name
+            cn           = "%s [%s]" % (email, desc) if desc else email
             if not spkac :
                 raise HTTP_Status.Bad_Request ("SPKAC missing")
+            ### Unicode arguments to `X509.new_email` fail [15-Jan-2013]
             X = X509.new_extension
+            x1 = X ( b"basicConstraints", b"CA:FALSE", critical = True)
+            x2 = X \
+                ( b"keyUsage"
+                , b"digitalSignature, keyEncipherment, keyAgreement"
+                , critical = True
+                )
+            x3 = X ( b"extendedKeyUsage", b"clientAuth, emailProtection, nsSGC")
             s = SPKAC \
-                ( spkac
-                , challenge
-                , X ( "basicConstraints", "CA:FALSE", critical = True)
-                , X ( 'keyUsage'
-                    , ("digitalSignature, keyEncipherment, keyAgreement")
-                    , critical = True
-                    )
-                , X ( "extendedKeyUsage", "clientAuth, emailProtection, nsSGC")
-                , CN     = email
+                ( spkac, challenge, x1, x2, x3
+                , CN     = cn
                 , Email  = email
                 )
             scope = top.scope
             CTM   = scope.Auth.Certificate
             start = CTM.E_Type.validity.start.now ()
             finis = start + datetime.timedelta (days = 365 * 2)
-            c_obj = CTM  (email = email, validity = (start, finis))
+            c_obj = CTM  (email = email, validity = (start, finis), desc = desc)
             scope.commit ()
-            result = c_obj.pem = s.gen_crt (pkey, cert, c_obj.pid).as_pem ()
+            result = c_obj.pem = s.gen_crt \
+                ( pkey, cert, c_obj.pid
+                , not_before = self._timestamp (start)
+                , not_after  = self._timestamp (finis)
+                ).as_pem ()
             response.headers [b"content-disposition"] = \
                 'inline; filename="%s.crt"' % (email, )
             scope.commit ()
             return result
         # end def _response_body
+
+        def _timestamp (self, v) :
+            ### convert from UTC to local time
+            vc = v + TFL.user_config.time_zone.utcoffset (v)
+            return int (time.mktime (vc.timetuple ()))
+        # end def _timestamp
 
     POST = _Make_Cert__POST_ # end class
 
