@@ -71,6 +71,8 @@
 #                     `GTW.AFS.MOM.Spec.setup_defaults`, if the module is loaded
 #    25-Sep-2012 (CT) Add `_get_smtp` to honor `<Tester>` and `<Logger>`
 #    25-Sep-2012 (CT) Pass `cmd.log_level` to `I18N.load`
+#     8-Jan-2013 (CT) Add `-cert_auth_path`
+#    15-Jan-2013 (CT) Add `-cc_domain`
 #    ««revision-date»»···
 #--
 
@@ -172,7 +174,9 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "-cert_auth_path:P"
+            ( "-cc_domain:S"
+                "?Domain used for authorization with client certificates"
+            , "-cert_auth_path:P"
                 "?Path of certification authority .crt and .key files"
             , "-external_media_path:P"
                 "?Path where the /media/X url should be bound to"
@@ -312,6 +316,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , Session_Class       = GTW.File_Session
                 , Templateer          = self._create_templateer (cmd)
                 , TEST                = cmd.TEST
+                , cc_domain           = cmd.cc_domain
                 , cert_auth_path      = cmd.cert_auth_path
                 , cookie_salt         = cookie_salt
                 , copyright_start     = cmd.copyright_start

@@ -40,6 +40,7 @@
 #     8-Jan-2013 (CT) Add `_Make_Cert_`
 #     8-Jan-2013 (CT) Add `_login_required` to various classes
 #    15-Jan-2013 (CT) Implement `_Make_Cert_.POST._response_body`
+#    15-Jan-2013 (CT) Set `O` of `SPKAC` to `cert.get_subject ().O`
 #    ««revision-date»»···
 #--
 
@@ -588,6 +589,7 @@ class _Make_Cert_ (_Ancestor) :
                 ( spkac, challenge, x1, x2, x3
                 , CN     = cn
                 , Email  = email
+                , O      = cert.get_subject ().O
                 )
             scope = top.scope
             CTM   = scope.Auth.Certificate

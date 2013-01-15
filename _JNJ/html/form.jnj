@@ -84,6 +84,7 @@
 ##     9-Oct-2012 (CT) Use class `Error-Message` for errors
 ##     9-Oct-2012 (CT) Add `username` to `login_inline`
 ##     8-Jan-2013 (CT) Add `cert_auth_path` to `logout_inline`
+##    15-Jan-2013 (CT) Add `cc_href` to `login_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -298,6 +299,7 @@
 
 {%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
   {%- set Auth     = page.SC.Auth -%}
+  {%- set cc_href  = page.cc_href %}
   {%- set l_caller = kwargs.pop ("caller",   None) -%}
   {%- set action   = kwargs.pop ("action",   Auth.href_login) -%}
   {%- set next     = kwargs.pop ("next",     request.path_x or request.path) -%}
@@ -311,6 +313,13 @@
     {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
       {{- display_errors (errors, None) -}}
+      {%- if cc_href %}
+        <li class="nav-link level-0">
+          <a href="{{ cc_href }}" class="button"
+            title="{{ GTW._T ("Login with a previously created client certificate") }}"
+          >{{ GTW._T ("Certificate login") }}</a>
+        </li>
+      {% endif -%}
       <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
       <li>
         {{ X.input.text

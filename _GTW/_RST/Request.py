@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -124,6 +124,7 @@ class _RST_Request_ (TFL.Meta.Object) :
 
     @Once_Property
     def username (self) :
+        # environment variable SSL_CLIENT_S_DN_Email
         auth = self.authorization
         return auth and auth.username
     # end def username

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -39,6 +39,7 @@
 #     6-Aug-2012 (MG) Consider `hidden`in  `is_current_page`
 #     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
 #    26-Sep-2012 (CT) Remove `hidden` from `is_current_page`
+#    15-Jan-2013 (CT) Add `cc_href`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,13 @@ class _TOP_Base_ (_Ancestor) :
         self.pop_to_self (kw, "login_required", "Media", prefix = "_")
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @property
+    @getattr_safe
+    def cc_href (self) :
+        if self.cc_domain :
+            return "https://" + pp_join (self.cc_domain, self.href)
+    # end def cc_href
 
     @Once_Property
     @getattr_safe

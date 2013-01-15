@@ -35,6 +35,7 @@
 #    17-Aug-2012 (MG) Clear Etag if notifications are part of the response
 #    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` to `GTW.RST.Root`
+#    15-Jan-2013 (CT) Add `cc_domain`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     Auth_Required              = GTW.RST.HTTP_Status.Login_Required
     Media_Parameters           = None
 
+    cc_domain                  = None
     cert_auth_path             = None
     copyright_start            = None
     copyright_url              = None
