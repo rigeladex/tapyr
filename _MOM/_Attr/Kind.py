@@ -187,6 +187,7 @@
 #    14-Dec-2012 (CT) Add guard to `Query._get_computed`
 #    11-Jan-2013 (CT) Add `Primary_AIS`; factor `_Primary_D_`,
 #                     derive `_Primary_` from `Kind`, not `_User_`
+#    16-Jan-2013 (CT) Add `Primary_AIS.get_substance`, `.has_substance`
 #    ««revision-date»»···
 #--
 
@@ -1028,6 +1029,13 @@ class Primary_AIS (_Primary_D_, _DB_System_) :
     """
 
     _k_rank     = -5
+
+    get_substance         = TFL.Meta.Alias_Property ("get_value")
+    void_values           = property (lambda s : ())
+
+    def has_substance (self, obj) :
+        return True
+    # end def has_substance
 
 # end class Primary_AIS
 
