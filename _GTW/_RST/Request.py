@@ -34,7 +34,7 @@
 #     6-Aug-2012 (CT) Add attribute `lang`
 #     2-Oct-2012 (CT) Add property `brief`
 #    16-Oct-2012 (CT) Add properties `ckd` and `raw`
-#    16-Jan-2013 (CT) Add and use `ssl_authorized_user` and `ssl_session_id`
+#    16-Jan-2013 (CT) Add `ssl_authorized_user` and `ssl_client_verified`
 #    ««revision-date»»···
 #--
 
@@ -116,9 +116,9 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def ssl_authorized_user
 
     @Once_Property
-    def ssl_session_id (self) :
-        return self.environ.get ("SSL_SESSION_ID")
-    # end def ssl_session_id
+    def ssl_client_verified (self) :
+        return self.environ.get ("SSL_CLIENT_VERIFY") == "SUCCESS"
+    # end def ssl_client_verified
 
     @property
     def user (self) :
