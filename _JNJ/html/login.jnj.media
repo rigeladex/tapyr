@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Oct-2012 (CT) Creation
+#    16-Jan-2013 (CT) Add rules for `a.button` and `input`
 #    ««revision-date»»···
 #--
 
@@ -41,9 +42,22 @@ style_sheet = Style_Sheet \
                 , padding        = TRBL0 (l = Em (1./8))
                 , children       =
                     [ Rule
+                        ( "a.button", "input"
+                        , display          = "inline-block"
+                        , margin_bottom    = Em (0.5)
+                        , width            = Em (12.0)
+                        )
+                    , Rule
+                        ( "a.button", "input[type=submit]"
+                        , background_color = P.color_heading
+                        , color            = P.color_selected
+                        , font_size        = Percent (115)
+                        , font_weight      = "bold"
+                        , margin_bottom    = Em (1.0)
+                        )
+                    , Rule
                         ( "label"
-                        , P.nav_col.color_spec_label
-                        , margin_top       = Em (0.5)
+                        , display          = "inline-block"
                         , padding          = TRBL (Em (0.2), Em (0.5))
                         )
                     ]

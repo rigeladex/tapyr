@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: 401.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##    15-Jan-2010 (CT) Creation
+##    16-Jan-2013 (CT) Add `class = "Login"`
 ##    ««revision-date»»···
 ##--
 #}
@@ -49,7 +50,7 @@
       }}
     </h1>
   {% endif %}
-  {{ login_inline (page, request) }}
+  {{ login_inline (page, request, class = "Login") }}
 {% endblock document -%}
 
 {#- __END__ jinja template: 401.jnj -#}

@@ -85,6 +85,7 @@
 ##     9-Oct-2012 (CT) Add `username` to `login_inline`
 ##     8-Jan-2013 (CT) Add `cert_auth_path` to `logout_inline`
 ##    15-Jan-2013 (CT) Add `cc_href` to `login_inline`
+##    16-Jan-2013 (CT) Remove `class` from `<a>` for `cc_href`
 ##    ««revision-date»»···
 ##--
 #}
@@ -314,7 +315,7 @@
     <ul>
       {{- display_errors (errors, None) -}}
       {%- if cc_href %}
-        <li class="nav-link level-0">
+        <li >
           <a href="{{ cc_href }}" class="button"
             title="{{ GTW._T ("Login with a previously created client certificate") }}"
           >{{ GTW._T ("Certificate login") }}</a>
