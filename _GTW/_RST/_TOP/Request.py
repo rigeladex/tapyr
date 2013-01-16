@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -32,6 +32,7 @@
 #    24-Jul-2012 (CT) Add `use_language`
 #     4-Aug-2012 (MG) Don't save session on language change
 #     4-Aug-2012 (MG) Allow setting of `username`
+#    16-Jan-2013 (CT) Consider `ssl_authorized_user` in `username` methods
 #    ««revision-date»»···
 #--
 
@@ -91,11 +92,20 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
 
     @property
     def username (self) :
-        return self.session.username
+        result = self.ssl_authorized_user
+        if result is None :
+            result = self.session.username
+        return result
     # end def username
 
     @username.setter
     def username (self, value) :
+        sau = self.ssl_authorized_user
+        if sau :
+            raise TypeError \
+                ( "Can't set username of ssl-authorized session from %s to %s"
+                % (sau, value)
+                )
         self.session.username = value
     # end def username
 
