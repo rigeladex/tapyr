@@ -34,6 +34,8 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _GTW.__test__.model      import *
 
+import datetime
+
 _test_create = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope ...
@@ -60,9 +62,9 @@ _test_create = """
     >>> all_cs
     [Auth.Certificate (1), Auth.Certificate (2)]
     >>> for c in all_cs :
-    ...     print (c.as_code ())
-    Auth.Certificate (1, email = u'foo@bar', validity = ('2013/01/16', ))
-    Auth.Certificate (2, email = u'foo@baz', validity = ('2013/01/31', ))
+    ...     print (c.as_code (), c.validity.start)
+    Auth.Certificate (1, email = u'foo@bar', validity = ('2013/01/16', )) 2013-01-16 00:00:00
+    Auth.Certificate (2, email = u'foo@baz', validity = ('2013/01/31', )) 2013-01-31 00:00:00
 
     >>> c1.cert_id = 42
     Traceback (most recent call last):
@@ -78,6 +80,21 @@ _test_create = """
     >>> all_cs = Auth.Certificate.query_s ().all ()
     >>> all_cs
     [Auth.Certificate (1), Auth.Certificate (2), Auth.Certificate (3)]
+
+    >>> c1.pem = "fake value to fool `alive`"
+    >>> (c1, c1.alive)
+    (Auth.Certificate (1), True)
+    >>> rdf = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = +1)
+    >>> rdp = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = -1)
+    >>> _ = c1.set (revocation_date = rdf) # doctest:+ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    Invariants: Condition `valid_revocation_date` : The revocation date cannot be in the future. (revocation_date <= today)
+        revocation_date = ...
+        today = ...
+    >>> _ = c1.set (revocation_date = rdp) # doctest:+ELLIPSIS
+    >>> (c1, c1.alive)
+    (Auth.Certificate (1), False)
 
     >>> scope.destroy ()
 """

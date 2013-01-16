@@ -28,6 +28,7 @@
 # Revision Dates
 #    11-Jan-2013 (CT) Creation
 #    14-Jan-2013 (CT) Add `pem` to `alive.query_fct`
+#    16-Jan-2013 (CT) Replace `is_revoked` by `revocation_date`
 #    ««revision-date»»···
 #--
 
@@ -84,12 +85,12 @@ class Certificate (_Ancestor_Essence) :
 
         # end class desc
 
-        class is_revoked (A_Boolean) :
-            """True if certificate has been revoked"""
+        class revocation_date (A_Date_Time) :
+            """Date and time when the certificate was revoked"""
 
             kind               = Attr.Optional
 
-        # end class is_revoked
+        # end class revocation_date
 
         class pem (Attr._A_Binary_String_) :
             """Signed certificate"""
@@ -114,12 +115,36 @@ class Certificate (_Ancestor_Essence) :
                 return \
                     ( ((Q.validity.start  == None) | (Q.validity.start <= now))
                     & ((Q.validity.finish == None) | (now <= Q.validity.finish))
-                    ) & (Q.is_revoked != True) & (Q.pem != None)
+                    & ( Q.revocation_date == None)
+                    & ( Q.pem             != None)
+                    )
             # end def query_fct
 
         # end class alive
 
     # end class _Attributes
+
+    class _Predicates (_Ancestor_Essence._Predicates) :
+
+        _Ancestor = _Ancestor_Essence._Predicates
+
+        class valid_revocation_date (Pred.Condition) :
+            """The revocation date cannot be in the future."""
+
+            kind               = Pred.Object
+            assertion          = "revocation_date <= today"
+            attributes         = ("revocation_date",)
+            bindings           = dict (today = "this.today")
+
+        # end class valid_revocation_date
+
+    # end class _Predicates
+
+    @property
+    def today (self) :
+        return A_Date_Time.now ().replace \
+            (hour = 0, minute = 0, second = 0, microsecond = 0)
+    # end def today
 
 # end class Certificate
 
