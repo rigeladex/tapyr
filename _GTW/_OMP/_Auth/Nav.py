@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -35,6 +35,7 @@
 #                     i.e., stuff related to non-AFS forms
 #    22-May-2012 (CT) Fix typo (`Account_P = dict`, not `Account = dict`)
 #    26-Jul-2012 (CT) Import `_GTW._RST.Permission`, not `_GTW._NAV.Permission`
+#    16-Jan-2013 (CT) Add `Certificate`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,11 @@ class Admin (object) :
 
     Account          = dict \
         ( ETM        = "GTW.OMP.Auth.Account"
+        , permission = Is_Superuser ()
+        )
+
+    Certificate      = dict \
+        ( ETM        = "GTW.OMP.Auth.Certificate"
         , permission = Is_Superuser ()
         )
 
