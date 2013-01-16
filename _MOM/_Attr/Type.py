@@ -265,6 +265,7 @@
 #    13-Dec-2012 (CT) Set `A_Angle.needs_raw_value` to `True`
 #    14-Dec-2012 (CT) Robustify `_A_Id_Entity_._check_type`
 #    11-Jan-2013 (CT) Add `A_AIS_Value`
+#    16-Jan-2013 (CT) Add `Init_Only_Mixin` to `A_AIS_Value.Kind_Mixins`
 #    ««revision-date»»···
 #--
 
@@ -1518,6 +1519,7 @@ class A_AIS_Value (_A_Int_) :
 
     typ              = _ ("AIS")
     kind             = MOM.Attr.Primary_AIS
+    Kind_Mixins      = (MOM.Attr.Init_Only_Mixin, )
 
 # end class A_AIS_Value
 

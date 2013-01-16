@@ -188,6 +188,7 @@
 #    11-Jan-2013 (CT) Add `Primary_AIS`; factor `_Primary_D_`,
 #                     derive `_Primary_` from `Kind`, not `_User_`
 #    16-Jan-2013 (CT) Add `Primary_AIS.get_substance`, `.has_substance`
+#    16-Jan-2013 (CT) Add `Primary_AIS.__set__`
 #    ««revision-date»»···
 #--
 
@@ -1036,6 +1037,10 @@ class Primary_AIS (_Primary_D_, _DB_System_) :
     def has_substance (self, obj) :
         return True
     # end def has_substance
+
+    def __set__ (self, obj, value) :
+        self._set_cooked_value_inner (obj, value)
+    # end def __set__
 
 # end class Primary_AIS
 

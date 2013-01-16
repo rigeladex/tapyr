@@ -226,6 +226,7 @@
 #    10-Dec-2012 (CT) Add support for nested attributes to `FO`
 #    11-Dec-2012 (CT) Move `_Class_Kind` from `Entity` to `M_Entity`
 #    11-Jan-2013 (CT) Check `primary_ais` in `_main__init__`
+#    16-Jan-2013 (CT) Use `.E_Type.primary_ais`, not `.primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -1513,11 +1514,11 @@ class Id_Entity (Entity) :
                 )
             checker (** kw)
             raise MOM.Error.Invariants (self._pred_man)
-        if self.primary_ais :
+        if self.E_Type.primary_ais :
             if epk [-1] is not None :
                 raise TypeError \
                     ( "Cannot pass value for attribute `%s` of %s, got `%s`"
-                    % (self.primary_ais.name, self.type_name, epk [-1])
+                    % (self.E_Type.primary_ais.name, self.type_name, epk [-1])
                     )
         kw.update (self._init_epk (epk))
         setter (** kw)

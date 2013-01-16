@@ -87,6 +87,8 @@
 #    11-Aug-2012 (CT) Change `instance` to delegate non-root types to `__super`
 #    12-Aug-2012 (CT) Change `instance` to not use `logging.error`
 #    11-Jan-2013 (CT) Add support for `primary_ais`
+#    16-Jan-2013 (CT) Use `.E_Type.primary_ais`, not `.primary_ais`
+#    16-Jan-2013 (CT) Use `setattr`, not `.set`, to set value of `primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -131,13 +133,13 @@ class Manager (MOM.EMS._Manager_) :
         count = self._counts
         root  = entity.relevant_root
         table = self._tables [root.type_name]
-        if entity.primary_ais :
-            ias_n = entity.primary_ais.name
+        if entity.E_Type.primary_ais :
+            ias_n = entity.E_Type.primary_ais.name
             ias_s = self._ias_seeds
             ias_v = getattr (entity, ias_n)
             if ias_v is None :
                 ias_s [root.type_name] += 1
-                entity.set (** { ias_n : ias_s [root.type_name] })
+                setattr (entity, ias_n, ias_s [root.type_name])
             else :
                 ias_s [root.type_name] = max (ias_v, ias_s [root.type_name])
         hpk = entity.hpk
