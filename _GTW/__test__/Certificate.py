@@ -71,6 +71,14 @@ _test_create = """
     >>> print (c1.as_code ())
     Auth.Certificate (1, email = u'foo@bar', validity = ('2013/01/16', ))
 
+    >>> c3 = Auth.Certificate (email = "foo@baz", validity = ("20150131", ))
+
+    >>> scope.commit ()
+
+    >>> all_cs = Auth.Certificate.query_s ().all ()
+    >>> all_cs
+    [Auth.Certificate (1), Auth.Certificate (2), Auth.Certificate (3)]
+
     >>> scope.destroy ()
 """
 
