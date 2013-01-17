@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -84,6 +84,7 @@
 #                      for empty `generations` (improve traceback information)
 #    13-Jun-2008 (CT)  `intersection` changed to never return an empty
 #                      `sections` if `min_size == 0`
+#    17-Jan-2013 (CT) Raise `Timeline_Error`, not `AssertionError`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,10 @@ import _TFL._Meta.Object
 
 from   _TFL.Generators       import enumerate_slice
 from   bisect                import bisect
+
+class Timeline_Error (Exception) :
+    """Wrong use of Timeline"""
+# end class Timeline_Error
 
 class TL_Section (TFL.Numeric_Interval) :
     """Section that may be cut from Timeline"""
@@ -184,7 +189,8 @@ class TLS_Periodic (TFL.Meta.Object) :
         self.timeline    = timeline
         self.generations = list (generations)
         self._imp        = {}
-        assert self.generations
+        if not self.generations :
+            raise ValueError ("`generations` must not be empty")
     # end def __init__
 
     def intersections_mod_p (self, min_size = None) :
@@ -231,7 +237,11 @@ class TLS_Periodic (TFL.Meta.Object) :
             if g :
                 p = max (g)
                 if p.parents :
-                    assert len (p.parents) == 1
+                    if len (p.parents) != 1 :
+                        raise RuntimeError \
+                            ( "p.parents must have one element: %s"
+                            % (p.parents, )
+                            )
                     p = p.parents
                 p.prepare_cut_around_l (p, size)
                 result.append (p)
@@ -315,7 +325,7 @@ class Timeline (TFL.Meta.Object) :
        >>> tl.cut (c1, c2)
        Traceback (most recent call last):
        ...
-       AssertionError: Wrong use of Timeline (intersection vs. cut)
+       Timeline_Error: Wrong use of Timeline (intersection vs. cut)
            [(0, 70), (215, 500), (550, 1000)] <--> (200, 215)
 
        >>> tl = Timeline (0, 1000)
@@ -348,8 +358,7 @@ class Timeline (TFL.Meta.Object) :
        >>> tl.intersection_p (S (50, 100), 40)
        Traceback (most recent call last):
        ...
-           assert span.length < period, (span, period)
-       AssertionError: ((50, 100), 40)
+       Timeline_Error: Length of span must be shorter than period: ((50, 100), 40)
 
        >>> tl = Timeline (0, 1000)
        >>> tl.snip (S (100, 120), S (300, 330), S (360, 370), S (550, 590))
@@ -424,10 +433,13 @@ class Timeline (TFL.Meta.Object) :
             pieces = sorted \
                 (pieces, key = lambda p : (p.index, p.to_cut), reverse = True)
             for p in pieces :
-                assert p._sid == self._sid, "%s\n    %s <--> %s" % \
-                    ( "Wrong use of Timeline (intersection vs. cut)"
-                    , self.free, p.to_cut
-                    )
+                if p._sid != self._sid:
+                    raise Timeline_Error \
+                        ( "%s\n    %s <--> %s"
+                        % ( "Wrong use of Timeline (intersection vs. cut)"
+                          , self.free, p.to_cut
+                          )
+                        )
                 if p.to_cut :
                     f = self.free [p.index]
                     if abs (f.lower - p.to_cut.lower) < self.epsilon :
@@ -437,8 +449,12 @@ class Timeline (TFL.Meta.Object) :
                     else :
                         head = self.Span (f.lower, p.to_cut.lower)
                         tail = self.Span (p.to_cut.upper, f.upper)
-                        assert head and tail, \
-                            "head = %s, tail = %s" % (head, tail)
+                        if not (head and tail) :
+                            raise RuntimeError \
+                                ( "Both head and tail must be non-empty: "
+                                  "head = %s, tail = %s"
+                                % (head, tail)
+                                )
                         self.free [p.index : p.index + 1] = [head, tail]
                     if not f :
                         del self.free [p.index]
@@ -480,7 +496,11 @@ class Timeline (TFL.Meta.Object) :
 
     def intersection_p (self, span, period, min_size = 1) :
         spans = list (self._periodic_span_iter (span, period))
-        assert spans, "span = %s, period = %s" % (span, period)
+        if not spans :
+            raise ValueError \
+                ( "Expansion of span `%s` to period `%s` must not be empty"
+                % (span, period)
+                )
         return self.multi_intersection (spans, period, min_size)
     # end def intersection_p
 
@@ -505,13 +525,17 @@ class Timeline (TFL.Meta.Object) :
             if l > 0 :
                 (free, ), size = self.intersection (s)
                 if abs (size - l) > self.epsilon :
-                    raise ValueError, (self.free, s, spans, free)
+                    raise ValueError ((self.free, s, spans, free))
                 free.prepare_cut_l (size)
                 self.cut           (free)
     # end def snip
 
     def _periodic_span_iter (self, span, period) :
-        assert span.length <= period, (span, period)
+        if span.length > period :
+            raise Timeline_Error \
+                ( "Length of span must be shorter than period: %s"
+                % ((span, period), )
+                )
         upper = self.orig.upper
         while span.lower < upper :
             yield span
