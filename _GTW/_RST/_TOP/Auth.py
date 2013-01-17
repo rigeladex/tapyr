@@ -552,20 +552,17 @@ class _Make_Cert_ (_Ancestor) :
         _renderers              = (GTW.RST.Mime_Type.User_Cert, )
 
         def _response_body (self, resource, request, response) :
+            from pyspkac.spkac import SPKAC
+            from M2Crypto      import EVP, X509
             top          = resource.top
             HTTP_Status  = top.Status
-            try :
-                from pyspkac.spkac import SPKAC
-                from M2Crypto      import EVP, X509
-            except ImportError as exc :
-                raise HTTP_Status.Internal_Server_Error (exc)
             ca_path      = top.cert_auth_path
             if not ca_path :
                 raise HTTP_Status.Not_Found ()
             try :
+                ### Unicode argument to `EVP.load_key` fails [M2Crypto==0.21.1]
                 cert  = X509.load_cert (Filename (".crt", ca_path).name)
-                ### Unicode argument to `EVP.load_key` fails [15-Jan-2013]
-                pkey  = EVP.load_key (str (Filename (".key", ca_path).name))
+                pkey  = EVP.load_key   (str (Filename (".key", ca_path).name))
             except Exception :
                 raise HTTP_Status.Not_Found ()
             req_data     = request.req_data
@@ -576,7 +573,7 @@ class _Make_Cert_ (_Ancestor) :
             cn           = "%s [%s]" % (email, desc) if desc else email
             if not spkac :
                 raise HTTP_Status.Bad_Request ("SPKAC missing")
-            ### Unicode arguments to `X509.new_email` fail [15-Jan-2013]
+            ### Unicode arguments to `X509.new_email` fail [M2Crypto==0.21.1]
             X = X509.new_extension
             x1 = X ( b"basicConstraints", b"CA:FALSE", critical = True)
             x2 = X \
