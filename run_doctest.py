@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,7 @@
 #    17-Aug-2010 (CT) `__test__` added to `_doctest_pat`
 #    14-Jun-2011 (MG) `timing` command line option added
 #    10-Aug-2012 (MG) Add new command line option for `exclude`
+#    17-Jan-2013 (CT) Add package-path to `sys.path`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,6 @@ import _TFL.Package_Namespace
 import  doctest
 import  sys
 import  subprocess
-import  os
 import  time
 import  fnmatch
 
@@ -106,7 +106,7 @@ def has_doctest (fn) :
 # end def has_doctest
 
 def run_command (cmd) :
-    subp = subprocess.Popen (cmd, shell = True, env = dict (os.environ))
+    subp = subprocess.Popen (cmd, shell = True, env = dict (sos.environ))
     subp.wait ()
 # end def run_command
 
@@ -137,7 +137,7 @@ def run_command_with_summary (cmd) :
     subp = subprocess.Popen \
         ( cmd
         , shell   = True
-        , env     = dict (os.environ)
+        , env     = dict (sos.environ)
         , stderr  = subprocess.PIPE
         , stdout  = subprocess.PIPE
         )
@@ -155,10 +155,11 @@ def _main (cmd) :
         f  = Filename (a)
         m  = f.base
         sys.path [0:0] = cmd_path
-        if f.directory :
-            sys.path [0:0] = [f.directory]
-        elif not cmd_path :
-            sys.path [0:0] = ["./"]
+        mod_path = f.directory if f.directory else "./"
+        if sos.path.exists \
+               (Filename ("__init__.py", default_dir = mod_path).name) :
+            sys.path [0:0] = [sos.path.join (mod_path, "..")]
+        sys.path [0:0] = [mod_path]
         if cmd.nodiff :
             flags = doctest.NORMALIZE_WHITESPACE
         else :
