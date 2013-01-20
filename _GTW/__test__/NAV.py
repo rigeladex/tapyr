@@ -32,6 +32,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    11-Dec-2012 (CT) Add error `410`
 #    12-Dec-2012 (CT) Add `Person_has_Account`
+#    20-Jan-2013 (CT) Change `401`
 #    ««revision-date»»···
 #--
 
@@ -162,7 +163,6 @@ _test_code = """
     >>> print formatted (css_users)
     [
       [ 400
-      , 401
       , 403
       , 404
       , 405
@@ -178,6 +178,10 @@ _test_code = """
       , 'calendar_day'
       , 'html/static.jnj'
       ]
+    ,
+      [ 401
+      , 'login'
+      ]
     , [ 'account_change_password' ]
     , [ 'console' ]
     , [ 'e_type_admin' ]
@@ -187,7 +191,6 @@ _test_code = """
       , 'e_type_afs|afs_div_seq|afs_fc_horizo'
       ]
     , [ 'gallery' ]
-    , [ 'login' ]
     , [ 'photo' ]
     , [ 'site_admin' ]
     ]

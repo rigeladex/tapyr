@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -35,6 +35,7 @@
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    12-Sep-2012 (RS) Add `Id_Entity`
 #     6-Dec-2012 (CT) Add `Person_has_Account`
+#    20-Jan-2013 (CT) Add `Auth.Certificate`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,8 @@ test_code = r"""
         ('Auth.Account_in_Group', ['left'])
         ('MOM.Document', ['left'])
         ('PAP.Person_has_Account', ['right'])
+    Auth.Certificate
+        ('MOM.Document', ['left'])
     Auth.Group
         ('Auth.Account_in_Group', ['right'])
         ('MOM.Document', ['left'])

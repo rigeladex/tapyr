@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -36,6 +36,7 @@
 #    31-Jul-2012 (CT) Add `Angle` to test output
 #    11-Oct-2012 (CT) Change duplicate removal for `Sig_Key` test
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#    20-Jan-2013 (CT) Add `AIS`
 #    ««revision-date»»···
 #--
 
@@ -412,6 +413,7 @@ _test_code = """
     ...     if msg not in seen :
     ...         print msg
     ...         seen.add (msg)
+    AIS <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Angle <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
@@ -425,6 +427,7 @@ _test_code = """
     Date-Time <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Date_Interval <Attr.Type.Querier Composite ()> None
     Date_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
+    Date_Time_Interval <Attr.Type.Querier Composite ()> None
     Directory <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Email <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Email <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
@@ -493,6 +496,7 @@ _test_code = """
     ...     if k not in seen and not isinstance (at, MOM.Attr._A_Entity_):
     ...         print "%%-20s %%-20s %%s" %% (at.typ, at, at.P_Type or "-"*10)
     ...         seen.add (k)
+    AIS                  cert_id              <type 'int'>
     Angle                lat                  <type 'float'>
     Boolean              discarded            <type 'bool'>
     Date                 date                 <type 'datetime.date'>
