@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Martin Glueck All rights reserved
+# Copyright (C) 2009-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -75,6 +75,7 @@
 #                     `_Q_Result_Attrs_.sa_query`
 #    11-Aug-2012 (MG) Change result of `_Q_Result_Attrs_` to namedtuple
 #    11-Aug-2012 (MG) Fix `namedtuple` of `_Q_Result_Attrs_`
+#    19-Jan-2013 (MG) Support new sqlalchmey version
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,13 @@ import _MOM._DBW._SAS.Filter
 import _MOM._DBW._SAS.Sorted_By
 
 from    sqlalchemy          import sql
+
+try :
+    SQL_Operators = sql.expression.Operators
+    SQL_Function  = sql.functions.sum ### XXX
+except AttributeError :
+    SQL_Operators = sql.operators.Operators
+    SQL_Function  = sql.expression.Function
 
 class _Q_Result_ (TFL.Meta.Object) :
     """Base class for Q_Result using SQLAlchemy to query a SQL database."""
@@ -161,7 +169,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     def filter (self, * criteria, ** eq_kw) :
         result = self._clone ()
         for c in criteria :
-            if not isinstance (c, sql.expression.Operators) :
+            if not isinstance (c, SQL_Operators) :
                 ajoins, aclause = c._sa_filter (self.e_type._SAQ)
             else :
                 ajoins          = ()
@@ -227,7 +235,7 @@ class _Q_Result_ (TFL.Meta.Object) :
 
     def order_by (self, criterion) :
         result = self._clone ()
-        if not isinstance (criterion, sql.expression.Operators) :
+        if not isinstance (criterion, SQL_Operators) :
             joins, order_clause = criterion._sa_order_by (self.e_type._SAQ)
         else :
             joins               = ()
@@ -512,7 +520,7 @@ class _Q_Result_Attrs_ (_Q_Result_) :
                 columns     = []
                 kinds       = []
                 for attr_q in self._attr_qs :
-                    if isinstance (attr_q, sql.functions.sum) :
+                    if isinstance (attr_q, SQL_Function) :
                         columns.append (attr_q)
                         kinds.append ((None, attr_q))
                     else :

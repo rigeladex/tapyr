@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -38,6 +38,7 @@
 #                     support for sqlite
 #     4-Aug-2012 (CT) Add stub for `retire`
 #     5-Aug-2012 (MG) Fix `reserve_pid`
+#    19-Jan-2013 (MG) Fix column name for type-name
 #    ««revision-date»»···
 #--
 
@@ -153,8 +154,8 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
             (self.select.where (self.pid_col == pid))
         found  = result.fetchone ()
         self.commit              ()
-        if found and found.type_name :
-            return found.type_name
+        if found and found.Type_Name :
+            return found.Type_Name
         raise LookupError ("No object with pid `%d` found" % (pid, ))
     # end def type_name
 
@@ -162,8 +163,8 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         result = self.connection.execute \
             (self.select.order_by (self.pid_col.asc ()))
         for row in result :
-            if row.type_name :
-                yield row.pid, row.type_name
+            if row.Type_Name :
+                yield row.pid, row.Type_Name
     # end def __iter__
 
 # end class Pid_Manager
