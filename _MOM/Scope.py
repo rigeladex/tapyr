@@ -109,6 +109,7 @@
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #     6-Dec-2012 (CT) Don't set `change.user` in `nested_change_recorder`
 #    21-Jan-2013 (CT) Add `destroy_all`, populate `Scope.Table`
+#    21-Jan-2013 (MG) Call change callbacks for nested change
 #    ««revision-date»»···
 #--
 
@@ -593,7 +594,9 @@ class Scope (TFL.Meta.Object) :
         with self.historian.nested_recorder (Change, * args, ** kw) as c :
             yield c
             if c :
+                c.user = self.user
                 self.ems.register_change (c)
+                c.do_callbacks           (self)
     # end def nested_change_recorder
 
     def pid_query (self, pid) :
@@ -621,7 +624,7 @@ class Scope (TFL.Meta.Object) :
         if result is not None :
             result.user = self.user
             self.ems.register_change (result)
-            result.do_callbacks (self)
+            result.do_callbacks      (self)
         return result
     # end def record_change
 

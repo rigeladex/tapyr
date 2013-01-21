@@ -83,6 +83,8 @@
 #    14-Sep-2012 (MG) Change `do_callbacks` to support early update of
 #                     entites
 #     6-Dec-2012 (CT) Store `user.pid`, if any, else `user`
+#    21-Jan-2013 (MG) Add scope parameter to `_Change_.do_callbacks`
+#                     Update `last_cid` in `Copy`
 #    ««revision-date»»···
 #--
 
@@ -143,7 +145,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
         return result
     # end def as_pickle
 
-    def do_callbacks (self) :
+    def do_callbacks (self, scope) :
         pass
     # end def do_callbacks
 
@@ -396,27 +398,8 @@ class _Entity_ (Undoable) :
 
 # end class _Entity_
 
-class Copy (_Entity_) :
-    """Model a change that copies an existing entity."""
-
-    ### This is a container for a `Create` and a `Attr` change-object.
-
-    kind = "Copy"
-
-# end class Copy
-
-class Create (_Entity_) :
-    """Model a change that creates a new entity (object or link)"""
-
-    kind = "Create"
-
-    def __init__ (self, entity) :
-        self.__super.__init__ (entity)
-        self.c_time       = self.time
-        self.c_user       = self.user
-        self._new_attr    = self._to_save (entity)
-        self.pickle_cargo = entity.as_pickle_cargo ()
-    # end def __init__
+class _Entity_Last_Cid_Update_Mixin_ (TFL.Meta.Object) :
+    """Mixin which updates the `last_cid` attribute of the entity"""
 
     def do_callbacks (self, scope) :
         entity = self.entity      (scope)
@@ -428,6 +411,30 @@ class Create (_Entity_) :
     def modified_attrs (self) :
         return set (("last_cid", ))
     # end def modified_attrs
+
+# end class _Entity_Last_Cid_Update_Mixin_
+
+class Copy (_Entity_Last_Cid_Update_Mixin_, _Entity_) :
+    """Model a change that copies an existing entity."""
+
+    ### This is a container for a `Create` and a `Attr` change-object.
+
+    kind = "Copy"
+
+# end class Copy
+
+class Create (_Entity_Last_Cid_Update_Mixin_, _Entity_) :
+    """Model a change that creates a new entity (object or link)"""
+
+    kind = "Create"
+
+    def __init__ (self, entity) :
+        self.__super.__init__ (entity)
+        self.c_time       = self.time
+        self.c_user       = self.user
+        self._new_attr    = self._to_save (entity)
+        self.pickle_cargo = entity.as_pickle_cargo ()
+    # end def __init__
 
     def redo (self, scope) :
         self._create      (scope, self.new_attr)

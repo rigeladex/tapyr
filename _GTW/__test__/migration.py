@@ -198,6 +198,9 @@ _test_code = r"""
     (0, 36)
     >>> scope.query_changes (type_name = "SRM.Boat_Class").count ()
     26
+    >>> b = scope.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
+    >>> print b.last_cid ### before migration
+    7
 
     Save contents of scope to database and destroy scope:
 
@@ -232,6 +235,10 @@ _test_code = r"""
     []
     >>> [s.query_changes (type_name = "SRM.Boat_Class").count () for s in scope_t, scope_s]
     [26, 26]
+    >>> bs = scope_s.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
+    >>> bt = scope_t.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
+    >>> print bs.last_cid, bt.last_cid ### migrated to HPS
+    7 7
 
     Now we delete the original database and then migrate back into the
     original app-type/backend. Again, all entities, changes, cids,
@@ -262,7 +269,7 @@ _test_code = r"""
     []
 
     >>> b = scope_u.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
-    >>> print b.last_cid
+    >>> print b.last_cid ### after migration
     7
     >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope
     >>> print c
@@ -285,6 +292,6 @@ _test_code = r"""
 
 """
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict (_test_code, ignore = ("HPS", ))
 
 ### __END__ migration
