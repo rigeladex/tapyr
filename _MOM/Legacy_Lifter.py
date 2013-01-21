@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jan-2013 (MG) Creation
 #    25-Jan-2013 (MG) Add filter code for old account passwort storage
+#    29-Jan-2013 (MG) Lift `Type_Name` in pickle carge
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,11 @@ class Legacy_Lifter (TFL.Meta.Object) :
         for type_name, pc, pid in db_iter :
             type_name = self.module.Type_Name_Renaming.get \
                 (type_name, type_name)
+            if "Type_Name" in pc : ### in case we changed the type name
+                                   ### through the Type_Name_Renaming we need
+                                   ### to change the Type_Name in the pickle
+                                   ### cargo as well
+                pc ["Type_Name"] = [type_name]
             lifter    = self.module.Type_Name_Lifter.get (type_name)
             if lifter :
                 lifter = getattr (self.module, lifter)

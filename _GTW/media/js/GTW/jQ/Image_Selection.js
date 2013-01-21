@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Martin Glueck All rights reserved
+// Copyright (C) 2012-2013 Martin Glueck All rights reserved
 // Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 // #*** <License> ************************************************************#
 // This script is licensed under the terms of either the
@@ -16,6 +16,7 @@
 // Revision Dates
 //    17-Aug-2012 (MG) Creation
 //    17-Aug-2012 (MG) Make selection window url configurable
+//    24-Jan-2013 (MG) Use elfinder as media selection interface
 //    ««revision-date»»···
 //--
 
@@ -30,13 +31,29 @@
                                   .addClass ("afs-media-button");
             inp$.prop   ("type", "hidden")
                 .after  (img$);
+            var elfinder = $('<div />').dialogelfinder ({
+                      url             : this.elfinder
+                    , lang            : this.language
+                    , width           : 840
+                    , destroyOnClose  : false
+                    , getFileCallback : function(files, fm) {
+                          img$.attr ("src", files);
+                          inp$.val  (files).trigger ("change");
+                          console.log (files);
+                      }
+                    , commandsOptions : {
+                        getfile : {
+                              oncomplete : 'close'
+                            , folders    : true
+                        }
+                      }
+                    , autoOpen : false
+                });
             img$.click (function (ev) {
                 var this$ = $(this);
                 window.SetUrl = function (url) {
-                    img$.attr ("src", url);
-                    inp$.val  (url).trigger ("change");
                 };
-                window.open (selection_url, "_blank");
+                elfinder.dialogelfinder ("open");
             });
           }
         }

@@ -1,0 +1,85 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2012-2013 Martin Glueck All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# #*** <License> ************************************************************#
+# This script is part of the library GTW.
+#
+# This script is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This script is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this script. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/elfinder.jnj.media
+#
+# Purpose
+#    Media fragments for the elfinder
+#
+# Revision Dates
+#    18-Jan-2013 (MG) Creation
+#    ««revision-date»»···
+#--
+
+from   __future__ import absolute_import, division, print_function, unicode_literals
+
+
+Script   (GTW.Script  ._.jQuery_UI)
+CSS_Link (GTW.CSS_Link._.jQuery_UI)
+Script   ("/media/X/elfinder/js/elfinder.min.js")
+CSS_Link ("/media/X/elfinder/css/elfinder.min.css")
+
+Script   ("/media/X/tiny_mce/tiny_mce_popup.js")
+Script   ("/media/X/elfinder/js/i18n/elfinder.de.js")
+
+JS_On_Ready \
+    ( """
+  var FileBrowserDialogue = {
+    init: function() {
+      // Here goes your code for setting your custom things onLoad.
+    },
+    mySubmit: function (URL) {
+      var win = tinyMCEPopup.getWindowArg ("window");
+
+      // pass selected file path to TinyMCE
+      win.document.getElementById (
+          tinyMCEPopup.getWindowArg ("input")).value = URL;
+
+      // are we an image browser?
+      if (typeof (win.ImageDialog) != "undefined") {
+        // update image dimensions
+        if (win.ImageDialog.getImageData) {
+          win.ImageDialog.getImageData ();
+        }
+        // update preview if necessary
+        if (win.ImageDialog.showPreviewImage) {
+          win.ImageDialog.showPreviewImage (URL);
+        }
+      }
+
+      // close popup window
+      tinyMCEPopup.close();
+    }
+  }
+
+  tinyMCEPopup.onInit.add (FileBrowserDialogue.init, FileBrowserDialogue);
+
+  var elf = $("#elfinder").elfinder({
+    // set your elFinder options here
+      url: "/elfinder",  // connector URL
+      getFileCallback: function(url) { // editor callback
+        FileBrowserDialogue.mySubmit(url); // pass selected file path to TinyMCE
+      }
+    }).elfinder("instance");
+    """.strip ()
+    )
+### __END__ elfinder
