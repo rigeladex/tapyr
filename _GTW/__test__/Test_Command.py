@@ -65,6 +65,11 @@ import _GTW._AFS._MOM.Spec
 import _TFL.Filename
 import _TFL.Generators
 
+from    werkzeug.test     import Client
+from    werkzeug.wrappers import BaseResponse
+import  pyquery
+import  lxml.html
+
 model_src        = sos.path.dirname (__file__)
 form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
 
@@ -87,6 +92,21 @@ Version = Product_Version \
         , db_extension    = ".momt"
         )
     )
+
+class Test_Response (BaseResponse) :
+    """Enhance the reponse for the test setup"""
+
+    @Once_Property
+    def PQ (self) :
+        return pyquery.PyQuery (self.data)
+    # end def PQ
+
+# end class Test_Response
+
+def _as_string (self) :
+    return lxml.html.tostring (self)
+# end def _as_string
+lxml.html.HtmlElement.string = Once_Property (_as_string)
 
 _Ancestor = GTW.Werkzeug.Command
 
@@ -236,6 +256,10 @@ class GTW_Test_Command (_Ancestor) :
 
     def reset (self) :
         self.root = None
+        try :
+            del self.Test_Client
+        except AttributeError :
+            pass
         MOM.Scope.destroy_all ()
     # end def reset
 
@@ -270,6 +294,19 @@ class GTW_Test_Command (_Ancestor) :
         result = self.__super._wsgi_app (cmd)
         return result
     # end def _wsgi_app
+
+    @Once_Property
+    def Test_Client (self) :
+        return Client (self.root, Test_Response)
+    # end def Test_Client
+
+    def test_post (self, url, ** options) :
+        return self.Test_Client.post (url, ** options)
+    # end def test_post
+
+    def test_get (self, url, ** options) :
+        return self.Test_Client.get (url, ** options)
+    # end def test_get
 
 # end class GTW_Test_Command
 
