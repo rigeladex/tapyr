@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -96,6 +96,7 @@
 #    21-Jun-2012 (CT) Add `Time_Zone`; factor `_User_Config_Entry_`, `cook_o`
 #    21-Jun-2012 (CT) Add and use `implied_value` to fix help output for `Bool`
 #    21-Jun-2012 (CT) Change `CAO.__getattr__` to cache results
+#    15-Jan-2013 (MG) Add global option `Pdb_on_Exception`
 #    ««revision-date»»···
 #--
 
@@ -1292,6 +1293,16 @@ class Cmd (TFL.Meta.Object) :
         oc.sort (key = TFL.Getter.rank)
         if not "help" in od :
             self._setup_opt (Opt.Help (), od, al, -1)
+        if not "Pdb_on_Exception" in od :
+            self._setup_opt \
+                ( Opt.Bool
+                    ( "Pdb_on_Exception"
+                    , description = "Start python debugger pdb on exception"
+                    )
+                , self._opt_dict
+                , self._opt_alias
+                , -1
+                )
     # end def _setup_opts
 
     def __getattr__ (self, name) :
@@ -1358,6 +1369,25 @@ class CAO (TFL.Meta.Object) :
 
     def __call__ (self) :
         handler = self._cmd._handler
+        if self.Pdb_on_Exception :
+            ## {{{ http://code.activestate.com/recipes/65287/ (r5)
+            import sys
+
+            def info(type, value, tb):
+               if hasattr(sys, 'ps1') or not sys.stderr.isatty():
+                  # we are in interactive mode or we don't have a tty-like
+                  # device, so we call the default hook
+                  sys.__excepthook__(type, value, tb)
+               else:
+                  import traceback, pdb
+                  # we are NOT in interactive mode, print the exception...
+                  traceback.print_exception(type, value, tb)
+                  print
+                  # ...then start the debugger in post-mortem mode.
+                  pdb.pm()
+
+            sys.excepthook = info
+            ## end of http://code.activestate.com/recipes/65287/ }}}
         if self.help :
             self._cmd.help (self)
         elif handler :
