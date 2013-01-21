@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -107,6 +107,7 @@
 #    11-Sep-2012 (CT) Add `rollback_pending_change`; factored from `MOM.EMS.SAS`
 #    27-Sep-2012 (CT) Remove references to `Entity.rank`
 #     6-Dec-2012 (CT) Don't set `change.user` in `nested_change_recorder`
+#    21-Jan-2013 (CT) Add `destroy_all`, populate `Scope.Table`
 #    ««revision-date»»···
 #--
 
@@ -133,15 +134,6 @@ import atexit
 import itertools
 import traceback
 import uuid
-
-@atexit.register
-def _atexit () :
-    for s in list (Scope.Table.itervalues ()) :
-        try :
-            s.destroy ()
-        except Exception :
-            pass
-# end def _atexit
 
 class _Example_ (TFL.Meta.Object) :
     """Encapsulate example app_type and scope."""
@@ -331,6 +323,7 @@ class Scope (TFL.Meta.Object) :
             yield self
             self._run_init_callbacks   ()
             self.start_change_recorder ()
+            Scope.Table [self.id] = self
         except :
             Scope.active = old_active
             raise
@@ -491,8 +484,8 @@ class Scope (TFL.Meta.Object) :
     def destroy (self) :
         """Close connection to database and destroy all cached instances."""
         self.ems.close ()
-        if self.qname in Scope.Table :
-            del Scope.Table [self.qname]
+        if self.id in Scope.Table :
+            del Scope.Table [self.id]
         self.stop_change_recorder ()
         self.app_type.run_kill_callbacks (self)
         for c in self.kill_callback :
@@ -507,6 +500,16 @@ class Scope (TFL.Meta.Object) :
             Scope.active = None
         self.__dict__.clear ()
     # end def destroy
+
+    @classmethod
+    def destroy_all (cls) :
+        """Destroy all scopes."""
+        for i, s in sorted (Scope.Table.iteritems (), reverse = True) :
+            try :
+                s.destroy ()
+            except Exception :
+                pass
+    # end def destroy_all
 
     def entity_iter (self) :
         """Yields all objects and links alive in `self` in unspecified
@@ -709,12 +712,6 @@ class Scope (TFL.Meta.Object) :
         return False
     # end def user_equal
 
-    def _add_to_scopes (self) :
-        for n in (self.qname, ) :
-            if n :
-                Scope.Table [n] = self
-    # end def _add_to_scopes
-
     def _check_inv (self, gauge, kind, eiter = None) :
         err_result = []
         wrn_result = []
@@ -841,6 +838,8 @@ class Scope (TFL.Meta.Object) :
     # end def __str__
 
 # end class Scope
+
+atexit.register (Scope.destroy_all)
 
 __doc__ = """
 Class `MOM.Scope`
