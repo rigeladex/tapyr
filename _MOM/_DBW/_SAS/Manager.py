@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2013 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -103,6 +103,7 @@
 #    15-Aug-2012 (MG) Create unique name of Index for primary key
 #    17-Aug-2012 (MG) Add `_Change_._SAS` to allow `.attr` queries for chang
 #                     objects
+#    21-Jan-2013 (MG) Fix `_add_user_defined_indices`
 #    ««revision-date»»···
 #--
 
@@ -198,9 +199,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         for col_names in e_type.use_indices :
             if not isinstance (col_names, (tuple, list)) :
                 col_names = (col_names, )
+            col_names     = list (col_names)
             columns       = [getattr (sa_table.c, cn) for cn in col_names]
             ### add the table name to ensure uniqueness of the index name
-            col_names.insert (sa_table.name, 0)
+            col_names.insert (0, sa_table.name)
             schema.Index ("__".join (col_names), * columns)
     # end def _add_user_defined_indices
 

@@ -128,10 +128,10 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         result = self.connection.execute \
             (self.select.where (self.pid_col == pid)).fetchone ()
         if result :
-            if Type_Name and result.type_name != Type_Name :
+            if Type_Name and result.Type_Name != Type_Name :
                 raise ValueError \
                     ( "Try to reverse pid %d with changed type_name %s != %d"
-                    % (pid, result.type_name, Type_Name)
+                    % (pid, result.Type_Name, Type_Name)
                     )
         else :
             sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)

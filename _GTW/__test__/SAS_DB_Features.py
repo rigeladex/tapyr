@@ -43,6 +43,6 @@ from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
 
 GTW.OMP.PAP.Person.use_indices = ( ("first_name", "last_name"), )
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict (_test_code, ignore = ("HPS", ))
 
 ### __END__ SAS_DB_Features
