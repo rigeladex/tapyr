@@ -521,6 +521,7 @@ def login (Scaffold, account, password) :
         , password = password
         , next     = "/redirected-after-login"
         )
+    ### print ("Login %s" % data.get ("username"))
     resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     return resp.status_code == 303
 # end def login

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -54,6 +54,7 @@
 #    14-Dec-2012 (CT) Move `order_by` before method in `super_ordered_delegate`
 #    14-Dec-2012 (CT) Redefine `Q_Result_Composite.first` to delegate `first`
 #    14-Dec-2012 (CT) Add guard for `._cache` to `_fill_cache`
+#    21-Jan-2013 (MG) `Q_Result_Composite.first`: filter `None` result
 #    ««revision-date»»···
 #--
 
@@ -698,7 +699,10 @@ class Q_Result_Composite (_Q_Result_) :
             )
         if self._order_by :
             result = result.order_by (self._order_by)
-        return result.__super.first ()
+        ### filter None result from the sub queries
+        for obj in result :
+            if obj is not None :
+                return obj
     # end def first
 
     @super_ordered_delegate
