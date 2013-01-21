@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -74,7 +74,7 @@ _composite = r"""
     >>> for e in show (q) : print e ### filtered 3
     ((u'event-1-text', ), (u'2010/04/01', ), (), u'')
 
-    >>> scope.destroy ()
+
 """
 
 _link1_role = r"""
@@ -114,7 +114,7 @@ _link1_role = r"""
     ((u'event-3-text', ), (u'2010/02/01', ), (), u'')
     ((u'event-4-text', ), (u'2010/01/01', ), (), u'')
 
-    >>> scope.destroy ()
+
 """
 
 _link2_link1 = r"""
@@ -160,7 +160,7 @@ _link2_link1 = r"""
     >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
     (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
-    >>> scope.destroy ()
+
 """
 
 _query_attr = r"""
@@ -201,7 +201,7 @@ _query_attr = r"""
     >>> PAP.Person.query (Q.RAW.last_name == "Tanzer").all ()
     [PAP.Person (u'tanzer', u'christian', u'', u'')]
 
-    >>> scope.destroy ()
+
 """
 
 _date_queries = """
@@ -224,7 +224,6 @@ _date_queries = """
     >>> print scope.PAP.Person.query_s (Q.lifetime.start.year >  2010).all ()
     [PAP.Person (u'ln 4', u'fn 4', u'', u'')]
 
-    >>> scope.destroy ()
 """
 
 _sub_query = """
@@ -244,7 +243,6 @@ _sub_query = """
     >>> print q.all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 1', u'fn 2', u'', u'')]
 
-    >>> scope.destroy ()
 """
 
 _type_name_query = r"""
@@ -265,7 +263,6 @@ _type_name_query = r"""
     >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page_Y").all ()
     [SWP.Clip_O ((u'year-1', 2011), ()), SWP.Clip_O ((u'year-2', 2012), ())]
 
-    >>> scope.destroy ()
 """
 
 from   _GTW.__test__.model import *

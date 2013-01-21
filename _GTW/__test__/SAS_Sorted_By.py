@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -67,7 +67,6 @@ _composite = r"""
     ((u'event-1-text', ), (u'2010/02/01', ), (), u'')
     ((u'event-2-text', ), (u'2010/01/01', ), (), u'')
 
-    >>> scope.destroy ()
 
 """
 
@@ -89,7 +88,6 @@ _link1_role = r"""
     (((u'event-1-text', ), (u'2010/02/01', ), (), u''), u'2010/02/01', ())
     (((u'event-2-text', ), (u'2010/01/01', ), (), u''), u'2010/01/01', ())
 
-    >>> scope.destroy ()
 
 """
 
@@ -125,7 +123,6 @@ _link2_link1 = r"""
     (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
     (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
 
-    >>> scope.destroy ()
 
 """
 
@@ -160,7 +157,6 @@ _query_attr = r"""
     2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
     2008 ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
 
-    >>> scope.destroy ()
 
 """
 

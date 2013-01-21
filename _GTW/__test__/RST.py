@@ -1291,8 +1291,6 @@ _test_example_1 = r"""
     >>> print ("Count after loop:", scope.MOM.Id_Entity.count)
     Count after loop: 16
 
-    >>> scope.destroy ()
-
 """
 
 _test_example_2 = r"""
@@ -1337,7 +1335,6 @@ _test_example_2 = r"""
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
 
-    >>> scope.destroy ()
 
 """
 
@@ -1383,7 +1380,6 @@ _test_example_3 = r"""
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 
-    >>> scope.destroy ()
 
 """
 
@@ -1518,7 +1514,6 @@ _test_example_4 = r"""
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
 
-    >>> scope.destroy ()
 
 """
 
@@ -3861,7 +3856,6 @@ _test_qr_local = """
     >>> SRM.Boat_in_Regatta.query_s (SRM.Boat_in_Regatta.AQ.boat.EQ ("17")).all ()
     []
 
-    >>> scope.destroy ()
 
 """
 

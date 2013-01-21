@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -72,7 +72,6 @@ _test_code = """
     >>> [e.address for e in person2.emails]
     [u'person2@example.com']
 
-    >>> scope.destroy ()
 
 """
 
@@ -116,7 +115,6 @@ _test_acr = """
     (<Role_Cacher_n (GTW.OMP.PAP.Person_has_Phone) person --> persons [GTW.OMP.PAP.Phone]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Phone) phone --> phones [GTW.OMP.PAP.Person]>)
     (<Role_Cacher_n (GTW.OMP.PAP.Company_has_Phone) company --> companies [GTW.OMP.PAP.Phone]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Phone) phone --> phones [GTW.OMP.PAP.Company]>)
 
-    >>> scope.destroy ()
 
 """
 

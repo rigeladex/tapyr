@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -47,7 +47,7 @@ simple = r"""
     PAP.Person (u'ln', u'fn', u'', u'')
     >>> per.lifetime.finish = datetime.date (2010, 2, 1)
     >>> scope.rollback ()
-    >>> scope.destroy  ()
+
 """
 
 create = r"""
@@ -87,7 +87,6 @@ create = r"""
     >>> len (scope.uncommitted_changes)
     0
 
-    >>> scope.destroy  ()
 
 """
 from   _GTW.__test__.model                      import *

@@ -96,7 +96,6 @@ _test_create = """
     >>> (c1, c1.alive)
     (Auth.Certificate (1), False)
 
-    >>> scope.destroy ()
 """
 
 __test__ = Scaffold.create_test_dict \

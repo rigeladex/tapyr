@@ -30,6 +30,7 @@
 #    18-Sep-2012 (CT) Redefine `__init__` to set `ANS.Version`
 #    25-Sep-2012 (CT) Add `smtp_server` default `<Tester>`
 #     9-Jan-2013 (CT) Factor in `GTW_RST_Test_Command` from `RST`
+#    21-Jan-2013 (CT) Add `reset`
 #    ««revision-date»»···
 #--
 
@@ -208,8 +209,18 @@ class GTW_Test_Command (_Ancestor) :
             test_spec = {"" : test_spec}
         for w in combiner ((b for b in backends if b not in ignore), bpt) :
             for name, code in test_spec.iteritems () :
-                key = "_".join (p for p in (name, ) + w if p)
-                result [key] = code % dict (self._backend_spec (w))
+                key  = "_".join (p for p in (name, ) + w if p)
+                test = "%s\n\n    %s\n" % \
+                    ( code % dict (self._backend_spec (w))
+                    , "\n    ".join \
+                        ( ( ">>> try :"
+                          , "...     Scaffold.reset ()"
+                          , "... except Exception :"
+                          , "...     pass"
+                          )
+                        )
+                    )
+                result [key] = test
         return result
     # end def create_test_dict
 
@@ -222,6 +233,11 @@ class GTW_Test_Command (_Ancestor) :
     def fixtures (self, scope) :
         pass
     # end def fixtures
+
+    def reset (self) :
+        self.root = None
+        MOM.Scope.destroy_all ()
+    # end def reset
 
     def scope (self, * args, ** kw) :
         verbose = kw.pop ("verbose", True)

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -202,7 +202,6 @@ _q_result = r"""
     >>> sorted (q.filter (qln.IN (["LN 4", "LN 5"])).attrs ("first_name", "last_name"))
     [(u'fn 1', u'ln 4'), (u'fn 2', u'ln 4'), (u'fn 2', u'ln 5'), (u'fn 4', u'ln 4'), (u'fn 5', u'ln 5')]
 
-    >>> scope.destroy ()
 """
 
 _attrs_query = r"""
@@ -229,7 +228,6 @@ _attrs_query = r"""
     >>> q2.order_by (Q.lifetime.start).all ()
     [(u'ln 1', datetime.date(2010, 1, 1)), (u'ln 3', datetime.date(2010, 1, 3)), (u'ln 2', datetime.date(2010, 1, 10)), (u'ln 4', datetime.date(2010, 1, 16)), (u'ln 5', datetime.date(2010, 2, 1))]
 
-    >>> scope.destroy ()
 """
 
 _raw_query = """
@@ -258,7 +256,6 @@ _raw_query = """
     >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("Ln")).order_by (Q.last_name).all ()
     [PAP.Person (u'lname 4', u'fn 3', u'', u'')]
 
-    >>> scope.destroy ()
 
 """
 

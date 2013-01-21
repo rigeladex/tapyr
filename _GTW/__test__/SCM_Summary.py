@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -290,7 +290,6 @@ _basic = r"""
     >>> sorted (conflicts), sorted (merges)
     ([], [])
 
-    >>> scope.destroy ()
 
 """
 
@@ -345,8 +344,6 @@ _more = dict \
     >>> scope_2.commit ()
     >>> scope_1.commit ()
 
-    >>> scope_1.destroy ()
-    >>> scope_2.destroy ()
     """
     )
 

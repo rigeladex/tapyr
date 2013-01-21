@@ -522,8 +522,6 @@ _test_code = """
     X                    width                <type 'int'>
     Y                    height               <type 'int'>
 
-    >>> scope.destroy ()
-
 """
 
 from _GTW.__test__.model import *

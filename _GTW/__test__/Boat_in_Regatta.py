@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -288,7 +288,6 @@ _test_code = r"""
       ...
     Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
-    >>> scope.destroy ()
 
 """
 
@@ -345,7 +344,6 @@ _test_delayed  = r"""
       ...
     Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
-    >>> scope.destroy ()
 
 """
 
@@ -462,7 +460,6 @@ _test_referential_integrity = r"""
     <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '13'}>
     <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 5}>
 
-    >>> scope.destroy ()
 
 """
 
@@ -570,7 +567,6 @@ _test_undo = r"""
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 6
     [1, 2, 3, 4, 5, 6, 7, 8]
 
-    >>> scope.destroy ()
 
 """
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Martin Glueck All rights reserved
+# Copyright (C) 2011-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -204,7 +204,6 @@ _attr_ac_query = """
     >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s"))))
     [Q.position.__raw_lat == 48d 11m 25s]
 
-    >>> scope.destroy ()
 """
 
 _epk_splitter_test = """
@@ -219,7 +218,7 @@ _epk_splitter_test = """
     [(u'Gl Ma',), (u'Gl', u'Ma')]
     >>> scope.PAP.Person.epk_splitter ("Van der Bel")
     [(u'Van der Bel',), (u'Van der', u'Bel'), (u'Van', u'der Bel')]
-    >>> scope.destroy ()
+
 """
 
 _ac_query = """
@@ -250,7 +249,7 @@ _ac_query = """
       (u'van der bellen', u'alexander', u'', u'')
     1 Van der B
     2 Van der B
-    >>> scope.destroy ()
+
 """
 
 from _GTW.__test__.model import *

@@ -410,7 +410,6 @@ _test_code = r"""
     PAP.Address                                    =                     ('street', 'zip', 'city', 'country')
     PAP.Url                                        =                     ('value',)
 
-    >>> scope.destroy ()
 
 """
 

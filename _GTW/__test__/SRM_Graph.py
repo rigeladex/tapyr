@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -432,7 +432,6 @@ _test_guides_EN = """
             |               >...............>               |
             +---------------+               +---------------+
 
-    >>> scope.destroy ()
 
 """
 
@@ -490,7 +489,6 @@ _test_guides_ES = """
                                             |               |               |               |
                                             +---------------+               +---------------+
 
-    >>> scope.destroy ()
 
 """
 
@@ -536,7 +534,6 @@ _test_guides_NE = """
             |               |
             +---------------+
 
-    >>> scope.destroy ()
 """
 
 _test_guides_NW = """
@@ -581,7 +578,6 @@ _test_guides_NW = """
                                                                                                             |               |
                                                                                                             +---------------+
 
-    >>> scope.destroy ()
 
 """
 
@@ -627,7 +623,6 @@ _test_guides_SE = """
                                                                             |               |               |               |               |               |
                                                                             +---------------+               +---------------+               +---------------+
 
-    >>> scope.destroy ()
 
 """
 
@@ -673,7 +668,6 @@ _test_guides_SW = """
             |               |               |               |               |               |
             +---------------+               +---------------+               +---------------+
 
-    >>> scope.destroy ()
 
 """
 
@@ -731,7 +725,6 @@ _test_guides_WN = """
                                             |               <...............<               |
                                             +---------------+               +---------------+
 
-    >>> scope.destroy ()
 
 """
 
@@ -789,7 +782,6 @@ _test_guides_WS = """
             |               |               |               |
             +---------------+               +---------------+
 
-    >>> scope.destroy ()
 
 """
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -480,7 +480,7 @@ _test_code = """
          expected type  : `IP6-network`
          got      value : `1:2:3::/1290`
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
-    >>> scope.destroy ()
+
 """
 
 _query_test = r"""
@@ -646,7 +646,7 @@ _query_test = r"""
     >>> print "\n".join (repr (x) for x in matches2)
     GTW.OMP.NET.Test_IP4_Network (("192.168.1.8/29", ))
 
-    >>> scope.destroy ()
+
 """
 from _GTW.__test__.model import *
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -173,7 +173,6 @@ _test_code = """
     >>> PAP.Person.query_s (last_name = "tanzer").attrs ("pid", "type_name").all ()
     [(1, 'PAP.Person'), (2, 'PAP.Person'), (4, 'PAP.Person'), (5, 'PAP.Person'), (3, 'PAP.Person')]
 
-    >>> scope.destroy ()
 
 """
 
@@ -195,7 +194,6 @@ _test_partial_roles = """
     SWP.Clip_O <class '_GTW._OMP._SWP.Clip.left'> SWP.Object_PN ['SWP.Gallery', 'SWP.Page']
     SRM.Boat_in_Regatta <class '_GTW._OMP._SRM.Boat_in_Regatta.right'> SRM.Regatta ['SRM.Regatta_C', 'SRM.Regatta_H']
 
-    >>> scope.destroy ()
 
 """
 
@@ -266,7 +264,6 @@ _test_roles = """
     PAP.Company_has_Phone Company `left` PAP.Company
     PAP.Company_has_Phone Phone `right` PAP.Phone
 
-    >>> scope.destroy ()
 
 """
 
