@@ -39,6 +39,8 @@
 #     5-Oct-2012 (CT) Pass `url` to nested `Entity.GET._response_obj` calls
 #    16-Oct-2012 (CT) Add and use `as_rest_cargo_raw`, use `as_rest_cargo_ckd`
 #     9-Jan-2013 (CT) Change `as_rest_cargo_raw`  to use `result.edit_attr`
+#    21-Jan-2013 (CT) Check `.allow_method` for
+#                     `_A_Id_Entity_.as_rest_cargo_raw`
 #    ««revision-date»»···
 #--
 
@@ -64,7 +66,10 @@ def as_rest_cargo_raw \
     if result is not None :
         res_vet = resource.resource_from_e_type (result.type_name)
         url     = res_vet.href_obj (result)
-        if request.has_option ("closure") and result.pid not in seen :
+        if (   request.has_option ("closure")
+           and result.pid not in seen
+           and res_vet.allow_method (method, request.user)
+           ) :
             result = method._response_obj \
                 ( resource, request, response, result, result.edit_attr, seen
                 , getter, a_name
