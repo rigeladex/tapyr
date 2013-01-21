@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -31,6 +31,7 @@
 #                     `app_type, db_url`
 #    12-Jul-2010 (CT) `destroy` added
 #    15-Jul-2010 (MG) `__str__` added
+#    19-Jan-2013 (MG) Add support for `legacy_lifter`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _TFL                  import TFL
 
 import _TFL._Meta.Object
 import _TFL.Record
+import _MOM.Legacy_Lifter
 
 class DB_Man (TFL.Meta.Object) :
     """Manager for data bases of MOM."""
@@ -60,13 +62,16 @@ class DB_Man (TFL.Meta.Object) :
     # end def connect
 
     @classmethod
-    def create (cls, app_type, db_url, from_db_man, chunk_size = 10000) :
+    def create ( cls, app_type, db_url, from_db_man
+               , chunk_size    = 10000
+               , legacy_lifter = None
+               ) :
         db_url          = app_type.Url (db_url)
         self            = cls.__new__  (cls, app_type, db_url)
         self.src        = from_db_man
         self.ems        = app_type.EMS.new (self, db_url)
         self.chunk_size = chunk_size
-        self._migrate (chunk_size)
+        self._migrate (chunk_size, legacy_lifter)
         return self
     # end def create
 
@@ -96,10 +101,11 @@ class DB_Man (TFL.Meta.Object) :
         self.__dict__.clear ()
     # end def destroy
 
-    def _migrate (self, chunk_size) :
+    def _migrate (self, chunk_size, legacy_lifter) :
+        ll     = MOM.Legacy_Lifter (legacy_lifter)
         self.ems.pcm.consume \
-            ( self.src.ems.pcm.produce_entities ()
-            , self.src.ems.pcm.produce_changes  ()
+            ( ll.entity_iter (self, self.src.ems.pcm.produce_entities ())
+            , ll.change_iter (self, self.src.ems.pcm.produce_changes  ())
             , chunk_size
             )
     # end def _migrate

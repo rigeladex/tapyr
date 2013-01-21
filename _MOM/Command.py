@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -55,6 +55,7 @@
 #     2-Jun-2012 (CT) Add `Config` derived from `Config_Option`
 #     3-Jun-2012 (CT) Factor `Config` to `Root_Command`
 #     4-Jun-2012 (CT) Add `default` "yes" to `_Readonly_.state`
+#    21-Jan-2013 (MG) Add support for project specific legacy lifter
 #    ««revision-date»»···
 #--
 
@@ -174,6 +175,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             , "overwrite:B?Overwrite `target_db_url` if necessary"
             , "readonly:B?Mark database `db_url` as readonly"
             , "target_db_url:S?Database url for target database"
+            , "legacy_lifter:P?Module containing project specific lifter code"
             )
 
     _Migrate_ = _MOM_Migrate_ # end class
@@ -276,7 +278,8 @@ class MOM_Command (TFL.Command.Root_Command) :
     def _do_migration (self, cmd, apt_s, url_s, apt_t, url_t, db_man_s) :
         if cmd.overwrite :
             apt_t.delete_database (url_t)
-        db_man_t = self.DB_Man.create (apt_t, url_t, db_man_s, cmd.chunk_size)
+        db_man_t = self.DB_Man.create \
+            (apt_t, url_t, db_man_s, cmd.chunk_size, cmd.legacy_lifter)
         if cmd.verbose :
             self._print_info  (apt_s, url_s, db_man_s.db_meta_data, "    ")
             self._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
