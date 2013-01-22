@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -34,6 +34,7 @@
 #     9-Aug-2012 (CT) Fix `is_current_dir` (test for "/" after `startswith`)
 #    10-Aug-2012 (CT) Move `_Cal_Page_.is_current_dir` to
 #                     `Calendar.is_current_page`
+#    22-Jan-2013 (CT) Remove spurious `handler.`
 #    ««revision-date»»···
 #--
 
@@ -150,7 +151,7 @@ class _Q_ (_Mixin_, _Cal_Page_) :
     # end def rendered
 
     def _q_args (self, anchor, request) :
-        req_data   = handler.request.req_data
+        req_data   = request.req_data
         if req_data.get ("Today") :
             anchor = self.today
         else :
