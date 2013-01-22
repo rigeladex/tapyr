@@ -104,6 +104,7 @@
 #    17-Aug-2012 (MG) Add `_Change_._SAS` to allow `.attr` queries for chang
 #                     objects
 #    21-Jan-2013 (MG) Fix `_add_user_defined_indices`
+#    22-Jan-2013 (MG) Set `autoincrement` for sqlite for the change history
 #    ««revision-date»»···
 #--
 
@@ -379,7 +380,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
             ( "change_history", metadata
             , schema.Column
-                  ( "cid",       types.Integer,     primary_key = True)
+                  ( "cid",       types.Integer,     primary_key = True
+                  )
             , schema.Column
                   ( "pid",       types.Integer,     nullable    = True)
             , schema.Column
@@ -393,7 +395,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                   , types.Integer
                   , schema.ForeignKey ("change_history.cid")
                   )
-            , mysql_engine = "InnoDB"
+            , mysql_engine         = "InnoDB"
+            , sqlite_autoincrement = True
             )
         MOM.DBW.SAS.Query \
             (MOM.SCM.Change._Change_, Table, parent = "parent_cid")

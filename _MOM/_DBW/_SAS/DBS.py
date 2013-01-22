@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -58,6 +58,7 @@
 #    22-Jun-2012 (MG) `close` parameter `delete_engine` added
 #    30-Jun-2012 (MG) `Listeners` replace by new `event` system
 #    31-Jul-2012 (CT) Restore compatibility to sqlalchemy 0.6.x (no `events`)
+#    22-Jan-2013 (MG) Add `reserve_cid` to sqlite
 #    ««revision-date»»···
 #--
 
@@ -402,6 +403,14 @@ class Sqlite (_SAS_DBS_) :
         engine.execute ("PRAGMA case_sensitive_like = true;")
         return engine
     # end def create_engine
+
+    @classmethod
+    def reserve_cid (cls, connection, cid) :
+        connection.execute \
+            ("update sqlite_sequence SET seq = %d "
+               "WHERE name == 'change_history' and seq < %d" % (cid, cid)
+            )
+    # end def reserve_cid
 
     @classmethod
     def rollback_pid (cls, pm) :

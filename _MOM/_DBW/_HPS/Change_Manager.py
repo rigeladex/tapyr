@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-May-2010 (CT) Creation
 #     4-Aug-2012 (CT) Remove `uncommitted_changes` from `rollback`
+#    22-Jan-2013 (MG) Don't reset `max_cid` in `rollback`
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,6 @@ class Change_Manager (TFL.Meta.Object) :
         table = self.table
         for cid in range (info.max_cid + 1, self.max_cid + 1) :
             table.pop (cid, None)
-        self.max_cid = info.max_cid
     # end def rollback
 
     def __iter__ (self) :
