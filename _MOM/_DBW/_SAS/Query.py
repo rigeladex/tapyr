@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.DBW.SAS.
@@ -66,6 +66,7 @@
 #    24-Aug-2012 (MG) Fix raw attribute queries for composites
 #    19-Sep-2012 (MG) Change handling of role names to support redefinition
 #                     in descantents
+#    23-Jan-2013 (MG) Support query attributes resulting in Id_Entity's
 #    ««revision-date»»···
 #--
 
@@ -215,9 +216,17 @@ class MOM_Query (_MOM_Query_) :
             query_fct = getattr (attr, "query_fct")
             if query_fct :
                 self._query_fct [name] = attr
+                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
+                    raise TypeError \
+                       ( "Id Entity query `%s` must be specified as "
+                         "`query`, not `query_fct`"
+                       % (attr.name, )
+                       )
             else :
                 query = attr.query._sa_filter (self)
                 self._add_q (query [1] [0], kind, name)
+                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
+                    self._ID_ENTITY_ATTRS [attr.name] = Join_Query (self)
     # end def __init__
 
     def _add_q (self, q, kind, * names) :
