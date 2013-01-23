@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -66,6 +66,7 @@
 #     8-Jun-2012 (CT) Add test for `query_changes` of `type_name`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    23-Jan-2013 (MG) Use `last_change` instead of `max_cid` in some tests
 #    ««revision-date»»···
 #--
 
@@ -1770,7 +1771,7 @@ Instead of committing, `rollback` discards all outstanding changes::
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.rollback ()
     >>> scope.changes_to_save, scope.ems.max_cid ### after rollback
-    (0, 54)
+    (0, 57)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []
 

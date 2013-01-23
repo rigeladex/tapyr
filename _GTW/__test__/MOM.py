@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -68,6 +68,7 @@
 #    11-Oct-2012 (CT) Add test for `signified`, import `MOM.Attr.Position`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #     6-Dec-2012 (CT) Add attributes `creation_change`, ...
+#    23-Jan-2013 (MG) Use `last_change` instead of `max_cid` in some tests
 #    ««revision-date»»···
 #--
 
@@ -1943,7 +1944,7 @@ Rollback of uncommited changes
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.rollback ()
-    >>> scope.changes_to_save, scope.ems.max_cid ### after rollback
+    >>> scope.changes_to_save, last_change (scope).cid ### after rollback
     (0, 50)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []
@@ -2028,6 +2029,9 @@ from   _TFL.Formatter           import Formatter, formatted_1 as formatted1
 formatted  = Formatter (width = 240)
 
 from   _MOM.inspect             import show_ref_map, show_ref_maps
+def last_change (scope) :
+    return scope.query_changes().order_by (TFL.Sorted_By ("-cid")).first ()
+# end def last_change
 
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"

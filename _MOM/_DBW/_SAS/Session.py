@@ -126,6 +126,7 @@
 #                     composite attribute to support migrations
 #    11-Jan-2013 (CT) Remove empty `A_AIS_Value` values from `value_dict`
 #    22-Jan-2013 (MG) Set the cid counter during rollback to the `max_cid`
+#    23-Jan-2013 (MG) Use `rollback_context` in ` Session_S.rollback`
 #    ««revision-date»»···
 #--
 
@@ -725,16 +726,14 @@ class Session_S (_Session_) :
         if self.transaction :
             self._in_rollback += 1
             scope              = self.scope
-            max_cid            = scope.max_cid
-            with scope.historian.temp_recorder (MOM.SCM.Ignorer) :
-                scope.ems._rollback_uncommitted_changes ()
-            self.__super.rollback ()
-            self._in_rollback -= 1
-            if not keep_object_cache :
-                self._pid_map  = self._saved ["pid_map"]
-            self._cid_map      = self._saved ["cid_map"]
-            scope.ems.pm.dbs.reserve_cid (self.__super.connection, max_cid)
-            self._close_connection       (TFL.Method.commit)
+            with scope.ems.pm.dbs.rollback_context (scope, self.__super) :
+                with scope.historian.temp_recorder (MOM.SCM.Ignorer) :
+                    scope.ems._rollback_uncommitted_changes ()
+                self.__super.rollback ()
+                self._in_rollback -= 1
+                if not keep_object_cache :
+                    self._pid_map  = self._saved ["pid_map"]
+                self._cid_map      = self._saved ["cid_map"]
     # end def rollback
 
     def _modify_change_iter (self, change_list) :

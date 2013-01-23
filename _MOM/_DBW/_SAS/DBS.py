@@ -59,6 +59,7 @@
 #    30-Jun-2012 (MG) `Listeners` replace by new `event` system
 #    31-Jul-2012 (CT) Restore compatibility to sqlalchemy 0.6.x (no `events`)
 #    22-Jan-2013 (MG) Add `reserve_cid` to sqlite
+#    23-Jan-2013 (MG) Add `rollback_context`
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,12 @@ class _SAS_DBS_ (MOM.DBW._DBS_) :
         transaction.rollback ()
         connection.close     ()
     # end def rollback
+
+    @classmethod
+    @TFL.Contextmanager
+    def rollback_context (cls, scope, session) :
+        yield
+    # end def rollback_context
 
     def __getattr__ (self, name) :
         return getattr (self._sa_engine, name)
@@ -417,6 +424,15 @@ class Sqlite (_SAS_DBS_) :
         if hasattr (pm, "connection") :
             del pm.connection
     # end def rollback_pid
+
+    @classmethod
+    @TFL.Contextmanager
+    def rollback_context (cls, scope, session) :
+        max_cid = scope.max_cid
+        yield
+        cls.reserve_cid           (session.connection, max_cid)
+        session._close_connection (TFL.Method.commit)
+    # end def rollback_context
 
 # end class Sqlite
 

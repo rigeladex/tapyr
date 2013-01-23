@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -35,7 +35,7 @@
 from   __future__  import unicode_literals
 
 from   _GTW.__test__.MOM import \
-    dt_form, MOM, BMT, show, NL, sos, formatted, formatted1
+    dt_form, MOM, BMT, show, NL, sos, formatted, formatted1, last_change
 from   _MOM.inspect import show_children, show_ref_map, show_ref_maps
 from   _TFL.Regexp  import Dict_Replacer, re
 

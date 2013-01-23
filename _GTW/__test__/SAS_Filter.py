@@ -257,6 +257,8 @@ _type_name_query = r"""
     >>> c2 = scope.SWP.Clip_O (left = p2, abstract = "abstract-p2.1")
     >>> c3 = scope.SWP.Clip_O (left = y1, abstract = "abstract-y1.1")
     >>> c4 = scope.SWP.Clip_O (left = y2, abstract = "abstract-y2.1")
+    >>> scope.commit ()
+
     >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page").all ()
     [SWP.Clip_O ((u'page-1', ), ()), SWP.Clip_O ((u'page-2', ), ())]
 

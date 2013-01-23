@@ -67,6 +67,8 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> x = SRM.Boat ((u'Optimist',),    "Austria", 1)
+    >>> x.nation
+    u'AUT'
     >>> x = SRM.Boat ((u'Optimist',),    "Austria", 2)
     >>> x = SRM.Boat ((u'Laser',),       "Austria", 3)
     >>> x = SRM.Boat ((u'Seascape 18',), "Austria", 14)
