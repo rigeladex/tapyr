@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -40,6 +40,7 @@
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #     1-Aug-2012 (MG) Add test type name change queries
+#    24-Jan-2013 (CT) Change `nation` from `Austria` to `AUT`
 #    ««revision-date»»···
 #--
 
@@ -92,10 +93,10 @@ _test_code = r"""
 
     >>> scope.commit ()
 
-    >>> x = SRM.Boat ((u'Optimist',),    u"Austria", 1)
-    >>> x = SRM.Boat ((u'Optimist',),    u"Austria", 2)
-    >>> x = SRM.Boat ((u'Laser',),       u"Austria", 3)
-    >>> x = SRM.Boat ((u'Seascape 18',), u"Austria", 14)
+    >>> x = SRM.Boat ((u'Optimist',),    u"AUT", 1)
+    >>> x = SRM.Boat ((u'Optimist',),    u"AUT", 2)
+    >>> x = SRM.Boat ((u'Laser',),       u"AUT", 3)
+    >>> x = SRM.Boat ((u'Seascape 18',), u"AUT", 14)
 
     >>> scope.commit ()
 
@@ -161,7 +162,7 @@ _test_code = r"""
     (0, 36)
     >>> scope.query_changes (type_name = "SRM.Boat_Class").count ()
     26
-    
+
     Save contents of scope to database and destroy scope:
 
     >>> scope.ems.compact ()
@@ -195,7 +196,7 @@ _test_code = r"""
     []
     >>> [s.query_changes (type_name = "SRM.Boat_Class").count () for s in scope_t, scope_s]
     [26, 26]
-    
+
     Now we delete the original database and then migrate back into the
     original app-type/backend. Again, all entities, changes, cids,
     and pids should still be identical:

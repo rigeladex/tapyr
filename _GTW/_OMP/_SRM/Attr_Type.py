@@ -39,6 +39,7 @@
 #     7-Aug-2012 (CT) Add `example` to attributes of `Regatta_Result`
 #     8-Sep-2012 (CT) Derive `A_Nation` from `A_Enum`, not `_A_Named_Object_`
 #     8-Sep-2012 (CT) Redefine `A_Nation.cooked` to call `upper`
+#    24-Jan-2013 (CT) Add guard around `upper` to `A_Nation.cooked`
 #    ««revision-date»»···
 #--
 
@@ -110,7 +111,15 @@ class A_Nation (A_Enum) :
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         if value :
-            return super (A_Nation, soc).cooked (value).upper ()
+            try :
+                v = value.upper ()
+            except Exception as exc :
+                raise ValueError \
+                    ( "Value for %s must be string, got %s %r"
+                    % (soc, type (value), value)
+                    )
+            else :
+                return super (A_Nation, soc).cooked (v)
     # end def cooked
 
 # end class A_Nation

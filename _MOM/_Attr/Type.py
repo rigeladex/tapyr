@@ -266,6 +266,7 @@
 #    14-Dec-2012 (CT) Robustify `_A_Id_Entity_._check_type`
 #    11-Jan-2013 (CT) Add `A_AIS_Value`
 #    16-Jan-2013 (CT) Add `Init_Only_Mixin` to `A_AIS_Value.Kind_Mixins`
+#    24-Jan-2013 (CT) Add guards to `A_Enum.cooked`
 #    ««revision-date»»···
 #--
 
@@ -1888,7 +1889,20 @@ class A_Enum (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        return soc.C_Type.cooked (value)
+        if value == "" :
+            result = None
+        else :
+            Table = soc.Table
+            try :
+                result = soc.C_Type.cooked (value)
+            except Exception as exc :
+                raise ValueError \
+                    ( "Invalid value for %s, got %s %r, expected one of %s"
+                    % (soc, type (value), value, sorted (Table))
+                    )
+            if not result in Table :
+                raise ValueError ("%s not in %s" % (result, sorted (Table)))
+        return result
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method

@@ -30,6 +30,7 @@
 #     1-Jul-2010 (CT) `race_results` as example of composite-collection added
 #     6-Sep-2010 (CT) Adapted to change of `Race_Result` from Composite-List
 #                     to `Link1`
+#    24-Jan-2013 (CT) Change `nation` from `Austria` to `AUT`
 #    ««revision-date»»···
 #--
 
@@ -66,12 +67,12 @@ _test_code = r"""
 
     >>> scope.commit ()
 
-    >>> x = SRM.Boat ((u'Optimist',),    "Austria", 1)
+    >>> x = SRM.Boat ((u'Optimist',),    "AUT", 1)
     >>> x.nation
     u'AUT'
-    >>> x = SRM.Boat ((u'Optimist',),    "Austria", 2)
-    >>> x = SRM.Boat ((u'Laser',),       "Austria", 3)
-    >>> x = SRM.Boat ((u'Seascape 18',), "Austria", 14)
+    >>> x = SRM.Boat ((u'Optimist',),    "AUT", 2)
+    >>> x = SRM.Boat ((u'Laser',),       "AUT", 3)
+    >>> x = SRM.Boat ((u'Seascape 18',), "AUT", 14)
 
     >>> scope.commit ()
 
