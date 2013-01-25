@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jan-2013 (MG) Creation
+#    25-Jan-2013 (MG) Add filter code for old account passwort storage
 #    ««revision-date»»···
 #--
 
@@ -37,20 +38,35 @@ from    _TFL             import TFL
 import  _TFL._Meta.Object
 import  _TFL.sos         as     os
 
-class Project_Legacy_Lifter (TFL.Meta.Object) :
+class Project_Legacy_Lifter (object) :
     """Base class for project specific legacy lifter"""
 
-    Type_Lifter   = dict ()
-    E_Type_Lifter = dict ()
+    __metaclass__      = TFL.Meta.M_Auto_Combine_Dicts
 
-# end class for
+    _dicts_to_combine  = \
+        ("Type_Name_Renaming", "Type_Name_Lifter", "E_Type_Lifter")
+
+    Type_Name_Renaming = \
+        { "Auth.Account_P" : "Auth.Account"
+        }
+    Type_Name_Lifter   = \
+        { "Auth.Account"   : "_account_lifter"
+        }
+    E_Type_Lifter      = dict ()
+
+    @classmethod
+    def _account_lifter (cls, type_name, pc, pid) :
+        if ("salt" in pc) and ("ph_name" not in pc) :
+            salt            = pc.pop ("salt") [0]
+            pc ["password"] = ["%s::%s" % (salt, pc ["password"] [0])]
+            pc ["ph_name"]  = ["sha224"]
+        return type_name, pc, pid
+    # end def _account_lifter
+
+# end class Project_Legacy_Lifter
 
 class Legacy_Lifter (TFL.Meta.Object) :
     """Database legacy lifter"""
-
-    Type_Name_Lifter = \
-        { "Auth.Account_P" : "Auth.Account"
-        }
 
     def __init__ (self, module) :
         self.module = Project_Legacy_Lifter
@@ -63,8 +79,9 @@ class Legacy_Lifter (TFL.Meta.Object) :
 
     def entity_iter (self, db_man, db_iter) :
         for type_name, pc, pid in db_iter :
-            type_name = self.Type_Name_Lifter.get (type_name, type_name)
-            lifter    = self.module.Type_Lifter.get (type_name)
+            type_name = self.module.Type_Name_Renaming.get \
+                (type_name, type_name)
+            lifter    = self.module.Type_Name_Lifter.get (type_name)
             if lifter :
                 lifter = getattr (self.module, lifter)
                 type_name, pc, pid = lifter (type_name, pc, pid)
