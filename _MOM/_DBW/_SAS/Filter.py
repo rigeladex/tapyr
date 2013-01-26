@@ -48,6 +48,7 @@
 #                     for `in_` operator
 #    10-Aug-2012 (MG) Change handling of composite attributes
 #     6-Dec-2012 (MG) Fix query attribute handling
+#    26-Jan-2013 (MG) Handle cached role queries
 #    ««revision-date»»···
 #--
 
@@ -76,9 +77,14 @@ def _sa_filter (self, SAQ) :
     if isinstance (result, (list, tuple)) :
         joins, columns = result
     else :
-        columns        = (result, )
+        columns        = [result]
         col            = columns [0]
-        if isinstance (col, MOM.DBW.SAS._MOM_Composite_Query_) :
+        _sa_filter     = getattr (col, "_sa_filter", None)
+        if _sa_filter :
+            aj, ac = _sa_filter ()
+            columns.extend      (ac)
+            joins.extend        (aj)
+        elif isinstance (col, MOM.DBW.SAS._MOM_Composite_Query_) :
             pass
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well

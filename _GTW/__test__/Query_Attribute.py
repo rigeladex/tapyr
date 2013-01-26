@@ -38,29 +38,39 @@ _query_test = """
     Creating new scope MOMT__...
     >>> Auth  = scope.Auth
     >>> PAP   = scope.PAP
-    >>> p     = PAP.Person ("ln", "fn", lifetime = ("20130101", ), raw = True)
-    >>> a     = Auth.Account_T ("test")
-    >>> pha   = PAP.Person_has_Account_Test (p, a)
+    >>> p1    = PAP.Person ("ln", "fn", lifetime = ("20130101", ), raw = True)
+    >>> p2    = PAP.Person ("ln", "nf", lifetime = ("20130101", ), raw = True)
+    >>> p3    = PAP.Person ("nl", "fn", lifetime = ("20130101", ), raw = True)
+    >>> a1    = Auth.Account_T ("test ln fn")
+    >>> a2    = Auth.Account_T ("test ln nf")
+    >>> a3    = Auth.Account_T ("test nl fn")
+    >>> pha1  = PAP.Person_has_Account_Test (p1, a1)
+    >>> pha2  = PAP.Person_has_Account_Test (p2, a2)
+    >>> pha3  = PAP.Person_has_Account_Test (p3, a3)
     >>> scope.commit ()
 
-    >>> a.person
+    >>> a1.person
     PAP.Person (u'ln', u'fn', u'', u'')
 
-    >>> a.qt
+    >>> a1.qt
     PAP.Person (u'ln', u'fn', u'', u'')
 
-    >>> p.accounts
-    set([Auth.Account_T (u'test')])
+    >>> p1.accounts
+    set([Auth.Account_T (u'test ln fn')])
 
-    >>> pha.owner
+    >>> pha1.owner
     PAP.Person (u'ln', u'fn', u'', u'')
 
-    >>> PAP.Person_has_Account_Test.query (Q.owner.last_name == "ln").all ()
-    [PAP.Person_has_Account_Test ((u'ln', u'fn', u'', u''), (u'test', ))]
+    >>> PAP.Person_has_Account_Test.query (Q.owner.last_name == "nl").all ()
+    [PAP.Person_has_Account_Test ((u'nl', u'fn', u'', u''), (u'test nl fn', ))]
 
+    >>> Auth.Account_T.query (Q.qt.last_name == "ln").count ()
+    2
 """
 
-from   _GTW.__test__.model import *
+from   _GTW.__test__.Test_Command import *
+import _GTW._OMP._Auth.import_Auth
+import _GTW._OMP._PAP .import_PAP
 
 _Ancestor_Essence = GTW.OMP.Auth.Account
 
@@ -110,6 +120,12 @@ class Person_has_Account_Test (_Ancestor_Essence) :
 
 # end class Person_has_Account_Test
 
+GTW_Test_Command.PNS_Aliases           = dict \
+    ( Auth            = GTW.OMP.Auth
+    , PAP             = GTW.OMP.PAP
+    )
+
+Scaffold = GTW_Test_Command ()
 __test__ = Scaffold.create_test_dict \
     ( _query_test
     )

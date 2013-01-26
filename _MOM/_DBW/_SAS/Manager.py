@@ -105,6 +105,7 @@
 #                     objects
 #    21-Jan-2013 (MG) Fix `_add_user_defined_indices`
 #    22-Jan-2013 (MG) Set `autoincrement` for sqlite for the change history
+#    26-Jan-2013 (MG) Handle cached roles in `MOM_Query`
 #    ««revision-date»»···
 #--
 
@@ -291,13 +292,14 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
 
     def update_etype (cls, e_type, app_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
+        CR = cls.role_cacher.get (e_type.Essence.type_name, ())
         if getattr (e_type, "relevant_root", None) :
             sa_table                = e_type._sa_table
             bases, db_attrs, unique = e_type._sa_save_attrs
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
-            MOM.DBW.SAS.MOM_Query     (e_type, sa_table, db_attrs, bases)
-            e_type._SAS.finish        ()
+            MOM.DBW.SAS.MOM_Query  (e_type, sa_table, db_attrs, bases, CR)
+            e_type._SAS.finish     ()
             if unique and not e_type.polymorphic_epk :
                 sa_table.append_constraint (schema.UniqueConstraint (* unique))
                 schema.Index \
@@ -307,7 +309,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             e_type._Reload_Mixin_.define_e_type    (e_type, _Reload_Mixin_)
             cls._add_check_constraints             (e_type, sa_table)
             cls._add_user_defined_indices          (e_type, sa_table)
-        for cr, assoc_et in cls.role_cacher.get (e_type.Essence.type_name, ()) :
+        for cr, assoc_et in CR :
             if cr.attr_name in e_type._Attributes._own_names :
                 ### setup cached role only for the etype first defining the
                 ### role attribute, not it's descendents
