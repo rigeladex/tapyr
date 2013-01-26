@@ -35,6 +35,7 @@
 #     2-Oct-2012 (CT) Add property `brief`
 #    16-Oct-2012 (CT) Add properties `ckd` and `raw`
 #    16-Jan-2013 (CT) Add `ssl_authorized_user` and `ssl_client_verified`
+#    26-Jan-2013 (CT) Add and use `http_server_authorized_user`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,14 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def ckd
 
     @Once_Property
+    def http_server_authorized_user (self) :
+        result = self.ssl_authorized_user
+        if result is None :
+            result = self.environ.get ("REMOTE_USER")
+        return result
+    # end def http_server_authorized_user
+
+    @Once_Property
     def locale_codes (self) :
         """The locale-code for the current session."""
         return self.get_browser_locale_codes ()
@@ -135,7 +144,7 @@ class _RST_Request_ (TFL.Meta.Object) :
 
     @Once_Property
     def username (self) :
-        result = self.ssl_authorized_user
+        result = self.http_server_authorized_user
         if result is None :
             auth   = self.authorization
             result = auth and auth.username
