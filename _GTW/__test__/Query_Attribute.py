@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Jan-2013 (MG) Creation
+#    26-Jan-2013 (CT) Add test for query attribute referring to cached role
 #    ««revision-date»»···
 #--
 
@@ -35,11 +36,21 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 _query_test = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
+    >>> Auth  = scope.Auth
     >>> PAP   = scope.PAP
     >>> p     = PAP.Person ("ln", "fn", lifetime = ("20130101", ), raw = True)
-    >>> a     = scope.Auth.Account.create_new_account_x ("test", "123")
+    >>> a     = Auth.Account_T ("test")
     >>> pha   = PAP.Person_has_Account_Test (p, a)
     >>> scope.commit ()
+
+    >>> a.person
+    PAP.Person (u'ln', u'fn', u'', u'')
+
+    >>> a.qt
+    PAP.Person (u'ln', u'fn', u'', u'')
+
+    >>> p.accounts
+    set([Auth.Account_T (u'test')])
 
     >>> pha.owner
     PAP.Person (u'ln', u'fn', u'', u'')
@@ -50,6 +61,29 @@ _query_test = """
 """
 
 from   _GTW.__test__.model import *
+
+_Ancestor_Essence = GTW.OMP.Auth.Account
+
+class Account_T (_Ancestor_Essence) :
+    """Test of query attributes"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class qt (A_Id_Entity) :
+            """Test of access to cached role attribute"""
+
+            kind               = Attr.Query
+            auto_up_depends    = ("person",)
+            P_Type             = GTW.OMP.PAP.Person
+            query              = Q.person
+
+        # end class qt
+
+    # end class _Attributes
+
+# end class Account_T
 
 _Ancestor_Essence = GTW.OMP.PAP.Person_has_Account
 
