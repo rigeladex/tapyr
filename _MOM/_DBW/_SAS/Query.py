@@ -67,6 +67,7 @@
 #    19-Sep-2012 (MG) Change handling of role names to support redefinition
 #                     in descantents
 #    23-Jan-2013 (MG) Support query attributes resulting in Id_Entity's
+#    26-Jan-2013 (CT) Add `e_type` to error TypeError
 #    ««revision-date»»···
 #--
 
@@ -218,9 +219,9 @@ class MOM_Query (_MOM_Query_) :
                 self._query_fct [name] = attr
                 if isinstance (attr, MOM.Attr._A_Id_Entity_) :
                     raise TypeError \
-                       ( "Id Entity query `%s` must be specified as "
+                       ( "Id Entity query `%s.%s` must be specified as "
                          "`query`, not `query_fct`"
-                       % (attr.name, )
+                       % (e_type.type_name, attr.name, )
                        )
             else :
                 query = attr.query._sa_filter (self)
