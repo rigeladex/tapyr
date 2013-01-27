@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Jan-2013 (MG) Creation
 #    26-Jan-2013 (CT) Add test for query attribute referring to cached role
+#    27-Jan-2013 (CT) Add another test for `.qt.last_name`
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,10 @@ _query_test = """
 
     >>> Auth.Account_T.query (Q.qt.last_name == "ln").count ()
     2
+
+    >>> Auth.Account_T.query_s (Q.qt.last_name == "ln").all ()
+    [Auth.Account_T (u'test ln fn'), Auth.Account_T (u'test ln nf')]
+
 """
 
 from   _GTW.__test__.Test_Command import *
