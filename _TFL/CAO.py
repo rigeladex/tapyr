@@ -97,6 +97,7 @@
 #    21-Jun-2012 (CT) Add and use `implied_value` to fix help output for `Bool`
 #    21-Jun-2012 (CT) Change `CAO.__getattr__` to cache results
 #    15-Jan-2013 (MG) Add global option `Pdb_on_Exception`
+#    27-Jan-2013 (CT) Don't unnecessarily redefine `sys.excepthook`
 #    ««revision-date»»···
 #--
 
@@ -1291,9 +1292,9 @@ class Cmd (TFL.Meta.Object) :
             if isinstance (o, _Config_) :
                 oc.append (o)
         oc.sort (key = TFL.Getter.rank)
-        if not "help" in od :
+        if "help" not in od :
             self._setup_opt (Opt.Help (), od, al, -1)
-        if not "Pdb_on_Exception" in od :
+        if "Pdb_on_Exception" not in od :
             self._setup_opt \
                 ( Opt.Bool
                     ( "Pdb_on_Exception"
@@ -1370,24 +1371,18 @@ class CAO (TFL.Meta.Object) :
     def __call__ (self) :
         handler = self._cmd._handler
         if self.Pdb_on_Exception :
-            ## {{{ http://code.activestate.com/recipes/65287/ (r5)
-            import sys
-
-            def info(type, value, tb):
-               if hasattr(sys, 'ps1') or not sys.stderr.isatty():
-                  # we are in interactive mode or we don't have a tty-like
-                  # device, so we call the default hook
-                  sys.__excepthook__(type, value, tb)
-               else:
-                  import traceback, pdb
-                  # we are NOT in interactive mode, print the exception...
-                  traceback.print_exception(type, value, tb)
-                  print
-                  # ...then start the debugger in post-mortem mode.
-                  pdb.pm()
-
-            sys.excepthook = info
-            ## end of http://code.activestate.com/recipes/65287/ }}}
+            ### Inspired by http://code.activestate.com/recipes/65287/ (r5)
+            if hasattr (sys, 'ps1') or not sys.stderr.isatty () :
+                ### interactive mode or without terminal
+                ### --> leave sys.excepthook unchanged
+                pass
+            else :
+                def info (type, value, tb) :
+                    import traceback, pdb
+                    traceback.print_exception (type, value, tb)
+                    print
+                    pdb.pm () # post-mortem mode
+                sys.excepthook = info
         if self.help :
             self._cmd.help (self)
         elif handler :
