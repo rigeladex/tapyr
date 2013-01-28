@@ -56,6 +56,7 @@
 #     3-Jun-2012 (CT) Factor `Config` to `Root_Command`
 #     4-Jun-2012 (CT) Add `default` "yes" to `_Readonly_.state`
 #    21-Jan-2013 (MG) Add support for project specific legacy lifter
+#    28-Jan-2013 (CT) Print `Url (...).path` in `_handle_migrate`
 #    ««revision-date»»···
 #--
 
@@ -320,7 +321,8 @@ class MOM_Command (TFL.Command.Root_Command) :
         apt_s, url_s = self.app_type_and_url (cmd.db_url, cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
         if cmd.verbose :
-            print "   ", apt_s, url_s, "to", apt_t, url_t
+            print "   ", apt_s, apt_s.Url (url_s).path, \
+                "to", apt_t, apt_t.Url (url_t).path
         db_man_s = self.DB_Man.connect (apt_s, url_s)
         if cmd.readonly :
             with self._cro_context (db_man_s, True) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -31,6 +31,7 @@
 #    24-Jun-2010 (CT) Optional argument `fs_path` added
 #    13-Jul-2010 (CT) `__contains__` and `split` added
 #    13-Jul-2010 (CT) `__init__` changed to accept `Url` instance as `value`
+#    28-Jan-2013 (CT) Add `abs_path`
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,12 @@ class Url (TFL.Meta.Object) :
             result = "%s#%s" % (result, f)
         return cls (result, fs_path = kw.get ("fs_path"))
     # end def new
+
+    @TFL.Meta.Once_Property
+    def abs_path (self) :
+        from _TFL import sos
+        return sos.path.abspath (self.path)
+    # end def abs_path
 
     def split (self, sep, * args, ** kw) :
         return self._value.split (sep, * args, ** kw)
