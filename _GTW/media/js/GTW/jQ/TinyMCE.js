@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Martin Glueck All rights reserved
+// Copyright (C) 2012-2013 Martin Glueck All rights reserved
 // Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -18,14 +18,14 @@
 //    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
 //    19-Aug-2012 (MG) Set `domain` to allow serving of tinymce from a
 //                     different subdomain
-//    ««revision-date»»···
+//    28-Jan-2013 (MG) `_setup_field` now has two parameters//    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
     var TinyMCE_Field = $GTW.AFS.Elements.Field.extend (
-        { _setup_field : function _setup_field (inp$) {
+        { _setup_field : function _setup_field (inp$, Form) {
             var file_browser = this.file_browser;
             var _open_selector = function (field_name, url, type, win) {
                 tinyMCE.activeEditor.windowManager.open
@@ -55,7 +55,7 @@
                 tinymce.get  (options.elements).save ();
                 inp$.trigger ("change");
             };
-            $GTW.AFS.Elements.root.pre_submit_callbacks.push (pre_submit);
+            Form.pre_submit_callbacks.push (pre_submit);
           }
         }
       , { type_name : "TinyMCE_Field" }

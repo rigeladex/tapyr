@@ -17,6 +17,7 @@
 //    17-Aug-2012 (MG) Creation
 //    17-Aug-2012 (MG) Make selection window url configurable
 //    24-Jan-2013 (MG) Use elfinder as media selection interface
+//    28-Jan-2013 (MG) `_setup_field` now has two parameters
 //    ««revision-date»»···
 //--
 
@@ -24,7 +25,7 @@
 
 ( function ($) {
     var Image_Selection_Field = $GTW.AFS.Elements.Field.extend (
-        { _setup_field : function _setup_field (inp$) {
+        { _setup_field : function _setup_field (inp$, Form) {
             var selection_url = this.selection_url;
             var url = inp$.val ();
             var img$ = $("<img />").attr ({ src : url, alt : this.label})

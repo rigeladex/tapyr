@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -111,6 +111,9 @@
 //    18-Aug-2012 (MG) Fix `_response_replace`
 //    13-Nov-2012 (CT) Add `_display_error_extra_links`
 //    13-Dec-2012 (CT) Add missing `else` to `setup_completer._put`
+//    26-Jan-2013 (MG) Move `pre_submit_callbacks` into `Form` object and
+//                     change `_setup_field´ to accept the `Form` object as
+//                     parameter
 //    ««revision-date»»···
 //--
 
@@ -162,7 +165,7 @@
         };
         return result;
     };
-    $AFS_E.Element.prototype._setup_field = function (inp$) {};
+    $AFS_E.Element.prototype._setup_field = function (inp$, Form) {};
     $.fn.gtw_afs_form = function (afs_form, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
@@ -184,7 +187,7 @@
               , selectors : selectors
               }
             );
-        $AFS_E.root.pre_submit_callbacks = [];
+        var Form = {pre_submit_callbacks : []};
         var setup_completer = function () {
             var _get = function _get (options, elem, val, cb) {
                 var anchor    = elem;
@@ -707,7 +710,7 @@
                         if ("completer" in elem) {
                             setup_completer (options, elem);
                         };
-                        elem._setup_field (inp$);
+                        elem._setup_field (inp$, Form);
                     };
                   }
                 );
@@ -879,8 +882,11 @@
                       );
               }
             , Save                      : function save_cb (s$, elem, id, ev) {
-                    var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
-                    for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
+                    var pre_submit_callbacks = Form.pre_submit_callbacks;
+                    for ( var i = 0, li = pre_submit_callbacks.length
+                        ; i < li
+                        ; i++
+                        ) {
                         pre_submit_callbacks [i] ();
                     }
                   var pvs = $AFS_E.root.packed_values (elem);
@@ -1025,7 +1031,7 @@
             }
         };
         var submit_cb = function submit_cb (ev) {
-            var pre_submit_callbacks = $AFS_E.root.pre_submit_callbacks;
+            var pre_submit_callbacks = Form.pre_submit_callbacks;
             for (var i = 0, li = pre_submit_callbacks.length; i < li; i++) {
                 pre_submit_callbacks [i] ();
             }
