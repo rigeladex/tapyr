@@ -255,7 +255,7 @@ class Account_Password_Reset (_Ancestor_Essence) :
                 (account = account) :
             l.destroy ()
         if nav :
-            return nav.href_change_pass (account)
+            return nav.href_reset_password (account)
     # end def handle
 
 # end class Account_Password_Reset

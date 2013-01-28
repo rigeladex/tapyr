@@ -42,6 +42,8 @@
 #    15-Jan-2013 (CT) Implement `_Make_Cert_.POST._response_body`
 #    15-Jan-2013 (CT) Set `O` of `SPKAC` to `cert.get_subject ().O`
 #    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
+#    28-Jan-2013 (CT) Split `_Reset_Password_` from `_Change_Password_`
+#                     (no `_login_required` for reset password)
 #    ««revision-date»»···
 #--
 
@@ -416,11 +418,12 @@ _Ancestor = _Activate_
 class _Change_Password_ (_Ancestor) :
 
     active_account_required = True
+    _action_kind            = "Change"
     _login_required         = True
 
     def get_title (self, account, request) :
-        return _T ("Change Password for %s on website %s") \
-            % (account.name, request.host)
+        return _T ("%s Password for %s on website %s") \
+            % (self._action_kind, account.name, request.host)
     # end def get_title
 
     def _check_account (self, account, errors) :
@@ -752,6 +755,16 @@ class _Request_Reset_Password_ (_Ancestor) :
 
 # end class _Request_Reset_Password_
 
+_Ancestor = _Change_Password_
+
+class _Reset_Password_ (_Ancestor) :
+
+    active_account_required = False
+    _action_kind            = "Reset"
+    _login_required         = False
+
+# end class _Change_Password_
+
 _Ancestor = GTW.RST.TOP.Dir_V
 
 class Auth (_Ancestor) :
@@ -770,7 +783,14 @@ class Auth (_Ancestor) :
         , make_cert               = _Make_Cert_
         , register                = _Register_
         , request_reset_password  = _Request_Reset_Password_
+        , reset_password          = _Reset_Password_
         )
+
+    @property
+    @getattr_safe
+    def href_activate (self) :
+        return pp_join (self.abs_href, "activate")
+    # end def href_activate
 
     @property
     @getattr_safe
@@ -790,12 +810,6 @@ class Auth (_Ancestor) :
         return pp_join (self.abs_href, "register")
     # end def href_register
 
-    @property
-    @getattr_safe
-    def href_reset_password (self) :
-        return pp_join (self.abs_href, "request_reset_password")
-    # end def href_reset_password
-
     @Once_Property
     @getattr_safe
     def _effective (self) :
@@ -812,12 +826,6 @@ class Auth (_Ancestor) :
         return result
     # end def href_action
 
-    @property
-    @getattr_safe
-    def href_activate (self) :
-        return self._href_q (self.abs_href, "activate")
-    # end def href_activate
-
     def href_change_email (self, obj) :
         return self._href_q \
             (self.abs_href, "change_email", p = str (obj.pid))
@@ -833,6 +841,11 @@ class Auth (_Ancestor) :
             return self._href_q \
                 (self.abs_href, "make_cert", p = str (obj.pid))
     # end def href_make_cert
+
+    def href_reset_password (self, obj) :
+        return self._href_q \
+            (self.abs_href, "reset_password", p = str (obj.pid))
+    # end def href_reset_password
 
     def _href_q (self, * args, ** kw) :
         return "%s?%s" % (pp_join (* args), urlencode (kw))
