@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -30,6 +30,7 @@
 #    12-May-2010 (CT) Use `pid`, not `lid`
 #    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
 #     5-Apr-2012 (CT) Use `.create_new_account_x` to create accounts
+#    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
 #    ««revision-date»»···
 #--
 
@@ -348,7 +349,7 @@ Test the expiration of action
     >>> act.handle ()
     Traceback (most recent call last):
         ...
-    Action_Exipred
+    Action_Expired
 """
 from   _MOM.__test__                 import *
 from   _GTW                          import GTW

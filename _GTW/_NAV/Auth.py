@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.Auth.
@@ -54,6 +54,7 @@
 #    11-Mar-2011 (CT) Moved `username` from cookie to `session`
 #    11-Jun-2012 (CT) Remove trailing `/` from `href`
 #    18-Jun-2012 (CT) Rename `email` to `email_from`
+#    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
 #    ««revision-date»»···
 #--
 
@@ -108,7 +109,7 @@ class Auth (GTW.NAV.Dir) :
                             (_T ("EMail verification successful."))
                         )
                     raise HTTP.Redirect_302 (next)
-                except GTW.OMP.Auth.Action_Exipred :
+                except GTW.OMP.Auth.Action_Expired :
                     action.destroy       ()
                     top.scope.commit     ()
                     raise HTTP.Error_404 ()

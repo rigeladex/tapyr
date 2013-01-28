@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -39,6 +39,7 @@
 #    22-Dec-2010 (CT) `_Account_Action_.electric` redefined to `True`
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    16-Aug-2012 (MG) Add `description` attribute to Action links
+#    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ from   _TFL.I18N              import _, _T, _Tn
 import  uuid
 import  datetime
 
-class Action_Exipred (StandardError) : pass
+class Action_Expired (StandardError) : pass
 
 _Ancestor_Essence = Auth.Link1
 
@@ -187,7 +188,7 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
 
     def handle (self, nav = None) :
         if self.expires < datetime.datetime.utcnow () :
-            raise Action_Exipred
+            raise Action_Expired
     # end def handle
 
 # end class _Account_Token_Action_

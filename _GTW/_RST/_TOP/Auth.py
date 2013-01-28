@@ -41,6 +41,7 @@
 #     8-Jan-2013 (CT) Add `_login_required` to various classes
 #    15-Jan-2013 (CT) Implement `_Make_Cert_.POST._response_body`
 #    15-Jan-2013 (CT) Set `O` of `SPKAC` to `cert.get_subject ().O`
+#    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
 #    ««revision-date»»···
 #--
 
@@ -216,7 +217,7 @@ class _Action_ (_Ancestor) :
 
     class _Action__GET_ (_Ancestor.GET) :
 
-        ### actions are handle by GTE because the links are sent to the user
+        ### actions are handle by GET because the links are sent to the user
         ### as email's and they should only click these links !
 
         _real_name             = "GET"
@@ -236,7 +237,7 @@ class _Action_ (_Ancestor) :
                     response.add_notification \
                         (GTW.Notification (_T (description)))
                     raise HTTP_Status.See_Other (next)
-                except GTW.OMP.Auth.Action_Exipred :
+                except GTW.OMP.Auth.Action_Expired :
                     action.destroy      ()
                     top.scope.commit    ()
             raise HTTP_Status.Not_Found ()
