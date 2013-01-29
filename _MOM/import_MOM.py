@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -55,5 +55,7 @@ import _MOM._Attr.Selector
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
+
+import _MOM.Id_Entity_has_Tag
 
 ### __END__ MOM.import_MOM
