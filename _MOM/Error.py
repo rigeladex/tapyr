@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -76,6 +76,7 @@
 #    10-Sep-2012 (CT) Fix name error in `Not_Unique`
 #    11-Sep-2012 (CT) Derive `Not_Unique` from `_Invariant_`
 #    12-Dec-2012 (CT) Change `Attribute.bindings` to format `value`
+#    29-Jan-2013 (CT) Improve text of `Name_Clash`
 #    ««revision-date»»···
 #--
 
@@ -683,9 +684,10 @@ class Name_Clash (Error) :
 
     def __init__ (self, new, old) :
         otn = _T (old.ui_name) if old else ""
+        otd = ("`%s`" % (old.ui_display, )) if old else _T ("object")
         self.__super.__init__ \
-            ( _T ("new definition of %s %s clashes with existing %s %s")
-            % (_T (new.ui_name), new, otn, old or _T ("object"))
+            ( _T ("new definition of %s `%s` clashes with existing %s %s")
+            % (_T (new.ui_name), new.ui_display, otn, otd)
             )
     # end def __init__
 
