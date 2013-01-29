@@ -57,6 +57,7 @@
 #    14-Jun-2011 (MG) `timing` command line option added
 #    10-Aug-2012 (MG) Add new command line option for `exclude`
 #    17-Jan-2013 (CT) Add package-path to `sys.path`
+#    29-Jan-2013 (CT) Improve DRY of _main
 #    ««revision-date»»···
 #--
 
@@ -160,10 +161,9 @@ def _main (cmd) :
                (Filename ("__init__.py", default_dir = mod_path).name) :
             sys.path [0:0] = [sos.path.join (mod_path, "..")]
         sys.path [0:0] = [mod_path]
-        if cmd.nodiff :
-            flags = doctest.NORMALIZE_WHITESPACE
-        else :
-            flags = doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
+        flags = doctest.NORMALIZE_WHITESPACE
+        if not cmd.nodiff :
+            flags |= doctest.REPORT_NDIFF
         try :
             start  = time.time ()
             module = __import__ (m)
@@ -187,23 +187,18 @@ def _main (cmd) :
                 et = " in %7.5fs" % (exec_time, )
             print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
     else :
-        path = nodiff = optimize = verbose = timing = ""
-        if cmd.nodiff :
-            nodiff  = " -nodiff"
-        if cmd.verbose:
-            verbose = " -verbose"
-        if cmd.timing :
-            timing  = " -timing"
-        if cmd_path :
-            path = " -path %r" % (",".join (cmd_path), )
-        if sys.flags.optimize :
-            optimize = " -%s" % ("O" * sys.flags.optimize, )
-        script = sos.path.join \
-            (Environment.script_path (), Environment.script_name ())
-        head = """%s%s %s%s%s%s%s""" % \
-            ( sys.executable, optimize
-            , script, path, nodiff, verbose, timing
-            )
+        head_pieces = \
+            [ sys.executable
+            , "-%s" % ("O" * sys.flags.optimize, )
+                if sys.flags.optimize else ""
+            , sos.path.join
+                (Environment.script_path (), Environment.script_name ())
+            , "-path %r" % (",".join (cmd_path), ) if cmd_path else ""
+            ]
+        for opt in ("nodiff", "timing", "verbose") :
+            if getattr (cmd, opt) :
+                head_pieces.append ("-" + opt)
+        head = " ".join (hp for hp in head_pieces if hp)
         if cmd.summary :
             run_cmd = run_command_with_summary
         else :
