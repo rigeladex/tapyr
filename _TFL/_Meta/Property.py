@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,12 +53,15 @@
 #    24-Sep-2009 (CT) `prop` decorator removed
 #    24-Sep-2009 (CT) `Data_Descriptor` added (as an example how to do it)
 #    22-Sep-2011 (CT) `Class_Property` added
+#    29-Jan-2013 (CT) Allow dotted names for `Alias_Property`
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta
 import _TFL._Meta.M_Class
+
+import operator
 
 class _Property_ (property) :
 
@@ -396,16 +399,27 @@ class Alias_Property (object) :
 
     def __init__ (self, aliased_name) :
         self.aliased_name = aliased_name
+        self.getter       = operator.attrgetter (aliased_name)
+        if "." in aliased_name :
+            head, tail  = aliased_name.rsplit (".", 1)
+            head_getter = operator.attrgetter (head)
+            def setter (obj, value) :
+                o = head_getter (obj)
+                setattr (o, tail, value)
+        else :
+            def setter (obj, value) :
+                setattr (obj, aliased_name, value)
+        self.setter = setter
     # end def __init__
 
     def __get__ (self, obj, cls = None) :
         if obj is None :
             obj = cls
-        return getattr (obj, self.aliased_name)
+        return self.getter (obj)
     # end def __get__
 
     def __set__ (self, obj, value) :
-        setattr (obj, self.aliased_name, value)
+        self.setter (obj, value)
     # end def __set__
 
 # end class Alias_Property
