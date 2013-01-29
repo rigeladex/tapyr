@@ -98,6 +98,7 @@
 #    21-Jun-2012 (CT) Change `CAO.__getattr__` to cache results
 #    15-Jan-2013 (MG) Add global option `Pdb_on_Exception`
 #    27-Jan-2013 (CT) Don't unnecessarily redefine `sys.excepthook`
+#    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
 #    ««revision-date»»···
 #--
 
@@ -1710,7 +1711,7 @@ values passed to it::
     >>> cmd._arg_list
     ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?']
     >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
-    ["'-help Display help about command'", "'-verbose:B=False#1?'", "'year:I,=2010#0?'"]
+    ["'-Pdb_on_Exception:B=False#1?Start python debugger pdb on exception'", "'-help Display help about command'", "'-verbose:B=False#1?'", "'year:I,=2010#0?'"]
 
     >>> cmd.adam, cmd.verbose
     ('adam:P=/tmp/test#1?First arg', '-verbose:B=False#1?')
@@ -1720,8 +1721,9 @@ values passed to it::
     >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
     Test
         Arguments  : ['adam', 'bert']
+        -Pdb_on_Exception : False
         -help      : []
-       -verbose   : False
+       -verbose    : False
         -year      : [2000, 1999]
         adam       : /tmp/tmp
         bert       : 42
@@ -1742,6 +1744,7 @@ values passed to it::
     >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
     Test
         Arguments  : ['adam', 'bert']
+        -Pdb_on_Exception : False
         -help      : []
         -verbose   : True
         -year      : [2000, 1999]
@@ -1761,6 +1764,7 @@ values passed to it::
     >>> c1 ([])
     one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : False
         -help      : []
         -y         : None
@@ -1771,6 +1775,7 @@ values passed to it::
     >>> c2 ([])
     two
         Arguments  : ['ccc', 'ddd']
+        -Pdb_on_Exception : False
         -help      : []
         -struct    : False
         ccc        : 3
@@ -1782,6 +1787,7 @@ values passed to it::
     >>> coc ([])
     Comp
         Arguments  : ['sub']
+        -Pdb_on_Exception : False
         -help      : []
         -strict    : False
         -verbose   : False
@@ -1790,6 +1796,7 @@ values passed to it::
     >>> coc (["one"])
     Comp one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : False
         -help      : []
         -strict    : False
@@ -1801,6 +1808,7 @@ values passed to it::
     >>> coc (["two"])
     Comp two
         Arguments  : ['ccc', 'ddd']
+        -Pdb_on_Exception : False
         -help      : []
         -strict    : False
         -struct    : False
@@ -1811,6 +1819,7 @@ values passed to it::
     >>> coc (["-s"])
     Comp
         Arguments  : ['sub']
+        -Pdb_on_Exception : False
         -help      : []
         -strict    : True
         -verbose   : False
@@ -1819,6 +1828,7 @@ values passed to it::
     >>> coc (["-s", "one"])
     Comp one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : False
         -help      : []
         -strict    : True
@@ -1830,6 +1840,7 @@ values passed to it::
     >>> coc (["-s", "two"])
     Comp two
         Arguments  : ['ccc', 'ddd']
+        -Pdb_on_Exception : False
         -help      : []
         -strict    : True
         -struct    : False
@@ -1852,6 +1863,7 @@ values passed to it::
     >>> coc (["one", "two"])
     Comp one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : False
         -help      : []
         -strict    : False
@@ -1863,6 +1875,7 @@ values passed to it::
     >>> coc (["one", "-v", "two", "-Z"])
     Comp one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : True
         -help      : []
         -strict    : False
@@ -1874,6 +1887,7 @@ values passed to it::
     >>> coc (["one", "-v", "two", "-Z", "three", "four"])
     Comp one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : True
         -help      : []
         -strict    : False
@@ -1888,6 +1902,7 @@ values passed to it::
     >>> cmd (["-foo", "a"])
     dict-test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -foo       : 42
         -help      : []
         __argv     : None
@@ -1895,6 +1910,7 @@ values passed to it::
     >>> cmd (["-foo=1"])
     dict-test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -foo       : frodo
         -help      : []
         __argv     : None
@@ -1902,6 +1918,7 @@ values passed to it::
     >>> cmd (["a", "b", "c", "d"])
     dict-test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -foo       : None
         -help      : []
         __argv     : a
@@ -1909,6 +1926,7 @@ values passed to it::
     >>> cmd (["-foo", "a", "b", "c", "d"])
     dict-test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -foo       : 42
         -help      : []
         __argv     : b
@@ -1916,6 +1934,7 @@ values passed to it::
     >>> cmd (["-foo=1", "a", "b", "c", "d"])
     dict-test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -foo       : frodo
         -help      : []
         __argv     : a
@@ -1924,38 +1943,44 @@ values passed to it::
     >>> _ = coc (["-help"])
     Comp [sub] ...
     <BLANKLINE>
-        sub       : Cmd_Choice
+        sub                 : Cmd_Choice
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help
+        -Pdb_on_Exception   : Bool
+            Start python debugger pdb on exception
+        -help               : Help
             Display help about command
-        -strict   : Bool
-        -verbose  : Bool
+        -strict             : Bool
+        -verbose            : Bool
     >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
-        aaa       : Str
-        bbb       : Str
+        aaa                 : Str
+        bbb                 : Str
     <BLANKLINE>
-        -Z        : Bool
-        -help     : Help
+        -Pdb_on_Exception   : Bool
+            Start python debugger pdb on exception
+        -Z                  : Bool
+        -help               : Help
             Display help about command
-        -strict   : Bool
-        -verbose  : Bool
-        -y        : Int
+        -strict             : Bool
+        -verbose            : Bool
+        -y                  : Int
     >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
     <BLANKLINE>
-        ccc       : Int
-        ddd       : Str_AS
+        ccc                 : Int
+        ddd                 : Str_AS
     <BLANKLINE>
-        argv      : [3, 'D']
+        argv                : [3, 'D']
     <BLANKLINE>
-        -help     : Help
+        -Pdb_on_Exception   : Bool
+            Start python debugger pdb on exception
+        -help               : Help
             Display help about command
-        -strict   : Bool
-        -struct   : Bool
-        -verbose  : Bool
+        -strict             : Bool
+        -struct             : Bool
+        -verbose            : Bool
     >>> _ = coc (["-help=cmds"])
     Sub commands of Comp
         one :
@@ -1965,24 +1990,28 @@ values passed to it::
     >>> cmd ([])
     Varargs test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -help      : []
         __argv     : None
         argv       : []
     >>> cmd (["a"])
     Varargs test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -help      : []
         __argv     : a
         argv       : ['a']
     >>> cmd (["a", "b"])
     Varargs test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -help      : []
         __argv     : a
         argv       : ['a', 'b']
     >>> cmd (["a", "b", "c"])
     Varargs test
         Arguments  : ['__argv']
+        -Pdb_on_Exception : False
         -help      : []
         __argv     : a
         argv       : ['a', 'b', 'c']
@@ -1999,6 +2028,7 @@ values passed to it::
     >>> cocb ([])
     Comp
         Arguments  : ['sub']
+        -Pdb_on_Exception : False
         -help      : []
         -strict    : False
         -verbose   : False
@@ -2007,6 +2037,7 @@ values passed to it::
     >>> cocb (["@c1b"])
     Comp one
         Arguments  : ['aaa', 'bbb']
+        -Pdb_on_Exception : False
         -Z         : True
         -help      : []
         -strict    : False
@@ -2018,6 +2049,7 @@ values passed to it::
     >>> cocb (["@c2b"])
     Comp two
         Arguments  : ['ccc', 'ddd']
+        -Pdb_on_Exception : False
         -help      : []
         -strict    : False
         -struct    : False
@@ -2039,13 +2071,15 @@ values passed to it::
     <BLANKLINE>
         Possible bundles: @c1b, @c2b
     <BLANKLINE>
-        sub       : Cmd_Choice
+        sub                 : Cmd_Choice
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help
+        -Pdb_on_Exception   : Bool
+            Start python debugger pdb on exception
+        -help               : Help
             Display help about command
-        -strict   : Bool
-        -verbose  : Bool
+        -strict             : Bool
+        -verbose            : Bool
     <BLANKLINE>
         Argument/option bundles of Comp
             @c1b

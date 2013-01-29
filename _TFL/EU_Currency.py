@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -66,6 +66,7 @@
 #     7-Jan-2010 (CT) `_EUC_Currency_Arg_` added
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    17-Jun-2010 (CT) `__unicode__` introduced
+#    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
 #    ««revision-date»»···
 #--
 
@@ -553,26 +554,29 @@ These can be used like this:
     >>> cmd = TFL.CAO.Cmd (name = "Test", args = (TFL.CAO.Arg.EUC (name = "amount"), ), opts = (TFL.CAO.Opt.EUC_Source (), TFL.CAO.Opt.EUC_Target ()))
     >>> cao = cmd (["-help=vals"])
     Actual option and argument values of Test
-        -help              = ['vals']
-        -source_currency   = EUR
-        -target_currency   = EUR
-        amount             = None
+        -Pdb_on_Exception   = False
+        -help               = ['vals']
+        -source_currency    = EUR
+        -target_currency    = EUR
+        amount              = None
             ()
 
     >>> cao = cmd (["-help=vals", "100"])
     Actual option and argument values of Test
-        -help              = ['vals']
-        -source_currency   = EUR
-        -target_currency   = EUR
-        amount             = 100
+        -Pdb_on_Exception   = False
+        -help               = ['vals']
+        -source_currency    = EUR
+        -target_currency    = EUR
+        amount              = 100
             100.00 EUR
 
     >>> cao = cmd (["-help=vals", "-source=ATS", "100.00"])
     Actual option and argument values of Test
-        -help              = ['vals']
-        -source_currency   = ATS
-        -target_currency   = EUR
-        amount             = 100.00
+        -Pdb_on_Exception   = False
+        -help               = ['vals']
+        -source_currency    = ATS
+        -target_currency    = EUR
+        amount              = 100.00
             7.27 EUR
 
     >>> pyk.fprint (cao.amount)
