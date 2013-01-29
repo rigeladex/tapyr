@@ -106,6 +106,7 @@
 #    21-Jan-2013 (MG) Fix `_add_user_defined_indices`
 #    22-Jan-2013 (MG) Set `autoincrement` for sqlite for the change history
 #    26-Jan-2013 (MG) Handle cached roles in `MOM_Query`
+#    29-Jan-2013 (MG) Fix handling of cached roles
 #    ««revision-date»»···
 #--
 
@@ -269,21 +270,25 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         ### we need to replace the attribute kinds for all `cached_role`
         ### attribute, even for e-etypes which don't have a relevant root
         attr_spec = e_type._Attributes
-        for name, attr_cls in attr_spec._own_names.iteritems () :
+        for name, attr in attr_spec._attr_dict.iteritems () :
+            attr_cls = getattr (attr_spec, name, None)
             if attr_cls and issubclass (attr_cls, cls.cached_role_attr_classes) :
-                acd      = attr_spec._own_names [name] = attr_cls.New \
-                    ( kind        = MOM.Attr.Cached
-                    , Kind_Mixins = (MOM.Attr.Computed_Mixin, )
-                    )
-                attr_spec._add_prop   (e_type, name, acd)
+                if name in attr_spec._own_names :
+                    acd      = attr_spec._own_names [name] = attr_cls.New \
+                        ( kind        = MOM.Attr.Cached
+                        , Kind_Mixins = (MOM.Attr.Computed_Mixin, )
+                        )
+                    attr_spec._add_prop   (e_type, name, acd)
+                cls.cached_roles [e_type.Essence.type_name].add ((name, attr))
         return e_type
     # end def etype_decorator
 
     def prepare (cls) :
-        cls._create_pid_table             (cls.metadata)
-        cls._create_scope_table           (cls.metadata)
-        cls._create_SCM_table             (cls.metadata)
-        cls.role_cacher = TFL.defaultdict (set)
+        cls._create_pid_table              (cls.metadata)
+        cls._create_scope_table            (cls.metadata)
+        cls._create_SCM_table              (cls.metadata)
+        cls.role_cacher  = TFL.defaultdict (set)
+        cls.cached_roles = TFL.defaultdict (set)
     # end def prepare
 
     def Reset_Metadata (cls) :
@@ -292,14 +297,17 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
 
     def update_etype (cls, e_type, app_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
-        CR = cls.role_cacher.get (e_type.Essence.type_name, ())
+        RC = cls.role_cacher.get (e_type.Essence.type_name, ())
         if getattr (e_type, "relevant_root", None) :
             sa_table                = e_type._sa_table
             bases, db_attrs, unique = e_type._sa_save_attrs
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
-            MOM.DBW.SAS.MOM_Query  (e_type, sa_table, db_attrs, bases, CR)
-            e_type._SAS.finish     ()
+            MOM.DBW.SAS.MOM_Query \
+                ( e_type, sa_table, db_attrs, bases, RC
+                , cls.cached_roles.get (e_type.Essence.type_name, ())
+                )
+            e_type._SAS.finish ()
             if unique and not e_type.polymorphic_epk :
                 sa_table.append_constraint (schema.UniqueConstraint (* unique))
                 schema.Index \
@@ -309,12 +317,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             e_type._Reload_Mixin_.define_e_type    (e_type, _Reload_Mixin_)
             cls._add_check_constraints             (e_type, sa_table)
             cls._add_user_defined_indices          (e_type, sa_table)
-        for cr, assoc_et in CR :
-            if cr.attr_name in e_type._Attributes._own_names :
+        for rc, assoc_et in RC :
+            if rc.attr_name in e_type._Attributes._own_names :
                 ### setup cached role only for the etype first defining the
                 ### role attribute, not it's descendents
                 cls._cached_role \
-                    (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
+                    (app_type, getattr (e_type, rc.attr_name), rc, assoc_et)
     # end def update_etype
 
     def _attr_dicts (cls, e_type, bases) :

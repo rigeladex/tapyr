@@ -69,6 +69,7 @@
 #    23-Jan-2013 (MG) Support query attributes resulting in Id_Entity's
 #    26-Jan-2013 (CT) Add `e_type` to error TypeError
 #    26-Jan-2013 (MG) Add `Cached_Role_Query`
+#    29-Jan-2013 (MG) Support for cached roles enhanced
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,8 @@ class Query (TFL.Meta.Object) :
 class _MOM_Query_ (TFL.Meta.Object) :
     """Base class for all queries for MOM objects"""
 
+    _query_fct = {}
+
     @Once_Property
     def attributes (self) :
         return dict (self._E_TYPE [0].attributes, pid = "pid")
@@ -147,7 +150,10 @@ class _MOM_Query_ (TFL.Meta.Object) :
 class MOM_Query (_MOM_Query_) :
     """Query for MOM Entities"""
 
-    def __init__ (self, e_type, sa_table, db_attrs, bases, cached_roles) :
+    def __init__ ( self, e_type, sa_table, db_attrs, bases
+                 , role_cacher
+                 , cached_roles
+                 ) :
         e_type._SAQ           = self
         self._E_TYPE          = e_type, bases
         self._SA_TABLE        = sa_table
@@ -198,11 +204,13 @@ class MOM_Query (_MOM_Query_) :
                     join_query = Join_Query (self)
                     for an in attr_names :
                         self._ID_ENTITY_ATTRS [an] = join_query
-        self._CR = cached_roles
-        for cr, assoc in cached_roles :
-            crq = Cached_Role_Query (self, cr, assoc)
-            setattr (self, cr.role_name, crq)
-            self._CACHED_ROLES [cr.role_name] = crq
+        for rc, assoc in role_cacher :
+            self._add_cached_role (rc.role_name, rc, assoc)
+        for name, attr in cached_roles :
+            if name not in self._CACHED_ROLES :
+                #import pdb; pdb.set_trace ()
+                self._add_cached_role \
+                    (name, attr.cacher, e_type.app_type [attr.assoc])
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
             self._COMPOSITES.extend (b_saq._COMPOSITES)
             self._ROLE_ATTRIBUTES.update (b_saq._ROLE_ATTRIBUTES)
@@ -246,6 +254,17 @@ class MOM_Query (_MOM_Query_) :
                         jq = Join_Query (self)
                     self._ID_ENTITY_ATTRS [attr.name] = jq
     # end def __init__
+
+    def _add_cached_role (self, name, rc, assoc) :
+        e_type = self._E_TYPE [0]
+        if isinstance (rc, MOM.Link_Cacher) :
+            crq = None
+        else :
+            crq = Cached_Role_Query \
+                (self, assoc, rc.role_name, rc.other_role.name, e_type)
+        self._CACHED_ROLES [name] = crq
+        setattr (self, name, crq)
+    # end def _add_cached_role
 
     def _add_q (self, q, kind, * names) :
         q.MOM_Kind = kind
@@ -430,39 +449,62 @@ class Join_Query (_MOM_Query_) :
 class Cached_Role_Query (_MOM_Query_) :
     """A query attribute for cached roles"""
 
-    def __init__ (self, source, cached_role, assoc) :
+    def __init__ (self, source, assoc, attr_name, oattr_name, orole_et) :
         self.source       = source
-        self.cached_role  = cached_role
         self.assoc        = assoc
+        self. attr_name   =  attr_name
+        self.oattr_name   = oattr_name
+        self.orole_et     = orole_et
     # end def __init__
 
+    @Once_Property
+    def joins (self) :
+        sa_source      = self.source._SA_TABLE
+        ### we have to use the _SAQ.left.table to get the table which defines
+        ### the left/right attribute
+        sa_assoc       = self.assoc._SAQ.left.table
+        role_et        = getattr (self.assoc, self. attr_name).P_Type
+        attr_col       = getattr (self.assoc._SAQ, self. attr_name)
+        oattr_col      = getattr (self.assoc._SAQ, self.oattr_name)
+        role_col       =       role_et._SAQ.pid
+        orole_col      = self.orole_et._SAQ.pid
+        role_table     = role_et._sa_table
+        self.role_et   = role_et
+        self.attr_col  = attr_col
+        return \
+           [ (sa_assoc,  role_table, attr_col  ==  role_col, False)
+           , (sa_source, sa_assoc,   oattr_col == orole_col, False)
+           ]
+    # end def joins
+
     def _sa_filter (self, * args, ** kw) :
-        return (), ()
+        joins = self.joins
+        return joins [1:], (self.attr_col, )
     # end def _sa_filter
 
     def __call__ (self, attr_name) :
         base, sub_attr = attr_name.split (".", 1)
-        sa_assoc       = self.assoc._SAQ.left.table
-        role_name      = self.cached_role.role_name
-        orole_name     = self.cached_role.other_role.name
-        r_et           = getattr (self.assoc,  role_name).P_Type
-        or_et          = getattr (self.assoc, orole_name).P_Type
-        r_table        = r_et._sa_table
-        joins          = \
-           [ ( sa_assoc
-             , r_table
-             , getattr (self.assoc._SAQ,  role_name) ==  r_et._SAQ.pid
-             , False
-             )
-           , ( self.source._SA_TABLE
-             , sa_assoc
-             , getattr (self.assoc._SAQ, orole_name) == or_et._SAQ.pid
-             , False
-             )
-           ,
-           ]
-        return joins, (getattr (Q, sub_attr) (r_et._SAQ), )
+        return self.joins, (getattr (Q, sub_attr) (self.role_et._SAQ), )
     # end def __call__
+
+    def __getattr__ (self, name) :
+        return self (".%s" % name)
+    # end def __getattr__
+
+    def contains (self, other) :
+        joins, ac = self._sa_filter ()
+        return ac [0].contains (getattr (other, "pid", other))
+    # end def contains
+
+    def in_ (self, others) :
+        joins, ac = self._sa_filter ()
+        return ac [0].in_ ([getattr (o, "pid", o) for o in others])
+    # end def in_
+
+    def notin_ (self, others) :
+        joins, ac = self._sa_filter ()
+        return ac [0].notin_ ([getattr (o, "pid", o) for o in others])
+    # end def notin_
 
 # end class Cached_Role_Query
 

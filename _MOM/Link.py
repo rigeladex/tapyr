@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -67,6 +67,7 @@
 #    13-Sep-2012 (CT) Add `_suffixed`
 #    14-Sep-2012 (CT) Add `cr_name` to `Link_Cacher`, `Role_Cacher`
 #    27-Sep-2012 (CT) Remove un-implemented `Link_AB` from docstring
+#    29-Jan-2013 (MG) Add cacher object to auto created obbject
 #    ««revision-date»»···
 #--
 
@@ -321,6 +322,7 @@ class _Cacher_ (TFL.Meta.Object) :
                 , P_Type       = P_Type
                 , description  = desc
                 , __module__   = role_type.__module__
+                , cacher       = self
                 )
             self.cr_attr = cr = type (CR) (attr_name, (CR, ), kw)
             role_type.add_attribute (cr, override = True)
