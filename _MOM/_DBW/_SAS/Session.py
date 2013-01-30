@@ -129,6 +129,7 @@
 #    22-Jan-2013 (MG) Set the cid counter during rollback to the `max_cid`
 #    23-Jan-2013 (MG) Use `rollback_context` in ` Session_S.rollback`
 #    30-Jan-2013 (MG) Add support for `keep_zombies` to `rollback`
+#    30-Jan-2013 (MG) Bug fixing for `keep_zombies` handling
 #    ««revision-date»»···
 #--
 
@@ -710,10 +711,10 @@ class Session_S (_Session_) :
         for pid, e in tuple (self._pid_map.iteritems ()) :
             if force_reload :
                 setattr (e, e.__class__.last_cid.ckd_name, -1)
-            if (   not keep_zombies
-               and isinstance (e, MOM._Id_Entity_Destroyed_Mixin_)
-               ) :
-                del self._pid_map [pid]
+            if isinstance (e, MOM._Id_Entity_Destroyed_Mixin_) :
+                ### need to be 2 if's so that the elif parts works as expected
+                if not keep_zombies :
+                    del self._pid_map [pid]
             elif not isinstance (e, MOM._Id_Entity_Reload_Mixin_) :
                 e.__class__ = e.__class__._RELOAD_E_TYPE
     # end def _mark_entities_for_reload
@@ -739,11 +740,18 @@ class Session_S (_Session_) :
             self._in_rollback += 1
             scope              = self.scope
             with scope.ems.pm.dbs.rollback_context (scope, self.__super) :
+                if keep_zombies :
+                    ### we need to copy the pid map because rolling back the
+                    ### uncommitted changes will remove the created entities
+                    ### from this map
+                    pid_map = self._pid_map.copy ()
                 with scope.historian.temp_recorder (MOM.SCM.Ignorer) :
                     scope.ems._rollback_uncommitted_changes ()
                 self.__super.rollback ()
                 self._in_rollback -= 1
                 self._cid_map      = self._saved ["cid_map"]
+                if keep_zombies :
+                    self._pid_map = pid_map
                 self._mark_entities_for_reload (keep_zombies = keep_zombies)
     # end def rollback
 
