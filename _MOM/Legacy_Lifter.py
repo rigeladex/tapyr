@@ -29,6 +29,8 @@
 #    19-Jan-2013 (MG) Creation
 #    25-Jan-2013 (MG) Add filter code for old account passwort storage
 #    29-Jan-2013 (MG) Lift `Type_Name` in pickle carge
+#    30-Jan-2013 (MG) Add support for `removing` objects during legacy
+#                     lifting
 #    ««revision-date»»···
 #--
 
@@ -83,22 +85,23 @@ class Legacy_Lifter (TFL.Meta.Object) :
             type_name = self.module.Type_Name_Renaming.get \
                 (type_name, type_name)
             if "Type_Name" in pc : ### in case we changed the type name
-                                   ### through the Type_Name_Renaming we need
-                                   ### to change the Type_Name in the pickle
-                                   ### cargo as well
+                                   ### through the Type_Name_Renaming we
+                                   ### need to change the Type_Name in
+                                   ### the pickle cargo as well
                 pc ["Type_Name"] = [type_name]
             lifter    = self.module.Type_Name_Lifter.get (type_name)
             if lifter :
                 lifter = getattr (self.module, lifter)
                 type_name, pc, pid = lifter (type_name, pc, pid)
-            if self.module.E_Type_Lifter :
+            if type_name and self.module.E_Type_Lifter :
                 pc_et   = db_man.app_type [type_name]
                 for let, lifter in self.module.E_Type_Lifter.iteritems () :
                     let = db_man.app_type [let]
                     if issubclass (pc_et, let) :
                         lifter = getattr (self.module, lifter)
                         type_name, pc, pid = lifter (type_name, pc, pid)
-            yield type_name, pc, pid
+            if type_name is not None :
+                yield type_name, pc, pid
     # end def entity_iter
 
     def change_iter (self, db_man, db_iter) :
