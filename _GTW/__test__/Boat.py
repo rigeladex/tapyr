@@ -38,6 +38,7 @@
 #     2-Jul-2012 (MG) Additional tests for handling of execptions added
 #     9-Sep-2012 (MG) Test for `convert_creation_change` added
 #     9-Sep-2012 (RS) Add `last_changed` and `creation_date` checks
+#    30-Jan-2013 (CT) Adapt to `Unique` predicates
 #    ««revision-date»»···
 #--
 
@@ -157,7 +158,9 @@ _test_code = """
     >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of Boat_Class (u'optimist') clashes with existing Boat_Class (u'optimist')
+    Invariants: The attribute values for ('name',) must be unique for each object
+    <BLANKLINE>
+    Already existing: Boat_Class Optimist
 
     >>> print scope.SRM.Boat.count ### 8
     2
@@ -168,7 +171,7 @@ _test_code = """
     [SRM.Boat ((u'optimist', ), '', 42, u'OE'), SRM.Boat ((u'optimist', ), u'AUT', 1107, u'')]
 
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### before invariant errors
-    [('object', []), ('region', []), ('system', [])]
+    [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
 
     >>> b.b_class.max_crew = 0
     Traceback (most recent call last):
@@ -176,7 +179,7 @@ _test_code = """
     Invariant: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `setattr`
-    [('object', []), ('region', []), ('system', [])]
+    [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
 
 
     >>> errors = []
@@ -187,14 +190,14 @@ _test_code = """
         max_crew = 0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 0)`
     [('object', [Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
-        max_crew = 0)]), ('region', []), ('system', [])]
+        max_crew = 0)]), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
     0
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 5)`
     [('object', [Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
-        max_crew = 5)]), ('region', []), ('system', [])]
+        max_crew = 5)]), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
     [Invariants(Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5),)]
@@ -219,7 +222,7 @@ _test_code = """
         max_crew = None
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = None)`
     [('object', [Required_Empty(SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
-        max_crew = None)]), ('region', []), ('system', [])]
+        max_crew = None)]), ('region', []), ('system', []), ('uniqueness', [])]
 
     >>> b.b_class.max_crew = None
     Traceback (most recent call last):

@@ -81,7 +81,7 @@ _test_create = """
     >>> all_cs
     [Auth.Certificate (1), Auth.Certificate (2), Auth.Certificate (3)]
 
-    >>> c1.pem = "fake value to fool `alive`"
+    >>> c1.pem = b"fake value to fool `alive`"
     >>> (c1, c1.alive)
     (Auth.Certificate (1), True)
     >>> rdf = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = +1)

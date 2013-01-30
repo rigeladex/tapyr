@@ -220,30 +220,24 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> b8   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1108", raw = True)
+
+    >>> b8
+    SRM.Boat ((u'optimist', ), u'AUT', 1108, u'')
+
     >>> bir8 = BiR (b8, reg, skipper = s)
     Traceback (most recent call last):
       ...
     Invariants: A sailor can't be skipper of more than one boat in a single
     regatta event.
     <BLANKLINE>
-    Clashing entities: Boat_in_Regatta Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist
+    Already existing: Boat_in_Regatta Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist
 
-    >>> for c in scope.uncommitted_changes : ### before commit failing `skipper_not_multiplexed`
-    ...     print (c)
-    <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1108', u'', 'SRM.Boat'), new-values = {'last_cid' : '11'}>
-
-    >>> show_dep (bir.skipper) ### before commit failing `skipper_not_multiplexed`
-    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
+    >>> b8
+    SRM.Boat ((u'optimist', ), u'AUT', 1108, u'')
 
     >>> scope.commit ()
 
-    >>> show_dep (bir.skipper) ### after commit failing `skipper_not_multiplexed`
-    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
-
     >>> scope.rollback ()
-
-    >>> show_dep (bir.skipper) ### after rollback
-    (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
 
     >>> p2  = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
     >>> s2  = SRM.Sailor.instance_or_new (p2, nation = u"AUT", raw = True)
@@ -414,9 +408,11 @@ _test_referential_integrity = r"""
     12
 
     >>> bir.last_cid                                  ### after s.destroy ()
+    8
+    >>> bir.left
     Traceback (most recent call last):
       ...
-    Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))>: access to attribute 'last_cid' not allowed
+    Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))>: access to attribute 'left' not allowed
     >>> scope.MOM.Id_Entity.query_s ().count ()       ### after s.destroy ()
     5
     >>> scope.MOM.Id_Entity.query_s ().all ()         ### after s.destroy ()

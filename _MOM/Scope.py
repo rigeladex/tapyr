@@ -111,6 +111,7 @@
 #    21-Jan-2013 (CT) Add `destroy_all`, populate `Scope.Table`
 #    21-Jan-2013 (MG) Call change callbacks for nested change
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
+#    30-Jan-2013 (CT) Add optional argument `allow_zombie` to `pid_query`
 #    ««revision-date»»···
 #--
 
@@ -600,9 +601,14 @@ class Scope (TFL.Meta.Object) :
                 c.do_callbacks           (self)
     # end def nested_change_recorder
 
-    def pid_query (self, pid) :
+    def pid_query (self, pid, allow_zombie = False) :
         """Returns entity with permanent id `pid`, if any."""
-        return self.ems.pid_query (pid)
+        result = self.ems.pid_query (pid)
+        if ( not allow_zombie
+           and isinstance (result, MOM._Id_Entity_Destroyed_Mixin_)
+           ) :
+            raise LookupError (pid)
+        return result
     # end def pid_query
 
     def query_changes (self, * filter, ** kw) :

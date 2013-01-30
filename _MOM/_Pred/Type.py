@@ -52,6 +52,7 @@
 #    30-Jan-2013 (CT) Add `Unique.ems_check`
 #    30-Jan-2013 (CT) Change `Unique.satisfied` and `_query_filters` to
 #                     use `_val_dict`
+#    30-Jan-2013 (CT) Change `Unique.satisfied` to query `epk_sig_root`
 #    ««revision-date»»···
 #--
 
@@ -495,7 +496,9 @@ class Unique (_Condition_) :
         self.val_disp = {}
         self.val_dict = val_dict = self._val_dict (obj, attr_dict)
         qfs      = self._query_filters (obj, val_dict)
-        q        = obj.ETM.query_s (* qfs)
+        scope    = obj.home_scope
+        ETM      = scope [obj.E_Type.epk_sig_root.type_name]
+        q        = ETM.query_s (* qfs)
         result   = q.count () == 0
         if not result :
             self._extra_links_d = self.clashes = q.all ()

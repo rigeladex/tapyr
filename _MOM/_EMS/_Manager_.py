@@ -78,6 +78,7 @@
 #    11-Sep-2012 (CT) Add `update` (and a stub for `add`)
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #    30-Jan-2013 (CT) Add `add` and `_check_uniqueness`
+#    30-Jan-2013 (CT) Fix handling of `Integrity_Error` in `add`
 #    ««revision-date»»···
 #--
 
@@ -149,12 +150,8 @@ class _Manager_ (TFL.Meta.Object) :
         try :
             return self._add (entity, pid)
         except self.Integrity_Error as exc :
-            scope = self.scope
-            clone = e_type.__new__ (e_type, scope = scope)
-            clone.__dict__.update \
-                ((a.name, a.get_value (entity)) for a in e_type.edit_attr)
-            scope.rollback_pending_change ()
-            self._check_uniqueness (clone, e_type.uniqueness_dbw)
+            self.scope.rollback_pending_change ()
+            self._check_uniqueness (entity, e_type.uniqueness_dbw)
     # end def add
 
     def async_changes (self, * filters, ** kw) :

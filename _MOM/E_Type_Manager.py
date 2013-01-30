@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -122,6 +122,8 @@
 #    11-Dec-2012 (CT) Add `Entity.__instancecheck__`, `.__subclasscheck__`
 #    13-Dec-2012 (CT) Move `ac_query_attrs` and `raw_query_attrs` to `Entity`,
 #                     add optional argument `AQ` to both
+#    30-Jan-2013 (CT) Remove check for `Duplicate_Link` from `_checked_roles`
+#                     (is checked by Unique predicate anyway)
 #    ««revision-date»»···
 #--
 
@@ -553,9 +555,6 @@ class Link (Id_Entity) :
         else :
             epk = tuple (self._role_to_cooked_iter (epk))
         etype = self._etype
-        if self.ems.exists (etype, epk) :
-            raise MOM.Error.Duplicate_Link \
-                (etype, self.ems.instance (etype, epk), epk, kw)
         errors  = []
         r_query = self.ems.r_query
         for r, pk in zip (etype.Roles, epk) :

@@ -86,6 +86,7 @@
 #    21-Jan-2013 (MG) Add scope parameter to `_Change_.do_callbacks`
 #                     Update `last_cid` in `Copy`
 #    30-Jan-2013 (CT) Change `Create.redo` to pass `entity` to `_create`
+#    30-Jan-2013 (CT) Change `Create.redo` to pass `allow_zombie` to `pid_query`
 #    ««revision-date»»···
 #--
 
@@ -439,7 +440,7 @@ class Create (_Entity_Last_Cid_Update_Mixin_, _Entity_) :
 
     def redo (self, scope) :
         try :
-            entity = scope.pid_query (self.pid)
+            entity = scope.pid_query (self.pid, allow_zombie = True)
         except LookupError :
             entity = None
         self._create      (scope, self.new_attr, entity)

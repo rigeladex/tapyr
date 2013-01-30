@@ -58,7 +58,9 @@ _test_code = r"""
     >>> SWP.Page_V ("foo", text = "V")
     Traceback (most recent call last):
       ...
-    Name_Clash: new definition of Page V (u'foo') clashes with existing Page U (u'foo')
+    Invariants: The attribute values for ('perma_name',) must be unique for each object
+    <BLANKLINE>
+    Already existing: Page U foo
     >>> SWP.Page_U.query_s (perma_name = "foo").all ()
     [SWP.Page_U (u'foo')]
     >>> SWP.Page_V.query_s (perma_name = "foo").all ()

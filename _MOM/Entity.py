@@ -229,6 +229,9 @@
 #    11-Jan-2013 (CT) Check `primary_ais` in `_main__init__`
 #    16-Jan-2013 (CT) Use `.E_Type.primary_ais`, not `.primary_ais`
 #    29-Jan-2013 (CT) Add `uniqueness_dbw` and `uniqueness_ems`
+#    30-Jan-2013 (CT) Add access to `last_cid` and `restore` to
+#                     `_Id_Entity_Destroyed_Mixin_`
+#    30-Jan-2013 (CT) Add access to `last_cid` to `_Id_Entity_Destroyed_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -1657,11 +1660,22 @@ class _Id_Entity_Destroyed_Mixin_ (object) :
     """Mixin indicating an entity that was already destroyed."""
 
     def __getattribute__ (self, name) :
-        if name in \
-                ( "E_Type", "pid", "type_name"
-                , "__class__", "__nonzero__", "__repr__"
-                ) :
+        if name in ("E_Type", "__class__", "__nonzero__", "__repr__") :
             return object.__getattribute__ (self, name)
+        elif name in ("last_cid", "pid", "type_name") :
+            try :
+                ### Need to reset `self.__class__` temporarily to allow
+                ### properties to run
+                cls            = self.__class__
+                self.__class__ = cls.__bases__ [1]
+                result         = getattr (self, name)
+            finally :
+                self.__class__ = cls
+            return result
+        elif name == "restore" :
+            cls = self.__class__
+            self.__class__ = cls.__bases__ [1]
+            return getattr (self, name)
         else :
             raise MOM.Error.Destroyed_Entity \
                 ( "%r: access to attribute %r not allowed"
@@ -1682,7 +1696,7 @@ class _Id_Entity_Destroyed_Mixin_ (object) :
     def __repr__ (self) :
         ### Need to reset `self.__class__` temporarily to get proper `__repr__`
         try :
-            cls = self.__class__
+            cls            = self.__class__
             self.__class__ = cls.__bases__ [1]
             result = "<Destroyed entity %s>" % (self.__repr__ (), )
         finally :

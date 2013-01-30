@@ -77,7 +77,7 @@
 #    11-Sep-2012 (CT) Derive `Not_Unique` from `_Invariant_`
 #    12-Dec-2012 (CT) Change `Attribute.bindings` to format `value`
 #    29-Jan-2013 (CT) Improve text of `Name_Clash`
-#    30-Jan-2013 (CT) Fix `Not_Unique`
+#    30-Jan-2013 (CT) Fix `Not_Unique`, remove `Duplicate_Link`
 #    ««revision-date»»···
 #--
 
@@ -497,18 +497,6 @@ class Destroyed_Entity (Error) :
     """The entity was already destroyed and cannot be used anymore."""
 # end class Destroyed_Entity
 
-class Duplicate_Link (Error) :
-    """Raised when a link is added to an association more than once."""
-
-    def __init__ (self, etype, old, epk, kw) :
-        self.__super.__init__ \
-            ( _T ("There already exists a link: %s %s")
-            % (_T (etype.ui_name), old.ui_display)
-            )
-    # end def __init__
-
-# end class Duplicate_Link
-
 class Empty_DB (DB) :
     """Database is empty."""
 # end class Empty_DB
@@ -752,7 +740,7 @@ class Not_Unique (_Invariant_) :
         extras = tuple \
             ("%s %s" % (x.type_name, x.ui_display) for x in self.extra_links)
         result.append \
-            ( _T ("Clashing entities: %s") % ("; ".join (extras), ))
+            ( _T ("Already existing: %s") % ("; ".join (extras), ))
         return "\n\n".join (result)
     # end def description
 

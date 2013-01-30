@@ -69,7 +69,9 @@ create = r"""
     >>> per = PAP.Person                   ("ln", "fn")
     Traceback (most recent call last):
     ...
-    Name_Clash: new definition of Person (u'ln', u'fn', u'', u'') clashes with existing Person (u'ln', u'fn', u'', u'')
+    Invariants: The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object
+    <BLANKLINE>
+    Already existing: Person ln fn
 
     >>> PAP.Person.count
     2

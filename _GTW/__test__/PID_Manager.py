@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -49,7 +49,9 @@ _test_code = r"""
     >>> b3 = SRM.Boat       (bc, "AUT", 2) # doctest:+ELLIPSIS
     Traceback (most recent call last):
         ...
-    Duplicate_Link: There already exists a link: Boat Optimist, AUT 2
+    Invariants: The attribute values for ('left', 'nation', 'sail_number', 'sail_number_x') must be unique for each object
+    <BLANKLINE>
+    Already existing: Boat Optimist, AUT 2
     >>> b3 = SRM.Boat       (bc, "AUT", 3)
     >>> int (b3.pid)
     102
