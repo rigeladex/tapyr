@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,7 @@
 #    12-Aug-2012 (CT) Add `Unique`
 #    12-Aug-2012 (CT) Use `_Export_Module`, DRY class names
 #    11-Sep-2012 (CT) Change `Unique` to use `attr_none`, not `attributes`
+#    29-Jan-2013 (CT) Force `Unique.kind` to `Uniqueness`, not `Region`
 #    ««revision-date»»···
 #--
 
@@ -202,10 +203,10 @@ class Unique (_Condition_) :
         cls.__m_super.__init__ (name, bases, dct)
         import _MOM._Pred.Kind
         if cls.kind is None :
-            cls.kind = MOM.Pred.Region
-        elif cls.kind is not MOM.Pred.Region :
+            cls.kind = MOM.Pred.Uniqueness
+        elif cls.kind is not MOM.Pred.Uniqueness :
             raise TypeError \
-                ( "Unique predicate %s *must* have kind Region, not %s"
+                ( "Unique predicate %s *must* have kind Uniqueness, not %s"
                 % (cls, cls.kind)
                 )
         if cls.attributes :
@@ -219,11 +220,11 @@ class Unique (_Condition_) :
     # end def __init__
 
     def __str__  (cls) :
-        return "%s : %s" % (cls.name, ", ".join (cls.attr_none))
+        return "%s %r" % (cls.name, cls.attr_none)
     # end def __str__
 
     def __repr__ (cls) :
-        return '%s (%r)' % (cls.__class__.__name__, cls.attr_none)
+        return '%s predicate: %s' % (cls.kind.__name__, cls)
     # end def __repr__
 
 # end class Unique

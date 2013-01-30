@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -76,6 +76,8 @@
 #    12-Aug-2012 (CT) Add `commit_context`
 #     9-Sep-2012 (CT) Add `convert_creation_change`
 #    11-Sep-2012 (CT) Add `update` (and a stub for `add`)
+#    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
+#    30-Jan-2013 (CT) Add `add` and `_check_uniqueness`
 #    ««revision-date»»···
 #--
 
@@ -104,6 +106,10 @@ class _Manager_ (TFL.Meta.Object) :
 
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
+
+    class Integrity_Error (Exception) :
+        """Raised when `DBW` signals an integrity error."""
+    # end class Integrity_Error
 
     @property
     def db_meta_data (self) :
@@ -138,8 +144,19 @@ class _Manager_ (TFL.Meta.Object) :
     # end def __init__
 
     def add (self, entity, pid = None) :
-        raise NotImplementedError ("%s must implement `add`" % self.__class__)
+        e_type = entity.E_Type
+        self._check_uniqueness (entity, e_type.uniqueness_ems)
+        try :
+            return self._add (entity, pid)
+        except self.Integrity_Error as exc :
+            scope = self.scope
+            clone = e_type.__new__ (e_type, scope = scope)
+            clone.__dict__.update \
+                ((a.name, a.get_value (entity)) for a in e_type.edit_attr)
+            scope.rollback_pending_change ()
+            self._check_uniqueness (clone, e_type.uniqueness_dbw)
     # end def add
+
     def async_changes (self, * filters, ** kw) :
         from _MOM.import_MOM import Q
         result = self.changes (Q.cid > self.scope.db_cid)
@@ -280,15 +297,30 @@ class _Manager_ (TFL.Meta.Object) :
         return result
     # end def restored
 
-    def rollback (self) :
+    def rollback (self, keep_zombies = False) :
         with self.scope.temp_change_recorder (MOM.SCM.Ignorer) :
-            self._rollback ()
+            self._rollback (keep_zombies)
         self._reset_transaction ()
     # end def rollback
 
     def update (self, entity, change) :
         pass ### redefine as necessary in descendents
     # end def update
+
+    def _add (self, entity, pid = None) :
+        raise NotImplementedError ("%s must implement `_add`" % self.__class__)
+    # end def _add
+
+    def _check_uniqueness (self, entity, uniqueness_predicates) :
+        def _gen (entity, uniqueness_predicates) :
+            for p in uniqueness_predicates :
+                result = p.check_predicate (entity)
+                if not result :
+                    yield result.error
+        errors = list (_gen (entity, uniqueness_predicates))
+        if errors :
+            raise MOM.Error.Invariants (errors)
+    # end def _check_uniqueness
 
     def _query_multi_root (self, Type) :
         raise NotImplementedError \
@@ -310,8 +342,8 @@ class _Manager_ (TFL.Meta.Object) :
         self._removed_entities   = {}
     # end def _reset_transaction
 
-    def _rollback (self) :
-        self.session.rollback ()
+    def _rollback (self, keep_zombies) :
+        self.session.rollback (keep_zombies)
     # end def _rollback
 
     def _rollback_uncommitted_changes  (self) :

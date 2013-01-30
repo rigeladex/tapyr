@@ -221,35 +221,24 @@ _test_code = r"""
 
     >>> b8   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1108", raw = True)
     >>> bir8 = BiR (b8, reg, skipper = s)
-    >>> bir8.other_boots_skippered.all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    Traceback (most recent call last):
+      ...
+    Invariants: A sailor can't be skipper of more than one boat in a single
+    regatta event.
+    <BLANKLINE>
+    Clashing entities: Boat_in_Regatta Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist
 
     >>> for c in scope.uncommitted_changes : ### before commit failing `skipper_not_multiplexed`
     ...     print (c)
     <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1108', u'', 'SRM.Boat'), new-values = {'last_cid' : '11'}>
-    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1108', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '12', 'skipper' : 5}>
 
     >>> show_dep (bir.skipper) ### before commit failing `skipper_not_multiplexed`
     (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
-    (((u'optimist', ), u'AUT', 1108, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
 
     >>> scope.commit ()
-    Traceback (most recent call last):
-    ...
-    Invariants: Condition `skipper_not_multiplexed` : A sailor can't be skipper of more than one boat in a single
-    regatta event. (other_boots_skippered_count == 0)
-        boat = Optimist, AUT 1108
-        other_boots_skippered_count = 1 << other_boots_skippered.count ()
-        regatta = Himmelfahrt 2008/05/01, Optimist
-        skipper = Tanzer Christian, AUT, 29676
 
     >>> show_dep (bir.skipper) ### after commit failing `skipper_not_multiplexed`
     (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
-    (((u'optimist', ), u'AUT', 1108, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))) : 1
-
-    >>> err =  first (bir8.errors)
-    >>> print formatted_1 (err.as_json_cargo)
-    {'attributes' : ['boat', 'regatta', 'skipper'], 'bindings' : [('boat', 'Optimist, AUT 1108'), ('other_boots_skippered_count', '1 << this.other_boots_skippered.count ()'), ('regatta', 'Himmelfahrt 2008/05/01, Optimist'), ('skipper', 'Tanzer Christian, AUT, 29676')], 'description' : '(other_boots_skippered_count == 0)', 'extra_links' : [(9, 'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist')], 'head' : "A sailor can't be skipper of more than one boat in a single\nregatta event."}
 
     >>> scope.rollback ()
 

@@ -228,6 +228,7 @@
 #    11-Dec-2012 (CT) Move `_Class_Kind` from `Entity` to `M_Entity`
 #    11-Jan-2013 (CT) Check `primary_ais` in `_main__init__`
 #    16-Jan-2013 (CT) Use `.E_Type.primary_ais`, not `.primary_ais`
+#    29-Jan-2013 (CT) Add `uniqueness_dbw` and `uniqueness_ems`
 #    ««revision-date»»···
 #--
 
@@ -957,6 +958,13 @@ class Id_Entity (Entity) :
     refuse_links          = set ()
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
     tutorial              = None
+
+    ### Thanks to `Alias_Property`, `uniqueness_dbw` and `uniqueness_ems` are
+    ### accessible for both  the instances and the class
+    uniqueness_dbw        = TFL.Meta.Alias_Property \
+        ("_Predicates.uniqueness_dbw")
+    uniqueness_ems        = TFL.Meta.Alias_Property \
+        ("_Predicates.uniqueness_ems")
 
     _sets_to_combine      = ("refuse_links", )
 

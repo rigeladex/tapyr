@@ -77,6 +77,7 @@
 #    11-Sep-2012 (CT) Derive `Not_Unique` from `_Invariant_`
 #    12-Dec-2012 (CT) Change `Attribute.bindings` to format `value`
 #    29-Jan-2013 (CT) Improve text of `Name_Clash`
+#    30-Jan-2013 (CT) Fix `Not_Unique`
 #    ««revision-date»»···
 #--
 
@@ -711,7 +712,7 @@ class Not_Unique (_Invariant_) :
     def __init__ (self, obj, inv) :
         self.__super.__init__ (obj)
         self.attributes   = sorted (inv.attributes + inv.attr_none)
-        self.count        = len (clashes)
+        self.count        = len (inv.clashes)
         self.extra_links  = tuple \
             ( TFL.Record
                 ( pid        = getattr (x, "pid", None)
@@ -723,13 +724,18 @@ class Not_Unique (_Invariant_) :
         self.inv          = inv
         self.type_name    = _T (obj.ui_name)
         self.ui_display   = obj.ui_display
-        self.args         = (self.type_name, self.ui_display, inv)
+        self.args         = (self.type_name, self.ui_display)
         description       = _T (inv.description)
         try :
             self.inv_desc = description % TFL.Caller.Object_Scope (obj)
         except TypeError :
             self.inv_desc = description
     # end def __init__
+
+    @Once_Property
+    def as_unicode (self) :
+        return self.description
+    # end def as_unicode
 
     @Once_Property
     def head (self) :

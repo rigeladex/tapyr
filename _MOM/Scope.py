@@ -110,6 +110,7 @@
 #     6-Dec-2012 (CT) Don't set `change.user` in `nested_change_recorder`
 #    21-Jan-2013 (CT) Add `destroy_all`, populate `Scope.Table`
 #    21-Jan-2013 (MG) Call change callbacks for nested change
+#    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #    ««revision-date»»···
 #--
 
@@ -641,9 +642,9 @@ class Scope (TFL.Meta.Object) :
         self.ems.rename (entity, new_epk, renamer)
     # end def rename
 
-    def rollback (self) :
+    def rollback (self, keep_zombies = False) :
         """Rollback and discard the outstanding changes."""
-        self.ems.rollback ()
+        self.ems.rollback (keep_zombies)
         self.count_change ()
     # end def rollback
 
@@ -652,7 +653,7 @@ class Scope (TFL.Meta.Object) :
            outstanding changes.
         """
         changes = tuple (self.uncommitted_changes.changes)
-        self.rollback ()
+        self.rollback (keep_zombies = True)
         for c in changes :
             c.redo (self)
     # end def rollback_pending_change

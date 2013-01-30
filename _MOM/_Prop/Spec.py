@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -41,6 +41,7 @@
 #    14-Oct-2010 (CT) `Kind_Mixins` added as `Spec` variable
 #    22-Dec-2011 (CT) Change `_effective_prop_kind` to set `kind` to `kind.kind`
 #    12-Sep-2012 (CT) Add `e_type` to `kind.__init__`
+#    29-Jan-2013 (CT) Factor `_sort_properties`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         self._names     = dict  (self._names)     ### class to instance
         self._create_prop_dict  (e_type)
         self._create_properties (e_type)
+        self._sort_properties   (e_type)
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :
@@ -99,8 +101,6 @@ class _Prop_Spec_ (TFL.Meta.Object) :
                 prop = getattr (e_type, n, None)
                 if prop is not None :
                     self._setup_prop (e_type, n, prop.kind, prop)
-        for pk in self._prop_kind.itervalues () :
-            pk.sort (key = TFL.Sorted_By ("rank", "name"))
     # end def _create_properties
 
     def _effective_prop_kind (self, name, prop_type, e_type) :
@@ -139,6 +139,11 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         self._prop_dict [name] = prop
         self._prop_kind [kind].append (prop)
     # end def _setup_prop
+
+    def _sort_properties (self, e_type) :
+        for pk in self._prop_kind.itervalues () :
+            pk.sort (key = TFL.Sorted_By ("rank", "name"))
+    # end def _sort_properties
 
 Spec = _Prop_Spec_ # end class
 

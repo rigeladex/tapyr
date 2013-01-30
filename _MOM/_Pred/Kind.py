@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -32,6 +32,8 @@
 #     2-Sep-2010 (CT) `Region` added
 #    27-Apr-2012 (CT) Add `Region` to last paragraph of `__doc__`
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
+#    29-Jan-2013 (CT) Add `Uniqueness`
+#    30-Jan-2013 (CT) Add `Kind.__repr__`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +71,10 @@ class Kind (MOM.Prop.Kind) :
     _del = None
     _get = check_predicate
     _set = None
+
+    def __repr__ (self) :
+        return repr (self.pred)
+    # end def __repr__
 
 # end class Kind
 
@@ -114,8 +120,7 @@ class Region (Kind) :
 
        Region predicates are checked by `scope.commit` before attempting to
        actually do the commit. Some backends might move the checks of
-       some regional predicates to the database engine, e.g., checks for
-       uniqueness constraints.
+       some regional predicates to the database engine.
     """
 
     kind = "region"
@@ -136,6 +141,21 @@ class System (Kind) :
 
 # end class System
 
+class Uniqueness (Kind) :
+    """Predicate kind for uniqueness invariant.
+
+       Uniqueness predicates specify must be satisfied before an object can be
+       added to the database.
+
+       Uniqueness predicates are checked by `scope.add` before attempting to
+       actually add the entity. Some backends might move the checks of
+       some uniqueness predicates to the database engine.
+    """
+
+    kind = "uniqueness"
+
+# end class Uniqueness
+
 __doc__ = """
 Class `MOM.Pred.Kind`
 =====================
@@ -154,14 +174,15 @@ Class `MOM.Pred.Kind`
     class gets instantiated by :class:`~_MOM._Pred.Spec.Spec` which passes
     the `type` to the kind's `__init__`.
 
-    This module provides three kinds of predicates: :class:`Object`,
-    :class:`Region`, and :class:`System`. A specific application or
-    application domain can define additional kinds of predicates by providing
-    additional classes derived from :class:`Kind`.
+    This module provides four kinds of predicates: :class:`Object`,
+    :class:`Region`, :class:`System`, and :class:`Uniqueness`. A specific
+    application or application domain can define additional kinds of
+    predicates by providing additional classes derived from :class:`Kind`.
 
 .. autoclass:: Object
 .. autoclass:: Region
 .. autoclass:: System
+.. autoclass:: Uniqueness
 
 """
 

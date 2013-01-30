@@ -59,6 +59,8 @@
 #    19-Aug-2012 (MG) Keep cache during rollback due to no changes
 #    11-Sep-2012 (CT) Factor `rollback_pending_change` to `MOM.Scope`
 #    14-Sep-2012 (MG) Change object update handling
+#    30-Jan-2013 (CT) Refactor `add` into `MOM.EMS._Manager_.add` and `_add`
+#    30-Jan-2013 (MG) Remove argument from `.rollback` call in `commit`
 #    ««revision-date»»···
 #--
 
@@ -113,8 +115,8 @@ class Manager (MOM.EMS._Manager_) :
     @property
     def max_cid (self) :
         try :
-            id_col     = MOM.SCM.Change._Change_._sa_table.c.cid
-            last = self.session.connection.execute \
+            id_col = MOM.SCM.Change._Change_._sa_table.c.cid
+            last   = self.session.connection.execute \
                 ( sql.select ((id_col, )).order_by (id_col.desc ()).limit (1)
                 ).fetchone ()
             return (last and last.cid) or 0
@@ -133,35 +135,6 @@ class Manager (MOM.EMS._Manager_) :
         return self.session
     # end def pcm
 
-    def add (self, entity, pid = None) :
-        ses = self.session
-        ses.flush () ### add all pending operations to the database transaction
-        if entity.polymorphic_epk :
-            ### since we have a polymorphic epk the database layer cannot
-            ### check the name clash -> therefore we need to make an extra
-            ### query for this.
-            epk_sig_root          = entity.epk_sig_root
-            epk_sig_root_epk_dict = dict \
-                ((a, getattr (entity, a)) for a in epk_sig_root.epk_sig)
-            try :
-                existing = self.query (epk_sig_root).filter \
-                    (** epk_sig_root_epk_dict).one ()
-                raise MOM.Error.Name_Clash (entity, existing)
-            except IndexError :
-                pass ### If the index error is raised the object does not
-                     ### exist -> we can create a new object with this epk
-        max_c = entity.max_count
-        if max_c and max_c <= self.query (entity.__class__).count () :
-            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        try :
-            ses.add   (entity, pid)
-        except SAS_Exception.IntegrityError as exc :
-            ### XXX introduce nested transactions
-            self.scope.rollback_pending_change ()
-            raise MOM.Error.Name_Clash \
-                (entity, self.instance (entity.__class__, entity.epk))
-    # end def add
-
     def changes (self, * filter, ** eq_kw) :
         query = MOM.DBW.SAS.Q_Result_Changes \
             (MOM.SCM.Change._Change_, self.session).filter (* filter, ** eq_kw)
@@ -174,7 +147,7 @@ class Manager (MOM.EMS._Manager_) :
             ### there was no commit -> we have to issue a rollback to the
             ### session to enure that the db resources will be released
             ### properly
-            self.session.rollback (True)
+            self.session.rollback ()
     # end def commit
 
     def load_root (self) :
@@ -226,6 +199,18 @@ class Manager (MOM.EMS._Manager_) :
     def update (self, entity, change) :
         self.session.update (entity, change)
     # end def update
+
+    def _add (self, entity, pid = None) :
+        ses = self.session
+        ses.flush () ### add all pending operations to the database transaction
+        max_c = entity.max_count
+        if max_c and max_c <= self.query (entity.__class__).count () :
+            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
+        try :
+            ses.add (entity, pid)
+        except SAS_Exception.IntegrityError as exc :
+            raise self.Integrity_Error
+    # end def _add
 
     def _query_multi_root (self, Type) :
         QR = self.Q_Result

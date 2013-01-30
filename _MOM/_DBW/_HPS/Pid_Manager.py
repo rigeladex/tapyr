@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -31,6 +31,7 @@
 #    12-May-2010 (CT) `retire` added
 #    12-May-2010 (CT) `reserve` corrected (corner cases)
 #     4-Aug-2012 (CT) Change `retire` not to set `pid` to None
+#    30-Jan-2013 (CT) Add `zombies`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,12 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         self.__super.__init__ (ems, db_url)
         self.max_pid = 0
         self.table   = {}
+        self.zombies = {}
     # end def __init__
+
+    def flush_zombies (self) :
+        self.zombies = {}
+    # end def flush_zombies
 
     def new (self, entity) :
         self.max_pid += 1
@@ -81,7 +87,10 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def new
 
     def query (self, pid) :
-        return self.table [pid]
+        if pid in self.zombies :
+            return self.zombies [pid]
+        else :
+            return self.table [pid]
     # end def query
 
     def reserve (self, entity, pid) :
@@ -97,11 +106,14 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
             if entity is not None :
                 table [pid] = entity
                 entity.pid  = pid
+                self.zombies.pop (pid, None)
         return pid
     # end def reserve
 
     def retire (self, entity) :
-        self.table.pop (entity.pid, None)
+        pid = entity.pid
+        self.table.pop (pid, None)
+        self.zombies [pid] = entity
     # end def retire
 
 # end class Pid_Manager

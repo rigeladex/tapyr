@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -49,6 +49,9 @@
 #    12-Aug-2012 (CT) Adapt to export-change of `MOM.Meta.M_Pred_Type`
 #    10-Sep-2012 (CT) Move `do_check` fo `_Condition_`
 #    11-Sep-2012 (CT) Change `Unique` to use `attr_none`, not `attributes`
+#    30-Jan-2013 (CT) Add `Unique.ems_check`
+#    30-Jan-2013 (CT) Change `Unique.satisfied` and `_query_filters` to
+#                     use `_val_dict`
 #    ««revision-date»»···
 #--
 
@@ -466,6 +469,9 @@ class Unique (_Condition_) :
 
     __metaclass__   = MOM.Meta.M_Pred_Type.Unique
 
+    ### DBW backend sets `ems_check` to `False` if database performs the check
+    ems_check = True
+
     @classmethod
     def New_Pred (cls, * attrs, ** kw) :
         """Return a new Unique predicate class for the attributes specified."""
@@ -475,7 +481,7 @@ class Unique (_Condition_) :
                 "__" + "___".join (a.replace (".", "__") for a in attrs)
             name = "unique_%s" % (suffix, )
         if not kw.get ("__doc__") :
-            kw ["doc"] = \
+            kw ["__doc__"] = \
                 ( "The attribute values for %r must be unique for each object"
                 % (attrs, )
                 )
@@ -485,35 +491,26 @@ class Unique (_Condition_) :
         return cls.__class__ (name, (cls, ), kw)
     # end def New_Pred
 
-    def query_filters (self, obj, attr_dict = {}) :
-        result = []
-        if obj.pid :
-            result.append (Q.pid != obj.pid)
-        attr_values = tuple (self._attr_values (obj, attr_dict))
-        result.extend (aq == v for aq, v in zip (self.aqs, attr_values))
-        return result
-    # end def query_filters
-
     def satisfied (self, obj, attr_dict = {}) :
-        qfs = self.query_filters (obj, attr_dict)
-        q   = obj.ETM.query_s (* qfs)
-        result = q.count () == 0
+        self.val_disp = {}
+        self.val_dict = val_dict = self._val_dict (obj, attr_dict)
+        qfs      = self._query_filters (obj, val_dict)
+        q        = obj.ETM.query_s (* qfs)
+        result   = q.count () == 0
         if not result :
-            self.val_disp = dict \
-                (zip (self.attr_none, self._attr_values (obj, attr_dict)))
-            self._extra_links_d = clashes = q.all ()
+            self._extra_links_d = self.clashes = q.all ()
             self.error = MOM.Error.Not_Unique (obj, self)
         return result
     # end def satisfied
 
-    def _attr_values (self, obj, attr_dict) :
-        for a in self.attr_none :
-            try :
-                v = attr_dict [a]
-            except KeyError :
-                v = getattr (obj, a, None)
-            yield obj.FO (a, v)
-    # end def _attr_values
+    def _query_filters (self, obj, val_dict) :
+        result = []
+        if obj.pid :
+            result.append (Q.pid != obj.pid)
+        attr_values = tuple (val_dict [a] for a in self.attr_none)
+        result.extend (aq == v for aq, v in zip (self.aqs, attr_values))
+        return result
+    # end def _query_filters
 
 # end class Unique
 

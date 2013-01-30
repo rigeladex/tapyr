@@ -89,6 +89,9 @@
 #    11-Jan-2013 (CT) Add support for `primary_ais`
 #    16-Jan-2013 (CT) Use `.E_Type.primary_ais`, not `.primary_ais`
 #    16-Jan-2013 (CT) Use `setattr`, not `.set`, to set value of `primary_ais`
+#    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
+#    30-Jan-2013 (CT) Replace `add` by `_add` (called by `__super.add`)
+#    30-Jan-2013 (CT) Call `.pm.flush_zombies` in `commit` and `_rollback`
 #    ««revision-date»»···
 #--
 
@@ -129,38 +132,6 @@ class Manager (MOM.EMS._Manager_) :
         self._tables    = TFL.defaultdict (dict)
     # end def __init__
 
-    def add (self, entity, pid = None) :
-        count = self._counts
-        root  = entity.relevant_root
-        table = self._tables [root.type_name]
-        if entity.E_Type.primary_ais :
-            ias_n = entity.E_Type.primary_ais.name
-            ias_s = self._ias_seeds
-            ias_v = getattr (entity, ias_n)
-            if ias_v is None :
-                ias_s [root.type_name] += 1
-                setattr (entity, ias_n, ias_s [root.type_name])
-            else :
-                ias_s [root.type_name] = max (ias_v, ias_s [root.type_name])
-        hpk = entity.hpk
-        if hpk in table :
-            raise MOM.Error.Name_Clash (entity, table [hpk])
-        if entity.max_count and entity.max_count <= count [entity.type_name] :
-            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        self.pm (entity, pid)
-        if entity.Roles :
-            refs  = tuple ((r, r.get_role (entity)) for r in entity.Roles)
-            amiss = tuple (r for r, o in refs if o is None)
-            if amiss :
-                raise TypeError ("Roles %s of %r are empty" % (amiss, entity))
-            r_map = self._r_map
-            for r, obj in refs :
-                obj.register_dependency (entity.__class__)
-                r_map [r] [obj.pid].add (entity)
-        count [entity.type_name] += 1
-        table [hpk] = entity
-    # end def add
-
     def all_links (self, obj_id) :
         r_map  = self._r_map
         result = sorted \
@@ -183,6 +154,11 @@ class Manager (MOM.EMS._Manager_) :
             result = result.filter (* filters, ** kw)
         return result
     # end def changes
+
+    def commit (self) :
+        self.__super.commit   ()
+        self.pm.flush_zombies ()
+    # end def commit
 
     def count (self, Type, strict) :
         if strict :
@@ -272,6 +248,35 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def r_query
 
+    def _add (self, entity, pid = None) :
+        count = self._counts
+        root  = entity.relevant_root
+        table = self._tables [root.type_name]
+        if entity.E_Type.primary_ais :
+            ias_n = entity.E_Type.primary_ais.name
+            ias_s = self._ias_seeds
+            ias_v = getattr (entity, ias_n)
+            if ias_v is None :
+                ias_s [root.type_name] += 1
+                setattr (entity, ias_n, ias_s [root.type_name])
+            else :
+                ias_s [root.type_name] = max (ias_v, ias_s [root.type_name])
+        if entity.max_count and entity.max_count <= count [entity.type_name] :
+            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
+        self.pm (entity, pid)
+        if entity.Roles :
+            refs  = tuple ((r, r.get_role (entity)) for r in entity.Roles)
+            amiss = tuple (r for r, o in refs if o is None)
+            if amiss :
+                raise TypeError ("Roles %s of %r are empty" % (amiss, entity))
+            r_map = self._r_map
+            for r, obj in refs :
+                obj.register_dependency (entity.__class__)
+                r_map [r] [obj.pid].add (entity)
+        count [entity.type_name] += 1
+        table [entity.hpk]        = entity
+    # end def _add
+
     def _load_objects (self, scope = None) :
         self.session.load_objects ()
     # end def _load_objects
@@ -330,11 +335,13 @@ class Manager (MOM.EMS._Manager_) :
             logging.exception ("%r: hpk = %s", entity, hpk)
     # end def _remove
 
-    def _rollback (self) :
+    def _rollback (self, keep_zombies) :
         self._rollback_uncommitted_changes ()
         self.cm.rollback (self.session)
         self.pm.max_pid = self.session.info.max_pid
-        self.__super._rollback ()
+        self.__super._rollback (keep_zombies)
+        if not keep_zombies :
+            self.pm.flush_zombies ()
     # end def _rollback
 
     def _t_count (self, Type, seen = None) :

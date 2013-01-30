@@ -108,6 +108,8 @@
 #    22-Jan-2013 (MG) Set `autoincrement` for sqlite for the change history
 #    26-Jan-2013 (MG) Handle cached roles in `MOM_Query`
 #    29-Jan-2013 (MG) Fix handling of cached roles
+#    29-Jan-2013 (CT) Use `e_type.P_uniqueness`, not home-grown code
+#    30-Jan-2013 (CT) Clear `.ems_check` for `Unique`, not `.do_check`
 #    31-Jan-2013 (MG) `Manager.finalize` added to finalize creation of
 #                     `MOM.Query` objects
 #    ««revision-date»»···
@@ -185,8 +187,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
 
     @classmethod
     def _add_check_constraints (cls, e_type, sa_table) :
-        for name, pred in e_type._Predicates._own_names.iteritems () :
-            if issubclass (pred, MOM.Pred.Unique) :
+        own_names = e_type._Predicates._own_names
+        for pk in e_type.P_uniqueness :
+            if pk.name in own_names :
+                pred    = pk.pred
                 columns = []
                 tables  = set ((sa_table, ))
                 for qs in pred.aqs :
@@ -194,9 +198,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     tables.update  (aj)
                     columns.extend (ac)
                 if len (tables) == 1 :
-                    unique = schema.UniqueConstraint (* columns)
+                    unique = schema.UniqueConstraint (* columns, name = pk.name)
                     sa_table.append_constraint       (unique)
-                    pred.do_check = False
+                    pred.ems_check = False
                 else :
                     pred._sa_affected_tables = tables
     # end def _add_check_constraints

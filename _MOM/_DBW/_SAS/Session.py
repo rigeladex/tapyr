@@ -128,6 +128,7 @@
 #    11-Jan-2013 (CT) Remove empty `A_AIS_Value` values from `value_dict`
 #    22-Jan-2013 (MG) Set the cid counter during rollback to the `max_cid`
 #    23-Jan-2013 (MG) Use `rollback_context` in ` Session_S.rollback`
+#    30-Jan-2013 (MG) Add support for `keep_zombies` to `rollback`
 #    ««revision-date»»···
 #--
 
@@ -646,9 +647,9 @@ class Session_S (_Session_) :
             entity.__class__._SAS.delete (self, entity)
     # end def delete
 
-    def expunge (self, clear_change = False) :
-        self._mark_entities_for_reload (True)
-        if clear_change :
+    def expunge (self, clear_cache = False) :
+        self._mark_entities_for_reload (force_reload = True)
+        if clear_cache :
             self._pid_map = {}
             self._cid_map = {}
     # end def expunge
@@ -700,13 +701,22 @@ class Session_S (_Session_) :
         return Type.select ()
     # end def query
 
-    def _mark_entities_for_reload (self, force_reload = False) :
-        for e in self._pid_map.itervalues () :
+    def _mark_entities_for_reload \
+            ( self
+            , keep_zombies = False
+            , force_reload = False
+            ) :
+        ### dict will be modified
+        for pid, e in tuple (self._pid_map.iteritems ()) :
             if force_reload :
                 setattr (e, e.__class__.last_cid.ckd_name, -1)
-            e.__class__ = e.__class__._RELOAD_E_TYPE
+            if (   not keep_zombies
+               and isinstance (e, MOM._Id_Entity_Destroyed_Mixin_)
+               ) :
+                del self._pid_map [pid]
+            elif not isinstance (e, MOM._Id_Entity_Reload_Mixin_) :
+                e.__class__ = e.__class__._RELOAD_E_TYPE
     # end def _mark_entities_for_reload
-
 
     def recreate_change (self, row) :
         cid = row.cid
@@ -724,7 +734,7 @@ class Session_S (_Session_) :
         return self._cid_map [cid]
     # end def recreate_change
 
-    def rollback (self, keep_object_cache = False) :
+    def rollback (self, keep_zombies = False) :
         if self.transaction :
             self._in_rollback += 1
             scope              = self.scope
@@ -733,9 +743,8 @@ class Session_S (_Session_) :
                     scope.ems._rollback_uncommitted_changes ()
                 self.__super.rollback ()
                 self._in_rollback -= 1
-                if not keep_object_cache :
-                    self._pid_map  = self._saved ["pid_map"]
                 self._cid_map      = self._saved ["cid_map"]
+                self._mark_entities_for_reload (keep_zombies = keep_zombies)
     # end def rollback
 
     def _modify_change_iter (self, change_list) :

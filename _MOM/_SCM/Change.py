@@ -85,6 +85,7 @@
 #     6-Dec-2012 (CT) Store `user.pid`, if any, else `user`
 #    21-Jan-2013 (MG) Add scope parameter to `_Change_.do_callbacks`
 #                     Update `last_cid` in `Copy`
+#    30-Jan-2013 (CT) Change `Create.redo` to pass `entity` to `_create`
 #    ««revision-date»»···
 #--
 
@@ -437,7 +438,11 @@ class Create (_Entity_Last_Cid_Update_Mixin_, _Entity_) :
     # end def __init__
 
     def redo (self, scope) :
-        self._create      (scope, self.new_attr)
+        try :
+            entity = scope.pid_query (self.pid)
+        except LookupError :
+            entity = None
+        self._create      (scope, self.new_attr, entity)
         self.__super.redo (scope)
     # end def redo
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -32,7 +32,11 @@
 #                     `attr._checkers` instead of home-grown code
 #     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
 #     8-Nov-2011 (CT) Remove `attr_none` from `_setup_attr_checker`
-#    12-Aug-2012 (CT) Add `MOM.Pred.Unique.New_Pred` to `_setup_attr_checker`
+#    12-Aug-2012 (CT) Add `MOM.Pred.Unique.New_Pred`
+#    29-Jan-2013 (CT) Change prefix in `_kind_list_name` to `P_` (was `_p_`)
+#    29-Jan-2013 (CT) Fix `MOM.Pred.Unique.New_Pred`
+#    29-Jan-2013 (CT) Move predicate creation to redefined `_create_properties`
+#    29-Jan-2013 (CT) Add `uniqueness_dbw` and `uniqueness_ems`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +49,7 @@ import _MOM._Pred.Type
 import _MOM._Prop.Spec
 
 import _TFL._Meta.Property
+import _TFL._Meta.Once_Property
 import _TFL.defaultdict
 
 class Spec (MOM.Prop.Spec) :
@@ -66,16 +71,41 @@ class Spec (MOM.Prop.Spec) :
     _prop_dict      = TFL.Meta.Alias_Property ("_pred_dict")
     _prop_kind      = TFL.Meta.Alias_Property ("_pred_kind")
 
+    @TFL.Meta.Once_Property
+    def uniqueness_dbw (self) :
+        """Uniqueness predicates checked by `DBW`"""
+        return list (u for u in self.uniqueness if not u.ems_check)
+    # end def uniqueness_dbw
+
+    @TFL.Meta.Once_Property
+    def uniqueness_ems (self) :
+        """Uniqueness predicates checked by `EMS`"""
+        return list (u for u in self.uniqueness if u.ems_check)
+    # end def uniqueness_ems
+
     def __init__ (self, e_type) :
         self.__super.__init__ (e_type)
-        self._attr_map = TFL.defaultdict (list)
-        for n, a in e_type.attributes.iteritems () :
-            self._setup_attr_checker (e_type, a)
+        self._attr_map    = TFL.defaultdict (list)
         e_type.predicates = self._prop_dict
+        self.uniqueness   = e_type.P_uniqueness
     # end def __init__
 
+    def _create_properties (self, e_type) :
+        self.__super._create_properties (e_type)
+        for n, a in e_type.attributes.iteritems () :
+            self._setup_attr_checker (e_type, a)
+        if e_type.epk_sig :
+            uniq_epk = MOM.Pred.Unique.New_Pred \
+                ( * e_type.epk_sig
+                , name_suffix = "epk"
+                , rank        = -100
+                , __module__  = e_type.__module__
+                )
+            self._add_prop (e_type, uniq_epk.name, uniq_epk)
+    # end def _create_properties
+
     def _kind_list_name (self, kind) :
-        return "_p_%s" % kind
+        return "P_%s" % kind
     # end def _kind_list_name
 
     def _setup_attr_checker (self, e_type, attr) :
@@ -84,27 +114,22 @@ class Spec (MOM.Prop.Spec) :
         for i, check in enumerate (attr._checkers (e_type)) :
             if isinstance (check, basestring) :
                 name      = "%s_%d" % (stem, i)
+                c_kind    = kind
                 prop_type = MOM.Pred.Attribute_Check (name, attr.name, check)
             else :
                 prop_type = check
-                kind      = check.kind
+                c_kind    = check.kind
                 name      = check.name
             if prop_type is not None :
                 checker = self._new_prop \
                     ( name      = name
-                    , kind      = kind
+                    , kind      = c_kind
                     , prop_type = prop_type
                     , e_type    = e_type
                     )
-                self._setup_prop (e_type, name, kind.kind, checker)
+                self._setup_prop (e_type, name, c_kind.kind, checker)
             else :
                 print e_type, attr, check
-        if e_type.epk_sig :
-            u = MOM.Pred.Unique.New_Pred \
-                ( * e_type.epk_sig
-                , name_suffix = "epk"
-                , __module__  = e_type.__module__
-                )
     # end def _setup_attr_checker
 
 # end class Spec

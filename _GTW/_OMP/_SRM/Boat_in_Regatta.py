@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -198,6 +198,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
                     "this.other_boots_skippered.count ()"
                 )
             _xtra_added        = False
+            do_check = False
 
             def _add_entities_to_extra_links (self, obj, lst) :
                 self.__super._add_entities_to_extra_links (obj, lst)
@@ -209,9 +210,20 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class skipper_not_multiplexed
 
-        unique_boat_regatta_skipper = Pred.Unique.New_Pred \
-            ( "boat", "regatta", "skipper"
-            , name = "unique_boat_regatta_skipper"
+        unique_boat_regatta = Pred.Unique.New_Pred \
+            ( "boat", "regatta"
+            , name    = "unique_boat_regatta"
+            , __doc__ =
+                """A boat can't enter a single regatta event more than once."""
+            )
+
+        unique_regatta_skipper = Pred.Unique.New_Pred \
+            ( "regatta", "skipper"
+            , name    = "unique_regatta_skipper"
+            , __doc__ =
+                """A sailor can't be skipper of more than one boat in a single
+                   regatta event.
+                """
             )
 
     # end class _Predicates
