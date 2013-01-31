@@ -73,6 +73,7 @@
 #    31-Jan-2013 (MG) Move creation of query attributes into the `finalize`
 #                     method (required if query attributes of roles of an
 #                     association access cached roles)
+#    31-Jan-2013 (MG) Add `eq` and `ne` support for `Cached_Role_Query`
 #    ««revision-date»»···
 #--
 
@@ -507,23 +508,36 @@ class Cached_Role_Query (_MOM_Query_) :
     # end def __call__
 
     def __getattr__ (self, name) :
+        if name.startswith ("__") :
+            raise TypeError ("Opeation `%s` not supported" % (name, ))
         return self (".%s" % name)
     # end def __getattr__
 
-    def contains (self, other) :
+    def _operator (self, name, arg) :
         joins, ac = self._sa_filter ()
-        return ac [0].contains (getattr (other, "pid", other))
+        return getattr (ac [0], name) (arg)
+    # end def _operator
+
+    def contains (self, other) :
+        return self._operator ("contains", getattr (other, "pid", other))
     # end def contains
 
     def in_ (self, others) :
-        joins, ac = self._sa_filter ()
-        return ac [0].in_ ([getattr (o, "pid", o) for o in others])
+        return self._operator ("in_", [getattr (o, "pid", o) for o in others])
     # end def in_
 
     def notin_ (self, others) :
-        joins, ac = self._sa_filter ()
-        return ac [0].notin_ ([getattr (o, "pid", o) for o in others])
+        return self._operator \
+            ("notin_", [getattr (o, "pid", o) for o in others])
     # end def notin_
+
+    def __eq__ (self, rhs) :
+        return self._operator ("__eq__", getattr (rhs, "pid", rhs))
+    # end def __eq__
+
+    def __ne__ (self, rhs) :
+        return self._operator ("__ne__", getattr (rhs, "pid", rhs))
+    # end def __ne__
 
 # end class Cached_Role_Query
 

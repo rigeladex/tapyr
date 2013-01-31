@@ -49,6 +49,7 @@
 #    10-Aug-2012 (MG) Change handling of composite attributes
 #     6-Dec-2012 (MG) Fix query attribute handling
 #    26-Jan-2013 (MG) Handle cached role queries
+#    31-Jan-2013 (MG) Bugfixing
 #    ««revision-date»»···
 #--
 
@@ -112,7 +113,7 @@ def _sa_filter (self, SAQ) :
             if isinstance (arg, MOM.Id_Entity) :
                 arg = arg.pid
             args.append (arg)
-    return joins, (getattr (args [0], self.op.__name__) (args [1]), )
+    return joins, (getattr (args [-2], self.op.__name__) (args [-1]), )
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query._Call_)
