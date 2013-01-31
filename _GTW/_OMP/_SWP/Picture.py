@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -31,6 +31,8 @@
 #     5-Sep-2011 (CT) `width.max_value` increased from 1000 to 1200
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    30-Jan-2013 (MG) Make `extension` changeable, change min values for
+#                     width and height
 #    ««revision-date»»···
 #--
 
@@ -66,7 +68,9 @@ class _Pic_ (_Ancestor_Essence) :
         class extension (A_String) :
             """Extension of file holding picture."""
 
-            kind               = Attr.Const
+            kind               = Attr.Required
+            Kind_Mixins        = (Attr.Init_Only_Mixin, )
+            max_length         = 10
             default            = u".jpg"
 
         # end class extension
@@ -174,7 +178,9 @@ class Picture (_Ancestor_Essence) :
 
         class name (A_String) :
 
-            kind               = Attr.Auto_Cached
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            max_length         = 100
 
             def computed (self, obj) :
                 if obj.number is not None :

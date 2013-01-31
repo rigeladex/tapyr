@@ -20,16 +20,15 @@
 #
 #++
 # Name
-#    GTW.RST.TOP.elFinder.Tag_Cloud_Driver
+#    GTW.RST.TOP.elFinder.Gallery_Driver
 #
 # Purpose
-#    file system driver for the tag cloud for the jquery file browser
+#    File system driver for galleries for the jquery file browser
 #    `elfinder 2`
 #    http://elfinder.org/
 #
 # Revision Dates
 #    29-Jan-2013 (MG) Creation
-#    30-Jan-2013 (MG) Move `add` from `_Filesystem_Driver_`
 #    ««revision-date»»···
 #--
 
@@ -49,47 +48,70 @@ import   mimetypes
 from    _GTW._RST._TOP._elFinder   import elFinder
 import  _GTW._RST._TOP._elFinder._Filesystem_Driver_
 
-class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
-    """Creates on directory for each tag."""
+class Gallery_Driver_elFinder (elFinder._Filesystem_Driver_) :
+    """Creates a directory for each gallery."""
 
-    def __init__ (self, root_dir, ETM, name, ** kw) :
-        self.thumb_directory = kw.pop ("thumb_directory", None)
+    _real_name = "Gallery_Driver"
+
+    def __init__ ( self, name, root_dir, filter = None
+                 , gallery_e_type = "SWP.Gallery"
+                 , picture_e_type = "SWP.Picture"
+                 , thum_size      = (96, 96)
+                 ) :
         self.__super.__init__ (name, ** kw)
-        self._ETM     = ETM
-        self.root_dir = root_dir
+        self.root_dir         = root_dir
+        self.filter           = filter
+        self._GETM            = gallery_e_type
+        self._PETM            = picture_e_type
+        self.thum_size        = thum_size
     # end def __init__
 
     def abs_path (self, obj) :
-        return obj.abs_path
+        return obj.photo.path
     # end def abs_path
 
     def add (self, path_spec, upload) :
         import werkzeug ### XXX
-        path, dir, file = path_spec
+        path, gallery, file = path_spec
+        MOM                 = self._scope.MOM
         if file :
             raise elFinder.Error ("errTrgFolderNotFound")
-        abs_file_name = os.path.join \
-            ( self.root_dir, dir.name
-            , werkzeug.secure_filename (upload.filename)
+        pics = sorted (gallery.pictures, key = lambda p : -p.number)
+        if pics :
+            number = pics [0].number + 1
+        else :
+            number = 0
+        name, ext = os.path.splitext \
+            (werkzeug.secure_filename (upload.filename))
+        img  = self.PETM \
+            ( gallery
+            , number = number
+            , name   = name
+            , photo  = MOM._Pic_
+                ( extension = ext
+                )
+            , thumb  = MOM._Thumb_
+                ( extension = ext
+                )
             )
-        rel_file_name  = abs_file_name.replace (MOM.Web_Src_Root, "")
-        upload.save                            (abs_file_name)
-        i    = PIL.Image.open                  (abs_file_name)
-        w, h = i.size
-        file = self.ETM        (path = rel_file_name, width = w, height = h)
-        self._scope.MOM.Id_Entity_has_Tag (file, ddir)
-        return self.file_entry            (dir, file)
+        upload.save                                        (img.photo.path)
+        i                                 = PIL.Image.open (img.photo.path)
+        img.photo.width, img.photo.height = i.size
+        i.thumbnail (self.thum_size, PIL.Image.ANTIALIAS)
+        i.save      (img.thumb.path)
+        img.thumb.width, img.thumb.height = i.size
+        return self.file_entry (gallery, img)
     # end def add
 
     def copy (self, src_path_spec, dst_volume, dst_path_spec, remove = False) :
         spath, sdir, sfile = src_path_spec
         dpath, ddir, dfile = dst_path_spec
         if not sfile :
-            raise _Error_ ("errNotFile")
+            raise elFinder.Error ("errNotFile")
         if not ddir :
-            raise _Error_ ("errNotFolder")
+            raise elFinder.Error ("errNotFolder")
         if dfile :
-            raise _Error_ ("errCmdParams")
+            raise elFinder.Error ("errCmdParams")
         dfile  = dst_volume._copy_from (ddir, self, sdir, sfile)
         result = dict (added = [dst_volume.file_entry (ddir, dfile)])
         if remove :
@@ -111,6 +133,7 @@ class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
             shandle.close        ()
             dhandle.close        ()
             return self.add_file (ddir, sfile.name)
+
         self._scope.MOM.Id_Entity_has_Tag (sfile, ddir)
         return sfile
     # end def _copy_from
@@ -133,41 +156,44 @@ class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
 
     def decode_hashes (self, hashes) :
         if len (hashes) > 2 :
-            raise _Error_ ("errCmdParams")
+            raise elFinder.Error ("errCmdParams")
         result = []
         dir    = None
         file   = None
         if hashes :
-            dir_name = hashes.pop (0)
-            dir      = self.TETM.pid_query (dir_name)
+            dir_name = hashes.pop          (0)
+            dir      = self.GETM.pid_query (dir_name)
             if not dir :
-                raise _Error_ ("errFolderNotFound", dir_name)
-            result.append            (dir.name)
+                raise elFinder.Error        ("errFolderNotFound", dir_name)
+            result.append                   (dir.perma_name)
         if hashes :
-            file_name = hashes.pop         (0)
-            file      = self.ETM.pid_query (file_name)
+            file_name = hashes.pop          (0)
+            file      = self.PETM.pid_query (file_name)
             if not file :
-                raise _Error_ ("errFileNotFound", file_name)
-            result.append            (file.name)
+                raise elFinder.Error        ("errFileNotFound", file_name)
+            result.append                   (file.name)
         return "/".join (result), dir, file
     # end def decode_hashes
 
     def directories (self, dir) :
-        if dir : ### tag of tag no supported
-            return []
-        return self.TETM.query ()
+        if dir : ### gallery in gallery not supported
+            return ()
+        result = self.GETM.query ()
+        if self.filter is not None :
+            result.filter (self.filter)
+        return result
     # end def directories
 
-    def directory_entry (self, tag) :
+    def directory_entry (self, gallery) :
         return dict \
             ( mime      = "directory"
             , ts        = time.mktime (self.started.timetuple ())
             , read      = self.allow_read
             , write     = self.allow_write
             , size      = 0
-            , hash      = "%s_%s" % (self.hash, tag.pid)
+            , hash      = "%s_%s" % (self.hash, gallery.pid)
             , phash     = self.hash
-            , name      = tag.name
+            , name      = gallery.title or gallery.perma_name
             , date      = self.started.strftime ("%c")
             , dirs      = 0
             )
@@ -178,37 +204,41 @@ class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
     # end def dirs_of_path
 
     @Once_Property
-    def ETM (self) :
-        return self._scope [self._ETM]
-    # end def ETM
+    def GETM (self) :
+        return self._scope [self._GETM]
+    # end def GETM
 
-    def files_in_directory (self, tag) :
-        if tag :
-            return self.ETM.query (Q.tags.CONTAINS (tag))
+    @Once_Property
+    def PETM (self) :
+        return self._scope [self._PETM]
+    # end def PETM
+
+    def files_in_directory (self, gallery) :
+        if gallery :
+            return gallery.pictures
         return ()
     # end def files_in_directory
 
-    def file_entry (self, tag, obj) :
+    def file_entry (self, gallery, obj) :
         path      = self.abs_path   (obj)
-        mime_type = self.mime_type  (obj)
+        mime_type = self.mime_type  (obj, path)
         stat      = os.stat         (path)
         result    = dict \
             ( mime      = mime_type
             , ts        = stat.st_mtime
-            , hash      = "%s_%s_%s" % (self.hash, tag.pid, obj.pid)
-            , phash     = "%s_%s"    % (self.hash, tag.pid)
+            , hash      = "%s_%s_%s" % (self.hash, gallery.pid, obj.pid)
+            , phash     = "%s_%s"    % (self.hash, gallery.pid)
             , read      = self.allow_read
             , write     = self.allow_write
             , size      = stat.st_size
             , name      = obj.name
             , date      = datetime.datetime.fromtimestamp
                 (stat.st_mtime).strftime ("%c")
-            , dim       = "%dx%d" % (obj.width, obj.height)
+            , dim       = "%dx%d" % (obj.photo.width, obj.photo.height)
             )
         if self.media_domain :
-            result ["url"] = "%s/%s" % (self.media_domain, obj.path)
-            if self.thumb_directory :
-                result ["tmb"] = "%s/%s" % (self.media_domain, obj.thumb_path)
+            result ["url"] = "%s/%s" % (self.media_domain, obj.photo.path)
+            result ["tmb"] = "%s/%s" % (self.media_domain, obj.thumb.path)
         return result
     # end def file_entry
 
@@ -218,51 +248,57 @@ class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
 
     @property
     def has_directories (self) :
-        return self.TETM.count > 0
+        result = self.GETM.query ()
+        if self.filter is not None :
+            result.filter (self.filter)
+        return result.count () > 0
     # end def has_directories
 
     def image_dimensions (self, path, dir, file) :
-        return "%dx%d" % (file.width, file.height)
+        return "%dx%d" % (file.photo.width, file.photo.height)
     # end def image_dimensions
 
-    def mime_type (self, obj) :
-        result = obj.mime_type
+    def mime_type (self, obj, abs_path) :
+        result = getattr (obj, "mime_type", None)
         if result is None :
-            result = obj.mime_type = mimetypes.guess_type (obj.abs_path) [0]
+            result = obj.mime_type = mimetypes.guess_type (abs_path) [0]
         return result
     # end def mime_type
 
     def mkdir (self, dir, name) :
-        ### a directory for in the tag cloud is ceating a new tag
         dir_name = os.path.join     (self.root_dir, name)
         if not os.path.isdir        (dir_name) :
             os.makedirs             (dir_name)
-        tag      = self.TETM        (name)
-        return self.directory_entry (tag)
+            for d in "th", "im" :
+                os.mkdir (os.path.join (dir_name, d))
+        gallery      = self.GETM    (name, directory = dir_name)
+        self._mkdir                 (gallery)
+        return self.directory_entry (gallery)
     # end def mkdir
 
+    def _mkdir (self, gallery) :
+        pass
+    # end def _mkdir
+
     def _open_file (self, dir, file) :
-        return open (file.abs_path, "rb")
+        return open (file.path, "rb")
     # end def _open_file
 
-    def remove (self, path_spec) :
-        path, dir, file = path_spec
-        EhT             = self._scope.MOM.Id_Entity_has_Tag
-        if file :
-            entry = self.file_entry (dir, file)
-            EhT.query               (right = dir, left = file).one ().destroy ()
-            if not file.tags :
-                file.destroy        ()
+    def remove (self, path_spec) : ### XXX
+        path, gallery, picture = path_spec
+        if picture:
+            entry = self.file_entry (gallery, picture)
+            picture.destroy         ()
         else :
-            if not EhT.query (Q.tag == dir).count () :
-                entry = self.directory_entry (dir)
-                dir.destroy                  ()
+            if not gallery.pictures :
+                entry = self.directory_entry (gallery)
+                gallery.destroy               ()
             else :
-                raise _Error_ ("errUsupportType")
+                raise elFinder.Error ("errUsupportType")
         return entry
     # end def remove
 
-    def rename (self, new_name, dir, file) :
+    def rename (self, new_name, dir, file) : ### XXX
         if file :
             ### rename the file
             file_name = self.abs_path (file)
@@ -277,13 +313,8 @@ class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
             return self.directory_entry (dir)
     # end def rename
 
-    @Once_Property
-    def TETM (self) :
-        return self._scope.MOM.Tag
-    # end def TETM
-
-# end class Tag_Cloud_Driver
+Gallery_Driver = Gallery_Driver_elFinder # end class
 
 if __name__ != "__main__" :
     GTW.RST.TOP.elFinder._Export ("*")
-### __END__ GTW.RST.TOP.elFinder.Tag_Cloud_Driver
+### __END__ GTW.RST.TOP.elFinder.Gallery_Driver

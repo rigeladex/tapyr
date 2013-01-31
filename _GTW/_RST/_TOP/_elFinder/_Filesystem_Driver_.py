@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    29-Jan-2013 (MG) Creation
+#    30-Jan-2013 (MG) Move `add` into `Tag_Cloud_Driver`
 #    ««revision-date»»···
 #--
 
@@ -71,25 +72,6 @@ class _Filesystem_Driver_ (TFL.Meta.Object) :
         self.hash      = "%sR" % (hash, )
         self.started   = datetime.datetime.now ()
     # end def initialize
-
-    def add (self, path_spec, upload) :
-        import werkzeug ### XXX
-        import pdb; pdb.set_trace ()
-        path, dir, file = path_spec
-        if file :
-            raise elFinder.Error ("errTrgFolderNotFound")
-        abs_file_name = os.path.join \
-            ( self.root_dir, dir.name
-            , werkzeug.secure_filename (upload.filename)
-            )
-        rel_file_name  = abs_file_name.replace (MOM.Web_Src_Root, "")
-        upload.save                            (abs_file_name)
-        i    = PIL.Image.open                  (abs_file_name)
-        w, h = i.size
-        file = self.ETM        (path = rel_file_name, width = w, height = h)
-        dir.add_to_entity      (file)
-        return self.file_entry (dir, file)
-    # end def add
 
     def current_directory (self, path) :
         path, dir, file = path
