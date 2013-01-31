@@ -30,6 +30,7 @@
 #    31-Jan-2013 (CT) Change `_main` to use `Backend_Default_Path`
 #    31-Jan-2013 (CT) Use `url.scheme` as default `db_name` extension in
 #                     `run_server`
+#    31-Jan-2013 (CT) Fix setting of `db_name` in `_main`
 #    ««revision-date»»···
 #--
 
@@ -211,7 +212,7 @@ def _main (Scaffold) :
         ("GTW_test_backends", "HPS").split (":") [0].strip ()
     db_url  = Scaffold.Backend_Parameters.get   (backend, "hps://").strip ("'")
     db_name = Scaffold.Backend_Default_Path.get \
-        (backend, "test.%s" % (back.lower (), ))
+        (backend) or "test.%s" % (backend.lower (), )
     _run_server \
         (Scaffold, ["-db_url", db_url, "-db_name", db_name, "-debug", "no"])
 # end def _main
