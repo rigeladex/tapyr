@@ -29,6 +29,7 @@
 #    23-Jan-2013 (MG) Creation
 #    26-Jan-2013 (CT) Add test for query attribute referring to cached role
 #    27-Jan-2013 (CT) Add another test for `.qt.last_name`
+#    31-Jan-2013 (CT) Add tests for `Q.person` passed to `Account.query`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,13 @@ _query_test = """
 
     >>> Auth.Account_T.query_s (Q.qt.last_name == "ln").all ()
     [Auth.Account_T (u'test ln fn'), Auth.Account_T (u'test ln nf')]
+
+    >>> Auth.Account.query_s (Q.person == p1).all ()
+    [Auth.Account_T (u'test ln fn')]
+
+    >>> Auth.Account.query_s (Q.person.first_name == "nf").all ()
+    [Auth.Account_T (u'test ln nf')]
+
 
 """
 
