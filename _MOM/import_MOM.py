@@ -56,6 +56,4 @@ from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
 
-import _MOM.Id_Entity_has_Tag
-
 ### __END__ MOM.import_MOM
