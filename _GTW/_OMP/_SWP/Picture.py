@@ -33,6 +33,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    30-Jan-2013 (MG) Make `extension` changeable, change min values for
 #                     width and height
+#    31-Jan-2013 (MG) change kind of `extension` to `Optional`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,7 @@ class _Pic_ (_Ancestor_Essence) :
         class extension (A_String) :
             """Extension of file holding picture."""
 
-            kind               = Attr.Required
+            kind               = Attr.Optional
             Kind_Mixins        = (Attr.Init_Only_Mixin, )
             max_length         = 10
             default            = u".jpg"
