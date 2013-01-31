@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2013 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -34,6 +34,7 @@
 #    11-May-2010 (CT) `Pid_Manager` added
 #    23-Jun-2010 (CT) `DBS_map` added
 #     9-Sep-2012 (CT) Add `_commit_creation_change`
+#    31-Jan-2013 (MG) Add `finalize`
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,11 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
         return e_type
     # end def etype_decorator
 
-    def prepare (self) :
+    def finalize (cls) :
+        pass
+    # end def finalize
+
+    def prepare (cls) :
         pass
     # end def prepare
 

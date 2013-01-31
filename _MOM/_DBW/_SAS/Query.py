@@ -70,6 +70,9 @@
 #    26-Jan-2013 (CT) Add `e_type` to error TypeError
 #    26-Jan-2013 (MG) Add `Cached_Role_Query`
 #    29-Jan-2013 (MG) Support for cached roles enhanced
+#    31-Jan-2013 (MG) Move creation of query attributes into the `finalize`
+#                     method (required if query attributes of roles of an
+#                     association access cached roles)
 #    ««revision-date»»···
 #--
 
@@ -77,6 +80,7 @@ from   _TFL                     import TFL
 import _TFL._Meta.Object
 import _TFL.Sorted_By
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 
 from   _MOM                     import MOM
 from   _MOM.import_MOM          import Q
@@ -84,6 +88,7 @@ import _MOM._DBW._SAS
 
 from    sqlalchemy              import sql
 import  operator
+import  itertools
 
 class Query (TFL.Meta.Object) :
     """A query object for non MOM objects"""
@@ -118,6 +123,7 @@ class _MOM_Query_ (TFL.Meta.Object) :
     _query_fct = {}
 
     @Once_Property
+    @getattr_safe
     def attributes (self) :
         return dict (self._E_TYPE [0].attributes, pid = "pid")
     # end def attributes
@@ -154,19 +160,20 @@ class MOM_Query (_MOM_Query_) :
                  , role_cacher
                  , cached_roles
                  ) :
-        e_type._SAQ           = self
-        self._E_TYPE          = e_type, bases
-        self._SA_TABLE        = sa_table
-        columns               = sa_table.columns
-        self.pid              = columns [e_type._sa_pk_name]
-        self._ATTRIBUTES      = []
-        self._ROLE_ATTRIBUTES = {}
-        self._RAW_ATTRIBUTES  = {}
-        self._COMPOSITES      = []
-        self._ID_ENTITY_ATTRS = {}
-        self._CACHED_ROLES    = {}
-        self._query_fct       = {}
-        delayed               = []
+        e_type._SAQ            = self
+        self._CACHE_SPEC       = (role_cacher, cached_roles)
+        self._E_TYPE           = e_type, bases
+        self._SA_TABLE         = sa_table
+        columns                = sa_table.columns
+        self.pid               = columns [e_type._sa_pk_name]
+        self._ATTRIBUTES       = []
+        self._ROLE_ATTRIBUTES  = {}
+        self._RAW_ATTRIBUTES   = {}
+        self._COMPOSITES       = []
+        self._ID_ENTITY_ATTRS  = {}
+        self._CACHED_ROLES     = {}
+        self._query_fct        = {}
+        self.delayed = delayed = []
         #if e_type.type_name in ("PAP.Person_has_Address", "PAP.Person_has_Phone") :
         #    import pdb; pdb.set_trace ()
         if e_type is e_type.relevant_root :
@@ -232,27 +239,6 @@ class MOM_Query (_MOM_Query_) :
         for rname, col in self._ROLE_ATTRIBUTES.iteritems () :
             kind = getattr (e_type, rname)
             setattr        (self, kind.role_name, col)
-        for name, kind, attr in delayed :
-            query_fct = getattr (attr, "query_fct")
-            if query_fct :
-                self._query_fct [name] = attr
-                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
-                    raise TypeError \
-                       ( "Id Entity query `%s.%s` must be specified as "
-                         "`query`, not `query_fct`"
-                       % (e_type.type_name, attr.name, )
-                       )
-            else :
-                ###import pdb; pdb.set_trace ()
-                query   = attr.query._sa_filter (self)
-                column  = jq = query [1] [0]
-                if not isinstance (column, Cached_Role_Query) :
-                    jq  = None
-                self._add_q (column, kind, name)
-                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
-                    if not jq :
-                        jq = Join_Query (self)
-                    self._ID_ENTITY_ATTRS [attr.name] = jq
     # end def __init__
 
     def _add_cached_role (self, name, rc, assoc) :
@@ -272,6 +258,38 @@ class MOM_Query (_MOM_Query_) :
             setattr (self, n, q)
             self._ATTRIBUTES.append (n)
     # end def _add_q
+
+    def finalize (self) :
+        for name, kind, attr in self.delayed :
+            query_fct = getattr (attr, "query_fct")
+            if query_fct :
+                self._query_fct [name] = attr
+                if isinstance (attr, MOM.Attr._A_Id_Entity_) :
+                    raise TypeError \
+                       ( "Id Entity query `%s.%s` must be specified as "
+                         "`query`, not `query_fct`"
+                       % (e_type.type_name, attr.name, )
+                       )
+            else :
+                ###import pdb; pdb.set_trace ()
+                query   = attr.query._sa_filter (self)
+                column  = jq = query [1] [0]
+                if not isinstance (column, Cached_Role_Query) :
+                    jq  = None
+                ### since we are in the `finalize` function we need to create
+                ### this attribute in the etype and all children
+                etype   = self._E_TYPE [0]
+                for et in itertools.chain \
+                    ((etype, ), etype.children.itervalues ()) :
+                    kind = getattr (et, attr.name)
+                    if kind :
+                        saq = et._SAQ
+                        saq._add_q (column, kind, name)
+                        if isinstance (attr, MOM.Attr._A_Id_Entity_) :
+                            if jq is None :
+                                jq = Join_Query (saq)
+                            saq._ID_ENTITY_ATTRS [attr.name] = jq
+    # end def finalize
 
     def __getitem__ (self, name) :
         return getattr (self, name)
@@ -458,6 +476,7 @@ class Cached_Role_Query (_MOM_Query_) :
     # end def __init__
 
     @Once_Property
+    @getattr_safe
     def joins (self) :
         sa_source      = self.source._SA_TABLE
         ### we have to use the _SAQ.left.table to get the table which defines
@@ -517,6 +536,7 @@ class _Default_Comp_Mixin_ (TFL.Meta.Object) :
     _Handled_Compare_Operations = set (("eq", "ne"))
 
     @Once_Property
+    @getattr_safe
     def _QUERY_ATTRIBUTES (self) :
         return self._ATTRIBUTES
     # end def _QUERY_ATTRIBUTES

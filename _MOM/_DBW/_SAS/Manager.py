@@ -107,6 +107,8 @@
 #    22-Jan-2013 (MG) Set `autoincrement` for sqlite for the change history
 #    26-Jan-2013 (MG) Handle cached roles in `MOM_Query`
 #    29-Jan-2013 (MG) Fix handling of cached roles
+#    31-Jan-2013 (MG) `Manager.finalize` added to finalize creation of
+#                     `MOM.Query` objects
 #    ««revision-date»»···
 #--
 
@@ -283,12 +285,18 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return e_type
     # end def etype_decorator
 
+    def finalize (cls) :
+        for saq in cls.finalize_query_objects :
+            saq.finalize ()
+    # end def finalize
+
     def prepare (cls) :
-        cls._create_pid_table              (cls.metadata)
-        cls._create_scope_table            (cls.metadata)
-        cls._create_SCM_table              (cls.metadata)
-        cls.role_cacher  = TFL.defaultdict (set)
-        cls.cached_roles = TFL.defaultdict (set)
+        cls._create_pid_table                        (cls.metadata)
+        cls._create_scope_table                      (cls.metadata)
+        cls._create_SCM_table                        (cls.metadata)
+        cls.role_cacher            = TFL.defaultdict (set)
+        cls.cached_roles           = TFL.defaultdict (set)
+        cls.finalize_query_objects = []
     # end def prepare
 
     def Reset_Metadata (cls) :
@@ -303,10 +311,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             bases, db_attrs, unique = e_type._sa_save_attrs
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
-            MOM.DBW.SAS.MOM_Query \
+            saq = MOM.DBW.SAS.MOM_Query \
                 ( e_type, sa_table, db_attrs, bases, RC
                 , cls.cached_roles.get (e_type.Essence.type_name, ())
                 )
+            if saq.delayed :
+                cls.finalize_query_objects.append (saq)
             e_type._SAS.finish ()
             if unique and not e_type.polymorphic_epk :
                 sa_table.append_constraint (schema.UniqueConstraint (* unique))

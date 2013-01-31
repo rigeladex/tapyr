@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -157,6 +157,7 @@
 #    11-Dec-2012 (CT) Add `M_E_Type.__instancecheck__`, `.__subclasscheck__`
 #    14-Dec-2012 (CT) Set `.relevant_roots` to `{}` for relevant classes
 #    17-Dec-2012 (CT) Add `ui_type_name` as alias for `ui_name`
+#    31-Jan-2013 (MG) Add call to `DBW.finalize`
 #    ««revision-date»»···
 #--
 
@@ -340,7 +341,10 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             ### `DBW.update_etype` can use features like `children` or
             ### `Ref_Req_Map` that are only available after *all* etypes have
             ### already been created
-            e_update (t, app_type)
+            e_update          (t, app_type)
+        ### give teh DBW a final chance to make some adijustments after all
+        ### etypes have been updated
+        app_type.DBW.finalize ()
     # end def _m_create_e_types
 
     def _m_new_e_type (cls, app_type, etypes) :
