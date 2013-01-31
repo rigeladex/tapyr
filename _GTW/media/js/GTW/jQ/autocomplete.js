@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -15,6 +15,8 @@
 //
 // Revision Dates
 //    13-Oct-2011 (CT) Creation
+//    31-Jan-2013 (MG) Fix changing of `_renderItem` to work with new
+//                     jQueryUI versions
 //    ««revision-date»»···
 //--
 
@@ -42,7 +44,11 @@
                 var self = $(this);
                 self.autocomplete (opts);
                 if (ri) {
-                    self.data ("autocomplete")._renderItem = ri;
+                    var data = self.data ("autocomplete");
+                    if (data === undefined) {
+                        data = self.data ("uiAutocomplete")
+                    }
+                    data._renderItem = ri;
                 };
               }
             );
