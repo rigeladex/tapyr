@@ -3,6 +3,8 @@
 *.~?~
 *.sqlite
 _GTW/__test__/test.momt.X
+test.hps
+test.hps.X
 test.momt
 test.momt.X
 test.bak

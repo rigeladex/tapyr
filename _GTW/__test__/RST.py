@@ -159,7 +159,7 @@ _test_client = r"""
 """
 
 _test_cqf = r"""
-    >>> server = Scaffold (["wsgi"] + server_args + ["-db_url", %(p1)s, "-db_name", %(n1)s or "test"]) # doctest:+ELLIPSIS
+    >>> server = Scaffold (["wsgi"] + server_args + ["-db_url", %(p1)s, "-db_name", %(n1)s or ("test." + %(bn1)s)]) # doctest:+ELLIPSIS
     ...
     >>> root   = Scaffold.root
     >>> v1     = root.resource_from_href ("v1")

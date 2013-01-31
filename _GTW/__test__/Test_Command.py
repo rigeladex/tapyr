@@ -31,6 +31,7 @@
 #    25-Sep-2012 (CT) Add `smtp_server` default `<Tester>`
 #     9-Jan-2013 (CT) Factor in `GTW_RST_Test_Command` from `RST`
 #    21-Jan-2013 (CT) Add `reset`
+#    31-Jan-2013 (CT) Add `bn` to `_backend_spec`
 #    ««revision-date»»···
 #--
 
@@ -230,8 +231,9 @@ class GTW_Test_Command (_Ancestor) :
         for w in combiner ((b for b in backends if b not in ignore), bpt) :
             for name, code in test_spec.iteritems () :
                 key  = "_".join (p for p in (name, ) + w if p)
+                bsd  = dict (self._backend_spec (w))
                 test = "%s\n\n    %s\n" % \
-                    ( code % dict (self._backend_spec (w))
+                    ( code % bsd
                     , "\n    ".join \
                         ( ( ">>> try :"
                           , "...     Scaffold.reset ()"
@@ -269,15 +271,13 @@ class GTW_Test_Command (_Ancestor) :
     # end def scope
 
     def _backend_spec (self, backends) :
-        i = 0
-        for b in backends :
-            i += 1
-            path = self.Backend_Default_Path [b]
-            for k, v in zip \
-                    ( ("p",                        "n",  "BN")
-                    , (self.Backend_Parameters [b], path, repr (b))
-                    ) :
-                yield ("%s%d" % (k, i), v)
+        for i, b in enumerate (backends) :
+            p  = self.Backend_Parameters   [b]
+            n  = self.Backend_Default_Path [b]
+            BN = repr (b)
+            bn = BN.lower ()
+            for k, v in (("p", p), ("n", n), ("BN", BN), ("bn", bn)) :
+                yield ("%s%d" % (k, i + 1), v)
     # end def _backend_spec
 
     def _create_templateer (self, cmd, ** kw) :

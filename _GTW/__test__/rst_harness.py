@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #     9-Jan-2013 (CT) Creation (factor from RST)
+#    31-Jan-2013 (CT) Change `_main` to use `Backend_Default_Path`
+#    31-Jan-2013 (CT) Use `url.scheme` as default `db_name` extension in
+#                     `run_server`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +65,10 @@ def _run_server (Scaffold, args = []) :
 def run_server (test_module_name, db_url = "hps://", db_name = None) :
     import socket
     import tempfile
+    import _TFL.Url
+    url = TFL.Url (db_url)
+    if not db_name :
+        db_name = "test.%s" % (url.scheme, )
     cmd = \
         [ sys.executable, "-c"
         , "; ".join
@@ -71,7 +78,7 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
               + repr
                   ( ["run_server"]
                   + server_args
-                  + ["-db_url", db_url, "-db_name", db_name or "test"]
+                  + ["-db_url", db_url, "-db_name", db_name]
                   )
               + ")"
               )
@@ -202,9 +209,11 @@ server_args = \
 def _main (Scaffold) :
     backend = sos.environ.get \
         ("GTW_test_backends", "HPS").split (":") [0].strip ()
-    db_url = Scaffold.Backend_Parameters.get (backend, "hps://").strip ("'")
+    db_url  = Scaffold.Backend_Parameters.get   (backend, "hps://").strip ("'")
+    db_name = Scaffold.Backend_Default_Path.get \
+        (backend, "test.%s" % (back.lower (), ))
     _run_server \
-        (Scaffold, ["-db_url", db_url, "-db_name", "test", "-debug", "no"])
+        (Scaffold, ["-db_url", db_url, "-db_name", db_name, "-debug", "no"])
 # end def _main
 
 ### __END__ GTW.__test__.rst_harness
