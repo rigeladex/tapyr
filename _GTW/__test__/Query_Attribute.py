@@ -31,6 +31,7 @@
 #    27-Jan-2013 (CT) Add another test for `.qt.last_name`
 #    31-Jan-2013 (CT) Add tests for `Q.person` passed to `Account.query`
 #     1-Feb-2013 (RS) Tests for query attribute via auto_cache attribute
+#     1-Feb-2013 (RS) Add queries for transitive query attribute
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,10 @@ _query_test = """
     [PAP.Person (u'ln', u'fn', u'', u'')]
     >>> PAP.Person.query (Q.wrzlbrmft.my_wolp == wolp).all ()
     [PAP.Person (u'ln', u'fn', u'', u'')]
+    >>> Auth.Account_T.query (Q.person.wrzlbrmft.wolp == wolp).all ()
+    [Auth.Account_T (u'test ln fn')]
+    >>> Auth.Account_T.query (Q.person.wrzlbrmft.my_wolp == wolp).all ()
+    [Auth.Account_T (u'test ln fn')]
 
 """
 
