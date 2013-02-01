@@ -92,10 +92,10 @@ _query_test = """
     >>> phw = PAP.Person_has_Wrzlbrmft (p1, w)
     >>> phw
     PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))
-    >>> PAP.Person_has_Account_Test.query (Q.wrzlbrmft.wolp == wolp).all ()
-    []
-    >>> PAP.Person_has_Account_Test.query (Q.wrzlbrmft.my_wolp == wolp).all ()
-    []
+    >>> PAP.Person.query (Q.wrzlbrmft.wolp == wolp).all ()
+    [PAP.Person (u'ln', u'fn', u'', u'')]
+    >>> PAP.Person.query (Q.wrzlbrmft.my_wolp == wolp).all ()
+    [PAP.Person (u'ln', u'fn', u'', u'')]
 
 """
 
