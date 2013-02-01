@@ -30,6 +30,7 @@
 #    26-Jan-2013 (CT) Add test for query attribute referring to cached role
 #    27-Jan-2013 (CT) Add another test for `.qt.last_name`
 #    31-Jan-2013 (CT) Add tests for `Q.person` passed to `Account.query`
+#     1-Feb-2013 (RS) Tests for query attribute via auto_cache attribute
 #    ««revision-date»»···
 #--
 
@@ -78,12 +79,142 @@ _query_test = """
     >>> Auth.Account.query_s (Q.person.first_name == "nf").all ()
     [Auth.Account_T (u'test ln nf')]
 
+    >>> nicky = PAP.Person_Nickname_Test (p1, 'nicky', raw = True)
+    >>> nicky
+    PAP.Person_Nickname_Test ((u'ln', u'fn', u'', u''), u'nicky')
+
+    >>> wolp = PAP.Wolperdinger ("Wolp", raw = True)
+    >>> wolp
+    PAP.Wolperdinger (u'Wolp')
+    >>> w = PAP.Wrzlbrmft ('WRZL', wolp, raw = True)
+    >>> w
+    PAP.Wrzlbrmft (u'WRZL', (u'Wolp', ))
+    >>> phw = PAP.Person_has_Wrzlbrmft (p1, w)
+    >>> phw
+    PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))
+    >>> PAP.Person_has_Account_Test.query (Q.wrzlbrmft.wolp == wolp).all ()
+    []
+    >>> PAP.Person_has_Account_Test.query (Q.wrzlbrmft.my_wolp == wolp).all ()
+    []
 
 """
 
 from   _GTW.__test__.Test_Command import *
 import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP .import_PAP
+
+_Ancestor_Essence = GTW.OMP.PAP.Link1
+
+class Person_Nickname_Test (_Ancestor_Essence) :
+    """ A nickname with `max_links = 1` for testing """
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+
+            role_type       = GTW.OMP.PAP.Person
+            max_links       = 1
+            auto_cache      = 'nick'
+
+        # end class left
+
+        class name (A_String) :
+
+            kind            = Attr.Primary
+            max_length      = 32
+
+        # end class name
+
+    # end class _Attributes
+
+# end class Person_Nickname_Test
+
+_Ancestor_Essence = GTW.OMP.PAP.Object
+
+class Wolperdinger (_Ancestor_Essence) :
+    """A class for testing an ID entitiy attribute"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class name (A_String) :
+
+            kind               = Attr.Primary
+            max_length         = 32
+
+        # end class name
+
+    # end class _Attributes
+    
+# end class Wolperdinger
+
+_Ancestor_Essence = GTW.OMP.PAP.Object
+
+class Wrzlbrmft (_Ancestor_Essence) :
+    """ Wrzlbrmft: A special Person property for testing """
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class name (A_String) :
+
+            kind               = Attr.Primary
+            max_length         = 32
+
+        # end class name
+
+        class wolp (A_Id_Entity) :
+
+            kind               = Attr.Primary
+            P_Type             = Wolperdinger
+
+        # end class wolp
+
+        class my_wolp (A_Id_Entity) :
+            """ model my own attribute as query """
+
+            kind               = Attr.Query
+            P_Type             = Wolperdinger
+            auto_up_depends    = ("wolp", )
+            hidden             = True
+            query              = Q.wolp
+
+        # end class my_wolp
+
+    # end class _Attributes
+
+# end class Wrzlbrmft
+
+_Ancestor_Essence = GTW.OMP.PAP.Link2
+
+class Person_has_Wrzlbrmft (_Ancestor_Essence) :
+    """ A Person property for testing """
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+
+            role_type          = GTW.OMP.PAP.Person
+
+        # end class left
+
+        class right (_Ancestor.right) :
+
+            role_type          = Wrzlbrmft
+            max_links          = 1
+            auto_cache         = 'wrzlbrmft'
+
+        # end class right
+
+    # end class _Attributes
+
+# end class Person_has_Wrzlbrmft
 
 _Ancestor_Essence = GTW.OMP.Auth.Account
 
@@ -103,6 +234,26 @@ class Account_T (_Ancestor_Essence) :
             query              = Q.person
 
         # end class qt
+
+#        class account_nick (A_Id_Entity) :
+#            """Test of access to query attributes via cached role"""
+#
+#            kind               = Attr.Query
+#            auto_up_depends    = ("person.nick",)
+#            P_Type             = Person_Nickname_Test
+#            query              = Q.person.nick
+#
+#        # end class account_nick
+
+#        class account_wrzl (A_Id_Entity) :
+#            """ Test of access to query attribute via cached role """
+#
+#            kind               = Attr.Query
+#            auto_up_depends    = ("person.wrzlbrmft",)
+#            P_Type             = Wrzlbrmft
+#            query              = Q.person.wrzlbrmft
+#
+#        # end class account_wrzl
 
     # end class _Attributes
 
