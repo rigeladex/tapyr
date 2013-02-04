@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -91,17 +91,19 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
     """Context manager measuring the execution time for a block.
 
        After finishing the block, `cb` will be called with the arguments
-       `start` and `finish`, if specified. Otherwise, `time_block` will use
-       `fmt` to write the execution time to sys.stdout.
+       `start`, `finish`, and `delta`, if specified.
+
+       Otherwise, `time_block` will use `fmt` to write the execution time to
+       sys.stdout.
     """
     start  = _timer ()
     yield
     finish = _timer ()
+    delta  = finish - start
     if cb is not None :
-        cb (start, finish)
+        cb (start, finish, delta)
     else :
         import pyk
-        delta = finish - start
         try :
             msg = fmt % (delta, )
         except (TypeError, ValueError) as exc :
