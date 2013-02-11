@@ -1,5 +1,5 @@
 //-*- coding: iso-8859-1 -*-
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -79,9 +79,9 @@ var $GTW;
         making_proto = true;
         try {
             proto = new this ();
-        }  finally {
+        } finally {
             making_proto = false;
-        }
+        };
         result = proto.constructor = function constructor () {
             if (! making_proto && this ["init"]) {
                 this.init.apply (this, arguments);
@@ -108,7 +108,7 @@ var $GTW;
         { Class       : Class
         , Module      : Module
         , author      : "christian.tanzer@swing.co.at"
-        , copyright   : "Copyright (C) 2011 Christian Tanzer"
+        , copyright   : "Copyright (C) 2011-2013 Christian Tanzer"
         , license     : "Dual licensed under the MIT or AGPLv3 licenses."
         , license_url : "http://www.c-tanzer.at/license/mit_or_agpl.html"
         , version     : "1.0"
