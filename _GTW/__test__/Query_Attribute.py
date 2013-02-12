@@ -32,6 +32,9 @@
 #    31-Jan-2013 (CT) Add tests for `Q.person` passed to `Account.query`
 #     1-Feb-2013 (RS) Tests for query attribute via auto_cache attribute
 #     1-Feb-2013 (RS) Add queries for transitive query attribute
+#    12-Feb-2013 (CT) Add more tests for `wrzlbrmft`
+#    12-Feb-2013 (CT) Set `Person_has_Wrzlbrmft.left.max_links` to `1`,
+#                     remove `Person_has_Wrzlbrmft.right.max_links`
 #    ««revision-date»»···
 #--
 
@@ -93,13 +96,26 @@ _query_test = """
     >>> phw = PAP.Person_has_Wrzlbrmft (p1, w)
     >>> phw
     PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))
-    >>> PAP.Person.query (Q.wrzlbrmft.wolp == wolp).all ()
+
+    >>> PAP.Person_has_Wrzlbrmft.query_s (Q.right == w).all ()
+    [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
+
+    >>> PAP.Person_has_Wrzlbrmft.query_s (Q.wrzlbrmft == w).all ()
+    [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
+
+    >>> PAP.Person.query_s (Q.wrzlbrmft == w).all ()
     [PAP.Person (u'ln', u'fn', u'', u'')]
-    >>> PAP.Person.query (Q.wrzlbrmft.my_wolp == wolp).all ()
+
+    >>> PAP.Person.query_s (Q.wrzlbrmft.wolp == wolp).all ()
     [PAP.Person (u'ln', u'fn', u'', u'')]
-    >>> Auth.Account_T.query (Q.person.wrzlbrmft.wolp == wolp).all ()
+
+    >>> PAP.Person.query_s (Q.wrzlbrmft.my_wolp == wolp).all ()
+    [PAP.Person (u'ln', u'fn', u'', u'')]
+
+    >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.wolp == wolp).all ()
     [Auth.Account_T (u'test ln fn')]
-    >>> Auth.Account_T.query (Q.person.wrzlbrmft.my_wolp == wolp).all ()
+
+    >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.my_wolp == wolp).all ()
     [Auth.Account_T (u'test ln fn')]
 
 """
@@ -153,7 +169,7 @@ class Wolperdinger (_Ancestor_Essence) :
         # end class name
 
     # end class _Attributes
-    
+
 # end class Wolperdinger
 
 _Ancestor_Essence = GTW.OMP.PAP.Object
@@ -206,13 +222,13 @@ class Person_has_Wrzlbrmft (_Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type          = GTW.OMP.PAP.Person
+            max_links          = 1
 
         # end class left
 
         class right (_Ancestor.right) :
 
             role_type          = Wrzlbrmft
-            max_links          = 1
             auto_cache         = 'wrzlbrmft'
 
         # end class right
