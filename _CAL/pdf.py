@@ -1,8 +1,7 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
@@ -50,6 +49,7 @@
 #    16-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #     5-Feb-2011 (CT) `PDF_Plan_Year` added
+#    12-Feb-2013 (CT) Change `PDF_Plan_Month.one_day` to show single appointment
 #    ««revision-date»»···
 #--
 
@@ -63,6 +63,7 @@ from   _TFL           import sos
 
 import _TFL._Meta.Object
 import _TFL.CAO
+import _TFL.defaultdict
 
 import _CAL.Plan
 import _CAL.Year
@@ -85,12 +86,14 @@ class PDF_P (TFL.Meta.Object) :
     ts     = 30
     lw     = 1.0
     font   = "Helvetica"
+    black  = 0.000, 0.000, 0.000
     blue   = 0.285, 0.668, 0.902
+    dark   = 0.400, 0.400, 0.400
+    gray   = 0.700, 0.700, 0.700
     holi   = 0.902, 0.902, 1.000
     light  = 0.875, 0.875, 0.875
-    gray   = 0.700, 0.700, 0.700
-    dark   = 0.400, 0.400, 0.400
-    black  = 0.000, 0.000, 0.000
+    orange = 1.000, 0.627, 0.133
+    white  = 1.000, 1.000, 1.000
 
 # end class PDF_P
 
@@ -106,6 +109,11 @@ class PDF_L (PDF_P) :
 # end class PDF_L
 
 class PDF_Plan (PDF_P) :
+
+    ac_map = TFL.defaultdict \
+        ( lambda : None
+        , O      = PDF_P.orange
+        )
 
     def __init__ ( self, Y, filename, first_unit, last_unit
                  , linewidth  = 0.6, xl = None, yl = None, xo = None, yo = None
@@ -222,7 +230,7 @@ class PDF_Plan_Month (PDF_Plan) :
         xo = x + 0.10 * cm
         yo = y + 0.15 * cm
         lw = self.linewidth
-        hd = d.is_holiday
+        hd = d.is_holiday or ""
         if hd :
             hd = TFL.I18N.encode_o (hd)
         if d.weekday == 6 : ### it's a sunday
@@ -236,6 +244,14 @@ class PDF_Plan_Month (PDF_Plan) :
         self.draw_text (c, xo + 0.4 * cm, yo, d.formatted ("%d"), self.darker)
         if hd :
             self.draw_text (c, xo + 0.8 * cm, yo, hd, self.blue)
+        apps = getattr (d, "appointments", [])
+        if len (apps) == 1 :
+            app = apps [0]
+            xa  = xl - 0.4 * cm
+            txt = app.activity [:35 - len (hd) - (5 if hd else 0)]
+            col = self.ac_map [app.prio]
+            if col :
+                self.draw_text (c, xa, yo, txt, col, right = True)
     # end def one_day
 
     def one_unit (self, Y, n, spec) :
