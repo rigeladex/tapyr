@@ -31,6 +31,7 @@
 #    31-Jan-2013 (CT) Use `url.scheme` as default `db_name` extension in
 #                     `run_server`
 #    31-Jan-2013 (CT) Fix setting of `db_name` in `_main`
+#    12-Feb-2013 (CT) Increase timeout and number of tries in `run_server`
 #    ««revision-date»»···
 #--
 
@@ -89,13 +90,13 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
     print ("Using", tf.name, "as stdout/stderr for server process", file=sys.stderr)
     p = subprocess.Popen (cmd, stderr = tf, stdout = tf)
     s = socket.socket    (socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout         (1.0)
+    s.settimeout         (2.0)
     i   = 0
     while True :
         try :
             s.connect (("localhost", 9999))
         except socket.error as exc :
-            if i < 20 :
+            if i < 30 :
                 i += 1
                 time.sleep (1)
             else :
