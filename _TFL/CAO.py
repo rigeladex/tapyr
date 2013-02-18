@@ -99,6 +99,7 @@
 #    15-Jan-2013 (MG) Add global option `Pdb_on_Exception`
 #    27-Jan-2013 (CT) Don't unnecessarily redefine `sys.excepthook`
 #    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
+#    18-Feb-2013 (CT) Change `_Number_.cook` to try `_cook` in case of eval Err
 #    ««revision-date»»···
 #--
 
@@ -416,7 +417,10 @@ class _Number_ (_Spec_) :
 
     def cook (self, value, cao = None) :
         if isinstance (value, basestring) :
-            value = self._safe_eval (value)
+            try :
+                value = self._safe_eval (value)
+            except Err :
+                pass ### try `_cook` ("08" doesn't work for `Int`, otherwise)
         return self._cook (value)
     # end def cook
 
