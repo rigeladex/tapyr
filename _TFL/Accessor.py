@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,6 +41,7 @@
 #    18-Sep-2009 (CT) `_call_1` and `_call_n` changed back to *not* call
 #                     callable results (breaks too many users)
 #    16-Aug-2012 (CT) Simplify `_Getter_`: get rid of `_Getter_[01n]_`
+#    22-Feb-2013 (CT) Remove legacy spellings `Attribute` and `Item`
 #    ««revision-date»»···
 #--
 
@@ -74,26 +75,18 @@ class _Getter_ (TFL.Meta.Object) :
        >>> gn (r)
        'howdi'
 
-       `Attribute` is a legacy spelling of `Getter`
-
-       >>> r = Record (a = 1, b = "2", foo = 42)
-       >>> a = Attribute.foo
-       >>> a (r)
-       42
        >>> s = Record (x = 0, y = 1)
-       >>> a (s)
+       >>> g1 (s)
        Traceback (most recent call last):
          ...
        AttributeError: foo
 
-       `Item` is another legacy spelling of `Getter`
-
-       >>> last = Item [-1]
+       >>> last = Getter [-1]
        >>> last (range (2))
        1
        >>> last (range (5))
        4
-       >>> third = Item [3]
+       >>> third = Getter [3]
        >>> third (range (2))
        Traceback (most recent call last):
          ...
@@ -166,7 +159,7 @@ class _Method_ (TFL.Meta.Object) :
 
 # end class _Method_
 
-Getter = Attribute = Item = _Getter_ ()
+Getter = _Getter_ ()
 Method = _Method_ ()
 
 __doc__ = """
@@ -178,5 +171,5 @@ Module `Accessor`
 """
 
 if __name__ != "__main__" :
-    TFL._Export ("Attribute", "Getter", "Item", "Method")
+    TFL._Export ("Getter", "Method")
 ### __END__ TFL.Accessor
