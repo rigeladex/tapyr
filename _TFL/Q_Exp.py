@@ -114,7 +114,7 @@ This module implements a query expression language::
     >>> q6.predicate (r2)
     True
 
-    >>> QQ = Q.__class__ (Ignore_Exception = AttributeError)
+    >>> QQ = Q.__class__ (Ignore_Exception = (AttributeError, ))
     >>> QQ.qux.predicate (r1) is QQ.undef
     True
     >>> Q.qux.predicate (r1) is Q.undef

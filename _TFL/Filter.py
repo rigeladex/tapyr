@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,6 +47,7 @@
 #    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
 #    19-Dec-2011 (CT) Add shortcut `Attr_Query.NOT`
 #    10-Aug-2012 (CT) Add `_rank` to allow defined order
+#    22-Feb-2013 (CT) Define `Ignore_Exception` as `tuple`
 #    ««revision-date»»···
 #--
 
@@ -400,7 +401,7 @@ class Attr_Query (TFL.Q_Exp.Base) :
 
     """
 
-    Ignore_Exception = AttributeError
+    Ignore_Exception = (AttributeError, )
 
     AND              = Filter_And
     NOT              = Filter_Not
