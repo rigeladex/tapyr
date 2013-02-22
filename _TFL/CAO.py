@@ -100,6 +100,7 @@
 #    27-Jan-2013 (CT) Don't unnecessarily redefine `sys.excepthook`
 #    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
 #    18-Feb-2013 (CT) Change `_Number_.cook` to try `_cook` in case of eval Err
+#    22-Feb-2013 (CT) Change `_Number_.cook` to `raise err`, if any
 #    ««revision-date»»···
 #--
 
@@ -201,6 +202,7 @@ class _Spec_ (TFL.Meta.Object) :
     auto_split    = None
     choices       = None
     implied_value = None
+    kind          = "argument"
     needs_value   = True
 
     prefix        = ""
@@ -354,6 +356,7 @@ class _Spec_O_ (_Spec_) :
 
     __metaclass__ = Opt
 
+    kind          = "option"
     prefix        = "-"
 
 # end class _Spec_O_
@@ -416,12 +419,16 @@ class _Number_ (_Spec_) :
     """Base class for numeric argument and option types"""
 
     def cook (self, value, cao = None) :
+        err = None
         if isinstance (value, basestring) :
             try :
                 value = self._safe_eval (value)
-            except Err :
+            except Err as err :
                 pass ### try `_cook` ("08" doesn't work for `Int`, otherwise)
-        return self._cook (value)
+        try :
+            return self._cook (value)
+        except (ValueError, TypeError) as exc :
+            raise err or Err ("%s for %s `%s`" % (exc, self.kind, self.name))
     # end def cook
 
     def _resolve_range_1 (self, value, cao, pat) :
