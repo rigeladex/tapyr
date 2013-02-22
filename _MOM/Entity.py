@@ -232,6 +232,7 @@
 #    30-Jan-2013 (CT) Add access to `last_cid` and `restore` to
 #                     `_Id_Entity_Destroyed_Mixin_`
 #    30-Jan-2013 (CT) Add access to `last_cid` to `_Id_Entity_Destroyed_Mixin_`
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -263,6 +264,7 @@ import _TFL._Meta.Once_Property
 import _TFL.Decorator
 import _TFL.defaultdict
 import _TFL.Sorted_By
+import _TFL.Undef
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.object_globals   import object_globals
@@ -332,7 +334,7 @@ class Entity (TFL.Meta.Object) :
     class _FO_ (TFL.Meta.Object) :
         """Formatter for attributes of object."""
 
-        undefined = object ()
+        undefined = TFL.Undef ("value")
 
         def __init__ (self, obj) :
             self.__obj = obj
@@ -1426,7 +1428,7 @@ class Id_Entity (Entity) :
     def user_diff (self, other, ignore = ()) :
         """Return differences in user attributes between `self` and `other`."""
         result = {}
-        undef  = object ()
+        undef  = TFL.Undef ()
         if ignore :
             ignore = set (ignore)
         if self.type_name != other.type_name :

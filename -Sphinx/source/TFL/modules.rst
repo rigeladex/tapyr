@@ -40,6 +40,9 @@ Modules of Package-NS `TFL`
 .. automodule:: _TFL.Sorted_By
    :members:
 
+.. automodule:: _TFL.Undef
+   :members:
+
 .. automodule:: _TFL.predicate
    :members:
 

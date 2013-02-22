@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -113,6 +113,7 @@
 #     5-Aug-2012 (CT) Change `__repr__` to single line, add `formatted` with
 #                     the same output as the former `__repr__`
 #     5-Aug-2012 (CT) Change `Form.__init__` to set `names`
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,8 @@ import _GTW._Form.Widget_Spec
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Lists
+import _TFL.Undef
+
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst
 from   _TFL.pyk                 import pickle
@@ -168,7 +171,7 @@ class _Element_ (TFL.Meta.Object) :
     readonly        = False
     renderer        = None
     root_sep        = "-"
-    undef           = object ()
+    undef           = TFL.Undef ("value")
     widget          = None
     _css_class      = None
     _id             = None

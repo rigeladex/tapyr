@@ -158,6 +158,7 @@
 #    14-Dec-2012 (CT) Set `.relevant_roots` to `{}` for relevant classes
 #    17-Dec-2012 (CT) Add `ui_type_name` as alias for `ui_name`
 #    31-Jan-2013 (MG) Add call to `DBW.finalize`
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,7 @@ import _TFL._Meta.Property
 import _TFL.Caller
 import _TFL.Decorator
 import _TFL.Sorted_By
+import _TFL.Undef
 
 from   _TFL.predicate        import any_true
 from   _TFL.object_globals   import class_globals
@@ -580,7 +582,7 @@ class M_An_Entity (M_Entity) :
         args    = ", ".join ("%s = undefined" % a for a in usr_sig)
         form    = cls._signified_sep.join \
             ((cls._signified_head, cls._signified_body, cls._signified_tail))
-        undefined = object ()
+        undefined = TFL.Undef ("argument")
         globals = dict (class_globals (cls), undefined = undefined)
         scope   = dict ()
         code    = form % dict \

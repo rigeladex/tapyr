@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -53,6 +53,7 @@
 #     9-Jan-2012 (CT) Add `minified_css` and `minified_js`
 #    14-Aug-2012 (MG) Add support for domains
 #     4-Dec-2012 (MG) Fix media `Domain` handling
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,8 @@ from   _TFL                               import TFL
 from   _GTW                               import GTW
 
 import _TFL.predicate
+import _TFL.Undef
+
 import _TFL._Meta.Object
 import _TFL._Meta.M_Unique_If_Named
 from   _TFL._Meta.Once_Property           import Once_Property
@@ -220,7 +223,7 @@ class JS_On_Ready (Media_Base) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    default_rank  = object ()
+    default_rank  = TFL.Undef ("rank")
     name          = None
 
     def __init__ (self, code, rank = default_rank, ** kw) :

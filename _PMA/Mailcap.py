@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #     4-Sep-2004 (CT) Creation
 #     6-Sep-2004 (CT) `needsterminal` considered in `Mailcap_Entry.system`
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -35,11 +36,12 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _TFL._Meta.Object
+import _TFL.Undef
 
 from   _TFL.predicate          import *
 from   _TFL                    import sos
 
-_undefined = object ()
+_undefined = TFL.Undef ()
 
 class Mailcap_Entry (TFL.Meta.Object) :
     """Model a single mailcap entry for a specific mime type"""

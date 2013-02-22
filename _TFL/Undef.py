@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -28,13 +28,14 @@
 # Revision Dates
 #     3-Sep-2010 (CT) Creation
 #    28-Sep-2010 (CT) `__nonzero__` added
+#    22-Feb-2013 (CT) Add doc-tests
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 
 class Undef (object) :
-    """Undefined object."""
+    """Undefined object with nice repr."""
 
     def __init__ (self, name = None) :
         self.name = name
@@ -52,6 +53,58 @@ class Undef (object) :
     # end def __repr__
 
 # end class Undef
+
+__doc__ = """
+Module `Undef`
+==========================
+
+:class:`Undef` provides a way to define undefined objects with a nice
+and deterministic `repr`.
+
+Normally, one would define an undefined object like this::
+
+    >>> undefined = object ()
+    >>> bool (undefined)
+    True
+    >>> undefined # doctest:+ELLIPSIS
+    <object object at ...>
+
+This works well, as long as `undefined` doesn't appear in any context, where
+it's `repr` is taken and as long as nobody applies boolean tests to it.
+
+:class:`Undef` avoids both these problems::
+
+    >>> undef = Undef ()
+    >>> bool (undef)
+    False
+    >>> undef
+    <Undef>
+
+    >>> undefined_foo = Undef ("foo")
+    >>> bool (undefined_foo)
+    False
+    >>> undefined_foo
+    <Undef/foo>
+
+    >>> undefined_bar = Undef ("bar")
+    >>> bool (undefined_bar)
+    False
+    >>> undefined_bar
+    <Undef/bar>
+
+    >>> undefined_foo == undefined_bar
+    False
+    >>> undefined_foo is undefined_bar
+    False
+
+    >>> undefined_foo == Undef ("foo")
+    False
+    >>> undefined_foo is Undef ("foo")
+    False
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
 
 if __name__ != "__main__" :
     TFL._Export ("Undef")

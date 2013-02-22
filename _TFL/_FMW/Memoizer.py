@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,12 +28,9 @@
 #
 # Revision Dates
 #     5-Jun-2005 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
-
-
 
 """
 Add memoization to functions and methods of modules/classing without
@@ -70,11 +67,12 @@ Second call 4 16
 
 from   _TFL                   import TFL
 import _TFL._FMW.Wrapper
+import _TFL.Undef
 
 class _Memoized_ (TFL.FMW.Wrapped_FM) :
     """Wrapper adding memoization to a single function or method"""
 
-    __undef = object ()
+    __undef = TFL.Undef ()
 
     def __init__ (self, * args, ** kw) :
         self._cache = {}

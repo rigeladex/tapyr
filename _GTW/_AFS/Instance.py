@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -51,6 +51,7 @@
 #     2-Dec-2011 (CT) Move property `pid` from `Instance` to `_Base_`, add `uid`
 #    26-Jan-2012 (CT) Add `form_kw` and `show_defaults` to `pop_to_self`
 #    26-Jan-2012 (CT) Replace `Base.uid` by `Instance.ui_display`
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,8 @@ from   _TFL                     import TFL
 import _GTW._AFS
 
 import _TFL._Meta.Object
+import _TFL.Undef
+
 from   _TFL._Meta.Once_Property import Once_Property
 
 import base64
@@ -182,7 +185,7 @@ class Instance (_Base_) :
     sort_json     = False
     value         = None
     _display      = None
-    _undef        = object ()
+    _undef        = TFL.Undef ("value")
 
     def __init__ (self, elem, ** kw) :
         self.pop_to_self \

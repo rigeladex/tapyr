@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,10 +53,12 @@
 #                      `Add_New_Method`
 #    13-Mar-2010 (CT)  `decorator` keyword argument added to `Add_To_Class`, too
 #     9-Aug-2012 (CT)  Add `getattr_safe`
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
+import _TFL.Undef
 
 import logging
 
@@ -113,9 +115,9 @@ def Decorator (decorator) :
     return wrapper
 # end def Decorator
 
-_undefined = object ()
+_AR_undefined = TFL.Undef ("return-value")
 
-def Annotated (RETURN = _undefined, ** kw) :
+def Annotated (RETURN = _AR_undefined, ** kw) :
     """Add dictionary `func_annotations` containing elements of `kw` and
        value of `RETURN` bound to key `return` as proposed by
        http://www.python.org/dev/peps/pep-3107/.
@@ -128,11 +130,13 @@ def Annotated (RETURN = _undefined, ** kw) :
            ...
            >>> sorted (foo.func_annotations.items ())
            [('bar', 'Arg 1'), ('baz', 42)]
+
            >>> @TFL.Annotated (bar = "Arg 1", baz = 42, RETURN = None)
            ... def foo (bar, baz) : pass
            ...
            >>> sorted (foo.func_annotations.items ())
            [('bar', 'Arg 1'), ('baz', 42), ('return', None)]
+
            >>> @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
            ... def foo (bar, baz) : pass
            ...
@@ -155,7 +159,7 @@ def Annotated (RETURN = _undefined, ** kw) :
                     ( "Function `%s` doesn't have an argument named `%s`"
                     % (f.__name__, k)
                     )
-        if RETURN is not _undefined :
+        if RETURN is not _AR_undefined :
             fa ["return"] = RETURN
         return f
     return decorator
@@ -166,13 +170,13 @@ def Attributed (** kw) :
 
        ::
 
-           >>> from _TFL.Decorator import *
            >>> @Attributed (foo = 1, bar = 42)
            ... def f () :
            ...     pass
            ...
            >>> sorted (f.__dict__.iteritems ())
            [('bar', 42), ('foo', 1)]
+
            >>> @Attributed (a = "WTF", b = 137)
            ... def g () :
            ...     "Test `Attributed` decorator"

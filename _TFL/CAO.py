@@ -101,6 +101,7 @@
 #    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
 #    18-Feb-2013 (CT) Change `_Number_.cook` to try `_cook` in case of eval Err
 #    22-Feb-2013 (CT) Change `_Number_.cook` to `raise err`, if any
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -120,6 +121,7 @@ import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 import _TFL.predicate
 import _TFL.r_eval
+import _TFL.Undef
 
 from   itertools          import chain as ichain
 
@@ -1356,7 +1358,7 @@ class CAO (TFL.Meta.Object) :
         , re.VERBOSE
         )
 
-    _pending = object ()
+    _pending = TFL.Undef ("pending")
 
     def __init__ (self, cmd) :
         self._cmd            = cmd

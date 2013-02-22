@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,10 +45,12 @@
 #     1-Mar-2007 (CT) Adapted to signature change of `DL_Ring`
 #     3-Nov-2009 (CT) `paired_map` fixed, `paired_zip` removed
 #    11-Nov-2009 (CT) Exception handler changed for 3-compatibility
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
-from _TFL import TFL
+from   _TFL import TFL
+import _TFL.Undef
 
 def alt_iter (* iterables) :
     """Alternating iterator
@@ -106,7 +108,7 @@ class Look_Ahead_Gen (object) :
 
     def __init__ (self, source) :
         self.source    = source    = iter (source)
-        self._sentinel = self.succ = object ()
+        self._sentinel = self.succ = TFL.Undef ("sentinel")
     # end def __init__
 
     def __nonzero__ (self) :

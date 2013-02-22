@@ -33,11 +33,13 @@
 #    28-Jun-2012 (CT) Add `relaxed`
 #    17-Jul-2012 (CT) Augment `AttributeError` info in `attr_let`
 #    28-Sep-2012 (CT) Add `try` for `fmt % delta` to `time_block`
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 import _TFL.Decorator
+import _TFL.Undef
 
 from   contextlib import closing, nested
 from   timeit     import default_timer as _timer
@@ -48,7 +50,7 @@ def attr_let (obj, ** kw) :
        values in `kw`.
     """
     store = {}
-    undef = object ()
+    undef = TFL.Undef ()
     for k, v in kw.iteritems () :
         store [k] = getattr (obj, k, undef)
     try :

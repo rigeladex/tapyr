@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,6 +52,7 @@
 #    16-Sep-2011 (MG) `_SUM_._name` added
 #    21-Sep-2011 (CT) `BETWEEN` changed to guard against `val is None`
 #    22-Dec-2011 (CT) Change `_Bin_.__repr__` to honor `reverse`
+#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    ««revision-date»»···
 #--
 
@@ -289,6 +290,7 @@ from   _TFL                     import TFL
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
+import _TFL.Undef
 
 from   _TFL.predicate           import callable
 
@@ -299,7 +301,7 @@ class Base (TFL.Meta.Object) :
 
     class Ignore_Exception (StandardError) : pass
 
-    undef = object ()
+    undef = TFL.Undef ("value")
 
     def __init__ (self, Ignore_Exception = None) :
         if Ignore_Exception is not None :
