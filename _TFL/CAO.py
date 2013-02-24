@@ -102,6 +102,7 @@
 #    18-Feb-2013 (CT) Change `_Number_.cook` to try `_cook` in case of eval Err
 #    22-Feb-2013 (CT) Change `_Number_.cook` to `raise err`, if any
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    24-Feb-2013 (CT) Split `__test__` from `__doc__`, add to `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -522,14 +523,14 @@ class Cmd_Choice (TFL.Meta.Object) :
         return self.sub_cmds
     # end def choices
 
+    @TFL.Meta.Once_Property
+    def _max_name_length (self) :
+        return max (sc._max_name_length for sc in self.sub_cmds.itervalues ())
+    # end def _max_name_length
+
     def cooked_default (self, cao = None) :
         return self.default
     # end def cooked_default
-
-    @TFL.Meta.Once_Property
-    def max_name_length (self) :
-        return max (sc.max_name_length for sc in self.sub_cmds.itervalues ())
-    # end def max_name_length
 
     def _get_sub_cmd (self, name) :
         sub_abbr = self.sub_abbr
@@ -686,7 +687,7 @@ class Help (_Spec_O_) :
             pyk.fprint ("%sArguments of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
-        max_l   = cao.max_name_length
+        max_l   = cao._max_name_length
         for arg in cao._arg_list :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
@@ -701,7 +702,7 @@ class Help (_Spec_O_) :
             pyk.fprint (head, desc, sep = "    ")
         indent += 4
         head    = " " * indent
-        max_l   = cao.max_name_length
+        max_l   = cao._max_name_length
         for k, v in sorted (bun._kw.iteritems ()) :
             pyk.fprint ("%s%-*s : %s" % (head, max_l, k, v))
     # end def _help_bun
@@ -723,7 +724,7 @@ class Help (_Spec_O_) :
                 pyk.fprint ("%sSub commands of %s" % (" " * indent, cao._name))
             indent += 4
             head    = " " * indent
-            max_l   = cao.max_name_length
+            max_l   = cao._max_name_length
             scs     = sorted \
                 ( cmd._sub_cmd_choice.sub_cmds.iteritems ()
                 , key = TFL.Getter [0]
@@ -741,7 +742,7 @@ class Help (_Spec_O_) :
             pyk.fprint ("%sOptions   of %s" % (" " * indent, cao._name))
         indent += 4
         head    = " " * indent
-        max_l   = cao.max_name_length - 1
+        max_l   = cao._max_name_length - 1
         for name, opt in sorted (cao._opt_dict.iteritems ()) :
             self._help_ao (opt, cao, head, max_l, "-")
     # end def _help_opts
@@ -821,7 +822,7 @@ class Help (_Spec_O_) :
             )
         indent += 4
         head    = " " * indent
-        max_l   = cao.max_name_length
+        max_l   = cao._max_name_length
         for name, opt in sorted (cao._opt_dict.iteritems ()) :
             self._help_value (opt, cao, head, max_l, "-")
         max_l  += 1
@@ -1209,13 +1210,13 @@ class Cmd (TFL.Meta.Object) :
     # end def __call__
 
     @TFL.Meta.Once_Property
-    def max_name_length (self) :
+    def _max_name_length (self) :
         result = max \
             (len (k) for k in ichain (self._arg_dict, self._opt_dict))
         if self._sub_cmd_choice :
-            result = max (result, self._sub_cmd_choice.max_name_length)
+            result = max (result, self._sub_cmd_choice._max_name_length)
         return result + 1
-    # end def max_name_length
+    # end def _max_name_length
 
     def parse (self, argv) :
         """Parse arguments, options, and sub-commands specified in `argv`
@@ -1361,25 +1362,25 @@ class CAO (TFL.Meta.Object) :
     _pending = TFL.Undef ("pending")
 
     def __init__ (self, cmd) :
-        self._cmd            = cmd
-        self._name           = cmd._name
-        self._arg_dict       = dict (cmd._arg_dict)
-        self._arg_list       = list (cmd._arg_list)
-        self._bun_dict       = dict (cmd._bun_dict)
-        self._opt_dict       = dict (cmd._opt_dict)
-        self._opt_abbr       = Trie (cmd._opt_dict, cmd._opt_alias)
-        self._opt_alias      = dict (cmd._opt_alias)
-        self._opt_conf       = list (cmd._opt_conf)
-        self._min_args       = cmd._min_args
-        self._max_args       = cmd._max_args
-        self._do_keywords    = cmd._do_keywords
-        self._put_keywords   = cmd._put_keywords
-        self.argv            = []
-        self.argv_raw        = []
-        self.max_name_length = cmd.max_name_length
-        self._map            = TFL.defaultdict (lambda : self._pending)
-        self._raw            = TFL.defaultdict (list)
-        self._key_values     = dict ()
+        self._cmd             = cmd
+        self._name            = cmd._name
+        self._arg_dict        = dict (cmd._arg_dict)
+        self._arg_list        = list (cmd._arg_list)
+        self._bun_dict        = dict (cmd._bun_dict)
+        self._opt_dict        = dict (cmd._opt_dict)
+        self._opt_abbr        = Trie (cmd._opt_dict, cmd._opt_alias)
+        self._opt_alias       = dict (cmd._opt_alias)
+        self._opt_conf        = list (cmd._opt_conf)
+        self._min_args        = cmd._min_args
+        self._max_args        = cmd._max_args
+        self._do_keywords     = cmd._do_keywords
+        self._put_keywords    = cmd._put_keywords
+        self.argv             = []
+        self.argv_raw         = []
+        self._max_name_length = cmd._max_name_length
+        self._map             = TFL.defaultdict (lambda : self._pending)
+        self._raw             = TFL.defaultdict (list)
+        self._key_values      = dict ()
     # end def __init__
 
     def __call__ (self) :
@@ -1655,36 +1656,42 @@ def show (cao) :
     pyk.fprint ("    argv       : %s" % (cao.argv, ))
 # end def show
 
-### «text»
-
+### «text» ### start of documentation
 __doc__ = """
 Module `CAO`
 =============
 
-This module provides classes for defining and processing commands,
-arguments, and options. The values for arguments and options can be
+This module provides classes for defining and processing **commands**,
+**arguments**, and **options**. The values for arguments and options can be
 parsed from `sys.argv` or supplied by a client via keyword arguments.
 
 A command is defined by creating an instance of :class:`Cmd`
 with the arguments
 
-- a callback function `handler` that performs the command,
+- a callback function `handler` that implements the command,
 
-- a tuple of :class:`Arg` instances that defines the possible arguments,
+    `handler` is called with an instance of :class:`CAO` as
+    the single argument
+
+- a tuple of :class:`Arg` instances specifying the possible arguments,
 
 - the minimum number of arguments required `min_args`,
 
-- the maximum number of arguments allowed  `max_args`
-  (the default -1 means an unlimited number is allowed),
+- the maximum number of arguments allowed  `max_args`,
 
-- a tuple of :class:`Arg` or :class:`Opt` instances that defines the
+    (the default -1 means an unlimited number is allowed)
+
+- a tuple of :class:`Arg` or :class:`Opt` instances specifying the
   possible  options,
 
 - a tuple of :class:`Bundle` instances that define pre-packaged bundles of
-  argument and option values to support common usage scenarios that can be
-  specified simply by using the bundles name.
+  argument- and option-values to support common usage scenarios that can be
+  specified simply by using name of the respective bundle,
 
 - a description of the command to be included in the `help`,
+
+    if the `description` argument is undefined, `handler.__doc__` will be
+    used if that is defined
 
 - a `name` for the command (by default, the name of the module defining
   the `Command` is used).
@@ -1701,18 +1708,141 @@ Calling a :class:`Cmd` instance with keyword arguments initializes
 the argument and option values from those values and calls the
 `handler`.
 
-Alternatively, the methods :meth:`~Cmd.parse` and :meth:`~Cmd.use` can be
-called by a client, if explicit flow control is required.
+Alternatively, the methods :meth:`~Cmd.parse` or :meth:`~Cmd.use` can be
+called by a client, should explicit flow control be required.
+
+A typical use of :class:`Cmd` looks like::
+
+    >>> def main (cao) :
+    ...     "Explanation of the purpose of the command"
+    ...     if cao.verbose :
+    ...         print "Starting", cao._name
+    ...     for fn in cao.argv :
+    ...         if cao.verbose :
+    ...             print "   processing", fn
+    ...         ### do whatever needs to be done
+    ...     if cao.verbose :
+    ...         print "Finished", cao._name
+    ...
+
+    >>> cmd = TFL.CAO.Cmd (
+    ...       handler       = main
+    ...     , args          = ( "file:P?File(s) to process",)
+    ...     , opts          =
+    ...         ( "indent:I,=4?Number of spaces to use for indentation"
+    ...         , "-output:P"
+    ...             "?Name of file to receive output (default: standard output)"
+    ...         , "-verbose:B?Print additional information to standard error"
+    ...         )
+    ...     , min_args      = 2
+    ...     , max_args      = 8
+    ...     , name          = "cao_example"
+    ...     )
+
+    >>> if __name__ == "__main__" :
+    ...     cmd ()
+
+`cmd` contains the specification of arguments and options. ::
+
+    >>> type (cmd.indent)
+    <class 'CAO.Int'>
+
+    >>> cmd.indent
+    'indent:I,=4#0?Number of spaces to use for indentation'
+
+    >>> cmd.indent.name, cmd.indent.default, cmd.indent.description, cmd.indent.auto_split, cmd.indent.max_number
+    ('indent', [4], 'Number of spaces to use for indentation', ',', 0)
+
+    >>> type (cmd.verbose)
+    <class 'CAO.Bool'>
+
+    >>> cmd.verbose
+    '-verbose:B=False#1?Print additional information to standard error'
+
+The methods :meth:`~Cmd.parse` and :meth:`~Cmd.use` return a instance of
+:class:`CAO` which provides access to all argument and option values
+specified. ::
+
+    >>> cao = cmd.parse (["-verbose"])
+    Traceback (most recent call last):
+    ...
+    Err: Command/argument/option error: Need at least 2 arguments, got 0
+
+    >>> cao = cmd.parse (["-verbose", "path1", "path2"])
+
+    >>> print cao.indent, type (cao.indent)
+    [4] <type 'list'>
+
+    >>> print cao.output
+    None
+
+    >>> print cao.verbose
+    True
+
+    >>> cao.argn
+    2
+
+    >>> cao.argv
+    ['path1', 'path2']
+
+    >>> cao.file
+    'path1'
+
+    >>> cao ()
+    Starting cao_example
+       processing path1
+       processing path2
+    Finished cao_example
+
+    >>> cmd.help (cao)
+    cao_example file ...
+        Explanation of the purpose of the command
+    <BLANKLINE>
+        file               : Path
+            File(s) to process
+    <BLANKLINE>
+        argv               : ['path1', 'path2']
+    <BLANKLINE>
+        cao_example doesn't have sub commands
+    <BLANKLINE>
+        -Pdb_on_Exception  : Bool
+            Start python debugger pdb on exception
+        -help              : Help
+            Display help about command
+        -indent            : Int
+            Number of spaces to use for indentation
+        -output            : Path
+            Name of file to receive output (default: standard output)
+        -verbose           : Bool
+            Print additional information to standard error
+    <BLANKLINE>
+        Actual option and argument values of cao_example
+            -Pdb_on_Exception   = False
+            -help               = []
+            -indent             = 4
+                [ 4 ]
+            -output             = None
+                ()
+            -verbose            = True
+            file                = path1
+
+.. autoclass:: Cmd
+   :members: __call__, parse, use
+.. autoclass:: CAO
 
 .. autoclass:: Arg
    :members:
 .. autoclass:: Opt
    :members:
 .. autoclass:: Bundle
-.. autoclass:: Cmd
-   :members: __call__, parse, use
-.. autoclass:: CAO
 
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+"""
+
+### «text» ### start of doctest
+__test__ = dict \
+    ( test = """
 Usage examples
 ----------------
 
@@ -2102,9 +2232,8 @@ values passed to it::
                 ccc    : 42
                 struct : False
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
 """
+    )
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
