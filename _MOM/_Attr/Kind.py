@@ -189,6 +189,8 @@
 #                     derive `_Primary_` from `Kind`, not `_User_`
 #    16-Jan-2013 (CT) Add `Primary_AIS.get_substance`, `.has_substance`
 #    16-Jan-2013 (CT) Add `Primary_AIS.__set__`
+#    25-Feb-2013 (CT) Guard `get_value` in
+#                     `Id_Entity_Reference_Mixin._set_cooked_value`
 #    ««revision-date»»···
 #--
 
@@ -1419,15 +1421,19 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42) :
-        old_value = self.get_value (obj)
-        changed   = old_value is not value
-        scope_p   = obj._home_scope is not None
+        init_finished = obj.init_finished
+        try :
+            old_value = self.get_value (obj)
+        except (ValueError, TypeError) :
+            old_value = None
+        changed       = old_value is not value
+        scope_p       = obj._home_scope is not None
         if changed :
             if old_value and scope_p :
                 self._unregister (obj, old_value)
             self.__super._set_cooked_value (obj, value, changed)
             if value :
-                if obj.init_finished :
+                if init_finished :
                     self._register (obj, value)
                 else :
                     obj._init_pending.append \
