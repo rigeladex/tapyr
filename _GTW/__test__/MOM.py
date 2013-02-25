@@ -69,6 +69,8 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #     6-Dec-2012 (CT) Add attributes `creation_change`, ...
 #    23-Jan-2013 (MG) Use `last_change` instead of `max_cid` in some tests
+#    25-Feb-2013 (CT) Replace `up_ex_q.auto_up_depends` by `query_preconditions`
+#                     add tests for `up_ex_q`
 #    ««revision-date»»···
 #--
 
@@ -320,10 +322,9 @@ class Trap (_Ancestor_Essence) :
                whenever one of the attributes it depends on changes.
             """
 
-            kind               = Attr.Query
-            query              = Q.max_weight * Q.serial_no
-
-            auto_up_depends    = ("max_weight", "serial_no")
+            kind                   = Attr.Query
+            query                  = Q.max_weight * Q.serial_no
+            query_preconditions    = (Q.max_weight, Q.serial_no)
 
         # end class up_ex_q
 
@@ -1631,8 +1632,21 @@ Attribute queries
     (42.0, 42.0)
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight == None).attrs (Q.name, "color"))
     ((u'betty', u''), (u'rutty_rat', u''), (u'toothy_beaver', u''))
-    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no %% 2).attr (Q.up_ex_q))
-    (20.0, None, None)
+
+    Use `query`, not `query_s`, to ensure that `Q.up_ex_q` is passed to DB
+    (`query_s` returns a `TFL.Q_Result_Composite`).
+
+    >>> sorted (scope.BMT.Trap.query (Q.serial_no %% 2).attr (Q.up_ex_q))
+    [None, None, 20.0]
+
+    >>> tuple (scope.BMT.Trap.query (Q.max_weight != None).attr (Q.up_ex_q))
+    (20.0,)
+
+    >>> sorted (scope.BMT.Trap.query (strict = 1).attrs ("name", "max_weight", "serial_no", "up_ex_q"))
+    [(u'x', None, 2, None), (u'x', 20.0, 1, 20.0), (u'y', None, 1, None), (u'y', None, 2, None), (u'z', None, 3, None)]
+
+    >>> sorted (scope.BMT.Trap.query (Q.up_ex_q > 0).attrs ("name", "max_weight", "serial_no", "up_ex_q"))
+    [(u'x', 20.0, 1, 20.0)]
 
 Renaming objects and links
 --------------------------
@@ -2017,11 +2031,15 @@ Changing a composite primary attribute
 Setting attribute values with Queries
 -------------------------------------
 
-    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
-    ((2, None, None), (3, None, None))
+    >>> t4.max_weight = 5.0
+
+    >>> sorted (scope.BMT.Trap.query (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
+    [(2, 5.0, 10.0), (3, None, None)]
+
     >>> scope.BMT.Trap.query_s (Q.serial_no != None).set (max_weight = 25)
-    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
-    ((2, 25.0, 50.0), (3, 25.0, 75.0))
+    >>> sorted (scope.BMT.Trap.query (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
+    [(2, 25.0, 50.0), (3, 25.0, 75.0)]
+
 
 """
 

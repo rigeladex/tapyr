@@ -67,6 +67,7 @@
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    23-Jan-2013 (MG) Use `last_change` instead of `max_cid` in some tests
+#    25-Feb-2013 (CT) Add `query_preconditions`
 #    ««revision-date»»···
 #--
 
@@ -316,10 +317,9 @@ class Trap (_Ancestor_Essence) :
                whenever one of the attributes it depends on changes.
             """
 
-            kind               = Attr.Query
-            query              = Q.max_weight * Q.serial_no
-
-            auto_up_depends    = ("max_weight", "serial_no")
+            kind                   = Attr.Query
+            query                  = Q.max_weight * Q.serial_no
+            query_preconditions    = (Q.max_weight, Q.serial_no)
 
         # end class up_ex_q
 

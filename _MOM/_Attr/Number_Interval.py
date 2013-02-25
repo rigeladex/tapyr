@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -30,6 +30,8 @@
 #    29-Mar-2012 (CT) Add `__module__` to `__class__` calls
 #    29-Mar-2012 (CT) Rename `new_interval_attr_type` to `make`, add doctest
 #    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
+#    25-Feb-2013 (CT) Add `query_preconditions` to `center`, `length`
+#                     remove `auto_up_depends` from `center`, `length`
 #    ««revision-date»»···
 #--
 
@@ -56,32 +58,32 @@ class _Interval_ (_Ancestor_Essence) :
         class lower (_A_Number_) :
             """Lower bound of interval."""
 
-            kind               = Attr.Necessary
+            kind                   = Attr.Necessary
 
         # end class lower
 
         class upper (_A_Number_) :
             """Upper bound of interval."""
 
-            kind               = Attr.Necessary
+            kind                   = Attr.Necessary
 
         # end class upper
 
         class center (_A_Number_) :
             """Center of interval."""
 
-            kind               = Attr.Query
-            query              = (Q.lower + Q.upper) * 0.5
-            auto_up_depends    = ("lower", "upper")
+            kind                   = Attr.Query
+            query                  = (Q.lower + Q.upper) * 0.5
+            query_preconditions    = (Q.lower, Q.upper)
 
         # end class center
 
         class length (_A_Number_) :
             """Length of interval."""
 
-            kind               = Attr.Query
-            query              = Q.upper - Q.lower
-            auto_up_depends    = ("lower", "upper")
+            kind                   = Attr.Query
+            query                  = Q.upper - Q.lower
+            query_preconditions    = (Q.lower, Q.upper)
 
         # end class length
 

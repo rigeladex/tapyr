@@ -191,6 +191,9 @@
 #    16-Jan-2013 (CT) Add `Primary_AIS.__set__`
 #    25-Feb-2013 (CT) Guard `get_value` in
 #                     `Id_Entity_Reference_Mixin._set_cooked_value`
+#    25-Feb-2013 (CT) Guard `Query._get_computed` against `Undef`, not `object`
+#    25-Feb-2013 (CT) Add `query_preconditions` to `Query._get_computed`
+#    25-Feb-2013 (CT) Remove `auto_up_depends` check from `Query._check_sanity`
 #    ««revision-date»»···
 #--
 
@@ -202,6 +205,7 @@ from   _MOM                  import MOM
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 import _TFL.Functor
+import _TFL.Undef
 
 import _MOM._Attr
 import _MOM._Meta.M_Attr_Kind
@@ -1276,29 +1280,33 @@ class Computed (_Cached_, _Computed_Mixin_) :
 # end class Computed
 
 class Query (_Cached_, _Computed_Mixin_) :
-    """Attribute calculated from a `query` (must be defined for the attribute
-       type).
-    """
+    """Attribute calculated from a `query`."""
 
     kind       = _ ("query")
 
     def _get_computed (self, obj) :
-        attr   = self.attr
-        result = attr.query (obj)
-        ### `attr.query` sometimes returns a `object` instance instead of None
-        if result is not None and result.__class__ is not object :
-            return attr.cooked (result)
+        Undef = TFL.Undef
+        attr  = self.attr
+        if not  (   attr.query_preconditions
+                and any (   v is None or isinstance (v, Undef)
+                        for v in (qp (obj) for qp in attr.query_preconditions)
+                        )
+                ) :
+            result = attr.query (obj)
+            ### `attr.query` sometimes returns a `Undef` instead of None
+            if isinstance (result, Undef) :
+                exc = getattr (result, "exc", None)
+                if exc :
+                    print "%s.%s query `%s` raises: `%s`" % \
+                        (obj.type_name, self.name, attr.query, exc)
+                result = None
+            if result is not None :
+                return attr.cooked (result)
     # end def _get_computed
 
     def _check_sanity (self, attr_type, e_type) :
         self.__super._check_sanity (attr_type, e_type)
         if __debug__ :
-            if not attr_type.auto_up_depends :
-                raise TypeError \
-                    ( "Attribute `%s` of kind Query needs "
-                      "`auto_up_depends` specified"
-                    % (attr_type, )
-                    )
             query = getattr (attr_type, "query", None)
             if not TFL.callable (query) :
                 raise TypeError \

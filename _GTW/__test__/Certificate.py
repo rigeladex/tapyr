@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Jan-2013 (CT) Creation
+#    25-Feb-2013 (CT) Add tests
 #    ««revision-date»»···
 #--
 
@@ -81,9 +82,14 @@ _test_create = """
     >>> all_cs
     [Auth.Certificate (1), Auth.Certificate (2), Auth.Certificate (3)]
 
+    >>> (c1, c1.alive)
+    (Auth.Certificate (1), False)
+
     >>> c1.pem = b"fake value to fool `alive`"
+
     >>> (c1, c1.alive)
     (Auth.Certificate (1), True)
+
     >>> rdf = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = +1)
     >>> rdp = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = -1)
     >>> _ = c1.set (revocation_date = rdf) # doctest:+ELLIPSIS
@@ -92,9 +98,36 @@ _test_create = """
     Invariants: Condition `valid_revocation_date` : The revocation date cannot be in the future. (revocation_date <= today)
         revocation_date = ...
         today = ...
-    >>> _ = c1.set (revocation_date = rdp) # doctest:+ELLIPSIS
+
+    >>> _ = c1.set (revocation_date = rdp)
     >>> (c1, c1.alive)
     (Auth.Certificate (1), False)
+
+    >>> scope.commit ()
+    >>> (c1, c1.alive)
+    (Auth.Certificate (1), False)
+
+    >>> c4 = Auth.Certificate (email = "foo@foo", validity = ())
+    >>> c4.cert_id
+    4
+
+    >>> (c4, c4.alive)
+    (Auth.Certificate (4), None)
+
+    >>> c4.validity.start = "20130225"
+    >>> (c4, c4.alive)
+    (Auth.Certificate (4), False)
+
+    >>> c4.pem = b"fake value to fool `alive`"
+    >>> (c4, c4.alive)
+    (Auth.Certificate (4), True)
+
+    >>> c5 = Auth.Certificate (email = "bar@foo", validity = ("20130225", ))
+    >>> c5.cert_id
+    5
+
+    >>> (c5, c5.alive)
+    (Auth.Certificate (5), False)
 
 """
 

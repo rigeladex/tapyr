@@ -267,6 +267,7 @@
 #    11-Jan-2013 (CT) Add `A_AIS_Value`
 #    16-Jan-2013 (CT) Add `Init_Only_Mixin` to `A_AIS_Value.Kind_Mixins`
 #    24-Jan-2013 (CT) Add guards to `A_Enum.cooked`
+#    25-Feb-2013 (CT) Add `query_preconditions`
 #    ««revision-date»»···
 #--
 
@@ -337,6 +338,7 @@ class A_Attr_Type (TFL.Meta.Object) :
     Q_Raw_Type          = MOM.Attr.Querier.Raw
     query               = None
     query_fct           = None
+    query_preconditions = ()
     rank                = 0
     raw_default         = ""
     record_changes      = True

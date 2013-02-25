@@ -29,6 +29,9 @@
 #    11-Jan-2013 (CT) Creation
 #    14-Jan-2013 (CT) Add `pem` to `alive.query_fct`
 #    16-Jan-2013 (CT) Replace `is_revoked` by `revocation_date`
+#    25-Feb-2013 (CT) Replace `alive.auto_up_depends` by `.query_preconditions`
+#    25-Feb-2013 (CT) Simplify `alive.query_fct` by relying on
+#                     `.query_preconditions`
 #    ««revision-date»»···
 #--
 
@@ -105,16 +108,16 @@ class Certificate (_Ancestor_Essence) :
                `validity.start` and `validity.finish`.
             """
 
-            kind               = Attr.Query
+            kind                   = Attr.Query
             ### need to recompute each time `alive` is accessed
-            Kind_Mixins        = (Attr.Computed, )
-            auto_up_depends    = ("validity", "is_revoked", "pem")
+            Kind_Mixins            = (Attr.Computed, )
+            query_preconditions    = (Q.validity.start, )
 
             def query_fct (self) :
                 now = A_Date_Time.now ()
                 return \
-                    ( ((Q.validity.start  == None) | (Q.validity.start <= now))
-                    & ((Q.validity.finish == None) | (now <= Q.validity.finish))
+                    ( ((Q.validity.finish == None) | (now <= Q.validity.finish))
+                    & ( Q.validity.start  <= now)
                     & ( Q.revocation_date == None)
                     & ( Q.pem             != None)
                     )

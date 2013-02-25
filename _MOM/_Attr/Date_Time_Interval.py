@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Jan-2013 (CT) Creation
+#    25-Feb-2013 (CT) Remove `alive.auto_up_depends`
 #    ««revision-date»»···
 #--
 
@@ -54,7 +55,6 @@ class Date_Time_Interval (_Ancestor_Essence) :
             """
 
             kind               = Attr.Query
-            auto_up_depends    = ("start", "finish")
             ### need to recompute each time `alive` is accessed
             Kind_Mixins        = (Attr.Computed, )
 

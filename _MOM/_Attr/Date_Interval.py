@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -65,7 +65,6 @@ class Date_Interval (_Ancestor_Essence) :
             """
 
             kind               = Attr.Query
-            auto_up_depends    = ("start", "finish")
             ### need to recompute each time `alive` is accessed
             Kind_Mixins        = (Attr.Computed, )
 

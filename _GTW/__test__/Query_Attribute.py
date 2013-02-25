@@ -299,6 +299,7 @@ class Person_has_Account_Test (_Ancestor_Essence) :
             kind               = Attr.Query
             query              = Q.left
             auto_up_depends    = ("left", )
+
         # end class owner
 
     # end class _Attributes

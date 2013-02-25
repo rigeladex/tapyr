@@ -53,6 +53,7 @@
 #    21-Sep-2011 (CT) `BETWEEN` changed to guard against `val is None`
 #    22-Dec-2011 (CT) Change `_Bin_.__repr__` to honor `reverse`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    25-Feb-2013 (CT) Change `_Get_.predicate` to set `Q.undef.exc`
 #    ««revision-date»»···
 #--
 
@@ -774,7 +775,8 @@ class _Get_ (_Exp_) :
         Q = self.Q
         try :
             return self._getter (obj)
-        except Q.Ignore_Exception :
+        except Q.Ignore_Exception as exc :
+            Q.undef.exc = exc
             return Q.undef
     # end def predicate
 
