@@ -38,6 +38,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    22-Dec-2011 (CT) Move `completer` from `start` to `A_Date`
 #     7-Aug-2012 (CT) Add `example`
+#    25-Feb-2013 (CT) Remove `alive.auto_up_depends`
 #    ««revision-date»»···
 #--
 
