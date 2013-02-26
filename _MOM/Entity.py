@@ -233,6 +233,7 @@
 #                     `_Id_Entity_Destroyed_Mixin_`
 #    30-Jan-2013 (CT) Add access to `last_cid` to `_Id_Entity_Destroyed_Mixin_`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    26-Feb-2013 (CT) Add attribute `ui_repr`
 #    ««revision-date»»···
 #--
 
@@ -318,12 +319,25 @@ class Entity (TFL.Meta.Object) :
             """Display in user interface"""
 
             kind               = Attr.Computed
+            max_length         = 0
 
             def computed (self, obj) :
                 return obj.ui_display_format % obj.FO
             # end def computed
 
         # end class ui_display
+
+        class ui_repr (A_String) :
+            """Repr for user interface"""
+
+            kind               = Attr.Computed
+            max_length         = 0
+
+            def computed (self, obj) :
+                return "%s %s" % (obj.type_name, obj.epk_raw [:-1])
+            # end def computed
+
+        # end class ui_repr
 
     # end class _Attributes
 

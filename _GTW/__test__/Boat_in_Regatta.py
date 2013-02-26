@@ -229,8 +229,9 @@ _test_code = r"""
       ...
     Invariants: A sailor can't be skipper of more than one boat in a single
     regatta event.
-    <BLANKLINE>
-    Already existing: Boat_in_Regatta Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist
+      The new definition of Boat_in_Regatta SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1108', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C')) would clash with 1 existing entities
+      Already existing:
+        SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'))
 
     >>> b8
     SRM.Boat ((u'optimist', ), u'AUT', 1108, u'')

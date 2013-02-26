@@ -59,8 +59,9 @@ _test_code = r"""
     Traceback (most recent call last):
       ...
     Invariants: The attribute values for ('perma_name',) must be unique for each object
-    <BLANKLINE>
-    Already existing: Page U foo
+      The new definition of Page V SWP.Page_V (u'foo',) would clash with 1 existing entities
+      Already existing:
+        SWP.Page_U (u'foo',)
     >>> SWP.Page_U.query_s (perma_name = "foo").all ()
     [SWP.Page_U (u'foo')]
     >>> SWP.Page_V.query_s (perma_name = "foo").all ()

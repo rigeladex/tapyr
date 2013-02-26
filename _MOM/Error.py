@@ -79,6 +79,7 @@
 #    29-Jan-2013 (CT) Improve text of `Name_Clash`
 #    30-Jan-2013 (CT) Fix `Not_Unique`, remove `Duplicate_Link`
 #    26-Feb-2013 (CT) Improve text of `Multiplicity`
+#    26-Feb-2013 (CT) Improve text of `Not_Unique`
 #    ««revision-date»»···
 #--
 
@@ -654,11 +655,11 @@ class Multiplicity (Error) :
         self.role         = role
         self.type_name    = e_type.ui_name
         self.l_ui_display = str  (epk)
-        self.r_ui_display = repr (r_obj)
+        self.r_ui_display = r_obj.ui_repr
         self.extra_links  = tuple \
             ( TFL.Record
                 ( pid        = getattr (x, "pid", None)
-                , ui_display = repr (x)
+                , ui_display = x.ui_repr
                 , type_name  = _T (x.ui_name)
                 )
             for x in links
@@ -743,14 +744,14 @@ class Not_Unique (_Invariant_) :
         self.extra_links  = tuple \
             ( TFL.Record
                 ( pid        = getattr (x, "pid", None)
-                , ui_display = x.ui_display
+                , ui_display = x.ui_repr
                 , type_name  = _T (x.ui_name)
                 )
             for x in inv.extra_links
             )
         self.inv          = inv
         self.type_name    = _T (obj.ui_name)
-        self.ui_display   = obj.ui_display
+        self.ui_display   = obj.ui_repr
         self.args         = (self.type_name, self.ui_display)
         description       = _T (inv.description)
         try :
@@ -768,7 +769,9 @@ class Not_Unique (_Invariant_) :
     def head (self) :
         return \
             ( _T
-              ("The new definition of %s %s clashed with %s existing entities")
+                ( "The new definition of %s %s would clash with %s "
+                  "existing entities"
+                )
             % (self.type_name, self.ui_display, self.count)
             )
     # end def head
@@ -776,11 +779,11 @@ class Not_Unique (_Invariant_) :
     @Once_Property
     def description (self) :
         result = [self.inv_desc] if self.inv_desc else []
-        extras = tuple \
-            ("%s %s" % (x.type_name, x.ui_display) for x in self.extra_links)
+        result.append  (self.head)
+        extras = tuple (x.ui_display for x in self.extra_links)
         result.append \
-            ( _T ("Already existing: %s") % ("; ".join (extras), ))
-        return "\n\n".join (result)
+            ( _T ("Already existing:\n    %s") % ("\n    ".join (extras), ))
+        return "\n  ".join (result)
     # end def description
 
 # end class Not_Unique

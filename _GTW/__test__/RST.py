@@ -3553,7 +3553,7 @@ _test_post = r"""
 
     >>> _ = show (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers=headers))
     { 'json' :
-        { 'error' : "The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object\n\nAlready existing: Person Dog Snoopy the" }
+        { 'error' : "The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object\n  The new definition of Person PAP.Person ('Dog', 'Snoopy', 'the', u'') would clash with 1 existing entities\n  Al
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }

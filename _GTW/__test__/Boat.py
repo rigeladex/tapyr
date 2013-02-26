@@ -159,8 +159,9 @@ _test_code = """
     Traceback (most recent call last):
       ...
     Invariants: The attribute values for ('name',) must be unique for each object
-    <BLANKLINE>
-    Already existing: Boat_Class Optimist
+      The new definition of Boat_Class SRM.Boat_Class (u'Optimist',) would clash with 1 existing entities
+      Already existing:
+        SRM.Boat_Class (u'Optimist',)
 
     >>> print scope.SRM.Boat.count ### 8
     2

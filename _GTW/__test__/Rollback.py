@@ -70,8 +70,9 @@ create = r"""
     Traceback (most recent call last):
     ...
     Invariants: The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object
-    <BLANKLINE>
-    Already existing: Person ln fn
+      The new definition of Person PAP.Person (u'ln', u'fn', u'', u'') would clash with 1 existing entities
+      Already existing:
+        PAP.Person (u'ln', u'fn', u'', u'')
 
     >>> PAP.Person.count
     2

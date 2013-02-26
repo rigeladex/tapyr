@@ -50,8 +50,9 @@ _test_code = r"""
     Traceback (most recent call last):
         ...
     Invariants: The attribute values for ('left', 'nation', 'sail_number', 'sail_number_x') must be unique for each object
-    <BLANKLINE>
-    Already existing: Boat Optimist, AUT 2
+      The new definition of Boat SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'2', u'') would clash with 1 existing entities
+      Already existing:
+        SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'2', u'')
     >>> b3 = SRM.Boat       (bc, "AUT", 3)
     >>> int (b3.pid)
     102
