@@ -78,6 +78,7 @@
 #    12-Dec-2012 (CT) Change `Attribute.bindings` to format `value`
 #    29-Jan-2013 (CT) Improve text of `Name_Clash`
 #    30-Jan-2013 (CT) Fix `Not_Unique`, remove `Duplicate_Link`
+#    26-Feb-2013 (CT) Improve text of `Multiplicity`
 #    ««revision-date»»···
 #--
 
@@ -648,16 +649,54 @@ class Link_Type (Error) :
 class Multiplicity (Error) :
     """Raised when the maximum multiplicity for an association is violated."""
 
-    def __init__ (self, etype, max_links, * args) :
-        self.__super.__init__ \
-            ( _T ("Maximum number of links for %s is %d %s")
-            % (etype, max_links, args)
+    def __init__ (self, e_type, role, r_obj, epk, * links) :
+        self.e_type       = e_type
+        self.role         = role
+        self.type_name    = e_type.ui_name
+        self.l_ui_display = str  (epk)
+        self.r_ui_display = repr (r_obj)
+        self.extra_links  = tuple \
+            ( TFL.Record
+                ( pid        = getattr (x, "pid", None)
+                , ui_display = repr (x)
+                , type_name  = _T (x.ui_name)
+                )
+            for x in links
             )
     # end def __init__
+
+    @Once_Property
+    def as_unicode (self) :
+        return self.description
+    # end def as_unicode
+
+    @Once_Property
+    def head (self) :
+        return \
+            ( _T
+              ("The new definition of %s %s would exceed the maximum "
+               "number [%s] of links allowed for %s."
+              )
+            % ( self.type_name, self.l_ui_display
+              , self.role.max_links, self.r_ui_display
+              )
+            )
+    # end def head
+
+    @Once_Property
+    def description (self) :
+        result = [self.head]
+        extras = tuple (x.ui_display for x in self.extra_links)
+        result.append \
+            ( _T ("Already existing:\n    %s") % ("\n    ".join (extras), ))
+        return "\n  ".join (result)
+    # end def description
 
 # end class Multiplicity
 
 class Multiplicity_Errors (Error) :
+
+    arg_sep = "\n  "
 
     @Once_Property
     def as_json_cargo (self) :

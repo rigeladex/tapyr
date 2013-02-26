@@ -124,6 +124,7 @@
 #                     add optional argument `AQ` to both
 #    30-Jan-2013 (CT) Remove check for `Duplicate_Link` from `_checked_roles`
 #                     (is checked by Unique predicate anyway)
+#    26-Feb-2013 (CT) Adapt to change of `MOM.Error.Multiplicity`
 #    ««revision-date»»···
 #--
 
@@ -563,11 +564,11 @@ class Link (Id_Entity) :
                 nol   = links.count ()
                 if nol >= r.max_links :
                     errors.append \
-                        ( MOM.Error.Multiplicity
-                            (pk, r.max_links, epk, list (links))
-                        )
+                        (MOM.Error.Multiplicity (etype, r, pk, epk, * links))
         if errors :
-            raise MOM.Error.Multiplicity_Errors (_T (etype.ui_name), errors)
+            exc = errors [0] if len (errors) == 1 else \
+                MOM.Error.Multiplicity_Errors (_T (etype.ui_name), errors)
+            raise exc
     # end def _checked_roles
 
     def _cooked_role (self, r, v) :

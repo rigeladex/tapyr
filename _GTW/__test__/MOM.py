@@ -1192,7 +1192,9 @@ appropriate class:
     >>> RiT (m, t2)
     Traceback (most recent call last):
       ...
-    Multiplicity_Errors: Rodent_in_Trap, [Multiplicity(u"Maximum number of links for (u'mighty_mouse') is 1 ((BMT.Mouse (u'mighty_mouse'), BMT.Trap (u'x', 2)), [BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1))])",)]
+    Multiplicity: The new definition of Rodent_in_Trap (BMT.Mouse (u'mighty_mouse'), BMT.Trap (u'x', 2)) would exceed the maximum number [1] of links allowed for BMT.Mouse (u'mighty_mouse').
+      Already existing:
+        BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1))
     >>> RiT (r, t3)
     BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1))
     >>> RiT (axel, t2)
