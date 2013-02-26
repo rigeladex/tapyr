@@ -53,6 +53,8 @@
 #    30-Jan-2013 (CT) Change `Unique.satisfied` and `_query_filters` to
 #                     use `_val_dict`
 #    30-Jan-2013 (CT) Change `Unique.satisfied` to query `epk_sig_root`
+#    26-Feb-2013 (CT) Fix `set_c_attr_value` for case that `result` is taken
+#                     from `val_dict`, not `obj`
 #    ««revision-date»»···
 #--
 
@@ -164,8 +166,8 @@ class _Condition_ (object):
     # end def set_attr_value
 
     def set_c_attr_value (self, obj, dict, c_attr, val_dict) :
-        attr, tail = c_attr.split (".", 1)
-        result = self.set_s_attr_value (obj, dict, attr, val_dict)
+        attr, tail  = c_attr.split (".", 1)
+        result = r0 = self.set_s_attr_value (obj, dict, attr, val_dict)
         for a in tail.split (".") :
             if result is None :
                 return None
@@ -177,7 +179,9 @@ class _Condition_ (object):
                       "`%s'\n    %s: %s"
                     % (attr, obj, self.assertion)
                     )
-        self.val_disp [c_attr] = obj.FO (c_attr, result)
+        if result is not None :
+            if tail :
+                self.val_disp [c_attr] = r0.FO (tail, result)
         return result
     # end def set_c_attr_value
 
