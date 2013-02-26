@@ -1296,7 +1296,7 @@ class Query (_Cached_, _Computed_Mixin_) :
             ### `attr.query` sometimes returns a `Undef` instead of None
             if isinstance (result, Undef) :
                 exc = getattr (result, "exc", None)
-                if exc :
+                if 0 and exc :
                     print "%s.%s query `%s` raises: `%s`" % \
                         (obj.type_name, self.name, attr.query, exc)
                 result = None
