@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.NET.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2012 (RS) Creation, factored from `GTW.OMP.NET.Attr_Type`
 #    11-Oct-2012 (RS) Insert magic _sa_filter into `rsclib.IP_Address`
+#    27-Feb-2013 (CT) Add `_SAS_IP4_Address_Query_Mixin_.contains`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,13 @@ class _SAS_IP_Address_Query_Mixin_ (TFL.Meta.Object) :
 
 class _SAS_IP4_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
     """Special query code for IP4 address objects"""
+
+    def contains (self, rhs) :
+        return sql.and_ \
+            ( self.numeric_address <= rhs .numeric_address
+            , rhs .numeric_address <= self.upper_bound
+            )
+    # end def contains
 
     def in_ (self, rhs) :
         return sql.and_ \
