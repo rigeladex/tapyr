@@ -268,6 +268,7 @@
 #    16-Jan-2013 (CT) Add `Init_Only_Mixin` to `A_AIS_Value.Kind_Mixins`
 #    24-Jan-2013 (CT) Add guards to `A_Enum.cooked`
 #    25-Feb-2013 (CT) Add `query_preconditions`
+#    27-Feb-2013 (CT) Add `sort_skip`
 #    ««revision-date»»···
 #--
 
@@ -343,6 +344,7 @@ class A_Attr_Type (TFL.Meta.Object) :
     raw_default         = ""
     record_changes      = True
     sort_rank           = 0
+    sort_skip           = False ### don't include in sorted_by_epk if True
     store_default       = False
     typ                 = None
     ui_name             = TFL.Meta.Once_Property \

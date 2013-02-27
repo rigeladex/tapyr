@@ -158,7 +158,8 @@
 #    14-Dec-2012 (CT) Set `.relevant_roots` to `{}` for relevant classes
 #    17-Dec-2012 (CT) Add `ui_type_name` as alias for `ui_name`
 #    31-Jan-2013 (MG) Add call to `DBW.finalize`
-#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
+#    27-Feb-2013 (CT) Add `sort_skip`
 #    ««revision-date»»···
 #--
 
@@ -1029,18 +1030,19 @@ class M_E_Type_Id (M_E_Type) :
             def _pka_sorted_by (name, et) :
                 return tuple ("%s.%s" % (name, s) for s in et.sorted_by)
             for pka in sorted (cls.primary, key = TFL.Getter.sort_rank) :
-                if pka.E_Type :
-                    pka_sb = _pka_sorted_by (pka.name, pka.E_Type)
-                    if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
-                        if pka_sb :
+                if not pka.sort_skip :
+                    if pka.E_Type :
+                        pka_sb = _pka_sorted_by (pka.name, pka.E_Type)
+                        if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
+                            if pka_sb :
+                                sbs.extend (pka_sb)
+                            else :
+                                ### Class is too abstract: need to use `tn_pid`
+                                sbs.append ("%s.tn_pid" % (pka.name, ))
+                        elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
                             sbs.extend (pka_sb)
-                        else :
-                            ### Class is too abstract: need to use `tn_pid`
-                            sbs.append ("%s.tn_pid" % (pka.name, ))
-                    elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
-                        sbs.extend (pka_sb)
-                else :
-                    sbs.append (pka.name)
+                    else :
+                        sbs.append (pka.name)
         sb = TFL.Sorted_By (* (sbs or sb_default))
         cls.sorted_by_epk = sb
     # end def _m_setup_sorted_by
