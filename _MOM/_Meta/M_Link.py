@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -86,6 +86,8 @@
 #                     `_m_setup_roles`, use `Role_Attrs` instead of
 #                     home-grown code
 #    21-Sep-2012 (CT) Add `child_np`, `child_np_map`
+#    27-Feb-2013 (CT) Simplify signature of `_m_setup_ref_maps` and
+#                     `_m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -324,12 +326,12 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             scope.remove (l)
     # end def destroy_links
 
-    def _m_setup_ref_maps (cls, bases, dct) :
-        cls._m_setup_roles              (bases, dct)
-        cls.__m_super._m_setup_ref_maps (bases, dct)
+    def _m_setup_ref_maps (cls) :
+        cls._m_setup_roles              ()
+        cls.__m_super._m_setup_ref_maps ()
     # end def _m_setup_ref_maps
 
-    def _m_setup_roles (cls, bases, dct) :
+    def _m_setup_roles (cls) :
         cls.Roles  = Roles  = tuple \
             (p for p in cls.primary if isinstance (p, MOM.Attr.Link_Role))
         role_types = tuple \

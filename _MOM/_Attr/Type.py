@@ -269,6 +269,7 @@
 #    24-Jan-2013 (CT) Add guards to `A_Enum.cooked`
 #    25-Feb-2013 (CT) Add `query_preconditions`
 #    27-Feb-2013 (CT) Add `sort_skip`
+#    27-Feb-2013 (CT) Move `_fix_P_Type` into `_A_Entity_.__init__`
 #    ««revision-date»»···
 #--
 
@@ -527,9 +528,6 @@ class A_Attr_Type (TFL.Meta.Object) :
         return result
     # end def _cls_attr
 
-    def _fix_P_Type (self, e_type) :
-        pass
-    # end def _fix_P_Type
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj, glob, locl) :
@@ -673,13 +671,13 @@ class _A_Entity_ (A_Attr_Type) :
 
     needs_raw_value   = False
 
-    def _fix_P_Type (self, e_type) :
+    def __init__ (self, kind, e_type) :
         P_Type = self.P_Type
-        if P_Type and not hasattr (P_Type, "app_type") :
-            if not isinstance (P_Type, basestring) :
-                P_Type = P_Type.type_name
-            self.P_Type = e_type.app_type.etypes [P_Type]
-    # end def _fix_P_Type
+        if P_Type :
+            tn = P_Type if isinstance (P_Type, basestring) else P_Type.type_name
+            self.P_Type = e_type.app_type.etypes [tn]
+        self.__super.__init__ (kind, e_type)
+    # end def __init__
 
     def __getattr__ (self, name) :
         ### to support calls like `scope.PAP.Person.lifetime.start.AQ
@@ -781,7 +779,6 @@ class _A_Composite_ (_A_Entity_) :
     # end def from_string
 
     def _checkers (self, e_type, kind) :
-        self._fix_P_Type (e_type)
         for c in self.__super._checkers (e_type, kind) :
             yield c
         name = self.name

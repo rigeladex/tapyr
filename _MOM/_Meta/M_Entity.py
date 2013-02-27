@@ -160,6 +160,11 @@
 #    31-Jan-2013 (MG) Add call to `DBW.finalize`
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    27-Feb-2013 (CT) Add `sort_skip`
+#    27-Feb-2013 (CT) Factor `_m_finish_init` from `M_E_Type.__init__`
+#    27-Feb-2013 (CT) Call `_m_finish_init` and `e_deco` in separate passes
+#                     over `app_type._T_Extension`
+#    27-Feb-2013 (CT) Simplify signature of `_m_fix_doc`,
+#                     `_m_setup_attributes`, and `_m_setup_ref_maps`
 #    ««revision-date»»···
 #--
 
@@ -324,7 +329,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         e_update = app_type.DBW.update_etype
         app_type.DBW.prepare ()
         for s in SX :
-            app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
+            app_type.add_type (s._m_new_e_type (app_type, etypes))
+        for t in app_type._T_Extension :
+            ### set up attributes and predicates only after all etypes are
+            ### registered in app_type
+            t._m_finish_init ()
         for t in reversed (app_type._T_Extension) :
             if t.polymorphic_epk :
                 if t.relevant_root :
@@ -340,12 +349,14 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
                 )
             t._m_fix_refuse_links (app_type)
             t._m_setup_sorted_by  ()
+            td = e_deco (t)
+            assert td is t
         for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
             ### `Ref_Req_Map` that are only available after *all* etypes have
             ### already been created
-            e_update          (t, app_type)
-        ### give teh DBW a final chance to make some adijustments after all
+            e_update (t, app_type)
+        ### give the DBW a final chance to make some adjustments after all
         ### etypes have been updated
         app_type.DBW.finalize ()
     # end def _m_create_e_types
@@ -723,8 +734,6 @@ class M_E_Type (M_E_Mixin) :
         else :
             cls.E_Type = cls.P_Type = cls
             cls.__m_super.__init__  (name, bases, dct)
-            cls._m_setup_attributes (bases, dct)
-            cls._m_fix_doc          (dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -804,7 +813,12 @@ class M_E_Type (M_E_Mixin) :
             return scope.entity_type (cls)
     # end def _m_entity_type
 
-    def _m_fix_doc (cls, dct) :
+    def _m_finish_init (cls) :
+        cls._m_setup_attributes ()
+        cls._m_fix_doc          ()
+    # end def _m_finish_init
+
+    def _m_fix_doc (cls) :
         doc = cls._dyn_doc
         if doc :
             os          = TFL.Caller.Object_Scope (cls)
@@ -829,18 +843,12 @@ class M_E_Type (M_E_Mixin) :
         return scope
     # end def _m_scope
 
-    def _m_setup_attributes (cls, bases, dct) :
+    def _m_setup_attributes (cls) :
         cls.AQ = MOM.Attr.Querier.E_Type (cls)
         cls._Attributes = A = cls._Attributes (cls)
         cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict
         app_type        = cls.app_type
-        for ak in attr_dict.itervalues () :
-            at = ak.attr
-            if isinstance (at, MOM.Attr._A_Id_Entity_) and at.P_Type :
-                ats = app_type.entity_type (at.P_Type)
-                if ats :
-                    at.P_Type = ats
         for pv in P._pred_kind.get ("object", []) :
             pn = pv.name
             for an in pv.attributes + pv.attr_none :
@@ -901,8 +909,8 @@ class M_E_Type_An (M_E_Type) :
         return cls._m_call (* args, ** kw)
     # end def __call__
 
-    def _m_setup_attributes (cls, bases, dct) :
-        cls.__m_super._m_setup_attributes (bases, dct)
+    def _m_setup_attributes (cls) :
+        cls.__m_super._m_setup_attributes ()
         cls.hash_sig = cls.sig_attr = cls.user_attr
         assert not cls.primary, \
             "An_Entity `%s` cannot have primary attributes" % (cls.type_name, )
@@ -999,14 +1007,14 @@ class M_E_Type_Id (M_E_Type) :
                     print "*" * 3, "Unknown typename in %s.refuse_links" % cls
     # end def _m_fix_refuse_links
 
-    def _m_setup_attributes (cls, bases, dct) :
-        cls.__m_super._m_setup_attributes (bases, dct)
+    def _m_setup_attributes (cls) :
+        cls.__m_super._m_setup_attributes ()
         cls.is_editable = (not cls.electric.default) and cls.user_attr
         cls.show_in_ui  = \
             (cls.record_changes and cls.show_in_ui and not cls.is_partial)
         cls.sig_attr = cls.primary
         MOM._Id_Entity_Destroyed_Mixin_.define_e_type (cls)
-        cls._m_setup_ref_maps (bases, dct)
+        cls._m_setup_ref_maps   ()
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :
@@ -1047,7 +1055,7 @@ class M_E_Type_Id (M_E_Type) :
         cls.sorted_by_epk = sb
     # end def _m_setup_sorted_by
 
-    def _m_setup_ref_maps (cls, bases, dct) :
+    def _m_setup_ref_maps (cls) :
         for eia in cls.id_entity_attr :
             ET = eia.E_Type
             if ET :
