@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -46,6 +46,7 @@
 #     8-Mar-2012 (CT) Add rule for `li.ui-menu-item`
 #    10-Aug-2012 (CT) Use `P.color_spec_sub_heading` for `h1`..`h6`
 #     9-Oct-2012 (CT) Add `bold`, `padding` to `.Error-Message`
+#    28-Feb-2013 (CT) Add `margin_bottom` for `ol li`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,10 @@ style_sheet = Style_Sheet \
     , Rule
         ( "input[type=submit]", "input[type=reset]", "button", "a.button"
         , ** P.button_spec
+        )
+    , Rule
+        ( "ol li"
+        , margin_bottom        = Em (0.5)
         )
     , Rule
         ( "tbody tr"
