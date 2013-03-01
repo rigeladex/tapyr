@@ -80,6 +80,7 @@
 #    30-Jan-2013 (CT) Fix `Not_Unique`, remove `Duplicate_Link`
 #    26-Feb-2013 (CT) Improve text of `Multiplicity`
 #    26-Feb-2013 (CT) Improve text of `Not_Unique`
+#     1-Mar-2013 (CT) Use `_real_name` for `Error`
 #    ««revision-date»»···
 #--
 
@@ -125,10 +126,11 @@ def as_json_cargo (* excs) :
     return list (_gen (excs))
 # end def as_json_cargo
 
-class Error (StandardError) :
+class _MOM_Error_ (StandardError) :
     """Root class of MOM exceptions"""
 
     __metaclass__    = TFL.Meta.Object.__class__
+    _real_name       = "Error"
 
     arg_sep          = ", "
     is_required      = False
@@ -196,7 +198,7 @@ class Error (StandardError) :
         return self.as_unicode
     # end def __unicode__
 
-# end class Error
+Error = _MOM_Error_ # end class
 
 class _Invariant_ (Error) :
 
