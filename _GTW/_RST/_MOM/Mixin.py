@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -67,6 +67,7 @@
 #    11-Dec-2012 (CT) Lift `query_filters` from `E_Type_Mixin` to `Mixin`
 #    17-Dec-2012 (CT) Add and use `E_Type_Mixin.et_map_name`
 #    17-Dec-2012 (CT) Make property `objects` `getattr_safe`
+#     2-Mar-2013 (CT) Use `response.headers.set`, not dict assignment
 #    ««revision-date»»···
 #--
 
@@ -180,7 +181,7 @@ class _POST_Mixin_ (_PUT_POST_Mixin_) :
     def _obj_resource_response_body (self, obj, resource, request, response) :
         o_resource, o_body = self.__super._obj_resource_response_body \
             (obj, resource, request, response)
-        response.headers ["Location"] = o_resource.abs_href
+        response.set_header (b"Location", o_resource.abs_href)
         return o_resource, o_body
     # end def _obj_resource_response_body
 

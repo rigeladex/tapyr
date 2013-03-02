@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
+#     2-Mar-2013 (CT) Add `add_header` and `set_header` (both encode `key`)
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,12 @@ class _WZG_Response_ (DynamicCharsetResponseMixin, Response) :
 
     default_charset      = "utf-8"
 
+    def add_header (self, key, value, ** kw) :
+        if isinstance (key, unicode) :
+            key = key.encode ("ascii")
+        return self.headers.add (key, value, ** kw)
+    # end def add_header
+
     def clear (self) :
         self.headers.clear ()
         self.response = []
@@ -61,6 +68,12 @@ class _WZG_Response_ (DynamicCharsetResponseMixin, Response) :
     def write (self, data) :
         self.response.append (data)
     # end def write
+
+    def set_header (self, key, value, ** kw) :
+        if isinstance (key, unicode) :
+            key = key.encode ("ascii")
+        return self.headers.set (key, value, ** kw)
+    # end def set_header
 
     def write_json (self, __data = None, ** kw) :
         data = dict (kw)

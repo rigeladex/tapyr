@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -38,6 +38,7 @@
 #    11-Dec-2012 (CT) Add property `info` to `Status`
 #    11-Dec-2012 (CT) Change `_add_response_body` to include `message`
 #                     (after doing: s/_msg/message/g)
+#     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
 #    ««revision-date»»···
 #--
 
@@ -429,7 +430,7 @@ class Redirection (Status) :
 
     def _add_response_headers (self, resource, request, response) :
         self.__super._add_response_headers (resource, request, response)
-        response.headers [b"Location"] = bytes (self.location)
+        response.set_header ("Location", self.location)
     # end def _add_response_headers
 
 # end class Redirection
@@ -703,7 +704,7 @@ class Unauthorized (Client_Error) :
             auth = self.auth
         except AttributeError :
             auth = '%s realm="%s"' % (self.scheme, self.realm)
-        response.headers [b"WWW-Authenticate"] = bytes (auth)
+        response.set_header ("WWW-Authenticate", auth)
     # end def _add_response_headers
 
 # end class Unauthorized
@@ -760,7 +761,7 @@ class Method_Not_Allowed (Client_Error) :
             valid_methods = self.valid_methods
         except AttributeError :
             valid_methods = resource.SUPPORTED_METHODS
-        response.headers [b"Allow"] = b", ".join (sorted (valid_methods))
+        response.set_header ("Allow", ", ".join (sorted (valid_methods)))
     # end def _add_response_headers
 
 # end class Method_Not_Allowed
@@ -936,7 +937,7 @@ class Request_Entity_Too_Large (Client_Error) :
         except AttributeError :
             pass
         else :
-            response.headers [b"Retry-After"] = bytes (retry_after)
+            response.set_header ("Retry-After", retry_after)
     # end def _add_response_headers
 
 # end class Request_Entity_Too_Large
@@ -1073,7 +1074,7 @@ class Service_Unavailable (Server_Error) :
             if isinstance (retry_after, CAL.Date_Time_Delta) :
                 retry_after = CAL.Date_Time ().as_utc () + retry_after
             if retry_after is not None :
-                response.headers [b"Retry-After"] = bytes (retry_after)
+                response.set_header ("Retry-After", retry_after)
     # end def _add_response_headers
 
 # end class Service_Unavailable

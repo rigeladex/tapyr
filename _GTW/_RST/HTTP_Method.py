@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -43,6 +43,7 @@
 #    15-Aug-2012 (MG) Use bytes string for `X-last-cid` header
 #    18-Aug-2012 (CT) Fix `_do_change_info`: apply `or` to `last`, `etag`
 #    10-Sep-2012 (CT) Replace `_do_change_info` by `_skip_render`
+#     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,7 @@ class _HTTP_Method_R_ (HTTP_Method) :
         if ci is not None :
             cid  = getattr (ci, "cid", None)
             if cid is not None :
-                response.headers [b"X-last-cid"] = cid
+                response.set_header ("X-last-cid", cid)
         if result :
             response.status_code = 304
         return result
@@ -239,7 +240,7 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
             if resource.allow_method (m, request.user)
             )
-        response.headers ["Allow"] = ", ".join (methods)
+        response.set_header ("Allow", ", ".join (methods))
         return response
     # end def __call__
 

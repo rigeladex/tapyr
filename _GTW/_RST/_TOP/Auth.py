@@ -44,6 +44,7 @@
 #    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
 #    28-Jan-2013 (CT) Split `_Reset_Password_` from `_Change_Password_`
 #                     (no `_login_required` for reset password)
+#     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
 #    ««revision-date»»···
 #--
 
@@ -603,8 +604,10 @@ class _Make_Cert_ (_Ancestor) :
                 , not_before = self._timestamp (start)
                 , not_after  = self._timestamp (finis)
                 ).as_pem ()
-            response.headers [b"content-disposition"] = \
-                'inline; filename="%s.crt"' % (email, )
+            response.set_header \
+                ( "content-disposition", "inline"
+                , filename = "%s.crt" % (email, )
+                )
             scope.commit ()
             return result
         # end def _response_body
