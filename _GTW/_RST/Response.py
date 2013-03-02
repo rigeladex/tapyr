@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
+#     2-Mar-2013 (CT) Add `add_link`, change `__call__` to add link headers
 #    ««revision-date»»···
 #--
 
@@ -53,18 +54,26 @@ class _RST_Response_ (TFL.Meta.Object) :
 
     __metaclass__     = _M_Response_
 
-    _own_vars         = ("root", "_request", "_response")
+    _own_vars         = ("root", "_links", "_request", "_response")
     _sets_to_combine  = ("_own_vars", )
 
     def __init__ (self, _root, _request, * args, ** kw) :
         self.root      = _root
+        self._links    = {}
         self._request  = _request
         self._response = _root.HTTP.Response (* args, ** kw)
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        return self._response.__call__ (* args, ** kw)
+        _response = self._response
+        for rel, (value, kw) in self._links.iteritems () :
+            _response.add_header ("link", value, rel = rel, ** kw)
+        return _response.__call__ (* args, ** kw)
     # end def __call__
+
+    def add_link (self, rel, value, ** kw) :
+        self._links [rel] = value, kw
+    # end def add_link
 
     def __getattr__ (self, name) :
         if name not in self._own_vars :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -43,6 +43,7 @@
 #                     not `GTW.RST.MOM._PUT_POST_Mixin_`
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove `__init__`
+#     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
 #    ««revision-date»»···
 #--
 
@@ -185,6 +186,11 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
             return False
         return self.__super.allow_method (method, user)
     # end def allow_method
+
+    def _handle_method (self, method, request, response) :
+        self.add_doc_link_header (response)
+        return self.__super._handle_method (method, request, response)
+    # end def _handle_method
 
     def href_obj (self, obj) :
         return pp_join (self.abs_href, str (obj.pid))

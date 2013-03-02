@@ -68,6 +68,7 @@
 #    17-Dec-2012 (CT) Add and use `E_Type_Mixin.et_map_name`
 #    17-Dec-2012 (CT) Make property `objects` `getattr_safe`
 #     2-Mar-2013 (CT) Use `response.headers.set`, not dict assignment
+#     2-Mar-2013 (CT) Add `add_doc_link_header`
 #    ««revision-date»»···
 #--
 
@@ -181,7 +182,7 @@ class _POST_Mixin_ (_PUT_POST_Mixin_) :
     def _obj_resource_response_body (self, obj, resource, request, response) :
         o_resource, o_body = self.__super._obj_resource_response_body \
             (obj, resource, request, response)
-        response.set_header (b"Location", o_resource.abs_href)
+        response.set_header ("Location", o_resource.abs_href)
         return o_resource, o_body
     # end def _obj_resource_response_body
 
@@ -315,6 +316,15 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     def _change_info_key (self) :
         return self.href
     # end def _change_info_key
+
+    def add_doc_link_header (self, response) :
+        top = self.top
+        etd = top.ET_Map.get (self.type_name)
+        if etd :
+            doc = getattr (etd, "doc", None) or getattr (etd, "rest_doc", None)
+            if doc is not None :
+                response.add_link ("doc", doc.abs_href)
+    # end def add_doc_link_header
 
     def pid_query_request (self, pid, E_Type = None, raise_not_found = True) :
         if E_Type is None :

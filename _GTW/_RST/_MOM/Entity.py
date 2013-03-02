@@ -41,6 +41,7 @@
 #     9-Jan-2013 (CT) Change `as_rest_cargo_raw`  to use `result.edit_attr`
 #    21-Jan-2013 (CT) Check `.allow_method` for
 #                     `_A_Id_Entity_.as_rest_cargo_raw`
+#     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
 #    ««revision-date»»···
 #--
 
@@ -235,6 +236,11 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
             response.status_code = code
         return not error
     # end def _check_cid
+
+    def _handle_method (self, method, request, response) :
+        self.add_doc_link_header (response)
+        return self.__super._handle_method (method, request, response)
+    # end def _handle_method
 
 Entity = _RST_MOM_Entity_ # end class
 

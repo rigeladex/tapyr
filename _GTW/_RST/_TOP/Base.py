@@ -40,6 +40,7 @@
 #     7-Aug-2012 (CT) Factor `own_links` to `RST.Base`
 #    26-Sep-2012 (CT) Remove `hidden` from `is_current_page`
 #    15-Jan-2013 (CT) Add `cc_href`
+#     2-Mar-2013 (CT) Redefine `_handle_method` to add `next`, `prev` links
 #    ««revision-date»»···
 #--
 
@@ -335,6 +336,19 @@ class _TOP_Base_ (_Ancestor) :
             return GTW.Media (children = medias)
         return self._Media
     # end def _get_media
+
+    def _handle_method (self, method, request, response) :
+        for name in ("next", "prev") :
+            try :
+                nb = getattr (self, name)
+            except AttributeError :
+                pass
+            else :
+                if nb is not None :
+                    response.add_link (name, nb.abs_href)
+        prev = self.prev
+        return self.__super._handle_method (method, request, response)
+    # end def _handle_method
 
     def _new_edit_session (self, request, ttl = None) :
         dbmd = self.top.scope.db_meta_data
