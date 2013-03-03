@@ -46,6 +46,7 @@
 #    12-Dec-2012 (CT) Use `+ELLIPSIS` instead of `Re_Replacer`
 #     6-Jan-2013 (CT) Add `test_client`
 #     9-Jan-2013 (CT) Factor `GTW_RST_Test_Command`, `rst_harness`
+#     3-Mar-2013 (CT) Add `link: ...rel=doc` to `headers`
 #    ««revision-date»»···
 #--
 
@@ -1868,6 +1869,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
+        , 'link' : '/Doc/PAP-Person; rel=doc'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -1895,6 +1897,7 @@ _test_get = r"""
         , 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
+        , 'link' : '/Doc/PAP-Person; rel=doc'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -1908,6 +1911,7 @@ _test_get = r"""
         , 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
+        , 'link' : '/Doc/PAP-Person; rel=doc'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -3416,6 +3420,7 @@ _test_post = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
+        , 'link' : '/Doc/PAP-Person; rel=doc'
         , 'location' : 'http://localhost:9999/v1/PAP-Person/17'
         , 'server' : '<server>'
         }
