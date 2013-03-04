@@ -34,8 +34,9 @@
 #     3-Aug-2012 (CT) Add tests for `Ref_Req_Map` and `Ref_Opt_Map`
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    12-Sep-2012 (RS) Add `Id_Entity`
-#     6-Dec-2012 (CT) Add `Person_has_Account`
+#     6-Dec-2012 (CT) Add `PAP.Person_has_Account`
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
+#     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #    ««revision-date»»···
 #--
 
@@ -233,6 +234,8 @@ test_code = r"""
         ('PAP.Address_Position', ['left'])
         ('PAP.Company_has_Address', ['right'])
         ('PAP.Person_has_Address', ['right'])
+    PAP.Legal_Entity
+        ('MOM.Document', ['left'])
     PAP.Company
         ('MOM.Document', ['left'])
         ('PAP.Company_has_Address', ['left'])

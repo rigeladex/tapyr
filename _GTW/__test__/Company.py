@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Feb-2013 (CT) Creation
+#     4-Mar-2013 (CT) Add tests for `PAP.Association`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,8 @@ _test_code = """
 
     >>> p1 = PAP.Person ("Doe", "Jane", lifetime = ("20010101", ), raw = True)
     >>> bm = PAP.Biz_Man (p1)
-    >>> cp = PAP.Company_P ("Doe, Inc.", bm)
+    >>> cp = PAP.Company_P ("Doe, Inc.", bm, raw = True)
+    >>> ta = PAP.Association ("Towel Carriers Association", short_name = "TCA", raw = True)
 
     >>> print (p1.ui_repr)
     PAP.Person (u'Doe', u'Jane', u'', u'')
@@ -49,6 +51,9 @@ _test_code = """
 
     >>> print (cp.ui_repr)
     PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'))
+
+    >>> print (ta.ui_repr)
+    PAP.Association (u'Towel Carriers Association',)
 
     >>> scope.commit ()
 
@@ -83,10 +88,25 @@ _test_code = """
     >>> PAP.Company_P.query (sort_key = PAP.Company_P.sorted_by_epk).count ()
     2
 
+    >>> print (PAP.Association.E_Type.name.description)
+    Name of association.
+
+    >>> print (PAP.Company.E_Type.name.description)
+    Name of company.
+
+    >>> for s in PAP.Subject.query_s () :
+    ...     print (s.ui_repr)
+    PAP.Person (u'Doe', u'Jane', u'', u'')
+    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'))
+    PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'))
+    PAP.Association (u'Towel Carriers Association',)
+
 """
 
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
+
+import _GTW._OMP._PAP.Association
 
 _Ancestor_Essence = GTW.OMP.PAP.Link1
 

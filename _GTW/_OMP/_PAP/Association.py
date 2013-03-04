@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -20,19 +20,17 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Company
+#    GTW.OMP.PAP.Association
 #
 # Purpose
-#    Model a company
+#    Model an association/club/society
 #
 # Revision Dates
-#     6-Mar-2012 (CT) Creation
-#    23-Mar-2012 (CT) Change `short_name` from `Primary_Optional` to `Optional`
-#     4-Mar-2013 (CT) Factor `PAP.Legal_Entity`
+#     4-Mar-2013 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _MOM.import_MOM             import *
 
@@ -46,10 +44,10 @@ import _GTW._OMP._PAP.Legal_Entity
 
 _Ancestor_Essence = PAP.Legal_Entity
 
-class _PAP_Company_ (_Ancestor_Essence) :
-    """Model a company."""
+class _PAP_Association_ (_Ancestor_Essence) :
+    """Model an association."""
 
-    _real_name = "Company"
+    _real_name = "Association"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -57,20 +55,20 @@ class _PAP_Company_ (_Ancestor_Essence) :
 
         class name (_Ancestor.name) :
 
-            example            = "John Doe, Inc."
+            example            = "International Sailing Federation"
 
         # end class name
 
         class short_name (_Ancestor.short_name) :
 
-            example            = "JDI"
+            example            = "ISAF"
 
         # end class short_name
 
     # end class _Attributes
 
-Company = _PAP_Company_ # end class
+Association = _PAP_Association_ # end class
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
-### __END__ GTW.OMP.PAP.Company
+### __END__ GTW.OMP.PAP.Association

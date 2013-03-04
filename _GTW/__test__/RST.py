@@ -47,6 +47,7 @@
 #     6-Jan-2013 (CT) Add `test_client`
 #     9-Jan-2013 (CT) Factor `GTW_RST_Test_Command`, `rst_harness`
 #     3-Mar-2013 (CT) Add `link: ...rel=doc` to `headers`
+#     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #    ««revision-date»»···
 #--
 
@@ -201,6 +202,8 @@ _test_cqf = r"""
         (Q.type_name == PAP.Company_has_Url,)
     PAP-Email
         (Q.type_name == PAP.Email,)
+    PAP-Legal_Entity
+        (Q.type_name.in_ (['PAP.Company'],),)
     PAP-Link1
         (Q.type_name.in_ (['PAP.Address_Position'],),)
     PAP-Link2
@@ -308,6 +311,7 @@ _test_cqf = r"""
     PAP-Company_has_Phone    (Company `left`, Phone `right`, Numeric_String `extension`, String `desc`)
     PAP-Company_has_Url    (Company `left`, Url `right`, String `desc`)
     PAP-Email    (Email `address`, String `desc`)
+    PAP-Legal_Entity    (String `name`, Date_Interval `lifetime`, String `short_name`)
     PAP-Link1    (Left `left`,)
     PAP-Link2    (Left `left`, Right `right`)
     PAP-Object    ()
@@ -355,7 +359,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Legal\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -581,6 +585,7 @@ _test_doc = r"""
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
             , 'PAP-Id_Entity'
+            , 'PAP-Legal_Entity'
             , 'PAP-Link1'
             , 'PAP-Link2'
             , 'PAP-Link2_Ordered'
@@ -1607,6 +1612,7 @@ _test_get = r"""
             , 'PAP-Company_has_Phone'
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
+            , 'PAP-Legal_Entity'
             , 'PAP-Link1'
             , 'PAP-Link2'
             , 'PAP-Object'
@@ -1676,6 +1682,7 @@ _test_get = r"""
             , '/v1/PAP-Company_has_Phone'
             , '/v1/PAP-Company_has_Url'
             , '/v1/PAP-Email'
+            , '/v1/PAP-Legal_Entity'
             , '/v1/PAP-Link1'
             , '/v1/PAP-Link2'
             , '/v1/PAP-Object'

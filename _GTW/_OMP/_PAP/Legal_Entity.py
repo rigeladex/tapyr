@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -20,57 +20,64 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Company
+#    GTW.OMP.PAP.Legal_Entity
 #
 # Purpose
-#    Model a company
+#    Model a legal entity that isn't a natural person
 #
 # Revision Dates
-#     6-Mar-2012 (CT) Creation
-#    23-Mar-2012 (CT) Change `short_name` from `Primary_Optional` to `Optional`
-#     4-Mar-2013 (CT) Factor `PAP.Legal_Entity`
+#     4-Mar-2013 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _MOM.import_MOM             import *
-
 from   _GTW._OMP._PAP.Attr_Type    import *
 
 from   _GTW                        import GTW
 from   _GTW._OMP._PAP              import PAP
 from   _TFL.I18N                   import _
 
-import _GTW._OMP._PAP.Legal_Entity
+import _GTW._OMP._PAP.Subject
 
-_Ancestor_Essence = PAP.Legal_Entity
+_Ancestor_Essence = PAP.Subject
 
-class _PAP_Company_ (_Ancestor_Essence) :
-    """Model a company."""
+class _PAP_Legal_Entity_ (_Ancestor_Essence) :
+    """Model a legal entity that isn't a natural person."""
 
-    _real_name = "Company"
+    _real_name  = "Legal_Entity"
+
+    is_partial  = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class name (_Ancestor.name) :
+        class name (A_String) :
+            """Name of %(type_base_name.lower ())s."""
 
-            example            = "John Doe, Inc."
+            kind               = Attr.Primary
+            max_length         = 64
+            ignore_case        = True
+            completer          = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class name
 
-        class short_name (_Ancestor.short_name) :
+        class short_name (A_String) :
+            """Short name of %(type_base_name.lower ())s."""
 
-            example            = "JDI"
+            kind               = Attr.Optional
+            max_length         = 12
+            ignore_case        = True
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class short_name
 
     # end class _Attributes
 
-Company = _PAP_Company_ # end class
+Legal_Entity = _PAP_Legal_Entity_ # end class
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
-### __END__ GTW.OMP.PAP.Company
+### __END__ GTW.OMP.PAP.Legal_Entity

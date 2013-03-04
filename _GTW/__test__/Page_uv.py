@@ -35,6 +35,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    14-Dec-2012 (CT) Test relevant_roots for relevant `E_Types`
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
+#     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #    ««revision-date»»···
 #--
 
@@ -207,6 +208,7 @@ _test_code = r"""
     EVT.Recurrence_Rule                            True   False  True
     PAP.Property                                   False  False  False
     PAP.Address                                    True   False  False
+    PAP.Legal_Entity                               False  False  False
     PAP.Company                                    True   False  False
     PAP.Email                                      True   False  False
     PAP.Phone                                      True   False  False
@@ -306,6 +308,7 @@ _test_code = r"""
     EVT.Recurrence_Rule                            EVT.Recurrence_Rule 0
     PAP.Property                                   ['PAP.Address', 'PAP.Email', 'PAP.Phone', 'PAP.Url']
     PAP.Address                                    PAP.Address 0
+    PAP.Legal_Entity                               ['PAP.Company']
     PAP.Company                                    PAP.Company 0
     PAP.Email                                      PAP.Email 0
     PAP.Phone                                      PAP.Phone 0
