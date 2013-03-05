@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.NET.
@@ -41,6 +41,7 @@
 #    24-Sep-2012 (RS) Move `SAS` specific stuff to `SAS_Attr_Type`
 #    10-Oct-2012 (CT) Add `PNS` to `IP_Address`
 #    12-Oct-2012 (RS) Add `code_format`
+#     5-Mar-2013 (CT) Add `sort_key_address`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,8 @@ from   rsclib.IP_Address     import IP4_Address as R_IP4_Address
 from   rsclib.IP_Address     import IP6_Address as R_IP6_Address
 
 import _GTW._OMP._NET
+
+import _TFL.Sorted_By
 
 class _A_IP_Address_ (A_Attr_Type) :
     """Model abstract address of IP network."""
@@ -213,6 +216,8 @@ _Ancestor_Essence = IP_Address
 class IP4_Address (_Ancestor_Essence) :
     """Model an IPv4 Address (without netmask)."""
 
+    sort_key_address = TFL.Sorted_By ("numeric_address")
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
@@ -254,6 +259,8 @@ _Ancestor_Essence = IP4_Address
 
 class IP4_Network (_Ancestor_Essence) :
     """Model an IPv4 Network with netmask."""
+
+    sort_key_address = TFL.Sorted_By ("mask_len", "numeric_address")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -310,6 +317,9 @@ _Ancestor_Essence = IP_Address
 
 class IP6_Address (_Ancestor_Essence) :
     """Model an IPv6 Address (without netmask)."""
+
+    sort_key_address = TFL.Sorted_By \
+        ("numeric_address_high", "numeric_address_low")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -372,6 +382,9 @@ _Ancestor_Essence = IP6_Address
 
 class IP6_Network (_Ancestor_Essence) :
     """Model an IPv6 Network with netmask."""
+
+    sort_key_address = TFL.Sorted_By \
+        ("mask_len", "numeric_address_high", "numeric_address_low")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -454,32 +467,36 @@ class _A_Composite_IP_Address_ (_A_Composite_) :
 class A_IP4_Address (_A_Composite_IP_Address_) :
     """IPv4 Address (without netmask)."""
 
-    P_Type = IP4_Address
-    typ    = "IP4_Address"
+    P_Type           = IP4_Address
+    sort_key_address = P_Type.sort_key_address
+    typ              = "IP4_Address"
 
 # end class A_IP4_Address
 
 class A_IP4_Network (_A_Composite_IP_Address_) :
     """IPv4 Address with netmask."""
 
-    P_Type = IP4_Network
-    typ    = "IP4_Network"
+    P_Type           = IP4_Network
+    sort_key_address = P_Type.sort_key_address
+    typ              = "IP4_Network"
 
 # end class A_IP4_Network
 
 class A_IP6_Address (_A_Composite_IP_Address_) :
     """IPv6 Address (without netmask)."""
 
-    P_Type = IP6_Address
-    typ    = "IP6_Address"
+    P_Type           = IP6_Address
+    sort_key_address = P_Type.sort_key_address
+    typ              = "IP6_Address"
 
 # end class A_IP6_Address
 
 class A_IP6_Network (_A_Composite_IP_Address_) :
     """IPv6 Address with netmask."""
 
-    P_Type = IP6_Network
-    typ    = "IP6_Network"
+    P_Type           = IP6_Network
+    sort_key_address = P_Type.sort_key_address
+    typ              = "IP6_Network"
 
 # end class A_IP6_Network
 
