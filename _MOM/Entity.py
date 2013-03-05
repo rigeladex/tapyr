@@ -234,6 +234,7 @@
 #    30-Jan-2013 (CT) Add access to `last_cid` to `_Id_Entity_Destroyed_Mixin_`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    26-Feb-2013 (CT) Add attribute `ui_repr`
+#     5-Mar-2013 (CT) Remove `Attr.Init_Only_Mixin` from `electric`
 #    ««revision-date»»···
 #--
 
@@ -1038,7 +1039,6 @@ class Id_Entity (Entity) :
             """Indicates if object/link was created automatically or not."""
 
             kind          = Attr.Internal
-            Kind_Mixins   = (Attr.Init_Only_Mixin, )
             default       = False
             hidden        = True
 
