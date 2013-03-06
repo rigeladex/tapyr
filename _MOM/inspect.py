@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -31,6 +31,7 @@
 #     7-Aug-2012 (CT) Rename `parents` to `ancestors`
 #    25-Aug-2012 (CT) Add `definers`
 #    20-Sep-2012 (CT) Add `children_trans_iter`
+#     6-Mar-2013 (CT) Add optional argument `sort_key` to `children_trans_iter`
 #    ««revision-date»»···
 #--
 
@@ -49,14 +50,16 @@ def ancestors (T) :
     return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
 # end def ancestors
 
-def children_trans_iter (T, level = 0, seen = None) :
+def children_trans_iter (T, level = 0, seen = None, sort_key = None) :
     if seen is None :
         seen = set ()
+    if sort_key is None :
+        sort_key = TFL.Getter.i_rank
     yield T, level
-    for c in sorted (T.children.itervalues (), key = TFL.Getter.i_rank) :
+    for c in sorted (T.children.itervalues (), key = sort_key) :
         if c not in seen :
             seen.add (c)
-            for cc, l in children_trans_iter (c, level + 1, seen) :
+            for cc, l in children_trans_iter (c, level + 1, seen, sort_key) :
                 yield cc, l
 # end def children_trans_iter
 

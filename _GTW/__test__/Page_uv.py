@@ -92,7 +92,7 @@ _test_code = r"""
     Auth.Account_Activation                        False  ('left',)
     Auth.Account_Password_Change_Required          False  ('left',)
     EVT.Recurrence_Spec                            False  ('left',)
-    SRM.Regatta                                    False  ('left', 'boat_class')
+    SRM.Regatta                                    True   ('left', 'boat_class')
     SRM.Regatta_C                                  False  ('left', 'boat_class')
     SRM.Regatta_H                                  False  ('left', 'boat_class')
     EVT.Event_occurs                               False  ('left', 'date', 'time')
@@ -131,16 +131,15 @@ _test_code = r"""
     SRM._Boat_Class_                               False  ('name',)
     SRM.Regatta_Event                              False  ('name', 'date')
     PAP.Company                                    False  ('name', 'registered_in')
-    SWP.Clip_X                                     True   ('perma_name',)
+    SWP.Clip_X                                     False  ('perma_name',)
     SWP.Gallery                                    False  ('perma_name',)
     SWP.Page                                       True   ('perma_name',)
-    SWP.Page_U                                     True   ('perma_name',)
-    SWP.Page_V                                     True   ('perma_name',)
-    SRM.Page                                       True   ('perma_name', 'event')
-    SWP.Page_Y                                     True   ('perma_name', 'year')
+    SWP.Page_U                                     False  ('perma_name',)
+    SWP.Page_V                                     False  ('perma_name',)
+    SRM.Page                                       False  ('perma_name', 'event')
+    SWP.Page_Y                                     False  ('perma_name', 'year')
     PAP.Address                                    False  ('street', 'zip', 'city', 'country')
     PAP.Url                                        False  ('value',)
-
 
     >>> fmt = "%%(type_name)-45s  %%(is_relevant)-5s  %%(polymorphic_epk)-5s  %%(polymorphic_epks)s"
     >>> for i, et in enumerate (scope.app_type._T_Extension) :
@@ -151,12 +150,12 @@ _test_code = r"""
     ...     print (fmt %% TFL.Caller.Object_Scope (et))
     type_name                                      relev  p_epk  p_epks
     ======================================================================
-    Auth.Entity                                    False  False  False
-    Auth.Link1                                     False  False  False
-    Auth.Link2                                     False  False  False
+    Auth.Entity                                    False  True   True
+    Auth.Link1                                     False  True   True
+    Auth.Link2                                     False  True   True
     Auth.Link2_Ordered                             False  False  False
     Auth.Link3                                     False  False  False
-    Auth.Object                                    False  False  False
+    Auth.Object                                    False  True   True
     Auth.Id_Entity                                 False  False  False
     Auth.Named_Object                              False  False  False
     Auth._Account_                                 True   False  False
@@ -165,69 +164,69 @@ _test_code = r"""
     Auth.Certificate                               True   False  False
     Auth.Group                                     True   False  False
     Auth.Account_in_Group                          True   False  False
-    Auth._Account_Action_                          False  False  False
+    Auth._Account_Action_                          False  True   True
     Auth.Account_Activation                        True   False  False
     Auth.Account_Password_Change_Required          True   False  False
     Auth._Account_Token_Action_                    False  False  False
     Auth.Account_EMail_Verification                True   False  False
     Auth.Account_Password_Reset                    True   False  False
-    EVT.Entity                                     False  False  False
-    EVT.Link1                                      False  False  False
+    EVT.Entity                                     False  True   True
+    EVT.Link1                                      False  True   True
     EVT.Link2                                      False  False  False
     EVT.Link2_Ordered                              False  False  False
     EVT.Link3                                      False  False  False
-    EVT.Object                                     False  False  False
+    EVT.Object                                     False  True   True
     EVT.Id_Entity                                  False  False  False
     EVT.Named_Object                               False  False  False
     EVT.Calendar                                   True   False  False
-    PAP.Entity                                     False  False  False
-    PAP.Link1                                      False  False  False
-    PAP.Link2                                      False  False  False
+    PAP.Entity                                     False  True   True
+    PAP.Link1                                      False  True   True
+    PAP.Link2                                      False  True   True
     PAP.Link2_Ordered                              False  False  False
     PAP.Link3                                      False  False  False
-    PAP.Object                                     False  False  False
+    PAP.Object                                     False  True   True
     PAP.Id_Entity                                  False  False  False
     PAP.Named_Object                               False  False  False
-    PAP.Subject                                    False  False  False
+    PAP.Subject                                    False  True   True
     PAP.Person                                     True   False  False
-    SWP.Entity                                     False  False  False
-    SWP.Link1                                      False  False  False
+    SWP.Entity                                     False  True   True
+    SWP.Link1                                      False  True   True
     SWP.Link2                                      False  False  False
     SWP.Link2_Ordered                              False  False  False
     SWP.Link3                                      False  False  False
-    SWP.Object                                     False  False  False
+    SWP.Object                                     False  True   True
     SWP.Id_Entity                                  False  False  False
     SWP.Named_Object                               False  False  False
     SWP.Object_PN                                  False  False  False
-    SWP.Page_Mixin                                 False  False  False
+    SWP.Page_Mixin                                 False  True   True
     SWP.Page                                       True   True   True
-    SWP.Page_Y                                     True   True   True
+    SWP.Page_Y                                     True   False  False
     EVT.Event                                      True   False  True
     EVT.Event_occurs                               True   False  True
-    EVT._Recurrence_Mixin_                         False  False  False
+    EVT._Recurrence_Mixin_                         False  True   True
     EVT.Recurrence_Spec                            True   False  True
     EVT.Recurrence_Rule                            True   False  True
-    PAP.Property                                   False  False  False
+    PAP.Property                                   False  True   True
     PAP.Address                                    True   False  False
-    PAP.Legal_Entity                               False  False  False
+    PAP.Legal_Entity                               False  True   True
     PAP.Company                                    True   False  False
     PAP.Email                                      True   False  False
     PAP.Phone                                      True   False  False
     PAP.Url                                        True   False  False
     PAP.Address_Position                           True   False  False
-    PAP.Subject_has_Property                       False  False  True
-    PAP.Subject_has_Phone                          False  False  True
-    PAP.Subject_has_Address                        False  False  True
-    PAP.Subject_has_Email                          False  False  True
-    PAP.Subject_has_Url                            False  False  True
+    PAP.Subject_has_Property                       False  True   True
+    PAP.Subject_has_Phone                          False  True   True
+    PAP.Subject_has_Address                        False  True   True
+    PAP.Subject_has_Email                          False  True   True
+    PAP.Subject_has_Url                            False  True   True
     PAP.Person_has_Account                         True   False  False
     SRM.Regatta_Result                             False  False  False
-    SRM.Entity                                     False  False  False
-    SRM.Link1                                      False  False  False
-    SRM.Link2                                      False  False  False
+    SRM.Entity                                     False  True   True
+    SRM.Link1                                      False  True   True
+    SRM.Link2                                      False  True   True
     SRM.Link2_Ordered                              False  False  False
     SRM.Link3                                      False  False  False
-    SRM.Object                                     False  False  False
+    SRM.Object                                     False  True   True
     SRM.Id_Entity                                  False  False  False
     SRM.Named_Object                               False  False  False
     SRM._Boat_Class_                               True   False  False
@@ -237,21 +236,21 @@ _test_code = r"""
     SRM.Club                                       True   False  False
     SRM.Regatta_Event                              True   False  False
     SWP.Clip_O                                     True   False  True
-    SWP.Clip_X                                     True   True   True
+    SWP.Clip_X                                     True   False  False
     SWP.Gallery                                    True   False  False
     SWP.Picture                                    True   False  False
-    SRM.Page                                       True   True   True
-    SRM.Regatta                                    True   False  False
+    SRM.Page                                       True   False  False
+    SRM.Regatta                                    True   True   True
     SRM.Regatta_C                                  True   False  False
     SRM.Regatta_H                                  True   False  False
     SRM.Sailor                                     True   False  False
-    SRM.Boat_in_Regatta                            True   False  False
-    SRM.Race_Result                                True   False  False
+    SRM.Boat_in_Regatta                            True   False  True
+    SRM.Race_Result                                True   False  True
     SRM.Team                                       True   False  False
-    SRM.Crew_Member                                True   False  False
-    SRM.Team_has_Boat_in_Regatta                   True   False  False
-    SWP.Page_U                                     True   True   True
-    SWP.Page_V                                     True   True   True
+    SRM.Crew_Member                                True   False  True
+    SRM.Team_has_Boat_in_Regatta                   True   False  True
+    SWP.Page_U                                     True   False  False
+    SWP.Page_V                                     True   False  False
     PAP.Person_has_Url                             True   False  False
     PAP.Company_has_Url                            True   False  False
     PAP.Person_has_Email                           True   False  False
@@ -417,7 +416,6 @@ _test_code = r"""
     PAP.Address                                    =                     ('street', 'zip', 'city', 'country')
     PAP.Url                                        =                     ('value',)
 
-
 """
 
 _auto_update = r"""
@@ -440,6 +438,7 @@ _auto_update = r"""
     >>> p = SWP.Page.query ().first ()
     >>> p.text, p.contents
     (u'New Text', u'<p>New Text</p>\n')
+
 """
 
 from _GTW.__test__.model import *

@@ -29,6 +29,7 @@
 #    26-Feb-2013 (CT) Creation
 #     4-Mar-2013 (CT) Add tests for `PAP.Association`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
+#     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
 #    ««revision-date»»···
 #--
 
@@ -102,10 +103,33 @@ _test_code = """
     PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
     PAP.Association (u'Towel Carriers Association',)
 
+    >>> sk = lambda x : (not bool (x.children), x.i_rank)
+    >>> for i, (T, l) in enumerate (children_trans_iter (PAP.Subject, sort_key = sk)) :
+    ...     if not i :
+    ...         print ("%%-50s %%5s %%5s %%5s" %% ("type_name", "relev", "p_epk", "p_epks"))
+    ...         print ("=" * 70)
+    ...     et = T.E_Type
+    ...     fs = (et.is_relevant, et.polymorphic_epk, et.polymorphic_epks)
+    ...     if any (fs) :
+    ...         hd  = "%%s%%s" %% ("  " * l, et.type_name)
+    ...         hdl = len (hd)
+    ...         sep = (" " if hdl %% 2 else "") + ". " * ((50 - hdl) // 2)
+    ...         r, p, s = ((x or "") for x in fs)
+    ...         print ("%%s %%s %%5s %%5s %%5s" %% (hd, sep, r, p, s))
+    type_name                                          relev p_epk p_epks
+    ======================================================================
+    PAP.Subject  . . . . . . . . . . . . . . . . . . .         True  True
+      PAP.Legal_Entity . . . . . . . . . . . . . . . .         True  True
+        PAP.Company  . . . . . . . . . . . . . . . . .   True  True  True
+          PAP.Company_P  . . . . . . . . . . . . . . .   True
+        PAP.Association  . . . . . . . . . . . . . . .   True
+      PAP.Person . . . . . . . . . . . . . . . . . . .   True
+
 """
 
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
+from   _MOM.inspect             import children_trans_iter
 
 import _GTW._OMP._PAP.Association
 

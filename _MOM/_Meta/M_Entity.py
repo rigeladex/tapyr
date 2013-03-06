@@ -165,6 +165,9 @@
 #                     over `app_type._T_Extension`
 #    27-Feb-2013 (CT) Simplify signature of `_m_fix_doc`,
 #                     `_m_setup_attributes`, and `_m_setup_ref_maps`
+#     6-Mar-2013 (CT) Change semantics of `polymorphic_epk`
+#                     add `polymorphic_relevant_epk` with previous semantics
+#                     of `polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -334,10 +337,6 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             ### set up attributes and predicates only after all etypes are
             ### registered in app_type
             t._m_finish_init ()
-        for t in reversed (app_type._T_Extension) :
-            if t.polymorphic_epk :
-                if t.relevant_root :
-                    t.relevant_root.polymorphic_epk = True
         for t in app_type._T_Extension :
             t.polymorphic_epks = t.polymorphic_epk or any \
                 (   (  pka.P_Type.polymorphic_epks
@@ -384,7 +383,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         if "epk_sig" not in kw :
-            kw ["epk_sig"] = ()
+            kw ["epk_sig"] = kw ["epk_sig_t"] = ()
         return dict  \
             ( cls.__dict__
             , app_type      = app_type
@@ -662,46 +661,48 @@ class M_Id_Entity (M_Entity) :
     # end def _m_auto_epkified
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
-        pkas      = sorted \
+        pkas = sorted \
             ( (  a for a in cls._Attributes._names.itervalues ()
               if a is not None and a.kind.is_primary
               )
             , key = TFL.Getter.sig_rank
             )
-        epk_sig   = tuple (a.name for a in pkas)
-        rel_bases = tuple \
-            (b for b in bases if getattr (b, "is_relevant", False))
-        pol_epk   = any_true \
-            ( (  getattr (rb, "polymorphic_epk", False)
-              or rb.epk_sig != epk_sig
-              )
-            for rb in rel_bases
-            )
-        a_ckd     = ", ".join (a.as_arg_ckd () for a in pkas)
-        a_raw     = ", ".join (a.as_arg_raw () for a in pkas)
-        d_ckd     = cls._epkified_sep.join \
+        epk_bases   = tuple \
+            (b for b in bases if getattr (b, "epk_sig", None) is not None)
+        epk_sig     = tuple (a.name             for a in pkas)
+        epk_sig_t   = tuple ((a.name, a.P_Type) for a in pkas)
+        is_relevant = cls.is_relevant or (not cls.is_partial)
+        pr_epk      = False
+        for eb in epk_bases :
+            if eb.epk_sig_t != epk_sig_t :
+                eb.polymorphic_epk = pr_epk = True
+                eb.polymorphic_relevant_epk = eb.is_relevant
+        a_ckd  = ", ".join (a.as_arg_ckd () for a in pkas)
+        a_raw  = ", ".join (a.as_arg_raw () for a in pkas)
+        d_ckd  = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
-        d_raw     = cls._epkified_sep.join \
+        d_raw  = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
-        r_kw = dict \
-            ( epk_sig          = epk_sig
-            , epkified_ckd     = cls._m_auto_epkified
+        r_kw   = dict \
+            ( epk_sig                  = epk_sig
+            , epk_sig_t                = epk_sig_t
+            , epkified_ckd             = cls._m_auto_epkified
                 (epk_sig, a_ckd, d_ckd, "ckd")
-            , epkified_raw     = cls._m_auto_epkified
+            , epkified_raw             = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
-            , is_relevant      = cls.is_relevant or (not cls.is_partial)
-            , Roles            = ()
-            , role_map         = {}
-            , _all_ref_map     = None
-            , _all_ref_opt_map = None
-            , _all_ref_req_map = None
-            , _own_ref_opt_map = TFL.defaultdict (set)
-            , _own_ref_req_map = TFL.defaultdict (set)
+            , is_relevant              = is_relevant
+            , polymorphic_epk          = False
+            , polymorphic_relevant_epk = pr_epk and is_relevant
+            , Roles                    = ()
+            , role_map                 = {}
+            , _all_ref_map             = None
+            , _all_ref_opt_map         = None
+            , _all_ref_req_map         = None
+            , _own_ref_opt_map         = TFL.defaultdict (set)
+            , _own_ref_req_map         = TFL.defaultdict (set)
             , ** kw
             )
-        if pol_epk :
-            r_kw ["polymorphic_epk"] = pol_epk
-        result    = cls.__m_super._m_new_e_type_dict \
+        result = cls.__m_super._m_new_e_type_dict \
             (app_type, etypes, bases, ** r_kw)
         return result
     # end def _m_new_e_type_dict
