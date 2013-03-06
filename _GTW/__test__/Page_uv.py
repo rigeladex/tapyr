@@ -36,6 +36,7 @@
 #    14-Dec-2012 (CT) Test relevant_roots for relevant `E_Types`
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
+#     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #    ««revision-date»»···
 #--
 
@@ -124,12 +125,12 @@ _test_code = r"""
     Auth.Group                                     False  ('name',)
     Auth._Account_                                 False  ('name',)
     EVT.Calendar                                   False  ('name',)
-    PAP.Company                                    False  ('name',)
     SRM.Boat_Class                                 False  ('name',)
     SRM.Club                                       False  ('name',)
     SRM.Handicap                                   False  ('name',)
     SRM._Boat_Class_                               False  ('name',)
     SRM.Regatta_Event                              False  ('name', 'date')
+    PAP.Company                                    False  ('name', 'registered_in')
     SWP.Clip_X                                     True   ('perma_name',)
     SWP.Gallery                                    False  ('perma_name',)
     SWP.Page                                       True   ('perma_name',)
@@ -400,12 +401,12 @@ _test_code = r"""
     Auth.Group                                     =                     ('name',)
     Auth._Account_                                 =                     ('name',)
     EVT.Calendar                                   =                     ('name',)
-    PAP.Company                                    =                     ('name',)
     SRM.Boat_Class                                 SRM._Boat_Class_      ('name',)
     SRM.Club                                       =                     ('name',)
     SRM.Handicap                                   SRM._Boat_Class_      ('name',)
     SRM._Boat_Class_                               =                     ('name',)
     SRM.Regatta_Event                              =                     ('name', 'date')
+    PAP.Company                                    =                     ('name', 'registered_in')
     SWP.Clip_X                                     SWP.Page              ('perma_name',)
     SWP.Gallery                                    =                     ('perma_name',)
     SWP.Page                                       =                     ('perma_name',)
