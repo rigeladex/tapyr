@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Feb-2013 (CT) Creation
 #     4-Mar-2013 (CT) Add tests for `PAP.Association`
+#     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ _test_code = """
     PAP.Biz_Man ((u'Doe', u'Jane', u'', u'', 'PAP.Person'),)
 
     >>> print (cp.ui_repr)
-    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'))
+    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
 
     >>> print (ta.ui_repr)
     PAP.Association (u'Towel Carriers Association',)
@@ -64,7 +65,7 @@ _test_code = """
     <Sorted_By: Getter function for `.left.last_name`, Getter function for `.left.first_name`, Getter function for `.left.middle_name`, Getter function for `.left.title`>
 
     >>> PAP.Company_P.sorted_by_epk
-    <Sorted_By: Getter function for `.name`, Getter function for `.owner.left.last_name`, Getter function for `.owner.left.first_name`, Getter function for `.owner.left.middle_name`, Getter function for `.owner.left.title`>
+    <Sorted_By: Getter function for `.name`, Getter function for `.owner.left.last_name`, Getter function for `.owner.left.first_name`, Getter function for `.owner.left.middle_name`, Getter function for `.owner.left.title`, Getter function for `.registered_in`>
 
     >>> PAP.Person.query (sort_key = TFL.Sorted_By ("pid")).count ()
     1
@@ -97,8 +98,8 @@ _test_code = """
     >>> for s in PAP.Subject.query_s () :
     ...     print (s.ui_repr)
     PAP.Person (u'Doe', u'Jane', u'', u'')
-    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'))
-    PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'))
+    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
+    PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
     PAP.Association (u'Towel Carriers Association',)
 
 """

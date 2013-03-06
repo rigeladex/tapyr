@@ -29,6 +29,7 @@
 #     6-Mar-2012 (CT) Creation
 #    23-Mar-2012 (CT) Change `short_name` from `Primary_Optional` to `Optional`
 #     4-Mar-2013 (CT) Factor `PAP.Legal_Entity`
+#     6-Mar-2013 (CT) Add attribute `registered_in`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,17 @@ class _PAP_Company_ (_Ancestor_Essence) :
             example            = "John Doe, Inc."
 
         # end class name
+
+        class registered_in (A_String) :
+            """Place where this (type_base_name.lower ())s is registered."""
+
+            kind               = Attr.Primary_Optional
+            max_length         = 64
+            ignore_case        = True
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+            example            = "NY"
+
+        # end class registered_in
 
         class short_name (_Ancestor.short_name) :
 

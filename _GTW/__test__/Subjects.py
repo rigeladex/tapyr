@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -30,6 +30,8 @@
 #    14-Sep-2012 (CT) Add test for role attributes of `Person_has_Address`
 #    20-Sep-2012 (CT) Add tests for `Person_has_Phone`, `Subject_has_Property`
 #    21-Sep-2012 (CT) Add test for polymorphic link creation
+#     6-Mar-2013 (CT) Add import of `Association`
+#     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #    ««revision-date»»···
 #--
 
@@ -55,9 +57,9 @@ _test_code = """
     5 2 3
 
     >>> PAP.Subject.query_s ().all ()
-    [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Company (u'lucky software'), PAP.Company (u'open source consulting'), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Company (u'lucky software', u''), PAP.Company (u'open source consulting', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
     >>> PAP.Company.query_s ().all ()
-    [PAP.Company (u'lucky software'), PAP.Company (u'open source consulting')]
+    [PAP.Company (u'lucky software', u''), PAP.Company (u'open source consulting', u'')]
     >>> PAP.Person.query_s ().all ()
     [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
 
@@ -80,16 +82,16 @@ _test_code = """
     >>> _ = PAP.Company_has_Phone (co, PAP.Phone ("43", "1", "246802", raw = True), extension = "16", raw = True)
 
     >>> PAP.Subject_has_Email.query_s ().all ()
-    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
     >>> PAP.Company_has_Email.query_s ().all ()
-    [PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', ))]
+    [PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', ))]
     >>> PAP.Person_has_Email.query_s ().all ()
     [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
     >>> PAP.Subject_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ()
-    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', ))]
+    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', ))]
     >>> PAP.Subject_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ()
-    [PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
     >>> PAP.Person_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ()
     [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', ))]
     >>> PAP.Person_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ()
@@ -113,10 +115,10 @@ _test_code = """
     >>> sorted (rr.persons, key = PAP.Person.sorted_by)
     [PAP.Person (u'schlatterbeck', u'ralf', u'', u'')]
     >>> sorted (rr.companies, key = PAP.Company.sorted_by)
-    [PAP.Company (u'open source consulting')]
+    [PAP.Company (u'open source consulting', u'')]
 
     >>> PAP.Subject_has_Property.query_s ().all ()
-    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', ), (u'lucky@mangari.org', )), PAP.Company_has_Phone ((u'open source consulting', ), (u'43', u'1', u'246802'), u'16'), PAP.Company_has_Email ((u'open source consulting', ), (u'office@runtux.com', )), PAP.Company_has_Email ((u'open source consulting', ), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'schlatterbeck', u'ralf', u'', u''), (u'43', u'1', u'987654'), u''), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16'), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'schlatterbeck', u'ralf', u'', u''), (u'43', u'1', u'987654'), u''), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
     >>> PAP.Subject_has_Property.query_s (left = pt).all ()
     [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
@@ -124,10 +126,10 @@ _test_code = """
     [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
     >>> PAP.Subject_has_Phone.query_s (Q.right.number.CONTAINS ("2")).all ()
-    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Company_has_Phone ((u'open source consulting', ), (u'43', u'1', u'246802'), u'16')]
+    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16')]
 
     >>> PAP.Subject_has_Phone.query_s (Q.extension != "").all ()
-    [PAP.Company_has_Phone ((u'open source consulting', ), (u'43', u'1', u'246802'), u'16')]
+    [PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16')]
 
     >>> PAP.Subject_has_Email.acr_map.get ("left", False)
     False
@@ -177,19 +179,23 @@ _test_code = """
     >>> for T, l in children_trans_iter (scope.PAP.Subject_has_Property) :
     ...     rr = T.relevant_root.type_name if T.relevant_root else sorted (T.relevant_roots)
     ...     print ("%%-30s %%-5s %%s" %% ("%%s%%s" %% ("  " * l, T.type_name), T.is_partial, rr))
-    PAP.Subject_has_Property       True  ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
-      PAP.Subject_has_Phone        True  ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
+    PAP.Subject_has_Property       True  ['PAP.Association_has_Address', 'PAP.Association_has_Email', 'PAP.Association_has_Phone', 'PAP.Association_has_Url', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
+      PAP.Subject_has_Phone        True  ['PAP.Association_has_Phone', 'PAP.Company_has_Phone', 'PAP.Person_has_Phone']
         PAP.Person_has_Phone       False PAP.Person_has_Phone
         PAP.Company_has_Phone      False PAP.Company_has_Phone
-      PAP.Subject_has_Address      True  ['PAP.Company_has_Address', 'PAP.Person_has_Address']
+        PAP.Association_has_Phone  False PAP.Association_has_Phone
+      PAP.Subject_has_Address      True  ['PAP.Association_has_Address', 'PAP.Company_has_Address', 'PAP.Person_has_Address']
         PAP.Person_has_Address     False PAP.Person_has_Address
         PAP.Company_has_Address    False PAP.Company_has_Address
-      PAP.Subject_has_Email        True  ['PAP.Company_has_Email', 'PAP.Person_has_Email']
+        PAP.Association_has_Address False PAP.Association_has_Address
+      PAP.Subject_has_Email        True  ['PAP.Association_has_Email', 'PAP.Company_has_Email', 'PAP.Person_has_Email']
         PAP.Person_has_Email       False PAP.Person_has_Email
         PAP.Company_has_Email      False PAP.Company_has_Email
-      PAP.Subject_has_Url          True  ['PAP.Company_has_Url', 'PAP.Person_has_Url']
+        PAP.Association_has_Email  False PAP.Association_has_Email
+      PAP.Subject_has_Url          True  ['PAP.Association_has_Url', 'PAP.Company_has_Url', 'PAP.Person_has_Url']
         PAP.Person_has_Url         False PAP.Person_has_Url
         PAP.Company_has_Url        False PAP.Company_has_Url
+        PAP.Association_has_Url    False PAP.Association_has_Url
 
 """
 
@@ -198,6 +204,8 @@ from   _MOM.import_MOM          import Q
 from   _MOM.inspect             import children_trans_iter
 
 from   itertools                import chain as ichain
+
+import _GTW._OMP._PAP.Association
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
