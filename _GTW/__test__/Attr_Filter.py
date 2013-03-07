@@ -275,7 +275,7 @@ _test_code = """
         loa                 0
         sail_area           0
       nation              0
-      __raw_sail_number   3
+      sail_number         4
       sail_number_x       3
       name                3
     right               2
@@ -313,7 +313,7 @@ _test_code = """
         salutation          3
         sex                 0
       nation              0
-      __raw_mna_number    3
+      mna_number          4
       club                2
         name                3
         long_name           3
@@ -416,7 +416,7 @@ _test_code = """
     AIS <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
-    Angle <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Angle <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'EQS', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'NES', 'STARTSWITH')> 4
     Boat <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_Class <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Boat_in_Regatta <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
@@ -438,7 +438,7 @@ _test_code = """
     Gallery <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Group <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
-    Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
+    Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'EQS', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'NES', 'STARTSWITH')> 4
     Int_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Name <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Nation <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
@@ -476,18 +476,21 @@ _test_code = """
     1 ('EQ',)
     2 ('EQ', 'IN', 'NE')
     3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')
+    4 ('CONTAINS', 'ENDSWITH', 'EQ', 'EQS', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'NES', 'STARTSWITH')
 
     >>> for k, v in sorted (at.AQ.Base_Op_Table.iteritems ()) :
     ...     print "%%-12s %%s" %% (k, v)
     CONTAINS     <Attr.Filter CONTAINS [contains]>
     ENDSWITH     <Attr.Filter ENDSWITH [ends-with]>
     EQ           <Attr.Filter EQ [==]>
+    EQS          <Attr.Filter EQS [EQS]>
     GE           <Attr.Filter GE [>=]>
     GT           <Attr.Filter GT [>]>
     IN           <Attr.Filter IN [in]>
     LE           <Attr.Filter LE [<=]>
     LT           <Attr.Filter LT [<]>
     NE           <Attr.Filter NE [!=]>
+    NES          <Attr.Filter NES [NES]>
     STARTSWITH   <Attr.Filter STARTSWITH [starts-with]>
 
     >>> seen = set ()

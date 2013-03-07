@@ -199,10 +199,14 @@ _attr_ac_query = """
     [Q.first_name == martin]
 
     >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48.190111"))))
-    [Q.position.__raw_lat == 48.190111]
+    [Q.position.lat == 48.190111]
 
-    >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s"))))
-    [Q.position.__raw_lat == 48d 11m 25s]
+    >>> apq = list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s")))) [0]
+    >>> apq
+    Q.position.lat == 48.1902777778
+
+    >>> PAP.Address_Position.query_s (apq).all ()
+    [PAP.Address_Position ((u'glasauergasse 32/2', u'1130', u'wien', u'austria'), (48.1902777778, 16.2686111111))]
 
 """
 

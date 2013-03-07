@@ -270,6 +270,9 @@
 #    25-Feb-2013 (CT) Add `query_preconditions`
 #    27-Feb-2013 (CT) Add `sort_skip`
 #    27-Feb-2013 (CT) Move `_fix_P_Type` into `_A_Entity_.__init__`
+#     6-Mar-2013 (CT) Change `_A_Unit_.eligible_raw_values, `._from_string` to
+#                     `Class_and_Instance_Method`, redefine `_A_Unit_.cooked`
+#     7-Mar-2013 (CT) Add `A_Frequency.completer`
 #    ««revision-date»»···
 #--
 
@@ -507,6 +510,9 @@ class A_Attr_Type (TFL.Meta.Object) :
                 return self._from_string (s, obj, glob, locl)
         except StandardError as exc :
             if s :
+                if isinstance (exc, MOM.Error.Attribute_Syntax) :
+                    ### don't wrap Attribute_Syntax inside Attribute_Syntax
+                    raise
                 raise MOM.Error.Attribute_Syntax (obj, self, s, str (exc))
     # end def from_string
 
@@ -1494,24 +1500,33 @@ class _A_Unit_ (A_Attr_Type) :
         return ""
     # end def as_string
 
-    def eligible_raw_values (self, obj = None) :
-        return sorted (self._unit_dict.iterkeys ())
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        val = soc.from_string (value) \
+            if isinstance (value, basestring) else value
+        return super (_A_Unit_, soc).cooked (val)
+    # end def cooked
+
+    @TFL.Meta.Class_and_Instance_Method
+    def eligible_raw_values (soc, obj = None) :
+        return sorted (soc._unit_dict.iterkeys ())
     # end def eligible_raw_values
 
-    def _from_string (self, s, obj, glob, locl) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
         factor = 1
-        pat    = self._unit_pattern
+        pat    = soc._unit_pattern
         if pat.search (s) :
             unit = pat.unit
             s    = s [: pat.start ("unit")]
             try :
-                factor = self._unit_dict [unit]
+                factor = soc._unit_dict [unit]
             except KeyError :
                 raise ValueError \
                     ( _T ("Invalid unit %s, specify one of %s")
-                    % (unit, self.eligible_raw_values ())
+                    % (unit, soc.eligible_raw_values ())
                     )
-        return self.__super._from_string (s, obj, glob, locl) * factor
+        return super (_A_Unit_, soc)._from_string (s, obj, glob, locl) * factor
     # end def _from_string
 
 # end class _A_Unit_
@@ -1612,7 +1627,7 @@ class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
                 raise ValueError \
                     ("%s not in %s" % (value, sorted (soc.Table)))
         else :
-            return bool (value)
+            return soc.P_Type (value)
     # end def cooked
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1983,6 +1998,7 @@ class A_Frequency (_A_Unit_, _A_Float_) :
     """Frequency with unit information (e.g. 2.437 GHz)."""
 
     typ              = _ ("Frequency")
+    completer        = MOM.Attr.Completer_Spec  (2)
     needs_raw_value  = True
     _unit_dict       = dict \
         ( Hz         = 1
