@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -44,6 +44,8 @@
 #    22-Dec-2011 (CT) Add `E_Type.Select`
 #     5-Oct-2012 (CT) Guard `_Container_._attrs` against missing `E_Type`
 #    10-Oct-2012 (CT) Change `_Type_._cooker` to apply `from_string` to strings
+#     7-Mar-2013 (CT) Add `_string_q_name`, `_string_attr_name`,`_string_cooker`
+#     7-Mar-2013 (CT) Redefine `Raw.Table` to include `EQS` and `NES`
 #    ««revision-date»»···
 #--
 
@@ -125,7 +127,7 @@ class _Type_ (TFL.Meta.Object) :
     Class         = None
     Signatures    = {}
 
-    ### `Table` maps the operations that can sensibly be selected in a UI
+    ### `Table` maps the filter operations that can sensibly be selected in a UI
     Table   = dict \
         ( EQ                 = Filter.Equal
         , GE                 = Filter.Greater_Equal
@@ -135,7 +137,7 @@ class _Type_ (TFL.Meta.Object) :
         , LT                 = Filter.Less_Than
         , NE                 = Filter.Not_Equal
         )
-    ### `_Table` maps additonal operations that don't make sense in a UI
+    ### `_Table` maps additonal filter operations that don't make sense in a UI
     _Table  = dict \
         ( AC                 = Filter.Auto_Complete
         )
@@ -458,21 +460,51 @@ class String (_Type_) :
         ( AC                 = Filter.Auto_Complete_S
         )
 
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _string_attr_name (self) :
+        return self._attr_name
+    # end def _string_attr_name
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _string_cooker (self) :
+        return self._cooker
+    # end def _string_cooker
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _string_q_name (self) :
+        return self._q_name
+    # end def _string_cooker
+
 # end class String
 
 class Raw (String) :
 
-    @TFL.Meta.Once_Property
-    @getattr_safe
-    def _attr_name (self) :
-        return self._attr.raw_name
-    # end def _attr_name
+    Table  = dict \
+        ( String.Table
+        , EQS                = Filter.Equal_S
+        , NES                = Filter.Not_Equal_S
+        )
 
     @TFL.Meta.Once_Property
     @getattr_safe
-    def _cooker (self) :
+    def _string_attr_name (self) :
+        return self._attr.raw_name
+    # end def _string_attr_name
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _string_cooker (self) :
         return unicode
-    # end def _cooker
+    # end def _string_cooker
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _string_q_name (self) :
+        return self._q_name_raw
+    # end def _string_cooker
 
 # end class Raw
 

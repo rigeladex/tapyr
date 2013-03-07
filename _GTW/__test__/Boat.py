@@ -116,16 +116,20 @@ _test_code = """
     [SRM.Boat_Class (u'optimist'), SRM.Boat_Class (u'laser')]
 
     >>> print SRM.Boat.sail_number.Q_Raw.EQ
-    <Attr.Equal __raw_sail_number.EQ [==]>
+    <Attr.Equal sail_number.EQ [==]>
     >>> rf = SRM.Boat.sail_number.Q_Raw.EQ ("1107")
-    >>> print rf
-    Q.__raw_sail_number == 1107
-
     >>> rf (b)
     True
 
     >>> getattr (b, "__raw_sail_number", "No raw value???")
     u'1107'
+
+    >>> print SRM.Boat.sail_number.Q_Raw.EQ  ("1107")
+    Q.sail_number == 1107
+    >>> print SRM.Boat.sail_number.Q_Raw.EQS ("1107")
+    Q.__raw_sail_number == 1107
+    >>> print SRM.Boat.sail_number.Q_Raw.AC  ("11")
+    Q.__raw_sail_number.startswith (u'11',)
 
     >>> bq = SRM.Boat.query_s ()
     >>> bq.all ()

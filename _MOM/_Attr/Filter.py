@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -58,6 +58,11 @@
 #                     deterministic order of dict iteration (`PYTHONHASHSEED`)
 #     4-Jul-2012 (CT) Add `_Filter_.__repr__`
 #     4-Jul-2012 (CT) Convert string `value` to `int` in `_Id_Entity_.__call__`
+#     7-Mar-2013 (CT) Factor `q_name` and redefine `_String_.q_name`
+#     7-Mar-2013 (CT) Redefine `_String_.attr_name` and `.cooker`
+#     7-Mar-2013 (CT) Add `Equal_S` and `Not_Equal_S`
+#     7-Mar-2013 (CT) Allow explicit definition of `op_key` by `Equal_S` and
+#                     `Not_Equal_S`
 #    ««revision-date»»···
 #--
 
@@ -91,10 +96,13 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
                 cls.op_nam = name.lower ().replace ("_", "-")
             if cls.op_sym is None :
                 cls.op_sym = cls.op_nam
-            op_key = cls.op_fct
-            if op_key.startswith ("__") :
-                op_key = op_key.replace ("_", "").upper ()
-            cls.op_key = op_key
+            if "op_key" in dct :
+                op_key = cls.op_key
+            else :
+                op_key = cls.op_fct
+                if op_key.startswith ("__") :
+                    op_key = op_key.replace ("_", "").upper ()
+                cls.op_key = op_key
             if op_key not in cls.Base_Op_Table :
                 cls.Base_Op_Table [op_key] = cls
             if cls.base_op_key is None :
@@ -150,8 +158,13 @@ class _Filter_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def a_query (self) :
-        return getattr (Q, self.querier._q_name)
+        return getattr (Q, self.q_name)
     # end def a_query
+
+    @TFL.Meta.Once_Property
+    def q_name (self) :
+        return self.querier._q_name
+    # end def q_name
 
     def query (self, value) :
         q = getattr (self.a_query, self.op_fct)
@@ -245,6 +258,21 @@ class _Id_Entity_ (_Composite_) :
 class _String_ (_Filter_) :
     """Base class for string-attribute filters."""
 
+    @TFL.Meta.Once_Property
+    def attr_name (self) :
+        return self.querier._string_attr_name
+    # end def attr_name
+
+    @TFL.Meta.Once_Property
+    def cooker (self) :
+        return self.querier._string_cooker
+    # end def cooker
+
+    @TFL.Meta.Once_Property
+    def q_name (self) :
+        return self.querier._string_q_name
+    # end def q_name
+
     def query (self, value) :
         aq = self.a_query
         q  = getattr (aq, self.op_fct) if value else aq.__eq__
@@ -282,6 +310,18 @@ class Equal (_Filter_) :
     op_sym        = "=="
 
 # end class Equal
+
+class Equal_S (_String_, Equal) :
+    """Attribute query filter for string equality."""
+
+    op_sym        = "EQS"
+    op_key        = "EQS"
+    desc          = _ \
+        ( "Select entities where the attribute is equal to the specified "
+          "string value"
+        )
+
+# end class Equal_S
 
 class Greater_Equal (_Filter_) :
     """Attribute query filter for greater-equal."""
@@ -363,6 +403,18 @@ class Not_Equal (_Filter_) :
     op_sym        = "!="
 
 # end class Not_Equal
+
+class Not_Equal_S (_String_, Not_Equal) :
+    """Attribute query filter for string equality."""
+
+    op_sym        = "NES"
+    op_key        = "NES"
+    desc          = _ \
+        ( "Select entities where the attribute is not "
+          "equal to the specified string value"
+        )
+
+# end class Not_Equal_S
 
 class Starts_With (_String_) :
     """Attribute query for starts-with."""

@@ -112,6 +112,7 @@
 #    30-Jan-2013 (CT) Clear `.ems_check` for `Unique`, not `.do_check`
 #    31-Jan-2013 (MG) `Manager.finalize` added to finalize creation of
 #                     `MOM.Query` objects
+#     7-Mar-2013 (CT) Use `polymorphic_relevant_epk`, not `polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -323,7 +324,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if saq.delayed :
                 cls.finalize_query_objects.append (saq)
             e_type._SAS.finish ()
-            if unique and not e_type.polymorphic_epk :
+            if unique and not e_type.polymorphic_relevant_epk :
                 sa_table.append_constraint (schema.UniqueConstraint (* unique))
                 schema.Index \
                     ( "%s_PK" % (sa_table.name, )

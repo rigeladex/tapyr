@@ -209,7 +209,7 @@ _test_code = """
                 , 'ui_name' : 'Nation'
                 }
               , { 'name' : 'sail_number'
-                , 'sig_key' : 3
+                , 'sig_key' : 4
                 , 'ui_name' : 'Sail number'
                 }
               , { 'name' : 'sail_number_x'
@@ -289,6 +289,11 @@ _test_code = """
             , 'label' : '&equiv;'
             , 'sym' : '=='
             }
+        , 'EQS' :
+            { 'desc' : 'Select entities where the attribute is equal to the specified string value'
+            , 'label' : 'EQS'
+            , 'sym' : 'EQS'
+            }
         , 'GE' :
             { 'desc' : 'Select entities where the attribute is greater than, or equal to, the specified value'
             , 'label' : '&ge;'
@@ -319,6 +324,11 @@ _test_code = """
             , 'label' : '&ne;'
             , 'sym' : '!='
             }
+        , 'NES' :
+            { 'desc' : 'Select entities where the attribute is not equal to the specified string value'
+            , 'label' : 'NES'
+            , 'sym' : 'NES'
+              }
         , 'STARTSWITH' :
             { 'desc' : 'Select entities where the attribute value starts with the specified value'
             , 'label' : 'starts-with'
@@ -353,6 +363,20 @@ _test_code = """
             , 'NE'
             , 'STARTSWITH'
             )
+        , 4 :
+            ( 'CONTAINS'
+            , 'ENDSWITH'
+            , 'EQ'
+            , 'EQS'
+            , 'GE'
+            , 'GT'
+            , 'IN'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            , 'NES'
+            , 'STARTSWITH'
+            )
         }
     , 'ui_sep' : '/'
     }
@@ -368,7 +392,7 @@ _test_code = """
         <left.left.AQ [Attr.Type.Querier Id_Entity]> <left.AQ [Attr.Type.Querier Id_Entity]>
             <left.left.name.AQ [Attr.Type.Querier String]> <left.left.AQ [Attr.Type.Querier Id_Entity]>
         <left.nation.AQ [Attr.Type.Querier Ckd]> <left.AQ [Attr.Type.Querier Id_Entity]>
-        <left.__raw_sail_number.AQ [Attr.Type.Querier Raw]> <left.AQ [Attr.Type.Querier Id_Entity]>
+        <left.sail_number.AQ [Attr.Type.Querier Raw]> <left.AQ [Attr.Type.Querier Id_Entity]>
         <left.sail_number_x.AQ [Attr.Type.Querier String]> <left.AQ [Attr.Type.Querier Id_Entity]>
     <right.AQ [Attr.Type.Querier Id_Entity]> <SRM.Boat_in_Regatta.AQ>
         <right.left.AQ [Attr.Type.Querier Id_Entity]> <right.AQ [Attr.Type.Querier Id_Entity]>
@@ -408,171 +432,171 @@ _test_code = """
           , Record
             ( attr = Nation `nation`
             , choices =
-               [
-                 ( 'AUS'
-                 , 'AUS [Australia]'
-                 )
-               ,
-                 ( 'AUT'
-                 , 'AUT [Austria]'
-                 )
-               ,
-                 ( 'BEL'
-                 , 'BEL [Belgium]'
-                 )
-               ,
-                 ( 'CAN'
-                 , 'CAN [Canada]'
-                 )
-               ,
-                 ( 'CRO'
-                 , 'CRO [Croatia]'
-                 )
-               ,
-                 ( 'CYP'
-                 , 'CYP [Cyprus]'
-                 )
-               ,
-                 ( 'CZE'
-                 , 'CZE [Czech Republic]'
-                 )
-               ,
-                 ( 'DEN'
-                 , 'DEN [Denmark]'
-                 )
-               ,
-                 ( 'ESP'
-                 , 'ESP [Spain]'
-                 )
-               ,
-                 ( 'EST'
-                 , 'EST [Estonia]'
-                 )
-               ,
-                 ( 'FIN'
-                 , 'FIN [Finland]'
-                 )
-               ,
-                 ( 'FRA'
-                 , 'FRA [France]'
-                 )
-               ,
-                 ( 'GBR'
-                 , 'GBR [Great Britain]'
-                 )
-               ,
-                 ( 'GER'
-                 , 'GER [Germany]'
-                 )
-               ,
-                 ( 'GRE'
-                 , 'GRE [Greece]'
-                 )
-               ,
-                 ( 'HUN'
-                 , 'HUN [Hungary]'
-                 )
-               ,
-                 ( 'IRL'
-                 , 'IRL [Ireland]'
-                 )
-               ,
-                 ( 'ISL'
-                 , 'ISL [Iceland]'
-                 )
-               ,
-                 ( 'ITA'
-                 , 'ITA [Italy]'
-                 )
-               ,
-                 ( 'LAT'
-                 , 'LAT [Latvia]'
-                 )
-               ,
-                 ( 'LIE'
-                 , 'LIE [Lichtenstein]'
-                 )
-               ,
-                 ( 'LTU'
-                 , 'LTU [Lithuania]'
-                 )
-               ,
-                 ( 'LUX'
-                 , 'LUX [Luxembourg]'
-                 )
-               ,
-                 ( 'MLT'
-                 , 'MLT [Malta]'
-                 )
-               ,
-                 ( 'MNE'
-                 , 'MNE [Montenegro]'
-                 )
-               ,
-                 ( 'MON'
-                 , 'MON [Monaco]'
-                 )
-               ,
-                 ( 'NED'
-                 , 'NED [Netherlands]'
-                 )
-               ,
-                 ( 'NOR'
-                 , 'NOR [Norway]'
-                 )
-               ,
-                 ( 'NZL'
-                 , 'NZL [New Zealand]'
-                 )
-               ,
-                 ( 'POL'
-                 , 'POL [Poland]'
-                 )
-               ,
-                 ( 'POR'
-                 , 'POR [Portugal]'
-                 )
-               ,
-                 ( 'ROU'
-                 , 'ROU [Romania]'
-                 )
-               ,
-                 ( 'RSA'
-                 , 'RSA [South Africa]'
-                 )
-               ,
-                 ( 'RUS'
-                 , 'RUS [Russia]'
-                 )
-               ,
-                 ( 'SLO'
-                 , 'SLO [Slovenia]'
-                 )
-               ,
-                 ( 'SRB'
-                 , 'SRB [Serbia]'
-                 )
-               ,
-                 ( 'SUI'
-                 , 'SUI [Switzerland]'
-                 )
-               ,
-                 ( 'SVK'
-                 , 'SVK [Slovakia]'
-                 )
-               ,
-                 ( 'SWE'
-                 , 'SWE [Sweden]'
-                 )
-               ,
-                 ( 'UKR'
-                 , 'UKR [Ukraine]'
-                 )
-               ,
-                 ( 'USA'
-                 , 'USA [United States]'
-                 )
-               ]
+                [
+                  ( 'AUS'
+                  , 'AUS [Australia]'
+                  )
+                ,
+                  ( 'AUT'
+                  , 'AUT [Austria]'
+                  )
+                ,
+                  ( 'BEL'
+                  , 'BEL [Belgium]'
+                  )
+                ,
+                  ( 'CAN'
+                  , 'CAN [Canada]'
+                  )
+                ,
+                  ( 'CRO'
+                  , 'CRO [Croatia]'
+                  )
+                ,
+                  ( 'CYP'
+                  , 'CYP [Cyprus]'
+                  )
+                ,
+                  ( 'CZE'
+                  , 'CZE [Czech Republic]'
+                  )
+                ,
+                  ( 'DEN'
+                  , 'DEN [Denmark]'
+                  )
+                ,
+                  ( 'ESP'
+                  , 'ESP [Spain]'
+                  )
+                ,
+                  ( 'EST'
+                  , 'EST [Estonia]'
+                  )
+                ,
+                  ( 'FIN'
+                  , 'FIN [Finland]'
+                  )
+                ,
+                  ( 'FRA'
+                  , 'FRA [France]'
+                  )
+                ,
+                  ( 'GBR'
+                  , 'GBR [Great Britain]'
+                  )
+                ,
+                  ( 'GER'
+                  , 'GER [Germany]'
+                  )
+                ,
+                  ( 'GRE'
+                  , 'GRE [Greece]'
+                  )
+                ,
+                  ( 'HUN'
+                  , 'HUN [Hungary]'
+                  )
+                ,
+                  ( 'IRL'
+                  , 'IRL [Ireland]'
+                  )
+                ,
+                  ( 'ISL'
+                  , 'ISL [Iceland]'
+                  )
+                ,
+                  ( 'ITA'
+                  , 'ITA [Italy]'
+                  )
+                ,
+                  ( 'LAT'
+                  , 'LAT [Latvia]'
+                  )
+                ,
+                  ( 'LIE'
+                  , 'LIE [Lichtenstein]'
+                  )
+                ,
+                  ( 'LTU'
+                  , 'LTU [Lithuania]'
+                  )
+                ,
+                  ( 'LUX'
+                  , 'LUX [Luxembourg]'
+                  )
+                ,
+                  ( 'MLT'
+                  , 'MLT [Malta]'
+                  )
+                ,
+                  ( 'MNE'
+                  , 'MNE [Montenegro]'
+                  )
+                ,
+                  ( 'MON'
+                  , 'MON [Monaco]'
+                  )
+                ,
+                  ( 'NED'
+                  , 'NED [Netherlands]'
+                  )
+                ,
+                  ( 'NOR'
+                  , 'NOR [Norway]'
+                  )
+                ,
+                  ( 'NZL'
+                  , 'NZL [New Zealand]'
+                  )
+                ,
+                  ( 'POL'
+                  , 'POL [Poland]'
+                  )
+                ,
+                  ( 'POR'
+                  , 'POR [Portugal]'
+                  )
+                ,
+                  ( 'ROU'
+                  , 'ROU [Romania]'
+                  )
+                ,
+                  ( 'RSA'
+                  , 'RSA [South Africa]'
+                  )
+                ,
+                  ( 'RUS'
+                  , 'RUS [Russia]'
+                  )
+                ,
+                  ( 'SLO'
+                  , 'SLO [Slovenia]'
+                  )
+                ,
+                  ( 'SRB'
+                  , 'SRB [Serbia]'
+                  )
+                ,
+                  ( 'SUI'
+                  , 'SUI [Switzerland]'
+                  )
+                ,
+                  ( 'SVK'
+                  , 'SVK [Slovakia]'
+                  )
+                ,
+                  ( 'SWE'
+                  , 'SWE [Sweden]'
+                  )
+                ,
+                  ( 'UKR'
+                  , 'UKR [Ukraine]'
+                  )
+                ,
+                  ( 'USA'
+                  , 'USA [United States]'
+                  )
+                ]
             , full_name = 'left.nation'
             , id = 'left__nation'
             , name = 'nation'
@@ -584,7 +608,7 @@ _test_code = """
             , full_name = 'left.sail_number'
             , id = 'left__sail_number'
             , name = 'sail_number'
-            , sig_key = 3
+            , sig_key = 4
             , ui_name = 'Boat/Sail number'
             )
           , Record
