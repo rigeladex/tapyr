@@ -47,6 +47,7 @@
 #    10-Aug-2012 (CT) Use `P.color_spec_sub_heading` for `h1`..`h6`
 #     9-Oct-2012 (CT) Add `bold`, `padding` to `.Error-Message`
 #    28-Feb-2013 (CT) Add `margin_bottom` for `ol li`
+#     7-Mar-2013 (CT) Add rule for `.added`
 #    ««revision-date»»···
 #--
 
@@ -186,10 +187,16 @@ style_sheet = Style_Sheet \
         )
     , Rule (".clickable",     cursor     = "pointer")
     , Rule
-      ( ".deleted"
-      , opacity          = 0.8
-      , text_decoration  = "line-through"
-      )
+        ( ".added"
+        , border             = P.border_added
+        , font_weight        = "bold"
+        )
+    , Rule
+        ( ".deleted"
+        , border             = P.border_deleted
+        , opacity            = 0.8
+        , text_decoration    = "line-through"
+        )
     , Rule (".hbox",          ** P.hbox_spec)
     , Rule
         ( ".headline"

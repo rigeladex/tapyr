@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -45,6 +45,7 @@
 #     1-Mar-2012 (CT) Change `pg_main_max_width` from `Em (50)` to `Em (45)`
 #     8-Mar-2012 (CT) Add `color_bg_menu`
 #    10-Aug-2012 (CT) Add `color_spec_sub_heading`, `color_spec_term`
+#     7-Mar-2013 (CT) Add `border_added` and `border_deleted`
 #    ««revision-date»»···
 #--
 
@@ -113,7 +114,9 @@ class Media_Defaults (Definition) :
 
     block_margin_bottom    = Em (1./2)
 
+    border_added           = "1px solid "  + P.color.m_red
     border_button          = "2px outset " + P.color_medium_grey
+    border_deleted         = "1px solid "  + P.color.m_blue
     border_simple          = "1px solid "  + P.color_medium_grey
     border_selected        = "2px solid "  + P.color_selected
 
