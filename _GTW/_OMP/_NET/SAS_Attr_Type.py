@@ -29,6 +29,7 @@
 #    24-Sep-2012 (RS) Creation, factored from `GTW.OMP.NET.Attr_Type`
 #    11-Oct-2012 (RS) Insert magic _sa_filter into `rsclib.IP_Address`
 #    27-Feb-2013 (CT) Add `_SAS_IP4_Address_Query_Mixin_.contains`
+#     7-Mar-2013 (RS) Add missing `contains` methods
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,8 @@ class _SAS_IP_Address_Query_Mixin_ (TFL.Meta.Object) :
 
 class _SAS_IP4_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
     """Special query code for IP4 address objects"""
+
+    max_mask_len = 32
 
     def contains (self, rhs) :
         return sql.and_ \
@@ -97,6 +100,27 @@ class _SAS_IP4_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
 
 class _SAS_IP6_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
     """Special query code for IP6 address objects"""
+
+    max_mask_len = 128
+
+    def contains (self, rhs) :
+        return sql.or_ \
+            ( sql.and_
+                ( self.numeric_address_high <  rhs .numeric_address_high
+                , rhs .numeric_address_high <  self.upper_bound_high
+                )
+            , sql.and_
+                ( self.numeric_address_high == rhs .numeric_address_high
+                , self.numeric_address_low  <= rhs .numeric_address_low
+                , rhs .numeric_address_low  <= self.upper_bound_low
+                )
+            , sql.and_
+                ( rhs .numeric_address_high == self.upper_bound_high
+                , self.numeric_address_low  <= rhs .numeric_address_low
+                , rhs .numeric_address_low  <= self.upper_bound_low
+                )
+            )
+    # end def contains
 
     def in_ (self, rhs) :
         return sql.or_ \
@@ -168,6 +192,14 @@ class _SAS_IP6_Address_Query_Mixin_ (_SAS_IP_Address_Query_Mixin_) :
 # end class _SAS_IP6_Address_Query_Mixin_
 
 class _Net_Cmp_Mixin_ (TFL.Meta.Object) :
+
+    def contains (self, rhs) :
+        mask_len = getattr (rhs, 'mask_len', self.max_mask_len)
+        return sql.and_ \
+            ( self.__super.contains (rhs)
+            , self.mask_len <= mask_len
+            )
+    # end def contains
 
     def in_ (self, rhs) :
         return sql.and_ \

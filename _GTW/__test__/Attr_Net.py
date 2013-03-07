@@ -40,6 +40,7 @@
 #    11-Oct-2012 (RS) Add type-check for `raw_query_attrs` test
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    12-Oct-2012 (RS) Changed `code_format` in `GTW.OMP.NET.Attr_Type`
+#     7-Mar-2013 (RS) Test `CONTAINS`
 #    ««revision-date»»···
 #--
 
@@ -549,6 +550,13 @@ _query_test = r"""
     >>> list (sorted (x.address.address for x in r))
     [192.168.1.0/29, 192.168.1.0/28, 192.168.1.8/29]
 
+    >>> n42a = n42.address
+    >>> Test_IP4_Network.query (Q.address.CONTAINS (n42a)).count ()
+    3
+    >>> i42a = i42.address
+    >>> Test_IP4_Network.query (Q.address.CONTAINS (i42a)).count ()
+    3
+
     >>> Test_IP4_Network.query (Q.address == network).count ()
     1
     >>> Test_IP4_Network.query (Q.address != network).count ()
@@ -618,6 +626,14 @@ _query_test = r"""
     >>> r = Test_IP6_Network.query (Q.address.IN (network)).all ()
     >>> list (sorted (x.address.address for x in r))
     [2001:db8::/125, 2001:db8::/124, 2001:db8::8/125]
+
+    >>> n62a = n62.address
+    >>> Test_IP6_Network.query (Q.address.CONTAINS (n62a)).count ()
+    3
+    >>> i62a = i62.address
+    >>> Test_IP6_Network.query (Q.address.CONTAINS (i62a)).count ()
+    3
+
 
     >>> Test_IP6_Network.query (Q.address == network).count ()
     1
