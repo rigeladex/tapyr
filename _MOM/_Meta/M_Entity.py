@@ -168,6 +168,7 @@
 #     6-Mar-2013 (CT) Change semantics of `polymorphic_epk`
 #                     add `polymorphic_relevant_epk` with previous semantics
 #                     of `polymorphic_epk`
+#     8-Mar-2013 (CT) Change `_m_create_e_types` to bubble up `polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -333,6 +334,16 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         app_type.DBW.prepare ()
         for s in SX :
             app_type.add_type (s._m_new_e_type (app_type, etypes))
+        for t in reversed (app_type._T_Extension) :
+            ### let `polymorphic_epk` and `polymorphic_relevant_epk` bubble up
+            ###     `_m_new_e_type_dict` only sets `polymorphic_epk` of
+            ###     immediate parent, but grandparents and higher ups also
+            ###     need it set
+            if t.polymorphic_epk and getattr (t, "epk_bases", ()) :
+                for b in t.epk_bases :
+                    b.polymorphic_epk = True
+                    if b.relevant_root :
+                        b.polymorphic_relevant_epk = True
         for t in app_type._T_Extension :
             ### set up attributes and predicates only after all etypes are
             ### registered in app_type
@@ -684,7 +695,8 @@ class M_Id_Entity (M_Entity) :
         d_raw  = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
         r_kw   = dict \
-            ( epk_sig                  = epk_sig
+            ( epk_bases                = epk_bases
+            , epk_sig                  = epk_sig
             , epk_sig_t                = epk_sig_t
             , epkified_ckd             = cls._m_auto_epkified
                 (epk_sig, a_ckd, d_ckd, "ckd")

@@ -197,7 +197,7 @@ _test_code = r"""
     SWP.Object                                     False  True   True
     SWP.Id_Entity                                  False  False  False
     SWP.Named_Object                               False  False  False
-    SWP.Object_PN                                  False  False  False
+    SWP.Object_PN                                  False  True   True
     SWP.Page_Mixin                                 False  True   True
     SWP.Page                                       True   True   True
     SWP.Page_Y                                     True   False  False
@@ -220,7 +220,7 @@ _test_code = r"""
     PAP.Subject_has_Email                          False  True   True
     PAP.Subject_has_Url                            False  True   True
     PAP.Person_has_Account                         True   False  False
-    SRM.Regatta_Result                             False  False  False
+    SRM.Regatta_Result                             False  True   True
     SRM.Entity                                     False  True   True
     SRM.Link1                                      False  True   True
     SRM.Link2                                      False  True   True

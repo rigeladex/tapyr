@@ -33,6 +33,8 @@
 #     6-Mar-2013 (CT) Add import of `Association`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
+#     8-Mar-2013 (CT) Add subclasses of `Association` to test
+#                     `polymorphic_epk` over multiple inheritance levels
 #    ««revision-date»»···
 #--
 
@@ -198,35 +200,22 @@ _test_code = """
         PAP.Company_has_Url        False PAP.Company_has_Url
         PAP.Association_has_Url    False PAP.Association_has_Url
 
-    >>> fmt = "%%(type_name)-16s %%(is_relevant)-5s %%(polymorphic_epk)-5s %%(polymorphic_epks)-6s %%(epk_sig)s"
+    >>> fmt = "%%(type_name)-20s %%(is_relevant)-5s %%(polymorphic_epk)-5s %%(polymorphic_epks)-6s %%(epk_sig)s"
     >>> for i, et in enumerate (scope.app_type._T_Extension) :
     ...   if not i :
     ...     print (fmt %% (dict (type_name = "type_name", is_relevant = "relev", epk_sig = "epk_sig", polymorphic_epk = "p_epk", polymorphic_epks = "p_epks")))
     ...     print ("=" * 75)
     ...   if issubclass (et, scope.PAP.Subject.E_Type) :
     ...     print (fmt %% TFL.Caller.Object_Scope (et))
-    type_name        relev p_epk p_epks epk_sig
+    type_name            relev p_epk p_epks epk_sig
     ===========================================================================
-    PAP.Subject      False True  True   ()
-    PAP.Person       True  False False  ('last_name', 'first_name', 'middle_name', 'title')
-    PAP.Legal_Entity False True  True   ('name',)
-    PAP.Company      True  False False  ('name', 'registered_in')
-    PAP.Association  True  False False  ('name',)
-
-    >>> fmt = "%%(type_name)-16s %%(is_relevant)-5s %%(polymorphic_epk)-5s %%(polymorphic_epks)-6s %%(epk_sig)s"
-    >>> for i, et in enumerate (scope.app_type._T_Extension) :
-    ...   if not i :
-    ...     print (fmt %% (dict (type_name = "type_name", is_relevant = "relev", epk_sig = "epk_sig", polymorphic_epk = "p_epk", polymorphic_epks = "p_epks")))
-    ...     print ("=" * 75)
-    ...   if issubclass (et, scope.PAP.Subject.E_Type) :
-    ...     print (fmt %% TFL.Caller.Object_Scope (et))
-    type_name        relev p_epk p_epks epk_sig
-    ===========================================================================
-    PAP.Subject      False True  True   ()
-    PAP.Person       True  False False  ('last_name', 'first_name', 'middle_name', 'title')
-    PAP.Legal_Entity False True  True   ('name',)
-    PAP.Company      True  False False  ('name', 'registered_in')
-    PAP.Association  True  False False  ('name',)
+    PAP.Subject          False True  True   ()
+    PAP.Person           True  False False  ('last_name', 'first_name', 'middle_name', 'title')
+    PAP.Legal_Entity     False True  True   ('name',)
+    PAP.Company          True  False False  ('name', 'registered_in')
+    PAP.Association      True  True  True   ('name',)
+    PAP.Association_S    True  True  True   ('name',)
+    PAP.Association_T    True  False False  ('name', 'epk_new')
 
     >>> sk = lambda x : (not bool (x.children), x.i_rank)
     >>> for i, (T, l) in enumerate (children_trans_iter (scope.MOM.Id_Entity, sort_key = sk)) :
@@ -240,11 +229,12 @@ _test_code = """
     ...         hdl = len (hd)
     ...         sep = (" " if hdl %% 2 else "") + ". " * ((50 - hdl) // 2)
     ...         ts  = tuple ((x or "") for x in fs)
-    ...         print ("%%s %%s %%6s %%6s %%6s %%6s" %% ((hd, sep) + ts))
+    ...         print (("%%s %%s %%6s %%6s %%6s %%6s" %% ((hd, sep) + ts)).rstrip ())
     type_name                                           relev  p_epk p_epks pr_epk
     ================================================================================
     MOM.Id_Entity  . . . . . . . . . . . . . . . . . .           True   True
       MOM.Link . . . . . . . . . . . . . . . . . . . .           True   True
+        MOM.Link1  . . . . . . . . . . . . . . . . . .           True   True
           Auth.Link1 . . . . . . . . . . . . . . . . .           True   True
             Auth._Account_Action_  . . . . . . . . . .           True   True
                 Auth.Account_EMail_Verification  . . .    True
@@ -279,19 +269,19 @@ _test_code = """
                 PAP.Subject_has_Phone  . . . . . . . .           True   True
                   PAP.Person_has_Phone . . . . . . . .    True                 True
                   PAP.Company_has_Phone  . . . . . . .    True                 True
-                  PAP.Association_has_Phone  . . . . .    True                 True
+                  PAP.Association_has_Phone  . . . . .    True          True   True
                 PAP.Subject_has_Address  . . . . . . .           True   True
                   PAP.Person_has_Address . . . . . . .    True                 True
                   PAP.Company_has_Address  . . . . . .    True                 True
-                  PAP.Association_has_Address  . . . .    True                 True
+                  PAP.Association_has_Address  . . . .    True          True   True
                 PAP.Subject_has_Email  . . . . . . . .           True   True
                   PAP.Person_has_Email . . . . . . . .    True                 True
                   PAP.Company_has_Email  . . . . . . .    True                 True
-                  PAP.Association_has_Email  . . . . .    True                 True
+                  PAP.Association_has_Email  . . . . .    True          True   True
                 PAP.Subject_has_Url  . . . . . . . . .           True   True
                   PAP.Person_has_Url . . . . . . . . .    True                 True
                   PAP.Company_has_Url  . . . . . . . .    True                 True
-                  PAP.Association_has_Url  . . . . . .    True                 True
+                  PAP.Association_has_Url  . . . . . .    True          True   True
               PAP.Person_has_Account . . . . . . . . .    True                 True
             SRM.Link2  . . . . . . . . . . . . . . . .           True   True
               SRM.Boat_in_Regatta  . . . . . . . . . .    True          True   True
@@ -309,8 +299,10 @@ _test_code = """
         PAP.Object . . . . . . . . . . . . . . . . . .           True   True
           PAP.Subject  . . . . . . . . . . . . . . . .           True   True
             PAP.Legal_Entity . . . . . . . . . . . . .           True   True
+              PAP.Association  . . . . . . . . . . . .    True   True   True   True
+                PAP.Association_S  . . . . . . . . . .    True   True   True   True
+                  PAP.Association_T  . . . . . . . . .    True                 True
               PAP.Company  . . . . . . . . . . . . . .    True                 True
-              PAP.Association  . . . . . . . . . . . .    True
             PAP.Person . . . . . . . . . . . . . . . .    True                 True
           PAP.Property . . . . . . . . . . . . . . . .           True   True
             PAP.Address  . . . . . . . . . . . . . . .    True                 True
@@ -318,6 +310,7 @@ _test_code = """
             PAP.Phone  . . . . . . . . . . . . . . . .    True                 True
             PAP.Url  . . . . . . . . . . . . . . . . .    True                 True
         SWP.Object . . . . . . . . . . . . . . . . . .           True   True
+          SWP.Object_PN  . . . . . . . . . . . . . . .           True   True
             SWP.Page . . . . . . . . . . . . . . . . .    True   True   True   True
               SWP.Page_Y . . . . . . . . . . . . . . .    True                 True
               SWP.Clip_X . . . . . . . . . . . . . . .    True
@@ -339,6 +332,32 @@ from   _MOM.inspect             import children_trans_iter
 from   itertools                import chain as ichain
 
 import _GTW._OMP._PAP.Association
+
+_Ancestor_Essence = GTW.OMP.PAP.Association
+
+class Association_S (_Ancestor_Essence) :
+    """Descendent of Association with identical epk_sig"""
+# end class Association_S
+
+_Ancestor_Essence = Association_S
+
+class Association_T (_Ancestor_Essence) :
+    """Descendent of Association_S with different epk_sig"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class epk_new (A_Int) :
+            """Additional epk attribute"""
+
+            kind               = Attr.Primary
+
+        # end class epk_new
+
+    # end class _Attributes
+
+# end class Association_T
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
