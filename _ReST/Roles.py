@@ -30,6 +30,7 @@
 #    15-Jan-2011 (CT) `deleted` role added
 #    28-Feb-2012 (CT) Add `_quoted_role`
 #     7-Mar-2013 (CT) Add `_added_role`
+#     8-Mar-2013 (CT) Use `...-inline` for short text `added` or `deleted`
 #    ««revision-date»»···
 #--
 
@@ -70,14 +71,16 @@ register_local_role (_email_role.name, _email_role)
 register_local_role ("tel",            _tel_role)
 
 def _added_role (role, rawtext, text, lineno, inliner, options={}, content=[]) :
-    node = nodes.inline (rawtext, text, classes = ["added"], ** options)
+    cssc = "added" if len (rawtext) > 60 else "added-inline"
+    node = nodes.inline (rawtext, text, classes = [cssc], ** options)
     return [node], []
 # end def _added_role
 
 register_local_role ("added", _added_role)
 
 def _deleted_role (role, rawtext, text, lineno, inliner, options={}, content=[]) :
-    node = nodes.inline (rawtext, text, classes = ["deleted"], ** options)
+    cssc = "deleted" if len (rawtext) > 60 else "deleted-inline"
+    node = nodes.inline (rawtext, text, classes = [cssc], ** options)
     return [node], []
 # end def _deleted_role
 

@@ -190,9 +190,22 @@ style_sheet = Style_Sheet \
         ( ".added"
         , border             = P.border_added
         , font_weight        = "bold"
+        , vertical_align     = "top"
         )
     , Rule
         ( ".deleted"
+        , border             = P.border_deleted
+        , opacity            = 0.8
+        , text_decoration    = "line-through"
+        , vertical_align     = "top"
+        )
+    , Rule
+        ( ".added-inline"
+        , border             = P.border_added
+        , font_weight        = "bold"
+        )
+    , Rule
+        ( ".deleted-inline"
         , border             = P.border_deleted
         , opacity            = 0.8
         , text_decoration    = "line-through"
