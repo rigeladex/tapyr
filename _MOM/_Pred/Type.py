@@ -2,7 +2,7 @@
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package _MOM.
+# This module is part of the package MOM.Pred.
 #
 # This module is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public
@@ -55,6 +55,7 @@
 #    30-Jan-2013 (CT) Change `Unique.satisfied` to query `epk_sig_root`
 #    26-Feb-2013 (CT) Fix `set_c_attr_value` for case that `result` is taken
 #                     from `val_dict`, not `obj`
+#    11-Mar-2013 (CT) Derive `_Condition_` from `MOM.Prop.Type`, not `object`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,7 @@ from   _MOM._Attr.Filter     import Q
 
 import _MOM._Meta.M_Pred_Type
 import _MOM._Pred
+import _MOM._Prop.Type
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -74,7 +76,7 @@ import _TFL.d_dict
 
 import traceback
 
-class _Condition_ (object):
+class _Condition_ (MOM.Prop.Type):
     ### Base class for all predicates (atomic and quantifiers).
 
     __metaclass__   = MOM.Meta.M_Pred_Type._Condition_

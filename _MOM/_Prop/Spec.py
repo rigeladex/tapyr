@@ -42,6 +42,7 @@
 #    22-Dec-2011 (CT) Change `_effective_prop_kind` to set `kind` to `kind.kind`
 #    12-Sep-2012 (CT) Add `e_type` to `kind.__init__`
 #    29-Jan-2013 (CT) Factor `_sort_properties`
+#    11-Mar-2013 (CT) Add `fix_doc`
 #    ««revision-date»»···
 #--
 
@@ -63,8 +64,8 @@ class _Prop_Spec_ (TFL.Meta.Object) :
 
     Kind_Mixins         = ()
 
-    _prop_dict_cls = dict
-    _mixed_kinds   = dict ()
+    _prop_dict_cls      = dict
+    _mixed_kinds        = dict ()
 
     def __init__ (self, e_type) :
         self._own_names = dict  (self._own_names) ### class to instance
@@ -73,6 +74,13 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         self._create_properties (e_type)
         self._sort_properties   (e_type)
     # end def __init__
+
+    def fix_doc (self, e_type) :
+        for p in self._prop_dict.itervalues () :
+            p.prop.fix_doc (e_type)
+            if p.prop.description :
+                p.__doc__ = p.prop.description
+    # end def fix_doc
 
     def _add_prop (self, e_type, name, prop_type) :
         kind = self._effective_prop_kind (name, prop_type, e_type)

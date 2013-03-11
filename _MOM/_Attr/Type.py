@@ -2,7 +2,7 @@
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package _MOM.
+# This module is part of the package MOM.Attr.
 #
 # This module is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public
@@ -273,6 +273,7 @@
 #     6-Mar-2013 (CT) Change `_A_Unit_.eligible_raw_values, `._from_string` to
 #                     `Class_and_Instance_Method`, redefine `_A_Unit_.cooked`
 #     7-Mar-2013 (CT) Add `A_Frequency.completer`
+#    11-Mar-2013 (CT) Factor `fix_doc` to `MOM.Prop.Type`
 #    ««revision-date»»···
 #--
 
@@ -290,6 +291,7 @@ import _MOM._Attr.Kind
 import _MOM._Attr.Querier
 import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
+import _MOM._Prop.Type
 
 from   _TFL.I18N             import _, _T
 from   _TFL.Regexp           import *
@@ -297,7 +299,6 @@ from   _TFL                  import sos
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
-import _TFL.Caller
 import _TFL.Currency
 import _TFL.r_eval
 
@@ -310,12 +311,13 @@ import time
 
 plain_number_pat = r"\d+ (?: \.\d*)? (?: [eE]\d+)? \s*"
 
-class A_Attr_Type (TFL.Meta.Object) :
+class A_Attr_Type (MOM.Prop.Type) :
     """Root class for attribute types for the MOM meta object model."""
 
     __metaclass__       = MOM.Meta.M_Attr_Type
-    _sets_to_combine    = ("check", )
-    _lists_to_combine   = ("Kind_Mixins", )
+    _doc_properties     = ("syntax", )
+    _sets_to_combine    = MOM.Prop.Type._sets_to_combine  + ("check", )
+    _lists_to_combine   = MOM.Prop.Type._lists_to_combine + ("Kind_Mixins", )
 
     auto_up_depends     = ()
     check               = set ()
@@ -486,23 +488,6 @@ class A_Attr_Type (TFL.Meta.Object) :
     def epk_def_set_raw (cls) :
         pass
     # end def epk_def_set_raw
-
-    def fix_doc (self, e_type) :
-        def fix (self, name, et_scope) :
-            v = getattr (self, name)
-            if v and "%(" in v :
-                try :
-                    v = v % et_scope
-                except Exception :
-                    pass
-                else :
-                    setattr (self, name, v)
-        et_scope = TFL.Caller.Object_Scope (e_type)
-        for k in "description", "explanation", "syntax" :
-            fix (self, k, et_scope)
-        if self.description :
-            self.__doc__ = self.description
-    # end def fix_doc
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         try :

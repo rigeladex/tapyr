@@ -169,6 +169,8 @@
 #                     add `polymorphic_relevant_epk` with previous semantics
 #                     of `polymorphic_epk`
 #     8-Mar-2013 (CT) Change `_m_create_e_types` to bubble up `polymorphic_epk`
+#    11-Mar-2013 (CT) Use `MOM.Prop.Spec.fix_doc`, not home-grown code
+#                     Call `_Predicates.fix_doc`, too
 #    ««revision-date»»···
 #--
 
@@ -836,8 +838,8 @@ class M_E_Type (M_E_Mixin) :
         if doc :
             os          = TFL.Caller.Object_Scope (cls)
             cls.__doc__ = doc % os
-        for a in cls.attributes.itervalues () :
-            a.attr.fix_doc (cls)
+        for S in (cls._Attributes, cls._Predicates) :
+            S.fix_doc (cls)
     # end def _m_fix_doc
 
     def _m_fix_refuse_links (cls, app_type) :
