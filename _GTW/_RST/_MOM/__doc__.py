@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-Jul-2012 (CT) Creation
 #     4-Dec-2012 (CT) Add bib-refs [Amu11] and [WPR10]
+#    13-Mar-2013 (CT) Improve documentation
 #    ««revision-date»»···
 #--
 
@@ -180,8 +181,8 @@ Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
         ]
     , 'entries' :
         [ { 'attributes' :
-              { 'first_name' : 'Christian'
-              , 'last_name' : 'Tanzer'
+              { 'first_name' : 'christian'
+              , 'last_name' : 'tanzer'
               , 'middle_name' : ''
               , 'title' : ''
               }
@@ -200,6 +201,9 @@ returned or to search for specific instances. Possible query parameters are:
 - `ckd`: Return cooked values for attributes of types supported by
   Javascript, i.e., `int`, `float`, and `string`. The cooked attribute
   values are returned in a `JSON`_ object with name `attributes`.
+
+  If neither `ckd` nor `raw` is specified as query parameter, per default
+  cooked values are returned.
 
   For instance::
 
@@ -231,6 +235,17 @@ returned or to search for specific instances. Possible query parameters are:
 
 - `raw`: Return raw values for all attributes. The raw attribute values  are
   returned in a `JSON`_ object with name `attributes_raw`.
+
+  Depending on the attribute type, raw values can differ from cooked values.
+  For instance, for attributes like `last_name` and `first_name` of the
+  essential type `PAP.Person` the cooked value is derived from the raw value
+  by converting it to lower case. For attribute values denoting frequencies,
+  the raw value is a string that can contain a unit like `kHz` or `GHz`,
+  while the cooked value is a floating point value normalized to `Hz`.
+
+  If an attribute value is to be shown in an UI, the raw value is generally
+  asked for; OTOH, if an attribute value is to be used for computations, the
+  cooked value is the one to use.
 
   For instance::
 
@@ -268,9 +283,12 @@ returned or to search for specific instances. Possible query parameters are:
 
 - `closure`: Return nested objects as `JSON`_ objects, not just references.
 
+  * For any nested object, only the first occurence is returned in full,
+    subsequent occurences just contain `pid` and `url`.
+
 - `count`: Return just the count, not the list, of instances.
 
-- `limit`: Restrict the number of instances to the value specified.
+- `limit`: Restrict the number of returned instances to the value specified.
 
 - `offset`: Number of first instance to return; can be used together with
   `limit` and `order_by` to iterate over all instances.
@@ -300,6 +318,8 @@ returned or to search for specific instances. Possible query parameters are:
   * `LE`: less than or equal
 
   * `LT`: less than
+
+  * `IN`: attribute value is member of the set specified as query value
 
   * `CONTAINS`: attribute value contains the specified query value
 
@@ -406,9 +426,10 @@ request body for the `PUT` must be a `JSON`_ object with the attributes:
 ~~~~~~~~~~
 
 Use the HTTP method `DELETE` to remove the instance from the database; this
-will also remove all links to the instance in question. You need to pass
-`cid` as query parameter. If the `cid` of the instance has changed in the
-meantime, the `DELETE` request will fail with a HTTP status code of 409.
+will also remove all links to the instance in question to preserve
+referential integrity. You need to pass `cid` as query parameter. If the
+`cid` of the instance has changed in the meantime, the `DELETE` request will
+fail with a HTTP status code of 409.
 
 .. _`RESTful web service`: http://en.wikipedia.org/wiki/Representational_State_Transfer
 .. _`REST`: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
