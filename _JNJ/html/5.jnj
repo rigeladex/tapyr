@@ -1,6 +1,6 @@
 {#- jinja template: html/5.jnj -#}
 {#
-## Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -28,10 +28,11 @@
 ##
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
-##    22-Nov-2011 (CT) Replace `<meta name="Content-URL` with `<!-- Content-URL`
+##    22-Nov-2011 (CT) Replace meta "Content-URL" with comment for "Content-URL"
 ##     2-Dec-2011 (CT) Add macro `script`, factor `shiv` from `head`
 ##     2-Dec-2011 (CT) Add `class="no-js"` to `html`
 ##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
+##    15-Mar-2013 (CT) Remove obsolete macro `shiv` (use `modernizr` instead)
 ##    ««revision-date»»···
 ##--
 #}
@@ -86,11 +87,5 @@
   {{ caller () }}
 </section>
 {%- endmacro -%}
-
-{%- macro shiv () -%}
-  <!--[if IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-{%- endmacro -%} {#- shiv -#}
 
 {#- __END__ jinja template: html/5.jnj -#}
