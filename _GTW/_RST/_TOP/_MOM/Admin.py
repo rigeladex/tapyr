@@ -51,6 +51,7 @@
 #    14-Dec-2012 (CT) Use `child_permission_map` in `_new_child_x`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
 #    17-Mar-2013 (CT) Add `_login_required` to `E_Type, `Group`, `Site``
+#    17-Mar-2013 (CT) Add guard `response.renderer` to `E_Type.rendered`
 #    ««revision-date»»···
 #--
 
@@ -1188,7 +1189,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                     , objects           = objects
                     , query_restriction = self.query_restriction
                     )
-                if response.renderer.name == "JSON" :
+                if response.renderer and response.renderer.name == "JSON" :
                     template   = self.top.Templateer.get_template ("e_type")
                     call_macro = template.call_macro
                     buttons    = dict \
