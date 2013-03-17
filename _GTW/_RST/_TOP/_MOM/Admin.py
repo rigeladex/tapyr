@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -50,6 +50,7 @@
 #    13-Dec-2012 (CT) Add argument `AQ` to `_rendered_completions`
 #    14-Dec-2012 (CT) Use `child_permission_map` in `_new_child_x`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
+#    17-Mar-2013 (CT) Add `_login_required` to `E_Type, `Group`, `Site``
 #    ««revision-date»»···
 #--
 
@@ -870,6 +871,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     _form_id              = None
     _form_parameters      = {}
     _list_display         = None
+    _login_required       = True
     _sort_key             = None
 
     class _E_Type_GET_ (_Ancestor.GET) :
@@ -1286,6 +1288,8 @@ class Group (_Ancestor) :
     show_aliases          = False
 
     _exclude_robots       = True
+    _login_required       = True
+
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "etypes", "PNSs", prefix = "_")
@@ -1352,7 +1356,9 @@ class Group (_Ancestor) :
 class Site (Group) :
     """Directory displaying admin Groups."""
 
-    _exclude_robots       = True
+    _exclude_robots      = True
+    _login_required      = True
+
 
     def _auto_entries (self) :
         for et in self.top.ET_Map.itervalues () :
