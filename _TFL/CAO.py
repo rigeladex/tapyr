@@ -103,6 +103,8 @@
 #    22-Feb-2013 (CT) Change `_Number_.cook` to `raise err`, if any
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    24-Feb-2013 (CT) Split `__test__` from `__doc__`, add to `__doc__`
+#    18-Mar-2013 (CT) Change `_safe_eval` to not convert `self` to string
+#    18-Mar-2013 (CT) Change `_Number_._resolve_range_1` to save match variables
 #    ««revision-date»»···
 #--
 
@@ -136,7 +138,8 @@ class Err (StandardError) :
     # end def __init__
 
     def __str__ (self) :
-        return "Command/argument/option error: %s" % (" ".join (self.args), )
+        return "Command/argument/option error: %s" % \
+            (" ".join (str (a) for a in self.args), )
     # end def __str__
 
     __repr__ = __str__
@@ -332,7 +335,10 @@ class _Spec_ (TFL.Meta.Object) :
             try :
                 return TFL.r_eval (value)
             except Exception :
-                raise Err ("Invalid value `%s` for %s" % (value, self))
+                ### Don't convert `self` to a string here because that
+                ### triggers a call to `cook` which might reset pattern
+                ### variables
+                raise Err ("Invalid value `%s` for " % (value), self)
     # end def _safe_eval
 
     def _set_default (self, default) :
@@ -435,10 +441,15 @@ class _Number_ (_Spec_) :
     # end def cook
 
     def _resolve_range_1 (self, value, cao, pat) :
-        cook  = self.cook
-        head  = cook (pat.head, cao)
-        tail  = cook (pat.tail, cao) + 1
-        delta = cook (pat.delta or self.range_delta, cao)
+        cook     = self.cook
+        ### Extract match variables because errors in `cook` might trigger
+        ### another pattern match overwriting them
+        r_head   = pat.head
+        r_tail   = pat.tail
+        r_delta  = pat.delta
+        head     = cook (r_head, cao)
+        tail     = cook (r_tail, cao) + 1
+        delta    = cook (r_delta or self.range_delta, cao)
         for v in range (head, tail, delta) :
             yield v
     # end def _resolve_range_1
@@ -1198,7 +1209,7 @@ class Cmd (TFL.Meta.Object) :
                 _argv = sys.argv [1:]
             try :
                 cao = self.parse (_argv)
-            except Exception, exc :
+            except Exception as exc :
                 if help :
                     pyk.fprint (exc, "\n\nUsage :")
                     cao = CAO (self)
