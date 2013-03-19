@@ -63,6 +63,7 @@
 #     7-Mar-2013 (CT) Add `Equal_S` and `Not_Equal_S`
 #     7-Mar-2013 (CT) Allow explicit definition of `op_key` by `Equal_S` and
 #                     `Not_Equal_S`
+#    19-Mar-2013 (CT) Add support for empty string to `_Id_Entity_.__call__`
 #    ««revision-date»»···
 #--
 
@@ -249,7 +250,7 @@ class _Id_Entity_ (_Composite_) :
             return self.__super.__call__ (value)
         else :
             if isinstance (value, basestring) :
-                value = int (value)
+                value = int (value) if value else None
             return self.query (value)
     # end def __call__
 
