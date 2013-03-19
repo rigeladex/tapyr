@@ -50,6 +50,9 @@
 #    19-Mar-2013 (CT) Add argument `seen_etypes` to `_attrs_transitive` to
 #                     break E_Type cycles
 #    19-Mar-2013 (CT) Protect `As_Json_Cargo`, `As_Template_Elem` against cycles
+#    19-Mar-2013 (CT) Protect `Atoms`, `Unwrapped_Atoms`
+#    19-Mar-2013 (CT) Pass a copy of `seen_etypes` to recursive calls
+#                     (otherwise, a sibling can mask a E_Type)
 #    ««revision-date»»···
 #--
 
@@ -88,10 +91,20 @@ class _Base_ (TFL.Meta.Object) :
     # end def As_Template_Elem
 
     @TFL.Meta.Once_Property
+    def Atoms (self) :
+        return tuple (self._atoms (set ()))
+    # end def Atoms
+
+    @TFL.Meta.Once_Property
     @getattr_safe
     def Attrs_Transitive (self) :
         return tuple (self._attrs_transitive (set ()))
     # end def Attrs_Transitive
+
+    @TFL.Meta.Once_Property
+    def Unwrapped_Atoms (self) :
+        return tuple (self._unwrapped_atoms (set ()))
+    # end def Unwrapped_Atoms
 
     def _as_json_cargo (self, seen_etypes) :
         return dict (self._as_json_cargo_inv, ui_name = self._attr.ui_name_T)
@@ -107,19 +120,9 @@ class _Base_ (TFL.Meta.Object) :
 class _Container_ (_Base_) :
 
     @TFL.Meta.Once_Property
-    def Atoms (self) :
-        return tuple (a for c in self.Attrs for a in c.Atoms)
-    # end def Atoms
-
-    @TFL.Meta.Once_Property
     def Attrs (self) :
         return tuple (getattr (self, c.name) for c in self._attrs)
     # end def Attrs
-
-    @TFL.Meta.Once_Property
-    def Unwrapped_Atoms (self) :
-        return tuple (a for c in self.Attrs for a in c.Unwrapped.Atoms)
-    # end def Unwrapped_Atoms
 
     @TFL.Meta.Once_Property
     def _attrs (self) :
@@ -140,7 +143,7 @@ class _Container_ (_Base_) :
                     if cet in seen_etypes :
                         continue
                     seen_etypes.add (cet)
-                yield c._as_json_cargo (seen_etypes)
+                yield c._as_json_cargo (set (seen_etypes))
         attrs  = list (_attrs (seen_etypes, self.Attrs))
         if attrs :
             result ["attrs"] = attrs
@@ -157,12 +160,24 @@ class _Container_ (_Base_) :
                     if cet in seen_etypes :
                         continue
                     seen_etypes.add (cet)
-                yield c._as_template_elem (seen_etypes)
+                yield c._as_template_elem (set (seen_etypes))
         attrs  = list (_attrs (seen_etypes, self.Attrs))
         if attrs :
             result ["attrs"] = attrs
         return result
     # end def _as_template_elem
+
+    def _atoms (self, seen_etypes) :
+        seen_etypes.add (self.E_Type)
+        for c in self.Attrs :
+            cet = c.E_Type
+            if cet is not None :
+                if cet in seen_etypes :
+                    continue
+                seen_etypes.add (cet)
+            for ct in c._atoms (set (seen_etypes)):
+                yield ct
+    # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
         seen_etypes.add (self.E_Type)
@@ -173,9 +188,21 @@ class _Container_ (_Base_) :
                     yield c
                     continue
                 seen_etypes.add (cet)
-            for ct in c._attrs_transitive (seen_etypes):
+            for ct in c._attrs_transitive (set (seen_etypes)):
                 yield ct
     # end def _attrs_transitive
+
+    def _unwrapped_atoms (self, seen_etypes) :
+        seen_etypes.add (self.E_Type)
+        for c in self.Attrs :
+            cet = c.E_Type
+            if cet is not None :
+                if cet in seen_etypes :
+                    continue
+                seen_etypes.add (cet)
+            for ct in c.Unwrapped.Atoms :
+                yield ct
+    # end def _unwrapped_atoms
 
 # end class _Container_
 
@@ -232,12 +259,6 @@ class _Type_ (_Base_) :
 
     @TFL.Meta.Once_Property
     @getattr_safe
-    def Atoms (self) :
-        return (self, )
-    # end def Atoms
-
-    @TFL.Meta.Once_Property
-    @getattr_safe
     def Attrs (self) :
         return ()
     # end def Attrs
@@ -275,12 +296,6 @@ class _Type_ (_Base_) :
             result = self.__class__ (self._attr)
         return result
     # end def Unwrapped
-
-    @TFL.Meta.Once_Property
-    @getattr_safe
-    def Unwrapped_Atoms (self) :
-        return (self.Unwrapped, )
-    # end def Unwrapped_Atoms
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -377,6 +392,10 @@ class _Type_ (_Base_) :
         return self.__class__ (self._attr, outer)
     # end def Wrapped
 
+    def _atoms (self, seen_etypes) :
+        yield self
+    # end def _atoms
+
     def _attrs_transitive (self, seen_etypes) :
         yield self
     # end def _attrs_transitive
@@ -388,6 +407,10 @@ class _Type_ (_Base_) :
         else :
             return attr.cooked (value)
     # end def _cooker
+
+    def _unwrapped_atoms (self, seen_etypes) :
+        yield self.Unwrapped
+    # end def _unwrapped_atoms
 
     def __getattr__ (self, name) :
         try :

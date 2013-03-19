@@ -31,6 +31,7 @@
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
 #    19-Mar-2013 (CT) Add test for `AQ` for recursive attribute `affiliate`
+#    19-Mar-2013 (CT) Add test for `AQ.Atoms`, `AQ.Unwrapped_Atoms`
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,7 @@ _test_code = """
       PAP.Person . . . . . . . . . . . . . . . . . . .   True
 
     >>> AQ = PAP.Company_P.E_Type.AQ
+
     >>> for aq in AQ.Attrs_Transitive :
     ...     print (aq, aq.E_Type.type_name if aq.E_Type else "-"*5)
     <name.AQ [Attr.Type.Querier String]> -----
@@ -144,8 +146,44 @@ _test_code = """
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <registered_in.AQ [Attr.Type.Querier String]> -----
     <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <lifetime.start.AQ [Attr.Type.Querier Date]> -----
+    <lifetime.finish.AQ [Attr.Type.Querier Date]> -----
+    <lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <short_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
+
+    >>> AQ
+    <Attr.Type.Querier.E_Type for PAP.Company_P>
+
+    >>> for aq in AQ.Atoms :
+    ...     print (aq)
+    <name.AQ [Attr.Type.Querier String]>
+    <owner.left.last_name.AQ [Attr.Type.Querier String_FL]>
+    <owner.left.first_name.AQ [Attr.Type.Querier String_FL]>
+    <owner.left.middle_name.AQ [Attr.Type.Querier String]>
+    <owner.left.title.AQ [Attr.Type.Querier String]>
+    <owner.left.lifetime.start.AQ [Attr.Type.Querier Date]>
+    <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
+    <owner.left.salutation.AQ [Attr.Type.Querier String]>
+    <owner.left.sex.AQ [Attr.Type.Querier Ckd]>
+    <registered_in.AQ [Attr.Type.Querier String]>
+    <lifetime.start.AQ [Attr.Type.Querier Date]>
+    <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
+    <short_name.AQ [Attr.Type.Querier String]>
+
+    >>> for aq in AQ.Unwrapped_Atoms :
+    ...     print (aq)
+    <name.AQ [Attr.Type.Querier String]>
+    <owner.left.last_name.AQ [Attr.Type.Querier String_FL]>
+    <owner.left.first_name.AQ [Attr.Type.Querier String_FL]>
+    <owner.left.middle_name.AQ [Attr.Type.Querier String]>
+    <owner.left.title.AQ [Attr.Type.Querier String]>
+    <registered_in.AQ [Attr.Type.Querier String]>
+    <lifetime.start.AQ [Attr.Type.Querier Date]>
+    <lifetime.finish.AQ [Attr.Type.Querier Date]>
+    <short_name.AQ [Attr.Type.Querier String]>
 
     >>> print (formatted (AQ.As_Json_Cargo))
     { 'filters' :
@@ -297,6 +335,23 @@ _test_code = """
               , { 'name' : 'registered_in'
                 , 'sig_key' : 3
                 , 'ui_name' : 'Registered in'
+                }
+              , { 'attrs' :
+                    [ { 'name' : 'start'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Start'
+                      }
+                    , { 'name' : 'finish'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Finish'
+                      }
+                    , { 'name' : 'alive'
+                      , 'sig_key' : 1
+                      , 'ui_name' : 'Alive'
+                      }
+                    ]
+                , 'name' : 'lifetime'
+                , 'ui_name' : 'Lifetime'
                 }
               , { 'name' : 'short_name'
                 , 'sig_key' : 3
@@ -693,6 +748,40 @@ _test_code = """
             , name = 'registered_in'
             , sig_key = 3
             , ui_name = 'Affiliate/Registered in'
+            )
+          , Record
+            ( attr = Date_Interval `lifetime`
+            , attrs =
+                [ Record
+                  ( attr = Date `start`
+                  , full_name = 'affiliate.lifetime.start'
+                  , id = 'affiliate__lifetime__start'
+                  , name = 'start'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start'
+                  )
+                , Record
+                  ( attr = Date `finish`
+                  , full_name = 'affiliate.lifetime.finish'
+                  , id = 'affiliate__lifetime__finish'
+                  , name = 'finish'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish'
+                  )
+                , Record
+                  ( attr = Boolean `alive`
+                  , choices = <Recursion on list...>
+                  , full_name = 'affiliate.lifetime.alive'
+                  , id = 'affiliate__lifetime__alive'
+                  , name = 'alive'
+                  , sig_key = 1
+                  , ui_name = 'Affiliate/Lifetime/Alive'
+                  )
+                ]
+            , full_name = 'affiliate.lifetime'
+            , id = 'affiliate__lifetime'
+            , name = 'lifetime'
+            , ui_name = 'Affiliate/Lifetime'
             )
           , Record
             ( attr = String `short_name`

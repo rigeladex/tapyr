@@ -44,6 +44,7 @@
 #    13-Nov-2012 (CT) Adapt to change of `SRM.Club.name.cooked`
 #    10-Dec-2012 (CT) Add tests for `.FO` (nested attributes)
 #    19-Mar-2013 (CT) Add tests for `AQ.Attrs`, `AQ.E_Type`, `AQx`
+#    19-Mar-2013 (CT) Add test for `AQ.Atoms`
 #    ««revision-date»»···
 #--
 
@@ -238,8 +239,56 @@ _test_code = r"""
     (<skipper.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
     (<skipper.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
+    (<skipper.club.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<place.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<points.AQ [Attr.Type.Querier Ckd]>, u'-----')
+
+    >>> BiR.AQ
+    <Attr.Type.Querier.E_Type for SRM.Boat_in_Regatta>
+
+    >>> for aq in BiR.AQ.Atoms :
+    ...     print (aq._id)
+    left__left__name
+    left__left__max_crew
+    left__left__beam
+    left__left__loa
+    left__left__sail_area
+    left__nation
+    left__sail_number
+    left__sail_number_x
+    left__name
+    right__left__name
+    right__left__date__start
+    right__left__date__finish
+    right__left__date__alive
+    right__left__club__name
+    right__left__club__long_name
+    right__left__desc
+    right__left__is_cancelled
+    right__boat_class__name
+    right__discards
+    right__is_cancelled
+    right__kind
+    right__races
+    right__result__date
+    right__result__software
+    right__result__status
+    skipper__left__last_name
+    skipper__left__first_name
+    skipper__left__middle_name
+    skipper__left__title
+    skipper__left__lifetime__start
+    skipper__left__lifetime__finish
+    skipper__left__lifetime__alive
+    skipper__left__salutation
+    skipper__left__sex
+    skipper__nation
+    skipper__mna_number
+    skipper__club__name
+    skipper__club__long_name
+    place
+    points
 
     >>> fs
     (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish, Q.boat_class.__raw_name)
