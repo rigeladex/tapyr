@@ -30,6 +30,7 @@
 #     4-Mar-2013 (CT) Add tests for `PAP.Association`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
+#    19-Mar-2013 (CT) Add test for `AQ` for recursive attribute `affiliate`
 #    ««revision-date»»···
 #--
 
@@ -125,6 +126,591 @@ _test_code = """
         PAP.Association  . . . . . . . . . . . . . . .   True
       PAP.Person . . . . . . . . . . . . . . . . . . .   True
 
+    >>> AQ = PAP.Company_P.E_Type.AQ
+    >>> for aq in AQ.Attrs_Transitive :
+    ...     print (aq, aq.E_Type.type_name if aq.E_Type else "-"*5)
+    <name.AQ [Attr.Type.Querier String]> -----
+    <owner.AQ [Attr.Type.Querier Id_Entity]> PAP.Biz_Man
+    <owner.left.AQ [Attr.Type.Querier Id_Entity]> PAP.Person
+    <owner.left.last_name.AQ [Attr.Type.Querier String_FL]> -----
+    <owner.left.first_name.AQ [Attr.Type.Querier String_FL]> -----
+    <owner.left.middle_name.AQ [Attr.Type.Querier String]> -----
+    <owner.left.title.AQ [Attr.Type.Querier String]> -----
+    <owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
+    <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
+    <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
+    <owner.left.salutation.AQ [Attr.Type.Querier String]> -----
+    <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
+    <registered_in.AQ [Attr.Type.Querier String]> -----
+    <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <short_name.AQ [Attr.Type.Querier String]> -----
+    <affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
+
+    >>> print (formatted (AQ.As_Json_Cargo))
+    { 'filters' :
+        [ { 'name' : 'name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Name'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'Class' : 'Entity'
+                , 'attrs' :
+                    [ { 'name' : 'last_name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Last name'
+                      }
+                    , { 'name' : 'first_name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'First name'
+                      }
+                    , { 'name' : 'middle_name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Middle name'
+                      }
+                    , { 'name' : 'title'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Academic title'
+                      }
+                    , { 'attrs' :
+                          [ { 'name' : 'start'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Start'
+                            }
+                          , { 'name' : 'finish'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Finish'
+                            }
+                          , { 'name' : 'alive'
+                            , 'sig_key' : 1
+                            , 'ui_name' : 'Alive'
+                            }
+                          ]
+                      , 'name' : 'lifetime'
+                      , 'ui_name' : 'Lifetime'
+                      }
+                    , { 'name' : 'salutation'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Salutation'
+                      }
+                    , { 'name' : 'sex'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Sex'
+                      }
+                    ]
+                , 'name' : 'left'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Man'
+                }
+              ]
+          , 'name' : 'owner'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Owner'
+          }
+        , { 'name' : 'registered_in'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Registered in'
+          }
+        , { 'attrs' :
+              [ { 'name' : 'start'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Start'
+                }
+              , { 'name' : 'finish'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Finish'
+                }
+              , { 'name' : 'alive'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Alive'
+                }
+              ]
+          , 'name' : 'lifetime'
+          , 'ui_name' : 'Lifetime'
+          }
+        , { 'name' : 'short_name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Short name'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'name'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Name'
+                }
+              , { 'Class' : 'Entity'
+                , 'attrs' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          , { 'attrs' :
+                                [ { 'name' : 'start'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Start'
+                                  }
+                                , { 'name' : 'finish'
+                                  , 'sig_key' : 0
+                                  , 'ui_name' : 'Finish'
+                                  }
+                                , { 'name' : 'alive'
+                                  , 'sig_key' : 1
+                                  , 'ui_name' : 'Alive'
+                                  }
+                                ]
+                            , 'name' : 'lifetime'
+                            , 'ui_name' : 'Lifetime'
+                            }
+                          , { 'name' : 'salutation'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Salutation'
+                            }
+                          , { 'name' : 'sex'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Sex'
+                            }
+                          ]
+                      , 'name' : 'left'
+                      , 'sig_key' : 2
+                      , 'ui_name' : 'Man'
+                      }
+                    ]
+                , 'name' : 'owner'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Owner'
+                }
+              , { 'name' : 'registered_in'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Registered in'
+                }
+              , { 'name' : 'short_name'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Short name'
+                }
+              ]
+          , 'name' : 'affiliate'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Affiliate'
+          }
+        ]
+    , 'name_sep' : '__'
+    , 'op_map' :
+        { 'CONTAINS' :
+            { 'desc' : 'Select entities where the attribute contains the specified value'
+            , 'sym' : 'contains'
+            }
+        , 'ENDSWITH' :
+            { 'desc' : 'Select entities where the attribute value ends with the specified value'
+            , 'sym' : 'ends-with'
+            }
+        , 'EQ' :
+            { 'desc' : 'Select entities where the attribute is equal to the specified value'
+            , 'sym' : '=='
+            }
+        , 'EQS' :
+            { 'desc' : 'Select entities where the attribute is equal to the specified string value'
+            , 'sym' : 'EQS'
+            }
+        , 'GE' :
+            { 'desc' : 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , 'sym' : '>='
+            }
+        , 'GT' :
+            { 'desc' : 'Select entities where the attribute is greater than the specified value'
+            , 'sym' : '>'
+            }
+        , 'IN' :
+            { 'desc' : 'Select entities where the attribute is a member of the specified list of values'
+            , 'sym' : 'in'
+            }
+        , 'LE' :
+            { 'desc' : 'Select entities where the attribute is less than, or equal to, the specified value'
+            , 'sym' : '<='
+            }
+        , 'LT' :
+            { 'desc' : 'Select entities where the attribute is less than the specified value'
+            , 'sym' : '<'
+            }
+        , 'NE' :
+            { 'desc' : 'Select entities where the attribute is not equal to the specified value'
+            , 'sym' : '!='
+            }
+        , 'NES' :
+            { 'desc' : 'Select entities where the attribute is not equal to the specified string value'
+            , 'sym' : 'NES'
+            }
+        , 'STARTSWITH' :
+            { 'desc' : 'Select entities where the attribute value starts with the specified value'
+            , 'sym' : 'starts-with'
+            }
+        }
+    , 'op_sep' : '___'
+    , 'sig_map' :
+        { 0 :
+            ( 'EQ'
+            , 'GE'
+            , 'GT'
+            , 'IN'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            )
+        , 1 :
+    ( 'EQ' ,)
+        , 2 :
+            ( 'EQ'
+            , 'IN'
+            , 'NE'
+            )
+        , 3 :
+            ( 'CONTAINS'
+            , 'ENDSWITH'
+            , 'EQ'
+            , 'GE'
+            , 'GT'
+            , 'IN'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            , 'STARTSWITH'
+            )
+        }
+    , 'ui_sep' : '/'
+    }
+
+    >>> print (formatted (list (f.As_Template_Elem for f in AQ.Attrs)))
+    [ Record
+      ( attr = String `name`
+      , full_name = 'name'
+      , id = 'name'
+      , name = 'name'
+      , sig_key = 3
+      , ui_name = 'Name'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Entity `owner`
+      , attrs =
+          [ Record
+            ( Class = 'Entity'
+            , attr = Person `left`
+            , attrs =
+                [ Record
+                  ( attr = String `last_name`
+                  , full_name = 'owner.left.last_name'
+                  , id = 'owner__left__last_name'
+                  , name = 'last_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner/Man/Last name'
+                  )
+                , Record
+                  ( attr = String `first_name`
+                  , full_name = 'owner.left.first_name'
+                  , id = 'owner__left__first_name'
+                  , name = 'first_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner/Man/First name'
+                  )
+                , Record
+                  ( attr = String `middle_name`
+                  , full_name = 'owner.left.middle_name'
+                  , id = 'owner__left__middle_name'
+                  , name = 'middle_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner/Man/Middle name'
+                  )
+                , Record
+                  ( attr = String `title`
+                  , full_name = 'owner.left.title'
+                  , id = 'owner__left__title'
+                  , name = 'title'
+                  , sig_key = 3
+                  , ui_name = 'Owner/Man/Academic title'
+                  )
+                , Record
+                  ( attr = Date_Interval `lifetime`
+                  , attrs =
+                      [ Record
+                        ( attr = Date `start`
+                        , full_name = 'owner.left.lifetime.start'
+                        , id = 'owner__left__lifetime__start'
+                        , name = 'start'
+                        , sig_key = 0
+                        , ui_name = 'Owner/Man/Lifetime/Start'
+                        )
+                      , Record
+                        ( attr = Date `finish`
+                        , full_name = 'owner.left.lifetime.finish'
+                        , id = 'owner__left__lifetime__finish'
+                        , name = 'finish'
+                        , sig_key = 0
+                        , ui_name = 'Owner/Man/Lifetime/Finish'
+                        )
+                      , Record
+                        ( attr = Boolean `alive`
+                        , choices =
+                            [ 'no'
+                            , 'yes'
+                            ]
+                        , full_name = 'owner.left.lifetime.alive'
+                        , id = 'owner__left__lifetime__alive'
+                        , name = 'alive'
+                        , sig_key = 1
+                        , ui_name = 'Owner/Man/Lifetime/Alive'
+                        )
+                      ]
+                  , full_name = 'owner.left.lifetime'
+                  , id = 'owner__left__lifetime'
+                  , name = 'lifetime'
+                  , ui_name = 'Owner/Man/Lifetime'
+                  )
+                , Record
+                  ( attr = String `salutation`
+                  , full_name = 'owner.left.salutation'
+                  , id = 'owner__left__salutation'
+                  , name = 'salutation'
+                  , sig_key = 3
+                  , ui_name = 'Owner/Man/Salutation'
+                  )
+                , Record
+                  ( attr = Sex `sex`
+                  , choices =
+                      [
+                        ( 'F'
+                        , 'Female'
+                        )
+                      ,
+                        ( 'M'
+                        , 'Male'
+                        )
+                      ]
+                  , full_name = 'owner.left.sex'
+                  , id = 'owner__left__sex'
+                  , name = 'sex'
+                  , sig_key = 0
+                  , ui_name = 'Owner/Man/Sex'
+                  )
+                ]
+            , full_name = 'owner.left'
+            , id = 'owner__left'
+            , name = 'left'
+            , sig_key = 2
+            , ui_name = 'Owner/Man'
+            )
+          ]
+      , full_name = 'owner'
+      , id = 'owner'
+      , name = 'owner'
+      , sig_key = 2
+      , ui_name = 'Owner'
+      )
+    , Record
+      ( attr = String `registered_in`
+      , full_name = 'registered_in'
+      , id = 'registered_in'
+      , name = 'registered_in'
+      , sig_key = 3
+      , ui_name = 'Registered in'
+      )
+    , Record
+      ( attr = Date_Interval `lifetime`
+      , attrs =
+          [ Record
+            ( attr = Date `start`
+            , full_name = 'lifetime.start'
+            , id = 'lifetime__start'
+            , name = 'start'
+            , sig_key = 0
+            , ui_name = 'Lifetime/Start'
+            )
+          , Record
+            ( attr = Date `finish`
+            , full_name = 'lifetime.finish'
+            , id = 'lifetime__finish'
+            , name = 'finish'
+            , sig_key = 0
+            , ui_name = 'Lifetime/Finish'
+            )
+          , Record
+            ( attr = Boolean `alive`
+            , choices = <Recursion on list...>
+            , full_name = 'lifetime.alive'
+            , id = 'lifetime__alive'
+            , name = 'alive'
+            , sig_key = 1
+            , ui_name = 'Lifetime/Alive'
+            )
+          ]
+      , full_name = 'lifetime'
+      , id = 'lifetime'
+      , name = 'lifetime'
+      , ui_name = 'Lifetime'
+      )
+    , Record
+      ( attr = String `short_name`
+      , full_name = 'short_name'
+      , id = 'short_name'
+      , name = 'short_name'
+      , sig_key = 3
+      , ui_name = 'Short name'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Entity `affiliate`
+      , attrs =
+          [ Record
+            ( attr = String `name`
+            , full_name = 'affiliate.name'
+            , id = 'affiliate__name'
+            , name = 'name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Name'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , attrs =
+                [ Record
+                  ( Class = 'Entity'
+                  , attr = Person `left`
+                  , attrs =
+                      [ Record
+                        ( attr = String `last_name`
+                        , full_name = 'affiliate.owner.left.last_name'
+                        , id = 'affiliate__owner__left__last_name'
+                        , name = 'last_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner/Man/Last name'
+                        )
+                      , Record
+                        ( attr = String `first_name`
+                        , full_name = 'affiliate.owner.left.first_name'
+                        , id = 'affiliate__owner__left__first_name'
+                        , name = 'first_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner/Man/First name'
+                        )
+                      , Record
+                        ( attr = String `middle_name`
+                        , full_name = 'affiliate.owner.left.middle_name'
+                        , id = 'affiliate__owner__left__middle_name'
+                        , name = 'middle_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner/Man/Middle name'
+                        )
+                      , Record
+                        ( attr = String `title`
+                        , full_name = 'affiliate.owner.left.title'
+                        , id = 'affiliate__owner__left__title'
+                        , name = 'title'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner/Man/Academic title'
+                        )
+                      , Record
+                        ( attr = Date_Interval `lifetime`
+                        , attrs =
+                            [ Record
+                              ( attr = Date `start`
+                              , full_name = 'affiliate.owner.left.lifetime.start'
+                              , id = 'affiliate__owner__left__lifetime__start'
+                              , name = 'start'
+                              , sig_key = 0
+                              , ui_name = 'Affiliate/Owner/Man/Lifetime/Start'
+                              )
+                            , Record
+                              ( attr = Date `finish`
+                              , full_name = 'affiliate.owner.left.lifetime.finish'
+                              , id = 'affiliate__owner__left__lifetime__finish'
+                              , name = 'finish'
+                              , sig_key = 0
+                              , ui_name = 'Affiliate/Owner/Man/Lifetime/Finish'
+                              )
+                            , Record
+                              ( attr = Boolean `alive`
+                              , choices = <Recursion on list...>
+                              , full_name = 'affiliate.owner.left.lifetime.alive'
+                              , id = 'affiliate__owner__left__lifetime__alive'
+                              , name = 'alive'
+                              , sig_key = 1
+                              , ui_name = 'Affiliate/Owner/Man/Lifetime/Alive'
+                              )
+                            ]
+                        , full_name = 'affiliate.owner.left.lifetime'
+                        , id = 'affiliate__owner__left__lifetime'
+                        , name = 'lifetime'
+                        , ui_name = 'Affiliate/Owner/Man/Lifetime'
+                        )
+                      , Record
+                        ( attr = String `salutation`
+                        , full_name = 'affiliate.owner.left.salutation'
+                        , id = 'affiliate__owner__left__salutation'
+                        , name = 'salutation'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner/Man/Salutation'
+                        )
+                      , Record
+                        ( attr = Sex `sex`
+                        , choices = <Recursion on list...>
+                        , full_name = 'affiliate.owner.left.sex'
+                        , id = 'affiliate__owner__left__sex'
+                        , name = 'sex'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Owner/Man/Sex'
+                        )
+                      ]
+                  , full_name = 'affiliate.owner.left'
+                  , id = 'affiliate__owner__left'
+                  , name = 'left'
+                  , sig_key = 2
+                  , ui_name = 'Affiliate/Owner/Man'
+                  )
+                ]
+            , full_name = 'affiliate.owner'
+            , id = 'affiliate__owner'
+            , name = 'owner'
+            , sig_key = 2
+            , ui_name = 'Affiliate/Owner'
+            )
+          , Record
+            ( attr = String `registered_in`
+            , full_name = 'affiliate.registered_in'
+            , id = 'affiliate__registered_in'
+            , name = 'registered_in'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Registered in'
+            )
+          , Record
+            ( attr = String `short_name`
+            , full_name = 'affiliate.short_name'
+            , id = 'affiliate__short_name'
+            , name = 'short_name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Short name'
+            )
+          ]
+      , full_name = 'affiliate'
+      , id = 'affiliate'
+      , name = 'affiliate'
+      , sig_key = 2
+      , ui_name = 'Affiliate'
+      )
+    ]
+
 """
 
 from   _GTW.__test__.model      import *
@@ -170,6 +756,14 @@ class Company_P (_Ancestor_Essence) :
             P_Type             = Biz_Man
 
         # end class owner
+
+        class affiliate  (A_Id_Entity) :
+            """Affiliate of the company"""
+
+            kind               = Attr.Optional
+            P_Type             = "GTW.OMP.PAP.Company_P"
+
+        # end class affiliate
 
     # end class _Attributes
 

@@ -43,6 +43,7 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    13-Nov-2012 (CT) Adapt to change of `SRM.Club.name.cooked`
 #    10-Dec-2012 (CT) Add tests for `.FO` (nested attributes)
+#    19-Mar-2013 (CT) Add tests for `AQ.Attrs`, `AQ.E_Type`, `AQx`
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,75 @@ _test_code = r"""
     <MOM.Attr.Selector.Kind sig_attr>
     >>> AQ.right.left.date._attr_selector
     <MOM.Attr.Selector.Kind sig_attr>
+
+    >>> AQ.Attrs
+    (<left.AQ [Attr.Type.Querier Id_Entity]>, <right.AQ [Attr.Type.Querier Id_Entity]>)
+    >>> AQ.left.Attrs
+    (<left.left.AQ [Attr.Type.Querier Id_Entity]>, <left.nation.AQ [Attr.Type.Querier Ckd]>, <left.sail_number.AQ [Attr.Type.Querier Raw]>, <left.sail_number_x.AQ [Attr.Type.Querier String]>)
+    >>> AQ.right.left.date.Attrs
+    (<right.left.date.start.AQ [Attr.Type.Querier Date]>, <right.left.date.finish.AQ [Attr.Type.Querier Date]>)
+
+    >>> print AQ.E_Type.type_name
+    SRM.Boat_in_Regatta
+    >>> print AQ.left.E_Type.type_name
+    SRM.Boat
+    >>> print AQ.right.left.date.E_Type.type_name
+    MOM.Date_Interval_C
+    >>> print AQ.right.left.date.start.E_Type
+    None
+
+    >>> for aq in BiR.AQ.Attrs_Transitive :
+    ...     print (aq, aq.E_Type.type_name if aq.E_Type else "-"*5)
+    (<left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Boat')
+    (<left.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Boat_Class')
+    (<left.left.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<left.left.max_crew.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.left.beam.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.left.loa.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.left.sail_area.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.sail_number.AQ [Attr.Type.Querier Raw]>, u'-----')
+    (<left.sail_number_x.AQ [Attr.Type.Querier String]>, u'-----')
+    (<left.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta')
+    (<right.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta_Event')
+    (<right.left.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.date.AQ [Attr.Type.Querier Composite]>, 'MOM.Date_Interval_C')
+    (<right.left.date.start.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<right.left.date.finish.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<right.left.date.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.left.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
+    (<right.left.club.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.desc.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.boat_class.AQ [Attr.Type.Querier Id_Entity]>, 'SRM._Boat_Class_')
+    (<right.boat_class.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.kind.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.races.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.result.AQ [Attr.Type.Querier Composite]>, 'SRM.Regatta_Result')
+    (<right.result.date.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.result.software.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.result.status.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Sailor')
+    (<skipper.left.AQ [Attr.Type.Querier Id_Entity]>, 'PAP.Person')
+    (<skipper.left.last_name.AQ [Attr.Type.Querier String_FL]>, u'-----')
+    (<skipper.left.first_name.AQ [Attr.Type.Querier String_FL]>, u'-----')
+    (<skipper.left.middle_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.left.title.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.left.lifetime.AQ [Attr.Type.Querier Composite]>, 'MOM.Date_Interval')
+    (<skipper.left.lifetime.start.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<skipper.left.lifetime.finish.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<skipper.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<skipper.left.salutation.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.left.sex.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
+    (<skipper.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
+    (<place.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<points.AQ [Attr.Type.Querier Ckd]>, u'-----')
 
     >>> fs
     (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish, Q.boat_class.__raw_name)

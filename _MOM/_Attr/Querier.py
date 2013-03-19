@@ -46,6 +46,10 @@
 #    10-Oct-2012 (CT) Change `_Type_._cooker` to apply `from_string` to strings
 #     7-Mar-2013 (CT) Add `_string_q_name`, `_string_attr_name`,`_string_cooker`
 #     7-Mar-2013 (CT) Redefine `Raw.Table` to include `EQS` and `NES`
+#    19-Mar-2013 (CT) Refactor `Attrs_Transitive` (and `_attrs_transitive`)
+#    19-Mar-2013 (CT) Add argument `seen_etypes` to `_attrs_transitive` to
+#                     break E_Type cycles
+#    19-Mar-2013 (CT) Protect `As_Json_Cargo`, `As_Template_Elem` against cycles
 #    ««revision-date»»···
 #--
 
@@ -69,7 +73,38 @@ id_sep = "__"
 op_sep = "___"
 ui_sep = "/"
 
-class _Container_ (TFL.Meta.Object) :
+class _Base_ (TFL.Meta.Object) :
+
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
+    def As_Json_Cargo (self) :
+        return self._as_json_cargo (set ())
+    # end def As_Json_Cargo
+
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
+    def As_Template_Elem (self) :
+        return self._as_template_elem (set ())
+    # end def As_Template_Elem
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def Attrs_Transitive (self) :
+        return tuple (self._attrs_transitive (set ()))
+    # end def Attrs_Transitive
+
+    def _as_json_cargo (self, seen_etypes) :
+        return dict (self._as_json_cargo_inv, ui_name = self._attr.ui_name_T)
+    # end def _as_json_cargo
+
+    def _as_template_elem (self, seen_etypes) :
+        result = dict (self._as_template_elem_inv, ui_name = self._ui_name_T)
+        return TFL.Record (** result)
+    # end def _as_template_elem
+
+# end class _Base_
+
+class _Container_ (_Base_) :
 
     @TFL.Meta.Once_Property
     def Atoms (self) :
@@ -95,6 +130,53 @@ class _Container_ (TFL.Meta.Object) :
             return ()
     # end def _attrs
 
+    def _as_json_cargo (self, seen_etypes) :
+        seen_etypes.add (self.E_Type)
+        result = self.__super._as_json_cargo (seen_etypes)
+        def _attrs (seen_etypes, Attrs) :
+            for c in Attrs :
+                cet = c.E_Type
+                if cet is not None :
+                    if cet in seen_etypes :
+                        continue
+                    seen_etypes.add (cet)
+                yield c._as_json_cargo (seen_etypes)
+        attrs  = list (_attrs (seen_etypes, self.Attrs))
+        if attrs :
+            result ["attrs"] = attrs
+        return result
+    # end def _as_json_cargo
+
+    def _as_template_elem (self, seen_etypes) :
+        seen_etypes.add (self.E_Type)
+        result = self.__super._as_template_elem (seen_etypes)
+        def _attrs (seen_etypes, Attrs) :
+            for c in Attrs :
+                cet = c.E_Type
+                if cet is not None :
+                    if cet in seen_etypes :
+                        continue
+                    seen_etypes.add (cet)
+                yield c._as_template_elem (seen_etypes)
+        attrs  = list (_attrs (seen_etypes, self.Attrs))
+        if attrs :
+            result ["attrs"] = attrs
+        return result
+    # end def _as_template_elem
+
+    def _attrs_transitive (self, seen_etypes) :
+        seen_etypes.add (self.E_Type)
+        for c in self.Attrs :
+            cet = c.E_Type
+            if cet is not None :
+                if cet in seen_etypes :
+                    yield c
+                    continue
+                seen_etypes.add (cet)
+            for ct in c._attrs_transitive (seen_etypes):
+                yield ct
+    # end def _attrs_transitive
+
 # end class _Container_
 
 class _M_Type_ (TFL.Meta.Object.__class__) :
@@ -114,7 +196,7 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Type_
 
-class _Type_ (TFL.Meta.Object) :
+class _Type_ (_Base_) :
     """Base class for Type classes.
 
        A Type class provides all filters for a set of Attr.Type classes.
@@ -148,32 +230,6 @@ class _Type_ (TFL.Meta.Object) :
         self._attr_selector = outer and outer._attr_selector
     # end def __init__
 
-    @property    ### depends on currently selected language (I18N/L10N)
-    @getattr_safe###
-    def As_Json_Cargo (self) :
-        Attrs = self.Attrs
-        result   = dict \
-            ( self._as_json_cargo_inv
-            , ui_name  = self._attr.ui_name_T
-            )
-        if Attrs :
-            result ["attrs"] = [c.As_Json_Cargo for c in Attrs]
-        return result
-    # end def As_Json_Cargo
-
-    @property    ### depends on currently selected language (I18N/L10N)
-    @getattr_safe###
-    def As_Template_Elem (self) :
-        Attrs = self.Attrs
-        result   = dict \
-            ( self._as_template_elem_inv
-            , ui_name  = self._ui_name_T
-            )
-        if Attrs :
-            result ["attrs"] = [c.As_Template_Elem for c in Attrs]
-        return TFL.Record (** result)
-    # end def As_Template_Elem
-
     @TFL.Meta.Once_Property
     @getattr_safe
     def Atoms (self) :
@@ -185,12 +241,6 @@ class _Type_ (TFL.Meta.Object) :
     def Attrs (self) :
         return ()
     # end def Attrs
-
-    @TFL.Meta.Once_Property
-    @getattr_safe
-    def Attrs_Transitive (self) :
-        return tuple (self._attrs_transitive ())
-    # end def Attrs_Transitive
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -327,11 +377,8 @@ class _Type_ (TFL.Meta.Object) :
         return self.__class__ (self._attr, outer)
     # end def Wrapped
 
-    def _attrs_transitive (self) :
+    def _attrs_transitive (self, seen_etypes) :
         yield self
-        for c in self.Attrs :
-            for ct in c.Attrs_Transitive :
-                yield ct
     # end def _attrs_transitive
 
     def _cooker (self, value) :
@@ -365,6 +412,12 @@ class _Type_ (TFL.Meta.Object) :
 # end class _Type_
 
 class _Composite_ (_Container_, _Type_) :
+
+    def _attrs_transitive (self, seen_etypes) :
+        yield self
+        for c in self.__super._attrs_transitive (seen_etypes) :
+            yield c
+    # end def _attrs_transitive
 
     def __getattr__ (self, name) :
         try :
@@ -528,7 +581,8 @@ class E_Type (_Container_) :
         return json.dumps (self.As_Json_Cargo, sort_keys = True)
     # end def as_json
 
-    @property
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
     def As_Json_Cargo (self) :
         filters = [f.As_Json_Cargo for f in self.Attrs]
         return dict \
@@ -540,11 +594,6 @@ class E_Type (_Container_) :
             , ui_sep    = ui_sep
             )
     # end def As_Json_Cargo
-
-    @TFL.Meta.Once_Property
-    def Attrs_Transitive (self) :
-        return tuple (ct for c in self.Attrs for ct in c.Attrs_Transitive)
-    # end def Attrs_Transitive
 
     @property
     def Op_Map (self) :
