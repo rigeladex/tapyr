@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,13 +28,14 @@
 # Revision Dates
 #    13-Mar-2006 (CT) Creation
 #    14-Nov-2006 (CT) `mm_set` added
+#    20-Mar-2013 (CT) Derive from `TFL.defaultdict_cb`, not `._defaultdict_`
 #    ««revision-date»»···
 #--
 
 from   _TFL import      TFL
 import _TFL.defaultdict
 
-class mm_dict (TFL._defaultdict_) :
+class mm_dict (TFL.defaultdict_cb) :
     """`defaultdict` with `dict` as `default_factory`.
 
        >>> mmd = mm_dict (a = {1 : 2, 2 : 4}, b = {42 : 1})
@@ -52,7 +53,7 @@ class mm_dict (TFL._defaultdict_) :
 
 # end class mm_dict
 
-class mm_list (TFL._defaultdict_) :
+class mm_list (TFL.defaultdict_cb) :
     """`defaultdict` with `list` as `default_factory`.
 
        >>> mml = mm_list (a = [1], b = [2], c = [42])
@@ -70,14 +71,14 @@ class mm_list (TFL._defaultdict_) :
 
 # end class mm_list
 
-class mm_set (TFL._defaultdict_) :
+class mm_set (TFL.defaultdict_cb) :
     """`defaultdict` with `set` as `default_factory`."""
 
     default_factory = set
 
 # end class mm_set
 
-class mm_dict_mm_list (TFL._defaultdict_) :
+class mm_dict_mm_list (TFL.defaultdict_cb) :
     """`defaultdict` with `mm_list` as `default_factory`."""
 
     default_factory = mm_list

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,93 +31,104 @@
 #    20-Jun-2007 (CT) `defaultdict_kd` added
 #    29-Aug-2008 (CT) s/super(...)/__super/
 #    30-May-2012 (CT) Add `defaultdict_nested`
+#    20-Mar-2013 (CT) Remove pre-2.5 support
+#    20-Mar-2013 (CT) Add `defaultdict_cb` and `defaultdict_int`
 #    ««revision-date»»···
 #--
 
 """
 Python 2.5 provides `collections.defaultdict`.
-This module allows the use of `defaultdict` in earlier and later versions of
-Python.
 
->>> zd = defaultdict (int)
->>> zd
-defaultdict(<type 'int'>, {})
->>> zd [1] = 42
->>> zd [2] = 137
->>> zd
-defaultdict(<type 'int'>, {1: 42, 2: 137})
->>> zd [3]
-0
->>> zd
-defaultdict(<type 'int'>, {1: 42, 2: 137, 3: 0})
+Originally, this module allowed the use of `defaultdict` in earlier versions
+of Python.
+
+In addition, this module provides
+
+* :class:`defaultdict_cb`: defaultdict with class-based `default_factory`
+
+* :class:`defaultdict_int`: defaultdict using `int` as `default_factory`
+
+* :class:`defaultdict_kd`: defaultdict that passes the missing `key` to the
+  `default_factory`
+
+::
+
+    >>> zd = defaultdict (int)
+    >>> zd
+    defaultdict(<type 'int'>, {})
+    >>> zd [1] = 42
+    >>> zd [2] = 137
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137)]
+
+    >>> zd [3]
+    0
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137), (3, 0)]
+
+    >>> zd [4] += 1
+    >>> zd [4]
+    1
+
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137), (3, 0), (4, 1)]
+
+    >>> zd = defaultdict_int ()
+    >>> zd
+    defaultdict(<type 'int'>, {})
+    >>> zd [1] = 42
+    >>> zd [2] = 137
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137)]
+
+    >>> zd [3]
+    0
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137), (3, 0)]
+
+    >>> zd [4] += 1
+    >>> zd [4]
+    1
+
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137), (3, 0), (4, 1)]
+
+    >>> ze = defaultdict_int (zd)
+    >>> ze [100] = sum (ze)
+
+    >>> sorted (zd.iteritems ())
+    [(1, 42), (2, 137), (3, 0), (4, 1)]
+    >>> sorted (ze.iteritems ())
+    [(1, 42), (2, 137), (3, 0), (4, 1), (100, 10)]
+
 """
 
 from   _TFL import TFL
 import _TFL._Meta.M_Class
 
-import sys
+from   collections import defaultdict
 
-class _defaultdict_ (dict) :
+class _defaultdict_ (defaultdict) :
 
     __metaclass__        = TFL.Meta.M_Class
 
-    if sys.hexversion < 0x02050000 :
-        def __getitem__ (self, key) :
-            try :
-                return self.__super.__getitem__ (key)
-            except KeyError :
-                return self.__missing__ (key)
-        # end def __getitem__
-
-    def __missing__ (self, key) :
-        if self.default_factory is None :
-            raise KeyError (key)
-        result = self [key] = self.default_factory ()
-        return result
-    # end def __missing__
-
-    def _defaultdict__init__ (self, _default_factory, * args, ** kw) :
-        self.default_factory = _default_factory
-        self.__super.__init__ (* args, ** kw)
-    # end def _defaultdict__init__
-
-    def _defaultdict__repr__ (self) :
-        return "%s(%r, %s)" % \
-            ( self.__class__.__name__, self.default_factory
-            , self.__super.__repr__ ()
-            )
-    # end def _defaultdict__repr__
-
 # end class _defaultdict_
 
-class _defaultdict_kd_ (_defaultdict_) :
+class defaultdict_cb (_defaultdict_) :
+    """defaultdict([mapping|iterable], ** kw) --> dict with class based default factory"""
 
-    def __missing__ (self, key) :
-        if self.default_factory is None :
-            raise KeyError (key)
-        result = self [key] = self.default_factory (key)
-        return result
-    # end def __missing__
+    default_factory = None
 
-# end class _defaultdict_kd_
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (self.default_factory, * args, ** kw)
+    # end def __init__
 
-try :
-    from collections import defaultdict
-except ImportError :
-    class defaultdict (_defaultdict_) :
-        """defaultdict(_default_factory) --> dict with default factory
+# end class defaultdict_cb
 
-           The default factory is called without arguments to produce
-           a new value when a key is not present, in __getitem__ only.
-           A defaultdict compares equal to a dict with the same items.
-        """
+defaultdict_int = defaultdict_cb.New \
+    (__name__ = "defaultdict_int", default_factory = int)
 
-        __init__ = _defaultdict_._defaultdict__init__
-        __repr__ = _defaultdict_._defaultdict__repr__
-
-    # end class defaultdict
-
-class defaultdict_kd (_defaultdict_kd_) :
+class defaultdict_kd (_defaultdict_) :
     """defaultdict_kd(_default_factory) --> dict with default factory
 
        The default factory is called with the `key` argument to produce
@@ -136,8 +147,12 @@ class defaultdict_kd (_defaultdict_kd_) :
        [(1, 42), (2, 4), ('a', 'aa')]
     """
 
-    __init__ = _defaultdict_kd_._defaultdict__init__
-    __repr__ = _defaultdict_kd_._defaultdict__repr__
+    def __missing__ (self, key) :
+        if self.default_factory is None :
+            raise KeyError (key)
+        result = self [key] = self.default_factory (key)
+        return result
+    # end def __missing__
 
 # end class defaultdict_kd
 
@@ -189,7 +204,7 @@ def defaultdict_nested (depth = 1, leaf = dict) :
 
 if __name__ != "__main__" :
     TFL._Export \
-        ( "defaultdict", "defaultdict_kd", "defaultdict_nested"
-        , "_defaultdict_", "_defaultdict_kd_"
+        ( "defaultdict", "defaultdict_cb", "defaultdict_int", "defaultdict_kd"
+        , "defaultdict_nested", "_defaultdict_"
         )
 ### __END__ TFL.defaultdict
