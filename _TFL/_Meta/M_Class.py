@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -58,6 +58,7 @@
 #    10-Feb-2011 (CT)  `_m_combine_nested_class` added to `M_Base`
 #    20-Jul-2012 (CT)  Add debug output to `M_Autorename.__new__`
 #    28-Sep-2012 (CT)  Improve TypeError message from `_most_specific_meta`
+#    20-Mar-2013 (CT)  Add support for `__name__` to `New`
 #    ««revision-date»»···
 #--
 
@@ -159,7 +160,7 @@ class M_Base (type) :
            will create a class `Some_Class_X` derived from
            `Some_Class` with a class attribute `foo` with value `42`.
         """
-        name = cls.__name__
+        name = kw.pop ("__name__", cls.__name__)
         if name_postfix :
             name = "_".join ((name, name_postfix))
         new_dict = dict (__module__ = cls.__module__)
