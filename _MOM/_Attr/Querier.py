@@ -53,6 +53,8 @@
 #    19-Mar-2013 (CT) Protect `Atoms`, `Unwrapped_Atoms`
 #    19-Mar-2013 (CT) Pass a copy of `seen_etypes` to recursive calls
 #                     (otherwise, a sibling can mask a E_Type)
+#    20-Mar-2013 (CT) Add and use `recursion_limit = 2` to limit E_Type cycles
+#    20-Mar-2013 (CT) Add `E_Type.As_Template_Elem`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +69,7 @@ import _TFL._Meta.Object
 
 from   _TFL.Decorator        import getattr_safe
 from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.defaultdict      import defaultdict_int as ETC
 from   _TFL.predicate        import filtered_join, split_hst, uniq
 
 import _TFL._Meta.Object
@@ -78,32 +81,38 @@ ui_sep = "/"
 
 class _Base_ (TFL.Meta.Object) :
 
+    recursion_limit = 2
+
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
     def As_Json_Cargo (self) :
-        return self._as_json_cargo (set ())
+        return self._as_json_cargo (ETC ())
     # end def As_Json_Cargo
 
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
     def As_Template_Elem (self) :
-        return self._as_template_elem (set ())
+        seen_etypes = ETC ()
+        outer = getattr (self, "_outer", None)
+        if outer is not None and outer.E_Type is not None :
+            seen_etypes [outer.E_Type] += 1
+        return self._as_template_elem (seen_etypes)
     # end def As_Template_Elem
 
     @TFL.Meta.Once_Property
     def Atoms (self) :
-        return tuple (self._atoms (set ()))
+        return tuple (self._atoms (ETC ()))
     # end def Atoms
 
     @TFL.Meta.Once_Property
     @getattr_safe
     def Attrs_Transitive (self) :
-        return tuple (self._attrs_transitive (set ()))
+        return tuple (self._attrs_transitive (ETC ()))
     # end def Attrs_Transitive
 
     @TFL.Meta.Once_Property
     def Unwrapped_Atoms (self) :
-        return tuple (self._unwrapped_atoms (set ()))
+        return tuple (self._unwrapped_atoms (ETC ()))
     # end def Unwrapped_Atoms
 
     def _as_json_cargo (self, seen_etypes) :
@@ -134,16 +143,17 @@ class _Container_ (_Base_) :
     # end def _attrs
 
     def _as_json_cargo (self, seen_etypes) :
-        seen_etypes.add (self.E_Type)
+        seen_etypes [self.E_Type] += 1
         result = self.__super._as_json_cargo (seen_etypes)
         def _attrs (seen_etypes, Attrs) :
+            rc = self.recursion_limit
             for c in Attrs :
                 cet = c.E_Type
                 if cet is not None :
-                    if cet in seen_etypes :
+                    if seen_etypes [cet] > rc :
                         continue
-                    seen_etypes.add (cet)
-                yield c._as_json_cargo (set (seen_etypes))
+                    seen_etypes [cet] += 1
+                yield c._as_json_cargo (ETC (seen_etypes))
         attrs  = list (_attrs (seen_etypes, self.Attrs))
         if attrs :
             result ["attrs"] = attrs
@@ -151,16 +161,20 @@ class _Container_ (_Base_) :
     # end def _as_json_cargo
 
     def _as_template_elem (self, seen_etypes) :
-        seen_etypes.add (self.E_Type)
+        seen_etypes [self.E_Type] += 1
         result = self.__super._as_template_elem (seen_etypes)
         def _attrs (seen_etypes, Attrs) :
+            ### for some reason, `_as_template_elem` descends one more recursion
+            ### level than `as_json_cargo`, subtract `-1` here to get identical
+            ### behavior
+            rc = self.recursion_limit - 1
             for c in Attrs :
                 cet = c.E_Type
                 if cet is not None :
-                    if cet in seen_etypes :
+                    if seen_etypes [cet] > rc :
                         continue
-                    seen_etypes.add (cet)
-                yield c._as_template_elem (set (seen_etypes))
+                    seen_etypes [cet] += 1
+                yield c._as_template_elem (ETC (seen_etypes))
         attrs  = list (_attrs (seen_etypes, self.Attrs))
         if attrs :
             result ["attrs"] = attrs
@@ -168,38 +182,41 @@ class _Container_ (_Base_) :
     # end def _as_template_elem
 
     def _atoms (self, seen_etypes) :
-        seen_etypes.add (self.E_Type)
+        seen_etypes [self.E_Type] += 1
+        rc = self.recursion_limit
         for c in self.Attrs :
             cet = c.E_Type
             if cet is not None :
-                if cet in seen_etypes :
+                if seen_etypes [cet] > rc :
                     continue
-                seen_etypes.add (cet)
-            for ct in c._atoms (set (seen_etypes)):
+                seen_etypes [cet] += 1
+            for ct in c._atoms (ETC (seen_etypes)):
                 yield ct
     # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
-        seen_etypes.add (self.E_Type)
+        seen_etypes [self.E_Type] += 1
+        rc = self.recursion_limit
         for c in self.Attrs :
             cet = c.E_Type
             if cet is not None :
-                if cet in seen_etypes :
+                if seen_etypes [cet] > rc :
                     yield c
                     continue
-                seen_etypes.add (cet)
-            for ct in c._attrs_transitive (set (seen_etypes)):
+                seen_etypes [cet] += 1
+            for ct in c._attrs_transitive (ETC (seen_etypes)):
                 yield ct
     # end def _attrs_transitive
 
     def _unwrapped_atoms (self, seen_etypes) :
-        seen_etypes.add (self.E_Type)
+        seen_etypes [self.E_Type] += 1
+        rc = self.recursion_limit
         for c in self.Attrs :
             cet = c.E_Type
             if cet is not None :
-                if cet in seen_etypes :
+                if seen_etypes [cet] > rc :
                     continue
-                seen_etypes.add (cet)
+                seen_etypes [cet] += 1
             for ct in c.Unwrapped.Atoms :
                 yield ct
     # end def _unwrapped_atoms
@@ -617,6 +634,13 @@ class E_Type (_Container_) :
             , ui_sep    = ui_sep
             )
     # end def As_Json_Cargo
+
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
+    def As_Template_Elem (self) :
+        seen_etypes = ETC ({self.E_Type : 1})
+        return [f._as_template_elem (seen_etypes) for f in self.Attrs]
+    # end def As_Template_Elem
 
     @property
     def Op_Map (self) :
