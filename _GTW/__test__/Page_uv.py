@@ -220,7 +220,7 @@ _test_code = r"""
     PAP.Subject_has_Email                          False  True   True
     PAP.Subject_has_Url                            False  True   True
     PAP.Person_has_Account                         True   False  False
-    SRM.Regatta_Result                             False  True   True
+    SRM.Regatta_Result                             False  False  False
     SRM.Entity                                     False  True   True
     SRM.Link1                                      False  True   True
     SRM.Link2                                      False  True   True

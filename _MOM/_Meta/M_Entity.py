@@ -171,6 +171,7 @@
 #     8-Mar-2013 (CT) Change `_m_create_e_types` to bubble up `polymorphic_epk`
 #    11-Mar-2013 (CT) Use `MOM.Prop.Spec.fix_doc`, not home-grown code
 #                     Call `_Predicates.fix_doc`, too
+#    21-Mar-2013 (CT) Add `polymorphic_epk = False` to `M_An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -632,7 +633,11 @@ class M_An_Entity (M_Entity) :
             , key  = TFL.Getter.sig_rank
             )
         usr_sig    = tuple (a.name for a in user_attrs)
-        r_kw       = dict (signified = None, usr_sig = usr_sig)
+        r_kw       = dict \
+            ( polymorphic_epk = False
+            , signified       = None
+            , usr_sig         = usr_sig
+            )
         if usr_sig and not cls.is_partial :
             r_kw ["signified"] = cls._m_auto_signified (usr_sig, user_attrs)
         result     = cls.__m_super._m_new_e_type_dict \
