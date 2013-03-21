@@ -399,92 +399,6 @@ _test_code = """
                 , 'ui_name' : 'Short name'
                 }
               , { 'Class' : 'Entity'
-                , 'attrs' :
-                    [ { 'name' : 'name'
-                      , 'sig_key' : 3
-                      , 'ui_name' : 'Name'
-                      }
-                    , { 'Class' : 'Entity'
-                      , 'attrs' :
-                          [ { 'Class' : 'Entity'
-                            , 'attrs' :
-                                [ { 'name' : 'last_name'
-                                  , 'sig_key' : 3
-                                  , 'ui_name' : 'Last name'
-                                  }
-                                , { 'name' : 'first_name'
-                                  , 'sig_key' : 3
-                                  , 'ui_name' : 'First name'
-                                  }
-                                , { 'name' : 'middle_name'
-                                  , 'sig_key' : 3
-                                  , 'ui_name' : 'Middle name'
-                                  }
-                                , { 'name' : 'title'
-                                  , 'sig_key' : 3
-                                  , 'ui_name' : 'Academic title'
-                                  }
-                                , { 'attrs' :
-                                      [ { 'name' : 'start'
-                                        , 'sig_key' : 0
-                                        , 'ui_name' : 'Start'
-                                        }
-                                      , { 'name' : 'finish'
-                                        , 'sig_key' : 0
-                                        , 'ui_name' : 'Finish'
-                                        }
-                                      , { 'name' : 'alive'
-                                        , 'sig_key' : 1
-                                        , 'ui_name' : 'Alive'
-                                        }
-                                      ]
-                                  , 'name' : 'lifetime'
-                                  , 'ui_name' : 'Lifetime'
-                                  }
-                                , { 'name' : 'salutation'
-                                  , 'sig_key' : 3
-                                  , 'ui_name' : 'Salutation'
-                                  }
-                                , { 'name' : 'sex'
-                                  , 'sig_key' : 0
-                                  , 'ui_name' : 'Sex'
-                                  }
-                                ]
-                            , 'name' : 'left'
-                            , 'sig_key' : 2
-                            , 'ui_name' : 'Man'
-                            }
-                          ]
-                      , 'name' : 'owner'
-                      , 'sig_key' : 2
-                      , 'ui_name' : 'Owner'
-                      }
-                    , { 'name' : 'registered_in'
-                      , 'sig_key' : 3
-                      , 'ui_name' : 'Registered in'
-                      }
-                    , { 'attrs' :
-                          [ { 'name' : 'start'
-                            , 'sig_key' : 0
-                            , 'ui_name' : 'Start'
-                            }
-                          , { 'name' : 'finish'
-                            , 'sig_key' : 0
-                            , 'ui_name' : 'Finish'
-                            }
-                          , { 'name' : 'alive'
-                            , 'sig_key' : 1
-                            , 'ui_name' : 'Alive'
-                            }
-                          ]
-                      , 'name' : 'lifetime'
-                      , 'ui_name' : 'Lifetime'
-                      }
-                    , { 'name' : 'short_name'
-                      , 'sig_key' : 3
-                      , 'ui_name' : 'Short name'
-                      }
-                    ]
                 , 'name' : 'affiliate'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Affiliate'
@@ -922,6 +836,15 @@ _test_code = """
             , name = 'short_name'
             , sig_key = 3
             , ui_name = 'Affiliate/Short name'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `affiliate`
+            , full_name = 'affiliate.affiliate'
+            , id = 'affiliate__affiliate'
+            , name = 'affiliate'
+            , sig_key = 2
+            , ui_name = 'Affiliate/Affiliate'
             )
           ]
       , full_name = 'affiliate'

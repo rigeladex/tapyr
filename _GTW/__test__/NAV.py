@@ -33,6 +33,7 @@
 #    11-Dec-2012 (CT) Add error `410`
 #    12-Dec-2012 (CT) Add `Person_has_Account`
 #    20-Jan-2013 (CT) Change `401`
+#    21-Mar-2013 (CT) Add `Company_R` and tests for `Query_Restriction_Spec`
 #    ««revision-date»»···
 #--
 
@@ -119,6 +120,7 @@ _test_code = """
     Admin/Personenverwaltung/Address e_type_admin
     Admin/Personenverwaltung/Address_Position e_type_admin
     Admin/Personenverwaltung/Company e_type_admin
+    Admin/Personenverwaltung/Company_R e_type_admin
     Admin/Personenverwaltung/Company_has_Address e_type_admin
     Admin/Personenverwaltung/Company_has_Email e_type_admin
     Admin/Personenverwaltung/Company_has_Phone e_type_admin
@@ -195,6 +197,457 @@ _test_code = """
     , [ 'site_admin' ]
     ]
 
+    >>> crad = nav_root.ET_Map ["PAP.Company_R"].admin
+    >>> crad
+    <E_Type Company_R: /Admin/Personenverwaltung/Company_R>
+
+    >>> QR = crad.QR
+    >>> QR
+    <class '_GTW._RST._TOP._MOM.Query_Restriction.Query_Restriction'>
+
+    >>> crad.E_Type.AQ.affiliate
+    <affiliate.AQ [Attr.Type.Querier Id_Entity]>
+
+    >>> crad.E_Type.AQ.affiliate.QR
+    Q.affiliate
+    >>> tuple (a.QR for a in crad.E_Type.AQ.affiliate.Attrs)
+    (Q.affiliate.__raw_name, Q.affiliate.__raw_registered_in, Q.affiliate.lifetime, Q.affiliate.__raw_short_name, Q.affiliate.affiliate, Q.affiliate.owner)
+
+    >>> print (formatted (QR.Filter_Atoms (QR.Filter (crad.E_Type, "affiliate"))))
+    ( Record
+      ( AQ = <name.AQ [Attr.Type.Querier String]>
+      , attr = String `name`
+      , edit = None
+      , full_name = 'name'
+      , id = 'name___AC'
+      , name = 'name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Name'
+      , value = None
+      )
+    , Record
+      ( AQ = <registered_in.AQ [Attr.Type.Querier String]>
+      , attr = String `registered_in`
+      , edit = None
+      , full_name = 'registered_in'
+      , id = 'registered_in___AC'
+      , name = 'registered_in___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Registered in'
+      , value = None
+      )
+    )
+
+    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate")))
+    Record
+    ( AQ = <affiliate.AQ [Attr.Type.Querier Id_Entity]>
+    , Class = 'Entity'
+    , attr = Entity `affiliate`
+    , attrs =
+        [ Record
+          ( attr = String `name`
+          , full_name = 'affiliate.name'
+          , id = 'affiliate__name'
+          , name = 'name'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Name'
+          )
+        , Record
+          ( attr = String `registered_in`
+          , full_name = 'affiliate.registered_in'
+          , id = 'affiliate__registered_in'
+          , name = 'registered_in'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Registered in'
+          )
+        , Record
+          ( attr = Date_Interval `lifetime`
+          , attrs =
+              [ Record
+                ( attr = Date `start`
+                , full_name = 'affiliate.lifetime.start'
+                , id = 'affiliate__lifetime__start'
+                , name = 'start'
+                , sig_key = 0
+                , ui_name = 'Affiliate/Lifetime/Start'
+                )
+              , Record
+                ( attr = Date `finish`
+                , full_name = 'affiliate.lifetime.finish'
+                , id = 'affiliate__lifetime__finish'
+                , name = 'finish'
+                , sig_key = 0
+                , ui_name = 'Affiliate/Lifetime/Finish'
+                )
+              , Record
+                ( attr = Boolean `alive`
+                , choices =
+                    [ 'no'
+                    , 'yes'
+                    ]
+                , full_name = 'affiliate.lifetime.alive'
+                , id = 'affiliate__lifetime__alive'
+                , name = 'alive'
+                , sig_key = 1
+                , ui_name = 'Affiliate/Lifetime/Alive'
+                )
+              ]
+          , full_name = 'affiliate.lifetime'
+          , id = 'affiliate__lifetime'
+          , name = 'lifetime'
+          , ui_name = 'Affiliate/Lifetime'
+          )
+        , Record
+          ( attr = String `short_name`
+          , full_name = 'affiliate.short_name'
+          , id = 'affiliate__short_name'
+          , name = 'short_name'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Short name'
+          )
+        , Record
+          ( Class = 'Entity'
+          , attr = Entity `affiliate`
+          , full_name = 'affiliate.affiliate'
+          , id = 'affiliate__affiliate'
+          , name = 'affiliate'
+          , sig_key = 2
+          , ui_name = 'Affiliate/Affiliate'
+          )
+        , Record
+          ( Class = 'Entity'
+          , attr = Entity `owner`
+          , children_np =
+              [ 'PAP.Company'
+              , 'PAP.Person'
+              ]
+          , full_name = 'affiliate.owner'
+          , id = 'affiliate__owner'
+          , name = 'owner'
+          , sig_key = 2
+          , ui_name = 'Affiliate/Owner'
+          )
+        ]
+    , edit = None
+    , full_name = 'affiliate'
+    , id = 'affiliate___AC'
+    , name = 'affiliate___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 2
+    , ui_name = 'Affiliate'
+    , value = None
+    )
+
+    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__name")))
+    Record
+    ( AQ = <affiliate.name.AQ [Attr.Type.Querier String]>
+    , attr = String `name`
+    , edit = None
+    , full_name = 'affiliate.name'
+    , id = 'affiliate__name___AC'
+    , name = 'affiliate__name___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute value starts with the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 3
+    , ui_name = 'Affiliate/Name'
+    , value = None
+    )
+
+    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__lifetime")))
+    Record
+    ( AQ = <affiliate.lifetime.AQ [Attr.Type.Querier Composite]>
+    , attr = Date_Interval `lifetime`
+    , attrs =
+        [ Record
+          ( attr = Date `start`
+          , full_name = 'affiliate.lifetime.start'
+          , id = 'affiliate__lifetime__start'
+          , name = 'start'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Lifetime/Start'
+          )
+        , Record
+          ( attr = Date `finish`
+          , full_name = 'affiliate.lifetime.finish'
+          , id = 'affiliate__lifetime__finish'
+          , name = 'finish'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Lifetime/Finish'
+          )
+        , Record
+          ( attr = Boolean `alive`
+          , choices =
+              [ 'no'
+              , 'yes'
+              ]
+          , full_name = 'affiliate.lifetime.alive'
+          , id = 'affiliate__lifetime__alive'
+          , name = 'alive'
+          , sig_key = 1
+          , ui_name = 'Affiliate/Lifetime/Alive'
+          )
+        ]
+    , edit = None
+    , full_name = 'affiliate.lifetime'
+    , id = 'affiliate__lifetime___AC'
+    , name = 'affiliate__lifetime___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , ui_name = 'Affiliate/Lifetime'
+    , value = None
+    )
+
+    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__lifetime", dict (start = "20130320"))))
+    Record
+    ( AQ = <affiliate.lifetime.AQ [Attr.Type.Querier Composite]>
+    , attr = Date_Interval `lifetime`
+    , attrs =
+        [ Record
+          ( attr = Date `start`
+          , full_name = 'affiliate.lifetime.start'
+          , id = 'affiliate__lifetime__start'
+          , name = 'start'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Lifetime/Start'
+          )
+        , Record
+          ( attr = Date `finish`
+          , full_name = 'affiliate.lifetime.finish'
+          , id = 'affiliate__lifetime__finish'
+          , name = 'finish'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Lifetime/Finish'
+          )
+        , Record
+          ( attr = Boolean `alive`
+          , choices =
+              [ 'no'
+              , 'yes'
+              ]
+          , full_name = 'affiliate.lifetime.alive'
+          , id = 'affiliate__lifetime__alive'
+          , name = 'alive'
+          , sig_key = 1
+          , ui_name = 'Affiliate/Lifetime/Alive'
+          )
+        ]
+    , edit =
+        { 'start' : '20130320' }
+    , full_name = 'affiliate.lifetime'
+    , id = 'affiliate__lifetime___AC'
+    , name = 'affiliate__lifetime___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , ui_name = 'Affiliate/Lifetime'
+    , value = <Recursion on dict...>
+    )
+
+    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__lifetime__start")))
+    Record
+    ( AQ = <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]>
+    , attr = Date `start`
+    , edit = None
+    , full_name = 'affiliate.lifetime.start'
+    , id = 'affiliate__lifetime__start___AC'
+    , name = 'affiliate__lifetime__start___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 0
+    , ui_name = 'Affiliate/Lifetime/Start'
+    , value = None
+    )
+
+    >>> qrs = crad.qr_spec
+    >>> qrs
+    <Attr.Type.Querier.Query_Restriction_Spec for PAP.Company_R>
+
+    >>> print (formatted (qrs.As_Template_Elem))
+    [ Record
+      ( attr = String `name`
+      , full_name = 'name'
+      , id = 'name'
+      , name = 'name'
+      , sig_key = 3
+      , ui_name = 'Name'
+      )
+    , Record
+      ( attr = String `registered_in`
+      , full_name = 'registered_in'
+      , id = 'registered_in'
+      , name = 'registered_in'
+      , sig_key = 3
+      , ui_name = 'Registered in'
+      )
+    , Record
+      ( attr = Date_Interval `lifetime`
+      , attrs =
+          [ Record
+            ( attr = Date `start`
+            , full_name = 'lifetime.start'
+            , id = 'lifetime__start'
+            , name = 'start'
+            , sig_key = 0
+            , ui_name = 'Lifetime/Start'
+            )
+          , Record
+            ( attr = Date `finish`
+            , full_name = 'lifetime.finish'
+            , id = 'lifetime__finish'
+            , name = 'finish'
+            , sig_key = 0
+            , ui_name = 'Lifetime/Finish'
+            )
+          , Record
+            ( attr = Boolean `alive`
+            , choices =
+                [ 'no'
+                , 'yes'
+                ]
+            , full_name = 'lifetime.alive'
+            , id = 'lifetime__alive'
+            , name = 'alive'
+            , sig_key = 1
+            , ui_name = 'Lifetime/Alive'
+            )
+          ]
+      , full_name = 'lifetime'
+      , id = 'lifetime'
+      , name = 'lifetime'
+      , ui_name = 'Lifetime'
+      )
+    , Record
+      ( attr = String `short_name`
+      , full_name = 'short_name'
+      , id = 'short_name'
+      , name = 'short_name'
+      , sig_key = 3
+      , ui_name = 'Short name'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Entity `affiliate`
+      , attrs =
+          [ Record
+            ( attr = String `name`
+            , full_name = 'affiliate.name'
+            , id = 'affiliate__name'
+            , name = 'name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Name'
+            )
+          , Record
+            ( attr = String `registered_in`
+            , full_name = 'affiliate.registered_in'
+            , id = 'affiliate__registered_in'
+            , name = 'registered_in'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Registered in'
+            )
+          , Record
+            ( attr = Date_Interval `lifetime`
+            , attrs =
+                [ Record
+                  ( attr = Date `start`
+                  , full_name = 'affiliate.lifetime.start'
+                  , id = 'affiliate__lifetime__start'
+                  , name = 'start'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Start'
+                  )
+                , Record
+                  ( attr = Date `finish`
+                  , full_name = 'affiliate.lifetime.finish'
+                  , id = 'affiliate__lifetime__finish'
+                  , name = 'finish'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Lifetime/Finish'
+                  )
+                , Record
+                  ( attr = Boolean `alive`
+                  , choices = <Recursion on list...>
+                  , full_name = 'affiliate.lifetime.alive'
+                  , id = 'affiliate__lifetime__alive'
+                  , name = 'alive'
+                  , sig_key = 1
+                  , ui_name = 'Affiliate/Lifetime/Alive'
+                  )
+                ]
+            , full_name = 'affiliate.lifetime'
+            , id = 'affiliate__lifetime'
+            , name = 'lifetime'
+            , ui_name = 'Affiliate/Lifetime'
+            )
+          , Record
+            ( attr = String `short_name`
+            , full_name = 'affiliate.short_name'
+            , id = 'affiliate__short_name'
+            , name = 'short_name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Short name'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `affiliate`
+            , full_name = 'affiliate.affiliate'
+            , id = 'affiliate__affiliate'
+            , name = 'affiliate'
+            , sig_key = 2
+            , ui_name = 'Affiliate/Affiliate'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , children_np =
+                [ 'PAP.Company'
+                , 'PAP.Person'
+                ]
+            , full_name = 'affiliate.owner'
+            , id = 'affiliate__owner'
+            , name = 'owner'
+            , sig_key = 2
+            , ui_name = 'Affiliate/Owner'
+            )
+          ]
+      , full_name = 'affiliate'
+      , id = 'affiliate'
+      , name = 'affiliate'
+      , sig_key = 2
+      , ui_name = 'Affiliate'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Entity `owner`
+      , children_np =
+          [ 'PAP.Company'
+          , 'PAP.Person'
+          ]
+      , full_name = 'owner'
+      , id = 'owner'
+      , name = 'owner'
+      , sig_key = 2
+      , ui_name = 'Owner'
+      )
+    ]
+
 """
 
 import os
@@ -207,6 +660,37 @@ os.environ.update \
 from   _GTW.__test__.model      import *
 
 from   _TFL.Formatter           import Formatter
+
+_Ancestor_Essence = GTW.OMP.PAP.Company
+
+class Company_R (_Ancestor_Essence) :
+    """Company subcluss to test recursive E_Type attribute"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class affiliate  (A_Id_Entity) :
+            """Affiliate of the company"""
+
+            kind               = Attr.Optional
+            P_Type             = "GTW.OMP.PAP.Company_R"
+
+        # end class affiliate
+
+        class owner (A_Id_Entity) :
+            """Owner of the company"""
+
+            kind               = Attr.Optional
+            P_Type             = "GTW.OMP.PAP.Subject"
+
+        # end class affiliate
+
+    # end class _Attributes
+
+# end class Company_R
+
+GTW.OMP.PAP.Nav.Admin.Company_R = dict (ETM = "GTW.OMP.PAP.Company_R")
 
 formatted = Formatter (width = 240)
 

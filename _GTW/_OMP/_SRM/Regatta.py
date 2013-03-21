@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -47,6 +47,8 @@
 #                     depends on it
 #    30-May-2012 (CT) Add attribute `is_cancelled`
 #     7-Aug-2012 (CT) Define `Regatta.default_child`
+#    21-Mar-2013 (CT) Set `Regatta.boat_class.P_Type_S` to avoid
+#                     `polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -88,7 +90,7 @@ class Regatta (_Ancestor_Essence) :
             """Class of boats sailing in this regatta."""
 
             kind               = Attr.Primary
-            P_Type             = GTW.OMP.SRM._Boat_Class_
+            P_Type = P_Type_S  = GTW.OMP.SRM._Boat_Class_
 
         # end class boat_class
 

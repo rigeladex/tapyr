@@ -235,6 +235,7 @@
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    26-Feb-2013 (CT) Add attribute `ui_repr`
 #     5-Mar-2013 (CT) Remove `Attr.Init_Only_Mixin` from `electric`
+#    21-Mar-2013 (CT) Add `has_identity`
 #    ««revision-date»»···
 #--
 
@@ -824,6 +825,7 @@ class An_Entity (Entity) :
 
     __metaclass__         = MOM.Meta.M_An_Entity
 
+    has_identity          = False
     is_partial            = True
     is_primary            = False
     owner                 = None
@@ -971,6 +973,7 @@ class Id_Entity (Entity) :
 
     __metaclass__         = MOM.Meta.M_Id_Entity
 
+    has_identity          = True
     is_partial            = True
     max_count             = 0
     pid                   = None  ### set by `scope.ems.add`

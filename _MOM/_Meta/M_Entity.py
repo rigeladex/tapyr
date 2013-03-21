@@ -172,6 +172,7 @@
 #    11-Mar-2013 (CT) Use `MOM.Prop.Spec.fix_doc`, not home-grown code
 #                     Call `_Predicates.fix_doc`, too
 #    21-Mar-2013 (CT) Add `polymorphic_epk = False` to `M_An_Entity`
+#    21-Mar-2013 (CT) Use `P_Type_S`, if defined, for `epk_sig_t`
 #    ««revision-date»»···
 #--
 
@@ -679,6 +680,8 @@ class M_Id_Entity (M_Entity) :
     # end def _m_auto_epkified
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        def _typ (a) :
+            return getattr (a, "P_Type_S", a.P_Type)
         pkas = sorted \
             ( (  a for a in cls._Attributes._names.itervalues ()
               if a is not None and a.kind.is_primary
@@ -688,7 +691,7 @@ class M_Id_Entity (M_Entity) :
         epk_bases   = tuple \
             (b for b in bases if getattr (b, "epk_sig", None) is not None)
         epk_sig     = tuple (a.name             for a in pkas)
-        epk_sig_t   = tuple ((a.name, a.P_Type) for a in pkas)
+        epk_sig_t   = tuple ((a.name, _typ (a)) for a in pkas)
         is_relevant = cls.is_relevant or (not cls.is_partial)
         pr_epk      = False
         for eb in epk_bases :

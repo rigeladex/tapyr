@@ -92,7 +92,7 @@ _test_code = r"""
     Auth.Account_Activation                        False  ('left',)
     Auth.Account_Password_Change_Required          False  ('left',)
     EVT.Recurrence_Spec                            False  ('left',)
-    SRM.Regatta                                    True   ('left', 'boat_class')
+    SRM.Regatta                                    False  ('left', 'boat_class')
     SRM.Regatta_C                                  False  ('left', 'boat_class')
     SRM.Regatta_H                                  False  ('left', 'boat_class')
     EVT.Event_occurs                               False  ('left', 'date', 'time')
@@ -240,15 +240,15 @@ _test_code = r"""
     SWP.Gallery                                    True   False  False
     SWP.Picture                                    True   False  False
     SRM.Page                                       True   False  False
-    SRM.Regatta                                    True   True   True
+    SRM.Regatta                                    True   False  False
     SRM.Regatta_C                                  True   False  False
     SRM.Regatta_H                                  True   False  False
     SRM.Sailor                                     True   False  False
-    SRM.Boat_in_Regatta                            True   False  True
-    SRM.Race_Result                                True   False  True
+    SRM.Boat_in_Regatta                            True   False  False
+    SRM.Race_Result                                True   False  False
     SRM.Team                                       True   False  False
-    SRM.Crew_Member                                True   False  True
-    SRM.Team_has_Boat_in_Regatta                   True   False  True
+    SRM.Crew_Member                                True   False  False
+    SRM.Team_has_Boat_in_Regatta                   True   False  False
     SWP.Page_U                                     True   False  False
     SWP.Page_V                                     True   False  False
     PAP.Person_has_Url                             True   False  False

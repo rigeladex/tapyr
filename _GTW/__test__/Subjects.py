@@ -253,12 +253,12 @@ _test_code = """
             SWP.Clip_O . . . . . . . . . . . . . . . .    True          True   True
             SWP.Picture  . . . . . . . . . . . . . . .    True                 True
           SRM.Link1  . . . . . . . . . . . . . . . . .           True   True
-            SRM.Regatta  . . . . . . . . . . . . . . .    True   True   True   True
-              SRM.Regatta_C  . . . . . . . . . . . . .    True                 True
-              SRM.Regatta_H  . . . . . . . . . . . . .    True                 True
+            SRM.Regatta  . . . . . . . . . . . . . . .    True                 True
+              SRM.Regatta_C  . . . . . . . . . . . . .    True
+              SRM.Regatta_H  . . . . . . . . . . . . .    True
             SRM.Boat . . . . . . . . . . . . . . . . .    True                 True
             SRM.Sailor . . . . . . . . . . . . . . . .    True                 True
-            SRM.Race_Result  . . . . . . . . . . . . .    True          True   True
+            SRM.Race_Result  . . . . . . . . . . . . .    True                 True
             SRM.Team . . . . . . . . . . . . . . . . .    True                 True
         MOM._MOM_Link_n_ . . . . . . . . . . . . . . .           True   True
           MOM.Link2  . . . . . . . . . . . . . . . . .           True   True
@@ -284,9 +284,9 @@ _test_code = """
                   PAP.Association_has_Url  . . . . . .    True          True   True
               PAP.Person_has_Account . . . . . . . . .    True                 True
             SRM.Link2  . . . . . . . . . . . . . . . .           True   True
-              SRM.Boat_in_Regatta  . . . . . . . . . .    True          True   True
-              SRM.Crew_Member  . . . . . . . . . . . .    True          True   True
-              SRM.Team_has_Boat_in_Regatta . . . . . .    True          True   True
+              SRM.Boat_in_Regatta  . . . . . . . . . .    True                 True
+              SRM.Crew_Member  . . . . . . . . . . . .    True                 True
+              SRM.Team_has_Boat_in_Regatta . . . . . .    True                 True
       MOM.Object . . . . . . . . . . . . . . . . . . .           True   True
             Auth.Group . . . . . . . . . . . . . . . .    True
         Auth.Object  . . . . . . . . . . . . . . . . .           True   True

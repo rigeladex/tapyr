@@ -55,6 +55,12 @@
 #                     (otherwise, a sibling can mask a E_Type)
 #    20-Mar-2013 (CT) Add and use `recursion_limit = 2` to limit E_Type cycles
 #    20-Mar-2013 (CT) Add `E_Type.As_Template_Elem`
+#    21-Mar-2013 (CT) Factor `_do_recurse`
+#                     * consider `has_identity` and `polymorphic_epk`
+#    21-Mar-2013 (CT) Check `_do_recurse` once for `self` in `_as_json_cargo`,
+#                     `_as_template_elem`; not for each element of `.Attrs`
+#    21-Mar-2013 (CT) Redefine `Id_Entity._as_json_cargo_inv`
+#                     * add `children_np`
 #    ««revision-date»»···
 #--
 
@@ -92,11 +98,7 @@ class _Base_ (TFL.Meta.Object) :
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
     def As_Template_Elem (self) :
-        seen_etypes = ETC ()
-        outer = getattr (self, "_outer", None)
-        if outer is not None and outer.E_Type is not None :
-            seen_etypes [outer.E_Type] += 1
-        return self._as_template_elem (seen_etypes)
+        return self._as_template_elem (ETC ())
     # end def As_Template_Elem
 
     @TFL.Meta.Once_Property
@@ -145,39 +147,22 @@ class _Container_ (_Base_) :
     def _as_json_cargo (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
         result = self.__super._as_json_cargo (seen_etypes)
-        def _attrs (seen_etypes, Attrs) :
-            rc = self.recursion_limit
-            for c in Attrs :
-                cet = c.E_Type
-                if cet is not None :
-                    if seen_etypes [cet] > rc :
-                        continue
-                    seen_etypes [cet] += 1
-                yield c._as_json_cargo (ETC (seen_etypes))
-        attrs  = list (_attrs (seen_etypes, self.Attrs))
-        if attrs :
-            result ["attrs"] = attrs
+        if self._do_recurse (self, self.recursion_limit, seen_etypes) :
+            attrs = list \
+                (c._as_json_cargo (ETC (seen_etypes)) for c in self.Attrs)
+            if attrs :
+                result ["attrs"] = attrs
         return result
     # end def _as_json_cargo
 
     def _as_template_elem (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
         result = self.__super._as_template_elem (seen_etypes)
-        def _attrs (seen_etypes, Attrs) :
-            ### for some reason, `_as_template_elem` descends one more recursion
-            ### level than `as_json_cargo`, subtract `-1` here to get identical
-            ### behavior
-            rc = self.recursion_limit - 1
-            for c in Attrs :
-                cet = c.E_Type
-                if cet is not None :
-                    if seen_etypes [cet] > rc :
-                        continue
-                    seen_etypes [cet] += 1
-                yield c._as_template_elem (ETC (seen_etypes))
-        attrs  = list (_attrs (seen_etypes, self.Attrs))
-        if attrs :
-            result ["attrs"] = attrs
+        if self._do_recurse (self, self.recursion_limit, seen_etypes) :
+            attrs = list \
+                (c._as_template_elem (ETC (seen_etypes)) for c in self.Attrs)
+            if attrs :
+                result ["attrs"] = attrs
         return result
     # end def _as_template_elem
 
@@ -185,40 +170,39 @@ class _Container_ (_Base_) :
         seen_etypes [self.E_Type] += 1
         rc = self.recursion_limit
         for c in self.Attrs :
-            cet = c.E_Type
-            if cet is not None :
-                if seen_etypes [cet] > rc :
-                    continue
-                seen_etypes [cet] += 1
-            for ct in c._atoms (ETC (seen_etypes)):
-                yield ct
+            if self._do_recurse (c, rc, seen_etypes) :
+                for ct in c._atoms (ETC (seen_etypes)):
+                    yield ct
     # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
         rc = self.recursion_limit
         for c in self.Attrs :
-            cet = c.E_Type
-            if cet is not None :
-                if seen_etypes [cet] > rc :
-                    yield c
-                    continue
-                seen_etypes [cet] += 1
-            for ct in c._attrs_transitive (ETC (seen_etypes)):
-                yield ct
+            if self._do_recurse (c, rc, seen_etypes) :
+                for ct in c._attrs_transitive (ETC (seen_etypes)):
+                    yield ct
+            else :
+                yield c
     # end def _attrs_transitive
+
+    def _do_recurse (self, c, rc, seen_etypes) :
+        cet    = c.E_Type
+        result = True
+        if cet is not None :
+            if cet.has_identity :
+                result = not (cet.polymorphic_epk or seen_etypes [cet] > rc)
+            seen_etypes [cet] += 1
+        return result
+    # end def _do_recurse
 
     def _unwrapped_atoms (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
         rc = self.recursion_limit
         for c in self.Attrs :
-            cet = c.E_Type
-            if cet is not None :
-                if seen_etypes [cet] > rc :
-                    continue
-                seen_etypes [cet] += 1
-            for ct in c.Unwrapped.Atoms :
-                yield ct
+            if self._do_recurse (c, rc, seen_etypes) :
+                for ct in c.Unwrapped.Atoms :
+                    yield ct
     # end def _unwrapped_atoms
 
 # end class _Container_
@@ -539,6 +523,16 @@ class Id_Entity (_Composite_) :
         , LT                 = Filter.Id_Entity_Less_Than
         )
 
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _as_json_cargo_inv (self) :
+        result = self.__super._as_json_cargo_inv
+        ET     = self.E_Type
+        if ET.polymorphic_epk and ET.children_np :
+            result ["children_np"] = sorted (str (c) for c in ET.children_np)
+        return result
+    # end def _as_json_cargo_inv
+
 # end class Id_Entity
 
 class String (_Type_) :
@@ -638,8 +632,7 @@ class E_Type (_Container_) :
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
     def As_Template_Elem (self) :
-        seen_etypes = ETC ({self.E_Type : 1})
-        return [f._as_template_elem (seen_etypes) for f in self.Attrs]
+        return [f.As_Template_Elem for f in self.Attrs]
     # end def As_Template_Elem
 
     @property
