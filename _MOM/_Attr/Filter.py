@@ -64,6 +64,7 @@
 #     7-Mar-2013 (CT) Allow explicit definition of `op_key` by `Equal_S` and
 #                     `Not_Equal_S`
 #    19-Mar-2013 (CT) Add support for empty string to `_Id_Entity_.__call__`
+#    21-Mar-2013 (CT) Add `value` guard to `_Composite_.__call__._gen`
 #    ««revision-date»»···
 #--
 
@@ -192,12 +193,13 @@ class _Composite_ (_Filter_) :
         q      = self.querier
         E_Type = self.attr.E_Type
         def _gen () :
-            for k, v in sorted (value.iteritems ()) :
-                qk   = getattr (q,  k)
-                qop  = getattr (qk, self.base_op_key)
-                r    = qop     (v)
-                if r is not None :
-                    yield r
+            if value is not None :
+                for k, v in sorted (value.iteritems ()) :
+                    qk   = getattr (q,  k)
+                    qop  = getattr (qk, self.base_op_key)
+                    r    = qop     (v)
+                    if r is not None :
+                        yield r
         qs = tuple (_gen ())
         if len (qs) > 1 :
             return Q.AND (* qs)
