@@ -855,6 +855,100 @@ _test_code = """
       )
     ]
 
+    >>> QR  = GTW.RST.TOP.MOM.Query_Restriction
+    >>> print (formatted (QR.Filter_Atoms (QR.Filter (PAP.Company_P, "affiliate"))))
+    ( Record
+      ( AQ = <name.AQ [Attr.Type.Querier String]>
+      , attr = String `name`
+      , edit = None
+      , full_name = 'name'
+      , id = 'name___AC'
+      , name = 'name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Name'
+      , value = None
+      )
+    , Record
+      ( AQ = <owner.left.last_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
+      , edit = None
+      , full_name = 'owner.left.last_name'
+      , id = 'owner__left__last_name___AC'
+      , name = 'owner__left__last_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Owner/Man/Last name'
+      , value = None
+      )
+    , Record
+      ( AQ = <owner.left.first_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `first_name`
+      , edit = None
+      , full_name = 'owner.left.first_name'
+      , id = 'owner__left__first_name___AC'
+      , name = 'owner__left__first_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Owner/Man/First name'
+      , value = None
+      )
+    , Record
+      ( AQ = <owner.left.middle_name.AQ [Attr.Type.Querier String]>
+      , attr = String `middle_name`
+      , edit = None
+      , full_name = 'owner.left.middle_name'
+      , id = 'owner__left__middle_name___AC'
+      , name = 'owner__left__middle_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Owner/Man/Middle name'
+      , value = None
+      )
+    , Record
+      ( AQ = <owner.left.title.AQ [Attr.Type.Querier String]>
+      , attr = String `title`
+      , edit = None
+      , full_name = 'owner.left.title'
+      , id = 'owner__left__title___AC'
+      , name = 'owner__left__title___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Owner/Man/Academic title'
+      , value = None
+      )
+    , Record
+      ( AQ = <registered_in.AQ [Attr.Type.Querier String]>
+      , attr = String `registered_in`
+      , edit = None
+      , full_name = 'registered_in'
+      , id = 'registered_in___AC'
+      , name = 'registered_in___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Registered in'
+      , value = None
+      )
+    )
+
 """
 
 from   _GTW.__test__.model      import *
@@ -862,6 +956,7 @@ from   _MOM.import_MOM          import Q
 from   _MOM.inspect             import children_trans_iter
 
 import _GTW._OMP._PAP.Association
+import _GTW._RST._TOP._MOM.Query_Restriction
 
 _Ancestor_Essence = GTW.OMP.PAP.Link1
 

@@ -326,9 +326,14 @@ _test_code = """
           ( Class = 'Entity'
           , attr = Entity `owner`
           , children_np =
-              [ 'PAP.Company'
-              , 'PAP.Person'
+              [ { 'type_name' : 'PAP.Company'
+                , 'ui_name' : 'Company'
+                }
+              , { 'type_name' : 'PAP.Person'
+                , 'ui_name' : 'Person'
+                }
               ]
+          , default_child = 'PAP.Person'
           , full_name = 'affiliate.owner'
           , id = 'affiliate__owner'
           , name = 'owner'
@@ -617,9 +622,14 @@ _test_code = """
             ( Class = 'Entity'
             , attr = Entity `owner`
             , children_np =
-                [ 'PAP.Company'
-                , 'PAP.Person'
+                [ { 'type_name' : 'PAP.Company'
+                  , 'ui_name' : 'Company'
+                  }
+                , { 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'Person'
+                  }
                 ]
+            , default_child = 'PAP.Person'
             , full_name = 'affiliate.owner'
             , id = 'affiliate__owner'
             , name = 'owner'
@@ -637,9 +647,14 @@ _test_code = """
       ( Class = 'Entity'
       , attr = Entity `owner`
       , children_np =
-          [ 'PAP.Company'
-          , 'PAP.Person'
+          [ { 'type_name' : 'PAP.Company'
+            , 'ui_name' : 'Company'
+            }
+          , { 'type_name' : 'PAP.Person'
+            , 'ui_name' : 'Person'
+            }
           ]
+      , default_child = 'PAP.Person'
       , full_name = 'owner'
       , id = 'owner'
       , name = 'owner'

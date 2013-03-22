@@ -173,6 +173,7 @@
 #                     Call `_Predicates.fix_doc`, too
 #    21-Mar-2013 (CT) Add `polymorphic_epk = False` to `M_An_Entity`
 #    21-Mar-2013 (CT) Use `P_Type_S`, if defined, for `epk_sig_t`
+#    22-Mar-2013 (CT) Fix `default_child` in `_m_create_e_types` (PNS_Aliases)
 #    ««revision-date»»···
 #--
 
@@ -365,6 +366,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             t._m_setup_sorted_by  ()
             td = e_deco (t)
             assert td is t
+            if t.default_child :
+                ### make sure `default_child` is right regarding
+                ### `app_type.PNS_Aliases`
+                dc = app_type.entity_type (t.default_child)
+                t._default_child = dc.type_name if dc else None
         for t in app_type._T_Extension :
             ### `DBW.update_etype` can use features like `children` or
             ### `Ref_Req_Map` that are only available after *all* etypes have

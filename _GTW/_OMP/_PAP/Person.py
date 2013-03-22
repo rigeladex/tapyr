@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -49,6 +49,7 @@
 #     4-Dec-2011 (CT) Adapt to factoring of `MOM.Attr.Querier` from
 #                     `MOM.Attr.Filter`
 #     6-Mar-2012 (CT) Factor `Subject`
+#    22-Mar-2013 (CT) Set `Subject.default_child` to `Person`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,7 @@ from   _GTW._OMP._PAP.Attr_Type    import *
 from   _GTW                        import GTW
 from   _GTW._OMP._PAP              import PAP
 from   _TFL.I18N                   import _
+import _TFL.Decorator
 
 import _GTW._OMP._PAP.Subject
 
@@ -93,6 +95,7 @@ class Filter_String_FL (MOM.Attr.Querier.String) :
 
 _Ancestor_Essence = PAP.Subject
 
+@TFL.Add_To_Class ("default_child", _Ancestor_Essence)
 class _PAP_Person_ (_Ancestor_Essence) :
     """Model a person."""
 

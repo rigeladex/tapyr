@@ -53,7 +53,7 @@
 #    19-Mar-2013 (CT) Protect `Atoms`, `Unwrapped_Atoms`
 #    19-Mar-2013 (CT) Pass a copy of `seen_etypes` to recursive calls
 #                     (otherwise, a sibling can mask a E_Type)
-#    20-Mar-2013 (CT) Add and use `recursion_limit = 2` to limit E_Type cycles
+#    20-Mar-2013 (CT) Add and use `_recursion_limit = 2` to limit E_Type cycles
 #    20-Mar-2013 (CT) Add `E_Type.As_Template_Elem`
 #    21-Mar-2013 (CT) Factor `_do_recurse`
 #                     * consider `has_identity` and `polymorphic_epk`
@@ -61,6 +61,9 @@
 #                     `_as_template_elem`; not for each element of `.Attrs`
 #    21-Mar-2013 (CT) Redefine `Id_Entity._as_json_cargo_inv`
 #                     * add `children_np`
+#    22-Mar-2013 (CT) Add `default_child` to `Id_Entity._as_json_cargo_inv`,
+#                     factor `E_Types_CNP`, add `E_Types_AQ`
+#    22-Mar-2013 (CT) Move `_polymorphic` check out of `_do_recurse`
 #    ««revision-date»»···
 #--
 
@@ -87,7 +90,7 @@ ui_sep = "/"
 
 class _Base_ (TFL.Meta.Object) :
 
-    recursion_limit = 2
+    _recursion_limit = 2
 
     @property    ### depends on currently selected language (I18N/L10N)
     @getattr_safe###
@@ -102,6 +105,7 @@ class _Base_ (TFL.Meta.Object) :
     # end def As_Template_Elem
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Atoms (self) :
         return tuple (self._atoms (ETC ()))
     # end def Atoms
@@ -113,9 +117,20 @@ class _Base_ (TFL.Meta.Object) :
     # end def Attrs_Transitive
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Unwrapped_Atoms (self) :
         return tuple (self._unwrapped_atoms (ETC ()))
     # end def Unwrapped_Atoms
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _polymorphic (self) :
+        cet = self.E_Type
+        result = False
+        if cet is not None and cet.has_identity :
+            result = cet.polymorphic_epk
+        return result
+    # end def _polymorphic
 
     def _as_json_cargo (self, seen_etypes) :
         return dict (self._as_json_cargo_inv, ui_name = self._attr.ui_name_T)
@@ -131,11 +146,13 @@ class _Base_ (TFL.Meta.Object) :
 class _Container_ (_Base_) :
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def Attrs (self) :
         return tuple (getattr (self, c.name) for c in self._attrs)
     # end def Attrs
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _attrs (self) :
         ET = self.E_Type
         if ET is not None :
@@ -147,39 +164,55 @@ class _Container_ (_Base_) :
     def _as_json_cargo (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
         result = self.__super._as_json_cargo (seen_etypes)
-        if self._do_recurse (self, self.recursion_limit, seen_etypes) :
-            attrs = list \
-                (c._as_json_cargo (ETC (seen_etypes)) for c in self.Attrs)
-            if attrs :
-                result ["attrs"] = attrs
+        if self._do_recurse (self, self._recursion_limit, seen_etypes) :
+            if self._polymorphic :
+                E_Types_AQ = self.E_Types_AQ
+                if E_Types_AQ :
+                    ### here, information about `self.E_Types_AQ` could be
+                    ### included
+                    pass
+            else :
+                attrs = list \
+                    (c._as_json_cargo (ETC (seen_etypes)) for c in self.Attrs)
+                if attrs :
+                    result ["attrs"] = attrs
         return result
     # end def _as_json_cargo
 
     def _as_template_elem (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
         result = self.__super._as_template_elem (seen_etypes)
-        if self._do_recurse (self, self.recursion_limit, seen_etypes) :
-            attrs = list \
-                (c._as_template_elem (ETC (seen_etypes)) for c in self.Attrs)
-            if attrs :
-                result ["attrs"] = attrs
+        if self._do_recurse (self, self._recursion_limit, seen_etypes) :
+            if self._polymorphic :
+                E_Types_AQ = self.E_Types_AQ
+                if E_Types_AQ :
+                    ### here, information about `self.E_Types_AQ` could be
+                    ### included
+                    pass
+            else :
+                attrs = list \
+                    (   c._as_template_elem (ETC (seen_etypes))
+                    for c in self.Attrs
+                    )
+                if attrs :
+                    result ["attrs"] = attrs
         return result
     # end def _as_template_elem
 
     def _atoms (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
-        rc = self.recursion_limit
+        rc = self._recursion_limit
         for c in self.Attrs :
-            if self._do_recurse (c, rc, seen_etypes) :
+            if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
                 for ct in c._atoms (ETC (seen_etypes)):
                     yield ct
     # end def _atoms
 
     def _attrs_transitive (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
-        rc = self.recursion_limit
+        rc = self._recursion_limit
         for c in self.Attrs :
-            if self._do_recurse (c, rc, seen_etypes) :
+            if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
                 for ct in c._attrs_transitive (ETC (seen_etypes)):
                     yield ct
             else :
@@ -191,16 +224,16 @@ class _Container_ (_Base_) :
         result = True
         if cet is not None :
             if cet.has_identity :
-                result = not (cet.polymorphic_epk or seen_etypes [cet] > rc)
+                result = seen_etypes [cet] <= rc
             seen_etypes [cet] += 1
         return result
     # end def _do_recurse
 
     def _unwrapped_atoms (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
-        rc = self.recursion_limit
+        rc = self._recursion_limit
         for c in self.Attrs :
-            if self._do_recurse (c, rc, seen_etypes) :
+            if self._do_recurse (c, rc, seen_etypes) and not c._polymorphic :
                 for ct in c.Unwrapped.Atoms :
                     yield ct
     # end def _unwrapped_atoms
@@ -449,7 +482,7 @@ class _Composite_ (_Container_, _Type_) :
         except AttributeError :
             head, _, tail = split_hst (name, ".")
             try :
-                result = getattr (self._attr.E_Type, head).AQ.Wrapped (self)
+                result = getattr (self.E_Type, head).AQ.Wrapped (self)
                 setattr (self, head, result)
                 if tail :
                     result = getattr (result, tail)
@@ -525,15 +558,76 @@ class Id_Entity (_Composite_) :
 
     @TFL.Meta.Once_Property
     @getattr_safe
+    def E_Types_AQ (self) :
+        E_Types_CNP = self.E_Types_CNP
+        if E_Types_CNP :
+            return dict \
+                (   (k, _Id_Entity_NP_ (ET, self._attr))
+                for (k, ET) in E_Types_CNP.iteritems ()
+                )
+    # end def E_Types_AQ
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def E_Types_CNP (self) :
+        ET  = self.E_Type
+        apt = ET.app_type
+        cnp = ET.children_np
+        if ET.polymorphic_epk and cnp :
+            return dict ((str (c), apt.entity_type (c)) for c in cnp)
+    # end def E_Types_CNP
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
     def _as_json_cargo_inv (self) :
-        result = self.__super._as_json_cargo_inv
-        ET     = self.E_Type
-        if ET.polymorphic_epk and ET.children_np :
-            result ["children_np"] = sorted (str (c) for c in ET.children_np)
+        result      = self.__super._as_json_cargo_inv
+        ET          = self.E_Type
+        E_Types_CNP = self.E_Types_CNP
+        if E_Types_CNP :
+            result ["children_np"] = list \
+                ( dict (type_name = etn, ui_name = _T (ET.ui_name))
+                for (etn, ET) in sorted (E_Types_CNP.iteritems ())
+                )
+            if ET.default_child :
+                result ["default_child"] = ET.default_child
         return result
     # end def _as_json_cargo_inv
 
+    def __getitem__ (self, key) :
+        E_Types_AQ = self.E_Types_AQ
+        if E_Types_AQ :
+            return E_Types_AQ [key]
+    # end def __getitem__
+
 # end class Id_Entity
+
+class _Id_Entity_NP_ (Id_Entity) :
+
+    def __init__ (self, ET, attr, outer = None) :
+        self._E_Type = ET
+        self.__super.__init__ (attr, outer = outer)
+    # end def __init__
+
+    @property
+    def E_Type (self) :
+        return self._E_Type
+    # end def E_Type
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def Unwrapped (self) :
+        result = self
+        if self._outer :
+            result = self.__class__ (self._E_Type, self._attr)
+        return result
+    # end def Unwrapped
+
+    def Wrapped (self, outer) :
+        assert not self._outer
+        return self.__class__ (self._E_Type, self._attr, outer)
+    # end def Wrapped
+
+# end class _Id_Entity_NP_
 
 class String (_Type_) :
 
