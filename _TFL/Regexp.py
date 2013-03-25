@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2000-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,9 +45,10 @@
 #     2-Nov-2004 (CT) `Multi_Regexp` added
 #    26-Jan-2006 (CT) `max_index` factored
 #     7-Jun-2006 (CT) `Re_Replacer` added
-#    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
-#    23-Dec-2007 (CT)  `Dict_Replacer` added
+#    14-Jun-2006 (CT) `Multi_Re_Replacer` added
+#    23-Dec-2007 (CT) `Dict_Replacer` added
 #    31-Dec-2010 (CT) `Multi_Regexp.search_all` and `.search_iter` added
+#    25-Mar-2013 (CT) Add `Copy`, `__nonzero__`, doctest to `Regexp`
 #    ««revision-date»»···
 #--
 
@@ -72,13 +73,29 @@ class Regexp (TFL.Meta.Object) :
        This allows constructions like::
 
            if pat.match (some_string) :
-               (g1, g2, g3) = pat.last_match.groups ()
+               (g1, g2, g3) = pat.groups ()
 
        `Regexp` instances support access to named match groups via attribute
        syntax::
 
            if pat.match (some_string) :
               g1 = pat.group_1
+
+
+    >>> pat = Regexp (r"(?P<nm> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)___(?P<op> [A-Z]+)$", re.VERBOSE)
+    >>> _   = pat.match ("last_name___EQ")
+    >>> bool (pat)
+    True
+    >>> pat.groups ()
+    ('last_name', 'EQ')
+
+    >>> sav = pat.Copy()
+    >>> _   = pat.match ("owner__last_name___STARTSWITH")
+    >>> pat.groups()
+    ('owner__last_name', 'STARTSWITH')
+    >>> sav.groups()
+    ('last_name', 'EQ')
+
     """
 
     default_flags = 0
@@ -95,6 +112,14 @@ class Regexp (TFL.Meta.Object) :
         self._pattern    = pattern
         self.last_match  = None
     # end def __init__
+
+    def Copy (self) :
+        """Return a copy with `last_match` saved for later use."""
+        result            = self.__class__.__new__ (self.__class__)
+        result._pattern   = self._pattern
+        result.last_match = self.last_match
+        return result
+    # end def Copy
 
     def match (self, string, pos = 0, endpos = None) :
         """Try to match `self._pattern` at the beginning of `string`.
@@ -177,6 +202,10 @@ class Regexp (TFL.Meta.Object) :
                 return getattr (self._pattern, name)
         raise AttributeError, name
     # end def __getattr__
+
+    def __nonzero__ (self) :
+        return bool (self.last_match)
+    # end def __nonzero__
 
 # end class Regexp
 
