@@ -740,9 +740,10 @@ class QX_Completer (_JSON_Action_PO_) :
                     )
                 )
             )
+        scope  = self.top.scope
         qr     = QR.from_request \
-            (ET, request, ** request.json.get ("values", {}))
-        ETM    = self.top.scope [ET.type_name]
+            (scope, ET, request, ** request.json.get ("values", {}))
+        ETM    = scope [ET.type_name]
         query  = qr (ETM.query_s ()).distinct ()
         entity_p = getattr (json, "entity_p", False)
         return self._rendered_completions (ETM, query, names, entity_p, json)
@@ -1164,7 +1165,8 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     def rendered (self, context, template = None) :
         request  = context ["request"]
         response = context ["response"]
-        qr = QR.from_request (self.ETM.E_Type, request, ** self.default_qr_kw)
+        qr = QR.from_request \
+            (self.top.scope, self.ETM.E_Type, request, ** self.default_qr_kw)
         self._fix_filters (qr.filters)
         fields = self._fields (qr.attributes or self.list_display)
         with self.LET (fields = fields, query_restriction = qr) :

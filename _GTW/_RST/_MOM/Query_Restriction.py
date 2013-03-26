@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -30,6 +30,8 @@
 #     4-Jul-2012 (CT) Fix typo
 #    19-Jul-2012 (CT) Add and use `default_limit` and `default_offset`
 #    10-Dec-2012 (CT) Remove `default_limit` and `default_offset`
+#    25-Mar-2013 (CT) Factor `_name_1_p`, add `_type_p`, `_name_1q_p`
+#    26-Mar-2013 (CT) Add support for `polymorphic_epk` attributes
 #    ««revision-date»»···
 #--
 
@@ -45,10 +47,11 @@ import _TFL._Meta.Object
 import _TFL._Meta.Property
 from   _TFL._Meta.Once_Property import Once_Property
 
+import _TFL.multimap
 import _TFL.Record
 
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import uniq
+from   _TFL.predicate           import first, uniq
 from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
@@ -68,9 +71,33 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     query_b     = None
     query_f     = None
 
-    _name_p     = r"(?P<name> [a-zA-Z0-9]+ (?: _{1,2}[a-zA-Z0-9]+)*)"
-    _op_p       = r"(?P<op> [A-Z]+)"
+    _id_sep     = MOM.Attr.Querier.id_sep
     _op_sep     = MOM.Attr.Querier.op_sep
+    _ui_sep     = MOM.Attr.Querier.ui_sep
+
+    _name_1_p   = r"[a-zA-Z0-9]+ (?: _[a-zA-Z0-9]+)*"
+    _type_p     = r"[A-Za-z0-9_.]+"
+    _name_1q_p  = " ".join \
+        ( ( _name_1_p                             ### leading name
+          ,   r"(?: "
+          ,     r"\[", _type_p, r"\]"             ### type_name
+          ,     _id_sep                           ### name separator
+          ,     _name_1_p                         ### trailing name
+          ,   r")?"
+          )
+        )
+    _name_p     = " ".join \
+        ( ( r"(?P<name>"
+          ,   _name_1q_p                          ### leading name
+          ,   r"(?: "
+          ,     _id_sep                           ### name separator
+          ,     _name_1q_p                        ### trailing name
+          ,   r")*"
+          , r")"
+          )
+        )
+    _op_p       = r"(?P<op> [A-Z]+)"
+
     _a_pat      = Regexp \
         ( "".join ((_name_p, _op_sep, _op_p, r"$"))
         , re.VERBOSE
@@ -80,14 +107,23 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         ( "".join ((_name_p, r"(?:", _op_sep, _op_p, r")?", r"$"))
         , re.VERBOSE
         )
+    _t_pat      = Regexp \
+        ( "".join
+            ((r"\[", r"(?P<type>", _type_p, r")", r"\](?: \.|", _id_sep, r")"))
+        , re.VERBOSE
+        )
 
     @classmethod
     def Filter (cls, E_Type, key, value = None, default_op = "AC") :
-        pat = cls._a_pat_opt
-        if pat.match (key) :
-            result, _ = cls._setup_attr_match \
-                (E_Type, pat, key, value, default_op)
-            return result
+        if cls._t_pat.search (key) :
+            raise ValueError \
+                ("Filter doesn't support polymorphic_epk: %s" % key)
+        data    = { key : value }
+        request = TFL.Record (req_data = data, req_data_list = data)
+        fs, fqs = cls.attr_filters \
+            (E_Type, request, data, None, cls._a_pat_opt, default_op)
+        if fs :
+            return fs [0]
     # end def Filter
 
     @classmethod
@@ -98,7 +134,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     # end def Filter_Atoms
 
     @classmethod
-    def from_request (cls, E_Type, request, ** kw) :
+    def from_request (cls, scope, E_Type, request, ** kw) :
         data   = dict (kw, ** dict (request.req_data.iteritems ()))
         result = cls \
             ( limit          = data.pop ("limit",  0)
@@ -117,10 +153,21 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         elif "FIRST" in data or "PREV" in data :
             result.offset = 0
         result._setup_attributes (E_Type, request, data)
-        result._setup_filters    (E_Type, request, data)
+        result._setup_filters    (E_Type, request, data, scope)
         result._setup_order_by   (E_Type, request, data)
         return result
     # end def from_request
+
+    @classmethod
+    def nested (cls, scope, ETM, tail_args) :
+        E_Type  = ETM.E_Type
+        request = TFL.Record \
+            ( req_data      = {}
+            , req_data_list = dict (AQ = list (",".join (v) for v in tail_args))
+            )
+        filters, filters_q  = cls.attr_filters (E_Type, request, {}, scope)
+        return cls (ETM = ETM, filters = filters, filters_q = filters_q)
+    # end def nested
 
     def __init__ (self, limit = None, offset = None, ** kw) :
         if limit :
@@ -199,10 +246,76 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         return 0
     # end def total_u
 
+    @TFL.Meta.Class_and_Instance_Method
+    def af_args_api (soc, req_data_list, default_op = "EQ") :
+        for aq in req_data_list.get ("AQ", []) :
+            if aq :
+                name, op, value = aq.split (",", 3)
+                head, typ, tail = soc._t_pat.split (name, 1, 2)
+                if not op :
+                    op = default_op
+                fn = soc._op_sep.join \
+                    ((soc._id_sep.join ((head.split ("."))), op))
+                yield fn, head, typ, tail, op, value
+    # end def af_args_api
+
+    @TFL.Meta.Class_and_Instance_Method
+    def af_args_fif (soc, req_data, a_pat = None, default_op = "EQ") :
+        if a_pat is None :
+            a_pat = soc._a_pat
+        t_pat = soc._t_pat
+        for fn in sorted (req_data) :
+            if a_pat.match (fn) :
+                name   = a_pat.name
+                op     = a_pat.op
+                value  = req_data [fn]
+                if not op :
+                    op = default_op
+                    fn = soc._op_sep.join ((fn, default_op))
+                head, typ, tail = t_pat.split (name, 1, 2)
+                h_name = ".".join (head.split (soc._id_sep))
+                t_name = ".".join (tail.split (soc._id_sep))
+                yield fn, h_name, typ, t_name, op, value
+    # end def af_args_fif
+
+    @TFL.Meta.Class_and_Instance_Method
+    def attr_filters \
+            ( soc, E_Type, request, data, scope
+            , a_pat = None
+            , default_op = "EQ"
+            ) :
+        filters   = []
+        filters_q = []
+        map       = TFL.mm_dict_mm_list ()
+        af_args   = ichain \
+            ( soc.af_args_api (request.req_data_list, default_op)
+            , soc.af_args_fif (data, a_pat, default_op)
+            )
+        for fn, name, typ, tail, op, value in af_args :
+            if typ :
+                map [name] [typ].append ((tail, op, value))
+            else :
+                f, fq = soc._setup_attr (E_Type, fn, name, op, value)
+                filters.append   (f)
+                filters_q.append (fq)
+        for name, t_map in map.iteritems () :
+            if len (t_map) > 1 :
+                raise ValueError \
+                    ( "Got types %s instead of exactly one type"
+                    % (sorted (t_map), )
+                    )
+            typ    = first (t_map)
+            nqr    = soc.nested (scope, scope [typ], t_map [typ])
+            fs, fq = soc._setup_attr_pepk (E_Type, name, nqr)
+            filters.extend   (fs)
+            filters_q.append (fq)
+        return tuple (filters), tuple (filters_q)
+    # end def attr_filters
+
     def _filter_matches (self, data, pat) :
-        for k in sorted (data) :
-            if pat.match (k) :
-                yield k, pat
+        for fn in sorted (data) :
+            if pat.match (fn) :
+                yield fn, pat
     # end def _filter_matches
 
     @TFL.Meta.Class_and_Instance_Method
@@ -214,7 +327,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     # end def _qop_desc
 
     @TFL.Meta.Class_and_Instance_Method
-    def _setup_attr (soc, E_Type, k, name, op, value) :
+    def _setup_attr (soc, E_Type, fn, name, op, value) :
         q      = getattr (E_Type.AQ, name)
         qop    = getattr (q, op)
         fq     = qop (value)
@@ -222,8 +335,8 @@ class RST_Query_Restriction (TFL.Meta.Object) :
             ( q.As_Template_Elem._kw
             , attr   = q._attr
             , edit   = value
-            , id     = k
-            , name   = k
+            , id     = fn
+            , name   = fn
             , op     = soc._qop_desc (qop)
             , AQ     = q
             , value  = value
@@ -232,24 +345,22 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     # end def _setup_attr
 
     @TFL.Meta.Class_and_Instance_Method
-    def _setup_attr_aq (soc, E_Type, aq) :
-        if aq :
-            name, op, value = aq.split (",", 3)
-            k = soc._op_sep.join (("__".join ((name.split ("."))), op))
-            result = soc._setup_attr (E_Type, k, name, op, value)
-            return result
-        return None, None
-    # end def _setup_attr_aq
-
-    @TFL.Meta.Class_and_Instance_Method
-    def _setup_attr_match (soc, E_Type, pat, k, value, default_op = "EQ") :
-        op     = pat.op
-        if not op :
-            op = default_op
-            k  = soc._op_sep.join ((k, default_op))
-        names  = pat.name.split  ("__")
-        return soc._setup_attr   (E_Type, k, ".".join (names), op, value)
-    # end def _setup_attr_match
+    def _setup_attr_pepk (soc, E_Type, name, nqr) :
+        q      = getattr (E_Type.AQ, name)
+        qop    = q.IN
+        value  = nqr (nqr.ETM.query ().attr ("pid"))
+        fq     = qop (value)
+        fs     = []
+        for nf in nqr.filters :
+            f    = nf.copy ()
+            f.id = f.name = soc._id_sep.join \
+                (("%s[%s]" % (name, nqr.ETM.type_name), nf.id))
+            f.full_name = ".".join \
+                (("%s[%s]" % (q._full_name, nqr.ETM.type_name), nf.full_name))
+            f.ui_name = soc._ui_sep.join ((q._ui_name_T, nf.ui_name))
+            fs.append (f)
+        return fs, fq
+    # end def _setup_attr_pepk
 
     def _setup_attributes (self, E_Type, request, data) :
         def _gen (fs) :
@@ -260,19 +371,9 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         self.attributes = tuple (_gen (data.pop ("fields", "").split (",")))
     # end def _setup_attributes
 
-    def _setup_filters (self, E_Type, request, data) :
-        matches = \
-            (   self._setup_attr_match (E_Type, pat, k, data.pop (k))
-            for k, pat in self._filter_matches (data, self._a_pat)
-            )
-        aqs     = \
-            (   self._setup_attr_aq (E_Type, aq)
-            for aq in request.req_data_list.get ("AQ")
-            )
-        f_fq_s  = tuple \
-            ((f, fq) for f, fq in ichain (matches, aqs) if fq is not None)
-        if f_fq_s :
-            self.filters, self.filters_q = zip (* f_fq_s)
+    def _setup_filters (self, E_Type, request, data, scope) :
+        self.filters, self.filters_q = self.attr_filters \
+            (E_Type, request, data, scope)
     # end def _setup_filters
 
     def _setup_order_by_1 (self, E_Type, s) :

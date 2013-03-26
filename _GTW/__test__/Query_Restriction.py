@@ -30,6 +30,7 @@
 #     2-Dec-2011 (CT) Creation continued..
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    30-Jul-2012 (CT) Change to test `GTW.RST.TOP.MOM` instead of `GTW.NAV`
+#    25-Mar-2013 (CT) Add `test_pepk`
 #    ««revision-date»»···
 #--
 
@@ -51,15 +52,53 @@ _test_code = """
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
 
-    >>> qe = QR.from_request (PAP.Person.E_Type, f_req (qux = "42", qix = "Miles"))
+    >>> qe = QR.from_request (scope, PAP.Person.E_Type, f_req (qux = "42", qix = "Miles"))
     >>> print qe.limit, qe.offset, qe.filters
     0 0 ()
 
     >>> rd = f_req (
     ...   limit = 24, last_name___GE = "Lee", lifetime__start___EQ = "2008", foo = "bar")
-    >>> qr = QR.from_request (PAP.Person.E_Type, rd)
+    >>> qr = QR.from_request (scope, PAP.Person.E_Type, rd)
     >>> print qr.limit, qr.offset
     24 0
+
+    >>> print formatted (qr.filters_q)
+    ( Q.last_name >= lee
+    , Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31))
+    )
+
+    >>> print formatted (qr.filters)
+    ( Record
+      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
+      , edit = 'Lee'
+      , full_name = 'last_name'
+      , id = 'last_name___GE'
+      , name = 'last_name___GE'
+      , op = Record
+          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+          , label = '&ge;'
+          )
+      , sig_key = 3
+      , ui_name = 'Last name'
+      , value = 'Lee'
+      )
+    , Record
+      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+      , attr = Date `start`
+      , edit = '2008'
+      , full_name = 'lifetime.start'
+      , id = 'lifetime__start___EQ'
+      , name = 'lifetime__start___EQ'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = '&equiv;'
+          )
+      , sig_key = 0
+      , ui_name = 'Lifetime/Start'
+      , value = '2008'
+      )
+    )
 
     >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name"))
     Record
@@ -130,7 +169,7 @@ _test_code = """
     >>> print qr.filters_q
     (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
 
-    >>> qo = QR.from_request (PAP.Person.E_Type, f_req (order_by = "-lifetime,last_name"))
+    >>> qo = QR.from_request (scope, PAP.Person.E_Type, f_req (order_by = "-lifetime,last_name"))
     >>> print formatted (qo.order_by)
     ( Record
       ( attr = Date_Interval `lifetime`
@@ -718,6 +757,97 @@ _test_code = """
       )
     ]
 
+"""
+
+_test_pepk = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> rd = f_req (last_name = "Lee")
+    >>> for afa in QR.af_args_fif (rd.req_data, QR._a_pat_opt) :
+    ...    print afa
+    (u'last_name___EQ', u'last_name', '', u'', u'EQ', u'Lee')
+
+    >>> print formatted (QR.Filter (PAP.Person.E_Type, "last_name", "Lee"))
+    Record
+    ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+    , attr = String `last_name`
+    , edit = 'Lee'
+    , full_name = 'last_name'
+    , id = 'last_name___AC'
+    , name = 'last_name___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute value starts with the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 3
+    , ui_name = 'Last name'
+    , value = 'Lee'
+    )
+
+    >>> rdd = \\
+    ...   { "spouse[PAP.Person]__last_name___GE" : "Lee"
+    ...   , "spouse[PAP.Person]__lifetime__start___EQ" : "2008"
+    ...   , "title___EQ" : "Dr."
+    ...   , "foo" : "bar"
+    ...   }
+    >>> rdx = Record (req_data = GTW.Request_Data (rdd), req_data_list = GTW.Request_Data_List (rdd))
+
+    >>> for afa in QR.af_args_fif (rdx.req_data) :
+    ...    print afa
+    (u'spouse[PAP.Person]__last_name___GE', u'spouse', u'PAP.Person', u'last_name', u'GE', u'Lee')
+    (u'spouse[PAP.Person]__lifetime__start___EQ', u'spouse', u'PAP.Person', u'lifetime.start', u'EQ', u'2008')
+    (u'title___EQ', u'title', '', u'', u'EQ', u'Dr.')
+
+    >>> qrx = QR.from_request (scope, PAP.Person_M.E_Type, rdx)
+    >>> print formatted (qrx.filters)
+    ( Record
+      ( AQ = <title.AQ [Attr.Type.Querier String]>
+      , attr = String `title`
+      , edit = 'Dr.'
+      , full_name = 'title'
+      , id = 'title___EQ'
+      , name = 'title___EQ'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = '&equiv;'
+          )
+      , sig_key = 3
+      , ui_name = 'Academic title'
+      , value = 'Dr.'
+      )
+    , Record
+      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
+      , edit = 'Lee'
+      , full_name = 'spouse[PAP.Person].last_name'
+      , id = 'spouse[PAP.Person]__last_name___GE'
+      , name = 'spouse[PAP.Person]__last_name___GE'
+      , op = Record
+          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+          , label = '&ge;'
+          )
+      , sig_key = 3
+      , ui_name = 'Spouse/Last name'
+      , value = 'Lee'
+      )
+    , Record
+      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+      , attr = Date `start`
+      , edit = '2008'
+      , full_name = 'spouse[PAP.Person].lifetime.start'
+      , id = 'spouse[PAP.Person]__lifetime__start___EQ'
+      , name = 'spouse[PAP.Person]__lifetime__start___EQ'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = '&equiv;'
+          )
+      , sig_key = 0
+      , ui_name = 'Spouse/Lifetime/Start'
+      , value = '2008'
+      )
+    )
 
 """
 
@@ -726,9 +856,39 @@ from   _GTW._RST._TOP._MOM.Query_Restriction import \
      ( Query_Restriction      as QR
      , Query_Restriction_Spec as QRS
      )
+import _GTW._OMP._PAP.Association
+
+_Ancestor_Essence = GTW.OMP.PAP.Person
+
+class Person_M (_Ancestor_Essence) :
+    """Married person"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class spouse (A_Id_Entity) :
+            """Spouse of this person"""
+
+            kind               = Attr.Necessary
+            P_Type             = "GTW.OMP.PAP.Subject"
+
+        # end class spouse
+
+    # end class _Attributes
+
+# end class Person_M
+
 from   _TFL.Formatter                        import Formatter, formatted_1
 formatted = Formatter (width = 240)
 
-__test__ = Scaffold.create_test_dict (_test_code)
+from   itertools                             import chain as ichain
+
+__test__ = Scaffold.create_test_dict \
+    ( dict
+      ( main       = _test_code
+      , test_pepk  = _test_pepk
+      )
+    )
 
 ### __END__ GTW.__test__.Query_Restriction

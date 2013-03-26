@@ -545,7 +545,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
         with self.__super._handle_method_context (method, request, response) :
             try :
                 qr = self.QR.from_request \
-                    (self.E_Type, request, ** self.default_qr_kw)
+                    (self.scope, self.E_Type, request, ** self.default_qr_kw)
             except AttributeError as exc :
                 error = _T ("Query restriction triggered error: %s") % (exc, )
                 raise self.Status.Bad_Request (error)
