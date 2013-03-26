@@ -312,12 +312,6 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         return tuple (filters), tuple (filters_q)
     # end def attr_filters
 
-    def _filter_matches (self, data, pat) :
-        for fn in sorted (data) :
-            if pat.match (fn) :
-                yield fn, pat
-    # end def _filter_matches
-
     @TFL.Meta.Class_and_Instance_Method
     def _qop_desc (soc, qop) :
         return TFL.Record \
