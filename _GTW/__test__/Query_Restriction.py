@@ -31,6 +31,7 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    30-Jul-2012 (CT) Change to test `GTW.RST.TOP.MOM` instead of `GTW.NAV`
 #    25-Mar-2013 (CT) Add `test_pepk`
+#    27-Mar-2013 (CT) Add `test_request_get` and real query to `test_pepk`
 #    ««revision-date»»···
 #--
 
@@ -57,13 +58,13 @@ _test_code = """
     0 0 ()
 
     >>> rd = f_req (
-    ...   limit = 24, last_name___GE = "Lee", lifetime__start___EQ = "2008", foo = "bar")
+    ...   limit = 24, last_name___GE = "Qux", lifetime__start___EQ = "2008", foo = "bar")
     >>> qr = QR.from_request (scope, PAP.Person.E_Type, rd)
     >>> print qr.limit, qr.offset
     24 0
 
     >>> print formatted (qr.filters_q)
-    ( Q.last_name >= lee
+    ( Q.last_name >= qux
     , Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31))
     )
 
@@ -71,7 +72,7 @@ _test_code = """
     ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
-      , edit = 'Lee'
+      , edit = 'Qux'
       , full_name = 'last_name'
       , id = 'last_name___GE'
       , name = 'last_name___GE'
@@ -81,7 +82,7 @@ _test_code = """
           )
       , sig_key = 3
       , ui_name = 'Last name'
-      , value = 'Lee'
+      , value = 'Qux'
       )
     , Record
       ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
@@ -137,7 +138,7 @@ _test_code = """
     ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
-      , edit = 'Lee'
+      , edit = 'Qux'
       , full_name = 'last_name'
       , id = 'last_name___GE'
       , name = 'last_name___GE'
@@ -147,7 +148,7 @@ _test_code = """
           )
       , sig_key = 3
       , ui_name = 'Last name'
-      , value = 'Lee'
+      , value = 'Qux'
       )
     , Record
       ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
@@ -167,7 +168,7 @@ _test_code = """
     )
 
     >>> print qr.filters_q
-    (Q.last_name >= lee, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
+    (Q.last_name >= qux, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
 
     >>> qo = QR.from_request (scope, PAP.Person.E_Type, f_req (order_by = "-lifetime,last_name"))
     >>> print formatted (qo.order_by)
@@ -760,20 +761,20 @@ _test_code = """
 """
 
 _test_pepk = """
-    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__...
-    >>> PAP = scope.PAP
+    >>> root  = Scaffold (["wsgi", "-db_url", %(p1)s, "-db_name", %(n1)s or ("test." + %(bn1)s)]) # doctest:+ELLIPSIS
+    >>> scope = root.scope
+    >>> PAP   = scope.PAP
 
-    >>> rd = f_req (last_name = "Lee")
+    >>> rd = f_req (last_name = "Qux")
     >>> for afa in QR.af_args_fif (rd.req_data, QR._a_pat_opt) :
     ...    print afa
-    (u'last_name___EQ', u'last_name', '', u'', u'EQ', u'Lee')
+    (u'last_name___EQ', u'last_name', '', u'', u'EQ', u'Qux')
 
-    >>> print formatted (QR.Filter (PAP.Person.E_Type, "last_name", "Lee"))
+    >>> print formatted (QR.Filter (PAP.Person.E_Type, "last_name", "Qux"))
     Record
     ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
     , attr = String `last_name`
-    , edit = 'Lee'
+    , edit = 'Qux'
     , full_name = 'last_name'
     , id = 'last_name___AC'
     , name = 'last_name___AC'
@@ -783,11 +784,11 @@ _test_pepk = """
         )
     , sig_key = 3
     , ui_name = 'Last name'
-    , value = 'Lee'
+    , value = 'Qux'
     )
 
     >>> rdd = \\
-    ...   { "spouse[PAP.Person]__last_name___GE" : "Lee"
+    ...   { "spouse[PAP.Person]__last_name___GE" : "Qux"
     ...   , "spouse[PAP.Person]__lifetime__start___EQ" : "2008"
     ...   , "title___EQ" : "Dr."
     ...   , "foo" : "bar"
@@ -796,7 +797,7 @@ _test_pepk = """
 
     >>> for afa in QR.af_args_fif (rdx.req_data) :
     ...    print afa
-    (u'spouse[PAP.Person]__last_name___GE', u'spouse', u'PAP.Person', u'last_name', u'GE', u'Lee')
+    (u'spouse[PAP.Person]__last_name___GE', u'spouse', u'PAP.Person', u'last_name', u'GE', u'Qux')
     (u'spouse[PAP.Person]__lifetime__start___EQ', u'spouse', u'PAP.Person', u'lifetime.start', u'EQ', u'2008')
     (u'title___EQ', u'title', '', u'', u'EQ', u'Dr.')
 
@@ -820,7 +821,7 @@ _test_pepk = """
     , Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
-      , edit = 'Lee'
+      , edit = 'Qux'
       , full_name = 'spouse[PAP.Person].last_name'
       , id = 'spouse[PAP.Person]__last_name___GE'
       , name = 'spouse[PAP.Person]__last_name___GE'
@@ -830,7 +831,7 @@ _test_pepk = """
           )
       , sig_key = 3
       , ui_name = 'Spouse/Last name'
-      , value = 'Lee'
+      , value = 'Qux'
       )
     , Record
       ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
@@ -848,6 +849,86 @@ _test_pepk = """
       , value = '2008'
       )
     )
+
+    >>> p1  = PAP.Person_M ("Qux", "Foo", lifetime = ("20080327",), raw = True)
+    >>> p2  = PAP.Person_M ("Bar", "Baz", title = "Dr.", spouse = p1, raw = True)
+
+    >>> PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid")).all ()
+    [PAP.Person_M (u'qux', u'foo', u'', u''), PAP.Person_M (u'bar', u'baz', u'', u'dr.')]
+    >>> pids = PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid")).attr ("pid").all ()
+    >>> list (int (p) for p in pids)
+    [1, 2]
+
+    >>> p1.pid, p1 in pids, p1 in [1, 2], p1 == p1.pid, p1.pid == p1
+    (1, True, True, True, True)
+    >>> p2.pid, p2 in pids, p2 in [1, 2], p2 == p2.pid, p2.pid == p2
+    (2, True, True, True, True)
+    >>> p1.spouse and p1.spouse.pid, p1.spouse in [1]
+    (None, False)
+    >>> p2.spouse and p2.spouse.pid, p2.spouse in [1], p2.spouse == p1.pid, p1.pid == p2.spouse
+    (1, True, True, True)
+
+    >>> req = Scaffold.test_request_get ("/Admin/Person?spouse[PAP.Person]__last_name___GE=Qux&spouse[PAP.Person]__lifetime__start___EQ=2008&title___EQ=Dr.")
+    >>> qr  = QR.from_request (scope, PAP.Person_M.E_Type, req)
+    >>> print (formatted (qr.filters))
+    ( Record
+      ( AQ = <title.AQ [Attr.Type.Querier String]>
+      , attr = String `title`
+      , edit = 'Dr.'
+      , full_name = 'title'
+      , id = 'title___EQ'
+      , name = 'title___EQ'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = '&equiv;'
+          )
+      , sig_key = 3
+      , ui_name = 'Academic title'
+      , value = 'Dr.'
+      )
+    , Record
+      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
+      , edit = 'Qux'
+      , full_name = 'spouse[PAP.Person].last_name'
+      , id = 'spouse[PAP.Person]__last_name___GE'
+      , name = 'spouse[PAP.Person]__last_name___GE'
+      , op = Record
+          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+          , label = '&ge;'
+          )
+      , sig_key = 3
+      , ui_name = 'Spouse/Last name'
+      , value = 'Qux'
+      )
+    , Record
+      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+      , attr = Date `start`
+      , edit = '2008'
+      , full_name = 'spouse[PAP.Person].lifetime.start'
+      , id = 'spouse[PAP.Person]__lifetime__start___EQ'
+      , name = 'spouse[PAP.Person]__lifetime__start___EQ'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = '&equiv;'
+          )
+      , sig_key = 0
+      , ui_name = 'Spouse/Lifetime/Start'
+      , value = '2008'
+      )
+    )
+
+    >>> list (int (p) for p in PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid")).attr ("pid"))
+    [1, 2]
+
+    >>> list (int (p) for p in PAP.Person_M.query (* qr.filters_q, sort_key = TFL.Sorted_By ("pid")).attr ("pid"))
+    [2]
+
+    >>> qr.filters_q # doctest:+ELLIPSIS
+    (Q.title == dr., Q.spouse.in_ (...,))
+
+    >>> qr (PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid"))).all ()
+    [PAP.Person_M (u'bar', u'baz', u'', u'dr.')]
 
 """
 

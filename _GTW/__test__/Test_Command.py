@@ -32,6 +32,7 @@
 #     9-Jan-2013 (CT) Factor in `GTW_RST_Test_Command` from `RST`
 #    21-Jan-2013 (CT) Add `reset`
 #    31-Jan-2013 (CT) Add `bn` to `_backend_spec`
+#    27-Mar-2013 (CT) Add `test_request`, reorder methods alphabetically
 #    ««revision-date»»···
 #--
 
@@ -66,7 +67,7 @@ import _GTW._AFS._MOM.Spec
 import _TFL.Filename
 import _TFL.Generators
 
-from    werkzeug.test     import Client
+from    werkzeug.test     import Client, EnvironBuilder
 from    werkzeug.wrappers import BaseResponse
 import  pyquery
 import  lxml.html
@@ -156,6 +157,11 @@ class GTW_Test_Command (_Ancestor) :
     def src_dir (self) :
         return "/tmp/test"
     # end def src_dir
+
+    @Once_Property
+    def Test_Client (self) :
+        return Client (self.root, Test_Response)
+    # end def Test_Client
 
     @Once_Property
     def web_src_root (self) :
@@ -270,6 +276,34 @@ class GTW_Test_Command (_Ancestor) :
         return self.__super.scope (* args, verbose = verbose, ** kw)
     # end def scope
 
+    def test_get (self, url, ** options) :
+        return self.Test_Client.get (url, ** options)
+    # end def test_get
+
+    def test_post (self, url, ** options) :
+        return self.Test_Client.post (url, ** options)
+    # end def test_post
+
+    def test_request (self, * args, ** kw) :
+        """Return a request object corresponding to `args` and `kw`. All
+           arguments supported by `werkzeug.test.EnvironBuilder` plus
+           `request_class` are allowed.
+        """
+        request_class = kw.pop ("request_class", self.root.Request)
+        env_builder   = EnvironBuilder (* args, ** kw)
+        return env_builder.get_request (request_class)
+    # end def test_request
+
+    def test_request_get (self, * args, ** kw) :
+        kw ["method"] = "GET"
+        return self.test_request (* args, ** kw)
+    # end def test_request_get
+
+    def test_request_post (self, * args, ** kw) :
+        kw ["method"] = "POST"
+        return self.test_request (* args, ** kw)
+    # end def test_request_post
+
     def _backend_spec (self, backends) :
         for i, b in enumerate (backends) :
             p  = self.Backend_Parameters   [b]
@@ -294,19 +328,6 @@ class GTW_Test_Command (_Ancestor) :
         result = self.__super._wsgi_app (cmd)
         return result
     # end def _wsgi_app
-
-    @Once_Property
-    def Test_Client (self) :
-        return Client (self.root, Test_Response)
-    # end def Test_Client
-
-    def test_post (self, url, ** options) :
-        return self.Test_Client.post (url, ** options)
-    # end def test_post
-
-    def test_get (self, url, ** options) :
-        return self.Test_Client.get (url, ** options)
-    # end def test_get
 
 # end class GTW_Test_Command
 

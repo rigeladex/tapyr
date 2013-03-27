@@ -32,6 +32,8 @@
 #    10-Dec-2012 (CT) Remove `default_limit` and `default_offset`
 #    25-Mar-2013 (CT) Factor `_name_1_p`, add `_type_p`, `_name_1q_p`
 #    26-Mar-2013 (CT) Add support for `polymorphic_epk` attributes
+#    27-Mar-2013 (CT) Change `__call__` to not apply `offset` for value `0`
+#    27-Mar-2013 (CT) Fix how `_setup_attr_pepk` calculates `value`
 #    ««revision-date»»···
 #--
 
@@ -142,10 +144,10 @@ class RST_Query_Restriction (TFL.Meta.Object) :
             )
         limit  = result.limit
         if limit :
-            if "LAST" in data :
-                result.offset  = - limit
-            elif "FIRST" in data :
+            if "FIRST" in data :
                 result.offset  = 0
+            elif "LAST" in data :
+                result.offset  = - limit
             elif "NEXT" in data :
                 result.offset += limit
             elif "PREV" in data :
@@ -186,7 +188,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
             result = result.order_by (self.order_by_q)
         self.query_f = result
         offset = self.offset_f
-        if offset is not None :
+        if offset :
             result = result.offset   (offset)
         if self.limit :
             result = result.limit    (self.limit)
@@ -342,7 +344,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     def _setup_attr_pepk (soc, E_Type, name, nqr) :
         q      = getattr (E_Type.AQ, name)
         qop    = q.IN
-        value  = nqr (nqr.ETM.query ().attr ("pid"))
+        value  = nqr (nqr.ETM.query ()).attr ("pid")
         fq     = qop (value)
         fs     = []
         for nf in nqr.filters :
