@@ -55,6 +55,9 @@
 #    14-Dec-2012 (CT) Redefine `Q_Result_Composite.first` to delegate `first`
 #    14-Dec-2012 (CT) Add guard for `._cache` to `_fill_cache`
 #    21-Jan-2013 (MG) `Q_Result_Composite.first`: filter `None` result
+#    27-Mar-2013 (CT) Factor `@_comparison_operator` from `_Attr_`;
+#                     to allow mixed numeric comparisons, try normal
+#                     comparison first
 #    ««revision-date»»···
 #--
 
@@ -170,6 +173,27 @@ from   _TFL.predicate             import first, uniq, uniq_p
 import itertools
 import operator
 
+def _comparison_operator (op) :
+    name    = op.__name__
+    op      = getattr (operator, name)
+    def _ (self, rhs) :
+        if isinstance (rhs, _Attr_) :
+            rhs = rhs._VALUE
+        lhs = self._VALUE
+        try :
+            return op (lhs, rhs)
+        except TypeError :
+            ### Some combinations, like `lhs == None` or
+            ### `type (rhs) == datetime.date`, raise a TypeError
+            ### Compare `(x.__class__.__name__, x)` in this case
+            return op \
+                ((lhs.__class__.__name__, lhs), (rhs.__class__.__name__, rhs))
+    _.__doc__    = op.__doc__
+    _.__name__   = name
+    _.__module__ = op.__module__
+    return _
+# end def _comparison_operator
+
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
 
@@ -181,14 +205,8 @@ class _Attr_ (object) :
         self._IS_SUM = isinstance (getter, TFL.Q_Exp._Sum_) and getter
     # end def __init__
 
-    def __eq__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        lhs = self._VALUE
-        ### Compare `(x.__class__.__name__, x)` to avoid TypeError from some
-        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
-        return (lhs.__class__.__name__, lhs) == (rhs.__class__.__name__, rhs)
-    # end def __eq__
+    @_comparison_operator
+    def __eq__ (self, rhs) : pass
 
     def __float__ (self) :
         return float (self._VALUE)
@@ -202,23 +220,11 @@ class _Attr_ (object) :
         raise AttributeError (name)
     # end def __getattr__
 
-    def __ge__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        lhs = self._VALUE
-        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
-        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
-        return (lhs.__class__.__name__, lhs) >= (rhs.__class__.__name__, rhs)
-    # end def __ge__
+    @_comparison_operator
+    def __ge__ (self, rhs) : pass
 
-    def __gt__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        lhs = self._VALUE
-        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
-        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
-        return (lhs.__class__.__name__, lhs) > (rhs.__class__.__name__, rhs)
-    # end def __gt__
+    @_comparison_operator
+    def __gt__ (self, rhs) : pass
 
     def __hash__ (self) :
         lhs = self._VALUE
@@ -229,32 +235,14 @@ class _Attr_ (object) :
         return int (self._VALUE)
     # end def __int__
 
-    def __le__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        lhs = self._VALUE
-        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
-        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
-        return (lhs.__class__.__name__, lhs) <= (rhs.__class__.__name__, rhs)
-    # end def __le__
+    @_comparison_operator
+    def __le__ (self, rhs) : pass
 
-    def __lt__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        lhs = self._VALUE
-        ### Compare `(x.__class__.__name__, x)` to avoid TypeError for some
-        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
-        return (lhs.__class__.__name__, lhs) < (rhs.__class__.__name__, rhs)
-    # end def __lt__
+    @_comparison_operator
+    def __lt__ (self, rhs) : pass
 
-    def __ne__ (self, rhs) :
-        if isinstance (rhs, _Attr_) :
-            rhs = rhs._VALUE
-        lhs = self._VALUE
-        ### Compare `(x.__class__.__name__, x)` to avoid TypeError from some
-        ### combinations, like `lhs == None`, `type (rhs) == datetime.date`
-        return (lhs.__class__.__name__, lhs) != (rhs.__class__.__name__, rhs)
-    # end def __ne__
+    @_comparison_operator
+    def __ne__ (self, rhs) : pass
 
     def __nonzero__ (self) :
         return bool (self._VALUE)
@@ -331,7 +319,10 @@ class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
 class _Q_Result_ (TFL.Meta.Object) :
 
-    Q = TFL.Attr_Query ()
+    Q             = TFL.Attr_Query ()
+
+    _Attr_        = _Attr_
+    _Attrs_Tuple_ = _Attrs_Tuple_
 
     def __init__ (self, iterable, _distinct = False) :
         self.iterable  = iterable
@@ -344,6 +335,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def all
 
     def attr (self, getter) :
+        _Attr_ = self._Attr_
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
         return Q_Result \
@@ -351,6 +343,7 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def attr
 
     def attrs (self, * getters) :
+        _Attrs_Tuple_ = self._Attrs_Tuple_
         if not getters :
             raise TypeError \
                 ( "%s.attrs() requires at least one argument"

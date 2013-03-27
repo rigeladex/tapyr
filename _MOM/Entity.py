@@ -236,6 +236,8 @@
 #    26-Feb-2013 (CT) Add attribute `ui_repr`
 #     5-Mar-2013 (CT) Remove `Attr.Init_Only_Mixin` from `electric`
 #    21-Mar-2013 (CT) Add `has_identity`
+#    27-Mar-2013 (CT) Add `TFL.Q_Result._Attr_` to `Id_Entity.__eq__`;
+#                     add `Id_Entity.__ne__`
 #    ««revision-date»»···
 #--
 
@@ -1605,7 +1607,10 @@ class Id_Entity (Entity) :
     # end def _set_raw
 
     def __eq__ (self, rhs) :
-        if isinstance (rhs, int) :
+        if isinstance (rhs, (int, long)) or \
+           (   isinstance (rhs, TFL.Q_Result._Attr_)
+           and isinstance (rhs._VALUE, (int, long))
+           ) :
             return self.pid == rhs
         elif isinstance (rhs, basestring) :
             try :
@@ -1621,6 +1626,10 @@ class Id_Entity (Entity) :
                 pass
             return (self.pid, self.home_scope.guid) == rhs
     # end def __eq__
+
+    def __ne__ (self, rhs) :
+        return not (self == rhs)
+    # end def __ne__
 
     def __hash__ (self) :
         return hash ((self.pid, self.home_scope.guid))
