@@ -49,6 +49,7 @@
 #    23-Dec-2007 (CT) `Dict_Replacer` added
 #    31-Dec-2010 (CT) `Multi_Regexp.search_all` and `.search_iter` added
 #    25-Mar-2013 (CT) Add `Copy`, `__nonzero__`, doctest to `Regexp`
+#    27-Mar-2013 (CT) Add `Multi_Re_Replacer.add`
 #    ««revision-date»»···
 #--
 
@@ -322,7 +323,7 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
     """Wrap multiple `Re_Replacer` instances and apply them in sequence"""
 
     def __init__ (self, * rerep) :
-        self.rereps = rerep
+        self.rereps = list (rerep)
     # end def __init__
 
     def __call__ (self, text, count = 0) :
@@ -331,6 +332,10 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
             result = rerep (result, count)
         return result
     # end def __call__
+
+    def add (self, * rereps) :
+        self.rereps.extend (rereps)
+    # end def add
 
 # end class Multi_Re_Replacer
 

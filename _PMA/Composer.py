@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,6 +51,7 @@
 #    27-Dec-2010 (CT) Options for mail sending added and passed to `PMA.Sender`
 #    27-Dec-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     6-Jul-2012 (CT) Remove stale import of `smtplib.SMTP`
+#    27-Mar-2013 (CT) Add options `-HTML`, `-receiver`, `-subject`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ import _PMA.Mime
 import _PMA.Sender
 import _PMA.Thread
 
+from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 import _TFL.CAO
 import _TFL.Environment
@@ -130,33 +132,36 @@ class Editor_Thread (PMA.Thread) :
 class Composer (TFL.Meta.Object) :
     """Support interactive sending of emails"""
 
-    body_marker    = "--text follows this line--"
-    domain         = TFL.Environment.mailname ()
-    editor         = "emacsclient --alternate-editor vi"
-    user           = TFL.Environment.username
-    email_address  = "%s@%s" % (user, domain)
+    body_marker         = "--text follows this line--"
+    domain              = TFL.Environment.mailname ()
+    editor              = "emacsclient --alternate-editor vi"
+    formatted_replacers = Multi_Re_Replacer ()
+    user                = TFL.Environment.username
+    email_address       = "%s@%s" % (user, domain)
+    receiver            = ""
+    subject             = ""
 
     compose_format = "\n".join \
         ( ( """From:        %(email_address)s"""
-          , """To:          """
-          , """Subject:     """
+          , """To:          %(receiver)s"""
+          , """Subject:     %(subject)s"""
           , """Bcc:         %(email_address)s"""
           , """X-mailer:    PMA %(version)s"""
           , """%(body_marker)s"""
-          , """"""
+          , ""
           )
         )
 
     forward_format = "\n".join \
         ( ( """From:        %(email_address)s"""
-          , """To:          """
+          , """To:          %(receiver)s"""
           , """Subject:     FW: %(subject)s"""
           , """Cc:          """
           , """Bcc:         %(email_address)s"""
           , """X-mailer:    PMA %(version)s"""
           , """%(body_marker)s"""
           , """see attached mail"""
-          , """"""
+          , ""
           )
         )
 
@@ -171,7 +176,7 @@ class Composer (TFL.Meta.Object) :
           , """References:  %(message_id)s"""
           , """%(body_marker)s"""
           , """%(sender)s wrote at %(message_date)s:"""
-          , """"""
+          , ""
           )
         )
 
@@ -183,7 +188,7 @@ class Composer (TFL.Meta.Object) :
 
     resend_format  = "\n".join \
         ( ( """From:        %(email_address)s"""
-          , """To:          """
+          , """To:          %(receiver)s"""
           , """Cc:          """
           , """Bcc:         """
           )
@@ -194,23 +199,58 @@ class Composer (TFL.Meta.Object) :
         ( "^(Subject: *)(Re|AW|FW): *((Re|AW|FW): *)+"
         , re.IGNORECASE | re.MULTILINE
         )
+    _rest2html_header         = "PMA-Rest-2-HTML"
+    _sig_pat                  = Regexp \
+        ( "^--$.*\Z"
+        , re.IGNORECASE | re.MULTILINE | re.DOTALL
+        )
 
-    def __init__ (self, editor = None, user = None, domain = None, smtp = None, send_cb = None) :
-        if editor is not None : self.editor = editor
-        if user   is not None : self.user   = user
-        if domain is not None : self.domain = domain
+    def __init__ \
+            ( self
+            , editor           = None
+            , user             = None
+            , domain           = None
+            , smtp             = None
+            , send_cb          = None
+            , rst2html         = False
+            , receiver         = None
+            , subject          = None
+            ) :
+        if editor   is not None    : self.editor   = editor
+        if user     is not None    : self.user     = user
+        if domain   is not None    : self.domain   = domain
+        if receiver is not None    : self.receiver = receiver
+        if subject  is not None    : self.subject  = subject
         if user is not None or domain is not None :
             self.email_address = "%s@%s" % (self.user, self.domain)
-        self.smtp    = smtp
-        self.send_cb = send_cb
-        self.locals  = dict \
-            ( body_marker   = self.body_marker
-            , email_address = self.email_address
-            , domain        = self.domain
-            , user          = self.user
-            , version       = PMA.version
+        self.smtp              = smtp
+        self.send_cb           = send_cb
+        self.rst2html          = rst2html
+        self.locals            = dict \
+            ( body_marker      = self.body_marker
+            , email_address    = self.email_address
+            , domain           = self.domain
+            , user             = self.user
+            , version          = PMA.version
             )
+        if self.receiver :
+            self.locals ["receiver"] = self.receiver
+        if self.subject :
+            self.locals ["subject"]  = self.subject
     # end def __init__
+
+    @Once_Property
+    def to_html (self) :
+        from   _GTW  import GTW
+        from   _ReST import ReST
+        import _ReST.To_Html
+        import _GTW.HTML
+        ReST.to_html.add_replacers \
+            ( GTW.HTML.Styler
+            , Re_Replacer (r'border="1"', r"")
+            )
+        return ReST.to_html
+    # end def to_html
 
     def compose (self) :
         """Compose and send a new email."""
@@ -254,12 +294,40 @@ class Composer (TFL.Meta.Object) :
             email [name] = value
     # end def _add_header_maybe
 
-    def _as_message (self, buffer) :
-        result = Lib.message_from_string (buffer.replace (self.body_marker, ""))
-        self._add_header_maybe \
-            ( result
-            , "Content-type", "text/plain; charset=%s" % PMA.default_encoding
+    def _as_html (self, buffer) :
+        encoding   = "utf8"
+        bm         = self.body_marker
+        head, body = tuple \
+            (p.decode (PMA.default_encoding) for p in buffer.split (bm, 1))
+        body       = self._remove_sig (body)
+        html       = "\n".join \
+            ( ( "<html>"
+              , "<head></head>"
+              , "<body>"
+              , self.to_html (body, encoding = encoding)
+              , "</body>"
+              , "</html>"
+              )
             )
+        html_buffer = "\n\n".join ((head, html))
+        result = Lib.message_from_string (html_buffer)
+        del result [self._rest2html_header]
+        del result ["Content-type"]
+        result ["Content-type"] = "text/html; charset=%s" % encoding
+        return result
+    # end def _as_html
+
+    def _as_message (self, buffer) :
+        if self.rst2html or self._rest2html_header in buffer :
+            result = self._as_html (buffer)
+        else :
+            result = Lib.message_from_string \
+                (buffer.replace (self.body_marker, ""))
+            self._add_header_maybe \
+                ( result
+                , "Content-type"
+                , "text/plain; charset=%s" % PMA.default_encoding
+                )
         return result
     # end def _as_message
 
@@ -330,8 +398,9 @@ class Composer (TFL.Meta.Object) :
         mapping = self.locals
         if msg is not None :
             mapping = PMA.Msg_Scope (msg, mapping)
-        return (unicode (format, PMA.default_encoding) % mapping).encode \
-            (PMA.default_encoding, "replace" )
+        result = unicode (format, PMA.default_encoding) % mapping
+        result = self.formatted_replacers (result)
+        return result.encode (PMA.default_encoding, "replace" )
     # end def _formatted
 
     def _process_attachement_headers (self, email) :
@@ -355,6 +424,15 @@ class Composer (TFL.Meta.Object) :
         return email
     # end def _process_attachement_headers
 
+    def _remove_sig (self, body) :
+        pat = self._sig_pat
+        if pat.search (body) :
+            sig = pat.group (0).strip ().split ("\n")
+            if len (sig) < 5 :
+                body = body [:pat.start (0)]
+        return body.strip ()
+    # end def _remove_sig
+
     def _send (self, buffer, finish_cb) :
         Editor_Thread (buffer, self.editor, finish_cb)
     # end def _send
@@ -370,7 +448,12 @@ def _main (cmd) :
         , user           = cmd.mail_user
         , use_tls        = cmd.tls
         )
-    comp = PMA.Composer (cmd.editor, cmd.user, cmd.domain, smtp)
+    comp = PMA.Composer \
+        ( cmd.editor, cmd.user, cmd.domain, smtp
+        , rst2html = cmd.HTML
+        , receiver = cmd.To
+        , subject  = cmd.subject
+        )
     if cmd.forward :
         comp.forward    (PMA.message_from_file (cmd.forward))
     elif cmd.reply :
@@ -392,6 +475,7 @@ _Command = TFL.CAO.Cmd \
         , "-domain:S?Domain of sender"
         , "-editor:S?Command used to start editor"
         , "-forward:S?Message to forward"
+        , "-HTML:B?Convert ReST message to HTML"
         , "-mail_host:S?Name of SMTP server to use"
         , "-mail_local_hostname:S?Name of host sending the email"
         , "-mail_port:I=25?Number of port of SMTP server to use"
@@ -399,7 +483,9 @@ _Command = TFL.CAO.Cmd \
         , "-mail_word:S?Password for login into SMTP server"
         , "-reply:S?Message to reply to"
         , "-Reply_all:S?Message to reply to"
+        , "-subject:S?Subject of email"
         , "-tls:B?Use SMTP in TLS (Transport Layer Security) mode."
+        , "-To:S?Email of receiver"
         , "-user:S?Name of sender"
         )
         , description =
