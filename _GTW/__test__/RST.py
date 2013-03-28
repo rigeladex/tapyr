@@ -656,7 +656,9 @@ _test_doc = r"""
         { 'attributes' :
             [ { 'default_value' : ''
               , 'description' : 'Boat racing in a regatta.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'left'
               , 'p_type' : 'Boat'
@@ -668,7 +670,9 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Regatta a boat races in.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'right'
               , 'p_type' : 'Regatta'
@@ -680,7 +684,9 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Skipper of boat.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'required'
               , 'name' : 'skipper'
               , 'p_type' : 'Sailor'
@@ -692,7 +698,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Place of boat in this regatta.'
               , 'example' : 2
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'place'
               , 'p_type' : 'int'
@@ -702,7 +710,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Total points of boat in this regatta.'
               , 'example' : 25
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'points'
               , 'p_type' : 'int'
@@ -749,6 +759,7 @@ _test_doc = r"""
               , 'description' : 'Regatta event to which this regatta belongs.'
               , 'is_changeable' : False
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'left'
               , 'p_type' : 'Regatta_Event'
@@ -760,7 +771,9 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Class of boats sailing in this regatta.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'boat_class'
               , 'p_type' : '_Boat_Class_'
@@ -772,7 +785,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'Number of discardable races in regatta'
               , 'example' : '42'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'discards'
               , 'p_type' : 'int'
@@ -782,7 +797,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Indicates that the regatta is cancelled'
               , 'example' : 'no'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'is_cancelled'
               , 'p_type' : 'bool'
@@ -793,7 +810,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Kind of regatta.'
               , 'example' : 'One race, one beer'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'max_length' : 32
               , 'name' : 'kind'
@@ -804,7 +823,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'Number of races sailed in regatta'
               , 'example' : '42'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'races'
               , 'p_type' : 'int'
@@ -815,7 +836,9 @@ _test_doc = r"""
                   [ { 'default_value' : ''
                     , 'description' : 'Date of regatta result.'
                     , 'example' : '1979/08/18'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'necessary'
                     , 'name' : 'date'
                     , 'p_type' : 'datetime'
@@ -825,7 +848,9 @@ _test_doc = r"""
                   , { 'default_value' : ''
                     , 'description' : 'Name of software used for managing the regatta.'
                     , 'example' : 'Blowing Bits Inc.'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'optional'
                     , 'max_length' : 64
                     , 'name' : 'software'
@@ -836,7 +861,9 @@ _test_doc = r"""
                   , { 'default_value' : ''
                     , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
                     , 'example' : 'Final'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'optional'
                     , 'max_length' : 64
                     , 'name' : 'status'
@@ -847,7 +874,9 @@ _test_doc = r"""
                   ]
               , 'default_value' : ''
               , 'description' : 'Information about result.'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'result'
               , 'p_type' : 'Regatta_Result'
@@ -893,6 +922,7 @@ _test_doc = r"""
               , 'description' : 'Regatta event to which this regatta belongs.'
               , 'is_changeable' : False
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'left'
               , 'p_type' : 'Regatta_Event'
@@ -904,7 +934,9 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Class of boats sailing in this regatta.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'boat_class'
               , 'p_type' : 'Boat_Class'
@@ -916,7 +948,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'Number of discardable races in regatta'
               , 'example' : '42'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'discards'
               , 'p_type' : 'int'
@@ -926,7 +960,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Indicates that the regatta is cancelled'
               , 'example' : 'no'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'is_cancelled'
               , 'p_type' : 'bool'
@@ -937,7 +973,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Kind of regatta.'
               , 'example' : 'One race, one beer'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'max_length' : 32
               , 'name' : 'kind'
@@ -948,7 +986,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'Number of races sailed in regatta'
               , 'example' : '42'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'races'
               , 'p_type' : 'int'
@@ -959,7 +999,9 @@ _test_doc = r"""
                   [ { 'default_value' : ''
                     , 'description' : 'Date of regatta result.'
                     , 'example' : '1979/08/18'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'necessary'
                     , 'name' : 'date'
                     , 'p_type' : 'datetime'
@@ -969,7 +1011,9 @@ _test_doc = r"""
                   , { 'default_value' : ''
                     , 'description' : 'Name of software used for managing the regatta.'
                     , 'example' : 'Blowing Bits Inc.'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'optional'
                     , 'max_length' : 64
                     , 'name' : 'software'
@@ -980,7 +1024,9 @@ _test_doc = r"""
                   , { 'default_value' : ''
                     , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
                     , 'example' : 'Final'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'optional'
                     , 'max_length' : 64
                     , 'name' : 'status'
@@ -991,7 +1037,9 @@ _test_doc = r"""
                   ]
               , 'default_value' : ''
               , 'description' : 'Information about result.'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'result'
               , 'p_type' : 'Regatta_Result'
@@ -1002,7 +1050,9 @@ _test_doc = r"""
             , { 'default_value' : 'no'
               , 'description' : 'Boolean attribute.'
               , 'example' : 'no'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'is_team_race'
               , 'p_type' : 'bool'
@@ -1049,6 +1099,7 @@ _test_doc = r"""
               , 'description' : 'Regatta event to which this regatta belongs.'
               , 'is_changeable' : False
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'left'
               , 'p_type' : 'Regatta_Event'
@@ -1060,7 +1111,9 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Name of handicap system used for this regatta.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'boat_class'
               , 'p_type' : 'Handicap'
@@ -1072,7 +1125,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'Number of discardable races in regatta'
               , 'example' : '42'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'discards'
               , 'p_type' : 'int'
@@ -1082,7 +1137,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Indicates that the regatta is cancelled'
               , 'example' : 'no'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'is_cancelled'
               , 'p_type' : 'bool'
@@ -1093,7 +1150,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Kind of regatta.'
               , 'example' : 'One race, one beer'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'max_length' : 32
               , 'name' : 'kind'
@@ -1104,7 +1163,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'Number of races sailed in regatta'
               , 'example' : '42'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'races'
               , 'p_type' : 'int'
@@ -1115,7 +1176,9 @@ _test_doc = r"""
                   [ { 'default_value' : ''
                     , 'description' : 'Date of regatta result.'
                     , 'example' : '1979/08/18'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'necessary'
                     , 'name' : 'date'
                     , 'p_type' : 'datetime'
@@ -1125,7 +1188,9 @@ _test_doc = r"""
                   , { 'default_value' : ''
                     , 'description' : 'Name of software used for managing the regatta.'
                     , 'example' : 'Blowing Bits Inc.'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'optional'
                     , 'max_length' : 64
                     , 'name' : 'software'
@@ -1136,7 +1201,9 @@ _test_doc = r"""
                   , { 'default_value' : ''
                     , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
                     , 'example' : 'Final'
+                    , 'is_changeable' : True
                     , 'is_required' : False
+                    , 'is_settable' : True
                     , 'kind' : 'optional'
                     , 'max_length' : 64
                     , 'name' : 'status'
@@ -1147,7 +1214,9 @@ _test_doc = r"""
                   ]
               , 'default_value' : ''
               , 'description' : 'Information about result.'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'result'
               , 'p_type' : 'Regatta_Result'
@@ -1187,7 +1256,9 @@ _test_doc = r"""
         { 'attributes' :
             [ { 'default_value' : ''
               , 'description' : '`Boat_in_Regatta` the crew member sails on.'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'left'
               , 'p_type' : 'Boat_in_Regatta'
@@ -1199,7 +1270,9 @@ _test_doc = r"""
               }
             , { 'default_value' : ''
               , 'description' : 'Person which sails as crew member on `boat_in_regatta`'
+              , 'is_changeable' : True
               , 'is_required' : True
+              , 'is_settable' : True
               , 'kind' : 'primary'
               , 'name' : 'right'
               , 'p_type' : 'Sailor'
@@ -1212,7 +1285,9 @@ _test_doc = r"""
             , { 'default_value' : '0'
               , 'description' : 'The crew members of a boat will be sorted by `key`, if\ndefined, by order of creation otherwise.'
               , 'example' : 7
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'name' : 'key'
               , 'p_type' : 'int'
@@ -1222,7 +1297,9 @@ _test_doc = r"""
             , { 'default_value' : ''
               , 'description' : 'Role of crew member.'
               , 'example' : 'trimmer'
+              , 'is_changeable' : True
               , 'is_required' : False
+              , 'is_settable' : True
               , 'kind' : 'optional'
               , 'max_length' : 32
               , 'name' : 'role'
@@ -1902,7 +1979,6 @@ _test_get = r"""
     >>> r = showf (R.get ("/v1/PAP-Person/1", headers = { "If-Modified-Since" : last_modified }))
     { 'headers' :
         { 'cache-control' : 'no-cache'
-        , 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'link' : '/Doc/PAP-Person; rel=doc'
@@ -1916,7 +1992,6 @@ _test_get = r"""
     >>> r = showf (R.get ("/v1/PAP-Person/1", headers = { "If-None-Match" : last_etag }))
     { 'headers' :
         { 'cache-control' : 'no-cache'
-        , 'connection' : 'close'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'link' : '/Doc/PAP-Person; rel=doc'

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -37,6 +37,8 @@
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map [self.E_Type.map_name]`
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #    17-Dec-2012 (CT) s/map_name/et_map_name/
+#    28-Mar-2013 (CT) Always include `is_changeable` in `_response_attr`;
+#                     display `E_Type.ui_attr`, not `.edit_attr`
 #    ««revision-date»»···
 #--
 
@@ -137,6 +139,8 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 ( default_value = attr.raw_default
                 , description   = _T (attr.description)
                 , is_required   = attr.is_required
+                , is_changeable = attr.is_changeable
+                , is_settable   = attr.is_settable
                 , kind          = _T (attr.kind)
                 , name          = attr.name
                 , type          = _T (attr.typ)
@@ -144,8 +148,6 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             self._add_attr_props \
                 (attr, ("group", "max_length", "role_name"), result)
             self._add_attr_props (attr, ("explanation", "syntax"), result, _T)
-            if not attr.is_changeable :
-                result ["is_changeable"] = False
             if attr.ui_name_T != attr.name :
                 result ["ui_name"] = attr.ui_name_T
             if attr.E_Type :
@@ -153,7 +155,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 if isinstance (attr.attr, MOM.Attr._A_Composite_) :
                     result ["attributes"] = list \
                         (   self._response_attr (resource, request, response, a)
-                        for a in attr.E_Type.edit_attr
+                        for a in attr.E_Type.ui_attr
                         )
                 else :
                     result ["url"] = resource.e_type_href (tn)

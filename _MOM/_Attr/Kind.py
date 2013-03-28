@@ -194,6 +194,7 @@
 #    25-Feb-2013 (CT) Guard `Query._get_computed` against `Undef`, not `object`
 #    25-Feb-2013 (CT) Add `query_preconditions` to `Query._get_computed`
 #    25-Feb-2013 (CT) Remove `auto_up_depends` check from `Query._check_sanity`
+#    28-Mar-2013 (CT) Set `Query.is_changeable` to `False`
 #    ««revision-date»»···
 #--
 
@@ -1282,7 +1283,8 @@ class Computed (_Cached_, _Computed_Mixin_) :
 class Query (_Cached_, _Computed_Mixin_) :
     """Attribute calculated from a `query`."""
 
-    kind       = _ ("query")
+    kind                  = _ ("query")
+    is_changeable         = False
 
     def _get_computed (self, obj) :
         Undef = TFL.Undef

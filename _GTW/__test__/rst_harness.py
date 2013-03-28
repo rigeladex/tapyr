@@ -32,6 +32,7 @@
 #                     `run_server`
 #    31-Jan-2013 (CT) Fix setting of `db_name` in `_main`
 #    12-Feb-2013 (CT) Increase timeout and number of tries in `run_server`
+#    28-Mar-2013 (CT) Add `skip_headers`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,8 @@ import requests
 import subprocess
 import sys
 import time
+
+skip_headers = set (["connection", "x-frame-options"])
 
 def req_json (r) :
     if r is not None and r.content :
@@ -143,7 +146,10 @@ def show (r, ** kw) :
 def showf (r, ** kw) :
     return show \
         ( r
-        , headers = dict (_normal (k, v) for k, v in r.headers.iteritems ())
+        , headers = dict
+            ( _normal (k, v) for k, v in r.headers.iteritems ()
+            if k.lower () not in skip_headers
+            )
         , ** kw
         )
 # end def showf

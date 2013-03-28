@@ -69,6 +69,7 @@
 #    17-Dec-2012 (CT) Make property `objects` `getattr_safe`
 #     2-Mar-2013 (CT) Use `response.headers.set`, not dict assignment
 #     2-Mar-2013 (CT) Add `add_doc_link_header`
+#    28-Mar-2013 (CT) Change `attributes` to use default `E_Type.ui_attr`
 #    ««revision-date»»···
 #--
 
@@ -210,7 +211,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     def attributes (self) :
         result = self._attributes
         if result is None :
-            result = self._attributes = self.E_Type.edit_attr
+            result = self._attributes = self.E_Type.ui_attr
         return result
     # end def attributes
 

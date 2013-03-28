@@ -60,6 +60,7 @@
 #     7-May-2012 (CT) Add `e_type.edit_attr` and `.id_entity_attr`
 #    14-Dec-2012 (CT) Add `KeyError` guard to `_setup_attrs` (`auto_up_depends`)
 #    11-Jan-2013 (CT) Add support for `primary_ais`
+#    28-Mar-2013 (CT) Add `e_type.ui_attr`
 #    ««revision-date»»···
 #--
 
@@ -116,6 +117,7 @@ class Spec (MOM.Prop.Spec) :
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
         self._setup_attrs     (e_type)
         e_type.edit_attr = tuple (MOM.Attr.Selector.editable (e_type))
+        e_type.ui_attr   = tuple (MOM.Attr.Selector.all      (e_type))
         e_type.id_entity_attr   = tuple \
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)

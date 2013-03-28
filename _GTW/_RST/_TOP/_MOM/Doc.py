@@ -1,6 +1,6 @@
 
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -38,6 +38,7 @@
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["doc"]`
 #     3-Dec-2012 (CT) Add guard against unknown E_Type
 #    17-Dec-2012 (CT) s/map_name/et_map_name/
+#    28-Mar-2013 (CT) Hide associations with more than one role
 #    ««revision-date»»···
 #--
 
@@ -215,7 +216,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
             if etf (ET) :
                 yield self.E_Type \
                     ( ETM    = str (ET.type_name)
-                    , hidden = not ET.is_relevant
+                    , hidden = (not ET.is_relevant) or len (ET.Roles) > 1
                     , parent = self
                     )
     # end def _gen_entries
