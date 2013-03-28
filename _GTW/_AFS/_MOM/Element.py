@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -116,6 +116,7 @@
 #    12-Dec-2012 (CT) Change `Field.applyf` to return `value.edit` if there
 #                     is no conflict (needed for composite attributes)
 #    17-Dec-2012 (CT) Fix `allow_new` in `Field_Entity.__call__`
+#    28-Mar-2013 (CT) Add `polymorphic_epk` to `Field_Entity.__call__`
 #    ««revision-date»»···
 #--
 
@@ -496,8 +497,8 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
     # end def __init__
 
     def __call__ (self, ETM, entity, ** kw) :
-        f_kw      = self._child_kw (kw)
-        allow_new = \
+        f_kw            = self._child_kw (kw)
+        allow_new       = \
             (   f_kw.get ("allow_new", True)
             and self.allow_new
             and not f_kw.get ("prefilled")
@@ -505,6 +506,8 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
         if self.type_name == ETM.type_name :
             ### this clause is taken when a part of the form is called
             ### directly like `Form [id].instantiated (...)`
+            pepk = ETM.polymorphic_epk
+            allow_new = allow_new and not pepk
             f_kw ["allow_new"] = allow_new
             if not (self.changeable or entity is None) :
                 f_kw ["readonly"] = True
@@ -517,6 +520,8 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
             a_entity     = getattr (entity, self.name, None)
             if a_entity is None and attr.raw_default :
                 a_entity = a_etm.instance (attr.raw_default, raw = True)
+            pepk         = a_etm.polymorphic_epk
+            allow_new    = allow_new and not pepk
             readonly     = not (self.changeable or a_entity is None)
             f_kw         = dict \
                 ( f_kw
@@ -536,6 +541,8 @@ class _MOM_Field_Entity_ (_MOM_Field_MI_, _MOM_Entity_MI_, AE.Field_Entity) :
                 )
             if readonly :
                 f_kw ["readonly"] = readonly
+            if pepk :
+                f_kw ["polymorphic_epk"] = pepk
             result = self.__super.__call__ (a_etm, a_entity, ** f_kw)
         return result
     # end def __call__
