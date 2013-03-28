@@ -52,6 +52,8 @@
 #    27-Dec-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     6-Jul-2012 (CT) Remove stale import of `smtplib.SMTP`
 #    27-Mar-2013 (CT) Add options `-HTML`, `-receiver`, `-subject`
+#    28-Mar-2013 (CT) Put `receiver`, `subject` in `defaults`
+#    28-Mar-2013 (CT) Use `Msg_Scope` even if there isn't a `msg`
 #    ««revision-date»»···
 #--
 
@@ -233,10 +235,10 @@ class Composer (TFL.Meta.Object) :
             , user             = self.user
             , version          = PMA.version
             )
-        if self.receiver :
-            self.locals ["receiver"] = self.receiver
-        if self.subject :
-            self.locals ["subject"]  = self.subject
+        self.defaults          = dict \
+            ( receiver         = self.receiver
+            , subject          = self.subject
+            )
     # end def __init__
 
     @Once_Property
@@ -395,9 +397,7 @@ class Composer (TFL.Meta.Object) :
     # end def _finish__send
 
     def _formatted (self, format, msg = None) :
-        mapping = self.locals
-        if msg is not None :
-            mapping = PMA.Msg_Scope (msg, mapping)
+        mapping = PMA.Msg_Scope (msg, self.locals, self.defaults)
         result = unicode (format, PMA.default_encoding) % mapping
         result = self.formatted_replacers (result)
         return result.encode (PMA.default_encoding, "replace" )

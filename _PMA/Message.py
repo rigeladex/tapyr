@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -163,6 +163,8 @@
 #    31-Mar-2009 (CT) `_get_sender_name` robustified
 #    16-Apr-2009 (CT) `_get_charset` guarded against unknown `charset`
 #     8-Jun-2009 (CT) Use `with` instead of `try..finally` for opening files
+#    28-Mar-2013 (CT) Add `defaults` to `Msg_Scope`,
+#                     allow `msg=None` in `Msg_Scope`
 #    ««revision-date»»···
 #--
 
@@ -222,8 +224,12 @@ class Msg_Scope (TFL.Caller.Scope) :
 
     class Lookup_Error (Exception) : pass
 
-    def __init__ (self, msg, locls = None, ** kw) :
+    _defaults = None
+
+    def __init__ (self, msg, locls = None, defaults = None, ** kw) :
         self.msg = msg
+        if defaults :
+            self._defaults = TFL.Caller.Scope (0, defaults, {})
         self.__super.__init__ (depth = 1, locls = locls, ** kw)
     # end def __init__
 
@@ -231,17 +237,23 @@ class Msg_Scope (TFL.Caller.Scope) :
         try :
             return self.__super.__getitem__ (name)
         except (NameError, KeyError) :
-            key    = name.lower ()
-            getter = getattr (self.__class__, "_get_%s" % key, None)
-            if callable (getter) :
-                return getter (self)
-            else :
-                result = self.msg._get_header_ (key, name)
+            if self.msg is not None :
+                key    = name.lower ()
+                getter = getattr (self.__class__, "_get_%s" % key, None)
+                if callable (getter) :
+                    return getter (self)
+                else :
+                    result = self.msg._get_header_ (key, name)
+                    if result is not None :
+                        return decoded_header (result)
+                result = getattr (self.msg, name, None)
                 if result is not None :
-                    return decoded_header (result)
-            result = getattr (self.msg, name, None)
-            if result is not None :
-                return result
+                    return result
+            if self._defaults :
+                try :
+                    return self._defaults [name]
+                except (NameError, KeyError) :
+                    pass
             raise self.Lookup_Error, name
     # end def _get_attr_
 
