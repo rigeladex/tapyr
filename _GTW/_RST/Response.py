@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
 #     2-Mar-2013 (CT) Add `add_link`, change `__call__` to add link headers
+#    28-Mar-2013 (CT) Add `_auto_headers` with `X-Frame-Options`
 #    ««revision-date»»···
 #--
 
@@ -54,18 +55,27 @@ class _RST_Response_ (TFL.Meta.Object) :
 
     __metaclass__     = _M_Response_
 
-    _own_vars         = ("root", "_links", "_request", "_response")
+    _auto_headers     = \
+        { "X-Frame-Options" : "SAMEORIGIN"
+        }
+
+    _own_vars         = \
+        ("root", "_auto_headers", "_links", "_request", "_response")
+
     _sets_to_combine  = ("_own_vars", )
 
     def __init__ (self, _root, _request, * args, ** kw) :
-        self.root      = _root
-        self._links    = {}
-        self._request  = _request
-        self._response = _root.HTTP.Response (* args, ** kw)
+        self.root          = _root
+        self._auto_headers = dict (self._auto_headers) # allow instance changes
+        self._links        = {}
+        self._request      = _request
+        self._response     = _root.HTTP.Response (* args, ** kw)
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
         _response = self._response
+        for k, v in self._auto_headers.iteritems () :
+            _response.add_header (k, v)
         for rel, (value, kw) in self._links.iteritems () :
             _response.add_header ("link", value, rel = rel, ** kw)
         return _response.__call__ (* args, ** kw)
