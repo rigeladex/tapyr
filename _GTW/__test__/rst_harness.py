@@ -33,6 +33,7 @@
 #    31-Jan-2013 (CT) Fix setting of `db_name` in `_main`
 #    12-Feb-2013 (CT) Increase timeout and number of tries in `run_server`
 #    28-Mar-2013 (CT) Add `skip_headers`
+#    28-Mar-2013 (CT) Register `p.terminate` in `Scaffold.reset_callbacks`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
     import socket
     import tempfile
     import _TFL.Url
+    import _TFL.Caller
     url = TFL.Url (db_url)
     if not db_name :
         db_name = "test.%s" % (url.scheme, )
@@ -90,7 +92,10 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
             )
         ]
     tf = tempfile.NamedTemporaryFile (delete = False)
-    print ("Using", tf.name, "as stdout/stderr for server process", file=sys.stderr)
+    print \
+        ( "Using", tf.name, "as stdout/stderr for server process"
+        , file=sys.stderr
+        )
     p = subprocess.Popen (cmd, stderr = tf, stdout = tf)
     s = socket.socket    (socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout         (2.0)
@@ -111,6 +116,8 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
     if exc is not None :
         print  ("Socket connect gave exception:", exc)
         p.kill ()
+    caller_scope = TFL.Caller.Scope (1)
+    caller_scope.Scaffold.reset_callbacks.append (p.terminate)
     return p
 # end def run_server
 

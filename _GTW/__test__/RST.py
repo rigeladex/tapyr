@@ -156,9 +156,6 @@ _test_client = r"""
     >>> r2r_p._result.url
     u'http://localhost:9999/v1/MOM-Id_Entity/1?raw=True'
 
-
-    >>> server.terminate ()
-
 """
 
 _test_cqf = r"""
@@ -557,8 +554,6 @@ _test_delete = r"""
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?brief'
     }
-
-    >>> server.terminate ()
 
 """
 
@@ -1322,8 +1317,6 @@ _test_doc = r"""
     , 'status' : 200
     , 'url' : 'http://localhost:9999/Doc/SRM-Crew_Member'
     }
-
-    >>> server.terminate ()
 
 """
 
@@ -3444,8 +3437,6 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/RAISE'
     }
 
-    >>> server.terminate ()
-
 """
 
 _test_options = r"""
@@ -3455,8 +3446,6 @@ _test_options = r"""
     / : GET, HEAD, OPTIONS
     /v1/MOM-Id_Entity/1 : DELETE, GET, HEAD, OPTIONS, PUT
     /v1/PAP-Address : GET, HEAD, OPTIONS, POST
-
-    >>> server.terminate ()
 
 """
 
@@ -3714,8 +3703,6 @@ _test_post = r"""
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
 
-    >>> server.terminate ()
-
 """
 
 _test_query = r"""
@@ -3896,8 +3883,6 @@ _test_query = r"""
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person?count&AQ=last_name,EQ,tanzer'
     }
-
-    >>> server.terminate ()
 
 """
 

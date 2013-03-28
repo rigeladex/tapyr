@@ -33,6 +33,7 @@
 #    21-Jan-2013 (CT) Add `reset`
 #    31-Jan-2013 (CT) Add `bn` to `_backend_spec`
 #    27-Mar-2013 (CT) Add `test_request`, reorder methods alphabetically
+#    28-Mar-2013 (CT) Add and call `reset_callbacks`
 #    ««revision-date»»···
 #--
 
@@ -117,6 +118,7 @@ class GTW_Test_Command (_Ancestor) :
     ANS                   = GTW
     nick                  = u"MOMT"
     default_db_name       = "test"
+    reset_callbacks       = []
 
     SALT                  = bytes ("4418c024-c51f-42b5-9032-be3ef10b1a61")
 
@@ -263,12 +265,18 @@ class GTW_Test_Command (_Ancestor) :
     # end def fixtures
 
     def reset (self) :
+        for cb in self.reset_callbacks :
+            try :
+                cb ()
+            except Exception :
+                pass
         self.root = None
         try :
             del self.Test_Client
         except AttributeError :
             pass
         MOM.Scope.destroy_all ()
+        self.reset_callbacks = []
     # end def reset
 
     def scope (self, * args, ** kw) :
