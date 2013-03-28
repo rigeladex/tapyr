@@ -64,6 +64,10 @@
 #    22-Mar-2013 (CT) Add `default_child` to `Id_Entity._as_json_cargo_inv`,
 #                     factor `E_Types_CNP`, add `E_Types_AQ`
 #    22-Mar-2013 (CT) Move `_polymorphic` check out of `_do_recurse`
+#    28-Mar-2013 (CT) Redefine `Id_Entity._as_json_cargo`, `._as_template_elem`
+#                     to include `._as_...` for each of the `children_np`
+#    28-Mar-2013 (CT) Redefine `_Id_Entity_NP_._as_json_cargo_inv`,
+#                     `._as_json_cargo`, and `_as_template_elem`
 #    ««revision-date»»···
 #--
 
@@ -165,13 +169,7 @@ class _Container_ (_Base_) :
         seen_etypes [self.E_Type] += 1
         result = self.__super._as_json_cargo (seen_etypes)
         if self._do_recurse (self, self._recursion_limit, seen_etypes) :
-            if self._polymorphic :
-                E_Types_AQ = self.E_Types_AQ
-                if E_Types_AQ :
-                    ### here, information about `self.E_Types_AQ` could be
-                    ### included
-                    pass
-            else :
+            if not self._polymorphic :
                 attrs = list \
                     (c._as_json_cargo (ETC (seen_etypes)) for c in self.Attrs)
                 if attrs :
@@ -183,13 +181,7 @@ class _Container_ (_Base_) :
         seen_etypes [self.E_Type] += 1
         result = self.__super._as_template_elem (seen_etypes)
         if self._do_recurse (self, self._recursion_limit, seen_etypes) :
-            if self._polymorphic :
-                E_Types_AQ = self.E_Types_AQ
-                if E_Types_AQ :
-                    ### here, information about `self.E_Types_AQ` could be
-                    ### included
-                    pass
-            else :
+            if not self._polymorphic :
                 attrs = list \
                     (   c._as_template_elem (ETC (seen_etypes))
                     for c in self.Attrs
@@ -580,18 +572,35 @@ class Id_Entity (_Composite_) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def _as_json_cargo_inv (self) :
-        result      = self.__super._as_json_cargo_inv
-        ET          = self.E_Type
-        E_Types_CNP = self.E_Types_CNP
-        if E_Types_CNP :
-            result ["children_np"] = list \
-                ( dict (type_name = etn, ui_name = _T (ET.ui_name))
-                for (etn, ET) in sorted (E_Types_CNP.iteritems ())
-                )
+        result = self.__super._as_json_cargo_inv
+        ET     = self.E_Type
+        if self.E_Types_CNP :
             if ET.default_child :
                 result ["default_child"] = ET.default_child
         return result
     # end def _as_json_cargo_inv
+
+    def _as_json_cargo (self, seen_etypes) :
+        result = self.__super._as_json_cargo (seen_etypes)
+        E_Types_CNP = self.E_Types_CNP
+        if E_Types_CNP :
+            result ["children_np"] = list \
+                (   self [etn]._as_json_cargo (seen_etypes)
+                for etn in sorted (E_Types_CNP)
+                )
+        return result
+    # end def _as_json_cargo
+
+    def _as_template_elem (self, seen_etypes) :
+        result = self.__super._as_template_elem (seen_etypes)
+        E_Types_CNP = self.E_Types_CNP
+        if E_Types_CNP :
+            result ["children_np"] = list \
+                (   self [etn]._as_template_elem (seen_etypes)
+                for etn in sorted (E_Types_CNP)
+                )
+        return result
+    # end def _as_template_elem
 
     def __getitem__ (self, key) :
         E_Types_AQ = self.E_Types_AQ
@@ -622,10 +631,30 @@ class _Id_Entity_NP_ (Id_Entity) :
         return result
     # end def Unwrapped
 
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _as_json_cargo_inv (self) :
+        result = self.__super._as_json_cargo_inv
+        result ["type_name"] = self.E_Type.type_name
+        return result
+    # end def _as_json_cargo_inv
+
     def Wrapped (self, outer) :
         assert not self._outer
         return self.__class__ (self._E_Type, self._attr, outer)
     # end def Wrapped
+
+    def _as_json_cargo (self, seen_etypes) :
+        result = self.__super._as_json_cargo (seen_etypes)
+        result ["ui_type_name"] = _T (self.E_Type.ui_name)
+        return result
+    # end def _as_json_cargo
+
+    def _as_template_elem (self, seen_etypes) :
+        result = self.__super._as_template_elem (seen_etypes)
+        result ["ui_type_name"] = _T (self.E_Type.ui_name)
+        return result
+    # end def _as_template_elem
 
 # end class _Id_Entity_NP_
 

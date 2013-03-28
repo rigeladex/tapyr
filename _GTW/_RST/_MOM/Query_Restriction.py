@@ -324,11 +324,12 @@ class RST_Query_Restriction (TFL.Meta.Object) :
 
     @TFL.Meta.Class_and_Instance_Method
     def _setup_attr (soc, E_Type, fn, name, op, value) :
-        q      = getattr (E_Type.AQ, name)
-        qop    = getattr (q, op)
-        fq     = qop (value)
-        f      = dict \
-            ( q.As_Template_Elem._kw
+        q       = getattr (E_Type.AQ, name)
+        qop     = getattr (q, op)
+        fq      = qop (value)
+        qate    = q.As_Template_Elem
+        f       = dict \
+            ( qate._kw
             , attr   = q._attr
             , edit   = value
             , id     = fn

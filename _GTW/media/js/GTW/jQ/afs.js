@@ -752,7 +752,7 @@
             };
         };
         var cmd_callback =
-            { Add                       : function add_cb (p$, parent, id, ev) {
+            { Add : function add_cb (p$, parent, id, ev) {
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
                       ( options.url.expander
@@ -765,7 +765,7 @@
                           { _response_append (response, txt_status, p$, parent); }
                       );
               }
-            , Cancel                    : function cancel_cb (s$, elem, id, ev) {
+            , Cancel : function cancel_cb (s$, elem, id, ev) {
                   var value  = elem ["value"];
                   var pid    = value && value.edit.pid;
                   if (pid != undefined) {
@@ -793,7 +793,7 @@
                       s$.remove   ();
                   };
               }
-            , Copy                      : function copy_cb (s$, elem, id, ev) {
+            , Copy : function copy_cb (s$, elem, id, ev) {
                   var p$        = s$.parent  ();
                   var value     = elem ["value"];
                   var pid       = value && value.edit.pid;
@@ -812,7 +812,7 @@
                           { _response_append (response, txt_status, p$, elem); }
                       );
               }
-            , Delete                    : function delete_cb (s$, elem, id, ev) {
+            , Delete : function delete_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
                   if (pid !== undefined && pid !== "") {
@@ -835,10 +835,10 @@
                           );
                   };
               }
-            , Done                      : function done_cb (s$, elem, id, ev) {
+            , Done : function done_cb (s$, elem, id, ev) {
                   alert ("Done still needs to be implemented");
               }
-            , Edit                      : function edit_cb (s$, elem, id, ev) {
+            , Edit : function edit_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
                   var pid   = value && value.edit.pid;
                   $.getJSON
@@ -860,7 +860,7 @@
                         }
                       );
               }
-            , Reset                     : function reset_cb (s$, elem, id, ev) {
+            , Reset : function reset_cb (s$, elem, id, ev) {
                   _clear_field (elem);
                   $.getJSON
                       ( options.url.expander
@@ -881,7 +881,7 @@
                         }
                       );
               }
-            , Save                      : function save_cb (s$, elem, id, ev) {
+            , Save : function save_cb (s$, elem, id, ev) {
                     var pre_submit_callbacks = Form.pre_submit_callbacks;
                     for ( var i = 0, li = pre_submit_callbacks.length
                         ; i < li
@@ -961,7 +961,7 @@
               }
             };
         var cmd_set =
-            { Entity                    : function Entity (elem) {
+            { Entity : function Entity (elem) {
                   var names = [];
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
@@ -970,7 +970,7 @@
                   };
                   return _cmds.apply (null, names);
               }
-            , Entity_Link               : function Entity_Link (elem) {
+            , Entity_Link : function Entity_Link (elem) {
                   var names = [];
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
@@ -982,13 +982,13 @@
                   };
                   return _cmds.apply (null, names);
               }
-            , Entity_List               : function Entity_List (elem) {
+            , Entity_List : function Entity_List (elem) {
                   return _cmds ("Add");
               }
-            , Field_Composite           : function Field_Composite (elem) {
+            , Field_Composite : function Field_Composite (elem) {
                   return _cmds ("Reset");
               }
-            , Field_Entity              : function Field_Entity (elem) {
+            , Field_Entity : function Field_Entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
                       names.push (elem.allow_new ? "Edit" : "Select");
