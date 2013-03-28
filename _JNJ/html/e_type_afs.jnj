@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: e_type_afs.jnj -#}
 {#
-## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -51,6 +51,7 @@
 ##     5-Aug-2012 (MG) Add url for `filemanager`
 ##     8-Aug-2012 (MG) Add url for `tinymce`
 ##    15-Aug-2012 (MG) Consider `Media_Domain` for external urls
+##    28-Mar-2013 (CT) Fix typo (add `t` to `ckedior`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -105,7 +106,7 @@
             , qx_esf_completed : "{{ page.href_qx_esf_completed () }}" {# -#}
             , qx_esf_completer : "{{ page.href_qx_esf_completer () }}" {# -#}
             , qx_esf : "{{ page.href_qx_esf () }}" {# -#}
-            , ckedior : "{{ page.top.Media_Domain }}/media/X/js/ckeditor/"
+            , ckeditor : "{{ page.top.Media_Domain }}/media/X/js/ckeditor/"
             , tinymce : "{{ page.top.Media_Domain }}/media/X/js/tiny_mce/"
             }
         }
