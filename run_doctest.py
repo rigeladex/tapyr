@@ -251,7 +251,7 @@ _Command = TFL.CAO.Cmd \
     ( handler      = _main
     , args         = ("module:P?Module(s) to test", )
     , opts         =
-        ( "exclude:S?Glob pattern toexclude certain tests"
+        ( "exclude:S?Glob pattern to exclude certain tests"
         , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"
         , "summary:B?Summary of failed tests"

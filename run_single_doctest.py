@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Martin Glueck All rights reserved
+# Copyright (C) 2011-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 #
@@ -26,6 +26,7 @@
 #
 # Revision Dates
 #    25-Jul-2011 (MG) Creation
+#    28-Mar-2013 (CT) Add `-summary` to be more compatible with `run_doctest`
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,7 @@ _Command = TFL.CAO.Cmd \
     , opts         =
         ( "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
         , "path:P:?Path to add to sys.path"
+        , "summary:B?Just for compatibility with `run_doctest`"
         , "timing:B?Add timing information"
         , "verbose:B?Turn verbosity on"
         )
