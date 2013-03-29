@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #     4-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     4-Sep-2012 (CT) Fix bugs, factor functions, add optional fields
+#    29-Mar-2013 (CT) Add meta class `M_Entry` to set `Kind`
 #    ««revision-date»»···
 #--
 
@@ -53,8 +54,18 @@ import _TFL.r_eval
 import _CAL.Date
 import _CAL.Year
 
+class M_Entry (TFL.Meta.Object.__class__) :
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if not name.startswith ("_") and not hasattr (cls, "Kind") :
+            cls.Kind = name
+    # end def __init__
+
 class _Entry_ (TFL.Meta.Object) :
     """Base class for entries"""
+
+    __metaclass__ = M_Entry
 
     free    = 0.0
     sick    = 0.0
