@@ -1,6 +1,6 @@
 {#- jinja template: _e_type.jnj -#}
 {#
-## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -56,8 +56,8 @@
 {%- macro attr_filter_table (filters, need_op = True) -%}
   <table class="{{ kwargs.get ("class", "attrs") }}">
     <tbody>
-      {%- for af in filters %}
-        {{ attr_filter_tr (af, need_op) }}
+      {% for af in filters %}
+        {{- attr_filter_tr (af, need_op) }}
       {% endfor -%}
     </tbody>
   </table>
@@ -85,7 +85,7 @@
       title="{{ GTW._T ("Select entity for attribute %s") % af.ui_name }}"{# -#}
   >
     <input class="hidden" name="__attribute_selector_for__" {# -#}
-      title="{{ af.attr.E_Type.type_name }}" {# -#}
+      title="{{ af.type_name }}" {# -#}
       value="{{ af.id }}" {# -#}
     >
     {{ attr_filter_table (filters, need_op = False) }}

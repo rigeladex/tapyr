@@ -467,6 +467,7 @@ _test_code = """
             , id = 'left__left'
             , name = 'left'
             , sig_key = 2
+            , type_name = 'SRM.Boat_Class'
             , ui_name = 'Boat/Class'
             )
           , Record
@@ -664,6 +665,7 @@ _test_code = """
       , id = 'left'
       , name = 'left'
       , sig_key = 2
+      , type_name = 'SRM.Boat'
       , ui_name = 'Boat'
       )
     , Record
@@ -712,6 +714,7 @@ _test_code = """
             , id = 'right__left'
             , name = 'left'
             , sig_key = 2
+            , type_name = 'SRM.Regatta_Event'
             , ui_name = 'Regatta/Event'
             )
           , Record
@@ -731,6 +734,7 @@ _test_code = """
             , id = 'right__boat_class'
             , name = 'boat_class'
             , sig_key = 2
+            , type_name = 'SRM._Boat_Class_'
             , ui_name = 'Regatta/Boat class'
             )
           ]
@@ -738,6 +742,7 @@ _test_code = """
       , id = 'right'
       , name = 'right'
       , sig_key = 2
+      , type_name = 'SRM.Regatta'
       , ui_name = 'Regatta'
       )
     , Record

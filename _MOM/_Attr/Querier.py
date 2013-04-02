@@ -68,6 +68,8 @@
 #                     to include `._as_...` for each of the `children_np`
 #    28-Mar-2013 (CT) Redefine `_Id_Entity_NP_._as_json_cargo_inv`,
 #                     `._as_json_cargo`, and `_as_template_elem`
+#     2-Apr-2013 (CT) Redefine `Id_Entity._as_template_elem_inv` to add
+#                     `type_name`
 #    ««revision-date»»···
 #--
 
@@ -579,6 +581,14 @@ class Id_Entity (_Composite_) :
                 result ["default_child"] = ET.default_child
         return result
     # end def _as_json_cargo_inv
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _as_template_elem_inv (self) :
+        result = self.__super._as_template_elem_inv
+        result ["type_name"] = self.E_Type.type_name
+        return result
+    # end def _as_template_elem_inv
 
     def _as_json_cargo (self, seen_etypes) :
         result = self.__super._as_json_cargo (seen_etypes)

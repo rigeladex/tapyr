@@ -611,6 +611,7 @@ _test_code = """
             , id = 'owner__left'
             , name = 'left'
             , sig_key = 2
+            , type_name = 'PAP.Person'
             , ui_name = 'Owner/Man'
             )
           ]
@@ -618,6 +619,7 @@ _test_code = """
       , id = 'owner'
       , name = 'owner'
       , sig_key = 2
+      , type_name = 'PAP.Biz_Man'
       , ui_name = 'Owner'
       )
     , Record
@@ -778,6 +780,7 @@ _test_code = """
                   , id = 'affiliate__owner__left'
                   , name = 'left'
                   , sig_key = 2
+                  , type_name = 'PAP.Person'
                   , ui_name = 'Affiliate/Owner/Man'
                   )
                 ]
@@ -785,6 +788,7 @@ _test_code = """
             , id = 'affiliate__owner'
             , name = 'owner'
             , sig_key = 2
+            , type_name = 'PAP.Biz_Man'
             , ui_name = 'Affiliate/Owner'
             )
           , Record
@@ -844,6 +848,7 @@ _test_code = """
             , id = 'affiliate__affiliate'
             , name = 'affiliate'
             , sig_key = 2
+            , type_name = 'PAP.Company_P'
             , ui_name = 'Affiliate/Affiliate'
             )
           ]
@@ -851,6 +856,7 @@ _test_code = """
       , id = 'affiliate'
       , name = 'affiliate'
       , sig_key = 2
+      , type_name = 'PAP.Company_P'
       , ui_name = 'Affiliate'
       )
     ]

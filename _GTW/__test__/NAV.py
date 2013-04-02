@@ -320,6 +320,7 @@ _test_code = """
           , id = 'affiliate__affiliate'
           , name = 'affiliate'
           , sig_key = 2
+          , type_name = 'PAP.Company_R'
           , ui_name = 'Affiliate/Affiliate'
           )
         , Record
@@ -406,6 +407,7 @@ _test_code = """
           , id = 'affiliate__owner'
           , name = 'owner'
           , sig_key = 2
+          , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
           )
         ]
@@ -418,6 +420,7 @@ _test_code = """
         , label = 'auto-complete'
         )
     , sig_key = 2
+    , type_name = 'PAP.Company_R'
     , ui_name = 'Affiliate'
     , value = None
     )
@@ -684,6 +687,7 @@ _test_code = """
             , id = 'affiliate__affiliate'
             , name = 'affiliate'
             , sig_key = 2
+            , type_name = 'PAP.Company_R'
             , ui_name = 'Affiliate/Affiliate'
             )
           , Record
@@ -770,6 +774,7 @@ _test_code = """
             , id = 'affiliate__owner'
             , name = 'owner'
             , sig_key = 2
+            , type_name = 'PAP.Subject'
             , ui_name = 'Affiliate/Owner'
             )
           ]
@@ -777,6 +782,7 @@ _test_code = """
       , id = 'affiliate'
       , name = 'affiliate'
       , sig_key = 2
+      , type_name = 'PAP.Company_R'
       , ui_name = 'Affiliate'
       )
     , Record
@@ -863,6 +869,7 @@ _test_code = """
       , id = 'owner'
       , name = 'owner'
       , sig_key = 2
+      , type_name = 'PAP.Subject'
       , ui_name = 'Owner'
       )
     ]
