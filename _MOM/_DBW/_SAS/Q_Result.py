@@ -76,6 +76,7 @@
 #    11-Aug-2012 (MG) Change result of `_Q_Result_Attrs_` to namedtuple
 #    11-Aug-2012 (MG) Fix `namedtuple` of `_Q_Result_Attrs_`
 #    19-Jan-2013 (MG) Support new sqlalchmey version
+#     2-Apr-2013 (CT) Make `Q_Result.__str__` deterministic (sort SELECT args)
 #    ««revision-date»»···
 #--
 
@@ -347,8 +348,15 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def __nonzero__
 
     def __str__ (self) :
-        sa_query = "\n     ".join \
-            (l.strip () for l in str (self.sa_query ()).split ("\n"))
+        def q_parts (self) :
+            for p in str (self.sa_query ()).split ("\n") :
+                p = p.strip ()
+                if ", " in p and p.startswith ("SELECT") :
+                    h, t = p.split (" ", 1)
+                    p = "\n       ".join \
+                        ((h, ",\n       ".join (sorted (t.split (", ")))))
+                yield p
+        sa_query = "\n     ".join (q_parts (self))
         return "SQL: %s" % (sa_query, )
     # end def __str__
 
