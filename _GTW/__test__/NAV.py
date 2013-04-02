@@ -34,15 +34,18 @@
 #    12-Dec-2012 (CT) Add `Person_has_Account`
 #    20-Jan-2013 (CT) Change `401`
 #    21-Mar-2013 (CT) Add `Company_R` and tests for `Query_Restriction_Spec`
+#     2-Apr-2013 (CT) Factor `test_qr`, add `test_esf`
 #    ««revision-date»»···
 #--
 
 from   __future__  import unicode_literals
 
-_test_code = """
+_test_nav = """
+    >>> nav_root = create_app () # doctest:+ELLIPSIS
+    Loaded ...
 
-    >>> nav_root = app
-    >>> TTT      = nav_root.Templateer.Template_Type
+    >>> TTT = nav_root.Templateer.Template_Type
+
     >>> print nav_root.abs_href
     /
 
@@ -196,6 +199,12 @@ _test_code = """
     , [ 'photo' ]
     , [ 'site_admin' ]
     ]
+
+"""
+
+_test_qr = """
+    >>> nav_root = create_app () # doctest:+ELLIPSIS
+    Loaded ...
 
     >>> crad = nav_root.ET_Map ["PAP.Company_R"].admin
     >>> crad
@@ -876,6 +885,440 @@ _test_code = """
 
 """
 
+_test_esf = """
+    >>> nav_root = create_app () # doctest:+ELLIPSIS
+    Loaded ...
+
+    >>> nav_root
+    <Root : />
+
+    >>> nav_root.ET_Map ["PAP.Company_R"]
+    E_Type_Desc (admin = <E_Type Company_R: /Admin/Personenverwaltung/Company_R>, type_name = PAP.Company_R)
+
+    >>> crad     = nav_root.ET_Map ["PAP.Company_R"].admin
+    >>> QR       = crad.QR
+    >>> afa      = QR.Filter (crad.E_Type, "affiliate")
+    >>> filters  = QR.Filter_Atoms (afa)
+
+    >>> print (formatted (afa))
+    Record
+    ( AQ = <affiliate.AQ [Attr.Type.Querier Id_Entity]>
+    , Class = 'Entity'
+    , attr = Entity `affiliate`
+    , attrs =
+        [ Record
+          ( attr = String `name`
+          , full_name = 'affiliate.name'
+          , id = 'affiliate__name'
+          , name = 'name'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Name'
+          )
+        , Record
+          ( attr = String `registered_in`
+          , full_name = 'affiliate.registered_in'
+          , id = 'affiliate__registered_in'
+          , name = 'registered_in'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Registered in'
+          )
+        , Record
+          ( attr = Date_Interval `lifetime`
+          , attrs =
+              [ Record
+                ( attr = Date `start`
+                , full_name = 'affiliate.lifetime.start'
+                , id = 'affiliate__lifetime__start'
+                , name = 'start'
+                , sig_key = 0
+                , ui_name = 'Affiliate/Lifetime/Start'
+                )
+              , Record
+                ( attr = Date `finish`
+                , full_name = 'affiliate.lifetime.finish'
+                , id = 'affiliate__lifetime__finish'
+                , name = 'finish'
+                , sig_key = 0
+                , ui_name = 'Affiliate/Lifetime/Finish'
+                )
+              , Record
+                ( attr = Boolean `alive`
+                , choices =
+                    [ 'no'
+                    , 'yes'
+                    ]
+                , full_name = 'affiliate.lifetime.alive'
+                , id = 'affiliate__lifetime__alive'
+                , name = 'alive'
+                , sig_key = 1
+                , ui_name = 'Affiliate/Lifetime/Alive'
+                )
+              ]
+          , full_name = 'affiliate.lifetime'
+          , id = 'affiliate__lifetime'
+          , name = 'lifetime'
+          , ui_name = 'Affiliate/Lifetime'
+          )
+        , Record
+          ( attr = String `short_name`
+          , full_name = 'affiliate.short_name'
+          , id = 'affiliate__short_name'
+          , name = 'short_name'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Short name'
+          )
+        , Record
+          ( Class = 'Entity'
+          , attr = Entity `affiliate`
+          , full_name = 'affiliate.affiliate'
+          , id = 'affiliate__affiliate'
+          , name = 'affiliate'
+          , sig_key = 2
+          , type_name = 'PAP.Company_R'
+          , ui_name = 'Affiliate/Affiliate'
+          )
+        , Record
+          ( Class = 'Entity'
+          , attr = Entity `owner`
+          , children_np =
+              [ Record
+                ( Class = 'Entity'
+                , attr = Entity `owner`
+                , attrs =
+                    [ Record
+                      ( attr = String `name`
+                      , full_name = 'owner.name'
+                      , id = 'owner__name'
+                      , name = 'name'
+                      , sig_key = 3
+                      , ui_name = 'Owner/Name'
+                      )
+                    , Record
+                      ( attr = String `registered_in`
+                      , full_name = 'owner.registered_in'
+                      , id = 'owner__registered_in'
+                      , name = 'registered_in'
+                      , sig_key = 3
+                      , ui_name = 'Owner/Registered in'
+                      )
+                    ]
+                , full_name = 'owner'
+                , id = 'owner'
+                , name = 'owner'
+                , sig_key = 2
+                , type_name = 'PAP.Company'
+                , ui_name = 'Owner'
+                , ui_type_name = 'Company'
+                )
+              , Record
+                ( Class = 'Entity'
+                , attr = Entity `owner`
+                , attrs =
+                    [ Record
+                      ( attr = String `last_name`
+                      , full_name = 'owner.last_name'
+                      , id = 'owner__last_name'
+                      , name = 'last_name'
+                      , sig_key = 3
+                      , ui_name = 'Owner/Last name'
+                      )
+                    , Record
+                      ( attr = String `first_name`
+                      , full_name = 'owner.first_name'
+                      , id = 'owner__first_name'
+                      , name = 'first_name'
+                      , sig_key = 3
+                      , ui_name = 'Owner/First name'
+                      )
+                    , Record
+                      ( attr = String `middle_name`
+                      , full_name = 'owner.middle_name'
+                      , id = 'owner__middle_name'
+                      , name = 'middle_name'
+                      , sig_key = 3
+                      , ui_name = 'Owner/Middle name'
+                      )
+                    , Record
+                      ( attr = String `title`
+                      , full_name = 'owner.title'
+                      , id = 'owner__title'
+                      , name = 'title'
+                      , sig_key = 3
+                      , ui_name = 'Owner/Academic title'
+                      )
+                    ]
+                , full_name = 'owner'
+                , id = 'owner'
+                , name = 'owner'
+                , sig_key = 2
+                , type_name = 'PAP.Person'
+                , ui_name = 'Owner'
+                , ui_type_name = 'Person'
+                )
+              ]
+          , default_child = 'PAP.Person'
+          , full_name = 'affiliate.owner'
+          , id = 'affiliate__owner'
+          , name = 'owner'
+          , sig_key = 2
+          , type_name = 'PAP.Subject'
+          , ui_name = 'Affiliate/Owner'
+          )
+        ]
+    , edit = None
+    , full_name = 'affiliate'
+    , id = 'affiliate___AC'
+    , name = 'affiliate___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 2
+    , type_name = 'PAP.Company_R'
+    , ui_name = 'Affiliate'
+    , value = None
+    )
+
+    >>> print (formatted (filters))
+    ( Record
+      ( AQ = <name.AQ [Attr.Type.Querier String]>
+      , attr = String `name`
+      , edit = None
+      , full_name = 'name'
+      , id = 'name___AC'
+      , name = 'name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Name'
+      , value = None
+      )
+    , Record
+      ( AQ = <registered_in.AQ [Attr.Type.Querier String]>
+      , attr = String `registered_in`
+      , edit = None
+      , full_name = 'registered_in'
+      , id = 'registered_in___AC'
+      , name = 'registered_in___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Registered in'
+      , value = None
+      )
+    )
+
+    >>> ETT = crad.Templateer.get_template ("e_type")
+    >>> print (ETT.call_macro ("entity_selector_form", crad, afa, filters))
+    <form class = "QR ES" title="Select entity for attribute Affiliate">
+        <input class="hidden" name="__attribute_selector_for__" title="PAP.Company_R" value="affiliate___AC" >
+        <table class="attrs">
+        <tbody>
+          <tr title="Name">
+        <td class="name">
+          <label for="name___AC">Name</label>
+        </td><td class="value">
+              <input type="text" class="value" id="name___AC" name="name___AC"/>
+        </td>
+        <td class="disabler"></td>
+      </tr>
+          <tr title="Registered in">
+        <td class="name">
+          <label for="registered_in___AC">Registered in</label>
+        </td><td class="value">
+              <input type="text" class="value" id="registered_in___AC" name="registered_in___AC"/>
+        </td>
+        <td class="disabler"></td>
+      </tr>
+          </tbody>
+      </table>
+        <button name="APPLY" title="Use the currently selected entity" type="submit"    >
+        Apply
+      </button>
+        <button name="CANCEL" title="Leave form without selecting entity " type="button"    >
+        Cancel
+      </button>
+        <button name="CLEAR" title="Reset fields" type="button"    >
+        Clear
+      </button>
+      </form>
+
+    >>> afo = QR.Filter (crad.E_Type, "owner[PAP.Person]")
+    >>> print (formatted (afo))
+    Record
+    ( AQ = <owner.AQ [Attr.Type.Querier _Id_Entity_NP_]>
+    , Class = 'Entity'
+    , attr = Entity `owner`
+    , attrs =
+        [ Record
+          ( attr = String `last_name`
+          , full_name = 'owner.last_name'
+          , id = 'owner__last_name'
+          , name = 'last_name'
+          , sig_key = 3
+          , ui_name = 'Owner/Last name'
+          )
+        , Record
+          ( attr = String `first_name`
+          , full_name = 'owner.first_name'
+          , id = 'owner__first_name'
+          , name = 'first_name'
+          , sig_key = 3
+          , ui_name = 'Owner/First name'
+          )
+        , Record
+          ( attr = String `middle_name`
+          , full_name = 'owner.middle_name'
+          , id = 'owner__middle_name'
+          , name = 'middle_name'
+          , sig_key = 3
+          , ui_name = 'Owner/Middle name'
+          )
+        , Record
+          ( attr = String `title`
+          , full_name = 'owner.title'
+          , id = 'owner__title'
+          , name = 'title'
+          , sig_key = 3
+          , ui_name = 'Owner/Academic title'
+          )
+        ]
+    , edit = None
+    , full_name = 'owner'
+    , id = 'owner[PAP.Person]'
+    , name = 'owner[PAP.Person]'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 2
+    , type_name = 'PAP.Person'
+    , ui_name = 'Owner'
+    , ui_type_name = 'Person'
+    , value = None
+    )
+
+    >>> filters  = QR.Filter_Atoms (afo)
+
+    >>> print (formatted (filters))
+    ( Record
+      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
+      , edit = None
+      , full_name = 'last_name'
+      , id = 'last_name___AC'
+      , name = 'last_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Last name'
+      , value = None
+      )
+    , Record
+      ( AQ = <first_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `first_name`
+      , edit = None
+      , full_name = 'first_name'
+      , id = 'first_name___AC'
+      , name = 'first_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'First name'
+      , value = None
+      )
+    , Record
+      ( AQ = <middle_name.AQ [Attr.Type.Querier String]>
+      , attr = String `middle_name`
+      , edit = None
+      , full_name = 'middle_name'
+      , id = 'middle_name___AC'
+      , name = 'middle_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Middle name'
+      , value = None
+      )
+    , Record
+      ( AQ = <title.AQ [Attr.Type.Querier String]>
+      , attr = String `title`
+      , edit = None
+      , full_name = 'title'
+      , id = 'title___AC'
+      , name = 'title___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Academic title'
+      , value = None
+      )
+    )
+
+    >>> print (ETT.call_macro ("entity_selector_form", crad, afo, filters))
+    <form class = "QR ES" title="Select entity for attribute Owner">
+        <input class="hidden" name="__attribute_selector_for__" title="PAP.Person" value="owner[PAP.Person]" >
+        <table class="attrs">
+        <tbody>
+          <tr title="Last name">
+        <td class="name">
+          <label for="last_name___AC">Last name</label>
+        </td><td class="value">
+              <input type="text" class="value" id="last_name___AC" name="last_name___AC"/>
+        </td>
+        <td class="disabler"></td>
+      </tr>
+          <tr title="First name">
+        <td class="name">
+          <label for="first_name___AC">First name</label>
+        </td><td class="value">
+              <input type="text" class="value" id="first_name___AC" name="first_name___AC"/>
+        </td>
+        <td class="disabler"></td>
+      </tr>
+          <tr title="Middle name">
+        <td class="name">
+          <label for="middle_name___AC">Middle name</label>
+        </td><td class="value">
+              <input type="text" class="value" id="middle_name___AC" name="middle_name___AC"/>
+        </td>
+        <td class="disabler"></td>
+      </tr>
+          <tr title="Academic title">
+        <td class="name">
+          <label for="title___AC">Academic title</label>
+        </td><td class="value">
+              <input type="text" class="value" id="title___AC" name="title___AC"/>
+        </td>
+        <td class="disabler"></td>
+      </tr>
+          </tbody>
+      </table>
+        <button name="APPLY" title="Use the currently selected entity" type="submit"    >
+        Apply
+      </button>
+        <button name="CANCEL" title="Leave form without selecting entity " type="button"    >
+        Cancel
+      </button>
+        <button name="CLEAR" title="Reset fields" type="button"    >
+        Clear
+      </button>
+      </form>
+
+"""
+
 import os
 os.environ.update \
     ( dict
@@ -920,17 +1363,49 @@ GTW.OMP.PAP.Nav.Admin.Company_R = dict (ETM = "GTW.OMP.PAP.Company_R")
 
 formatted = Formatter (width = 240)
 
-__test__ = dict \
-    ( NAV_test = _test_code
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_esf = _test_esf
+        , test_nav = _test_nav
+        , test_qr  = _test_qr
+        )
     )
 
-app = Scaffold \
-    ( [ "wsgi"
-      , "-db_url",    "hps://"
-      , "-db_name",   "test"
-      , "-debug",     "yes"
-      , "-load_I18N", "no"
-      ]
-    )
+def create_app () :
+    return Scaffold \
+        ( [ "wsgi"
+          , "-db_url",    "hps://"
+          , "-db_name",   "test"
+          , "-debug",     "yes"
+          , "-load_I18N", "no"
+          ]
+        )
+# end def create_app
+
+def _monkey_patch_xmlattr () :
+    ### The jinja filter `xmlattr` isn't determistic
+    ### Monkey patch to make it determistic: add `sorted`
+    from jinja2 import filters as filters
+
+    escape = filters.escape
+
+    @filters.evalcontextfilter
+    def do_xmlattr(_eval_ctx, d, autospace=True):
+        rv = u' '.join( sorted
+            ( u'%s="%s"' % (escape(key), escape(value))
+            for key, value in d.iteritems()
+            if value is not None and not isinstance(value, filters.Undefined)
+            )
+        )
+        if autospace and rv:
+            rv = u' ' + rv
+        if _eval_ctx.autoescape:
+            rv = Markup(rv)
+        return rv
+
+    filters.FILTERS ["xmlattr"] = do_xmlattr
+# end def _monkey_patch_xmlattr
+
+_monkey_patch_xmlattr ()
 
 ### __END__ GTW.__test__.NAV

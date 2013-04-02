@@ -34,6 +34,9 @@
 #    26-Mar-2013 (CT) Add support for `polymorphic_epk` attributes
 #    27-Mar-2013 (CT) Change `__call__` to not apply `offset` for value `0`
 #    27-Mar-2013 (CT) Fix how `_setup_attr_pepk` calculates `value`
+#     2-Apr-2013 (CT) Add support for `polymorphic_epk` to `Filter` and
+#                     `Filter_Atoms`
+#     2-Apr-2013 (CT) Add optional argument `q` to `_setup_attr`
 #    ««revision-date»»···
 #--
 
@@ -111,28 +114,42 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         )
     _t_pat      = Regexp \
         ( "".join
-            ((r"\[", r"(?P<type>", _type_p, r")", r"\](?: \.|", _id_sep, r")"))
+            ((r"\[", r"(?P<type>", _type_p, r")", r"\](?: \.|", _id_sep, r")?"))
         , re.VERBOSE
         )
 
     @classmethod
     def Filter (cls, E_Type, key, value = None, default_op = "AC") :
-        if cls._t_pat.search (key) :
-            raise ValueError \
-                ("Filter doesn't support polymorphic_epk: %s" % key)
-        data    = { key : value }
-        request = TFL.Record (req_data = data, req_data_list = data)
-        fs, fqs = cls.attr_filters \
-            (E_Type, request, data, None, cls._a_pat_opt, default_op)
-        if fs :
-            return fs [0]
+        data  = { key : value }
+        t_pat = cls._t_pat
+        if t_pat.search (key) :
+            name, typ, tail = t_pat.split (key, 1, 2)
+            q = getattr (E_Type.AQ, name)
+            if q :
+                qd = q [typ]
+                f, fq = cls._setup_attr \
+                    (E_Type, key, name, default_op, value, qd)
+                return f
+            else :
+                raise ValueError \
+                    ("Unknown attribute %s.%s" % (E_Type.type_name, name))
+        else :
+            request = TFL.Record (req_data = data, req_data_list = data)
+            fs, fqs = cls.attr_filters \
+                (E_Type, request, data, None, cls._a_pat_opt, default_op)
+            if fs :
+                return fs [0]
     # end def Filter
 
     @classmethod
     def Filter_Atoms (cls, af) :
         ET = af.attr.E_Type
+        AQ = af.attr.AQ
+        if ET.polymorphic_epk :
+            AQ = af.AQ
+            ET = AQ.E_Type
         return tuple \
-            (cls.Filter (ET, q._id) for q in af.attr.AQ.Unwrapped_Atoms)
+            (cls.Filter (ET, q._id) for q in AQ.Unwrapped_Atoms)
     # end def Filter_Atoms
 
     @classmethod
@@ -323,8 +340,9 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     # end def _qop_desc
 
     @TFL.Meta.Class_and_Instance_Method
-    def _setup_attr (soc, E_Type, fn, name, op, value) :
-        q       = getattr (E_Type.AQ, name)
+    def _setup_attr (soc, E_Type, fn, name, op, value, q = None) :
+        if q is None :
+            q   = getattr (E_Type.AQ, name)
         qop     = getattr (q, op)
         fq      = qop (value)
         qate    = q.As_Template_Elem
