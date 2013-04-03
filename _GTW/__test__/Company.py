@@ -613,6 +613,7 @@ _test_code = """
             , sig_key = 2
             , type_name = 'PAP.Person'
             , ui_name = 'Owner/Man'
+            , ui_type_name = 'Person'
             )
           ]
       , full_name = 'owner'
@@ -621,6 +622,7 @@ _test_code = """
       , sig_key = 2
       , type_name = 'PAP.Biz_Man'
       , ui_name = 'Owner'
+      , ui_type_name = 'Biz_Man'
       )
     , Record
       ( attr = String `registered_in`
@@ -782,6 +784,7 @@ _test_code = """
                   , sig_key = 2
                   , type_name = 'PAP.Person'
                   , ui_name = 'Affiliate/Owner/Man'
+                  , ui_type_name = 'Person'
                   )
                 ]
             , full_name = 'affiliate.owner'
@@ -790,6 +793,7 @@ _test_code = """
             , sig_key = 2
             , type_name = 'PAP.Biz_Man'
             , ui_name = 'Affiliate/Owner'
+            , ui_type_name = 'Biz_Man'
             )
           , Record
             ( attr = String `registered_in`
@@ -850,6 +854,7 @@ _test_code = """
             , sig_key = 2
             , type_name = 'PAP.Company_P'
             , ui_name = 'Affiliate/Affiliate'
+            , ui_type_name = 'Company_P'
             )
           ]
       , full_name = 'affiliate'
@@ -858,6 +863,7 @@ _test_code = """
       , sig_key = 2
       , type_name = 'PAP.Company_P'
       , ui_name = 'Affiliate'
+      , ui_type_name = 'Company_P'
       )
     ]
 

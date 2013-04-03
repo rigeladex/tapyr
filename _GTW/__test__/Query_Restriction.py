@@ -469,6 +469,7 @@ _test_code = """
             , sig_key = 2
             , type_name = 'SRM.Boat_Class'
             , ui_name = 'Boat/Class'
+            , ui_type_name = 'Boat_Class'
             )
           , Record
             ( attr = Nation `nation`
@@ -667,6 +668,7 @@ _test_code = """
       , sig_key = 2
       , type_name = 'SRM.Boat'
       , ui_name = 'Boat'
+      , ui_type_name = 'Boat'
       )
     , Record
       ( Class = 'Entity'
@@ -716,6 +718,7 @@ _test_code = """
             , sig_key = 2
             , type_name = 'SRM.Regatta_Event'
             , ui_name = 'Regatta/Event'
+            , ui_type_name = 'Regatta_Event'
             )
           , Record
             ( Class = 'Entity'
@@ -736,6 +739,7 @@ _test_code = """
             , sig_key = 2
             , type_name = 'SRM._Boat_Class_'
             , ui_name = 'Regatta/Boat class'
+            , ui_type_name = '_Boat_Class_'
             )
           ]
       , full_name = 'right'
@@ -744,6 +748,7 @@ _test_code = """
       , sig_key = 2
       , type_name = 'SRM.Regatta'
       , ui_name = 'Regatta'
+      , ui_type_name = 'Regatta'
       )
     , Record
       ( attr = Int `points`

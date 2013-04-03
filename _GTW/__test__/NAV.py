@@ -331,6 +331,7 @@ _test_qr = """
           , sig_key = 2
           , type_name = 'PAP.Company_R'
           , ui_name = 'Affiliate/Affiliate'
+          , ui_type_name = 'Company_R'
           )
         , Record
           ( Class = 'Entity'
@@ -418,6 +419,7 @@ _test_qr = """
           , sig_key = 2
           , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
+          , ui_type_name = 'Subject'
           )
         ]
     , edit = None
@@ -431,6 +433,7 @@ _test_qr = """
     , sig_key = 2
     , type_name = 'PAP.Company_R'
     , ui_name = 'Affiliate'
+    , ui_type_name = 'Company_R'
     , value = None
     )
 
@@ -698,6 +701,7 @@ _test_qr = """
             , sig_key = 2
             , type_name = 'PAP.Company_R'
             , ui_name = 'Affiliate/Affiliate'
+            , ui_type_name = 'Company_R'
             )
           , Record
             ( Class = 'Entity'
@@ -785,6 +789,7 @@ _test_qr = """
             , sig_key = 2
             , type_name = 'PAP.Subject'
             , ui_name = 'Affiliate/Owner'
+            , ui_type_name = 'Subject'
             )
           ]
       , full_name = 'affiliate'
@@ -793,6 +798,7 @@ _test_qr = """
       , sig_key = 2
       , type_name = 'PAP.Company_R'
       , ui_name = 'Affiliate'
+      , ui_type_name = 'Company_R'
       )
     , Record
       ( Class = 'Entity'
@@ -880,6 +886,7 @@ _test_qr = """
       , sig_key = 2
       , type_name = 'PAP.Subject'
       , ui_name = 'Owner'
+      , ui_type_name = 'Subject'
       )
     ]
 
@@ -976,6 +983,7 @@ _test_esf = """
           , sig_key = 2
           , type_name = 'PAP.Company_R'
           , ui_name = 'Affiliate/Affiliate'
+          , ui_type_name = 'Company_R'
           )
         , Record
           ( Class = 'Entity'
@@ -1063,6 +1071,7 @@ _test_esf = """
           , sig_key = 2
           , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
+          , ui_type_name = 'Subject'
           )
         ]
     , edit = None
@@ -1076,6 +1085,7 @@ _test_esf = """
     , sig_key = 2
     , type_name = 'PAP.Company_R'
     , ui_name = 'Affiliate'
+    , ui_type_name = 'Company_R'
     , value = None
     )
 
@@ -1114,7 +1124,7 @@ _test_esf = """
 
     >>> ETT = crad.Templateer.get_template ("e_type")
     >>> print (ETT.call_macro ("entity_selector_form", crad, afa, filters))
-    <form class = "QR ES" title="Select entity for attribute Affiliate">
+    <form class = "QR ES" title="Select Company_R for attribute Affiliate">
         <input class="hidden" name="__attribute_selector_for__" title="PAP.Company_R" value="affiliate___AC" >
         <table class="attrs">
         <tbody>
@@ -1136,10 +1146,10 @@ _test_esf = """
       </tr>
           </tbody>
       </table>
-        <button name="APPLY" title="Use the currently selected entity" type="submit"    >
+        <button name="APPLY" title="Use the currently selected Company_R" type="submit"    >
         Apply
       </button>
-        <button name="CANCEL" title="Leave form without selecting entity " type="button"    >
+        <button name="CANCEL" title="Leave form without selecting Company_R" type="button"    >
         Cancel
       </button>
         <button name="CLEAR" title="Reset fields" type="button"    >
@@ -1268,7 +1278,7 @@ _test_esf = """
     )
 
     >>> print (ETT.call_macro ("entity_selector_form", crad, afo, filters))
-    <form class = "QR ES" title="Select entity for attribute Owner">
+    <form class = "QR ES" title="Select Person for attribute Owner">
         <input class="hidden" name="__attribute_selector_for__" title="PAP.Person" value="owner[PAP.Person]" >
         <table class="attrs">
         <tbody>
@@ -1306,10 +1316,10 @@ _test_esf = """
       </tr>
           </tbody>
       </table>
-        <button name="APPLY" title="Use the currently selected entity" type="submit"    >
+        <button name="APPLY" title="Use the currently selected Person" type="submit"    >
         Apply
       </button>
-        <button name="CANCEL" title="Leave form without selecting entity " type="button"    >
+        <button name="CANCEL" title="Leave form without selecting Person" type="button"    >
         Cancel
       </button>
         <button name="CLEAR" title="Reset fields" type="button"    >

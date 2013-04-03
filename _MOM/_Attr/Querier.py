@@ -66,10 +66,11 @@
 #    22-Mar-2013 (CT) Move `_polymorphic` check out of `_do_recurse`
 #    28-Mar-2013 (CT) Redefine `Id_Entity._as_json_cargo`, `._as_template_elem`
 #                     to include `._as_...` for each of the `children_np`
-#    28-Mar-2013 (CT) Redefine `_Id_Entity_NP_._as_json_cargo_inv`,
-#                     `._as_json_cargo`, and `_as_template_elem`
+#    28-Mar-2013 (CT) Redefine `_Id_Entity_NP_._as_json_cargo_inv`, and
+#                     `._as_json_cargo`
 #     2-Apr-2013 (CT) Redefine `Id_Entity._as_template_elem_inv` to add
 #                     `type_name`
+#     3-Apr-2013 (CT) Add `ui_type_name` to `Id_Entity._as_template_elem`
 #    ««revision-date»»···
 #--
 
@@ -603,6 +604,7 @@ class Id_Entity (_Composite_) :
 
     def _as_template_elem (self, seen_etypes) :
         result = self.__super._as_template_elem (seen_etypes)
+        result ["ui_type_name"] = _T (self.E_Type.ui_name)
         E_Types_CNP = self.E_Types_CNP
         if E_Types_CNP :
             result ["children_np"] = list \
@@ -659,12 +661,6 @@ class _Id_Entity_NP_ (Id_Entity) :
         result ["ui_type_name"] = _T (self.E_Type.ui_name)
         return result
     # end def _as_json_cargo
-
-    def _as_template_elem (self, seen_etypes) :
-        result = self.__super._as_template_elem (seen_etypes)
-        result ["ui_type_name"] = _T (self.E_Type.ui_name)
-        return result
-    # end def _as_template_elem
 
 # end class _Id_Entity_NP_
 
