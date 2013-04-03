@@ -1125,7 +1125,8 @@ _test_esf = """
     >>> ETT = crad.Templateer.get_template ("e_type")
     >>> print (ETT.call_macro ("entity_selector_form", crad, afa, filters))
     <form class = "QR ES" title="Select Company_R for attribute Affiliate">
-        <input class="hidden" name="__attribute_selector_for__" title="PAP.Company_R" value="affiliate___AC" >
+        <input class="hidden" name="__esf_for_attr__" value="affiliate___AC">
+        <input class="hidden" name="__esf_for_type__" value="PAP.Company_R">
         <table class="attrs">
         <tbody>
           <tr title="Name">
@@ -1279,7 +1280,8 @@ _test_esf = """
 
     >>> print (ETT.call_macro ("entity_selector_form", crad, afo, filters))
     <form class = "QR ES" title="Select Person for attribute Owner">
-        <input class="hidden" name="__attribute_selector_for__" title="PAP.Person" value="owner[PAP.Person]" >
+        <input class="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
+        <input class="hidden" name="__esf_for_type__" value="PAP.Person">
         <table class="attrs">
         <tbody>
           <tr title="Last name">

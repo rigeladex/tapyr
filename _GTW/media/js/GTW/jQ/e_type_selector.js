@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -25,6 +25,8 @@
 //     7-Mar-2012 (CT) Add `ET_Selector_AFS`, refactor as necessary
 //     8-Mar-2012 (CT) Fix bugs in `ET_Selector_AFS`, `ET_Selector_HD`
 //     8-Mar-2012 (CT) Add `options.completer_position` and `.dialog_position`
+//     3-Apr-2013 (CT) Split hidden `input` field "__attribute_selector_for__"
+//                     into two: "__esf_for_attr__"  and "__esf_for_type__"
 //    ««revision-date»»···
 //--
 
@@ -45,7 +47,8 @@
             , dialog_position     : default_position
             , icon_map            : {}
             , selectors           :
-                { aid             : "[name=__attribute_selector_for__]"
+                { aid             : "[name=__esf_for_attr__]"
+                , tid             : "[name=__esf_for_type__]"
                 }
             , treshold            : 1
             }
@@ -313,11 +316,13 @@
     );
     var ET_Selector_AFS = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
-              var opts = this.options;
-              var aid$ = this.widget.find (opts.selectors.aid);
+              var opts   = this.options;
+              var aid$   = this.widget.find (opts.selectors.aid);
+              var tid$   = this.widget.find (opts.selectors.tid);
               var result =
-                  { key : aid$.val ()
-                  , etn : opts.afs.anchor.type_name // aid$.prop ("title")
+                  { key  : aid$.val ()
+                  , etn  : opts.afs.anchor.type_name
+                  , etns : tid$.val ()
                   };
               return result;
           }
@@ -337,7 +342,8 @@
     var ET_Selector_HD = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
               var aid$ = this.widget.find (this.options.selectors.aid);
-              return { key : aid$.val () };
+              var tid$ = this.widget.find (this.options.selectors.tid);
+              return { key : aid$.val (), etns : tid$.val () };
           }
         , get_esf_data          : function get_esf_data (ev, target$) {
               return { key : target$.prop ("id") };
