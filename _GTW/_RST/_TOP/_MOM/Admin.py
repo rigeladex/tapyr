@@ -52,6 +52,8 @@
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
 #    17-Mar-2013 (CT) Add `_login_required` to `E_Type, `Group`, `Site``
 #    17-Mar-2013 (CT) Add guard `response.renderer` to `E_Type.rendered`
+#     3-Apr-2013 (CT) Move `json.etn` into `if "key"` clause of
+#                     `_get_attr_filter`
 #    ««revision-date»»···
 #--
 
@@ -280,13 +282,13 @@ class _JSON_Action_ (_Ancestor) :
         etn = None
         if "key" in json :
             key = json.key
+            if "etn" in json :
+                etn = json.etn
         else :
-            form, elem = self.form_element   (json.fid)
-            field      = self.field_element  (form, json.trigger)
+            form, elem = self.form_element  (json.fid)
+            field      = self.field_element (form, json.trigger)
             etn        = elem.type_name
             key        = field.name
-        if "etn" in json :
-            etn = json.etn
         if etn is not None :
             ET  = self.scope [etn].E_Type
         return QR.Filter (ET, key)
