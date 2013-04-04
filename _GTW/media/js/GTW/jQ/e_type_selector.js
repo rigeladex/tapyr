@@ -342,7 +342,7 @@
                             self.activate_form (ui.newContent);
                           } // remove after upgrading to jQueryUI 1.9+
                         , create      : function (event, ui) {
-                            var form = ui.Panel;
+                            var form = ui.panel;
                             if (! form) { // remove after upgrading to jQueryUI 1.9+
                                 form = esfp$.find ("form").get (active);
                             };
