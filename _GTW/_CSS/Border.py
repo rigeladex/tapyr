@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.CSS.
@@ -29,6 +29,7 @@
 #    21-Feb-2011 (CT) Creation
 #    23-Mar-2011 (CT) `P_Border` added
 #    16-Feb-2012 (CT) Disable prefixes for `radius` (validator->errors)
+#     4-Apr-2013 (CT) Remove `radius` prefixes from doctest, too (doh!)
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ def Border (** declarations) :
     >>> print (sorted (Border (color = "red", width = "2px").items ()))
     [(u'border-color', u'red'), (u'border-width', u'2px')]
     >>> print (sorted (Border (color = "red", width = "2px", radius = "2px").items ()))
-    [(u'-moz-border-radius', u'2px'), (u'-webkit-border-radius', u'2px'), (u'border-color', u'red'), (u'border-radius', u'2px'), (u'border-width', u'2px')]
+    [(u'border-color', u'red'), (u'border-radius', u'2px'), (u'border-width', u'2px')]
     """
     result = {}
     for k, v in declarations.iteritems () :
