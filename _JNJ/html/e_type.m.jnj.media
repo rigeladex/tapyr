@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -29,6 +29,7 @@
 #     8-Mar-2012 (CT) Creation
 #    19-Mar-2012 (CT) Add rule for `ui-state-default`
 #    14-Dec-2012 (CT) Add rule for `.button.vip`
+#     3-Apr-2013 (CT) Add `Rule.clearfix` to rule for `.QR`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,8 @@ style_sheet = Style_Sheet \
     , Rule
         ( ".QR"
         , children           =
-            [ Rule
+            [ P.Rule.clearfix
+            , Rule
                 ( "input"
                 , background_color = P.nav_col.background_color
                 , border           = P.border_simple

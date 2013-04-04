@@ -46,6 +46,7 @@
 #     8-Mar-2012 (CT) Add `color_bg_menu`
 #    10-Aug-2012 (CT) Add `color_spec_sub_heading`, `color_spec_term`
 #     7-Mar-2013 (CT) Add `border_added` and `border_deleted`
+#     3-Apr-2013 (CT) Add `Rule`, `Rule.clearfix`
 #    ««revision-date»»···
 #--
 
@@ -287,6 +288,20 @@ class Media_Defaults (Definition) :
         width                  = Px (5)
 
     # end class tablesorter
+
+    class Rule :
+
+        clearfix = Rule_Pseudo \
+            ( "after"
+            , clear            = "both"
+            , content          = "' '"
+            , display          = "block"
+            , font_size        = 0
+            , height           = 0
+            , visibility       = "hidden"
+            )
+
+    # end class Rule
 
     color_spec_error       = P_dict \
         ( background_color = P.background_color

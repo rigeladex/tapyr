@@ -54,6 +54,7 @@
 #    17-Mar-2013 (CT) Add guard `response.renderer` to `E_Type.rendered`
 #     3-Apr-2013 (CT) Move `json.etn` into `if "key"` clause of
 #                     `_get_attr_filter`
+#     3-Apr-2013 (CT) Factor `_get_esf_filter`, support `polymorphic_epk`
 #    ««revision-date»»···
 #--
 
@@ -291,8 +292,32 @@ class _JSON_Action_ (_Ancestor) :
             key        = field.name
         if etn is not None :
             ET  = self.scope [etn].E_Type
-        return QR.Filter (ET, key)
+        return self.QR.Filter (ET, key)
     # end def _get_attr_filter
+
+    def _get_esf_filter (self, json) :
+        QR     = self.QR
+        ET     = self.E_Type
+        result = self._get_attr_filter (json)
+        result.polymorphic_epk = pepk = result.AQ.E_Type.polymorphic_epk
+        if pepk :
+            scope = self.scope
+            result.filters_np = fnps = []
+            sc = None
+            if "etns" in json :
+                sc = json.etns
+            sc = sc or result.default_child
+            for i, cnp in enumerate (result.children_np) :
+                cf = QR.Filter (ET, "%s[%s]" % (cnp.full_name, cnp.type_name))
+                cf.filters = QR.Filter_Atoms (cf)
+                fnps.append (cf)
+                if cf.type_name == sc :
+                    result ["selected_type"] = i
+        else :
+            result.selected_type = None
+            result.filters = QR.Filter_Atoms (result)
+        return result
+    # end def _get_esf_filter
 
     def _rendered_completions (self, ETM, query, names, entity_p, json, AQ = None) :
         if entity_p :
@@ -355,14 +380,17 @@ class _JSON_Action_ (_Ancestor) :
         return result
     # end def _rendered_completions_e
 
-    def _rendered_esf (self, af, filters, ** kw) :
+    def _rendered_esf (self, af, ** kw) :
         template = self.top.Templateer.get_template ("e_type")
+        macro    = "entity_selector_form%s" % \
+            ("_p" if af.polymorphic_epk else "")
         result   = dict \
             ( callbacks = [] ### XXX
-            , html      = template.call_macro
-                ("entity_selector_form", self, af, filters)
+            , html      = template.call_macro (macro, self, af)
             , ** kw
             )
+        if af.selected_type is not None :
+            result ["selected_type"] = af.selected_type
         return result
     # end def _rendered_esf
 
@@ -707,15 +735,14 @@ class QX_Completed (_JSON_Action_PO_) :
     name            = "esf_completed"
 
     def _rendered_post (self, request, response) :
-        json    = TFL.Record (** request.json)
-        af      = self._get_attr_filter (json)
-        filters = QR.Filter_Atoms (af)
-        ETM     = self.top.scope  [af.attr.E_Type.type_name]
-        obj     = self.pid_query_request (json.pid, ETM.E_Type)
-        for f in filters :
+        json   = TFL.Record (** request.json)
+        af     = self._get_esf_filter (json)
+        ETM    = self.top.scope  [af.type_name]
+        obj    = self.pid_query_request (json.pid, ETM.E_Type)
+        for f in af.filters :
             f.edit = f.value = f.AQ.QR (obj)
-        result  = self._rendered_esf \
-            ( af, filters
+        result = self._rendered_esf \
+            ( af
             , value     = obj.pid
             , display   = str (obj.FO)
             )
@@ -732,7 +759,7 @@ class QX_Completer (_JSON_Action_PO_) :
     def _rendered_post (self, request, response) :
         json   = TFL.Record (** request.json)
         af     = self._get_attr_filter (json)
-        ET     = af.attr.E_Type
+        ET     = af.AQ.E_Type
         at     = QR.Filter  (ET, json.trigger)
         names  = tuple \
             ( uniq
@@ -759,10 +786,9 @@ class QX_Entity_Selector_Form (_JSON_Action_PO_) :
     name            = "esf"
 
     def _rendered_post (self, request, response) :
-        json    = TFL.Record (** request.json)
-        af      = self._get_attr_filter (json)
-        filters = QR.Filter_Atoms       (af)
-        result  = self._rendered_esf    (af, filters)
+        json   = TFL.Record (** request.json)
+        af     = self._get_esf_filter (json)
+        result = self._rendered_esf   (af)
         return result
     # end def _rendered_post
 

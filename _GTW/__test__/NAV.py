@@ -905,7 +905,6 @@ _test_esf = """
     >>> crad     = nav_root.ET_Map ["PAP.Company_R"].admin
     >>> QR       = crad.QR
     >>> afa      = QR.Filter (crad.E_Type, "affiliate")
-    >>> filters  = QR.Filter_Atoms (afa)
 
     >>> print (formatted (afa))
     Record
@@ -1089,7 +1088,8 @@ _test_esf = """
     , value = None
     )
 
-    >>> print (formatted (filters))
+    >>> afa.filters = QR.Filter_Atoms (afa)
+    >>> print (formatted (afa.filters))
     ( Record
       ( AQ = <name.AQ [Attr.Type.Querier String]>
       , attr = String `name`
@@ -1123,7 +1123,7 @@ _test_esf = """
     )
 
     >>> ETT = crad.Templateer.get_template ("e_type")
-    >>> print (ETT.call_macro ("entity_selector_form", crad, afa, filters))
+    >>> print (ETT.call_macro ("entity_selector_form", crad, afa))
     <form class = "QR ES" title="Select Company_R for attribute Affiliate">
         <input class="hidden" name="__esf_for_attr__" value="affiliate___AC">
         <input class="hidden" name="__esf_for_type__" value="PAP.Company_R">
@@ -1158,8 +1158,146 @@ _test_esf = """
       </button>
       </form>
 
-    >>> afo = QR.Filter (crad.E_Type, "owner[PAP.Person]")
-    >>> print (formatted (afo))
+    >>> afos = QR.Filter (crad.E_Type, "owner")
+    >>> afos.AQ.E_Type.polymorphic_epk
+    True
+
+    >>> print (formatted (afos))
+    Record
+    ( AQ = <owner.AQ [Attr.Type.Querier Id_Entity]>
+    , Class = 'Entity'
+    , attr = Entity `owner`
+    , children_np =
+        [ Record
+          ( Class = 'Entity'
+          , attr = Entity `owner`
+          , attrs =
+              [ Record
+                ( attr = String `name`
+                , full_name = 'owner.name'
+                , id = 'owner__name'
+                , name = 'name'
+                , sig_key = 3
+                , ui_name = 'Owner/Name'
+                )
+              , Record
+                ( attr = String `registered_in`
+                , full_name = 'owner.registered_in'
+                , id = 'owner__registered_in'
+                , name = 'registered_in'
+                , sig_key = 3
+                , ui_name = 'Owner/Registered in'
+                )
+              ]
+          , full_name = 'owner'
+          , id = 'owner'
+          , name = 'owner'
+          , sig_key = 2
+          , type_name = 'PAP.Company'
+          , ui_name = 'Owner'
+          , ui_type_name = 'Company'
+          )
+        , Record
+          ( Class = 'Entity'
+          , attr = Entity `owner`
+          , attrs =
+              [ Record
+                ( attr = String `last_name`
+                , full_name = 'owner.last_name'
+                , id = 'owner__last_name'
+                , name = 'last_name'
+                , sig_key = 3
+                , ui_name = 'Owner/Last name'
+                )
+              , Record
+                ( attr = String `first_name`
+                , full_name = 'owner.first_name'
+                , id = 'owner__first_name'
+                , name = 'first_name'
+                , sig_key = 3
+                , ui_name = 'Owner/First name'
+                )
+              , Record
+                ( attr = String `middle_name`
+                , full_name = 'owner.middle_name'
+                , id = 'owner__middle_name'
+                , name = 'middle_name'
+                , sig_key = 3
+                , ui_name = 'Owner/Middle name'
+                )
+              , Record
+                ( attr = String `title`
+                , full_name = 'owner.title'
+                , id = 'owner__title'
+                , name = 'title'
+                , sig_key = 3
+                , ui_name = 'Owner/Academic title'
+                )
+              ]
+          , full_name = 'owner'
+          , id = 'owner'
+          , name = 'owner'
+          , sig_key = 2
+          , type_name = 'PAP.Person'
+          , ui_name = 'Owner'
+          , ui_type_name = 'Person'
+          )
+        ]
+    , default_child = 'PAP.Person'
+    , edit = None
+    , full_name = 'owner'
+    , id = 'owner___AC'
+    , name = 'owner___AC'
+    , op = Record
+        ( desc = 'Select entities where the attribute is equal to the specified value'
+        , label = 'auto-complete'
+        )
+    , sig_key = 2
+    , type_name = 'PAP.Subject'
+    , ui_name = 'Owner'
+    , ui_type_name = 'Subject'
+    , value = None
+    )
+
+    >>> afos.filters  = QR.Filter_Atoms (afos)
+    >>> print (formatted (afos.filters))
+    ( Record
+      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+      , attr = Date `start`
+      , edit = None
+      , full_name = 'lifetime.start'
+      , id = 'lifetime__start___AC'
+      , name = 'lifetime__start___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 0
+      , ui_name = 'Lifetime/Start'
+      , value = None
+      )
+    , Record
+      ( AQ = <lifetime.finish.AQ [Attr.Type.Querier Date]>
+      , attr = Date `finish`
+      , edit = None
+      , full_name = 'lifetime.finish'
+      , id = 'lifetime__finish___AC'
+      , name = 'lifetime__finish___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 0
+      , ui_name = 'Lifetime/Finish'
+      , value = None
+      )
+    )
+
+    >>> afop = QR.Filter (crad.E_Type, "owner[PAP.Person]")
+    >>> afop.AQ.E_Type.polymorphic_epk
+    False
+
+    >>> print (formatted (afop))
     Record
     ( AQ = <owner.AQ [Attr.Type.Querier _Id_Entity_NP_]>
     , Class = 'Entity'
@@ -1213,9 +1351,9 @@ _test_esf = """
     , value = None
     )
 
-    >>> filters  = QR.Filter_Atoms (afo)
+    >>> afop.filters  = QR.Filter_Atoms (afop)
 
-    >>> print (formatted (filters))
+    >>> print (formatted (afop.filters))
     ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
@@ -1278,7 +1416,7 @@ _test_esf = """
       )
     )
 
-    >>> print (ETT.call_macro ("entity_selector_form", crad, afo, filters))
+    >>> print (ETT.call_macro ("entity_selector_form", crad, afop))
     <form class = "QR ES" title="Select Person for attribute Owner">
         <input class="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
         <input class="hidden" name="__esf_for_type__" value="PAP.Person">

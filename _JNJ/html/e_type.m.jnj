@@ -49,6 +49,7 @@
 ##     3-Apr-2013 (CT) Use `af.ui_type_name` in `entity_selector_form`
 ##     3-Apr-2013 (CT) Split hidden `input` field "__attribute_selector_for__"
 ##                     into two: "__esf_for_attr__"  and "__esf_for_type__"
+##     3-Apr-2013 (CT) Add `entity_selector_form_p`
 ##    ««revision-date»»···
 ##--
 #}
@@ -83,13 +84,13 @@
   </tr>
 {%- endmacro -%} {#- attr_filter_tr -#}
 
-{%- macro entity_selector_form (page, af, filters) -%}
-  <form class = "QR ES" {# -#}
+{%- macro entity_selector_form (page, af, form_class="") -%}
+  <form class = "{{ ('QR ES ' + form_class).strip () }}" {# -#}
       title="{{ GTW._T ("Select %s for attribute %s") % (af.ui_type_name, af.ui_name) }}"{# -#}
   >
     <input class="hidden" name="__esf_for_attr__" value="{{ af.id }}">
     <input class="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
-    {{ attr_filter_table (filters, need_op = False) }}
+    {{ attr_filter_table (af.filters, need_op = False) }}
     {{ _qr_button
         ( GTW._  ("Apply")
         , GTW._T ("Use the currently selected %s") % af.ui_type_name
@@ -108,6 +109,26 @@
     }}
   </form>
 {%- endmacro -%} {#- entity_selector_form -#}
+
+{%- macro entity_selector_form_p (page, af) -%}
+  <div
+    title="{{ GTW._T ("Select %s for attribute %s") % (af.ui_type_name, af.ui_name) }}"{# -#}
+  >
+    <h2>
+      {{- GTW._T ("Select one of the types below") -}}
+    </h2>
+    <div class="ESF-Polymorphic">
+      {%- for cf in af.filters_np %}
+        <h3 title="{{ GTW._T ("Select %s for attribute %s") % (cf.ui_type_name, cf.ui_name) }}">
+          <a href="#"> {#- remove `<a>` after upgrading to jQueryUI 1.9+ -#}
+            {{- GTW._T ("Select a %s") % cf.ui_type_name -}}
+          </a>
+        </h3>
+        {{ entity_selector_form (page, cf, cf.type_name) }}
+      {% endfor -%}
+    </div>
+  </div>
+{%- endmacro -%} {#- entity_selector_form_p -#}
 
 {%- macro obj_button (page, E_Type, tag, href, name, desc, icon, kind, a_class=None) -%}
   <{{ tag }} class="cmd-button {{ kind }}">

@@ -27,6 +27,8 @@
 //     8-Mar-2012 (CT) Add `options.completer_position` and `.dialog_position`
 //     3-Apr-2013 (CT) Split hidden `input` field "__attribute_selector_for__"
 //                     into two: "__esf_for_attr__"  and "__esf_for_type__"
+//     4-Apr-2013 (CT) Factor `setup_form` from `setup_widget`
+//     4-Apr-2013 (CT) Add support for `esf_polymorphic`
 //    ««revision-date»»···
 //--
 
@@ -45,6 +47,7 @@
         { defaults              :
             { completer_position  : default_position
             , dialog_position     : default_position
+            , esf_polymorphic_cls : "ESF-Polymorphic"
             , icon_map            : {}
             , selectors           :
                 { aid             : "[name=__esf_for_attr__]"
@@ -86,6 +89,8 @@
                     , selectors          : this.selectors
                     }
                   );
+              this.selectors.esf_polymorphic =
+                  "." + this.options.esf_polymorphic_cls;
               this.ajax_response = undefined;
               this.widget        = undefined;
           }
@@ -119,6 +124,11 @@
               };
               return false;
           }
+        , activate_form         : function activate_form (form) {
+              if (form) {
+                  this.setup_form ($(form));
+              };
+          }
         , apply_cb              : function apply_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
               var response = self.widget.data ("completed_response");
@@ -134,12 +144,12 @@
         , clear_cb              : function clear_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
               var S    = self.options.selectors;
-              self.widget.find (":input").not ("button, .hidden").each
+              self.a_form$.find (":input").not ("button, .hidden").each
                   ( function () {
                       $(this).val ("");
                     }
                   );
-              self.widget.find (S.apply_button)
+              self.a_form$.find (S.apply_button)
                   .button ("option", "disabled", true);
           }
         , close_cb              : function close_cb (ev) {
@@ -151,7 +161,8 @@
               this.close_cb ();
               this.widget = this.setup_widget (response);
               this.widget
-                  .data ("completed_response", response)
+                  .data ("completed_response", response);
+              this.a_form$
                   .find (S.apply_button)
                       .button ("option", "disabled", false);
           }
@@ -185,7 +196,7 @@
               var values   = {}, n = 0;
               self.completion_data = self.get_completion_data ();
               if (self.completion_data.key) {
-                  self.widget.find (":input").not ("button, .hidden").each
+                  self.a_form$.find (":input").not ("button, .hidden").each
                       ( function () {
                           var i$ = $(this);
                           var k  = i$.prop ("id");
@@ -257,27 +268,15 @@
                       );
               };
           }
-        , setup_widget          : function setup_widget (response) {
-              var self    = this;
-              var options = self.options;
-              var S       = options.selectors;
-              var result  = $(response.html)
-                  .dialog
-                      ( { autoOpen : false
-                        , close    : self.close_cb
-                        }
-                      );
-              var form$   = result.is ("form") ? result : result.find ("form");
-              this.inputs$ = result.find (":input").not ("button, .hidden");
-              result.find  (S.button)
-                  .gtw_buttonify (self.icons, options.buttonify_options);
-              result.find  (S.apply_button)
-                  .button  ("option", "disabled", true)
-                  .click   (self, self.apply_cb);
-              result.find  (S.cancel_button).click (self, self.close_cb);
-              result.find  (S.clear_button).click  (self, self.clear_cb);
+        , setup_form            : function setup_form (form$) {
+              var self     = this;
+              var options  = self.options;
+              var S        = options.selectors;
+              var inputs$  = form$.find (":input").not ("button, .hidden");
+              this.a_form$ = form$;
+              this.inputs$ = inputs$;
               form$.submit (self, self.apply_cb);
-              this.inputs$.each
+              inputs$.each
                   ( function () {
                       var inp$ = $(this);
                       inp$.gtw_autocomplete
@@ -298,6 +297,30 @@
                           );
                     }
                   );
+              inputs$.first ().focus ();
+          }
+        , setup_widget          : function setup_widget (response) {
+              var self    = this;
+              var options = self.options;
+              var S       = options.selectors;
+              var active  = "selected_type" in response ?
+                                response.selected_type : false;
+              var result  = $(response.html)
+                  .dialog
+                      ( { autoOpen : false
+                        , close    : self.close_cb
+                        }
+                      );
+              var esfp$   = result.hasClass (options.esf_polymorphic_cls) ?
+                                result : result.find  (S.esf_polymorphic);
+              var form$;
+              result.find  (S.button)
+                  .gtw_buttonify (self.icons, options.buttonify_options);
+              result.find  (S.apply_button)
+                  .button  ("option", "disabled", true)
+                  .click   (self, self.apply_cb);
+              result.find  (S.cancel_button).click (self, self.close_cb);
+              result.find  (S.clear_button).click  (self, self.clear_cb);
               result
                   .dialog ("option", "width", "auto")
                   .dialog ("open")
@@ -309,7 +332,31 @@
                               , { of : self.target$ }
                               )
                           );
-              this.inputs$.first ().focus ();
+              if (esfp$.size () > 0) {
+                  esfp$.accordion
+                      ( { active      : active
+                        , activate    : function (event, ui) {
+                            self.activate_form (ui.newPanel);
+                          }
+                        , change      : function (event, ui) {
+                            self.activate_form (ui.newContent);
+                          } // remove after upgrading to jQueryUI 1.9+
+                        , create      : function (event, ui) {
+                            var form = ui.Panel;
+                            if (! form) { // remove after upgrading to jQueryUI 1.9+
+                                form = esfp$.find ("form").get (active);
+                            };
+                            self.activate_form (form);
+                          }
+                        , clearStyle  : true // remove after upgrading to jQueryUI 1.9+
+                        , collapsible : true
+                        , heightStyle : "content"
+                        }
+                      );
+              } else {
+                  form$ = result.is ("form") ? result : result.find ("form");
+                  this.setup_form (form$);
+              };
               return result;
           }
         }
@@ -317,8 +364,8 @@
     var ET_Selector_AFS = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
               var opts   = this.options;
-              var aid$   = this.widget.find (opts.selectors.aid);
-              var tid$   = this.widget.find (opts.selectors.tid);
+              var aid$   = this.a_form$.find (opts.selectors.aid);
+              var tid$   = this.a_form$.find (opts.selectors.tid);
               var result =
                   { key  : aid$.val ()
                   , etn  : opts.afs.anchor.type_name
@@ -341,8 +388,8 @@
     );
     var ET_Selector_HD = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
-              var aid$ = this.widget.find (this.options.selectors.aid);
-              var tid$ = this.widget.find (this.options.selectors.tid);
+              var aid$ = this.a_form$.find (this.options.selectors.aid);
+              var tid$ = this.a_form$.find (this.options.selectors.tid);
               return { key : aid$.val (), etns : tid$.val () };
           }
         , get_esf_data          : function get_esf_data (ev, target$) {
