@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -31,6 +31,7 @@
 #    31-Dec-2010 (CT) `Kits` added and used
 #    21-Feb-2011 (CT) `Rule.__init__` changed to allow `kits` passed
 #                     positionally
+#     3-Apr-2013 (CT) Add `__call__`, add argument `proto` to `__init__`
 #    ««revision-date»»···
 #--
 
@@ -68,9 +69,9 @@ class Rule (TFL.Meta.Object) :
     """Model a CSS rule.
 
     >>> import itertools
-    >>> tr = Rp ("target", background_color = "yellow", color = "red")
-    >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both", children = [tr])
-    >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both", children = [tr])
+    >>> tr = Rule_Pseudo ("target", background_color = "yellow", color = "red")
+    >>> r1 = Rule ("tr.row1", "div.row1", color = "grey", clear = "both", children = [tr])
+    >>> r2 = Rule ("tr.row2", "div.row2", color = "blue", clear = "both", children = [tr])
     >>> for x in itertools.chain (r1, r2) :
     ...   print (x)
     ...
@@ -101,10 +102,17 @@ class Rule (TFL.Meta.Object) :
     parent_sep    = " "
 
     def __init__ (self, * selectors, ** declarations) :
+        proto = declarations.pop ("proto", None)
+        if proto :
+            self.parent_sep = proto.parent_sep
         self.pop_to_self (declarations, "base_level", "parent", "parent_sep")
         self.children      = list (self._pop_children (declarations))
         sels               = []
         kits               = []
+        if proto :
+            sels.extend (proto._selectors)
+            kits.append (proto.declarations)
+            self.children  = proto.children + self.children
         for s in selectors :
             (kits if isinstance (s, dict) else sels).append (s)
         self._selectors    = tuple (sels)
@@ -115,6 +123,11 @@ class Rule (TFL.Meta.Object) :
         if self.parent is not None :
             self.parent.children.append (self)
     # end def __init__
+
+    def __call__ (self, * selectors, ** declarations) :
+        declarations ["proto"] = self
+        return self.__class__ (* selectors, ** declarations)
+    # end def __call__
 
     def copy (self) :
         d = dict \
