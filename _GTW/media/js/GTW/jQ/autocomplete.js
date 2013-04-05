@@ -17,6 +17,7 @@
 //    13-Oct-2011 (CT) Creation
 //    31-Jan-2013 (MG) Fix changing of `_renderItem` to work with new
 //                     jQueryUI versions
+//     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
 //    ««revision-date»»···
 //--
 
@@ -27,7 +28,7 @@
     var renderer =
         { html          : function _ac_render_item_html (ul, item) {
               var result = $("<li>")
-                  .data     ("item.autocomplete", item)
+                  .data     ("ui-autocomplete-item", item)
                   .append   ($("<a>").html (item.label))
                   .appendTo (ul);
               return result;
@@ -44,10 +45,7 @@
                 var self = $(this);
                 self.autocomplete (opts);
                 if (ri) {
-                    var data = self.data ("autocomplete");
-                    if (data === undefined) {
-                        data = self.data ("uiAutocomplete")
-                    }
+                    var data = self.data ("uiAutocomplete");
                     data._renderItem = ri;
                 };
               }

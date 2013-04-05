@@ -114,6 +114,7 @@
 //    26-Jan-2013 (MG) Move `pre_submit_callbacks` into `Form` object and
 //                     change `_setup_field´ to accept the `Form` object as
 //                     parameter
+//     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //    ««revision-date»»···
 //--
 
@@ -934,7 +935,7 @@
             , Select : function select_cb (s$, elem, id, ev) {
                   var anchor   = $AFS_E.get (elem.anchor_id || elem.root_id);
                   var target$  = $(ev.delegateTarget);
-                  var selector = target$.data ("selector_afs");
+                  var selector = target$.data ("gtw_e_type_selector_afs");
                   var apply_cb = function apply_cb (display, value) {
                       if ("value" in elem && "edit" in elem ["value"]) {
                           elem.value.edit.pid = value;
@@ -955,7 +956,7 @@
                             , url  : options.url
                             }
                           );
-                      selector = target$.data ("selector_afs");
+                      selector = target$.data ("gtw_e_type_selector_afs");
                   };
                   selector.activate_cb (ev);
               }

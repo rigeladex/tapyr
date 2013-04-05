@@ -29,6 +29,8 @@
 //                     into two: "__esf_for_attr__"  and "__esf_for_type__"
 //     4-Apr-2013 (CT) Factor `setup_form` from `setup_widget`
 //     4-Apr-2013 (CT) Add support for `esf_polymorphic`
+//     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
+//     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //    ««revision-date»»···
 //--
 
@@ -131,7 +133,7 @@
           }
         , apply_cb              : function apply_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
-              var response = self.widget.data ("completed_response");
+              var response = self.widget.data ("gtw_ets_completed_response");
               if (response ["value"] && response ["display"]) {
                   self._apply_cb_inner (ev, response);
               };
@@ -161,7 +163,7 @@
               this.close_cb ();
               this.widget = this.setup_widget (response);
               this.widget
-                  .data ("completed_response", response);
+                  .data ("gtw_ets_completed_response", response);
               this.a_form$
                   .find (S.apply_button)
                       .button ("option", "disabled", false);
@@ -171,7 +173,7 @@
               var l = response.fields - !response.partial; // skip pid
               var v = response.fields - 1;
               var result = [];
-              inp$.data ("completer_response", response);
+              inp$.data ("gtw_ets_completer_response", response);
               if (response.completions > 0 && response.fields > 0) {
                   for ( var i = 0, li = response.matches.length, match
                       ; i < li
@@ -237,7 +239,7 @@
         , select_cb             : function select_cb (ev, inp$, item) {
               var self     = this;
               var S        = self.options.selectors;
-              var response = inp$.data ("completer_response");
+              var response = inp$.data ("gtw_ets_completer_response");
               if (response.partial) {
                   inp$.val (item.value);
                   if (response.matches.length > 1) {
@@ -332,23 +334,15 @@
                               , { of : self.target$ }
                               )
                           );
-              if (esfp$.size () > 0) {
+              if (esfp$.length) {
                   esfp$.accordion
                       ( { active      : active
                         , activate    : function (event, ui) {
                             self.activate_form (ui.newPanel);
                           }
-                        , change      : function (event, ui) {
-                            self.activate_form (ui.newContent);
-                          } // remove after upgrading to jQueryUI 1.9+
                         , create      : function (event, ui) {
-                            var form = ui.panel;
-                            if (! form) { // remove after upgrading to jQueryUI 1.9+
-                                form = esfp$.find ("form").get (active);
-                            };
-                            self.activate_form (form);
+                            self.activate_form (ui.content);
                           }
-                        , clearStyle  : true // remove after upgrading to jQueryUI 1.9+
                         , collapsible : true
                         , heightStyle : "content"
                         }
@@ -408,7 +402,7 @@
         this.each
             ( function () {
                 var selector = new ET_Selector_AFS (opts);
-                $(this).data ("selector_afs", selector);
+                $(this).data ("gtw_e_type_selector_afs", selector);
               }
             );
         return this;

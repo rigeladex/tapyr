@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -28,27 +28,36 @@
 # Revision Dates
 #    14-Dec-2011 (CT) Creation
 #    24-Feb-2012 (CT) Add `:not(:last-child)` to rule for `b:first-child`
+#     5-Apr-2013 (CT) Split rule for `.ui-menu-item` from `.ui-autocomplete`
+#     5-Apr-2013 (CT) Add `overflow_y` to `.ui-autocomplete`
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
-        ( ".ui-autocomplete .ui-menu-item"
+        ( ".ui-autocomplete "
+        , display        = "block"
+        , overflow_y    = "auto"
         , children =
             [ Rule
-                ("a"
-                , white_space   = "nowrap"
-                )
-            , Rule
-                ( "b"
-                , font_weight   = "normal"
-                , padding_left  = "0.25em"
-                )
-            , Rule
-                ( "b:first-child:not(:last-child)"
-                , font_weight   = "bold"
-                , padding_left  = 0
-                , padding_right = "0.75em"
+                ( ".ui-menu-item"
+                , children =
+                    [ Rule
+                        ("a"
+                        , white_space   = "nowrap"
+                        )
+                    , Rule
+                        ( "b"
+                        , font_weight   = "normal"
+                        , padding_left  = "0.25em"
+                        )
+                    , Rule
+                        ( "b:first-child:not(:last-child)"
+                        , font_weight   = "bold"
+                        , padding_left  = 0
+                        , padding_right = "0.75em"
+                        )
+                    ]
                 )
             ]
         )

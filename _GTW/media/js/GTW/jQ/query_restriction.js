@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -40,6 +40,8 @@
 //     8-Mar-2012 (CT) Add `options.completer_position`, `.dialog_position`,
 //                     `.menu_position`, adjust positions of various popups
 //    19-Mar-2012 (CT) Use `.ui-state-default` in parent of `.ui-icon`
+//     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
+//     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //    ««revision-date»»···
 //--
 
@@ -108,7 +110,7 @@
             , opts && opts ["ui_class"] || {}
             );
         var options  = $.extend
-            ( { treshold  : 0
+            ( { treshold            : 0
               }
             , opts || {}
             , { completer_position  : completer_position
@@ -190,7 +192,7 @@
         var add_attr_filter_cb = function add_attr_filter_cb (ev) {
             var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
-            var choice  = target$.data ("choice");
+            var choice  = target$.data ("gtw_qr_choice");
             var afs$    = $(S.attr_filter_container, qr$);
             var head$   = afs$.filter
                 ( function () {
@@ -224,17 +226,17 @@
         };
         var attach_menu = function attach_menu (but$, menu) {
             but$.click (menu_click_cb)
-                .data  ("menu$", menu);
+                .data  ("gtw_qr_menu$", menu);
         };
         var attr_select =
             { cb              :
                 { add         : function add (ev) {
                       var S       = options.selectors;
                       var target$ = $(ev.delegateTarget);
-                      var choice  = target$.data ("choice").label;
+                      var choice  = target$.data ("gtw_qr_choice").label;
                       var c$      = attr_select.new_attr (choice);
                       var but$    = as_widget$.find (S.add_button);
-                      var menu$   = but$.data ("menu$").element;
+                      var menu$   = but$.data ("gtw_qr_menu$").element;
                       as_widget$.find    (S.select_attr_attributes).append (c$);
                       attr_select.toggle (menu$, choice, true);
                       as_widget$.find    (S.apply_button).focus ();
@@ -264,7 +266,7 @@
                 , clear       : function clear (ev, ui) {
                       var S = options.selectors;
                       var but$    = as_widget$.find (S.add_button);
-                      var menu$   = but$.data ("menu$").element;
+                      var menu$   = but$.data ("gtw_qr_menu$").element;
                       as_widget$.find (S.select_attr_attributes).empty ();
                       menu$.find ("a.button").removeClass ("ui-state-disabled");
                   }
@@ -278,7 +280,7 @@
                       var attr$    = target$.closest (S.select_attr_item);
                       var disabled = attr$.hasClass  ("disabled");
                       var but$     = as_widget$.find (S.add_button);
-                      var menu$    = but$.data ("menu$").element;
+                      var menu$    = but$.data ("gtw_qr_menu$").element;
                       var choice   = attr$.find ("b").html ();
                       var title    = disabled ?
                           options.title.disabler : options.title.enabler;
@@ -327,7 +329,7 @@
                   var S       = options.selectors;
                   var attrs$  = as_widget$.find (S.select_attr_attributes);
                   var but$    = as_widget$.find (S.add_button);
-                  var menu$   = but$.data ("menu$").element;
+                  var menu$   = but$.data ("gtw_qr_menu$").element;
                   var af, a$;
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
                       choice = $.trim (choices [i]);
@@ -466,8 +468,8 @@
         };
         var menu_click_cb = function menu_click_cb (ev) {
             var but$ = $(ev.delegateTarget);
-            var menu = but$.data ("menu$");
-            var opts = menu.element.data ("options");
+            var menu = but$.data ("gtw_qr_menu$");
+            var opts = menu.element.data ("gtw_qr_options");
             if (menu.element.is (":visible")) {
                 menu.element.hide ();
                 but$.removeClass (options.ui_class.active_menu_button);
@@ -496,7 +498,7 @@
         var menu_select_cb = function menu_select_cb (ev) {
             var target$ = $(ev.delegateTarget);
             var menu$   = target$.closest (".cmd-menu");
-            target$.data ("callback") (ev);
+            target$.data ("gtw_qr_callback") (ev);
             $("."+options.ui_class.active_menu_button)
                 .removeClass (options.ui_class.active_menu_button);
             menu$.hide ();
@@ -537,25 +539,22 @@
             };
             var result = choice.attr_filter_html
                 .clone (true)
-                .data  ("choice", choice);
+                .data ("gtw_qr_choice", choice);
             update_attr_filter_op (result, op, key);
             $(S.attr_filter_op, result).each (setup_op_button);
             return result;
         };
         var new_menu = function new_menu (choices, cb, options) {
             var menu = $(L ("ul.drop-menu.cmd-menu")), result;
-            menu.data ({ options : options });
+            menu.data ({ gtw_qr_options : options });
             for (var i = 0, li = choices.length; i < li; i++) {
                 ( function () {
                     var c = choices [i];
-                    menu.append
-                      ( $(L ("li"))
-                          .append
-                              ( $(L ("a.button", { html : c.label }))
-                                  .click (menu_select_cb)
-                                  .data  ({callback : cb, choice : c})
-                              )
-                      );
+                    var entry = $(L ("a.button", { html : c.label }));
+                    entry
+                        .click (menu_select_cb)
+                        .data  ({ gtw_qr_callback : cb, gtw_qr_choice : c});
+                    menu.append ($(L ("li")).append (entry));
                   } ()
                 );
             };
@@ -564,13 +563,13 @@
                 .appendTo (body$)
                 .css      ({ top: 0, left: 0, position : "absolute" })
                 .hide     ()
-                .data     ("menu");
+                .data     ("ui-menu");
             return result;
         };
         var op_select_cb = function op_select_cb (ev) {
             var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
-            var choice  = target$.data ("choice");
+            var choice  = target$.data ("gtw_qr_choice");
             var but$    = $("."+options.ui_class.active_menu_button).first ();
             var afc$    = but$.closest (S.attr_filter_container);
             var val$  = $(S.attr_filter_value, afc$);
@@ -590,10 +589,10 @@
                 { add_criterion : function add_criterion (ev) {
                       var S       = options.selectors;
                       var target$ = $(ev.delegateTarget);
-                      var choice  = target$.data ("choice").label;
+                      var choice  = target$.data ("gtw_qr_choice").label;
                       var c$      = order_by.new_criterion (choice);
                       var but$    = ob_widget$.find (S.add_button);
-                      var menu$   = but$.data ("menu$").element;
+                      var menu$   = but$.data ("gtw_qr_menu$").element;
                       ob_widget$.find (S.order_by_criteria).append (c$);
                       order_by.toggle_criteria (menu$, choice, true);
                       ob_widget$.find (S.apply_button).focus ();
@@ -629,7 +628,7 @@
                 , clear       : function clear (ev, ui) {
                       var S = options.selectors;
                       var but$    = ob_widget$.find (S.add_button);
-                      var menu$   = but$.data ("menu$").element;
+                      var menu$   = but$.data ("gtw_qr_menu$").element;
                       ob_widget$.find (S.order_by_criteria).empty ();
                       menu$.find ("a.button").removeClass ("ui-state-disabled");
                   }
@@ -650,7 +649,7 @@
                       var crit$    = target$.closest (S.order_by_criterion);
                       var disabled = crit$.hasClass ("disabled");
                       var but$     = ob_widget$.find (S.add_button);
-                      var menu$    = but$.data ("menu$").element;
+                      var menu$    = but$.data ("gtw_qr_menu$").element;
                       var choice   = crit$.find ("b").html ();
                       var title    = disabled ?
                           options.title.disabler : options.title.enabler;
@@ -701,7 +700,7 @@
                   var S       = options.selectors;
                   var crits$  = ob_widget$.find (S.order_by_criteria);
                   var but$    = ob_widget$.find (S.add_button);
-                  var menu$   = but$.data ("menu$").element;
+                  var menu$   = but$.data ("gtw_qr_menu$").element;
                   var c$, desc;
                   for (var i = 0, li = choices.length, choice; i < li; i++) {
                       choice = $.trim (choices [i]);
