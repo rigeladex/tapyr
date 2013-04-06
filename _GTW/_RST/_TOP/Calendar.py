@@ -35,6 +35,7 @@
 #    10-Aug-2012 (CT) Move `_Cal_Page_.is_current_dir` to
 #                     `Calendar.is_current_page`
 #    22-Jan-2013 (CT) Remove spurious `handler.`
+#     6-Apr-2013 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -132,7 +133,7 @@ class _Q_ (_Mixin_, _Cal_Page_) :
         else :
             this = context ["page"] = self.__class__ \
                 ( parent = self
-                , anchor = q_args.anchor
+                , anchor = qa.anchor
                 )
         with this.LET (week_roller_size = qa.week_roller_size) :
             if this.qx_p :
