@@ -48,6 +48,7 @@
 #     9-Oct-2012 (CT) Add `bold`, `padding` to `.Error-Message`
 #    28-Feb-2013 (CT) Add `margin_bottom` for `ol li`
 #     7-Mar-2013 (CT) Add rule for `.added`
+#     8-Apr-2013 (CT) Factor `P.Rule.hover`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ style_sheet = Style_Sheet \
         ( "a"
         , text_decoration      = "none"
         , children             =
-            [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+            [ P.Rule.hover
             ]
         )
     , Rule
@@ -81,7 +82,7 @@ style_sheet = Style_Sheet \
         )
     , Rule
         ( "input[type=submit]", "input[type=reset]", "button", "a.button"
-        , ** P.button_spec
+        , P.button_spec
         )
     , Rule
         ( "ol li"
@@ -90,9 +91,9 @@ style_sheet = Style_Sheet \
     , Rule
         ( "tbody tr"
         , children             =
-            [ Rule_Pseudo ("nth-child(2n+1)", ** P.color_spec_row1)
-            , Rule_Pseudo ("nth-child(2n)",   ** P.color_spec_row2)
-            , Rule_Pseudo ("target",          ** P.color_spec_selected)
+            [ P.Rule.row_odd
+            , P.Rule.row_even
+            , P.Rule.target
             ]
         )
     , Rule

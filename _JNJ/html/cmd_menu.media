@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -27,56 +27,9 @@
 #
 # Revision Dates
 #    23-Nov-2011 (CT) Creation (factored from html/afs.jnj.media)
+#     8-Apr-2013 (CT) Add `max_height` and `overflow_y` to `.cmd-menu`
 #    ««revision-date»»···
 #--
-
-if False :
-  style_sheet = Style_Sheet \
-    ( Rule
-        ( ".cmd-menu"
-        , float            = "right"
-        , padding          = 0
-        , children         =
-            [ Rule
-                ( "a.button"
-                , display     = "inline-block"
-                , float       = "none"
-                , font_size   = Percent (70)
-                , line_height = Em (1.5)
-                , margin      = TRBL0 (l = Em (0.5))
-                )
-            , Rule
-                ( "a.default"
-                , padding     = TRBL (0, Em (1.0))
-                )
-            , Rule
-                ( "a.drop"
-                , height      = Em (1.5)
-                , padding     = 0
-                , width       = Em (1.5)
-                , children    =
-                    [ Rule
-                        ( "i"
-                        , Border
-                            ( style   = "solid"
-                            , color   = C_TRBL0
-                                ( t   = P.afs.color_spec_heading ["color"])
-                            , width   = TRBL (Em (0.75), Em (0.5), 0)
-                            )
-                        , display     = "inline-block"
-                        , height      = 0
-                        , margin      = TRBL0 (l = Em (0.325))
-                        , width       = 0
-                        )
-                    , Rule_Pseudo
-                        ( "hover i"
-                        , border_color = C_TRBL0 (t = "red")
-                        )
-                    ]
-                )
-            ]
-        )
-    )
 
 style_sheet = Style_Sheet \
     ( Rule
@@ -84,6 +37,8 @@ style_sheet = Style_Sheet \
         , border           = P.border_button
         , float            = "right"
         , margin_top       = Em (-0.1)
+        , max_height       = Percent (80)
+        , overflow_y       = "auto"
         , padding          = 0
         , children         =
             [ Rule

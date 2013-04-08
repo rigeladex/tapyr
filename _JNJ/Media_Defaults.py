@@ -47,11 +47,15 @@
 #    10-Aug-2012 (CT) Add `color_spec_sub_heading`, `color_spec_term`
 #     7-Mar-2013 (CT) Add `border_added` and `border_deleted`
 #     3-Apr-2013 (CT) Add `Rule`, `Rule.clearfix`
+#     8-Apr-2013 (CT) Add lots of rules to `Rule`, e.g., `disabled`, `focus`...
 #    ««revision-date»»···
 #--
 
 from _GTW._CSS.import_CSS import *
-from _GTW.Parameters      import Definition, P, P_dict
+from _GTW.Parameters      import \
+    ( Definition, P, P_dict, Rule_Definition
+    , Rule, Rule_Attr, Rule_Child, Rule_Class, Rule_Pseudo, Rule_Sibling
+    )
 
 Color.formatter = RGB_X
 
@@ -289,16 +293,73 @@ class Media_Defaults (Definition) :
 
     # end class tablesorter
 
-    class Rule :
+    class Rule (Rule_Definition) :
 
-        clearfix = Rule_Pseudo \
+        clearfix           = Rule_Pseudo \
             ( "after"
-            , clear            = "both"
-            , content          = "' '"
-            , display          = "block"
-            , font_size        = 0
-            , height           = 0
-            , visibility       = "hidden"
+            , clear        = "both"
+            , content      = "' '"
+            , display      = "block"
+            , font_size    = 0
+            , height       = 0
+            , visibility   = "hidden"
+            )
+
+        disabled           = Rule_Class \
+            ( "disabled"
+            , opacity      = 0.5
+            )
+
+        focus              = Rule_Pseudo \
+            ( "focus"
+            ,  P.R.color_spec_selected
+            )
+
+        focus_outline      = Rule_Pseudo \
+            ( "focus"
+            ,  P.R.color_spec_selected
+            , outline      = P.R.outline_focus
+            )
+
+        hover              = Rule_Pseudo \
+            ( "hover"
+            ,  P.R.color_spec_selected
+            )
+
+        hover_rev          = Rule_Pseudo \
+            ( "hover"
+            ,  P.R.color_spec_selected_rev
+            )
+
+        link               = Rule_Pseudo \
+            ( "link"
+            , color = P.R.link_color
+            )
+
+        row_even           = Rule_Pseudo \
+            ( "nth-child(2n)"
+            , P.R.color_spec_row2
+            )
+
+        row_odd            = Rule_Pseudo \
+            ( "nth-child(2n+1)"
+            , P.R.color_spec_row1
+            )
+
+        target             = Rule_Pseudo \
+            ( "target"
+            ,  P.R.color_spec_selected
+            )
+
+        target_outline     = Rule_Pseudo \
+            ( "target"
+            ,  P.R.color_spec_selected
+            , outline      = P.R.outline_focus
+            )
+
+        visited            = Rule_Pseudo \
+            ( "visited"
+            ,  P.R.color_spec_visited
             )
 
     # end class Rule

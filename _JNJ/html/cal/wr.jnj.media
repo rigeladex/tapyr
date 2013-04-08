@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -40,9 +40,9 @@ style_sheet = Style_Sheet \
                 ( "a"
                 , text_decoration  = "none"
                 , children         =
-                    [ Rule_Pseudo ("link",    color = P.link_color)
-                    , Rule_Pseudo ("visited", color = P.visited_color)
-                    , Rule_Pseudo ("hover",   ** P.color_spec_selected)
+                    [ P.Rule.link
+                    , P.Rule.visited
+                    , P.Rule.hover
                     ]
                 )
             , Rule
@@ -174,7 +174,8 @@ style_sheet = Style_Sheet \
                 , margin           = TRBL0 (r = Em (2))
                 , text_align       = "right"
                 , children         =
-                    [ Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
+                    [ P.Rule.focus
+                    , P.Rule.hover
                     ]
                 )
             , Rule

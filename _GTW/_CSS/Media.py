@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -165,7 +165,7 @@ class Query (_Media_) :
 class Rule (_Media_) :
     """Media rule: block of CSS rules specific for a list of media queries.
 
-    >>> from _GTW._CSS.Rule import R
+    >>> from _GTW._CSS.Rule import Rule as R
     >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both")
     >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both")
     >>> print r1

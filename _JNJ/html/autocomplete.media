@@ -30,6 +30,7 @@
 #    24-Feb-2012 (CT) Add `:not(:last-child)` to rule for `b:first-child`
 #     5-Apr-2013 (CT) Split rule for `.ui-menu-item` from `.ui-autocomplete`
 #     5-Apr-2013 (CT) Add `overflow_y` to `.ui-autocomplete`
+#     8-Apr-2013 (CT) Add `max_height` to `.ui-autocomplete`
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,8 @@ style_sheet = Style_Sheet \
     ( Rule
         ( ".ui-autocomplete "
         , display        = "block"
-        , overflow_y    = "auto"
+        , max_height     = Percent (80)
+        , overflow_y     = "auto"
         , children =
             [ Rule
                 ( ".ui-menu-item"

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -151,10 +151,7 @@ style_sheet = Style_Sheet \
                 ( "tr.active"
                 , cursor          = "pointer"
                 , children        =
-                    [ Rule_Pseudo
-                        ( "hover"
-                        , ** P.color_spec_selected
-                        )
+                    [ P.Rule.hover
                     ]
                 )
             , Rule

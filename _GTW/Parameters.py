@@ -33,6 +33,8 @@
 #     3-Jan-2012 (CT) Add and use `_Media`, change `_MOB_.__call__` to not
 #                     unnecessarily wrap media objects
 #     8-Apr-2013 (CT) Add `chdir (base_dir)` to `__doc__`
+#     8-Apr-2013 (CT) Add `Rule` and its children, `Rule_Definition`,
+#                     factor `_Parameter_`
 #    ««revision-date»»···
 #--
 
@@ -58,29 +60,61 @@ def ddict (* ds) :
     return result
 # end def ddict
 
-class P_dict (TFL.Q_Exp.Q_Root) :
-    """Parameter dict: supports lazy evaluation of dict arguments."""
+class _Parameter_ (TFL.Q_Exp.Q_Root) :
 
     def __init__ (self, * args, ** kw) :
         self.args = args
         self.kw   = kw
     # end def __init__
 
-    def __call__ (self, P) :
-        result = {}
+    def _resolved_args (self, P, args) :
         Q_Root = TFL.Q_Exp.Q_Root
-        for a in self.args :
+        for a in args :
             if isinstance (a, Q_Root) :
                 a = a (P)
-            result.update (a)
-        for k, v in self.kw.iteritems () :
+            yield a
+    # end def _resolved_args
+
+    def _resolved_kw (self, P, kw) :
+        Q_Root = TFL.Q_Exp.Q_Root
+        for k, v in kw.iteritems () :
             if isinstance (v, Q_Root) :
                 v = v (P)
-            result [k] = v
-        return result
+            yield k, v
+    # end def _resolved_kw
+
+# end class P_dict
+
+class P_dict (_Parameter_) :
+    """Parameter dict: supports lazy evaluation of dict arguments."""
+
+    def __call__ (self, P) :
+        return dict \
+            (  * tuple (self._resolved_args (P, self.args))
+            , ** dict  (self._resolved_kw   (P, self.kw))
+            )
     # end def __call__
 
 # end class P_dict
+
+class Rule (_Parameter_) :
+    """Parameterized CSS rule"""
+
+    def __call__ (self, P) :
+        from _GTW._CSS import Rule as CSS_Rule
+        RT   = getattr (CSS_Rule, self.__class__.__name__)
+        args = tuple (self._resolved_args (P, self.args))
+        kw   = dict  (self._resolved_kw   (P, self.kw))
+        return RT (* args, ** kw)
+    # end def __call__
+
+# end class Rule
+
+class Rule_Attr    (Rule) : pass
+class Rule_Child   (Rule) : pass
+class Rule_Class   (Rule) : pass
+class Rule_Pseudo  (Rule) : pass
+class Rule_Sibling (Rule) : pass
 
 class M_Definition (TFL.Meta.Object.__class__) :
     """Meta class for `Definition`."""
@@ -158,6 +192,11 @@ class Definition (TFL.Meta.Object) :
     # end def T
 
 # end class Definition
+
+class Rule_Definition (Definition) :
+    """Definition of parameterized CSS rules"""
+
+# end class Rule_Definition
 
 class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     """Encapsulate media parameters so that it is usable as context for

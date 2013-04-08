@@ -32,6 +32,7 @@
 #    21-Feb-2011 (CT) `Rule.__init__` changed to allow `kits` passed
 #                     positionally
 #     3-Apr-2013 (CT) Add `__call__`, add argument `proto` to `__init__`
+#     8-Apr-2013 (CT) Remove `R` and other abbreviations
 #    ««revision-date»»···
 #--
 
@@ -241,13 +242,6 @@ class Rule_Sibling (Rule) :
     parent_sep = " + "
 
 # end class Rule_Sibling
-
-R  = Rule
-Ra = Rule_Attr
-Rc = Rule_Class
-Rd = Rule_Child
-Rp = Rule_Pseudo
-Rs = Rule_Sibling
 
 __all__ = tuple \
     ( k for (k, v) in globals ().iteritems () if isinstance (v, M_Rule)

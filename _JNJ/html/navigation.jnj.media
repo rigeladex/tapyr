@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -50,7 +50,7 @@ style_sheet = Style_Sheet \
                         ( "[type=submit]", "[type=reset]"
                         , width    = P.nav_col.width * 0.975
                         , children =
-                            [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                            [ P.Rule.hover
                             , Rule_Class
                                 ( "reset-passwd"
                                 , Border
@@ -186,12 +186,19 @@ style_sheet = Style_Sheet \
                 , border_color   = C_TRBL0
                     (default = "transparent", t = P.nav_col.mark_color_link)
                 )
-            , Rule ("a",         text_decoration = "none")
-            , Rule ("a:link",    color = P.link_color)
-            , Rule ("a:visited", color = P.visited_color)
             , Rule
-                ( "a:hover", "a.current-section:hover", "li.nav-link:hover"
-                , ** P.color_spec_selected
+                ( "a"
+                , text_decoration = "none"
+                , children             =
+                    [ P.Rule.link
+                    , P.Rule.visited
+                    ]
+                )
+            , Rule
+                ( "a", "a.current-section", "li.nav-link"
+                , children             =
+                    [ P.Rule.hover
+                    ]
                 )
             , Rule
                 ( "h1"
@@ -256,7 +263,9 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "section.login a"
                 , padding  = P.input_padding
-                , children = [Rule_Pseudo ("hover", ** P.color_spec_selected)]
+                , children =
+                    [ P.Rule.hover
+                    ]
                 , ** P.nav_col.button_spec
                 )
             , Rule

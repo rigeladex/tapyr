@@ -60,7 +60,7 @@ style_sheet = Style_Sheet \
         , text_align           = "center"
         , width                = Percent (95)
         , children             =
-            [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+            [ P.Rule.hover
             , Rule_Class
                 ( "bot"
                 , margin       = TRBL (Em (2.0), "auto", Em (0.5))
@@ -96,13 +96,14 @@ style_sheet = Style_Sheet \
                         ( "value.display"
                         , color        = "inherit"
                         )
-                    , Rule_Pseudo ("hover", "focus", ** P.color_spec_selected)
+                    , P.Rule.hover
+                    , P.Rule.focus
                     ]
                 )
             , Rule
                 ( "li", "tr"
                 , children         =
-                    [ Rule_Pseudo ("hover", ** P.color_spec_selected)
+                    [ P.Rule.hover
                     ]
                 )
             , Rule
@@ -155,10 +156,7 @@ style_sheet = Style_Sheet \
                         , padding          = 0
                         , vertical_align   = "middle"
                         , children         =
-                            [ Rule_Pseudo
-                                ( "hover"
-                                , ** P.color_spec_selected_rev
-                                )
+                            [ P.Rule.hover_rev
                             ]
                         , ** Border (radius = Px (10))
                         )
@@ -222,10 +220,7 @@ style_sheet = Style_Sheet \
                                 , padding          = 0
                                 , vertical_align   = "middle"
                                 , children         =
-                                    [ Rule_Pseudo
-                                        ( "hover"
-                                        , ** P.color_spec_selected_rev
-                                        )
+                                    [ P.Rule.hover_rev
                                     ]
                                 , ** Border (radius = Px (10))
                                 )
@@ -245,22 +240,10 @@ style_sheet = Style_Sheet \
                                 , padding          = TRBL
                                     (Em (0.75), Em (0.5), Em (0.5))
                                 , children         =
-                                    [ Rule_Class
-                                        ( "disabled"
-                                        , opacity  = 0.5
-                                        )
-                                    , Rule_Pseudo
-                                        ( "nth-child(2n)"
-                                        , ** P.color_spec_row1
-                                        )
-                                    , Rule_Pseudo
-                                        ( "nth-child(2n+1)"
-                                        , ** P.color_spec_row2
-                                        )
-                                    , Rule_Pseudo
-                                        ( "hover"
-                                        , ** P.color_spec_selected
-                                        )
+                                    [ P.Rule.disabled
+                                    , P.Rule.row_even
+                                    , P.Rule.row_odd
+                                    , P.Rule.hover
                                     ]
                                 )
                             , Rule

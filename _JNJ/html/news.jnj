@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: news.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -32,6 +32,7 @@
 ##    26-Feb-2010 (CT) Added some `{#--#}` to avoid spurious whitespace
 ##    17-Mar-2010 (CT) `permalink` added
 ##    13-Sep-2010 (CT) Use `e.date.start` before `e.date`
+##     8-Apr-2013 (CT) Use `e.created_by`, not `e.creator`
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,7 +40,7 @@
 {%- macro entry (e) -%}
   <div class="news-entry">
     <div class="news-meta">
-      <span class="news-author">{{ e.creator }}</span>{#--#}
+      <span class="news-author">{{ e.created_by }}</span>{#--#}
       <span class="news-date">{{ GTW.firstof (e.date.start, e.date) }}</span>{#--#}
       <div  class="news-title">
         {%- onion e.permalink %}
