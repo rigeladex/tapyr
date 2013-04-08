@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -32,6 +32,7 @@
 #    27-Sep-2011 (MG) `Include`, `Eval`, and `_eval_file` added
 #     3-Jan-2012 (CT) Add and use `_Media`, change `_MOB_.__call__` to not
 #                     unnecessarily wrap media objects
+#     8-Apr-2013 (CT) Add `chdir (base_dir)` to `__doc__`
 #    ««revision-date»»···
 #--
 
@@ -262,16 +263,17 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
 Scope = _Parameters_Scope_ # end class
 
-import os
-
 __doc__ = r"""
 >>> from _JNJ.Media_Defaults import Media_Defaults
 >>> from _JNJ.Environment    import HTML
 >>> import _GTW.jQuery
+>>> import os
 >>> base_dir        = os.path.abspath \
 ...    (os.path.join (os.path.dirname (__file__), "..", "_GTW", "__test__"))
 >>> env             = HTML (load_path = base_dir)
 >>> base_media      = os.path.join (base_dir, "_test.media")
+>>> os.chdir (base_dir)
+
 >>> def as_string (fragments) :
 ...     return "\n\n".join \
 ...         (str (s) for s in sorted (fragments, key = TFL.Getter.rank))
@@ -305,7 +307,9 @@ a.hide
 [href="/media/GTW/css/jquery.gritter.rel.css"]
 >>> print as_string (scope.js_on_ready)
 /* this is a JS on ready code */
+
 """
+
 if __name__ != "__main__" :
     GTW._Export_Module ()
 ### __END__ GTW.Parameters
