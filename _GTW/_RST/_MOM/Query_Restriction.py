@@ -37,6 +37,7 @@
 #     2-Apr-2013 (CT) Add support for `polymorphic_epk` to `Filter` and
 #                     `Filter_Atoms`
 #     2-Apr-2013 (CT) Add optional argument `q` to `_setup_attr`
+#     9-Apr-2013 (CT) Add exception handler to `af_args_api`
 #    ««revision-date»»···
 #--
 
@@ -269,7 +270,16 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     def af_args_api (soc, req_data_list, default_op = "EQ") :
         for aq in req_data_list.get ("AQ", []) :
             if aq :
-                name, op, value = aq.split (",", 3)
+                try :
+                    name, op, value = aq.split (",", 3)
+                except (ValueError, TypeError) :
+                    raise ValueError \
+                        ( _T( "AQ argument must contain the values "
+                              "`attribute_name`, `operator`, `value` "
+                              "separated by commas; got `%s` instead"
+                            )
+                        % (aq, )
+                        )
                 head, typ, tail = soc._t_pat.split (name, 1, 2)
                 if not op :
                     op = default_op

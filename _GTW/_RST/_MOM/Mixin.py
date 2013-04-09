@@ -70,6 +70,7 @@
 #     2-Mar-2013 (CT) Use `response.headers.set`, not dict assignment
 #     2-Mar-2013 (CT) Add `add_doc_link_header`
 #    28-Mar-2013 (CT) Change `attributes` to use default `E_Type.ui_attr`
+#     9-Apr-2013 (CT) Catch `ValueError` in `_handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -547,7 +548,7 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
             try :
                 qr = self.QR.from_request \
                     (self.scope, self.E_Type, request, ** self.default_qr_kw)
-            except AttributeError as exc :
+            except (AttributeError, TypeError, ValueError) as exc :
                 error = _T ("Query restriction triggered error: %s") % (exc, )
                 raise self.Status.Bad_Request (error)
             kw = dict (query_restriction = qr)
