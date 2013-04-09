@@ -42,6 +42,7 @@
 //    19-Mar-2012 (CT) Use `.ui-state-default` in parent of `.ui-icon`
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
+//     9-Apr-2013 (CT) Add and use `new_menu_nested` for `attr_filters`
 //    ««revision-date»»···
 //--
 
@@ -391,7 +392,8 @@
                               var but$ = $(this);
                               attach_menu
                                 ( but$
-                                , new_menu (attr_filters, attr_select.cb.add)
+                                , new_menu_nested
+                                    (qrs.filters, attr_select.cb.add)
                                 );
                             }
                           );
@@ -544,26 +546,76 @@
             $(S.attr_filter_op, result).each (setup_op_button);
             return result;
         };
-        var new_menu = function new_menu (choices, cb, options) {
-            var menu = $(L ("ul.drop-menu.cmd-menu")), result;
-            menu.data ({ gtw_qr_options : options });
-            for (var i = 0, li = choices.length; i < li; i++) {
-                ( function () {
-                    var c = choices [i];
-                    var entry = $(L ("a.button", { html : c.label }));
-                    entry
-                        .click (menu_select_cb)
-                        .data  ({ gtw_qr_callback : cb, gtw_qr_choice : c});
-                    menu.append ($(L ("li")).append (entry));
-                  } ()
-                );
+        var new_menu__add = function new_menu__add (choice, menu, cb, off) {
+            var label  = choice.label.substr (off || 0);
+            var entry  = $(L ("a.button", { html : label }));
+            var result = $(L ("li"));
+            entry
+                .click (menu_select_cb)
+                .data  ({ gtw_qr_callback : cb, gtw_qr_choice : choice});
+            result.append (entry);
+            menu.append (result);
+            return result;
+        };
+        var new_menu__add_nested = function new_menu__add_nested (choice, menu, cb, off) {
+            var label  = choice.label.substr (off || 0);
+            var offs   = choice.label.length + qrs.ui_sep.length;
+            var sub, tail = "", treshold = 2;
+            if ("sig_key" in choice) {
+                new_menu__add (choice, menu, cb, off);
+                tail     = " ...";
+                treshold = 3;
             };
-            result = menu
+            if ("attrs" in choice) {
+                if (choice.attrs.length > treshold) {
+                    sub = $(L ("li")).append
+                        ( $(L ("a.button", { html : label + tail })));
+                    menu.append (sub);
+                    new_menu__add_sub (choice.attrs, sub, cb, offs);
+                } else {
+                    for (var j = 0, lj = choice.attrs.length; j < lj; j++) {
+                        new_menu__add_nested
+                            (choice.attrs [j], menu, cb, off);
+                    };
+                };
+            };
+        };
+        var new_menu__add_sub = function new_menu__add_sub (choices, menu, cb, off) {
+            var sub_menu = $(L ("ul"));
+            menu.append (sub_menu);
+            for (var i = 0, li = choices.length; i < li; i++) {
+                new_menu__add_nested (choices [i], sub_menu, cb, off);
+            };
+        };
+        var new_menu__create = function new_menu__create (options) {
+            var result = $(L ("ul.drop-menu.cmd-menu"));
+            result.data ({ gtw_qr_options : options });
+            return result;
+        };
+        var new_menu__finish = function new_menu__finish (menu) {
+            var result = menu
                 .menu     ({})
                 .appendTo (body$)
                 .css      ({ top: 0, left: 0, position : "absolute" })
                 .hide     ()
                 .data     ("ui-menu");
+            return result;
+        };
+        var new_menu = function new_menu (choices, cb, options) {
+            var menu = new_menu__create (options), result;
+            for (var i = 0, li = choices.length; i < li; i++) {
+                new_menu__add (choices [i], menu, cb, 0);
+            };
+            result = new_menu__finish (menu);
+            return result;
+        };
+        var new_menu_nested = function new_menu_nested (choices, cb, options) {
+            var menu = new_menu__create (options), result;
+            menu.addClass ("nested")
+            for (var i = 0, li = choices.length; i < li; i++) {
+                new_menu__add_nested (choices [i], menu, cb, 0);
+            };
+            result = new_menu__finish (menu);
             return result;
         };
         var op_select_cb = function op_select_cb (ev) {
@@ -767,8 +819,8 @@
                               var but$ = $(this);
                               attach_menu
                                 ( but$
-                                , new_menu
-                                    (attr_filters, order_by.cb.add_criterion)
+                                , new_menu_nested
+                                    (qrs.filters, order_by.cb.add_criterion)
                                 );
                             }
                           );
@@ -924,7 +976,9 @@
             .each
                 ( function () {
                     attach_menu
-                        ($(this), new_menu (attr_filters, add_attr_filter_cb));
+                        ( $(this)
+                        , new_menu_nested (qrs.filters, add_attr_filter_cb)
+                        );
                   }
                 );
         $(selectors.attr_filter_op).each (setup_op_button);

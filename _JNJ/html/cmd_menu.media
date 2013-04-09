@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Nov-2011 (CT) Creation (factored from html/afs.jnj.media)
 #     8-Apr-2013 (CT) Add `max_height` and `overflow_y` to `.cmd-menu`
+#     9-Apr-2013 (CT) Add `max_width`, rule for `.cmd-menu.nested`
 #    ««revision-date»»···
 #--
 
@@ -38,8 +39,11 @@ style_sheet = Style_Sheet \
         , float            = "right"
         , margin_top       = Em (-0.1)
         , max_height       = Percent (80)
+        , max_width        = Percent (80)
+        , min_width        = Em (12)
         , overflow_y       = "auto"
         , padding          = 0
+        , width            = "auto"
         , children         =
             [ Rule
                 ( "a.button"
@@ -83,6 +87,17 @@ style_sheet = Style_Sheet \
                         , border_color = C_TRBL0 (t = "red")
                         )
                     ]
+                )
+            ]
+        )
+    , Rule
+        ( ".cmd-menu.nested"
+        , overflow         = "visible"
+        , children         =
+            [ Rule
+                ( "ul"
+                , max_width        = Percent (80)
+                , min_width        = Em (12)
                 )
             ]
         )
