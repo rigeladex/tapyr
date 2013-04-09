@@ -77,6 +77,7 @@
 #    11-Aug-2012 (MG) Fix `namedtuple` of `_Q_Result_Attrs_`
 #    19-Jan-2013 (MG) Support new sqlalchmey version
 #     2-Apr-2013 (CT) Make `Q_Result.__str__` deterministic (sort SELECT args)
+#     9-Apr-2013 (CT) Change `attr_name` for `SUM` in `_getters_to_columns`
 #    ««revision-date»»···
 #--
 
@@ -472,7 +473,14 @@ class _Q_Result_Attrs_ (_Q_Result_) :
     # end def distinct
 
     def _getters_to_columns (self, getters, raw) :
-        Q     = MOM.Q
+        def getter_name (getter) :
+            try :
+                name = getter._name
+            except AttributeError :
+                return str (getter)
+            else :
+                return name.rsplit (".", 1) [-1]
+        Q = MOM.Q
         if raw :
             Q = Q.RAW
         SAQ   = self.e_type._SAQ
@@ -481,12 +489,13 @@ class _Q_Result_Attrs_ (_Q_Result_) :
             if isinstance (getter, basestring) :
                 getter = getattr (Q, getter)
             if isinstance (getter, TFL.Q_Exp._Sum_) :
-                    result          = sql.func.SUM (getter.rhs)
-                    result.MOM_Kind = None
-                    self.attr_names.append ("sum")
-                    yield result
+                self.attr_names.append \
+                    ("__".join (("sum", getter_name (getter.rhs))))
+                result          = sql.func.SUM (getter.rhs)
+                result.MOM_Kind = None
+                yield result
             else :
-                self.attr_names.append (getter._name.rsplit (".",1)[-1])
+                self.attr_names.append (getter_name (getter))
                 yield getter
     # end def _getters_to_columns
 

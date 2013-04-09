@@ -130,6 +130,7 @@
 #    23-Jan-2013 (MG) Use `rollback_context` in ` Session_S.rollback`
 #    30-Jan-2013 (MG) Add support for `keep_zombies` to `rollback`
 #    30-Jan-2013 (MG) Bug fixing for `keep_zombies` handling
+#     9-Apr-2013 (CT) Add column `time` to table `change_history`
 #    ««revision-date»»···
 #--
 
@@ -593,6 +594,7 @@ class Session_S (_Session_) :
                         , type_name = getattr (change, "type_name", "")
                         , kind      = change.kind
                         , data      = change.as_pickle ()
+                        , time      = change.time
                         )
                     )
                 )
@@ -829,6 +831,7 @@ class Session_PC (_Session_) :
                         , type_name  = chg_dct.get ("type_name", "")
                         , data       = Pickle.dumps
                               ((chg_cls, chg_dct, []), Pickle.HIGHEST_PROTOCOL)
+                        , time       = chg_dct.get ("time", None)
                         , parent_cid = parent_cid
                         )
                     )

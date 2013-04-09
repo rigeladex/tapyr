@@ -113,12 +113,15 @@
 #    31-Jan-2013 (MG) `Manager.finalize` added to finalize creation of
 #                     `MOM.Query` objects
 #     7-Mar-2013 (CT) Use `polymorphic_relevant_epk`, not `polymorphic_epk`
+#     9-Apr-2013 (CT) Add `db_sig`, add column `time` to table `change_history`
 #    ««revision-date»»···
 #--
 
 from   _TFL                      import TFL
 import _TFL.defaultdict
 import _TFL.Accessor
+import _TFL._Meta.Once_Property
+
 from   _MOM                      import MOM
 import _MOM._DBW
 import _MOM._DBW._Manager_
@@ -183,8 +186,63 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
     metadata                 = schema.MetaData () ### XXX
+
+    sa_pid_sequence          = schema.Sequence ("pid_seq")
+
+    meta_table_columns       = dict \
+        ( change_history     =
+            ( schema.Column
+                ( "cid",       types.Integer,     primary_key = True
+                )
+            , schema.Column
+                ( "pid",       types.Integer,     nullable    = True)
+            , schema.Column
+                ( "type_name", Type_Name_Type)
+            , schema.Column
+                ( "kind",      types.String (30))
+            , schema.Column
+                ( "data",      types.LargeBinary, nullable    = True)
+            , schema.Column
+                ( "time",      types.DateTime)
+            , schema.Column
+                ( "parent_cid"
+                , types.Integer
+                , schema.ForeignKey ("change_history.cid")
+                )
+            )
+        , pids               =
+            ( schema.Column
+                ( "pid"
+                , types.Integer
+                , sa_pid_sequence
+                , primary_key = True
+                )
+            , schema.Column
+                ( "Type_Name", Type_Name_Type, nullable = True)
+            )
+        , scope_metadata     =
+            ( schema.Column ("pk",        types.Integer, primary_key = True)
+            , schema.Column ("readonly",  types.Boolean)
+            , schema.Column ("meta_data", types.PickleType)
+            ,
+            )
+        )
+
     cached_role_attr_classes = \
         (MOM.Attr.A_Cached_Role, MOM.Attr.A_Cached_Role_Set)
+
+    @TFL.Meta.Once_Property
+    def db_sig (cls) :
+        return tuple \
+            (   ( k
+                , tuple
+                    (  (c.name, str (c.type), c.nullable, c.primary_key)
+                    for c in columns
+                    )
+                )
+            for (k, columns) in sorted (cls.meta_table_columns.iteritems ())
+            )
+    # end def db_sig
 
     @classmethod
     def _add_check_constraints (cls, e_type, sa_table) :
@@ -388,39 +446,21 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _cached_role
 
     def _create_pid_table (cls, metadata) :
-        cls.sa_pid_sequence = schema.Sequence ("pid_seq")
+        t_name  = "pids"
+        columns = tuple (c.copy () for c in cls.meta_table_columns [t_name])
         cls.sa_pid          = Table = schema.Table \
-            ( "pids", metadata
-            , schema.Column
-                  ( "pid"
-                  , types.Integer
-                  , cls.sa_pid_sequence
-                  , primary_key = True
-                  )
-            , schema.Column ("Type_Name", Type_Name_Type, nullable = True)
+            ( t_name, metadata
+            , * columns
             , mysql_engine = "InnoDB"
             )
     # end def _create_pid_table
 
     def _create_SCM_table (cls, metadata) :
+        t_name  = "change_history"
+        columns = tuple (c.copy () for c in cls.meta_table_columns [t_name])
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
-            ( "change_history", metadata
-            , schema.Column
-                  ( "cid",       types.Integer,     primary_key = True
-                  )
-            , schema.Column
-                  ( "pid",       types.Integer,     nullable    = True)
-            , schema.Column
-                  ( "type_name", Type_Name_Type)
-            , schema.Column
-                  ( "kind",      types.String (30))
-            , schema.Column
-                  ( "data",      types.LargeBinary, nullable    = True)
-            , schema.Column
-                  ( "parent_cid"
-                  , types.Integer
-                  , schema.ForeignKey ("change_history.cid")
-                  )
+            ( t_name, metadata
+            , * columns
             , mysql_engine         = "InnoDB"
             , sqlite_autoincrement = True
             )
@@ -433,11 +473,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_SCM_table
 
     def _create_scope_table (cls, metadata) :
+        t_name  = "scope_metadata"
+        columns = tuple (c.copy () for c in cls.meta_table_columns [t_name])
         MOM.DBW.SAS._Session_._sa_scope = Table = schema.Table \
-            ( "scope_metadata", metadata
-            , schema.Column ("pk",        types.Integer, primary_key = True)
-            , schema.Column ("readonly",  types.Boolean)
-            , schema.Column ("meta_data", types.PickleType)
+            ( t_name, metadata
+            , * columns
             , mysql_engine = "InnoDB"
             )
         MOM.DBW.SAS.Query (Table, Table)

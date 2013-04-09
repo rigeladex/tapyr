@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -40,6 +40,7 @@
 #    22-Dec-2010 (CT) `etypes_by_pns` addded
 #    18-Nov-2011 (CT) Add `attribute_types`
 #    26-Jun-2012 (CT) Add `PNS_Aliases_R`
+#     9-Apr-2013 (CT) Add `DBW.db_sig` to `db_sig`
 #    ««revision-date»»···
 #--
 
@@ -143,7 +144,10 @@ class _App_Type_D_ (_App_Type_) :
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
-        return tuple (T.db_sig for T in self._T_Extension if T.relevant_root)
+        return \
+            ( self.DBW.db_sig
+            + tuple (T.db_sig for T in self._T_Extension if T.relevant_root)
+            )
     # end def db_sig
 
     @property

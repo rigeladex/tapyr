@@ -35,6 +35,7 @@
 #    23-Jun-2010 (CT) `DBS_map` added
 #     9-Sep-2012 (CT) Add `_commit_creation_change`
 #    31-Jan-2013 (MG) Add `finalize`
+#     9-Apr-2013 (CT) Add `db_sig`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
     """Backend independent _Manager_, describes the common interface."""
 
     DBS_map = {}
+    db_sig  = ()
 
     def create_database (cls, db_url, scope) :
         raise NotImplementedError

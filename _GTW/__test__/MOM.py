@@ -1617,6 +1617,8 @@ Attribute queries
     [BMT.Person (u'tin', u'tin', u'')]
     >>> scope.BMT.Rodent.query_s (Q.weight != None).all ()
     [BMT.Mouse (u'Magic_Mouse'), BMT.Mouse (u'mighty_mouse')]
+    >>> scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight).all ()
+    [42.0, 42.0]
     >>> scope.BMT.Rodent.query_s (Q.weight == None).all ()
     [BMT.Rat (u'betty'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver')]
     >>> scope.BMT.Rodent.query_s (Q.weight > 0).all ()
