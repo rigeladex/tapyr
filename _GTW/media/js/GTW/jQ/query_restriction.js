@@ -43,6 +43,7 @@
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //     9-Apr-2013 (CT) Add and use `new_menu_nested` for `attr_filters`
+//     9-Apr-2013 (CT) Fix dialogs ("gtw_dialog_is_closing")
 //    ««revision-date»»···
 //--
 
@@ -307,7 +308,12 @@
                       attr_select.cb.clear ();
                       attr_select.prefill  (val ? val.split (",") : []);
                       as_widget$
-                          .dialog ("option", "width", "auto")
+                          .dialog
+                              ( "option"
+                              , { dialogClass : "no-close"
+                                , width       : "auto"
+                                }
+                              )
                           .dialog ("open")
                           .dialog ("widget")
                               .position
@@ -372,8 +378,10 @@
                       };
                   };
                   result = saf$.dialog
-                      ( { autoOpen : false
-                        , title    : saf$.attr ("title")
+                      ( { dialogClass : "no-close"
+                        , autoOpen    : false
+                        , title       : saf$.attr ("title")
+                        , width       : "auto"
                         }
                       );
                   result.find (S.prototype)
@@ -675,7 +683,6 @@
                       $(S.order_by_display).val (displays.join (", "));
                       $(S.order_by_value)  .val (values.join   (", "));
                       order_by.cb.close ();
-                      qr$.find (S.apply_button).focus ();
                   }
                 , clear       : function clear (ev, ui) {
                       var S = options.selectors;
@@ -685,8 +692,13 @@
                       menu$.find ("a.button").removeClass ("ui-state-disabled");
                   }
                 , close       : function close (ev) {
-                      ob_widget$.dialog ("close");
-                      order_by.cb.clear ();
+                      ob_widget$.data ("gtw_dialog_is_closing", true);
+                      try {
+                          ob_widget$.dialog ("close");;
+                      } finally {
+                          ob_widget$.removeData ("gtw_dialog_is_closing");
+                      };
+                      qr$.find (S.apply_button).focus ();
                   }
                 , dir         : function dir (ev) {
                       var S        = options.selectors;
@@ -718,14 +730,24 @@
                       var target$ = $(ev.delegateTarget);
                       var li$     = target$.closest ("li");
                       var width   = qr$.width ();
-                      var dialog;
+                      if (  ob_widget$
+                         && ob_widget$.data ("gtw_dialog_is_closing")
+                         ) {
+                          qr$.find (S.apply_button).focus ();
+                          return false;
+                      };
                       if (ob_widget$ == null) {
                           ob_widget$ = order_by.setup_widget (target$);
                       };
                       order_by.cb.clear ();
                       order_by.prefill  (target$.val ().split (","));
                       ob_widget$
-                          .dialog ("option", "width", "auto")
+                          .dialog
+                              ( "option"
+                              , { dialogClass : "no-close"
+                                , width       : "auto"
+                                }
+                              )
                           .dialog ("open")
                           .dialog ("widget")
                               .position
@@ -799,8 +821,10 @@
                       };
                   };
                   result = obf$.dialog
-                      ( { autoOpen : false
-                        , title    : obf$.attr ("title")
+                      ( { autoOpen    : false
+                        , dialogClass : "no-close"
+                        , title       : obf$.attr ("title")
+                        , width       : "auto"
                         }
                       );
                   result.find (S.prototype)

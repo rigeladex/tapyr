@@ -31,6 +31,7 @@
 //     4-Apr-2013 (CT) Add support for `esf_polymorphic`
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
+//     9-Apr-2013 (CT) Fix `close` callback of `.dialog`
 //    ««revision-date»»···
 //--
 
@@ -309,8 +310,9 @@
                                 response.selected_type : false;
               var result  = $(response.html)
                   .dialog
-                      ( { autoOpen : false
-                        , close    : self.close_cb
+                      ( { autoOpen    : false
+                        , close       : function () { self.close_cb () }
+                        , dialogClass : "no-close"
                         }
                       );
               var esfp$   = result.hasClass (options.esf_polymorphic_cls) ?

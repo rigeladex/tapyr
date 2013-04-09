@@ -60,6 +60,7 @@
 #     8-Mar-2012 (CT) Factor rules for `.QR` to `html/e_type.m.jnj.media`
 #    19-Apr-2012 (CT) Add rule for `.ui-state-default` to placate Chrome
 #    13-Dec-2012 (CT) Add rule for `td+td` to `.Object-List`
+#     9-Apr-2013 (CT) Include "html/ui_dialog.media"
 #    ««revision-date»»···
 #--
 
@@ -177,5 +178,7 @@ JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
 Include ("html/autocomplete.media")
 Include ("html/cmd_button.media")
 Include ("html/cmd_menu.media")
+Include ("html/ui_dialog.media")
+
 
 ### __END__ html/e_type_admin.jnj.media

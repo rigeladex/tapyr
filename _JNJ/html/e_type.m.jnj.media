@@ -30,6 +30,7 @@
 #    19-Mar-2012 (CT) Add rule for `ui-state-default`
 #    14-Dec-2012 (CT) Add rule for `.button.vip`
 #     3-Apr-2013 (CT) Add `Rule.clearfix` to rule for `.QR`
+#     9-Apr-2013 (CT) Include "html/ui_dialog.media"
 #    ««revision-date»»···
 #--
 
@@ -278,5 +279,7 @@ style_sheet = Style_Sheet \
         , ** P.font_spec_normal
         )
     )
+
+Include ("html/ui_dialog.media")
 
 ### __END__ html/e_type.m.jnj.media
