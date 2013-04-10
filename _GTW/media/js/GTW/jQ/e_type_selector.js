@@ -32,6 +32,9 @@
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //     9-Apr-2013 (CT) Fix `close` callback of `.dialog`
+//    10-Apr-2013 (CT) Bind `beforeClose`, `close` events of `dialog` to
+//                     `before_close_cb`, `close_cb`;
+//                     bind `cancel_button` to `close` calling `dialog("close")`
 //    ««revision-date»»···
 //--
 
@@ -48,7 +51,8 @@
         };
     var ET_Selector = $GTW.Class.extend (
         { defaults              :
-            { completer_position  : default_position
+            { closing_flag        : "gtw_esf_closing"
+            , completer_position  : default_position
             , dialog_position     : default_position
             , esf_polymorphic_cls : "ESF-Polymorphic"
             , icon_map            : {}
@@ -95,6 +99,7 @@
               this.selectors.esf_polymorphic =
                   "." + this.options.esf_polymorphic_cls;
               this.ajax_response = undefined;
+              this.hd_input$     = undefined;
               this.widget        = undefined;
           }
         , activate_cb           : function activate_cb (ev) {
@@ -138,11 +143,18 @@
               if (response ["value"] && response ["display"]) {
                   self._apply_cb_inner (ev, response);
               };
-              self.close_cb  (ev);
+              self.close ();
               if ("esf_focusee" in self.options) {
                   self.options.esf_focusee.focus ();
               };
               return false;
+          }
+        , before_close_cb       : function before_close_cb (ev, ui) {
+              var self = (ev && "data" in ev) ? ev.data || this : this;
+              var hdi$ = self.hd_input$;
+              if (hdi$) {
+                  hdi$.data (self.options.closing_flag, true);
+              };
           }
         , clear_cb              : function clear_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
@@ -155,13 +167,24 @@
               self.a_form$.find (S.apply_button)
                   .button ("option", "disabled", true);
           }
-        , close_cb              : function close_cb (ev) {
+        , close                 : function close (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
-              self.widget.dialog ("destroy");
+              self.widget.dialog ("close");
+          }
+        , close_cb              : function close_cb (ev, ui) {
+              var self = (ev && "data" in ev) ? ev.data || this : this;
+              var hdi$ = self.hd_input$;
+              try {
+                  self.widget.dialog ("destroy");
+              } finally {
+                  if (hdi$) {
+                      hdi$.removeData (self.options.closing_flag);
+                  };
+              };
           }
         , completed_cb          : function completed_cb (inp$, response) {
               var S = this.options.selectors;
-              this.close_cb ();
+              this.close ();
               this.widget = this.setup_widget (response);
               this.widget
                   .data ("gtw_ets_completed_response", response);
@@ -311,8 +334,10 @@
               var result  = $(response.html)
                   .dialog
                       ( { autoOpen    : false
-                        , close       : function () { self.close_cb () }
-                        , dialogClass : "no-close"
+                        , beforeClose : function (ev, ui)
+                            { self.before_close_cb (ev, ui); }
+                        , close       : function (ev, ui)
+                            { self.close_cb (ev, ui); }
                         }
                       );
               var esfp$   = result.hasClass (options.esf_polymorphic_cls) ?
@@ -323,7 +348,7 @@
               result.find  (S.apply_button)
                   .button  ("option", "disabled", true)
                   .click   (self, self.apply_cb);
-              result.find  (S.cancel_button).click (self, self.close_cb);
+              result.find  (S.cancel_button).click (self, self.close);
               result.find  (S.clear_button).click  (self, self.clear_cb);
               result
                   .dialog ("option", "width", "auto")
@@ -413,8 +438,15 @@
         this.each
             ( function () {
                 var selector = new ET_Selector_HD (opts);
-                $(this).gtw_hd_input
-                    ({callback : function (ev) { selector.activate_cb (ev); }});
+                var self     = $(this);
+                selector.hd_input$ = self;
+                self.gtw_hd_input
+                    ( { callback     : function (ev) {
+                            selector.activate_cb (ev);
+                        }
+                      , closing_flag : selector.options.closing_flag
+                      }
+                    );
               }
             );
         return this;

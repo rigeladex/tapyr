@@ -44,6 +44,9 @@
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //     9-Apr-2013 (CT) Add and use `new_menu_nested` for `attr_filters`
 //     9-Apr-2013 (CT) Fix dialogs ("gtw_dialog_is_closing")
+//    10-Apr-2013 (CT) Bind `beforeClose`, `close` events of `obf$.dialog` to
+//                     `order_by.cb.before_close_cb`, `.cb.close_cb`;
+//                     bind `cancel_button` to `ob_widget$.dialog("close")`
 //    ««revision-date»»···
 //--
 
@@ -112,7 +115,8 @@
             , opts && opts ["ui_class"] || {}
             );
         var options  = $.extend
-            ( { treshold            : 0
+            ( { obf_closing_flag    : "gtw_obf_dialog_closing"
+              , treshold            : 0
               }
             , opts || {}
             , { completer_position  : completer_position
@@ -657,7 +661,7 @@
                       order_by.toggle_criteria (menu$, choice, true);
                       ob_widget$.find (S.apply_button).focus ();
                   }
-                , apply       : function apply (ev) {
+                , apply         : function apply (ev) {
                       var S     = options.selectors;
                       var crit$ = ob_widget$.find
                           (S.order_by_criteria + " " + S.order_by_criterion);
@@ -682,32 +686,36 @@
                           )
                       $(S.order_by_display).val (displays.join (", "));
                       $(S.order_by_value)  .val (values.join   (", "));
-                      order_by.cb.close ();
+                      ob_widget$.dialog ("close");
+                      qr$.find (S.apply_button).focus ();
                   }
-                , clear       : function clear (ev, ui) {
+                , before_close  : function before_close (ev) {
+                      var hdi$ = order_by.hd_input$;
+                      if (hdi$) {
+                          hdi$.data (options.obf_closing_flag, true);
+                      };
+                  }
+                , clear         : function clear (ev, ui) {
                       var S = options.selectors;
                       var but$    = ob_widget$.find (S.add_button);
                       var menu$   = but$.data ("gtw_qr_menu$").element;
                       ob_widget$.find (S.order_by_criteria).empty ();
                       menu$.find ("a.button").removeClass ("ui-state-disabled");
                   }
-                , close       : function close (ev) {
-                      ob_widget$.data ("gtw_dialog_is_closing", true);
-                      try {
-                          ob_widget$.dialog ("close");;
-                      } finally {
-                          ob_widget$.removeData ("gtw_dialog_is_closing");
+                , close         : function close (ev) {
+                      var hdi$ = order_by.hd_input$;
+                      if (hdi$) {
+                          hdi$.removeData (options.obf_closing_flag);
                       };
-                      qr$.find (S.apply_button).focus ();
                   }
-                , dir         : function dir (ev) {
+                , dir           : function dir (ev) {
                       var S        = options.selectors;
                       var target$  = $(ev.target);
                       var crit$    = target$.closest (S.order_by_criterion);
                       var dir$     = crit$.find (S.order_by_direction);
                       order_by.toggle_dir (dir$);
                   }
-                , disabler    : function disabler (ev) {
+                , disabler      : function disabler (ev) {
                       var S        = options.selectors;
                       var target$  = $(ev.target);
                       var crit$    = target$.closest (S.order_by_criterion);
@@ -725,29 +733,18 @@
                       order_by.toggle_criteria (menu$, choice, disabled);
                       return false;
                   }
-                , open        : function open (ev) {
+                , open          : function open (ev) {
                       var S       = options.selectors;
                       var target$ = $(ev.delegateTarget);
                       var li$     = target$.closest ("li");
+                      var obw$    = ob_widget$;
                       var width   = qr$.width ();
-                      if (  ob_widget$
-                         && ob_widget$.data ("gtw_dialog_is_closing")
-                         ) {
-                          qr$.find (S.apply_button).focus ();
-                          return false;
-                      };
-                      if (ob_widget$ == null) {
-                          ob_widget$ = order_by.setup_widget (target$);
+                      if (obw$ == null) {
+                          ob_widget$ = obw$ = order_by.setup_widget (target$);
                       };
                       order_by.cb.clear ();
                       order_by.prefill  (target$.val ().split (","));
-                      ob_widget$
-                          .dialog
-                              ( "option"
-                              , { dialogClass : "no-close"
-                                , width       : "auto"
-                                }
-                              )
+                      obw$.dialog ("option", "width", "auto")
                           .dialog ("open")
                           .dialog ("widget")
                               .position
@@ -792,7 +789,12 @@
               }
             , setup             : function setup () {
                   var li$ = $(this).closest ("li");
-                  li$.gtw_hd_input ({ callback : order_by.cb.open });
+                  order_by.hd_input$ = li$;
+                  li$.gtw_hd_input
+                      ( { callback     : order_by.cb.open
+                        , closing_flag : options.obf_closing_flag
+                        }
+                      );
               }
             , setup_widget      : function setup_widget (but$) {
                   var S      = options.selectors;
@@ -822,9 +824,9 @@
                   };
                   result = obf$.dialog
                       ( { autoOpen    : false
-                        , dialogClass : "no-close"
+                        , beforeClose : order_by.cb.before_close
+                        , close       : order_by.cb.close
                         , title       : obf$.attr ("title")
-                        , width       : "auto"
                         }
                       );
                   result.find (S.prototype)
@@ -849,7 +851,11 @@
                             }
                           );
                   result.find (S.apply_button).click  (order_by.cb.apply);
-                  result.find (S.cancel_button).click (order_by.cb.close);
+                  result.find (S.cancel_button).click
+                    ( function () {
+                          return ob_widget$.dialog ("close");
+                      }
+                    );
                   result.find (S.clear_button).click  (order_by.cb.clear);
                   result.find (S.order_by_direction)
                       .addClass ("ui-icon " + options.ui_class.sort_asc)

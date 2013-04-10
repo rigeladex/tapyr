@@ -41,7 +41,7 @@
             ri = renderer [render_item];
         };
         this.each
-            ( function (n) {
+            ( function setup_autocomplete (n) {
                 var self = $(this);
                 self.autocomplete (opts);
                 if (ri) {

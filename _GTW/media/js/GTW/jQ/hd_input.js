@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -17,6 +17,7 @@
 //    28-Nov-2011 (CT) Creation
 //     7-Dec-2011 (CT) Change plugin name to `gtw_hd_input`
 //     7-Mar-2012 (CT) Add `hidden`, set `disabled` of `hidden` to `false`, too
+//    10-Apr-2013 (CT) Add and use `closing_flag`
 //    ««revision-date»»···
 //--
 
@@ -24,22 +25,34 @@
 
 ( function ($, undefined) {
     $.fn.gtw_hd_input = function (opts) {
+        var self      = this;
         var selectors = $.extend
-            ( { display     : ".value.display"
-              , hidden      : ".value.hidden"
+            ( { display      : ".value.display"
+              , hidden       : ".value.hidden"
               }
             , opts && opts ["selectors"] || {}
             );
-        var options  = $.extend
-            ( {}
+        var options   = $.extend
+            ( { closing_flag : "gtw_hd_input_closing"
+              }
             , opts || {}
-            , { selectors : selectors
+            , { selectors    : selectors
               }
             );
         var display$ = $(selectors.display, this);
         var hidden$  = $(selectors.hidden,  this);
         if ("callback" in options) {
-            display$.bind ("focus", options.callback);
+            display$.bind
+                ( "focus"
+                , function hd_input_focus () {
+                      var closing = self.data (options.closing_flag);
+                      if (closing) {
+                          return false;
+                      } else {
+                          return options.callback.apply (this, arguments);
+                      };
+                  }
+                );
         }
         display$.prop ("disabled", false);
         hidden$.prop  ("disabled", false);
