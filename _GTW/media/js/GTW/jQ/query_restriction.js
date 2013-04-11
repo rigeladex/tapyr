@@ -48,6 +48,8 @@
 //                     `order_by.cb.before_close_cb`, `.cb.close_cb`;
 //                     bind `cancel_button` to `ob_widget$.dialog("close")`
 //    11-Apr-2013 (CT) Add `a_pred` to `new_menu_nested`
+//    11-Apr-2013 (CT) DRY `toggle_disabled_state`, fix it for nested entries;
+//                     fix `attr_select.prefill` call of `toggle` (`af.label`)
 //    ««revision-date»»···
 //--
 
@@ -196,6 +198,26 @@
                 return result;
               } ()
             );
+        var toggle_disabled_state = function toggle_disabled_state (menu$, choice, state) {
+            var cl = choice.length;
+            menu$.find ("a.button").each
+                ( function () {
+                    var a$         = $(this);
+                    var c          = a$.data ("gtw_qr_choice");
+                    var label      = c ? c.label : a$.html ();
+                    var label_head = label.slice (0, cl);
+                    var label_sep  = label [cl];
+                    var match      =
+                        (  (cl <= label.length)
+                        && (!label_sep)
+                        || (label_sep === "/")
+                        );
+                    if (match && (choice === label_head)) {
+                        a$.toggleClass ("ui-state-disabled", state);
+                    };
+                  }
+                );
+        };
         var add_attr_filter_cb = function add_attr_filter_cb (ev) {
             var S       = options.selectors;
             var target$ = $(ev.delegateTarget);
@@ -266,7 +288,7 @@
                                 };
                             }
                           )
-                      $(S.select_attr_value).val (values.join   (", "));
+                      $(S.select_attr_value).val (values.join (", "));
                       attr_select.cb.close ();
                       qr$.find (S.apply_button).focus ();
                   }
@@ -349,7 +371,7 @@
                           af = af_map [choice];
                           a$ = attr_select.new_attr (af.label);
                           attrs$.append (a$);
-                          attr_select.toggle (menu$, choice, true);
+                          attr_select.toggle (menu$, af.label, true);
                       };
                   };
               }
@@ -420,25 +442,7 @@
                       .parent   ().addClass ("ui-state-default");
                   return result;
               }
-            , toggle         : function toggle (menu$, choice, state) {
-                  var cl = choice.length;
-                  menu$.find ("a.button").each
-                      ( function () {
-                          var a$ = $(this);
-                          var label      = a$.html ();
-                          var label_head = label.slice (0, cl);
-                          var label_sep  = label [cl];
-                          var match =
-                              (  (cl <= label.length)
-                              && (!label_sep)
-                              || (label_sep === "/")
-                              );
-                          if (match && (choice === label_head)) {
-                              a$.toggleClass ("ui-state-disabled", state);
-                          };
-                        }
-                      );
-              }
+            , toggle         : toggle_disabled_state
             };
         var disabler_cb = function disabler_cb (ev) {
             var S        = options.selectors;
@@ -874,25 +878,7 @@
                       (S.order_by_criterion, "click", order_by.cb.dir);
                   return result;
               }
-            , toggle_criteria   : function toggle_criteria (menu$, choice, state) {
-                  var cl = choice.length;
-                  menu$.find ("a.button").each
-                      ( function () {
-                          var a$ = $(this);
-                          var label      = a$.html ();
-                          var label_head = label.slice (0, cl);
-                          var label_sep  = label [cl];
-                          var match =
-                              (  (cl <= label.length)
-                              && (!label_sep)
-                              || (label_sep === "/")
-                              );
-                          if (match && (choice === label_head)) {
-                              a$.toggleClass ("ui-state-disabled", state);
-                          };
-                        }
-                      );
-              }
+            , toggle_criteria   : toggle_disabled_state
             , toggle_dir        : function toggle_dir (dir$) {
                   var asc   = dir$.hasClass (options.ui_class.sort_asc);
                   var title = asc ?
