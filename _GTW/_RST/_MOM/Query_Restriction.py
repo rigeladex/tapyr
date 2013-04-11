@@ -38,6 +38,7 @@
 #                     `Filter_Atoms`
 #     2-Apr-2013 (CT) Add optional argument `q` to `_setup_attr`
 #     9-Apr-2013 (CT) Add exception handler to `af_args_api`
+#    11-Apr-2013 (CT) Factor `_pepk_filter` from `Filter` and fix
 #    ««revision-date»»···
 #--
 
@@ -125,15 +126,8 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         t_pat = cls._t_pat
         if t_pat.search (key) :
             name, typ, tail = t_pat.split (key, 1, 2)
-            q = getattr (E_Type.AQ, name)
-            if q :
-                qd = q [typ]
-                f, fq = cls._setup_attr \
-                    (E_Type, key, name, default_op, value, qd)
-                return f
-            else :
-                raise ValueError \
-                    ("Unknown attribute %s.%s" % (E_Type.type_name, name))
+            return cls._pepk_filter \
+                (E_Type, key, name, typ, tail, value, default_op)
         else :
             request = TFL.Record (req_data = data, req_data_list = data)
             fs, fqs = cls.attr_filters \
@@ -340,6 +334,42 @@ class RST_Query_Restriction (TFL.Meta.Object) :
             filters_q.append (fq)
         return tuple (filters), tuple (filters_q)
     # end def attr_filters
+
+    @classmethod
+    def _pepk_filter (cls, E_Type, key, name, typ, tail, value, default_op) :
+        q = getattr (E_Type.AQ, name)
+        if not q :
+            raise ValueError \
+                (_T ("Unknown attribute %s.%s") % (E_Type.type_name, name))
+        try :
+            qd = q [typ]
+        except KeyError :
+            raise ValueError \
+                ( _T ("Unknown type %s for attribute %s.%s")
+                % (typ, E_Type.type_name, name)
+                )
+        op     = None
+        if tail :
+            t_name = tail
+            if cls._a_pat_opt.match (tail) :
+                t_name = cls._a_pat_opt.name
+                op     = cls._a_pat_opt.op
+            else :
+                try :
+                    t_name, op, v = tail.split (",", 3)
+                except (ValueError, TypeError) :
+                    pass
+            qa = getattr (qd, t_name)
+            if not qa :
+                raise ValueError \
+                    ( _T ( "Unknown attribute %s.%s[%s].%s")
+                    % ((E_Type.type_name, name, typ, tail))
+                    )
+        else :
+            qa = qd
+        f, fq = cls._setup_attr (E_Type, key, name, op or default_op, value, qa)
+        return f
+    # end def _pepk_filter
 
     @TFL.Meta.Class_and_Instance_Method
     def _qop_desc (soc, qop) :

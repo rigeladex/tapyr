@@ -71,6 +71,8 @@
 #     2-Apr-2013 (CT) Redefine `Id_Entity._as_template_elem_inv` to add
 #                     `type_name`
 #     3-Apr-2013 (CT) Add `ui_type_name` to `Id_Entity._as_template_elem`
+#    11-Apr-2013 (CT) Redefine `_Id_Entity_NP_._ui_name_T` to add `[type_name]`
+#    11-Apr-2013 (CT) Include `children_np` in `Sig_Map`
 #    ««revision-date»»···
 #--
 
@@ -148,6 +150,10 @@ class _Base_ (TFL.Meta.Object) :
         return TFL.Record (** result)
     # end def _as_template_elem
 
+    def _sig_map_transitive (self, seen_etypes) :
+        return {}
+    # end def _sig_map_transitive
+
 # end class _Base_
 
 class _Container_ (_Base_) :
@@ -223,6 +229,16 @@ class _Container_ (_Base_) :
             seen_etypes [cet] += 1
         return result
     # end def _do_recurse
+
+    def _sig_map_transitive (self, seen_etypes) :
+        seen_etypes [self.E_Type] += 1
+        result = self.__super._sig_map_transitive (seen_etypes)
+        rc = self._recursion_limit
+        for c in self.Attrs :
+            if self._do_recurse (c, rc, seen_etypes) :
+                result.update (c._sig_map_transitive (seen_etypes))
+        return result
+    # end def _sig_map_transitive
 
     def _unwrapped_atoms (self, seen_etypes) :
         seen_etypes [self.E_Type] += 1
@@ -437,6 +453,14 @@ class _Type_ (_Base_) :
             return attr.cooked (value)
     # end def _cooker
 
+    def _sig_map_transitive (self, seen_etypes) :
+        result  = self.__super._sig_map_transitive (seen_etypes)
+        op_keys = self.Op_Keys
+        if op_keys :
+            result [self.Signatures [op_keys]] = op_keys
+        return result
+    # end def _sig_map_transitive
+
     def _unwrapped_atoms (self, seen_etypes) :
         yield self.Unwrapped
     # end def _unwrapped_atoms
@@ -614,6 +638,15 @@ class Id_Entity (_Composite_) :
         return result
     # end def _as_template_elem
 
+    def _sig_map_transitive (self, seen_etypes) :
+        result     = self.__super._sig_map_transitive (seen_etypes)
+        E_Types_AQ = self.E_Types_AQ
+        if E_Types_AQ :
+            for aq in E_Types_AQ.itervalues () :
+                result.update (aq._sig_map_transitive (seen_etypes))
+        return result
+    # end def _sig_map_transitive
+
     def __getitem__ (self, key) :
         E_Types_AQ = self.E_Types_AQ
         if E_Types_AQ :
@@ -650,6 +683,12 @@ class _Id_Entity_NP_ (Id_Entity) :
         result ["type_name"] = self.E_Type.type_name
         return result
     # end def _as_json_cargo_inv
+
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
+    def _ui_name_T (self) :
+        return "%s[%s]" % ((self.__super._ui_name_T), _T (self.E_Type.ui_name))
+    # end def _ui_name_T
 
     def Wrapped (self, outer) :
         assert not self._outer
@@ -778,11 +817,10 @@ class E_Type (_Container_) :
 
     @TFL.Meta.Once_Property
     def Sig_Map (self) :
-        result = {}
-        Signatures = _Type_.Signatures
-        for f in uniq (f.Op_Keys for f in self.Attrs_Transitive) :
-            if f :
-                result [Signatures [f]] = f
+        result      = {}
+        seen_etypes = ETC ()
+        for c in self.Attrs :
+            result.update (c._sig_map_transitive (seen_etypes))
         return result
     # end def Sig_Map
 

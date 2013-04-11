@@ -47,9 +47,10 @@
 //    10-Apr-2013 (CT) Bind `beforeClose`, `close` events of `obf$.dialog` to
 //                     `order_by.cb.before_close_cb`, `.cb.close_cb`;
 //                     bind `cancel_button` to `ob_widget$.dialog("close")`
-//    11-Apr-2013 (CT) Add `a_pred` to `new_menu_nested`
+//    11-Apr-2013 (CT) Add `pred` to `new_menu_nested`
 //    11-Apr-2013 (CT) DRY `toggle_disabled_state`, fix it for nested entries;
 //                     fix `attr_select.prefill` call of `toggle` (`af.label`)
+//    11-Apr-2013 (CT) Add polymorphic attributes to attribute filter menu
 //    ««revision-date»»···
 //--
 
@@ -155,6 +156,17 @@
                         result.push (f);
                         if ("attrs" in f) {
                             add (f.attrs, f.key, f.label);
+                        } else if ("children_np" in f) {
+                            for ( var j = 0, lj = f.children_np.length, c
+                                ; j < lj
+                                ; j++
+                                ) {
+                                c = f.children_np [j];
+                                add ( c.attrs
+                                    , f.key   + "[" + c.type_name    + "]"
+                                    , f.label + "[" + c.ui_type_name + "]"
+                                    );
+                            };
                         };
                     };
                 };
@@ -574,11 +586,11 @@
             menu.append (result);
             return result;
         };
-        var new_menu__add_nested = function new_menu__add_nested (choice, menu, cb, off, a_pred) {
+        var new_menu__add_nested = function new_menu__add_nested (choice, menu, cb, off, pred, icnp) {
             var label  = choice.label.substr (off || 0);
             var offs   = choice.label.length + qrs.ui_sep.length;
             var sub, tail = "", treshold = 2;
-            if (a_pred (choice)) {
+            if (pred (choice)) {
                 new_menu__add (choice, menu, cb, off);
                 tail     = "/...";
                 treshold = 3;
@@ -588,20 +600,41 @@
                     sub = $(L ("li")).append
                         ( $(L ("a.button", { html : label + tail })));
                     menu.append (sub);
-                    new_menu__add_sub (choice.attrs, sub, cb, offs, a_pred);
+                    new_menu__add_sub (choice.attrs, sub, cb, offs, pred, icnp);
                 } else {
                     for (var j = 0, lj = choice.attrs.length; j < lj; j++) {
                         new_menu__add_nested
-                            (choice.attrs [j], menu, cb, off, a_pred);
+                            (choice.attrs [j], menu, cb, off, pred, icnp);
                     };
                 };
+            } else if (icnp && "children_np" in choice) {
+                sub = $(L ("li")).append
+                    ( $(L ("a.button", { html : label + tail })));
+                menu.append (sub);
+                new_menu__add_sub_cnp
+                        (choice.children_np, sub, cb, offs, pred);
             };
         };
-        var new_menu__add_sub = function new_menu__add_sub (choices, menu, cb, off, a_pred) {
+        var new_menu__add_sub = function new_menu__add_sub (choices, menu, cb, off, pred, icnp) {
             var sub_menu = $(L ("ul"));
             menu.append (sub_menu);
             for (var i = 0, li = choices.length; i < li; i++) {
-                new_menu__add_nested (choices [i], sub_menu, cb, off, a_pred);
+                new_menu__add_nested
+                    (choices [i], sub_menu, cb, off, pred, icnp);
+            };
+        };
+        var new_menu__add_sub_cnp = function new_menu__add_sub_cnp (children_np, menu, cb, off, pred) {
+            var sub_menu = $(L ("ul"));
+            var etn, offs, typ_menu, typ;
+            menu.append (sub_menu);
+            for (var i = 0, li = children_np.length; i < li; i++) {
+                typ  = children_np [i];
+                etn  = "[" + typ.ui_type_name + "]";
+                offs = off + etn.length;
+                typ_menu = $(L ("li")).append
+                    ( $(L ("a.button", { html : etn })));
+                sub_menu.append (typ_menu);
+                new_menu__add_sub (typ.attrs, typ_menu, cb, offs, pred, true);
             };
         };
         var new_menu__create = function new_menu__create (options) {
@@ -618,25 +651,25 @@
                 .data     ("ui-menu");
             return result;
         };
-        var new_menu = function new_menu (choices, cb, options) {
-            var menu = new_menu__create (options), result;
+        var new_menu = function new_menu (choices, cb, kw) {
+            var opts = (kw && "opts" in kw) ? kw.opts : {};
+            var menu = new_menu__create (opts);
             for (var i = 0, li = choices.length; i < li; i++) {
                 new_menu__add (choices [i], menu, cb, 0);
             };
-            result = new_menu__finish (menu);
-            return result;
+            return new_menu__finish (menu);
         };
-        var new_menu_nested = function new_menu_nested (choices, cb, options, a_pred) {
-            var menu = new_menu__create (options), result;
-            menu.addClass ("nested")
+        var new_menu_nested = function new_menu_nested (choices, cb, kw) {
+            var pred = (kw && "pred" in kw) ? kw.pred
+                         : function () { return true; };
+            var icnp = (kw && "icnp" in kw) ? kw.icnp : false;
+            var opts = (kw && "opts" in kw) ? kw.opts : {};
+            var menu = new_menu__create (opts);
+            menu.addClass ("nested");
             for (var i = 0, li = choices.length; i < li; i++) {
-                new_menu__add_nested
-                    ( choices [i], menu, cb, 0
-                    , a_pred || function () { return true; }
-                    );
+                new_menu__add_nested (choices [i], menu, cb, 0, pred, icnp);
             };
-            result = new_menu__finish (menu);
-            return result;
+            return new_menu__finish (menu);
         };
         var op_select_cb = function op_select_cb (ev) {
             var S       = options.selectors;
@@ -910,8 +943,12 @@
                 afs.ops_menu$ = new_menu
                     ( sig_map [afs.sig_key]
                     , op_select_cb
-                    , { open     : function (ev, menu) { adjust_op_menu (afs); }
-                      , position : { my : "left top" }
+                    , { opts :
+                          { open     : function (ev, menu) {
+                                adjust_op_menu (afs);
+                            }
+                          , position : { my : "left top" }
+                          }
                       }
                     );
             };
@@ -970,10 +1007,12 @@
             return head + tail;
         };
         var update_attr_filter_op = function update_attr_filter_op (afc$, op, key) {
-            var S    = options.selectors;
-            var afs  = af_map  [afc$.attr ("title")];
-            var but$ = $(S.attr_filter_op, afc$);
-            var oop  = op_map_by_sym [but$.html ()];
+            var S     = options.selectors;
+            var afm   = af_map;
+            var title = afc$.attr ("title");
+            var afs   = afm [title];
+            var but$  = $(S.attr_filter_op, afc$);
+            var oop   = op_map_by_sym [but$.html ()];
             if (oop) {
                 afs.ops_selected [oop.sym] = false;
             };
@@ -998,8 +1037,12 @@
                     attach_menu
                         ( $(this)
                         , new_menu_nested
-                            ( qrs.filters, add_attr_filter_cb, {}
-                            , function (choice) { return "sig_key" in choice; }
+                            ( qrs.filters, add_attr_filter_cb
+                            , { pred : function (choice) {
+                                    return "sig_key" in choice;
+                                }
+                              , icnp : true
+                              }
                             )
                         );
                   }
