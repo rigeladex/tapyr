@@ -44,6 +44,7 @@
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove `__init__`
 #     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
+#    15-Apr-2013 (CT) Protect `_resource_entries` against `result` of `None`
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,7 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         # end def _response_entry
 
         def _resource_entries (self, resource, request, response) :
-            result = resource.objects
+            result = resource.objects or []
             return sorted (result, key = Q.pid)
         # end def _resource_entries
 
