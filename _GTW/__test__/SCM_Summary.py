@@ -33,12 +33,15 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    12-Sep-2012 (CT) Adapt to recording of electric changes
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    15-Apr-2013 (CT) Adapt to change of `MOM.Attr.Kind.reset`
 #    ««revision-date»»···
 #--
 
 from __future__ import unicode_literals
 
-from _GTW.__test__.model import *
+from _GTW.__test__.model           import *
+from _GTW.__test__.Boat_in_Regatta import clean_change, show_change
+
 import datetime
 
 _basic = r"""
@@ -95,7 +98,7 @@ _basic = r"""
     >>> ucc  = csm1 = scope.uncommitted_changes
 
     >>> for csp in ucc.changes :
-    ...     print csp
+    ...     show_change (csp)
     <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'1'}>
     <Create SRM.Boat_Class (u'420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '2', 'max_crew' : u'2'}>
     <Create SRM.Boat_Class (u'Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '3', 'max_crew' : u'1'}>
@@ -109,7 +112,7 @@ _basic = r"""
     <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '11', 'perma_name' : u'himmelfahrt'}>
     <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '12', 'perma_name' : u'optimist'}>
     <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '13', 'perma_name' : u'yardstick'}>
-    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 9}>
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'registration_date' : u'<today>', 'skipper' : 9}>
     <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), new-values = {'last_cid' : '15', 'points' : u'8'}>
     <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), new-values = {'last_cid' : '16', 'points' : u'4'}>
     <Create SWP.Page (u'event-1-text', 'SWP.Page'), new-values = {'contents' : u'<p>Text for the 1. event</p>\n', 'date' : (('start', u'2010/09/08'),), 'last_cid' : '17', 'text' : u'Text for the 1. event'}>
@@ -164,7 +167,7 @@ _basic = r"""
     <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '66'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 1
-    ...     print csp
+    ...     show_change (csp)
     <Change Summary for pid 1: newborn, 1 change>
         <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'1'}>
         <Modify SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), old-values = {'last_cid' : '1', 'loa' : u''}, new-values = {'last_cid' : '31', 'loa' : u'2.43'}>
@@ -198,7 +201,7 @@ _basic = r"""
     <Change Summary for pid 12: newborn>
         <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '13', 'perma_name' : u'yardstick'}>
     <Change Summary for pid 13: newborn>
-        <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 9}>
+        <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'registration_date' : u'<today>', 'skipper' : 9}>
     <Change Summary for pid 14: newborn, 1 change>
         <Create SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), new-values = {'last_cid' : '15', 'points' : u'8'}>
         <Modify SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '15'}, new-values = {'discarded' : u'yes', 'last_cid' : '33'}>
@@ -276,7 +279,7 @@ _basic = r"""
         <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '66'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 2
-    ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
     1 [('last_cid', (old = None, new = '31')), ('loa', (old = u'', new = u'2.43')), ('max_crew', (old = None, new = u'1'))]
     2 [('last_cid', (old = None, new = '2')), ('max_crew', (old = None, new = u'2'))]
     3 [('last_cid', (old = None, new = '3')), ('max_crew', (old = None, new = u'1'))]
@@ -289,7 +292,7 @@ _basic = r"""
     10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '36')), ('perma_name', (old = None, new = u'himmelfahrt'))]
     11 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
     12 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '13')), ('perma_name', (old = None, new = u'yardstick'))]
-    13 [('last_cid', (old = None, new = '14')), ('skipper', (old = None, new = 9))]
+    13 [('last_cid', (old = None, new = '14')), ('registration_date', (old = None, new = u'<today>')), ('skipper', (old = None, new = 9))]
     14 [('discarded', (old = u'no', new = u'yes')), ('last_cid', (old = None, new = '33')), ('points', (old = None, new = u'8'))]
     15 [('last_cid', (old = None, new = '16')), ('points', (old = None, new = u'4'))]
     16 [('contents', (old = None, new = u'<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = u'Text for the 1. event'))]
@@ -437,7 +440,7 @@ _basic = r"""
         <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '109'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 4
-    ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
     18 [('date', (old = (('start', u'2010/08/18'),), new = (('finish', u'2010/08/19'), ('start', u'2010/08/13')))), ('last_cid', (old = '19', new = '85'))]
     20 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '51', new = '100'))]
     35 [('last_cid', (old = '59', new = None))]
@@ -483,16 +486,16 @@ _basic = r"""
 
     >>> ucc = scope.uncommitted_changes
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 5
-    ...     print csp
+    ...     show_change (csp)
     <Change Summary for pid 6: just died>
         <Destroy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), old-values = {'last_cid' : '6'}>
-          <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : 9}>
+          <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'registration_date' : u'<today>', 'skipper' : 9}>
             <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '33', 'points' : u'8'}>
             <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 7: just died>
         <Destroy SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1134', u'', 'SRM.Boat'), old-values = {'last_cid' : '8'}>
     <Change Summary for pid 13: just died>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'skipper' : 9}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '14', 'registration_date' : u'<today>', 'skipper' : 9}>
           <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'yes', 'last_cid' : '33', 'points' : u'8'}>
           <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
     <Change Summary for pid 14: just died>
@@ -501,10 +504,10 @@ _basic = r"""
         <Destroy SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'2', 'SRM.Race_Result'), old-values = {'last_cid' : '16', 'points' : u'4'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 6
-    ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
     6 [('last_cid', (old = '6', new = None))]
     7 [('last_cid', (old = '8', new = None))]
-    13 [('last_cid', (old = '14', new = None)), ('skipper', (old = 9, new = None))]
+    13 [('last_cid', (old = '14', new = None)), ('registration_date', (old = u'<today>', new = None)), ('skipper', (old = 9, new = None))]
     14 [('discarded', (old = u'yes', new = None)), ('last_cid', (old = '33', new = None)), ('points', (old = u'8', new = None))]
     15 [('last_cid', (old = '16', new = None)), ('points', (old = u'4', new = None))]
 
@@ -524,7 +527,7 @@ _basic = r"""
         <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'finish' : u'', 'last_cid' : '115'}, new-values = {'finish' : u'2077/11/30', 'last_cid' : '116'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 8
-    ...     print csp.pid, sorted (csp.attribute_changes.iteritems ())
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
     8 [('last_cid', (old = '32', new = '116')), ('lifetime', (old = (('finish', u''), ('start', u'')), new = (('finish', u'2077/11/30'), ('start', u'1997/11/16'))))]
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :

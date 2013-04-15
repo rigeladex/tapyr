@@ -195,6 +195,7 @@
 #    25-Feb-2013 (CT) Add `query_preconditions` to `Query._get_computed`
 #    25-Feb-2013 (CT) Remove `auto_up_depends` check from `Query._check_sanity`
 #    28-Mar-2013 (CT) Set `Query.is_changeable` to `False`
+#    15-Apr-2013 (CT) Change `reset` to use `self.default`, not `attr.default`
 #    ««revision-date»»···
 #--
 
@@ -366,12 +367,13 @@ class Kind (MOM.Prop.Kind) :
     # end def default
 
     def reset (self, obj) :
-        attr = self.attr
-        if attr.raw_default and attr.default is None :
-            attr.default = attr.from_string \
+        attr    = self.attr
+        default = self.default
+        if default is None and attr.raw_default :
+            default = attr.default = attr.from_string \
                 (attr.raw_default, obj, obj.globals ())
         return self._set_raw \
-            (obj, attr.raw_default, attr.default, changed = True)
+            (obj, attr.raw_default, default, changed = True)
     # end def reset
 
     def set_pickle_cargo (self, obj, cargo) :

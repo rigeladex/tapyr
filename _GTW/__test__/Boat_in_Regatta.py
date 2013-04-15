@@ -45,6 +45,7 @@
 #    10-Dec-2012 (CT) Add tests for `.FO` (nested attributes)
 #    19-Mar-2013 (CT) Add tests for `AQ.Attrs`, `AQ.E_Type`, `AQx`
 #    19-Mar-2013 (CT) Add test for `AQ.Atoms`
+#    15-Apr-2013 (CT) Adapt to change of `MOM.Attr.Kind.reset`
 #    ««revision-date»»···
 #--
 
@@ -53,17 +54,18 @@ from   __future__  import unicode_literals
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
-    >>> PAP = scope.PAP
-    >>> SRM = scope.SRM
-    >>> BiR = SRM.Boat_in_Regatta
-    >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1, raw = True)
-    >>> ys  = SRM.Handicap ("Yardstick", raw = True)
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
-    >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian", raw = True)
-    >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
-    >>> rev = SRM.Regatta_Event (u"Himmelfahrt", (u"20080501", ), raw = True)
-    >>> reg = SRM.Regatta_C (rev.epk_raw, bc.epk_raw, raw = True)
-    >>> reh = SRM.Regatta_H (rev.epk_raw, ys,  raw = True)
+    >>> PAP   = scope.PAP
+    >>> SRM   = scope.SRM
+    >>> BiR   = SRM.Boat_in_Regatta
+    >>> today = BiR.registration_date.default
+    >>> bc    = SRM.Boat_Class ("Optimist", max_crew = 1, raw = True)
+    >>> ys    = SRM.Handicap ("Yardstick", raw = True)
+    >>> b     = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> p     = PAP.Person.instance_or_new (u"Tanzer", u"Christian", raw = True)
+    >>> s     = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
+    >>> rev   = SRM.Regatta_Event (u"Himmelfahrt", (u"20080501", ), raw = True)
+    >>> reg   = SRM.Regatta_C (rev.epk_raw, bc.epk_raw, raw = True)
+    >>> reh   = SRM.Regatta_H (rev.epk_raw, ys,  raw = True)
     >>> list (r.name for r in sorted (rev.regattas))
     [u'Optimist', u'Yardstick']
 
@@ -93,6 +95,9 @@ _test_code = r"""
     SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
 
     >>> bir = BiR (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
+    >>> bir.registration_date == today
+    True
+
     >>> bir.epk_raw
     (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     >>> BiR.instance (* bir.epk_raw, raw = True)
@@ -547,24 +552,23 @@ _test_referential_integrity = r"""
     Destroyed_Entity: <Destroyed entity SRM.Boat_in_Regatta (((u'optimist', ), u'AUT', 1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))>: access to attribute 'skipper' not allowed
 
     >>> for c in scope.uncommitted_changes :
-    ...     print (c)
+    ...     show_change (c)
     <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
         <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
     <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : 5}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
 
     >>> for c in reversed (scope.uncommitted_changes [-1:]) :
     ...     c.undo (scope)
 
     >>> for c in scope.uncommitted_changes :
-    ...     print (c)
+    ...     show_change (c)
     <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
         <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
     <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : 5}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
     <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '13'}>
-    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'skipper' : 5}>
-
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'registration_date' : u'<today>', 'skipper' : 5}>
 
 """
 
@@ -610,7 +614,7 @@ _test_undo = r"""
     >>> s.last_cid, scope.max_cid
     (9, 10)
     >>> for c in scope.uncommitted_changes : ### after first destroy
-    ...     print (c)
+    ...     show_change (c)
     <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
         <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
 
@@ -619,7 +623,7 @@ _test_undo = r"""
 
     >>> scope.rollback ()   ### first rollback
     >>> for c in scope.uncommitted_changes :
-    ...     print (c)
+    ...     show_change (c)
 
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 3.5
     [1, 2, 3, 4, 5, 6, 7, 8]
@@ -637,7 +641,7 @@ _test_undo = r"""
     >>> s.last_cid
     11
     >>> for c in scope.query_changes () : ### after second destroy of club
-    ...     print ("%%2d %%s" %% (c.cid, c))
+    ...     print ("%%2d %%s" %% (c.cid, clean_change (c)))
      1 <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'1'}>
      2 <Create SRM.Club (u'SC-AMS', 'SRM.Club'), new-values = {'last_cid' : '2'}>
      3 <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), new-values = {'last_cid' : '3'}>
@@ -645,7 +649,7 @@ _test_undo = r"""
      5 <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', (u'SC-AMS', 'SRM.Club'), 'SRM.Sailor'), new-values = {'last_cid' : '5'}>
      6 <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '6', 'perma_name' : u'himmelfahrt'}>
      7 <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
-     8 <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '8', 'skipper' : 5}>
+     8 <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
     11 <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '11'}>
     12 <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
         <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '11'}>
@@ -658,11 +662,11 @@ _test_undo = r"""
     <Destroyed entity SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')>
 
     >>> for c in scope.uncommitted_changes : ### after second destroy
-    ...     print (c)
+    ...     show_change (c)
     <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
         <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '11'}>
     <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '11'}>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'skipper' : 5}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 4
     [1, 3, 4, 6, 7]
 
@@ -674,7 +678,7 @@ _test_undo = r"""
     SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ))
 
     >>> for c in scope.uncommitted_changes : ### after second rollback
-    ...     print (c)
+    ...     show_change (c)
 
 
     >>> for _e in scope.MOM.Id_Entity.query_s () : ### 5
@@ -694,23 +698,37 @@ _test_undo = r"""
 
 """
 
-_ADD_to__test_undo = """
+from   _GTW.__test__.model import *
+from   _TFL.predicate      import first
+from   _TFL.Regexp         import Re_Replacer, re
+from   datetime            import datetime
 
-"""
+_clean_registration_date = Re_Replacer \
+    ( r"u'%s'" % (datetime.now ().strftime("%Y/%m/%d"), )
+    , r"u'<today>'"
+    )
 
-from _GTW.__test__.model import *
-from _TFL.predicate      import first
+def clean_change (c) :
+    result = str (c)
+    result = _clean_registration_date (result)
+    return result
+# end def clean_change
+
+def show_change (c) :
+    print clean_change (c)
+# end def show_changes
+
+def show_dep (x) :
+    if x and x.dependencies :
+        for k, v in sorted (x.dependencies.iteritems (), key = TFL.Getter [0].ui_display) :
+            print k, ":", v
+    else :
+        print "---"
 
 def show_ora (x) :
     if x and x.object_referring_attributes :
         for k, vs in sorted (x.object_referring_attributes.iteritems ()) :
             print k, ":", ", ".join (str (v) for v in vs)
-    else :
-        print "---"
-def show_dep (x) :
-    if x and x.dependencies :
-        for k, v in sorted (x.dependencies.iteritems (), key = TFL.Getter [0].ui_display) :
-            print k, ":", v
     else :
         print "---"
 
