@@ -29,6 +29,7 @@
 #    13-Mar-2006 (CT) Creation
 #    14-Nov-2006 (CT) `mm_set` added
 #    20-Mar-2013 (CT) Derive from `TFL.defaultdict_cb`, not `._defaultdict_`
+#    16-Apr-2013 (CT) Add `mm_dict_mm_dict`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,13 @@ class mm_set (TFL.defaultdict_cb) :
     default_factory = set
 
 # end class mm_set
+
+class mm_dict_mm_dict (TFL.defaultdict_cb) :
+    """`defaultdict` with `mm_dict` as `default_factory`."""
+
+    default_factory = mm_dict
+
+# end class mm_dict_mm_dict
 
 class mm_dict_mm_list (TFL.defaultdict_cb) :
     """`defaultdict` with `mm_list` as `default_factory`."""
