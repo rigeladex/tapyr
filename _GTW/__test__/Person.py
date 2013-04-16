@@ -187,13 +187,12 @@ _test_partial_roles = """
     ...         print ET.type_name, pr, pret.type_name, sorted (pret.children_np)
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.right'> PAP.Property ['PAP.Address', 'PAP.Email', 'PAP.Phone', 'PAP.Url']
-    PAP.Subject_has_Phone <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
-    PAP.Subject_has_Address <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
-    PAP.Subject_has_Email <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
-    PAP.Subject_has_Url <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
     SWP.Clip_O <class '_GTW._OMP._SWP.Clip.left'> SWP.Object_PN ['SWP.Gallery', 'SWP.Page']
     SRM.Boat_in_Regatta <class '_GTW._OMP._SRM.Boat_in_Regatta.right'> SRM.Regatta ['SRM.Regatta_C', 'SRM.Regatta_H']
-
+    PAP.Subject_has_Address <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Subject_has_Email <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Subject_has_Phone <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
+    PAP.Subject_has_Url <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
 
 """
 
@@ -222,14 +221,6 @@ _test_roles = """
     PAP.Address_Position Address `left` PAP.Address
     PAP.Subject_has_Property Subject `left` PAP.Subject
     PAP.Subject_has_Property Property `right` PAP.Property
-    PAP.Subject_has_Phone Subject `left` PAP.Subject
-    PAP.Subject_has_Phone Phone `right` PAP.Phone
-    PAP.Subject_has_Address Subject `left` PAP.Subject
-    PAP.Subject_has_Address Address `right` PAP.Address
-    PAP.Subject_has_Email Subject `left` PAP.Subject
-    PAP.Subject_has_Email Email `right` PAP.Email
-    PAP.Subject_has_Url Subject `left` PAP.Subject
-    PAP.Subject_has_Url Url `right` PAP.Url
     PAP.Person_has_Account Person `left` PAP.Person
     PAP.Person_has_Account Account `right` Auth.Account
     SRM.Boat Boat_Class `left` SRM.Boat_Class
@@ -247,10 +238,22 @@ _test_roles = """
     SRM.Crew_Member Sailor `right` SRM.Sailor
     SRM.Team_has_Boat_in_Regatta Team `left` SRM.Team
     SRM.Team_has_Boat_in_Regatta Boat_in_Regatta `right` SRM.Boat_in_Regatta
+    PAP.Subject_has_Address Subject `left` PAP.Subject
+    PAP.Subject_has_Address Address `right` PAP.Address
+    PAP.Subject_has_Email Subject `left` PAP.Subject
+    PAP.Subject_has_Email Email `right` PAP.Email
+    PAP.Subject_has_Phone Subject `left` PAP.Subject
+    PAP.Subject_has_Phone Phone `right` PAP.Phone
+    PAP.Subject_has_Url Subject `left` PAP.Subject
+    PAP.Subject_has_Url Url `right` PAP.Url
     PAP.Person_has_Url Person `left` PAP.Person
     PAP.Person_has_Url Url `right` PAP.Url
     PAP.Company_has_Url Company `left` PAP.Company
     PAP.Company_has_Url Url `right` PAP.Url
+    PAP.Person_has_Phone Person `left` PAP.Person
+    PAP.Person_has_Phone Phone `right` PAP.Phone
+    PAP.Company_has_Phone Company `left` PAP.Company
+    PAP.Company_has_Phone Phone `right` PAP.Phone
     PAP.Person_has_Email Person `left` PAP.Person
     PAP.Person_has_Email Email `right` PAP.Email
     PAP.Company_has_Email Company `left` PAP.Company
@@ -259,10 +262,6 @@ _test_roles = """
     PAP.Person_has_Address Address `right` PAP.Address
     PAP.Company_has_Address Company `left` PAP.Company
     PAP.Company_has_Address Address `right` PAP.Address
-    PAP.Person_has_Phone Person `left` PAP.Person
-    PAP.Person_has_Phone Phone `right` PAP.Phone
-    PAP.Company_has_Phone Company `left` PAP.Company
-    PAP.Company_has_Phone Phone `right` PAP.Phone
 
 
 """

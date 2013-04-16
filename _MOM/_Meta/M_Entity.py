@@ -174,6 +174,8 @@
 #    21-Mar-2013 (CT) Add `polymorphic_epk = False` to `M_An_Entity`
 #    21-Mar-2013 (CT) Use `P_Type_S`, if defined, for `epk_sig_t`
 #    22-Mar-2013 (CT) Fix `default_child` in `_m_create_e_types` (PNS_Aliases)
+#    15-Apr-2013 (CT) Add `children_np_transitive`
+#    16-Apr-2013 (CT) Add `_m_create_role_children` to `_m_setup_auto_props`
 #    ««revision-date»»···
 #--
 
@@ -229,7 +231,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
 
     def __init__ (cls, name, bases, dct) :
-        cls._children_np = None
+        cls._children_np = cls._children_np_transitive = None
         cls.__m_super.__init__      (name, bases, dct)
         cls._m_init_name_attributes ()
         cls._m_setup_children       (bases, dct)
@@ -257,6 +259,24 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             result = cls._children_np = dict (_gen (cls))
         return result
     # end def children_np
+
+    @property
+    def children_np_transitive (cls) :
+        """All non-partial descendents of `cls`, including `cls`."""
+        result = cls._children_np_transitive
+        if result is None :
+            def _gen (cls) :
+                def _gen_children (cls) :
+                    yield cls
+                    for c in cls.children.itervalues () :
+                        for x in _gen_children (c) :
+                            yield x
+                for c in _gen_children (cls) :
+                    if not c.is_partial :
+                        yield c.type_name, c
+            result = cls._children_np_transitive = dict (_gen (cls))
+        return result
+    # end def children_np_transitive
 
     @property
     def default_child (cls) :
@@ -416,6 +436,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
             , _real_name    = str (cls.type_base_name)     ### M_Autorename
             , _children_np  = None
+            , _children_np_transitive = None
             , _dyn_doc      = cls._dyn_doc
             , ** kw
             )
@@ -575,6 +596,9 @@ class M_Entity (M_E_Mixin) :
     def _m_setup_auto_props (cls, SX) :
         for c in SX :
             c._m_setup_etype_auto_props ()
+        for c in SX [::-1] :
+            if getattr (c, "_role_children_to_add", None) :
+                c._m_create_role_children ()
         for c in SX [::-1] :
             c._m_create_auto_children ()
     # end def _m_setup_auto_props
@@ -1026,14 +1050,11 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_fix_refuse_links (cls, app_type) :
         refuse_links = cls.refuse_links
-        for tn in tuple (refuse_links) :
+        for tn in tuple (cls.refuse_links) :
             ET = app_type.etypes.get (tn)
             if ET is not None :
                 if ET.type_name not in refuse_links :
                     refuse_links.add (ET.type_name)
-            else :
-                if __debug__ :
-                    print "*" * 3, "Unknown typename in %s.refuse_links" % cls
     # end def _m_fix_refuse_links
 
     def _m_setup_attributes (cls) :

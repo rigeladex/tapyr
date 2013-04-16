@@ -215,10 +215,6 @@ _test_code = r"""
     PAP.Url                                        True   False  False
     PAP.Address_Position                           True   False  False
     PAP.Subject_has_Property                       False  True   True
-    PAP.Subject_has_Phone                          False  True   True
-    PAP.Subject_has_Address                        False  True   True
-    PAP.Subject_has_Email                          False  True   True
-    PAP.Subject_has_Url                            False  True   True
     PAP.Person_has_Account                         True   False  False
     SRM.Regatta_Result                             False  False  False
     SRM.Entity                                     False  True   True
@@ -251,14 +247,18 @@ _test_code = r"""
     SRM.Team_has_Boat_in_Regatta                   True   False  False
     SWP.Page_U                                     True   False  False
     SWP.Page_V                                     True   False  False
+    PAP.Subject_has_Address                        False  True   True
+    PAP.Subject_has_Email                          False  True   True
+    PAP.Subject_has_Phone                          False  True   True
+    PAP.Subject_has_Url                            False  True   True
     PAP.Person_has_Url                             True   False  False
     PAP.Company_has_Url                            True   False  False
+    PAP.Person_has_Phone                           True   False  False
+    PAP.Company_has_Phone                          True   False  False
     PAP.Person_has_Email                           True   False  False
     PAP.Company_has_Email                          True   False  False
     PAP.Person_has_Address                         True   False  False
     PAP.Company_has_Address                        True   False  False
-    PAP.Person_has_Phone                           True   False  False
-    PAP.Company_has_Phone                          True   False  False
 
     >>> fmt = "%%-45s  %%s"
     >>> for et in scope.app_type._T_Extension :
@@ -315,10 +315,6 @@ _test_code = r"""
     PAP.Url                                        PAP.Url 0
     PAP.Address_Position                           PAP.Address_Position 0
     PAP.Subject_has_Property                       ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
-    PAP.Subject_has_Phone                          ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
-    PAP.Subject_has_Address                        ['PAP.Company_has_Address', 'PAP.Person_has_Address']
-    PAP.Subject_has_Email                          ['PAP.Company_has_Email', 'PAP.Person_has_Email']
-    PAP.Subject_has_Url                            ['PAP.Company_has_Url', 'PAP.Person_has_Url']
     PAP.Person_has_Account                         PAP.Person_has_Account 0
     SRM.Link1                                      ['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Sailor', 'SRM.Team']
     SRM.Link2                                      ['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta']
@@ -345,14 +341,18 @@ _test_code = r"""
     SRM.Team_has_Boat_in_Regatta                   SRM.Team_has_Boat_in_Regatta 0
     SWP.Page_U                                     SWP.Page 0
     SWP.Page_V                                     SWP.Page 0
+    PAP.Subject_has_Address                        ['PAP.Company_has_Address', 'PAP.Person_has_Address']
+    PAP.Subject_has_Email                          ['PAP.Company_has_Email', 'PAP.Person_has_Email']
+    PAP.Subject_has_Phone                          ['PAP.Company_has_Phone', 'PAP.Person_has_Phone']
+    PAP.Subject_has_Url                            ['PAP.Company_has_Url', 'PAP.Person_has_Url']
     PAP.Person_has_Url                             PAP.Person_has_Url 0
     PAP.Company_has_Url                            PAP.Company_has_Url 0
+    PAP.Person_has_Phone                           PAP.Person_has_Phone 0
+    PAP.Company_has_Phone                          PAP.Company_has_Phone 0
     PAP.Person_has_Email                           PAP.Person_has_Email 0
     PAP.Company_has_Email                          PAP.Company_has_Email 0
     PAP.Person_has_Address                         PAP.Person_has_Address 0
     PAP.Company_has_Address                        PAP.Company_has_Address 0
-    PAP.Person_has_Phone                           PAP.Person_has_Phone 0
-    PAP.Company_has_Phone                          PAP.Company_has_Phone 0
 
     >>> print (sorted (rr.type_name for rr in scope.relevant_roots))
     ['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group', 'Auth._Account_', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture']

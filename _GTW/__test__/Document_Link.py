@@ -258,14 +258,6 @@ test_code = r"""
         ('MOM.Document', ['left'])
     PAP.Subject_has_Property
         ('MOM.Document', ['left'])
-    PAP.Subject_has_Phone
-        ('MOM.Document', ['left'])
-    PAP.Subject_has_Address
-        ('MOM.Document', ['left'])
-    PAP.Subject_has_Email
-        ('MOM.Document', ['left'])
-    PAP.Subject_has_Url
-        ('MOM.Document', ['left'])
     PAP.Person_has_Account
         ('MOM.Document', ['left'])
     SRM.Link1
@@ -345,9 +337,21 @@ test_code = r"""
         ('MOM.Document', ['left'])
     SRM.Team_has_Boat_in_Regatta
         ('MOM.Document', ['left'])
+    PAP.Subject_has_Address
+        ('MOM.Document', ['left'])
+    PAP.Subject_has_Email
+        ('MOM.Document', ['left'])
+    PAP.Subject_has_Phone
+        ('MOM.Document', ['left'])
+    PAP.Subject_has_Url
+        ('MOM.Document', ['left'])
     PAP.Person_has_Url
         ('MOM.Document', ['left'])
     PAP.Company_has_Url
+        ('MOM.Document', ['left'])
+    PAP.Person_has_Phone
+        ('MOM.Document', ['left'])
+    PAP.Company_has_Phone
         ('MOM.Document', ['left'])
     PAP.Person_has_Email
         ('MOM.Document', ['left'])
@@ -356,10 +360,6 @@ test_code = r"""
     PAP.Person_has_Address
         ('MOM.Document', ['left'])
     PAP.Company_has_Address
-        ('MOM.Document', ['left'])
-    PAP.Person_has_Phone
-        ('MOM.Document', ['left'])
-    PAP.Company_has_Phone
         ('MOM.Document', ['left'])
 
     >>> show_ref_maps (scope, "Ref_Opt_Map")

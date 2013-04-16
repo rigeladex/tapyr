@@ -183,10 +183,6 @@ _test_code = """
     ...     rr = T.relevant_root.type_name if T.relevant_root else sorted (T.relevant_roots)
     ...     print ("%%-30s %%-5s %%s" %% ("%%s%%s" %% ("  " * l, T.type_name), T.is_partial, rr))
     PAP.Subject_has_Property       True  ['PAP.Association_has_Address', 'PAP.Association_has_Email', 'PAP.Association_has_Phone', 'PAP.Association_has_Url', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
-      PAP.Subject_has_Phone        True  ['PAP.Association_has_Phone', 'PAP.Company_has_Phone', 'PAP.Person_has_Phone']
-        PAP.Person_has_Phone       False PAP.Person_has_Phone
-        PAP.Company_has_Phone      False PAP.Company_has_Phone
-        PAP.Association_has_Phone  False PAP.Association_has_Phone
       PAP.Subject_has_Address      True  ['PAP.Association_has_Address', 'PAP.Company_has_Address', 'PAP.Person_has_Address']
         PAP.Person_has_Address     False PAP.Person_has_Address
         PAP.Company_has_Address    False PAP.Company_has_Address
@@ -195,6 +191,10 @@ _test_code = """
         PAP.Person_has_Email       False PAP.Person_has_Email
         PAP.Company_has_Email      False PAP.Company_has_Email
         PAP.Association_has_Email  False PAP.Association_has_Email
+      PAP.Subject_has_Phone        True  ['PAP.Association_has_Phone', 'PAP.Company_has_Phone', 'PAP.Person_has_Phone']
+        PAP.Person_has_Phone       False PAP.Person_has_Phone
+        PAP.Company_has_Phone      False PAP.Company_has_Phone
+        PAP.Association_has_Phone  False PAP.Association_has_Phone
       PAP.Subject_has_Url          True  ['PAP.Association_has_Url', 'PAP.Company_has_Url', 'PAP.Person_has_Url']
         PAP.Person_has_Url         False PAP.Person_has_Url
         PAP.Company_has_Url        False PAP.Company_has_Url
@@ -266,10 +266,6 @@ _test_code = """
               Auth.Account_in_Group  . . . . . . . . .    True                 True
             PAP.Link2  . . . . . . . . . . . . . . . .           True   True
               PAP.Subject_has_Property . . . . . . . .           True   True
-                PAP.Subject_has_Phone  . . . . . . . .           True   True
-                  PAP.Person_has_Phone . . . . . . . .    True                 True
-                  PAP.Company_has_Phone  . . . . . . .    True                 True
-                  PAP.Association_has_Phone  . . . . .    True          True   True
                 PAP.Subject_has_Address  . . . . . . .           True   True
                   PAP.Person_has_Address . . . . . . .    True                 True
                   PAP.Company_has_Address  . . . . . .    True                 True
@@ -278,6 +274,10 @@ _test_code = """
                   PAP.Person_has_Email . . . . . . . .    True                 True
                   PAP.Company_has_Email  . . . . . . .    True                 True
                   PAP.Association_has_Email  . . . . .    True          True   True
+                PAP.Subject_has_Phone  . . . . . . . .           True   True
+                  PAP.Person_has_Phone . . . . . . . .    True                 True
+                  PAP.Company_has_Phone  . . . . . . .    True                 True
+                  PAP.Association_has_Phone  . . . . .    True          True   True
                 PAP.Subject_has_Url  . . . . . . . . .           True   True
                   PAP.Person_has_Url . . . . . . . . .    True                 True
                   PAP.Company_has_Url  . . . . . . . .    True                 True

@@ -88,6 +88,9 @@
 #    21-Sep-2012 (CT) Add `child_np`, `child_np_map`
 #    27-Feb-2013 (CT) Simplify signature of `_m_setup_ref_maps` and
 #                     `_m_setup_roles`
+#    16-Apr-2013 (CT) Add and use `auto_derive_np_kw`
+#    16-Apr-2013 (CT) Make `m_create_role_children` lazy
+#    16-Apr-2013 (CT) Rename `m_create_role_child` to `_m_create_role_child`
 #    ««revision-date»»···
 #--
 
@@ -97,7 +100,8 @@ from   _TFL import TFL
 import _MOM._Meta.M_Entity
 import _MOM.E_Type_Manager
 
-from   _TFL.predicate import cartesian
+from   _TFL.predicate import cartesian, uniq
+import _TFL.multimap
 
 import itertools
 
@@ -105,70 +109,18 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
     _orn = {}
+    auto_derive_np_kw = TFL.mm_dict_mm_dict ()
 
-    def m_create_role_child (cls, * role_etype_s) :
-        """Create derived link classes for the (role, e_type) combinations
-           specified.
-        """
-        rets = []
-        rkw  = {}
-        tn   = cls.type_name
-        tbn  = cls.type_base_name
-        for role_name, etype in role_etype_s :
-            role = getattr (cls._Attributes, role_name)
-            rET  = role.E_Type
-            tbn  = tbn.replace (rET.type_base_name, etype.type_base_name)
-            tn   = tn.replace  (rET.type_base_name, etype.type_base_name)
-            if cls.type_name in rET.refuse_links :
-                return
-            rets.append (rET)
-            rkw [role.name] = role.__class__ \
-                ( role.name
-                , (role, )
-                , dict
-                    ( auto_cache     = role.auto_cache_np
-                    , auto_derive_np = role.auto_derive_npt
-                    , role_type      = etype
-                    , __module__     = cls.__module__
-                    )
-                )
-        if tn == cls.type_name :
-            raise NameError \
-                ("Cannot auto-derive from %s for %s" % (cls, role_etype_s))
-        if any ((tn in rET.refuse_links) for rET in rets) :
-            pass
-        elif tn not in cls._type_names :
-            is_partial = \
-                (  any (r.role_type.is_partial for r in rkw.itervalues ())
-                or any
-                    (   (not r.role_type) or r.role_type.is_partial
-                    for r in cls.Role_Attrs if r.name not in rkw
-                    )
-                )
-            result = cls.__class__ \
-                ( tbn
-                , (cls, )
-                , dict
-                    ( _Attributes    = cls._Attributes.__class__
-                        ( "_Attributes"
-                        , (cls._Attributes, )
-                        , dict (rkw, __module__ = cls.__module__)
-                        )
-                    , is_partial     = is_partial
-                    , PNS            = cls.PNS
-                    , __module__     = cls.__module__
-                    )
-                )
-            return result
-    # end def m_create_role_child
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if "_role_children_to_add" not in dct :
+            cls._role_children_to_add = []
+    # end def __init__
 
     def m_create_role_children (cls, role) :
-        if isinstance (role, basestring) :
-           role = getattr (cls._Attributes, role)
-        children = sorted \
-            (role.E_Type.children_np.itervalues (), key = TFL.Getter.i_rank)
-        for c in children :
-            cls.m_create_role_child ((role.name, c))
+        if not isinstance (role, basestring) :
+           role = role.name
+        cls._role_children_to_add.append (role)
     # end def m_create_role_children
 
     def other_role_name (cls, role_name) :
@@ -177,13 +129,6 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             % (cls.type_name, role_name)
             )
     # end def other_role_name
-
-    def _m_create_auto_child (cls, * role_etype_s) :
-        result = cls.m_create_role_child (* role_etype_s)
-        if result :
-            result._m_setup_etype_auto_props ()
-        return result
-    # end def _m_create_auto_child
 
     def _m_create_auto_children (cls) :
         adrs = tuple \
@@ -199,8 +144,93 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             )
         if adrs :
             for adr in cartesian (* adrs) :
-                cls._m_create_auto_child (* adr)
+                cls._m_create_role_child (* adr)
     # end def _m_create_auto_children
+
+    def _m_create_role_child (cls, * role_etype_s) :
+        """Create derived link classes for the (role, e_type) combinations
+           specified.
+        """
+        rkw     = {}
+        rets    = []
+        tn      = cls.type_name
+        tbn     = cls.type_base_name
+        for role_name, etype in role_etype_s :
+            role  = getattr (cls._Attributes, role_name)
+            rET   = role.E_Type
+            tbn   = tbn.replace (rET.type_base_name, etype.type_base_name)
+            tn    = tn.replace  (rET.type_base_name, etype.type_base_name)
+            if tn == cls.type_name :
+                raise NameError \
+                    ( "Cannot auto-derive from %s for role `%s` from %s to %s"
+                    % ( cls.type_name, role_name
+                      , rET.type_base_name, etype.type_base_name
+                      )
+                    )
+            if cls.type_name in etype.refuse_links :
+                return
+            rets.append ((role, etype))
+        if any ((tn in etype.refuse_links) for role, etype in rets):
+            return
+        elif tn not in cls._type_names :
+            if tn in cls.auto_derive_np_kw :
+                auto_kw = cls.auto_derive_np_kw [tn]
+            else :
+                auto_kw = cls.auto_derive_np_kw [tbn]
+            for role, etype in rets :
+                rkw [role.name] = role.__class__ \
+                    ( role.name
+                    , (role, )
+                    , dict
+                        ( auto_kw [role.name]
+                        , auto_cache     = role.auto_cache_np
+                        , auto_derive_np = role.auto_derive_npt
+                        , role_type      = etype
+                        , __module__     = cls.__module__
+                        )
+                    )
+                ### reset cache
+                role._children_np = role._children_np_transitive = None
+            is_partial = \
+                (  any (r.role_type.is_partial for r in rkw.itervalues ())
+                or any
+                    (   (not r.role_type) or r.role_type.is_partial
+                    for r in cls.Role_Attrs if r.name not in rkw
+                    )
+                )
+            result = cls.__class__ \
+                ( tbn
+                , (cls, )
+                , dict
+                    ( auto_kw ["properties"]
+                    , _Attributes    = cls._Attributes.__class__
+                        ( "_Attributes"
+                        , (cls._Attributes, )
+                        , dict
+                            ( auto_kw ["extra_attributes"]
+                            , __module__ = cls.__module__
+                            , ** rkw
+                            )
+                        )
+                    , is_partial     = is_partial
+                    , PNS            = cls.PNS
+                    , __module__     = cls.__module__
+                    )
+                )
+            ### reset cache
+            cls._children_np = cls._children_np_transitive = None
+            result._m_setup_etype_auto_props ()
+            return result
+    # end def _m_create_role_child
+
+    def _m_create_role_children (cls) :
+        for role in uniq (cls._role_children_to_add) :
+            role = getattr (cls._Attributes, role)
+            children = sorted \
+                (role.E_Type.children_np.itervalues (), key = TFL.Getter.i_rank)
+            for c in children :
+                cls._m_create_role_child ((role.name, c))
+    # end def _m_create_role_children
 
     def _m_init_prop_specs (cls, name, bases, dct) :
         result = cls.__m_super._m_init_prop_specs (name, bases, dct)
