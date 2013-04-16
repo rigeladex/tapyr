@@ -29,6 +29,7 @@
 #    14-Jul-2012 (CT) Creation
 #     4-Dec-2012 (CT) Add bib-refs [Amu11] and [WPR10]
 #    13-Mar-2013 (CT) Improve documentation
+#    16-Apr-2013 (CT) Add more documentation about AQ expressions
 #    ««revision-date»»···
 #--
 
@@ -158,9 +159,10 @@ Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
     * `attributes`: `JSON`_ object mapping attribute names to values.
 
       - if the value of an attribute refers to an instance of another `e-type`,
-        only the pid is returned, unless the `GET` request contained the query
-        parameter `closure`, in which case a nested `JSON`_ object with the
-        information about the nested object is returned here.
+        only the pid and the url of the instance are returned, unless the
+        `GET` request contained the query parameter `closure`, in which case
+        a nested `JSON`_ object with the information about the nested object
+        is returned here.
 
     * `type_name`: name of essential entity type.
 
@@ -303,9 +305,16 @@ returned or to search for specific instances. Possible query parameters are:
 
 - `AQ`: restrict results to those matching the attribute query specified. The
   value for this query parameter is a comma-separated tuple of attribute
-  name, operation, and value.
+  name, operator, and value::
 
-  Possible operations include:
+      AQ=<attribute-name>,<operator>,<value>
+
+  The possible attribute-names depend on the type queried and are documented
+  for each type. A GET request to a type-specific resource of
+  the REST Api will return a link to the documentation of that type as a
+  link-header with `rel=doc`.
+
+  Possible operators include:
 
   * `EQ`: equal
 
@@ -326,6 +335,9 @@ returned or to search for specific instances. Possible query parameters are:
   * `ENDSWITH`: attribute value ends with the specified query value
 
   * `STARTSWITH`: attribute value starts with the specified query value
+
+  If you specify more than one AQ expression, they are ANDed
+  together.
 
 - `FIRST`: Results start with first instance, according to `order_by`.
 
