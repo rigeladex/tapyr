@@ -49,6 +49,7 @@
 #     7-Aug-2012 (CT) Define `Regatta.default_child`
 #    21-Mar-2013 (CT) Set `Regatta.boat_class.P_Type_S` to avoid
 #                     `polymorphic_epk`
+#    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -109,7 +110,7 @@ class Regatta (_Ancestor_Essence) :
             """Indicates that the regatta is cancelled"""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Mixin, )
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
 
             def computed (self, obj) :
                 return obj.event.is_cancelled

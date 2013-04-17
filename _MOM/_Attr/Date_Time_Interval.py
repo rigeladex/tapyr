@@ -28,6 +28,7 @@
 # Revision Dates
 #    11-Jan-2013 (CT) Creation
 #    25-Feb-2013 (CT) Remove `alive.auto_up_depends`
+#    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -145,7 +146,7 @@ class Date_Time_Interval_C (_Ancestor_Essence) :
 
         class finish (_Ancestor.finish) :
 
-            Kind_Mixins        = (Attr.Computed_Mixin, )
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
 
             def computed (self, obj) :
                 if obj and obj.start :

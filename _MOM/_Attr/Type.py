@@ -274,6 +274,12 @@
 #                     `Class_and_Instance_Method`, redefine `_A_Unit_.cooked`
 #     7-Mar-2013 (CT) Add `A_Frequency.completer`
 #    11-Mar-2013 (CT) Factor `fix_doc` to `MOM.Prop.Type`
+#    15-Apr-2013 (CT) Add `_A_Id_Entity_.allow_e_types`, `.refuse_e_types`
+#    16-Apr-2013 (CT) Change `_A_Id_Entity_.check_type` to check against
+#                     `.refuse_e_types_transitive`, too
+#    17-Apr-2013 (CT) Move calls of `check_type` to `Kind._set_cooked_value`
+#                     Remove `A_Link_Role.cooked` and `._check_type`
+#    17-Apr-2013 (CT) Change `as_arg_ckd` and `as_arg_raw` to normal methods
 #    ««revision-date»»···
 #--
 
@@ -406,6 +412,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     # end def ui_name_T
 
     def __init__ (self, kind, e_type) :
+        self.e_type      = e_type
         self.kind        = kind
         self.is_required = kind.is_required
     # end def __init__
@@ -423,16 +430,12 @@ class A_Attr_Type (MOM.Prop.Type) :
         return result
     # end def ac_ui_display
 
-    @classmethod
-    def as_arg_ckd (cls) :
-        if cls.kind :
-            return cls.kind.as_arg_ckd (cls)
+    def as_arg_ckd (self) :
+        return self.kind.as_arg_ckd (self)
     # end def as_arg_ckd
 
-    @classmethod
-    def as_arg_raw (cls) :
-        if cls.kind :
-            return cls.kind.as_arg_raw (cls)
+    def as_arg_raw (self) :
+        return self.kind.as_arg_raw (self)
     # end def as_arg_raw
 
     def as_code (self, value) :
@@ -479,13 +482,11 @@ class A_Attr_Type (MOM.Prop.Type) :
             )
     # end def db_sig
 
-    @classmethod
-    def epk_def_set_ckd (cls) :
+    def epk_def_set_ckd (self) :
         pass
     # end def epk_def_set_ckd
 
-    @classmethod
-    def epk_def_set_raw (cls) :
+    def epk_def_set_raw (self) :
         pass
     # end def epk_def_set_raw
 
@@ -740,11 +741,10 @@ class _A_Composite_ (_A_Entity_) :
         return value
     # end def cooked
 
-    @classmethod
-    def epk_def_set_ckd (cls) :
-        if cls.kind :
-            form = "if %(name)s is None : %(name)s = cls.%(name)s.P_Type ()"
-            return cls.kind.epk_def_set (form % dict (name = cls.name))
+    def epk_def_set_ckd (self) :
+        ### this becomes part of a `classmethod` of the owning `e_type`
+        form = "if %(name)s is None : %(name)s = cls.%(name)s.P_Type ()"
+        return self.kind.epk_def_set (form % dict (name = self.name))
     # end def epk_def_set_ckd
 
     @TFL.Meta.Once_Property
@@ -1038,12 +1038,30 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 class _A_Id_Entity_ (_A_Entity_) :
     """Attribute referring to an entity."""
 
-    Q_Ckd_Type        = MOM.Attr.Querier.Id_Entity
+    _sets_to_combine    = \
+        _A_Entity_._sets_to_combine + ("allow_e_types", "refuse_e_types")
 
-    is_link_role      = False
+    Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
+
+    is_link_role        = False
+
+    allow_e_types       = set ()
+    refuse_e_types      = set ()
 
     ### allow creation of new entity for this attribute
-    ui_allow_new      = True
+    ui_allow_new        = True
+
+    def __init__ (self, kind, e_type) :
+        self.__super.__init__ (kind, e_type)
+        ### copy from class to instance
+        self.allow_e_types  = set (self.allow_e_types)
+        self.refuse_e_types = set (self.refuse_e_types)
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def allow_e_types_transitive (self) :
+        return set (self._gen_etypes_transitive (self.allow_e_types))
+    # end def allow_e_types_transitive
 
     @property
     def example (self) :
@@ -1065,6 +1083,14 @@ class _A_Id_Entity_ (_A_Entity_) :
                 % self.E_Type.type_name
                 )
     # end def example
+
+    @TFL.Meta.Once_Property
+    def refuse_e_types_transitive (self) :
+        return \
+            ( set (self._gen_etypes_transitive (self.refuse_e_types))
+            - self.allow_e_types_transitive
+            )
+    # end def refuse_e_types_transitive
 
     @TFL.Meta.Once_Property
     def sorted_by (self) :
@@ -1089,12 +1115,36 @@ class _A_Id_Entity_ (_A_Entity_) :
         return ""
     # end def as_string
 
+    def check_type (self, value) :
+        if not isinstance (value, self.E_Type.Essence) :
+            typ = getattr (value, "ui_name", value.__class__)
+            raise ValueError \
+                ( _T
+                    ( "%s %s not eligible for attribute %s,"
+                      "\n"
+                      "    must be instance of %s"
+                    )
+                % ( _T (typ), unicode (value), self.name
+                  , _T (self.P_Type.ui_name)
+                  )
+                )
+        tn = value.type_name
+        if tn in self.refuse_e_types_transitive :
+            raise ValueError \
+                ( _T
+                    ( "%s not eligible for attribute %s,"
+                      "\n"
+                      "    must be instance of %s, but not %s"
+                    )
+                % ( unicode (value), self.name
+                  , _T (self.P_Type.ui_name), _T (value.E_Type.ui_name)
+                  )
+                )
+        return value
+    # end def check_type
+
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if value is not None :
-            etm = soc.etype_manager ()
-            if etm :
-                soc._check_type (etm.E_Type, value)
         return value
     # end def cooked
 
@@ -1114,14 +1164,10 @@ class _A_Id_Entity_ (_A_Entity_) :
     # end def etype_manager
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
-        scope = self._get_scope (obj)
-        if isinstance (s, self.P_Type) :
-            return s
-        elif isinstance (s, MOM.Entity) :
-            ### prevent call of `_call_eval` for `s`
-            ### * `_call_eval` expects a string
-            return self._check_type (s, self.P_Type)
+        if isinstance (s, MOM.Entity) :
+            return s ### `check_type` called by `kind._set_cooked_value`
         elif isinstance (s, int) :
+            scope = self._get_scope (obj)
             return scope.pid_query (s)
         elif s :
             assert self.P_Type, "%s needs to define `P_Type`" % self
@@ -1145,22 +1191,14 @@ class _A_Id_Entity_ (_A_Entity_) :
         return True
     # end def _accept_object
 
-    @TFL.Meta.Class_and_Instance_Method
-    def _check_type (soc, etype, value) :
-        if not isinstance (value, etype.Essence) :
-            typ = getattr (value, "ui_name", value.__class__)
-            raise ValueError \
-                ( _T
-                    ( "%s %s not eligible for attribute %s,"
-                      "\n"
-                      "    must be instance of %s"
-                    )
-                % ( _T (typ), unicode (value), soc.name
-                  , _T (soc.P_Type.ui_name)
-                  )
-                )
-        return value
-    # end def _check_type
+    def _gen_etypes_transitive (self, e_types) :
+        apt = self.e_type.app_type
+        for ret in e_types :
+            ET = apt.etypes.get (ret)
+            if ET :
+                for c in ET.children_np_transitive :
+                    yield c
+    # end def _gen_etypes_transitive
 
     def _get_object (self, obj, epk, raw = False) :
         if epk and isinstance (epk [-1], self.P_Type.Type_Name_Type) :
@@ -2058,27 +2096,6 @@ class A_Link_Role (_A_Id_Entity_) :
         else :
             return self.__super.ui_name
     # end def ui_name
-
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        soc._check_type (soc.role_type, value)
-        return value
-    # end def cooked
-
-    @TFL.Meta.Class_and_Instance_Method
-    def _check_type (soc, etype, value) :
-        soc.__super._check_type (etype, value)
-        tn = soc.assoc.type_name
-        if tn in value.refuse_links :
-            value_type = type (value)
-            raise MOM.Error.Link_Type \
-                ( tn
-                , soc.role_type.type_name
-                , _T (soc.role_type.ui_name)
-                , value
-                , getattr (value_type, "type_name", value_type)
-                )
-    # end def _check_type
 
 # end class A_Link_Role
 

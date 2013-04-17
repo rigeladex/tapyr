@@ -176,6 +176,10 @@
 #    22-Mar-2013 (CT) Fix `default_child` in `_m_create_e_types` (PNS_Aliases)
 #    15-Apr-2013 (CT) Add `children_np_transitive`
 #    16-Apr-2013 (CT) Add `_m_create_role_children` to `_m_setup_auto_props`
+#    16-Apr-2013 (CT) Move `__instancecheck__`, `__subclasscheck__` to M_Entity
+#    16-Apr-2013 (CT) Add to `refuse_e_types` in `_m_fix_refuse_links`
+#    17-Apr-2013 (CT) Use `cls.is_locked` instead of home-grown code
+#    17-Apr-2013 (CT) Move `_m_auto_epkified` from M_Id_Entity to M_E_Type_Id
 #    ««revision-date»»···
 #--
 
@@ -613,6 +617,14 @@ class M_Entity (M_E_Mixin) :
         cls.Partial_Roles = ()
     # end def _m_setup_roles
 
+    def __instancecheck__ (cls, instance) :
+        return isinstance (instance, cls.Essence)
+    # end def __instancecheck__
+
+    def __subclasscheck__ (cls, subclass) :
+        return issubclass (subclass, cls.Essence)
+    # end def __subclasscheck__
+
 # end class M_Entity
 
 M_Entity.M_Root = M_Entity
@@ -681,33 +693,11 @@ class M_An_Entity (M_Entity) :
 class M_Id_Entity (M_Entity) :
     """Meta class for MOM.Id_Entity"""
 
-    _epkified_sep  = "\n    "
-    _epkified_head = """def epkified_%(suffix)s (cls, %(args)s) :"""
-    _epkified_tail = """return (%(epk)s), kw\n"""
-
     def __init__ (cls, name, bases, dct) :
         assert "__init__" not in dct, \
           "%s: please redefine `_finish__init__`, not __init__" % cls
         cls.__m_super.__init__  (name, bases, dct)
     # end def __init__
-
-    def _m_auto_epkified (cls, epk_sig, args, code, suffix) :
-        form    = cls._epkified_sep.join \
-            (x for x in (cls._epkified_head, code, cls._epkified_tail) if x)
-        globals = class_globals (cls)
-        scope   = dict          ()
-        code    = form % dict \
-            ( epk    = ", ".join (epk_sig) + ("," if len (epk_sig) == 1 else "")
-            , args   = ", ".join (x for x in (args, "** kw") if x)
-            , suffix = suffix
-            )
-        exec code in globals, scope
-        result             = scope ["epkified_%s" % suffix]
-        result.epk_sig     = epk_sig
-        result.args        = args
-        result.source_code = code
-        return classmethod (result)
-    # end def _m_auto_epkified
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         def _typ (a) :
@@ -728,20 +718,10 @@ class M_Id_Entity (M_Entity) :
             if eb.epk_sig_t != epk_sig_t :
                 eb.polymorphic_epk = pr_epk = True
                 eb.polymorphic_relevant_epk = eb.is_relevant
-        a_ckd  = ", ".join (a.as_arg_ckd () for a in pkas)
-        a_raw  = ", ".join (a.as_arg_raw () for a in pkas)
-        d_ckd  = cls._epkified_sep.join \
-            (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
-        d_raw  = cls._epkified_sep.join \
-            (x for x in (a.epk_def_set_raw () for a in pkas) if x)
         r_kw   = dict \
             ( epk_bases                = epk_bases
             , epk_sig                  = epk_sig
             , epk_sig_t                = epk_sig_t
-            , epkified_ckd             = cls._m_auto_epkified
-                (epk_sig, a_ckd, d_ckd, "ckd")
-            , epkified_raw             = cls._m_auto_epkified
-                (epk_sig, a_raw, d_raw, "raw")
             , is_relevant              = is_relevant
             , polymorphic_epk          = False
             , polymorphic_relevant_epk = pr_epk and is_relevant
@@ -938,14 +918,6 @@ class M_E_Type (M_E_Mixin) :
         raise AttributeError ("%s.%s" % (cls.type_name, name))
     # end def __getattr__
 
-    def __instancecheck__ (cls, instance) :
-        return isinstance (instance, cls.Essence)
-    # end def __instancecheck__
-
-    def __subclasscheck__ (cls, subclass) :
-        return issubclass (subclass, cls.Essence)
-    # end def __subclasscheck__
-
 # end class M_E_Type
 
 M_E_Type.M_Root = M_E_Type
@@ -980,6 +952,10 @@ class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
 
     Manager        = MOM.E_Type_Manager.Id_Entity
+
+    _epkified_sep  = "\n    "
+    _epkified_head = """def epkified_%(suffix)s (cls, %(args)s) :"""
+    _epkified_tail = """return (%(epk)s), kw\n"""
 
     @property
     def Ref_Map (cls) :
@@ -1048,23 +1024,56 @@ class M_E_Type_Id (M_E_Type) :
         return result
     # end def _calc_ref_map
 
+    def _m_auto_epkified (cls, epk_sig, args, code, suffix) :
+        form    = cls._epkified_sep.join \
+            (x for x in (cls._epkified_head, code, cls._epkified_tail) if x)
+        globals = class_globals (cls)
+        scope   = dict          ()
+        code    = form % dict \
+            ( epk    = ", ".join (epk_sig) + ("," if len (epk_sig) == 1 else "")
+            , args   = ", ".join (x for x in (args, "** kw") if x)
+            , suffix = suffix
+            )
+        exec code in globals, scope
+        result             = scope ["epkified_%s" % suffix]
+        result.epk_sig     = epk_sig
+        result.args        = args
+        result.source_code = code
+        return classmethod (result)
+    # end def _m_auto_epkified
+
     def _m_fix_refuse_links (cls, app_type) :
         refuse_links = cls.refuse_links
         for tn in tuple (cls.refuse_links) :
             ET = app_type.etypes.get (tn)
             if ET is not None :
-                if ET.type_name not in refuse_links :
-                    refuse_links.add (ET.type_name)
+                refuse_links.add (ET.type_name)
+                rs = list \
+                    (r for r in ET.Role_Attrs if issubclass (cls, r.E_Type))
+                for r in rs :
+                    a = getattr (ET, r.name)
+                    a.refuse_e_types.add (cls.type_name)
     # end def _m_fix_refuse_links
 
     def _m_setup_attributes (cls) :
         cls.__m_super._m_setup_attributes ()
-        cls.is_editable = (not cls.electric.default) and cls.user_attr
-        cls.show_in_ui  = \
+        cls.is_editable  = cls.user_attr and not cls.is_locked ()
+        cls.show_in_ui   = \
             (cls.record_changes and cls.show_in_ui and not cls.is_partial)
-        cls.sig_attr = cls.primary
+        cls.sig_attr     = cls.primary
         MOM._Id_Entity_Destroyed_Mixin_.define_e_type (cls)
         cls._m_setup_ref_maps   ()
+        ### setup `epkified_ckd` and `epkified_raw`
+        pkas             = tuple (a.attr for a in cls.primary)
+        a_ckd            = ", ".join (a.as_arg_ckd () for a in pkas)
+        a_raw            = ", ".join (a.as_arg_raw () for a in pkas)
+        d_ckd            = cls._epkified_sep.join \
+            (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
+        d_raw            = cls._epkified_sep.join \
+            (x for x in (a.epk_def_set_raw () for a in pkas) if x)
+        epk_sig          = cls.epk_sig
+        cls.epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
+        cls.epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :

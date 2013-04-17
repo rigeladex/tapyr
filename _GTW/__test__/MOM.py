@@ -637,7 +637,7 @@ classes:
     False
 
     >>> issubclass (ET_Mouse, BMT.Mouse.E_Spec)
-    False
+    True
 
 For each `entity_type` with a unique :attr:`epk_sig`, the meta
 machinery automatically creates methods `epkified_ckd` and

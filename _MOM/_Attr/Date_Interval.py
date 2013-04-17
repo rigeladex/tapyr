@@ -39,6 +39,7 @@
 #    22-Dec-2011 (CT) Move `completer` from `start` to `A_Date`
 #     7-Aug-2012 (CT) Add `example`
 #    25-Feb-2013 (CT) Remove `alive.auto_up_depends`
+#    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -156,7 +157,7 @@ class Date_Interval_C (_Ancestor_Essence) :
 
         class finish (_Ancestor.finish) :
 
-            Kind_Mixins        = (Attr.Computed_Mixin, )
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
 
             def computed (self, obj) :
                 if obj and obj.start :

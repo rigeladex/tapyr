@@ -196,6 +196,11 @@
 #    25-Feb-2013 (CT) Remove `auto_up_depends` check from `Query._check_sanity`
 #    28-Mar-2013 (CT) Set `Query.is_changeable` to `False`
 #    15-Apr-2013 (CT) Change `reset` to use `self.default`, not `attr.default`
+#    17-Apr-2013 (CT) Change `as_arg_ckd` and `as_arg_raw` as normal methods
+#    17-Apr-2013 (CT) Add call of `attr.check_type` to `_set_cooked_value` of
+#                     `Link_Role` and `Id_Entity_Reference_Mixin`
+#    17-Apr-2013 (CT) Use `getattr`, not `self.get_value`, in
+#                     `Id_Entity_Reference_Mixin._set_cooked_value`
 #    ««revision-date»»···
 #--
 
@@ -994,18 +999,15 @@ class _Primary_ (Kind) :
 
 class _Primary_D_ (_Primary_) :
 
-    @classmethod
-    def as_arg_ckd (cls, attr) :
+    def as_arg_ckd (self, attr) :
         return "%s = %r" % (attr.name, attr.default)
     # end def as_arg_ckd
 
-    @classmethod
-    def as_arg_raw (cls, attr) :
+    def as_arg_raw (self, attr) :
         return "%s = %r" % (attr.name, attr.raw_default)
     # end def as_arg_raw
 
-    @classmethod
-    def epk_def_set (cls, code) :
+    def epk_def_set (self, code) :
         return code
     # end def epk_def_set
 
@@ -1018,8 +1020,7 @@ class Primary (_Required_Mixin_, _Primary_, _User_) :
 
     _k_rank     = -20
 
-    @classmethod
-    def as_arg_ckd (cls, attr) :
+    def as_arg_ckd (self, attr) :
         return attr.name
     # end def as_arg_ckd
 
@@ -1070,6 +1071,8 @@ class Link_Role (_EPK_Mixin_, Primary) :
     get_role               = TFL.Meta.Alias_Property ("get_value")
 
     def _set_cooked_value (self, obj, value, changed = 42) :
+        if value :
+            self.attr.check_type (value)
         if obj.init_finished :
             ac = obj.__class__.acr_map.get (self.name)
             if ac :
@@ -1433,9 +1436,11 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42) :
+        attr          = self.attr
         init_finished = obj.init_finished
         try :
-            old_value = self.get_value (obj)
+            ### Don't use `self.get_value`: don't want  `computed` to be called
+            old_value = getattr (obj, attr.ckd_name, None)
         except (ValueError, TypeError) :
             old_value = None
         changed       = old_value is not value
@@ -1443,6 +1448,8 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
         if changed :
             if old_value and scope_p :
                 self._unregister (obj, old_value)
+            if value :
+                attr.check_type (value)
             self.__super._set_cooked_value (obj, value, changed)
             if value :
                 if init_finished :

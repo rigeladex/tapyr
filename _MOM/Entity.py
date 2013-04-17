@@ -41,7 +41,7 @@
 #    13-Oct-2009 (CT) `__init__` and `__new__` refactored
 #    15-Oct-2009 (CT) `is_relevant` and `relevant_root` added
 #    20-Oct-2009 (CT) Moved call of `init_epk` from `__new__` to `__init__`
-#    20-Oct-2009 (NN) `epk_as_dict` added
+#    20-Oct-2009 (CT) `epk_as_dict` added
 #    21-Oct-2009 (CT) `is_locked` changed to use `.default` if called
 #                     as class method
 #    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed

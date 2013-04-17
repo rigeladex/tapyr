@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -47,6 +47,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    12-Sep-2012 (CT) Change `compute_occurrences` to use `sorted`
 #                     (to achieve determistic test output)
+#    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,7 @@ class Event (_Ancestor_Essence) :
             """Short title (used in navigation)."""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Mixin, )
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
 
             def computed (self, obj) :
                 if obj :

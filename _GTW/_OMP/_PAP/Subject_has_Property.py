@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -35,6 +35,7 @@
 #                     `Subject_has_Property`
 #    12-Sep-2012 (CT) Set `right.role_type` to `Property`
 #    12-Sep-2012 (CT) Add `auto_cache_np`, `auto_derive_np` to `left`, `right`
+#    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -84,7 +85,7 @@ class Subject_has_Property (_Ancestor_Essence) :
             """Short description of the link"""
 
             kind           = Attr.Optional
-            Kind_Mixins    = (Attr.Computed_Mixin, )
+            Kind_Mixins    = (Attr.Computed_Set_Mixin, )
             max_length     = 20
             ui_name        = _("Description")
 

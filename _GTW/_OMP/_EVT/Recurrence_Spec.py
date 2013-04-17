@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -30,6 +30,7 @@
 #     7-Sep-2010 (CT) `_change_callback` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    14-May-2012 (CT) Replace `unit.C_Type` by `unit.P_Type`
+#    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -262,7 +263,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             """Finish date of the recurrence."""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Mixin, )
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             rank               = -105
 
             rrule_name         = "until"
@@ -361,7 +362,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             """Start date of the recurrence."""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Mixin, )
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             rank               = -110
 
             rrule_name         = "dtstart"
