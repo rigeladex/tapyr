@@ -180,6 +180,7 @@
 #    16-Apr-2013 (CT) Add to `refuse_e_types` in `_m_fix_refuse_links`
 #    17-Apr-2013 (CT) Use `cls.is_locked` instead of home-grown code
 #    17-Apr-2013 (CT) Move `_m_auto_epkified` from M_Id_Entity to M_E_Type_Id
+#    18-Apr-2013 (CT) Factor `children_transitive`
 #    ««revision-date»»···
 #--
 
@@ -235,7 +236,9 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
 
     def __init__ (cls, name, bases, dct) :
-        cls._children_np = cls._children_np_transitive = None
+        cls._children_np            = None
+        cls._children_np_transitive = None
+        cls._children_transitive    = None
         cls.__m_super.__init__      (name, bases, dct)
         cls._m_init_name_attributes ()
         cls._m_setup_children       (bases, dct)
@@ -269,6 +272,18 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         """All non-partial descendents of `cls`, including `cls`."""
         result = cls._children_np_transitive
         if result is None :
+            result = cls._children_np_transitive = dict \
+                (  (tn, c) for tn, c in cls.children_transitive.iteritems ()
+                if not c.is_partial
+                )
+        return result
+    # end def children_np_transitive
+
+    @property
+    def children_transitive (cls) :
+        """All descendents of `cls`, including `cls`."""
+        result = cls._children_transitive
+        if result is None :
             def _gen (cls) :
                 def _gen_children (cls) :
                     yield cls
@@ -276,11 +291,10 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
                         for x in _gen_children (c) :
                             yield x
                 for c in _gen_children (cls) :
-                    if not c.is_partial :
-                        yield c.type_name, c
-            result = cls._children_np_transitive = dict (_gen (cls))
+                    yield c.type_name, c
+            result = cls._children_transitive = dict (_gen (cls))
         return result
-    # end def children_np_transitive
+    # end def children_transitive
 
     @property
     def default_child (cls) :
@@ -439,9 +453,10 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
             , _real_name    = str (cls.type_base_name)     ### M_Autorename
-            , _children_np  = None
+            , _children_np            = None
             , _children_np_transitive = None
-            , _dyn_doc      = cls._dyn_doc
+            , _children_transitive    = None
+            , _dyn_doc                = cls._dyn_doc
             , ** kw
             )
     # end def _m_new_e_type_dict
