@@ -73,6 +73,8 @@
 #     3-Apr-2013 (CT) Add `ui_type_name` to `Id_Entity._as_template_elem`
 #    11-Apr-2013 (CT) Redefine `_Id_Entity_NP_._ui_name_T` to add `[type_name]`
 #    11-Apr-2013 (CT) Include `children_np` in `Sig_Map`
+#    18-Apr-2013 (CT) Change `E_Types_CNP` to use
+#                     `selectable_e_types_unique_epk`, not `children_np`
 #    ««revision-date»»···
 #--
 
@@ -591,7 +593,7 @@ class Id_Entity (_Composite_) :
     def E_Types_CNP (self) :
         ET  = self.E_Type
         apt = ET.app_type
-        cnp = ET.children_np
+        cnp = self._attr.selectable_e_types_unique_epk
         if ET.polymorphic_epk and cnp :
             return dict ((str (c), apt.entity_type (c)) for c in cnp)
     # end def E_Types_CNP

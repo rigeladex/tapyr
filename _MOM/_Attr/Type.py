@@ -282,6 +282,8 @@
 #    17-Apr-2013 (CT) Change `as_arg_ckd` and `as_arg_raw` to normal methods
 #    18-Apr-2013 (CT) Raise `MOM.Error.Wrong_Type` or `.Attribute_Syntax`,
 #                     not `ValueError`
+#    18-Apr-2013 (CT) Add `_A_Id_Entity_.eligible_e_types` and
+#                     `.selectable_e_types_unique_epk`
 #    ««revision-date»»···
 #--
 
@@ -1065,6 +1067,15 @@ class _A_Id_Entity_ (_A_Entity_) :
         return set (self._gen_etypes_transitive (self.allow_e_types))
     # end def allow_e_types_transitive
 
+    @TFL.Meta.Once_Property
+    def eligible_e_types (self) :
+        """Set of eligible e_types that this attribute can refer to"""
+        return \
+            ( set (self.E_Type.children_np_transitive)
+            - self.refuse_e_types_transitive
+            )
+    # end def eligible_e_types
+
     @property
     def example (self) :
         etm = self.etype_manager ()
@@ -1093,6 +1104,19 @@ class _A_Id_Entity_ (_A_Entity_) :
             - self.allow_e_types_transitive
             )
     # end def refuse_e_types_transitive
+
+    @TFL.Meta.Once_Property
+    def selectable_e_types_unique_epk (self) :
+        """Set of eligible partial or non-partial e-types with unique epk"""
+        def _gen (ET) :
+            if ET.polymorphic_epk :
+                for c in ET.children.itervalues () :
+                    for x in _gen (c) :
+                        yield x
+            else :
+                yield ET.type_name
+        return set (_gen (self.E_Type)) - self.refuse_e_types_transitive
+    # end def selectable_e_types_unique_epk
 
     @TFL.Meta.Once_Property
     def sorted_by (self) :
