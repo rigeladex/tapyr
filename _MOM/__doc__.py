@@ -983,7 +983,7 @@ appropriate class::
     >>> RiT (p, t4)
     Traceback (most recent call last):
       ...
-    ValueError: Person (u'luke', u'lucky', u'') not eligible for attribute left,
+    Wrong_Type: Person 'luke, lucky' not eligible for attribute left,
         must be instance of Rodent
 
     >>> rit1 = RiT (m, t1)

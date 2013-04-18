@@ -280,6 +280,8 @@
 #    17-Apr-2013 (CT) Move calls of `check_type` to `Kind._set_cooked_value`
 #                     Remove `A_Link_Role.cooked` and `._check_type`
 #    17-Apr-2013 (CT) Change `as_arg_ckd` and `as_arg_raw` to normal methods
+#    18-Apr-2013 (CT) Raise `MOM.Error.Wrong_Type` or `.Attribute_Syntax`,
+#                     not `ValueError`
 #    ««revision-date»»···
 #--
 
@@ -736,7 +738,7 @@ class _A_Composite_ (_A_Entity_) :
         if isinstance (value, dict) :
             value = P_Type (** value)
         if value is not None and not isinstance (value, P_Type) :
-            raise ValueError \
+            raise MOM.Error.Wrong_Type \
                 (_T ("Value `%r` is not of type %s") % (value, P_Type))
         return value
     # end def cooked
@@ -831,7 +833,7 @@ class _A_Date_ (A_Attr_Type) :
                 else :
                     break
             else :
-                raise ValueError (s)
+                raise MOM.Error.Attribute_Syntax (obj, soc, s)
             return soc.P_Type (* result [soc._tuple_off:soc._tuple_len])
     # end def _from_string
 
@@ -882,8 +884,8 @@ class _A_Named_Value_ (A_Attr_Type) :
         try :
             return soc.Table [s]
         except KeyError :
-            raise ValueError \
-                ("%s not in %s" % (s, soc.eligible_raw_values ()))
+            msg = "%s not in %s" % (s, soc.eligible_raw_values ())
+            raise MOM.Error.Attribute_Syntax (obj, soc, s, msg)
     # end def _from_string
 
 # end class _A_Named_Value_
@@ -950,7 +952,7 @@ class _A_Number_ (A_Attr_Type) :
                 try :
                     return soc._call_eval (val, ** soc.math_dict)
                 except (NameError, ValueError, TypeError, SyntaxError) :
-                    raise ValueError
+                    raise MOM.Error.Attribute_Syntax (obj, soc, value)
     # end def _from_string
 
 # end class _A_Number_
@@ -1116,29 +1118,28 @@ class _A_Id_Entity_ (_A_Entity_) :
     # end def as_string
 
     def check_type (self, value) :
-        if not isinstance (value, self.E_Type.Essence) :
-            typ = getattr (value, "ui_name", value.__class__)
-            raise ValueError \
+        E_Type = self.E_Type
+        if not isinstance (value, E_Type.Essence) :
+            typ       = _T (getattr (value, "ui_name", value.__class__))
+            v_display = getattr (value, "ui_display", unicode (value))
+            raise MOM.Error.Wrong_Type \
                 ( _T
-                    ( "%s %s not eligible for attribute %s,"
+                    ( "%s '%s' not eligible for attribute %s,"
                       "\n"
                       "    must be instance of %s"
                     )
-                % ( _T (typ), unicode (value), self.name
-                  , _T (self.P_Type.ui_name)
-                  )
+                % (typ, v_display, self.name, _T (E_Type.ui_name))
                 )
         tn = value.type_name
         if tn in self.refuse_e_types_transitive :
-            raise ValueError \
+            typ = _T (value.E_Type.ui_name)
+            raise MOM.Error.Wrong_Type \
                 ( _T
-                    ( "%s not eligible for attribute %s,"
+                    ( "%s '%s' not eligible for attribute %s,"
                       "\n"
                       "    must be instance of %s, but not %s"
                     )
-                % ( unicode (value), self.name
-                  , _T (self.P_Type.ui_name), _T (value.E_Type.ui_name)
-                  )
+                % (typ, value.ui_display, self.name, _T (E_Type.ui_name), typ)
                 )
         return value
     # end def check_type
@@ -1212,7 +1213,7 @@ class _A_Id_Entity_ (_A_Entity_) :
             if self._accept_object  (obj, result) :
                 return self.cooked  (result)
             else :
-                raise ValueError \
+                raise MOM.Error.Wrong_Type \
                     ( _T ("object %s %s not eligible, specify one of: %s")
                     % (tn, epk, self.eligible_raw_values (obj))
                     )
@@ -1348,7 +1349,7 @@ class _A_String_Ascii_ (_A_String_) :
         if value is not None :
             value = super (_A_String_Ascii_, soc).cooked (value)
             if not self._cooked_re.match (value) :
-                raise ValueError (value)
+                raise MOM.Error.Attribute_Syntax (obj, soc, value)
         return value
     # end def cooked
 
@@ -1545,10 +1546,11 @@ class _A_Unit_ (A_Attr_Type) :
             try :
                 factor = soc._unit_dict [unit]
             except KeyError :
-                raise ValueError \
+                msg = \
                     ( _T ("Invalid unit %s, specify one of %s")
                     % (unit, soc.eligible_raw_values ())
                     )
+                raise MOM.Error.Attribute_Syntax (obj, soc, s, msg)
         return super (_A_Unit_, soc)._from_string (s, obj, glob, locl) * factor
     # end def _from_string
 
@@ -1647,8 +1649,8 @@ class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
             try :
                 return soc.Table_X [value.lower ()]
             except KeyError :
-                raise ValueError \
-                    ("%s not in %s" % (value, sorted (soc.Table)))
+                msg = "%s not in %s" % (value, sorted (soc.Table))
+                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
         else :
             return soc.P_Type (value)
     # end def cooked
@@ -1727,7 +1729,8 @@ class A_Date (_A_Date_) :
             try :
                 value = soc._from_string (value)
             except ValueError :
-                raise TypeError ("Date expected, got %r" % (value, ))
+                msg = "Date expected, got %r" % (value, )
+                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
         elif not isinstance (value, datetime.date) :
             raise TypeError ("Date expected, got %r" % (value, ))
         return value
@@ -1935,12 +1938,14 @@ class A_Enum (A_Attr_Type) :
             try :
                 result = soc.C_Type.cooked (value)
             except Exception as exc :
-                raise ValueError \
+                msg = \
                     ( "Invalid value for %s, got %s %r, expected one of %s"
                     % (soc, type (value), value, sorted (Table))
                     )
+                raise MOM.Error.Attribute_Syntax (None, soc, s, msg)
             if not result in Table :
-                raise ValueError ("%s not in %s" % (result, sorted (Table)))
+                msg = ("%s not in %s" % (result, sorted (Table)))
+                raise MOM.Error.Attribute_Syntax (None, soc, s, msg)
         return result
     # end def cooked
 
@@ -1952,7 +1957,8 @@ class A_Enum (A_Attr_Type) :
             if result in Table :
                 return result
             else :
-                raise ValueError ("%s not in %s" % (s, sorted (Table)))
+                msg = ("%s not in %s" % (s, sorted (Table)))
+                raise MOM.Error.Attribute_Syntax (obj, soc, s, msg)
     # end def _from_string
 
 # end class A_Enum

@@ -81,6 +81,7 @@
 #    26-Feb-2013 (CT) Improve text of `Multiplicity`
 #    26-Feb-2013 (CT) Improve text of `Not_Unique`
 #     1-Mar-2013 (CT) Use `_real_name` for `Error`
+#    18-Apr-2013 (CT) Change `Link_Error` to `Wrong_Type`
 #    ««revision-date»»···
 #--
 
@@ -645,10 +646,6 @@ class Link_Scope_Mix (Error) :
     """Raised when objects with different home scopes are put into a link."""
 # end class Link_Scope_Mix
 
-class Link_Type (Error) :
-    """Raised when a link is created with wrong object types."""
-# end class Link_Type
-
 class Multiplicity (Error) :
     """Raised when the maximum multiplicity for an association is violated."""
 
@@ -945,6 +942,10 @@ class Too_Many_Objects (Error) :
     # end def __init__
 
 # end class Too_Many_Objects
+
+class Wrong_Type (Error) :
+    """Raised when an instance of inccorect type is passed to an attribute."""
+# end class Wrong_Type
 
 if __name__ != "__main__" :
     MOM._Export_Module ()
