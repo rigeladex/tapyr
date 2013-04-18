@@ -115,6 +115,7 @@
 //                     change `_setup_field´ to accept the `Form` object as
 //                     parameter
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
+//    18-Apr-2013 (CT) Use `alert`, not `console.error`
 //    ««revision-date»»···
 //--
 
@@ -213,7 +214,7 @@
                               if (! answer ["error"]) {
                                   _get_cb (options, elem, val, cb, answer);
                               } else {
-                                  console.error ("Ajax error", answer, data);
+                                  alert ("Ajax error: " + answer ["error"]);
                               };
                         }
                       , url           : options.url.completer
@@ -666,7 +667,7 @@
                         );
                     _setup_callbacks (s$);
                 } else {
-                    console.error ("Ajax Error", response);
+                    alert ("Ajax Error: " + response ["error"]);
                 };
             };
         };
@@ -784,7 +785,8 @@
                                         s$ = _response_replace
                                             (response, s$, elem);
                                     } else {
-                                        console.error ("Ajax Error", response);
+                                        alert
+                                          ("Ajax Error: " + response ["error"]);
                                     };
                                 };
                             }
@@ -829,7 +831,8 @@
                                       s$ = _response_replace (response, s$, elem);
                                       _setup_callbacks (s$);
                                   } else {
-                                      console.error ("Ajax Error", response);
+                                      alert
+                                          ("Ajax Error: " + response ["error"]);
                                   };
                               }
                             }
@@ -855,7 +858,7 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    console.error ("Ajax Error", response);
+                                    alert ("Ajax Error: " + response ["error"]);
                                 };
                             };
                         }
@@ -876,7 +879,7 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    console.error ("Ajax Error", response);
+                                    alert ("Ajax Error: " + response ["error"]);
                                 };
                             };
                         }
@@ -919,13 +922,12 @@
                                           s$ = _response_replace (response, s$, elem);
                                           _setup_callbacks (s$);
                                       } else {
-                                          console.error
-                                              ("Save missing response", answer);
+                                          alert ("Save missing response");
                                       };
                                   };
                               } else {
-                                  console.error
-                                      ("Save error", answer, json_data);
+                                  alert
+                                      ("Save error:" + answer ["error"]);
                               };
                           }
                         }

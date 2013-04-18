@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    27-Jul-2011 (CT) Creation
+//    18-Apr-2013 (CT) Add `alert` to `options.error`
 //    ««revision-date»»···
 //--
 
@@ -25,10 +26,10 @@
         var options  = $.extend
             ( { async       : false                  // defaults settings
               , error       : function (xhr_instance, status, exc) {
-                    console.error
-                        ( (name || "Ajax request") + " failed: "
-                        , status, exc, opts.data
-                        );
+                    var msg = (name || "Ajax request") + " failed: ";
+                    alert
+                        (msg + ": " + exc + "\n\n" + xhr_instance.esponseText);
+                    console.error (msg, status, exc, opts.data);
                 }
               , timeout     : 30000
               }
