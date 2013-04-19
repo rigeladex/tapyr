@@ -284,6 +284,8 @@
 #                     not `ValueError`
 #    18-Apr-2013 (CT) Add `_A_Id_Entity_.eligible_e_types` and
 #                     `.selectable_e_types_unique_epk`
+#    19-Apr-2013 (CT) Remove `_A_Id_Entity_.eligible_objects`,
+#                     `.eligible_raw_values`
 #    ««revision-date»»···
 #--
 
@@ -1173,15 +1175,6 @@ class _A_Id_Entity_ (_A_Entity_) :
         return value
     # end def cooked
 
-    def eligible_objects (self, obj = None) :
-        etm = self.etype_manager (obj)
-        return (etm and etm.query_s ()) or ()
-    # end def eligible_objects
-
-    def eligible_raw_values (self, obj = None) :
-        return sorted (o.epk for o in self.eligible_objects (obj))
-    # end def eligible_raw_values
-
     @TFL.Meta.Class_and_Instance_Method
     def etype_manager (soc, obj = None) :
         if soc.P_Type :
@@ -1206,16 +1199,6 @@ class _A_Id_Entity_ (_A_Entity_) :
             return self._get_object  (obj, t, raw = True)
     # end def from_string
 
-    def _accept_object (self, obj, result) :
-        if (      self.__class__.eligible_objects.im_func
-           is not _A_Id_Entity_.eligible_objects.im_func
-           ) :
-            eo = self.eligible_objects (obj)
-            if eo :
-                return result in eo
-        return True
-    # end def _accept_object
-
     def _gen_etypes_transitive (self, e_types) :
         apt = self.e_type.app_type
         for ret in e_types :
@@ -1234,13 +1217,7 @@ class _A_Id_Entity_ (_A_Entity_) :
         etm    = scope [tn]
         result = etm.instance (* epk, raw = raw)
         if result is not None :
-            if self._accept_object  (obj, result) :
-                return self.cooked  (result)
-            else :
-                raise MOM.Error.Wrong_Type \
-                    ( _T ("object %s %s not eligible, specify one of: %s")
-                    % (tn, epk, self.eligible_raw_values (obj))
-                    )
+            return self.cooked  (result)
         else :
             raise MOM.Error.No_Such_Entity \
                 (  _T ("No object of type %s with epk %s in scope %s")
