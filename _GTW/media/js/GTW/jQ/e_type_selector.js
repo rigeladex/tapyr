@@ -35,6 +35,7 @@
 //    10-Apr-2013 (CT) Bind `beforeClose`, `close` events of `dialog` to
 //                     `before_close_cb`, `close_cb`;
 //                     bind `cancel_button` to `close` calling `dialog("close")`
+//    22-Apr-2013 (CT) Change default of `treshold` to `0`
 //    ««revision-date»»···
 //--
 
@@ -60,7 +61,7 @@
                 { aid             : "[name=__esf_for_attr__]"
                 , tid             : "[name=__esf_for_type__]"
                 }
-            , treshold            : 1
+            , treshold            : 0
             }
         , init                  : function init (opts) {
               var icon_map = $.extend
@@ -217,7 +218,8 @@
           }
         , get_completions       : function get_completions (inp$, term, cb) {
               var self     = this;
-              var S        = self.options.selectors;
+              var options  = self.options;
+              var S        = options.selectors;
               var trigger  = inp$.prop ("id");
               var values   = {}, n = 0;
               self.completion_data = self.get_completion_data ();
@@ -234,7 +236,7 @@
                         }
                       );
               };
-              if (n > 0) {
+              if (n > 0 || options.treshold == 0) {
                   $.gtw_ajax_2json
                       ( { async         : true
                         , data          : $.extend
@@ -252,7 +254,7 @@
                                 console.error ("Ajax error", answer, data);
                             };
                           }
-                        , url           : self.options.url.qx_esf_completer
+                        , url           : options.url.qx_esf_completer
                         }
                       , "Completion"
                       );
