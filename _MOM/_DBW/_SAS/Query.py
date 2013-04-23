@@ -23,7 +23,7 @@
 #    MOM.DBW.SAS.Query
 #
 # Purpose
-#    A wrapper which provides access to the SQL column objects trough the
+#    A wrapper which provides access to the SQL column objects through the
 #    attribute names of Entities.
 #
 # Revision Dates
@@ -74,6 +74,7 @@
 #                     method (required if query attributes of roles of an
 #                     association access cached roles)
 #    31-Jan-2013 (MG) Add `eq` and `ne` support for `Cached_Role_Query`
+#    23-Apr-2013 (CT) Fix typos, style
 #    ««revision-date»»···
 #--
 
@@ -175,8 +176,6 @@ class MOM_Query (_MOM_Query_) :
         self._CACHED_ROLES     = {}
         self._query_fct        = {}
         self.delayed = delayed = []
-        #if e_type.type_name in ("PAP.Person_has_Address", "PAP.Person_has_Phone") :
-        #    import pdb; pdb.set_trace ()
         if e_type is e_type.relevant_root :
             self.Type_Name    = columns.Type_Name
             self.pid          = columns.pid
@@ -185,7 +184,6 @@ class MOM_Query (_MOM_Query_) :
         for name, kind in db_attrs.iteritems () :
             attr = kind.attr
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
-                attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
                 qclass = _MOM_Composite_Query_.__class__ \
                     ( "%s_%s_Query_Class" % (e_type.type_name, name)
@@ -216,7 +214,6 @@ class MOM_Query (_MOM_Query_) :
             self._add_cached_role (rc.role_name, rc, assoc)
         for name, attr in cached_roles :
             if name not in self._CACHED_ROLES :
-                #import pdb; pdb.set_trace ()
                 self._add_cached_role \
                     (name, attr.cacher, e_type.app_type [attr.assoc])
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
@@ -272,7 +269,6 @@ class MOM_Query (_MOM_Query_) :
                        % (e_type.type_name, attr.name, )
                        )
             else :
-                ###import pdb; pdb.set_trace ()
                 query   = attr.query._sa_filter (self)
                 column  = jq = query [1] [0]
                 if not isinstance (column, Cached_Role_Query) :
@@ -438,15 +434,15 @@ class Join_Query (_MOM_Query_) :
                     % (sub_attr, type_name, type_name)
                     )
         else :
-            sub_sb         = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
-            joins, oc      = sub_sb._sa_order_by (o_SAQ, desc = desc)
+            sub_sb    = TFL.Sorted_By (getattr (TFL.Getter, sub_attr) (Q))
+            joins, oc = sub_sb._sa_order_by (o_SAQ, desc = desc)
             for b in o_SAQ._E_TYPE [1] :
                 j_SAQ = b._SAQ
                 joins.append \
                     ( ( j_SAQ._SA_TABLE
                       , o_SAQ._SA_TABLE
-                      ,    j_SAQ.pid
-                        == o_SAQ._SA_TABLE.columns [o_SAQ._E_TYPE [0]._sa_pk_name]
+                      , j_SAQ.pid == o_SAQ._SA_TABLE.columns
+                                         [o_SAQ._E_TYPE [0]._sa_pk_name]
                       , False
                       )
                     )
@@ -455,9 +451,9 @@ class Join_Query (_MOM_Query_) :
                   , o_SAQ.pid.table
                   , column == o_SAQ.pid
                   , not isinstance
-                        ( column.mom_kind
-                        , (MOM.Attr.Primary, MOM.Attr.Necessary)
-                        )
+                      ( column.mom_kind
+                      , (MOM.Attr.Primary, MOM.Attr.Necessary)
+                      )
                   )
                 )
         return joins, oc
@@ -509,7 +505,7 @@ class Cached_Role_Query (_MOM_Query_) :
 
     def __getattr__ (self, name) :
         if name.startswith ("__") :
-            raise TypeError ("Opeation `%s` not supported" % (name, ))
+            raise TypeError ("Operation `%s` not supported" % (name, ))
         return self (".%s" % name)
     # end def __getattr__
 

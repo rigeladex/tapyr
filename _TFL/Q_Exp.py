@@ -668,7 +668,6 @@ class _Exp_ (_Exp_Base_) :
     def ENDSWITH () :
         def endswith (l, r) :
             return l.endswith (r)
-        # end def endswith
         return endswith
     # end def ENDSWITH
 
@@ -691,7 +690,6 @@ class _Exp_ (_Exp_Base_) :
     def STARTSWITH () :
         def startswith (l, r) :
             return l.startswith (r)
-        # end def startswith
         return startswith
     # end def STARTSWITH
 
