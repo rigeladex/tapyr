@@ -47,6 +47,7 @@
 #    24-Apr-2013 (CT) Remove idempodent changes from `attribute_changes`
 #    24-Apr-2013 (CT) Add check for `is_born and is_dead` to `Pid.__nonzero__`
 #    24-Apr-2013 (CT) Don't add `new` for `is_dead` to `attribute_changes`
+#    24-Apr-2013 (CT) Add `Summary.entity_changes`
 #    ««revision-date»»···
 #--
 
@@ -431,6 +432,13 @@ class Summary (TFL.Meta.Object) :
                         yield v
         return TFL.uniq (_gen (self, ems))
     # end def entities_transitive
+
+    def entity_changes (self, scope) :
+        by_pid = self.by_pid
+        for e in self.entities (scope.ems) :
+            c = by_pid [e.pid]
+            yield e, c.attribute_changes
+    # end def entity_changes
 
     def _add_to_by_pid (self, changes) :
         by_pid = self._by_pid

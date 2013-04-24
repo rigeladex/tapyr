@@ -34,7 +34,7 @@
 #    12-Sep-2012 (CT) Adapt to recording of electric changes
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    15-Apr-2013 (CT) Adapt to change of `MOM.Attr.Kind.reset`
-#    24-Apr-2013 (CT) Add test `no_net` and adapt to change of `MOM.SCM.Summary`
+#    24-Apr-2013 (CT) Add test `no_net`; adapt to change of `MOM.SCM.Summary`
 #    ««revision-date»»···
 #--
 
@@ -443,6 +443,24 @@ _basic = r"""
     58 [('last_cid', (old = None, new = '107'))]
     59 [('last_cid', (old = None, new = '108'))]
     60 [('last_cid', (old = None, new = '109'))]
+
+    >>> for e, acs in ucc.entity_changes (scope) :
+    ...     print e.pid, clean_change (sorted (acs.iteritems ()))
+    18 [('date', (old = (('start', u'2010/08/18'),), new = (('finish', u'2010/08/19'), ('start', u'2010/08/13')))), ('last_cid', (old = '19', new = '85'))]
+    20 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '51', new = '100'))]
+    57 [('last_cid', (old = None, new = '106'))]
+    58 [('last_cid', (old = None, new = '107'))]
+    59 [('last_cid', (old = None, new = '108'))]
+    60 [('last_cid', (old = None, new = '109'))]
+
+    >>> for e, acs in ucc.entity_changes (scope) :
+    ...     e
+    EVT.Event ((u'event-1-text', ), (u'2010/08/13', u'2010/08/19'), (), u'')
+    EVT.Recurrence_Spec (((u'event-1-text', ), (u'2010/08/13', u'2010/08/19'), (), u''))
+    EVT.Event_occurs (((u'event-1-text', ), (u'2010/08/13', u'2010/08/19'), (), u''), u'2010/08/01', ())
+    EVT.Event_occurs (((u'event-1-text', ), (u'2010/08/13', u'2010/08/19'), (), u''), u'2010/08/08', ())
+    EVT.Event_occurs (((u'event-1-text', ), (u'2010/08/13', u'2010/08/19'), (), u''), u'2010/08/15', ())
+    EVT.Event_occurs (((u'event-1-text', ), (u'2010/08/13', u'2010/08/19'), (), u''), u'2010/09/08', ())
 
     >>> for pid, ca in sorted (ucc.changed_attrs.iteritems ()) :
     ...     print pid, sorted (ca)
