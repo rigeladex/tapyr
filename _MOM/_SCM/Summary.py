@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -44,6 +44,9 @@
 #    28-Sep-2010 (CT) `Attr_C_Summary.check_conflict` and `.check_ini_vs_cur`
 #                     added
 #     7-May-2012 (CT) Add `entities_transitive`
+#    24-Apr-2013 (CT) Remove idempodent changes from `attribute_changes`
+#    24-Apr-2013 (CT) Add check for `is_born and is_dead` to `Pid.__nonzero__`
+#    24-Apr-2013 (CT) Don't add `new` for `is_dead` to `attribute_changes`
 #    ««revision-date»»···
 #--
 
@@ -130,13 +133,19 @@ class Attr_Summary (TFL.Meta.Object) :
 class Attr_C_Summary (_Entity_Summary_) :
     """Change summary for a composite attribute of a single `pid`."""
 
-    def __init__ (self, attr_summary = None) :
-        self.attribute_changes = TFL.defaultdict (Attr_Summary)
+    def __init__ (self, attr_summary, is_dead) :
+        self.attribute_changes = acs = TFL.defaultdict (Attr_Summary)
         if attr_summary :
             old = dict (attr_summary.old)
-            new = dict (attr_summary.new)
+            if not is_dead :
+                new = dict (attr_summary.new)
+            else :
+                n = None
             for a in set (itertools.chain (old, new)) :
-                self [a].add (old.get (a), new.get (a))
+                o = old.get (a)
+                if not is_dead :
+                    n = new.get (a)
+                acs [a].add (o, n)
     # end def __init__
 
     @property
@@ -246,15 +255,23 @@ class Pid (_Entity_Summary_) :
 
     @TFL.Meta.Once_Property
     def attribute_changes (self) :
-        result = TFL.defaultdict (Attr_Summary)
+        result  = TFL.defaultdict (Attr_Summary)
+        is_dead = self.is_dead
+        new     = None
         for c in self.changes :
             r = result
             if isinstance (c, MOM.SCM.Change.Attr_Composite) :
                 r = result [c.attr_name] = Attr_C_Summary \
-                    (result.get (c.attr_name))
+                    (result.get (c.attr_name), is_dead)
             for a in set (itertools.chain (c.old_attr, c.new_attr)) :
-                (result if a == "last_cid" else r) \
-                    [a].add (c.old_attr.get (a), c.new_attr.get (a))
+                old = c.old_attr.get (a)
+                if not is_dead :
+                    new = c.new_attr.get (a)
+                res = (result if a == "last_cid" else r)
+                res [a].add (old, new)
+        for a, ra in list (result.iteritems ()) :
+            if ra.old == ra.new :
+                del result [a]
         return result
     # end def attribute_changes
 
@@ -336,7 +353,7 @@ class Pid (_Entity_Summary_) :
     # end def __len__
 
     def __nonzero__ (self) :
-        return bool (self._changes)
+        return bool (self._changes) and not (self.is_born and self.is_dead)
     # end def __nonzero__
 
     def __repr__ (self) :

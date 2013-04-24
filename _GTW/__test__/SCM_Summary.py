@@ -34,6 +34,7 @@
 #    12-Sep-2012 (CT) Adapt to recording of electric changes
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    15-Apr-2013 (CT) Adapt to change of `MOM.Attr.Kind.reset`
+#    24-Apr-2013 (CT) Add test `no_net` and adapt to change of `MOM.SCM.Summary`
 #    ««revision-date»»···
 #--
 
@@ -279,11 +280,11 @@ _basic = r"""
         <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/10/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '66'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 2
+    ...   if csp :
     ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
     1 [('last_cid', (old = None, new = '31')), ('loa', (old = u'', new = u'2.43')), ('max_crew', (old = None, new = u'1'))]
     2 [('last_cid', (old = None, new = '2')), ('max_crew', (old = None, new = u'2'))]
     3 [('last_cid', (old = None, new = '3')), ('max_crew', (old = None, new = u'1'))]
-    4 [('last_cid', (old = None, new = None)), ('max_crew', (old = None, new = None))]
     5 [('last_cid', (old = None, new = '5'))]
     6 [('last_cid', (old = None, new = '6'))]
     7 [('last_cid', (old = None, new = '8'))]
@@ -298,22 +299,8 @@ _basic = r"""
     16 [('contents', (old = None, new = u'<p>Text for the 1. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '17')), ('text', (old = None, new = u'Text for the 1. event'))]
     17 [('contents', (old = None, new = u'<p>Text for the 2. event</p>\n')), ('date', (old = None, new = (('start', u'2010/09/08'),))), ('last_cid', (old = None, new = '18')), ('text', (old = None, new = u'Text for the 2. event'))]
     18 [('last_cid', (old = None, new = '19'))]
-    19 [('last_cid', (old = None, new = None))]
     20 [('date_exceptions', (old = None, new = u'2010/08/15')), ('dates', (old = u'', new = u'2010/09/08,2010/10/08')), ('last_cid', (old = None, new = '51'))]
     21 [('count', (old = None, new = u'7')), ('last_cid', (old = None, new = '23')), ('start', (old = None, new = u'2010/08/01')), ('unit', (old = None, new = u'Weekly'))]
-    22 [('last_cid', (old = None, new = None))]
-    23 [('last_cid', (old = None, new = None))]
-    24 [('last_cid', (old = None, new = None))]
-    25 [('last_cid', (old = None, new = None))]
-    26 [('last_cid', (old = None, new = None))]
-    27 [('last_cid', (old = None, new = None))]
-    28 [('last_cid', (old = None, new = None))]
-    29 [('last_cid', (old = None, new = None))]
-    30 [('last_cid', (old = None, new = None))]
-    31 [('last_cid', (old = None, new = None))]
-    32 [('last_cid', (old = None, new = None))]
-    33 [('last_cid', (old = None, new = None))]
-    34 [('last_cid', (old = None, new = None))]
     35 [('last_cid', (old = None, new = '59'))]
     36 [('last_cid', (old = None, new = '60'))]
     37 [('last_cid', (old = None, new = '61'))]
@@ -440,6 +427,7 @@ _basic = r"""
         <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('finish', u'2010/08/19'), ('start', u'2010/08/13')), u'', u'', 'EVT.Event'), u'2010/09/08', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '109'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 4
+    ...   if csp :
     ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
     18 [('date', (old = (('start', u'2010/08/18'),), new = (('finish', u'2010/08/19'), ('start', u'2010/08/13')))), ('last_cid', (old = '19', new = '85'))]
     20 [('date_exceptions', (old = u'2010/08/15', new = u'')), ('dates', (old = u'2010/09/08,2010/10/08', new = u'2010/09/08')), ('last_cid', (old = '51', new = '100'))]
@@ -451,20 +439,6 @@ _basic = r"""
     40 [('last_cid', (old = '64', new = None))]
     41 [('last_cid', (old = '65', new = None))]
     42 [('last_cid', (old = '66', new = None))]
-    43 [('last_cid', (old = None, new = None))]
-    44 [('last_cid', (old = None, new = None))]
-    45 [('last_cid', (old = None, new = None))]
-    46 [('last_cid', (old = None, new = None))]
-    47 [('last_cid', (old = None, new = None))]
-    48 [('last_cid', (old = None, new = None))]
-    49 [('last_cid', (old = None, new = None))]
-    50 [('last_cid', (old = None, new = None))]
-    51 [('last_cid', (old = None, new = None))]
-    52 [('last_cid', (old = None, new = None))]
-    53 [('last_cid', (old = None, new = None))]
-    54 [('last_cid', (old = None, new = None))]
-    55 [('last_cid', (old = None, new = None))]
-    56 [('last_cid', (old = None, new = None))]
     57 [('last_cid', (old = None, new = '106'))]
     58 [('last_cid', (old = None, new = '107'))]
     59 [('last_cid', (old = None, new = '108'))]
@@ -540,6 +514,40 @@ _basic = r"""
     >>> sorted (conflicts), sorted (merges)
     ([], [])
 
+"""
+
+_no_net = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP   = scope.PAP
+    >>> p     = PAP.Person.instance_or_new (u"Tanzer", u"Laurens")
+
+    >>> scope.commit ()
+
+    >>> ucc = scope.uncommitted_changes
+    >>> _   = p.set (title = "Mr.")
+
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 1
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
+    1 [('last_cid', (old = '1', new = '2')), ('title', (old = u'', new = u'Mr.'))]
+
+    >>> _ = p.set (title = "")
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 2
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
+    1 [('last_cid', (old = '1', new = '3'))]
+
+    >>> scope.commit ()
+
+    >>> ucc = scope.uncommitted_changes
+    >>> _   = p.set (title = "Mr.")
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 3
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
+    1 [('last_cid', (old = '3', new = '4')), ('title', (old = u'', new = u'Mr.'))]
+
+    >>> p.destroy ()
+    >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 4
+    ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
+    1 [('last_cid', (old = '3', new = None)), ('title', (old = u'', new = None))]
 
 """
 
@@ -605,7 +613,12 @@ __test__ = dict \
     )
 
 __test__ = dict \
-    ( ** Scaffold.create_test_dict (_basic)
+    ( ** Scaffold.create_test_dict
+        ( dict
+            ( basic  = _basic
+            , no_net = _no_net
+            )
+        )
     )
 
 ### __END__ GTW.__test__.SCM_Summary
