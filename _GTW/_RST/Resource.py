@@ -236,7 +236,6 @@ class _RST_Base_ (TFL.Meta.Object) :
                ) :
                 self._postconditions = tuple \
                     (parent.child_postconditions_map [name])
-                print ("*" * 5, self, self._postconditions)
     # end def __init__
 
     def _after__init__ (self, kw) :

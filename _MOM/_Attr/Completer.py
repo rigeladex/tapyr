@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -39,6 +39,7 @@
 #     7-Nov-2011 (CT) Change `Completer.__call__` to query results for
 #                     `treshold == 0` without `fs`
 #    13-Dec-2012 (CT) Add arguments `ETM_R`, `AQ` to `Completer.__call__`
+#    25-Apr-2013 (CT) Add optional arg `xtra_filter` to `Completer.__call__`
 #    ««revision-date»»···
 #--
 
@@ -77,14 +78,22 @@ class Completer (TFL.Meta.Object) :
         return result
     # end def copy
 
-    def __call__ (self, scope, val_dict, ETM_R = None, AQ = None) :
+    def __call__ \
+            ( self, scope, val_dict
+            , ETM_R       = None
+            , AQ          = None
+            , xtra_filter = None
+            ) :
         ETM = scope [self.etn]
         if ETM_R is None :
             ETM_R = ETM
         vd  = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
         fs  = tuple (ETM.ac_query_attrs (self.names, vd, AQ))
         if fs or self.treshold == 0 :
-            return ETM_R.query_s (* fs).distinct ()
+            q = ETM_R.query_s (* fs)
+            if xtra_filter is not None :
+                q = q.filter (xtra_filter)
+            return q.distinct ()
         return TFL.Q_Result (())
     # end def __call__
 

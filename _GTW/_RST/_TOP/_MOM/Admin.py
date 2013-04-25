@@ -57,6 +57,7 @@
 #     3-Apr-2013 (CT) Factor `_get_esf_filter`, support `polymorphic_epk`
 #    25-Apr-2013 (CT) Use `self.commit_scope`, not `scope.commit`
 #    25-Apr-2013 (CT) Add `child_postconditions_map` to `_new_child_x`
+#    25-Apr-2013 (CT) Add and use `eligible_object_restriction`
 #    ««revision-date»»···
 #--
 
@@ -596,7 +597,8 @@ class Completer (_JSON_Action_PO_) :
                 ETM_R = scope [elem.anchor.type_name]
                 AQ    = getattr (ETM_R.E_Type.AQ, elem.name)
             names  = completer.names
-            query  = completer (scope, json.values, ETM_R, AQ)
+            eor    = self.eligible_object_restriction (E_Type.type_name)
+            query  = completer (scope, json.values, ETM_R, AQ, eor)
             result = self._rendered_completions \
                 (ETM, query, names, completer.entity_p, json, AQ)
         return result
@@ -775,7 +777,11 @@ class QX_Completer (_JSON_Action_PO_) :
         qr     = QR.from_request \
             (scope, ET, request, ** request.json.get ("values", {}))
         ETM    = scope [ET.type_name]
-        query  = qr (ETM.query_s ()).distinct ()
+        bq     = ETM.query_s ()
+        eor    = self.eligible_object_restriction (ET.type_name)
+        if eor is not None :
+            bq = bq.filter (eor)
+        query  = qr (bq).distinct ()
         entity_p = getattr (json, "entity_p", False)
         return self._rendered_completions (ETM, query, names, entity_p, json)
     # end def _rendered_post
@@ -1134,6 +1140,10 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             , pid             = pid
             )
     # end def changer
+
+    def eligible_object_restriction (self, type_name) :
+        return None
+    # end def eligible_objects
 
     def href_create (self) :
         return pp_join (self.abs_href, "create")
