@@ -88,6 +88,7 @@
 #    14-Dec-2012 (CT) Auto-instantiate permissions in `_get_permissions`
 #    25-Apr-2013 (CT) Add `postconditions`, `check_postconditions`,
 #                     `commit_scope`
+#    25-Apr-2013 (CT) Add `child_postconditions_map`
 #    ««revision-date»»···
 #--
 
@@ -182,6 +183,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     Auth_Required              = Status.Unauthorized
 
     child_permission_map       = {}
+    child_postconditions_map   = {}
     cls_postconditions         = ()
     ext                        = None
     hidden                     = False
@@ -225,11 +227,16 @@ class _RST_Base_ (TFL.Meta.Object) :
                 print (self.href or "/{ROOT}", k, v, "\n   ", exc)
         if self.implicit :
             self.hidden = True
-        name = self.name
-        if (   (not self.permission)
-           and parent and name in parent.child_permission_map
-           ) :
-            self.permission = parent.child_permission_map [name]
+        if parent :
+            name = self.name
+            if (not self.permission) and name in parent.child_permission_map :
+                self.permission = parent.child_permission_map [name]
+            if (   (not self._postconditions)
+               and name in parent.child_postconditions_map
+               ) :
+                self._postconditions = tuple \
+                    (parent.child_postconditions_map [name])
+                print ("*" * 5, self, self._postconditions)
     # end def __init__
 
     def _after__init__ (self, kw) :

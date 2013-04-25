@@ -56,6 +56,7 @@
 #                     `_get_attr_filter`
 #     3-Apr-2013 (CT) Factor `_get_esf_filter`, support `polymorphic_epk`
 #    25-Apr-2013 (CT) Use `self.commit_scope`, not `scope.commit`
+#    25-Apr-2013 (CT) Add `child_postconditions_map` to `_new_child_x`
 #    ««revision-date»»···
 #--
 
@@ -838,11 +839,18 @@ class _NC_Mixin_ (TFL.Meta.Object) :
             kw     = dict \
                 ( args   = grandchildren
                 , kind   = child
-                , name   = "%s/%s" % (child, name)
+                , name   = "%s/%s" % (child, name) if name else child
                 , parent = self
                 )
-            if child in self.child_permission_map :
-                kw ["permission"] = self.child_permission_map [child]
+            if name :
+                ### GTW.RST.Resource._Base_.__init__ considers
+                ###     `child_permission_map` and `child_postconditions_map`
+                ### with `kw ["name"]` but the maps refer to just `child`
+                if child in self.child_permission_map :
+                    kw ["permission"] = self.child_permission_map [child]
+                if child in self.child_postconditions_map :
+                    kw ["postconditions"] = \
+                        self.child_postconditions_map [child]
             result = T (** kw)
             return result
     # end def _new_child_x
