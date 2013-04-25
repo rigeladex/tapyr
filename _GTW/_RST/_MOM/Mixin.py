@@ -71,6 +71,7 @@
 #     2-Mar-2013 (CT) Add `add_doc_link_header`
 #    28-Mar-2013 (CT) Change `attributes` to use default `E_Type.ui_attr`
 #     9-Apr-2013 (CT) Catch `ValueError` in `_handle_method_context`
+#    25-Apr-2013 (CT) Add `Pre_Commit_Entity_Check`, use `resource.commit_scope`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,23 @@ from   _TFL.I18N                import _, _T, _Tn
 
 import _TFL._Meta.Object
 import _TFL.Record
+
+class Pre_Commit_Entity_Check (TFL.Meta.Object) :
+
+    def __init__ (self, check_name) :
+        self.check_name = check_name
+    # end def __init__
+
+    def __call__ (self, resource, request, response) :
+        scope = resource.scope
+        cname = self.check_name
+        for e, acs in scope.uncommitted_changes.entity_changes (scope) :
+            check = getattr (e, cname, None)
+            if check is not None :
+                check (resource, request, response, acs)
+    # end def __call__
+
+# end class Pre_Commit_Entity_Check
 
 class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
 
@@ -165,12 +183,12 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
         try :
             attrs = self._request_attrs (resource, request, response)
             obj   = self._apply_attrs   (resource, request, response, attrs)
+            resource.commit_scope       (request, response)
         except Exception as exc :
-            resource.scope.rollback ()
-            response.status_code = self.failure_code
             result               = dict (error = str (exc))
+            response.status_code = self.failure_code
+            resource.scope.rollback ()
         else :
-            resource.scope.commit ()
             response.status_code = self.success_code
             _, result = self._obj_resource_response_body \
                 (obj, resource, request, response)

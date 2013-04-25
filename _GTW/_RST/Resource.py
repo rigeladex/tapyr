@@ -86,6 +86,8 @@
 #    12-Dec-2012 (CT) Change `_http_response_context` to always `LET`
 #    14-Dec-2012 (CT) Add `child_permission_map`
 #    14-Dec-2012 (CT) Auto-instantiate permissions in `_get_permissions`
+#    25-Apr-2013 (CT) Add `postconditions`, `check_postconditions`,
+#                     `commit_scope`
 #    ««revision-date»»···
 #--
 
@@ -180,6 +182,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     Auth_Required              = Status.Unauthorized
 
     child_permission_map       = {}
+    cls_postconditions         = ()
     ext                        = None
     hidden                     = False
     implicit                   = False
@@ -192,6 +195,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     _r_permission              = None             ### read  permission
     _w_permission              = None             ### write permission
     _page_template             = None
+    _postconditions            = ()
     _template_names            = set ()
 
     DELETE                     = None             ### redefine if necessary
@@ -206,7 +210,8 @@ class _RST_Base_ (TFL.Meta.Object) :
         self._kw = dict (kw)
         self.pop_to_self \
             ( kw
-            , "exclude_robots", "r_permission", "w_permission"
+            , "exclude_robots", "postconditions"
+            , "r_permission", "w_permission"
             , prefix = "_"
             )
         encoding = kw.get ("input_encoding") or \
@@ -415,6 +420,20 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @Once_Property
     @getattr_safe
+    def postconditions (self) :
+        def _gen (self) :
+            for p in self.cls_postconditions :
+                yield p
+            for p in self._postconditions :
+                yield p
+            if self.parent :
+                for p in self.parent.postconditions :
+                    yield p
+        return list (uniq (_gen (self)))
+    # end def postconditions
+
+    @Once_Property
+    @getattr_safe
     def r_permissions (self) :
         return sorted \
             (self._get_permissions ("r_permission"), key = TFL.Getter._rank)
@@ -453,6 +472,20 @@ class _RST_Base_ (TFL.Meta.Object) :
     def allow_user (self, user) :
         return self.allow_method (self.GET, user)
     # end def allow_user
+
+    def check_postconditions (self, request, response) :
+        if not self.postconditions_checked :
+            self.postconditions_checked = True
+            for p in self.postconditions :
+                if isinstance (p, TFL.Meta.Object.__class__) :
+                    p = p ()
+                p (self, request, response)
+    # end def check_postconditions
+
+    def commit_scope (self, request, response) :
+        self.check_postconditions (request, response)
+        self.top.scope.commit     ()
+    # end def commit_scope
 
     def get_etag (self, request) :
         ci = self.change_info
@@ -612,12 +645,13 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        T = self.Templateer
-        if T :
-            with T.GTW.LET (blackboard = dict ()) :
+        with self.LET (postconditions_checked = False) :
+            T = self.Templateer
+            if T :
+                with T.GTW.LET (blackboard = dict ()) :
+                    yield
+            else :
                 yield
-        else :
-            yield
     # end def _handle_method_context
 
     def __getattr__ (self, name) :

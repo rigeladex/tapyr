@@ -55,6 +55,7 @@
 #     3-Apr-2013 (CT) Move `json.etn` into `if "key"` clause of
 #                     `_get_attr_filter`
 #     3-Apr-2013 (CT) Factor `_get_esf_filter`, support `polymorphic_epk`
+#    25-Apr-2013 (CT) Use `self.commit_scope`, not `scope.commit`
 #    ««revision-date»»···
 #--
 
@@ -459,7 +460,7 @@ class _Changer_ (_HTML_Action_) :
             self.form_value_apply (fv, scope, fv.sid, session_secret)
             if not fv.errors :
                 try :
-                    scope.commit ()
+                    self.commit_scope (request, response)
                 except Exception as exc :
                     for e in fv.entities () :
                         if e.entity :

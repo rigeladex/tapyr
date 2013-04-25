@@ -82,6 +82,7 @@
 #    26-Feb-2013 (CT) Improve text of `Not_Unique`
 #     1-Mar-2013 (CT) Use `_real_name` for `Error`
 #    18-Apr-2013 (CT) Change `Link_Error` to `Wrong_Type`
+#    25-Apr-2013 (CT) Add `Permission`
 #    ««revision-date»»···
 #--
 
@@ -790,6 +791,48 @@ class Not_Unique (_Invariant_) :
 class Partial_Type (Error) :
     """Raised when creation of an object of a partial type is tried."""
 # end class Partial_Type
+
+class Permission (_Invariant_, ValueError) :
+    """You are not allowed to use that object in this context"""
+
+    class inv :
+        name       = "Permission_Error"
+
+    def __init__ (self, obj, attr, val, allowed) :
+        self.__super.__init__ (obj)
+        self.args         = (obj, attr, val.ui_display)
+        self.obj          = obj
+        self.attribute    = attr
+        self.attributes   = (attr.name, )
+        self.is_required  = attr.is_required
+        self.value        = val.ui_display
+        self.allowed      = tuple (x.ui_display for x in allowed)
+    # end def __init__
+
+    @Once_Property
+    def as_unicode (self) :
+        attr   = self.attribute
+        result = \
+            ( _T ( "Permission error for : `%r`"
+                   "\n     allowed  values : (%s)"
+                   "\n     got      value  : `%s`"
+                 )
+            % (attr, ", ".join (self.allowed), self.value)
+            )
+        return result
+    # end def as_unicode
+
+    @Once_Property
+    def bindings (self) :
+        return ((self.attribute.name, self.value), )
+    # end def bindings
+
+    @Once_Property
+    def head (self) :
+        return unicode (self)
+    # end def head
+
+# end class Permission
 
 class Quant (Invariant) :
     """Raised when a quantifier invariant of a MOM object/link is violated."""
