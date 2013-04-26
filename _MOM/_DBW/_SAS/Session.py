@@ -131,6 +131,7 @@
 #    30-Jan-2013 (MG) Add support for `keep_zombies` to `rollback`
 #    30-Jan-2013 (MG) Bug fixing for `keep_zombies` handling
 #     9-Apr-2013 (CT) Add column `time` to table `change_history`
+#    26-Apr-2013 (CT) Remove `A_AIS_Value`
 #    ««revision-date»»···
 #--
 
@@ -397,9 +398,6 @@ class SAS_Interface (TFL.Meta.Object) :
                         )
                     )
             else :
-                if isinstance (kind.attr, MOM.Attr.A_AIS_Value) :
-                    if getattr (entity, attr_name) is None :
-                        continue
                 pickle_cargo = kind.get_pickle_cargo (entity)
                 pc_transform = kind.attr.SAS_PC_Transform
                 if pc_transform :

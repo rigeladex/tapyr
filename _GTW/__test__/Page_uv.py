@@ -86,8 +86,8 @@ _test_code = r"""
     >>> for et in rets :
     ...     print (fmt %% TFL.Caller.Object_Scope (et))
     PAP.Email                                      False  ('address',)
-    Auth.Certificate                               False  ('cert_id',)
     PAP.Phone                                      False  ('country_code', 'area_code', 'number')
+    Auth.Certificate                               False  ('email', 'validity', 'desc')
     PAP.Person                                     False  ('last_name', 'first_name', 'middle_name', 'title')
     Auth.Account_Activation                        False  ('left',)
     Auth.Account_Password_Change_Required          False  ('left',)
@@ -361,8 +361,8 @@ _test_code = r"""
     >>> for et in rets :
     ...     print (fmt %% (et.type_name, et.epk_sig_root.type_name if et.epk_sig_root is not et else "=", et.epk_sig))
     PAP.Email                                      =                     ('address',)
-    Auth.Certificate                               =                     ('cert_id',)
     PAP.Phone                                      =                     ('country_code', 'area_code', 'number')
+    Auth.Certificate                               =                     ('email', 'validity', 'desc')
     PAP.Person                                     =                     ('last_name', 'first_name', 'middle_name', 'title')
     Auth.Account_Activation                        =                     ('left',)
     Auth.Account_Password_Change_Required          =                     ('left',)

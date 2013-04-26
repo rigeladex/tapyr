@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Jan-2013 (CT) Creation
 #    25-Feb-2013 (CT) Add tests
+#    26-Apr-2013 (CT) Remove `cert_id`
 #    ««revision-date»»···
 #--
 
@@ -42,37 +43,22 @@ _test_create = """
     Creating new scope ...
     >>> Auth  = scope.Auth
 
-    >>> Auth.Account.E_Type.primary_ais
-    >>> Auth.Certificate.E_Type.primary_ais
-    AIS `cert_id`
-
     >>> Auth.Certificate.query_s ().all ()
     []
 
     >>> c1 = Auth.Certificate (email = "foo@bar", validity = ("20130116", ))
     >>> c2 = Auth.Certificate (email = "foo@baz", validity = ("20130131", ))
 
-    >>> cx = Auth.Certificate (42, email = "foo@qux", validity = ("20130301", ))
-    Traceback (most recent call last):
-    ...
-    TypeError: Cannot pass value for attribute `cert_id` of Auth.Certificate, got `42`
-
     >>> scope.commit ()
 
     >>> all_cs = Auth.Certificate.query_s ().all ()
     >>> all_cs
-    [Auth.Certificate (1), Auth.Certificate (2)]
+    [Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), Auth.Certificate (u'foo@baz', ('2013/01/31', ), u'')]
+
     >>> for c in all_cs :
     ...     print (c.as_code (), c.validity.start)
-    Auth.Certificate (1, email = u'foo@bar', validity = ('2013/01/16', )) 2013-01-16 00:00:00
-    Auth.Certificate (2, email = u'foo@baz', validity = ('2013/01/31', )) 2013-01-31 00:00:00
-
-    >>> c1.cert_id = 42
-    Traceback (most recent call last):
-    ...
-    AttributeError: Init-only attribute `Certificate.cert_id` cannot be changed from `1` to `42` after object creation
-    >>> print (c1.as_code ())
-    Auth.Certificate (1, email = u'foo@bar', validity = ('2013/01/16', ))
+    Auth.Certificate (u'foo@bar', ('2013/01/16', ), u'', ) 2013-01-16 00:00:00
+    Auth.Certificate (u'foo@baz', ('2013/01/31', ), u'', ) 2013-01-31 00:00:00
 
     >>> c3 = Auth.Certificate (email = "foo@baz", validity = ("20150131", ))
 
@@ -80,15 +66,15 @@ _test_create = """
 
     >>> all_cs = Auth.Certificate.query_s ().all ()
     >>> all_cs
-    [Auth.Certificate (1), Auth.Certificate (2), Auth.Certificate (3)]
+    [Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), Auth.Certificate (u'foo@baz', ('2013/01/31', ), u''), Auth.Certificate (u'foo@baz', ('2015/01/31', ), u'')]
 
     >>> (c1, c1.alive)
-    (Auth.Certificate (1), False)
+    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
 
     >>> c1.pem = b"fake value to fool `alive`"
 
     >>> (c1, c1.alive)
-    (Auth.Certificate (1), True)
+    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), True)
 
     >>> rdf = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = +1)
     >>> rdp = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = -1)
@@ -101,33 +87,29 @@ _test_create = """
 
     >>> _ = c1.set (revocation_date = rdp)
     >>> (c1, c1.alive)
-    (Auth.Certificate (1), False)
+    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
 
     >>> scope.commit ()
     >>> (c1, c1.alive)
-    (Auth.Certificate (1), False)
+    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
 
     >>> c4 = Auth.Certificate (email = "foo@foo", validity = ())
-    >>> c4.cert_id
-    4
 
     >>> (c4, c4.alive)
-    (Auth.Certificate (4), None)
+    (Auth.Certificate (u'foo@foo', (), u''), None)
 
     >>> c4.validity.start = "20130225"
     >>> (c4, c4.alive)
-    (Auth.Certificate (4), False)
+    (Auth.Certificate (u'foo@foo', ('2013/02/25', ), u''), False)
 
     >>> c4.pem = b"fake value to fool `alive`"
     >>> (c4, c4.alive)
-    (Auth.Certificate (4), True)
+    (Auth.Certificate (u'foo@foo', ('2013/02/25', ), u''), True)
 
     >>> c5 = Auth.Certificate (email = "bar@foo", validity = ("20130225", ))
-    >>> c5.cert_id
-    5
 
     >>> (c5, c5.alive)
-    (Auth.Certificate (5), False)
+    (Auth.Certificate (u'bar@foo', ('2013/02/25', ), u''), False)
 
 """
 
@@ -135,7 +117,6 @@ __test__ = Scaffold.create_test_dict \
     ( dict
         ( create = _test_create
         )
-    , ignore = ("MYS", "SQL") ### XXX those backends should be fixed
     )
 
 ### __END__ GTW.__test__.Certificate

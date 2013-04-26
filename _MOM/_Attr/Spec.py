@@ -61,6 +61,7 @@
 #    14-Dec-2012 (CT) Add `KeyError` guard to `_setup_attrs` (`auto_up_depends`)
 #    11-Jan-2013 (CT) Add support for `primary_ais`
 #    28-Mar-2013 (CT) Add `e_type.ui_attr`
+#    26-Apr-2013 (CT) Remove support for `primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -124,17 +125,8 @@ class Spec (MOM.Prop.Spec) :
             )
         e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)
-        e_type.primary_optional = po = list \
+        e_type.primary_optional = list \
             (p for p in e_type.primary [len (pr): ] if not p.electric)
-        pais = e_type.primary [len (pr) + len (po): ]
-        if len (pais) > 1 :
-            raise TypeError \
-                ( "E_Type %s cannot define more than 1 primary ais attribute"
-                  "; but got %s"
-                % (e_type, pais)
-                )
-        else :
-            e_type.primary_ais = pais [0] if pais else None
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

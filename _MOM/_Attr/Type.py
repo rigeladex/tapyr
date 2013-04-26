@@ -286,6 +286,7 @@
 #                     `.selectable_e_types_unique_epk`
 #    19-Apr-2013 (CT) Remove `_A_Id_Entity_.eligible_objects`,
 #                     `.eligible_raw_values`
+#    26-Apr-2013 (CT) Remove `A_AIS_Value`
 #    ««revision-date»»···
 #--
 
@@ -1556,15 +1557,6 @@ class _A_Unit_ (A_Attr_Type) :
     # end def _from_string
 
 # end class _A_Unit_
-
-class A_AIS_Value (_A_Int_) :
-    """Auto-incremented-sequence primary key"""
-
-    typ              = _ ("AIS")
-    kind             = MOM.Attr.Primary_AIS
-    Kind_Mixins      = (MOM.Attr.Init_Only_Mixin, )
-
-# end class A_AIS_Value
 
 class A_Angle (_A_Float_) :
     """Angle in degrees."""

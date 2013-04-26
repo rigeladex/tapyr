@@ -92,6 +92,7 @@
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #    30-Jan-2013 (CT) Replace `add` by `_add` (called by `__super.add`)
 #    30-Jan-2013 (CT) Call `.pm.flush_zombies` in `commit` and `_rollback`
+#    26-Apr-2013 (CT) Remove support for `primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -127,7 +128,6 @@ class Manager (MOM.EMS._Manager_) :
     def __init__ (self, scope, db_url) :
         self.__super.__init__ (scope, db_url)
         self._counts    = TFL.defaultdict (int)
-        self._ias_seeds = TFL.defaultdict (int)
         self._r_map     = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self._tables    = TFL.defaultdict (dict)
     # end def __init__
@@ -252,15 +252,6 @@ class Manager (MOM.EMS._Manager_) :
         count = self._counts
         root  = entity.relevant_root
         table = self._tables [root.type_name]
-        if entity.E_Type.primary_ais :
-            ias_n = entity.E_Type.primary_ais.name
-            ias_s = self._ias_seeds
-            ias_v = getattr (entity, ias_n)
-            if ias_v is None :
-                ias_s [root.type_name] += 1
-                setattr (entity, ias_n, ias_s [root.type_name])
-            else :
-                ias_s [root.type_name] = max (ias_v, ias_s [root.type_name])
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         self.pm (entity, pid)

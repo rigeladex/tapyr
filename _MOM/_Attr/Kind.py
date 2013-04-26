@@ -201,6 +201,7 @@
 #                     `Link_Role` and `Id_Entity_Reference_Mixin`
 #    17-Apr-2013 (CT) Use `getattr`, not `self.get_value`, in
 #                     `Id_Entity_Reference_Mixin._set_cooked_value`
+#    26-Apr-2013 (CT) Remove support for `Primary_AIS`
 #    ««revision-date»»···
 #--
 
@@ -430,23 +431,6 @@ class Kind (MOM.Prop.Kind) :
                     raise ValueError \
                         ( "`%s` needs a definition for `_syntax_re`"
                         % (attr_type, )
-                        )
-            elif isinstance (attr_type, MOM.Attr.A_AIS_Value) :
-                if not isinstance (self, Primary_AIS) :
-                    raise TypeError \
-                        ( "`%s` needs to be kind Primary_AIS, but is %s"
-                        % (attr_type, self.__class__)
-                        )
-                if attr_type.default is not None :
-                    raise TypeError \
-                        ( "`%s` needs default `None`, but has default `%s`"
-                        % (attr_type, attr_type.default)
-                        )
-                if not e_type.relevant_root :
-                    raise TypeError \
-                        ( "Attribute `%s` cannot be defined for non-relevant "
-                          "E-Type s"
-                        % (attr_type, e_type)
                         )
     # end def _check_sanity
 
@@ -1032,27 +1016,6 @@ class Primary (_Required_Mixin_, _Primary_, _User_) :
     # end def epk_def_set
 
 # end class Primary
-
-class Primary_AIS (_Primary_D_, _DB_System_) :
-    """Primary auto-incremented-sequence attribute:
-       cannot be passed to constructor,
-       used as part of the `essential primary key`.
-    """
-
-    _k_rank     = -5
-
-    get_substance         = TFL.Meta.Alias_Property ("get_value")
-    void_values           = property (lambda s : ())
-
-    def has_substance (self, obj) :
-        return True
-    # end def has_substance
-
-    def __set__ (self, obj, value) :
-        self._set_cooked_value_inner (obj, value)
-    # end def __set__
-
-# end class Primary_AIS
 
 class Primary_Optional (_Sticky_Mixin_, _Primary_D_, _User_) :
     """Primary optional attribute: has a default value, used as part

@@ -238,6 +238,7 @@
 #    21-Mar-2013 (CT) Add `has_identity`
 #    27-Mar-2013 (CT) Add `TFL.Q_Result._Attr_` to `Id_Entity.__eq__`;
 #                     add `Id_Entity.__ne__`
+#    26-Apr-2013 (CT) Remove support for `primary_ais`
 #    ««revision-date»»···
 #--
 
@@ -1547,12 +1548,6 @@ class Id_Entity (Entity) :
                 )
             checker (** kw)
             raise MOM.Error.Invariants (self._pred_man)
-        if self.E_Type.primary_ais :
-            if epk [-1] is not None :
-                raise TypeError \
-                    ( "Cannot pass value for attribute `%s` of %s, got `%s`"
-                    % (self.E_Type.primary_ais.name, self.type_name, epk [-1])
-                    )
         kw.update (self._init_epk (epk))
         setter (** kw)
         required_errors = self._pred_man.required_errors

@@ -68,6 +68,7 @@
 #    23-Sep-2012 (RS) Add `_sa_ip`
 #    24-Sep-2012 (RS) SAS magic for `_A_IP_Address` now in `GTW.OMP.NET`
 #    11-Jan-2013 (CT) Add support for `A_AIS_Value`
+#    26-Apr-2013 (CT) Remove support for `A_AIS_Value`
 #    ««revision-date»»···
 #--
 
@@ -138,19 +139,6 @@ def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col.mom_kind = kind
     return (col, )
 # end def _sa_columns_a_object
-
-@Add_Classmethod ("_sa_columns", Attr.A_AIS_Value)
-def _sa_columns_ais_value (cls, attr, kind, unique, owner_etype, ** kw) :
-    seq = schema.Sequence \
-        ("%s_%s_seq" % (owner_etype.type_name.replace (".", "_"), attr.name))
-    col = schema.Column \
-        ( attr._sa_col_name
-        , types.Integer ()
-        , seq
-        , primary_key = True
-        )
-    return (col, )
-# end def _sa_columns_ais_value
 
 @Add_Classmethod ("_sa_columns", Attr._A_Named_Value_)
 def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :

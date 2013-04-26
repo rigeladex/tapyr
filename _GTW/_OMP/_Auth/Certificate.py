@@ -32,6 +32,7 @@
 #    25-Feb-2013 (CT) Replace `alive.auto_up_depends` by `.query_preconditions`
 #    25-Feb-2013 (CT) Simplify `alive.query_fct` by relying on
 #                     `.query_preconditions`
+#    26-Apr-2013 (CT) Remove `cert_id`, make `email`, `validity`, `desc` primary
 #    ««revision-date»»···
 #--
 
@@ -58,31 +59,24 @@ class Certificate (_Ancestor_Essence) :
 
         ### Primary attributes
 
-        class cert_id (A_AIS_Value) :
-            """Id of certificate"""
-
-        # end class cert_id
-
-        ### Non-primary attributes
-
         class email (A_Email) :
             """Email of account"""
 
-            kind               = Attr.Required
+            kind               = Attr.Primary
 
         # end class email
 
         class validity (A_Date_Time_Interval) :
             """Validity date interval"""
 
-            kind               = Attr.Required
+            kind               = Attr.Primary
 
         # end class validity
 
         class desc (A_String) :
             """Short description of the certificate"""
 
-            kind               = Attr.Optional
+            kind               = Attr.Primary_Optional
             max_length         = 40
             ui_name            = _("Description")
 
