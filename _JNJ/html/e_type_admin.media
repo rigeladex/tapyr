@@ -1,0 +1,127 @@
+# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/e_type_admin.media
+#
+# Purpose
+#    Media fragment for e_type_admin specific templates
+#
+# Revision Dates
+#    29-Apr-2013 (CT) Creation (factored from e_type_admin.jnj.media)
+#    ««revision-date»»···
+#--
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".Object-List"
+        , min_width          = Percent (50)
+        , children           =
+            [ Rule
+                ( "a"
+                , display         = "block"
+                , text_decoration = "none"
+                , children        =
+                    [ Rule_Class
+                        ( "delete"
+                        , display = "none"
+                        )
+                    ]
+                )
+            , Rule
+                ( "caption"
+                , color           = "#1b4287"
+                , font_size       = P.h1_font_size + 10
+                , font_weight     = "bold"
+                , padding         = TRBL0 (b = Em (3/4.))
+                , text_align      = "left"
+                )
+            , Rule
+                ( "thead"
+                , font_weight     = "bold"
+                )
+            , Rule
+                ( "td.delete"
+                , display         = "none"
+                )
+            , Rule
+                ( "td", "th"
+                , font_size       = "small"
+                , children        =
+                    [ Rule_Class
+                        ( "cmd-button"
+                        , padding           = Em (0.2)
+                        , children          =
+                            [ Rule
+                                ( "b"
+                                , border_width      = Px (1)
+                                , display           = "block"
+                                )
+                            ]
+                        )
+                    ]
+                )
+            , Rule
+                ( "td+td", "th+th"
+                , border_left   = "2px solid " + P.color_half_grey
+                , padding_left  = Em (0.5)
+                , padding_right = Em (0.5)
+                )
+            , Rule
+                ( "th.Group[colspan]"
+                , padding         = 0
+                , children        =
+                    [ Rule
+                        ( "a"
+                        , P.nav_col.color_spec_heading
+                        , font_size = "medium"
+                        , display   = "block"
+                        , padding   = TRBL0 (t = Px (2), b = Px (4))
+                        )
+                    ]
+                )
+            , Rule
+                ( "tr.active"
+                , cursor          = "pointer"
+                , children        =
+                    [ P.Rule.hover
+                    ]
+                )
+            , Rule
+                ( ".Count"
+                , padding         = TRBL0 (r = Em (0.1), l = Em (0.5))
+                , text_align      = "right"
+                )
+            , Rule ### otherwise, Chrome has wrong dimensions
+                ( ".ui-state-default"
+                , height          = Px (16)
+                , width           = Px (16)
+                )
+            ]
+        )
+    )
+
+Include ("html/autocomplete.media")
+Include ("html/cmd_button.media")
+Include ("html/cmd_menu.media")
+Include ("html/ui_dialog.media")
+
+### __END__ html/e_type_admin.media

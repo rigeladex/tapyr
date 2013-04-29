@@ -1409,7 +1409,6 @@ class Site (Group) :
     _exclude_robots      = True
     _login_required      = True
 
-
     def _auto_entries (self) :
         for et in self.top.ET_Map.itervalues () :
             man = et.manager

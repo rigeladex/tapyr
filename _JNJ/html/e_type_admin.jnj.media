@@ -61,8 +61,11 @@
 #    19-Apr-2012 (CT) Add rule for `.ui-state-default` to placate Chrome
 #    13-Dec-2012 (CT) Add rule for `td+td` to `.Object-List`
 #     9-Apr-2013 (CT) Include "html/ui_dialog.media"
+#    29-Apr-2013 (CT) Factor "html/e_type_admin.media"
 #    ««revision-date»»···
 #--
+
+Include ("html/e_type_admin.media")
 
 style_sheet = Style_Sheet \
     ( Rule
@@ -81,92 +84,6 @@ style_sheet = Style_Sheet \
                 )
             ]
         )
-    , Rule
-        ( ".Object-List"
-        , min_width          = Percent (50)
-        , children           =
-            [ Rule
-                ( "a"
-                , display         = "block"
-                , text_decoration = "none"
-                , children        =
-                    [ Rule_Class
-                        ( "delete"
-                        , display = "none"
-                        )
-                    ]
-                )
-            , Rule
-                ( "caption"
-                , color           = "#1b4287"
-                , font_size       = P.h1_font_size + 10
-                , font_weight     = "bold"
-                , padding         = TRBL0 (b = Em (3/4.))
-                , text_align      = "left"
-                )
-            , Rule
-                ( "thead"
-                , font_weight     = "bold"
-                )
-            , Rule
-                ( "td.delete"
-                , display         = "none"
-                )
-            , Rule
-                ( "td", "th"
-                , font_size       = "small"
-                , children        =
-                    [ Rule_Class
-                        ( "cmd-button"
-                        , padding           = Em (0.2)
-                        , children          =
-                            [ Rule
-                                ( "b"
-                                , border_width      = Px (1)
-                                , display           = "block"
-                                )
-                            ]
-                        )
-                    ]
-                )
-            , Rule
-                ( "td+td", "th+th"
-                , border_left   = "2px solid " + P.color_half_grey
-                , padding_left  = Em (0.5)
-                , padding_right = Em (0.5)
-                )
-            , Rule
-                ( "th.Group[colspan]"
-                , padding         = 0
-                , children        =
-                    [ Rule
-                        ( "a"
-                        , P.nav_col.color_spec_heading
-                        , font_size = "medium"
-                        , display   = "block"
-                        , padding   = TRBL0 (t = Px (2), b = Px (4))
-                        )
-                    ]
-                )
-            , Rule
-                ( "tr.active"
-                , cursor          = "pointer"
-                , children        =
-                    [ P.Rule.hover
-                    ]
-                )
-            , Rule
-                ( ".Count"
-                , padding         = TRBL0 (r = Em (0.1), l = Em (0.5))
-                , text_align      = "right"
-                )
-            , Rule ### otherwise, Chrome has wrong dimensions
-                ( ".ui-state-default"
-                , height          = Px (16)
-                , width           = Px (16)
-                )
-            ]
-        )
     )
 
 Script (GTW.Script._.GTW_L)
@@ -174,11 +91,5 @@ Script (GTW.Script (src = "/media/GTW/js/GTW/jQ/hd_input.js"))
 Script (GTW.Script._.GTW_e_type_admin)
 
 JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)
-
-Include ("html/autocomplete.media")
-Include ("html/cmd_button.media")
-Include ("html/cmd_menu.media")
-Include ("html/ui_dialog.media")
-
 
 ### __END__ html/e_type_admin.jnj.media
