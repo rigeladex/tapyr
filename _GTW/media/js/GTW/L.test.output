@@ -1,5 +1,5 @@
 div
-    className = "classy"
+    class = "classy"
     title = "A classy div generated in javascript by L"
     span
         A child element

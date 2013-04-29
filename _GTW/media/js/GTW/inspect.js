@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -17,6 +17,7 @@
 //    28-Jan-2011 (CT) Creation
 //     9-Mar-2011 (CT) `copy` added
 //    31-May-2011 (MG) Mssing `var` added
+//    29-Apr-2013 (CT) Add `show1`
 //    ««revision-date»»···
 //--
 
@@ -86,7 +87,7 @@
               }
               return result;
           }
-        , show   : function show (obj, filter, level, top_filter) {
+        , show : function show (obj, filter, level, top_filter) {
               var i, l, name, r, regexp, value;
               var result = [];
               var lev    = level || 0;
@@ -103,22 +104,48 @@
                               r = indent + value;
                           } else {
                               r = indent + name + " : " + value;
-                          }
+                          };
                           r = r.split ("\n") [0].replace (/ *\{ *$/, "");
                           break;
                       case "object" :
                           result.push (indent + name + " :");
-                          r = inspect.show (value, filter, lev + 1); ;
+                          r = inspect.show (value, filter, lev + 1);
                           break;
                       case "string" :
                           r = indent + name + " = \"" + value + "\"";
                           break;
                       default :
                           r = indent + name + " = " + value;
-                  }
+                  };
                   result.push (r);
-              }
+              };
               return result.join ("\n");
+          }
+        , show1  : function show1 (value, filter, level, top_filter) {
+              var result;
+              var rs = [];
+              switch (typeof value) {
+                  case "function" :
+                      result = value.toString ();
+                      break;
+                  case "object" :
+                      if (value) {
+                          if (value.constructor == Array) {
+                              l = value.length;
+                              for (i = 0; i < l; i += 1) {
+                                  rs.push (show1 (value [i], filter, lev + 1));
+                              };
+                              result = "[" + rs.join (",") + "]";
+                          } else {
+                              result = inspect.show
+                                  (value, filter, lev + 1, top_filter);
+                          }
+                      };
+                      break;
+                  default :
+                      result = value;
+              };
+              return result;
           }
         , values : function values (obj, filter) {
               var result = [];

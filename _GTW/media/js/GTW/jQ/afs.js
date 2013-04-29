@@ -116,6 +116,7 @@
 //                     parameter
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //    18-Apr-2013 (CT) Use `alert`, not `console.error`
+//    29-Apr-2013 (CT) Use `$GTW.show_message`, not `alert`
 //    ««revision-date»»···
 //--
 
@@ -214,7 +215,7 @@
                               if (! answer ["error"]) {
                                   _get_cb (options, elem, val, cb, answer);
                               } else {
-                                  alert ("Ajax error: " + answer ["error"]);
+                                  $GTW.show_message ("Ajax error: " + answer ["error"]);
                               };
                         }
                       , url           : options.url.completer
@@ -468,7 +469,7 @@
                           }
                         );
                 } else {
-                    alert ("Unknown command " + name);
+                    $GTW.show_message ("Unknown command " + name);
                 };
             };
             return result;
@@ -667,7 +668,7 @@
                         );
                     _setup_callbacks (s$);
                 } else {
-                    alert ("Ajax Error: " + response ["error"]);
+                    $GTW.show_message ("Ajax Error: " + response ["error"]);
                 };
             };
         };
@@ -785,7 +786,7 @@
                                         s$ = _response_replace
                                             (response, s$, elem);
                                     } else {
-                                        alert
+                                        $GTW.show_message
                                           ("Ajax Error: " + response ["error"]);
                                     };
                                 };
@@ -831,7 +832,7 @@
                                       s$ = _response_replace (response, s$, elem);
                                       _setup_callbacks (s$);
                                   } else {
-                                      alert
+                                      $GTW.show_message
                                           ("Ajax Error: " + response ["error"]);
                                   };
                               }
@@ -840,7 +841,7 @@
                   };
               }
             , Done : function done_cb (s$, elem, id, ev) {
-                  alert ("Done still needs to be implemented");
+                  $GTW.show_message ("Done still needs to be implemented");
               }
             , Edit : function edit_cb (s$, elem, id, ev) {
                   var value = elem ["value"];
@@ -858,7 +859,7 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    alert ("Ajax Error: " + response ["error"]);
+                                    $GTW.show_message ("Ajax Error: " + response ["error"]);
                                 };
                             };
                         }
@@ -879,7 +880,7 @@
                                     s$ = _response_replace (response, s$, elem);
                                     _setup_callbacks (s$);
                                 } else {
-                                    alert ("Ajax Error: " + response ["error"]);
+                                    $GTW.show_message ("Ajax Error: " + response ["error"]);
                                 };
                             };
                         }
@@ -907,26 +908,26 @@
                               if (! answer ["error"]) {
                                   if (answer ["conflicts"]) {
                                       // XXX
-                                      alert ( "Conflicts: \n"
+                                      $GTW.show_message ( "Conflicts: \n"
                                             + $GTW.inspect.show
                                                 (answer.conflicts)
                                             );
                                   } else if (answer ["errors"]) {
-                                      alert ("Errors: " + answer.errors);
+                                      $GTW.show_message ("Errors: " + answer.errors);
                                   } else if (answer ["expired"]) {
                                       // XXX display re-authorization form
-                                      alert ("Expired: " + answer.expired);
+                                      $GTW.show_message ("Expired: " + answer.expired);
                                   } else if (id === answer.$child_ids [0]) {
                                       response = answer [id];
                                       if (response !== undefined) {
                                           s$ = _response_replace (response, s$, elem);
                                           _setup_callbacks (s$);
                                       } else {
-                                          alert ("Save missing response");
+                                          $GTW.show_message ("Save missing response");
                                       };
                                   };
                               } else {
-                                  alert
+                                  $GTW.show_message
                                       ("Save error:" + answer ["error"]);
                               };
                           }
@@ -1053,12 +1054,12 @@
                         if (! answer ["error"]) {
                             if (answer ["conflicts"]) {
                                 // XXX
-                                alert ("Submit conflicts");
+                                $GTW.show_message ("Submit conflicts");
                             } else if (answer ["errors"]) {
                                 _display_error_map (answer.errors);
                             } else if (answer ["expired"]) {
                                 // XXX display re-authorization form
-                                alert ("Expired: " + answer.expired);
+                                $GTW.show_message ("Expired: " + answer.expired);
                             } else {
                                 // Need timeout here for IE
                                 setTimeout
@@ -1069,7 +1070,7 @@
                                     );
                             };
                         } else {
-                            alert ("Submit error: " + answer ["error"]);
+                            $GTW.show_message ("Submit error: " + answer ["error"]);
                         };
                     }
                   }

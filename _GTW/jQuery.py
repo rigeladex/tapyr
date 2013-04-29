@@ -209,6 +209,7 @@ GTW.Script \
         ( GTW.Script._.GTW_autocomplete
         , GTW.Script._.GTW_buttonify
         , GTW.Script._.GTW_jq_util
+        , GTW.Script._.GTW_util
         )
     )
 
@@ -247,6 +248,7 @@ GTW.Script \
         , GTW.Script._.GTW_buttonify
         , GTW.Script._.GTW_e_type_selector
         , GTW.Script._.GTW_UI_Icon_Map
+        , GTW.Script._.GTW_util
         )
     )
 

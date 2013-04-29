@@ -1,5 +1,5 @@
 //-*- coding: iso-8859-1 -*-
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -50,6 +50,7 @@
 //    17-Feb-2012 (CT) Add and use `Element._setup_callbacks`
 //     5-Mar-2012 (CT) Change `Field_Entity._setup_value` to copy `allow_new`
 //                     to `value`
+//    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //    ««revision-date»»···
 //--
 
@@ -197,7 +198,8 @@
                   if (cb_spec.cb_name in cb_map) {
                       cb_spec ["callback"] = cb_map [cb_spec.cb_name];
                   } else {
-                      console.error ("Unkown callback referenced by", cb_spec);
+                      $GTW.show_message
+                          ("Unkown callback referenced by", cb_spec);
                   };
               };
           }

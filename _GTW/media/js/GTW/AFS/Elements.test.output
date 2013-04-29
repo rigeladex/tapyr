@@ -1211,7 +1211,7 @@ $GTW :
         function update(dict)
     author = "christian.tanzer@swing.co.at"
     Class : function constructor()
-    copyright = "Copyright (C) 2011 Christian Tanzer"
+    copyright = "Copyright (C) 2011-2013 Christian Tanzer"
     inspect :
         blanks = "                                                                         "
         function copy(obj, filter)
@@ -1223,6 +1223,7 @@ $GTW :
         function key_cmp(l, r)
         function keys(obj, filter)
         function show(obj, filter, level, top_filter)
+        function show1(value, filter, level, top_filter)
         function update(dict)
         function values(obj, filter)
     function jsonify(thing)

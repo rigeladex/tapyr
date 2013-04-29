@@ -30,7 +30,7 @@
                     var msg = (name || "Ajax request") + " failed: ";
                     alert
                         (msg + ": " + exc + "\n\n" + xhr_instance.esponseText);
-                    console.error (msg, status, exc, opts.data);
+                    $GTW.show_message (msg, status, exc, opts.data);
                 }
               , timeout     : 30000
               }

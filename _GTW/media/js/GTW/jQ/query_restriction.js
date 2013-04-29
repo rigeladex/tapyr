@@ -51,6 +51,7 @@
 //    11-Apr-2013 (CT) DRY `toggle_disabled_state`, fix it for nested entries;
 //                     fix `attr_select.prefill` call of `toggle` (`af.label`)
 //    11-Apr-2013 (CT) Add polymorphic attributes to attribute filter menu
+//    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //    ««revision-date»»···
 //--
 
@@ -403,10 +404,12 @@
                                         saf$ = $(response.html);
                                         options.select_attr_form_html = saf$;
                                     } else {
-                                        console.error ("Ajax Error", response);
+                                        $GTW.show_message
+                                            ("Ajax Error", response);
                                     };
                                 } else {
-                                  console.error ("Ajax Error", response);
+                                  $GTW.show_message
+                                      ("Ajax Error", response.error);
                                 }
                               }
                             , url         : options.url.qx_asf
@@ -554,10 +557,11 @@
                                           .each (setup_disabler);
                                   ajx = true;
                                 } else {
-                                  console.error ("Ajax Error", response);
+                                  $GTW.show_message ("Ajax Error", response);
                                 }
                             } else {
-                                console.error ("Ajax Error", response);
+                                $GTW.show_message
+                                    ("Ajax Error", response.error);
                             };
                         }
                       , url         : options.url.qx_af_html
@@ -850,10 +854,12 @@
                                         obf$ = $(response.html);
                                         options.order_by_form_html = obf$;
                                     } else {
-                                        console.error ("Ajax Error", response);
+                                        $GTW.show_message
+                                            ("Ajax Error", response);
                                     };
                                 } else {
-                                  console.error ("Ajax Error", response);
+                                  $GTW.show_message
+                                      ("Ajax Error", response.error);
                                 }
                               }
                             , url         : options.url.qx_obf

@@ -25,6 +25,7 @@
 //    14-Oct-2011 (MG) Missing `var` added to `as_int_array`
 //    22-Feb-2012 (CT) Change `fix_a_nospam` to take data from `next` `b.nospam`
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `jQ/util.js`
+//    29-Apr-2013 (CT) Add `show_message`
 //    ««revision-date»»···
 //--
 
@@ -49,6 +50,10 @@
                     window.history.pushState (state, title, url);
                 };
                 /* else { XXX ??? } */
+            }
+          , show_message   : function show_message () {
+                var args = [].slice.apply (arguments); // convert to real array
+                alert (args.join (" "));
             }
           }
         );

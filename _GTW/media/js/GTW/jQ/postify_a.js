@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -22,6 +22,7 @@
 //    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
 //    19-Apr-2012 (CT) If `"hidden_selector" in options` --> set `display` of
 //                     `this` to `"inherit"` to placate Chrome
+//    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //    ««revision-date»»···
 //--
 
@@ -43,8 +44,8 @@
                 ( url
                 , function (answer, status, xhr_instance) {
                       var repl;
-                      if (answer ["error"]) {
-                          console.error ("Delete error", answer);
+                      if ("error" in answer && answer ["error"]) {
+                          $GTW.show_message ("Delete error", answer.error);
                       } else if (answer ["replacement"]) {
                           repl = answer.replacement;
                           p.html (repl.html);

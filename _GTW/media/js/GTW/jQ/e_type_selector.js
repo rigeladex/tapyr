@@ -36,6 +36,7 @@
 //                     `before_close_cb`, `close_cb`;
 //                     bind `cancel_button` to `close` calling `dialog("close")`
 //    22-Apr-2013 (CT) Change default of `treshold` to `0`
+//    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //    ««revision-date»»···
 //--
 
@@ -118,10 +119,10 @@
                                       self.widget        = self.setup_widget
                                           (response);
                                   } else {
-                                    console.error ("Ajax Error", response);
+                                    $GTW.show_message ("Ajax Error", response);
                                   }
                               } else {
-                                  console.error ("Ajax Error", response);
+                                  $GTW.show_message ("Ajax Error", response.error);
                               };
                           }
                         , url         : self.options.url.qx_esf
@@ -251,7 +252,8 @@
                             if (! answer ["error"]) {
                                 self.get_ccb (inp$, term, cb, answer);
                             } else {
-                                console.error ("Ajax error", answer, data);
+                                $GTW.show_message
+                                  ("Ajax error", answer.error, data);
                             };
                           }
                         , url           : options.url.qx_esf_completer
