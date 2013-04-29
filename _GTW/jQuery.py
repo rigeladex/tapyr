@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -59,6 +59,7 @@
 #    17-Aug-2012 (MG) Remove `jqPlot`
 #    25-Sep-2012 (CT) Add `GTW_pns_doc_graph`
 #     4-Dec-2012 (CT) Add `//` to `JS_On_Ready` of `GTW_Externalize`
+#    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `GTW_jq_util`
 #    ««revision-date»»···
 #--
 
@@ -154,24 +155,23 @@ GTW.Script \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/util.js"
     , name     = "GTW_util"
-    , requires = (GTW.Script._.Modernizr, GTW.Script._.jQuery, GTW.Script._.GTW)
-      ### XXX remove dependency on jQuery
-    )
-
-GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
-GTW.JS_On_Ready \
-    ( """$("a[href^='http://'], a[href^='https://', a[href^='//']").gtw_externalize ();"""
-    , name = "GTW_Externalize"
+    , requires = (GTW.Script._.Modernizr, GTW.Script._.GTW)
     )
 
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/util.js"
     , name     = "GTW_jq_util"
     , requires =
-        ( GTW.Script._.jQuery
+        ( GTW.Script._.GTW_util
+        , GTW.Script._.jQuery
         , GTW.Script._.GTW_jsonify
         )
     )
+GTW.JS_On_Ready \
+    ( """$("a[href^='http://'], a[href^='https://', a[href^='//']").gtw_externalize ();"""
+    , name = "GTW_Externalize"
+    )
+GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/autocomplete.js"

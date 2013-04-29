@@ -1,5 +1,5 @@
 //-*- coding: iso-8859-1 -*-
-// Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -24,12 +24,13 @@
 //     5-Apr-2011 (CT) `Array.prototype.indexOf` defined, if necessary
 //    14-Oct-2011 (MG) Missing `var` added to `as_int_array`
 //    22-Feb-2012 (CT) Change `fix_a_nospam` to take data from `next` `b.nospam`
+//    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `jQ/util.js`
 //    ««revision-date»»···
 //--
 
 "use strict";
 
-( function ($) {
+( function () {
     $GTW.update
         ( { as_int_array   : function (data) {
                 var list   = data.split (",");
@@ -43,18 +44,6 @@
                 };
                 return result;
             }
-          , fix_a_nospam   : function ($) {
-                $("a.nospam").each (
-                    function () {
-                        var data = $(this).next ("b.nospam").attr ("title");
-                        if (data != null) {
-                            var aia = $GTW.as_int_array (data);
-                            $(this).replaceWith
-                                (String.fromCharCode.apply (null, aia));
-                        };
-                    }
-                );
-            }
           , push_history   : function (url, title, state) {
                 if (Modernizr.history) {
                     window.history.pushState (state, title, url);
@@ -63,17 +52,6 @@
             }
           }
         );
-    $.fn.gtw_externalize = function () {
-        this.click
-            ( function (event) {
-                  window.open (this.href).focus ();
-                  if (event && "preventDefault" in event) {
-                      event.preventDefault ();
-                  };
-              }
-            ).addClass ("external");
-        return this;
-    };
     if (! Array.prototype.indexOf) {
         Array.prototype.indexOf = function indexOf (elem, start) {
             var len = this.length;
@@ -97,6 +75,6 @@
         };
     }
   }
-) (jQuery);
+) ();
 
 // __END__ GTW_util.js

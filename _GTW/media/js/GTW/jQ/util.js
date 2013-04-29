@@ -16,6 +16,7 @@
 // Revision Dates
 //    27-Jul-2011 (CT) Creation
 //    18-Apr-2013 (CT) Add `alert` to `options.error`
+//    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` in here
 //    ««revision-date»»···
 //--
 
@@ -45,7 +46,33 @@
             options.data = $GTW.jsonify (data);
         };
         $.ajax (options);
-    }
+    };
+    $.fn.gtw_externalize = function () {
+        this.click
+            ( function (event) {
+                  window.open (this.href).focus ();
+                  if (event && "preventDefault" in event) {
+                      event.preventDefault ();
+                  };
+              }
+            ).addClass ("external");
+        return this;
+    };
+    $GTW.update
+        ( { fix_a_nospam   : function ($) {
+                $("a.nospam").each (
+                    function () {
+                        var data = $(this).next ("b.nospam").attr ("title");
+                        if (data != null) {
+                            var aia = $GTW.as_int_array (data);
+                            $(this).replaceWith
+                                (String.fromCharCode.apply (null, aia));
+                        };
+                    }
+                );
+            }
+          }
+        );
   } (jQuery)
 );
 
