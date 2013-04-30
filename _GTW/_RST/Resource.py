@@ -89,6 +89,7 @@
 #    25-Apr-2013 (CT) Add `postconditions`, `check_postconditions`,
 #                     `commit_scope`
 #    25-Apr-2013 (CT) Add `child_postconditions_map`
+#    30-Apr-2013 (CT) Don't check `postconditions` for superuser
 #    ««revision-date»»···
 #--
 
@@ -651,7 +652,8 @@ class _RST_Base_ (TFL.Meta.Object) :
     def _handle_method_context (self, method, request, response) :
         ### Redefine to setup context for handling `method` for `request`,
         ### for instance, `self.change_info`
-        with self.LET (postconditions_checked = False) :
+        user = request.user
+        with self.LET (postconditions_checked = (user and user.superuser)) :
             T = self.Templateer
             if T :
                 with T.GTW.LET (blackboard = dict ()) :

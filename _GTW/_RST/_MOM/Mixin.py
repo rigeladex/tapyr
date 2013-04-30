@@ -72,6 +72,7 @@
 #    28-Mar-2013 (CT) Change `attributes` to use default `E_Type.ui_attr`
 #     9-Apr-2013 (CT) Catch `ValueError` in `_handle_method_context`
 #    25-Apr-2013 (CT) Add `Pre_Commit_Entity_Check`, use `resource.commit_scope`
+#    30-Apr-2013 (CT) Add `Pre_Commit_Entity_Check.__repr__`
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,10 @@ class Pre_Commit_Entity_Check (TFL.Meta.Object) :
             if check is not None :
                 check (resource, request, response, acs)
     # end def __call__
+
+    def __repr__ (self) :
+        return "<%s for %s>" % (self.__class__.__name__, self.check_name)
+    # end def __repr__
 
 # end class Pre_Commit_Entity_Check
 

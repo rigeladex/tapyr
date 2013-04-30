@@ -813,10 +813,10 @@ class Permission (_Invariant_, ValueError) :
     def as_unicode (self) :
         attr   = self.attribute
         result = \
-            ( _T ( "Permission error for : `%r`"
-                   "\n     allowed  values : (%s)"
-                   "\n     got      value  : `%s`"
-                 )
+            ( _T( "Permission error for : `%r`"
+                  "\n     allowed  values : (%s)"
+                  "\n     got      value  : `%s`"
+                )
             % (attr, ", ".join (self.allowed), self.value)
             )
         return result

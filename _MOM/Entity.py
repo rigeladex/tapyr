@@ -239,6 +239,7 @@
 #    27-Mar-2013 (CT) Add `TFL.Q_Result._Attr_` to `Id_Entity.__eq__`;
 #                     add `Id_Entity.__ne__`
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
+#    30-Apr-2013 (CT) Add `add_error`
 #    ««revision-date»»···
 #--
 
@@ -1254,6 +1255,11 @@ class Id_Entity (Entity) :
               if a.has_substance (self)
             )
     # end def ui_display_format
+
+    def add_error (self, err, kind = "object") :
+        """Add `err` to error-list of predicate manager"""
+        self._pred_man.errors [kind].append (err)
+    # end def add_error
 
     def all_links (self) :
         return sorted \
