@@ -3872,7 +3872,7 @@ _test_query = r"""
     >>> r = show (R.get ("/v1/MOM-Object?count&AQ=last_name,EQ,tanzer"))
     { 'json' :
         { 'description' : 'Bad request'
-        , 'message' : 'Query restriction triggered error: MOM.Object.last_name'
+        , 'message' : "Query restriction triggered error: AttributeError 'MOM.Object.last_name'"
         }
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/MOM-Object?count&AQ=last_name,EQ,tanzer'

@@ -73,6 +73,7 @@
 #     9-Apr-2013 (CT) Catch `ValueError` in `_handle_method_context`
 #    25-Apr-2013 (CT) Add `Pre_Commit_Entity_Check`, use `resource.commit_scope`
 #    30-Apr-2013 (CT) Add `Pre_Commit_Entity_Check.__repr__`
+#     1-May-2013 (CT) Improve error message of `_handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -572,7 +573,8 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
                 qr = self.QR.from_request \
                     (self.scope, self.E_Type, request, ** self.default_qr_kw)
             except (AttributeError, TypeError, ValueError) as exc :
-                error = _T ("Query restriction triggered error: %s") % (exc, )
+                error = _T ("Query restriction triggered error: %s '%s'") % \
+                    (exc.__class__.__name__, exc)
                 raise self.Status.Bad_Request (error)
             kw = dict (query_restriction = qr)
             if qr.attributes :
