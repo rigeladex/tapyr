@@ -30,6 +30,7 @@
 #    25-Sep-2012 (CT) Fix `_register` errors
 #     9-Oct-2012 (CT) Change "error" class, fix various errors
 #     6-Dec-2012 (MG) Fix test executaion, new test for query attribute added
+#     1-May-2013 (CT) Add `@foo.bar` to email addresses
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ _login_logout = r"""
               The password is required.
             </li>
 
-    >>> data   = dict (username = "a1")
+    >>> data   = dict (username = "a1@foo.bar")
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -87,7 +88,7 @@ _login_logout = r"""
     >>> resp.headers ["Location"] ### logout
     'http://localhost/after/logout'
 
-    >>> data ["username"] = "a3"
+    >>> data ["username"] = "a3@foo.bar"
     >>> data ["password"] = "p3"
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
@@ -96,9 +97,9 @@ _login_logout = r"""
           This account is currently inactive
         </li>
 
-    >>> a2 = Auth.Account.query (name = "a2").one ()
+    >>> a2 = Auth.Account.query (name = "a2@foo.bar").one ()
     >>> a2.password_change_required
-    >>> data ["username"] = "a2"
+    >>> data ["username"] = "a2@foo.bar"
     >>> data ["password"] = "p2"
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
@@ -108,7 +109,7 @@ _login_logout = r"""
 
     >>> Auth.Account.force_password_change (a2)
     >>> a2.password_change_required
-    Auth.Account_Password_Change_Required ((u'a2', ))
+    Auth.Account_Password_Change_Required ((u'a2@foo.bar', ))
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -121,13 +122,13 @@ _activate        = r"""
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
-    >>> a2     = Auth.Account.query (name = "a2").one ()
+    >>> a2     = Auth.Account.query (name = "a2@foo.bar").one ()
     >>> passwd = a2.prepare_activation ()
     >>> scope.commit ()
 
     >>> resp   = Scaffold.test_get ("/Auth/activate.html", query_string = "p=%%d" %% (a2.pid, ))
     >>> print ("".join (t.string for t in resp.PQ (b"li.account-name")))
-    <li class="account-name">a2</li>
+    <li class="account-name">a2@foo.bar</li>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = Scaffold.test_post ("/Auth/activate.html", data = data)
@@ -210,7 +211,7 @@ _register        = r"""
             </li>
     <BLANKLINE>
 
-    >>> data ["username"] = "a2"
+    >>> data ["username"] = "a2@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -225,7 +226,7 @@ _register        = r"""
             </li>
     <BLANKLINE>
 
-    >>> data ["username"] = "new-account"
+    >>> data ["username"] = "new-account@foo.bar"
     >>> data ["npassword"] = "new-pass"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
@@ -244,21 +245,21 @@ _register        = r"""
 
     >>> data ["vpassword"] = "new-pass"
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data) # doctest:+ELLIPSIS
-    Email via localhost from webmaster@ to ['new-account']
+    Email via localhost from webmaster@ to ['new-account@foo.bar']
     Content-type: text/plain; charset=utf-8
     Date: ...
     Subject: Email confirmation for localhost
-    To: new-account
+    To: new-account@foo.bar
     From: webmaster@
     <BLANKLINE>
-    Confirm new email address new-account
+    Confirm new email address new-account@foo.bar
     <BLANKLINE>
     To verify the new email address, please click the following link: http://localhost/Auth/action?...
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
     <BLANKLINE>
 
-    >>> a = Auth.Account.query (name = "new-account").one ()
+    >>> a = Auth.Account.query (name = "new-account@foo.bar").one ()
     >>> links = Auth._Account_Token_Action_.query ().all ()
     >>> len (links)
     1
@@ -276,7 +277,7 @@ _change_email    = r"""
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
-    >>> a2     = Auth.Account.query (name = "a2").one ()
+    >>> a2     = Auth.Account.query (name = "a2@foo.bar").one ()
     >>> passwd = "p2"
 
     ### first, check if we can change the email without beeing logged in
@@ -288,7 +289,7 @@ _change_email    = r"""
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_email.html", query_string = "p=%%d" %% (a2.pid, ))
     >>> print ("".join (t.string for t in resp.PQ (b"li#account-name")))
-    <li id="account-name">a2</li>
+    <li id="account-name">a2@foo.bar</li>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
@@ -320,7 +321,7 @@ _change_email    = r"""
             </li>
     <BLANKLINE>
 
-    >>> data ["nemail"] = "new-email"
+    >>> data ["nemail"] = "new-email@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -328,7 +329,7 @@ _change_email    = r"""
           Repeat the EMail for verification.
         </li>
 
-    >>> data ["vemail"] = "newemail"
+    >>> data ["vemail"] = "newemail@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -336,16 +337,16 @@ _change_email    = r"""
           The Email's don't match.
         </li>
 
-    >>> data ["vemail"] = "new-email"
+    >>> data ["vemail"] = "new-email@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data) # doctest:+ELLIPSIS
-    Email via localhost from webmaster@ to ['new-email']
+    Email via localhost from webmaster@ to ['new-email@foo.bar']
     Content-type: text/plain; charset=utf-8
     ...
     Subject: Email confirmation for localhost
-    To: new-email
+    To: new-email@foo.bar
     From: webmaster@
     <BLANKLINE>
-    Confirm new email address new-email
+    Confirm new email address new-email@foo.bar
     ...
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -367,7 +368,7 @@ _change_password = r"""
     >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"])
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
-    >>> a2     = Auth.Account.query (name = "a2").one ()
+    >>> a2     = Auth.Account.query (name = "a2@foo.bar").one ()
     >>> passwd = "p2"
     >>> scope.commit ()
 
@@ -375,7 +376,7 @@ _change_password = r"""
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_password.html", query_string = "p=%%d" %% (a2.pid, ))
     >>> print ("".join (t.string for t in resp.PQ (b"li.account-name")))
-    <li class="account-name">a2</li>
+    <li class="account-name">a2@foo.bar</li>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = Scaffold.test_post ("/Auth/change_password.html", data = data)
@@ -443,7 +444,7 @@ _password_reset  = r"""
           A user name is required to login.
         </li>
 
-    >>> data ["username"]= "a5"
+    >>> data ["username"]= "a5@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)
     >>> errors = resp.PQ (b"li.Error-Message")
     >>> print ("".join (e.string for e in errors))
@@ -451,16 +452,16 @@ _password_reset  = r"""
           Account could not be found
         </li>
 
-    >>> data ["username"]= "a2"
+    >>> data ["username"]= "a2@foo.bar"
     >>> resp   = Scaffold.test_post ("/Auth/request_reset_password.html", data = data)# doctest:+ELLIPSIS
-    Email via localhost from webmaster@ to ['a2']
+    Email via localhost from webmaster@ to ['a2@foo.bar']
     Content-type: text/plain; charset=utf-8
     ...
-    Subject: Password reset for user a2 on website localhost
-    To: a2
+    Subject: Password reset for user a2@foo.bar on website localhost
+    To: a2@foo.bar
     From: webmaster@
     <BLANKLINE>
-    Password of a2 reset
+    Password of a2@foo.bar reset
     <BLANKLINE>
     Your password was reset to the temporary value:
     <BLANKLINE>
@@ -480,7 +481,7 @@ _test_query_attr    = r"""
     >>> Auth   = scope.Auth
 
     >>> Auth.Account.query (Q.active == True).all ()
-    [Auth.Account (u'a1'), Auth.Account (u'a2')]
+    [Auth.Account (u'a1@foo.bar'), Auth.Account (u'a2@foo.bar')]
 """
 
 from   _GTW.__test__.Test_Command import *
@@ -499,13 +500,13 @@ else :
 def fixtures (self, scope) :
     Auth  = scope.Auth
     a1    = Auth.Account.create_new_account_x \
-        ("a1", "p1", enabled = True,  suspended = False, superuser = True)
+        ("a1@foo.bar", "p1", enabled = True,  suspended = False, superuser = True)
     a2    = Auth.Account.create_new_account_x \
-        ("a2", "p2", enabled = True,  suspended = False, superuser = False)
+        ("a2@foo.bar", "p2", enabled = True,  suspended = False, superuser = False)
     a3    = Auth.Account.create_new_account_x \
-        ("a3", "p3", enabled = True,  suspended = True,  superuser = False)
+        ("a3@foo.bar", "p3", enabled = True,  suspended = True,  superuser = False)
     a3    = Auth.Account.create_new_account_x \
-        ("a4", "p4", enabled = False, suspended = True , superuser = False)
+        ("a4@foo.bar", "p4", enabled = False, suspended = True , superuser = False)
     scope.commit ()
 # end def fixtures
 

@@ -48,9 +48,9 @@ _query_test = """
     >>> p1    = PAP.Person ("ln", "fn", lifetime = ("20130101", ), raw = True)
     >>> p2    = PAP.Person ("ln", "nf", lifetime = ("20130101", ), raw = True)
     >>> p3    = PAP.Person ("nl", "fn", lifetime = ("20130101", ), raw = True)
-    >>> a1    = Auth.Account_T ("test ln fn")
-    >>> a2    = Auth.Account_T ("test ln nf")
-    >>> a3    = Auth.Account_T ("test nl fn")
+    >>> a1    = Auth.Account_T ("test-ln+fn@foo.bar")
+    >>> a2    = Auth.Account_T ("test-ln+nf@foo.bar")
+    >>> a3    = Auth.Account_T ("test-nl-fn@foo.bar")
     >>> pha1  = PAP.Person_has_Account_Test (p1, a1)
     >>> pha2  = PAP.Person_has_Account_Test (p2, a2)
     >>> pha3  = PAP.Person_has_Account_Test (p3, a3)
@@ -63,25 +63,25 @@ _query_test = """
     PAP.Person (u'ln', u'fn', u'', u'')
 
     >>> p1.accounts
-    set([Auth.Account_T (u'test ln fn')])
+    set([Auth.Account_T (u'test-ln+fn@foo.bar')])
 
     >>> pha1.owner
     PAP.Person (u'ln', u'fn', u'', u'')
 
     >>> PAP.Person_has_Account_Test.query (Q.owner.last_name == "nl").all ()
-    [PAP.Person_has_Account_Test ((u'nl', u'fn', u'', u''), (u'test nl fn', ))]
+    [PAP.Person_has_Account_Test ((u'nl', u'fn', u'', u''), (u'test-nl-fn@foo.bar', ))]
 
     >>> Auth.Account_T.query (Q.qt.last_name == "ln").count ()
     2
 
     >>> Auth.Account_T.query_s (Q.qt.last_name == "ln").all ()
-    [Auth.Account_T (u'test ln fn'), Auth.Account_T (u'test ln nf')]
+    [Auth.Account_T (u'test-ln+fn@foo.bar'), Auth.Account_T (u'test-ln+nf@foo.bar')]
 
     >>> Auth.Account.query_s (Q.person == p1).all ()
-    [Auth.Account_T (u'test ln fn')]
+    [Auth.Account_T (u'test-ln+fn@foo.bar')]
 
     >>> Auth.Account.query_s (Q.person.first_name == "nf").all ()
-    [Auth.Account_T (u'test ln nf')]
+    [Auth.Account_T (u'test-ln+nf@foo.bar')]
 
     >>> nicky = PAP.Person_Nickname_Test (p1, 'nicky', raw = True)
     >>> nicky
@@ -113,10 +113,10 @@ _query_test = """
     [PAP.Person (u'ln', u'fn', u'', u'')]
 
     >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.wolp == wolp).all ()
-    [Auth.Account_T (u'test ln fn')]
+    [Auth.Account_T (u'test-ln+fn@foo.bar')]
 
     >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.my_wolp == wolp).all ()
-    [Auth.Account_T (u'test ln fn')]
+    [Auth.Account_T (u'test-ln+fn@foo.bar')]
 
 """
 

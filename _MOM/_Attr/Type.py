@@ -287,6 +287,7 @@
 #    19-Apr-2013 (CT) Remove `_A_Id_Entity_.eligible_objects`,
 #                     `.eligible_raw_values`
 #    26-Apr-2013 (CT) Remove `A_AIS_Value`
+#     1-May-2013 (CT) Add `Email._syntax_re`
 #    ««revision-date»»···
 #--
 
@@ -1887,13 +1888,17 @@ class A_Dirname (_A_Filename_) :
 
 # end class A_Dirname
 
-class A_Email (_A_String_) :
+class A_Email (Syntax_Re_Mixin, _A_String_) :
     """An email address"""
 
     typ                = _ ("Email")
     max_length         = 80
-
-    ### XXX check_syntax
+    _syntax_re         = Regexp \
+        ( r"^[-_#=!?$&'+*/^~a-z0-9.]+"
+          r"@"
+          r"[-a-z0-9.]+$"
+        , re.IGNORECASE | re.VERBOSE
+        )
 
 # end class A_Email
 
