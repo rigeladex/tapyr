@@ -60,6 +60,7 @@
 #    25-Sep-2012 (CT) Add `GTW_pns_doc_graph`
 #     4-Dec-2012 (CT) Add `//` to `JS_On_Ready` of `GTW_Externalize`
 #    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `GTW_jq_util`
+#     1-May-2013 (CT) Add `GTW_hd_input`
 #    ««revision-date»»···
 #--
 
@@ -184,6 +185,12 @@ GTW.Script \
     , name     = "GTW_buttonify"
     , rank     = -10
     , requires = (GTW.Script._.jQuery_UI, GTW.Script._.GTW_UI_Icon_Map)
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/jQ/hd_input.js"
+    , name     = "GTW_hd_input"
+    , requires = (GTW.Script._.jQuery, )
     )
 
 GTW.Script \

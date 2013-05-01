@@ -1,6 +1,6 @@
 {#- jinja template: div_seq.jnj -#}
 {#
-## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -48,6 +48,7 @@
 ##     8-Mar-2012 (CT) Change `Field_Entity` to show `elem.display` if
 ##                     `not elem.children`
 ##    17-Jul-2012 (MG) `Hidden` added
+##     1-May-2013 (CT) Change `Field_Entity` to use hidden/display input-pair
 ##    ««revision-date»»···
 ##--
 #}
@@ -119,29 +120,46 @@
 {%- endmacro -%} {#- Field_Composite -#}
 
 {%- macro Field_Entity (form, elem, renderer) -%}
-  {#- XXX honor allow_new, is_changeable... -#}
-  {% call GTW.call_macro
-      ( "do_element"
-      , form, elem, renderer
-      , class      = "closed"     if elem.collapsed else ""
-      , head       = elem.display if elem.collapsed else None
-      , show_desc  = False
-      , templ_name = renderer
-      )
-  -%}
-    {{ GTW.call_macro
-        ( "do_head"
+  {%- if elem.allow_new %}
+    {% call GTW.call_macro
+        ( "do_element"
         , form, elem, renderer
-        , tail       = elem.display
-            if elem.collapsed or not elem.children else None
+        , class      = "closed"     if elem.collapsed else ""
+        , head       = elem.display if elem.collapsed else None
         , show_desc  = False
         , templ_name = renderer
         )
-    }}
-    {%- if not elem.collapsed %}
-      {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
-    {% endif -%}
-  {%- endcall %} {# do_element #}
+    -%}
+      {{ GTW.call_macro
+          ( "do_head"
+          , form, elem, renderer
+          , tail       = elem.display
+              if elem.collapsed or not elem.children else None
+          , show_desc  = False
+          , templ_name = renderer
+          )
+      }}
+      {%- if not elem.collapsed %}
+        {{ GTW.call_macro ("do_children", form, elem, renderer, templ_name = renderer) }}
+      {% endif -%}
+    {%- endcall %} {# do_element #}
+  {%- else %}
+    {% call GTW.call_macro
+        ( "do_element"
+        , form, elem, renderer, "FC-"
+        , class      = "Selector Field"
+        , het_c      = "div"
+        , templ_name = renderer
+        )
+    -%}
+      {%- if not (elem.prefilled or elem.readonly) -%}
+        {{ GTW.call_macro ("do_cmds", templ_name = renderer) }}
+      {% endif -%}
+      {{ GTW.call_macro ("do_description",  elem, templ_name = renderer) }}
+      {{ GTW.call_macro ("do_label",        elem, templ_name = renderer) }}
+      {{ GTW.call_macro (elem.input_widget, elem, class = "value") }}
+    {%- endcall %} {# do_element #}
+  {% endif -%}
 {%- endmacro -%} {#- Field_Entity -#}
 
 {%- macro Field_Role_Hidden (form, elem, renderer) -%}

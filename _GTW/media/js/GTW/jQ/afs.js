@@ -117,6 +117,7 @@
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //    18-Apr-2013 (CT) Use `alert`, not `console.error`
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `alert`
+//     1-May-2013 (CT) Support entity selection with hidden/display input-pair
 //    ««revision-date»»···
 //--
 
@@ -172,7 +173,8 @@
     $.fn.gtw_afs_form = function (afs_form, opts) {
         var icons     = new $GTW.UI_Icon_Map (opts && opts ["icon_map"] || {});
         var selectors = $.extend
-            ( { entity_errors            : "section.entity-errors"
+            ( { container                : "div[id],section"
+              , entity_errors            : "section.entity-errors"
               , err_msg                  : "div.error-msg"
               , focusables               :
                   ".Field :input:not(:hidden), .cmd-button [href=#EDIT], .cmd-button [href=#SELECT]"
@@ -710,10 +712,14 @@
                         elem.inp$  = inp$;
                         inp$.change  (field_change_cb)
                             .trigger ("change");
-                        if ("completer" in elem) {
-                            setup_completer (options, elem);
+                        if (inp$.hasClass ("display")) {
+                            _setup_efs_selector (inp$, id, elem);
+                        } else {
+                            if ("completer" in elem) {
+                                setup_completer (options, elem);
+                            };
+                            elem._setup_field (inp$, Form);
                         };
-                        elem._setup_field (inp$, Form);
                     };
                   }
                 );
@@ -728,8 +734,9 @@
                     .focus ();
         };
         var _setup_cmd_buttons = function _setup_cmd_buttons (cmc$) {
-            var s$     = cmc$.closest ("div[id],section");
-            var id     = s$.attr      ("id");
+            var S      = options.selectors;
+            var s$     = cmc$.closest (S.container);
+            var id     = s$.attr      ("id").replace (/^FC-/, "");
             var elem   = $AFS_E.get   (id);
             var source = cmd_set [elem.type] (elem);
             cmc$.attr ("title", "").html ("");
@@ -752,6 +759,33 @@
                         );
                   } ()
                 );
+            };
+        };
+        var _setup_efs_selector = function _setup_efs_selector (inp$, id, elem){
+            var S        = options.selectors;
+            var anchor   = $AFS_E.get (elem.anchor_id || elem.root_id);
+            var s$       = inp$.closest (S.container);
+            var selector = s$.data ("gtw_e_type_selector_afs");
+            if (! selector) {
+                var apply_cb = function apply_cb (display, value) {
+                    if ("value" in elem && "edit" in elem ["value"]) {
+                        inp$.val (display).trigger ("change");
+                        elem.value.edit.pid = value;
+                        if ("cid" in elem.value.edit) {
+                            delete elem.value.edit.cid;
+                        };
+                    };
+                };
+                s$.gtw_e_type_selector_hd_afs
+                    ( { afs :
+                          { anchor   : anchor
+                          , apply_cb : apply_cb
+                          , elem     : elem
+                          , fid      : id
+                          }
+                      , url  : options.url
+                      }
+                    );
             };
         };
         var cmd_callback =
@@ -796,6 +830,17 @@
                       elem.remove ()
                       s$.remove   ();
                   };
+              }
+            , Clear : function clear_cb (s$, elem, id, ev) {
+                  var S    = options.selectors;
+                  var inp$ = s$.find (".value.display");
+                  if ("value" in elem && "edit" in elem ["value"]) {
+                      elem.value.edit.pid = null;
+                      if ("cid" in elem.value.edit) {
+                          delete elem.value.edit.cid;
+                      };
+                  };
+                  inp$.val ("").trigger ("change");
               }
             , Copy : function copy_cb (s$, elem, id, ev) {
                   var p$        = s$.parent  ();
@@ -935,34 +980,6 @@
                       , "Save"
                       );
               }
-            , Select : function select_cb (s$, elem, id, ev) {
-                  var anchor   = $AFS_E.get (elem.anchor_id || elem.root_id);
-                  var target$  = $(ev.delegateTarget);
-                  var selector = target$.data ("gtw_e_type_selector_afs");
-                  var apply_cb = function apply_cb (display, value) {
-                      if ("value" in elem && "edit" in elem ["value"]) {
-                          elem.value.edit.pid = value;
-                          if ("cid" in elem.value.edit) {
-                              delete elem.value.edit.cid;
-                          };
-                      };
-                      s$.find ("h2 i").html (display);
-                  };
-                  if (! selector) {
-                      target$.gtw_e_type_selector_afs
-                          ( { afs :
-                                { anchor   : anchor
-                                , apply_cb : apply_cb
-                                , elem     : elem
-                                , fid      : id
-                                }
-                            , url  : options.url
-                            }
-                          );
-                      selector = target$.data ("gtw_e_type_selector_afs");
-                  };
-                  selector.activate_cb (ev);
-              }
             };
         var cmd_set =
             { Entity : function Entity (elem) {
@@ -995,9 +1012,10 @@
             , Field_Entity : function Field_Entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push (elem.allow_new ? "Edit" : "Select");
+                      names.push (elem.allow_new ? "Edit" : "Clear");
                   } else {
-                      names.push ("Reset", "Cancel", "Done");
+                      // XXX Add "Done" once it is implemented
+                      names.push ("Reset", "Cancel");
                   };
                   return _cmds.apply (null, names);
               }
@@ -1018,13 +1036,15 @@
                     new_value = f$.val ();
                 };
                 old_value = afs_field.value.edit || ini_value;
-                afs_field.value.edit = new_value;
-                if ("checker" in afs_field) {
-                    status = afs_field.checker (afs_field, new_value);
+                if (! f$.hasClass ("display")) {
+                    afs_field.value.edit = new_value;
+                    if ("checker" in afs_field) {
+                        status = afs_field.checker (afs_field, new_value);
+                    };
                 };
-                b$.toggleClass ("bad",     !  status)
-                  .toggleClass ("good",    !! status);
-                f$.toggleClass ("bad",     !  status);
+                b$.toggleClass ("bad",  !  status)
+                  .toggleClass ("good", !! status);
+                f$.toggleClass ("bad",  !  status);
                 if (f$.attr ("required")) {
                     b$.toggleClass ("missing", !  (new_value))
                       .toggleClass ("good",    !! (new_value && status));

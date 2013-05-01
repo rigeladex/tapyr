@@ -37,6 +37,8 @@
 //                     bind `cancel_button` to `close` calling `dialog("close")`
 //    22-Apr-2013 (CT) Change default of `treshold` to `0`
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
+//     1-May-2013 (CT) Change `gtw_e_type_selector_afs` to
+//                     `gtw_e_type_selector_hd_afs`
 //    ««revision-date»»···
 //--
 
@@ -393,8 +395,8 @@
               var tid$   = this.a_form$.find (opts.selectors.tid);
               var result =
                   { key  : aid$.val ()
-                  , etn  : opts.afs.anchor.type_name
                   , etns : tid$.val ()
+                  , etn  : opts.afs.anchor.type_name
                   };
               return result;
           }
@@ -413,9 +415,14 @@
     );
     var ET_Selector_HD = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
-              var aid$ = this.a_form$.find (this.options.selectors.aid);
-              var tid$ = this.a_form$.find (this.options.selectors.tid);
-              return { key : aid$.val (), etns : tid$.val () };
+              var opts   = this.options;
+              var aid$   = this.a_form$.find (opts.selectors.aid);
+              var tid$   = this.a_form$.find (opts.selectors.tid);
+              var result =
+                  { key  : aid$.val ()
+                  , etns : tid$.val ()
+                  };
+              return result;
           }
         , get_esf_data          : function get_esf_data (ev, target$) {
               return { key : target$.prop ("id") };
@@ -429,16 +436,7 @@
           }
         }
     );
-    $.fn.gtw_e_type_selector_afs = function (opts) {
-        this.each
-            ( function () {
-                var selector = new ET_Selector_AFS (opts);
-                $(this).data ("gtw_e_type_selector_afs", selector);
-              }
-            );
-        return this;
-    };
-    $.fn.gtw_e_type_selector_hd = function (opts) {
+    $.fn.gtw_e_type_selector_hd = function gtw_e_type_selector_hd (opts) {
         this.each
             ( function () {
                 var selector = new ET_Selector_HD (opts);
@@ -451,6 +449,24 @@
                       , closing_flag : selector.options.closing_flag
                       }
                     );
+              }
+            );
+        return this;
+    };
+    $.fn.gtw_e_type_selector_hd_afs = function gtw_e_type_selector_hd_afs (opts) {
+        this.each
+            ( function () {
+                var selector = new ET_Selector_AFS (opts);
+                var self     = $(this);
+                selector.hd_input$ = self;
+                self.gtw_hd_input
+                    ( { callback     : function (ev) {
+                            selector.activate_cb (ev);
+                        }
+                      , closing_flag : selector.options.closing_flag
+                      }
+                    );
+                self.data ("gtw_e_type_selector_afs", selector);
               }
             );
         return this;

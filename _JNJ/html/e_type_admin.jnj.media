@@ -87,7 +87,7 @@ style_sheet = Style_Sheet \
     )
 
 Script (GTW.Script._.GTW_L)
-Script (GTW.Script (src = "/media/GTW/js/GTW/jQ/hd_input.js"))
+Script (GTW.Script._.GTW_hd_input)
 Script (GTW.Script._.GTW_e_type_admin)
 
 JS_On_Ready (GTW.JS_On_Ready._.GTW_e_type_admin)

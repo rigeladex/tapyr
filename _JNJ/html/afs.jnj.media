@@ -160,8 +160,8 @@ style_sheet = Style_Sheet \
                         ( "input"
                         , children      =
                             [ Rule_Class
-                                ( "Long", "Very-Long"
-                                , width = Percent (99)
+                                ( "Long", "Very-Long", "display.Field_Entity"
+                                , width = Percent (98)
                                 )
                             ]
                         )
@@ -356,6 +356,7 @@ Include ("html/cmd_button.media")
 Include ("html/e_type.m.jnj.media")
 
 Script  (GTW.Script._.GTW_L)
+Script  (GTW.Script._.GTW_hd_input)
 Script  (GTW.Script._.GTW_jq_afs)
 
 ### __END__ html/afs.jnj.media

@@ -1,6 +1,6 @@
 {#- jinja template: afs.jnj -#}
 {#
-## Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -43,6 +43,9 @@
 ##    23-Feb-2012 (CT) Add `do_description` and `do_label`
 ##    29-Feb-2012 (CT) Replace `do_menu` by `do_cmds`, use class `cmd-button`
 ##     7-Mar-2012 (CT) Change `do_head` to wrap `tail` inside an `<i>` element
+##    30-Apr-2013 (CT) Add optional argument `het_c` to `do_element`
+##    30-Apr-2013 (CT) Add optional argument `het_h` to `do_head`
+##     1-May-2013 (CT) Add `caller` to `do_label`
 ##    ««revision-date»»···
 ##--
 #}
@@ -79,13 +82,14 @@
             ((class, elem.css_class)) if class else elem.css_class
         ).strip ()
   %}
+  {%- set het_c = kwargs.pop ("het_c", elem.het_c) %}
   {%- set desc = GTW._T (elem.description)|safe %}
-  <{{ elem.het_c }} id="{{ id_fix }}{{ elem.id }}"
+  <{{ het_c }} id="{{ id_fix }}{{ elem.id }}"
       {%- if cssc %} class="{{ cssc }}"{% endif -%}
       {%- if show_desc and desc %} title="{{ desc }}"{% endif -%}
   >
     {{ elem_caller () -}}
-  </{{ elem.het_c }}>
+  </{{ het_c }}>
 {%- endmacro -%} {#- do_element -#}
 
 {%- macro do_head (form, elem, renderer, n = 1, head = None, tail = None, show_desc = True) -%}
@@ -102,7 +106,8 @@
     {%- do csscs.append ("prefilled") %}
   {% endif -%}
   {%- set cssc  = " ".join (csscs).strip () %}
-  <{{ elem.het_h }}
+  {%- set het_h = kwargs.pop ("het_h", elem.het_h) %}
+  <{{ het_h }}
       {%- if cssc %} class="{{ cssc }}"{% endif -%}
       {%- if desc %} title="{{ desc }}"{% endif -%}
   >
@@ -118,14 +123,18 @@
     {%- if not (elem.prefilled or elem.readonly) -%}
       {{ do_cmds () }}
     {% endif -%}
-  </{{ elem.het_h }}>
+  </{{ het_h }}>
 {%- endmacro -%} {#- do_head -#}
 
 {%- macro do_label (elem) -%}
+  {%- set label_caller = kwargs.pop ("caller", None) -%}
   <{{ elem.het_h }}>
     <label for="{{ elem.id }}">{# -#}
       <b class="Status"></b>{{ GTW._T (elem.label) -}}
     </label>
+    {%- if label_caller %}
+      {{ label_caller () }}
+    {% endif -%}
   </{{ elem.het_h }}>
 {%- endmacro -%} {#- do_label -#}
 
