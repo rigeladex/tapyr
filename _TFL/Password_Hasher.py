@@ -28,6 +28,8 @@
 # Revision Dates
 #     5-Jan-2013 (CT) Creation
 #     6-Jan-2013 (CT) Fix `Bcrypt.verify`
+#     1-May-2013 (CT) Change to use `passlib` instead of `bcrypt`
+#     2-May-2013 (CT) Use `hash_cmp` to `verify`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +41,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 import hashlib
+import itertools
 import uuid
 
 class M_Password_Hasher (TFL.Meta.Object.__class__) :
@@ -107,6 +110,16 @@ class Password_Hasher (TFL.Meta.Object) :
         raise NotImplementedError ("%s must implement verify" % cls.__name__)
     # end def verify
 
+    @classmethod
+    def hash_cmp (cls, l, r) :
+        if len (l) == len (r) :
+            s = 0
+            for a, b in itertools.izip (l, r) :
+                s |= ord (a) ^ ord (b)
+            return s == 0
+        return False
+    # end def hash_cmp
+
 # end class Password_Hasher
 
 class _Hashlib_Password_Hasher_ (Password_Hasher) :
@@ -129,11 +142,12 @@ class _Hashlib_Password_Hasher_ (Password_Hasher) :
     def verify (cls, clear_password, hashed_password) :
         """True if `clear_password` and `hashed_password` match"""
         try :
-            salt, hashed = hashed_password.split (cls.sep, 1)
+            salt, _ = hashed_password.split (cls.sep, 1)
         except Exception :
             return False
         else :
-            return hashed_password == cls.hashed (clear_password, salt)
+            return cls.hash_cmp \
+                (hashed_password, cls.hashed (clear_password, salt))
     # end def verify
 
 # end class _Hashlib_Password_Hasher_
@@ -149,6 +163,8 @@ class sha224 (_Hashlib_Password_Hasher_) :
     True
     >>> Password_Hasher.sha224.verify (pr, pr)
     False
+    >>> Password_Hasher.sha224.verify (ph, pr)
+    False
 
     """
 
@@ -157,20 +173,20 @@ class sha224 (_Hashlib_Password_Hasher_) :
 # end class sha224
 
 try :
-    import bcrypt
+    from passlib.hash import bcrypt
 except ImportError :
     pass
 else :
     class Bcrypt (Password_Hasher) :
         """Password Hasher using bcrypt
 
-        ### `salt` set to result of `Password_Hasher.Bcrypt.salt (10)`
-        >>> salt = "$2a$10$M7AKwXInnXIeaWYQEbQn2."
+        ### `salt` set to some random value extracted from a b-crypted password
+        >>> salt = bcrypt.normhash ("WCXrf6O517rQFabeyr7xtO")
 
         >>> pr = "Ao9ug9wahWae"
         >>> ph = Password_Hasher.Bcrypt.hashed (pr, salt)
         >>> print (ph)
-        $2a$10$M7AKwXInnXIeaWYQEbQn2.e5scJWYzRAIFuXzfqZlrTwancjBLh8C
+        $2a$12$WCXrf6O517rQFabeyr7xtOb3t0GkVQzCYFjPZvAQ237y2C3TL.XcO
 
         >>> Password_Hasher.Bcrypt.verify (pr, ph)
         True
@@ -178,6 +194,7 @@ else :
         False
         >>> Password_Hasher.Bcrypt.verify (pr, pr)
         False
+
         """
 
         default_rounds = 12
@@ -186,22 +203,15 @@ else :
         @classmethod
         def hashed (cls, clear_password, salt = None) :
             """Hashed value of `clear_password` using `salt`"""
-            if salt is None :
-                salt = cls.salt ()
-            return bcrypt.hashpw (clear_password, salt)
+            return bcrypt.encrypt \
+                (clear_password, rounds = cls.default_rounds, salt = salt)
         # end def hashed
-
-        @classmethod
-        def salt (cls, rounds = None, ** kw) :
-            return bcrypt.gensalt (rounds or cls.default_rounds)
-        # end def salt
 
         @classmethod
         def verify (cls, clear_password, hashed_password) :
             """True if `clear_password` and `hashed_password` match"""
             try :
-                hp = bcrypt.hashpw (clear_password, hashed_password)
-                return hp == hashed_password
+                return bcrypt.verify (clear_password, hashed_password)
             except Exception :
                 return False
         # end def verify
