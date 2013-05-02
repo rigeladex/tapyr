@@ -58,6 +58,8 @@
 #    27-Mar-2013 (CT) Factor `@_comparison_operator` from `_Attr_`;
 #                     to allow mixed numeric comparisons, try normal
 #                     comparison first
+#     2-May-2013 (CT) Change `Q_Result_Composite.limit` to `@super_ordered`,
+#                     not `@super_ordered_delegate` (gave wrong order sometimes)
 #    ««revision-date»»···
 #--
 
@@ -560,7 +562,7 @@ class _Q_Result_Limited_ (_Q_Result_) :
             iterable = self.iterable
             if self._distinct and not iterable._distinct :
                 iterable = self._distinct (iterable)
-            self._cache = list (itertools.islice (iterable, None, self._limit))
+            self._cache = list (itertools.islice (iterable, 0, self._limit, 1))
     # end def _fill_cache
 
 # end class _Q_Result_Limited_
@@ -578,7 +580,8 @@ class _Q_Result_Offset_ (_Q_Result_) :
             iterable = self.iterable
             if self._distinct and not iterable._distinct :
                 iterable = self._distinct (iterable)
-            self._cache = list (itertools.islice (iterable, self._offset, None))
+            self._cache = list \
+                (itertools.islice (iterable, self._offset, None, 1))
     # end def _fill_cache
 
 # end class _Q_Result_Offset_
@@ -654,13 +657,15 @@ class Q_Result_Composite (_Q_Result_) :
     @TFL.Decorator
     def super_ordered_delegate (q) :
         def _ (self, * args, ** kw) :
-            name   = q.__name__
-            result = self.__class__ \
-                ( [getattr (sq, name) (* args, ** kw) for sq in self.queries]
+            name    = q.__name__
+            oby     = self._order_by
+            queries = self.queries
+            result  = self.__class__ \
+                ( [getattr (sq, name) (* args, ** kw) for sq in queries]
                 , _distinct = self._distinct
                 )
-            if self._order_by :
-                result = result.order_by (self._order_by)
+            if oby :
+                result = result.order_by (oby)
             result = getattr (result.__super, name) (* args, ** kw)
             return result
         return _
@@ -698,7 +703,7 @@ class Q_Result_Composite (_Q_Result_) :
                 return obj
     # end def first
 
-    @super_ordered_delegate
+    @super_ordered
     def limit (self, limit) :
         pass
     # end def limit

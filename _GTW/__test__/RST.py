@@ -49,6 +49,7 @@
 #     3-Mar-2013 (CT) Add `link: ...rel=doc` to `headers`
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
+#     2-May-2013 (CT) Add `offset=[0,-1]/limit=1` tests to `test_query`
 #    ««revision-date»»···
 #--
 
@@ -3734,6 +3735,15 @@ _test_query = r"""
     , 'url' : 'http://localhost:9999/v1/pid?brief'
     }
 
+    >>> _ = show (R.get ("/v1/pid?order_by=pid&offset=0&limit=1&brief"))
+    { 'json' :
+        { 'entries' : [ 1 ]
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?order_by=pid&offset=0&limit=1&brief'
+    }
+
     >>> _ = show (R.get ("/v1/pid?order_by=pid&FIRST&limit=1&brief"))
     { 'json' :
         { 'entries' : [ 1 ]
@@ -3741,6 +3751,15 @@ _test_query = r"""
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?order_by=pid&FIRST&limit=1&brief'
+    }
+
+    >>> _ = show (R.get ("/v1/pid?order_by=pid&offset=-1&limit=1&brief"))
+    { 'json' :
+        { 'entries' : [ 16 ]
+        , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/pid?order_by=pid&offset=-1&limit=1&brief'
     }
 
     >>> _ = show (R.get ("/v1/pid?order_by=pid&LAST&limit=1&brief"))

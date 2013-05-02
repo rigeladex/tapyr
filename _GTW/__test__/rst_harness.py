@@ -34,6 +34,8 @@
 #    12-Feb-2013 (CT) Increase timeout and number of tries in `run_server`
 #    28-Mar-2013 (CT) Add `skip_headers`
 #    28-Mar-2013 (CT) Register `p.terminate` in `Scaffold.reset_callbacks`
+#     2-May-2013 (CT) Add `sleep(1)` to begin of `run_server`
+#                     to avoid spurious errors
 #    ««revision-date»»···
 #--
 
@@ -73,6 +75,7 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
     import tempfile
     import _TFL.Url
     import _TFL.Caller
+    time.sleep (1)
     url = TFL.Url (db_url)
     if not db_name :
         db_name = "test.%s" % (url.scheme, )
