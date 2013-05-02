@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -40,6 +40,7 @@
 #    19-Aug-2012 (MG) Add locking of session file
 #    23-Aug-2012 (CT) Add missing import for `fcntl`
 #    24-Aug-2012 (MG) Import for `fcntl` moved to `posix` part
+#     2-May-2013 (CT) Call `fchmod` to clear permissions for `group` and `other`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _GTW.Session
 import cPickle
 import os
+import stat
 import sys
 
 class Lock_Failed (StandardError) :
@@ -149,9 +151,10 @@ class Locked_File (object) :
     # end def __init__
 
     def __enter__ (self) :
-        self._file = open (self.file_name, self.mode)
+        self._file = result = open (self.file_name, self.mode)
         self._lock ()
-        return self._file
+        os.fchmod (result.fileno (), stat.S_IRUSR | stat.S_IWUSR)
+        return result
     # end def __enter__
 
     def __exit__ (self, exc_type, exc_val, exc_tb) :
