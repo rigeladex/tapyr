@@ -39,6 +39,7 @@
 #     2-May-2013 (CT) Factor in `cookie_encoding`, `cookie`, `secure_cookie`,
 #                     `_cookie_signature` from `GTW.RST.TOP.Request`
 #     2-May-2013 (CT) Factor `new_secure_cookie` from `GTW.RST.Response`
+#     3-May-2013 (CT) Factor `rat_secret` and add `remote_addr` to it
 #    ««revision-date»»···
 #--
 
@@ -139,7 +140,7 @@ class _RST_Request_ (TFL.Meta.Object) :
                 if user is not None :
                     try :
                         result [0] = user.name
-                        return user.password, root.scope.db_meta_data.dbid
+                        return self.rat_secret (user)
                     except Exception :
                         pass
             cargo = self.secure_cookie ("RAT", agent, rat.session_ttl_s)
@@ -244,6 +245,11 @@ class _RST_Request_ (TFL.Meta.Object) :
         result    = "|".join ((cargo, timestamp, signature))
         return result
     # end def new_secure_cookie
+
+    def rat_secret (self, user) :
+        rip = getattr (self, "remote_addr", None)
+        return (user.password, self.root.scope.db_meta_data.dbid, user.pid, rip)
+    # end def rat_secret
 
     def secure_cookie (self, name, secret_agent = None, ttl_s = None) :
         root   = self.root

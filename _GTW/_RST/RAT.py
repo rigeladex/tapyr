@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-May-2013 (CT) Creation
+#     3-May-2013 (CT) Use `request.rat_secret`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -128,10 +129,7 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
                                      else str (account.pid)
                     , expires  = None
                     , max_age  = resource.session_ttl
-                    , secrets  =
-                        ( account.password
-                        , scope.db_meta_data.dbid
-                        )
+                    , secrets  = request.rat_secret (account)
                     , ** resource.cookie_kw
                     )
             return result
