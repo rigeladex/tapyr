@@ -67,6 +67,8 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
     HEAD                       = None
 
     if __debug__ :
+        import _GTW._RST._TOP.Base
+
         class RAT_GET (_Ancestor.GET) :
 
             _real_name             = "GET"

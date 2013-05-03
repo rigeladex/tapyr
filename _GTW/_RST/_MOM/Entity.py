@@ -42,6 +42,7 @@
 #    21-Jan-2013 (CT) Check `.allow_method` for
 #                     `_A_Id_Entity_.as_rest_cargo_raw`
 #     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
+#     3-May-2013 (CT) Add `META` to REST query arguments
 #    ««revision-date»»···
 #--
 
@@ -147,6 +148,19 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
                 , type_name  = obj.type_name
                 , ** kw
                 )
+            if request.has_option ("META") :
+                creation    = dict \
+                    (date   = str (obj.creation_date).split (".") [0])
+                last_change = dict \
+                    (date   = str (obj.last_changed).split (".") [0])
+                if obj.created_by :
+                    creation ["user"] = obj.created_by
+                if obj.last_changed_by :
+                    last_change ["user"] = obj.last_changed_by
+                result.update \
+                    ( creation    = creation
+                    , last_change = last_change
+                    )
             if getter is not None :
                 result [a_name] = self._response_obj_attrs \
                     ( resource, request, response, obj, attrs, seen

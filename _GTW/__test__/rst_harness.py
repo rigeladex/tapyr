@@ -38,12 +38,15 @@
 #                     to avoid spurious errors
 #     3-May-2013 (CT) Add `scaffold_name` to `run_server`;
 #                     add `normalize_json` to `show`; add `** kw` to `traverse`
+#     3-May-2013 (CT) Add `date_cleaner`
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 from   _GTW.__test__.Test_Command import *
+
+from   _TFL.Regexp                import Re_Replacer, re
 
 from   posixpath import join as pp_join
 
@@ -54,6 +57,11 @@ import sys
 import time
 
 skip_headers = set (["connection", "x-frame-options"])
+
+date_cleaner = Re_Replacer \
+    ( r"'date' : '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'"
+    , r"'date' : <datetime>"
+    )
 
 def req_json (r) :
     if r is not None and r.content :
@@ -147,6 +155,7 @@ def _normal (k, v) :
 
 def show (r, ** kw) :
     normalize_json = kw.pop ("normalize_json", False)
+    cleaner        = kw.pop ("cleaner", False)
     json = req_json (r)
     if json is not None :
         if normalize_json :
@@ -161,6 +170,8 @@ def show (r, ** kw) :
             , ** kw
             )
         )
+    if cleaner :
+        output = cleaner (output)
     print (output)
     return r
 # end def show

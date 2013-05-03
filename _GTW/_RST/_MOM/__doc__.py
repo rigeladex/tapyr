@@ -30,6 +30,7 @@
 #     4-Dec-2012 (CT) Add bib-refs [Amu11] and [WPR10]
 #    13-Mar-2013 (CT) Improve documentation
 #    16-Apr-2013 (CT) Add more documentation about AQ expressions
+#     3-May-2013 (CT) Add `META`
 #    ««revision-date»»···
 #--
 
@@ -341,7 +342,13 @@ returned or to search for specific instances. Possible query parameters are:
 
 - `FIRST`: Results start with first instance, according to `order_by`.
 
-- `LAST`: Results end with last instance, according to `order_by`.
+- `LAST`: Results end with last instance, according to `order_by``.
+
+- ``META``: Return meta information about creation and last_change of objects.
+
+  For each instance, the response includes the JSON objects ``creation`` and
+  ``last_change``; both of these objects have a ``date`` field, and if known
+  a ``user`` field.
 
 
 `POST`
@@ -413,6 +420,23 @@ For instance::
         , 'title' : ''
         }
     , 'cid' : 1
+    , 'pid' : 1
+    , 'type_name' : 'PAP.Person'
+    , 'url' : '/PAP-Person/1'
+    }
+
+    >>> requests.get ("/PAP-Person/1?raw&META")
+    { 'attributes_raw' :
+        { 'first_name' : 'Christian'
+        , 'last_name' : 'Tanzer'
+        , 'middle_name' : ''
+        , 'title' : ''
+        }
+    , 'cid' : 1
+    , 'creation' :
+        { 'date' : '2013-05-03 16:23:53', 'user' : 'rsc@runtux.com' }
+    , 'last_change' :
+        { 'date' : '2013-05-03 16:34:42', 'user' : 'rsc@runtux.com'  }
     , 'pid' : 1
     , 'type_name' : 'PAP.Person'
     , 'url' : '/PAP-Person/1'
