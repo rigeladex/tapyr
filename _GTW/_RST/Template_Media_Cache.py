@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -34,6 +34,7 @@
 #    10-Aug-2012 (CT) Add `verbose`
 #    14-Aug-2012 (MG) Consider `Media_Base.Domain` for href creation
 #    17-Aug-2012 (MG) Set `etag`during cache creation
+#     2-May-2013 (CT) Use `root.hash_fct` and `root.b64_encoded`
 #    ««revision-date»»···
 #--
 
@@ -48,19 +49,18 @@ from   _TFL                   import sos
 import _TFL._Meta.Object
 import _TFL.predicate
 
-import base64
-import hashlib
 from   posixpath import join as pp_join
 
 class Template_Media_Cache (TFL.Meta.Object) :
 
     cache_rank = 1000
 
-    def __init__ ( self, media_dir, prefix
-                 , clear_dir       = False
-                 , cache_filenames = False
-                 , verbose         = False
-                 ) :
+    def __init__ \
+            ( self, media_dir, prefix
+            , clear_dir       = False
+            , cache_filenames = False
+            , verbose         = False
+            ) :
         if not prefix.startswith ("/") :
             prefix           = "/%s" % (prefix, )
         if GTW.Media_Base.Domain :
@@ -84,15 +84,16 @@ class Template_Media_Cache (TFL.Meta.Object) :
         TT      = root.Templateer.Template_Type
         for t in TFL.uniq (root.template_iter ()) :
             t_set.update (t.templates)
-            css_href = self._add_to_map (t, "CSS", css_map)
-            js_href  = None if TEST else self._add_to_map (t, "js", js_map)
+            css_href = self._add_to_map (root, t, "CSS", css_map)
+            js_href  = None if TEST else self._add_to_map \
+                (root, t, "js", js_map)
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
             if self.cache_filenames :
                 self._add_filenames (t)
         self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
         if not TEST :
             self._create_cache ("js", js_map, GTW.minified_js)
-        TT.etag = self._get_etag (css_map, js_map, t_set)
+        TT.etag = self._get_etag (root, css_map, js_map, t_set)
         return dict \
             ( css_href_map = TT.css_href_map
             , etag         = TT.etag
@@ -118,7 +119,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
         TT.Media_Map    = cargo.get ("Media_Map",    {})
     # end def from_pickle_cargo
 
-    def _add_to_map (self, t, name, map) :
+    def _add_to_map (self, root, t, name, map) :
         try :
             attr = getattr (t, name)
         except Exception as exc :
@@ -130,8 +131,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
         else :
             if attr :
                 attr = attr.encode      (t.env.encoding)
-                h    = hashlib.sha1     (attr).digest ()
-                k    = base64.b64encode (h, "_-").rstrip ("=")
+                h    = root.hash_fct    (attr).digest ()
+                k    = root.b64_encoded (h)
                 if k not in map :
                     cn      = ".".join      ((k, name.lower ()))
                     href    = pp_join       (self.prefix,    cn)
@@ -163,7 +164,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
                     print "Wrote template media cache file", fn
     # end def _create_cache
 
-    def _get_etag (self, css_map, js_map, t_set) :
+    def _get_etag (self, root, css_map, js_map, t_set) :
         def _gen (css_map, js_map, t_set) :
             yield "CSS"
             for c in sorted (css_map) :
@@ -176,8 +177,8 @@ class Template_Media_Cache (TFL.Meta.Object) :
                 s = t.source
                 if s is not None :
                     yield s.encode ("iso-8859-1", "replace")
-        h = hashlib.sha1 ("\n".join (_gen (css_map, js_map, t_set))).digest ()
-        return base64.b64encode (h, str ("_-")).rstrip ("=")
+        h = root.hash_fct ("\n".join (_gen (css_map, js_map, t_set))).digest ()
+        return root.b64_encoded (h)
     # end def _get_etag
 
     def __str__ (self) :

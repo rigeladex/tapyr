@@ -41,6 +41,9 @@
 #    26-Sep-2012 (CT) Remove `hidden` from `is_current_page`
 #    15-Jan-2013 (CT) Add `cc_href`
 #     2-Mar-2013 (CT) Redefine `_handle_method` to add `next`, `prev` links
+#     3-May-2013 (CT) Rename `login_required` to `auth_required`
+#     3-May-2013 (CT) Factor `auth_required` and `allow_method` to
+#                     `GTW.RST.Base`
 #    ««revision-date»»···
 #--
 
@@ -117,12 +120,12 @@ class _TOP_Base_ (_Ancestor) :
 
     _real_name                 = "_Base_"
 
+    session_ttl_name           = "user_session_ttl"
     short_title                = ""
     title                      = ""
 
     _exclude_robots            = False
     _index                     = None
-    _login_required            = False
     _Media                     = GTW.Media ()
 
     class _TOP_Base_GET_ (HTTP_Method_Mixin, _Ancestor.GET) :
@@ -171,7 +174,7 @@ class _TOP_Base_ (_Ancestor) :
     Index_Type = Index
 
     def __init__ (self, ** kw) :
-        self.pop_to_self (kw, "login_required", "Media", prefix = "_")
+        self.pop_to_self (kw, "Media", prefix = "_")
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -216,18 +219,6 @@ class _TOP_Base_ (_Ancestor) :
 
     @Once_Property
     @getattr_safe
-    def login_required (self) :
-        ### if a parent requires login, all children do too (even if they
-        ### claim otherwise!)
-        return \
-            (  self._login_required
-            or self.r_permissions
-            or (self.parent and self.parent.login_required)
-            )
-    # end def login_required
-
-    @Once_Property
-    @getattr_safe
     def Media (self) :
         return self._get_media ()
     # end def Media
@@ -259,14 +250,6 @@ class _TOP_Base_ (_Ancestor) :
     def q_href (self) :
         return pp_join (self.abs_href, self.q_prefix)
     # end def q_href
-
-    def allow_method (self, method, user) :
-        """Returns True if `self` allows `method` for `user`."""
-        if self.login_required and not \
-               (user and user.authenticated and user.active) :
-            return False
-        return self.__super.allow_method (method, user)
-    # end def allow_method
 
     def etype_manager (self, obj) :
         etn = getattr (obj, "type_name", None)

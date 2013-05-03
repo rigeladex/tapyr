@@ -45,6 +45,9 @@
 #    28-Jan-2013 (CT) Split `_Reset_Password_` from `_Change_Password_`
 #                     (no `_login_required` for reset password)
 #     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
+#     2-May-2013 (CT) Factor `GTW.RST.Auth_Mixin`
+#     2-May-2013 (CT) Use `self.hash_fct`, `self.b64_encoded`
+#     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +55,8 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+
+from   _GTW._RST.Auth_Mixin     import Errors
 
 import _GTW.Notification
 import _GTW._RST.HTTP_Method
@@ -67,22 +72,9 @@ from   _TFL.I18N                import _, _T, _Tn
 from   posixpath                import join  as pp_join
 from   urllib                   import urlencode
 
-import base64
-import collections
 import datetime
-import hashlib
 import time
 import urlparse
-
-class Errors (collections.defaultdict) :
-
-    __metaclass__ = TFL.Meta.M_Class
-
-    def __init__ (self) :
-        self.__super.__init__ (list)
-    # end def __init__
-
-# end class Errors
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -92,11 +84,9 @@ class _Cmd_ (_Ancestor) :
 
 # end class _Cmd_
 
-class _Form_Cmd_ (_Cmd_) :
+class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
 
-    skip_etag               = True
     active_account_required = True
-
 
     class _Form_Cmd__GET_ (_Ancestor.GET) :
 
@@ -119,96 +109,9 @@ class _Form_Cmd_ (_Cmd_) :
 
     GET = _Form_Cmd__GET_ # end class
 
-    class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.POST) :
+    class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.Auth_Mixin.POST) :
 
         _real_name              = "POST"
-        account                 = None
-
-        def get_account (self, resource, username, debug = False) :
-            try :
-                self.account = resource.account_manager.query \
-                    (name = username).one ()
-            except IndexError :
-                self.account = None
-                if debug :
-                    self.errors ["username"].append \
-                        ( "No account with username `%s` found"
-                        % (username, )
-                        )
-                return False
-            else :
-                return True
-        # end def get_account
-
-        def _authenticate (self, resource, username, password, debug = False) :
-            result = False
-            self.get_account (resource, username, debug)
-            if password and self.account :
-                result = self.account.verify_password (password)
-                if not result and debug :
-                    self.errors ["password"].append \
-                        ( "Password is wrong:\n"
-                               "  %s\n"
-                               "  hash db `%s`\n"
-                               "  hash in `%s`"
-                        % ( password
-                          , self.account.password
-                          , self.account.password_hash (password, self.account)
-                          )
-                        )
-            return result
-        # end def _authenticate
-
-        def get_required (self, request, field_name, error) :
-            value = request.req_data.get (field_name)
-            if not value :
-                self.errors [field_name].append (error)
-            return value
-        # end def get_required
-
-        def get_username (self, request, field_name = "username") :
-            return self.get_required \
-                (request, field_name, _T ("A user name is required to login."))
-        # end def get_required
-
-        def get_password \
-                ( self, request
-                , field_name   = "password"
-                , verify_field = None
-                ) :
-            password = self.get_required \
-                (request, field_name, _T ("The password is required."))
-            if verify_field :
-                verify = self.get_required \
-                ( request, verify_field
-                , _T ("Repeat the password for verification.")
-                )
-                if password and verify and (password != verify) :
-                    self.errors [field_name].append \
-                        (_T ("The passwords don't match."))
-            return password
-        # end def get_password
-
-        def _credentials_validation \
-                ( self, resource, request
-                , username = "username"
-                , password = "password"
-                , debug    = False
-                ) :
-            username     = self.get_username (request, username)
-            password     = self.get_password (request, password)
-            error_add    = lambda e : self.errors [None].append (e)
-            if not username :
-                error_add (_T ("Please enter a username"))
-            elif not self._authenticate \
-                   (resource, username, password, debug) :
-                error_add (_T ("Username or password incorrect"))
-            elif resource.active_account_required and not self.account.active :
-                error_add (_T ("This account is currently inactive"))
-            elif self.errors and debug :
-                error_add (repr (request.req_data))
-            return username, password
-        # end def _credentials_validation
 
     POST = _Form_Cmd__POST_ # end class
 
@@ -342,7 +245,7 @@ class _Change_Email_ (_Ancestor) :
     page_template_name  = "account_change_email"
     new_email_template  = "account_verify_new_email"
     old_email_template  = "account_change_email_info"
-    _login_required     = True
+    _auth_required      = True
 
     class _Change_Email__POST_ (_Ancestor.POST) :
 
@@ -370,7 +273,7 @@ class _Change_Email_ (_Ancestor) :
             req_data    = request.req_data
             top         = resource.top
             HTTP_Status = top.Status
-            self.errors = Errors         ()
+            self.errors = Errors ()
             self._credentials_validation (resource, request, debug = debug)
             new_email   = self.get_email (request)
             if not self.errors :
@@ -420,7 +323,7 @@ class _Change_Password_ (_Ancestor) :
 
     active_account_required = True
     _action_kind            = "Change"
-    _login_required         = True
+    _auth_required          = True
 
     def get_title (self, account, request) :
         return _T ("%s Password for %s on website %s") \
@@ -469,7 +372,7 @@ class _Login_ (_Ancestor) :
                     (resetter, request, response)
                 return result
             else :
-                self.errors = Errors ()
+                self.errors = Errors  ()
                 debug       = getattr (resource.top, "DEBUG", False)
                 username, password = self._credentials_validation \
                     (resource, request, debug = debug)
@@ -508,7 +411,7 @@ _Ancestor = _Cmd_
 class _Logout_ (_Ancestor) :
 
     GET                 = None
-    _login_required     = True
+    _auth_required      = True
 
     class _Logout__POST_ (_Form_Cmd_.POST) :
 
@@ -518,7 +421,7 @@ class _Logout_ (_Ancestor) :
             top       = resource.top
             next      = request.req_data.get ("next", request.referrer or "/")
             next_page = top.resource_from_href (urlparse.urlsplit (next).path)
-            if getattr (next_page, "login_required", False) :
+            if getattr (next_page, "auth_required", False) :
                 next = "/"
             response.username = None
             response.add_notification (_T ("Logout successful."))
@@ -534,7 +437,7 @@ _Ancestor = _Form_Cmd_
 class _Make_Cert_ (_Ancestor) :
 
     page_template_name  = "account_make_cert"
-    _login_required     = True
+    _auth_required      = True
 
     class _Make_Cert__GET_ (_Ancestor.GET) :
 
@@ -623,9 +526,9 @@ class _Make_Cert_ (_Ancestor) :
     def _challenge_hash (self, request) :
         scope = self.top.scope
         user  = request.user
-        sig   = "%s:::%s" % (scope.db_meta_data.dbid, user.name)
-        hash  = hashlib.sha224 (sig).digest ()
-        return base64.b64encode (hash, b":-").rstrip (b"=")
+        sig   = "%s:::%s" %     (scope.db_meta_data.dbid, user.name)
+        hash  = self.hash_fct   (sig).digest ()
+        return self.b64_encoded (hash, altchars = b":-")
     # end def _challenge_hash
 
 # end class _Make_Cert_
@@ -644,7 +547,7 @@ class _Register_ (_Ancestor) :
         def _response_body (self, resource, request, response) :
             req_data      = request.req_data
             top           = resource.top
-            self.errors   = Errors            ()
+            self.errors   = Errors ()
             username      = self.get_username (request)
             if username :
                 self.get_account (resource, username)
@@ -764,7 +667,7 @@ class _Reset_Password_ (_Ancestor) :
 
     active_account_required = False
     _action_kind            = "Reset"
-    _login_required         = False
+    _auth_required          = False
 
 # end class _Change_Password_
 

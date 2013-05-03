@@ -36,6 +36,7 @@
 #    26-Sep-2012 (CT) Add argument `resource` to `_http_response`
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` to `GTW.RST.Root`
 #    15-Jan-2013 (CT) Add `cc_domain`
+#     2-May-2013 (CT) Add argument `resource` to `_http_response_finish`...
 #    ««revision-date»»···
 #--
 
@@ -138,17 +139,17 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
         try :
             result = self.__super._http_response (resource, request, response)
         except (Status.Informational, Status.Redirection, Status.Successful) :
-            self._http_response_finish (request, response)
+            self._http_response_finish (resource, request, response)
             raise
         except Exception :
-            self._http_response_finish_error (request, response)
+            self._http_response_finish_error (resource, request, response)
             raise
         else :
-            self._http_response_finish (request, response)
+            self._http_response_finish (resource, request, response)
             return result
     # end def _http_response
 
-    def _http_response_finish (self, request, response) :
+    def _http_response_finish (self, resource, request, response) :
         notifications = response.session.notifications
         if notifications and notifications.Cached :
             ### this response contains notifications ->
@@ -163,7 +164,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
             scope.commit ()
     # end def _http_response_finish
 
-    def _http_response_finish_error (self, request, response) :
+    def _http_response_finish_error (self, resource, request, response) :
         scope = self.scope
         if scope :
             try :

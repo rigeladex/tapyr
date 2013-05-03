@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -31,6 +31,7 @@
 #     6-Aug-2012 (MG) Add `Alias.is_current_page`
 #     8-Aug-2012 (MG) Fix `Alias.is_current_page`
 #    26-Sep-2012 (CT) Redefine `show_in_nav`
+#     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #    ««revision-date»»···
 #--
 
@@ -122,9 +123,9 @@ class TOP_Alias (GTW.RST.Alias) :
 
     @Once_Property
     @getattr_safe
-    def login_required (self) :
-        return (not self.target) or self.target.login_required
-    # end def login_required
+    def auth_required (self) :
+        return (not self.target) or self.target.auth_required
+    # end def auth_required
 
     def is_current_page (self, page) :
         if self.hidden :

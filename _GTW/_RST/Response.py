@@ -29,6 +29,8 @@
 #    20-Jun-2012 (CT) Creation
 #     2-Mar-2013 (CT) Add `add_link`, change `__call__` to add link headers
 #    28-Mar-2013 (CT) Add `_auto_headers` with `X-Frame-Options`
+#     2-May-2013 (CT) Factor in `clear_cookie`, `set_cookie`, and
+#                     `set_secure_cookie` (from GTW.RST.TOP.Response)
 #    ««revision-date»»···
 #--
 
@@ -81,9 +83,30 @@ class _RST_Response_ (TFL.Meta.Object) :
         return _response.__call__ (* args, ** kw)
     # end def __call__
 
+    @property
+    def resource (self) :
+        return self._request.resource
+    # end def resource
+
     def add_link (self, rel, value, ** kw) :
         self._links [rel] = value, kw
     # end def add_link
+
+    def clear_cookie (self, name, * args, ** kw) :
+        self._response.delete_cookie (name, * args, ** kw)
+    # end def clear_cookie
+
+    def set_cookie (self, key, value = "", ** kw) :
+        if isinstance (value, unicode) :
+            value = value.encode (self._request.cookie_encoding)
+        return self._response.set_cookie (key, value, ** kw)
+    # end def set_cookie
+
+    def set_secure_cookie (self, name, data, secrets = None, ** kw) :
+        cookie = self._request.new_secure_cookie (name, data, secrets)
+        self.set_cookie (name, cookie, ** kw)
+        return cookie
+    # end def set_secure_cookie
 
     def __getattr__ (self, name) :
         if name not in self._own_vars :

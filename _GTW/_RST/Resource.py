@@ -90,6 +90,10 @@
 #                     `commit_scope`
 #    25-Apr-2013 (CT) Add `child_postconditions_map`
 #    30-Apr-2013 (CT) Don't check `postconditions` for superuser
+#     2-May-2013 (CT) Make `hash_fct` a configurable parameter
+#     2-May-2013 (CT) Factor `b64_encoded`
+#     3-May-2013 (CT) Fix call of `Status.Method_Not_Allowed`
+#     3-May-2013 (CT) Add `auth_required` and use in `allow_method`
 #    ««revision-date»»···
 #--
 
@@ -124,6 +128,7 @@ from   posixpath import \
     , commonprefix
     )
 
+import datetime
 import base64
 import hashlib
 import logging
@@ -183,6 +188,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     Status                     = GTW.RST.HTTP_Status
     Auth_Required              = Status.Unauthorized
 
+    b64_altchars               = b"_-"
     child_permission_map       = {}
     child_postconditions_map   = {}
     cls_postconditions         = ()
@@ -190,9 +196,11 @@ class _RST_Base_ (TFL.Meta.Object) :
     hidden                     = False
     implicit                   = False
     pid                        = None
+    session_ttl_name           = "edit_session_ttl"
     template                   = Alias_Property ("page_template")
     template_name              = Alias_Property ("page_template_name")
 
+    _auth_required             = False
     _greet_entry               = None
     _needs_parent              = True
     _r_permission              = None             ### read  permission
@@ -213,6 +221,8 @@ class _RST_Base_ (TFL.Meta.Object) :
         self._kw = dict (kw)
         self.pop_to_self \
             ( kw
+            , "auth_required"
+            , "login_required"             ### just for backwards compatibility
             , "exclude_robots", "postconditions"
             , "r_permission", "w_permission"
             , prefix = "_"
@@ -289,6 +299,18 @@ class _RST_Base_ (TFL.Meta.Object) :
         if scope :
             return scope.GTW.OMP.Auth.Account
     # end def account_manager
+
+    @Once_Property
+    @getattr_safe
+    def auth_required (self) :
+        ### if a parent requires authorization, all children do too
+        ### (even if they claim otherwise!)
+        return \
+            (  self._auth_required
+            or self.permission
+            or (self.parent and self.parent.auth_required)
+            )
+    # end def auth_required
 
     @property
     @getattr_safe
@@ -446,6 +468,25 @@ class _RST_Base_ (TFL.Meta.Object) :
             (self._get_permissions ("r_permission"), key = TFL.Getter._rank)
     # end def r_permissions
 
+    @Once_Property
+    @getattr_safe
+    def session_ttl (self) :
+        result = getattr (self.top, self.session_ttl_name)
+        if not isinstance (result, datetime.timedelta) :
+            result = datetime.timedelta (seconds = result)
+        return result
+    # end def session_ttl
+
+    @Once_Property
+    @getattr_safe
+    def session_ttl_s (self) :
+        ttl = self.session_ttl
+        try :
+            return ttl.total_seconds ()
+        except AttributeError :
+            return (ttl.days * 86400 + ttl.seconds)
+    # end def session_ttl_s
+
     @property
     @getattr_safe
     def Type (self) :
@@ -465,8 +506,23 @@ class _RST_Base_ (TFL.Meta.Object) :
         return self
     # end def _effective
 
+    @property
+    def _login_required (self) :
+        ### just for backwards compatibility
+        return self._auth_required
+    # end def _login_required
+
+    @_login_required.setter
+    def _login_required (self, value) :
+        ### just for backwards compatibility
+        self._auth_required = value
+    # end def _login_required
+
     def allow_method (self, method, user) :
         """Returns True if `self` allows `method` for `user`."""
+        if self.auth_required and not \
+               (user and user.authenticated and user.active) :
+            return False
         if isinstance (method, basestring) :
             method = GTW.RST.HTTP_Method.Table [method]
         if not (user and user.superuser) :
@@ -479,6 +535,15 @@ class _RST_Base_ (TFL.Meta.Object) :
     def allow_user (self, user) :
         return self.allow_method (self.GET, user)
     # end def allow_user
+
+    def b64_encoded (self, s, ** kw) :
+        altchars = self.b64_altchars
+        if "altchars" in kw :
+            altchars = bytes (kw.pop ("altchars"))
+        assert not kw
+        result = base64.b64encode (s, altchars)
+        return result.rstrip (b"=")
+    # end def b64_encoded
 
     def check_postconditions (self, request, response) :
         if not self.postconditions_checked :
@@ -505,8 +570,8 @@ class _RST_Base_ (TFL.Meta.Object) :
             if ci_etag :
                 result.append (ci_etag)
         if result :
-            h = hashlib.sha1 ("-".join (result)).digest ()
-            return base64.b64encode (h, str ("_-")).rstrip ("=")
+            h = self.hash_fct ("-".join (result)).digest ()
+            return self.b64_encoded (h)
     # end def get_etag
 
     def get_last_modified (self, request) :
@@ -1125,6 +1190,7 @@ class RST_Root (_Ancestor) :
     domain                     = ""
     encoding                   = "utf-8"    ### output encoding
     error_email_template       = "error_email"
+    hash_fct                   = hashlib.sha224
     i18n                       = False
     ignore_picky_accept        = False
     input_encoding             = "iso-8859-15"
@@ -1184,6 +1250,7 @@ class RST_Root (_Ancestor) :
         self.Table          = {}
         self._change_infos  = {}
         self.top            = self
+        kw.setdefault ("hash_fct", self.hash_fct)
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -1379,6 +1446,7 @@ class RST_Root (_Ancestor) :
                 href     = request.path
                 resource = self.resource_from_href (href, request)
                 if resource :
+                    request.resource = resource
                     result  = self._http_response (resource, request, response)
                 else :
                     raise Status.Not_Found ()
@@ -1413,7 +1481,7 @@ class RST_Root (_Ancestor) :
             meth_name = request.method
             if meth_name not in resource.SUPPORTED_METHODS :
                 raise Status.Method_Not_Allowed \
-                    (valid_methods = resource.SUPPORTED_METHODS)
+                    (valid_methods = sorted (resource.SUPPORTED_METHODS))
             Method = resource._get_method (meth_name)
             if Method is not None :
                 method = Method ()

@@ -33,6 +33,8 @@
 #     4-Aug-2012 (MG) Don't save session on language change
 #     4-Aug-2012 (MG) Allow setting of `username`
 #    16-Jan-2013 (CT) Consider `ssl_authorized_user` in `username` methods
+#     2-May-2013 (CT) Factor `cookie_encoding`, `cookie`, `secure_cookie`,
+#                     `_cookie_signature`, to `GTW.RST.Request`
 #    ««revision-date»»···
 #--
 
@@ -47,25 +49,10 @@ import _GTW.File_Session
 import _GTW._RST._TOP
 import _GTW._RST.Request
 
-### XXX replace home-grown code by werkzeug supplied functions
-### XXX     werkzeug.utils, werkzeug.HTTP, ...
-
-import base64
-import datetime
-import hashlib
-import hmac
-import logging
-import time
-
 class _RST_TOP_Request_ (GTW.RST.Request) :
     """Extend GTW.RST.Request with session handling."""
 
-    _real_name = "Request"
-
-    @Once_Property
-    def cookie_encoding (self) :
-        return self.settings.get ("cookie_encoding", "utf-8")
-    # end def cookie_encoding
+    _real_name        = "Request"
 
     @Once_Property
     def locale_codes (self) :
@@ -109,27 +96,6 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
         self.session.username = value
     # end def username
 
-    @Once_Property
-    def user_session_ttl (self) :
-        result = self.settings.get ("user_session_ttl", 31 * 86400)
-        if not isinstance (result, datetime.timedelta) :
-            result = datetime.timedelta (seconds = result)
-        return result
-    # end def user_session_ttl
-
-    @Once_Property
-    def user_session_ttl_s (self) :
-        ttl = self.user_session_ttl
-        try :
-            return ttl.total_seconds ()
-        except AttributeError :
-            return (ttl.days * 86400 + ttl.seconds)
-    # end def user_session_ttl_s
-
-    def cookie (self, name) :
-        return self.cookies.get (name)
-    # end def cookie
-
     def get_user_locale_codes (self) :
         supported = getattr (self.root, "languages", set ())
         result    = tuple \
@@ -137,55 +103,31 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
         return result
     # end def get_user_locale_codes
 
-    def secure_cookie (self, name) :
-        ### based on `tornado.web.Request.get_secure_cookie`
-        cookie = self.cookies.get (name)
-        if not cookie:
-            return None
-        parts = cookie.split ("|")
-        if len (parts) != 3 :
-            return None
-        (data, timestamp, signature) = parts
-        if not self.root.HTTP.safe_str_cmp \
-                (signature, self._cookie_signature (data, timestamp)) :
-            logging.warning ("Invalid cookie signature %r", data)
-            return None
-        if int (timestamp) < time.time () - self.user_session_ttl_s :
-            logging.warning ("Expired cookie %r", data)
-            return None
-        try:
-            return base64.b64decode (data).decode (self.cookie_encoding)
-        except Exception :
-            return None
-    # end def secure_cookie
-
     def use_language (self, langs) :
         self.__super.use_language (langs)
         self.session ["language"] = langs
     # end def use_language
 
-    def _cookie_signature (self, * parts):
-        hash = hmac.new\
-            (self.settings ["cookie_salt"], digestmod = hashlib.sha1)
-        for part in parts:
-            hash.update (part)
-        return hash.hexdigest ()
-    # end def _cookie_signature
+    def _session_hash (self, sig) :
+        root   = self.root
+        hash   = root.hash_fct     (str (sig)).digest ()
+        result = root.b64_encoded  (hash, altchars = "~@")
+        return result
+    # end def _session_hash
 
     def _session_hasher (self, username) :
-        sig    = self._session_sig (username)
-        hash   = hashlib.sha224    (str (sig)).digest ()
-        result = base64.b64encode  (hash, bytes ("~@")).rstrip ("=")
-        return result
-    # end def _session_hasher
+        return self._session_hash (self._session_sig (username))
+    # end def _session_hash
 
-    def _session_sig (self, username) :
+    def _session_sig (self, user) :
         root  = self.root
         scope = root.scope
-        user  = root._get_user (username)
+        if isinstance (user, basestring) :
+            user = root._get_user (user)
         return \
-            ( getattr (user, "password", username)
-            , scope and scope.db_meta_data.dbid or 42
+            ( getattr (user, "password", user)
+            , scope.db_meta_data.dbid
+                  if scope is not None else self.settings ["cookie_salt"]
             )
     # end def _session_sig
 

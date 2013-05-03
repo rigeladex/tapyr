@@ -34,6 +34,8 @@
 #    31-Jan-2013 (CT) Add `bn` to `_backend_spec`
 #    27-Mar-2013 (CT) Add `test_request`, reorder methods alphabetically
 #    28-Mar-2013 (CT) Add and call `reset_callbacks`
+#     3-May-2013 (CT) Rename `login_required` to `auth_required`
+#     3-May-2013 (CT) Add `GTW_RST_Test_Command.v1_auth_required`
 #    ««revision-date»»···
 #--
 
@@ -195,7 +197,7 @@ class GTW_Test_Command (_Ancestor) :
                 , pid             = "Admin"
                 , title           = u"Verwaltung der Homepage"
                 , head_line       = u"Administration der Homepage"
-                , login_required  = True
+                , auth_required   = True
                 , entries         = self._nav_admin_groups ()
                 )
             , TOP.Auth
@@ -347,13 +349,21 @@ class GTW_RST_Test_Command (GTW_Test_Command) :
         , UTP               = "RST"
         )
 
+    v1_auth_required        = False
+
     def create_rst (self, cmd, ** kw) :
         import _GTW._RST._MOM.Doc
         import _GTW._RST._MOM.Scope
+        if self.v1_auth_required :
+            ### `secure` and `httponly` break the test --> clear `cookie_kw`
+            GTW.RST.RAT.cookie_kw = {}
         result = GTW.RST.Root \
             ( language          = "de"
             , entries           =
-                [ GTW.RST.MOM.Scope        (name = "v1")
+                [ GTW.RST.MOM.Scope
+                    ( name          = "v1"
+                    , auth_required = self.v1_auth_required
+                    )
                 , GTW.RST.MOM.Doc.App_Type (name = "Doc")
                 , GTW.RST.Raiser           (name = "RAISE")
                 ]

@@ -36,6 +36,8 @@
 #    28-Mar-2013 (CT) Register `p.terminate` in `Scaffold.reset_callbacks`
 #     2-May-2013 (CT) Add `sleep(1)` to begin of `run_server`
 #                     to avoid spurious errors
+#     3-May-2013 (CT) Add `scaffold_name` to `run_server`;
+#                     add `normalize_json` to `show`; add `** kw` to `traverse`
 #    ««revision-date»»···
 #--
 
@@ -70,7 +72,12 @@ def _run_server (Scaffold, args = []) :
     return result
 # end def run_server
 
-def run_server (test_module_name, db_url = "hps://", db_name = None) :
+def run_server \
+        ( test_module_name
+        , db_url        = "hps://"
+        , db_name       = None
+        , scaffold_name = "Scaffold"
+        ) :
     import socket
     import tempfile
     import _TFL.Url
@@ -83,7 +90,7 @@ def run_server (test_module_name, db_url = "hps://", db_name = None) :
         [ sys.executable, "-c"
         , "; ".join
             ( ( "import %s" % (test_module_name, )
-              , "%s.Scaffold " % (test_module_name, )
+              , "%s.%s" % (test_module_name, scaffold_name)
               + "( "
               + repr
                   ( ["run_server"]
@@ -129,6 +136,8 @@ def _normal (k, v) :
         v = "<datetime instance>"
     elif k in ("etag",) :
         v = "ETag value"
+    elif k in ("RAT",) :
+        v = "<REST authorization token>"
     elif k == "content-length" and int (v) != 0 :
         v = "<length>"
     elif k == "server" :
@@ -137,8 +146,11 @@ def _normal (k, v) :
 # end def _normal
 
 def show (r, ** kw) :
+    normalize_json = kw.pop ("normalize_json", False)
     json = req_json (r)
     if json is not None :
+        if normalize_json :
+            json = dict ( _normal (k, v) for k, v in json.iteritems ())
         kw ["json"] = json
     elif r.content :
         kw ["content"] = r.content.replace ("\r", "").strip ().split ("\n")
@@ -164,17 +176,17 @@ def showf (r, ** kw) :
         )
 # end def showf
 
-def traverse (url, level = 0, seen = None) :
+def traverse (url, level = 0, seen = None, ** kw) :
     if seen is None :
         seen = set ()
-    rg    = requests.get     (url)
-    ro    = requests.options (url)
+    rg    = requests.get     (url, ** kw)
+    ro    = requests.options (url, ** kw)
     path  = requests.utils.urlparse (url).path or "/"
     if ro.ok :
         allow = ro.headers ["allow"]
         if allow not in seen :
             print (path, ":", allow)
-            seen .add (allow)
+            seen.add (allow)
     else :
         print (path, ":", ro.status_code, ro.content)
     if rg.ok :
@@ -182,7 +194,7 @@ def traverse (url, level = 0, seen = None) :
         if json :
             l = level + 1
             for e in json.get ("entries", ()) :
-                traverse ("http://localhost:9999" + str (e), l, seen)
+                traverse ("http://localhost:9999" + str (e), l, seen, ** kw)
 # end def traverse
 
 class Requester (TFL.Meta.Object) :

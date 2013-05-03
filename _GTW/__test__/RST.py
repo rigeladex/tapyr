@@ -50,6 +50,7 @@
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #     2-May-2013 (CT) Add `offset=[0,-1]/limit=1` tests to `test_query`
+#     3-May-2013 (CT) Add `test_rat`, import `GTW.OMP.Auth`
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW.__test__.rst_harness  import *
 from   _GTW.__test__              import rst_harness
 
+import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
 
@@ -66,8 +68,9 @@ import _GTW._RST._MOM.Client
 import datetime
 import json
 
-def run_server (db_url = "hps://", db_name = None) :
-    return rst_harness.run_server ("_GTW.__test__.RST", db_url, db_name)
+def run_server (db_url = "hps://", db_name = None, scaffold_name = "Scaffold") :
+    return rst_harness.run_server \
+        ("_GTW.__test__.RST", db_url, db_name, scaffold_name)
 # end def run_server
 
 class _GTW_Test_Command_ (GTW_RST_Test_Command) :
@@ -75,7 +78,8 @@ class _GTW_Test_Command_ (GTW_RST_Test_Command) :
     _rn_prefix            = "_GTW_Test"
 
     PNS_Aliases           = dict \
-        ( PAP             = GTW.OMP.PAP
+        ( Auth            = GTW.OMP.Auth
+        , PAP             = GTW.OMP.PAP
         , SRM             = GTW.OMP.SRM
         , SWP             = GTW.OMP.SWP
         )
@@ -109,7 +113,22 @@ class _GTW_Test_Command_ (GTW_RST_Test_Command) :
 
 _Command_  = _GTW_Test_Command_ # end class
 
-Scaffold   = _Command_ ()
+class _GTW_Test_Command_RAT_ (_GTW_Test_Command_) :
+
+    v1_auth_required        = True
+
+    def fixtures (self, scope) :
+        self.__super.fixtures (scope)
+        Auth = scope.Auth
+        Auth.Account.create_new_account_x \
+            ("test@test.test", "test", enabled = True, suspended = False)
+        scope.commit ()
+    # end def fixtures
+
+_Command_RAT_ = _GTW_Test_Command_RAT_ # end class
+
+Scaffold      = _Command_     ()
+Scaffold_RAT  = _Command_RAT_ ()
 
 ### «text» ### The doctest follows::
 
@@ -125,7 +144,11 @@ _test_client = r"""
     >>> [e._url for e in r]
     [u'http://localhost:9999/v1', u'http://localhost:9999/Doc', u'http://localhost:9999/RAISE']
 
-    >>> r1 = r [0] [0]
+    >>> r1 = list (x for x in  r [0] if x._url.endswith ("MOM-Id_Entity")) [0]
+
+    >>> print (r1._url)
+    http://localhost:9999/v1/MOM-Id_Entity
+
     >>> [e._url for e in r1._entries [:3]]
     [u'/v1/MOM-Id_Entity/1', u'/v1/MOM-Id_Entity/2', u'/v1/MOM-Id_Entity/3']
 
@@ -173,18 +196,52 @@ _test_cqf = r"""
 
     >>> for e in v1.entries :
     ...     print ("%%s\n    %%s" %% (e.name, e.change_query_filters))
+    Auth-Account
+        (Q.type_name == Auth.Account,)
+    Auth-Account_Activation
+        (Q.type_name == Auth.Account_Activation,)
+    Auth-Account_Anonymous
+        (Q.type_name == Auth.Account_Anonymous,)
+    Auth-Account_EMail_Verification
+        (Q.type_name == Auth.Account_EMail_Verification,)
+    Auth-Account_Password_Change_Required
+        (Q.type_name == Auth.Account_Password_Change_Required,)
+    Auth-Account_Password_Reset
+        (Q.type_name == Auth.Account_Password_Reset,)
+    Auth-Account_in_Group
+        (Q.type_name == Auth.Account_in_Group,)
+    Auth-Certificate
+        (Q.type_name == Auth.Certificate,)
+    Auth-Group
+        (Q.type_name == Auth.Group,)
+    Auth-Link1
+        (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset'],),)
+    Auth-Link2
+        (Q.type_name.in_ (['Auth.Account_in_Group'],),)
+    Auth-Named_Object
+        (Q.type_name.in_ (['Auth.Group'],),)
+    Auth-Object
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group'],),)
+    Auth-_Account_
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous'],),)
+    Auth-_Account_Action_
+        (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset'],),)
+    Auth-_Account_Token_Action_
+        (Q.type_name.in_ (['Auth.Account_EMail_Verification', 'Auth.Account_Password_Reset'],),)
     MOM-Id_Entity
         ()
     MOM-Link
-        (Q.type_name.in_ (['PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link1
-        (Q.type_name.in_ (['PAP.Address_Position', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'PAP.Address_Position', 'SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SWP.Clip_O', 'SWP.Picture'],),)
     MOM-Link2
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+        (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+    MOM-Named_Object
+        (Q.type_name.in_ (['Auth.Group'],),)
     MOM-Object
-        (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
     MOM-_MOM_Link_n_
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+        (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
         (Q.type_name == PAP.Address,)
     PAP-Address_Position
@@ -206,11 +263,13 @@ _test_cqf = r"""
     PAP-Link1
         (Q.type_name.in_ (['PAP.Address_Position'],),)
     PAP-Link2
-        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url'],),)
+        (Q.type_name.in_ (['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url'],),)
     PAP-Object
         (Q.type_name.in_ (['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url'],),)
     PAP-Person
         (Q.type_name == PAP.Person,)
+    PAP-Person_has_Account
+        (Q.type_name == PAP.Person_has_Account,)
     PAP-Person_has_Address
         (Q.type_name == PAP.Person_has_Address,)
     PAP-Person_has_Email
@@ -296,10 +355,27 @@ _test_cqf = r"""
 
     >>> for e in v1.entries :
     ...     print ("%%s    %%s" %% (e.name, e.attributes))
+    Auth-Account    (Email `name`, Boolean `enabled`, Boolean `superuser`, Boolean `active`)
+    Auth-Account_Activation    (Account `left`,)
+    Auth-Account_Anonymous    (Email `name`, Boolean `enabled`)
+    Auth-Account_EMail_Verification    (Account `left`, String `token`, Date-Time `expires`, Email `new_email`)
+    Auth-Account_Password_Change_Required    (Account `left`,)
+    Auth-Account_Password_Reset    (Account `left`, String `token`, Date-Time `expires`, String `password`)
+    Auth-Account_in_Group    (Account `left`, Group `right`)
+    Auth-Certificate    (Email `email`, Date_Time_Interval `validity`, String `desc`, Date-Time `revocation_date`, Boolean `alive`)
+    Auth-Group    (Name `name`, String `desc`)
+    Auth-Link1    (Left `left`,)
+    Auth-Link2    (Left `left`, Right `right`)
+    Auth-Named_Object    (Name `name`,)
+    Auth-Object    ()
+    Auth-_Account_    (Email `name`, Boolean `enabled`, Boolean `superuser`, Boolean `active`)
+    Auth-_Account_Action_    (Account `left`,)
+    Auth-_Account_Token_Action_    (Account `left`, String `token`, Date-Time `expires`)
     MOM-Id_Entity    ()
     MOM-Link    (Left `left`,)
     MOM-Link1    (Left `left`,)
     MOM-Link2    (Left `left`, Right `right`)
+    MOM-Named_Object    (Name `name`,)
     MOM-Object    ()
     MOM-_MOM_Link_n_    (Left `left`, Right `right`)
     PAP-Address    (String `street`, String `zip`, String `city`, String `country`, String `desc`, String `region`)
@@ -315,6 +391,7 @@ _test_cqf = r"""
     PAP-Link2    (Left `left`, Right `right`)
     PAP-Object    ()
     PAP-Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
+    PAP-Person_has_Account    (Person `left`, Account `right`)
     PAP-Person_has_Address    (Person `left`, Address `right`, String `desc`)
     PAP-Person_has_Email    (Person `left`, Email `right`, String `desc`)
     PAP-Person_has_Phone    (Person `left`, Phone `right`, Numeric_String `extension`, String `desc`)
@@ -358,7 +435,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Legal\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Legal\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Named\_Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Account\_Token\_Action\_|Auth\-\_Account\_Action\_|Auth\-\_Account\_|Auth\-Object|Auth\-Named\_Object|Auth\-Link2|Auth\-Link1|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account\_Password\_Reset|Auth\-Account\_Password\_Change\_Required|Auth\-Account\_EMail\_Verification|Auth\-Account\_Anonymous|Auth\-Account\_Activation|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -564,7 +641,25 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc?brief"))
     { 'json' :
         { 'entries' :
-            [ 'MOM-Id_Entity'
+            [ 'Auth-Account'
+            , 'Auth-Account_Activation'
+            , 'Auth-Account_EMail_Verification'
+            , 'Auth-Account_Password_Change_Required'
+            , 'Auth-Account_Password_Reset'
+            , 'Auth-Account_in_Group'
+            , 'Auth-Certificate'
+            , 'Auth-Group'
+            , 'Auth-Id_Entity'
+            , 'Auth-Link1'
+            , 'Auth-Link2'
+            , 'Auth-Link2_Ordered'
+            , 'Auth-Link3'
+            , 'Auth-Named_Object'
+            , 'Auth-Object'
+            , 'Auth-_Account_'
+            , 'Auth-_Account_Action_'
+            , 'Auth-_Account_Token_Action_'
+            , 'MOM-Id_Entity'
             , 'MOM-Link'
             , 'MOM-Link1'
             , 'MOM-Link2'
@@ -590,6 +685,7 @@ _test_doc = r"""
             , 'PAP-Named_Object'
             , 'PAP-Object'
             , 'PAP-Person'
+            , 'PAP-Person_has_Account'
             , 'PAP-Person_has_Address'
             , 'PAP-Person_has_Email'
             , 'PAP-Person_has_Phone'
@@ -1332,6 +1428,15 @@ _test_example_1 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    Auth.Account : ------
+    Auth.Account_Activation : ------
+    Auth.Account_Anonymous : ------
+    Auth.Account_EMail_Verification : ------
+    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Reset : ------
+    Auth.Account_in_Group : ------
+    Auth.Certificate : ------
+    Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', u'NY', 'PAP.Company')
@@ -1341,6 +1446,7 @@ _test_example_1 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Account : ------
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1379,6 +1485,15 @@ _test_example_2 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    Auth.Account : ------
+    Auth.Account_Activation : ------
+    Auth.Account_Anonymous : ------
+    Auth.Account_EMail_Verification : ------
+    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Reset : ------
+    Auth.Account_in_Group : ------
+    Auth.Certificate : ------
+    Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', u'NY', 'PAP.Company')
@@ -1388,6 +1503,7 @@ _test_example_2 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Account : ------
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1448,6 +1564,7 @@ _test_example_3 = r"""
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Account : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
@@ -1457,7 +1574,15 @@ _test_example_3 = r"""
     PAP.Company : (u'John Doe, Inc.', u'NY', 'PAP.Company')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
-
+    Auth.Group : (u'foo', 'Auth.Group')
+    Auth.Certificate : ------
+    Auth.Account_in_Group : ------
+    Auth.Account_Password_Reset : ------
+    Auth.Account_Password_Change_Required : ------
+    Auth.Account_EMail_Verification : ------
+    Auth.Account_Anonymous : ------
+    Auth.Account_Activation : ------
+    Auth.Account : ------
 
 """
 
@@ -1472,6 +1597,15 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    Auth.Account : ------
+    Auth.Account_Activation : ------
+    Auth.Account_Anonymous : ------
+    Auth.Account_EMail_Verification : ------
+    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Reset : ------
+    Auth.Account_in_Group : ------
+    Auth.Certificate : ------
+    Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', u'NY', 'PAP.Company')
@@ -1481,6 +1615,7 @@ _test_example_4 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Account : ------
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1515,6 +1650,15 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    Auth.Account : ------
+    Auth.Account_Activation : ------
+    Auth.Account_Anonymous : ------
+    Auth.Account_EMail_Verification : ------
+    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Reset : ------
+    Auth.Account_in_Group : ------
+    Auth.Certificate : ------
+    Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Company : (u'John Doe, Inc.', u'NY', 'PAP.Company')
@@ -1524,6 +1668,7 @@ _test_example_4 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
+    PAP.Person_has_Account : ------
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1582,6 +1727,7 @@ _test_example_4 = r"""
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
+    PAP.Person_has_Account : ------
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
@@ -1591,7 +1737,15 @@ _test_example_4 = r"""
     PAP.Company : (u'John Doe, Inc.', u'NY', 'PAP.Company')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
-
+    Auth.Group : (u'foo', 'Auth.Group')
+    Auth.Certificate : ------
+    Auth.Account_in_Group : ------
+    Auth.Account_Password_Reset : ------
+    Auth.Account_Password_Change_Required : ------
+    Auth.Account_EMail_Verification : ------
+    Auth.Account_Anonymous : ------
+    Auth.Account_Activation : ------
+    Auth.Account : ------
 
 """
 
@@ -1670,10 +1824,27 @@ _test_get = r"""
     >>> r = show (R.get ("/v1?brief"))
     { 'json' :
         { 'entries' :
-            [ 'MOM-Id_Entity'
+            [ 'Auth-Account'
+            , 'Auth-Account_Activation'
+            , 'Auth-Account_Anonymous'
+            , 'Auth-Account_EMail_Verification'
+            , 'Auth-Account_Password_Change_Required'
+            , 'Auth-Account_Password_Reset'
+            , 'Auth-Account_in_Group'
+            , 'Auth-Certificate'
+            , 'Auth-Group'
+            , 'Auth-Link1'
+            , 'Auth-Link2'
+            , 'Auth-Named_Object'
+            , 'Auth-Object'
+            , 'Auth-_Account_'
+            , 'Auth-_Account_Action_'
+            , 'Auth-_Account_Token_Action_'
+            , 'MOM-Id_Entity'
             , 'MOM-Link'
             , 'MOM-Link1'
             , 'MOM-Link2'
+            , 'MOM-Named_Object'
             , 'MOM-Object'
             , 'MOM-_MOM_Link_n_'
             , 'PAP-Address'
@@ -1689,6 +1860,7 @@ _test_get = r"""
             , 'PAP-Link2'
             , 'PAP-Object'
             , 'PAP-Person'
+            , 'PAP-Person_has_Account'
             , 'PAP-Person_has_Address'
             , 'PAP-Person_has_Email'
             , 'PAP-Person_has_Phone'
@@ -1740,10 +1912,27 @@ _test_get = r"""
     >>> r = show (R.get ("/v1"))
     { 'json' :
         { 'entries' :
-            [ '/v1/MOM-Id_Entity'
+            [ '/v1/Auth-Account'
+            , '/v1/Auth-Account_Activation'
+            , '/v1/Auth-Account_Anonymous'
+            , '/v1/Auth-Account_EMail_Verification'
+            , '/v1/Auth-Account_Password_Change_Required'
+            , '/v1/Auth-Account_Password_Reset'
+            , '/v1/Auth-Account_in_Group'
+            , '/v1/Auth-Certificate'
+            , '/v1/Auth-Group'
+            , '/v1/Auth-Link1'
+            , '/v1/Auth-Link2'
+            , '/v1/Auth-Named_Object'
+            , '/v1/Auth-Object'
+            , '/v1/Auth-_Account_'
+            , '/v1/Auth-_Account_Action_'
+            , '/v1/Auth-_Account_Token_Action_'
+            , '/v1/MOM-Id_Entity'
             , '/v1/MOM-Link'
             , '/v1/MOM-Link1'
             , '/v1/MOM-Link2'
+            , '/v1/MOM-Named_Object'
             , '/v1/MOM-Object'
             , '/v1/MOM-_MOM_Link_n_'
             , '/v1/PAP-Address'
@@ -1759,6 +1948,7 @@ _test_get = r"""
             , '/v1/PAP-Link2'
             , '/v1/PAP-Object'
             , '/v1/PAP-Person'
+            , '/v1/PAP-Person_has_Account'
             , '/v1/PAP-Person_has_Address'
             , '/v1/PAP-Person_has_Email'
             , '/v1/PAP-Person_has_Phone'
@@ -3445,8 +3635,8 @@ _test_options = r"""
 
     >>> _ = traverse ("http://localhost:9999/")
     / : GET, HEAD, OPTIONS
+    /v1/Auth-Account : GET, HEAD, OPTIONS, POST
     /v1/MOM-Id_Entity/1 : DELETE, GET, HEAD, OPTIONS, PUT
-    /v1/PAP-Address : GET, HEAD, OPTIONS, POST
 
 """
 
@@ -3951,21 +4141,120 @@ _test_qr_local = """
 
 """
 
+_test_rat = r"""
+    >>> server = run_server (%(p1)s, %(n1)s, "Scaffold_RAT")
+
+    >>> _ = traverse ("http://localhost:9999/")
+    / : GET, HEAD, OPTIONS
+    /RAT : OPTIONS, POST
+    /v1 : 401 {"description": "Unauthorized"}
+
+    >>> headers = { "Content-Type": "application/json" }
+
+    >>> rat_cargo = json.dumps (
+    ...   dict (user_name = "test@test.test", password = "test"))
+    >>> r = R.post ("/RAT", data = rat_cargo, headers = headers)
+    >>> show (r)
+    { 'json' :
+        { 'errors' :
+            { 'null' :
+    [ 'Please enter a username' ]
+            , 'username' :
+    [ 'A user name is required to login.' ]
+            }
+        }
+    , 'status' : 400
+    , 'url' : 'http://localhost:9999/RAT'
+    }
+    <Response [400]>
+
+    >>> rat_cargo = json.dumps (dict (username = "test@test.test", password = "test"))
+    >>> r = R.post ("/RAT", data = rat_cargo, headers = headers)
+    >>> show (r, normalize_json = True)
+    { 'json' :
+        { 'RAT' : '<REST authorization token>' }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/RAT'
+    }
+    <Response [200]>
+
+    >>> cookies = r.cookies
+
+    >>> rvo = R.options ("/v1/Auth-Account", cookies = cookies)
+    >>> showf (rvo)
+    { 'headers' :
+        { 'allow' : 'GET, HEAD, OPTIONS, POST'
+        , 'content-length' : '0'
+        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'date' : '<datetime instance>'
+        , 'link' : '/Doc/Auth-Account; rel=doc'
+        , 'server' : '<server>'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/Auth-Account'
+    }
+    <Response [200]>
+
+    >>> rvo_nc = R.options ("/v1/Auth-Account")
+    >>> showf (rvo_nc)
+    { 'headers' :
+        { 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'server' : '<server>'
+        , 'www-authenticate' : 'Basic realm="basic-auth"'
+        }
+    , 'json' :
+        { 'description' : 'Unauthorized' }
+    , 'status' : 401
+    , 'url' : 'http://localhost:9999/v1/Auth-Account'
+    }
+    <Response [401]>
+
+    >>> rvg = R.get ("/v1/Auth-Account?verbose", cookies = cookies)
+    >>> show (rvg)
+    { 'json' :
+        { 'attribute_names' :
+            [ 'name'
+            , 'enabled'
+            , 'superuser'
+            , 'active'
+            ]
+        , 'entries' :
+            [ { 'attributes' :
+                  { 'enabled' : True
+                  , 'name' : 'test@test.test'
+                  }
+              , 'cid' : 17
+              , 'pid' : 17
+              , 'type_name' : 'Auth.Account'
+              , 'url' : '/v1/Auth-Account/17'
+              }
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/Auth-Account?verbose'
+    }
+    <Response [200]>
+
+"""
+
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( test_client     = _test_client
-        , test_cqf        = _test_cqf
-        , test_delete     = _test_delete
-        , test_doc        = _test_doc
-        , test_example_1  = _test_example_1
-        , test_example_2  = _test_example_2
-        , test_example_3  = _test_example_3
-        , test_example_4  = _test_example_4
-        , test_get        = _test_get
-        , test_options    = _test_options
-        , test_post       = _test_post
-        , test_query      = _test_query
-        , test_qr_local   = _test_qr_local
+        ( test_client         = _test_client
+        , test_cqf            = _test_cqf
+        , test_delete         = _test_delete
+        , test_doc            = _test_doc
+        , test_example_1      = _test_example_1
+        , test_example_2      = _test_example_2
+        , test_example_3      = _test_example_3
+        , test_example_4      = _test_example_4
+        , test_get            = _test_get
+        , test_options        = _test_options
+        , test_rat            = _test_rat
+        , test_post           = _test_post
+        , test_query          = _test_query
+        , test_qr_local       = _test_qr_local
         )
     )
 

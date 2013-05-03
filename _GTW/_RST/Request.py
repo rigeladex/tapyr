@@ -36,26 +36,39 @@
 #    16-Oct-2012 (CT) Add properties `ckd` and `raw`
 #    16-Jan-2013 (CT) Add `ssl_authorized_user` and `ssl_client_verified`
 #    26-Jan-2013 (CT) Add and use `http_server_authorized_user`
+#     2-May-2013 (CT) Factor in `cookie_encoding`, `cookie`, `secure_cookie`,
+#                     `_cookie_signature` from `GTW.RST.TOP.Request`
+#     2-May-2013 (CT) Factor `new_secure_cookie` from `GTW.RST.Response`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _GTW                     import GTW
-from   _TFL                     import TFL
+from   _GTW                      import GTW
+from   _TFL                      import TFL
 
 import _GTW._RST
 
-from   _TFL                     import I18N
-from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL                      import I18N
+from   _TFL._Meta.Once_Property  import Once_Property
 
 import _TFL._Meta.Object
+
+import base64
+import datetime
+import hmac
+import logging
+import time
+
+### XXX replace home-grown code by werkzeug supplied functions
+### XXX     werkzeug.utils, werkzeug.HTTP, ...
 
 class _RST_Request_ (TFL.Meta.Object) :
     """Wrap and extend wsgi-specific Request class."""
 
-    _real_name = "Request"
-    _user      = None
+    _real_name        = "Request"
+    _resource         = None
+    _user             = None
 
     lang              = None
     original_resource = None
@@ -91,6 +104,11 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def ckd
 
     @Once_Property
+    def cookie_encoding (self) :
+        return self.settings.get ("cookie_encoding", "utf-8")
+    # end def cookie_encoding
+
+    @Once_Property
     def http_server_authorized_user (self) :
         result = self.ssl_authorized_user
         if result is None :
@@ -105,6 +123,31 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def locale_codes
 
     @Once_Property
+    def rat_authorized_user (self) :
+        root   = self.root
+        rat    = getattr (root.SC, "RAT", None)
+        result = [None]
+        if rat is not None :
+            def agent (self, cargo, timestamp) :
+                user = None
+                try :
+                    pid = int (cargo)
+                except Exception :
+                    user = root._get_user (cargo)
+                else :
+                    user = root.scope.pid_query (pid)
+                if user is not None :
+                    try :
+                        result [0] = user.name
+                        return user.password, root.scope.db_meta_data.dbid
+                    except Exception :
+                        pass
+            cargo = self.secure_cookie ("RAT", agent, rat.session_ttl_s)
+            if cargo is not None :
+                return result [0]
+    # end def rat_authorized_user
+
+    @Once_Property
     def raw (self) :
         req_data = self.req_data
         if "raw" in req_data :
@@ -113,6 +156,19 @@ class _RST_Request_ (TFL.Meta.Object) :
             ### for all methods but `GET`, `raw` is default
             return not req_data.has_option ("ckd")
     # end def raw
+
+    @property
+    def resource (self) :
+        result = self._resource
+        if result is None :
+            result = self.root
+        return result
+    # end def resource
+
+    @resource.setter
+    def resource (self, value) :
+        self._resource = value
+    # end def resource
 
     @property
     def settings (self) :
@@ -146,6 +202,8 @@ class _RST_Request_ (TFL.Meta.Object) :
     def username (self) :
         result = self.http_server_authorized_user
         if result is None :
+            result = self.rat_authorized_user
+        if result is None :
             auth   = self.authorization
             result = auth and auth.username
         return result
@@ -155,6 +213,14 @@ class _RST_Request_ (TFL.Meta.Object) :
     def verbose (self) :
         return self.req_data.has_option ("verbose")
     # end def verbose
+
+    def cookie (self, name) :
+        return self.cookies.get (name)
+    # end def cookie
+
+    def current_time (self) :
+        return time.time ()
+    # end def current_time
 
     def get_browser_locale_codes (self) :
         """Determines the user's locale from Accept-Language header."""
@@ -167,10 +233,78 @@ class _RST_Request_ (TFL.Meta.Object) :
         return getattr (self.root, "default_locale_code", "en")
     # end def get_browser_locale_codes
 
+    def new_secure_cookie (self, name, data, secrets = None) :
+        timestamp = base64.b64encode (str (int (self.current_time ())))
+        cargo     = base64.b64encode \
+            (    data.encode (self.cookie_encoding)
+            if   isinstance  (data, unicode)
+            else data
+            )
+        signature = self._cookie_signature (cargo, timestamp, secrets = secrets)
+        result    = "|".join ((cargo, timestamp, signature))
+        return result
+    # end def new_secure_cookie
+
+    def secure_cookie (self, name, secret_agent = None, ttl_s = None) :
+        root   = self.root
+        cookie = self.cookies.get (name)
+        if not cookie:
+            return None
+        parts  = cookie.split ("|", 2)
+        if len (parts) != 3 :
+            return None
+        (data, timestamp, signature) = parts
+        enc = self.cookie_encoding
+        try:
+            result = base64.b64decode (data).decode (enc)
+        except Exception :
+            return None
+        secrets = None
+        if secret_agent :
+            secrets = secret_agent (self, result, timestamp)
+        wanted_sig = self._cookie_signature (data, timestamp, secrets = secrets)
+        if not root.HTTP.safe_str_cmp (signature, wanted_sig) :
+            logging.warning ("Invalid cookie signature %r", data)
+            return None
+        try :
+            timestamp = base64.b64decode (timestamp).decode (enc)
+        except Exception :
+            pass
+        try :
+            then = int (timestamp)
+        except Exception :
+            return None
+        now = self.current_time ()
+        ttl = ttl_s if ttl_s is not None else self.resource.session_ttl_s
+        if then < (now - ttl) :
+            logging.warning ("Expired cookie %r older then %s", data, ttl)
+            return None
+        if then > now + 180 :
+            ### don't accept cookies with a timestamp more than 2 minutes in
+            ### the future
+            logging.warning \
+                ( "Time-travelling cookie %r [%s seconds ahead]"
+                , data, then - now
+                )
+            return None
+        return result
+    # end def secure_cookie
+
     def use_language (self, langs) :
         self.lang = langs
         I18N.use (* langs)
     # end def use_language
+
+    def _cookie_signature (self, * parts, ** kw):
+        enc     = self.cookie_encoding
+        secrets = (self.settings ["cookie_salt"], kw.pop ("secrets", None))
+        result  = hmac.new \
+            (unicode (secrets).encode (enc), digestmod = self.root.hash_fct)
+        for part in parts:
+            result.update (b":::")
+            result.update (part)
+        return result.hexdigest ()
+    # end def _cookie_signature
 
 Request = _RST_Request_ # end class
 

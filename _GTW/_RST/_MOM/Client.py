@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     6-Jan-2013 (CT) Creation
+#     3-May-2013 (CT) Add `Requester.add_cookies`
+#     3-May-2013 (CT) Add exception handler to `Resource._json`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +69,7 @@ class _Entity_ (TFL.Meta.Object) :
         json = self._json
         if json :
             return dict (json.get (self._ad_name) or {})
+        return {}
     # end def _attrs
 
     @TFL.Meta.Once_Property
@@ -75,6 +78,7 @@ class _Entity_ (TFL.Meta.Object) :
         json = self._json
         if json :
             return json.get (self._ad_name, {})
+        return {}
     # end def _attrs_orig
 
     @property
@@ -97,6 +101,7 @@ class _Entity_ (TFL.Meta.Object) :
                         else :
                             yield requester.get (e)
                 return list (gen (self._requester, entries))
+        return []
     # end def _entries
 
     def PUT (self) :
@@ -204,7 +209,10 @@ class Resource (_Entity_) :
     def _json (self) :
         result = self._result.json
         if callable (result) :
-            result = result ()
+            try :
+                result = result ()
+            except Exception as exc :
+                result = {}
         return result
     # end def _json
 
@@ -256,6 +264,10 @@ class Requester (TFL.Meta.Object) :
             setattr (s, k, v)
         s.headers.update ({ "Content-Type" : "application/json" })
     # end def __init__
+
+    def add_cookies (self, ** kw) :
+        self.session.cookies.update (kw)
+    # end def add_cookies
 
     def __getattr__ (self, name) :
         return self.Wrapper (name, self)

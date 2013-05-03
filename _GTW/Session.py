@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -47,6 +47,8 @@
 #    23-Jul-2012 (CT) Call `renew_session_id` in `username.setter`
 #     4-Aug-2012 (MG) Don't save session on session id renewal
 #    19-Aug-2012 (MG) Add repr for User class
+#     2-May-2013 (CT) Convert `New_ID` to instance method,
+#                     use `settings ["hash_fct"]`, if any
 #    ««revision-date»»···
 #--
 
@@ -223,25 +225,24 @@ class Session (TFL.Meta.Object) :
         assert self.user
         hard_expiry = self._expiry (ttl, "user_session_ttl")
         soft_expiry = self._expiry (ttl, "edit_session_ttl")
+        hash_fct    = self._settings.get ("hash_fct", hashlib.sha224)
         id     = uuid.uuid4 ().hex
         hash   = base64.b64encode \
-            ( hashlib.sha224
-                (str ((hash_sig, hard_expiry, soft_expiry))).digest ()
-            )
+            (hash_fct (str ((hash_sig, hard_expiry, soft_expiry))).digest ())
         self.user.sessions [id] = (hard_expiry, soft_expiry, hash)
         return id, hash
     # end def new_edit_session
 
-    @classmethod
-    def New_ID (cls, check = None, salt = "") :
+    def New_ID (self, check = None, salt = "") :
         try :
             getpid = os.getpid
         except AttributeError :
             pid = 1
         else :
             pid = getpid ()
+        hash_fct = self._settings.get ("hash_fct", hashlib.sha224)
         while True :
-            id = hashlib.md5 \
+            id = hash_fct \
                 ( "%s%s%s%s"
                 % ( randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
                 ).hexdigest ()
@@ -267,7 +268,7 @@ class Session (TFL.Meta.Object) :
         o_sid     = self._sid
         self._sid = n_sid
         try :
-            with self.LET   (_sid = o_sid) :
+            with self.LET (_sid = o_sid) :
                 self.remove ()
         except :
             pass

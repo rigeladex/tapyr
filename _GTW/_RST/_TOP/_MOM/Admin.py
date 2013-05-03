@@ -58,6 +58,7 @@
 #    25-Apr-2013 (CT) Use `self.commit_scope`, not `scope.commit`
 #    25-Apr-2013 (CT) Add `child_postconditions_map` to `_new_child_x`
 #    25-Apr-2013 (CT) Add and use `eligible_object_restriction`
+#     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #    ««revision-date»»···
 #--
 
@@ -514,7 +515,7 @@ class Changer (_Changer_) :
 
     argn            = 1
     name            = "change"
-    _login_required = True
+    _auth_required  = True
 
 # end class Changer
 
@@ -623,7 +624,7 @@ class Deleter (_JSON_Action_PO_) :
     name                 = "delete"
     page_template_name   = "e_type_delete"
 
-    _login_required      = True
+    _auth_required       = True
 
     def _rendered_post (self, request, response) :
         self._check_readonly (request)
@@ -916,7 +917,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     _form_id              = None
     _form_parameters      = {}
     _list_display         = None
-    _login_required       = True
+    _auth_required        = True
     _sort_key             = None
 
     class _E_Type_GET_ (_Ancestor.GET) :
@@ -1338,7 +1339,7 @@ class Group (_Ancestor) :
     show_aliases          = False
 
     _exclude_robots       = True
-    _login_required       = True
+    _auth_required        = True
 
 
     def __init__ (self, ** kw) :
@@ -1407,7 +1408,7 @@ class Site (Group) :
     """Directory displaying admin Groups."""
 
     _exclude_robots      = True
-    _login_required      = True
+    _auth_required       = True
 
     def _auto_entries (self) :
         for et in self.top.ET_Map.itervalues () :

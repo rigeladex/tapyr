@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -28,6 +28,8 @@
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
 #    23-Jul-2012 (CT) Add `username` to `_own_vars`
+#     2-May-2013 (CT) Factor `clear_cookie`, `set_cookie`, and
+#                     `set_secure_cookie` to `GTW.RST.Response`
 #    ««revision-date»»···
 #--
 
@@ -61,8 +63,8 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
 
     @username.setter
     def username (self, value) :
-        if value != self.username :
-            session = self.session
+        session = self.session
+        if value != session.username :
             session.username = value
             self._set_session_cookie ()
     # end def username
@@ -75,34 +77,14 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
             notifications.append (noti)
     # end def add_notification
 
-    def clear_cookie (self, name, * args, ** kw) :
-        self._response.delete_cookie (name, * args, ** kw)
-    # end def clear_cookie
-
-    def set_cookie (self, key, value = "", ** kw) :
-        if isinstance (value, unicode) :
-            value = value.encode (self._request.cookie_encoding)
-        return self._response.set_cookie (key, value, ** kw)
-    # end def set_cookie
-
-    def set_secure_cookie (self, name, data, ** kw) :
-        request   = self._request
-        timestamp = str (int (time.time ()))
-        if isinstance (data, unicode) :
-            data  = data.encode (request.cookie_encoding)
-        data      = base64.b64encode (data)
-        signature = request._cookie_signature (data, timestamp)
-        cookie    = "|".join ((data, timestamp, signature))
-        self.set_cookie (name, cookie, ** kw)
-    # end def set_secure_cookie
-
     def _set_session_cookie (self) :
         request     = self._request
         session     = self.session
         cookie_name = request.session_cookie_name
-        self.set_secure_cookie \
-            (cookie_name, session.sid, max_age = request.user_session_ttl)
+        cookie      = self.set_secure_cookie \
+            (cookie_name, session.sid, max_age = self.resource.session_ttl)
         GTW.Notification_Collection (session)
+        return cookie
     # end def _set_session_cookie
 
 Response = _RST_TOP_Response_ # end class

@@ -40,6 +40,7 @@
 #     5-Dec-2012 (CT) Redefine `Archive.Year.sort_key`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    17-Mar-2013 (CT) Add `_login_required = False` to `_get_bir_admin`
+#     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                 , name            = "admin"
                 , parent          = self
                 , submit_callback = self._register_submit_callback
-                , _login_required = False
+                , _auth_required  = False
                 )
             self.bir_admin = result = bir.admin.__class__ (** kw)
             return result

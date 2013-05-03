@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -34,6 +34,7 @@
 #     4-Oct-2012 (CT) Add `href_e_type`, `resource_from_e_type`
 #     5-Oct-2012 (CT) Add `json_indent` to `JSON.json_dump_kw`
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["rest_api"]`
+#     3-May-2013 (CT) Create `RAT` if `auth_required`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.Resource
+import _GTW._RST.RAT
 import _GTW._RST._MOM.E_Type
 
 from   _MOM.import_MOM          import MOM, Q
@@ -59,6 +61,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
     E_Type                     = GTW.RST.MOM.E_Type
 
     def __init__ (self, ** kw) :
+        root = self.top
         json_indent = kw.pop ("json_indent", None)
         if "entries" not in kw :
             kw ["entries"] = tuple \
@@ -67,7 +70,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
                       , name = et.type_name.replace (".", "-")
                       )
                 for et in sorted \
-                    (self.top.scope.T_Extension, key = TFL.Getter.type_name)
+                    (root.scope.T_Extension, key = TFL.Getter.type_name)
                 if  issubclass (et, MOM.Id_Entity)
                         and (et.children_np or not et.is_partial)
                 )
@@ -78,7 +81,10 @@ class _RST_MOM_Scope_ (_Ancestor) :
                 ( indent    = json_indent or 2
                 , sort_keys = True
                 )
-        self.top.E_Type_Desc._prop_map ["rest_api"] = self
+        if self.auth_required :
+            root.E_Type_Desc._prop_map ["rest_api"] = self
+            if not hasattr (root.SC, "RAT") :
+                root.add_entries (GTW.RST.RAT (name = "RAT"))
     # end def __init__
 
     def href_e_type (self, e_type) :
