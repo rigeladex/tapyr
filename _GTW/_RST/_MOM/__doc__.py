@@ -50,32 +50,32 @@ This package provides classes implementing a generic `RESTful web service`_
 
 A RESTful web service is a set of URLs, each URL referring to a specific
 resource and supporting one or more of the `standard HTTP methods`_. At a
-minimum, each resource supports the safe HTTP methods `GET`, `HEAD`, and
-`OPTIONS`. Some resources also support HTTP methods with side effects, such
-as `DELETE`, `POST`, and `PUT`.
+minimum, each resource supports the safe HTTP methods ``GET``, ``HEAD``, and
+``OPTIONS``. Some resources also support HTTP methods with side effects, such
+as ``DELETE``, ``POST``, and ``PUT``.
 
-The `OPTIONS` methods returns the list of HTTP methods supported by the
+The ``OPTIONS`` methods returns the list of HTTP methods supported by the
 specified resource.
 
-Depending on the setup, a RESTful web service implemented by `GTW.RST.MOM`
+Depending on the setup, a RESTful web service implemented by ``GTW.RST.MOM``
 provides access to one or more databases, each holding a different instance
 of a MOM model. In the following documentation, we'll assume the simplest
-case of just a single database, with the web service mapped to `/` ignoring
+case of just a single database, with the web service mapped to ``/`` ignoring
 the protocol and domain.
 
-`Scope`
--------
+``Scope``
+----------
 
 For a specific database, the top URL of the RESTful web service refers to a
-so-called `Scope`. The scope provides access to all essential entity types,
-aka `E-Types`, that comprise the object model. The scope does not support
+so-called ``Scope``. The scope provides access to all essential entity types,
+aka ``E-Types``, that comprise the object model. The scope does not support
 HTTP methods with side effects.
 
-Use the HTTP method `GET` to retrieve the list of `E-Types` defined by the
-`scope`. `GET` returns a `JSON`_ object with the attribute `entries` listing
-the URLs or URL fragments of the scopes `e-types`.
+Use the HTTP method ``GET`` to retrieve the list of ``E-Types`` defined by the
+``scope``. ``GET`` returns a ``JSON`` object with the attribute ``entries`` listing
+the URLs or URL fragments of the scopes ``e-types``.
 
-For instance, the elided result of a `GET` request for the URL `/`
+For instance, the elided result of a ``GET`` request for the URL ``/``
 might look like::
 
         { 'entries' :
@@ -103,21 +103,21 @@ might look like::
             ]
         }
 
-`E-Type`
----------
+``E-Type``
+------------
 
-An `E-Type` describes a specific essential entity type of a MOM model. The
-RESTful resource for a `e-type` allows read and write access to all instances
-of the `e-type` in question.
+An ``E-Type`` describes a specific essential entity type of a MOM model. The
+RESTful resource for a ``e-type`` allows read and write access to all instances
+of the ``e-type`` in question.
 
-`GET`
-~~~~~
+``GET``
+~~~~~~~~
 
-Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
+Use the HTTP method ``GET`` to retrieve the list of instances of the ``e-type``.
 
-* `GET` without any parameters returns a `JSON`_ object with the attribute
-  `entries` listing the URLs of the instances of the
-  `e-type`.
+* ``GET`` without any parameters returns a ``JSON`` object with the attribute
+  ``entries`` listing the URLs of the instances of the
+  ``e-type``.
 
   For instance (using the Python package `requests`_)::
 
@@ -129,9 +129,9 @@ Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
         ]
     }
 
-* `GET` with the query parameter `brief` returns a `JSON`_ object
-  with the attribute `entries` listing the permanent ids, aka `pids`, of the
-  instances of the `e-type`.
+* ``GET`` with the query parameter ``brief`` returns a `JSON`_ object
+  with the attribute ``entries`` listing the permanent ids, aka ``pids``, of the
+  instances of the ``e-type``.
 
   For instance::
 
@@ -144,30 +144,30 @@ Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
     , 'url_template' : '/PAP-Person/{entry}'
     }
 
-* `GET` with the query parameter `verbose` returns a `JSON`_ object
+* ``GET`` with the query parameter ``verbose`` returns a `JSON`_ object
   with the attributes:
 
-  - `attribute_names`: the list of attribute names for instances of the
-    `e-type`.
+  - ``attribute_names``: the list of attribute names for instances of the
+    ``e-type``.
 
-  - `entries`: the list of instances; for each instance a `JSON`_ object
+  - ``entries``: the list of instances; for each instance a `JSON`_ object
     containing:
 
-    * `pid`: permanent id of instance.
+    * ``pid``: permanent id of instance.
 
-    * `cid`: id of last change.
+    * ``cid``: id of last change.
 
-    * `attributes`: `JSON`_ object mapping attribute names to values.
+    * ``attributes``: `JSON`_ object mapping attribute names to values.
 
-      - if the value of an attribute refers to an instance of another `e-type`,
+      - if the value of an attribute refers to an instance of another ``e-type``,
         only the pid and the url of the instance are returned, unless the
-        `GET` request contained the query parameter `closure`, in which case
+        ``GET`` request contained the query parameter ``closure``, in which case
         a nested `JSON`_ object with the information about the nested object
         is returned here.
 
-    * `type_name`: name of essential entity type.
+    * ``type_name``: name of essential entity type.
 
-    * `url`: URL of resource referring to this instance.
+    * ``url``: URL of resource referring to this instance.
 
   For instance::
 
@@ -201,11 +201,11 @@ Use the HTTP method `GET` to retrieve the list of instances of the `e-type`.
 You can use additional query parameters to restrict the number of instances
 returned or to search for specific instances. Possible query parameters are:
 
-- `ckd`: Return cooked values for attributes of types supported by
-  Javascript, i.e., `int`, `float`, and `string`. The cooked attribute
-  values are returned in a `JSON`_ object with name `attributes`.
+- ``ckd``: Return cooked values for attributes of types supported by
+  Javascript, i.e., ``int``, ``float``, and ``string``. The cooked attribute
+  values are returned in a ``JSON`` object with name ``attributes``.
 
-  If neither `ckd` nor `raw` is specified as query parameter, per default
+  If neither ``ckd`` nor ``raw`` is specified as query parameter, per default
   cooked values are returned.
 
   For instance::
@@ -236,15 +236,15 @@ returned or to search for specific instances. Possible query parameters are:
     , 'url' : '/v1/PAP-Person/1'
     }
 
-- `raw`: Return raw values for all attributes. The raw attribute values  are
-  returned in a `JSON`_ object with name `attributes_raw`.
+- ``raw``: Return raw values for all attributes. The raw attribute values  are
+  returned in a `JSON`_ object with name ``attributes_raw``.
 
   Depending on the attribute type, raw values can differ from cooked values.
-  For instance, for attributes like `last_name` and `first_name` of the
-  essential type `PAP.Person` the cooked value is derived from the raw value
+  For instance, for attributes like ``last_name`` and ``first_name`` of the
+  essential type ``PAP.Person`` the cooked value is derived from the raw value
   by converting it to lower case. For attribute values denoting frequencies,
-  the raw value is a string that can contain a unit like `kHz` or `GHz`,
-  while the cooked value is a floating point value normalized to `Hz`.
+  the raw value is a string that can contain a unit like ``kHz`` or ``GHz``,
+  while the cooked value is a floating point value normalized to ``Hz``.
 
   If an attribute value is to be shown in an UI, the raw value is generally
   asked for; OTOH, if an attribute value is to be used for computations, the
@@ -284,27 +284,27 @@ returned or to search for specific instances. Possible query parameters are:
     , 'url' : '/v1/PAP-Person/1'
     }
 
-- `closure`: Return nested objects as `JSON`_ objects, not just references.
+- ``closure``: Return nested objects as ``JSON`` objects, not just references.
 
   * For any nested object, only the first occurence is returned in full,
-    subsequent occurences just contain `pid` and `url`.
+    subsequent occurences just contain ``pid`` and ``url``.
 
-- `count`: Return just the count, not the list, of instances.
+- ``count``: Return just the count, not the list, of instances.
 
-- `limit`: Restrict the number of returned instances to the value specified.
+- ``limit``: Restrict the number of returned instances to the value specified.
 
-- `offset`: Number of first instance to return; can be used together with
-  `limit` and `order_by` to iterate over all instances.
+- ``offset``: Number of first instance to return; can be used together with
+  ``limit`` and ``order_by`` to iterate over all instances.
 
-- `order_by`: Criteria used to sort the `results`; comma separated list of
-  attribute names and/or `pid`. Each criterion may be preceded by `-` to
+- ``order_by``: Criteria used to sort the ``results``; comma separated list of
+  attribute names and/or ``pid``. Each criterion may be preceded by ``-`` to
   sort the results in descending direction for that criterion.
 
-- `strict`: Limit the results to strict instances of the e-type in question,
-  i.e., don't include instances of derived e-types. If you specify `strict`
+- ``strict``: Limit the results to strict instances of the e-type in question,
+  i.e., don't include instances of derived e-types. If you specify ``strict``
   for a partial, aka abstract, e-type you'll get an empty list of results.
 
-- `AQ`: restrict results to those matching the attribute query specified. The
+- ``AQ``: restrict results to those matching the attribute query specified. The
   value for this query parameter is a comma-separated tuple of attribute
   name, operator, and value::
 
@@ -313,36 +313,36 @@ returned or to search for specific instances. Possible query parameters are:
   The possible attribute-names depend on the type queried and are documented
   for each type. A GET request to a type-specific resource of
   the REST Api will return a link to the documentation of that type as a
-  link-header with `rel=doc`.
+  link-header with ``rel=doc``.
 
   Possible operators include:
 
-  * `EQ`: equal
+  * ``EQ``: equal
 
-  * `NE`: not equal
+  * ``NE``: not equal
 
-  * `GE`: greater than or equal
+  * ``GE``: greater than or equal
 
-  * `GT`: greater than
+  * ``GT``: greater than
 
-  * `LE`: less than or equal
+  * ``LE``: less than or equal
 
-  * `LT`: less than
+  * ``LT``: less than
 
-  * `IN`: attribute value is member of the set specified as query value
+  * ``IN``: attribute value is member of the set specified as query value
 
-  * `CONTAINS`: attribute value contains the specified query value
+  * ``CONTAINS``: attribute value contains the specified query value
 
-  * `ENDSWITH`: attribute value ends with the specified query value
+  * ``ENDSWITH``: attribute value ends with the specified query value
 
-  * `STARTSWITH`: attribute value starts with the specified query value
+  * ``STARTSWITH``: attribute value starts with the specified query value
 
   If you specify more than one AQ expression, they are ANDed
   together.
 
-- `FIRST`: Results start with first instance, according to `order_by`.
+- ``FIRST``: Results start with first instance, according to ``order_by``.
 
-- `LAST`: Results end with last instance, according to `order_by``.
+- ``LAST``: Results end with last instance, according to ``order_by``.
 
 - ``META``: Return meta information about creation and last_change of objects.
 
@@ -351,12 +351,12 @@ returned or to search for specific instances. Possible query parameters are:
   a ``user`` field.
 
 
-`POST`
-~~~~~~
+``POST``
+~~~~~~~~~
 
-Use the HTTP method `POST` to create a new instance of the `e-type`. The
-request body for the `POST` must be a `JSON`_ object with the attribute
-`attributes_raw` which in turn must be a `JSON`_ object that maps attribute
+Use the HTTP method ``POST`` to create a new instance of the ``e-type``. The
+request body for the ``POST`` must be a `JSON`_ object with the attribute
+``attributes_raw`` which in turn must be a `JSON`_ object that maps attribute
 names to attribute values. The POSTing of cooked attribute values is not
 supported.
 
@@ -392,22 +392,22 @@ For instance::
     , 'url' : '/PAP-Person/17'
     }
 
-A successful `POST` request returns a `JSON`_ object describing the newly
+A successful ``POST`` request returns a `JSON`_ object describing the newly
 created instance. This `JSON`_ object has the same format as the result of a
-`GET` request for the instance.
+``GET`` request for the instance.
 
-`Instance`
+``Instance``
 --------------
 
 The RESTful resource for an instance allows read and write access to the
-instance. For HTTP methods with side effects, you need to pass the `cid` of
-the instance as returned by a `GET` method.
+instance. For HTTP methods with side effects, you need to pass the ``cid`` of
+the instance as returned by a ``GET`` method.
 
-`GET`
-~~~~~
+``GET``
+~~~~~~~~
 
-Use the HTTP method `GET` to retrieve the value of the instance. `GET`
-returns a `JSON`_ object with the same structure as a `verbose` `GET` applied
+Use the HTTP method ``GET`` to retrieve the value of the instance. ``GET``
+returns a `JSON`_ object with the same structure as a ``verbose`` ``GET`` applied
 to the resource of the instance's e-type.
 
 For instance::
@@ -442,32 +442,32 @@ For instance::
     , 'url' : '/PAP-Person/1'
     }
 
-`PUT`
-~~~~~
+``PUT``
+~~~~~~~~
 
-Use the HTTP method `PUT` to change the value of an instance. The
-request body for the `PUT` must be a `JSON`_ object with the attributes:
+Use the HTTP method ``PUT`` to change the value of an instance. The
+request body for the ``PUT`` must be a `JSON`_ object with the attributes:
 
-- `cid`: the id of the last change of the instance, as returned by a previous
-  `GET` (or possibly `POST`) request.
+- ``cid``: the id of the last change of the instance, as returned by a previous
+  ``GET`` (or possibly ``POST``) request.
 
-  If the `cid` of the instance has changed in the meantime, the `PUT` request
+  If the ``cid`` of the instance has changed in the meantime, the ``PUT`` request
   will fail with a HTTP status code of 409.
 
-- `attributes_raw`: a `JSON`_ object that maps attribute names to
+- ``attributes_raw``: a ``JSON`` object that maps attribute names to
   changed attribute values (in raw form). Attributes not listed in
-  `attributes_raw` are not changed by the `PUT` request.
+  ``attributes_raw`` are not changed by the ``PUT`` request.
 
-`DELETE`
-~~~~~~~~~~
+``DELETE``
+~~~~~~~~~~~~
 
-Use the HTTP method `DELETE` to remove the instance from the database; this
+Use the HTTP method ``DELETE`` to remove the instance from the database; this
 will also remove all links to the instance in question to preserve
-referential integrity. You need to pass `cid` as query parameter. If the
-`cid` of the instance has changed in the meantime, the `DELETE` request will
+referential integrity. You need to pass ``cid`` as query parameter. If the
+``cid`` of the instance has changed in the meantime, the ``DELETE`` request will
 fail with a HTTP status code of 409.
 
-.. _`RESTful web service`: http://en.wikipedia.org/wiki/Representational_State_Transfer
+.. _q`RESTful web service`: http://en.wikipedia.org/wiki/Representational_State_Transfer
 .. _`REST`: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 .. _`standard HTTP methods`: http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods
 .. _`JSON`: http://en.wikipedia.org/wiki/JSON
