@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -48,6 +48,7 @@
 #                     on `MOM.Error.Error`
 #    27-Apr-2012 (CT) Factor `record_errors`, change apply to
 #                     `e.errors.append (exc)` if necessary
+#     4-May-2013 (CT) Change `apply` to save `entity_values`
 #    ««revision-date»»···
 #--
 
@@ -184,9 +185,10 @@ class Value (_Base_) :
     def apply (self, * args, ** kw) :
         conflicts = 0
         do_break  = False
-        entities  = sorted (self.entity_children (), key = self.apply_key)
-        results   = self.results = {}
-        errors    = self.errors  = {}
+        entities  = self.entity_values = sorted \
+            (self.entity_children (), key = self.apply_key)
+        results   = self.results  = {}
+        errors    = self.errors   = {}
         self._check_sids   (entities, ** kw)
         for e in entities :
             e.errors = []

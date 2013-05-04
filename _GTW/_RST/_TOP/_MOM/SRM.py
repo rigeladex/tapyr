@@ -41,6 +41,8 @@
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    17-Mar-2013 (CT) Add `_login_required = False` to `_get_bir_admin`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
+#     4-May-2013 (CT) Add `submit_error_callback`,
+#                     factor methods from `_register_submit_callback`
 #    ««revision-date»»···
 #--
 
@@ -158,14 +160,15 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                     )
             kw = dict \
                 ( bir.admin._orig_kw
-                , default_qr_kw   = dict (right___EQ = obj.pid)
-                , form_id         = "AF_BiR"
-                , form_parameters = dict (form_kw = form_kw)
-                , implicit        = True
-                , name            = "admin"
-                , parent          = self
-                , submit_callback = self._register_submit_callback
-                , _auth_required  = False
+                , default_qr_kw         = dict (right___EQ = obj.pid)
+                , form_id               = "AF_BiR"
+                , form_parameters       = dict (form_kw = form_kw)
+                , implicit              = True
+                , name                  = "admin"
+                , parent                = self
+                , submit_callback       = self._register_submit_callback
+                , submit_error_callback = self._register_submit_error_callback
+                , _auth_required        = False
                 )
             self.bir_admin = result = bir.admin.__class__ (** kw)
             return result
@@ -238,7 +241,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
         return result
     # end def _get_pages
 
-    def _register_submit_callback (self, request, response, scope, fv, result) :
+    def _regatta_registration_objects_msg (self, scope, fv) :
         def _gen (scope, results) :
             from _MOM._Attr import Selector as S
             AQ = S.List (S.primary, S.user)
@@ -250,18 +253,48 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                         for a in AQ (x)
                         if  a.has_substance (x)
                         )
-        message = "\n".join \
+        result = "\n".join \
             (   "%s (%s)" % (t, ", ".join (a))
             for t, a in _gen (scope, fv.results)
             )
+        return result
+    # end def _regatta_registration_objects_msg
+
+    def _register_submit_callback (self, request, response, scope, fv, result) :
+        message = self._regatta_registration_objects_msg (scope, fv)
+        self._send_registration_email \
+            (request, response, scope, fv, result, message)
+    # end def _register_submit_callback
+
+    def _register_submit_error_callback (self, request, response, scope, fv, result) :
+        from _TFL.Formatter import Formatter
+        formatted = Formatter (width = 1024)
+        message = "\n\n-----------------\n\n".join \
+            (( self._regatta_registration_objects_msg (scope, fv)
+             , "\n\n".join
+                 ( "%s\n    %s"
+                   % (id, "\n    ".join (formatted (e, 2) for e in errors))
+                 for id, errors in fv.errors.iteritems ()
+                 )
+             , "\n\n".join
+                 (str (v) for v in fv.entity_values)
+            ))
+        self._send_registration_email \
+            (request, response, scope, fv, result, message, "*** failed ***")
+    # end def _register_submit_error_callback
+
+    def _send_registration_email \
+            ( self, request, response, scope, fv, result, message
+            , subject_tail = ""
+            ):
         try :
             email = self.email_from
             self.send_email \
                 ( self.register_email_template
                 , email_from    = email
                 , email_to      = email
-                , email_subject =
-                    _T ("%s: regatta registration") % (self.obj.ui_display, )
+                , email_subject = _T ("%s: regatta registration %s")
+                      % (self.obj.ui_display, subject_tail)
                 , message       = message
                 , NAV           = self.top
                 , page          = self
@@ -274,7 +307,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                 % (email, exc)
                 )
             pyk.fprint (message)
-    # end def _register_submit_callback
+    # end def _send_registration_email
 
 # end class Regatta
 

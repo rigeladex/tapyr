@@ -59,6 +59,7 @@
 #    25-Apr-2013 (CT) Add `child_postconditions_map` to `_new_child_x`
 #    25-Apr-2013 (CT) Add and use `eligible_object_restriction`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
+#     4-May-2013 (CT) Add `submit_error_callback`
 #    ««revision-date»»···
 #--
 
@@ -502,6 +503,15 @@ class _Changer_ (_HTML_Action_) :
                             , self.__call__, json ["cargo"], result
                             )
             if fv.errors :
+                if TFL.callable (self.submit_error_callback) :
+                    try :
+                        self.submit_error_callback \
+                            (request, response, scope, fv, result)
+                    except Exception as exc :
+                        logging.exception \
+                            ( "%s._rendered_post: %s -> %s"
+                            , self.__call__, json ["cargo"], result
+                            )
                 scope.rollback ()
         return result
     # end def _rendered_post
@@ -904,6 +914,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     max_completions       = 20
     skip_etag             = True
     submit_callback       = None
+    submit_error_callback = None
 
     _entry_type_map       = dict \
         ((c.name, c) for c in
