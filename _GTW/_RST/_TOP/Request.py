@@ -35,6 +35,8 @@
 #    16-Jan-2013 (CT) Consider `ssl_authorized_user` in `username` methods
 #     2-May-2013 (CT) Factor `cookie_encoding`, `cookie`, `secure_cookie`,
 #                     `_cookie_signature`, to `GTW.RST.Request`
+#     4-May-2013 (CT) Change `username` to use `__super.username`
+#     4-May-2013 (CT) Redefine `apache_authorized_user` to disable it
 #    ««revision-date»»···
 #--
 
@@ -53,6 +55,12 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     """Extend GTW.RST.Request with session handling."""
 
     _real_name        = "Request"
+
+    @Once_Property
+    def apache_authorized_user (self) :
+        ### Don't want to support this in TOP context
+        pass
+    # end def apache_authorized_user
 
     @Once_Property
     def locale_codes (self) :
@@ -79,7 +87,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
 
     @property
     def username (self) :
-        result = self.ssl_authorized_user
+        result = self.__super.username
         if result is None :
             result = self.session.username
         return result

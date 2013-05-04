@@ -41,6 +41,7 @@
 #     2-May-2013 (CT) Factor `new_secure_cookie` from `GTW.RST.Response`
 #     3-May-2013 (CT) Factor `rat_secret` and add `remote_addr` to it
 #     4-May-2013 (CT) Add `cookies_to_delete`, use for failing `RAT`
+#     4-May-2013 (CT) Factor `apache_authorized_user`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,11 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def __getattr__
 
     @Once_Property
+    def apache_authorized_user (self) :
+        return self.environ.get ("REMOTE_USER")
+    # end def apache_authorized_user
+
+    @Once_Property
     def brief (self) :
         return self.req_data.has_option ("brief")
     # end def brief
@@ -115,7 +121,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     def http_server_authorized_user (self) :
         result = self.ssl_authorized_user
         if result is None :
-            result = self.environ.get ("REMOTE_USER")
+            result = self.apache_authorized_user
         return result
     # end def http_server_authorized_user
 
