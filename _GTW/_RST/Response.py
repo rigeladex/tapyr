@@ -32,6 +32,7 @@
 #     2-May-2013 (CT) Factor in `clear_cookie`, `set_cookie`, and
 #                     `set_secure_cookie` (from GTW.RST.TOP.Response)
 #     4-May-2013 (CT) Add `cookies_to_delete`
+#     4-May-2013 (CT) Don't use werkzeug's `delete_cookie`
 #    ««revision-date»»···
 #--
 
@@ -77,8 +78,9 @@ class _RST_Response_ (TFL.Meta.Object) :
 
     def __call__ (self, * args, ** kw) :
         _response = self._response
-        for c in self._request.cookies_to_delete :
+        for c in list (self._request.cookies_to_delete) :
             self.clear_cookie (c)
+        self._request.cookies_to_delete.clear ()
         for k, v in self._auto_headers.iteritems () :
             _response.add_header (k, v)
         for rel, (value, kw) in self._links.iteritems () :
@@ -95,11 +97,13 @@ class _RST_Response_ (TFL.Meta.Object) :
         self._links [rel] = value, kw
     # end def add_link
 
-    def clear_cookie (self, name, * args, ** kw) :
-        self._response.delete_cookie (name, * args, ** kw)
+    def clear_cookie (self, name, ** kw) :
+        ### Don't use werkzeug's `delete_cookie`: sends `max_age = 0`
+        self._response.set_cookie (name, "", max_age = -1, ** kw)
     # end def clear_cookie
 
     def set_cookie (self, key, value = "", ** kw) :
+        self._request.cookies_to_delete.discard (key)
         if isinstance (value, unicode) :
             value = value.encode (self._request.cookie_encoding)
         return self._response.set_cookie (key, value, ** kw)

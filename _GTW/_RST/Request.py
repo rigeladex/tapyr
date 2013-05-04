@@ -79,7 +79,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     def __init__ (self, root, environ) :
         self.root     = root
         self._request = root.HTTP.Request (environ)
-        self.cookies_to_delete = []
+        self.cookies_to_delete = set ()
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -153,7 +153,7 @@ class _RST_Request_ (TFL.Meta.Object) :
                         pass
             cargo = self.secure_cookie ("RAT", agent, rat.session_ttl_s)
             if cargo is None :
-                self.cookies_to_delete.append ("RAT")
+                self.cookies_to_delete.add ("RAT")
             else :
                 return result [0]
     # end def rat_authorized_user
