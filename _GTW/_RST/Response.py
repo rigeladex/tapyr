@@ -31,6 +31,7 @@
 #    28-Mar-2013 (CT) Add `_auto_headers` with `X-Frame-Options`
 #     2-May-2013 (CT) Factor in `clear_cookie`, `set_cookie`, and
 #                     `set_secure_cookie` (from GTW.RST.TOP.Response)
+#     4-May-2013 (CT) Add `cookies_to_delete`
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,8 @@ class _RST_Response_ (TFL.Meta.Object) :
 
     def __call__ (self, * args, ** kw) :
         _response = self._response
+        for c in self._request.cookies_to_delete :
+            self.clear_cookie (c)
         for k, v in self._auto_headers.iteritems () :
             _response.add_header (k, v)
         for rel, (value, kw) in self._links.iteritems () :

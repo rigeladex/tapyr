@@ -39,6 +39,7 @@
 #     3-May-2013 (CT) Add `scaffold_name` to `run_server`;
 #                     add `normalize_json` to `show`; add `** kw` to `traverse`
 #     3-May-2013 (CT) Add `date_cleaner`
+#     4-May-2013 (CT) Add `set-copy` to`skip_headers`
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,7 @@ import subprocess
 import sys
 import time
 
-skip_headers = set (["connection", "x-frame-options"])
+skip_headers = set (["connection", "set-cookie", "x-frame-options"])
 
 date_cleaner = Re_Replacer \
     ( r"'date' : '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'"

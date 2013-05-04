@@ -40,6 +40,7 @@
 #                     `_cookie_signature` from `GTW.RST.TOP.Request`
 #     2-May-2013 (CT) Factor `new_secure_cookie` from `GTW.RST.Response`
 #     3-May-2013 (CT) Factor `rat_secret` and add `remote_addr` to it
+#     4-May-2013 (CT) Add `cookies_to_delete`, use for failing `RAT`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     def __init__ (self, root, environ) :
         self.root     = root
         self._request = root.HTTP.Request (environ)
+        self.cookies_to_delete = []
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -144,7 +146,9 @@ class _RST_Request_ (TFL.Meta.Object) :
                     except Exception :
                         pass
             cargo = self.secure_cookie ("RAT", agent, rat.session_ttl_s)
-            if cargo is not None :
+            if cargo is None :
+                self.cookies_to_delete.append ("RAT")
+            else :
                 return result [0]
     # end def rat_authorized_user
 
