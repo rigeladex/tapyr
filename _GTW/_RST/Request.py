@@ -43,6 +43,7 @@
 #     4-May-2013 (CT) Add `cookies_to_delete`, use for failing `RAT`
 #     4-May-2013 (CT) Factor `apache_authorized_user`
 #     5-May-2013 (CT) Fix `signature` warning of `secure_cookie`
+#     5-May-2013 (CT) Factor `_auth_user_name`, turn `username` into `property`
 #    ««revision-date»»···
 #--
 
@@ -210,8 +211,21 @@ class _RST_Request_ (TFL.Meta.Object) :
         self._user = value
     # end def user
 
-    @Once_Property
+    @property
     def username (self) :
+        ### `username` is `property` not `Once_Property` to allow
+        ### descendent to change redefine `username.setter` (to support `login`)
+        ### `_auth_user_name` is `Once_Property` to improve performance
+        return self._auth_user_name
+    # end def username
+
+    @Once_Property
+    def verbose (self) :
+        return self.req_data.has_option ("verbose")
+    # end def verbose
+
+    @Once_Property
+    def _auth_user_name (self) :
         result = self.http_server_authorized_user
         if result is None :
             result = self.rat_authorized_user
@@ -219,12 +233,7 @@ class _RST_Request_ (TFL.Meta.Object) :
             auth   = self.authorization
             result = auth and auth.username
         return result
-    # end def username
-
-    @Once_Property
-    def verbose (self) :
-        return self.req_data.has_option ("verbose")
-    # end def verbose
+    # end def _auth_user_name
 
     def cookie (self, name) :
         return self.cookies.get (name)

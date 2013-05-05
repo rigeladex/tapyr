@@ -49,6 +49,7 @@
 #    19-Aug-2012 (MG) Add repr for User class
 #     2-May-2013 (CT) Convert `New_ID` to instance method,
 #                     use `settings ["hash_fct"]`, if any
+#     5-May-2013 (CT) Add change guard to `username.setter`
 #    ««revision-date»»···
 #--
 
@@ -158,8 +159,9 @@ class Session (TFL.Meta.Object) :
 
     @username.setter
     def username (self, value) :
-        self._change_user     (self.user, value)
-        self.renew_session_id ()
+        if self.user.name != value :
+            self._change_user     (self.user, value)
+            self.renew_session_id ()
     # end def username
 
     @property

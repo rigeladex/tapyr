@@ -87,8 +87,10 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
 
     @property
     def username (self) :
-        result = self.__super.username
+        result = self.__super._auth_user_name
         if result is None :
+            ### `session.username` can change (due to login/logout)
+            ### cannot cache by defining as `Once_Property`
             result = self.session.username
         return result
     # end def username
