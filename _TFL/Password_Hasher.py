@@ -30,6 +30,9 @@
 #     6-Jan-2013 (CT) Fix `Bcrypt.verify`
 #     1-May-2013 (CT) Change to use `passlib` instead of `bcrypt`
 #     2-May-2013 (CT) Use `hash_cmp` to `verify`
+#     5-May-2013 (CT) Test `bcrypt` before defining `Bcrypt`
+#                     (passlib fails *after* import if bcrypt's c-extension
+#                     is AWOL)
 #    ««revision-date»»···
 #--
 
@@ -174,7 +177,8 @@ class sha224 (_Hashlib_Password_Hasher_) :
 
 try :
     from passlib.hash import bcrypt
-except ImportError :
+    bcrypt.encrypt ("123", rounds = 4)
+except Exception :
     pass
 else :
     class Bcrypt (Password_Hasher) :
