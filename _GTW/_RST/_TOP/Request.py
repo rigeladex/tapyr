@@ -105,9 +105,10 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     # end def username
 
     def get_user_locale_codes (self) :
+        session   = self.session
         supported = getattr (self.root, "languages", set ())
         result    = tuple \
-            (l for l in self.session.get ("language", ()) if l in supported)
+            (l for l in session.get ("language", ()) if l in supported)
         return result
     # end def get_user_locale_codes
 

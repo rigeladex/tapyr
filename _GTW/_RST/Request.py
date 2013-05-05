@@ -42,6 +42,7 @@
 #     3-May-2013 (CT) Factor `rat_secret` and add `remote_addr` to it
 #     4-May-2013 (CT) Add `cookies_to_delete`, use for failing `RAT`
 #     4-May-2013 (CT) Factor `apache_authorized_user`
+#     5-May-2013 (CT) Fix `signature` warning of `secure_cookie`
 #    ««revision-date»»···
 #--
 
@@ -280,7 +281,7 @@ class _RST_Request_ (TFL.Meta.Object) :
             secrets = secret_agent (self, result, timestamp)
         wanted_sig = self._cookie_signature (data, timestamp, secrets = secrets)
         if not root.HTTP.safe_str_cmp (signature, wanted_sig) :
-            logging.warning ("Invalid cookie signature %r", data)
+            logging.warning ("Invalid cookie signature %r", result)
             return None
         try :
             timestamp = base64.b64decode (timestamp).decode (enc)

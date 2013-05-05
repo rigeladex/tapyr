@@ -60,6 +60,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #     5-Jan-2013 (CT) Use `TFL.Password_Hasher`, not homegrown code
 #     6-Jan-2013 (CT) Increase `password.max_length` to 120 (from 60)
+#     5-May-2013 (CT) Add warning about unknown `hasher` to `verify_password`
 #    ««revision-date»»···
 #--
 
@@ -316,6 +317,10 @@ class Account (_Ancestor_Essence) :
         try :
             hasher = TFL.Password_Hasher [self.ph_name]
         except KeyError :
+            logging.warning \
+                ( "Unknown password hashing algorithm %r for %r"
+                , self.ph_name, self.name
+                )
             return False
         else :
             return hasher.verify (password, self.password)
