@@ -62,6 +62,7 @@
 #     6-Jan-2013 (CT) Increase `password.max_length` to 120 (from 60)
 #     5-May-2013 (CT) Add warning about unknown `hasher` to `verify_password`
 #     6-May-2013 (CT) Add missing `import logging` (forgot yesterday)
+#     6-May-2013 (CT) Add `sys.path` to, raise KeyError in, `verify_password`
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,7 @@ import _GTW._OMP._Auth.Entity
 import _TFL.Password_Hasher
 
 import logging
+import sys
 
 _Ancestor_Essence = Auth.Object
 
@@ -321,10 +323,11 @@ class Account (_Ancestor_Essence) :
             hasher = TFL.Password_Hasher [self.ph_name]
         except KeyError :
             logging.warning \
-                ( "Unknown password hashing algorithm %r for %r"
-                , self.ph_name, self.name
+                ( "Unknown password hashing algorithm %r for %r%"
+                  "\n  Python path\n    %s"
+                , self.ph_name, self.name, "\n    ".join (sys.path)
                 )
-            return False
+            raise KeyError ("No password hasher named %s" % self.ph_name)
         else :
             return hasher.verify (password, self.password)
     # end def verify_password
