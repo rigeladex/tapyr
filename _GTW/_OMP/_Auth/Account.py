@@ -61,6 +61,7 @@
 #     5-Jan-2013 (CT) Use `TFL.Password_Hasher`, not homegrown code
 #     6-Jan-2013 (CT) Increase `password.max_length` to 120 (from 60)
 #     5-May-2013 (CT) Add warning about unknown `hasher` to `verify_password`
+#     6-May-2013 (CT) Add missing `import logging` (forgot yesterday)
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,8 @@ from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
 import _TFL.Password_Hasher
+
+import logging
 
 _Ancestor_Essence = Auth.Object
 
