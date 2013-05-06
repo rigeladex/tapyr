@@ -322,12 +322,12 @@ class Account (_Ancestor_Essence) :
         try :
             hasher = TFL.Password_Hasher [self.ph_name]
         except KeyError :
-            logging.warning \
+            logging.error \
                 ( "Unknown password hashing algorithm %r for %r%"
                   "\n  Python path\n    %s"
                 , self.ph_name, self.name, "\n    ".join (sys.path)
                 )
-            raise KeyError ("No password hasher named %s" % self.ph_name)
+            raise KeyError ("No password hasher named '%s'" % self.ph_name)
         else :
             return hasher.verify (password, self.password)
     # end def verify_password
