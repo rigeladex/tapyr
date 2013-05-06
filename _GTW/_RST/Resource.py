@@ -614,8 +614,7 @@ class _RST_Base_ (TFL.Meta.Object) :
             message = "\n\n=====\n\n".join ((message, tbi))
         if xtra :
             message = "\n\n#####\n\n".join ((message, xtra))
-        if 1 : #not self.DEBUG :
-            message = _error_email_cleaner (message)
+        message = _error_email_cleaner (message)
         if not self.Templateer :
             print ("Exception:", exc)
             print ("Request path", request.path)

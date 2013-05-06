@@ -48,6 +48,7 @@
 #     2-May-2013 (CT) Factor `GTW.RST.Auth_Mixin`
 #     2-May-2013 (CT) Use `self.hash_fct`, `self.b64_encoded`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
+#     6-May-2013 (CT) Try to `commit` before sending emails/notifications
 #    ««revision-date»»···
 #--
 
@@ -229,6 +230,7 @@ class _Activate_ (_Ancestor) :
             else :
                 next    = req_data.get      ("next", "/")
                 account.change_password     (new_password, suspended = False)
+                top.scope.commit            ()
                 response.username = account.name
                 resource._send_notification (response)
                 raise HTTP_Status.See_Other (next)
@@ -282,6 +284,7 @@ class _Change_Email_ (_Ancestor) :
                 host    = request.host
                 token   = account.change_email_prepare (new_email)
                 link    = resource.parent.href_action  (account, token, request)
+                top.scope.commit ()
                 try :
                     resource.send_email \
                         ( resource.new_email_template
@@ -566,6 +569,7 @@ class _Register_ (_Ancestor) :
                 account, token = Auth.Account.create_new_account \
                     (username, new_password)
                 link  = resource.parent.href_action (account, token, request)
+                top.scope.commit ()
                 try :
                     resource.send_email \
                         ( resource.email_template
@@ -633,6 +637,7 @@ class _Request_Reset_Password_ (_Ancestor) :
                     (urlparse.urlsplit (next).path)
                 passwd, token = Auth.Account.reset_password (account)
                 link = resource.parent.href_action (account, token, request)
+                top.scope.commit ()
                 resource.send_email \
                     ( resource.email_template
                     , email_to      = username

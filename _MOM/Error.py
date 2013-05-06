@@ -83,6 +83,7 @@
 #     1-Mar-2013 (CT) Use `_real_name` for `Error`
 #    18-Apr-2013 (CT) Change `Link_Error` to `Wrong_Type`
 #    25-Apr-2013 (CT) Add `Permission`
+#     6-May-2013 (CT) Change `Error.as_unicode` to use `__doc__`, unless `.args`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,10 @@ class _MOM_Error_ (StandardError) :
 
     @Once_Property
     def as_unicode (self) :
-        return self.arg_sep.join (self.str_arg (self.args))
+        result = self.arg_sep.join (self.str_arg (self.args))
+        if not result :
+            result = _T (self.__class__.__doc__)
+        return result
     # end def as_unicode
 
     def str_arg (self, args) :

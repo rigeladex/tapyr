@@ -39,6 +39,7 @@
 #    11-Dec-2012 (CT) Change `_add_response_body` to include `message`
 #                     (after doing: s/_msg/message/g)
 #     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
+#     6-May-2013 (CT) Set `request.Error` to `unicode (.message)`
 #    ««revision-date»»···
 #--
 
@@ -133,7 +134,10 @@ class Status (StandardError, TFL.Meta.Object) :
         if not hasattr (request, "Error") :
             if self.message :
                 ### Backwards compatibility with old-style Jinja templates
-                request.Error = self.message
+                try :
+                    request.Error = unicode (self.message)
+                except Exception :
+                    request.Error = str (self.message)
         response.status_code  = self.status_code
         self._add_response_body    (resource, request, response)
         self._add_response_headers (resource, request, response)
