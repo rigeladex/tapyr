@@ -63,6 +63,8 @@
 #     5-May-2013 (CT) Add warning about unknown `hasher` to `verify_password`
 #     6-May-2013 (CT) Add missing `import logging` (forgot yesterday)
 #     6-May-2013 (CT) Add `sys.path` to, raise KeyError in, `verify_password`
+#     6-May-2013 (CT) Factor `unknown_hasher`, use it in `password_hash`;
+#                     fix `ph_name.computed_default`
 #    ««revision-date»»···
 #--
 
@@ -257,7 +259,8 @@ class Account (_Ancestor_Essence) :
             Kind_Mixins        = (Attr.Sticky_Mixin, )
 
             def computed_default (self) :
-                return Account.default_ph_name
+                ### Need to use `self.e_type` to access E_Type
+                return self.e_type.default_ph_name
             # end def computed_default
 
         # end class ph_name
@@ -295,7 +298,7 @@ class Account (_Ancestor_Essence) :
         try :
             hasher = TFL.Password_Hasher [ph_name]
         except KeyError :
-            pass
+            cls.unknown_hasher (obj, ph_name)
         else :
             return hasher.hashed (password)
     # end def password_hash
@@ -318,16 +321,22 @@ class Account (_Ancestor_Essence) :
         return "".join (choice (chars) for i in xrange (length))
     # end def random_password
 
+    @classmethod
+    def unknown_hasher (cls, obj, ph_name) :
+        name = obj.name if obj is not None else cls.__name__
+        logging.error \
+            ( "Unknown password hashing algorithm %r for %r%"
+              "\n  Python path\n    %s"
+            , ph_name, name, "\n    ".join (sys.path)
+            )
+        raise KeyError ("No password hasher named '%s'" % ph_name)
+    # end def unknown_hasher
+
     def verify_password (self, password) :
         try :
             hasher = TFL.Password_Hasher [self.ph_name]
         except KeyError :
-            logging.error \
-                ( "Unknown password hashing algorithm %r for %r%"
-                  "\n  Python path\n    %s"
-                , self.ph_name, self.name, "\n    ".join (sys.path)
-                )
-            raise KeyError ("No password hasher named '%s'" % self.ph_name)
+            self.unknown_hasher (self, self.ph_name)
         else :
             return hasher.verify (password, self.password)
     # end def verify_password
