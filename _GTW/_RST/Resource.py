@@ -94,6 +94,8 @@
 #     2-May-2013 (CT) Factor `b64_encoded`
 #     3-May-2013 (CT) Fix call of `Status.Method_Not_Allowed`
 #     3-May-2013 (CT) Add `auth_required` and use in `allow_method`
+#     6-May-2013 (CT) Add optional argument `xtra` to `send_error_email`
+#     6-May-2013 (CT) Add and use `_password_elider`, `_error_email_cleaner`
 #    ««revision-date»»···
 #--
 
@@ -111,6 +113,7 @@ from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.Filename            import Filename
 from   _TFL.predicate           import callable, first, uniq
+from   _TFL.Regexp              import Re_Replacer, Multi_Re_Replacer, re
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -136,6 +139,12 @@ import re
 import sys
 import time
 import traceback
+
+_password_elider = Re_Replacer \
+    ( "'password' *: *'[^']+'"
+    , "'password' : '...'"
+    )
+_error_email_cleaner = Multi_Re_Replacer (_password_elider)
 
 class _RST_Meta_ (TFL.Meta.M_Class) :
 
@@ -587,7 +596,7 @@ class _RST_Base_ (TFL.Meta.Object) :
             return self.Templateer.get_template (template_name, injected)
     # end def get_template
 
-    def send_error_email (self, request, exc, tbi) :
+    def send_error_email (self, request, exc, tbi, xtra = None) :
         from _TFL.Formatter import formatted
         email     = self.email_from
         headers   = request.headers
@@ -595,15 +604,18 @@ class _RST_Base_ (TFL.Meta.Object) :
             ( "Headers:\n    %s"
               "\n\nBody:\n    %s"
               "\n\nRequest data:\n%s"
-              "\n\n====="
-              "\n\n%s"
             %   ( "\n    ".join
                     ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
                 , formatted (request.body)
                 , formatted (request.req_data.data)
-                , tbi
                 )
             )
+        if tbi :
+            message = "\n\n=====\n\n".join ((message, tbi))
+        if xtra :
+            message = "\n\n#####\n\n".join ((message, xtra))
+        if 1 : #not self.DEBUG :
+            message = _error_email_cleaner (message)
         if not self.Templateer :
             print ("Exception:", exc)
             print ("Request path", request.path)

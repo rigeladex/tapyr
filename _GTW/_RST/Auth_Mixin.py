@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-May-2013 (CT) Creation
+#     6-May-2013 (CT) Change error format in `_authenticate`
 #    ««revision-date»»···
 #--
 
@@ -88,7 +89,7 @@ class Auth_Mixin (TFL.Meta.Object) :
                 if not result and debug :
                     self.errors ["password"].append \
                         ( "Password is wrong:\n"
-                               "  %s\n"
+                               "  'password' : '%s'\n"
                                "  hash db `%s`\n"
                                "  hash in `%s`"
                         % ( password

@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-May-2013 (CT) Creation
 #     3-May-2013 (CT) Use `request.rat_secret`, not home-grown code
+#     6-May-2013 (CT) Add `send_error_email` to `RAT.POST._response_body`
 #    ««revision-date»»···
 #--
 
@@ -67,43 +68,6 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
     GET                        = None
     HEAD                       = None
 
-    if __debug__ :
-        import _GTW._RST._TOP.Base
-
-        class RAT_GET (_Ancestor.GET) :
-
-            _real_name             = "GET"
-            _renderers             = (GTW.RST.TOP.HTML, )
-
-            def _response_body (self, resource, request, response) :
-                return """
-                    <html>
-                      <head><title>RAT Test Form</title></head>
-                      <body>
-                        <form class="Login" method="post" action="/RAT">
-                          <p>
-                          <label>
-                            Username
-                            <input name="username" type="text">
-                          </label>
-                          <p>
-                          <label>
-                            Password
-                            <input name="password" type="password">
-                          </label>
-                          <p>
-                          <input type="submit" name="Submit" value="Login"
-                            title="Submit username and password"
-                          >
-                        </form>
-                      </body>
-                    </html>
-                """
-            # end def _response_body
-
-        GETXXX =  RAT_GET # end class
-
-
     class RAT_POST (GTW.RST.Auth_Mixin.POST) :
 
         _real_name             = "POST"
@@ -117,8 +81,16 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
             username, password = self._credentials_validation \
                 (resource, request, debug = debug)
             if self.errors :
+                from _TFL.Formatter import Formatter
+                formatted = Formatter (width = 1024)
                 result ["errors"]    = self.errors
                 response.status_code = 400
+                resource.send_error_email \
+                    ( request
+                    , "RAT Authorization error"
+                    , None
+                    , "Errors:\n%s" % (formatted (self.errors), )
+                    )
             else :
                 account = self.account
                 cn      = resource.pid
