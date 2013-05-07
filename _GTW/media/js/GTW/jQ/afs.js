@@ -121,6 +121,8 @@
 //     7-May-2013 (CT) Change `reset_cb` to send newly factored `_elem_pid`;
 //                     use `_elem_pid` for other pid-using callbacks, too
 //     7-May-2013 (CT) Add argument `name` to `_elem_pid`
+//     7-May-2013 (CT) Remove `:readonly` fields from `focusables`
+//     7-May-2013 (CT) Don't call `_setup_efs_selector` for `readonly` fields
 //    ««revision-date»»···
 //--
 
@@ -180,7 +182,7 @@
               , entity_errors            : "section.entity-errors"
               , err_msg                  : "div.error-msg"
               , focusables               :
-                  ".Field :input:not(:hidden), .cmd-button [href=#EDIT], .cmd-button [href=#SELECT]"
+                  ".Field :input:not(:hidden):not(:readonly), .cmd-button [href=#EDIT], .cmd-button [href=#SELECT]"
               , input_field              : ".Field :input:not(:hidden)"
               , submit                   : "[type=submit]"
               }
@@ -737,7 +739,9 @@
                         elem.inp$  = inp$;
                         inp$.change  (field_change_cb)
                             .trigger ("change");
-                        if (inp$.hasClass ("display")) {
+                        if (  inp$.hasClass ("display")
+                           && ! (elem ["prefilled"] || inp$.attr ("readonly"))
+                           ) {
                             _setup_efs_selector (inp$, id, elem);
                         } else {
                             if ("completer" in elem) {
