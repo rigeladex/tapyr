@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.Auth.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
 #    26-Sep-2012 (CT) Fix typo in `_Export`
+#     7-May-2013 (CT) Add `Person_has_Account`, remove `_Account_Action_`
 #    ««revision-date»»···
 #--
 
@@ -48,28 +49,11 @@ from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.I18N              import _, _T
 
 def graph (app_type) :
-    return MOM.Graph.Spec.Graph \
+    result = MOM.Graph.Spec.Graph \
         ( app_type
         , ET.Auth.Account_in_Group
             ( Role.left
-                ( ET.Auth._Account_Action_
-                    ( Child.Auth.Account_Activation
-                        ( Skip.left
-                        , offset = CD.SW
-                        )
-                    , Child.Auth.Account_EMail_Verification
-                        ( offset = CD.S
-                        )
-                    , Child.Auth.Account_Password_Change_Required
-                        ( Skip.left
-                        , offset = CD.S + CD.E
-                        )
-                    , Child.Auth.Account_Password_Reset
-                        ( offset = CD.S + 2 * CD.E
-                        )
-                    , offset = CD.S
-                    )
-                , offset = CD.W
+                ( offset = CD.W
                 )
             , Role.right
                 ( offset = CD.E
@@ -78,6 +62,18 @@ def graph (app_type) :
         , desc  = _T ("Graph displaying Auth partial object model")
         , title = _T ("Auth graph")
         )
+    if hasattr (GTW.OMP, "PAP") and hasattr (GTW.OMP.PAP, "Person_has_Account"):
+        result ["Auth.Account"]._add \
+            ( ET.PAP.Person_has_Account
+                ( Role.left
+                    ( offset       = CD.S)
+                , Role.right
+                    ( guide_offset = 1.0
+                    )
+                , offset      = CD.S
+                )
+            )
+    return result
 # end def graph
 
 class Command (MOM.Graph.Command) :
