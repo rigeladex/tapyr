@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -52,7 +52,7 @@ _test_code = r"""
     >>> scope.commit () # create failes
     Traceback (most recent call last):
        ...
-    Readonly_DB
+    Readonly_DB: Database is set to readonly.
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p = scope.PAP.Person.query ().one ()
@@ -61,7 +61,7 @@ _test_code = r"""
     >>> scope.commit () ### update fails
     Traceback (most recent call last):
        ...
-    Readonly_DB
+    Readonly_DB: Database is set to readonly.
 
     >>> scope.PAP.Person.query ().all () ### without title
     [PAP.Person (u'ln', u'fn', u'', u'')]
@@ -88,6 +88,5 @@ Scaffold.Backend_Default_Path ["SQL"] = "'test.sqlite'"
 Scaffold.Backend_Default_Path ["HPS"] = "'test.hps'"
 
 __test__ = Scaffold.create_test_dict (_test_code)
+
 ### __END__ GTW.__test__.readonly
-
-

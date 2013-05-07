@@ -40,6 +40,7 @@
 #     9-Apr-2013 (CT) Add exception handler to `af_args_api`
 #    11-Apr-2013 (CT) Factor `_pepk_filter` from `Filter` and fix
 #     7-May-2013 (CT) Add exception handler to `_setup_attr`
+#     7-May-2013 (CT) Add guard against `A_Cached_Role` to `_setup_attr`
 #    ««revision-date»»···
 #--
 
@@ -390,6 +391,13 @@ class RST_Query_Restriction (TFL.Meta.Object) :
                     ( _T ("%s doesn't have an attribute named `%s`")
                     % (E_Type.type_name, name)
                     )
+            else :
+                ### XXX remove this when query machinery supports cached roles
+                if isinstance (q._attr, MOM.Attr.A_Cached_Role) :
+                    raise AttributeError \
+                        ( _T ("Query for cached role attribute `%s` of %s not yet supported")
+                        % (name, E_Type.type_name)
+                        )
         qop     = getattr (q, op)
         fq      = qop (value)
         qate    = q.As_Template_Elem
