@@ -60,6 +60,8 @@
 #    25-Apr-2013 (CT) Add and use `eligible_object_restriction`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #     4-May-2013 (CT) Add `submit_error_callback`
+#     7-May-2013 (CT) Fix `Expander.rendered` for `An_Entity` elements
+#     7-May-2013 (CT) Set `Deleter.argn` to `None`, not `1`
 #    ««revision-date»»···
 #--
 
@@ -630,7 +632,10 @@ class Creator (_Changer_) :
 class Deleter (_JSON_Action_PO_) :
     """Delete a specific instance of a etype."""
 
-    argn                 = 1
+    ### `argn = None` because `Deleter` can be `POST`ed to with a `child` or
+    ### with a `pid` contained in JSON cargo
+    argn                 = None
+
     name                 = "delete"
     page_template_name   = "e_type_delete"
 
@@ -703,6 +708,8 @@ class Expander (_JSON_Action_) :
         form, elem     = self.form_element   (fid)
         session_secret = self.session_secret (request, sid)
         ETM            = scope [elem.type_name]
+        if issubclass (ETM.E_Type, MOM.An_Entity) :
+            ETM = scope [elem.anchor.type_name]
         if pid is not None and pid != "null" :
             obj = context ["instance"] = self.pid_query_request \
                 (pid, ETM.E_Type)

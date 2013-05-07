@@ -118,6 +118,8 @@
 //    18-Apr-2013 (CT) Use `alert`, not `console.error`
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `alert`
 //     1-May-2013 (CT) Support entity selection with hidden/display input-pair
+//     7-May-2013 (CT) Change `reset_cb` to send newly factored `_elem_pid`;
+//                     use `_elem_pid` for other pid-using callbacks, too
 //    ««revision-date»»···
 //--
 
@@ -644,6 +646,25 @@
                 fields$ [0].focus ();
             };
         };
+        var _elem_pid = function _elem_pid (elem) {
+            var value = elem ["value"];
+            var result;
+            if (value) {
+                if ("edit" in value) {
+                    // Id_Entity
+                    result = value.edit.pid;
+                } else {
+                    // composite attribute
+                    var anchor = $AFS_E.get (elem.anchor_id || elem.root_id);
+                    try {
+                        result = anchor.value.edit.pid;
+                    }  catch (x) {
+                        // relax
+                    };
+                };
+            };
+            return result;
+        };
         var _response_append = function _response_append
                 (response, txt_status, p$, parent) {
             var anchor, root, new_elem, s$;
@@ -803,8 +824,7 @@
                       );
               }
             , Cancel : function cancel_cb (s$, elem, id, ev) {
-                  var value  = elem ["value"];
-                  var pid    = value && value.edit.pid;
+                  var pid  = _elem_pid (elem);
                   if (pid != undefined) {
                       $.getJSON
                           ( options.url.expander
@@ -844,8 +864,7 @@
               }
             , Copy : function copy_cb (s$, elem, id, ev) {
                   var p$        = s$.parent  ();
-                  var value     = elem ["value"];
-                  var pid       = value && value.edit.pid;
+                  var pid       = _elem_pid (elem);
                   var parent    = $AFS_E.get (p$.attr ("id"));
                   var child_idx = parent.new_child_idx ();
                   $.getJSON
@@ -862,8 +881,7 @@
                       );
               }
             , Delete : function delete_cb (s$, elem, id, ev) {
-                  var value = elem ["value"];
-                  var pid   = value && value.edit.pid;
+                  var pid  = _elem_pid (elem);
                   if (pid !== undefined && pid !== "") {
                       $.gtw_ajax_2json
                           ( { url         : options.url.deleter
@@ -889,8 +907,7 @@
                   $GTW.show_message ("Done still needs to be implemented");
               }
             , Edit : function edit_cb (s$, elem, id, ev) {
-                  var value = elem ["value"];
-                  var pid   = value && value.edit.pid;
+                  var pid = _elem_pid (elem);
                   $.getJSON
                       ( options.url.expander
                       , { fid       : id
@@ -911,11 +928,12 @@
                       );
               }
             , Reset : function reset_cb (s$, elem, id, ev) {
+                  var pid = _elem_pid (elem);
                   _clear_field (elem);
                   $.getJSON
                       ( options.url.expander
                       , { fid           : id
-                        , pid           : null
+                        , pid           : pid
                         , sid           : $AFS_E.root.value.sid
                         , allow_new     : elem.allow_new
                         }
@@ -999,7 +1017,8 @@
                   if (elem.collapsed) {
                       names.push ("Copy", "Edit");
                   } else {
-                      names.push ("Reset", "Cancel", "Done");
+                      // XXX Add "Done" once it is implemented
+                      names.push ("Reset", "Cancel");
                   };
                   return _cmds.apply (null, names);
               }
