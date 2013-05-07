@@ -120,6 +120,7 @@
 //     1-May-2013 (CT) Support entity selection with hidden/display input-pair
 //     7-May-2013 (CT) Change `reset_cb` to send newly factored `_elem_pid`;
 //                     use `_elem_pid` for other pid-using callbacks, too
+//     7-May-2013 (CT) Add argument `name` to `_elem_pid`
 //    ««revision-date»»···
 //--
 
@@ -646,18 +647,21 @@
                 fields$ [0].focus ();
             };
         };
-        var _elem_pid = function _elem_pid (elem) {
+        var _elem_pid = function _elem_pid (elem, name) {
             var value = elem ["value"];
             var result;
+            if (! name) {
+              name = "edit";
+            };
             if (value) {
-                if ("edit" in value) {
+                if (name in value) {
                     // Id_Entity
-                    result = value.edit.pid;
+                    result = value [name].pid;
                 } else {
                     // composite attribute
                     var anchor = $AFS_E.get (elem.anchor_id || elem.root_id);
                     try {
-                        result = anchor.value.edit.pid;
+                        result = anchor.value [name].pid;
                     }  catch (x) {
                         // relax
                     };
@@ -928,7 +932,7 @@
                       );
               }
             , Reset : function reset_cb (s$, elem, id, ev) {
-                  var pid = _elem_pid (elem);
+                  var pid = _elem_pid (elem, "init");
                   _clear_field (elem);
                   $.getJSON
                       ( options.url.expander
