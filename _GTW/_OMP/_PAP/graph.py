@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -31,6 +31,8 @@
 #    12-Oct-2012 (CT) Add `Nickname` if provided by `PAP`, i.e., was imported
 #     9-Nov-2012 (CT) Add `IM_Handle` if provided by `PAP`, i.e., was imported
 #     9-Nov-2012 (CT) Rotate graph by roughly 90 degrees
+#     7-May-2013 (CT) Add `Association`, `Person_has_Account`, if imported
+#     7-May-2013 (CT) Shift `Subject_has_Property` to center of graph
 #    ««revision-date»»···
 #--
 
@@ -56,10 +58,14 @@ def graph (app_type) :
         , ET.PAP.Subject_has_Property
             ( Role.left
                 ( Child.PAP.Company
-                    ( offset      = CD.N
+                    ( offset      = CD.NW
+                    , source_side = "E"
+                    , target_side = "W"
                     )
                 , Child.PAP.Person
-                    ( offset      = CD.NE
+                    ( offset      = CD.N
+                    , source_side = "W"
+                    , target_side = "W"
                     )
                 , offset = CD.W
                 )
@@ -67,41 +73,55 @@ def graph (app_type) :
                 ( Child.PAP.Address
                     ( ET.PAP.Address_Position
                         ( label  = "_Position"
-                        , offset = CD.E
+                        , offset = CD.W
                         )
-                    , offset      = CD.N
+                    , offset      = CD.S + 2 * CD.W
                     )
                 , Child.PAP.Email
-                    ( offset      = CD.E
-                    )
-                , Child.PAP.Phone
                     ( offset      = CD.SW
                     )
-                , Child.PAP.Url
+                , Child.PAP.Phone
                     ( offset      = CD.S
                     )
+                , Child.PAP.Url
+                    ( offset      = CD.SE
+                    , source_side = "W"
+                    , target_side = "E"
+                    )
                 , offset = CD.E
-                )
-            , Child.PAP.Subject_has_Phone
-                ( guide_offset = 1
-                , offset       = CD.SW
                 )
             )
         , desc  = _T ("Graph displaying PAP partial object model")
         , title = _T ("PAP graph")
         )
+    if hasattr (GTW.OMP.PAP, "Association") :
+        result ["PAP.Subject"]._add \
+            ( Child.PAP.Association
+                ( offset      = CD.W
+                )
+            )
     if hasattr (GTW.OMP.PAP, "IM_Handle") :
         result ["PAP.Property"]._add \
             ( Child.PAP.IM_Handle
-                ( offset      = CD.E * 2
-                , source_side = "S"
-                , target_side = "S"
+                ( offset      = CD.E
                 )
             )
     if hasattr (GTW.OMP.PAP, "Nickname") :
         result ["PAP.Property"]._add \
             ( Child.PAP.Nickname
-                ( offset      = CD.SE
+                ( offset      = CD.NE
+                , source_side = "W"
+                , target_side = "E"
+                )
+            )
+    if hasattr (GTW.OMP.PAP, "Person_has_Account") :
+        result ["PAP.Person"]._add \
+            ( ET.PAP.Person_has_Account
+                ( Role.left  (guide_offset = 1.0)
+                , Role.right
+                    ( offset  = CD.E
+                    )
+                , offset      = CD.E
                 )
             )
     return result

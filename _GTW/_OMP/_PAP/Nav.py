@@ -50,6 +50,7 @@
 #    12-Dec-2012 (CT) Add `Person_has_Account`
 #    12-Dec-2012 (CT) Add `accounts` to `include_links` of `Person`
 #     7-May-2013 (CT) Add `IM_Handle`, `Nickname`
+#     7-May-2013 (CT) Add `Association`, `_import_association_cb`
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,11 @@ class Admin (object) :
         ( ETM            = "GTW.OMP.PAP.Address"
         , list_display   = ("zip", "city", "street", "desc")
         , sort_key       = TFL.Sorted_By ( "zip", "street")
+        )
+
+    Association          = dict \
+        ( ETM            = "GTW.OMP.PAP.Association"
+        , list_display   = ("name", "short_name", "lifetime")
         )
 
     Company              = dict \
@@ -162,7 +168,7 @@ import _GTW._OMP._PAP.Company
 import _GTW._OMP._PAP.Person
 
 GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("addresses", "emails", "phones"))
+    ( include_links = ("addresses", "emails", "phones", "urls"))
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     ( include_links =
         ("accounts", "addresses", "emails", "im_handles", "nicknames", "phones")
@@ -184,6 +190,16 @@ import _MOM._Attr.Time_Interval
 MOM.Attr.Date_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
 MOM.Attr.Position.GTW.afs_kw      = dict (renderer = "afs_fc_horizo")
 MOM.Attr.Time_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
+
+def _import_association_cb (module) :
+    PAP = GTW.OMP.PAP
+    PAP.Association.GTW.afs_spec = Spec.Entity \
+        ( include_links = ("addresses", "emails", "phones", "urls"))
+    for T in (PAP.Address, PAP.Email, PAP.Phone, PAP.Url) :
+        T.GTW.afs_spec.add_links ("associations")
+
+GTW.OMP.PAP._Add_Import_Callback \
+    ("_GTW._OMP._PAP.Association", _import_association_cb)
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export_Module ()

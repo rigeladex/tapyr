@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -78,6 +78,7 @@
 #    17-Aug-2012 (MG) Add support for overriding of `Type`
 #     8-Sep-2012 (CT) Set `MAT.A_Enum.input_widget`
 #    12-Dec-2012 (CT) Ignore `LookupError` in `Entity_Link.__call__`
+#     7-May-2013 (CT) Add `Entity.add_links`
 #    ««revision-date»»···
 #--
 
@@ -153,9 +154,7 @@ class _Entity_Mixin_ (_Base_) :
             (self.attr_spec, ** kw.pop ("attr_spec", {}))
         include_elems = kw.pop ("include_elems", ())
         include_links = tuple \
-            (   (Entity_Link (l) if isinstance (l, basestring) else l)
-            for l in kw.pop ("include_links", ())
-            )
+            (self._entity_link (l) for l in kw.pop ("include_links", ()))
         etl_group = kw.pop ("entity_links_group", None)
         if  etl_group :
             include_links = \
@@ -202,6 +201,10 @@ class _Entity_Mixin_ (_Base_) :
         for e in self._elems :
             yield e
     # end def elements
+
+    def _entity_link (self, l) :
+        return (Entity_Link (l) if isinstance (l, basestring) else l)
+    # end def _entity_link
 
 # end class _Entity_Mixin_
 
@@ -261,6 +264,10 @@ class Entity (_Entity_Mixin_) :
         self._elems = elements
         self.__super.__init__ (** kw)
     # end def __init__
+
+    def add_links (self, * links) :
+        self._elems += tuple (self._entity_link (l) for l in links)
+    # end def add_links
 
 # end class Entity
 
