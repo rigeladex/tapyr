@@ -51,6 +51,7 @@
 #    12-Dec-2012 (CT) Add `accounts` to `include_links` of `Person`
 #     7-May-2013 (CT) Add `IM_Handle`, `Nickname`
 #     7-May-2013 (CT) Add `Association`, `_import_association_cb`
+#     7-May-2013 (CT) Add `urls` to `include_links` of `Person`
 #    ««revision-date»»···
 #--
 
@@ -171,7 +172,9 @@ GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
     ( include_links = ("addresses", "emails", "phones", "urls"))
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     ( include_links =
-        ("accounts", "addresses", "emails", "im_handles", "nicknames", "phones")
+        ( "accounts", "addresses", "emails", "im_handles"
+        , "nicknames", "phones", "urls"
+        )
     )
 GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
     ( include_links = ("persons", "companies", "PAP.Address_Position"))
