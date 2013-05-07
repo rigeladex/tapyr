@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -49,6 +49,7 @@
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
 #    12-Dec-2012 (CT) Add `Person_has_Account`
 #    12-Dec-2012 (CT) Add `accounts` to `include_links` of `Person`
+#     7-May-2013 (CT) Add `IM_Handle`, `Nickname`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,16 @@ class Admin (object) :
 
     Email                = dict \
         ( ETM            = "GTW.OMP.PAP.Email"
+        , list_display   = ("ui_display", "desc")
+        )
+
+    IM_Handle            = dict \
+        ( ETM            = "GTW.OMP.PAP.IM_Handle"
+        , list_display   = ("ui_display", "desc")
+        )
+
+    Nickname             = dict \
+        ( ETM            = "GTW.OMP.PAP.Nickname"
         , list_display   = ("ui_display", "desc")
         )
 
@@ -128,6 +139,14 @@ class Admin (object) :
         ( ETM            = "GTW.OMP.PAP.Person_has_Email"
         )
 
+    Person_has_IM_Handle = dict \
+        ( ETM            = "GTW.OMP.PAP.Person_has_IM_Handle"
+        )
+
+    Person_has_Nickname  = dict \
+        ( ETM            = "GTW.OMP.PAP.Person_has_Nickname"
+        )
+
     Person_has_Phone     = dict \
         ( ETM            = "GTW.OMP.PAP.Person_has_Phone"
         )
@@ -143,17 +162,19 @@ import _GTW._OMP._PAP.Company
 import _GTW._OMP._PAP.Person
 
 GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
-    (include_links = ("addresses", "emails", "phones"))
+    ( include_links = ("addresses", "emails", "phones"))
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
-    (include_links = ("accounts", "addresses", "emails", "phones"))
+    ( include_links =
+        ("accounts", "addresses", "emails", "im_handles", "nicknames", "phones")
+    )
 GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", "companies", "PAP.Address_Position"))
+    ( include_links = ("persons", "companies", "PAP.Address_Position"))
 GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", "companies"))
+    ( include_links = ("persons", "companies"))
 GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", "companies"))
+    ( include_links = ("persons", "companies"))
 GTW.OMP.PAP.Url.GTW.afs_spec = Spec.Entity \
-    (include_links = ("persons", "companies"))
+    ( include_links = ("persons", "companies"))
 
 from   _MOM import MOM
 import _MOM._Attr.Date_Interval
