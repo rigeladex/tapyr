@@ -39,6 +39,7 @@
 #     2-Apr-2013 (CT) Add optional argument `q` to `_setup_attr`
 #     9-Apr-2013 (CT) Add exception handler to `af_args_api`
 #    11-Apr-2013 (CT) Factor `_pepk_filter` from `Filter` and fix
+#     7-May-2013 (CT) Add exception handler to `_setup_attr`
 #    ««revision-date»»···
 #--
 
@@ -382,7 +383,13 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     @TFL.Meta.Class_and_Instance_Method
     def _setup_attr (soc, E_Type, fn, name, op, value, q = None) :
         if q is None :
-            q   = getattr (E_Type.AQ, name)
+            try :
+                q   = getattr (E_Type.AQ, name)
+            except AttributeError as exc :
+                raise AttributeError \
+                    ( _T ("%s doesn't have an attribute named `%s`")
+                    % (E_Type.type_name, name)
+                    )
         qop     = getattr (q, op)
         fq      = qop (value)
         qate    = q.As_Template_Elem
