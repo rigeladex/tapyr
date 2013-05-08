@@ -45,6 +45,7 @@
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove `__init__`
 #     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
 #    15-Apr-2013 (CT) Protect `_resource_entries` against `result` of `None`
+#     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
 #    ««revision-date»»···
 #--
 
@@ -128,12 +129,13 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         def _response_dict (self, resource, request, response, ** kw) :
             if request.verbose :
                 def _gen (attributes) :
+                    render_csv = response.renderer.name == "CSV"
                     for a in attributes :
                         n  = a.name
                         ts = []
                         if a.E_Type :
                             if issubclass (a.E_Type, MOM.Id_Entity) :
-                                if not request.brief :
+                                if render_csv and not request.brief :
                                     ts = ["pid", "url"]
                             else :
                                 ts = [u.name for u in a.E_Type.user_attr]

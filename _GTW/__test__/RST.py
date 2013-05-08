@@ -51,6 +51,7 @@
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
 #     2-May-2013 (CT) Add `offset=[0,-1]/limit=1` tests to `test_query`
 #     3-May-2013 (CT) Add `test_rat`, import `GTW.OMP.Auth`
+#     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
 #    ««revision-date»»···
 #--
 
@@ -2202,10 +2203,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&closure&ckd"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2315,10 +2314,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2428,10 +2425,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2531,10 +2526,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2644,10 +2637,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure&AQ=boat_class,EQ,9"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2695,10 +2686,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure&AQ=boat_class,EQ,7"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2779,10 +2768,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure&AQ=boat_class,EQ,7&AQ=left,EQ,13"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2832,10 +2819,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure&AQ=boat_class,EQ,7&AQ=left,EQ,10"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
@@ -2884,10 +2869,8 @@ _test_get = r"""
     >>> _ = show (R.get ("/v1/SRM-Regatta?verbose&raw&closure&AQ=left,EQ,10"))
     { 'json' :
         { 'attribute_names' :
-            [ 'left.pid'
-            , 'left.url'
-            , 'boat_class.pid'
-            , 'boat_class.url'
+            [ 'left'
+            , 'boat_class'
             , 'discards'
             , 'is_cancelled'
             , 'kind'
