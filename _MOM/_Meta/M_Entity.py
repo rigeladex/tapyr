@@ -1033,7 +1033,8 @@ class M_E_Type_Id (M_E_Type) :
                     v = tuple (_filter (k, v))
                 if v :
                     result [k].update (v)
-        for k, v in getattr (cls, _name).iteritems () :
+        own_map = getattr (cls, _name)
+        for k, v in own_map.iteritems () :
             if not k.is_partial :
                 result [k].update (v)
         return result

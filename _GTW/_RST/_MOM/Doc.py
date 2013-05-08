@@ -206,7 +206,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             try :
                 resource.scope.rollback () ### Remove example objects, if any
             except Exception as exc :
-                logging.exception ("Rollback error")
+                logging.exception ("Rollback error: %s", exc)
             return result
         # end def _response_body
 
