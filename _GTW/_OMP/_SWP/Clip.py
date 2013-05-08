@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -30,6 +30,7 @@
 #    12-Apr-2010 (CT) Creation continued
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ class Clip_O (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SWP.Object_PN
             role_name          = "object"
-            auto_cache         = "clips"
+            rev_ref_attr_name  = "clips"
 
         # end class left
 

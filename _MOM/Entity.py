@@ -240,6 +240,7 @@
 #                     add `Id_Entity.__ne__`
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
 #    30-Apr-2013 (CT) Add `add_error`
+#    10-May-2013 (CT) Add `show_in_ui_T`
 #    ««revision-date»»···
 #--
 
@@ -298,6 +299,7 @@ class Entity (TFL.Meta.Object) :
     polymorphic_epks      = False  ### Set by meta machinery
     relevant_root         = None   ### Set by meta machinery
     show_in_ui            = True   ### Modified by meta machinery
+    show_in_ui_T          = True   ### Default for descendent classes
     show_package_prefix   = False  ### Include `PNS` in `ui_name` ???
     ui_display_sep        = ", "
     x_locked              = False
@@ -1883,11 +1885,13 @@ Class `MOM.Id_Entity`
 
       Class is shown in the UI only if `show_in_ui` is True.
 
-      `show_in_ui` is not inherited --- it must be set to `False` for every single
-      class that shouldn't be shown in the UI.
+      `show_in_ui` is not inherited --- it must be set to `False` for every
+      single class that shouldn't be shown in the UI. Alternatively, a class
+      can set `show_in_ui_T` to False to force its descendents `show_in_ui` to
+      `False`.
 
       The meta machinery modifies `show_in_ui` by combining it with
-      `record_changes` and `not is_partial`.
+      `record_changes`.
 
     .. attribute:: show_package_prefix
 

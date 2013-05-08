@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Dec-2012 (CT) Creation
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class Person_has_Account (_Ancestor_Essence) :
             """Person using the account."""
 
             role_type          = PAP.Person
-            auto_cache         = True
+            auto_rev_ref       = True
 
         # end class left
 
@@ -63,7 +64,7 @@ class Person_has_Account (_Ancestor_Essence) :
             """Account used by a person."""
 
             role_type          = GTW.OMP.Auth.Account
-            auto_cache         = True
+            auto_rev_ref       = True
             max_links          = 1
 
         # end class right

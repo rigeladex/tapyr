@@ -43,6 +43,8 @@
 #     7-Aug-2012 (CT) Add `example`
 #    30-Jan-2013 (CT) Replace `skipper_not_multiplexed` by
 #                     `unique_regatta_skipper`
+#    12-May-2013 (CT) Repace `auto_cache` by `link_ref_attr_name`
+#    13-May-2013 (CT) Use `query`, not `r_query`
 #    ««revision-date»»···
 #--
 
@@ -81,8 +83,8 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Regatta a boat races in."""
 
             role_type          = GTW.OMP.SRM.Regatta
-            auto_cache         = "boats"
-            Cacher_Type        = MOM.Link_Cacher
+            link_ref_attr_name = "boats"
+            link_ref_suffix    = None
 
         # end class right
 
@@ -95,7 +97,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             def computed (self, obj) :
                 scope = obj.home_scope
                 return \
-                    [ cm.sailor for cm in scope.SRM.Crew_Member.r_query
+                    [ cm.sailor for cm in scope.SRM.Crew_Member.query
                         ( left = obj
                         , sort_key = TFL.Sorted_By ("key", "pid")
                         )

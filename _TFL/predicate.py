@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -175,6 +175,7 @@
 #     9-Oct-2010 (MG)  `undotted_dict`and `dotted_dict`: Parameter `sep` added
 #     8-Sep-2011 (CT)  `first_n` added
 #    12-Sep-2012 (CT)  Use `itertools.product` for `cartesian`, if available
+#    10-May-2013 (CT)  Add `plural_of`
 #    ««revision-date»»···
 #--
 
@@ -750,6 +751,27 @@ def pairs_2w (seq) :
         yield a, b
         yield b, a
 # end def pairs_2w
+
+def plural_of (noun) :
+    """Returns the plural from of the (english) `noun`.
+
+    >>> print plural_of ("house")
+    houses
+    >>> print plural_of ("address")
+    addresses
+    >>> print plural_of ("enemy")
+    enemies
+
+    """
+    result = noun
+    if result.endswith ("s") :
+        result += "es"
+    elif result.endswith ("y") :
+        result = result [:-1] + "ies"
+    else :
+        result += "s"
+    return result
+# end def plural_of
 
 def predecessor_of (element, iterable, pairwise = pairwise) :
     """Returns the predecessor of `element` in `iterable`"""

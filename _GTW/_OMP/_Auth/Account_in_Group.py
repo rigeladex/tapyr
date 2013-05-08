@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Jan-2010 (CT) Creation
 #    18-Jan-2010 (CT) `auto_cache` added
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -53,14 +54,14 @@ class Account_in_Group (_Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type     = Auth.Account
-            auto_cache    = True
+            auto_rev_ref  = True
 
         # end class left
 
         class right (_Ancestor.right) :
 
             role_type     = Auth.Group
-            auto_cache    = True
+            auto_rev_ref  = True
 
         # end class right
 

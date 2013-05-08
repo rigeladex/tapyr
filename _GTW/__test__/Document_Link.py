@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.__test__.Id_Entity_Link
+#    GTW.__test__.Document_Link
 #
 # Purpose
 #    Test how generic links to object without a relevant root work,
@@ -94,8 +94,6 @@ test_code = r"""
         ('MOM.Document', ['left'])
     MOM.Link2
         ('MOM.Document', ['left'])
-    MOM.Link2_Ordered
-        ('MOM.Document', ['left'])
     MOM.Link3
         ('MOM.Document', ['left'])
     MOM.Object
@@ -104,17 +102,15 @@ test_code = r"""
         ('MOM.Document', ['left'])
     MOM.Document
         ('MOM.Document', ['left'])
+    Auth.Id_Entity
+        ('MOM.Document', ['left'])
     Auth.Link1
         ('MOM.Document', ['left'])
     Auth.Link2
         ('MOM.Document', ['left'])
-    Auth.Link2_Ordered
-        ('MOM.Document', ['left'])
     Auth.Link3
         ('MOM.Document', ['left'])
     Auth.Object
-        ('MOM.Document', ['left'])
-    Auth.Id_Entity
         ('MOM.Document', ['left'])
     Auth.Named_Object
         ('MOM.Document', ['left'])
@@ -149,33 +145,29 @@ test_code = r"""
         ('MOM.Document', ['left'])
     Auth.Account_Password_Reset
         ('MOM.Document', ['left'])
+    EVT.Id_Entity
+        ('MOM.Document', ['left'])
     EVT.Link1
         ('MOM.Document', ['left'])
     EVT.Link2
-        ('MOM.Document', ['left'])
-    EVT.Link2_Ordered
         ('MOM.Document', ['left'])
     EVT.Link3
         ('MOM.Document', ['left'])
     EVT.Object
         ('MOM.Document', ['left'])
-    EVT.Id_Entity
-        ('MOM.Document', ['left'])
     EVT.Named_Object
         ('MOM.Document', ['left'])
     EVT.Calendar
+        ('MOM.Document', ['left'])
+    PAP.Id_Entity
         ('MOM.Document', ['left'])
     PAP.Link1
         ('MOM.Document', ['left'])
     PAP.Link2
         ('MOM.Document', ['left'])
-    PAP.Link2_Ordered
-        ('MOM.Document', ['left'])
     PAP.Link3
         ('MOM.Document', ['left'])
     PAP.Object
-        ('MOM.Document', ['left'])
-    PAP.Id_Entity
         ('MOM.Document', ['left'])
     PAP.Named_Object
         ('MOM.Document', ['left'])
@@ -189,17 +181,15 @@ test_code = r"""
         ('PAP.Person_has_Phone', ['left'])
         ('PAP.Person_has_Url', ['left'])
         ('SRM.Sailor', ['left'])
+    SWP.Id_Entity
+        ('MOM.Document', ['left'])
     SWP.Link1
         ('MOM.Document', ['left'])
     SWP.Link2
         ('MOM.Document', ['left'])
-    SWP.Link2_Ordered
-        ('MOM.Document', ['left'])
     SWP.Link3
         ('MOM.Document', ['left'])
     SWP.Object
-        ('MOM.Document', ['left'])
-    SWP.Id_Entity
         ('MOM.Document', ['left'])
     SWP.Named_Object
         ('MOM.Document', ['left'])
@@ -260,17 +250,15 @@ test_code = r"""
         ('MOM.Document', ['left'])
     PAP.Person_has_Account
         ('MOM.Document', ['left'])
+    SRM.Id_Entity
+        ('MOM.Document', ['left'])
     SRM.Link1
         ('MOM.Document', ['left'])
     SRM.Link2
         ('MOM.Document', ['left'])
-    SRM.Link2_Ordered
-        ('MOM.Document', ['left'])
     SRM.Link3
         ('MOM.Document', ['left'])
     SRM.Object
-        ('MOM.Document', ['left'])
-    SRM.Id_Entity
         ('MOM.Document', ['left'])
     SRM.Named_Object
         ('MOM.Document', ['left'])
@@ -380,4 +368,4 @@ from   _TFL.Formatter           import formatted_1
 
 __test__ = Scaffold.create_test_dict (test_code)
 
-### __END__ GTW.__test__.Id_Entity_Link
+### __END__ GTW.__test__.Document_Link

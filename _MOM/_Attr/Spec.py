@@ -62,6 +62,7 @@
 #    11-Jan-2013 (CT) Add support for `primary_ais`
 #    28-Mar-2013 (CT) Add `e_type.ui_attr`
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
+#    15-May-2013 (CT) Add `e_type.link_ref_attr`
 #    ««revision-date»»···
 #--
 
@@ -111,17 +112,22 @@ class Spec (MOM.Prop.Spec) :
         self._syncable    = []
         self._user_attr   = []
         self.__super.__init__ (e_type)
+        sk = TFL.Sorted_By ("rank", "name")
         e_type.attributes = self._prop_dict
         e_type.db_attr    = self._db_attr
         e_type.user_attr  = self._user_attr
-        e_type.db_attr.sort   (key = TFL.Sorted_By ("rank", "name"))
-        e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
+        e_type.db_attr.sort   (key = sk)
+        e_type.user_attr.sort (key = sk)
         self._setup_attrs     (e_type)
         e_type.edit_attr = tuple (MOM.Attr.Selector.editable (e_type))
         e_type.ui_attr   = tuple (MOM.Attr.Selector.all      (e_type))
         e_type.id_entity_attr   = tuple \
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)
+            )
+        e_type.link_ref_attr    = tuple \
+            (  a for a in sorted (e_type.attributes.itervalues (), key = sk)
+            if isinstance (a.attr, MOM.Attr.A_Link_Ref_List)
             )
         e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)

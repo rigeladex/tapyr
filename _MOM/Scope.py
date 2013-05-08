@@ -112,6 +112,7 @@
 #    21-Jan-2013 (MG) Call change callbacks for nested change
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #    30-Jan-2013 (CT) Add optional argument `allow_zombie` to `pid_query`
+#    10-May-2013 (CT) Allow non-string arguments to `__getitem__`
 #    ««revision-date»»···
 #--
 
@@ -825,6 +826,8 @@ class Scope (TFL.Meta.Object) :
     # end def __getattr__
 
     def __getitem__ (self, name) :
+        if not isinstance (name, basestring) :
+            name = name.type_name
         try :
             return self._get_etm (name)
         except AttributeError :

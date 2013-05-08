@@ -68,6 +68,9 @@
 #    14-Sep-2012 (CT) Add `cr_name` to `Link_Cacher`, `Role_Cacher`
 #    27-Sep-2012 (CT) Remove un-implemented `Link_AB` from docstring
 #    29-Jan-2013 (MG) Add cacher object to auto created obbject
+#    15-May-2013 (CT) Remove `Link2_Ordered`
+#    15-May-2013 (CT) Remove `_Cacher_` and role- and link-cacher children
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -179,26 +182,6 @@ class Link2 (_Ancestor_Essence) :
 
 # end class Link2
 
-_Ancestor_Essence = Link2
-
-class Link2_Ordered (_Ancestor_Essence) :
-    """Common base class for essential binary ordered links of MOM."""
-
-    is_partial            = True
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        class seq_no (A_Int) :
-            """Sequence number of a link in an ordered association."""
-
-            kind       = Attr.Primary
-
-        # end class seq_no
-
-    # end class _Attributes
-
-# end class Link2_Ordered
-
 _Ancestor_Essence = _MOM_Link_n_
 
 class Link3 (_Ancestor_Essence) :
@@ -272,257 +255,6 @@ class _Link3_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
 
 # end class _Link3_Reload_Mixin_
 
-class _Cacher_ (TFL.Meta.Object) :
-
-    link_type_name     = None
-
-    def __init__ (self, attr_name = None) :
-        self.role_name = None
-        self.grn       = None
-        self.cr_attr   = None
-        self.attr_name = attr_name
-    # end def __init__
-
-    def copy (self, Link, role) :
-        result = self.__class__ (* self.copy_args)
-        result.setup (Link, role)
-        return result
-    # end def copy
-
-    def setup (self, Link, role) :
-        assert self.role_name is None
-        self.link_type_name = Link.type_name
-        self.role_name      = role_name = role.role_name
-        self.grn            = role.generic_role_name
-        attr_name           = self.attr_name
-        if attr_name is None or attr_name == True :
-            self.attr_name = self._suffixed (self._auto_attr_name (Link, role))
-        assert isinstance (self.attr_name, basestring)
-    # end def setup
-
-    def _repr_tail (self) :
-        return ""
-    # end def _repr_tail
-
-    def _setup_attr (self, CR, Link, role, role_type, P_Type, desc) :
-        attr_name = self.attr_name
-        if attr_name in role_type._Attributes._names :
-            cr = getattr (role_type._Attributes, attr_name)
-            if cr.electric :
-                self.cr_attr = cr
-            else :
-                raise TypeError \
-                    ( "Name conflict between attribute '%s' "
-                      "and auto-cache %s: %s\n  %s"
-                    % (attr_name, CR, Link, self)
-                    )
-        else :
-            kw  = dict \
-                ( assoc        = Link.type_name
-                , P_Type       = P_Type
-                , description  = desc
-                , __module__   = role_type.__module__
-                , cacher       = self
-                )
-            self.cr_attr = cr = type (CR) (attr_name, (CR, ), kw)
-            role_type.add_attribute (cr, override = True)
-    # end def _setup_attr
-
-    def _suffixed (self, name) :
-        suffix = self._suffix
-        result = name
-        if suffix :
-            if name.endswith (suffix) :
-                result += "e" + suffix
-            elif name.endswith ("y") and suffix == "s" :
-                result = name [:-1] + "ies"
-            else :
-                result += suffix
-        return result
-    # end def _suffixed
-
-    def __repr__ (self) :
-        return "<%s (%s) %s --> %s%s>" % \
-            ( self.__class__.__name__, self.link_type_name
-            , self.role_name, self.attr_name
-            , self._repr_tail ()
-            )
-    # end def __repr__
-
-# end class _Cacher_
-
-@TFL.Add_To_Class ("Cacher", MOM.Meta.M_Link1)
-class Link_Cacher (_Cacher_) :
-
-    @property
-    def copy_args (self) :
-        return (self.attr_name, )
-    # end def copy_args
-
-    @property
-    def cr_name (self) :
-        return self.role_name
-    # end def cr_name
-
-    def setup (self, Link, role) :
-        self.max_links = max_links = role.max_links
-        if max_links == 1 :
-            self.__class__ = Link_Cacher_1
-            CR             = MOM.Attr.A_Cached_Role
-        else :
-            self.__class__ = Link_Cacher_n
-            CR             = MOM.Attr.A_Cached_Role_Set
-        desc = "`%s` link%s" % (Link.type_base_name, self._suffix)
-        self.__super.setup (Link, role)
-        self._setup_attr   (CR, Link, role, role.role_type, Link, desc)
-    # end def setup
-
-    def _auto_attr_name (self, Link, role) :
-        return Link.type_base_name.lower ()
-    # end def _auto_attr_name
-
-# end class Link_Cacher
-
-class Link_Cacher_1 (Link_Cacher) :
-
-    _suffix = ""
-
-    def __call__ (self, link, no_value = False) :
-        assert self.role_name is not None
-        o = getattr (link, self.role_name)
-        if o is not None :
-            if no_value :
-                value = None
-            else :
-                value = link
-            setattr (o, self.attr_name, value)
-    # end def __call__
-
-# end class Link_Cacher_1
-
-class Link_Cacher_n (Link_Cacher) :
-
-    _suffix = "s"
-
-    def __call__ (self, link, no_value = False) :
-        assert self.role_name is not None
-        o = getattr (link, self.role_name)
-        if o is not None :
-            cache = getattr (o, self.attr_name)
-            value = link
-            if no_value :
-                try :
-                    cache.remove (value)
-                except LookupError :
-                    pass
-            else :
-                cache.add (value)
-    # end def __call__
-
-# end class Link_Cacher_n
-
-@TFL.Add_To_Class ("Cacher", MOM.Meta.M_Link_n)
-class Role_Cacher (_Cacher_) :
-
-    def __init__ (self, attr_name = None, other_role_name = None) :
-        self.__super.__init__ (attr_name)
-        self.other_role_name = self._orn = other_role_name
-        self.other_role      = None
-    # end def __init__
-
-    @property
-    def copy_args (self) :
-        return (self.attr_name, self._orn)
-    # end def copy_args
-
-    @property
-    def cr_name (self) :
-        try :
-            return self.other_role.name
-        except AttributeError :
-            return self.other_role_name
-    # end def cr_name
-
-    def setup (self, Link, role) :
-        other_role_name = \
-            self.other_role_name or Link.other_role_name (role.name)
-        self.other_role = other_role = getattr \
-            (Link._Attributes, other_role_name)
-        del self.other_role_name
-        self.max_links = max_links = other_role.max_links
-        if max_links == 1 :
-            self.__class__ = Role_Cacher_1
-            CR = ( MOM.Attr.A_Cached_Role
-                 , MOM.Attr.A_Cached_Role_DFC
-                 ) [bool (other_role.dfc_synthesizer)]
-        else :
-            self.__class__ = Role_Cacher_n
-            if other_role.dfc_synthesizer :
-                raise NotImplementedError \
-                    ( "Autocache for DFC and max_links > 1: %s.%s"
-                    % (Link, self.role_name)
-                    )
-            CR = MOM.Attr.A_Cached_Role_Set
-        self.__super.setup (Link, role)
-        other_type = other_role.role_type
-        if other_type is None :
-            raise TypeError \
-                ( "XXX Can't create attribute for auto_cache of role: %s.%s"
-                % (Link, self.role_name)
-                )
-        desc = "`%s` linked to `%s`" % \
-            ( self._suffixed (self.role_name.capitalize ())
-            , other_role.role_name
-            )
-        self._setup_attr (CR, Link, role, other_type, role.role_type, desc)
-    # end def setup
-
-    def _auto_attr_name (self, Link, role) :
-        return role.role_name
-    # end def _auto_attr_name
-
-    def _repr_tail (self) :
-        return " [%s]" % (self.other_role.role_type.type_name, )
-    # end def _repr_tail
-
-# end class Role_Cacher
-
-class Role_Cacher_1 (Role_Cacher) :
-
-    _suffix = ""
-
-    def __call__ (self, link, no_value = False) :
-        assert self.role_name is not None
-        o = getattr (link, self.other_role.name)
-        if o is not None :
-            if no_value :
-                value = None
-            else :
-                value = getattr (link, self.role_name)
-            setattr (o, self.attr_name, value)
-    # end def __call__
-
-# end class Role_Cacher_1
-
-class Role_Cacher_n (Role_Cacher) :
-
-    _suffix = "s"
-
-    def __call__ (self, link, no_value = False) :
-        assert self.role_name is not None
-        o = getattr (link, self.other_role.name)
-        if o is not None :
-            cache = getattr (o, self.attr_name)
-            if cache is not None :
-                value = getattr (link, self.role_name)
-                if no_value :
-                    cache.discard (value)
-                else :
-                    cache.add     (value)
-    # end def __call__
-
-# end class Role_Cacher_n
-
 __doc__ = """
 Class `MOM.Link`
 ================
@@ -559,9 +291,10 @@ Class `MOM.Link`
 Arity
 -----
 
-Arity defines how many objects one link comprises. A binary
-association relates pairs of objects to each other, a ternary
-association relates triples of objects to each other, and so on.
+Arity defines how many objects one link comprises. A unary link relates the
+(attributes of the) link to one object. A binary association relates pairs of
+objects to each other, a ternary association relates triples of objects to
+each other, and so on.
 
 For each arity, a separate subclass exists, e.g.,
 :class:`Link2`, :class:`Link3`, etc. Each arity-specific subclass has
@@ -574,8 +307,6 @@ proper arity-specific descendent of :class:`Link_EB`.
 .. autoclass:: Link1()
 
 .. autoclass:: Link2()
-
-.. autoclass:: Link2_Ordered()
 
 .. autoclass:: Link3()
 
@@ -602,7 +333,9 @@ Each object participating in a link of an association plays a specific
 
 * Non-essential properties:
 
-  - `auto_cache` (see `auto-caching`_)
+  - `link_ref_attr_name` (see `link-ref-attr-name`)
+
+  - `auto_rev_ref` (see `auto-rev-ref`_)
 
 Each role of a specific association is defined by a link-role attribute named
 by the generic role name. For a specific association, the link-role attribute
@@ -619,15 +352,15 @@ For instance::
         class _Attributes (Link2._Attributes) :
 
             class left (Link2._Attributes.left) :
-                role_type   = Person
-                role_name   = "employee"
-                auto_cache  = True
-                max_links   = 1 ### Danger, Will Robinson
+                role_type     = Person
+                role_name     = "employee"
+                auto_rev_ref  = True
+                max_links     = 1 ### Danger, Will Robinson
             # end class left
 
             class right (Link2._Attributes.right) :
-                role_type   = Company
-                role_name   = "employer"
+                role_type     = Company
+                role_name     = "employer"
             # end class right
 
         # end class _Attributes
@@ -656,28 +389,43 @@ Simple multiplicity constraints are implemented by defining
 `max_links` for the appropriate role. In this case, the `Link` class
 will enforce the constraint.
 
-Auto-Caching
+Link-ref-attr-name
+-------------------
+
+For each link-role, the metaclass of the link automatically creates a query
+attribute of type `A_Link_Ref_List` for the role-type that returns the links
+in which the object is referred to by that link-role.
+
+By default, the name of `A_Link_Ref_List` attributes is:
+
+- for :class:`Link1`, the `type_base_name` in lower case
+
+- for :class:`Link2`, the `role_name` of the other link-role
+
+- for :class:`Link3`, the `role_name` of the other link-roles joined
+  by "__"
+
+This default can be overriden by defining the property `link_ref_attr_name`
+for the link-role; setting `link_ref_attr_name` to `Undef()` inhibits the
+creation of the `A_Link_Ref_List` attribute.
+
+Unless `link_ref_suffix` is set to `None` for the
+link-role, the name of the `A_Link_Ref_List` is then pluralized, assuming
+English rules for pluralization.
+
+Auto-Rev-Ref
 ------------
 
-By specifying `auto_cache` for one of the `roles` of an entity-based
-association, an attribute caching the objects linked via this
+By specifying `auto_rev_ref` for one of the `roles` of an entity-based
+association, an attribute referring to the objects linked via this
 association is automagically added to another role of the association.
 
-`auto_cache` can be set to one of the values:
+`auto_rev_ref` can be set to one of the values:
 
-- `True`. This only works for binary associations without any
-  non-default properties for auto-caching. As it is the simplest case,
+- `True`. This only works for binary associations.As it is the simplest case,
   it should be preferred over the other possibilities, if possible.
 
-- A string specifying the name of the attribute used for caching.
-
-- A tuple of strings specifying the name of the attribute used for
-  caching and the name of the other role holding the cache.
-
-- XXX An instance of :class:`_MOM.Link_Role.Role_Cacher<MOM.Link_Role.Role_Cacher>`.
-
-In all cases, an instance of `Role_Cacher` will manage the automatic
-cache for the role in question.
+- A string specifying the name of the auto-rev-ref attribute.
 
 """
 

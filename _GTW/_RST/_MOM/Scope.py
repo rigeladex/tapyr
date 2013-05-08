@@ -34,7 +34,7 @@
 #     4-Oct-2012 (CT) Add `href_e_type`, `resource_from_e_type`
 #     5-Oct-2012 (CT) Add `json_indent` to `JSON.json_dump_kw`
 #    20-Oct-2012 (CT) Set `E_Type_Desc._prop_map ["rest_api"]`
-#     3-May-2013 (CT) Create `RAT` if `auth_required`
+#    10-May-2013 (CT) Use `show_in_ui`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -44,7 +44,6 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.Resource
-import _GTW._RST.RAT
 import _GTW._RST._MOM.E_Type
 
 from   _MOM.import_MOM          import MOM, Q
@@ -71,8 +70,7 @@ class _RST_MOM_Scope_ (_Ancestor) :
                       )
                 for et in sorted \
                     (root.scope.T_Extension, key = TFL.Getter.type_name)
-                if  issubclass (et, MOM.Id_Entity)
-                        and (et.children_np or not et.is_partial)
+                if  issubclass (et, MOM.Id_Entity) and et.show_in_ui
                 )
         self.__super.__init__ (** kw)
         if json_indent or self.DEBUG :
@@ -81,10 +79,6 @@ class _RST_MOM_Scope_ (_Ancestor) :
                 ( indent    = json_indent or 2
                 , sort_keys = True
                 )
-        if self.auth_required :
-            root.E_Type_Desc._prop_map ["rest_api"] = self
-            if not hasattr (root.SC, "RAT") :
-                root.add_entries (GTW.RST.RAT (name = "RAT"))
     # end def __init__
 
     def href_e_type (self, e_type) :

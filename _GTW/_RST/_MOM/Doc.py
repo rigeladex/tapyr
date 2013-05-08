@@ -39,6 +39,7 @@
 #    17-Dec-2012 (CT) s/map_name/et_map_name/
 #    28-Mar-2013 (CT) Always include `is_changeable` in `_response_attr`;
 #                     display `E_Type.ui_attr`, not `.edit_attr`
+#    15-May-2013 (CT) Add `show_in_ui` to `e_type_filter`
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,11 @@ class _RST_MOM_Doc_Mixin_ (TFL.Meta.Object) :
     # end def change_info
 
     def e_type_filter (self, e_type) :
-        return issubclass (e_type, MOM.Id_Entity) and not e_type.is_locked ()
+        return \
+            (   issubclass (e_type, MOM.Id_Entity)
+            and e_type.show_in_ui
+            and not e_type.is_locked ()
+            )
     # end def e_type_filter
 
 Mixin = _RST_MOM_Doc_Mixin_ # end class

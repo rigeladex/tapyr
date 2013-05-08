@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    31-Aug-2010 (CT) Creation
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class Team_has_Boat_in_Regatta (_Ancestor_Essence) :
             """Sailing team boats sail for in regatta."""
 
             role_type          = GTW.OMP.SRM.Team
-            auto_cache         = True
+            auto_rev_ref       = True
 
         # end class left
 
@@ -66,7 +67,7 @@ class Team_has_Boat_in_Regatta (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Boat_in_Regatta
             role_name          = "boat"
-            auto_cache         = True
+            auto_rev_ref       = True
 
         # end class right
 

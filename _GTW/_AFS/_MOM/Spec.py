@@ -79,6 +79,7 @@
 #     8-Sep-2012 (CT) Set `MAT.A_Enum.input_widget`
 #    12-Dec-2012 (CT) Ignore `LookupError` in `Entity_Link.__call__`
 #     7-May-2013 (CT) Add `Entity.add_links`
+#    15-May-2013 (CT) Adapt `Entity_Link._get_assoc` to `MOM.Attr._A_Rev_Ref`
 #    ««revision-date»»···
 #--
 
@@ -311,10 +312,10 @@ class Entity_Link (Entity) :
     # end def __call__
 
     def _get_assoc (self, name, E_Type) :
-        cached_role = getattr (E_Type, name, None)
-        if cached_role is not None :
-            assoc = cached_role.assoc
-            name  = getattr (assoc, "type_name", assoc)
+        ref_attr = getattr (E_Type, name, None)
+        if ref_attr is not None :
+            ref_type = ref_attr.Ref_Type
+            name     = getattr (ref_type, "type_name", ref_type)
         return E_Type.app_type.etypes [name]
     # end def _get_assoc
 

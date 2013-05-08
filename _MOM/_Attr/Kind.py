@@ -202,6 +202,7 @@
 #    17-Apr-2013 (CT) Use `getattr`, not `self.get_value`, in
 #                     `Id_Entity_Reference_Mixin._set_cooked_value`
 #    26-Apr-2013 (CT) Remove support for `Primary_AIS`
+#     8-May-2013 (CT) Factor `_Query_` to fool `DBW.SAS`
 #    ««revision-date»»···
 #--
 
@@ -1248,7 +1249,7 @@ class Computed (_Cached_, _Computed_Mixin_) :
 
 # end class Computed
 
-class Query (_Cached_, _Computed_Mixin_) :
+class _Query_ (_Cached_, _Computed_Mixin_) :
     """Attribute calculated from a `query`."""
 
     kind                  = _ ("query")
@@ -1286,7 +1287,13 @@ class Query (_Cached_, _Computed_Mixin_) :
                     )
     # end def _check_sanity
 
+# end class _Query_
+
+class Query (_Query_) :
+    ### XXX fold `_Query_` back into `Query` after SAS has been fixed
+    pass
 # end class Query
+
 
 class Computed_Mixin (_Computed_Mixin_) :
     """Mixin to compute attribute value if empty, i.e., if no value was

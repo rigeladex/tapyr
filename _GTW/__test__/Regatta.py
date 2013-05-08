@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -101,16 +101,18 @@ _test_code = """
     (u'yardstick')
         (('tuple', (('unicode', u'yardstick'),)),)
 
-    >>> sorted (SRM.Regatta.acr_map.values ())
-    [<Link_Cacher_n (GTW.OMP.SRM.Regatta) event --> regattas>]
-    >>> sorted (SRM.Regatta_C.acr_map.values ())
-    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_C) event --> regattas>]
-    >>> sorted (SRM.Regatta_H.acr_map.values ())
-    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_H) event --> regattas>]
+#    ### XXX auto cached roles are currently not supported
+#    ### XXX * either remove tests or re-add auto-cached roles and fix tests
+#    >>> sorted (SRM.Regatta.acr_map.values ())
+#    [<Link_Cacher_n (GTW.OMP.SRM.Regatta) event --> regattas>]
+#    >>> sorted (SRM.Regatta_C.acr_map.values ())
+#    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_C) event --> regattas>]
+#    >>> sorted (SRM.Regatta_H.acr_map.values ())
+#    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_H) event --> regattas>]
 
     >>> crs = SRM.Regatta_Event.regattas
-    >>> print crs, ":", crs.assoc
-    Cached_Role_Set `regattas` : GTW.OMP.SRM.Regatta
+    >>> print crs, ":", crs.Ref_Type.type_name
+    Link_Ref_List `regattas` : SRM.Regatta
 
     >>> sorted (rev.regattas)
     [SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'yardstick', ))]

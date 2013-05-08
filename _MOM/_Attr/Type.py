@@ -288,6 +288,13 @@
 #                     `.eligible_raw_values`
 #    26-Apr-2013 (CT) Remove `A_AIS_Value`
 #     1-May-2013 (CT) Add `Email._syntax_re`
+#     8-May-2013 (CT) Add `A_Link_Ref` and `A_Link_Ref_Set`
+#    10-May-2013 (CT) Add `link_ref_singular`
+#    11-May-2013 (CT) Factor `_A_Rev_Ref_`, add `A_Rev_Ref_Set`
+#    12-May-2013 (CT) Add `A_Role_Ref` and `A_Role_Ref_Set`
+#    13-May-2013 (CT) Factor `_A_Id_Entity_Collection_`,
+#                     add `_A_Id_Entity_List_`
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -1052,6 +1059,8 @@ class _A_Id_Entity_ (_A_Entity_) :
     Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
 
     is_link_role        = False
+    rev_ref_attr_name   = None
+    rev_ref_singular    = False
 
     allow_e_types       = set ()
     refuse_e_types      = set ()
@@ -1233,6 +1242,57 @@ class _A_Id_Entity_ (_A_Entity_) :
     # end def _get_scope
 
 # end class _A_Id_Entity_
+
+class _A_Rev_Ref_ (A_Attr_Type) :
+
+    ### need to recompute each time value is accessed ### ???
+    kind                = MOM.Attr._Query_
+    Kind_Mixins         = (MOM.Attr.Computed, )
+
+    ### set by meta machinery
+    P_Type              = None
+    E_Type              = TFL.Meta.Alias_Property ("P_Type")
+    Ref_Type            = None
+    ref_name            = None
+
+    electric            = True
+    hidden              = True
+
+    def __init__ (self, kind, e_type) :
+        for k in ("P_Type", "Ref_Type") :
+            T = getattr (self, k, None)
+            if T :
+                tn = T if isinstance (T, basestring) else T.type_name
+                setattr (self, k, e_type.app_type.etypes [tn])
+        self.__super.__init__ (kind, e_type)
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def ref_filter (self) :
+      return getattr (Q, self.ref_name)
+    # end def ref_filter
+
+    def finished_query_all (self, q) :
+        return q.all ()
+    # end def finished_query_all
+
+    def finished_query_one (self, q) :
+        try :
+            return q.one ()
+        except IndexError :
+            pass
+    # end def finished_query_one
+
+    def query (self, obj) :
+        return self.finished_query (self.query_x (obj))
+    # end def query
+
+    def query_x (self, obj) :
+        ETM = obj.home_scope [self.Ref_Type]
+        return ETM.query (self.ref_filter == obj)
+    # end def query_x
+
+# end class _A_Rev_Ref_
 
 class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
@@ -1480,7 +1540,7 @@ class _A_Typed_Tuple_ (_A_Typed_Collection_) :
 
 # end class _A_Typed_Tuple_
 
-class _A_Id_Entity_Set_ (_A_Typed_Set_) :
+class _A_Id_Entity_Collection_ (_A_Typed_Collection_) :
 
     C_Type         = _A_Id_Entity_
 
@@ -1493,6 +1553,18 @@ class _A_Id_Entity_Set_ (_A_Typed_Set_) :
         sk = MOM.Scope.active.MOM.Id_Entity.sort_key
         return self.__super._C_as_string (sorted (value, key = sk))
     # end def _C_as_string
+
+# end class _A_Id_Entity_Collection_
+
+class _A_Id_Entity_List_ (_A_Typed_List_, _A_Id_Entity_Collection_) :
+
+    pass
+
+# end class _A_Id_Entity_List_
+
+class _A_Id_Entity_Set_ (_A_Typed_Set_, _A_Id_Entity_Collection_) :
+
+    pass
 
 # end class _A_Id_Entity_Set_
 
@@ -1684,6 +1756,15 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
     kind           = MOM.Attr.Cached_Role_Set
     typ            = _ ("Cached_Role_Set")
     hidden         = True
+
+    def __init__ (self, kind, e_type) :
+        for k in ("P_Type", ) :
+            T = getattr (self, k, None)
+            if T :
+                tn = T if isinstance (T, basestring) else T.type_name
+                setattr (self, k, e_type.app_type.etypes [tn])
+        self.__super.__init__ (kind, e_type)
+    # end def __init__
 
 # end class A_Cached_Role_Set
 
@@ -2069,28 +2150,56 @@ class A_Length (_A_Unit_, _A_Float_) :
 
 # end class A_Length
 
+class _A_Link_Ref_ (_A_Rev_Ref_) :
+
+    role_filter         = TFL.Meta.Alias_Property ("ref_filter")
+    role_name           = TFL.Meta.Alias_Property ("ref_name")
+
+# end class _A_Link_Ref_
+
+class A_Link_Ref (_A_Link_Ref_, _A_Id_Entity_) :
+    """Reverse reference to link referring to an `entity`"""
+
+    typ                 = _ ("Link_Ref")
+
+    finished_query      = _A_Link_Ref_.finished_query_one
+
+# end class A_Link_Ref
+
+class A_Link_Ref_List (_A_Link_Ref_, _A_Id_Entity_List_) :
+    """Reverse reference to set of links referring to an `entity`."""
+
+    typ                 = _ ("Link_Ref_List")
+
+    finished_query      = _A_Link_Ref_.finished_query_all
+
+# end class A_Link_Ref_List
+
 class A_Link_Role (_A_Id_Entity_) :
     """Link-role."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
+    __metaclass__       = MOM.Meta.M_Attr_Type_Link_Role
 
-    auto_cache        = False
-    auto_cache_np     = False
-    auto_derive_np    = False
-    auto_derive_npt   = False
-    Cacher_Type       = None
-    dfc_synthesizer   = None
-    force_role_name   = None
-    is_link_role      = True
-    kind              = MOM.Attr.Link_Role
-    max_links         = -1
-    role_name         = None
-    role_type         = None
-    E_Type = P_Type   = TFL.Meta.Alias_Property ("role_type")
+    auto_rev_ref        = False
+    auto_rev_ref_np     = False
+    auto_derive_np      = False
+    auto_derive_npt     = False
+    Cacher_Type         = None
+    dfc_synthesizer     = None
+    force_role_name     = None
+    is_link_role        = True
+    link_ref_attr_name  = None
+    link_ref_singular   = False
+    link_ref_suffix     = TFL.Undef ("suffix")
+    kind                = MOM.Attr.Link_Role
+    max_links           = -1
+    role_name           = None
+    role_type           = None
+    E_Type = P_Type     = TFL.Meta.Alias_Property ("role_type")
     ### by default, don't allow creation of new object for this attribute
-    ui_allow_new      = False
+    ui_allow_new        = False
 
-    _t_rank           = -100
+    _t_rank                   = -100
 
     @TFL.Meta.Once_Property
     def ui_name (self) :
@@ -2152,10 +2261,60 @@ class A_Numeric_String (_A_String_Base_) :
 class A_Id_Entity (_A_Id_Entity_) :
     """An entity."""
 
-    typ            = _ ("Entity")
-    Kind_Mixins    = (MOM.Attr.Id_Entity_Reference_Mixin, )
+    typ                = _ ("Entity")
+    Kind_Mixins        = (MOM.Attr.Id_Entity_Reference_Mixin, )
 
 # end class A_Id_Entity
+
+class A_Rev_Ref_Set (_A_Rev_Ref_, _A_Id_Entity_Set_) :
+    """Reverse reference to set of entities referring to an `entity`."""
+
+    typ                 = _ ("Rev_Ref_Set")
+
+    finished_query      = _A_Rev_Ref_.finished_query_all
+
+# end class A_Rev_Ref_Set
+
+class _A_Role_Ref_ (_A_Rev_Ref_) :
+
+    role_filter         = TFL.Meta.Alias_Property ("ref_filter")
+    role_name           = TFL.Meta.Alias_Property ("ref_name")
+
+    def query_x (self, obj) :
+        return self.__super.query_x (obj).attr (self.other_role_name)
+    # end def query_x
+
+# end class _A_Role_Ref_
+
+class A_Role_Ref (_A_Role_Ref_, _A_Id_Entity_) :
+    """Reverse reference to role linked to an `entity`"""
+
+    typ                 = _ ("Role_Ref")
+
+    def finished_query (self, q) :
+        result = self.finished_query_one (q)
+        try :
+            return result._VALUE
+        except Exception :
+            return result
+    # end def finished_query
+
+# end class A_Role_Ref
+
+class A_Role_Ref_Set (_A_Role_Ref_, _A_Id_Entity_Set_) :
+    """Reverse reference to set of roles linked to an `entity`."""
+
+    typ                 = _ ("Role_Ref_Set")
+
+    def finished_query (self, q) :
+        result = self.finished_query_all (q)
+        try :
+            return list (r._VALUE for r in result)
+        except Exception :
+            return result
+    # end def finished_query
+
+# end class A_Role_Ref_Set
 
 class A_String (_A_String_) :
     """A string."""
@@ -2347,7 +2506,7 @@ Class `MOM.Attr.A_Attr_Type`
       :class:`~_MOM._Attr.Kind.Computed_Mixin` or
       one of the internal attributes kinds
       :class:`~_MOM._Attr.Kind.Sync_Cached`,
-      :class:`~_MOM._Attr.Kind.Auto_Cached`,
+      :class:`~_MOM._Attr.Kind.Query`,
       :class:`~_MOM._Attr.Kind.Once_Cached`, or
       :class:`~_MOM._Attr.Kind.Computed`.
 

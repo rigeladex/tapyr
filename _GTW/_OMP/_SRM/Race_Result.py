@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -29,6 +29,7 @@
 #     6-Sep-2010 (CT) Creation
 #     7-Oct-2011 (CT) `race.min_value` set to `1`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class Race_Result (_Ancestor_Essence) :
             """`Boat_in_Regatta` the crew member sails on."""
 
             role_type          = GTW.OMP.SRM.Boat_in_Regatta
-            auto_cache         = "race_results"
+            rev_ref_attr_name  = "race_result"
 
         # end class left
 

@@ -125,6 +125,8 @@
 #    30-Jan-2013 (CT) Remove check for `Duplicate_Link` from `_checked_roles`
 #                     (is checked by Unique predicate anyway)
 #    26-Feb-2013 (CT) Adapt to change of `MOM.Error.Multiplicity`
+#    13-May-2013 (CT) Change `r_query` to look at non-role id-entity
+#                     attributes, not call `ems.r_query`
 #    ««revision-date»»···
 #--
 
@@ -482,15 +484,16 @@ class Link (Id_Entity) :
            `r_query` behaves similar to `query` but provides the additional
            features:
 
-           - if `kw` contains role names,
+           - if `kw` contains role names or other id-entity-attributes,
+
+             * the name can be a generic or a specific role name (`query`
+               only allows generic role names)
 
              * the values passed can be `epk` in cooked or raw form (for
                `query`, objects must be passed)
 
              * the returned links are restricted to those linking the
                specified objects
-
-           - some backends optimize link queries triggered via `r_query`.
         """
         sort_key = kw.pop ("sort_key", None)
         Type     = self._etype
@@ -498,20 +501,25 @@ class Link (Id_Entity) :
         rkw      = {}
         if map :
             for k in list (kw) :
+                aie = None
                 if k in map :
-                    role = Type.Roles [map [k]]
+                    aie = Type.Roles [map [k]]
+                elif k in Type.attributes :
+                    a = Type.attributes [k]
+                    if isinstance (a.attr, MOM.Attr.A_Id_Entity) :
+                        aie = a.attr
+                if aie is not None :
                     try :
-                        obj = self._cooked_role (role, kw.pop (k))
-                        if not isinstance (obj, role.P_Type) :
+                        obj = self._cooked_role (aie, kw.pop (k))
+                        if not isinstance (obj, aie.P_Type) :
                             return []
-                        rkw [role.name] = obj
+                        rkw [aie.name] = obj
                     except MOM.Error.No_Such_Entity :
                         return []
         ems = self.ems
         if rkw :
-            result = ems.r_query (self._etype, rkw, * filters, ** kw)
-        else :
-            result = ems.query   (self._etype, * filters, ** kw)
+            kw = dict (kw, ** rkw)
+        result = ems.query (self._etype, * filters, ** kw)
         if sort_key is not None :
             result = result.order_by (sort_key)
         return result

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Jan-2013 (MG) Creation
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,7 @@ class Id_Entity_has_Tag (_Ancestor_Essence) :
 
             role_type          = Tag
             role_name          = "tag"
-            auto_cache         = True
+            auto_rev_ref       = True
 
         # end class right
 
@@ -103,7 +104,7 @@ class Id_Entity_has_Tag (_Ancestor_Essence) :
             auto_up_depends    = ("right", )
 
             def computed (self, obj) :
-                return unicode (obj.left.type_name)
+                return str (obj.left.type_name)
             # end def computed
 
         # end class entity_type_name

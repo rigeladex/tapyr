@@ -134,38 +134,17 @@ _test_code = """
     >>> PAP.Subject_has_Phone.query_s (Q.extension != "").all ()
     [PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16')]
 
-    >>> PAP.Subject_has_Email.acr_map.get ("left", False)
-    False
-    >>> PAP.Company_has_Email.acr_map.get ("left", False)
-    <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>
-    >>> PAP.Person_has_Email.acr_map.get ("left", False)
-    <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>
-
-    >>> PAP.Subject_has_Email.acr_map.get ("right", False)
-    <Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>
-    >>> PAP.Company_has_Email.acr_map.get ("right", False)
-    <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>
-    >>> PAP.Person_has_Email.acr_map.get ("right", False)
-    <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>
-
-    >>> sorted (PAP.Subject_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
-    [<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>]
-    >>> sorted (PAP.Company_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
-    [<Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>]
-    >>> sorted (PAP.Person_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
-    [<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>]
-
     >>> def show_emails (ET) :
     ...     attr = ET.emails
-    ...     print (attr.attr.__class__, ":", attr.description, "[", attr.assoc, "]")
+    ...     print (attr.attr.__class__, ":", attr.description, "[", attr.Ref_Type.type_name, "]")
     >>> show_emails (PAP.Subject)
-    <class '_GTW._OMP._PAP.Subject.emails'> : `Emails` linked to `subject` [ GTW.OMP.PAP.Subject_has_Email ]
+    <class '_GTW._OMP._PAP.Subject.emails'> : `Email` linked to `Subject` [ PAP.Subject_has_Email ]
 
     >>> show_emails (PAP.Company)
-    <class '_GTW._OMP._PAP.Company.emails'> : `Emails` linked to `company` [ GTW.OMP.PAP.Company_has_Email ]
+    <class '_GTW._OMP._PAP.Company.emails'> : `Email` linked to `Company` [ PAP.Company_has_Email ]
 
     >>> show_emails (PAP.Person)
-    <class '_GTW._OMP._PAP.Person.emails'> : `Emails` linked to `person` [ GTW.OMP.PAP.Person_has_Email ]
+    <class '_GTW._OMP._PAP.Person.emails'> : `Email` linked to `Person` [ PAP.Person_has_Email ]
 
     >>> ET = PAP.Person_has_Address.E_Type
     >>> sorted (ET.role_map)
@@ -322,6 +301,41 @@ _test_code = """
             SRM.Handicap . . . . . . . . . . . . . . .    True
           SRM.Club . . . . . . . . . . . . . . . . . .    True                 True
           SRM.Regatta_Event  . . . . . . . . . . . . .    True                 True
+      Auth.Id_Entity . . . . . . . . . . . . . . . . .           True   True
+      EVT.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
+      PAP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
+      SWP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
+      SRM.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
+
+"""
+
+### XXX auto cached roles are currently not supported
+### XXX * either remove _test_acr or re-add auto-cached roles and fix _test_acr
+_test_acr = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> PAP.Subject_has_Email.acr_map.get ("left", False)
+    False
+    >>> PAP.Company_has_Email.acr_map.get ("left", False)
+    <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>
+    >>> PAP.Person_has_Email.acr_map.get ("left", False)
+    <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>
+
+    >>> PAP.Subject_has_Email.acr_map.get ("right", False)
+    <Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>
+    >>> PAP.Company_has_Email.acr_map.get ("right", False)
+    <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>
+    >>> PAP.Person_has_Email.acr_map.get ("right", False)
+    <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>
+
+    >>> sorted (PAP.Subject_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
+    [<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>]
+    >>> sorted (PAP.Company_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
+    [<Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>]
+    >>> sorted (PAP.Person_has_Email.acr_map.values (), key = TFL.Getter.attr_name)
+    [<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>]
 
 """
 

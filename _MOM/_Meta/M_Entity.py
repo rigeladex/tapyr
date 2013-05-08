@@ -181,6 +181,15 @@
 #    17-Apr-2013 (CT) Use `cls.is_locked` instead of home-grown code
 #    17-Apr-2013 (CT) Move `_m_auto_epkified` from M_Id_Entity to M_E_Type_Id
 #    18-Apr-2013 (CT) Factor `children_transitive`
+#    10-May-2013 (CT) Use `cls.show_in_ui_T` as default for `.show_in_ui`
+#    10-May-2013 (CT) Consider `children_np` for `show_in_ui` of `.is_partial`
+#    10-May-2013 (CT) Fix `M_Entity.__subclasscheck__` for `Spec Essence`
+#    11-May-2013 (CT) Factor `_m_create_rev_ref_attr`
+#                     (from `M_Link._m_create_link_ref_attr` to `M_Id_Entity`)
+#    11-May-2013 (CT) Redefine `M_Id_Entity._m_setup_roles` to call
+#                     `_m_create_rev_ref_attr`
+#    12-May-2013 (CT) Add `rev_type` to `_m_create_rev_ref_attr`
+#    13-May-2013 (CT) Fix `.__subclasscheck__`, again
 #    ««revision-date»»···
 #--
 
@@ -603,7 +612,7 @@ class M_Entity (M_E_Mixin) :
         if "is_partial" not in dct :
             setattr (cls, "is_partial", False)
         if "show_in_ui" not in dct :
-            setattr (cls, "show_in_ui", True)
+            setattr (cls, "show_in_ui", cls.show_in_ui_T)
         for psn in cls._nested_classes_to_combine :
             cls._m_combine_nested_class (psn, bases, dct)
         if "ui_display" not in cls._Attributes.__dict__ :
@@ -637,7 +646,13 @@ class M_Entity (M_E_Mixin) :
     # end def __instancecheck__
 
     def __subclasscheck__ (cls, subclass) :
-        return issubclass (subclass, cls.Essence)
+        Essence = getattr (cls, "Essence", cls)
+        try :
+            _super = Essence.__m_super
+        except AttributeError :
+            return type.__subclasscheck__   (Essence, subclass)
+        else :
+            return _super.__subclasscheck__ (subclass)
     # end def __subclasscheck__
 
 # end class M_Entity
@@ -714,6 +729,45 @@ class M_Id_Entity (M_Entity) :
         cls.__m_super.__init__  (name, bases, dct)
     # end def __init__
 
+    def _m_create_rev_ref_attr \
+            (cls, Attr_Type, rev_name, ref, ref_type, rev_type, ** kw) :
+        if rev_name in ref_type._Attributes._names :
+            r        = getattr (ref_type._Attributes, rev_name)
+            own      = rev_name in ref_type._Attributes._own_names
+            r_is_ref = issubclass (r, MOM.Attr._A_Rev_Ref_)
+            if (  (not r_is_ref)
+               or (own and not issubclass (cls, r.Ref_Type))
+               ) :
+                expl = ""
+                if r_is_ref :
+                    expl = "for %s.%s " % (r.Ref_Type.type_name, r.ref_name)
+                raise TypeError \
+                    ( "Name conflict between %s attribute '%s' %s"
+                      "and automagic reverse reference for %s.%s"
+                    % ( ref_type.type_name, r.name, expl
+                      , cls.type_name, ref.name
+                      )
+                    )
+            if own :
+                return r
+        akw = dict \
+            ( P_Type       = rev_type
+            , Ref_Type     = cls
+            , ref_name     = ref.name
+            , __module__   = ref_type.__module__
+            , ** kw
+            )
+        if "description" not in akw :
+            akw ["description"] = \
+                (_T ( "Set of `%s` instances referring to this entity "
+                      "by attribute %s"
+                    ) % (_T (cls.ui_name), ref.name)
+                )
+        result = type (Attr_Type) (rev_name, (Attr_Type, ), akw)
+        ref_type.add_attribute (result, override = True)
+        return result
+    # end def _m_create_rev_ref_attr
+
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         def _typ (a) :
             return getattr (a, "P_Type_S", a.P_Type)
@@ -753,6 +807,21 @@ class M_Id_Entity (M_Entity) :
             (app_type, etypes, bases, ** r_kw)
         return result
     # end def _m_new_e_type_dict
+
+    def _m_setup_roles (cls) :
+        cls.__m_super._m_setup_roles ()
+        def _gen_refs (cls) :
+            for a in cls._Attributes._names.itervalues () :
+                if a is not None and issubclass (a, MOM.Attr.A_Id_Entity) :
+                    yield a
+        for ref in _gen_refs (cls) :
+            rev_name = ref.rev_ref_attr_name
+            if rev_name :
+                r_type = ref.E_Type
+                if r_type and not isinstance (r_type, basestring) :
+                    cls._m_create_rev_ref_attr \
+                        (MOM.Attr.A_Rev_Ref_Set, rev_name, ref, r_type, cls)
+    # end def _m_setup_roles
 
 # end class M_Id_Entity
 
@@ -1075,7 +1144,9 @@ class M_E_Type_Id (M_E_Type) :
         cls.__m_super._m_setup_attributes ()
         cls.is_editable  = cls.user_attr and not cls.is_locked ()
         cls.show_in_ui   = \
-            (cls.record_changes and cls.show_in_ui and not cls.is_partial)
+            (   cls.record_changes and cls.show_in_ui
+            and bool (cls.children_np or not cls.is_partial)
+            )
         cls.sig_attr     = cls.primary
         MOM._Id_Entity_Destroyed_Mixin_.define_e_type (cls)
         cls._m_setup_ref_maps   ()

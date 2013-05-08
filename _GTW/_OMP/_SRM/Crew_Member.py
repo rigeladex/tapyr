@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -32,6 +32,7 @@
 #     9-Feb-2011 (CT) `right.ui_allow_new` set to `True`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     8-Aug-2012 (CT) Add `example`
+#    12-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,8 @@ class Crew_Member (_Ancestor_Essence) :
             """Person which sails as crew member on `boat_in_regatta`"""
 
             role_type          = GTW.OMP.SRM.Sailor
-            auto_cache         = "_crew"
+            rev_ref_attr_name  = "_crew"
+            rev_ref_singular   = True
             ui_allow_new       = True
 
         # end class right

@@ -32,6 +32,8 @@
 #     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
 #    19-Mar-2013 (CT) Add test for `AQ` for recursive attribute `affiliate`
 #    19-Mar-2013 (CT) Add test for `AQ.Atoms`, `AQ.Unwrapped_Atoms`
+#    11-May-2013 (CT) Add `_test_entity_attr`
+#    15-May-2013 (CT) Add test for `link_ref_attr`
 #    ««revision-date»»···
 #--
 
@@ -963,6 +965,503 @@ _test_code = """
 
 """
 
+_test_entity_attr = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> MOM = scope.MOM
+    >>> PAP = scope.PAP
+    >>> sk = lambda x : (not bool (x.children), x.i_rank)
+
+    >>> show_T_attrs (PAP.Subject, "%%s%%-15s %%-10s %%-25.25s %%s", None, sk)
+    PAP.Subject
+        address_links   query      PAP.Subject_has_Address   PAP.Subject_has_Address
+        addresses       query      PAP.Address               PAP.Subject_has_Address
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Subject_has_Email     PAP.Subject_has_Email
+        emails          query      PAP.Email                 PAP.Subject_has_Email
+        last_changed_by computed   MOM.Id_Entity
+        phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
+        phones          query      PAP.Phone                 PAP.Subject_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links       query      PAP.Subject_has_Url       PAP.Subject_has_Url
+        urls            query      PAP.Url                   PAP.Subject_has_Url
+    .PAP.Legal_Entity
+        address_links   query      PAP.Subject_has_Address   PAP.Subject_has_Address
+        addresses       query      PAP.Address               PAP.Subject_has_Address
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Subject_has_Email     PAP.Subject_has_Email
+        emails          query      PAP.Email                 PAP.Subject_has_Email
+        last_changed_by computed   MOM.Id_Entity
+        phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
+        phones          query      PAP.Phone                 PAP.Subject_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links       query      PAP.Subject_has_Url       PAP.Subject_has_Url
+        urls            query      PAP.Url                   PAP.Subject_has_Url
+    ..PAP.Company
+        address_links   query      PAP.Company_has_Address   PAP.Company_has_Address
+        addresses       query      PAP.Address               PAP.Company_has_Address
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Company_has_Email     PAP.Company_has_Email
+        emails          query      PAP.Email                 PAP.Company_has_Email
+        last_changed_by computed   MOM.Id_Entity
+        phone_links     query      PAP.Company_has_Phone     PAP.Company_has_Phone
+        phones          query      PAP.Phone                 PAP.Company_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links       query      PAP.Company_has_Url       PAP.Company_has_Url
+        urls            query      PAP.Url                   PAP.Company_has_Url
+    ...PAP.Company_P
+        address_links   query      PAP.Company_has_Address   PAP.Company_has_Address
+        addresses       query      PAP.Address               PAP.Company_has_Address
+        affiliate       optional   PAP.Company_P
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Company_has_Email     PAP.Company_has_Email
+        emails          query      PAP.Email                 PAP.Company_has_Email
+        last_changed_by computed   MOM.Id_Entity
+        owner           primary    PAP.Biz_Man
+        phone_links     query      PAP.Company_has_Phone     PAP.Company_has_Phone
+        phones          query      PAP.Phone                 PAP.Company_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links       query      PAP.Company_has_Url       PAP.Company_has_Url
+        urls            query      PAP.Url                   PAP.Company_has_Url
+    ..PAP.Association
+        address_links   query      PAP.Association_has_Addre PAP.Association_has_Address
+        addresses       query      PAP.Address               PAP.Association_has_Address
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Association_has_Email PAP.Association_has_Email
+        emails          query      PAP.Email                 PAP.Association_has_Email
+        last_changed_by computed   MOM.Id_Entity
+        phone_links     query      PAP.Association_has_Phone PAP.Association_has_Phone
+        phones          query      PAP.Phone                 PAP.Association_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links       query      PAP.Association_has_Url   PAP.Association_has_Url
+        urls            query      PAP.Url                   PAP.Association_has_Url
+    .PAP.Person
+        account_links   query      PAP.Person_has_Account    PAP.Person_has_Account
+        accounts        query      Auth.Account              PAP.Person_has_Account
+        address_links   query      PAP.Person_has_Address    PAP.Person_has_Address
+        addresses       query      PAP.Address               PAP.Person_has_Address
+        biz_man         query      PAP.Biz_Man               PAP.Biz_Man
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Person_has_Email      PAP.Person_has_Email
+        emails          query      PAP.Email                 PAP.Person_has_Email
+        last_changed_by computed   MOM.Id_Entity
+        phone_links     query      PAP.Person_has_Phone      PAP.Person_has_Phone
+        phones          query      PAP.Phone                 PAP.Person_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        sailors         query      SRM.Sailor                SRM.Sailor
+        url_links       query      PAP.Person_has_Url        PAP.Person_has_Url
+        urls            query      PAP.Url                   PAP.Person_has_Url
+
+    >>> seen = set ()
+    >>> show_T_attrs (MOM.Id_Entity, "%%s%%-35s %%-10s %%-25.25s %%s", set (), sk)
+    MOM.Id_Entity
+        created_by                          computed   MOM.Id_Entity
+        last_changed_by                     computed   MOM.Id_Entity
+    .MOM.Link
+    ..MOM.Link1
+    ...Auth.Link1
+    ....Auth._Account_Action_
+        left                                primary    Auth.Account              Auth._Account_Action_
+    .....Auth._Account_Token_Action_
+    ...EVT.Link1
+    ....EVT._Recurrence_Mixin_
+    .....EVT.Recurrence_Spec
+        left                                primary    EVT.Event                 EVT.Recurrence_Spec
+        rules                               query      EVT.Recurrence_Rule       EVT.Recurrence_Rule
+    .....EVT.Recurrence_Rule
+        left                                primary    EVT.Recurrence_Spec       EVT.Recurrence_Rule
+    ....EVT.Event
+        calendar                            primary    EVT.Calendar
+        left                                primary    SWP.Page                  EVT.Event
+        occurs                              query      EVT.Event_occurs          EVT.Event_occurs
+        recurrence                          query      EVT.Recurrence_Spec       EVT.Recurrence_Spec
+    ....EVT.Event_occurs
+        essence                             computed   MOM.Id_Entity
+    ...PAP.Link1
+    ....PAP.Address_Position
+        left                                primary    PAP.Address               PAP.Address_Position
+    ....PAP.Biz_Man
+        left                                primary    PAP.Person                PAP.Biz_Man
+        owns                                query      PAP.Company_P             PAP.Company_P
+    ...SWP.Link1
+    ....SWP.Clip_O
+        left                                primary    SWP.Object_PN             SWP.Clip_O
+    ....SWP.Picture
+        left                                primary    SWP.Gallery               SWP.Picture
+    ...SRM.Link1
+    ....SRM.Regatta
+        boat_class                          primary    SRM._Boat_Class_
+        boats                               query      SRM.Boat_in_Regatta       SRM.Boat_in_Regatta
+        left                                primary    SRM.Regatta_Event         SRM.Regatta
+    .....SRM.Regatta_C
+        boat_class                          primary    SRM.Boat_Class
+        teams                               query      SRM.Team                  SRM.Team
+    .....SRM.Regatta_H
+        boat_class                          primary    SRM.Handicap
+    ....SRM.Boat
+        left                                primary    SRM.Boat_Class            SRM.Boat
+        regatta_links                       query      SRM.Boat_in_Regatta       SRM.Boat_in_Regatta
+    ....SRM.Sailor
+        boat_in_regatta_links               query      SRM.Crew_Member           SRM.Crew_Member
+        club                                primary    SRM.Club
+    ....SRM.Race_Result
+        left                                primary    SRM.Boat_in_Regatta       SRM.Race_Result
+    ....SRM.Team
+        boat_links                          query      SRM.Team_has_Boat_in_Rega SRM.Team_has_Boat_in_Regatta
+        leader                              optional   PAP.Person
+        left                                primary    SRM.Regatta_C             SRM.Team
+    ..MOM._MOM_Link_n_
+    ...MOM.Link2
+    ....Auth.Link2
+    .....Auth.Account_in_Group
+        right                               primary    Auth.Group                Auth.Account_in_Group
+    ....PAP.Link2
+    .....PAP.Subject_has_Property
+        left                                primary    PAP.Subject               PAP.Subject_has_Property
+        right                               primary    PAP.Property              PAP.Subject_has_Property
+    ......PAP.Subject_has_Address
+        right                               primary    PAP.Address               PAP.Subject_has_Address
+    .......PAP.Company_has_Address
+        left                                primary    PAP.Company               PAP.Company_has_Address
+    .......PAP.Association_has_Address
+        left                                primary    PAP.Association           PAP.Association_has_Address
+    ......PAP.Subject_has_Email
+        right                               primary    PAP.Email                 PAP.Subject_has_Email
+    ......PAP.Subject_has_Phone
+        right                               primary    PAP.Phone                 PAP.Subject_has_Phone
+    ......PAP.Subject_has_Url
+        right                               primary    PAP.Url                   PAP.Subject_has_Url
+    .....PAP.Person_has_Account
+        right                               primary    Auth.Account              PAP.Person_has_Account
+    ....SRM.Link2
+    .....SRM.Boat_in_Regatta
+        _crew                               query      SRM.Sailor                SRM.Crew_Member
+        left                                primary    SRM.Boat                  SRM.Boat_in_Regatta
+        race_results                        query      SRM.Race_Result           SRM.Race_Result
+        right                               primary    SRM.Regatta               SRM.Boat_in_Regatta
+        sailor_links                        query      SRM.Crew_Member           SRM.Crew_Member
+        skipper                             required   SRM.Sailor
+        team_links                          query      SRM.Team_has_Boat_in_Rega SRM.Team_has_Boat_in_Regatta
+    .....SRM.Crew_Member
+        right                               primary    SRM.Sailor                SRM.Crew_Member
+    .....SRM.Team_has_Boat_in_Regatta
+        left                                primary    SRM.Team                  SRM.Team_has_Boat_in_Regatta
+        right                               primary    SRM.Boat_in_Regatta       SRM.Team_has_Boat_in_Regatta
+    ...MOM.Link3
+    .MOM.Object
+    ..MOM.Named_Object
+    ...Auth.Named_Object
+    ....Auth.Group
+        account_links                       query      Auth.Account_in_Group     Auth.Account_in_Group
+        accounts                            query      Auth.Account              Auth.Account_in_Group
+    ..Auth.Object
+    ...Auth._Account_
+    ....Auth.Account
+        _account_action_s                   query      Auth._Account_Action_     Auth._Account_Action_
+        _account_token_action_s             query      Auth._Account_Token_Actio Auth._Account_Token_Action_
+        account_email_verifications         query      Auth.Account_EMail_Verifi Auth.Account_EMail_Verification
+        account_password_resets             query      Auth.Account_Password_Res Auth.Account_Password_Reset
+        activation                          query      Auth.Account_Activation   Auth.Account_Activation
+        activations                         query      Auth.Account_Activation   Auth.Account_Activation
+        group_links                         query      Auth.Account_in_Group     Auth.Account_in_Group
+        groups                              query      Auth.Group                Auth.Account_in_Group
+        password_change_required            query      Auth.Account_Password_Cha Auth.Account_Password_Change_Required
+        password_change_requireds           query      Auth.Account_Password_Cha Auth.Account_Password_Change_Required
+        person                              query      PAP.Person                PAP.Person_has_Account
+        person_link                         query      PAP.Person_has_Account    PAP.Person_has_Account
+        person_links                        query      PAP.Person_has_Account    PAP.Person_has_Account
+    ..EVT.Object
+    ..PAP.Object
+    ...PAP.Subject
+        address_links                       query      PAP.Subject_has_Address   PAP.Subject_has_Address
+        addresses                           query      PAP.Address               PAP.Subject_has_Address
+        email_links                         query      PAP.Subject_has_Email     PAP.Subject_has_Email
+        emails                              query      PAP.Email                 PAP.Subject_has_Email
+        phone_links                         query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
+        phones                              query      PAP.Phone                 PAP.Subject_has_Phone
+        property_links                      query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links                           query      PAP.Subject_has_Url       PAP.Subject_has_Url
+        urls                                query      PAP.Url                   PAP.Subject_has_Url
+    ....PAP.Legal_Entity
+    .....PAP.Company
+        address_links                       query      PAP.Company_has_Address   PAP.Company_has_Address
+        email_links                         query      PAP.Company_has_Email     PAP.Company_has_Email
+        phone_links                         query      PAP.Company_has_Phone     PAP.Company_has_Phone
+        url_links                           query      PAP.Company_has_Url       PAP.Company_has_Url
+    ......PAP.Company_P
+        affiliate                           optional   PAP.Company_P
+        owner                               primary    PAP.Biz_Man
+    .....PAP.Association
+        address_links                       query      PAP.Association_has_Addre PAP.Association_has_Address
+        email_links                         query      PAP.Association_has_Email PAP.Association_has_Email
+        phone_links                         query      PAP.Association_has_Phone PAP.Association_has_Phone
+        url_links                           query      PAP.Association_has_Url   PAP.Association_has_Url
+    ....PAP.Person
+        account_links                       query      PAP.Person_has_Account    PAP.Person_has_Account
+        address_links                       query      PAP.Person_has_Address    PAP.Person_has_Address
+        biz_man                             query      PAP.Biz_Man               PAP.Biz_Man
+        email_links                         query      PAP.Person_has_Email      PAP.Person_has_Email
+        phone_links                         query      PAP.Person_has_Phone      PAP.Person_has_Phone
+        sailors                             query      SRM.Sailor                SRM.Sailor
+        url_links                           query      PAP.Person_has_Url        PAP.Person_has_Url
+    ...PAP.Property
+        subject_links                       query      PAP.Subject_has_Property  PAP.Subject_has_Property
+    ....PAP.Address
+        association_links                   query      PAP.Association_has_Addre PAP.Association_has_Address
+        associations                        query      PAP.Association           PAP.Association_has_Address
+        companies                           query      PAP.Company               PAP.Company_has_Address
+        company_links                       query      PAP.Company_has_Address   PAP.Company_has_Address
+        gps                                 query      PAP.Address_Position      PAP.Address_Position
+        person_links                        query      PAP.Person_has_Address    PAP.Person_has_Address
+        persons                             query      PAP.Person                PAP.Person_has_Address
+        subject_links                       query      PAP.Subject_has_Address   PAP.Subject_has_Address
+    ....PAP.Email
+        association_links                   query      PAP.Association_has_Email PAP.Association_has_Email
+        company_links                       query      PAP.Company_has_Email     PAP.Company_has_Email
+        person_links                        query      PAP.Person_has_Email      PAP.Person_has_Email
+        subject_links                       query      PAP.Subject_has_Email     PAP.Subject_has_Email
+    ....PAP.Phone
+        association_links                   query      PAP.Association_has_Phone PAP.Association_has_Phone
+        company_links                       query      PAP.Company_has_Phone     PAP.Company_has_Phone
+        person_links                        query      PAP.Person_has_Phone      PAP.Person_has_Phone
+        subject_links                       query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
+    ....PAP.Url
+        association_links                   query      PAP.Association_has_Url   PAP.Association_has_Url
+        company_links                       query      PAP.Company_has_Url       PAP.Company_has_Url
+        person_links                        query      PAP.Person_has_Url        PAP.Person_has_Url
+        subject_links                       query      PAP.Subject_has_Url       PAP.Subject_has_Url
+    ..SWP.Object
+    ...SWP.Object_PN
+        clip_os                             query      SWP.Clip_O                SWP.Clip_O
+    ....SWP.Page
+        events                              query      EVT.Event                 EVT.Event
+    .....SRM.Page
+        event                               primary    SRM.Regatta_Event
+    ....SWP.Gallery
+        pictures                            query      SWP.Picture               SWP.Picture
+    ..SRM.Object
+    ...SRM._Boat_Class_
+    ....SRM.Boat_Class
+        boats                               query      SRM.Boat                  SRM.Boat
+    ...SRM.Regatta_Event
+        regattas                            query      SRM.Regatta               SRM.Regatta
+    .Auth.Id_Entity
+    .EVT.Id_Entity
+    .PAP.Id_Entity
+    .SWP.Id_Entity
+    .SRM.Id_Entity
+
+    >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
+    ...     if T.link_ref_attr and not T.is_partial :
+    ...         print (T.type_name)
+    ...         for a in T.link_ref_attr :
+    ...             if a.Ref_Type.show_in_ui :
+    ...                  print (" " * 3, a.name)
+    Auth.Account
+        group_links
+        person_links
+    Auth.Group
+        account_links
+    EVT.Event
+        occurs
+    EVT.Recurrence_Spec
+        rules
+    PAP.Address
+        subject_links
+        person_links
+        company_links
+        association_links
+    PAP.Association
+        property_links
+        url_links
+        phone_links
+        email_links
+        address_links
+    PAP.Company
+        property_links
+        url_links
+        phone_links
+        email_links
+        address_links
+    PAP.Company_P
+        property_links
+        url_links
+        phone_links
+        email_links
+        address_links
+    PAP.Email
+        subject_links
+        person_links
+        company_links
+        association_links
+    PAP.Person
+        property_links
+        account_links
+        sailors
+        url_links
+        phone_links
+        email_links
+        address_links
+    PAP.Phone
+        subject_links
+        person_links
+        company_links
+        association_links
+    PAP.Url
+        subject_links
+        person_links
+        company_links
+        association_links
+    SRM.Boat
+        regatta_links
+    SRM.Boat_Class
+        boats
+    SRM.Boat_in_Regatta
+        race_results
+        sailor_links
+        team_links
+    SRM.Page
+        events
+        clip_os
+    SRM.Regatta_C
+        boats
+        teams
+    SRM.Regatta_Event
+        regattas
+    SRM.Regatta_H
+        boats
+    SRM.Sailor
+        boat_in_regatta_links
+    SRM.Team
+        boat_links
+    SWP.Clip_X
+        events
+        clip_os
+    SWP.Gallery
+        clip_os
+        pictures
+    SWP.Page
+        events
+        clip_os
+    SWP.Page_Y
+        events
+        clip_os
+
+    >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
+    ...     print ("%%-40s %%s" %% (T.type_name, T.show_in_ui))
+    Auth.Account                             True
+    Auth.Account_Activation                  False
+    Auth.Account_Anonymous                   False
+    Auth.Account_EMail_Verification          False
+    Auth.Account_Password_Change_Required    False
+    Auth.Account_Password_Reset              False
+    Auth.Account_in_Group                    True
+    Auth.Certificate                         True
+    Auth.Group                               True
+    Auth.Id_Entity                           True
+    Auth.Link1                               True
+    Auth.Link2                               True
+    Auth.Link3                               False
+    Auth.Named_Object                        True
+    Auth.Object                              True
+    Auth._Account_                           True
+    Auth._Account_Action_                    False
+    Auth._Account_Token_Action_              False
+    EVT.Calendar                             True
+    EVT.Event                                True
+    EVT.Event_occurs                         True
+    EVT.Id_Entity                            True
+    EVT.Link1                                True
+    EVT.Link2                                False
+    EVT.Link3                                False
+    EVT.Named_Object                         False
+    EVT.Object                               True
+    EVT.Recurrence_Rule                      True
+    EVT.Recurrence_Spec                      True
+    EVT._Recurrence_Mixin_                   True
+    MOM.Id_Entity                            True
+    MOM.Link                                 True
+    MOM.Link1                                True
+    MOM.Link2                                True
+    MOM.Link3                                False
+    MOM.Named_Object                         True
+    MOM.Object                               True
+    MOM._MOM_Link_n_                         True
+    PAP.Address                              True
+    PAP.Address_Position                     True
+    PAP.Association                          True
+    PAP.Association_has_Address              True
+    PAP.Association_has_Email                True
+    PAP.Association_has_Phone                True
+    PAP.Association_has_Url                  True
+    PAP.Biz_Man                              True
+    PAP.Company                              True
+    PAP.Company_P                            True
+    PAP.Company_has_Address                  True
+    PAP.Company_has_Email                    True
+    PAP.Company_has_Phone                    True
+    PAP.Company_has_Url                      True
+    PAP.Email                                True
+    PAP.Id_Entity                            True
+    PAP.Legal_Entity                         True
+    PAP.Link1                                True
+    PAP.Link2                                True
+    PAP.Link3                                False
+    PAP.Named_Object                         False
+    PAP.Object                               True
+    PAP.Person                               True
+    PAP.Person_has_Account                   True
+    PAP.Person_has_Address                   True
+    PAP.Person_has_Email                     True
+    PAP.Person_has_Phone                     True
+    PAP.Person_has_Url                       True
+    PAP.Phone                                True
+    PAP.Property                             True
+    PAP.Subject                              True
+    PAP.Subject_has_Address                  True
+    PAP.Subject_has_Email                    True
+    PAP.Subject_has_Phone                    True
+    PAP.Subject_has_Property                 True
+    PAP.Subject_has_Url                      True
+    PAP.Url                                  True
+    SRM.Boat                                 True
+    SRM.Boat_Class                           True
+    SRM.Boat_in_Regatta                      True
+    SRM.Club                                 True
+    SRM.Crew_Member                          True
+    SRM.Handicap                             True
+    SRM.Id_Entity                            True
+    SRM.Link1                                True
+    SRM.Link2                                True
+    SRM.Link3                                False
+    SRM.Named_Object                         False
+    SRM.Object                               True
+    SRM.Page                                 True
+    SRM.Race_Result                          True
+    SRM.Regatta                              True
+    SRM.Regatta_C                            True
+    SRM.Regatta_Event                        True
+    SRM.Regatta_H                            True
+    SRM.Sailor                               True
+    SRM.Team                                 True
+    SRM.Team_has_Boat_in_Regatta             True
+    SRM._Boat_Class_                         True
+    SWP.Clip_O                               True
+    SWP.Clip_X                               True
+    SWP.Gallery                              True
+    SWP.Id_Entity                            True
+    SWP.Link1                                True
+    SWP.Link2                                False
+    SWP.Link3                                False
+    SWP.Named_Object                         False
+    SWP.Object                               True
+    SWP.Object_PN                            True
+    SWP.Page                                 True
+    SWP.Page_Y                               True
+    SWP.Picture                              True
+
+"""
+
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
 from   _MOM.inspect             import children_trans_iter
@@ -982,8 +1481,10 @@ class Biz_Man (_Ancestor_Essence) :
         class left (_Ancestor.left) :
             """Network device the interface is connected to."""
 
-            role_type          = GTW.OMP.PAP.Person
-            role_name          = "man"
+            role_type           = GTW.OMP.PAP.Person
+            role_name           = "man"
+            max_links           = 1
+            link_ref_singular   = True
 
         # end class left
 
@@ -1005,6 +1506,7 @@ class Company_P (_Ancestor_Essence) :
 
             kind               = Attr.Primary
             P_Type             = Biz_Man
+            rev_ref_attr_name  = "owns"
 
         # end class owner
 
@@ -1020,9 +1522,46 @@ class Company_P (_Ancestor_Essence) :
 
 # end class Company_P
 
+def T_attrs (T, seen = None) :
+    if seen is None :
+        seen = set ()
+    Ref_Attr_Types = \
+        ( MOM.Attr._A_Id_Entity_
+        , MOM.Attr._A_Id_Entity_Collection_
+        )
+    def _gen () :
+        for n, a in sorted (T.attributes.iteritems ()) :
+            attr = a.attr
+            PT   = attr.P_Type
+            if PT and isinstance (attr, Ref_Attr_Types) :
+                key = (attr.name, PT.type_name)
+                if key not in seen :
+                    seen.add (key)
+                    yield n, a, PT
+    return sorted (_gen ())
+# end def T_attrs
+
+def show_T_attrs (Root, format, seen, sk, lead = ".") :
+    for (T, l) in children_trans_iter (Root, sort_key = sk) :
+        attrs = T_attrs (T, seen)
+        if attrs or T.children :
+            print ("%s%s" % (lead * l, T.type_name))
+            for n, a, PT in attrs :
+                RT = getattr (getattr (a, "Ref_Type", None), "type_name", "")
+                if not RT :
+                    RT = getattr (a, "assoc", "")
+                    if not isinstance (RT, basestring) :
+                        RT = getattr (RT, "type_name", "")
+                if RT.startswith ("GTW.OMP.") :
+                    RT = RT [len ("GTW.OMP."):]
+                line = format % (" " * 4, a.name, a.kind, PT.type_name, RT)
+                print (line.rstrip ())
+# end def show_T_attrs
+
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( main          = _test_code
+        , entity_attr   = _test_entity_attr
         )
     )
 

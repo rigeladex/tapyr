@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -31,6 +31,7 @@
 #    22-Sep-2011 (CT) s/A_Entity/A_Id_Entity/
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
+#    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ class Team (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Regatta_C
             role_name          = "regatta"
-            auto_cache         = True
+            rev_ref_attr_name  = "team"
 
         # end class left
 

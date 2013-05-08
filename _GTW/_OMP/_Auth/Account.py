@@ -65,6 +65,7 @@
 #     6-May-2013 (CT) Add `sys.path` to, raise KeyError in, `verify_password`
 #     6-May-2013 (CT) Factor `unknown_hasher`, use it in `password_hash`;
 #                     fix `ph_name.computed_default`
+#    10-May-2013 (CT) Set `Account_Anonymous.show_in_ui = False`
 #    ««revision-date»»···
 #--
 
@@ -151,6 +152,7 @@ class Account_Anonymous (_Ancestor_Essence) :
     """Default account for users which are not logging in."""
 
     max_count    = 1
+    show_in_ui   = False
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

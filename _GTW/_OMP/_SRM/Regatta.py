@@ -50,6 +50,7 @@
 #    21-Mar-2013 (CT) Set `Regatta.boat_class.P_Type_S` to avoid
 #                     `polymorphic_epk`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
+#    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class Regatta (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Regatta_Event
             role_name          = "event"
-            auto_cache         = True
+            link_ref_attr_name = "regatta"
 
         # end class left
 

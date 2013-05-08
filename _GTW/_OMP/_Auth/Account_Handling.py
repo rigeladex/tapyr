@@ -40,6 +40,8 @@
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
 #    16-Aug-2012 (MG) Add `description` attribute to Action links
 #    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
+#    10-May-2013 (CT) Add `_Account_Action_.show_in_ui_T = False`
+#    13-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -61,7 +63,8 @@ _Ancestor_Essence = Auth.Link1
 class _Account_Action_ (_Ancestor_Essence) :
     """Base class for different actions for a account."""
 
-    is_partial = True
+    is_partial    = True
+    show_in_ui_T  = False
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -97,8 +100,8 @@ class Account_Activation (_Ancestor_Essence) :
         class left (_Ancestor.left) :
             """Account which this action is bound to."""
 
-            auto_cache = "activation"
-            max_links  = 1
+            max_links          = 1
+            link_ref_attr_name = "activation"
 
         # end class left
 
@@ -120,8 +123,8 @@ class Account_Password_Change_Required (_Ancestor_Essence) :
         class left (_Ancestor.left) :
             """Account which this action is bound to."""
 
-            auto_cache = "password_change_required"
-            max_links  = 1
+            max_links          = 1
+            link_ref_attr_name = "password_change_required"
 
         # end class left
 

@@ -34,6 +34,7 @@
 #    30-Jan-2013 (MG) Make `extension` changeable, change min values for
 #                     width and height
 #    31-Jan-2013 (MG) change kind of `extension` to `Optional`
+#    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,7 @@ class Picture (_Ancestor_Essence) :
             import _GTW._OMP._SWP.Gallery
             role_type          = GTW.OMP.SWP.Gallery
 
-            auto_cache         = "pictures"
+            rev_ref_attr_name  = "picture"
 
         # end class left
 

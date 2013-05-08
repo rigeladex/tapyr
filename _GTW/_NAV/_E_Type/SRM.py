@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -58,6 +58,7 @@
 #     7-May-2012 (CT) Add attribute `bir_admin` to `Regatta`
 #    30-May-2012 (CT) Change `href_register` to honor `is_cancelled`
 #    18-Jun-2012 (CT) Rename `email` to `email_from`
+#    13-May-2013 (CT) Use `query`, not `r_query`
 #    ««revision-date»»···
 #--
 
@@ -147,7 +148,7 @@ class Regatta (GTW.NAV.E_Type.Instance_Mixin, GTW.NAV.Dir) :
             if first (obj.teams).place :
                 Result_Type = self.Result_Teamrace
         else :
-            obj.boats = scope.SRM.Boat_in_Regatta.r_query \
+            obj.boats = scope.SRM.Boat_in_Regatta.query \
                 (right = obj).order_by (sk).all ()
             if obj.races :
                 Result_Type = self.Result

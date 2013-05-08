@@ -91,17 +91,27 @@
 #    16-Apr-2013 (CT) Add and use `auto_derive_np_kw`
 #    16-Apr-2013 (CT) Make `m_create_role_children` lazy
 #    16-Apr-2013 (CT) Rename `m_create_role_child` to `_m_create_role_child`
+#     8-May-2013 (CT) Add `_m_create_link_ref_attr`, call from `_m_setup_roles`
+#    10-May-2013 (CT) Factor `plural_of`
+#    10-May-2013 (CT) Add `link_ref_singular`
+#    11-May-2013 (CT) Factor `_m_create_rev_ref_attr` to `M_Id_Entity`
+#    12-May-2013 (CT) Add `_m_create_role_ref_attr`, call from `_m_setup_roles`
+#    12-May-2013 (CT) Remove setup of `auto_cache_roles` from `_m_setup_roles`
+#    12-May-2013 (CT) Add `rev_type` to calls of `_m_create_rev_ref_attr`
+#    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    ««revision-date»»···
 #--
 
-from   _MOM import MOM
-from   _TFL import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
 
 import _MOM._Meta.M_Entity
 import _MOM.E_Type_Manager
 
-from   _TFL.predicate import cartesian, uniq
+from   _TFL.I18N             import _, _T
+from   _TFL.predicate        import cartesian, plural_of, uniq
 import _TFL.multimap
+import _TFL.Undef
 
 import itertools
 
@@ -147,6 +157,17 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 cls._m_create_role_child (* adr)
     # end def _m_create_auto_children
 
+    def _m_create_link_ref_attr (cls, role, role_type, plural) :
+        name      = cls._m_link_ref_attr_name (role, plural)
+        Attr_Type = MOM.Attr.A_Link_Ref_List if plural else MOM.Attr.A_Link_Ref
+        return cls._m_create_rev_ref_attr \
+            ( Attr_Type, name, role, role_type, cls
+            , assoc        = cls ### XXX remove after auto_cache_roles are removed
+            , description  =
+                _T ("`%s` link%s") % (_T (cls.ui_name), "s" if plural else "")
+            )
+    # end def _m_create_link_ref_attr
+
     def _m_create_role_child (cls, * role_etype_s) :
         """Create derived link classes for the (role, e_type) combinations
            specified.
@@ -178,17 +199,14 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             else :
                 auto_kw = cls.auto_derive_np_kw [tbn]
             for role, etype in rets :
-                rkw [role.name] = role.__class__ \
-                    ( role.name
-                    , (role, )
-                    , dict
-                        ( auto_kw [role.name]
-                        , auto_cache     = role.auto_cache_np
-                        , auto_derive_np = role.auto_derive_npt
-                        , role_type      = etype
-                        , __module__     = cls.__module__
-                        )
+                r_rkw = dict \
+                    ( auto_kw [role.name]
+                    , auto_rev_ref   = role.auto_rev_ref_np
+                    , auto_derive_np = role.auto_derive_npt
+                    , role_type      = etype
+                    , __module__     = cls.__module__
                     )
+                rkw [role.name] = role.__class__ (role.name, (role, ), r_rkw)
                 ### reset cache
                 role._children_np = role._children_np_transitive = None
             is_partial = \
@@ -232,6 +250,25 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 cls._m_create_role_child ((role.name, c))
     # end def _m_create_role_children
 
+    def _m_create_role_ref_attr (cls, name, role, role_type) :
+        orn        = cls.other_role_name (role.name)
+        other_role = getattr (cls._Attributes, orn)
+        plural     = other_role.max_links != 1
+        Attr_Type  = MOM.Attr.A_Role_Ref
+        if plural :
+            if not role.rev_ref_singular :
+                name   = plural_of (name)
+            Attr_Type  = MOM.Attr.A_Role_Ref_Set
+        if other_role.role_type :
+            result = cls._m_create_rev_ref_attr \
+                ( Attr_Type, name, other_role, other_role.role_type, role_type
+                , description     = _T ("`%s` linked to `%s`") %
+                    (_T (role_type.ui_name), _T (other_role.role_type.ui_name))
+                , other_role_name = role.name
+                )
+            return result
+    # end def _m_create_role_ref_attr
+
     def _m_init_prop_specs (cls, name, bases, dct) :
         result = cls.__m_super._m_init_prop_specs (name, bases, dct)
         cls._Attributes.m_setup_names ()
@@ -246,6 +283,20 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         return result
     # end def _m_init_prop_specs
 
+    def _m_link_ref_attr_name (cls, role, plural = True) :
+        result = role.link_ref_attr_name or cls.link_ref_attr_name_p (role)
+        suffix = role.link_ref_suffix
+        if isinstance (suffix, TFL.Undef) :
+            suffix = cls.link_ref_attr_name_s
+        if suffix is not None :
+            result += suffix
+            if plural :
+                result = plural_of (result)
+        elif not plural :
+            result += "_1"
+        return result
+    # end def _m_link_ref_attr_name
+
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
@@ -257,36 +308,49 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     # end def _m_new_e_type_dict
 
     def _m_setup_roles (cls) :
-        ac_roles = []
+        cls.__m_super._m_setup_roles ()
         cls.Partial_Roles = PRs = []
         cls.Roles         = Rs  = []
         cls.acr_map = acr_map = dict (getattr (cls, "acr_map", {}))
         for a in cls.Role_Attrs :
             Rs.append (a)
             if a.role_type :
-                if a.auto_cache :
-                    ac_roles.append (a)
                 if a.role_type.is_partial :
                     PRs.append (a)
             else :
                 cls.is_partial = True
-        for a in ac_roles :
-            rc = acr_map.get (a.name) or a.auto_cache
-            if not isinstance (rc, MOM._.Link._Cacher_) :
-                Cacher = a.Cacher_Type or cls.Cacher
-                rc     = Cacher (a.auto_cache)
-            if rc.link_type_name is None :
-                rc.setup (cls, a)
-            elif cls.type_name != rc.link_type_name :
-                rc = rc.copy (cls, a)
-            acr_map [a.name] = rc
-        cls.auto_cache_roles = tuple (acr_map.get (a.name) for a in ac_roles)
+        for role in Rs :
+            r_type = role.role_type
+            if r_type and not isinstance (role.link_ref_attr_name, TFL.Undef) :
+                if role.link_ref_singular :
+                    if role.max_links != 1 :
+                        raise TypeError \
+                            ( "%s.%s: inconsistent `max_links` %s "
+                              "for link_ref_singular"
+                            % (cls, role.name, role.max_links)
+                            )
+                else :
+                    cls._m_create_link_ref_attr (role, r_type, plural = True)
+                if role.max_links == 1 :
+                    cls._m_create_link_ref_attr (role, r_type, plural = False)
+                rran = role.rev_ref_attr_name or role.auto_rev_ref
+                if rran and len (cls.Role_Attrs) == 2 :
+                    if rran == True :
+                        rran = role.role_name
+                    cls._m_create_role_ref_attr (rran, role, r_type)
+        cls.auto_cache_roles = ()
     # end def _m_setup_roles
 
 # end class M_Link
 
 class M_Link1 (M_Link) :
     """Meta class of unary link-types of MOM meta object model."""
+
+    link_ref_attr_name_s = ""
+
+    def link_ref_attr_name_p (cls, role) :
+        return cls.type_base_name.lower ()
+    # end def link_ref_attr_name_p
 
     def other_role_name (cls, role_name) :
         raise TypeError \
@@ -299,6 +363,13 @@ class M_Link1 (M_Link) :
 
 class M_Link_n (M_Link) :
     """Meta class of link-types with more than 1 role."""
+
+    link_ref_attr_name_s = "_link"
+
+    def link_ref_attr_name_p (cls, role) :
+        return "__".join \
+            (r.role_name for r in cls.Roles if r.name != role.name)
+    # end def link_ref_attr_name_p
 
 # end class M_Link_n
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Oct-2012 (CT) Creation
+#    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,8 @@ class Address_Position (_Ancestor_Essence) :
 
             role_type          = PAP.Address
             max_links          = 1
-            auto_cache         = "gps"
+            link_ref_attr_name = "gps"
+            link_ref_singular  = True
 
         # end class left
 

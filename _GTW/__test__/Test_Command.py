@@ -36,6 +36,7 @@
 #    28-Mar-2013 (CT) Add and call `reset_callbacks`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #     3-May-2013 (CT) Add `GTW_RST_Test_Command.v1_auth_required`
+#    13-May-2013 (CT) Fix `RAT` handling in `create_rst`
 #    ««revision-date»»···
 #--
 
@@ -354,9 +355,6 @@ class GTW_RST_Test_Command (GTW_Test_Command) :
     def create_rst (self, cmd, ** kw) :
         import _GTW._RST._MOM.Doc
         import _GTW._RST._MOM.Scope
-        if self.v1_auth_required :
-            ### `secure` and `httponly` break the test --> clear `cookie_kw`
-            GTW.RST.RAT.cookie_kw = {}
         result = GTW.RST.Root \
             ( language          = "de"
             , entries           =
@@ -369,6 +367,11 @@ class GTW_RST_Test_Command (GTW_Test_Command) :
                 ]
             , ** kw
             )
+        if self.v1_auth_required :
+            ### `secure` and `httponly` break the test --> clear `cookie_kw`
+            import _GTW._RST.RAT
+            GTW.RST.RAT.cookie_kw = {}
+            result.add_entries (GTW.RST.RAT (name = "RAT"))
         if cmd.log_level :
             print (formatted (result.Table))
         return result

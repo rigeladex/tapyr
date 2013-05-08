@@ -52,6 +52,7 @@
 #     7-May-2013 (CT) Add `IM_Handle`, `Nickname`
 #     7-May-2013 (CT) Add `Association`, `_import_association_cb`
 #     7-May-2013 (CT) Add `urls` to `include_links` of `Person`
+#    15-May-2013 (CT) Use `*_links` for `include_links`
 #    ««revision-date»»···
 #--
 
@@ -169,21 +170,23 @@ import _GTW._OMP._PAP.Company
 import _GTW._OMP._PAP.Person
 
 GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("addresses", "emails", "phones", "urls"))
+    ( include_links =
+        ("address_links", "email_links", "phone_links", "url_links")
+    )
 GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
     ( include_links =
-        ( "accounts", "addresses", "emails", "im_handles"
-        , "nicknames", "phones", "urls"
+        ( "account_links", "address_links", "email_links", "im_handle_links"
+        , "nickname_links", "phone_links", "url_links"
         )
     )
 GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("persons", "companies", "PAP.Address_Position"))
+    ( include_links = ("person_links", "company_links", "PAP.Address_Position"))
 GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("persons", "companies"))
+    ( include_links = ("person_links", "company_links"))
 GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("persons", "companies"))
+    ( include_links = ("person_links", "company_links"))
 GTW.OMP.PAP.Url.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("persons", "companies"))
+    ( include_links = ("person_links", "company_links"))
 
 from   _MOM import MOM
 import _MOM._Attr.Date_Interval
@@ -197,9 +200,11 @@ MOM.Attr.Time_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
 def _import_association_cb (module) :
     PAP = GTW.OMP.PAP
     PAP.Association.GTW.afs_spec = Spec.Entity \
-        ( include_links = ("addresses", "emails", "phones", "urls"))
+        ( include_links =
+            ("address_links", "email_links", "phone_links", "url_links")
+        )
     for T in (PAP.Address, PAP.Email, PAP.Phone, PAP.Url) :
-        T.GTW.afs_spec.add_links ("associations")
+        T.GTW.afs_spec.add_links ("association_links")
 
 GTW.OMP.PAP._Add_Import_Callback \
     ("_GTW._OMP._PAP.Association", _import_association_cb)

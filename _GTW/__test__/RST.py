@@ -199,22 +199,14 @@ _test_cqf = r"""
     ...     print ("%%s\n    %%s" %% (e.name, e.change_query_filters))
     Auth-Account
         (Q.type_name == Auth.Account,)
-    Auth-Account_Activation
-        (Q.type_name == Auth.Account_Activation,)
-    Auth-Account_Anonymous
-        (Q.type_name == Auth.Account_Anonymous,)
-    Auth-Account_EMail_Verification
-        (Q.type_name == Auth.Account_EMail_Verification,)
-    Auth-Account_Password_Change_Required
-        (Q.type_name == Auth.Account_Password_Change_Required,)
-    Auth-Account_Password_Reset
-        (Q.type_name == Auth.Account_Password_Reset,)
     Auth-Account_in_Group
         (Q.type_name == Auth.Account_in_Group,)
     Auth-Certificate
         (Q.type_name == Auth.Certificate,)
     Auth-Group
         (Q.type_name == Auth.Group,)
+    Auth-Id_Entity
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group'],),)
     Auth-Link1
         (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset'],),)
     Auth-Link2
@@ -225,10 +217,6 @@ _test_cqf = r"""
         (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group'],),)
     Auth-_Account_
         (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous'],),)
-    Auth-_Account_Action_
-        (Q.type_name.in_ (['Auth.Account_Activation', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset'],),)
-    Auth-_Account_Token_Action_
-        (Q.type_name.in_ (['Auth.Account_EMail_Verification', 'Auth.Account_Password_Reset'],),)
     MOM-Id_Entity
         ()
     MOM-Link
@@ -259,6 +247,8 @@ _test_cqf = r"""
         (Q.type_name == PAP.Company_has_Url,)
     PAP-Email
         (Q.type_name == PAP.Email,)
+    PAP-Id_Entity
+        (Q.type_name.in_ (['PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url'],),)
     PAP-Legal_Entity
         (Q.type_name.in_ (['PAP.Company'],),)
     PAP-Link1
@@ -309,6 +299,8 @@ _test_cqf = r"""
         (Q.type_name == SRM.Crew_Member,)
     SRM-Handicap
         (Q.type_name == SRM.Handicap,)
+    SRM-Id_Entity
+        (Q.type_name.in_ (['SRM.Boat', 'SRM.Boat_Class', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Handicap', 'SRM.Page', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_Event', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta'],),)
     SRM-Link1
         (Q.type_name.in_ (['SRM.Boat', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team'],),)
     SRM-Link2
@@ -341,6 +333,8 @@ _test_cqf = r"""
         (Q.type_name == SWP.Clip_X,)
     SWP-Gallery
         (Q.type_name == SWP.Gallery,)
+    SWP-Id_Entity
+        (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture'],),)
     SWP-Link1
         (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Picture'],),)
     SWP-Object
@@ -357,21 +351,15 @@ _test_cqf = r"""
     >>> for e in v1.entries :
     ...     print ("%%s    %%s" %% (e.name, e.attributes))
     Auth-Account    (Email `name`, Boolean `enabled`, Boolean `superuser`, Boolean `active`)
-    Auth-Account_Activation    (Account `left`,)
-    Auth-Account_Anonymous    (Email `name`, Boolean `enabled`)
-    Auth-Account_EMail_Verification    (Account `left`, String `token`, Date-Time `expires`, Email `new_email`)
-    Auth-Account_Password_Change_Required    (Account `left`,)
-    Auth-Account_Password_Reset    (Account `left`, String `token`, Date-Time `expires`, String `password`)
     Auth-Account_in_Group    (Account `left`, Group `right`)
     Auth-Certificate    (Email `email`, Date_Time_Interval `validity`, String `desc`, Date-Time `revocation_date`, Boolean `alive`)
     Auth-Group    (Name `name`, String `desc`)
+    Auth-Id_Entity    ()
     Auth-Link1    (Left `left`,)
     Auth-Link2    (Left `left`, Right `right`)
     Auth-Named_Object    (Name `name`,)
     Auth-Object    ()
     Auth-_Account_    (Email `name`, Boolean `enabled`, Boolean `superuser`, Boolean `active`)
-    Auth-_Account_Action_    (Account `left`,)
-    Auth-_Account_Token_Action_    (Account `left`, String `token`, Date-Time `expires`)
     MOM-Id_Entity    ()
     MOM-Link    (Left `left`,)
     MOM-Link1    (Left `left`,)
@@ -387,6 +375,7 @@ _test_cqf = r"""
     PAP-Company_has_Phone    (Company `left`, Phone `right`, Numeric_String `extension`, String `desc`)
     PAP-Company_has_Url    (Company `left`, Url `right`, String `desc`)
     PAP-Email    (Email `address`, String `desc`)
+    PAP-Id_Entity    ()
     PAP-Legal_Entity    (String `name`, Date_Interval `lifetime`, String `short_name`)
     PAP-Link1    (Left `left`,)
     PAP-Link2    (Left `left`, Right `right`)
@@ -412,6 +401,7 @@ _test_cqf = r"""
     SRM-Club    (String `name`, String `long_name`)
     SRM-Crew_Member    (Boat_in_Regatta `left`, Sailor `right`, Int `key`, String `role`)
     SRM-Handicap    (String `name`,)
+    SRM-Id_Entity    ()
     SRM-Link1    (Left `left`,)
     SRM-Link2    (Left `left`, Right `right`)
     SRM-Object    ()
@@ -428,6 +418,7 @@ _test_cqf = r"""
     SWP-Clip_O    (Object_PN `left`, Date_Interval `date_x`, Text `abstract`, Int `prio`)
     SWP-Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, Url `link_to`, String `title`)
     SWP-Gallery    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`, Directory `directory`)
+    SWP-Id_Entity    ()
     SWP-Link1    (Left `left`,)
     SWP-Object    ()
     SWP-Object_PN    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`)
@@ -436,7 +427,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Legal\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Named\_Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Account\_Token\_Action\_|Auth\-\_Account\_Action\_|Auth\-\_Account\_|Auth\-Object|Auth\-Named\_Object|Auth\-Link2|Auth\-Link1|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account\_Password\_Reset|Auth\-Account\_Password\_Change\_Required|Auth\-Account\_EMail\_Verification|Auth\-Account\_Anonymous|Auth\-Account\_Activation|Auth\-Account))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Named\_Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Account\_|Auth\-Object|Auth\-Named\_Object|Auth\-Link2|Auth\-Link1|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -643,29 +634,19 @@ _test_doc = r"""
     { 'json' :
         { 'entries' :
             [ 'Auth-Account'
-            , 'Auth-Account_Activation'
-            , 'Auth-Account_EMail_Verification'
-            , 'Auth-Account_Password_Change_Required'
-            , 'Auth-Account_Password_Reset'
             , 'Auth-Account_in_Group'
             , 'Auth-Certificate'
             , 'Auth-Group'
             , 'Auth-Id_Entity'
             , 'Auth-Link1'
             , 'Auth-Link2'
-            , 'Auth-Link2_Ordered'
-            , 'Auth-Link3'
             , 'Auth-Named_Object'
             , 'Auth-Object'
             , 'Auth-_Account_'
-            , 'Auth-_Account_Action_'
-            , 'Auth-_Account_Token_Action_'
             , 'MOM-Id_Entity'
             , 'MOM-Link'
             , 'MOM-Link1'
             , 'MOM-Link2'
-            , 'MOM-Link2_Ordered'
-            , 'MOM-Link3'
             , 'MOM-Named_Object'
             , 'MOM-Object'
             , 'MOM-_MOM_Link_n_'
@@ -681,9 +662,6 @@ _test_doc = r"""
             , 'PAP-Legal_Entity'
             , 'PAP-Link1'
             , 'PAP-Link2'
-            , 'PAP-Link2_Ordered'
-            , 'PAP-Link3'
-            , 'PAP-Named_Object'
             , 'PAP-Object'
             , 'PAP-Person'
             , 'PAP-Person_has_Account'
@@ -709,9 +687,6 @@ _test_doc = r"""
             , 'SRM-Id_Entity'
             , 'SRM-Link1'
             , 'SRM-Link2'
-            , 'SRM-Link2_Ordered'
-            , 'SRM-Link3'
-            , 'SRM-Named_Object'
             , 'SRM-Object'
             , 'SRM-Page'
             , 'SRM-Race_Result'
@@ -728,10 +703,6 @@ _test_doc = r"""
             , 'SWP-Gallery'
             , 'SWP-Id_Entity'
             , 'SWP-Link1'
-            , 'SWP-Link2'
-            , 'SWP-Link2_Ordered'
-            , 'SWP-Link3'
-            , 'SWP-Named_Object'
             , 'SWP-Object'
             , 'SWP-Object_PN'
             , 'SWP-Page'
@@ -1826,21 +1797,15 @@ _test_get = r"""
     { 'json' :
         { 'entries' :
             [ 'Auth-Account'
-            , 'Auth-Account_Activation'
-            , 'Auth-Account_Anonymous'
-            , 'Auth-Account_EMail_Verification'
-            , 'Auth-Account_Password_Change_Required'
-            , 'Auth-Account_Password_Reset'
             , 'Auth-Account_in_Group'
             , 'Auth-Certificate'
             , 'Auth-Group'
+            , 'Auth-Id_Entity'
             , 'Auth-Link1'
             , 'Auth-Link2'
             , 'Auth-Named_Object'
             , 'Auth-Object'
             , 'Auth-_Account_'
-            , 'Auth-_Account_Action_'
-            , 'Auth-_Account_Token_Action_'
             , 'MOM-Id_Entity'
             , 'MOM-Link'
             , 'MOM-Link1'
@@ -1856,6 +1821,7 @@ _test_get = r"""
             , 'PAP-Company_has_Phone'
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
+            , 'PAP-Id_Entity'
             , 'PAP-Legal_Entity'
             , 'PAP-Link1'
             , 'PAP-Link2'
@@ -1881,6 +1847,7 @@ _test_get = r"""
             , 'SRM-Club'
             , 'SRM-Crew_Member'
             , 'SRM-Handicap'
+            , 'SRM-Id_Entity'
             , 'SRM-Link1'
             , 'SRM-Link2'
             , 'SRM-Object'
@@ -1897,6 +1864,7 @@ _test_get = r"""
             , 'SWP-Clip_O'
             , 'SWP-Clip_X'
             , 'SWP-Gallery'
+            , 'SWP-Id_Entity'
             , 'SWP-Link1'
             , 'SWP-Object'
             , 'SWP-Object_PN'
@@ -1914,21 +1882,15 @@ _test_get = r"""
     { 'json' :
         { 'entries' :
             [ '/v1/Auth-Account'
-            , '/v1/Auth-Account_Activation'
-            , '/v1/Auth-Account_Anonymous'
-            , '/v1/Auth-Account_EMail_Verification'
-            , '/v1/Auth-Account_Password_Change_Required'
-            , '/v1/Auth-Account_Password_Reset'
             , '/v1/Auth-Account_in_Group'
             , '/v1/Auth-Certificate'
             , '/v1/Auth-Group'
+            , '/v1/Auth-Id_Entity'
             , '/v1/Auth-Link1'
             , '/v1/Auth-Link2'
             , '/v1/Auth-Named_Object'
             , '/v1/Auth-Object'
             , '/v1/Auth-_Account_'
-            , '/v1/Auth-_Account_Action_'
-            , '/v1/Auth-_Account_Token_Action_'
             , '/v1/MOM-Id_Entity'
             , '/v1/MOM-Link'
             , '/v1/MOM-Link1'
@@ -1944,6 +1906,7 @@ _test_get = r"""
             , '/v1/PAP-Company_has_Phone'
             , '/v1/PAP-Company_has_Url'
             , '/v1/PAP-Email'
+            , '/v1/PAP-Id_Entity'
             , '/v1/PAP-Legal_Entity'
             , '/v1/PAP-Link1'
             , '/v1/PAP-Link2'
@@ -1969,6 +1932,7 @@ _test_get = r"""
             , '/v1/SRM-Club'
             , '/v1/SRM-Crew_Member'
             , '/v1/SRM-Handicap'
+            , '/v1/SRM-Id_Entity'
             , '/v1/SRM-Link1'
             , '/v1/SRM-Link2'
             , '/v1/SRM-Object'
@@ -1985,6 +1949,7 @@ _test_get = r"""
             , '/v1/SWP-Clip_O'
             , '/v1/SWP-Clip_X'
             , '/v1/SWP-Gallery'
+            , '/v1/SWP-Id_Entity'
             , '/v1/SWP-Link1'
             , '/v1/SWP-Object'
             , '/v1/SWP-Object_PN'
@@ -4129,8 +4094,8 @@ _test_rat = r"""
 
     >>> _ = traverse ("http://localhost:9999/")
     / : GET, HEAD, OPTIONS
-    /RAT : OPTIONS, POST
     /v1 : 401 {"description": "Unauthorized"}
+    /RAT : OPTIONS, POST
 
     >>> headers = { "Content-Type": "application/json" }
 

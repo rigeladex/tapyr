@@ -41,6 +41,7 @@
 #    18-Nov-2011 (CT) Add `attribute_types`
 #    26-Jun-2012 (CT) Add `PNS_Aliases_R`
 #     9-Apr-2013 (CT) Add `DBW.db_sig` to `db_sig`
+#    10-May-2013 (CT) Add `all_attribute_types`
 #    ««revision-date»»···
 #--
 
@@ -131,10 +132,21 @@ class _App_Type_D_ (_App_Type_) :
         result = set ()
         for T in self._T_Extension :
             if not T.is_partial :
-                for ak in T.primary + T.user_attr :
+                for ak in T.edit_attr :
                     result.add (ak.attr)
         return sorted (result, key = TFL.Sorted_By ("typ", "name"))
     # end def attribute_types
+
+    @TFL.Meta.Once_Property
+    def all_attribute_types (self) :
+        """List of all attribute types used by the etypes of the application."""
+        result = set ()
+        for T in self._T_Extension :
+            if not T.is_partial :
+                for ak in T.attributes.itervalues () :
+                    result.add (ak.attr)
+        return sorted (result, key = TFL.Sorted_By ("typ", "name"))
+    # end def all_attribute_types
 
     @TFL.Meta.Once_Property
     def db_version_hash (self) :

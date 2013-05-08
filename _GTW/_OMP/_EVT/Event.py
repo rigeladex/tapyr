@@ -48,6 +48,7 @@
 #    12-Sep-2012 (CT) Change `compute_occurrences` to use `sorted`
 #                     (to achieve determistic test output)
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
+#    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class Event (_Ancestor_Essence) :
             import _GTW._OMP._SWP.Page
             role_type          = GTW.OMP.SWP.Page
             role_name          = "object"
-            auto_cache         = "events"
+            link_ref_attr_name = "event"
 
             ### give `date` and `time` priority for sorting
             sort_rank          = 10
@@ -209,7 +210,8 @@ class Event_occurs (_Ancestor_Essence) :
 
             role_type          = Event
             role_name          = "event"
-            auto_cache         = "occurs"
+            link_ref_attr_name = "occurs"
+            link_ref_suffix    = None     ### disable automatic pluralization
 
             ### give `date` and `time` priority for sorting
             sort_rank          = 10

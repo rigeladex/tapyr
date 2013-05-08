@@ -31,6 +31,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    14-May-2012 (CT) Replace `unit.C_Type` by `unit.P_Type`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
+#    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,8 @@ class Recurrence_Spec (_Ancestor_Essence) :
             """Event that recurs"""
 
             role_type          = GTW.OMP.EVT.Event
-            auto_cache         = "recurrence"
+            link_ref_attr_name = "recurrence"
+            link_ref_singular  = True
             max_links          = 1
 
         # end class left
@@ -212,7 +214,8 @@ class Recurrence_Rule (_Ancestor_Essence) :
             """Recurrence-spec this rule applies to."""
 
             role_type          = Recurrence_Spec
-            auto_cache         = "rules"
+            link_ref_attr_name = "rules"
+            link_ref_suffix    = None
 
         # end class left
 

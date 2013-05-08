@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -28,6 +28,8 @@
 # Revision Dates
 #    28-Aug-2012 (CT) Creation
 #    12-Sep-2012 (RS) Add `Id_Entity` needed by `FFM.Firmware`
+#    15-May-2013 (CT) Remove `Link2_Ordered`
+#    15-May-2013 (CT) Make derived `Id_Entity` a mixin of `Link*` and `Object`
 #    ««revision-date»»···
 #--
 
@@ -61,12 +63,11 @@ def derive_pns_bases (PNS, parent_PNS = MOM) :
     __module__ = TFL.Caller.globals () ["__name__"]
     postfix    = "_" + PNS._._bname
     pPNS       = parent_PNS
-    E          = _derived (PNS, postfix, pPNS.Entity, __module__ = __module__)
+    E = _derived (PNS, postfix, pPNS.Entity,       __module__ = __module__)
+    I = _derived (PNS, postfix, pPNS.Id_Entity, E, __module__ = __module__)
     for base in \
-            ( pPNS.Link1, pPNS.Link2, pPNS.Link2_Ordered, pPNS.Link3
-            , pPNS.Object, pPNS.Id_Entity
-            ) :
-        _derived (PNS, postfix, base, E, __module__ = __module__)
+            (pPNS.Link1, pPNS.Link2, pPNS.Link3, pPNS.Object) :
+        _derived (PNS, postfix, base, I, __module__ = __module__)
     _derived \
         (PNS, postfix, pPNS.Named_Object, PNS.Object, __module__ = __module__)
 # end def derive_pns_bases
