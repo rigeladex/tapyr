@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -39,6 +39,7 @@
 #                     take a selector, not `kind` as second argument
 #    17-Dec-2012 (CT) Change `_Kind_Selection_.attrs` to honor `hidden` for
 #                     kind `query`
+#    16-May-2013 (CT) Add `A_Type` (plus `_A_Type_Selection_`)
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ import _MOM._Attr
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
+import _TFL.Sorted_By
 
 import itertools
 
@@ -85,6 +87,28 @@ class _Selection_ (TFL.Meta.Object) :
     # end def __iter__
 
 # end class _Selection_
+
+class _A_Type_Selection_ (_Selection_) :
+    """Attribute selection for a specific type of attributes."""
+
+    def __init__ (self, spec, E_Type, anchor = None) :
+        self.__super.__init__ (E_Type, anchor)
+        self.a_type = spec.a_type
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def attrs (self) :
+        E_Type = self.E_Type
+        a_type = self.a_type
+        sk     = TFL.Sorted_By ("rank", "name")
+        result = tuple \
+            (  a for a in sorted (E_Type.attributes.itervalues (), key = sk)
+            if isinstance (a.attr, a_type)
+            )
+        return result
+    # end def attrs
+
+# end class _A_Type_Selection_
 
 class _Combo_Selection_ (_Selection_) :
     """Attribute selection assembled from `include` and `exclude` selectors."""
@@ -213,6 +237,21 @@ class _Selector_ (TFL.Meta.Object) :
     # end def __call__
 
 # end class _Selector_
+
+class A_Type (_Selector_) :
+    """Selector for a specific type of attributes."""
+
+    Type = _A_Type_Selection_
+
+    def __init__ (self, a_type) :
+        self.a_type = a_type
+    # end def __init__
+
+    def __repr__ (self) :
+        return "<MOM.Attr.Selector.Type %s>" % (self.a_type, )
+    # end def __repr__
+
+# end class A_Type
 
 class Combo (_Selector_) :
     """Selector for a set of attributes assembled from `include` and

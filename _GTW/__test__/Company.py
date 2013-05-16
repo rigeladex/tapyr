@@ -1348,6 +1348,62 @@ _test_entity_attr = """
         clip_os
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
+    ...     if T.rev_ref_attr and not T.is_partial :
+    ...         print (T.type_name)
+    ...         for a in T.rev_ref_attr :
+    ...             if a.Ref_Type.show_in_ui :
+    ...                  print (" " * 3, a.name)
+    Auth.Account
+        groups
+        person
+    Auth.Group
+        accounts
+    PAP.Address
+        persons
+        companies
+        associations
+    PAP.Association
+        urls
+        phones
+        emails
+        addresses
+    PAP.Biz_Man
+        owns
+    PAP.Company
+        urls
+        phones
+        emails
+        addresses
+    PAP.Company_P
+        urls
+        phones
+        emails
+        addresses
+    PAP.Email
+        persons
+        companies
+        associations
+    PAP.Person
+        accounts
+        urls
+        phones
+        emails
+        addresses
+    PAP.Phone
+        persons
+        companies
+        associations
+    PAP.Url
+        persons
+        companies
+        associations
+    SRM.Boat_in_Regatta
+        _crew
+        teams
+    SRM.Team
+        boats
+
+    >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
     ...     print ("%%-40s %%s" %% (T.type_name, T.show_in_ui))
     Auth.Account                             True
     Auth.Account_Activation                  False

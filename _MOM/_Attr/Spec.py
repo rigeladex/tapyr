@@ -63,6 +63,8 @@
 #    28-Mar-2013 (CT) Add `e_type.ui_attr`
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
 #    15-May-2013 (CT) Add `e_type.link_ref_attr`
+#    16-May-2013 (CT) Use `Selector.A_Type` instead of home-grown code
+#    16-May-2013 (CT) Add `e_type.rev_ref_attr`
 #    ««revision-date»»···
 #--
 
@@ -126,8 +128,10 @@ class Spec (MOM.Prop.Spec) :
             if isinstance (a, MOM.Attr._EPK_Mixin_)
             )
         e_type.link_ref_attr    = tuple \
-            (  a for a in sorted (e_type.attributes.itervalues (), key = sk)
-            if isinstance (a.attr, MOM.Attr.A_Link_Ref_List)
+            (MOM.Attr.Selector.A_Type (MOM.Attr.A_Link_Ref_List) (e_type))
+        e_type.rev_ref_attr     = tuple \
+            ( MOM.Attr.Selector.A_Type
+                ((MOM.Attr.A_Rev_Ref_Set, MOM.Attr._A_Role_Ref_)) (e_type)
             )
         e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)
