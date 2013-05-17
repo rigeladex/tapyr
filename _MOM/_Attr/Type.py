@@ -295,6 +295,7 @@
 #    13-May-2013 (CT) Factor `_A_Id_Entity_Collection_`,
 #                     add `_A_Id_Entity_List_`
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
+#    17-May-2013 (CT) Add `sort_key` to `_A_Rev_Ref_.query`, `.query_x`
 #    ««revision-date»»···
 #--
 
@@ -1283,13 +1284,14 @@ class _A_Rev_Ref_ (A_Attr_Type) :
             pass
     # end def finished_query_one
 
-    def query (self, obj) :
-        return self.finished_query (self.query_x (obj))
+    def query (self, obj, sort_key = None) :
+        result = self.query_x (obj, sort_key)
+        return self.finished_query (result)
     # end def query
 
-    def query_x (self, obj) :
+    def query_x (self, obj, sort_key = None) :
         ETM = obj.home_scope [self.Ref_Type]
-        return ETM.query (self.ref_filter == obj)
+        return ETM.query (self.ref_filter == obj, sort_key = sort_key)
     # end def query_x
 
 # end class _A_Rev_Ref_
@@ -2280,8 +2282,9 @@ class _A_Role_Ref_ (_A_Rev_Ref_) :
     role_filter         = TFL.Meta.Alias_Property ("ref_filter")
     role_name           = TFL.Meta.Alias_Property ("ref_name")
 
-    def query_x (self, obj) :
-        return self.__super.query_x (obj).attr (self.other_role_name)
+    def query_x (self, obj, sort_key = None) :
+        return self.__super.query_x \
+            (obj, sort_key = sort_key).attr (self.other_role_name)
     # end def query_x
 
 # end class _A_Role_Ref_

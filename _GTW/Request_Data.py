@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -44,6 +44,7 @@
 #     2-Jul-2012 (CT) Add `has_option`
 #     3-Jul-2012 (CT) Redefine `Request_Data_List.get` to fix `default`
 #     5-Oct-2012 (CT) Change `Request_Data_List.get` to use `.getlist`
+#    17-May-2013 (CT) Change `has_option` to return default `False`
 #    ««revision-date»»···
 #--
 
@@ -71,7 +72,7 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
         """Return value of `key` or True, if `key` was specified with empty
            value.
         """
-        result = self.get (key)
+        result = self.get (key, False)
         if isinstance (result, (list, tuple)) and result :
             result = result [-1]
         if result == "" :

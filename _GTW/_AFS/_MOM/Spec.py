@@ -96,6 +96,7 @@ import _GTW._Form._MOM.Field ### XXX remove after migration of `css_class`
 import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
+from   _TFL.predicate           import uniq
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
@@ -155,7 +156,7 @@ class _Entity_Mixin_ (_Base_) :
             (self.attr_spec, ** kw.pop ("attr_spec", {}))
         include_elems = kw.pop ("include_elems", ())
         include_links = tuple \
-            (self._entity_link (l) for l in kw.pop ("include_links", ()))
+            (self._entity_link (l) for l in uniq (kw.pop ("include_links", ())))
         etl_group = kw.pop ("entity_links_group", None)
         if  etl_group :
             include_links = \

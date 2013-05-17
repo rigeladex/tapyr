@@ -52,6 +52,7 @@
 #     2-May-2013 (CT) Add `offset=[0,-1]/limit=1` tests to `test_query`
 #     3-May-2013 (CT) Add `test_rat`, import `GTW.OMP.Auth`
 #     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
+#    17-May-2013 (CT) Add tests for `rels`
 #    ««revision-date»»···
 #--
 
@@ -2044,7 +2045,9 @@ _test_get = r"""
 
     >>> rp_json = req_json (rp)
     >>> for e in rp_json ["entries"] :
+    ...     print (e)
     ...     _ = show (requests.get ("http://localhost:9999" + e))
+    /v1/PAP-Person/1
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'christian'
@@ -2054,12 +2057,22 @@ _test_get = r"""
             }
         , 'cid' : 1
         , 'pid' : 1
+        , 'rels' :
+            [ '/v1/PAP-Person/1/account_links'
+            , '/v1/PAP-Person/1/address_links'
+            , '/v1/PAP-Person/1/email_links'
+            , '/v1/PAP-Person/1/phone_links'
+            , '/v1/PAP-Person/1/property_links'
+            , '/v1/PAP-Person/1/sailors'
+            , '/v1/PAP-Person/1/url_links'
+            ]
         , 'type_name' : 'PAP.Person'
         , 'url' : '/v1/PAP-Person/1'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
+    /v1/PAP-Person/2
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'laurens'
@@ -2069,12 +2082,22 @@ _test_get = r"""
             }
         , 'cid' : 2
         , 'pid' : 2
+        , 'rels' :
+            [ '/v1/PAP-Person/2/account_links'
+            , '/v1/PAP-Person/2/address_links'
+            , '/v1/PAP-Person/2/email_links'
+            , '/v1/PAP-Person/2/phone_links'
+            , '/v1/PAP-Person/2/property_links'
+            , '/v1/PAP-Person/2/sailors'
+            , '/v1/PAP-Person/2/url_links'
+            ]
         , 'type_name' : 'PAP.Person'
         , 'url' : '/v1/PAP-Person/2'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person/2'
     }
+    /v1/PAP-Person/3
     { 'json' :
         { 'attributes' :
             { 'first_name' : 'clarissa'
@@ -2084,6 +2107,15 @@ _test_get = r"""
             }
         , 'cid' : 3
         , 'pid' : 3
+        , 'rels' :
+            [ '/v1/PAP-Person/3/account_links'
+            , '/v1/PAP-Person/3/address_links'
+            , '/v1/PAP-Person/3/email_links'
+            , '/v1/PAP-Person/3/phone_links'
+            , '/v1/PAP-Person/3/property_links'
+            , '/v1/PAP-Person/3/sailors'
+            , '/v1/PAP-Person/3/url_links'
+            ]
         , 'type_name' : 'PAP.Person'
         , 'url' : '/v1/PAP-Person/3'
         }
@@ -2096,7 +2128,7 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
     }
 
-    >>> r = showf (R.get ("/v1/PAP-Person/1"))
+    >>> r = showf (R.get ("/v1/PAP-Person/1?RELS"))
     { 'headers' :
         { 'cache-control' : 'no-cache'
         , 'content-length' : '<length>'
@@ -2104,7 +2136,7 @@ _test_get = r"""
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
         , 'last-modified' : '<datetime instance>'
-        , 'link' : '/Doc/PAP-Person; rel=doc'
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -2117,11 +2149,25 @@ _test_get = r"""
             }
         , 'cid' : 1
         , 'pid' : 1
+        , 'rels' :
+            { '/v1/PAP-Person/1/account_links' :
+                []
+            , '/v1/PAP-Person/1/address_links' :
+                []
+            , '/v1/PAP-Person/1/email_links' :
+                []
+            , '/v1/PAP-Person/1/phone_links' :
+                []
+            , '/v1/PAP-Person/1/sailors' :
+                [ '/v1/SRM-Sailor/4' ]
+            , '/v1/PAP-Person/1/url_links' :
+                []
+            }
         , 'type_name' : 'PAP.Person'
         , 'url' : '/v1/PAP-Person/1'
         }
     , 'status' : 200
-    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1?RELS'
     }
 
     >>> last_modified = r.headers ["last-modified"]
@@ -2131,7 +2177,7 @@ _test_get = r"""
         { 'cache-control' : 'no-cache'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'link' : '/Doc/PAP-Person; rel=doc'
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -2144,7 +2190,7 @@ _test_get = r"""
         { 'cache-control' : 'no-cache'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'link' : '/Doc/PAP-Person; rel=doc'
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -2221,16 +2267,7 @@ _test_get = r"""
                       }
                   , 'is_cancelled' : False
                   , 'left' :
-                      { 'attributes' :
-                          { 'date' :
-                              { 'finish' : '2008-05-01'
-                              , 'start' : '2008-05-01'
-                              }
-                          , 'name' : 'himmelfahrt'
-                          }
-                      , 'cid' : 10
-                      , 'pid' : 10
-                      , 'type_name' : 'SRM.Regatta_Event'
+                      { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
                   }
@@ -2241,13 +2278,7 @@ _test_get = r"""
               }
             , { 'attributes' :
                   { 'boat_class' :
-                      { 'attributes' :
-                          { 'max_crew' : 1
-                          , 'name' : 'optimist'
-                          }
-                      , 'cid' : 7
-                      , 'pid' : 7
-                      , 'type_name' : 'SRM.Boat_Class'
+                      { 'pid' : 7
                       , 'url' : '/v1/SRM-Boat_Class/7'
                       }
                   , 'is_cancelled' : False
@@ -2332,16 +2363,7 @@ _test_get = r"""
                       }
                   , 'is_cancelled' : 'no'
                   , 'left' :
-                      { 'attributes_raw' :
-                          { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
-                              }
-                          , 'name' : 'Himmelfahrt'
-                          }
-                      , 'cid' : 10
-                      , 'pid' : 10
-                      , 'type_name' : 'SRM.Regatta_Event'
+                      { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
                   }
@@ -2352,13 +2374,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'max_crew' : '1'
-                          , 'name' : 'Optimist'
-                          }
-                      , 'cid' : 7
-                      , 'pid' : 7
-                      , 'type_name' : 'SRM.Boat_Class'
+                      { 'pid' : 7
                       , 'url' : '/v1/SRM-Boat_Class/7'
                       }
                   , 'is_cancelled' : 'no'
@@ -2544,16 +2560,7 @@ _test_get = r"""
                       }
                   , 'is_cancelled' : 'no'
                   , 'left' :
-                      { 'attributes_raw' :
-                          { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
-                              }
-                          , 'name' : 'Himmelfahrt'
-                          }
-                      , 'cid' : 10
-                      , 'pid' : 10
-                      , 'type_name' : 'SRM.Regatta_Event'
+                      { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
                   }
@@ -2564,13 +2571,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'max_crew' : '1'
-                          , 'name' : 'Optimist'
-                          }
-                      , 'cid' : 7
-                      , 'pid' : 7
-                      , 'type_name' : 'SRM.Boat_Class'
+                      { 'pid' : 7
                       , 'url' : '/v1/SRM-Boat_Class/7'
                       }
                   , 'is_cancelled' : 'no'
@@ -2695,13 +2696,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'max_crew' : '1'
-                          , 'name' : 'Optimist'
-                          }
-                      , 'cid' : 7
-                      , 'pid' : 7
-                      , 'type_name' : 'SRM.Boat_Class'
+                      { 'pid' : 7
                       , 'url' : '/v1/SRM-Boat_Class/7'
                       }
                   , 'is_cancelled' : 'no'
@@ -2887,16 +2882,7 @@ _test_get = r"""
                       }
                   , 'is_cancelled' : 'no'
                   , 'left' :
-                      { 'attributes_raw' :
-                          { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
-                              }
-                          , 'name' : 'Himmelfahrt'
-                          }
-                      , 'cid' : 10
-                      , 'pid' : 10
-                      , 'type_name' : 'SRM.Regatta_Event'
+                      { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
                   }
@@ -3262,13 +3248,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'max_crew' : '1'
-                          , 'name' : 'Optimist'
-                          }
-                      , 'cid' : 7
-                      , 'pid' : 7
-                      , 'type_name' : 'SRM.Boat_Class'
+                      { 'pid' : 7
                       , 'url' : '/v1/SRM-Boat_Class/7'
                       }
                   , 'is_cancelled' : 'no'
@@ -3302,16 +3282,7 @@ _test_get = r"""
                       }
                   , 'is_cancelled' : 'no'
                   , 'left' :
-                      { 'attributes_raw' :
-                          { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
-                              }
-                          , 'name' : 'Himmelfahrt'
-                          }
-                      , 'cid' : 10
-                      , 'pid' : 10
-                      , 'type_name' : 'SRM.Regatta_Event'
+                      { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
                   }
@@ -3322,13 +3293,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'max_crew' : '1'
-                          , 'name' : 'Optimist'
-                          }
-                      , 'cid' : 7
-                      , 'pid' : 7
-                      , 'type_name' : 'SRM.Boat_Class'
+                      { 'pid' : 7
                       , 'url' : '/v1/SRM-Boat_Class/7'
                       }
                   , 'is_cancelled' : 'no'
@@ -3353,73 +3318,15 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'left' :
-                      { 'attributes_raw' :
-                          { 'left' :
-                              { 'attributes_raw' :
-                                  { 'max_crew' : '1'
-                                  , 'name' : 'Optimist'
-                                  }
-                              , 'cid' : 7
-                              , 'pid' : 7
-                              , 'type_name' : 'SRM.Boat_Class'
-                              , 'url' : '/v1/SRM-Boat_Class/7'
-                              }
-                          , 'nation' : 'AUT'
-                          , 'sail_number' : '1107'
-                          , 'sail_number_x' : ''
-                          }
-                      , 'cid' : 8
-                      , 'pid' : 8
-                      , 'type_name' : 'SRM.Boat'
+                      { 'pid' : 8
                       , 'url' : '/v1/SRM-Boat/8'
                       }
                   , 'right' :
-                      { 'attributes_raw' :
-                          { 'boat_class' :
-                              { 'pid' : 7
-                              , 'url' : '/v1/SRM-Boat_Class/7'
-                              }
-                          , 'is_cancelled' : 'no'
-                          , 'left' :
-                              { 'attributes_raw' :
-                                  { 'date' :
-                                      { 'finish' : '2008/05/01'
-                                      , 'start' : '2008/05/01'
-                                      }
-                                  , 'name' : 'Himmelfahrt'
-                                  }
-                              , 'cid' : 10
-                              , 'pid' : 10
-                              , 'type_name' : 'SRM.Regatta_Event'
-                              , 'url' : '/v1/SRM-Regatta_Event/10'
-                              }
-                          }
-                      , 'cid' : 11
-                      , 'pid' : 11
-                      , 'type_name' : 'SRM.Regatta_C'
+                      { 'pid' : 11
                       , 'url' : '/v1/SRM-Regatta_C/11'
                       }
                   , 'skipper' :
-                      { 'attributes_raw' :
-                          { 'club' : None
-                          , 'left' :
-                              { 'attributes_raw' :
-                                  { 'first_name' : 'Laurens'
-                                  , 'last_name' : 'Tanzer'
-                                  , 'middle_name' : 'William'
-                                  , 'title' : ''
-                                  }
-                              , 'cid' : 2
-                              , 'pid' : 2
-                              , 'type_name' : 'PAP.Person'
-                              , 'url' : '/v1/PAP-Person/2'
-                              }
-                          , 'mna_number' : ''
-                          , 'nation' : 'AUT'
-                          }
-                      , 'cid' : 5
-                      , 'pid' : 5
-                      , 'type_name' : 'SRM.Sailor'
+                      { 'pid' : 5
                       , 'url' : '/v1/SRM-Sailor/5'
                       }
                   }
@@ -3430,73 +3337,15 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'left' :
-                      { 'attributes_raw' :
-                          { 'left' :
-                              { 'attributes_raw' :
-                                  { 'max_crew' : '1'
-                                  , 'name' : 'Optimist'
-                                  }
-                              , 'cid' : 7
-                              , 'pid' : 7
-                              , 'type_name' : 'SRM.Boat_Class'
-                              , 'url' : '/v1/SRM-Boat_Class/7'
-                              }
-                          , 'nation' : 'AUT'
-                          , 'sail_number' : '1107'
-                          , 'sail_number_x' : ''
-                          }
-                      , 'cid' : 8
-                      , 'pid' : 8
-                      , 'type_name' : 'SRM.Boat'
+                      { 'pid' : 8
                       , 'url' : '/v1/SRM-Boat/8'
                       }
                   , 'right' :
-                      { 'attributes_raw' :
-                          { 'boat_class' :
-                              { 'pid' : 7
-                              , 'url' : '/v1/SRM-Boat_Class/7'
-                              }
-                          , 'is_cancelled' : 'no'
-                          , 'left' :
-                              { 'attributes_raw' :
-                                  { 'date' :
-                                      { 'finish' : '2008/06/21'
-                                      , 'start' : '2008/06/20'
-                                      }
-                                  , 'name' : 'Guggenberger'
-                                  }
-                              , 'cid' : 13
-                              , 'pid' : 13
-                              , 'type_name' : 'SRM.Regatta_Event'
-                              , 'url' : '/v1/SRM-Regatta_Event/13'
-                              }
-                          }
-                      , 'cid' : 14
-                      , 'pid' : 14
-                      , 'type_name' : 'SRM.Regatta_C'
+                      { 'pid' : 14
                       , 'url' : '/v1/SRM-Regatta_C/14'
                       }
                   , 'skipper' :
-                      { 'attributes_raw' :
-                          { 'club' : None
-                          , 'left' :
-                              { 'attributes_raw' :
-                                  { 'first_name' : 'Laurens'
-                                  , 'last_name' : 'Tanzer'
-                                  , 'middle_name' : 'William'
-                                  , 'title' : ''
-                                  }
-                              , 'cid' : 2
-                              , 'pid' : 2
-                              , 'type_name' : 'PAP.Person'
-                              , 'url' : '/v1/PAP-Person/2'
-                              }
-                          , 'mna_number' : ''
-                          , 'nation' : 'AUT'
-                          }
-                      , 'cid' : 5
-                      , 'pid' : 5
-                      , 'type_name' : 'SRM.Sailor'
+                      { 'pid' : 5
                       , 'url' : '/v1/SRM-Sailor/5'
                       }
                   }
@@ -3840,6 +3689,145 @@ _test_post = r"""
         { 'count' : 21 }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
+    }
+
+    >>> cargo_e = json.dumps (
+    ...   dict
+    ...     ( attributes_raw = dict
+    ...         ( right = dict
+    ...             ( address = "rin@tin.tin")
+    ...         )
+    ...     )
+    ... )
+    >>> _ = show (R.post ("/v1/PAP-Person/17/email_links", data=cargo_e, headers=headers))
+    { 'json' :
+        { 'attributes_raw' :
+            { 'left' :
+                { 'pid' : 17
+                , 'url' : '/v1/PAP-Person/17'
+                }
+            , 'right' :
+                { 'pid' : 22
+                , 'url' : '/v1/PAP-Email/22'
+                }
+            }
+        , 'cid' : 24
+        , 'pid' : 23
+        , 'type_name' : 'PAP.Person_has_Email'
+        , 'url' : '/v1/PAP-Person_has_Email/23'
+        }
+    , 'status' : 201
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/17/email_links'
+    }
+
+    >>> _ = show (R.get ("/v1/PAP-Person/17/email_links?verbose"))
+    { 'json' :
+        { 'attribute_names' :
+            [ 'left'
+            , 'right'
+            , 'desc'
+            ]
+        , 'entries' :
+            [ { 'attributes' :
+                  { 'left' :
+                      { 'pid' : 17
+                      , 'url' : '/v1/PAP-Person/17'
+                      }
+                  , 'right' :
+                      { 'pid' : 22
+                      , 'url' : '/v1/PAP-Email/22'
+                      }
+                  }
+              , 'cid' : 24
+              , 'pid' : 23
+              , 'type_name' : 'PAP.Person_has_Email'
+              , 'url' : '/v1/PAP-Person_has_Email/23'
+              }
+            ]
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/17/email_links?verbose'
+    }
+
+    >>> _ = show (R.get ("/v1/PAP-Person/17?RELS"))
+    { 'json' :
+        { 'attributes' :
+            { 'first_name' : 'rin'
+            , 'last_name' : 'tin'
+            , 'lifetime' :
+                { 'start' : '2000-11-22' }
+            , 'middle_name' : 'tin'
+            , 'title' : ''
+            }
+        , 'cid' : 22
+        , 'pid' : 17
+        , 'rels' :
+            { '/v1/PAP-Person/17/account_links' :
+                []
+            , '/v1/PAP-Person/17/address_links' :
+                []
+            , '/v1/PAP-Person/17/email_links' :
+                [ '/v1/PAP-Person_has_Email/23' ]
+            , '/v1/PAP-Person/17/phone_links' :
+                []
+            , '/v1/PAP-Person/17/sailors' :
+                []
+            , '/v1/PAP-Person/17/url_links' :
+                []
+            }
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/17'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/17?RELS'
+    }
+
+    >>> _ = show (R.get ("/v1/PAP-Person/17?RELS&verbose"))
+    { 'json' :
+        { 'attributes' :
+            { 'first_name' : 'rin'
+            , 'last_name' : 'tin'
+            , 'lifetime' :
+                { 'start' : '2000-11-22' }
+            , 'middle_name' : 'tin'
+            , 'title' : ''
+            }
+        , 'cid' : 22
+        , 'pid' : 17
+        , 'rels' :
+            { '/v1/PAP-Person/17/account_links' :
+                []
+            , '/v1/PAP-Person/17/address_links' :
+                []
+            , '/v1/PAP-Person/17/email_links' :
+                [ { 'attributes' :
+                      { 'left' :
+                          { 'pid' : 17
+                          , 'url' : '/v1/PAP-Person/17'
+                          }
+                      , 'right' :
+                          { 'pid' : 22
+                          , 'url' : '/v1/PAP-Email/22'
+                          }
+                      }
+                  , 'cid' : 24
+                  , 'pid' : 23
+                  , 'type_name' : 'PAP.Person_has_Email'
+                  , 'url' : '/v1/PAP-Person_has_Email/23'
+                  }
+                ]
+            , '/v1/PAP-Person/17/phone_links' :
+                []
+            , '/v1/PAP-Person/17/sailors' :
+                []
+            , '/v1/PAP-Person/17/url_links' :
+                []
+            }
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/17'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/17?RELS&verbose'
     }
 
 """

@@ -33,6 +33,7 @@
 #                     `set_secure_cookie` (from GTW.RST.TOP.Response)
 #     4-May-2013 (CT) Add `cookies_to_delete`
 #     4-May-2013 (CT) Don't use werkzeug's `delete_cookie`
+#    17-May-2013 (CT) Change `__call__` to sort link headers
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class _RST_Response_ (TFL.Meta.Object) :
         self._request.cookies_to_delete.clear ()
         for k, v in self._auto_headers.iteritems () :
             _response.add_header (k, v)
-        for rel, (value, kw) in self._links.iteritems () :
+        for rel, (value, kw) in sorted (self._links.iteritems ()) :
             _response.add_header ("link", value, rel = rel, ** kw)
         return _response.__call__ (* args, ** kw)
     # end def __call__

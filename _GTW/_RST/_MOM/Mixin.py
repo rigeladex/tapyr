@@ -74,6 +74,7 @@
 #    25-Apr-2013 (CT) Add `Pre_Commit_Entity_Check`, use `resource.commit_scope`
 #    30-Apr-2013 (CT) Add `Pre_Commit_Entity_Check.__repr__`
 #     1-May-2013 (CT) Improve error message of `_handle_method_context`
+#    17-May-2013 (CT) Add `request._rst_seen`  (in `_handle_method_context`)
 #    ««revision-date»»···
 #--
 
@@ -122,7 +123,7 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
     failure_code = 400 ### Bad request
 
     def _obj_resource_response_body (self, obj, resource, request, response) :
-        o_resource = resource._new_entry (obj.pid)
+        o_resource = resource._new_entry (obj)
         o_body     = o_resource.GET ()._response_body \
             (o_resource, request, response)
         return o_resource, o_body
@@ -281,6 +282,8 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     _objects                   = []
     _old_cid                   = -1
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
+
+    show_rels                  = None
 
     @Once_Property
     @getattr_safe
@@ -449,7 +452,8 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     def _handle_method_context (self, method, request, response) :
         with self.__super._handle_method_context (method, request, response) :
             with self.LET (_change_info = self._get_change_info ()) :
-                yield
+                with request.LET (_rst_seen = set ()) :
+                    yield
     # end def _prepare_handle_method
 
 Mixin = _RST_MOM_Mixin_ # end class

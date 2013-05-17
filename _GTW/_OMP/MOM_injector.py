@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.
@@ -32,6 +32,7 @@
 #    14-Mar-2011 (CT) Creation (factored from `_GTW._OMP.Scaffold`)
 #    15-Mar-2011 (CT) `GTW.afs_id` and `.afs_spec` initialized to `None`
 #    23-Mar-2011 (CT) `GTW.afs_kw` initialized to `None`
+#    17-May-2013 (CT) Add `GTW.rst_mom_rbl_spec`
 #    ««revision-date»»···
 #--
 
@@ -45,10 +46,11 @@ MOM.Entity.GTW = type \
     ( "GTW"
     , ()
     , dict
-        ( afs_id     = None
-        , afs_kw     = None
-        , afs_spec   = None
-        , __module__ = MOM.Entity.__module__
+        ( afs_id             = None
+        , afs_kw             = None
+        , afs_spec           = None
+        , rst_mom_rbl_spec   = None
+        , __module__         = MOM.Entity.__module__
         )
     )
 for _T in MOM.Entity._S_Extension [1:] :

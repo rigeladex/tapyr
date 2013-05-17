@@ -43,6 +43,9 @@
 #                     `_A_Id_Entity_.as_rest_cargo_raw`
 #     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
 #     3-May-2013 (CT) Add `META` to REST query arguments
+#    17-May-2013 (CT) Redefine `_get_objects` to return `[]`
+#    17-May-2013 (CT) Add support for `rels`; derive from `Dir_V`, not `Leaf`
+#    17-May-2013 (CT) Take `seen` from `request._rst_seen`
 #    ««revision-date»»···
 #--
 
@@ -58,8 +61,14 @@ import _GTW._RST._MOM.Mixin
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
+
 import _TFL._Meta.Object
-import _TFL.Decorator
+import _TFL.Undef
+
+from   posixpath                import join as pp_join
+
+_undef_arg = TFL.Undef ("arg")
 
 @TFL.Add_Method (MOM.Attr._A_Id_Entity_)
 def as_rest_cargo_raw \
@@ -75,7 +84,8 @@ def as_rest_cargo_raw \
             result = method._response_obj \
                 ( resource, request, response, result, result.edit_attr, seen
                 , getter, a_name
-                , url = url
+                , url       = url
+                , show_rels = None
                 )
         elif request.brief :
             result = int (result.pid)
@@ -86,7 +96,7 @@ def as_rest_cargo_raw \
 
 MOM.Attr._A_Id_Entity_.as_rest_cargo_ckd = as_rest_cargo_raw
 
-_Ancestor = GTW.RST.Leaf
+_Ancestor = GTW.RST.Dir_V
 
 class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
     """RESTful node for a specific instance of an essential type."""
@@ -126,21 +136,29 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
             return attr.name, value
         # end def _response_attr
 
-        def _response_body (self, resource, request, response) :
+        def _response_body \
+                (self, resource, request, response, show_rels = _undef_arg) :
             attrs = resource.attributes
             obj   = resource.obj
-            seen  = set ()
-            return self._response_obj \
-                ( resource, request, response, obj, attrs, seen
-                , url = resource.abs_href
-                )
+            seen  = request._rst_seen
+            try :
+                result = self._response_obj \
+                    ( resource, request, response, obj, attrs, seen
+                    , url = resource.abs_href, show_rels = show_rels
+                    )
+            except Exception as exc :
+                response.status_code = 400
+                result = dict (error = str (exc))
+            return result
         # end def _response_body
 
         def _response_obj \
                 ( self, resource, request, response, obj, attrs, seen
-                , getter = None, a_name = None
+                , getter = None, a_name = None, show_rels = _undef_arg
                 , ** kw
                 ) :
+            if isinstance (show_rels, TFL.Undef) :
+                show_rels = resource.show_rels
             seen.add (obj.pid)
             result = dict \
                 ( cid        = obj.last_cid
@@ -161,6 +179,23 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
                     ( creation    = creation
                     , last_change = last_change
                     )
+            et_map = resource._entry_type_map
+            if et_map :
+                if show_rels :
+                    result ["rels"] = rmap = {}
+                    for rel in show_rels :
+                        rbl = resource._get_child (rel)
+                        if rbl is None :
+                            raise ValueError \
+                                ( "Unknown value %r for 'rels'; "
+                                  "possible value are: %s"
+                                % (rel, ", ".join (sorted (et_map)))
+                                )
+                        bod = rbl.GET ()._response_body (rbl, request, response)
+                        rmap [rbl.abs_href] = bod.get ("entries", [])
+                elif show_rels is not None :
+                    result ["rels"] = list \
+                        (l for l, r in resource._entry_type_links)
             if getter is not None :
                 result [a_name] = self._response_obj_attrs \
                     ( resource, request, response, obj, attrs, seen
@@ -218,7 +253,7 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         self.pop_to_self (kw, "ETM", prefix = "_")
         obj = kw.pop ("obj")
         if isinstance (obj, (int, long, basestring)) :
-            obj   = self.ETM.pid_query (obj)
+            obj   = self.scope.pid_query (obj)
         self.obj  = obj
         self.name = str (obj.pid)
         self.pop_to_self (kw, "attributes")
@@ -229,6 +264,33 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
     def E_Type (self) :
         return self.obj.__class__
     # end def E_Type
+
+    @Once_Property
+    @getattr_safe
+    def _default_rels (self) :
+        def _gen (et_map) :
+            E_Type = self.E_Type
+            for k in et_map :
+                a = getattr (E_Type, k)
+                if not a.Ref_Type.is_partial :
+                    yield k
+        return sorted (_gen (self._entry_type_map))
+    # end def _default_rels
+
+    @Once_Property
+    @getattr_safe
+    def _entry_type_links (self) :
+        def _gen (href, ET) :
+            for lra in ET.link_ref_attr :
+                yield (pp_join (href, lra.name), lra.__doc__.replace ("`", ""))
+        return tuple (sorted (_gen (self.abs_href, self.E_Type)))
+    # end def _entry_type_links
+
+    @Once_Property
+    @getattr_safe
+    def _entry_type_map (self) :
+        return self._rbl_entry_type_map
+    # end def _entry_type_map
 
     def _check_cid (self, request, response, result) :
         cid_c  = request.req_data.get ("cid")
@@ -251,10 +313,35 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         return not error
     # end def _check_cid
 
+    def _get_objects (self) :
+        ### nothing to return here
+        return []
+    # end def _get_objects
+
     def _handle_method (self, method, request, response) :
         self.add_doc_link_header (response)
         return self.__super._handle_method (method, request, response)
     # end def _handle_method
+
+    def _handle_method (self, method, request, response) :
+        for link, rel in self._entry_type_links :
+            response.add_link (rel, link)
+        return self.__super._handle_method (method, request, response)
+    # end def _handle_method
+
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request, response) :
+        with self.__super._handle_method_context (method, request, response) :
+            show_rels = request.has_option ("RELS")
+            if show_rels :
+                rels = request.req_data_list.get ("RELS")
+                if len (rels) == 1 :
+                    show_rels = (rels [0],) if rels [0] else self._default_rels
+                else :
+                    show_rels = sorted (rels)
+            with self.LET (show_rels = show_rels) :
+                yield
+    # end def _handle_method_context
 
 Entity = _RST_MOM_Entity_ # end class
 

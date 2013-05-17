@@ -46,6 +46,8 @@
 #     2-Mar-2013 (CT) Redefine `_handle_method` to call `add_doc_link_header`
 #    15-Apr-2013 (CT) Protect `_resource_entries` against `result` of `None`
 #     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
+#    17-May-2013 (CT) Factor `E_Type.GET._response_body_count`
+#    17-May-2013 (CT) Add `_rbl_entry_type_map`
 #    ««revision-date»»···
 #--
 
@@ -63,8 +65,10 @@ import _GTW._RST._MOM.Entity
 from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
-import _TFL._Meta.Object
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.predicate           import dotted_dict
+
+import _TFL._Meta.Object
 
 from   posixpath                import join as pp_join
 
@@ -109,22 +113,22 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
 
         _renderers             = _Ancestor.GET._renderers + (_E_Type_CSV_, )
 
-        ### XXX redefine _response_dict and _response_entry to regard
-        ###     query parameters (full vs. bare bone answer...)
-
         def _response_body (self, resource, request, response) :
             if request.has_option ("count") :
-                ETM = resource.ETM
-                if request.has_option ("strict") :
-                    qr = ETM.count_strict
-                else :
-                    qr = ETM.count
-                result = dict (count = qr)
+                responder = self._response_body_count
             else :
-                result = self.__super._response_body \
-                    (resource, request, response)
-            return result
+                responder = self.__super._response_body
+            return responder (resource, request, response)
         # end def _response_body
+
+        def _response_body_count (self, resource, request, response) :
+            ETM = resource.ETM
+            if request.has_option ("strict") :
+                qr = ETM.count_strict
+            else :
+                qr = ETM.count
+            return dict (count = qr)
+        # end def _response_body_count
 
         def _response_dict (self, resource, request, response, ** kw) :
             if request.verbose :
@@ -151,15 +155,15 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         # end def _response_dict
 
         def _response_entry (self, resource, request, response, entry) :
-            pid = int (entry.pid)
             if request.verbose :
                 ### Restrict `attributes` only for identical types
                 kw = dict (attributes = self.attributes) \
                     if entry.type_name == resource.E_Type.type_name else {}
-                e = resource._new_entry (pid, ** kw)
-                result = e.GET ()._response_body (e, request, response)
+                e = resource._new_entry (entry, ** kw)
+                result = e.GET ()._response_body \
+                    (e, request, response, show_rels = None)
             elif request.brief :
-                result = pid
+                result = int (entry.pid)
             else :
                 result = resource.href_obj (entry)
             return result
@@ -184,20 +188,36 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
 
     POST = _RST_MOM_E_Type_POST_ # end class
 
+    @Once_Property
+    @getattr_safe
+    def _rbl_entry_type_map (self) :
+        import _GTW._RST._MOM.Role_Bound_Links
+        E_Type = self.E_Type
+        result = {}
+        for lra in E_Type.link_ref_attr :
+            LET  = lra.E_Type
+            name = lra.name
+            if LET.show_in_ui :
+                rbl_spec = LET.GTW.rst_mom_rbl_spec or {}
+                result [name] = rbl_spec.get \
+                    (name, GTW.RST.MOM.Role_Bound_Links)
+        return result
+    # end def _rbl_entry_type_map
+
     def allow_method (self, method, user) :
         if method.name == "POST" and self.ETM.is_partial :
             return False
         return self.__super.allow_method (method, user)
     # end def allow_method
 
+    def href_obj (self, obj) :
+        return pp_join (self.abs_href, str (obj.pid))
+    # end def href_obj
+
     def _handle_method (self, method, request, response) :
         self.add_doc_link_header (response)
         return self.__super._handle_method (method, request, response)
     # end def _handle_method
-
-    def href_obj (self, obj) :
-        return pp_join (self.abs_href, str (obj.pid))
-    # end def href_obj
 
 E_Type = _RST_MOM_E_Type_ # end class
 
