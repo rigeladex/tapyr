@@ -48,6 +48,8 @@
 #     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
 #    17-May-2013 (CT) Factor `E_Type.GET._response_body_count`
 #    17-May-2013 (CT) Add `_rbl_entry_type_map`
+#    20-May-2013 (CT) Fix `_rbl_entry_type_map`
+#                     (use E_Type.GTW.rst_mom_rbl_spec, not LET.GTW.rst_...)
 #    ««revision-date»»···
 #--
 
@@ -198,7 +200,7 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
             LET  = lra.E_Type
             name = lra.name
             if LET.show_in_ui :
-                rbl_spec = LET.GTW.rst_mom_rbl_spec or {}
+                rbl_spec = E_Type.GTW.rst_mom_rbl_spec or {}
                 result [name] = rbl_spec.get \
                     (name, GTW.RST.MOM.Role_Bound_Links)
         return result
