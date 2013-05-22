@@ -35,6 +35,7 @@
 #                     width and height
 #    31-Jan-2013 (MG) change kind of `extension` to `Optional`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
+#    22-May-2013 (CT) Change `max_value` of `height` and `width` to 1280
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,7 @@ class _Pic_ (_Ancestor_Essence) :
         class height (_Ancestor.y) :
             """Height of picture."""
 
-            max_value          = 1000
+            max_value          = 1280
             min_value          = 200
 
         # end class height
@@ -103,7 +104,7 @@ class _Pic_ (_Ancestor_Essence) :
         class width (_Ancestor.x) :
             """Width of picture."""
 
-            max_value          = 1200
+            max_value          = 1280
             min_value          = 200
 
         # end class width
