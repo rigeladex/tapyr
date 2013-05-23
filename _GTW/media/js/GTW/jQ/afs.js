@@ -123,6 +123,7 @@
 //     7-May-2013 (CT) Add argument `name` to `_elem_pid`
 //     7-May-2013 (CT) Remove `:readonly` fields from `focusables`
 //     7-May-2013 (CT) Don't call `_setup_efs_selector` for `readonly` fields
+//    23-May-2013 (CT) Disable `Reset` for `Entity` (removes `prefill` values)
 //    ««revision-date»»···
 //--
 
@@ -1013,7 +1014,8 @@
                   if (elem.value.edit.pid) {
                       names.push ("Delete");
                   } else {
-                      names.push ("Reset");
+                      // XXX Add "Reset" once it doesn't remove prefill values
+                      // names.push ("Reset");
                   };
                   return _cmds.apply (null, names);
               }
