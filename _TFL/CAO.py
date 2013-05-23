@@ -105,6 +105,7 @@
 #    24-Feb-2013 (CT) Split `__test__` from `__doc__`, add to `__doc__`
 #    18-Mar-2013 (CT) Change `_safe_eval` to not convert `self` to string
 #    18-Mar-2013 (CT) Change `_Number_._resolve_range_1` to save match variables
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -199,10 +200,8 @@ class Opt (Arg) :
 
 # end class Opt
 
-class _Spec_ (TFL.Meta.Object) :
+class _Spec_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
     """Base class for argument and option types"""
-
-    __metaclass__ = Arg
 
     alias         = None
     auto_split    = None
@@ -360,10 +359,8 @@ class _Spec_ (TFL.Meta.Object) :
 
 # end class _Spec_
 
-class _Spec_O_ (_Spec_) :
+class _Spec_O_ (TFL.Meta.BaM (_Spec_, metaclass = Opt)) :
     """Base class for option types"""
-
-    __metaclass__ = Opt
 
     kind          = "option"
     prefix        = "-"
@@ -493,10 +490,8 @@ class Binary (Bool) :
 
 # end class Binary
 
-class Cmd_Choice (TFL.Meta.Object) :
+class Cmd_Choice (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
     """Argument that selects a sub-command"""
-
-    __metaclass__ = Arg
 
     auto_split    = None
     default       = None

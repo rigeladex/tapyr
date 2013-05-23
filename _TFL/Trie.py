@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -32,6 +32,7 @@
 #    17-Jan-2011 (CT) `completions` and `update` added
 #    15-Apr-2012 (CT) Add `sorted` to guarantee determistic output
 #                     for `PYTHONHASHSEED="random"`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -41,10 +42,9 @@ import _TFL._Meta.Object
 
 import itertools
 
-class Node (object) :
+class Node (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Autosuper)) :
     """Node of a trie."""
 
-    __metaclass__ = TFL.Meta.M_Autosuper
     __slots__     = ("children", "value")
 
     kind          = "Node"

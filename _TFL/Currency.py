@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #                         blocks inheritance of __hash__ in 3.x
 #     7-Jan-2010 (CT) `__str__` moved from `Currency` to `_Currency_`
 #    17-Jun-2010 (CT) `__unicode__` introduced
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -97,9 +98,7 @@ class _M_Currency_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Currency_
 
-class _Currency_ (TFL.Meta.Object) :
-
-    __metaclass__   = _M_Currency_
+class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
 
     name            = "EUR"
     sloppy_name     = "EUR"

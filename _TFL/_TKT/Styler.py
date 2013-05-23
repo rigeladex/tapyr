@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,17 +32,20 @@
 #     1-Apr-2005 (CT) `__new__` and `_cache` added
 #     2-Apr-2005 (MG) `__init__` changed to allow renaming of a `style`
 #                     property
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
+from   _TFL._Meta           import Meta
+
 import _TFL._TKT.Mixin
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
 
 import weakref
 
-class _TKT_Styler_ (TFL.Meta.Object) :
+class _TKT_Styler_ (Meta.BaM (Meta.Object, metaclass = Meta.M_Auto_Combine)) :
     """Map a UI.Style object to a toolkit specific dictionary of options
 
 
@@ -72,7 +75,6 @@ class _TKT_Styler_ (TFL.Meta.Object) :
     """
 
     _real_name           = "Styler"
-    __metaclass__        = TFL.Meta.M_Auto_Combine
     _dicts_to_combine    = ("Opts", "_opt_mappers")
 
     Opts                 = {} ### contains all options of interest to a
@@ -100,7 +102,7 @@ class _TKT_Styler_ (TFL.Meta.Object) :
         self.option_dict = d = {}
         _opt_mappers     = self._opt_mappers
         for style_name, tkt_name in self.Opts.iteritems () :
-            v        = getattr (style, style_name, None)
+            v = getattr (style, style_name, None)
             if v is not None :
                 s [style_name] = v
                 if style_name in _opt_mappers :

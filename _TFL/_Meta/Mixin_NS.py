@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,11 +27,11 @@
 #
 # Revision Dates
 #    17-Apr-2009 (CT) Creation
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
-import _TFL._Meta
 import _TFL._Meta.M_Class
 
 import _TFL.Caller
@@ -62,7 +62,7 @@ class M_Mixin_NS (TFL.Meta.M_Class) :
 
 # end class M_Mixin_NS
 
-class Mixin_NS (object) :
+class Mixin_NS (TFL.Meta.BaM (object, metaclass = M_Mixin_NS)) :
     """Mixin namespace: provides access to mixin functionality via a single
        object.
 
@@ -104,8 +104,6 @@ class Mixin_NS (object) :
          ...
        TypeError: Cannot access attributes of unbound instance of <MNS_M1 unbound>
     """
-
-    __metaclass__ = M_Mixin_NS
 
     def __init__ (self, obj = None) :
         self._obj = obj

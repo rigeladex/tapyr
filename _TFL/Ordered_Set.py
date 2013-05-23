@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,6 +45,7 @@
 #     3-Nov-2009 (CT)  Usage of `has_key` removed
 #    11-Nov-2009 (CT)  `__getitem__` changed to deal with slices
 #                      (3-compatibility)
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -54,13 +55,12 @@ import _TFL._Meta.M_Class
 
 class Duplicate_Key_Error (KeyError) : pass
 
-class Ordered_Set (list) :
+class Ordered_Set (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
     """Ordered set of objects. The objects are stored in a python list but
        additionally kept in a dictionary to allow fast access to the position
        in the list.
     """
 
-    __metaclass__        = TFL.Meta.M_Class
     _reverse_mapping_cls = dict
     _cannot_hold         = int
 

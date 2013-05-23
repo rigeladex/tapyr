@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,8 +33,7 @@
 #                      can't read PNG. Now left one xbm to document
 #                      failing doctest of TGW.
 #    25-Feb-2005 (RSC) Added style-related doctests
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    23-May-2013 (CT)  Fix bitmap-names in tests
 #    ««revision-date»»···
 #--
 
@@ -49,10 +48,8 @@ class Butcon (TFL.TKT.Mixin) :
     _interface_test   = """
         >>> from _TFL._UI.Style import *
         >>> w = Butcon ()
-        >>> w.apply_bitmap ('open_node')
-        >>> w.apply_bitmap ('closed_node')
-        >>> w.apply_bitmap ('circle')
-        >>> w.apply_bitmap ('small_circle')
+        >>> w.apply_bitmap ('node_open')
+        >>> w.apply_bitmap ('node_closed')
         >>> blue = Style ("blue", background = "lightblue")
         >>> w.apply_style (blue)
         >>> w.push_style  (blue)

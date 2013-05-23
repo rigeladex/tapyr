@@ -59,11 +59,77 @@
 #    20-Jul-2012 (CT)  Add debug output to `M_Autorename.__new__`
 #    28-Sep-2012 (CT)  Improve TypeError message from `_most_specific_meta`
 #    20-Mar-2013 (CT)  Add support for `__name__` to `New`
+#    23-May-2013 (CT)  Add and use `BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta
+
+def BaM (* bases, ** kw) :
+    """Specify `bases` and `metaclass` in syntax compatible to Python 2 & 3.
+
+       Use BaM in class statements like this ::
+
+           class A_Class (BaM (A_Base_1, A_Base_2, metaclass = A_Metaclass)) :
+               pass
+
+       BaM returns a temporary class with a temporary metaclass derived
+       from `metaclass`. The temporary class is seen by Python as the single
+       base of a new class to be defined. According to the standard Python
+       rules, the metaclass is inherited from the base class. The temporary
+       metaclass instantiates the new class with the `metaclass` and the
+       `bases` passed to `BaM`, ignoring the temporary base and meta classes.
+
+       I stole the idea for `BaM` from Armin Ronacher's `with_metaclass`[*]_,
+       but defined BaM's signature to be compatible with the inheritance
+       signature of class statements in Python 3.
+
+       .. [*] http://lucumr.pocoo.org/2013/5/21/porting-to-python-3-redux/
+
+    >>> class M (type) :
+    ...    pass
+    >>> class N (M) :
+    ...    pass
+    >>> class A (BaM (metaclass = M)) :
+    ...    pass
+    >>> class B (A) :
+    ...    pass
+    >>> class C (A) :
+    ...    pass
+    >>> class D (BaM (B, C, metaclass = N)) :
+    ...    pass
+
+    >>> M.__class__, M.__bases__, M.mro (M)
+    (<type 'type'>, (<type 'type'>,), [<class 'M_Class.M'>, <type 'type'>, <type 'object'>])
+    >>> N.__class__, N.__bases__, N.mro (N)
+    (<type 'type'>, (<class 'M_Class.M'>,), [<class 'M_Class.N'>, <class 'M_Class.M'>, <type 'type'>, <type 'object'>])
+
+    >>> A.__class__, A.__bases__, A.mro ()
+    (<class 'M_Class.M'>, (<type 'object'>,), [<class 'M_Class.A'>, <type 'object'>])
+    >>> B.__class__, B.__bases__, B.mro ()
+    (<class 'M_Class.M'>, (<class 'M_Class.A'>,), [<class 'M_Class.B'>, <class 'M_Class.A'>, <type 'object'>])
+    >>> C.__class__, C.__bases__, C.mro ()
+    (<class 'M_Class.M'>, (<class 'M_Class.A'>,), [<class 'M_Class.C'>, <class 'M_Class.A'>, <type 'object'>])
+    >>> D.__class__, D.__bases__, D.mro ()
+    (<class 'M_Class.N'>, (<class 'M_Class.B'>, <class 'M_Class.C'>), [<class 'M_Class.D'>, <class 'M_Class.B'>, <class 'M_Class.C'>, <class 'M_Class.A'>, <type 'object'>])
+
+    """
+    meta = kw.pop ("metaclass")
+    assert not kw
+    class metaclass (meta) :
+        __call__ = type.__call__
+        __init__ = type.__init__
+        def __new__ (cls, name, this_bases, d):
+            if this_bases is None :
+                ### return temporary class
+                return type.__new__ (cls, name, (), d)
+            ### return instance of `meta`, derived from `bases`
+            ### * add `__metaclass__` to `d` to please
+            ###   `M_M_Class._most_specific_meta`
+            return meta (name, bases, dict (d, __metaclass__ = meta))
+    return metaclass ("BaM_temporary_class", None, {})
+# end def BaM
 
 def _m_mangled_attr_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
@@ -115,25 +181,26 @@ class M_M_Class (type) :
     def _most_specific_meta (meta, name, bases, dict) :
         result = dict.get ("__metaclass__")
         if result is None :
-            from types import ClassType as Classic
             result = meta
-            for b in bases :
-                b_meta = type (b)
-                if issubclass (result, b_meta) or b_meta is Classic :
-                    pass
-                elif issubclass (b_meta, result) :
-                    result = b_meta
-                else :
-                    raise TypeError \
-                        ( "Metatype conflict among bases: %s %s vs. %s %s"
-                        % (result, name, b_meta, b)
-                        )
+            if bases is not None :
+                from types import ClassType as Classic
+                for b in bases :
+                    b_meta = type (b)
+                    if issubclass (result, b_meta) or b_meta is Classic :
+                        pass
+                    elif issubclass (b_meta, result) :
+                        result = b_meta
+                    else :
+                        raise TypeError \
+                            ( "Metatype conflict among bases: %s %s vs. %s %s"
+                            % (result, name, b_meta, b)
+                            )
         return result
     # end def _most_specific_meta
 
 # end class M_M_Class
 
-class M_Base (type) :
+class M_Base (BaM (type, metaclass = M_M_Class)) :
     """Base class of TFL metaclasses.
 
        It provides a `__m_super` attribute for the meta-classes (for
@@ -141,8 +208,6 @@ class M_Base (type) :
        the class method `New` that creates a descendent class
        augmented by additional attributes and/or methods.
     """
-
-    __metaclass__ = M_M_Class
 
     def _m_mangled_attr_name (cls, name) :
         return _m_mangled_attr_name (name, cls.__name__)

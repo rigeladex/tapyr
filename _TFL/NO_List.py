@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,6 +48,7 @@
 #     3-Nov-2009 (CT)  Usage of `has_key` removed
 #     9-Sep-2010 (MG) `M_Name_Dict`, `Name_Dict` changed to allow overriding
 #                     the `key_attr_name`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -81,9 +82,8 @@ class M_Name_Dict (TFL.Meta.M_Class) :
 
 # end class M_Name_Dict
 
-class Name_Dict (dict) :
+class Name_Dict (TFL.Meta.BaM (dict, metaclass = M_Name_Dict)) :
 
-    __metaclass__    = M_Name_Dict
     key_attr_name    = "name"
     _convert_methods = \
         ("get", "pop", "__getitem__", "__delitem__", "__setitem__")

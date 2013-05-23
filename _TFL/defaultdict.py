@@ -33,6 +33,7 @@
 #    30-May-2012 (CT) Add `defaultdict_nested`
 #    20-Mar-2013 (CT) Remove pre-2.5 support
 #    20-Mar-2013 (CT) Add `defaultdict_cb` and `defaultdict_int`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -108,9 +109,9 @@ import _TFL._Meta.M_Class
 
 from   collections import defaultdict
 
-class _defaultdict_ (defaultdict) :
+class _defaultdict_ (TFL.Meta.BaM (defaultdict, metaclass = TFL.Meta.M_Class)) :
 
-    __metaclass__        = TFL.Meta.M_Class
+    pass
 
 # end class _defaultdict_
 

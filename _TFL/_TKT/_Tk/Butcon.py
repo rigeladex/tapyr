@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    23-Feb-2005 (CT)  `exposed_widget` added
 #    25-Feb-2005 (RSC) Added _interface_test
 #    15-Apr-2012 (CT)  Import `predicate` from `_TFL`
+#    23-May-2013 (CT)  Fix bitmap-names in tests
 #    ««revision-date»»···
 #--
 
@@ -57,10 +58,9 @@ class _Tk_Butcon_ (TFL.TKT.Tk.Widget, TFL.TKT.Butcon) :
        >>> gray = Style ("gray", background = "gray80")
        >>> w = Butcon ()
        >>> w.wtk_widget.pack ()
-       >>> w.apply_bitmap ('open_node')
+       >>> w.apply_bitmap ('node_open')
        >>> w.apply_style (yell)
-       >>> w.apply_bitmap ('closed_node')
-       >>> w.apply_bitmap ('circle')
+       >>> w.apply_bitmap ('node_closed')
        >>> w.apply_style (gray)
     """
 
@@ -125,10 +125,9 @@ yell = Style ("yell", background = "yellow", foreground = "red")
 gray = Style ("gray", background = "gray80")
 w = Butcon ()
 w.wtk_widget.pack ()
-w.apply_bitmap ('open_node')
+w.apply_bitmap ('node_open')
 w.apply_style (yell)
-w.apply_bitmap ('closed_node')
-w.apply_bitmap ('circle')
+w.apply_bitmap ('node_closed')
 
 """
 

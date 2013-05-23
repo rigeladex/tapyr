@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -70,16 +70,13 @@
 #                      or None instead of True/False
 #    12-Dec-2005 (CT)  `return None` removed from `has_child`
 #    08-Nov-2006 (PGO) `NO_List` added that doesn't check for dups
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    20-Nov-2007 (MG)  Imports fixed
-#     2-Apr-2008 (MG) `Node` now inherits from `TFL.Meta.Object` instead of
-#                     `object`
-#    26-Feb-2012 (MG) `__future__` imports added
+#     2-Apr-2008 (MG)  `Node` now inherits from `TFL.Meta.Object` instead of
+#                      `object`
+#    26-Feb-2012 (MG)  `__future__` imports added
+#    23-May-2013 (CT)  Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
-
-
 
 """
 A node of a structured document has attributes and children.
@@ -413,10 +410,8 @@ class _Node_NO_List_ (TFL.NO_List) :
 
 NO_List = _Node_NO_List_ # end def _Node_NO_List_
 
-class Node (TFL.Meta.Object) :
+class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     """Node of a structured document."""
-
-    __metaclass__        = TFL.SDG.M_Node
 
     children             = property (lambda s : s._children_iter ())
     children_group_names = (Body, ) = range (1)

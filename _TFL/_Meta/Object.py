@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,10 +37,12 @@
 #    10-Dec-2009 (CT) `LET` defined as alias for `TFL.Context.attr_let`
 #    16-Feb-2011 (CT) `pop_to_self` added
 #     8-Jun-2012 (CT) Add `opts.get ("prefix")` to `pop_to_self`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   _TFL       import TFL
+from   _TFL._Meta import Meta
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
@@ -49,7 +51,7 @@ import _TFL.Context
 import _TFL.Decorator
 
 class _TFL_Meta_Object_Root_ (object) :
-    """Root class to fix `__init__` and `__new__`.
+    """Root class to fix `__init__` and `__new__`, check the `mro`.
 
        As of Python 2.6, `object.__init__` doesn't accept parameters
        (http://bugs.python.org/issue1683368).
@@ -74,6 +76,7 @@ class _TFL_Meta_Object_Root_ (object) :
            ...
        AssertionError: MRO conflict for B.__init__: super != object,
            (<class 'Object.B'>, <class 'Object.Object'>, <class 'Object._TFL_Meta_Object_Root_'>, <class 'Object.A'>, <type 'object'>)
+
        >>> class C (object) :
        ...     def __init__ (self, x = 2) :
        ...         print "C.__init__:", x
@@ -128,7 +131,9 @@ class _TFL_Meta_Object_Root_ (object) :
 
 # end class _TFL_Meta_Object_Root_
 
-class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
+_Object_Root_ = _TFL_Meta_Object_Root_
+
+class _TFL_Meta_Object_ (Meta.BaM (_Object_Root_, metaclass = Meta.M_Class)) :
     """Instead of `object`, `TFL.Meta.Object` should be used as baseclass to
        define top-level classes. Classes derived (directly or indirectly)
        from `Object` gain the benefits:
@@ -158,11 +163,6 @@ class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
            are easy to solve if `Object` is the single ancestor in
            need of fixing.
     """
-
-    __metaclass__ = TFL.Meta.M_Class
-    """TFL.Meta.M_Class is used as metaclass for this class and all its
-       dependents (which don't override the metaclass)
-       """
 
     _real_name    = "Object"
     """This class will be known and used as `Object` although the class

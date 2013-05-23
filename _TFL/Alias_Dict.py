@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,13 +27,14 @@
 #
 # Revision Dates
 #    30-Sep-2009 (CT) Creation
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 import _TFL._Meta.M_Class
 
-class Alias_Dict (dict) :
+class Alias_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     """A dictionary with support for aliases for the keys.
 
        >>> ad = Alias_Dict (a = 1, b = 42, z = 137)
@@ -47,8 +48,6 @@ class Alias_Dict (dict) :
        >>> sorted (ad.iteritems ())
        [('a', 1), ('b', 42), ('z', 137)]
     """
-
-    __metaclass__        = TFL.Meta.M_Class
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)

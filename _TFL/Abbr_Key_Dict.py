@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #    24-Mar-2005 (CT) Small changes in MGs changes
 #    24-Mar-2005 (CT) Moved into package `TFL`
 #    29-Aug-2008 (CT) s/super(...)/__super/
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -84,12 +85,10 @@ class Ambiguous_Key (KeyError) :
     pass
 # end class Ambiguous_Key
 
-class Abbr_Key_Dict (dict) :
+class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     """Dictionary supporting unique abbreviations of a key to be used as
        arguments for `__getitem__'.
     """
-
-    __metaclass__        = TFL.Meta.M_Class
 
     def __getitem__ (self, key) :
         matching = self.matching_keys (key)

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,12 +33,14 @@
 #                     actually exist [provided the existing ones define
 #                     everything necessary])
 #    19-Nov-2008 (CT) `hide` added to option `-batch`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   __future__             import with_statement
 
 from   _TFL                   import TFL
+from   _TFL._Meta             import Meta
 
 import _TFL._Meta.M_Auto_Combine
 import _TFL._UI.Application
@@ -51,12 +53,10 @@ from   _TFL.Command_Line      import Command_Line, Opt, Arg
 import sys
 import traceback
 
-class _TFL_UI_Starter_ (TFL.UI.Mixin) :
+class _TFL_UI_Starter_ (Meta.BaM (UI.Mixin, metaclass = Meta.M_Auto_Combine)) :
     """Starter class for TFL applications."""
 
     _real_name           = "Starter"
-
-    __metaclass__        = TFL.Meta.M_Auto_Combine
     _lists_to_combine    = ("Args", "Opts")
     _gui_toolkit_name    = "Tk"
 

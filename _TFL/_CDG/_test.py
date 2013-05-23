@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2013 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -17,6 +17,7 @@
 #    14-Nov-2006 (MZO) test extended, profiler added
 #    14-Mar-2007 (PGO) `mask` is ubyte1 only
 #    18-Oct-2007 (MZO) [25170] example for `table_entry_comments` added
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -30,10 +31,8 @@ import _TFL._SDG._C.import_C
 
 Meta_Struct = TFL.CDG.M_Struct.New ("TDCOM")
 
-class Struct (TFL.CDG.Struct) :
+class Struct (TFL.Meta.BaM (TFL.CDG.Struct, metaclass = Meta_Struct)) :
     """Base class for all structs"""
-
-    __metaclass__ = Meta_Struct
 
 # end class Struct
 

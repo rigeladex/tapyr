@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #    20-Aug-2012 (CT) Sort methods alphabetically
 #    21-Aug-2012 (CT) Add `corners`
 #    26-Aug-2012 (CT) Change `side_dict` to get nice sides
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ class M_Rect (TFL.Meta.Object.__class__) :
 
 # end class M_Rect
 
-class Rect (TFL.Meta.Object) :
+class Rect (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rect)) :
     """Model an axes-parallel rectangle in 2D space.
 
     >>> def rect_points (r) :
@@ -153,8 +154,6 @@ class Rect (TFL.Meta.Object) :
     (2.5, 2.0) : (2.0, 1.75)
 
     """
-
-    __metaclass__ = M_Rect
 
     Bottom_Left   = D2.Point (0.0, 0.0)
     Bottom_Right  = D2.Point (1.0, 0.0)

@@ -33,12 +33,14 @@
 #     5-May-2013 (CT) Test `bcrypt` before defining `Bcrypt`
 #                     (passlib fails *after* import if bcrypt's c-extension
 #                     is AWOL)
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _TFL import TFL
+from   _TFL       import TFL
+from   _TFL._Meta import Meta
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -47,7 +49,7 @@ import hashlib
 import itertools
 import uuid
 
-class M_Password_Hasher (TFL.Meta.Object.__class__) :
+class M_Password_Hasher (Meta.Object.__class__) :
     """Meta class for password hashers"""
 
     Table = {}
@@ -85,10 +87,8 @@ class M_Password_Hasher (TFL.Meta.Object.__class__) :
 
 # end class M_Password_Hasher
 
-class Password_Hasher (TFL.Meta.Object) :
+class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
     """Base class for password hashers"""
-
-    __metaclass__ = M_Password_Hasher
 
     rank          = 0
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2012 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
+# Copyright (C) 2006-2013 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -46,10 +46,14 @@
 #    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
 #    16-Jun-2010 (CT)  s/print/pyk.fprint/
 #     8-Aug-2012 (CT) Use `parent._._module_name`, not `parent._._name`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
+from   _TFL              import TFL
 from   _TFL              import pyk
+
+import _TFL._Meta.M_Class
 
 import imp
 import os
@@ -81,12 +85,11 @@ class M_DPN_Importer (type) :
 
 # end class M_DPN_Importer
 
-class DPN_Importer (object) :
+class DPN_Importer (TFL.Meta.BaM (object, metaclass = M_DPN_Importer)) :
     """Implements an import hook for derived package namesapces,
-       according PEP 302. For the derived and all parent namespaces,
+       according to PEP 302. For the derived and all parent namespaces,
        try to find the module.
     """
-    __metaclass__ = M_DPN_Importer
 
     def __init__ (self, name, pns_chain) :
         self.name      = name

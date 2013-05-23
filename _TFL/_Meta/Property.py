@@ -54,18 +54,16 @@
 #    24-Sep-2009 (CT) `Data_Descriptor` added (as an example how to do it)
 #    22-Sep-2011 (CT) `Class_Property` added
 #    29-Jan-2013 (CT) Allow dotted names for `Alias_Property`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
-import _TFL._Meta
 import _TFL._Meta.M_Class
 
 import operator
 
-class _Property_ (property) :
-
-    __metaclass__ = TFL.Meta.M_Class
+class _Property_ (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
 
     def __init__ (self) :
         self.__super.__init__ (self._get, self._set, self._del)
@@ -107,14 +105,12 @@ class Property (_Property_) :
 
 # end class Property
 
-class Data_Descriptor (property) :
+class Data_Descriptor (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
     """Data descriptor for an attribute.
 
        This is just an example how to define a data descriptor for an
        attribute.
     """
-
-    __metaclass__ = TFL.Meta.M_Class
 
     def __init__ (self, name, doc = None) :
         self.name    = name
@@ -146,10 +142,8 @@ class Data_Descriptor (property) :
 
 # end class Data_Descriptor
 
-class Method_Descriptor (object) :
+class Method_Descriptor (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
     """Descriptor for special method types."""
-
-    __metaclass__ = TFL.Meta.M_Class
 
     class Bound_Method (object) :
 
@@ -368,7 +362,7 @@ class Class_and_Instance_Method (Method_Descriptor) :
 
 # end class Class_and_Instance_Method
 
-class Alias_Property (object) :
+class Alias_Property (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Class)) :
     """Property defining an alias name for another attribute.
 
        ::
@@ -394,8 +388,6 @@ class Alias_Property (object) :
            >>> X.bar()
            42
     """
-
-    __metaclass__ = TFL.Meta.M_Class
 
     def __init__ (self, aliased_name) :
         self.aliased_name = aliased_name
@@ -443,23 +435,23 @@ class Alias_Class_and_Instance_Method (Class_Method) :
 
        ::
 
-         >>> class T (object) :
+         >>> class Meta_T (TFL.Meta.M_Class) :
+         ...   def foo (cls) :
+         ...     print "Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__)
+         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
          ...   chameleon = Alias_Class_and_Instance_Method ("foo")
-         ...   class __metaclass__ (TFL.Meta.M_Class) :
-         ...     def foo (cls) :
-         ...       print "Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__)
          ...   def foo (self) :
          ...     print "Instance method foo <%s>" % (self.__class__.__name__, )
          ...
          >>> T.chameleon()
-         Class method foo <T.__metaclass__>
+         Class method foo <T.Meta_T>
          >>> T ().chameleon ()
          Instance method foo <T>
-         >>> class U(T) :
+         >>> class U (T) :
          ...   pass
          ...
          >>> U.chameleon()
-         Class method foo <U.__metaclass__>
+         Class method foo <U.Meta_T>
          >>> U().chameleon()
          Instance method foo <U>
     """
@@ -529,10 +521,10 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
 
        ::
 
-         >>> class T (object) :
+         >>> class Meta_T (TFL.Meta.M_Class) :
+         ...   foo = 42
+         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
          ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
-         ...   class __metaclass__ (TFL.Meta.M_Class) :
-         ...     foo = 42
          ...   foo = 137
          ...
          >>> T.chameleon

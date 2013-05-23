@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2013 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -31,11 +31,13 @@
 #     8-May-2007 (MZO) Creation ..
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    29-Aug-2008 (CT)  Import of TTA removed
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
 from    _TFL                    import TFL
 from    _TFL                    import sos
+from    _TFL._Meta              import Meta
 import  _TFL._Meta.Object
 import  _TFL._Meta.M_Class
 import  _TFL.predicate
@@ -175,13 +177,10 @@ class Check_Reference_Mixin (TFL.Meta.Object) :
 
 # end class Check_Reference_Mixin
 
-class Check_Rule (Check_Reference_Mixin) :
-
-    __metaclass__ =  M_Check_Rule
+class Check_Rule (Meta.BaM (Check_Reference_Mixin, metaclass = M_Check_Rule)) :
 
     def __call__ (self, fcl_ms, mhl_ms, app_data) :
         result = self._rule (fcl_ms, mhl_ms, app_data)
-#        self._out (result)
         return result
     # end def __call__
 

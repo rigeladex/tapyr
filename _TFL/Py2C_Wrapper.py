@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #                      argument.
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,6 @@ from   _TFL                  import TFL
 from   _TFL.predicate        import *
 from   _TFL._SDG._C.import_C import C as C_Document
 
-import _TFL._Meta
 import _TFL._Meta.M_Class
 
 class Meta_Py_Object (TFL.Meta.M_Class) :
@@ -76,9 +76,7 @@ class Meta_Py_Object (TFL.Meta.M_Class) :
 
 # end class Meta_Py_Object
 
-class _Py_Object_ :
-
-    __metaclass__   = Meta_Py_Object
+class _Py_Object_ (TFL.Meta.BaM (object, metaclass = Meta_Py_Object)) :
 
     format_code     = None
     c_types         = None

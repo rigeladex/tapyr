@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,7 @@
 #    22-Aug-2008 (CT)  Moved from `_TOM` to `_TFL`, code from `TTA.Plugin`
 #                      factored in here
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -77,10 +78,9 @@ class M_Plugin (TFL.Meta.M_Class) :
 
 # end class M_Plugin
 
-class _TFL_Plugin_ (TFL.Meta.Object) :
+class _TFL_Plugin_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Plugin)) :
     """Model a plugin of an application."""
 
-    __metaclass__        = M_Plugin
     _real_name           = "Plugin"
 
     application          = None

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -42,6 +42,7 @@
 #     3-Jun-2012 (CT) Factor `Rel_Path_Option`, add `Config_Dirs_Option`
 #     3-Jun-2012 (CT) Add `Root_Command`
 #     4-Jun-2012 (CT) Change `app_path` to use `root`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -97,10 +98,9 @@ class _M_Option_ (_Meta_Base_) :
 
 # end class _M_Option_
 
-class TFL_Option (TFL.Meta.Object) :
+class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
     ### Base class for options of interactive commands.
 
-    __metaclass__           = _M_Option_
     _real_name              = "Option"
     _rn_prefix              = "TFL_"
 
@@ -285,10 +285,9 @@ class _M_Command_ (_Meta_Base_) :
 
 # end class _M_Command_
 
-class TFL_Command (TFL.Meta.Object) :
+class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     ### Base class for interactive commands.
 
-    __metaclass__           = _M_Command_
     _rn_prefix              = "TFL_"
 
     _dicts_to_combine       = ("_defaults", )

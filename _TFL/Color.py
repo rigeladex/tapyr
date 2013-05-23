@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -35,6 +35,7 @@
 #    18-Jan-2012 (CT) Return `name`, not `"name"`, from `SVG_Color.formatted`
 #    16-Apr-2012 (CT) Add `sorted` to `.iteritems`
 #    31-Aug-2012 (CT) Add property `no_alpha`
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -231,10 +232,8 @@ class M_Color (TFL.Meta.Object.__class__) :
 
 # end class M_Color
 
-class _Color_ (TFL.Meta.Object) :
+class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     """Base class modelling a mutable color."""
-
-    __metaclass__ = M_Color
 
     alpha         = None
     formatter     = None

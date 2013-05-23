@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #    29-Sep-2006 (CT) `__add__` and `__sub__` added
+#    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -35,10 +36,8 @@ from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL._Units.M_Kind
 
-class Kind (TFL.Meta.Object) :
+class Kind (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.Units.M_Kind)) :
     """Model a unit kind"""
-
-    __metaclass__ = TFL.Units.M_Kind
 
     base_unit     = None ### redefine in descendents
     _units        = ()   ### redefine in descendents
