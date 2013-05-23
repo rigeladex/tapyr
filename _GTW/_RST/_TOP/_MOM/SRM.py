@@ -43,6 +43,8 @@
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #     4-May-2013 (CT) Add `submit_error_callback`,
 #                     factor methods from `_register_submit_callback`
+#    23-May-2013 (CT) Add `_regatta_registration_changed_msg`, call it in
+#                     `_register_submit_error_callback`
 #    ««revision-date»»···
 #--
 
@@ -61,7 +63,7 @@ from   _TFL._Meta.Property      import Alias_Property
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import first
+from   _TFL.predicate           import first, uniq
 
 from   posixpath                import join as pp_join
 
@@ -241,21 +243,51 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
         return result
     # end def _get_pages
 
+    def _regatta_registration_changed_msg (self, scope, fv) :
+        def _gen (scope, fv) :
+            results = {}
+            for ev in fv.entity_values :
+                try :
+                    cc = ev.elem._changed_children \
+                        (ev, results, scope, ev.entity)
+                except Exception as exc:
+                    pass
+                else :
+                    if cc :
+                        yield "%s\n    %s\n" % \
+                            ( ev
+                            , "\n    ".join
+                                (   "%-25s: %s" % (k, v)
+                                for k, v in sorted (cc.iteritems ())
+                                )
+                            )
+                    else :
+                        yield str (ev)
+        return "\n\n".join (_gen (scope, fv))
+    # end def _regatta_registration_changed_msg
+
     def _regatta_registration_objects_msg (self, scope, fv) :
-        def _gen (scope, results) :
+        def _ents (scope, fv) :
+            for ev in fv.entity_values :
+                try :
+                    e = ev.entity
+                except AttributeError :
+                    pass
+                else :
+                    if e is not None :
+                        yield e
+        def _gen (scope, entities) :
             from _MOM._Attr import Selector as S
-            AQ = S.List (S.primary, S.user)
-            SRM = scope.SRM
-            for k, x in sorted (results.iteritems ()) :
-                if isinstance (x, (SRM.Boat.E_Type, SRM.Sailor.E_Type)) :
-                    yield x.type_name, tuple \
-                        ( "%s = '%s'" % (a.name, getattr (x.FO, a.name))
-                        for a in AQ (x)
-                        if  a.has_substance (x)
-                        )
+            AQ = S.editable
+            for x in sorted (uniq (entities), key = TFL.Getter.type_name) :
+                yield x.type_name, tuple \
+                    ( "%s = '%s'" % (a.name, getattr (x.FO, a.name))
+                    for a in AQ (x)
+                    if  a.has_substance (x)
+                    )
         result = "\n".join \
             (   "%s (%s)" % (t, ", ".join (a))
-            for t, a in _gen (scope, fv.results)
+            for t, a in _gen (scope, _ents (scope, fv))
             )
         return result
     # end def _regatta_registration_objects_msg
@@ -276,8 +308,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                    % (id, "\n    ".join (formatted (e, 2) for e in errors))
                  for id, errors in fv.errors.iteritems ()
                  )
-             , "\n\n".join
-                 (str (v) for v in fv.entity_values)
+             , self._regatta_registration_changed_msg (scope, fv)
             ))
         self._send_registration_email \
             (request, response, scope, fv, result, message, "*** failed ***")
