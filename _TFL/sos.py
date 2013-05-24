@@ -61,6 +61,7 @@
 #     5-Mar-2010 (CT) `changed_dir` added
 #     1-Jul-2010 (CT) `expanded_glob` changed to return `[pathname]` over `[]`
 #    24-May-2013 (CT) Improve Python-3.3 compatibility
+#    24-May-2013 (CT) Don't inclode magic `os` properties
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,8 @@ import os as _os
 
 ### `from os import *` fails in Python 3.3 due to a quite restricted `__all__`
 ### --> update `globals` with `os.__dict__` instead
-globals ().update (_os.__dict__)
+globals ().update \
+    ((k, v) for k, v in _os.__dict__.items () if not k.startswith ("__"))
 
 mkdir_p = makedirs
 
