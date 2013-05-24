@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -66,6 +66,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL import TFL
 import _TFL._Meta.Object
 
@@ -84,7 +86,7 @@ def frame (depth = 0) :
             for i in range (depth) :
                 result = result.f_back
         except AttributeError :
-            raise ValueError, "call stack is not deep enough: %d" % (depth, )
+            raise ValueError ("call stack is not deep enough: %d" % (depth, ))
     return result
 # end def frame
 
@@ -135,19 +137,19 @@ class Scope (TFL.Meta.Object) :
        The supplied index operator allows Scope objects to be used as mapping
        arguments for the string formatting operator "%"::
 
-           >>> print "42*3 == %(42*3)s" % Scope ()
+           >>> print ("42*3 == %(42*3)s" % Scope ())
            42*3 == 126
 
            >>> a,b,c = 2,3,4
-           >>> print "a = %(a)s, b = %(b)d, c = %(c)f, d = %(b*c)s" % Scope ()
+           >>> print ("a = %(a)s, b = %(b)d, c = %(c)f, d = %(b*c)s" % Scope ())
            a = 2, b = 3, c = 4.000000, d = 12
 
            >>> list = [x*x for x in range (10)]
-           >>> print "%(list)s, %(list [2:4])s, %(list [-1])s" % Scope ()
+           >>> print ("%(list)s, %(list [2:4])s, %(list [-1])s" % Scope ())
            [0, 1, 4, 9, 16, 25, 36, 49, 64, 81], [4, 9], 81
 
            >>> square = lambda n : n * n
-           >>> print "%(square (%(3*4)s))s" % Scope ()
+           >>> print ("%(square (%(3*4)s))s" % Scope ())
            144
 
     """
@@ -174,7 +176,7 @@ class Scope (TFL.Meta.Object) :
         try :
             return eval (index, self.globals, self.locals)
         except NameError :
-            raise KeyError, index
+            raise KeyError (index)
     # end def __getitem__
 
     def __getattr__ (self, name) :
@@ -184,7 +186,7 @@ class Scope (TFL.Meta.Object) :
             try :
                 return self.globals [name]
             except KeyError :
-                raise AttributeError, name
+                raise AttributeError (name)
     # end def __getattr__
 
 # end class Scope
@@ -210,7 +212,7 @@ class Object_Scope (Scope) :
        '/foo/bar'
        >>> c.directories
        <bound method Filename.directories of Filename (/foo/bar/baz.dat)>
-       >>> c.directories()
+       >>> list (c.directories ())
        ['foo', 'bar']
        >>> from _TFL.Record import Record
        >>> c = Record (x = 1)
@@ -218,9 +220,9 @@ class Object_Scope (Scope) :
        >>> s = Object_Scope (o)
        >>> s.a
        42
-       >>> print s.b
+       >>> print (s.b)
        (a = 137, b = 'foo', c = Record (x = 1))
-       >>> print s.b.c
+       >>> print (s.b.c)
        (x = 1)
        >>> "s.a = %(a)s, s.b.a = %(b.a)s, s.b.c.x = %(b.c.x)s" % s
        's.a = 42, s.b.a = 137, s.b.c.x = 1'

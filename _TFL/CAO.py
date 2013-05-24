@@ -106,8 +106,11 @@
 #    18-Mar-2013 (CT) Change `_safe_eval` to not convert `self` to string
 #    18-Mar-2013 (CT) Change `_Number_._resolve_range_1` to save match variables
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#    23-May-2013 (CT) Improve Python-3 compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__       import print_function
 
 from   _TFL               import TFL
 
@@ -117,6 +120,7 @@ from   _TFL.Regexp        import Regexp, re
 from   _TFL.Trie          import Word_Trie as Trie
 
 import _TFL.Accessor
+import _TFL.Context
 import _TFL.defaultdict
 import _TFL.Environment
 import _TFL._Meta.M_Class
@@ -132,7 +136,7 @@ from   itertools          import chain as ichain
 import decimal
 import sys
 
-class Err (StandardError) :
+class Err (Exception) :
 
     def __init__ (self, * args) :
         self.args = args
@@ -281,7 +285,7 @@ class _Spec_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
         result = self.__default
         if TFL.callable (result) :
             result = result ()
-        if isinstance (result, basestring) :
+        if isinstance (result, pyk.string_types) :
             result = self.cooked (result, cao)
         elif result is None :
             result = ()
@@ -426,11 +430,11 @@ class _Number_ (_Spec_) :
 
     def cook (self, value, cao = None) :
         err = None
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             try :
                 value = self._safe_eval (value)
-            except Err as err :
-                pass ### try `_cook` ("08" doesn't work for `Int`, otherwise)
+            except Err as exc :
+                err = exc ### try `_cook` ("08" doesn't work for `Int`, otherwise)
         try :
             return self._cook (value)
         except (ValueError, TypeError) as exc :
@@ -463,7 +467,7 @@ class Bool (_Spec_O_) :
     def cook (self, value, cao = None) :
         if value is None :
             return True
-        if not isinstance (value, basestring) :
+        if not isinstance (value, pyk.string_types) :
             return bool (value)
         if value.lower () in ("no", "0", "false") : ### XXX I18N
             return False
@@ -531,7 +535,8 @@ class Cmd_Choice (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
 
     @TFL.Meta.Once_Property
     def _max_name_length (self) :
-        return max (sc._max_name_length for sc in self.sub_cmds.itervalues ())
+        return max \
+            (sc._max_name_length for sc in pyk.itervalues (self.sub_cmds))
     # end def _max_name_length
 
     def cooked_default (self, cao = None) :
@@ -646,26 +651,27 @@ class Help (_Spec_O_) :
                     , ", ".join (sorted (ichain (topics, ("all", "help"))))
                     )
             if "summary" in wanted :
-                nl.next ()
+                next (nl)
                 self._help_summary (cao, indent)
             arg_p     = any (a for a in cao._arg_list if not a.hide)
             want_args = "args" in wanted
             if want_args and arg_p :
-                nl.next ()
+                next (nl)
                 self._help_args (cao, indent, heading = not most_p)
             if "cmds" in wanted :
-                nl.next ()
+                next (nl)
                 self._help_cmds \
                     (cao, indent+ (4 * want_args), heading = not want_args)
-            opt_p = any (o for o in cao._opt_dict.itervalues () if not o.hide)
+            opt_p = any \
+                (o for o in pyk.itervalues (cao._opt_dict) if not o.hide)
             if "opts" in wanted and opt_p :
-                nl.next ()
+                next (nl)
                 self._help_opts (cao, indent, heading = not most_p)
             if "buns" in wanted and cao._bun_dict :
-                nl.next ()
+                next (nl)
                 self._help_buns (cao, indent + (4 * most_p))
             if "vals" in wanted :
-                nl.next ()
+                next (nl)
                 self._help_values (cao, indent + (4 * most_p))
     # end def _handler
 
@@ -709,7 +715,7 @@ class Help (_Spec_O_) :
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length
-        for k, v in sorted (bun._kw.iteritems ()) :
+        for k, v in sorted (pyk.iteritems (bun._kw)) :
             pyk.fprint ("%s%-*s : %s" % (head, max_l, k, v))
     # end def _help_bun
 
@@ -719,7 +725,7 @@ class Help (_Spec_O_) :
                 ("%sArgument/option bundles of %s" % (" " * indent, cao._name))
             indent += 4
             head    = " " * indent
-            for k, b in sorted (cao._bun_dict.iteritems ()) :
+            for k, b in sorted (pyk.iteritems (cao._bun_dict)) :
                 self._help_bun (b, cao, head, indent)
     # end def _help_buns
 
@@ -732,7 +738,7 @@ class Help (_Spec_O_) :
             head    = " " * indent
             max_l   = cao._max_name_length
             scs     = sorted \
-                ( cmd._sub_cmd_choice.sub_cmds.iteritems ()
+                ( pyk.iteritems (cmd._sub_cmd_choice.sub_cmds)
                 , key = TFL.Getter [0]
                 )
             for name, sc in scs :
@@ -749,7 +755,7 @@ class Help (_Spec_O_) :
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length - 1
-        for name, opt in sorted (cao._opt_dict.iteritems ()) :
+        for name, opt in sorted (pyk.iteritems (cao._opt_dict)) :
             self._help_ao (opt, cao, head, max_l, "-")
     # end def _help_opts
 
@@ -763,7 +769,7 @@ class Help (_Spec_O_) :
         if desc :
             pyk.fprint (head, desc, sep = "    ")
         if cao._bun_dict :
-            self.nl.next ()
+            next (self.nl)
             pyk.fprint \
                 ( "%sPossible bundles: %s"
                 % ( " " * (indent + 4)
@@ -793,7 +799,7 @@ class Help (_Spec_O_) :
         if ao.hide :
             return
         name = ao.name
-        raw_default = unicode (ao.raw_default)
+        raw_default = pyk.text_type (ao.raw_default)
         try :
             raw = cao ["%s:raw" % name]
         except KeyError :
@@ -812,7 +818,7 @@ class Help (_Spec_O_) :
             cooked = cooked [0]
         pyk.fprint \
             ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
-        if unicode (cooked) != unicode (raw) :
+        if pyk.text_type (cooked) != pyk.text_type (raw) :
             if isinstance (cooked, (list, dict)) :
                 from _TFL.Formatter import formatted_1, formatted
                 pyk.fprint \
@@ -829,7 +835,7 @@ class Help (_Spec_O_) :
         indent += 4
         head    = " " * indent
         max_l   = cao._max_name_length
-        for name, opt in sorted (cao._opt_dict.iteritems ()) :
+        for name, opt in sorted (pyk.iteritems (cao._opt_dict)) :
             self._help_value (opt, cao, head, max_l, "-")
         max_l  += 1
         for arg in cao._arg_list :
@@ -875,7 +881,7 @@ class Int_X (_Number_) :
     type_abbr     = "X"
 
     def _cook (self, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             return int (value, 0)
         return int (value)
     # end def _cook
@@ -886,7 +892,7 @@ class Key (_Spec_) :
     """Argument or option that specifies a key of a dictionary `dct`."""
 
     def __init__ (self, dct, ** kw) :
-        assert all (isinstance (k, basestring) for k in dct)
+        assert all (isinstance (k, pyk.string_types) for k in dct)
         self._dict = dct
         self.__super.__init__ (** kw)
     # end def __init__
@@ -927,7 +933,7 @@ class Money (Decimal) :
     def _safe_eval (self, value) :
         cdp = self.comma_dec_pat
         pdp = self.period_dec_pat
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             if cdp.match (value) :
                 orig  = value
                 value = cdp.sub \
@@ -1264,7 +1270,7 @@ class Cmd (TFL.Meta.Object) :
             if max_args == -1 or max_args > 0 :
                 args = (Arg.Str ("__argv"), )
         for i, a in enumerate (args) :
-            if isinstance (a, basestring) :
+            if isinstance (a, pyk.string_types) :
                 a = Arg.from_string (a)
             if isinstance (a.__class__, Opt) :
                 raise Err \
@@ -1305,7 +1311,7 @@ class Cmd (TFL.Meta.Object) :
         self._opt_alias = al = {}
         self._opt_conf  = oc = []
         for i, o in enumerate (opts) :
-            if isinstance (o, basestring) :
+            if isinstance (o, pyk.string_types) :
                 o = Arg.from_string (o.lstrip ("-"))
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
@@ -1401,8 +1407,8 @@ class CAO (TFL.Meta.Object) :
                 def info (type, value, tb) :
                     import traceback, pdb
                     traceback.print_exception (type, value, tb)
-                    print
-                    pdb.pm () # post-mortem mode
+                    pyk.fprint ()
+                    pdb.pm     () # post-mortem mode
                 sys.excepthook = info
         if self.help :
             self._cmd.help (self)
@@ -1474,7 +1480,7 @@ class CAO (TFL.Meta.Object) :
             for ckd in ckds :
                 if sc and sc.name in ckd :
                     self._set_arg (sc, ckd.pop (sc.name))
-                for k, v in ckd.iteritems () :
+                for k, v in pyk.iteritems (ckd) :
                     ao = None
                     if k in self._opt_dict :
                         ao = self._opt_dict [k]
@@ -1529,7 +1535,7 @@ class CAO (TFL.Meta.Object) :
                 if v is None :
                     if spec.needs_value :
                         try :
-                            v = argv_it.next ()
+                            v = next (argv_it)
                         except StopIteration :
                             raise Err ("Option `%s` needs a value" % n)
                     else :
@@ -1595,7 +1601,7 @@ class CAO (TFL.Meta.Object) :
             self._set_arg (sc, _kw.pop (sc.name))
         ad   = self._arg_dict
         rest = []
-        for k, v in _kw.iteritems () :
+        for k, v in pyk.iteritems (_kw) :
             matches, unique = self._opt_abbr.completions (k)
             if unique :
                 self._set_opt  (self._opt_dict [unique], v)
@@ -1632,7 +1638,7 @@ class CAO (TFL.Meta.Object) :
     # end def __getattr__
 
     def __getitem__ (self, key) :
-        if isinstance (key, basestring) :
+        if isinstance (key, pyk.string_types) :
             map = self._map
             key, _, raw = TFL.split_hst (key, ":")
             if raw == "raw" :
@@ -1650,6 +1656,15 @@ class CAO (TFL.Meta.Object) :
     # end def __iter__
 
 # end class CAO
+
+@TFL.Contextmanager
+def expect_except (* Xs) :
+    """Hide exception class name differences between Python 2 and 3"""
+    try :
+        yield
+    except Xs as exc :
+        print ("%s: %s" % (exc.__class__.__name__, exc))
+# end def expect_except
 
 def show (cao) :
     pyk.fprint (cao._name)
@@ -1722,13 +1737,13 @@ A typical use of :class:`Cmd` looks like::
     >>> def main (cao) :
     ...     "Explanation of the purpose of the command"
     ...     if cao.verbose :
-    ...         print "Starting", cao._name
+    ...         print ("Starting", cao._name)
     ...     for fn in cao.argv :
     ...         if cao.verbose :
-    ...             print "   processing", fn
+    ...             print ("   processing", fn)
     ...         ### do whatever needs to be done
     ...     if cao.verbose :
-    ...         print "Finished", cao._name
+    ...         print ("Finished", cao._name)
     ...
 
     >>> cmd = TFL.CAO.Cmd (
@@ -1769,20 +1784,19 @@ The methods :meth:`~Cmd.parse` and :meth:`~Cmd.use` return a instance of
 :class:`CAO` which provides access to all argument and option values
 specified. ::
 
-    >>> cao = cmd.parse (["-verbose"])
-    Traceback (most recent call last):
-    ...
+    >>> with expect_except (Err) :
+    ...      cao = cmd.parse (["-verbose"])
     Err: Command/argument/option error: Need at least 2 arguments, got 0
 
     >>> cao = cmd.parse (["-verbose", "path1", "path2"])
 
-    >>> print cao.indent, type (cao.indent)
-    [4] <type 'list'>
+    >>> print (cao.indent, type (cao.indent).__name__)
+    [4] list
 
-    >>> print cao.output
+    >>> print (cao.output)
     None
 
-    >>> print cao.verbose
+    >>> print (cao.verbose)
     True
 
     >>> cao.argn
@@ -1859,7 +1873,7 @@ values passed to it::
     >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
     >>> cmd._arg_list
     ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?']
-    >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
+    >>> sorted (str (o) for o in pyk.itervalues (cmd._opt_dict))
     ["'-Pdb_on_Exception:B=False#1?Start python debugger pdb on exception'", "'-help Display help about command'", "'-verbose:B=False#1?'", "'year:I,=2010#0?'"]
 
     >>> cmd.adam, cmd.verbose
@@ -1997,17 +2011,14 @@ values passed to it::
         ccc        : 3
         ddd        : D
         argv       : [3, 'D']
-    >>> coc (["two", "-s"])
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (Err) :
+    ...      coc (["two", "-s"])
     Err: Command/argument/option error: Ambiguous option `-s`, matches any of ('strict', 'struct')
-    >>> coc (["two", "-t"])
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (Err) :
+    ...      coc (["two", "-t"])
     Err: Command/argument/option error: Unknown option `-t`
-    >>> coc (["two", "one"])
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (Err) :
+    ...      coc (["two", "one"])
     Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?'
     >>> coc (["one", "two"])
     Comp one
@@ -2164,9 +2175,8 @@ values passed to it::
         -help      : []
         __argv     : a
         argv       : ['a', 'b', 'c']
-    >>> cmd (["a", "b", "c", "d"])
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (Err) :
+    ...      cmd (["a", "b", "c", "d"])
     Err: Command/argument/option error: Maximum number of arguments is 3, got 4
 
     >>> c1b = Bundle ("c1b", sub = "one", Z = True, aaa = "foo")
@@ -2206,13 +2216,11 @@ values passed to it::
         ccc        : 42
         ddd        : D
         argv       : [42, 'D']
-    >>> cocb (["c2b"])
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (Err) :
+    ...      cocb (["c2b"])
     Err: Command/argument/option error: Unkown sub-command `c2b`, specify one of: (one, two)
-    >>> cocb (["@c3b"])
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (Err) :
+    ...      cocb (["@c3b"])
     Err: Command/argument/option error: Unknown bundle `@c3b`, specify one of (@c1b, @c2b)
 
     >>> _ = cocb (["-help"])

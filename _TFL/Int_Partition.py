@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,14 +35,18 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL import TFL
+from   _TFL import pyk
+
 import _TFL._Meta.Object
 
 class _Int_Partition_ (TFL.Meta.Object) :
     """Compute partition of (positive) integers.
 
        >>> for i in range (6) :
-       ...   print i, list (Int_Partition (i))
+       ...   print (i, list (Int_Partition (i)))
        ...
        0 []
        1 [(1,)]
@@ -60,7 +64,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
 
        >>> for n in range (9) :
        ...   for l in range (n) :
-       ...     print n, l, Int_Partition [n, l]
+       ...     print (n, l, Int_Partition [n, l])
        ...
        1 0 ((1,),)
        2 0 ((2,),)
@@ -100,7 +104,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
        8 7 ((1, 1, 1, 1, 1, 1, 1, 1),)
 
        >>> for i in range (11) :
-       ...   print "p(%d) = %d" % (i, len (list (Int_Partition (i))))
+       ...   print ("p(%d) = %d" % (i, len (list (Int_Partition (i)))))
        ...
        p(0) = 0
        p(1) = 1
@@ -126,10 +130,11 @@ class _Int_Partition_ (TFL.Meta.Object) :
                 yield p
     # end def __call__
 
-    def __getitem__ (self, (n, l)) :
+    def __getitem__ (self, key) :
         """Return all partitions of length `l` for the positive integer
            `n`, i.e., all sums of `l + 1` positive integers adding up to `n`.
         """
+        (n, l) = key
         try :
             result = self._Table [(n, l)]
         except KeyError :
@@ -141,7 +146,7 @@ class _Int_Partition_ (TFL.Meta.Object) :
         if l == 0 :
             yield (n, )
         else :
-            for a in xrange (n - l, 0 , -1) :
+            for a in pyk.xrange (n - l, 0 , -1) :
                 for ps in self [(n - a, l - 1)] :
                     if a >= ps [0] :
                         yield (a, ) + ps

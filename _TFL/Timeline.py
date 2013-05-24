@@ -246,7 +246,7 @@ class TLS_Periodic (TFL.Meta.Object) :
                 p.prepare_cut_around_l (p, size)
                 result.append (p)
             else :
-                raise ValueError, \
+                raise ValueError \
                     ( "Elements of self.generations %s must not be empty, %s"
                     % (self.generations, size)
                     )
@@ -276,6 +276,7 @@ class TLS_Periodic (TFL.Meta.Object) :
 class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
 
+       >>> from _TFL.CAO import expect_except
        >>> S  = Timeline.Span
        >>> tl = Timeline (0, 1000)
        >>> tl.free
@@ -322,9 +323,8 @@ class Timeline (TFL.Meta.Object) :
        >>> tl.cut (c1, c2)
        >>> tl.free
        [(0, 70), (215, 500), (550, 1000)]
-       >>> tl.cut (c1, c2)
-       Traceback (most recent call last):
-       ...
+       >>> with expect_except (Timeline_Error) :
+       ...      tl.cut (c1, c2)
        Timeline_Error: Wrong use of Timeline (intersection vs. cut)
            [(0, 70), (215, 500), (550, 1000)] <--> (200, 215)
 
@@ -355,9 +355,8 @@ class Timeline (TFL.Meta.Object) :
        [(0, 50), (100, 450), (500, 850), (900, 1000)]
 
        >>> tl = Timeline (0, 1000)
-       >>> tl.intersection_p (S (50, 100), 40)
-       Traceback (most recent call last):
-       ...
+       >>> with expect_except (Timeline_Error) :
+       ...      tl.intersection_p (S (50, 100), 40)
        Timeline_Error: Length of span must be shorter than period: ((50, 100), 40)
 
        >>> tl = Timeline (0, 1000)

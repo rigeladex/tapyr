@@ -58,6 +58,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
 
@@ -269,25 +271,25 @@ def Class_Property (getter) :
         ...     @Class_Property
         ...     def bar (cls) :
         ...         "Normal method bar"
-        ...         print "Normal method bar called"
+        ...         print ("Normal method bar called")
         ...         return 42
         ...     @Class_Property
         ...     @classmethod
         ...     def baz (cls) :
         ...         "classmethod baz"
-        ...         print "classmethod baz called"
+        ...         print ("classmethod baz called")
         ...         return "Frozz"
         ...     @Class_Property
         ...     @Class_Method
         ...     def foo (cls) :
         ...         "Class_Method foo"
-        ...         print "Class_Method foo called"
+        ...         print ("Class_Method foo called")
         ...         return "Hello world"
         ...     @Class_Property
         ...     @Once_Property
         ...     def qux (cls) :
         ...         "Once property qux"
-        ...         print "Once property qux"
+        ...         print ("Once property qux")
         ...         return 42 * 42
         ...
         >>> foo = Foo ()
@@ -336,22 +338,22 @@ class Class_and_Instance_Method (Method_Descriptor) :
            ...     def __init__ (self) :
            ...         self.foo = 137
            ...     def chameleon (soc) :
-           ...         print type (soc), soc.foo
+           ...         print (type (soc).__name__, soc.foo)
            ...     chameleon = Class_and_Instance_Method (chameleon)
            ...
            >>> T.chameleon ()
-           <type 'type'> 42
+           type 42
            >>> T ().chameleon ()
-           <class 'Property.T'> 137
+           T 137
            >>> class U (T) :
            ...     foo = 84
            ...     def __init__ (self) :
            ...         self.foo = 2 * 137
            ...
            >>> U.chameleon ()
-           <type 'type'> 84
+           type 84
            >>> U ().chameleon ()
-           <class 'Property.U'> 274
+           U 274
     """
 
     def __get__ (self, obj, cls = None) :
@@ -424,7 +426,7 @@ class Alias_Attribute (Alias_Property) :
     # end def __get__
 
     def __set__ (self, obj, value) :
-        raise TypeError, "Cannot assign `%s` to object `%s`" % (value, object)
+        raise TypeError ("Cannot assign `%s` to object `%s`" % (value, object))
     # end def __set__
 
 # end class Alias_Attribute
@@ -437,11 +439,11 @@ class Alias_Class_and_Instance_Method (Class_Method) :
 
          >>> class Meta_T (TFL.Meta.M_Class) :
          ...   def foo (cls) :
-         ...     print "Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__)
+         ...     print ("Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__))
          >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
          ...   chameleon = Alias_Class_and_Instance_Method ("foo")
          ...   def foo (self) :
-         ...     print "Instance method foo <%s>" % (self.__class__.__name__, )
+         ...     print ("Instance method foo <%s>" % (self.__class__.__name__, ))
          ...
          >>> T.chameleon()
          Class method foo <T.Meta_T>
@@ -480,9 +482,9 @@ class Alias2_Class_and_Instance_Method (Class_Method) :
          ...   chameleon = Alias2_Class_and_Instance_Method ("foo", "bar")
          ...   @classmethod
          ...   def foo (cls) :
-         ...     print "Class method foo <%s>" % (cls.__name__, )
+         ...     print ("Class method foo <%s>" % (cls.__name__, ))
          ...   def bar (self) :
-         ...     print "Instance method bar <%s>" % (self.__class__.__name__, )
+         ...     print ("Instance method bar <%s>" % (self.__class__.__name__, ))
          ...
          >>> T.chameleon()
          Class method foo <T>
@@ -505,8 +507,8 @@ class Alias2_Class_and_Instance_Method (Class_Method) :
 
     def __get__ (self, obj, cls = None) :
         if obj is None :
-            result = self.Bound_Method \
-                (getattr (cls, self.cm_alias).im_func, cls, cls)
+            m      = getattr (cls, self.cm_alias)
+            result = self.Bound_Method (m.__func__, cls, cls)
         else :
             result = self.Bound_Method \
                 (getattr (cls, self.im_alias), obj, cls)

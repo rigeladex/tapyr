@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -157,7 +157,7 @@ def context (* lang) :
 def decode (s, errors = "replace") :
     """Decode `s` using `TFL.user_config.input_encoding`."""
     if isinstance (s, str) :
-        s = unicode (s, TFL.user_config.input_encoding, errors)
+        s = pyk.text_type (s, TFL.user_config.input_encoding, errors)
     return s
 # end def decode
 
@@ -209,7 +209,7 @@ def _load_languages (locale_dir, languages, domains, log_level) :
 
 def mark (text):
     """Mark `text` for translation."""
-    return unicode (text)
+    return pyk.text_type (text)
 # end def mark
 
 def safe_eval (value, encoding = None) :

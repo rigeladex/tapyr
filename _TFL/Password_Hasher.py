@@ -40,6 +40,8 @@
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _TFL       import TFL
+from   _TFL       import pyk
+
 from   _TFL._Meta import Meta
 
 import _TFL._Meta.Object
@@ -68,7 +70,7 @@ class M_Password_Hasher (Meta.Object.__class__) :
     # end def default
 
     def _m_add (cls, name, Table) :
-        name = unicode (name)
+        name = pyk.text_type (name)
         assert name not in Table, "Name clash: `%s` <-> `%s`" % \
             (name, Table [name].__class__)
         Table [name] = cls

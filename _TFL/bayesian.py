@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,12 +28,10 @@
 # Revision Dates
 #     3-Aug-2003 (CT) Creation
 #    29-Sep-2006 (CT) Two more doctests added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 from _TFL import TFL
 
@@ -102,7 +100,7 @@ def _command_spec (arg_array = None) :
 # end def _command_spec
 
 def _main (cmd) :
-    print "%5.3f" % bayesian (cmd.p_h, cmd.p_o_h, cmd.p_o_not_h)
+    print ("%5.3f" % bayesian (cmd.p_h, cmd.p_o_h, cmd.p_o_not_h))
 # end def _main
 
 if __name__ == "__main__" :

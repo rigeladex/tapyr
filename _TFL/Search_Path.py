@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,6 +42,13 @@ import errno
 class Search_Path (TFL.Meta.Object) :
     """Model a search path.
 
+       >>> @TFL.Contextmanager
+       ... def expect_except (* Xs) :
+       ...     try :
+       ...         yield
+       ...     except Xs as exc :
+       ...         print (exc)
+
        >>> sp = Search_Path ("/a", "/b", "/c")
        >>> sp.find ("x", lambda z : z.startswith ("/a"))
        '/a/x'
@@ -51,10 +58,9 @@ class Search_Path (TFL.Meta.Object) :
        '/c/x'
        >>> sp.find ("x/y", lambda z : z.startswith ("/c"))
        '/c/x/y'
-       >>> sp.find ("/x/y", lambda z : z.startswith ("/c"))
-       Traceback (most recent call last):
-         ...
-       IOError: [Errno 2] No such file '/x/y' in search path '/a/:/b/:/c/'
+       >>> with expect_except (IOError) :
+       ...     sp.find ("/x/y", lambda z : z.startswith ("/c"))
+       [Errno 2] No such file '/x/y' in search path '/a/:/b/:/c/'
        >>> sp.find ("x/y", lambda z : True)
        '/a/x/y'
        >>> list (sp.find_iter ("x/y", lambda z : True))

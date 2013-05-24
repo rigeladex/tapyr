@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -38,8 +38,9 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
+from   __future__  import print_function
 
+from   _TFL                    import TFL
 from   _TFL                    import pyk
 
 import _TFL._Meta.Object
@@ -129,7 +130,7 @@ class SMTP (TFL.Meta.Object) :
            email addresses!
 
         >>> from email.header import Header
-        >>> print Header ("christian.tanzer@swing.co.at", charset = "utf-8")
+        >>> print (Header ("christian.tanzer@swing.co.at", charset = "utf-8"))
         =?utf-8?q?christian=2Etanzer=40swing=2Eco=2Eat?=
         """
         if charset is None :

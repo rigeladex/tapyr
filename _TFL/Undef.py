@@ -33,7 +33,9 @@
 #--
 
 from   _TFL               import TFL
+from   _TFL               import pyk
 
+@pyk.adapt__bool__
 class Undef (object) :
     """Undefined object with nice repr."""
 
@@ -41,9 +43,9 @@ class Undef (object) :
         self.name = name
     # end def __init__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return False
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         names = [self.__class__.__name__]

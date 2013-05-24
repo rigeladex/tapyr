@@ -43,14 +43,14 @@
 #--
 
 """
+>>> from _TFL.CAO import expect_except
 >>> d = Abbr_Key_Dict (a = 1, ab = 2, abc = 3, bertie = 4, bingo = 5)
 >>> d ["a"], d ["ab"], d ["abc"]
 (1, 2, 3)
 >>> d ["be"], d ["ber"], d ["bertie"]
 (4, 4, 4)
->>> d ["b"]
-Traceback (most recent call last):
-  ...
+>>> with expect_except (Ambiguous_Key) :
+...      d ["b"] # doctest:+ELLIPSIS
 Ambiguous_Key: "b matches more than 1 key: ['bertie', 'bingo']"
 >>> d ["berties"]
 Traceback (most recent call last):
@@ -77,6 +77,7 @@ KeyError: 'berties'
 """
 
 from   _TFL      import TFL
+from   _TFL      import pyk
 
 import _TFL.predicate
 import _TFL._Meta.M_Class
@@ -95,10 +96,10 @@ class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
         if len (matching) == 1 :
             return self.__super.__getitem__ (matching [0])
         elif not matching :
-            raise KeyError, key
+            raise KeyError (key)
         else :
-            raise Ambiguous_Key, \
-                  "%s matches more than 1 key: %s" % (key, matching)
+            raise Ambiguous_Key \
+                ("%s matches more than 1 key: %s" % (key, matching))
     # end def __getitem__
 
     def matching_keys (self, abbr) :
@@ -106,7 +107,7 @@ class Abbr_Key_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
         if abbr in self :
             return [abbr]
         elif isinstance (abbr, str) :
-            return TFL.matches (TFL.sorted (self.iterkeys ()), abbr)
+            return TFL.matches (TFL.sorted (pyk.iterkeys (self)), abbr)
         return []
     # end def matching_keys
 

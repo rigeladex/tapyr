@@ -63,7 +63,11 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL             import TFL
+from   _TFL             import pyk
+
 import _TFL._Meta
 
 def BaM (* bases, ** kw) :
@@ -100,19 +104,30 @@ def BaM (* bases, ** kw) :
     >>> class D (BaM (B, C, metaclass = N)) :
     ...    pass
 
-    >>> M.__class__, M.__bases__, M.mro (M)
-    (<type 'type'>, (<type 'type'>,), [<class 'M_Class.M'>, <type 'type'>, <type 'object'>])
-    >>> N.__class__, N.__bases__, N.mro (N)
-    (<type 'type'>, (<class 'M_Class.M'>,), [<class 'M_Class.N'>, <class 'M_Class.M'>, <type 'type'>, <type 'object'>])
+    >>> def show (cls) :
+    ...     try :
+    ...         mro = cls.mro (cls)
+    ...     except TypeError :
+    ...         mro = cls.mro ()
+    ...     return \\
+    ...         ( cls.__class__.__name__
+    ...         , tuple (b.__name__ for b in cls.__bases__)
+    ...         , tuple (c.__name__ for c in mro)
+    ...         )
 
-    >>> A.__class__, A.__bases__, A.mro ()
-    (<class 'M_Class.M'>, (<type 'object'>,), [<class 'M_Class.A'>, <type 'object'>])
-    >>> B.__class__, B.__bases__, B.mro ()
-    (<class 'M_Class.M'>, (<class 'M_Class.A'>,), [<class 'M_Class.B'>, <class 'M_Class.A'>, <type 'object'>])
-    >>> C.__class__, C.__bases__, C.mro ()
-    (<class 'M_Class.M'>, (<class 'M_Class.A'>,), [<class 'M_Class.C'>, <class 'M_Class.A'>, <type 'object'>])
-    >>> D.__class__, D.__bases__, D.mro ()
-    (<class 'M_Class.N'>, (<class 'M_Class.B'>, <class 'M_Class.C'>), [<class 'M_Class.D'>, <class 'M_Class.B'>, <class 'M_Class.C'>, <class 'M_Class.A'>, <type 'object'>])
+    >>> show (M)
+    ('type', ('type',), ('M', 'type', 'object'))
+    >>> show (N)
+    ('type', ('M',), ('N', 'M', 'type', 'object'))
+
+    >>> show (A)
+    ('M', ('object',), ('A', 'object'))
+    >>> show (B)
+    ('M', ('A',), ('B', 'A', 'object'))
+    >>> show (C)
+    ('M', ('A',), ('C', 'A', 'object'))
+    >>> show (D)
+    ('N', ('B', 'C'), ('D', 'B', 'C', 'A', 'object'))
 
     """
     meta = kw.pop ("metaclass")
@@ -183,7 +198,7 @@ class M_M_Class (type) :
         if result is None :
             result = meta
             if bases is not None :
-                from types import ClassType as Classic
+                Classic = pyk.Classic_Class_Type
                 for b in bases :
                     b_meta = type (b)
                     if issubclass (result, b_meta) or b_meta is Classic :
@@ -229,7 +244,7 @@ class M_Base (BaM (type, metaclass = M_M_Class)) :
         if name_postfix :
             name = "_".join ((name, name_postfix))
         new_dict = dict (__module__ = cls.__module__)
-        for attr_name, value in mangled_attributes.iteritems () :
+        for attr_name, value in pyk.iteritems (mangled_attributes) :
             new_dict [_m_mangled_attr_name (attr_name, name)] = value
         head_mixins = kw.pop ("head_mixins", ())
         tail_mixins = kw.pop ("tail_mixins", ())
@@ -299,10 +314,13 @@ class M_Autorename (M_Base) :
         try :
             return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
         except TypeError as exc :
-            print "*" * 3, meta, name
+            print ("*" * 3, meta, name)
             for b in bases :
-                print " " * 3, b
-                print " " * 6, "\n       ".join (str (c) for c in b.mro ()[1:])
+                print (" " * 3, b)
+                print \
+                    ( " " * 6
+                    , "\n       ".join (str (c) for c in b.mro () [1:])
+                    )
             raise
     # end def __new__
 
@@ -364,9 +382,13 @@ class M_Autosuper (M_Base) :
                      )
                ) :
                 if 0 :
-                    print cls, "has name clash with ancestor", ", ".join \
-                        (  str (b) for b in ancestors
-                        if name == b.__name__ == b.__dict__.get ("__real_name")
+                    print \
+                        ( cls, "has name clash with ancestor"
+                        , ", ".join
+                            (  str (b) for b in ancestors
+                            if name == b.__name__
+                                    == b.__dict__.get ("__real_name")
+                            )
                         )
                 _super_value = _super_calling_not_possible
         setattr (cls, _super_name, _super_value)
@@ -440,7 +462,7 @@ class M_Automethodwrap (M_Base) :
         for b in bss :
             _aw.update (getattr (b, "__autowrap", {}))
         _aw.update (dict.get (cls._m_mangled_attr_name ("autowrap"), {}))
-        for name, wrapper in _aw.iteritems () :
+        for name, wrapper in pyk.iteritems (_aw) :
             if TFL.callable (wrapper) :
                 method = dict.get (name)
                 if method :

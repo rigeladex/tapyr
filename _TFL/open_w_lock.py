@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 """Provide locking via a lock file.
 
    >>> name = "/tmp/foo.bar"
@@ -38,16 +40,16 @@
    >>> x=sos.system ("rm -f %s" % name)
    >>>
    >>> with lock_file (name) :
-   ...     print sos.popen (show, "r").read (),
+   ...     print (sos.popen (show, "r").read (), end = "")
    ...
    /tmp/foo.bar.lock
    >>> with open_w_lock (name, "w") as file :
-   ...     print sos.popen (show, "r").read (),
+   ...     print (sos.popen (show, "r").read (),)
    ...     try :
    ...         with lock_file (name) :
-   ...             print sos.popen (show, "r").read (),
+   ...             print (sos.popen (show, "r").read (), end = "")
    ...     except Sync_Conflict :
-   ...         print "Got Sync_Conflict:", name
+   ...         print ("Got Sync_Conflict:", name)
    ...
    /tmp/foo.bar
    /tmp/foo.bar.lock
@@ -77,7 +79,7 @@ def lock_file (file_name) :
         can_lock = sos.access (ln.directory, sos.W_OK)
         if can_lock :
             lf = sos.open (ln.name, sos.O_CREAT | sos.O_EXCL)
-    except sos.error, exc :
+    except sos.error as exc :
         if exc.args [0] != errno.EEXIST :
             raise
         raise Sync_Conflict (file_name)

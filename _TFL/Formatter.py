@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -40,14 +40,23 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   __future__       import print_function
+
+from   _TFL             import TFL
+from   _TFL             import pyk
 
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.Generators
 import _TFL.Record
 
-from   itertools import chain as ichain
+from   itertools        import chain as ichain
+
+try :
+    long
+except NameError :
+    class long (int) :
+        """Just for backwards compatibility with Python 2"""
 
 class Formatter (TFL.Meta.Object) :
     """Provide callable to convert python data structures to a nicely formatted
@@ -55,7 +64,7 @@ class Formatter (TFL.Meta.Object) :
 
     >>> thing = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, 137)}]
     >>> thinl = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, long (137))}]
-    >>> print formatted (thing)
+    >>> print (formatted (thing))
     [ 'abc'
     , 'dfg'
     , { 0 :
@@ -66,10 +75,10 @@ class Formatter (TFL.Meta.Object) :
       , 2 : 'xyz'
       }
     ]
-    >>> print formatted_1 (thing)
+    >>> print (formatted_1 (thing))
     ['abc', 'dfg', {0 : (42, 137), 1 : 'abc', 2 : 'xyz'}]
 
-    >>> print formatted (thinl)
+    >>> print (formatted (thinl))
     [ 'abc'
     , 'dfg'
     , { 0 :
@@ -80,11 +89,11 @@ class Formatter (TFL.Meta.Object) :
       , 2 : 'xyz'
       }
     ]
-    >>> print formatted_1 (thinl)
+    >>> print (formatted_1 (thinl))
     ['abc', 'dfg', {0 : (42, 137), 1 : 'abc', 2 : 'xyz'}]
 
     >>> thing.append (thing)
-    >>> print formatted (thing)
+    >>> print (formatted (thing))
     [ 'abc'
     , 'dfg'
     , { 0 :
@@ -96,21 +105,21 @@ class Formatter (TFL.Meta.Object) :
       }
     , <Recursion on list...>
     ]
-    >>> print formatted_1 (thing)
+    >>> print (formatted_1 (thing))
     ['abc', 'dfg', {0 : (42, 137), 1 : 'abc', 2 : 'xyz'}, <Recursion on list...>]
 
     >>> thinr = TFL.Record (foo = 42, bar = u"wrzl", baz = "MadamImadam")
-    >>> print formatted (thinr)
+    >>> print (formatted (thinr))
     Record
     ( bar = 'wrzl'
     , baz = 'MadamImadam'
     , foo = 42
     )
-    >>> print formatted_1 (thinr)
+    >>> print (formatted_1 (thinr))
     Record (bar = 'wrzl', baz = 'MadamImadam', foo = 42)
 
     >>> thinq = ["abc", "dfg", { 1 : "yxz" }, thinr]
-    >>> print formatted (thinq)
+    >>> print (formatted (thinq))
     [ 'abc'
     , 'dfg'
     , { 1 : 'yxz' }
@@ -120,7 +129,7 @@ class Formatter (TFL.Meta.Object) :
       , foo = 42
       )
     ]
-    >>> print formatted_1 (thinq)
+    >>> print (formatted_1 (thinq))
     ['abc', 'dfg', {1 : 'yxz'}, Record (bar = 'wrzl', baz = 'MadamImadam', foo = 42)]
 
     """
@@ -177,7 +186,7 @@ class Formatter (TFL.Meta.Object) :
         if thing :
             head = leader or ws
             tail = "}" if len (thing) == 1 else ""
-            for k, v in sorted (thing.iteritems ()) :
+            for k, v in sorted (pyk.iteritems (thing)) :
                 rk = self._repr (k)
                 vl = "%s%s %s : " % (head, sep, rk)
                 v2 = "%s%s %s : " % (ws,   sep, rk)
@@ -232,14 +241,14 @@ class Formatter (TFL.Meta.Object) :
     def _format_record (self, thing, level, seen, ws, leader) :
         kw = thing._kw
         if len (kw) == 1 :
-           for k, v in sorted (kw.iteritems ()) :
+           for k, v in sorted (pyk.iteritems (kw)) :
                 yield "%sRecord (%s = %s)" % \
                     (leader or ws, k, formatted_1 (v))
                 break
         elif kw :
             head = "%sRecord%s%s" % (leader, self.sep, ws)
             sep  = "("
-            for k, v in sorted (kw.iteritems ()) :
+            for k, v in sorted (pyk.iteritems (kw)) :
                 rk = str (k)
                 vl = "%s%s %s = " % (head, sep, rk)
                 for l in self.format_iter (v, level + 2, seen, vl, True) :

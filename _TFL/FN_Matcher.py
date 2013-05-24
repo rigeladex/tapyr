@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,20 +34,16 @@
 #    12-Aug-2003 (CT) Import for `StringIO` added
 #    12-Aug-2003 (CT) `Alias_Property` replaced by explicit function
 #                     delegation to avoid doctest hiccups
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL import TFL
+from   _TFL import pyk
+
 import _TFL._Meta.Object
 
 import fnmatch
 import re
-
-from   StringIO import StringIO
 
 class FN_Matcher (TFL.Meta.Object) :
     """Filename matcher for regular expressions.
@@ -63,7 +59,8 @@ class FN_Matcher (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, file_names) :
-        return filter (self.matches, file_names)
+        matches = self.matches
+        return list (fn for fn in file_names if matches (fn))
     # end def __call__
 
     def matches (self, file_name) :
@@ -80,7 +77,7 @@ class FN_Matcher (TFL.Meta.Object) :
     def _Matcher (self, pattern) :
         if isinstance (pattern, FN_Matcher) :
             return pattern
-        elif isinstance (pattern, (str, unicode)) :
+        elif isinstance (pattern, pyk.string_types) :
             return FN_Matcher_Glob (pattern)
         else :
             return FN_Matcher (pattern)
@@ -159,20 +156,20 @@ class FN_Matcher_Grep (FN_Matcher) :
        pattern.
 
        >>> names = ["abcd.x", "abcd.y", "cdef.x", "cdef.y", "rstu.x", "rstu.y"]
-       >>> FN_Matcher_Grep ("cd", "*.x", _open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*.x", _open = pyk.StringIO) (names)
        ['abcd.x', 'cdef.x']
-       >>> FN_Matcher_Grep ("cd", "*.y", _open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*.y", _open = pyk.StringIO) (names)
        ['abcd.y', 'cdef.y']
-       >>> FN_Matcher_Grep ("cd", "*", _open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*", _open = pyk.StringIO) (names)
        ['abcd.x', 'abcd.y', 'cdef.x', 'cdef.y']
-       >>> FN_Matcher_Grep ("u", "*", _open = StringIO) (names)
+       >>> FN_Matcher_Grep ("u", "*", _open = pyk.StringIO) (names)
        ['rstu.x', 'rstu.y']
-       >>> FN_Matcher_Grep ("cd", "*.x", predicate = lambda x : not x, _open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*.x", predicate = lambda x : not x, _open = pyk.StringIO) (names)
        ['rstu.x']
     """
 
     def __init__ (self, grep_pattern, name_pattern, predicate = lambda x : x, _open = open) :
-        if isinstance (grep_pattern, (str, unicode)) :
+        if isinstance (grep_pattern, pyk.string_types) :
             grep_pattern  = re.compile (grep_pattern, re.M)
         self.grep_pattern = grep_pattern
         self.pattern      = self._Matcher (name_pattern)
@@ -184,7 +181,7 @@ class FN_Matcher_Grep (FN_Matcher) :
         if self.pattern.matches (file_name) :
             try :
                 file = self._open (file_name)
-            except IOError, exc :
+            except IOError as exc :
                 pass
             else :
                 try :

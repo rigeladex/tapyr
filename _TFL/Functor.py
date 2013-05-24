@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,19 +39,21 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL             import TFL
 import _TFL.Function
 
 class Functor (TFL.Function) :
     """
        >>> def foo (x) :
-       ...     print 42 + x
+       ...     print (42 + x)
        ...
        >>> f = Functor (foo, x = 58)
        >>> f ()
        100
        >>> def bar (a, b, c) :
-       ...     print (a, b, c)
+       ...     print ((a, b, c), )
        ...
        >>> f = Functor (bar, 3)
        >>> f (1, 2)

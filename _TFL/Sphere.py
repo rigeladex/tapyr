@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Martin Glueck All rights reserved
+# Copyright (C) 2011-2013 Martin Glueck All rights reserved
 # ****************************************************************************
 #
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
@@ -31,6 +31,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL               import TFL
 import _TFL._Meta.Object
 import  math
@@ -40,9 +42,9 @@ class Sphere (TFL.Meta.Object) :
 
     >>> p1 = Earth.Point (48.110278, 16.569722, 183) ### Airport Vienna    (VIE), Austria
     >>> p2 = Earth.Point (47.260278, 11.343889, 581) ### Airport Innsbruck (INN), Austria
-    >>> print "%10.2f" % Earth.distance (p1, p2)
+    >>> print ("%10.2f" % Earth.distance (p1, p2))
     402469.91
-    >>> print "%10.2f" % Earth.distance (p2, p1)
+    >>> print ("%10.2f" % Earth.distance (p2, p1))
     402469.91
     """
 

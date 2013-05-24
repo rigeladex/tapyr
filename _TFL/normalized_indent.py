@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,19 +30,17 @@
 #     6-Jul-2005 (CT) Doctest moved from function `normalized_indent` to
 #                     module (and another case added)
 #     6-Jul-2005 (CT) `textwrap.dedent` used if available
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 """
 >>> normalized_indent ("Just a single line.")
 'Just a single line.'
 >>> normalized_indent ("  Just a single line inside white space.  ")
 'Just a single line inside white space.'
->>> print _normalized_indent ('''First line.
+>>> print (_normalized_indent ('''First line.)
 ...     Second line.
 ...     Third line.
 ...         Fourth line (indented).
@@ -55,21 +53,21 @@ Third line.
     Fourth line (indented).
     Fifth line (ditto).
 Sixth line.
->>> print normalized_indent ('''
+>>> print ( normalized_indent ('''
 ...     First line.
 ...     Second line.
 ...     Third line.
 ...         Fourth line (indented).
 ...         Fifth line (ditto).
 ...     Sixth line.
-... ''')
+... '''))
 First line.
 Second line.
 Third line.
     Fourth line (indented).
     Fifth line (ditto).
 Sixth line.
->>> print normalized_indent ('''
+>>> print (normalized_indent ('''
 ...         First line.
 ...     Second line.
 ...     Third line.
@@ -77,14 +75,14 @@ Sixth line.
 ...         Fifth line (ditto).
 ...     Sixth line.
 ...
-... ''')
+... '''))
 First line.
 Second line.
 Third line.
     Fourth line (indented).
     Fifth line (ditto).
 Sixth line.
->>> print normalized_indent ('''
+>>> print (normalized_indent ('''
 ...  First line.
 ...     Second line.
 ...     Third line.
@@ -92,7 +90,7 @@ Sixth line.
 ...         Fifth line (ditto).
 ...     Sixth line.
 ...
-... ''')
+... '''))
 First line.
 Second line.
 Third line.

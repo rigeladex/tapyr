@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,8 +37,7 @@ Meta class for auto-combining the set-valued attributes mentioned in
 
 ::
 
-    >>> class A (object) :
-    ...     __metaclass__     = M_Auto_Combine_Sets
+    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Sets)) :
     ...     _sets_to_combine  = ("foo", "bar")
     ...     foo               = set ([1, 2, 3])
     ...

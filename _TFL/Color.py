@@ -39,7 +39,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 from   _TFL                     import TFL
+from   _TFL                     import pyk
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -752,14 +755,14 @@ class SVG_Color (RGB_X) :
     def Pam (self) :
         if self._Pam is None :
             self.__class__._Pam = dict \
-                ((v, k) for (k, v) in sorted (self.Map.iteritems ()))
+                ((v, k) for (k, v) in sorted (pyk.iteritems (self.Map)))
         return self._Pam
     # end def Pam
 
 # end class SVG_Color
 
 __all__ = tuple \
-    ( k for (k, v) in globals ().iteritems ()
+    ( k for (k, v) in pyk.iteritems (globals ())
     if k != "_Color_" and isinstance (v, M_Color)
     )
 
@@ -774,54 +777,54 @@ Classes modelling various color representations::
     >>> c = RGB_8 (255, 0, 0)
     >>> d = c.as_RGB_X
     >>> h = d.as_HSL
-    >>> print c, d, h
+    >>> print (c, d, h)
     rgb(255, 0, 0) #F00 hsl(0, 100%, 50%)
 
     >>> cn = ~ c
     >>> hn = ~ h
-    >>> print cn, hn
+    >>> print (cn, hn)
     rgb(0, 255, 255) hsl(180, 100%, 50%)
 
     >>> ca = RGB (* c.rgb, alpha = 0.25).as_RGB_8
     >>> da = ca.as_RGB_X
     >>> ha = da.as_HSL
-    >>> print ca, da, ha
+    >>> print (ca, da, ha)
     rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) hsla(0, 100%, 50%, 0.25)
 
     >>> b  = RGB (0, 0, 0)
     >>> hb = b.as_HSL
     >>> w  = RGB (1, 1, 1)
     >>> hw = w.as_HSL
-    >>> print b, ~b, hb, ~hb
+    >>> print (b, ~b, hb, ~hb)
     rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
-    >>> print ~w, w, ~hw, hw
+    >>> print (~w, w, ~hw, hw)
     rgb(0%, 0%, 0%) rgb(100%, 100%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
 
-    >>> print c * 0.5, w * 0.8
+    >>> print (c * 0.5, w * 0.8)
     rgb(127, 0, 0) rgb(80%, 80%, 80%)
 
     >>> _Color_.formatter = RGB_X
-    >>> print b, ~b, hb, ~hb
+    >>> print (b, ~b, hb, ~hb)
     #000 #FFF #000 #FFF
-    >>> print cn, hn
+    >>> print (cn, hn)
     #0FF #0FF
-    >>> print ca, da, ha
+    >>> print (ca, da, ha)
     rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25) rgba(255, 0, 0, 0.25)
 
     >>> _Color_.formatter = HSL
-    >>> print b, ~b, hb, ~hb
+    >>> print (b, ~b, hb, ~hb)
     hsl(0, 0%, 0%) hsl(0, 0%, 100%) hsl(0, 0%, 0%) hsl(0, 0%, 100%)
-    >>> print cn, hn
+    >>> print (cn, hn)
     hsl(180, 100%, 50%) hsl(180, 100%, 50%)
-    >>> print ca, da, ha
+    >>> print (ca, da, ha)
     hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25) hsla(0, 100%, 50%, 0.25)
 
     >>> _Color_.formatter = RGB_X
-    >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
+    >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
     #808080 #8B0000 rgba(0, 0, 255, 0.5)
 
     >>> _Color_.formatter = None
-    >>> print SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5)
+    >>> print (SVG_Color ("Gray"), SVG_Color ("Dark red"), SVG_Color ("blue", 0.5))
     grey darkred rgba(0, 0, 255, 0.5)
 
 """

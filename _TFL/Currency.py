@@ -40,7 +40,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL import TFL
+from   _TFL import pyk
 
 import _TFL._Meta.Object
 import _TFL.Decorator
@@ -98,6 +101,8 @@ class _M_Currency_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Currency_
 
+@pyk.adapt__div__
+@pyk.adapt__str__
 class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
 
     name            = "EUR"
@@ -143,11 +148,11 @@ class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
     __rmul__ = __mul__
 
     @_binary_operator_currency
-    def __div__ (self, rhs) :
+    def __truediv__ (self, rhs) :
         return self.amount / rhs
-    # end def __div__
+    # end def __truediv__
 
-    __rdiv__ = __div__
+    __rdiv__    = __truediv__
 
     @_binary_operator_currency
     def __floordiv__ (self, rhs) :
@@ -266,12 +271,8 @@ class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
     # end def __repr__
 
     def __str__ (self) :
-        return TFL.I18N.encode_o (unicode (self))
-    # end def __str__
-
-    def __unicode__ (self) :
         return u"%s %s" % (self.as_string (), self.symbol or self.name)
-    # end def __unicode__
+    # end def __str__
 
 # end class _Currency_
 
@@ -308,7 +309,7 @@ class Currency (_Currency_) :
        >>> c /= vat
        >>> c
        Currency ("12345.67")
-       >>> print c
+       >>> print (c)
        12345.67 ¤
 
        >>> c = Currency ("12345.67")

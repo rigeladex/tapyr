@@ -44,12 +44,14 @@
 #    16-Jul-2011 (CT) `__repr__` added
 #    22-Jul-2011 (CT) `Attr_Query.Func` added
 #    12-Sep-2011 (CT) `Attr_Query.And` changed to `Attr_Query.AND`, ditto 4 `Or`
-#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
+#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_<<name>>_`
 #    19-Dec-2011 (CT) Add shortcut `Attr_Query.NOT`
 #    10-Aug-2012 (CT) Add `_rank` to allow defined order
 #    22-Feb-2013 (CT) Define `Ignore_Exception` as `tuple`
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 """
 Module `Filter`
@@ -61,7 +63,7 @@ This module provides some classes for filtering iterables::
     ...     import textwrap
     ...     text = str (x)
     ...     sep  = chr (10) + "    "
-    ...     print sep.join (textwrap.wrap (text, 70))
+    ...     print (sep.join (textwrap.wrap (text, 70)))
     ...
     >>> def is_even  (x) : return (x % 2) == 0
     ...
@@ -168,8 +170,8 @@ operators short-circuit::
 
     >>> for f in Div_7_and_Prime, Div_7_or_Prime :
     ...     for g in f, ~f, ~~f :
-    ...         print g.__class__.__name__,
-    ...     print
+    ...         print (g.__class__.__name__, end = "")
+    ...     print ()
     ...
     Filter_And Filter_Or Filter_And
     Filter_Or Filter_And Filter_Or

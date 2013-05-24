@@ -31,6 +31,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
 
@@ -72,13 +74,13 @@ class Mixin_NS (TFL.Meta.BaM (object, metaclass = M_Mixin_NS)) :
        >>> class M1 (object) :
        ...     def foo (self) :
        ...         ### Use `self._obj` to show class of bound object
-       ...         print self._obj.__class__.__name__, "foo", self.a, self.b
+       ...         print (self._obj.__class__.__name__, "foo", self.a, self.b)
        ...
        >>> class M2 (object) :
        ...     def foo (self) :
-       ...         print self._obj.__class__.__name__, "foo", self.b, self.c
+       ...         print (self._obj.__class__.__name__, "foo", self.b, self.c)
        ...     def bar (self) :
-       ...         print self._obj.__class__.__name__, "bar", self.c
+       ...         print (self._obj.__class__.__name__, "bar", self.c)
        ...
        >>> class C (object) :
        ...     m1 = Mixin_NS.New (M1)

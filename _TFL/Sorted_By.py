@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,6 +46,8 @@
 #                     to allow comparison of unequal types in Python 3.x
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 from   _TFL import TFL
 
@@ -94,7 +96,7 @@ class Sorted_By (TFL.Meta.Object) :
            >>> from _TFL.Record import Record as R
            >>> NL = chr (10)
            >>> def show (l, key) :
-           ...     print NL.join (str (s) for s in sorted (l, key = key))
+           ...     print (NL.join (str (s) for s in sorted (l, key = key)))
            ...
            >>> l = [ R (a = 1, b = 1, c = "abcd")
            ...     , R (a = 1, b = 2, c = "ABCD")
@@ -103,7 +105,7 @@ class Sorted_By (TFL.Meta.Object) :
            ...     , R (a = 2, b = 1, c = " xyzz")
            ...     , R (a = 2, b = 1, c = "  xyzzz")
            ...     ]
-           >>> print NL.join (str (s) for s in l)
+           >>> print (NL.join (str (s) for s in l))
            (a = 1, b = 1, c = 'abcd')
            (a = 1, b = 2, c = 'ABCD')
            (a = 1, b = 2, c = 'efg')
@@ -288,7 +290,7 @@ class Sorted_By_Strict (Sorted_By) :
        criterion.
     """
 
-    class Ignore_Exception (StandardError) : pass
+    class Ignore_Exception (Exception) : pass
 
 # end class Sorted_By_Strict
 

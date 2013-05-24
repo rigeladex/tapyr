@@ -87,10 +87,10 @@ class _Getter_ (TFL.Meta.Object) :
        >>> last (range (5))
        4
        >>> third = Getter [3]
-       >>> third (range (2))
+       >>> third (range (2))# doctest:+ELLIPSIS
        Traceback (most recent call last):
          ...
-       IndexError: list index out of range
+       IndexError: ... index out of range
        >>> third (range (5))
        3
     """
@@ -142,8 +142,6 @@ class _Method_ (TFL.Meta.Object) :
        >>> lower = Method.lower
        >>> lower ("abCDe")
        'abcde'
-       >>> lower (u"abCDe")
-       u'abcde'
        >>> lower (1)
        Traceback (most recent call last):
          ...

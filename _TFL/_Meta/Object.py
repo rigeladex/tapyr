@@ -41,6 +41,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL       import TFL
 from   _TFL._Meta import Meta
 
@@ -61,13 +63,13 @@ class _TFL_Meta_Object_Root_ (object) :
 
        >>> class A (object) :
        ...     def __init__ (self, x = 2) :
-       ...         print "A.__init__:", x
+       ...         print ("A.__init__:", x)
        ...         self.x = x
        ...         super (A, self).__init__ ()
        ...
        >>> class B (TFL.Meta.Object, A) :
        ...     def __init__ (self, y) :
-       ...         print "B.__init__:", y
+       ...         print ("B.__init__:", y)
        ...         self.y = y
        ...         self.__super.__init__ ()
        ...
@@ -75,17 +77,17 @@ class _TFL_Meta_Object_Root_ (object) :
        Traceback (most recent call last):
            ...
        AssertionError: MRO conflict for B.__init__: super != object,
-           (<class 'Object.B'>, <class 'Object.Object'>, <class 'Object._TFL_Meta_Object_Root_'>, <class 'Object.A'>, <type 'object'>)
+           ('B', 'Object', '_TFL_Meta_Object_Root_', 'A', 'object')
 
        >>> class C (object) :
        ...     def __init__ (self, x = 2) :
-       ...         print "C.__init__:", x
+       ...         print ("C.__init__:", x)
        ...         self.x = x
        ...         super (C, self).__init__ ()
        ...
        >>> class D (TFL.Meta.Object, C) :
        ...     def __init__ (self, y, x = 3) :
-       ...         print "D.__init__:", y
+       ...         print ("D.__init__:", y)
        ...         self.y = y
        ...         self.__super.__init__ (y = y, x = x)
        ...         C.__init__ (self, x)
@@ -96,7 +98,7 @@ class _TFL_Meta_Object_Root_ (object) :
        >>> d = D (42)
        D.__init__: 42
        C.__init__: 3
-       >>> print d.x,d.y
+       >>> print (d.x, d.y)
        3 42
     """
 
@@ -123,7 +125,7 @@ class _TFL_Meta_Object_Root_ (object) :
             sup = super (_TFL_Meta_Object_Root_, cls)
             msg       = \
                 ( "MRO conflict for %s.%%s: super != object,\n    %s"
-                % (cls.__name__, cls.__mro__)
+                % (cls.__name__, tuple (c.__name__ for c in cls.__mro__))
                 )
             assert sup.__new__  is object.__new__,  (msg % ("__new__", ))
             assert sup.__init__ is object.__init__, (msg % ("__init__", ))

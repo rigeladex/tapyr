@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #                     from the $%&@*$ doc-test
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 from _TFL.Regexp import *
 
@@ -80,5 +82,5 @@ if __name__ == "__main__" :
         , min_args = 2
         , max_args = 2
         )
-    print swap_2strings (cmd.s1, cmd.s2, sys.stdin.read ()),
+    print (swap_2strings (cmd.s1, cmd.s2, sys.stdin.read ()), end="")
 ### __END__ swap_2strings

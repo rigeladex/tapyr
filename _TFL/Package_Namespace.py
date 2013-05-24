@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -145,6 +145,8 @@
 #     6-Dec-2012 (CT) Change  `_run_import_callback` to `classmethod`
 #    ««revision-date»»···
 #--
+
+from   _TFL        import pyk
 
 import re
 import sys
@@ -298,7 +300,7 @@ class Package_Namespace (object) :
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
-            if isinstance (name, basestring) :
+            if isinstance (name, pyk.string_types) :
                 name, as_name = name, name
             else :
                 name, as_name = name

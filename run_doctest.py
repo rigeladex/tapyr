@@ -61,6 +61,9 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division
+from   __future__  import print_function, unicode_literals
+
 from   _TFL             import TFL
 from   _TFL             import Environment
 from   _TFL             import sos
@@ -117,6 +120,8 @@ def _subp_step (subp) :
     except ValueError :
         pass
     else :
+        err = err.decode ("latin-1")
+        out = out.decode ("latin-1")
         sys.stdout.write (out)
         sys.stderr.write (err)
         if err :
@@ -175,17 +180,17 @@ def _main (cmd) :
             exec_time = time.time () - start
         except KeyboardInterrupt :
             raise
-        except StandardError, exc :
+        except Exception as exc :
             exec_time = time.time () - start
             if cmd.timing :
                 et = " in %7.5fs" % (exec_time, )
-            print >> sys.stderr, format_x % (replacer (a), exc, et)
+            print (format_x % (replacer (a), exc, et), file = sys.stderr)
             raise
         else :
             format = format_f if f else format_s
             if cmd.timing :
                 et = " in %7.5fs" % (exec_time, )
-            print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
+            print (replacer (format % TFL.Caller.Scope ()), file = sys.stderr)
     else :
         head_pieces = \
             [ sys.executable
@@ -206,7 +211,7 @@ def _main (cmd) :
         def run_mod (a) :
             if cmd.exclude and fnmatch.fnmatch (a, cmd.exclude):
                 summary.excluded.append (a)
-                print "%s excluded" % (a, )
+                print ("%s excluded" % (a, ))
             else :
                 summary.modules += 1
                 run_cmd ("%s %s" % (head, a))
@@ -233,18 +238,23 @@ def _main (cmd) :
             format = format_f if summary.failed else format_s
             if cmd.timing :
                 et = " in %7.5fs" % (time.time () - start, )
-            print "=" * 79
-            print format % TFL.Caller.Scope \
-                ( f      = summary.failed
-                , module = TFL.Record (__file__ = " ".join (cmd.argv))
-                , t      = summary.total
-                , et     = et
-                ), "[%s/%s modules fail]" % \
-                (len (summary.failures), summary.modules)
-            print "    %s" % \
-                ("\n    ".join ("%-68s : %s" % f for f in summary.failures))
+            print ("=" * 79)
+            print \
+                ( format % TFL.Caller.Scope
+                    ( f      = summary.failed
+                    , module = TFL.Record (__file__ = " ".join (cmd.argv))
+                    , t      = summary.total
+                    , et     = et
+                    )
+                , "[%s/%s modules fail]" %
+                    (len (summary.failures), summary.modules)
+                )
+            print \
+                ( "    %s"
+                % ("\n    ".join ("%-68s : %s" % f for f in summary.failures))
+                )
             if summary.excluded :
-                print "    %s excluded" % (", ".join (summary.excluded), )
+                print ("    %s excluded" % (", ".join (summary.excluded), ))
 # end def _main
 
 _Command = TFL.CAO.Cmd \

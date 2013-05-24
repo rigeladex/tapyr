@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,14 +28,14 @@
 # Revision Dates
 #     6-Feb-2005 (CT) Creation
 #    25-Mar-2005 (MG) Import of `Filename` changed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 import _TFL._Meta.Object
 
 from   _TFL.Filename     import Filename
@@ -45,7 +45,6 @@ class PMPP (TFL.Meta.Object) :
     """Poor-Man's Pre-Processor: rewrite a file according to preprocessor
        comments.
 
-       >>> from   StringIO import StringIO
        >>> pp     = PMPP ("TESTTAG")
        >>> source = '''Line before start-tag
        ...    Indented line before start-tag
@@ -62,8 +61,8 @@ class PMPP (TFL.Meta.Object) :
        ...    Line after end-tag
        ... Last line
        ... '''
-       >>> for l in pp (StringIO (source)) :
-       ...     print l,
+       >>> for l in pp (pyk.StringIO (source)) :
+       ...     print (l, end = "")
        ...
        Line before start-tag
           Indented line before start-tag
@@ -92,7 +91,7 @@ class PMPP (TFL.Meta.Object) :
         target = Filename (target_dir, fname).name
         f      = open     (fname,  "r")
         o      = open     (target, "w")
-        print "Processing %s" % (target, )
+        print ("Processing %s" % (target, ))
         for l in self (f) :
             o.write (l)
     # end def rewrite
@@ -113,18 +112,18 @@ class PMPP (TFL.Meta.Object) :
                     ### return untagged text unchanged
                     yield l
             else :
-                l = source.next ()
+                l = next (source)
                 if comment_pat.match (l) :
                     comment = comment_pat.comment
                 while not (else_tag.match (l) or tail_tag.match (l)) :
                     ### return text between start-tag and else- or tail-tag
                     ### without the leading comment
                     yield l.replace (comment, "", 1)
-                    l = source.next ()
+                    l = next (source)
                 if else_tag.match (l) :
                     ### skip over text between else- and tail-tag
                     while not tail_tag.match (l) :
-                        l = source.next ()
+                        l = next (source)
     # end def __call__
 
 # end class PMPP

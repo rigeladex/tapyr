@@ -47,7 +47,7 @@
 #    14-Jan-2011 (CT) `Bin` and `__binary` changed to honor `reverse`
 #    22-Jul-2011 (CT) `__call__` factored up to `Q_Root`
 #    22-Jul-2011 (CT) `LOWER` (and `Func`) added
-#    13-Sep-2011 (CT) All internal classes renamed to `_«name»_`
+#    13-Sep-2011 (CT) All internal classes renamed to `_<<name>>_`
 #    14-Sep-2011 (CT) `SUM` added
 #    16-Sep-2011 (MG) `_SUM_._name` added
 #    21-Sep-2011 (CT) `BETWEEN` changed to guard against `val is None`
@@ -56,6 +56,8 @@
 #    25-Feb-2013 (CT) Change `_Get_.predicate` to set `Q.undef.exc`
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 """
 Module `Q_Exp`
@@ -210,15 +212,15 @@ no way to simulate this by defining operator methods. Therefore,
 `_Bin_.__nonzero__` raises a TypeError to signal that an expression like
 `Q.a < Q.b < Q.c` isn't possible::
 
-    >>> Q.a < Q.b < Q.c
+    >>> Q.a < Q.b < Q.c # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
+    TypeError: ... should return bool or int, returned exceptions.TypeError
 
-    >>> Q.bar.LOWER == Q.baz.LOWER == Q.qux.LOWER
+    >>> Q.bar.LOWER == Q.baz.LOWER == Q.qux.LOWER # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
+    TypeError: ... should return bool or int, returned exceptions.TypeError
 
 Query operators with boolean results, i.e., equality and ordering operators,
 cannot be used with any operators except `==` and `!=`::
@@ -268,9 +270,9 @@ Queries for nested attributes are also possible::
 
 Q.SUM needs documenting::
 
-    >>> print Q.SUM (1)
+    >>> print (Q.SUM (1))
     Q.SUM (1)
-    >>> print Q.SUM (Q.finish - Q.start)
+    >>> print (Q.SUM (Q.finish - Q.start))
     Q.SUM (Q.finish - Q.start)
 
     >>> Q.SUM (1) (r1)
@@ -287,6 +289,7 @@ Q.SUM needs documenting::
 """
 
 from   _TFL                     import TFL
+from   _TFL                     import pyk
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -297,10 +300,11 @@ from   _TFL.predicate           import callable
 
 import operator
 
+@pyk.adapt__bool__
 class Base (TFL.Meta.Object) :
     """Query generator"""
 
-    class Ignore_Exception (StandardError) : pass
+    class Ignore_Exception (Exception) : pass
 
     undef = TFL.Undef ("value")
 
@@ -326,10 +330,10 @@ class Base (TFL.Meta.Object) :
         return self._Get_ (self, item, operator.itemgetter (item))
     # end def __getitem__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return TypeError \
             ("Result of `%s` cannot be used in a boolean context" % (self, ))
-    # end def __nonzero__
+    # end def __bool__
 
 # end class Base
 
@@ -345,31 +349,33 @@ class Q_Root (TFL.Meta.Object) :
 # end class Q_Root
 
 @TFL.Add_New_Method (Base)
+@pyk.adapt__bool__
+@pyk.adapt__div__
 class _Bin_ (Q_Root) :
     """Binary query expression"""
 
-    op_map        = dict \
-        ( __add__ = "+"
-        , __div__ = "/"
-        , __eq__  = "=="
-        , __ge__  = ">="
-        , __gt__  = ">"
-        , __le__  = "<="
-        , __lt__  = "<"
-        , __mod__ = "%"
-        , __mul__ = "*"
-        , __rmul__ = "*"
-        , __pow__ = "**"
-        , __sub__ = "-"
+    op_map               = dict \
+        ( __add__        = "+"
+        , __truediv__    = "/"
+        , __eq__         = "=="
+        , __ge__         = ">="
+        , __gt__         = ">"
+        , __le__         = "<="
+        , __lt__         = "<"
+        , __mod__        = "%"
+        , __mul__        = "*"
+        , __rmul__       = "*"
+        , __pow__        = "**"
+        , __sub__        = "-"
         )
 
-    rop_map       = dict \
-        ( __radd__  = "__add__"
-        , __rdiv__  = "__div__"
-        , __rmod__  = "__mod__"
-        , __rmul__  = "__mul__"
-        , __rpow__  = "__pow__"
-        , __rsub__  = "__sub__"
+    rop_map              = dict \
+        ( __radd__       = "__add__"
+        , __rdiv__       = "__truediv__"
+        , __rmod__       = "__mod__"
+        , __rmul__       = "__mul__"
+        , __rpow__       = "__pow__"
+        , __rsub__       = "__sub__"
         )
 
     predicate_precious_p = True
@@ -398,10 +404,10 @@ class _Bin_ (Q_Root) :
             return self.op (l, r)
     # end def predicate
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return TypeError \
             ("Result of `%s` cannot be used in a boolean context" % (self, ))
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         op = self.op.__name__
@@ -414,6 +420,7 @@ class _Bin_ (Q_Root) :
 # end class _Bin_
 
 @TFL.Add_New_Method (Base)
+@pyk.adapt__bool__
 class _Call_ (Q_Root) :
     """Query expression calling a method."""
 
@@ -433,10 +440,10 @@ class _Call_ (Q_Root) :
             return self.op (l, * self.args, ** self.kw)
     # end def predicate
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return TypeError \
             ("Result of `%s` cannot be used in a boolean context" % (self, ))
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         op = self.op.__name__
@@ -448,7 +455,8 @@ class _Call_ (Q_Root) :
 def __binary (op, Class) :
     name    = op.__name__
     reverse = name in _Bin_.rop_map
-    op      = getattr (operator, _Bin_.rop_map [name] if reverse else name)
+    key     = _Bin_.rop_map [name] if reverse else name
+    op      = getattr (operator, key)
     if name in ("__eq__", "__ne__") :
         ### Allow `x == None` and `x != None`
         undefs = (Q.undef, )
@@ -564,6 +572,7 @@ class _Date_ (TFL.Meta.Object) :
 
 # end class _Date_
 
+@pyk.adapt__bool__
 class _Exp_Base_ (Q_Root) :
 
     ### Equality queries
@@ -579,10 +588,10 @@ class _Exp_Base_ (Q_Root) :
         raise NotImplementedError
     # end def __hash__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return TypeError \
             ("Result of `%s` cannot be used in a boolean context" % (self, ))
-    # end def __nonzero__
+    # end def __bool__
 
 # end class _Exp_Base_
 
@@ -607,7 +616,7 @@ class _Exp_ (_Exp_Base_) :
     def __add__ (self, rhs) : pass
 
     @_binary
-    def __div__ (self, rhs) : pass
+    def __truediv__ (self, rhs) : pass
 
     @_binary
     def __mod__ (self, rhs) : pass
@@ -695,6 +704,7 @@ class _Exp_ (_Exp_Base_) :
 
 # end class _Exp_
 
+@pyk.adapt__div__
 class _Exp_B_ (_Exp_Base_) :
     """Query expression for query result of type Boolean"""
 
@@ -716,7 +726,7 @@ class _Exp_B_ (_Exp_Base_) :
     def __add__ (self, rhs) : pass
 
     @_type_error
-    def __div__ (self, rhs) : pass
+    def __truediv__ (self, rhs) : pass
 
     @_type_error
     def __mod__ (self, rhs) : pass

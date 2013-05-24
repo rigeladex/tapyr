@@ -179,7 +179,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL             import TFL
+from   _TFL             import pyk
 
 import _TFL.Generators
 
@@ -480,7 +483,7 @@ def filtered_join (sep, strings, pred = None) :
 def first (iterable) :
     """Return first element of iterable"""
     try :
-        return iter (iterable).next ()
+        return next (iter (iterable))
     except StopIteration :
         raise IndexError
 # end def first
@@ -523,7 +526,7 @@ def first_n (iterable, n, default = None) :
 
        >>> it = (1,2,3)
        >>> for n in range (6) :
-       ...   print n, tuple (first_n (it, n))
+       ...   print (n, tuple (first_n (it, n)))
        ...
        0 ()
        1 (1,)
@@ -543,11 +546,11 @@ def first_n (iterable, n, default = None) :
 def flatten (* lists) :
     """Returns a list containing all the elements in `lists`.
 
-       >>> flatten (range (3))
+       >>> flatten (list (range (3)))
        [0, 1, 2]
-       >>> flatten (range (3), range (2))
+       >>> flatten (list (range (3)), list (range (2)))
        [0, 1, 2, 0, 1]
-       >>> flatten ((range (3), range (2)))
+       >>> flatten ((list (range (3)), list(range (2))))
        [[0, 1, 2], [0, 1]]
     """
     result = []
@@ -559,9 +562,9 @@ def flatten (* lists) :
 def flattened (* lists) :
     """Returns a list containing all the elements in `lists`.
 
-       >>> flattened (range (3), range (2))
+       >>> flattened (list (range (3)), list (range (2)))
        [0, 1, 2, 0, 1]
-       >>> flattened ((range (3), range (2)))
+       >>> flattened ((list (range (3)), list (range (2))))
        [0, 1, 2, 0, 1]
     """
     result = []
@@ -581,7 +584,7 @@ def head_slices (l) :
        >>> head_slices ("abcdef")
        ['a', 'ab', 'abc', 'abcd', 'abcde', 'abcdef']
     """
-    return [l [:i] for i in range (1, len (l) + 1)]
+    return [l [:i] for i in list (range (1, len (l) + 1))]
 # end def head_slices
 
 def identity (x) :
@@ -662,7 +665,7 @@ def is_ordered (seq, decorator = None) :
 def list_difference (l, r) :
     """Compute difference of `l` and `r`.
 
-       >>> range (3), range (2,5)
+       >>> list (range (3)), list (range (2, 5))
        ([0, 1, 2], [2, 3, 4])
        >>> list_difference (range (3), range (2, 5))
        [0, 1]
@@ -676,7 +679,7 @@ def list_difference (l, r) :
 def lists_equal (l, r) :
     """True if set of elements of `l` and `r` is equal.
 
-       >>> l = range (3)
+       >>> l = list (range (3))
        >>> r = l[::-1]
        >>> l,r
        ([0, 1, 2], [2, 1, 0])
@@ -755,11 +758,11 @@ def pairs_2w (seq) :
 def plural_of (noun) :
     """Returns the plural from of the (english) `noun`.
 
-    >>> print plural_of ("house")
+    >>> print (plural_of ("house"))
     houses
-    >>> print plural_of ("address")
+    >>> print (plural_of ("address"))
     addresses
-    >>> print plural_of ("enemy")
+    >>> print (plural_of ("enemy"))
     enemies
 
     """
@@ -819,11 +822,11 @@ except NameError :
 
 def re_matches (list, pat) :
     """Returns all strings in `list` matching the regular expression `pat`."""
-    if isinstance (pat, (str, unicode)) :
+    if isinstance (pat, pyk.string_types) :
         import re
         pat = re.compile (pat)
     return \
-        [s for s in list if isinstance (s, (str, unicode)) and pat.search (s)]
+        [s for s in list if isinstance (s, pyk.string_types) and pat.search (s)]
 # end def re_matches
 
 def rotate_l (sequence) :
@@ -908,9 +911,9 @@ def second_arg (x, y, * args, ** kw) :
 def sliced (iterable, length) :
     """Generate all slices of size `length` in `iterable`.
 
-        >>> l = range (20)
+        >>> l = list (range (20))
         >>> for s in sliced (l, 3) :
-        ...   print s
+        ...   print (s)
         ...
         (0, 1, 2)
         (3, 4, 5)
@@ -920,20 +923,20 @@ def sliced (iterable, length) :
         (15, 16, 17)
         (18, 19)
         >>> for s in sliced (l, 5) :
-        ...   print s
+        ...   print (s)
         ...
         (0, 1, 2, 3, 4)
         (5, 6, 7, 8, 9)
         (10, 11, 12, 13, 14)
         (15, 16, 17, 18, 19)
         >>> for s in sliced (l, 8) :
-        ...   print s
+        ...   print (s)
         ...
         (0, 1, 2, 3, 4, 5, 6, 7)
         (8, 9, 10, 11, 12, 13, 14, 15)
         (16, 17, 18, 19)
         >>> for s in sliced (l, 10) :
-        ...   print s
+        ...   print (s)
         ...
         (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         (10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
@@ -1062,7 +1065,7 @@ def tail_slices (l) :
        >>> tail_slices ("abcdef")
        ['abcdef', 'bcdef', 'cdef', 'def', 'ef', 'f']
     """
-    return [l [i:] for i in range (len (l))]
+    return [l [i:] for i in list (range (len (l)))]
 # end def tail_slices
 
 def third_arg (x, y, z, * args, ** kw) :
@@ -1081,7 +1084,7 @@ def tupelize (l) :
        >>> tupelize ([1, 2, [3], [4, [5, 6]]])
        (1, 2, (3,), (4, (5, 6)))
     """
-    if isinstance (l, (str, unicode)) :
+    if isinstance (l, pyk.string_types) :
         return l
     try:
         l = list (l)
@@ -1098,7 +1101,7 @@ def undotted_dict (d, sep = ".") :
 
        >>> def show (d) :
        ...     def gen (d) :
-       ...         for k, v in sorted (d.iteritems ()) :
+       ...         for k, v in sorted (pyk.iteritems (d)) :
        ...             if isinstance (v, dict) :
        ...                 v = show (v)
        ...             yield "%r : %s" % (k, v)
@@ -1110,7 +1113,7 @@ def undotted_dict (d, sep = ".") :
        "{'a' : 1, 'ab' : {'b' : 2, 'c' : {'d' : 42}}}"
     """
     result = {}
-    for k, v in sorted (d.iteritems ()) :
+    for k, v in sorted (pyk.iteritems (d)) :
         n = k
         target = result
         if sep in k :
@@ -1127,8 +1130,8 @@ def dotted_dict (d, prefix = "", sep = ".") :
        dict and the keys will be combined with `.`
 
        >>> def show (d) :
-       ...     for k, v in sorted (d.iteritems ()) :
-       ...         print k, v
+       ...     for k, v in sorted (pyk.iteritems (d)) :
+       ...         print (k, v)
        >>> show (dotted_dict (dict (a = 1, b = dict (c = 2, d = dict (e = 3)))))
        a 1
        b.c 2
@@ -1137,7 +1140,7 @@ def dotted_dict (d, prefix = "", sep = ".") :
     result = {}
     if prefix :
         prefix = "%s%s" % (prefix, sep)
-    for k, v in d.iteritems () :
+    for k, v in pyk.iteritems (d) :
         k = "%s%s" % (prefix, k)
         if isinstance (v, dict) :
             result.update (dotted_dict (v, k, sep))
@@ -1186,7 +1189,7 @@ def uniq_p (seq, pred) :
     """Returns a copy of `seq` where duplicates with regard to `pred` are
        eliminated while preserving the order of the remaining elements.
 
-       >>> range (1, 60, 5)
+       >>> list (range (1, 60, 5))
        [1, 6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 56]
        >>> list (uniq_p (range (1, 60, 5), lambda x : x%6))
        [1, 6, 11, 16, 21, 26]
@@ -1206,11 +1209,11 @@ def un_nested (l) :
        This is handy if you want to support the passing of a list to a `*
        args' argument without using `apply`.
 
-       >>> un_nested (range (3))
+       >>> un_nested (list (range (3)))
        [0, 1, 2]
-       >>> un_nested ([range (3)])
+       >>> un_nested ([list (range (3))])
        [0, 1, 2]
-       >>> un_nested ([range (3), range (2)])
+       >>> un_nested ([list (range (3)), list (range (2))])
        [[0, 1, 2], [0, 1]]
     """
     if l and len (l) == 1 and isinstance (l [0], (list, tuple)) :

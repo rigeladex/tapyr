@@ -58,6 +58,8 @@
 #--
 
 from   _TFL         import TFL
+from   _TFL         import pyk
+
 import _TFL.Undef
 
 import logging
@@ -151,7 +153,7 @@ def Annotated (RETURN = _AR_undefined, ** kw) :
         if varargs : args.append (varargs)
         if varkw   : args.append (varkw)
         arg_set = set (args)
-        for k, v in kw.iteritems () :
+        for k, v in kw.items () :
             if k in arg_set :
                 fa [k] = v
             else :
@@ -174,20 +176,20 @@ def Attributed (** kw) :
            ... def f () :
            ...     pass
            ...
-           >>> sorted (f.__dict__.iteritems ())
+           >>> sorted (pyk.iteritems (f.__dict__))
            [('bar', 42), ('foo', 1)]
 
            >>> @Attributed (a = "WTF", b = 137)
            ... def g () :
            ...     "Test `Attributed` decorator"
            ...
-           >>> sorted (g.__dict__.iteritems ())
+           >>> sorted (pyk.iteritems (g.__dict__))
            [('a', 'WTF'), ('b', 137)]
            >>> g.__doc__
            'Test `Attributed` decorator'
     """
     def decorator (f) :
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             setattr (f, k, v)
         return f
     return decorator

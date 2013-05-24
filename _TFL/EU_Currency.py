@@ -78,6 +78,7 @@ from   _TFL.Currency     import Currency, _Currency_
 
 import _TFL.CAO
 
+@pyk.adapt__str__
 class _EU_Currency_ (_Currency_) :
 
     Table           = {}
@@ -93,7 +94,7 @@ class _EU_Currency_ (_Currency_) :
         _EU_Currency_.target_currency = tc or Euro
     # end def set_target_currency
 
-    def __unicode__ (self) :
+    def __str__ (self) :
         """Return `self.amount' as string representation of
            `self.target_currency'.
         """
@@ -104,7 +105,7 @@ class _EU_Currency_ (_Currency_) :
             , cent
             , target_currency.sloppy_name
             )
-    # end def __unicode__
+    # end def __str__
 
 # end class _EU_Currency_
 
@@ -291,6 +292,7 @@ class ATS (EU_Currency) :
     sloppy_name    = u"öS"
     decimal_sign   = ","
     sep_1000       = "."
+
 # end class ATS
 
 class DEM (EU_Currency) :
@@ -299,6 +301,7 @@ class DEM (EU_Currency) :
     to_euro_factor = 1.95583
     name           = "DEM"
     sloppy_name    = u"DM"
+
 # end class DEM
 
 class FRF (EU_Currency) :
@@ -307,6 +310,7 @@ class FRF (EU_Currency) :
     to_euro_factor = 6.55957
     name           = "FRF"
     sloppy_name    = u"FF"
+
 # end class FRF
 
 class ITL (EU_Currency) :
@@ -315,6 +319,7 @@ class ITL (EU_Currency) :
     to_euro_factor = 1936.27
     name           = "ITL"
     sloppy_name    = u"ITL"
+
 # end class ITL
 
 class BEF (EU_Currency) :
@@ -323,6 +328,7 @@ class BEF (EU_Currency) :
     to_euro_factor = 40.3399
     name           = "BEF"
     sloppy_name    = u"BF"
+
 # end class BEF
 
 class NLG (EU_Currency) :
@@ -331,6 +337,7 @@ class NLG (EU_Currency) :
     to_euro_factor = 2.20371
     name           = "NLG"
     sloppy_name    = u"NLG"
+
 # end class NLG
 
 class ESP (EU_Currency) :
@@ -339,6 +346,7 @@ class ESP (EU_Currency) :
     to_euro_factor = 166.386
     name           = "ESP"
     sloppy_name    = u"ESP"
+
 # end class ESP
 
 class PTE (EU_Currency) :
@@ -347,6 +355,7 @@ class PTE (EU_Currency) :
     to_euro_factor = 200.482
     name           = "PTE"
     sloppy_name    = u"PTE"
+
 # end class PTE
 
 class FIM (EU_Currency) :
@@ -355,6 +364,7 @@ class FIM (EU_Currency) :
     to_euro_factor = 5.94573
     name           = "FIM"
     sloppy_name    = u"FIM"
+
 # end class FIM
 
 class IEP (EU_Currency) :
@@ -363,6 +373,7 @@ class IEP (EU_Currency) :
     to_euro_factor = 0.787564
     name           = "IEP"
     sloppy_name    = u"IEP"
+
 # end class IEP
 
 class LUF (EU_Currency) :
@@ -371,6 +382,7 @@ class LUF (EU_Currency) :
     to_euro_factor = 40.3399
     name           = "LUF"
     sloppy_name    = u"LUF"
+
 # end class BEF
 
 EUC = EU_Currency

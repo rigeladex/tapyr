@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -95,9 +95,13 @@
    name, and file extension.
 """
 
+from   __future__  import absolute_import, division
+from   __future__  import print_function
+
 from   _TFL           import TFL
-from   _TFL.predicate import *
+from   _TFL           import pyk
 from   _TFL           import sos
+from   _TFL.predicate import *
 
 import _TFL._Meta.Object
 import _TFL.Environment
@@ -210,11 +214,11 @@ class Filename (TFL.Meta.Object):
             bname          = ""
         (self.base, self.ext) = self.split_ext (bname)
         if default_dir :
-            if isinstance (default_dir, (str, unicode)) :
+            if isinstance (default_dir, pyk.string_types) :
                 default_dir = self._as_dir (default_dir)
             defaults = (default_dir, ) + defaults
         for default in defaults :
-            if isinstance (default, (str, unicode)) :
+            if isinstance (default, pyk.string_types) :
                 default = Filename (default)
             defd = default.directory
             if defd :
@@ -273,7 +277,7 @@ class Filename (TFL.Meta.Object):
     # end def _as_file
 
     def directories (self) :
-        return filter (None, self.directory.split (sos.sep))
+        return list (d for d in self.directory.split (sos.sep) if d)
     # end def directories
 
     def make_absolute (self) :
@@ -384,10 +388,10 @@ class Filename (TFL.Meta.Object):
         posixified = staticmethod (posixified)
     else :
         def posixified (filename) :
-            raise NotImplementedError, \
-              ( "Function Filename.posixified for system %s"
-              % TFL.Environment.system
-              )
+            raise NotImplementedError \
+                ( "Function Filename.posixified for system %s"
+                % TFL.Environment.system
+                )
         posixified = staticmethod (posixified)
     # end if TFL.Environment.system
 
@@ -446,7 +450,7 @@ else :
             )
         if cmd.Directory :
             result = Dirname (result.name)
-        print result.name
+        print (result.name)
     # end def _main
 
     _Command = TFL.CAO.Cmd \

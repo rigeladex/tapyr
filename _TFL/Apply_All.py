@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,32 +36,32 @@ import _TFL._Meta.Object
 class Apply_All (TFL.Meta.Object) :
     """Class transparently applying method calls to a set of objects.
 
-       >>> l1  = range (5)
+       >>> l1  = list (range (5))
        >>> l2  = ["f", "b", "c", "a"]
        >>> all = Apply_All (l1, l2)
-       >>> all._reveivers
+       >>> all._receivers
        ([0, 1, 2, 3, 4], ['f', 'b', 'c', 'a'])
        >>> all.sort ()
-       >>> all._reveivers
+       >>> all._receivers
        ([0, 1, 2, 3, 4], ['a', 'b', 'c', 'f'])
        >>> all.count ("a")
        [0, 1]
        >>> all.reverse ()
-       >>> all._reveivers
+       >>> all._receivers
        ([4, 3, 2, 1, 0], ['f', 'c', 'b', 'a'])
        >>> all.pop ()
        [0, 'a']
-       >>> all._reveivers
+       >>> all._receivers
        ([4, 3, 2, 1], ['f', 'c', 'b'])
     """
 
     def __init__ (self, * receivers) :
-        self._reveivers = receivers
+        self._receivers = receivers
     # end def __init__
 
     def _apply (self, name, * args, ** kw) :
         result = []
-        for r in self._reveivers :
+        for r in self._receivers :
             f = getattr (r, name)
             r = f (* args, ** kw)
             if r is not None :

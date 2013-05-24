@@ -41,7 +41,7 @@ from   _TFL import TFL
 import _TFL.Decorator
 import _TFL.Undef
 
-from   contextlib import closing, nested
+from   contextlib import closing
 from   timeit     import default_timer as _timer
 
 @TFL.Contextmanager

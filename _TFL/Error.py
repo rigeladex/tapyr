@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,12 @@
 
 from   _TFL                import TFL
 
-class Not_A_File              (StandardError) : pass
-class Not_A_Dir               (StandardError) : pass
-class Sync_Conflict           (StandardError) : pass
-class Already_Open            (StandardError) : pass
-class Not_Open                (StandardError) : pass
-class Could_Not_Delete_Old_DB (StandardError) : pass
+class Not_A_File              (Exception) : pass
+class Not_A_Dir               (Exception) : pass
+class Sync_Conflict           (Exception) : pass
+class Already_Open            (Exception) : pass
+class Not_Open                (Exception) : pass
+class Could_Not_Delete_Old_DB (Exception) : pass
 
 if __name__ != "__main__" :
     TFL._Export ("*")

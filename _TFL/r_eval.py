@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__  import absolute_import, division, print_function
 
 from   _TFL        import TFL
 
@@ -61,14 +61,14 @@ def r_eval (source, ** kw) :
     >>> r_eval ("lambda : 5")
     Traceback (most recent call last):
     ...
-    ValueError: Cannot safely evaluate u'lambda : 5'
+    ValueError: Cannot safely evaluate 'lambda : 5'
     >>> r_eval ("().__class__")
     Traceback (most recent call last):
     ...
-    ValueError: Cannot safely evaluate u'().__class__'
+    ValueError: Cannot safely evaluate '().__class__'
     >>> r_eval ("((). __class__)")
     Traceback (most recent call last):
-    ValueError: Cannot safely evaluate u'((). __class__)'
+    ValueError: Cannot safely evaluate '((). __class__)'
     """
     if source :
         if _eval_restrict_pat.search (source) :

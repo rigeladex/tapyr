@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,11 +57,16 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL        import TFL
+from   _TFL        import pyk
+
 import _TFL.Accessor
 import _TFL.predicate
 import _TFL._Meta.Object
 
+@pyk.adapt__bool__
 class DL_Item (TFL.Meta.Object) :
     """Item in a doubly linked list"""
 
@@ -113,9 +118,9 @@ class DL_Item (TFL.Meta.Object) :
         self.link_next   (h)
     # end def resplice
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return not (self.next is None or self.prev is None)
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         if bool (self) :
@@ -184,7 +189,7 @@ class _DL_Chain_ (TFL.Meta.Object) :
                 i -= 1
                 r  = r.prev
         if not r :
-            raise IndexError, index
+            raise IndexError (index)
         return r
     # end def item
 
@@ -265,6 +270,7 @@ class _DL_Counted_ (TFL.Meta.Object) :
 
 # end class _DL_Counted_
 
+@pyk.adapt__bool__
 class DL_List (_DL_Chain_) :
     """Doubly linked list.
 
@@ -296,7 +302,7 @@ class DL_List (_DL_Chain_) :
        >>> dl.remove (dl.head.next)
        1
        >>> for x in dl :
-       ...   print x
+       ...   print (x)
        ...
        0
        2
@@ -333,9 +339,9 @@ class DL_List (_DL_Chain_) :
         return self.__super.remove (item)
     # end def remove
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self._H.next is not self._T
-    # end def __nonzero__
+    # end def __bool__
 
 # end class DL_List
 
@@ -364,13 +370,14 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
 
 ### XXX please make an own module for DL_Ring classes
 
+@pyk.adapt__bool__
 class DL_Ring (_DL_Chain_) :
     """Doubly linked ring.
 
        >>> dr = DL_Ring ()
        >>> list (dr)
        []
-       >>> print dr.head, dr.tail
+       >>> print (dr.head, dr.tail)
        None None
        >>> dr = DL_Ring ((0, 1, 2, 3, 4))
        >>> list (dr)
@@ -395,7 +402,7 @@ class DL_Ring (_DL_Chain_) :
        >>> dr.remove (dr.head.next)
        1
        >>> for x in dr :
-       ...   print x
+       ...   print (x)
        ...
        0
        2
@@ -403,7 +410,7 @@ class DL_Ring (_DL_Chain_) :
        >>> dr.clear ()
        >>> list (dr)
        []
-       >>> print dr.head, dr.tail
+       >>> print (dr.head, dr.tail)
        None None
        >>> dr = DL_Ring ((0, 1, 2, 3, 4))
        >>> list (dr)
@@ -474,13 +481,13 @@ class DL_Ring (_DL_Chain_) :
 
     def rotate_next (self, n) :
         """Move `self.mark` forward (i.e., following `next`) `n` times."""
-        for i in xrange (n) :
+        for i in pyk.xrange (n) :
             self.mark = self.mark.next
     # end def rotate_next
 
     def rotate_prev (self, n) :
         """Move `self.mark` backward (i.e., following `prev`) `n` times."""
-        for i in xrange (n) :
+        for i in pyk.xrange (n) :
             self.mark = self.mark.prev
     # end def rotate_prev
 
@@ -491,9 +498,9 @@ class DL_Ring (_DL_Chain_) :
             yield self._H
     # end def __iter__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.mark is not self._NIL
-    # end def __nonzero__
+    # end def __bool__
 
 # end class DL_Ring
 
@@ -527,7 +534,7 @@ class DL_Ring_Sorted (DL_Ring) :
     # end def __init__
 
     def append (self, * items) :
-        raise TypeError, "Append not allowed for DL_Ring_Sorted"
+        raise TypeError ("Append not allowed for DL_Ring_Sorted")
     # end def append
 
     def insert (self, * items) :
@@ -536,7 +543,7 @@ class DL_Ring_Sorted (DL_Ring) :
     # end def insert
 
     def prepend (self, items) :
-        raise TypeError, "Prepend not allowed for DL_Ring_Sorted"
+        raise TypeError ("Prepend not allowed for DL_Ring_Sorted")
     # end def prepend
 
     def _insert (self, other) :

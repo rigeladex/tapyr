@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,62 +34,63 @@
 #     8-Feb-2005 (CED) Various improvements
 #     9-Feb-2005 (CED) Some simplifications done
 #    24-Mar-2005 (CT)  Use `Math_Func.gcd` instead of `predicate.gcd`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 from   _TFL           import TFL
+from   _TFL           import pyk
+
 from   _TFL.Regexp    import Regexp, re
 
 import Math_Func
 
+@pyk.adapt__div__
 class Ratio :
     """Model ratio of two integer numbers.
 
-       >>> print Ratio (1, 2)
+       >>> print (Ratio (1, 2))
        1 / 2
-       >>> print Ratio (2)
+       >>> print (Ratio (2))
        2 / 1
-       >>> print Ratio ("3/4")
+       >>> print (Ratio ("3/4"))
        3 / 4
-       >>> print Ratio ("3")
+       >>> print (Ratio ("3"))
        3 / 1
-       >>> print Ratio (1, 2) * Ratio (1, 4)
+       >>> print (Ratio (1, 2) * Ratio (1, 4))
        1 / 8
-       >>> print Ratio (1, 2) / Ratio (1, 4)
+       >>> print (Ratio (1, 2) / Ratio (1, 4))
        2 / 1
-       >>> print Ratio (1, 2) * Ratio ("3")
+       >>> print (Ratio (1, 2) * Ratio ("3"))
        3 / 2
-       >>> print Ratio (1, 2) * 3
+       >>> print (Ratio (1, 2) * 3)
        3 / 2
-       >>> print Ratio (1, 2) * 3.
+       >>> print (Ratio (1, 2) * 3.)
        3 / 2
-       >>> print 6 * Ratio (1, 2)
+       >>> print (6 * Ratio (1, 2))
        3 / 1
-       >>> print 6 / Ratio (1, 2)
+       >>> print (6 / Ratio (1, 2))
        12 / 1
-       >>> print Ratio (1, 2) / 6
+       >>> print (Ratio (1, 2) / 6)
        1 / 12
-       >>> print Ratio (1, 2) / 6.
+       >>> print (Ratio (1, 2) / 6.)
        1 / 12
-       >>> print 1 / Ratio (1, 2)
+       >>> print (1 / Ratio (1, 2))
        2 / 1
-       >>> print Ratio (3, 4).reciprocal ()
+       >>> print (Ratio (3, 4).reciprocal ())
        4 / 3
-       >>> print Ratio (6, 8).normalized ()
+       >>> print (Ratio (6, 8).normalized ())
        3 / 4
-       >>> print Ratio (1, -2).normalized ()
+       >>> print (Ratio (1, -2).normalized ())
        -1 / 2
-       >>> print Ratio (1, 2).inversed ()
+       >>> print (Ratio (1, 2).inversed ())
        -1 / 2
-       >>> print Ratio (1, 3) + Ratio (1, 4)
+       >>> print (Ratio (1, 3) + Ratio (1, 4))
        7 / 12
-       >>> print Ratio (1, 3) - Ratio (1, 4)
+       >>> print (Ratio (1, 3) - Ratio (1, 4))
        1 / 12
-       >>> print 1 - Ratio (1, 3)
+       >>> print (1 - Ratio (1, 3))
        2 / 3
     """
 
@@ -105,29 +106,29 @@ class Ratio :
         )
 
     def __init__ (self, n, d = None) :
-        if isinstance (n, str) :
+        if isinstance (n, Ratio) :
             if not d is None :
-                raise TypeError, \
-                    "Ratio() 2nd argument not allowed when 1st is a string"
+                raise TypeError \
+                    ("Ratio() 2nd argument not allowed when 1st is a Ratio")
+            self.n = n.n
+            self.d = n.d
+        elif isinstance (n, pyk.string_types) :
+            if not d is None :
+                raise TypeError \
+                    ("Ratio() 2nd argument not allowed when 1st is a string")
             if self.pattern.match (n) :
                 self.n = int (self.pattern.group ("n"))
                 self.d = int (self.pattern.group ("d") or 1)
             else :
-                raise ValueError, "invalid literal for Ratio(): %s" % (n, )
-        elif isinstance (n, Ratio) :
-            if not d is None :
-                raise TypeError, \
-                    "Ratio() 2nd argument not allowed when 1st is a Ratio"
-            self.n = n.n
-            self.d = n.d
+                raise ValueError ("invalid literal for Ratio(): %s" % (n, ))
         elif d == 0 :
-            raise TypeError, "Ratio() zero not allowed for denominator"
+            raise TypeError ("Ratio() zero not allowed for denominator")
         else :
             try :
                 self.n = int (n)
                 self.d = int (d or 1)
             except TypeError :
-                print "invalid arguments for Ratio: (%r, %r)" % (n, d)
+                print ("invalid arguments for Ratio: (%r, %r)" % (n, d))
                 raise
     # end def __init__
 
@@ -189,27 +190,27 @@ class Ratio :
 
     __rmul__ = __mul__
 
-    def __idiv__ (self, rhs) :
+    def __itruediv__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
             rhs = self.__class__ (rhs)
         self   *= rhs.reciprocal ()
         return self
-    # end def __idiv__
+    # end def __itruediv__
 
-    def __div__ (self, rhs) :
-        result  = self.__class__ (self)
+    def __truediv__ (self, rhs) :
+        result  = self.__class__ (self.n, self.d)
         result /= rhs
         return result
-    # end def __div__
+    # end def __truediv__
 
-    def __rdiv__ (self, lhs) :
+    def __rtruediv__ (self, lhs) :
         ### XXX CED: Originally this one did not return a `Ratio` instance,
         ### XXX but tried to keep the type of `lhs` ?
         ### XXX If this would be preferable, all the other `__rXXX__`
         ### XXX functions should do this also. Therefore `__rmul__`
         ### XXX and `__radd__` should be implemented
         return lhs * self.reciprocal ()
-    # end def __rdiv__
+    # end def __rtruediv__
 
     def __iadd__ (self, rhs) :
         if not isinstance (rhs, Ratio) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,8 +41,7 @@ Meta class for auto-combining the dict-valued attributes mentioned in
 
 ::
 
-    >>> class A (object) :
-    ...     __metaclass__     = M_Auto_Combine_Dicts
+    >>> class A (TFL.Meta.BaM (object, metaclass = M_Auto_Combine_Dicts)) :
     ...     _dicts_to_combine = ("foo", "bar")
     ...     bar               = dict (x = 1, y = 2)
     ...
@@ -67,6 +66,7 @@ Meta class for auto-combining the dict-valued attributes mentioned in
 """
 
 from   _TFL                import TFL
+from   _TFL                import pyk
 
 import _TFL._Meta.M_Class
 
@@ -90,7 +90,7 @@ class M_Auto_Combine_Dicts (TFL.Meta.M_Base) :
                 ( cls, name
                 , dict
                     ( itertools.chain
-                        ( * (   getattr (c, name, {}).iteritems ()
+                        ( * (   pyk.iteritems (getattr (c, name, {}))
                             for c in reversed ((cls, ) + bases)
                             )
                         )

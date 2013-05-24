@@ -36,7 +36,11 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL import       TFL
+from   _TFL import       pyk
+
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 
@@ -59,7 +63,7 @@ class Node (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Autosuper)) :
         """Generate node and all its children in pre-order."""
         def gen (key, node) :
             yield key, node
-            for ck, cn in sorted (node.children.iteritems ()) :
+            for ck, cn in sorted (pyk.iteritems (node.children)) :
                 for k, n in gen (ck, cn) :
                     yield k, n
         v = self.value
@@ -83,7 +87,7 @@ class Node (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Autosuper)) :
             tail = "\n  ".join \
                 ( itertools.chain
                     ( * (   cn.visualized ().split ("\n")
-                        for ck, cn in sorted (children.iteritems ())
+                        for ck, cn in sorted (pyk.iteritems (children))
                         )
                     )
                 )
@@ -188,10 +192,10 @@ class Word_Trie (TFL.Meta.Object) :
     >>> wt.matches_levenshtein ("cit", 2)
     [('cab', 2), ('cat', 1), ('cats', 2), ('cub', 2)]
 
-    >>> print wt
+    >>> print (wt)
     Word_Trie (('ada', 'adam', 'beta', 'cab', 'cabby', 'cat', 'cathy',\
         'cats', 'cub'))
-    >>> print wt.visualized ()
+    >>> print (wt.visualized ())
     <Node
       <Node
         <Node
@@ -226,7 +230,7 @@ class Word_Trie (TFL.Meta.Object) :
         >
       >
     >
-    >>> print wt.find ("ca").visualized ()
+    >>> print (wt.find ("ca").visualized ())
     <Node
       <Value cab
         <Node
@@ -422,7 +426,7 @@ class Word_Trie (TFL.Meta.Object) :
         ### http://en.wikipedia.org/wiki/Levenshtein_distance
         ### http://stevehanov.ca/blog/index.php?id=114
         row_1 = range (len (word) + 1)
-        for char, node in self.root.children.iteritems () :
+        for char, node in pyk.iteritems (self.root.children) :
             for m in self._match_iter_inner \
                     (col_iter, word, max_edits, char, node, row_1) :
                 yield m
@@ -440,7 +444,7 @@ class Word_Trie (TFL.Meta.Object) :
             yield (node.value, row_c [-1])
         if any (c <= max_edits for c in row_c) :
             char_1 = char
-            for char, node in node.children.iteritems () :
+            for char, node in pyk.iteritems (node.children) :
                 for m in self._match_iter_inner \
                         ( col_iter, word, max_edits
                         , char, node, row_c, row_1, char_1
@@ -471,7 +475,7 @@ class Word_Trie_P (Word_Trie) :
 
    >>> wt.discard ("cab")
     True
-    >>> print wt.find ("ca").visualized ()
+    >>> print (wt.find ("ca").visualized ())
     <Node
       <Node
         <Node
@@ -487,7 +491,7 @@ class Word_Trie_P (Word_Trie) :
     >
     >>> wtp.discard ("cab")
     True
-    >>> print wtp.find ("ca").visualized ()
+    >>> print (wtp.find ("ca").visualized ())
     <Node
       <Node
         <Node
@@ -504,7 +508,7 @@ class Word_Trie_P (Word_Trie) :
 
     >>> wt.discard ("cabby")
     True
-    >>> print wt.find ("ca").visualized ()
+    >>> print (wt.find ("ca").visualized ())
     <Node
       <Node
         <Node
@@ -520,7 +524,7 @@ class Word_Trie_P (Word_Trie) :
     >
     >>> wtp.discard ("cabby")
     True
-    >>> print wtp.find ("ca").visualized ()
+    >>> print (wtp.find ("ca").visualized ())
     <Node
       <Value cat
         <Node

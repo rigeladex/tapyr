@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,8 +38,12 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL        import TFL
 from   _TFL.Regexp import Regexp, Re_Replacer, Dict_Replacer, re
+
+from   itertools   import chain as ichain
 import unicodedata
 
 _diacrit_map    = \
@@ -55,13 +59,15 @@ _diacrit_map    = \
 _diacrit_rep    = Dict_Replacer (_diacrit_map)
 
 _graph_rep      = Re_Replacer \
-    ( "(%s)+"
-    % "|".join   (re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"'))
-    , "_"
+    ( u"(%s)+"
+    % u"|".join   (re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"'))
+    , u"_"
     )
 
 _non_print_rep  = Re_Replacer \
-    ("|".join   (re.escape (chr (i)) for i in range (0, 32) + [127]), "")
+    ( u"|".join (re.escape (chr (i)) for i in ichain (range (0, 32), [127]))
+    , u""
+    )
 
 _quote_map      = \
     { u"«"      : u"<<"
@@ -80,38 +86,54 @@ _quote_map      = \
 
 _quote_rep      = Dict_Replacer (_quote_map)
 
+def _encoded (s) :
+    return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
+# end def _encoded
+
+def _sanitized_unicode (s, translate_table = None) :
+    if translate_table :
+        s = s.translate (translate_table)
+    s = _quote_rep (_diacrit_rep (s))
+    return s
+# end def _sanitized_unicode
+
+def _show (s) :
+    result = repr (s)
+    if result.startswith ("b'") :
+        result = result [1:]
+    print (result)
+# end def _show
+
 def sanitized_unicode (s, translate_table = None) :
     """Return sanitized version of unicode string `s` reduced to
        pure ASCII 8-bit string. Caveat: passing in an 8-bit string with
        diacriticals doesn't work.
 
-       >>> sanitized_unicode (u"üxäyözßuÜXÄYÖZbc¡ha!")
+       >>> _show (sanitized_unicode (u"üxäyözßuÜXÄYÖZbc¡ha!"))
        'uexaeyoezssuUeXAeYOeZbcha!'
-       >>> sanitized_unicode (u"«ÄÖÜ»")
+       >>> _show (sanitized_unicode (u"«ÄÖÜ»"))
        '<<AeOeUe>>'
-       >>> sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord (u"»") : u">"})
+       >>> _show \\
+       ... (sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord (u"»") : u">"}))
        '<AeOeUe>'
     """
-    if translate_table :
-        s = s.translate (translate_table)
-    s = _quote_rep (_diacrit_rep (s))
-    return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
+    return _encoded (_sanitized_unicode (s, translate_table))
 # end def sanitized_unicode
 
 def sanitized_filename (s, translate_table = None) :
    """Return `sanitized_unicode (s)` with all non-printable and some graphic
       characters removed so that the result is usable as a filename.
 
-       >>> sanitized_filename (
-       ...    u"überflüßig komplexer'; und $gefährlicher*' Filename")
+       >>> _show (sanitized_filename \\
+       ...    (u"überflüßig komplexer'; und $gefährlicher*' Filename"))
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
-       >>> sanitized_filename (u"«ÄÖÜß»")
+       >>> _show (sanitized_filename (u"«ÄÖÜß»"))
        '_AeOeUess_'
    """
-   s = sanitized_unicode  (s.strip (), translate_table)
+   s = _sanitized_unicode (s.strip (), translate_table)
    s = _non_print_rep     (s)
    s = _graph_rep         (s)
-   return s
+   return _encoded        (s)
 # end def sanitized_filename
 
 __doc__ = """

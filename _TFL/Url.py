@@ -36,6 +36,7 @@
 #--
 
 from   _TFL        import TFL
+from   _TFL        import pyk
 
 from   _TFL.Regexp import *
 
@@ -125,7 +126,7 @@ class Url (TFL.Meta.Object) :
             self._value  = value
             attrs        = dict \
                 ( (k, v or "")
-                for (k, v) in self._matcher.groupdict ().iteritems ()
+                for (k, v) in pyk.iteritems (self._matcher.groupdict ())
                 )
             self._parsed = p = TFL.Record (** attrs)
             if fs_path and p.path.startswith ("/") :

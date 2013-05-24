@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -60,6 +60,7 @@
 #    11-Nov-2009 (CT) Changed exception handler for 3-compatibility
 #     5-Mar-2010 (CT) `changed_dir` added
 #     1-Jul-2010 (CT) `expanded_glob` changed to return `[pathname]` over `[]`
+#    24-May-2013 (CT) Improve Python-3.3 compatibility
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,11 @@ from    _TFL import TFL
 
 import _TFL.Decorator
 
-from    os   import *
+import os as _os
+
+### `from os import *` fails in Python 3.3 due to a quite restricted `__all__`
+### --> update `globals` with `os.__dict__` instead
+globals ().update (_os.__dict__)
 
 mkdir_p = makedirs
 

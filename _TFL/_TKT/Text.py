@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -64,12 +64,10 @@
 #                      respectively
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty`.
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin
@@ -115,24 +113,24 @@ class Text (TFL.TKT.Mixin) :
         >>> w.apply_style  ( gray, w.bol_pos (hum_p), w.eol_pos (hum_p)
         ...                , tag ="foo")
         >>> tags = w.tags_at (hum_p)
-        >>> print len (tags), tags [0]
+        >>> print (len (tags), tags [0])
         1 foo
         >>> #applying an eventbinding is impossible here because this
         >>> #needs an app context for looking up the event name.
         >>> #w.apply_style  (cb,   w.bol_pos (hum_p), w.eol_pos (hum_p))
         >>> w.remove_style (gray, w.buffer_head, w.buffer_tail)
 
-        >>> print w.get (hum_p, w.pos_at (hum_p, 3))
+        >>> print (w.get (hum_p, w.pos_at (hum_p, 3)))
         HaH
-        >>> print w.get (hum_m, w.pos_at (hum_m, 3))
+        >>> print (w.get (hum_m, w.pos_at (hum_m, 3)))
         Hum
         >>> p = True
         >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
         ...     p = w.find (t, backwards = not p)
         ...     if p is not None :
-        ...         print t, "found", w.get (p, w.pos_at (p, delta = len (t)))
+        ...         print (t, "found", w.get (p, w.pos_at (p, delta = len (t))))
         ...     else :
-        ...         print t, "not found"
+        ...         print (t, "not found")
         ...
         Ha found Ha
         He not found
@@ -141,44 +139,44 @@ class Text (TFL.TKT.Mixin) :
         Hu found Hu
         >>> w.insert (w.buffer_tail, chr (10) + "Diddle Dum")
         >>> w.apply_style (gray, w.bol_pos (w.buffer_tail), w.eol_pos (w.buffer_tail))
-        >>> print w.get ()
+        >>> print (w.get ())
         HiHaHoHum
         Diddle Dum
-        >>> print w.get (w.bol_pos (hum_m), w.eol_pos (hum_m))
+        >>> print (w.get (w.bol_pos (hum_m), w.eol_pos (hum_m)))
         HiHaHoHum
-        >>> print w.get ( w.bol_pos (hum_m, line_delta = 1)
-        ...             , w.eol_pos (hum_m, line_delta = 1))
+        >>> print (w.get ( w.bol_pos (hum_m, line_delta = 1)
+        ...             , w.eol_pos (hum_m, line_delta = 1)))
         Diddle Dum
         >>> w.see (w.buffer_tail)
         >>> w.see (w.buffer_head)
         >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
-        >>> print w.get ()
+        >>> print (w.get ())
         HiHaHoHum
          Dum
 
         >>> w.insert (grmpf, "GRMPF", blue)
         >>> w.insert (grmpf, "jup", blue)
-        >>> print w.get ()
+        >>> print (w.get ())
         HiHajupGRMPFHoHum
          Dum
 
         >>> w.insert (w.insert_mark, "cp1", blue)
         >>> w.insert (w.insert_mark, "cp2", yell)
-        >>> print w.get ()
+        >>> print (w.get ())
         Hicp1cp2HajupGRMPFHoHum
          Dum
 
         >>> x = w.insert_mark
         >>> w.insert (x, "CP1", blue)
         >>> w.insert (x, "CP2", yell)
-        >>> print w.get ()
+        >>> print (w.get ())
         Hicp1cp2CP1CP2HajupGRMPFHoHum
          Dum
 
         >>> x = w.buffer_tail
         >>> w.insert (x, "X1", blue)
         >>> w.insert (x, "Y2", yell)
-        >>> print w.get ()
+        >>> print (w.get ())
         Hicp1cp2CP1CP2HajupGRMPFHoHum
          DumX1Y2
 

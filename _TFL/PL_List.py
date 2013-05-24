@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,10 +41,15 @@
 #    ««revision-date»»···
 #--
 
-from   UserList  import UserList
-from   copy      import deepcopy
+from   __future__  import print_function
 
-from   _TFL      import TFL
+try :
+    from   collections import UserList
+except ImportError :
+    from   UserList    import UserList
+from   copy            import deepcopy
+
+from   _TFL            import TFL
 
 class PL_List (UserList) :
     """Perl like list: references to undefined indices return an undefined
@@ -53,10 +58,10 @@ class PL_List (UserList) :
        >>> p = PL_List ([1,2,3])
        >>> p
        [1, 2, 3]
-       >>> print p [5]
+       >>> print (p [5])
        None
        >>> p = PL_List ([1,2,3], undefined = 0)
-       >>> print p [5]
+       >>> print (p [5])
        0
        >>> p [0]
        1
@@ -121,7 +126,7 @@ class PL_List (UserList) :
     def __setitem__ (self, item, value) :
         try :
             self.data [item] = value
-        except IndexError, exc :
+        except IndexError as exc :
             l = len (self.data)
             if item >= l :
                 for i in range (l, item) :

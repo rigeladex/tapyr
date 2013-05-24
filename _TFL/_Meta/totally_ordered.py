@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #    19-Nov-2009 (CT) `_Orders_.__hash__` added (3-compatibility)
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 """
 `totally_ordered` is a class decorator adding all missing rich comparison
@@ -73,8 +75,8 @@ old-style `__cmp__` is defined::
 
     >>> for C in T_cmp, T_ge, T_gt, T_le, T_lt, T_gtr, T_ltr :
     ...     a, b, c = C (1), C (2), C (2)
-    ...     print C.__name__, a<b, a<=b, a>b, a>=b, b<a, b<=a, b>a, b>=a
-    ...     print "    ", a==b, a!=b, b==c, b!=c
+    ...     print (C.__name__, a<b, a<=b, a>b, a>=b, b<a, b<=a, b>a, b>=a)
+    ...     print ("    ", a==b, a!=b, b==c, b!=c)
     ...
     T_cmp True True False False False False True True
          False True True False
@@ -92,12 +94,12 @@ old-style `__cmp__` is defined::
          False True True False
     >>> for C in T_lt, T_gtr, T_ltr :
     ...     a, b, c = C (1), C (2), C (2)
-    ...     print C.__name__, (a, b) < (a, b), (a, b) <= (a, b), (a, b) == (a, b)
-    ...     print "    ",     (a, b) > (a, b), (a, b) >= (a, b), (a, b) == (a, b)
-    ...     print "    ",     (b, c) < (b, c), (b, c) <= (b, c), (b, c) == (b, c)
-    ...     print "    ",     (b, c) > (b, c), (b, c) >= (b, c), (b, c) == (b, c)
-    ...     print "    ",     (a, c) < (b, c), (a, c) <= (b, c), (a, c) == (b, c)
-    ...     print "    ",     (a, c) > (b, c), (a, c) >= (b, c), (a, c) == (b, c)
+    ...     print (C.__name__, (a, b) < (a, b), (a, b) <= (a, b), (a, b) == (a, b))
+    ...     print ("    ",     (a, b) > (a, b), (a, b) >= (a, b), (a, b) == (a, b))
+    ...     print ("    ",     (b, c) < (b, c), (b, c) <= (b, c), (b, c) == (b, c))
+    ...     print ("    ",     (b, c) > (b, c), (b, c) >= (b, c), (b, c) == (b, c))
+    ...     print ("    ",     (a, c) < (b, c), (a, c) <= (b, c), (a, c) == (b, c))
+    ...     print ("    ",     (a, c) > (b, c), (a, c) >= (b, c), (a, c) == (b, c))
     T_lt False True True
          False True True
          False True True
@@ -124,6 +126,8 @@ old-style `__cmp__` is defined::
 """
 
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 import _TFL._Meta.Object
 
 import itertools
@@ -133,7 +137,7 @@ _order_operators = ("__lt__", "__gt__", "__le__", "__ge__")
 def _base_operator (cls) :
     names = set (_order_operators + ("__cmp__", ))
     ops   = cls.operators = dict ()
-    for name, func in cls.__dict__.iteritems () :
+    for name, func in pyk.iteritems (cls.__dict__) :
         if name in names :
             func.__doc__  = getattr (object, name).__doc__
             ops [name]    = func
@@ -189,7 +193,7 @@ class _Orders_ (TFL.Meta.Object) :
         , __ne__ = lambda self, rhs :     (self < rhs or rhs < self)
         )
 
-    for name, func in equality_operators.iteritems () :
+    for name, func in pyk.iteritems (equality_operators) :
         func.__name__ = name
         func.__doc__  = getattr (object, name).__doc__
 
@@ -205,19 +209,19 @@ def totally_ordered (cls) :
     defined = set (cls.__dict__)
     oops    = set (_order_operators) & defined
     if oops :
-        base = (k for k in _order_operators if k in oops).next ()
+        base = next (k for k in _order_operators if k in oops)
     elif "__cmp__" in defined :
         ### backwards compatibility for 2.x classes defining `__cmp__`
         base = "__cmp__"
     else :
-        raise TypeError, \
+        raise TypeError \
             ( "Totally ordered class `%s` must define at least one of: "
               "%s, or __cmp__"
             % (cls.__name__, ", ".join (_order_operators))
             )
     for name, func in itertools.chain \
-            ( getattr (_Orders_, base).operators.iteritems ()
-            , _Orders_.equality_operators.iteritems ()
+            ( pyk.iteritems (getattr (_Orders_, base).operators)
+            , pyk.iteritems (_Orders_.equality_operators)
             ) :
         if name not in defined :
             setattr (cls, name, func)

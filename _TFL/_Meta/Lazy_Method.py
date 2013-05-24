@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,8 @@
 #     3-Feb-2009 (CT)  Documentation improved
 #    ««revision-date»»···
 #--
+
+from   __future__       import print_function
 
 from   _TFL             import TFL
 import _TFL._Meta.Property
@@ -100,7 +102,7 @@ class Lazy_Method_RLV (TFL.Meta.Method_Descriptor) :
        >>> class Test (object) :
        ...     changes = 0
        ...     def test (self) :
-       ...         print "Test.test", self.changes
+       ...         print ("Test.test", self.changes)
        ...     test = Lazy_Method (test)
        ...
        >>> t = Test ()

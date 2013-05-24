@@ -49,7 +49,11 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   __future__       import print_function
+
+from   _TFL             import TFL
+from   _TFL             import pyk
+
 import _TFL.Undef
 
 def alt_iter (* iterables) :
@@ -74,30 +78,31 @@ def alt_iter (* iterables) :
         i = 0
         while i < len (iters) :
             try :
-                yield iters [i].next ()
+                yield next (iters [i])
             except StopIteration :
                 del iters [i]
             else :
                 i += 1
 # end def alt_iter
 
+@pyk.adapt__bool__
 class Look_Ahead_Gen (object) :
     """Wrap a generator/iterator to provide look ahead
 
        >>> for i in Look_Ahead_Gen (range (3)) :
-       ...   print i
+       ...   print (i)
        ...
        0
        1
        2
        >>> lag = Look_Ahead_Gen (range (1))
        >>> for i in lag :
-       ...   print i, lag.is_finished
+       ...   print (i, lag.is_finished)
        ...
        0 True
        >>> lag = Look_Ahead_Gen (range (3))
        >>> for i in lag :
-       ...   print i, lag.is_finished
+       ...   print (i, lag.is_finished)
        ...
        0 False
        1 False
@@ -114,7 +119,7 @@ class Look_Ahead_Gen (object) :
     def __nonzero__ (self) :
         try :
             if self.succ is self._sentinel :
-                self.succ = self.source.next ()
+                self.succ = next (self.source)
         except StopIteration :
             return False
         return True
@@ -125,11 +130,11 @@ class Look_Ahead_Gen (object) :
         _sentinel = self._sentinel
         while True :
             if self.succ is _sentinel :
-                next      = source.next ()
+                succ      = next (source)
             else :
-                next      = self.succ
+                succ      = self.succ
                 self.succ = _sentinel
-            yield next
+            yield succ
     # end def __iter__
 
 # end class Look_Ahead_Gen
@@ -255,7 +260,7 @@ class Lazy_List :
        >>> try :
        ...     rl [5]
        ... except IndexError :
-       ...     print "OK"
+       ...     print ("OK")
        ...
        OK
        >>> rl [::2]
@@ -264,7 +269,7 @@ class Lazy_List :
 
     def __init__ (self, generator) :
         self._data = []
-        self._next = generator.next
+        self._next = lambda : next (generator)
     # end def __init__
 
     def __getitem__ (self, i) :
@@ -287,7 +292,7 @@ class Lazy_List :
     def _get (self, last) :
         data = self._data
         next = self._next
-        while last > len (data) :
+        while last and last > len (data) :
             data.append (next ())
     # end def _get
 
@@ -311,13 +316,13 @@ def window_wise (seq, size) :
     """
     from _TFL.DL_List import DL_Ring
     s = iter  (seq)
-    h = tuple ((s.next () for i in range (size)))
+    h = tuple ((next (s) for i in range (size)))
     if len (h) == size :
         w = DL_Ring (h)
         yield tuple (w.values ())
         while True:
             w.pop_front ()
-            w.append    (s.next ())
+            w.append    (next (s))
             yield tuple (w.values ())
 # end def window_wise
 

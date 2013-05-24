@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -61,8 +61,8 @@ def import_module_brittle (module_name) :
         ### not yet in the `__dict__` of the containing package)
         try :
             result = getattr (result, n)
-        except AttributeError, exc :
-            raise ImportError, "%s: %s, %s" % (exc, module_name, result)
+        except AttributeError as exc :
+            raise ImportError ("%s: %s, %s" % (exc, module_name, result))
     return result
 # end def import_module_brittle
 

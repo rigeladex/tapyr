@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,12 +44,17 @@
 #--
 
 from   _TFL                 import TFL
+from   _TFL                 import pyk
 
-from   _TFL.Environment     import practically_infinite as infinite
+from   _TFL.Environment           import practically_infinite as infinite
+from   _TFL._Meta.totally_ordered import totally_ordered
+
 import _TFL.DL_List
 import _TFL.predicate
 import _TFL._Meta.Object
 
+@pyk.adapt__bool__
+@totally_ordered
 class Numeric_Interval (TFL.Meta.Object) :
     """Class for modelling a numeric interval.
 
@@ -180,12 +185,16 @@ class Numeric_Interval (TFL.Meta.Object) :
         return self.__class__ (self.lower + delta, self.upper + delta)
     # end def shifted
 
-    def __cmp__ (self, other) :
+    def __bool__ (self) :
+        return self.length > 0
+    # end def __bool__
+
+    def __eq__ (self, other) :
         try :
-            return cmp ((self.lower, self.upper), (other.lower, other.upper))
+            return (self.lower, self.upper) == (other.lower, other.upper)
         except AttributeError :
-            return cmp ((self.lower, self.upper), other)
-    # end def __cmp__
+            return (self.lower, self.upper) == other
+    # end def __eq__
 
     def __getitem__ (self, key) :
         return (self.lower, self.upper) [key]
@@ -195,13 +204,16 @@ class Numeric_Interval (TFL.Meta.Object) :
         return iter ((self.lower, self.upper))
     # end def __iter__
 
+    def __lt__ (self, other) :
+        try :
+            return (self.lower, self.upper) < (other.lower, other.upper)
+        except AttributeError :
+            return (self.lower, self.upper) < other
+    # end def __lt__
+
     def __mod__ (self, rhs) :
         return self.__class__ (self.lower % rhs, (self.upper % rhs) or rhs)
     # end def __mod__
-
-    def __nonzero__ (self) :
-        return self.length > 0
-    # end def __nonzero__
 
     def __repr__ (self) :
         return self.format % (self.lower, self.upper)

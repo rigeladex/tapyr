@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,10 @@
 #
 # Revision Dates
 #    17-Jun-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 """
 This module tests _TFL.import_module in two ways. The doctest tests the
@@ -56,11 +54,13 @@ a running python interpreter as in
 
 from _TFL.import_module import *
 
-print "Importing ", import_module ("_TFL._test_import_module"), "works"
+print ("Importing ", import_module ("_TFL._test_import_module"), "works")
 try :
     import_module_brittle ("_TFL._test_import_module")
-except ImportError, exc :
-    print ("Importing _TFL._test_import_module with "
-           "import_module_brittle fails as expected: \n    "
-          ), exc
+except ImportError as exc :
+    print \
+        ( "Importing _TFL._test_import_module with "
+          "import_module_brittle fails as expected: \n    "
+        , exc
+        )
 ### __END__ TFL._test_import_module

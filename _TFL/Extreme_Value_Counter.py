@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2004-2013 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -29,18 +29,13 @@
 # Revision Dates
 #    19-Feb-2004 (CED) Creation
 #    26-Feb-2004 (CED) `set` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-#
 
-
-
-from _TFL import TFL
+from   _TFL import TFL
 
 import _TFL._Meta.Object
-import sys
+import _TFL.Environment
 
 class Extreme_Counter (object) :
     """
@@ -109,7 +104,7 @@ class Extreme_Counter (object) :
 
 class Maximum_Counter (Extreme_Counter) :
 
-    def __init__ (self, init_val = -sys.maxint) :
+    def __init__ (self, init_val = - TFL.Environment.practically_infinite) :
         self__super.__init__ (init_val)
     # end def __init__
 
@@ -117,7 +112,7 @@ class Maximum_Counter (Extreme_Counter) :
 
 class Minimum_Counter (Extreme_Counter) :
 
-    def __init__ (self, init_val = sys.maxint) :
+    def __init__ (self, init_val = TFL.Environment.practically_infinite) :
         self__super.__init__ (init_val)
     # end def __init__
 

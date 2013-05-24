@@ -53,7 +53,12 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import absolute_import, division
+from   __future__  import print_function
+
 from   _TFL           import TFL
+from   _TFL           import pyk
+
 import _TFL._Meta.Object
 import _TFL.Environment
 import re
@@ -144,6 +149,8 @@ class Regexp (TFL.Meta.Object) :
            `pos` and `endpos` determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
+        if not isinstance (string, pyk.string_types) :
+            string = string.decode ("latin-1")
         endpos = endpos or self.max_index
         result = self.last_match = self._pattern.search (string, pos, endpos)
         return result
@@ -198,10 +205,10 @@ class Regexp (TFL.Meta.Object) :
                     try :
                         return self.last_match.group (name)
                     except IndexError :
-                        raise AttributeError, name
+                        raise AttributeError (name)
             except AttributeError :
                 return getattr (self._pattern, name)
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __nonzero__ (self) :
@@ -218,7 +225,7 @@ class Multi_Regexp :
         self.last_match  = None
         add              = self.patterns.append
         for p in patterns :
-            if isinstance (p, (str, unicode)) :
+            if isinstance (p, pyk.string_types) :
                 p = Regexp (p, ** kw)
             add (p)
     # end def __init__
@@ -255,7 +262,7 @@ class Multi_Regexp :
             try :
                 return self.last_match.group (name)
             except IndexError :
-                raise AttributeError, name
+                raise AttributeError (name)
     # end def __getattr__
 
 # end class Multi_Regexp
@@ -282,7 +289,7 @@ class Re_Replacer (TFL.Meta.Object) :
         try :
             return self.regexp.sub (self.replacement, text, count)
         except TypeError :
-            print self.regexp.pattern, self.replacement
+            print (self.regexp.pattern, self.replacement)
             raise
     # end def __call__
 
@@ -306,7 +313,7 @@ class Dict_Replacer (Re_Replacer) :
         regexp    = Regexp \
             ( "|".join
                 ( re.escape (k) for k in sorted
-                    (map.iterkeys (), key = lambda k : (-len (k), k))
+                    (pyk.iterkeys (map), key = lambda k : (-len (k), k))
                 )
             , __flags
             )

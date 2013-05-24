@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,13 +33,17 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL                     import TFL
+from   _TFL                     import pyk
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 
 import math
 
+@pyk.adapt__str__
 class _Angle_ (TFL.Meta.Object) :
     """Model an angle"""
 
@@ -134,28 +138,23 @@ class _Angle_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        import _TFL.I18N
-        return TFL.I18N.encode_o (unicode (self))
+        return u"%3.3d°%2.2d'%2.2d''" % self.tuple
     # end def __str__
 
     def __sub__ (self, rhs) :
         return self.__class__ (float (self) - getattr (rhs, self.name, rhs))
     # end def __sub__
 
-    def __unicode__ (self) :
-        return u"%3.3d°%2.2d'%2.2d''" % self.tuple
-    # end def __unicode__
-
 # end class _Angle_
 
 class Angle_D (_Angle_) :
     """Model an angle specified in degrees.
 
-       >>> print Angle_D (45)
+       >>> print (Angle_D (45))
        045°00'00''
-       >>> print Angle_D (45.5)
+       >>> print (Angle_D (45.5))
        045°30'00''
-       >>> print Angle_D (45, 20, 40)
+       >>> print (Angle_D (45, 20, 40))
        045°20'40''
        >>> Angle_D (45)
        Angle_D (45.0)
@@ -164,9 +163,9 @@ class Angle_D (_Angle_) :
        >>> Angle_D (45, 30, 36)
        Angle_D (45.51)
        >>> a = Angle_D (45)
-       >>> print a.radians
+       >>> print ("%14.12f" % a.radians)
        0.785398163397
-       >>> print a.sin, a.cos, a.tan
+       >>> print ("%14.12f %14.12f %14.1f" % (a.sin, a.cos, a.tan))
        0.707106781187 0.707106781187 1.0
 
     """
@@ -199,13 +198,15 @@ class Angle_R (_Angle_) :
        >>> b = Angle_R (0.78539816339744828)
        >>> b.degrees
        45.0
-       >>> print b.sin, b.cos, b.tan
+       >>> print ("%14.12f %14.12f %14.1f" % (b.sin, b.cos, b.tan))
        0.707106781187 0.707106781187 1.0
-       >>> Angle_R.asin (b.sin)
+       >>> br = Angle_R.asin (b.sin)
+       >>> print ("%s (%14.12f)" % (br.__class__.__name__, br))
        Angle_R (0.785398163397)
-       >>> Angle_D.asin (b.sin)
+       >>> bd = Angle_D.asin (b.sin)
+       >>> print ("%s (%14.12f)" % (bd.__class__.__name__, bd))
        Angle_R (0.785398163397)
-       >>> print Angle_R.asin (b.sin).degrees
+       >>> print ("%14.1f" % Angle_R.asin (b.sin).degrees)
        45.0
     """
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This library is free software; you can redistribute it and/or
@@ -104,7 +104,7 @@ def horner (x, ai) :
        -16
     """
     ia     = reversed (ai)
-    result = ia.next  ()
+    result = next     (ia)
     for a in ia :
         result *= x
         result += a

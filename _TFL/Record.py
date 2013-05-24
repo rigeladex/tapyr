@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2000-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,6 +51,8 @@
 #--
 
 from   _TFL           import TFL
+from   _TFL           import pyk
+
 from   _TFL.predicate import sorted
 
 import _TFL._Meta.Object
@@ -85,7 +87,7 @@ class Record (TFL.Meta.Object) :
     def _formatted_kw (self) :
         return ", ".join \
             ( (   "%s = %r" % (k, v)
-              for (k, v) in sorted (self._kw.iteritems ())
+              for (k, v) in sorted (pyk.iteritems (self._kw))
               )
             )
     # end def _formatted_kw
@@ -102,7 +104,7 @@ class Record (TFL.Meta.Object) :
         try :
             return self._kw [name]
         except KeyError :
-            raise AttributeError, name
+            raise AttributeError (name)
     # end def __getattr__
 
     def __getitem__ (self, key) :
@@ -172,7 +174,7 @@ class Record_S (Record) :
                 try :
                     o = getattr (o, k)
                 except AttributeError :
-                    raise KeyError, key
+                    raise KeyError (key)
             return o
     # end def __getitem__
 

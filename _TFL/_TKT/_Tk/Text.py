@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -81,12 +81,10 @@
 #    13-May-2005 (CT)  `remove_style` robustified
 #    20-May-2005 (CT)  `Scrolled_Text` changed to set `x_scroll_default` to
 #                      False
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__  import print_function
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk
@@ -118,7 +116,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        >>> w.pos_at (cur)
        '1.4'
        >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
-       ...     print t, w.find (t)
+       ...     print (t, w.find (t))
        ...
        Ha 1.4
        He None
@@ -134,13 +132,13 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        >>> w.insert (w.buffer_tail, chr (10) + "Diddle Dum")
        >>> w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
        ('1.0', '3.0', '1.4', '1.0')
-       >>> print w.get ()
+       >>> print (w.get ())
        HiHoHaHum
        Diddle Dum
        >>> w.see (w.buffer_tail)
        >>> w.see (w.buffer_head)
        >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
-       >>> print w.get ()
+       >>> print (w.get ())
        HiHoHaHum
         Dum
     """
@@ -382,7 +380,7 @@ w.insert (w.buffer_head, "Ho", delta = 2)
 w.apply_style  (gray, w.bol_pos (w.insert_mark), w.eol_pos (w.insert_mark))
 w.remove_style (gray, w.buffer_head, w.buffer_tail)
 for t in "Ha", "He", "Hi", "Ho", "Hu" :
-    print t, w.find (t)
+    print (t, w.find (t))
 
 w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.insert (w.buffer_tail, '''\nDiddle Dum''')

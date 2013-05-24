@@ -166,6 +166,7 @@ Provide filtering and ordering functions over query result::
 """
 
 from   _TFL                       import TFL
+from   _TFL                       import pyk
 
 import _TFL._Meta.Object
 import _TFL.Decorator
@@ -387,7 +388,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         if kw :
             criteria = list (criteria)
             Q = self.Q
-            for k, v in kw.iteritems () :
+            for k, v in pyk.iteritems (kw) :
                 criteria.append (getattr (Q, k) == v)
             criteria = tuple (criteria)
         assert criteria
@@ -409,7 +410,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         if kw :
             criteria = list (criteria)
             Q = self.Q
-            for k, v in kw.iteritems () :
+            for k, v in pyk.iteritems (kw) :
                 criteria.append (getattr (Q, k) == v)
             criteria = tuple (criteria)
         assert criteria
@@ -449,7 +450,7 @@ class _Q_Result_ (TFL.Meta.Object) :
                 yield k, v
         args = tuple (_g (args))
         for r in self :
-            for k, v in kw.iteritems () :
+            for k, v in pyk.iteritems (kw) :
                 setattr (r, k, v)
             for k, v in args :
                 k.SET (r, v)
@@ -541,7 +542,7 @@ class _Q_Result_Group_By_ (_Q_Result_Filtered_) :
                             )
                 result         = sum_fixed
             else :
-                result         = result.itervalues ()
+                result         = pyk.itervalues (result)
             if self._distinct and not self.iterable._distinct :
                 result  = self._distinct (result)
             self._cache = list (result)

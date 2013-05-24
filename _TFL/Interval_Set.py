@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2009 Dr. Ralf Schlatterbeck Open Source Consulting.
+# Copyright (C) 2004-2013 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
 # Web: http://www.runtux.com Email: office@runtux.com
 # All rights reserved
@@ -62,6 +62,8 @@
 #--
 
 from   _TFL                  import TFL
+from   _TFL                  import pyk
+
 from   _TFL.predicate        import any_true, dusort
 from   bisect                import bisect
 
@@ -69,6 +71,7 @@ import _TFL._Meta.Object
 
 import itertools
 
+@pyk.adapt__bool__
 class Interval_Set (TFL.Meta.Object) :
     """Class for modelling a sorted set of intervals.
 
@@ -304,7 +307,7 @@ class Interval_Set (TFL.Meta.Object) :
 
     def overlaps (self, other) :
         try :
-            self._intersection_iter (other).next ()
+            next (self._intersection_iter (other))
         except StopIteration :
             return False
         else :
@@ -316,21 +319,21 @@ class Interval_Set (TFL.Meta.Object) :
     # end def union
 
     def _difference_iter (self, other) :
-        lit = iter     (self)
-        l   = lit.next ()
+        lit = iter (self)
+        l   = next (lit)
         for r in other :
             if not r :
                 continue
             while l.upper <= r.lower :
                 yield l
-                l = lit.next ()
+                l = next (lit)
             if l.lower < r.upper :
                 if l.lower < r.lower :
                     yield l.__class__ (l.lower, r.lower)
                 if r.upper < l.upper :
                     l = l.__class__ (r.upper, l.upper)
                 else :
-                    l = lit.next ()
+                    l = next (lit)
                     if l.lower < r.upper < l.upper :
                         l = l.__class__ (r.upper, l.upper)
         yield l
@@ -341,24 +344,24 @@ class Interval_Set (TFL.Meta.Object) :
     def _intersection_iter (self, other) :
         l_iter = iter (self)
         r_iter = iter (other)
-        l, r   = l_iter.next (), r_iter.next ()
+        l, r   = next (l_iter), next (r_iter)
         while True :
             i = r.intersection (l)
             if i.is_valid () :
                 yield i
             if l.upper < r.upper :
-                l = l_iter.next ()
+                l = next (l_iter)
             else :
-                r = r_iter.next ()
+                r = next (r_iter)
     # end def _intersection_iter
+
+    def __bool__ (self) :
+        return bool (self.intervals)
+    # end def __bool__
 
     def __iter__ (self) :
         return iter (self.intervals)
     # end def __iter__
-
-    def __nonzero__ (self) :
-        return bool (self.intervals)
-    # end __nonzero__
 
     def __repr__ (self) :
         name = self.__class__.__name__
@@ -374,17 +377,18 @@ class Interval_Set (TFL.Meta.Object) :
         # end def __init__
 
         def advance (self) :
-            next       = self.ivi.next
-            min_size   = self.min_size
-            v = next ()
+            succ     = lambda : next (self.ivi)
+            min_size = self.min_size
+            v = succ ()
             while v.length < min_size :
-                v = next ()
+                v = succ ()
             self.value = v
             return v
         # end def advance
 
     # end class _IVS_Iter_
 
+    @pyk.adapt__bool__
     class _IVS_Iter_X_ (_IVS_Iter_) :
 
         def advance (self) :
@@ -398,9 +402,9 @@ class Interval_Set (TFL.Meta.Object) :
             return v
         # end def advance
 
-        def __nonzero__ (self) :
+        def __bool__ (self) :
             return not self.done
-        # end def __nonzero__
+        # end def __bool__
 
     # end class _IVS_Iter_X_
 

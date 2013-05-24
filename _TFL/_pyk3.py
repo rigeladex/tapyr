@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -28,13 +28,55 @@
 # Revision Dates
 #    16-Jun-2010 (CT) Creation
 #     5-Jan-2011 (CT) `pickle` added
+#    23-May-2013 (CT) Add `string_types`, `text_type`, `Classic_Class_Type`
+#    23-May-2013 (CT) Add class decorator `adapt__bool__`
+#    24-May-2013 (CT) Add `adapt__div__`, `adapt__str__`
+#    24-May-2013 (CT) Add `iteritems`, `iterkeys`, `itervalues`, `xrange`
+#    24-May-2013 (CT) Add `int_types`
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   io     import StringIO
 
 import pickle
 
-fprint = print
+Classic_Class_Type = None
+
+fprint             = print
+
+int_types          = (int, )
+string_types       = (str, )
+text_type          = str
+
+def adapt__bool__ (cls) :
+    dct = cls.__dict__
+    if "__bool__" not in dct and "__nonzero__" in dct :
+        setattr (cls, "__bool__", dct ["__nonzero__"])
+    return cls
+# end def adapt__bool__
+
+def adapt__div__ (cls) :
+    """Nothing to be done here"""
+    return cls
+# end def adapt__div__
+
+def adapt__str__ (cls) :
+    """Nothing to be done here"""
+    return cls
+# end def adapt__str__
+
+def iteritems (dct) :
+    return dct.items ()
+# end def iteritems
+
+def iterkeys (dct) :
+    return dct.keys ()
+# end def iterkeys
+
+def itervalues (dct) :
+    return dct.values ()
+# end def itervalues
+
+xrange = range
 
 ### __END__ TFL._pyk3

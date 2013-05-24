@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -87,7 +87,7 @@ class M_Unique_If_Named (TFL.Meta.M_Class) :
 
     def __getattr__ (cls, name) :
         if name == "_" :
-            raise AttributeError, name
+            raise AttributeError (name)
         return getattr (cls._, name)
     # end def __getattr__
 
