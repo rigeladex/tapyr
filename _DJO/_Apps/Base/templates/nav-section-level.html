@@ -1,6 +1,6 @@
 {# Django template: nav-section-level.html #}
 {% comment %}
-  ## Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+  ## Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
   ##
   ##
@@ -14,13 +14,14 @@
   ## Revision Dates
   ##    29-Feb-2008 (CT) Creation (factored from nav-section.html)
   ##    23-Mar-2010 (CT) Guard for `hidden` added
+  ##    24-May-2013 (CT) Add guard for `auth_required`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
 <ul>
   {% for link in link_list %}
-    {% if not link.hidden %}{% rrender "nav-section-entry.html" %}{% endif %}
+    {% if link.hidden or link.auth_required %}{% else %}{% rrender "nav-section-entry.html" %}{% endif %}
   {% endfor %}
 </ul>
 {# __END__ Django template: nav-section-level.html #}

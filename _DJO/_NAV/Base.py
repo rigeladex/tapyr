@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -178,14 +178,19 @@
 #    21-Dec-2010 (CT) `Root.home` added
 #    23-May-2011 (CT) `copyright_url` added
 #     2-Jun-2012 (CT) Add `DJO` to `context` in `from_nav_list_file`
+#    24-May-2013 (CT) Add `auth_required`, `cutoff_date`; consider in `hidden`
 #    ««revision-date»»···
 #--
 
 from   _DJO                     import DJO
+from   _CAL                     import CAL
 from   _TFL                     import TFL
+
 import _DJO.Media
 import _DJO._NAV
 import _DJO._NAV.Url_Pattern
+
+import _CAL.Date_Time
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -227,7 +232,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
     __metaclass__   = _Meta_
 
     desc            = ""
-    hidden          = False
     href            = ""
     input_encoding  = "iso-8859-15"
     nick            = ""
@@ -238,6 +242,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     parent          = None
 
     _dump_type      = "dict"
+    _hidden         = False
 
     _Media          = DJO.Media ()
 
@@ -251,6 +256,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if "Media" in kw :
             self._Media = kw.pop ("Media")
         self._login_required = kw.pop ("login_required", False)
+        self.auth_required   = kw.pop ("auth_required",  self._login_required)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
@@ -267,6 +273,33 @@ class _Site_Entity_ (TFL.Meta.Object) :
             return "/%s" % (result, )
         return result
     # end def abs_href
+
+    @Once_Property
+    def date_dt (self) :
+        if self.date :
+            try :
+                return CAL.Date_Time.from_string (self.date)._body
+            except Exception :
+                pass
+    # end def date_dt
+
+    @property
+    def hidden (self) :
+        cutoff = False
+        cd     = self.cutoff_date
+        dd     = self.date_dt
+        if cd and self.honor_cutoff and dd :
+            try :
+                cutoff = cd > dd
+            except Exception as exc :
+                TFL.Environment.exec_python_startup (); import pdb; pdb.set_trace ()
+        return self._hidden or self.login_required or cutoff
+    # end def hidden
+
+    @hidden.setter
+    def hidden (self, value) :
+        self._hidden = value
+    # end def hidden
 
     def above (self, link) :
         return (not self.level) or \
@@ -354,6 +387,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         ### claim otherwise!)
         return \
             (  self._login_required
+            or self.auth_required
             or self._permission
             or (self.parent and self.parent.login_required)
             )
@@ -713,12 +747,14 @@ class Root (_Dir_) :
     Admin                   = None
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
+    cutoff_date             = None
     empty_template          = None
     handlers                = \
         { 403               : "_DJO.views.handler_403"
         , 404               : "_DJO.views.handler_404"
         , 500               : "_DJO.views.handler_500"
         }
+    honor_cutoff            = False
     name                    = "/"
     owner                   = None
     src_root                = ""
