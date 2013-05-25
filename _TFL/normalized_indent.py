@@ -33,20 +33,18 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 >>> normalized_indent ("Just a single line.")
 'Just a single line.'
 >>> normalized_indent ("  Just a single line inside white space.  ")
 'Just a single line inside white space.'
->>> print (_normalized_indent ('''First line.)
+>>> print (_normalized_indent ('''First line.
 ...     Second line.
 ...     Third line.
 ...         Fourth line (indented).
 ...         Fifth line (ditto).
 ...     Sixth line.
-... ''')
+... '''))
 First line.
 Second line.
 Third line.
@@ -98,6 +96,8 @@ Third line.
     Fifth line (ditto).
 Sixth line.
 """
+
+from   __future__  import print_function
 
 from   _TFL import TFL
 

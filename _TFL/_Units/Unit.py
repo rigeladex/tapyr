@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,17 +27,19 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL import TFL
+from   _TFL import pyk
+
+from   _TFL._Meta.totally_ordered import totally_ordered
+
 import _TFL._Meta.Object
 import _TFL._Units
 
+@totally_ordered
+@pyk.adapt__div__
 class Unit (TFL.Meta.Object) :
     """Model a unit kind"""
 
@@ -47,25 +49,25 @@ class Unit (TFL.Meta.Object) :
         self.abbr   = abbr
     # end def __init__
 
-    def __cmp__ (self, rhs) :
+    def __eq__ (self, rhs) :
         try :
             rhs = rhs.factor
         except AttributeError :
             pass
-        return cmp (self.factor, rhs)
-    # end def __cmp__
-
-    def __div__ (self, rhs) :
-        try :
-            rhs = rhs.factor
-        except AttributeError :
-            pass
-        return self.factor / rhs
-    # end def __div__
+        return self.factor == rhs
+    # end def __eq__
 
     def __float__ (self) :
         return self.factor
     # end def __float__
+
+    def __lt__ (self, rhs) :
+        try :
+            rhs = rhs.factor
+        except AttributeError :
+            pass
+        return self.factor > rhs
+    # end def __lt__
 
     def __mul__ (self, rhs) :
         try :
@@ -82,6 +84,14 @@ class Unit (TFL.Meta.Object) :
     def __repr__ (self) :
         return "%s = %s" % (self.name, self.factor)
     # end def __repr__
+
+    def __truediv__ (self, rhs) :
+        try :
+            rhs = rhs.factor
+        except AttributeError :
+            pass
+        return self.factor / rhs
+    # end def __truediv__
 
 # end class Unit
 

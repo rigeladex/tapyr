@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -106,8 +106,8 @@ class Enum (TFL.SDG.C.Node, TFL.SDG.Leaf) :
     def _convert_values (self, values) :
         result = []
         if not values :
-            raise ValueError, \
-               "Enum declaration need at least one possible value"
+            raise ValueError \
+               ("Enum declaration need at least one possible value")
         for v in values :
             item, _, comment = [s.strip () for s in split_hst (v, "//")]
             name, _, value   = [s.strip () for s in split_hst (item, "=")]

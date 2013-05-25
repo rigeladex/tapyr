@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,12 +28,8 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #     8-Nov-2006 (CED) `firkin` added (old british unit)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -43,7 +39,7 @@ class Mass (TFL.Units.Kind) :
     """Units of mass
 
        >>> Mass (1)
-       1.0
+       1
        >>> Mass (1, "g")
        0.001
        >>> Mass (1, "oz")
@@ -81,4 +77,4 @@ class Mass (TFL.Units.Kind) :
 
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
-### __END__ Mass
+### __END__ TFL.Units.Mass

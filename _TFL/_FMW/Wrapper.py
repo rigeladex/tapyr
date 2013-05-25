@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,10 +36,10 @@
 #--
 
 from   _TFL                   import TFL
+from   _TFL                   import pyk
+
 import _TFL._FMW
 import _TFL._Meta.Object
-
-import new
 
 CO_GENERATOR = 0x0020 ### stolen from python/Include/compile.h
 
@@ -73,8 +73,8 @@ class Wrapped_FM (_Wrapped_) :
     """Wrapped function/method."""
 
     def __call__ (self, * args, ** kw) :
-        raise NotImplementedError, \
-            "%s.__call__ must be redefined" % self.__class__.__name__
+        raise NotImplementedError \
+            ("%s.__call__ must be redefined" % self.__class__.__name__)
         return self.fct (* args, ** kw)
     # end def __call__
 
@@ -125,7 +125,7 @@ class Wrapper (TFL.Meta.Object) :
     def add_method (self, cls, name) :
         """Wrap method with `name` of class `cls`"""
         wrapped = self._wrapped (cls, name)
-        setattr (cls, name, new.instancemethod (wrapped, None, cls))
+        setattr (cls, name, pyk.new_instancemethod (wrapped, None, cls))
     # end def add_method
 
     def _wrapped (self, cm, name) :

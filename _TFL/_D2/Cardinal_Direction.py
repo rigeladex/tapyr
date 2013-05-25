@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.D2.
@@ -34,6 +34,7 @@
 from   __future__     import absolute_import, division, print_function, unicode_literals
 
 from   _TFL           import TFL
+from   _TFL           import pyk
 from   _TFL._D2       import D2
 
 from   _TFL.Math_Func import sign
@@ -55,7 +56,7 @@ class _Cardinal_Direction_ (D2._Point_) :
         , (-1, +1) : "NW"
         }
 
-    name_map        = dict ((v, k) for k, v in value_map.iteritems ())
+    name_map        = dict ((v, k) for k, v in pyk.iteritems (value_map))
 
     def _directions (self) :
         v_map = self.value_map

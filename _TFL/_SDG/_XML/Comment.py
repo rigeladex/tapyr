@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,14 +27,15 @@
 #
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    26-Feb-2012 (MG) `__future__` imports added
 #    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL                   import TFL
+from   _TFL                   import pyk
+
 import _TFL._SDG._XML.Element
 
 class Comment (TFL.SDG.XML.Leaf) :
@@ -67,7 +68,7 @@ class Comment (TFL.SDG.XML.Leaf) :
         )
 
     def _convert_text (self, v) :
-        if v and isinstance (v, (str, unicode)) :
+        if v and isinstance (v, pyk.string_types) :
             v = v.replace ("--", "···").split ("\n")
         return v
     # end def _convert_text

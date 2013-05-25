@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,8 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -42,11 +38,11 @@ class Pressure (TFL.Units.Kind) :
     """Units of pressure
 
        >>> Pressure (1.0)
-       1.0
+       1
        >>> Pressure (1.0,"bar")
-       100000.0
+       100000
        >>> Pressure (1.0,"atm")
-       101325.0
+       101325
     """
 
     Unit              = TFL.Units.Unit

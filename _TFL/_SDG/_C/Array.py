@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,7 +46,10 @@
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression
 import _TFL._SDG._C.Struct
@@ -114,7 +117,7 @@ class Array (TFL.SDG.C._Var_) :
     # end def __init__
 
     def _convert_bounds (self, bounds) :
-        if isinstance (bounds, (str, unicode, int, long)) :
+        if isinstance (bounds, pyk.string_types + pyk.int_types) :
             bounds = (bounds, )
         return [str (b) for b in bounds]
     # end def _convert_bounds

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,7 +42,11 @@
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL                   import TFL
+from   _TFL                   import pyk
+
+import _TFL.I18N
 import _TFL._SDG._XML.Comment
 import _TFL._SDG._XML.Doctype
 import _TFL._SDG._XML.Element
@@ -52,13 +56,16 @@ import _TFL._SDG._XML.Node
 class Document (TFL.SDG.XML.Node) :
     """Model a XML document (i.e., the root element)
 
+       >>> nl = pyk.unichr (10)
+
        >>> d = Document ( "Memo", "First line of text"
        ...              , "& a second line of %text"
        ...              , "A third line of %text &entity; including"
        ...              , doctype     = "memo"
        ...              , description = "Just a test"
        ...              )
-       >>> print (chr (10).join (d.formatted ("xml_format")))
+       >>> lines = list (d.formatted ("xml_format"))
+       >>> print (nl.join (lines))
        <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <!DOCTYPE memo >
        <!-- Just a test -->
@@ -74,7 +81,7 @@ class Document (TFL.SDG.XML.Node) :
        ...                                  ("memo", dtd = "memo.dtd")
        ...              , description = "Just a test"
        ...              )
-       >>> print (chr (10).join (d.formatted ("xml_format")))
+       >>> print (nl.join (d.formatted ("xml_format")))
        <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <!DOCTYPE memo SYSTEM "memo.dtd">
        <!-- Just a test -->
@@ -96,7 +103,7 @@ class Document (TFL.SDG.XML.Node) :
        ...              , encoding        = "UTF-8"
        ...              , standalone      = "no"
        ...              )
-       >>> print (chr (10).join (s.formatted ("xml_format")))
+       >>> print (nl.join (s.formatted ("xml_format")))
        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
        <svg height="100%" viewBox="10 60 450 260" width="100%"
             xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +120,7 @@ class Document (TFL.SDG.XML.Node) :
        ...         , "VERSION"       : "1.0.0a"
        ...         }
        >>> d = Document (TFL.SDG.XML.Element ("fx:FIBEX", x_attrs = attrs ))
-       >>> print (chr (10).join (d.formatted ("xml_format")))
+       >>> print (nl.join (d.formatted ("xml_format")))
        <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
        <fx:FIBEX VERSION="1.0.0a"
                  xmlns:flexray="http://www.asam.net/xml/fbx/flexray"
@@ -175,7 +182,8 @@ class Document (TFL.SDG.XML.Node) :
 
     def formatted (self, format_name, * args, ** kw) :
         for r in self.__super.formatted (format_name, * args, ** kw) :
-            if isinstance (r, unicode) :
+            if pyk.text_type != str and isinstance (r, pyk.text_type) :
+                ### Only do this for Python2
                 r = r.encode (self.encoding, "xmlcharrefreplace")
             yield r
     # end def formatted

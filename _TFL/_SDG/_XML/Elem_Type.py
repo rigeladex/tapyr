@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,8 +38,6 @@
 #    ««revision-date»»···
 #--
 
-
-
 """Usage example:
 
    >>> from _TFL._SDG._XML.Document import *
@@ -68,7 +66,10 @@
 
 """
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL                   import TFL
+from   _TFL                   import pyk
+
 import _TFL._SDG._XML.Element
 import _TFL.Caller
 
@@ -89,7 +90,7 @@ def Elem_Type \
     attr_names        = []
     front_dict        = dict_from_list (front_args)
     init_arg_defaults = dict (init_arg_defaults)
-    for k, v in attributes.iteritems () :
+    for k, v in pyk.iteritems (attributes) :
         init_arg_defaults [k] = v
         if not (k in front_dict or k == rest_args) :
             attr_names.append (k)

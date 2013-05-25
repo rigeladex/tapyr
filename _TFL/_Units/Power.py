@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,8 @@
 #
 # Revision Dates
 #    15-Feb-2006 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -42,9 +38,9 @@ class Power (TFL.Units.Kind) :
     """Units of power
 
        >>> Power (1.0)
-       1.0
+       1
        >>> Power (1, "kW")
-       1000.0
+       1000
        >>> Power (1, "hp")
        735.49875
        >>> Power (1, "cal/s")

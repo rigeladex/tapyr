@@ -31,8 +31,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """Provide locking via a lock file.
 
    >>> name = "/tmp/foo.bar"
@@ -57,6 +55,8 @@ from   __future__  import print_function
    >>> x=sos.system ("rm -f %s" % name)
 
 """
+
+from   __future__          import print_function
 
 from   __future__          import with_statement
 

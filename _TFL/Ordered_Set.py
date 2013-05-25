@@ -50,6 +50,7 @@
 #--
 
 from   _TFL import TFL
+from   _TFL import pyk
 
 import _TFL._Meta.M_Class
 
@@ -166,7 +167,7 @@ class Ordered_Set (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
     # end def _check_value
 
     def _fix (self, start = 0) :
-        for pos in xrange (start, len (self)) :
+        for pos in pyk.xrange (start, len (self)) :
             value = self [pos]
             self.index_dict [value] = pos
     # end def _fix
@@ -242,6 +243,7 @@ class Immutable_Ordered_Set (Ordered_Set) :
        the ordered set, it can also store values of the type that is used
        as an index.
     """
+
     _cannot_hold = ()
 
     def __init__ (self, values = None) :

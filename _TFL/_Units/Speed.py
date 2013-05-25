@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,8 @@
 #
 # Revision Dates
 #    15-Feb-2006 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -46,11 +42,11 @@ class Speed (TFL.Units.Kind) :
     """Units of speed.
 
        >>> Speed (1)
-       1.0
+       1
        >>> Speed (1, "kmh")
        0.277777777778
        >>> Speed (1, "c")
-       299792458.0
+       299792458
     """
 
     Length        = TFL.Units.Length

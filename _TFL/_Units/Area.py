@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,12 +28,8 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #     8-Nov-2006 (CED) `nanoacre` added (used in chip design)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -44,11 +40,11 @@ class Area (TFL.Units.Kind) :
     """Units of area
 
        >>> Area (1.0)
-       1.0
+       1
        >>> Area (1.0, "are")
-       100.0
+       100
        >>> Area (1.0, "hectare")
-       10000.0
+       10000
        >>> Area (1.0, "sqin")
        0.00064516
        >>> Area (1.0, "sqft")
@@ -58,7 +54,7 @@ class Area (TFL.Units.Kind) :
        >>> Area (1.0, "sqmi")
        2589988.11034
        >>> Area (1.0, "sqkm")
-       1000000.0
+       1000000
        >>> Area (1.0, "acre")
        4046.8564224
        >>> Area (640, "acre") == Area (1.0, "sqmi")

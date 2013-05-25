@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,16 +33,15 @@
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    08-Dec-2005 (MG)  Bugfixes
 #    12-Dec-2005 (CT)  `Regexp` import fixed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
-
-
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 from   _TFL.predicate    import un_nested
 from   _TFL.Regexp       import *
 import _TFL._SDG._C.Node
@@ -51,7 +50,6 @@ import _TFL._SDG._C.Var
 
 class Arg_List (TFL.SDG.C.Node) :
     """Model C argument lists"""
-
 
     children_group_names = (default_cgi, ) = (TFL.SDG.C.Node.Decl, )
 
@@ -75,11 +73,11 @@ class Arg_List (TFL.SDG.C.Node) :
     # end def __init__
 
     def _convert_children (self, children) :
-        if len (children) == 1 and isinstance (children [0], (str, unicode)) :
+        if len (children) == 1 and isinstance (children [0], pyk.string_types) :
             children = [c.strip () for c in children [0].split (",")]
         result = []
         for c in children :
-            if isinstance (c, (str, unicode)) :
+            if isinstance (c, pyk.string_types) :
                 if self.arg_pat.match (c) :
                     if self.arg_pat.void :
                         c = TFL.SDG.C.Expression (self.arg_pat.void)
@@ -87,7 +85,7 @@ class Arg_List (TFL.SDG.C.Node) :
                         c = TFL.SDG.C.Var \
                                 (self.arg_pat.type, self.arg_pat.name)
                 else :
-                    raise TFL.SDG.Invalid_Node, (self, c)
+                    raise TFL.SDG.Invalid_Node (self, c)
             c.cgi     = self.Decl
             c.trailer = ""
             result.append (c)

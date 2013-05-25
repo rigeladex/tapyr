@@ -57,8 +57,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 Module `Q_Exp`
 ===============
@@ -215,12 +213,12 @@ no way to simulate this by defining operator methods. Therefore,
     >>> Q.a < Q.b < Q.c # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    TypeError: ... should return bool or int, returned exceptions.TypeError
+    TypeError: ...
 
     >>> Q.bar.LOWER == Q.baz.LOWER == Q.qux.LOWER # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    TypeError: ... should return bool or int, returned exceptions.TypeError
+    TypeError: ...
 
 Query operators with boolean results, i.e., equality and ordering operators,
 cannot be used with any operators except `==` and `!=`::
@@ -248,10 +246,10 @@ cannot be used with any operators except `==` and `!=`::
 
 But explicit parenthesis are necessary in some cases::
 
-    >>> Q.a < Q.b == Q.a % 2
+    >>> Q.a < Q.b == Q.a % 2 # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
+    TypeError: ...
 
 Queries for nested attributes are also possible::
 
@@ -287,6 +285,8 @@ Q.SUM needs documenting::
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
+
+from   __future__  import print_function
 
 from   _TFL                     import TFL
 from   _TFL                     import pyk

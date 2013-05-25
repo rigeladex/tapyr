@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,17 +43,16 @@
 #    26-Aug-2004 (CT)  `_convert` moved to `TFL.SDG.Node`
 #    23-Sep-2004 (MG) `vaps_channel_format` and friends added
 #     7-Oct-2004 (CED) `apidoc_tex_format` and friends added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    31-Oct-2011 (MG)  imports corrected
 #    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
-
-
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 import _TFL._SDG._C
 import _TFL._SDG.Node
 
@@ -167,7 +166,7 @@ class _C_Node_ (TFL.SDG.Node) :
 
     def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
         result = value
-        if result  and isinstance (result, (str, unicode)) :
+        if result  and isinstance (result, pyk.string_types) :
             result = (result, )
         if result and isinstance (result, (tuple, list)) :
             result = TFL.SDG.C.Comment \
@@ -186,7 +185,7 @@ class _C_Node_ (TFL.SDG.Node) :
     # end def _convert_c_comment
 
     def _convert_c_stmt (self, value) :
-        if value and isinstance (value, (str, unicode)) :
+        if value and isinstance (value, pyk.string_types) :
             result = []
             for s in value.split (";") :
                 stmt = self._convert (s.strip (), TFL.SDG.C.Statement)

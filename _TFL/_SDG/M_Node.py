@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,6 +40,7 @@
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL                            import TFL
+from   _TFL                            import pyk
 
 import _TFL._Meta.M_Auto_Combine_Dicts
 import _TFL._Meta.M_Class
@@ -84,7 +85,7 @@ class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
         for fn in cls._list_of_formats :
             f = getattr (cls, fn, None)
             if f is not None :
-                if not isinstance (f, (str, unicode)) :
+                if not isinstance (f, pyk.string_types) :
                     f = getattr (cls, "__%s" % fn)
                 cls._normalize_format (fn, f)
     # end def _normalize_formats

@@ -33,9 +33,15 @@
 #--
 
 from   _TFL import TFL
+from   _TFL import pyk
+
+from   _TFL._Meta.totally_ordered import totally_ordered
+
 import _TFL._Meta.Object
 import _TFL._Units.M_Kind
 
+@totally_ordered
+@pyk.adapt__div__
 class Kind (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.Units.M_Kind)) :
     """Model a unit kind"""
 
@@ -56,27 +62,35 @@ class Kind (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.Units.M_Kind)) :
     def __add__ (self, rhs) :
         if isinstance (rhs, self.__class__) :
             return self.__class__ (self.value + rhs.value)
-        raise TypeError, \
+        raise TypeError \
             ( "unsupported operand type(s) for +: '%s' and '%s'"
             % (self.__class__.__name__, rhs.__class__.__name__)
             )
     # end def __add__
 
-    def __cmp__ (self, rhs) :
+    def __eq__ (self, rhs) :
         try :
             rhs = rhs.value
         except AttributeError :
             pass
-        return cmp (self.value, rhs)
-    # end def __cmp__
+        return self.value == rhs
+    # end def __eq__
 
-    def __div__ (self, rhs) :
+    def __lt__ (self, rhs) :
+        try :
+            rhs = rhs.value
+        except AttributeError :
+            pass
+        return self.value < rhs
+    # end def __lt__
+
+    def __truediv__ (self, rhs) :
         try :
             rhs = rhs.value
         except AttributeError :
             pass
         return self.value / rhs
-    # end def __div__
+    # end def __truediv__
 
     def __float__ (self) :
         return self.value
@@ -90,9 +104,9 @@ class Kind (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.Units.M_Kind)) :
             elif unit_name in self.units :
                 unit = self.units [unit_name]
             else :
-                raise AttributeError, name
+                raise AttributeError (name)
             return self.value / unit.factor
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __mul__ (self, rhs) :
@@ -104,13 +118,13 @@ class Kind (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.Units.M_Kind)) :
     # end def __mul__
 
     def __repr__ (self) :
-        return "%s" % (self.value, )
+        return "%.12g" % (self.value, )
     # end def __repr__
 
     def __sub__ (self, rhs) :
         if isinstance (rhs, self.__class__) :
             return self.__class__ (self.value - rhs.value)
-        raise TypeError, \
+        raise TypeError \
             ( "unsupported operand type(s) for -: '%s' and '%s'"
             % (self.__class__.__name__, rhs.__class__.__name__)
             )

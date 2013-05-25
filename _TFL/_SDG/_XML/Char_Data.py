@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,14 +27,15 @@
 #
 # Revision Dates
 #    27-Aug-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL                   import TFL
+from   _TFL                   import pyk
+
 import _TFL._SDG._XML.Element
 
 class Char_Data (TFL.SDG.XML.Leaf) :
@@ -56,7 +57,7 @@ class Char_Data (TFL.SDG.XML.Leaf) :
     def _convert_text (self, args) :
         result = []
         for a in args :
-            if a and isinstance (a, (str, unicode)) :
+            if a and isinstance (a, pyk.string_types) :
                 a = self._special_char_pat.sub \
                     (self._special_char_replacer, a).split ("\n")
                 result.extend (a)

@@ -30,8 +30,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 This module tests _TFL.import_module in two ways. The doctest tests the
 normal use of the module and can be triggered by running this module through
@@ -51,6 +49,8 @@ a running python interpreter as in
 >>> import_module ("os").__name__
 'os'
 """
+
+from   __future__  import print_function
 
 from _TFL.import_module import *
 

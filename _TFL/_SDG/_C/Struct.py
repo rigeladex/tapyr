@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -101,7 +101,7 @@ class Struct (TFL.SDG.C._Decl_) :
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
         #if self.name in self.extension :
-        #    raise KeyError, (self.name, self.extension [self.name])
+        #    raise KeyError (self.name, self.extension [self.name])
         self.extension [self.name] = self
     # end def __init__
 
@@ -122,7 +122,7 @@ class Struct (TFL.SDG.C._Decl_) :
         m = self.field_pat.match (f)
         if not m :
             print (f)
-            raise TFL.SDG.Invalid_Node, (self, f)
+            raise TFL.SDG.Invalid_Node (self, f)
         name   = m.group ("name").strip ()
         type   = m.group ("type").strip ()
         init   = (m.group ("init") or "").strip ()
@@ -161,7 +161,7 @@ class Struct (TFL.SDG.C._Decl_) :
                     msg = ( "No initialization value for `%s.%s`"
                           % (self.name, c.name)
                           )
-                    raise ValueError, msg
+                    raise ValueError (msg)
             else :
                 v = init_dict [c.name]
             if c.type.name in TFL.SDG.C.Struct.extension :
@@ -188,7 +188,7 @@ class Struct (TFL.SDG.C._Decl_) :
                         ( "No initialization value for `%s.%s`"
                         % (self.name, c.name)
                         )
-                    raise ValueError, msg
+                    raise ValueError (msg)
             else :
                 v = init_dict [c.name]
             assert not isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)), c

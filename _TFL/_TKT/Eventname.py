@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,12 +36,8 @@
 #                      `_check` made informative instead of prescriptive
 #    10-Aug-2005 (CT)  `canonical_key_name` added
 #    26-Apr-2006 (PGO) import of Set removed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 """
 Consistency check:
@@ -53,7 +49,11 @@ _TFL._TKT._Tk.Eventname defines all names that _TFL._TKT._Batch.Eventname define
 _TFL._TKT._Batch.Eventname defines all names that _TFL._TKT._Tk.Eventname defines
 """
 
+from   __future__       import print_function
+
 from   _TFL                 import TFL
+from   _TFL                 import pyk
+
 import _TFL.Caller
 import _TFL._TKT.Mixin
 
@@ -88,26 +88,28 @@ class _Eventname (TFL.TKT.Mixin) :
         return name
     # end def canonical_key_name
 
+    @classmethod
     def check_names (cls, evn_1, evn_2) :
         """Checks if `evn_1` and `evn_2` define the same event names"""
-        s1 = set (evn_1._map.iterkeys ())
-        s2 = set (evn_2._map.iterkeys ())
+        s1 = set (pyk.iterkeys (evn_1._map))
+        s2 = set (pyk.iterkeys (evn_2._map))
         cls._check_difference (evn_1, evn_2, s1 - s2)
         cls._check_difference (evn_2, evn_1, s2 - s1)
-    check_names = classmethod (check_names)
+    # end def check_names
 
+    @classmethod
     def _check_difference (cls, evn_1, evn_2, diff) :
         if diff :
             for n in diff :
-                print "%s defines %s, while %s doesn't"  % (evn_1, n, evn_2)
+                print ("%s defines %s, while %s doesn't"  % (evn_1, n, evn_2))
         else :
-            print "%s defines all names that %s defines" % (evn_2, evn_1)
-    _check_difference = classmethod (_check_difference)
+            print ("%s defines all names that %s defines" % (evn_2, evn_1))
+    # end def _check_difference
 
     def _check (self, kw) :
         if __debug__ :
             pam = self._pam
-            for k, v in kw.iteritems () :
+            for k, v in pyk.iteritems (kw) :
                 if v is not None and v in pam :
                     print \
                         ( "Eventnames `%s` and `%s` point to same event: `%s`"
@@ -120,8 +122,8 @@ class _Eventname (TFL.TKT.Mixin) :
         try :
             return self._map [name]
         except KeyError :
-            raise AttributeError, \
-                "'Eventname' object has no attribute '%s'" % (name, )
+            raise AttributeError \
+                ("'Eventname' object has no attribute '%s'" % (name, ))
     # end def __getattr__
 
     def __repr__ (self) :

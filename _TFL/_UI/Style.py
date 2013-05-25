@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -60,14 +60,16 @@ ValueError: <Style fool> doesn't allow value `normalique` for `font_style`
 >>> s = Style ("a", background = "red")
 >>> t = s (foreground = "yellow")
 >>> u = t (name = "c", background = "pink")
->>> print s, s.foreground, s.background
+>>> print (s, s.foreground, s.background)
 <Style a> None red
->>> print t, t.foreground, t.background
+>>> print (t, t.foreground, t.background)
 <Style instance a> yellow red
->>> print u, u.foreground, u.background
+>>> print (u, u.foreground, u.background)
 <Style instance c> yellow pink
 
 """
+
+from   __future__       import print_function
 
 from   _TFL                    import TFL
 import _TFL._Meta.M_Data_Class
@@ -164,7 +166,7 @@ class Style (TFL.Meta.Object) :
            given by `kw`.
         """
         if hasattr (self, name) :
-            raise NameError, "Style %s already defined" % name
+            raise NameError ("Style %s already defined" % name)
         result = self (name, * parents, ** kw)
         setattr (self, name, result)
         return result

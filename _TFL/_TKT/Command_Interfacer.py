@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,7 +43,11 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL           import TFL
+import _TFL.Environment
+
 import _TFL._TKT.Mixin
 
 import sys
@@ -51,7 +55,7 @@ import sys
 class Command_Interfacer (TFL.TKT.Mixin) :
     """Model a toolkit command interface like menu, toolbar, etc."""
 
-    max_cmds_per_group = sys.maxint
+    max_cmds_per_group = TFL.Environment.practically_infinite
 
     def clear (self) :
         """Remove all commands/groups/separators from command interfacer"""
@@ -232,7 +236,7 @@ class _Test_CI_ (Command_Interfacer) :
         for cb in self.activation :
             cb ()
         for i, e in enumerate (self.elements) :
-            print "%s%3d : %s" % (prefix, i, e)
+            print ("%s%3d : %s" % (prefix, i, e))
             if hasattr (e, "group") :
                 e.group.activate (prefix = prefix + "  ")
     # end def activate

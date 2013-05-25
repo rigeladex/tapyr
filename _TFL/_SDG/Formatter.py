@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -99,15 +99,16 @@
 #                     them
 #    13-Jul-2005 (CT) Style
 #    30-Aug-2005 (CT) Use `split_hst` instead of home-grown code
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    20-Nov-2007 (MG)  Imports fixed
 #    26-Feb-2012 (MG) `__future__` imports added
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL               import TFL
+from   _TFL               import pyk
+
 import _TFL._Meta.Object
 import _TFL._SDG
 import _TFL.Generators
@@ -194,7 +195,7 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
         if attr is not None :
             format = self.format
             sep    = ""
-            if isinstance (attr, (str, unicode)) :
+            if isinstance (attr, pyk.string_types) :
                 attr = (attr, )
             for x in attr :
                 yield sep + _percent_pat.sub ("%%", format % x)
@@ -483,7 +484,7 @@ class Multi_Line_Formatter (_Formatter_) :
                 formatters.append \
                     (rf (name, form, x_forms.head, x_forms.tail, anchor))
             else :
-                raise ValueError, (key, match.group (0))
+                raise ValueError (key, match.group (0))
         return _Recursive_Formatters_ (x_forms, * formatters)
     # end def _recursive_formatter
 

@@ -224,16 +224,16 @@ class Text (TFL.TKT.Mixin) :
            lmargin2 must alway be applied in the same style (this is an
            implementation restriction of GTK).
         """
-        raise NotImplementedError, \
-            "%s must define apply_style" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define apply_style" % (self.__class__.__name__, ))
     # end def apply_style
 
     def bol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
         """Return position of begin of physical line of `pos_or_mark` plus
            `delta` plus `line_delta`.
         """
-        raise NotImplementedError, \
-            "%s must define bol_pos" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define bol_pos" % (self.__class__.__name__, ))
     # end def bol_pos
 
     def clear (self) :
@@ -245,8 +245,8 @@ class Text (TFL.TKT.Mixin) :
         """Return position of end of physical line of `pos_or_mark` plus
            `delta` plus `line_delta`.
         """
-        raise NotImplementedError, \
-            "%s must define eol_pos" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define eol_pos" % (self.__class__.__name__, ))
     # end def eol_pos
 
     def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
@@ -254,68 +254,68 @@ class Text (TFL.TKT.Mixin) :
            buffer between position/mark `head` (default: `self.buffer_head`)
            plus `delta` and position/mark `tail` (default: `self.buffer_tail`).
         """
-        raise NotImplementedError, \
-            "%s must define find" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define find" % (self.__class__.__name__, ))
     # end def find
 
     def free_mark (self, * mark) :
         """Free all marks passed as arguments."""
-        raise NotImplementedError, \
-            "%s must define free_mark" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define free_mark" % (self.__class__.__name__, ))
     # end def free_mark
 
     def get (self, head = None, tail = None, delta= 0) :
         """Return `text` between position/mark `head` (default:
            `self.buffer_head`) plus `delta` to position/mark `tail` (default:
            `self.buffer_tail`)."""
-        raise NotImplementedError, \
-            "%s must define get" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define get" % (self.__class__.__name__, ))
     # end def get
 
     def insert (self, pos_or_mark, text, style = None, delta = 0) :
         """Insert `text` at `pos_or_mark` plus `delta`with `style`."""
-        raise NotImplementedError, \
-            "%s must define insert" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define insert" % (self.__class__.__name__, ))
     # end def insert
 
     def insert_image (self, pos_or_mark, image_name, style = None, delta = 0) :
         """Insert image with name `image_name` at `pos_or_mark` plus
            `delta` with `style`.
         """
-        raise NotImplementedError, \
-            "%s must define insert_image" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define insert_image" % (self.__class__.__name__, ))
     # end def insert_image
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
         """Insert `widget` at `pos_or_mark` plus `delta` with `style`."""
-        raise NotImplementedError, \
-            "%s must define insert_widget" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define insert_widget" % (self.__class__.__name__, ))
     # end def insert_widget
 
     def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
         """Return a mark with `name` at position `pos` plus `delta`."""
-        raise NotImplementedError, \
-            "%s must define mark_at" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define mark_at" % (self.__class__.__name__, ))
     # end def mark_at
 
     def place_cursor (self, pos_or_mark) :
         """Move the insertion cursor to `pos_or_mark`"""
-        raise NotImplementedError, \
-            "%s must define place_cursor" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define place_cursor" % (self.__class__.__name__, ))
     # end def place_cursor
 
     def pop_style (self) :
         """Pop lastly pushed `style` (and remove its effect from
            `self.wtk_widget`).
         """
-        raise NotImplementedError, \
-            "%s must define pop_style" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define pop_style" % (self.__class__.__name__, ))
     # end def pop_style
 
     def pos_at (self, pos, delta = 0) :
         """Return position `pos` plus `delta`."""
-        raise NotImplementedError, \
-            "%s must define pos_at" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define pos_at" % (self.__class__.__name__, ))
     # end def pos_at
 
     def push_style (self, style) :
@@ -323,43 +323,43 @@ class Text (TFL.TKT.Mixin) :
            calling `pop_style` later).
         """
         assert style.callback is None
-        raise NotImplementedError, \
-            "%s must define push_style" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define push_style" % (self.__class__.__name__, ))
     # end def push_style
 
     def remove (self, head, tail = None, delta = 0) :
         """Remove text between `head` and `tail` from buffer."""
-        raise NotImplementedError, \
-            "%s must define remove" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define remove" % (self.__class__.__name__, ))
     # end def remove
 
     def remove_style (self, style, head, tail = None, delta = 0) :
         """Remove `style` from position/mark `head` plus `delta` to
            position/mark `tail` (default: `self.buffer_tail`).
         """
-        raise NotImplementedError, \
-            "%s must define remove_style" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define remove_style" % (self.__class__.__name__, ))
     # end def remove_style
 
     def see (self, pos_or_mark) :
         """Adjust view of `self` so that `pos_or_mark` is completely visible.
         """
-        raise NotImplementedError, \
-            "%s must define see" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define see" % (self.__class__.__name__, ))
     # end def see
 
     def set_tabs (self, * tabs) :
         """Set tabulator positions. Unit is pixels."""
-        raise NotImplementedError, \
-            "%s must define set_tabs" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define set_tabs" % (self.__class__.__name__, ))
     # end def set_tabs
 
     def tags_at (self, pos_or_mark) :
         """Return the names of all tags active at position specified by
            `pos_or_mark`.
         """
-        raise NotImplementedError, \
-            "%s must define tags_at" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define tags_at" % (self.__class__.__name__, ))
     # end def tags_at
 
 # end class Text

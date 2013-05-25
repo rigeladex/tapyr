@@ -43,6 +43,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from    _TFL           import TFL
 
 from    _TFL._D2       import D2
@@ -78,10 +80,10 @@ class Rect (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rect)) :
 
     >>> def rect_points (r) :
     ...     for p in sorted (r.corner_dict.keys ()) :
-    ...         print "%-20s : %s" % (p, getattr (r, p))
+    ...         print ("%-20s : %s" % (p, getattr (r, p)))
     >>> def rect_sides (r) :
     ...     for s in sorted (r.side_dict.keys ()) :
-    ...         print "%-20s : %s" % (s, getattr (r, s))
+    ...         print ("%-20s : %s" % (s, getattr (r, s)))
     >>> def connection_points (r) :
     ...     P = D2.Point
     ...     for p, off in sorted (
@@ -97,7 +99,7 @@ class Rect (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rect)) :
     ...             , key = lambda x : tuple (x [0] + x [1])
     ...             ) :
     ...         q = p + off
-    ...         print "%s : %s" % (q, r.connection_point (q, r.center))
+    ...         print ("%s : %s" % (q, r.connection_point (q, r.center)))
     >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (2.0, 1.0))
     >>> rect_points (q)
     bottom_left          : (1.0, 1.0)
@@ -265,7 +267,7 @@ class Rect (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rect)) :
         elif name in self.side_dict :
             return self.side_dict [name] (self)
         else :
-            raise  AttributeError, name
+            raise  AttributeError (name)
     # end def __getattr__
 
     def __repr__ (self) :

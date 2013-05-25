@@ -53,6 +53,7 @@
 #--
 
 from   _TFL                 import TFL
+from   _TFL                 import pyk
 
 import _TFL._Meta.M_Class
 import _TFL.Accessor
@@ -74,7 +75,7 @@ class M_Name_Dict (TFL.Meta.M_Class) :
     @TFL.Decorator
     def name_of_key (method) :
         def _ (self, key, * args, ** kw) :
-            if not isinstance (key, basestring) :
+            if not isinstance (key, pyk.string_types) :
                 key = getattr (key, self.key_attr_name)
             return method (self, key, * args, ** kw)
         return _
@@ -99,7 +100,7 @@ class NO_List (TFL.Ordered_Set):
     """
 
     _reverse_mapping_cls = Name_Dict
-    _cannot_hold         = basestring
+    _cannot_hold         = pyk.string_types
 
     def has_key (self, name) :
         return name in self.index_dict

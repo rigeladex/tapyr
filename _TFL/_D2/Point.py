@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,6 +50,8 @@
 #    19-Oct-2012 (RS) Fix `_R_Point_` arithmetics when `_scale` != (1, 1)
 #    ««revision-date»»···
 #--
+
+from   __future__       import print_function
 
 from    _TFL     import TFL
 from    _TFL._D2 import D2
@@ -173,9 +175,12 @@ class Point (_Point_) :
 
     def __setitem__ (self, index, value) :
         """Set `x` (for `index == 0`) or `y` (for `index == 1`) to `value`."""
-        if   index == 0 : self.x = value
-        elif index == 1 : self.y = value
-        else            : raise IndexError, index
+        if index == 0 :
+            self.x = value
+        elif index == 1 :
+            self.y = value
+        else :
+            raise IndexError (index)
     # end def __setitem__
 
     def __sub__  (self, right) :
@@ -291,15 +296,15 @@ class R_Point_P (_R_Point_) :
 
        >>> p = Point     (5, 42)
        >>> q = R_Point_P (p, Point (3, 7))
-       >>> print p, q
+       >>> print (p, q)
        (5, 42) (8, 49)
        >>> p.scale (Point (2, 0.5))
        Point (10, 21.0)
-       >>> print p, q
+       >>> print (p, q)
        (10, 21.0) (13, 28.0)
        >>> q.scale (Point (3, 2))
        R_Point_P (39, 56.0)
-       >>> print p, q
+       >>> print (p, q)
        (10, 21.0) (39, 56.0)
        >>> x = R_Point_P (Point (5, 42), Point (-3, -32))
        >>> x
@@ -350,11 +355,11 @@ class R_Point_L (_R_Point_) :
        >>> l = D2.Line   (Point (0, 0), Point (20, 10))
        >>> q = R_Point_L (l, 0.5, Point (2, 2))
        >>> r = -q
-       >>> print l, q, r
+       >>> print (l, q, r)
        ((0, 0), (20, 10)) (12.0, 7.0) (-12.0, -7.0)
        >>> l.shift (Point (5, 5))
        Line ((5, 5), (25, 15))
-       >>> print l, q, r
+       >>> print (l, q, r)
        ((5, 5), (25, 15)) (17.0, 12.0) (-17.0, -12.0)
        >>> x1 = q * Point (1, 0)
        >>> x1
@@ -393,11 +398,11 @@ class R_Point_R (_R_Point_) :
        >>> from _TFL._D2.Screen import Rect
        >>> r = Rect   (Point (0, 10), Point (20, 10))
        >>> p = R_Point_R (r, Rect.Center_Top, Point (0, 2))
-       >>> print r, p
+       >>> print (r, p)
        ((0, 10), (20, 10)) (10.0, 12.0)
        >>> r.shift (Point (5.0, 5.0))
        Rect ((5.0, 15.0), (20, 10))
-       >>> print r, p
+       >>> print (r, p)
        ((5.0, 15.0), (20, 10)) (15.0, 17.0)
        >>> x1 = p * Point (1, 0)
        >>> x1
@@ -437,10 +442,10 @@ class R_Point_nP (_R_Point_) :
        >>> p = Point     (5, 42)
        >>> q = R_Point_P (p, Point (3, 7))
        >>> a = R_Point_nP ((p, q), (0.5, 0.5), (1.0, 0.0))
-       >>> print p, q, a
+       >>> print (p, q, a)
        (5, 42) (8, 49) (6.5, 42.0)
        >>> b = R_Point_nP ((p, q, a), (0., 0., 1.0), (0.3, 0.4, 0.3))
-       >>> print p, q, a, b
+       >>> print (p, q, a, "(%.1f, %.1f)" % tuple (b))
        (5, 42) (8, 49) (6.5, 42.0) (6.5, 44.8)
        >>> x1 = a * Point (1, 0)
        >>> x1
@@ -473,7 +478,7 @@ class R_Point_nP (_R_Point_) :
         , offset = None, scale = None
         ) :
         if not (len (ref_points) == len (x_weights) == len (y_weights)) :
-            raise ValueError, \
+            raise ValueError \
                 ( "%s must have equal length"
                 % ((ref_points, x_weights, y_weights), )
                 )

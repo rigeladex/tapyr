@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -185,7 +185,11 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL           import TFL
+from   _TFL           import pyk
+
 import _TFL.NO_List
 import _TFL.Record
 from   _TFL.predicate import *
@@ -205,7 +209,7 @@ class Exception_Handled (Exception) :
     """
 # end class Exception_Handled
 
-class Precondition_Violation (StandardError) :
+class Precondition_Violation (Exception) :
     def __init__ (self, precondition, msg) :
         self.precondition = precondition
         self.msg          = msg
@@ -233,7 +237,7 @@ class _Command_ (TFL.Meta.Object) :
     # end def __init__
 
     def disable (self) :
-        for i in self.interfacers.itervalues () :
+        for i in pyk.itervalues (self.interfacers) :
             try :
                 i.disable_entry (self.name)
             except (KeyboardInterrupt, SystemExit) :
@@ -241,11 +245,11 @@ class _Command_ (TFL.Meta.Object) :
             except StandardError :
                 if __debug__ :
                     traceback.print_exc ()
-                    print str (self), i.__class__, i
+                    print (str (self), i.__class__, i)
     # end def disable
 
     def enable (self) :
-        for i in self.interfacers.itervalues () :
+        for i in pyk.itervalues (self.interfacers) :
             try :
                 i.enable_entry (self.name)
             except KeyboardInterrupt :
@@ -253,7 +257,7 @@ class _Command_ (TFL.Meta.Object) :
             except StandardError :
                 if __debug__ :
                     traceback.print_exc ()
-                    print str (self), i.__class__, i
+                    print (str (self), i.__class__, i)
     # end def enable
 
     def formatted_precondition (self, p = None) :
@@ -300,7 +304,7 @@ class _Command_ (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         if name == "qname" :
             return self.name
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
 # end class _Command_
@@ -327,7 +331,7 @@ class Command (_Command_) :
     def check_precondition (self) :
         try :
             return self._check_precondition ()
-        except Precondition_Violation, exc:
+        except Precondition_Violation as exc:
             if self.pv_callback :
                 self.pv_callback (exc.precondition, exc.msg)
                 return False
@@ -336,7 +340,7 @@ class Command (_Command_) :
     # end def check_precondition
 
     def destroy (self) :
-        for i in self.interfacers.itervalues () :
+        for i in pyk.itervalues (self.interfacers) :
             i.destroy ()
         self.interfacers = self.command = self.precondition \
                          = self.pv_callback = None
@@ -370,14 +374,14 @@ class Command (_Command_) :
         except Exception_Handled :
             pass
         except KeyboardInterrupt :
-            print "Command %s canceled" % self.name
+            print ("Command %s canceled" % self.name)
         return result
     # end def run
 
     def _check_precondition (self) :
         if self.batch_mode and not self.batchable :
             msg = "Command '%s' cannot be used in batch mode" % self.qname
-            raise Precondition_Violation, ("batchable", msg)
+            raise Precondition_Violation ("batchable", msg)
         p = self.precondition
         self._check_precondition_value (p, p and not p ())
         return True
@@ -386,7 +390,7 @@ class Command (_Command_) :
     def _check_precondition_value (self, p, has_failed) :
         if has_failed :
             msg = self.formatted_precondition (p)
-            raise Precondition_Violation, (p.__name__, msg)
+            raise Precondition_Violation (p.__name__, msg)
         return not has_failed
     # end def _check_precondition_value
 
@@ -488,7 +492,7 @@ class Dyn_Command (_Command_) :
     # end def is_applicable
 
     def run (self, * args, ** kw) :
-        raise Precondition_Violation, \
+        raise Precondition_Violation \
             ("Dynamic command", "cannot be used directly")
     # end def run
 
@@ -557,7 +561,7 @@ class Command_Delegator (Command) :
                     p       = cmd_mgr [self.delegatee].precondition
                     if p is not None :
                         yield self._delegator (a, p)
-                except KeyError, exc :
+                except KeyError as exc :
                     msg = ( "This command is not applicable to the current "
                             "selection.\n"
                             "  `%s`" % (a, )
@@ -565,7 +569,7 @@ class Command_Delegator (Command) :
                     raise Precondition_Violation (self, msg)
                 except GeneratorExit :
                     raise StopIteration
-                except Exception, exc :
+                except Exception as exc :
                     import traceback
                     traceback.print_exc ()
                     raise
@@ -631,24 +635,24 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
         self._element       = TFL.NO_List ()
         ### `_epi` contains all groups/commands per interfacer
         self._epi           = dict \
-            ([(n, TFL.NO_List ()) for n in interfacers.iterkeys ()])
+            ([(n, TFL.NO_List ()) for n in pyk.iterkeys (interfacers)])
     # end def __init__
 
     def destroy (self) :
         self.root = self.parent = self.interfacers = None
-        for i in self._epi.itervalues () :
+        for i in pyk.itervalues (self._epi) :
             for e in i :
                 e.destroy ()
         self._element = self._epi = None
     # end def destroy
 
     def set_auto_short_cuts (self) :
-        for i in self.interfacers.itervalues () :
+        for i in pyk.itervalues (self.interfacers) :
             i.set_auto_short_cuts ()
     # end def set_auto_short_cuts
 
     def _bind_dyn_cmd_handler (self) :
-        for n, i in self.interfacers.iteritems () :
+        for n, i in pyk.iteritems (self.interfacers) :
             i.bind_to_activation \
                 (lambda * args, ** kw : self._handle_dyn_commands (n, i))
     # end def _bind_dyn_cmd_handler
@@ -673,12 +677,12 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
     # end def _interfacers
 
     def _real_index (self, element, index, delta) :
-        if isinstance (index, (int, long)) :
-            raise KeyError, \
-                "Numeric indices like `%s` are not supported" % (index, )
+        if isinstance (index, pyk.int_types) :
+            raise KeyError \
+                ("Numeric indices like `%s` are not supported" % (index, ))
         if index is None :
             index = len (element)
-        if isinstance (index, (str, unicode)) :
+        if isinstance (index, pyk.string_types) :
             index = element.n_index (index) + delta
         return index
     # end def _real_index
@@ -1021,7 +1025,7 @@ class Command_Mgr (Command_Group) :
             , parent        = None
             , batchable     = True
             )
-        for i in interfacers.itervalues () :
+        for i in pyk.itervalues (interfacers) :
             i.bind_to_sync (self.update_state)
     # end def __init__
 
@@ -1034,9 +1038,9 @@ class Command_Mgr (Command_Group) :
 
     def destroy (self) :
         self.__super.destroy ()
-        for p in self._precondition_eager.itervalues () :
+        for p in pyk.itervalues (self._precondition_eager) :
             p.command = p.precondition = None
-        for p in self._precondition_lazy.itervalues () :
+        for p in pyk.itervalues (self._precondition_lazy) :
             p.command = p.precondition = None
         self.appl = self.pv_callback \
                   = self._precondition_eager \
@@ -1059,11 +1063,11 @@ class Command_Mgr (Command_Group) :
 
     def update_state (self, event = None, force = False) :
         """Enable/disable all commands according to their preconditions"""
-        for p_checker in self._precondition_eager.itervalues () :
+        for p_checker in pyk.itervalues (self._precondition_eager) :
             p_checker ()
         if force or self.changes != int (self.change_counter) :
             try :
-                for p_checker in self._precondition_lazy.itervalues () :
+                for p_checker in pyk.itervalues (self._precondition_lazy) :
                     p_checker ()
             finally :
                 self.changes = int (self.change_counter)
@@ -1089,7 +1093,7 @@ __test__ = dict \
         >>> import itertools
         >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
         >>> def dyn_1 () :
-        ...     for i in _d1.next () :
+        ...     for i in next (_d1) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> mb = interfacer = _Test_CI_ (None)
@@ -1134,7 +1138,7 @@ __test__ = dict \
         >>> import itertools
         >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
         >>> def dyn_1 () :
-        ...     for i in _d1.next () :
+        ...     for i in next (_d1) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> mb = interfacer = _Test_CI_ (None)
@@ -1189,7 +1193,7 @@ __test__ = dict \
         >>> import itertools
         >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
         >>> def dyn_1 () :
-        ...     for i in _d1.next () :
+        ...     for i in next (_d1) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> mb = interfacer = _Test_CI_ (None)
@@ -1222,7 +1226,7 @@ __test__ = dict \
         >>> import itertools
         >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
         >>> def dyn_1 () :
-        ...     for i in _d1.next () :
+        ...     for i in next (_d1) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> mb = interfacer = _Test_CI_ (None)
@@ -1261,12 +1265,12 @@ __test__ = dict \
         >>> import itertools
         >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
         >>> def dyn_1 () :
-        ...     for i in _d1.next () :
+        ...     for i in next (_d1) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> _d2 = itertools.cycle ((["a"], ["b", "c", "d"], []))
         >>> def dyn_2 () :
-        ...     for i in _d2.next () :
+        ...     for i in next (_d2) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> mb = interfacer = _Test_CI_ (None)
@@ -1347,12 +1351,12 @@ __test__ = dict \
         >>> import itertools
         >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
         >>> def dyn_1 () :
-        ...     for i in _d1.next () :
+        ...     for i in next (_d1) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> _d2 = itertools.cycle ((["a"], ["b", "c", "d"], []))
         >>> def dyn_2 () :
-        ...     for i in _d2.next () :
+        ...     for i in next (_d2) :
         ...         yield "Dyn-%s" % i, i, None
         ...
         >>> mb = interfacer = _Test_CI_ (None)

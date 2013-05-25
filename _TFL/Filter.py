@@ -51,8 +51,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 Module `Filter`
 ================
@@ -73,8 +71,8 @@ This module provides some classes for filtering iterables::
     ...
 
     >>> primes                = [2, 3, 5, 7, 11, 13, 17, 19]
-    >>> some_teens            = range (10, 20, 2)
-    >>> fourties              = range (40, 50)
+    >>> some_teens            = list (range (10, 20, 2))
+    >>> fourties              = list (range (40, 50))
     >>> numbers               = primes + some_teens + fourties
 
     >>> Div_7                 = Filter     (div_7)
@@ -170,7 +168,7 @@ operators short-circuit::
 
     >>> for f in Div_7_and_Prime, Div_7_or_Prime :
     ...     for g in f, ~f, ~~f :
-    ...         print (g.__class__.__name__, end = "")
+    ...         print (g.__class__.__name__, end = " ")
     ...     print ()
     ...
     Filter_And Filter_Or Filter_And
@@ -179,6 +177,8 @@ operators short-circuit::
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
+
+from   __future__  import print_function
 
 from   _TFL                     import TFL
 from   _TFL.predicate           import first, all_true, any_true

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,8 @@
 #                      in the context of units is a bad thing (TM))
 #     8-Nov-2006 (CED) Some parsec variants added (used in astronomy for large
 #                      structures)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -49,7 +45,7 @@ class Length (TFL.Units.Kind) :
     """Units of length.
 
        >>> Length (1)
-       1.0
+       1
        >>> Length (1,"yd")
        0.9144
        >>> Length (1,"in")
@@ -59,7 +55,7 @@ class Length (TFL.Units.Kind) :
        >>> Length (1,"mi")
        1609.344
        >>> Length (1,"Nm")
-       1852.0
+       1852
     """
 
     Unit              = TFL.Units.Unit

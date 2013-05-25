@@ -33,6 +33,7 @@
 #    24-May-2013 (CT) Add `adapt__div__`, `adapt__str__`
 #    24-May-2013 (CT) Add `iteritems`, `iterkeys`, `itervalues`, `xrange`
 #    24-May-2013 (CT) Add `int_types`
+#    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
 #    ««revision-date»»···
 #--
 
@@ -45,8 +46,10 @@ Classic_Class_Type = None
 fprint             = print
 
 int_types          = (int, )
+izip               = zip
 string_types       = (str, )
 text_type          = str
+unichr             = chr
 
 def adapt__bool__ (cls) :
     dct = cls.__dict__
@@ -65,6 +68,14 @@ def adapt__str__ (cls) :
     return cls
 # end def adapt__str__
 
+def new_instancemethod (function, instance, cls) :
+    ### XXX how to implement this ???
+    if instance is None :
+        return function
+    raise NotImplementedError \
+        ("new_instancemethod for instance %s" % (instance, ))
+# end def new_instancemethod
+
 def iteritems (dct) :
     return dct.items ()
 # end def iteritems
@@ -78,5 +89,11 @@ def itervalues (dct) :
 # end def itervalues
 
 xrange = range
+
+_zip = zip
+
+def zip (* args) :
+    return list (_zip (* args))
+# end def zip
 
 ### __END__ TFL._pyk3

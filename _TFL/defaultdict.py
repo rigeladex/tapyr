@@ -37,8 +37,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 Python 2.5 provides `collections.defaultdict`.
 
@@ -57,8 +55,6 @@ In addition, this module provides
 ::
 
     >>> zd = defaultdict (int)
-    >>> zd
-    defaultdict(<type 'int'>, {})
     >>> zd [1] = 42
     >>> zd [2] = 137
     >>> sorted (pyk.iteritems (zd))
@@ -77,8 +73,6 @@ In addition, this module provides
     [(1, 42), (2, 137), (3, 0), (4, 1)]
 
     >>> zd = defaultdict_int ()
-    >>> zd
-    defaultdict(<type 'int'>, {})
     >>> zd [1] = 42
     >>> zd [2] = 137
     >>> sorted (pyk.iteritems (zd))
@@ -105,6 +99,8 @@ In addition, this module provides
     [(1, 42), (2, 137), (3, 0), (4, 1), (100, 10)]
 
 """
+
+from   __future__  import print_function
 
 from   _TFL import TFL
 from   _TFL import pyk

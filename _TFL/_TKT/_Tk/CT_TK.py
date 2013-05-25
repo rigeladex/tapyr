@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -467,6 +467,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 import Tkinter
 Tkinter.wantobjects = False
 
@@ -546,7 +548,7 @@ class Option_Mgr (TFL.Meta.Object) :
             if sos.path.isfile (filename) :
                 tk.option_readfile (filename)
                 self._already_read_option_file [filename] = 1
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             pass
@@ -567,7 +569,7 @@ class Option_Mgr (TFL.Meta.Object) :
             self._read_option_file (tk, sos.path.join (path, filename))
             for p in std_pathes () :
                 self._read_option_file (tk, sos.path.join (p, filename))
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             ### ignore exceptions triggered by non-existent directories and
@@ -674,10 +676,12 @@ class _Image_Mgr_ (TFL.Meta.Object) :
         name = self.normalized (name)
         if name in self.files :
             if self.files [name].name != filename.name :
-                print "Name clash for %s %s: %s vs. %s" \
-                      % ( self.Image_class [filename.ext]
-                        , name, filename.name, self.files [name].name
-                        )
+                print \
+                    ( "Name clash for %s %s: %s vs. %s"
+                    % ( self.Image_class [filename.ext]
+                      , name, filename.name, self.files [name].name
+                      )
+                    )
                 return None
         else :
             self.files [name] = filename
@@ -845,8 +849,8 @@ class CT_TK_mixin :
         self._set_option   ("parent", root, kw)
         try :
             result = self.tk.call (tk_fct, * (args + self._options (kw)))
-        except TclError, exc :
-            print exc
+        except TclError as exc :
+            print (exc)
             result = None
         else :
             if result :
@@ -1040,8 +1044,8 @@ class CT_TK_mixin :
             ww, wh = w.winfo_width        (), w.winfo_height       ()
             sw, sh = w.winfo_screenwidth  (), w.winfo_screenheight ()
             x,  y  = w.winfo_rootx        (), w.winfo_rooty        ()
-            ### print name, x, y, g, mh, wh, sh, mw, ww, sw
-            ### print sh -wh, sw - ww
+            ### print (name, x, y, g, mh, wh, sh, mw, ww, sw)
+            ### print (sh -wh, sw - ww)
             if (   g
                and (wh >= max (mh, 50) and ww >= max (mw, 50))
                and (sh - wh > 100 and sw - ww > 70)
@@ -1270,7 +1274,7 @@ class C_Text (C_Frame) :
     def __getattr__ (self, name) :
         if name in self._auto_delegate :
             return getattr (self.body, name)
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
 # end class C_Text
@@ -1782,7 +1786,7 @@ class Progress_Gauge (C_Frame) :
         self.show_percent = not cycle
         if g_range < 0 :
             ### This is an error of the caller
-            raise ValueError, "Range must be positive (got %d)" % g_range
+            raise ValueError ("Range must be positive (got %d)" % g_range)
         if label :
             self.set_label (label)
         self.set_value (0)
@@ -2057,7 +2061,7 @@ class Buttongroup (CT_TK_mixin) :
             cmd   = self.cmd_map [label]
             try :
                 msg = cmd.im_self.button_help (label, cmd, cmd.__doc__)
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 msg = cmd.__doc__
@@ -2079,7 +2083,7 @@ class Buttongroup (CT_TK_mixin) :
             elif self.help :
                 self.help.push_help (msg)
                 self.helped = button
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             pass
@@ -2103,7 +2107,7 @@ class Buttongroup (CT_TK_mixin) :
         elif isinstance (b, (str, unicode)) :
             try :
                 return button.n_index (b)
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 return length
@@ -2172,8 +2176,9 @@ class Buttongroup (CT_TK_mixin) :
         for b in self.button :
             f = b
             if b._is_framed : f = b.master
-            print "%-10s: (%s) [%s, %s] [%s, %s] [%s, %s]" % \
-                  ( b ["text"]
+            print \
+                ( "%-10s: (%s) [%s, %s] [%s, %s] [%s, %s]"
+                % ( b ["text"]
                   , b ["font"]
                   , b ["width"]
                   , b ["height"]
@@ -2182,6 +2187,7 @@ class Buttongroup (CT_TK_mixin) :
                   , f.winfo_reqwidth  ()
                   , f.winfo_reqheight ()
                   )
+                )
     # end def _info
 
 # end class Buttongroup
@@ -2616,7 +2622,7 @@ class C_Listbox_Extended (C_Listbox) :
             try :
                 index = l.index (v)
                 w.select_set    (index)
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 pass
@@ -2952,7 +2958,7 @@ class Listbox_Tuple (Listbox_Tuple_, C_Frame) :
     def _make_listboxes (self, n) :
         for i in range (n) :
             w = self._new_listbox ( self
-                                  , name = "listbox" + `i`
+                                  , name = "listbox" + repr (i)
                                   , selectmode = self.selectmode
                                   )
             self.add_listbox      ( w)
@@ -3084,10 +3090,11 @@ class Scrollable_ (C_Frame) :
     # end def change_size
 
     def _hull_pack  (self, * args, ** kw) :
-        raise NameError, ( "Hull of scrollable widget "
-                         + self.__class__.__name__
-                         + " cannot be packed/gridded"
-                         )
+        raise NameError \
+            ( "Hull of scrollable widget "
+            + self.__class__.__name__
+            + " cannot be packed/gridded"
+            )
     # end def _hull_pack
 
     def vport_pack (self, * args) :
@@ -3117,7 +3124,7 @@ class Scrollable_ (C_Frame) :
             if 0 <= new_head < new_tail <= 1:
                 scrollb.set (new_head, new_tail)
                 vport_view  ("moveto", new_head)
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             pass
@@ -3275,7 +3282,7 @@ class V_Scrollable (V_Scrollable_, Scrollable_) :
     scroll_unpack = Mixin.y_scroll_unpack
 
     def change_size (self, event=None) :
-        ###print event.widget.winfo_class (), event.widget
+        ###print (event.widget.winfo_class (), event.widget)
         if not self._y_pending :
             self._y_pending = self.after_idle (self.shrink_maybe)
     # end def change_size
@@ -3285,7 +3292,7 @@ class V_Scrollable (V_Scrollable_, Scrollable_) :
         self.update_idletasks  ()
         nw  = self.winfo_width () - self.y_scroll.winfo_width ()
         ### h = self.hull
-        ### print self, self.vport.winfo_width (), self.vport.bbox ("all")
+        ### print (self, self.vport.winfo_width (), self.vport.bbox ("all"))
         self.vport.configure   (width = nw)
         self.hull_repack       ()
     # end def change_width
@@ -3315,7 +3322,7 @@ class V_Scrollable (V_Scrollable_, Scrollable_) :
                     self.scroll_unpack ()
                 else :
                     self.scroll_pack ()
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 ## `shrink_maybe' is sometimes called after the
@@ -3421,7 +3428,7 @@ class Notebook (C_Frame) :
             page = self.page [page_name]
             page.bind (event, command, * args, ** kw)
         except KeyError :
-            print "Unknown page", page_name, self.page.keys ()
+            print ("Unknown page", page_name, self.page.keys ())
     # end def page_bind
 
     def display (self, name) :
@@ -3827,7 +3834,7 @@ class Panedwindow_ (C_Frame) :
             size = self._widget_size ()
             one  = (frac       * size) - 5
             two  = ((1 - frac) * size) - 5
-            print self.name, self.pane_size, size, one, two
+            print (self.name, self.pane_size, size, one, two)
             if min (one, two) > 20 :
                 self.pane [i    ].configure (** {self.pane_size : one})
                 self.pane [i + 1].configure (** {self.pane_size : two})
@@ -3991,7 +3998,7 @@ class Entry_History :
         else :
             try :
                 i = self.values.index (value) - 1
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 i = len (self.values) - 1
@@ -4007,7 +4014,7 @@ class Entry_History :
             l = len (self.values)
             try :
                 i = self.values.index (value) + 1
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 i = l
@@ -4573,7 +4580,7 @@ class Listdrop_ (CT_TK_mixin) :
                 try :
                     curr = int (curr)
                     i    = self.list.index (curr)
-                except (SystemExit, KeyboardInterrupt), exc :
+                except (SystemExit, KeyboardInterrupt) as exc :
                     raise
                 except :
                     i = 0
@@ -4738,7 +4745,7 @@ class Listdropentry_Extended (Listdropentry_) :
         try :
             vs = int (self.get ())
             self.scroll_box.set (vs)
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             pass
@@ -4866,7 +4873,7 @@ class Combo_Entry :
         if i is not None :
             try    :
                 self._entry_set (self.list_box.get (i))
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 pass
@@ -5698,7 +5705,7 @@ class Num_Spinner (Spinnerentry_) :
         if value is not None :
             try :
                 value = int (value) + inc
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 self.show_error ( "Illegal Integer"
@@ -5749,7 +5756,7 @@ class Listspinner_ (CT_TK_mixin) :
         else :
             try :
                 return self.list.index (value)
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 return 0
@@ -5985,7 +5992,7 @@ class Combobox_Listdropspinner (Combo_, Listdropspinner) :
         Listdropspinner.set (self, value)
         try :
             self.combo_box.select (self.list.index (value))
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             ### hide exceptions due to values not in `self.list'
@@ -6120,7 +6127,7 @@ class C_Menu (CT_TK_mixin, Menu) :
                     msg = ( "Duplicate short cut `%s' for "
                             "menu entries `%s' and `%s'"
                           )
-                    print msg % (short_cut, self._short_map [short_cut], label)
+                    print (msg % (short_cut, self._short_map [short_cut], label))
                     self._add_pending_short_cut (short_cut, label)
                 else :
                     self._short_map [short_cut] = label
@@ -6142,8 +6149,7 @@ class C_Menu (CT_TK_mixin, Menu) :
            unique short cut was explicitly set.
         """
         items = sorted ( self._pending_short_cuts.items ()
-                       , lambda (scl, ll), (scr, lr) :
-                             cmp (scl, scr) or cmp (len (ll), len (lr))
+                       , key = lambda x : (x [0], len (x [1]))
                        )
         for sc, labels in items :
             del self._pending_short_cuts [sc]
@@ -6202,7 +6208,7 @@ class C_Menu (CT_TK_mixin, Menu) :
                 index = self.index     ("@%d" % (event.y, ))
                 label = self.entrycget (index, "label")
                 self._help_label       (label, widget, event)
-            except (SystemExit, KeyboardInterrupt), exc :
+            except (SystemExit, KeyboardInterrupt) as exc :
                 raise
             except :
                 pass
@@ -6211,19 +6217,19 @@ class C_Menu (CT_TK_mixin, Menu) :
     # end def help
 
     def _help_active_entry (self, event = None) :
-        ### print ".",
+        ### print (".", end = " ")
         ### unfortunately, `index (ACTIVE)' doesn't work as advertised
         ###                (it always returns `None')
         try :
             index = self.index (ACTIVE)
-            print "kieselack %s" % index
+            print ("kieselack %s" % index)
             if index is not None :
                 label = self.entrycget (index, "label")
                 self._help_label       (label, self, event)
             else :
                 pass
-                ### print "no active index?"
-        except (SystemExit, KeyboardInterrupt), exc :
+                ### print ("no active index?")
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
         except :
             traceback.print_exc ()
@@ -6247,7 +6253,7 @@ class C_Menu (CT_TK_mixin, Menu) :
                             msg = cmd.im_self.menu_help (label, cmd, msg)
                         else :
                             msg = cmd.menu_help         (label, cmd, msg)
-                    except (SystemExit, KeyboardInterrupt), exc :
+                    except (SystemExit, KeyboardInterrupt) as exc :
                         raise
                     except :
                         pass
@@ -6264,7 +6270,7 @@ class C_Menu (CT_TK_mixin, Menu) :
                 elif self.help_widget :
                     self.help_widget.push_help (msg)
                 else                  :
-                    pass # print msg
+                    pass # print (msg)
         else :
             self.deactivate_help ()
     # end def _help_label
@@ -6653,7 +6659,7 @@ if _default_root :
 else :
     try :
         root = _default_root = Tk ()
-    except (SystemExit, KeyboardInterrupt), exc :
+    except (SystemExit, KeyboardInterrupt) as exc :
         raise
     except :
         traceback.print_exc ()

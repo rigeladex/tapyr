@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -137,9 +137,9 @@ class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
         child = self._convert (child, self.else_class)
         if isinstance (child, self.else_class) :
             if self.else_children :
-                raise TFL.SDG.Invalid_Node, (self, child)
+                raise TFL.SDG.Invalid_Node (self, child)
         elif not isinstance (child, self.elif_class) :
-            raise TFL.SDG.Invalid_Node, (self, child)
+            raise TFL.SDG.Invalid_Node (self, child)
         child.trailer = ""
         self.__super.insert (child, index, delta)
     # end def insert

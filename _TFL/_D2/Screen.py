@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.D2.
@@ -32,6 +32,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL            import TFL
 
 from    _TFL._D2       import D2
@@ -42,10 +44,10 @@ class _Screen_Rect_ (D2.Rect) :
 
     >>> def rect_points (r) :
     ...     for p in sorted (r.corner_dict.keys ()) :
-    ...         print "%-20s : %s" % (p, getattr (r, p))
+    ...         print ("%-20s : %s" % (p, getattr (r, p)))
     >>> def rect_sides (r) :
     ...     for s in sorted (r.side_dict.keys ()) :
-    ...         print "%-20s : %s" % (s, getattr (r, s))
+    ...         print ("%-20s : %s" % (s, getattr (r, s)))
     >>> def connection_points (r) :
     ...     P = D2.Point
     ...     for p, off in sorted (
@@ -61,7 +63,7 @@ class _Screen_Rect_ (D2.Rect) :
     ...             , key = lambda x : tuple (x [0] + x [1])
     ...             ) :
     ...         q = p + off
-    ...         print "%s : %s" % (q, r.connection_point (q, r.center))
+    ...         print ("%s : %s" % (q, r.connection_point (q, r.center)))
     >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (2.0, 1.0))
     >>> rect_points (q)
     bottom_left          : (1.0, 2.0)

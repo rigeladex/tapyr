@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2013 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -36,38 +36,40 @@
 <Command fct_3>
 >>> g2.add_command (TFL.UI.Command ("fct4", fct_4), if_names = ("menu_2", ))
 <Command fct_4>
->>> print cmd_mgr ["Group1"].interfacers ['menu_1']
+>>> print (cmd_mgr ["Group1"].interfacers ['menu_1'])
 Group1 ['fct1', 'fct2']
->>> print cmd_mgr ["Group1"].interfacers ['menu_2']
+>>> print (cmd_mgr ["Group1"].interfacers ['menu_2'])
 Traceback (most recent call last):
   ...
 KeyError: 'menu_2'
->>> print cmd_mgr ["Group2"].interfacers ['menu_1']
+>>> print (cmd_mgr ["Group2"].interfacers ['menu_1'])
 Traceback (most recent call last):
   ...
 KeyError: 'menu_1'
->>> print cmd_mgr ["Group2"].interfacers ['menu_2']
+>>> print (cmd_mgr ["Group2"].interfacers ['menu_2'])
 Group2 ['fct3', 'fct4']
 """
+
+from   __future__       import print_function
 
 from   _TFL                   import TFL
 import _TFL._UI.Command_Mgr
 import _TFL._TKT.Command_Interfacer
 
 def fct_1 () :
-    print "fct_1"
+    print ("fct_1")
 # end def fct_1
 
 def fct_2 () :
-    print "fct_2"
+    print ("fct_2")
 # end def fct_2
 
 def fct_3 () :
-    print "fct_3"
+    print ("fct_3")
 # end def fct_3
 
 def fct_4 () :
-    print "fct_4"
+    print ("fct_4")
 # end def fct_4
 
 class CI_Menu (TFL.TKT.Command_Interfacer) :

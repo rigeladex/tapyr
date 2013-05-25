@@ -48,7 +48,6 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 import hashlib
-import itertools
 import uuid
 
 class M_Password_Hasher (Meta.Object.__class__) :
@@ -119,7 +118,7 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
     def hash_cmp (cls, l, r) :
         if len (l) == len (r) :
             s = 0
-            for a, b in itertools.izip (l, r) :
+            for a, b in pyk.izip (l, r) :
                 s |= ord (a) ^ ord (b)
             return s == 0
         return False
@@ -137,8 +136,8 @@ class _Hashlib_Password_Hasher_ (Password_Hasher) :
         """Hashed value of `clear_password` using `salt`"""
         if salt is None :
             salt = cls.salt ()
-        hasher = hashlib.new      (cls.__name__, salt)
-        hasher.update             (clear_password)
+        hasher = hashlib.new      (cls.__name__, salt.encode ("utf-8"))
+        hasher.update             (clear_password.encode ("utf-8"))
         hashed = hasher.hexdigest ()
         return cls.sep.join       ((salt, hashed))
     # end def hashed

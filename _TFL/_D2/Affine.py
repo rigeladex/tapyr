@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2007-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -118,6 +118,8 @@ class Affine (TFL.Meta.Object) :
 
     """
 
+    _str_format = "(" + ", ".join (("%.12g", ) * 6) + ")"
+
     @classmethod
     def Reflection (cls, lx = 1, ly = 0, dx = 0, dy = 0) :
         """Returns affine transformations for reflection about a line between
@@ -172,7 +174,7 @@ class Affine (TFL.Meta.Object) :
     def __mul__ (self, rhs) :
         if isinstance (rhs, Affine) :
             sm = self._matrix
-            rm = zip (* rhs._matrix) # transpose
+            rm = list (zip (* rhs._matrix)) # transpose
             return self.__class__ \
                 ( sum (u * v for (u, v) in zip (sm [0], rm [0]))
                 , sum (u * v for (u, v) in zip (sm [0], rm [1]))
@@ -201,7 +203,7 @@ class Affine (TFL.Meta.Object) :
 
     def __str__ (self) :
         (a, b, c), (d, e, f) = self._matrix [:2]
-        return "(%s, %s, %s, %s, %s, %s)" % (a, b, c, d, e, f)
+        return self._str_format % (a, b, c, d, e, f)
     # end def __str__
 
     def __repr__ (self) :

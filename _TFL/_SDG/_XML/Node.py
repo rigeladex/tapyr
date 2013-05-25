@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,6 +46,8 @@
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 import _TFL._SDG._XML
 import _TFL._SDG.Node
 
@@ -92,14 +94,14 @@ class _XML_Node_ (TFL.SDG.Node) :
     def _attr_iter (self) :
         attr_values = \
             ( [(a, getattr (self, a)) for a in self.attr_names]
-            + sorted (self.x_attrs.iteritems ())
+            + sorted (pyk.iteritems (self.x_attrs))
             )
         if attr_values :
             translate = lambda a : self.attr_name_translate.get (a, a)
             for a, v in attr_values :
                 if v is not None :
                     k = translate (a)
-                    v = unicode (v).replace ("'", "&quot;")
+                    v = pyk.text_type (v).replace ("'", "&quot;")
                     yield u'''%s="%s"''' % (k, v)
     # end def _attr_iter
 
@@ -124,14 +126,16 @@ class _XML_Node_ (TFL.SDG.Node) :
 
     def _checked_xml_name (self, value) :
         if not self._xml_name_pat.match (value) :
-            raise ValueError, "`%s` doesn not match %s" % \
-                (value, self._xml_name_pat.pattern)
+            raise ValueError \
+                ( "`%s` doesn not match %s"
+                % (value, self._xml_name_pat.pattern)
+                )
         return value
     # end def _checked_xml_name
 
     def _insert (self, child, index, children, delta = 0) :
         if child is not None :
-            if isinstance (child, (str, unicode)) :
+            if isinstance (child, pyk.string_types) :
                 import _TFL._SDG._XML.Char_Data
                 child = TFL.SDG.XML.Char_Data (child)
             self.__super._insert (child, index, children, delta)

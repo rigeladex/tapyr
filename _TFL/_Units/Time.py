@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,12 +29,8 @@
 #     9-Feb-2005 (CED) Creation
 #    15-Feb-2006 (CT)  Done right
 #     8-Nov-2006 (CED) `microfortnight` added (used in VMS)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -46,13 +42,13 @@ class Time (TFL.Units.Kind) :
     """Units of time.
 
        >>> Time (1)
-       1.0
+       1
        >>> Time (1, "ns")
        1e-09
        >>> Time (1, "d")
-       86400.0
+       86400
        >>> Time (1, "wk")
-       604800.0
+       604800
        >>> Time (1, "wk") == Time (7, "d")
        True
     """

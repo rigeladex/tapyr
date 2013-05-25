@@ -62,20 +62,20 @@ class Butcon (TFL.TKT.Mixin) :
 
     def apply_bitmap (self, bitmap) :
         """Apply `bitmap` to our widget, replacing existing bitmap."""
-        raise NotImplementedError, \
-            "%s must define apply_bitmap" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define apply_bitmap" % (self.__class__.__name__, ))
     # end def apply_bitmap
 
     def apply_style (self, style) :
         """Apply `style` to our widget."""
-        raise NotImplementedError, \
-            "%s must define apply_style" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define apply_style" % (self.__class__.__name__, ))
     # end def apply_style
 
     def remove_style (self, style) :
         """Remove `style` from our widget."""
-        raise NotImplementedError, \
-            "%s must define remove_style" % (self.__class__.__name__, )
+        raise NotImplementedError \
+            ("%s must define remove_style" % (self.__class__.__name__, ))
     # end def apply_style
 
 # end class Butcon

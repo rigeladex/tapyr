@@ -43,14 +43,14 @@ Caveats:
 
 >>> class Test :
 ...     def method (self, i) :
-...         print "Test.method called with", i,
+...         print ("Test.method called with", i,)
 ...         return i * i
 ...
 >>> Memoizer.add_method (Test, "method")
 >>> t = Test ()
 >>> for j in range (5) :
-...     print "First  call", j, t.method (j)
-...     print "Second call", j, t.method (j)
+...     print ("First  call", j, t.method (j))
+...     print ("Second call", j, t.method (j))
 ...
 First  call 0 Test.method called with 0 0
 Second call 0 0
@@ -64,6 +64,8 @@ First  call 4 Test.method called with 4 16
 Second call 4 16
 
 """
+
+from   __future__       import print_function
 
 from   _TFL                   import TFL
 import _TFL._FMW.Wrapper

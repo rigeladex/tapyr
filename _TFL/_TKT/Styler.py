@@ -36,7 +36,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__       import print_function
+
 from   _TFL                 import TFL
+from   _TFL                 import pyk
 from   _TFL._Meta           import Meta
 
 import _TFL._TKT.Mixin
@@ -65,7 +68,7 @@ class _TKT_Styler_ (Meta.BaM (Meta.Object, metaclass = Meta.M_Auto_Combine)) :
        >>> s4 = Style ("s4", s1, underline = "double")
        >>> s5 = Style ("s5", s4, underline = "none")
        >>> for s in s1, s2, s3, s4, s5 :
-       ...     print s, sorted (Test_Styler (s).option_dict.iteritems ())
+       ...     print (s, sorted (pyk.iteritems (Test_Styler (s).option_dict)))
        ...
        <Style s1> [('foreground', 'yellow')]
        <Style s2> [('background', 'red')]
@@ -101,7 +104,7 @@ class _TKT_Styler_ (Meta.BaM (Meta.Object, metaclass = Meta.M_Auto_Combine)) :
         self.style_dict  = s = {}
         self.option_dict = d = {}
         _opt_mappers     = self._opt_mappers
-        for style_name, tkt_name in self.Opts.iteritems () :
+        for style_name, tkt_name in pyk.iteritems (self.Opts) :
             v = getattr (style, style_name, None)
             if v is not None :
                 s [style_name] = v

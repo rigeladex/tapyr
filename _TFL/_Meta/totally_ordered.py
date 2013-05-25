@@ -33,8 +33,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 `totally_ordered` is a class decorator adding all missing rich comparison
 methods to a class, if at least one of the rich ordering methods or the
@@ -124,6 +122,8 @@ old-style `__cmp__` is defined::
     TypeError: Totally ordered class `T` must define at least one of: __lt__, __gt__, __le__, __ge__, or __cmp__
 
 """
+
+from   __future__  import print_function
 
 from   _TFL              import TFL
 from   _TFL              import pyk

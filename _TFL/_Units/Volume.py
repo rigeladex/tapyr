@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,8 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
@@ -43,9 +39,9 @@ class Volume (TFL.Units.Kind) :
     """Units of volume
 
        >>> Volume (1.0)
-       1.0
+       1
        >>> Volume (1.0, "cbkm")
-       1000000000.0
+       1000000000
        >>> Volume (1.0, "cbin")
        1.6387064e-05
        >>> Volume (1.0, "cbft")

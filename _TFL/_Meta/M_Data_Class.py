@@ -45,8 +45,6 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
-
 """
 M_Data_Class supports the definition of classes holding primarily or
 exclusively data in the form of class attributes with full support for
@@ -87,6 +85,8 @@ inheritance.
     >>> print (r12, r12.foo, r12.bar, r12.baz, r12.quux)
     <Record instance r12> 3 42 137 13
 """
+
+from   __future__  import print_function
 
 from   _TFL             import TFL
 from   _TFL             import pyk

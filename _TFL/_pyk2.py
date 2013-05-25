@@ -34,9 +34,12 @@
 #    24-May-2013 (CT) Add `adapt__div__`, `adapt__str__`
 #    24-May-2013 (CT) Add `iteritems`, `iterkeys`, `itervalues`, `xrange`
 #    24-May-2013 (CT) Add `int_types`
+#    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
 #    ««revision-date»»···
 #--
 
+from   itertools    import izip
+from   new          import instancemethod as new_instancemethod
 from   StringIO     import StringIO
 
 from   types        import ClassType as Classic_Class_Type
@@ -47,6 +50,8 @@ import sys
 int_types    = (int, long)
 string_types = (str, unicode)
 text_type    = unicode
+unichr       = unichr
+zip          = zip
 
 def adapt__bool__ (cls) :
     dct = cls.__dict__

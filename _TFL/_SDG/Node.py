@@ -364,26 +364,30 @@ T_Node R
 T_Node
     ( T_Node
         ( Leaf
-            (name = u'a.1')
+            (name = 'a.1')
         , Leaf
-            (name = u'a.2')
-        , hansi = u'A'
-        , name = u'a'
+            (name = 'a.2')
+        , hansi = 'A'
+        , name = 'a'
         )
     , T_Node
         ( Node
-            (name = u'b.x')
+            (name = 'b.x')
         , Leaf
-            (name = u'b.z')
-        , name = u'b'
+            (name = 'b.z')
+        , name = 'b'
         )
-    , name = u'R'
+    , name = 'R'
     )
 """
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
+
 from   _TFL              import TFL
+from   _TFL              import pyk
+
 import _TFL.Caller
+import _TFL.I18N
 import _TFL.NO_List
 import _TFL._SDG
 import _TFL._SDG.M_Node
@@ -392,7 +396,7 @@ import _TFL._Meta.Object
 from   _TFL.predicate    import *
 import sys
 
-class Invalid_Node (StandardError) :
+class Invalid_Node (Exception) :
     pass
 # end class Invalid_Node
 
@@ -443,14 +447,14 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
         for a in self.front_args :
             if children :
                 if a in kw :
-                    raise TypeError, \
+                    raise TypeError \
                         ( "%s() got multiple values for keyword argument %s"
                         % (self.__class__.__name__, a)
                         )
                 kw [a]   = children [0]
                 children = children [1:]
             elif a not in kw :
-                raise TypeError, \
+                raise TypeError \
                     ( "%s() takes exactly %s arguments (%s given)"
                     % (self.__class__.__name__, len (self.front_args), n)
                     )
@@ -513,7 +517,8 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
             else :
                 context.locals ["indent_anchor"] = indent_anchor + len (indent)
             for l in f (self, context) :
-                yield indent + l
+                x = indent + l
+                yield x
     # end def formatted
 
     def has_child (self, child_name, transitive = True) :
@@ -521,7 +526,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
            `child_name'.
         """
         child_name = self._child_name (child_name)
-        for children in self.children_groups.itervalues () :
+        for children in pyk.itervalues (self.children_groups) :
             if child_name in children :
                 return children [child_name]
         if transitive :
@@ -551,40 +556,43 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     # end def _child_name
 
     def _children_iter (self) :
-        for group in self.children_groups.itervalues () :
+        for group in pyk.itervalues (self.children_groups) :
             for c in group :
                 yield c
     # end def _children_iter
 
     def _convert (self, value, Class, * args, ** kw) :
-        if value and isinstance (value, (str, unicode)) :
+        if value and isinstance (value, pyk.string_types) :
             value = Class (value.strip (), * args, ** kw)
         return value
     # end def _convert
 
     def _formatted_attrs (self, * args, ** kw) :
-        for k, v in sorted (self.init_arg_defaults.iteritems ()) :
+        for k, v in sorted (pyk.iteritems (self.init_arg_defaults)) :
             a = getattr (self, k)
             if a != v :
+                if pyk.text_type != str and isinstance (a, pyk.text_type) :
+                    ### Python2: encode unicode to avoid `u`-prefix
+                    a = TFL.I18N.encode_o (a)
                 yield "%s = %r" % (k, a)
     # end def _formatted_attrs
 
     def _init_kw (self, kw) :
         kw_err = {}
-        for k, v in self.init_arg_defaults.iteritems () :
+        for k, v in pyk.iteritems (self.init_arg_defaults) :
             if not hasattr (self, k) :
                 setattr (self, k, v)
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             if k in self.init_arg_defaults :
                 ### protect `%` characters hidden inside `v` to avoid
                 ### ValueErrors during formatting
-                if isinstance (v, (str, unicode)) :
+                if isinstance (v, pyk.string_types) :
                     v = v.replace ("%", "%%")
                 elif isinstance (v, (tuple, list, TFL.NO_List)) :
                     vin = v
                     v   = []
                     for x in vin :
-                        if isinstance (x, (str, unicode)) :
+                        if isinstance (x, pyk.string_types) :
                             x = x.replace ("%", "%%")
                         v.append (x)
                 if k in self._autoconvert :
@@ -594,7 +602,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
                 kw_err [k] = v
         if kw_err :
             print (self.__class__, self.init_arg_defaults)
-            raise TypeError, "unexpected keyword arguments: %s" % kw_err
+            raise TypeError ("unexpected keyword arguments: %s" % kw_err)
     # end def _init_kw
 
     def _insert (self, child, index, children, delta = 0) :
@@ -643,7 +651,7 @@ class Leaf (Node) :
     children_group_names = () ### doesn't allow any children
 
     def insert (self, child, index = None, delta = 0) :
-        raise Invalid_Node, (self, child)
+        raise Invalid_Node (self, child)
     # end def insert
 
 # end class Leaf
