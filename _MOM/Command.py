@@ -378,11 +378,11 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _handle_load_auth_mig
 
     def _handle_migrate (self, cmd) :
+        if cmd.Auth_Migrate :
+            self._handle_auth_mig (cmd)
         if cmd.verbose :
             print "Migrating scope", cmd.db_url, cmd.db_name, \
                 "-->", cmd.target_db_url
-        if cmd.Auth_Migrate :
-            self._handle_auth_mig (cmd)
         apt_s, url_s = self.app_type_and_url (cmd.db_url,        cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
         if cmd.verbose :
