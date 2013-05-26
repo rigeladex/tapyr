@@ -317,8 +317,6 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _cro_context
 
     def _do_migration (self, cmd, apt_s, url_s, apt_t, url_t, db_man_s) :
-        if cmd.Auth_Migrate :
-            self._handle_auth_mig (cmd)
         if cmd.overwrite :
             apt_t.delete_database (url_t)
         db_man_t = self.DB_Man.create \
@@ -328,12 +326,9 @@ class MOM_Command (TFL.Command.Root_Command) :
             self._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
         db_man_t.ems.compact ()
         db_man_t.destroy ()
-        if cmd.Auth_Migrate :
-            self._handle_load_auth_mig (cmd, cmd.target_db_url)
     # end def _do_migration
 
     def _handle_auth_mig (self, cmd) :
-        from time import time
         scope = self._handle_load (cmd)
         mig   = pyk.pickle.dumps  (scope.Auth.Account.migration ())
         with open (cmd.mig_auth_file, "wb") as f :
@@ -386,6 +381,8 @@ class MOM_Command (TFL.Command.Root_Command) :
         if cmd.verbose :
             print "Migrating scope", cmd.db_url, cmd.db_name, \
                 "-->", cmd.target_db_url
+        if cmd.Auth_Migrate :
+            self._handle_auth_mig (cmd)
         apt_s, url_s = self.app_type_and_url (cmd.db_url,        cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
         if cmd.verbose :
@@ -396,6 +393,8 @@ class MOM_Command (TFL.Command.Root_Command) :
         with cmgr (db_man_s, True) :
             self._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
         db_man_s.destroy ()
+        if cmd.Auth_Migrate :
+            self._handle_load_auth_mig (cmd, cmd.target_db_url)
     # end def _handle_migrate
 
     def _handle_readonly (self, cmd) :
