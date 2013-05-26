@@ -57,6 +57,7 @@
 #     4-Jun-2012 (CT) Add `default` "yes" to `_Readonly_.state`
 #    21-Jan-2013 (MG) Add support for project specific legacy lifter
 #    28-Jan-2013 (CT) Print `Url (...).path` in `_handle_migrate`
+#    26-May-2013 (CT) Change `_cro_context` to use `try/finally`, not `/except`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +70,7 @@ from   _TFL                   import sos
 
 import _TFL.CAO
 import _TFL.Command
+import _TFL.Context
 import _TFL.Environment
 import _TFL.Filename
 import _TFL._Meta.Once_Property
@@ -271,9 +273,8 @@ class MOM_Command (TFL.Command.Root_Command) :
         db_man.change_readonly (state)
         try :
             yield
-        except :
+        finally :
             db_man.change_readonly (old_state)
-            raise
     # end def _cro_context
 
     def _do_migration (self, cmd, apt_s, url_s, apt_t, url_t, db_man_s) :
@@ -324,10 +325,8 @@ class MOM_Command (TFL.Command.Root_Command) :
             print "   ", apt_s, apt_s.Url (url_s).path, \
                 "to", apt_t, apt_t.Url (url_t).path
         db_man_s = self.DB_Man.connect (apt_s, url_s)
-        if cmd.readonly :
-            with self._cro_context (db_man_s, True) :
-                self._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
-        else :
+        cmgr = self._cro_context if cmd.readonly else TFL.Context.relaxed
+        with cmgr (db_man_s, True) :
             self._do_migration (cmd, apt_s, url_s, apt_t, url_t, db_man_s)
         db_man_s.destroy ()
     # end def _handle_migrate
