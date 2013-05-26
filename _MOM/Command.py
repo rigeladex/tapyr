@@ -58,6 +58,7 @@
 #    21-Jan-2013 (MG) Add support for project specific legacy lifter
 #    28-Jan-2013 (CT) Print `Url (...).path` in `_handle_migrate`
 #    26-May-2013 (CT) Change `_cro_context` to use `try/finally`, not `/except`
+#    26-May-2013 (CT) Add support for authorization migration
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,7 @@ import _MOM.DB_Man
 import _MOM._EMS.Backends
 
 from   _TFL                   import sos
+from   _TFL.pyk               import pyk
 
 import _TFL.CAO
 import _TFL.Command
@@ -74,6 +76,9 @@ import _TFL.Context
 import _TFL.Environment
 import _TFL.Filename
 import _TFL._Meta.Once_Property
+
+import contextlib
+import stat
 
 class SA_WE_Opt (TFL.CAO.Bool) :
     """Turn SA warnings into errors"""
@@ -127,6 +132,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             , "Migrate from `target_db_url` to `db_url`"
             , command       = "migrate"
             , db_url        = "hps:///migration"
+            , Auth_Migrate  = "yes"
             )
         ### Application needs to define `db_url = target_db_url = XXX` for
         ### the bundles `mig1` and `mig2` to work conventiently
@@ -144,13 +150,34 @@ class MOM_Command (TFL.Command.Root_Command) :
             )
         , "-db_url:S=hps://"
             "?Database url (form: `dialect://user:password@host:port/db_name`)"
+        , TFL.CAO.Abs_Path
+            ( name        = "mig_auth_file"
+            , description = "Default name of auth migration file"
+            , max_number  = 1
+            )
         , SA_WE_Opt ()
         , "-verbose:B"
         )
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
-    class _MOM_Create_ (_Sub_Command_) :
+    class _MOM_New_DB_Command_ (_Sub_Command_) :
+        ### Base for commands that create a new database
+
+        is_partial              = True
+        _opts                   = \
+            ( "-Auth_Migrate:B?Migrate authorization objects"
+            ,
+            )
+
+    # end class _MOM_New_DB_Command_
+
+    class _MOM_Auth_Mig_ (_Sub_Command_) :
+        """Create a migration of the authorization objects"""
+
+    _Auth_Mig_ = _MOM_Auth_Mig_ # end class
+
+    class _MOM_Create_ (_MOM_New_DB_Command_) :
         """Create database specified by `-db_url`."""
 
     _Create_ = _MOM_Create_ # end class
@@ -170,7 +197,12 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     _Load_ = _MOM_Load_ # end class
 
-    class _MOM_Migrate_ (_Sub_Command_) :
+    class _MOM_Load_Auth_Mig_ (_Sub_Command_) :
+        """Load a migration of the authorization objects"""
+
+    _Load_Auth_Mig_ = _MOM_Load_Auth_Mig_ # end class
+
+    class _MOM_Migrate_ (_MOM_New_DB_Command_) :
         """Migrate database specified by `-db_url` to `-target_db_url`."""
 
         _opts                   = \
@@ -213,6 +245,11 @@ class MOM_Command (TFL.Command.Root_Command) :
             )
     # end def default_db_name
 
+    @TFL.Meta.Once_Property
+    def default_mig_auth_file (self) :
+        return "".join (("~/.AM_", self.ANS.__name__.lower (), ".sam"))
+    # end def default_mig_auth_file
+
     def app_type (self, * ems_dbw) :
         """Return app_type named `self.nick` for application namespace
            `self.ANS`.
@@ -239,6 +276,8 @@ class MOM_Command (TFL.Command.Root_Command) :
         result = self.__super.dynamic_defaults (defaults)
         if "db_name" not in defaults :
             result ["db_name"] = self.default_db_name
+        if "mig_auth_file" not in defaults :
+            result ["mig_auth_file"] = self.default_mig_auth_file
         return result
     # end def dynamic_defaults
 
@@ -278,6 +317,8 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _cro_context
 
     def _do_migration (self, cmd, apt_s, url_s, apt_t, url_t, db_man_s) :
+        if cmd.Auth_Migrate :
+            self._handle_auth_mig (cmd)
         if cmd.overwrite :
             apt_t.delete_database (url_t)
         db_man_t = self.DB_Man.create \
@@ -287,11 +328,29 @@ class MOM_Command (TFL.Command.Root_Command) :
             self._print_info  (apt_t, url_t, db_man_t.db_meta_data, "    ")
         db_man_t.ems.compact ()
         db_man_t.destroy ()
+        if cmd.Auth_Migrate :
+            self._handle_load_auth_mig (cmd, cmd.target_db_url)
     # end def _do_migration
+
+    def _handle_auth_mig (self, cmd) :
+        from time import time
+        scope = self._handle_load (cmd)
+        mig   = pyk.pickle.dumps  (scope.Auth.Account.migration ())
+        with open (cmd.mig_auth_file, "wb") as f :
+            sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
+            f.write (mig)
+        if cmd.verbose :
+            print "Wrote authorization objects to", cmd.mig_auth_file
+        scope.commit      ()
+        scope.ems.compact ()
+        scope.destroy     ()
+    # end def _handle_auth_mig
 
     def _handle_create (self, cmd) :
         scope = self.scope \
             (cmd.db_url, cmd.db_name, create = True, verbose = cmd.verbose)
+        if cmd.Auth_Migrate :
+            self._read_auth_mig (cmd, scope)
         scope.commit      ()
         scope.ems.compact ()
         scope.destroy     ()
@@ -311,15 +370,23 @@ class MOM_Command (TFL.Command.Root_Command) :
         db_man.destroy   ()
     # end def _handle_info
 
-    def _handle_load (self, cmd) :
-        return self.scope (cmd.db_url, cmd.db_name, create = False)
+    def _handle_load (self, cmd, url = None) :
+        return self.scope (url or cmd.db_url, cmd.db_name, create = False)
     # end def _handle_load
+
+    def _handle_load_auth_mig (self, cmd, url = None) :
+        scope = self._handle_load (cmd, url)
+        self._read_auth_mig       (cmd, scope)
+        scope.commit              ()
+        scope.ems.compact         ()
+        scope.destroy             ()
+    # end def _handle_load_auth_mig
 
     def _handle_migrate (self, cmd) :
         if cmd.verbose :
             print "Migrating scope", cmd.db_url, cmd.db_name, \
                 "-->", cmd.target_db_url
-        apt_s, url_s = self.app_type_and_url (cmd.db_url, cmd.db_name)
+        apt_s, url_s = self.app_type_and_url (cmd.db_url,        cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
         if cmd.verbose :
             print "   ", apt_s, apt_s.Url (url_s).path, \
@@ -356,6 +423,20 @@ class MOM_Command (TFL.Command.Root_Command) :
         print "%s%-12s : %s" % (indent, "dbv_hash/apt", apt.db_version_hash)
         print
     # end def _print_info
+
+    def _read_auth_mig (self, cmd, scope) :
+        try :
+            f = open (cmd.mig_auth_file, "rb")
+        except IOError as exc :
+            print "Couldn't open", cmd.mig_auth_file, "due to exception", exc
+        else :
+            with contextlib.closing (f) :
+                cargo = f.read ()
+            mig = pyk.pickle.loads (cargo)
+            scope.Auth.Account.apply_migration (mig)
+            if cmd.verbose :
+                print "Loaded authorization objects from", cmd.mig_auth_file
+    # end def _read_auth_mig
 
 Command = MOM_Command # end class
 

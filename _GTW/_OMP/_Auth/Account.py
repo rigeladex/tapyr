@@ -199,15 +199,14 @@ class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     def apply_migration (self, migration) :
         """Add all objects and links `migration` to `self.home_scope`."""
         scope = self.home_scope
-        for epk, db_attrs in sorted (pyk.iteritems (migration ["Account"])) :
-            acc = self.instance_or_new (* epk, raw = True)
-            acc.set_raw (** dict (db_attrs))
-        for k in ("Group", "Person", "links") :
+        for k in ("Account", "Group", "Person", "links") :
             for epk, db_attrs in sorted (pyk.iteritems (migration [k])) :
                 ET  = scope [epk [-1]]
-                obj = self.instance (* epk, raw = True)
+                obj = ET.instance (* epk, raw = True)
                 if obj is None :
-                   obj = ET (* epk, raw = True, ** dict (db_attrs))
+                    obj = ET (* epk, raw = True, ** dict (db_attrs))
+                elif k == "Account" :
+                    obj.set_raw (** dict (db_attrs))
     # end def apply_migration
 
     def create_new_account_x (self, name, password, ** kw) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -67,6 +67,7 @@
 #    16-Aug-2010 (CT) Adapted to change of signature of `DB_Meta_Data.COPY`
 #    16-Aug-2010 (CT) `_copy_ignore` added and redefinition of `COPY` removed
 #    16-Aug-2010 (CT) `close` change to use `_check_sync`, not `_check_sync_ro`
+#    26-May-2013 (CT) Use `chmod` to limit readability of files
 #    ««revision-date»»···
 #--
 
@@ -91,6 +92,7 @@ import _TFL.Record
 
 import contextlib
 import pickle
+import stat
 import zipfile            as     ZF
 
 TZF = TFL.module_copy \
@@ -194,6 +196,7 @@ class Store (TFL.Meta.Object) :
             self._check_sync (info)
             with TFL.open_to_replace \
                      (db_uri.name, mode = "wb", backup_name = bak) as file:
+                sos.fchmod (file.fileno (), stat.S_IRUSR | stat.S_IWUSR)
                 with contextlib.closing (self.ZF.ZipFile (file, "w")) as zf :
                     for abs, rel in info.FILES (self.x_uri, self.info_uri) :
                         zf.write (abs, rel)
@@ -209,7 +212,8 @@ class Store (TFL.Meta.Object) :
         assert not sos.path.exists (self.x_uri.name), self.x_uri.name
         x_name = self.x_uri.name
         with TFL.lock_file (x_name) :
-            sos.mkdir (x_name)
+            sos.mkdir  (x_name)
+            sos.system ("chmod go= %s" % x_name)
             self._create_info ()
     # end def create
 
@@ -231,6 +235,7 @@ class Store (TFL.Meta.Object) :
         with TFL.lock_file (x_name) :
             if not sos.path.exists (x_name) :
                 sos.mkdir (x_name)
+                sos.system ("chmod go= %s" % x_name)
                 with contextlib.closing \
                          (self.ZF.ZipFile (self.db_uri.name, "r")) as zf :
                     zf.extractall (x_name)
