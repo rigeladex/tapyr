@@ -66,6 +66,7 @@
 #     6-May-2013 (CT) Factor `unknown_hasher`, use it in `password_hash`;
 #                     fix `ph_name.computed_default`
 #    10-May-2013 (CT) Set `Account_Anonymous.show_in_ui = False`
+#    26-May-2013 (CT) Add `Account_Manager.apply_migration`, `.migration`
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,8 @@ from   _GTW                   import GTW
 
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
+
+from   _TFL.pyk               import pyk
 
 import _TFL.Password_Hasher
 
@@ -193,6 +196,20 @@ _Ancestor_Essence = _Account_
 class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for password accounts"""
 
+    def apply_migration (self, migration) :
+        """Add all objects and links `migration` to `self.home_scope`."""
+        scope = self.home_scope
+        for epk, db_attrs in sorted (pyk.iteritems (migration ["Account"])) :
+            acc = self.instance_or_new (* epk, raw = True)
+            acc.set_raw (** dict (db_attrs))
+        for k in ("Group", "Person", "links") :
+            for epk, db_attrs in sorted (pyk.iteritems (migration [k])) :
+                ET  = scope [epk [-1]]
+                obj = self.instance (* epk, raw = True)
+                if obj is None :
+                   obj = ET (* epk, raw = True, ** dict (db_attrs))
+    # end def apply_migration
+
     def create_new_account_x (self, name, password, ** kw) :
         etype    = self._etype
         password = etype.password_hash (password)
@@ -213,26 +230,44 @@ class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
 
     def force_password_change (self, account) :
         Auth = self.home_scope.GTW.OMP.Auth
-        if isinstance (account, basestring) :
+        if isinstance (account, pyk.string_types) :
             account = self.query (name = account).one ()
         if not Auth.Account_Password_Change_Required.query \
             (account = account).count () :
             Auth.Account_Password_Change_Required (account)
     # end def force_password_change
 
+    def migration (self, * filters) :
+        """Return a all account instances in migration format."""
+        result = dict \
+            (  (k, {})
+            for k in ("Account", "Group", "Person", "links")
+            )
+        for obj in self.query (* filters).order_by (Q.pid) :
+            result ["Account"].update ((obj.as_migration (), ))
+            if getattr (obj, "person", None) :
+                result ["Person"].update ((obj.person.as_migration (), ))
+                result ["links"].update ((obj.person_link.as_migration (), ))
+            for gl in obj.group_links :
+                result ["Group"].update ((gl.group.as_migration (), ))
+                result ["links"].update ((gl.as_migration (), ))
+        return result
+    # end def migration
+
     def reset_password (self, account) :
-        Auth = self.home_scope.GTW.OMP.Auth
-        if isinstance (account, basestring) :
+        Auth  = self.home_scope.GTW.OMP.Auth
+        etype = self._etype
+        if isinstance (account, pyk.string_types) :
             account = self.query (name = account).one ()
         if not account.enabled :
             raise TypeError (u"Account has been disabled")
         ### first we set the password to someting random nobody knows
-        account.change_password (self._etype.random_password (32))
+        account.change_password (etype.random_password (32))
         ### than we create the password change request action
         self.force_password_change (account)
         ### now create a reset password action which contains the new password
         apr = Auth.Account_Password_Reset \
-            (account, password = self._etype.random_password (16))
+            (account, password = etype.random_password (16))
         ### and temporarily suspend the account
         account.set (suspended = True)
         return apr.password, apr.token

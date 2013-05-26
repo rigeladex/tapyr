@@ -241,6 +241,7 @@
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
 #    30-Apr-2013 (CT) Add `add_error`
 #    10-May-2013 (CT) Add `show_in_ui_T`
+#    26-May-2013 (CT) Add `Id_Entity.as_migration`
 #    ««revision-date»»···
 #--
 
@@ -1291,6 +1292,14 @@ class Id_Entity (Entity) :
             result = result.filter (* filters, ** kw)
         return result
     # end def async_changes
+
+    def as_migration (self) :
+        def _gen (self) :
+            for ak in self.db_attr :
+                if not (ak.is_primary or ak.name == "last_cid") :
+                    yield ak.name, ak.get_raw_epk (self)
+        return (self.epk_raw, dict (_gen (self)))
+    # end def as_migration
 
     def as_pickle_cargo (self) :
         return (str (self.type_name), self.as_attr_pickle_cargo (), self.pid)

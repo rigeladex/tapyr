@@ -31,6 +31,7 @@
 #     9-Oct-2012 (CT) Change "error" class, fix various errors
 #     6-Dec-2012 (MG) Fix test executaion, new test for query attribute added
 #     1-May-2013 (CT) Add `@foo.bar` to email addresses
+#    26-May-2013 (CT) Add `_test_migration`
 #    ««revision-date»»···
 #--
 
@@ -474,6 +475,72 @@ _password_reset  = r"""
     >>> print ("".join (e.string for e in errors))
 """
 
+_test_migration     = r"""
+
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> scope  = root.scope
+    >>> Auth   = scope.Auth
+    >>> g1     = Auth.Group ("g1")
+    >>> _      = Auth.Account_in_Group (("a1@foo.bar", ), ("g1", ), raw = True)
+    >>> mig    = Auth.Account.migration ()
+    >>> for k, d in sorted (pyk.iteritems (mig)) :
+    ...     print (k)
+    ...     for epk in sorted (d) :
+    ...         print (" " * 2, epk)
+    ...         print \
+    ...             ( " " * 5
+    ...             , (chr (10) + "      ").join
+    ...                 (   "%%-10s : %%s"
+    ...                       %% (k, v if k != "password" else "<password>")
+    ...                 for k, v in sorted (pyk.iteritems (d [epk]))
+    ...                 )
+    ...             )
+    Account
+       (u'a1@foo.bar', 'Auth.Account')
+          electric   : no
+          enabled    : yes
+          password   : <password>
+          ph_name    : Bcrypt
+          superuser  : yes
+          suspended  : no
+          x_locked   : no
+       (u'a2@foo.bar', 'Auth.Account')
+          electric   : no
+          enabled    : yes
+          password   : <password>
+          ph_name    : Bcrypt
+          superuser  : no
+          suspended  : no
+          x_locked   : no
+       (u'a3@foo.bar', 'Auth.Account')
+          electric   : no
+          enabled    : yes
+          password   : <password>
+          ph_name    : Bcrypt
+          superuser  : no
+          suspended  : yes
+          x_locked   : no
+       (u'a4@foo.bar', 'Auth.Account')
+          electric   : no
+          enabled    : no
+          password   : <password>
+          ph_name    : Bcrypt
+          superuser  : no
+          suspended  : yes
+          x_locked   : no
+    Group
+       (u'g1', 'Auth.Group')
+          desc       :
+          electric   : no
+          x_locked   : no
+    Person
+    links
+       ((u'a1@foo.bar', 'Auth.Account'), (u'g1', 'Auth.Group'), 'Auth.Account_in_Group')
+          electric   : no
+          x_locked   : no
+
+"""
+
 _test_query_attr    = r"""
     >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     ...
@@ -535,6 +602,7 @@ __test__ = Scaffold.create_test_dict \
         , login_logout    = _login_logout
         , register        = _register
         , reset_password  = _password_reset
+        , test_migration  = _test_migration
         , test_query_attr = _test_query_attr
         )
     , backends = ("SQL", )

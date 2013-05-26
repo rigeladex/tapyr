@@ -37,6 +37,7 @@
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #     3-May-2013 (CT) Add `GTW_RST_Test_Command.v1_auth_required`
 #    13-May-2013 (CT) Fix `RAT` handling in `create_rst`
+#    26-May-2013 (CT) Import `pyk`
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ from   _GTW                     import GTW
 from   _JNJ                     import JNJ
 from   _MOM                     import MOM
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 from   _MOM.import_MOM          import *
 from   _MOM.inspect             import show_ref_map, show_ref_maps
