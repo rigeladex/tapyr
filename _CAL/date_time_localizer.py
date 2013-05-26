@@ -37,7 +37,7 @@ from   _TFL             import TFL
 from   _CAL             import CAL
 
 from   _TFL.Regexp      import Regexp, Multi_Re_Replacer, Re_Replacer, re
-from   _TFL             import pyk
+from   _TFL.pyk         import pyk
 
 import _CAL.Date_Time
 import _TFL.CAO

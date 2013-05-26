@@ -34,7 +34,7 @@
 from   __future__     import absolute_import, division, print_function, unicode_literals
 
 from   _TFL           import TFL
-from   _TFL           import pyk
+from   _TFL.pyk       import pyk
 from   _TFL._D2       import D2
 
 from   _TFL.Math_Func import sign

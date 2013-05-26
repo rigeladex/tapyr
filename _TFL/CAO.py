@@ -113,8 +113,9 @@
 from   __future__       import print_function
 
 from   _TFL               import TFL
+from   _TFL.pyk           import pyk
 
-from   _TFL               import pyk, sos
+from   _TFL               import sos
 from   _TFL.I18N          import _, _T, _Tn
 from   _TFL.Regexp        import Regexp, re
 from   _TFL.Trie          import Word_Trie as Trie

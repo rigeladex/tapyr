@@ -384,7 +384,7 @@ T_Node
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _TFL              import TFL
-from   _TFL              import pyk
+from   _TFL.pyk          import pyk
 
 import _TFL.Caller
 import _TFL.I18N

@@ -75,7 +75,7 @@ import _GTW._NAV._E_Type.Mixin
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
-from   _TFL                     import pyk
+from   _TFL.pyk                 import pyk
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
 from   posixpath                import join  as pjoin

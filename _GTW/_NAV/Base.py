@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -320,10 +320,10 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
 from   _TFL.Formatter           import formatted
 from   _TFL.predicate           import uniq
-from   _TFL.pyk                 import pickle
 from   _TFL.Record              import Record
 from   _TFL.Regexp              import Dict_Replacer
-from   _TFL                     import pyk, sos
+from   _TFL.pyk                 import pyk
+from   _TFL                     import sos
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -1350,7 +1350,7 @@ class Root (_Dir_) :
     def load_cache (self, cache_file) :
         try :
             with open (cache_file, "rb") as file :
-                cargo = pickle.load (file)
+                cargo = pyk.pickle.load (file)
         except StandardError as exc :
             logging.warning \
                 ( "Loading pickle dump %s failed with exception: %s"
@@ -1426,7 +1426,7 @@ class Root (_Dir_) :
                 cargo.update (cp.as_pickle_cargo (self))
             try :
                 with open (cache_file, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                    pyk.pickle.dump (cargo, file, pyk.pickle.HIGHEST_PROTOCOL)
             except StandardError as exc :
                 logging.warning \
                     ( "Storing pickle dump %s failed with exception: %s"

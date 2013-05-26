@@ -55,7 +55,7 @@
 #--
 
 from   _TFL            import TFL
-from   _TFL            import pyk
+from   _TFL.pyk        import pyk
 from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
 

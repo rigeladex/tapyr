@@ -35,88 +35,143 @@
 #    24-May-2013 (CT) Add `iteritems`, `iterkeys`, `itervalues`, `xrange`
 #    24-May-2013 (CT) Add `int_types`
 #    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
+#    26-May-2013 (CT) Convert to class/instance to allow lazy imports
 #    ««revision-date»»···
 #--
 
-from   itertools    import izip
-from   new          import instancemethod as new_instancemethod
-from   StringIO     import StringIO
-
-from   types        import ClassType as Classic_Class_Type
-
-import cPickle      as     pickle
+import functools
 import sys
 
-int_types    = (int, long)
-string_types = (str, unicode)
-text_type    = unicode
-unichr       = unichr
-zip          = zip
+def lazy_property (fct) :
+    name = fct.__name__
+    @functools.wraps (fct)
+    def _ (self) :
+        try :
+            result = self.__dict__ [name]
+        except KeyError :
+            result = self.__dict__ [name] = fct (self)
+        return result
+    return property (_)
+# end def lazy_property
 
-def adapt__bool__ (cls) :
-    dct = cls.__dict__
-    if "__bool__" in dct and "__nonzero__" not in dct :
-        setattr (cls, "__nonzero__", dct ["__bool__"])
-    return cls
-# end def adapt__bool__
+class _Pyk_ (object) :
+    """Python2 specific implementation of TFL.pyk.
 
-def adapt__div__ (cls) :
-    dct = cls.__dict__
-    if "__truediv__" in dct and "__div__" not in dct :
-        cls.__div__ = cls.__truediv__
-    if "__itruediv__" in dct and "__idiv__" not in dct :
-        cls.__idiv__ = cls.__itruediv__
-    if "__rtruediv__" in dct and "__rdiv__" not in dct :
-        cls.__rdiv__ = cls.__rtruediv__
-    return cls
-# end def adapt__div__
-
-def adapt__str__ (cls) :
-    dct = cls.__dict__
-    if "__str__" in dct and "__unicode__" not in dct :
-        from _TFL import TFL
-        cls.__unicode__ = cls.__str__
-        cls.__str__     = lambda s : TFL.I18N.encode_o (s.__unicode__ ())
-    return cls
-# end def adapt__str__
-
-def fprint (* values, ** kw) :
-    """print(value, ..., sep=' ', end='\\n', file=sys.stdout)
-
-       Prints the values to a stream, or to sys.stdout by default.
-       Optional keyword arguments:
-       file: a file-like object (stream); defaults to the current sys.stdout.
-       sep:  string inserted between values, default a space.
-       end:  string appended after the last value, default a newline.
+       Use a class instead of module-level definitions to allow lazy imports.
     """
-    from   _TFL.User_Config import user_config
-    def _convert (v, encoding) :
-        if not isinstance (v, basestring) :
-            v = unicode (v)
-        if isinstance (v, unicode) :
-            v = v.encode (encoding, "replace")
-        return v
-    file = kw.pop ("file", None)
-    if file is None :
-        file = sys.stdout
-    enc  = user_config.output_encoding
-    sep  = _convert (kw.pop ("sep",  " "),  enc)
-    end  = _convert (kw.pop ("end",  "\n"), enc)
-    txt  = sep.join (_convert (v, enc) for v in values)
-    file.write (txt + end)
-# end def fprint
 
-def iteritems (dct) :
-    return dct.iteritems ()
-# end def iteritems
+    @staticmethod
+    def adapt__bool__ (cls) :
+        dct = cls.__dict__
+        if "__bool__" in dct and "__nonzero__" not in dct :
+            setattr (cls, "__nonzero__", dct ["__bool__"])
+        return cls
+    # end def adapt__bool__
 
-def iterkeys (dct) :
-    return dct.iterkeys ()
-# end def iterkeys
+    @staticmethod
+    def adapt__div__ (cls) :
+        dct = cls.__dict__
+        if "__truediv__" in dct and "__div__" not in dct :
+            cls.__div__ = cls.__truediv__
+        if "__itruediv__" in dct and "__idiv__" not in dct :
+            cls.__idiv__ = cls.__itruediv__
+        if "__rtruediv__" in dct and "__rdiv__" not in dct :
+            cls.__rdiv__ = cls.__rtruediv__
+        return cls
+    # end def adapt__div__
 
-def itervalues (dct) :
-    return dct.itervalues ()
-# end def itervalues
+    @staticmethod
+    def adapt__str__ (cls) :
+        dct = cls.__dict__
+        if "__str__" in dct and "__unicode__" not in dct :
+            from _TFL import TFL
+            cls.__unicode__ = cls.__str__
+            cls.__str__     = lambda s : TFL.I18N.encode_o (s.__unicode__ ())
+        return cls
+    # end def adapt__str__
 
-xrange = xrange
+    @lazy_property
+    def Classic_Class_Type (self) :
+        import types
+        return types.ClassType
+    # end def Classic_Class_Type
+
+    @staticmethod
+    def fprint (* values, ** kw) :
+        """print(value, ..., sep=' ', end='\\n', file=sys.stdout)
+
+           Prints the values to a stream, or to sys.stdout by default.
+           Optional keyword arguments:
+           file: a file-like object (stream); defaults to the current sys.stdout.
+           sep:  string inserted between values, default a space.
+           end:  string appended after the last value, default a newline.
+        """
+        from   _TFL.User_Config import user_config
+        def _convert (v, encoding) :
+            if not isinstance (v, basestring) :
+                v = unicode (v)
+            if isinstance (v, unicode) :
+                v = v.encode (encoding, "replace")
+            return v
+        file = kw.pop ("file", None)
+        if file is None :
+            file = sys.stdout
+        enc  = user_config.output_encoding
+        sep  = _convert (kw.pop ("sep",  " "),  enc)
+        end  = _convert (kw.pop ("end",  "\n"), enc)
+        txt  = sep.join (_convert (v, enc) for v in values)
+        file.write (txt + end)
+    # end def fprint
+
+    int_types = (int, long)
+
+    @staticmethod
+    def iteritems (dct) :
+        return dct.iteritems ()
+    # end def iteritems
+
+    @staticmethod
+    def iterkeys (dct) :
+        return dct.iterkeys ()
+    # end def iterkeys
+
+    @staticmethod
+    def itervalues (dct) :
+        return dct.itervalues ()
+    # end def itervalues
+
+    @lazy_property
+    def izip (self) :
+        import itertools
+        return itertools.izip
+    # end def izip
+
+    @lazy_property
+    def new_instancemethod (self) :
+        import new
+        return new.instancemethod
+    # end def new_instancemethod
+
+    @lazy_property
+    def pickle (self) :
+        import cPickle
+        return cPickle
+    # end def pickle
+
+    @lazy_property
+    def StringIO (self) :
+        import cStringIO
+        return cStringIO.StringIO
+    # end def StringIO
+
+    string_types = (str, unicode)
+    text_type    = unicode
+    unichr       = unichr
+    xrange       = staticmethod (xrange)
+    zip          = staticmethod (zip)
+
+# end class _Pyk_
+
+pyk = _Pyk_ ()
+
 ### __END__ TFL._pyk2

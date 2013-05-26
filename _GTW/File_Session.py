@@ -45,7 +45,7 @@
 #--
 
 from   _GTW                     import GTW
-from   _TFL                     import pyk
+from   _TFL.pyk                 import pyk
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _GTW.Session

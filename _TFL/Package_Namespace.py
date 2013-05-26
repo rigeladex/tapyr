@@ -146,7 +146,7 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL        import pyk
+from   _TFL.pyk    import pyk
 
 import re
 import sys
@@ -336,7 +336,6 @@ class Package_Namespace (object) :
         """Reload all the `modules` of the `Package_Namespace` specified
            (default: all modules of the `Package_Namespace` currently imported).
         """
-        from _TFL import pyk
         old_reload = self.__reload
         if not modules :
             from _TFL.predicate import dusort

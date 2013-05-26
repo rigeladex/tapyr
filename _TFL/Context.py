@@ -105,7 +105,7 @@ def time_block (fmt = "Execution time: %s", out = None, cb = None) :
     if cb is not None :
         cb (start, finish, delta)
     else :
-        import pyk
+        from _TFL.pyk import pyk
         try :
             msg = fmt % (delta, )
         except (TypeError, ValueError) as exc :

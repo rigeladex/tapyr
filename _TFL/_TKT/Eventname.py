@@ -52,7 +52,7 @@ _TFL._TKT._Batch.Eventname defines all names that _TFL._TKT._Tk.Eventname define
 from   __future__       import print_function
 
 from   _TFL                 import TFL
-from   _TFL                 import pyk
+from   _TFL.pyk             import pyk
 
 import _TFL.Caller
 import _TFL._TKT.Mixin

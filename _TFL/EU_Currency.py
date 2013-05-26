@@ -72,7 +72,7 @@
 
 from   _TFL              import TFL
 
-from   _TFL              import pyk
+from   _TFL.pyk          import pyk
 from   _TFL.Currency     import *
 from   _TFL.Currency     import Currency, _Currency_
 

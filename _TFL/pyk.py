@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -33,7 +33,7 @@
 import sys
 
 if sys.version_info < (3,) :
-    from _TFL._pyk2 import *
+    from _TFL._pyk2 import pyk
 else :
-    from _TFL._pyk3 import *
+    from _TFL._pyk3 import pyk
 ### __END__ TFL.pyk

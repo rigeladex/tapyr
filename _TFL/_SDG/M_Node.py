@@ -40,7 +40,7 @@
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 from   _TFL                            import TFL
-from   _TFL                            import pyk
+from   _TFL.pyk                        import pyk
 
 import _TFL._Meta.M_Auto_Combine_Dicts
 import _TFL._Meta.M_Class

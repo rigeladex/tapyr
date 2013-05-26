@@ -51,7 +51,7 @@ import _CAL.Date
 import _CAL.Time
 
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL                     import pyk
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
 
 import datetime

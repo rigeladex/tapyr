@@ -50,7 +50,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _TFL                   import TFL
 
-from   _TFL                   import pyk
+from   _TFL.pyk               import pyk
 from   _TFL                   import sos
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.object_globals    import object_module

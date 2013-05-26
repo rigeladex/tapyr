@@ -34,66 +34,105 @@
 #    24-May-2013 (CT) Add `iteritems`, `iterkeys`, `itervalues`, `xrange`
 #    24-May-2013 (CT) Add `int_types`
 #    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
+#    26-May-2013 (CT) Convert to class/instance to allow lazy imports
 #    ««revision-date»»···
 #--
 
-from   io     import StringIO
+import functools
 
-import pickle
+def lazy_property (fct) :
+    name = fct.__name__
+    @functools.wraps (fct)
+    def _ (self) :
+        try :
+            result = self.__dict__ [name]
+        except KeyError :
+            result = self.__dict__ [name] = fct (self)
+        return result
+    return property (_)
+# end def lazy_property
 
-Classic_Class_Type = None
+class _Pyk_ (object) :
+    """Python2 specific implementation of TFL.pyk.
 
-fprint             = print
+       Use a class instead of module-level definitions to allow lazy imports.
+    """
 
-int_types          = (int, )
-izip               = zip
-string_types       = (str, )
-text_type          = str
-unichr             = chr
+    @staticmethod
+    def adapt__bool__ (cls) :
+        dct = cls.__dict__
+        if "__bool__" not in dct and "__nonzero__" in dct :
+            setattr (cls, "__bool__", dct ["__nonzero__"])
+        return cls
+    # end def adapt__bool__
 
-def adapt__bool__ (cls) :
-    dct = cls.__dict__
-    if "__bool__" not in dct and "__nonzero__" in dct :
-        setattr (cls, "__bool__", dct ["__nonzero__"])
-    return cls
-# end def adapt__bool__
+    @staticmethod
+    def adapt__div__ (cls) :
+        """Nothing to be done here"""
+        return cls
+    # end def adapt__div__
 
-def adapt__div__ (cls) :
-    """Nothing to be done here"""
-    return cls
-# end def adapt__div__
+    @staticmethod
+    def adapt__str__ (cls) :
+        """Nothing to be done here"""
+        return cls
+    # end def adapt__str__
 
-def adapt__str__ (cls) :
-    """Nothing to be done here"""
-    return cls
-# end def adapt__str__
+    Classic_Class_Type = None
+    fprint             = staticmethod (print)
+    int_types          = (int, )
 
-def new_instancemethod (function, instance, cls) :
-    ### XXX how to implement this ???
-    if instance is None :
-        return function
-    raise NotImplementedError \
-        ("new_instancemethod for instance %s" % (instance, ))
-# end def new_instancemethod
+    @staticmethod
+    def iteritems (dct) :
+        return dct.items ()
+    # end def iteritems
 
-def iteritems (dct) :
-    return dct.items ()
-# end def iteritems
+    @staticmethod
+    def iterkeys (dct) :
+        return dct.keys ()
+    # end def iterkeys
 
-def iterkeys (dct) :
-    return dct.keys ()
-# end def iterkeys
+    @staticmethod
+    def itervalues (dct) :
+        return dct.values ()
+    # end def itervalues
 
-def itervalues (dct) :
-    return dct.values ()
-# end def itervalues
+    izip = zip
 
-xrange = range
+    @staticmethod
+    def new_instancemethod (function, instance, cls) :
+        ### XXX how to implement this ???
+        if instance is None :
+            return function
+        raise NotImplementedError \
+            ("new_instancemethod for instance %s" % (instance, ))
+    # end def new_instancemethod
 
-_zip = zip
+    @lazy_property
+    def pickle (self) :
+        import pickle
+        return pickle
+    # end def pickle
 
-def zip (* args) :
-    return list (_zip (* args))
-# end def zip
+    @lazy_property
+    def StringIO (self) :
+        import io
+        return io.StringIO
+    # end def StringIO
+
+    string_types       = (str, )
+    text_type          = str
+    unichr             = chr
+    _zip               = staticmethod (zip)
+
+    def zip (self, * args) :
+        return list (self._zip (* args))
+    # end def zip
+
+    xrange = staticmethod (range)
+
+# end class _Pyk_
+
+pyk = _Pyk_ ()
 
 ### __END__ TFL._pyk3

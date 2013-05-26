@@ -62,7 +62,7 @@
 #--
 
 from   _TFL                  import TFL
-from   _TFL                  import pyk
+from   _TFL.pyk              import pyk
 
 from   _TFL.predicate        import any_true, dusort
 from   bisect                import bisect

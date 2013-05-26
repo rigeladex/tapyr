@@ -320,7 +320,7 @@ class Account (_Ancestor_Essence) :
         from   random import choice
         import string
         chars = cls.charset
-        return "".join (choice (chars) for i in xrange (length))
+        return "".join (choice (chars) for i in range (length))
     # end def random_password
 
     @classmethod

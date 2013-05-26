@@ -39,7 +39,7 @@
 from   __future__  import print_function
 
 from   _TFL import       TFL
-from   _TFL import       pyk
+from   _TFL.pyk import pyk
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object

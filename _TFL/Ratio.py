@@ -40,7 +40,7 @@
 from   __future__  import print_function
 
 from   _TFL           import TFL
-from   _TFL           import pyk
+from   _TFL.pyk       import pyk
 
 from   _TFL.Regexp    import Regexp, re
 

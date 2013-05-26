@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -40,8 +40,8 @@ from   _TFL                     import TFL
 
 import _GTW._Werkzeug
 
-from   _TFL                     import pyk, sos
-from   _TFL.pyk                 import pickle
+from   _TFL.pyk                 import pyk
+from   _TFL                     import sos
 
 import _TFL._Meta.Object
 import _TFL.Context
@@ -71,7 +71,7 @@ class App_Cache (TFL.Meta.Object) :
         path = self.cache_path
         try :
             with open (path, "rb") as file :
-                cargo = pickle.load (file)
+                cargo = pyk.pickle.load (file)
         except StandardError as exc :
             logging.warning \
                 ( "Loading pickle dump %s failed with exception: %s"
@@ -99,7 +99,7 @@ class App_Cache (TFL.Meta.Object) :
                 cargo.update (cp.as_pickle_cargo (** kw))
             try :
                 with open (path, "wb") as file :
-                    pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
+                    pyk.pickle.dump (cargo, file, pyk.pickle.HIGHEST_PROTOCOL)
                 if self.verbose :
                     print ("Stored pickle dump %s successfully" % path)
             except StandardError as exc :

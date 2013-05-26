@@ -131,7 +131,6 @@ import _TFL.Undef
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst
-from   _TFL.pyk                 import pickle
 from   _TFL.Regexp              import Regexp, re
 
 import json

@@ -33,7 +33,7 @@
 #--
 
 from   _TFL               import TFL
-from   _TFL               import pyk
+from   _TFL.pyk           import pyk
 
 @pyk.adapt__bool__
 class Undef (object) :

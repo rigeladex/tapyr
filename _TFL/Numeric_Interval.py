@@ -44,7 +44,7 @@
 #--
 
 from   _TFL                 import TFL
-from   _TFL                 import pyk
+from   _TFL.pyk             import pyk
 
 from   _TFL.Environment           import practically_infinite as infinite
 from   _TFL._Meta.totally_ordered import totally_ordered
