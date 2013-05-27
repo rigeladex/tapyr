@@ -67,6 +67,7 @@
 #                     fix `ph_name.computed_default`
 #    10-May-2013 (CT) Set `Account_Anonymous.show_in_ui = False`
 #    26-May-2013 (CT) Add `Account_Manager.apply_migration`, `.migration`
+#    27-May-2013 (CT) Make `create_new_account_x` argument `password` optional
 #    ««revision-date»»···
 #--
 
@@ -209,8 +210,10 @@ class Account_Manager (_Ancestor_Essence.M_E_Type.Manager) :
                     obj.set_raw (** dict (db_attrs))
     # end def apply_migration
 
-    def create_new_account_x (self, name, password, ** kw) :
-        etype    = self._etype
+    def create_new_account_x (self, name, password = None, ** kw) :
+        etype = self._etype
+        if not password :
+            password = etype.random_password (32)
         password = etype.password_hash (password)
         return self \
             ( name
