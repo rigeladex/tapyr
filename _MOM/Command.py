@@ -59,8 +59,12 @@
 #    28-Jan-2013 (CT) Print `Url (...).path` in `_handle_migrate`
 #    26-May-2013 (CT) Change `_cro_context` to use `try/finally`, not `/except`
 #    26-May-2013 (CT) Add support for authorization migration
+#    27-May-2013 (CT) Add optional argument `mig_auth_file` to
+#                     `_handle_load_auth_mig` and `_read_auth_mig`
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 from   _MOM.import_MOM        import *
 
@@ -291,11 +295,11 @@ class MOM_Command (TFL.Command.Root_Command) :
         create = create or url.create
         if create :
             if verbose :
-                print "Creating new scope", apt, url.path or "in memory"
+                print ("Creating new scope", apt, url.path or "in memory")
             scope = self._create_scope (apt, url, verbose)
         else :
             if verbose :
-                print "Loading scope", apt, url
+                print ("Loading scope", apt, url)
             scope = self._load_scope (apt, url)
         return scope
     # end def scope
@@ -335,7 +339,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
             f.write (mig)
         if cmd.verbose :
-            print "Wrote authorization objects to", cmd.mig_auth_file
+            print ("Wrote authorization objects to", cmd.mig_auth_file)
         scope.commit      ()
         scope.ems.compact ()
         scope.destroy     ()
@@ -354,7 +358,7 @@ class MOM_Command (TFL.Command.Root_Command) :
     def _handle_delete (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         if cmd.verbose :
-            print "Deleting scope", apt, url.path
+            print ("Deleting scope", apt, url.path)
         apt.delete_database (url)
     # end def _handle_delete
 
@@ -369,9 +373,9 @@ class MOM_Command (TFL.Command.Root_Command) :
         return self.scope (url or cmd.db_url, cmd.db_name, create = False)
     # end def _handle_load
 
-    def _handle_load_auth_mig (self, cmd, url = None) :
+    def _handle_load_auth_mig (self, cmd, url = None, mig_auth_file = None) :
         scope = self._handle_load (cmd, url)
-        self._read_auth_mig       (cmd, scope)
+        self._read_auth_mig       (cmd, scope, mig_auth_file)
         scope.commit              ()
         scope.ems.compact         ()
         scope.destroy             ()
@@ -381,13 +385,17 @@ class MOM_Command (TFL.Command.Root_Command) :
         if cmd.Auth_Migrate :
             self._handle_auth_mig (cmd)
         if cmd.verbose :
-            print "Migrating scope", cmd.db_url, cmd.db_name, \
-                "-->", cmd.target_db_url
+            print \
+                ( "Migrating scope", cmd.db_url, cmd.db_name
+                , "-->", cmd.target_db_url
+                )
         apt_s, url_s = self.app_type_and_url (cmd.db_url,        cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
         if cmd.verbose :
-            print "   ", apt_s, apt_s.Url (url_s).path, \
-                "to", apt_t, apt_t.Url (url_t).path
+            print \
+                ( "   ", apt_s, apt_s.Url (url_s).path
+                , "to",  apt_t, apt_t.Url (url_t).path
+                )
         db_man_s = self.DB_Man.connect (apt_s, url_s)
         cmgr = self._cro_context if cmd.readonly else TFL.Context.relaxed
         with cmgr (db_man_s, True) :
@@ -416,25 +424,28 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _load_scope
 
     def _print_info (self, apt, url, dbmd, indent = "") :
-        print "%sInfo for database" % (indent, ), apt, url
+        print ("%sInfo for database" % (indent, ), apt, url)
         for k in sorted (dbmd) :
-            print "%s%-12s : %s" % (indent, k, dbmd [k])
-        print "%s%-12s : %s" % (indent, "dbv_hash/apt", apt.db_version_hash)
-        print
+            print ("%s%-12s : %s" % (indent, k, dbmd [k]))
+        print ("%s%-12s : %s" % (indent, "dbv_hash/apt", apt.db_version_hash))
+        print ()
     # end def _print_info
 
-    def _read_auth_mig (self, cmd, scope) :
+    def _read_auth_mig (self, cmd, scope, mig_auth_file = None) :
         try :
-            f = open (cmd.mig_auth_file, "rb")
+            f = open (mig_auth_file or cmd.mig_auth_file, "rb")
         except IOError as exc :
-            print "Couldn't open", cmd.mig_auth_file, "due to exception", exc
+            print \
+                ( "Couldn't open", cmd.mig_auth_file, "due to exception\n    "
+                , exc
+                )
         else :
             with contextlib.closing (f) :
                 cargo = f.read ()
             mig = pyk.pickle.loads (cargo)
             scope.Auth.Account.apply_migration (mig)
             if cmd.verbose :
-                print "Loaded authorization objects from", cmd.mig_auth_file
+                print ("Loaded authorization objects from", cmd.mig_auth_file)
     # end def _read_auth_mig
 
 Command = MOM_Command # end class
