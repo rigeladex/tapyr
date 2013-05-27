@@ -190,8 +190,11 @@
 #                     `_m_create_rev_ref_attr`
 #    12-May-2013 (CT) Add `rev_type` to `_m_create_rev_ref_attr`
 #    13-May-2013 (CT) Fix `.__subclasscheck__`, again
+#    27-May-2013 (CT) Kludge around Python 2.6's broken type.__subclasscheck__
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 from   _MOM import MOM
 from   _TFL import TFL
@@ -571,10 +574,12 @@ class M_Entity (M_E_Mixin) :
             if __debug__ :
                 if verbose :
                     p = _Properties._names.get (name)
-                    print "Property %s.%s already defined as %s [%s]" %\
-                        ( cls.type_name, name
-                        , getattr (p,    "kind")
-                        , getattr (prop, "kind")
+                    print \
+                        ( "Property %s.%s already defined as %s [%s]"
+                        % ( cls.type_name, name
+                          , getattr (p,    "kind")
+                          , getattr (prop, "kind")
+                          )
                         )
         else :
             _Properties._m_add_prop (cls, name, prop)
@@ -646,13 +651,21 @@ class M_Entity (M_E_Mixin) :
     # end def __instancecheck__
 
     def __subclasscheck__ (cls, subclass) :
-        Essence = getattr (cls, "Essence", cls)
+        Essence_c  = getattr (cls,      "Essence", cls)
+        Essence_s  = getattr (subclass, "Essence", subclass)
         try :
-            _super = Essence.__m_super
+            _super = Essence_c.__m_super
         except AttributeError :
-            return type.__subclasscheck__   (Essence, subclass)
+            try :
+                return type.__subclasscheck__ (Essence_c, Essence_s)
+            except TypeError :
+                ### Python 2.6's __subclasscheck__ is broken beyond belief
+                if cls is Essence_c :
+                    return super (M_Entity, cls).__subclasscheck__ (Essence_s)
+                else :
+                    return issubclass (Essence_s, Essence_c)
         else :
-            return _super.__subclasscheck__ (subclass)
+            return _super.__subclasscheck__ (Essence_s)
     # end def __subclasscheck__
 
 # end class M_Entity
@@ -904,10 +917,12 @@ class M_E_Type (M_E_Mixin) :
             if __debug__ :
                 if verbose :
                     p = _Properties._prop_dict.get (name)
-                    print "Property %s.%s already defined for %s as %s [%s]" %\
-                        ( cls.type_name, name, cls.app_type.name
-                        , getattr (p,    "kind")
-                        , getattr (prop, "kind")
+                    print \
+                        ( "Property %s.%s already defined for %s as %s [%s]"
+                        % ( cls.type_name, name, cls.app_type.name
+                          , getattr (p,    "kind")
+                          , getattr (prop, "kind")
+                          )
                         )
         else :
             result = _Properties._add_prop (cls, name, prop)
@@ -978,7 +993,8 @@ class M_E_Type (M_E_Mixin) :
                                     ( "%s: %s attribute `%s` of `%s` cannot "
                                       "be referred to by object "
                                       "invariant `%s`"
-                                    ) % (cls, attr.kind, an, cls.type_name, pn)
+                                    % (cls, attr.kind, an, cls.type_name, pn)
+                                    )
                         else :
                             P._attr_map [attr.attr].append (pn)
                             if attr.is_required :
