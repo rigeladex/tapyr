@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -147,6 +147,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL           import TFL
 
 from   _TFL           import sos
@@ -158,8 +160,7 @@ import _TFL._UI
 import _TFL._UI.Mixin
 from   _TFL._UI.Style import *
 import _TFL._UI.Command_Mgr
-import _TOM._UI.Change_Counter
-
+import _TFL._UI.Change_Counter
 
 import sys
 
@@ -182,7 +183,7 @@ class Styles_Cache (object) :
 
     __setitem__  = __setattr__
 
-    __contains__ = has_key = styles.has_key
+    __contains__ = styles.__contains__
 
 # end class Styles_Cache
 
@@ -323,7 +324,7 @@ class Node (TFL.UI.Mixin) :
               , (Regexp (r"^([^a-zA-Z]*\d)"), r"A\1")
               )
 
-    class Name_Clash (StandardError) : pass
+    class Name_Clash (Exception) : pass
 
     def __init__ \
         ( self
@@ -373,7 +374,7 @@ class Node (TFL.UI.Mixin) :
         if not self.parent :
             self.level       = 0
             self.number      = len (self.browser.nodes)
-            self.bid         = `self.browser.bid_seed`
+            self.bid         = repr (self.browser.bid_seed)
             self.tag         = self.name + "::" + self.bid
             browser.bid_seed = browser.bid_seed + 1
             browser.nodes.append (self)
@@ -394,10 +395,10 @@ class Node (TFL.UI.Mixin) :
                 , any_leave = self.mouse_leave
                 )
             )
-        self.level_tag = "level" + `self.level`
+        self.level_tag = "level" + repr (self.level)
         self.head_tag  = self.level_tag + ':head'
-        if browser.node_map.has_key (self.tag) :
-            raise Name_Clash, self.tag
+        if self.tag in browser.node_map :
+            raise Name_Clash (self.tag)
         browser.node_map [self.tag] = self
         self.children               = []
         self.tags                   = ()
@@ -810,7 +811,7 @@ class Node (TFL.UI.Mixin) :
             tail = text.pos_at (text.eol_pos (self.tail_mark), delta = 1)
             self._delete (self.head_mark, tail)
             self.browser.nodes.remove (self)
-        if self.browser.node_map.has_key (self.tag) :
+        if self.tag in self.browser.node_map :
             del self.browser.node_map [self.tag]
     # end def destroy
 
@@ -958,7 +959,7 @@ class Node_Linked (Node) :
         for l in self.o_links :
             links.extend (l if isinstance (l, (list,tuple)) else (l,))
         link_dct = dict ((self._link_name (i), i) for i in links)
-        sk       = lambda (n, _) : -len (n) ### longer names first
+        sk       = lambda n, _ : (-len (n), n) ### longer names first
         for nam, o in sorted (link_dct.iteritems (), key = sk) :
             callback       = callback_style \
                 ( callback = dict \
@@ -1024,7 +1025,7 @@ class Browser (TFL.UI.Mixin) :
         self.wtk_widget     = self.text.wtk_widget
         self.wtk_widget.ui  = self   # back reference
         self.exposed_widget = self.text.exposed_widget
-        if not styles.has_key  ("active_node") :
+        if "active_node" not in styles :
             self._setup_styles ()
         self.text.apply_style  (styles.normal)
         self.text.set_tabs     (* styles._tabs)
@@ -1177,7 +1178,7 @@ class Browser (TFL.UI.Mixin) :
             )
         tabs = styles._tabs = []
         for i in range (1, 16) :
-            level = "level" + `i-1`
+            level = "level" + repr (i-1)
             head  = level + ':head'
             styles [level] = Style \
                 ( level
@@ -1307,12 +1308,14 @@ class Browser (TFL.UI.Mixin) :
         self.gauge.deactivate ()
     # end def _deactivate_gauge
 
-    def _find_highlight (self, (node, match), apply_found_bg = 0) :
+    def _find_highlight (self, nm, apply_found_bg = 0) :
+        node, match = nm
         self.open (node)
         node.find_highlight (match, apply_found_bg = 0)
     # end def _find_highlight
 
-    def _find_unhighlight (self, (node, match)) :
+    def _find_unhighlight (self, nm) :
+        node, match = nm
         node.find_unhighlight (match)
     # end def _find_unhighlight
 
@@ -1521,7 +1524,7 @@ class Browser (TFL.UI.Mixin) :
         """ find match """
         result = func (*args)
         if result is None :
-            print "%s not found" % self._find_pattern
+            print ("%s not found" % self._find_pattern)
     # end def _do_find
 
     def _do_find_next (self) :

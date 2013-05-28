@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,12 +33,8 @@
 #     7-May-2001 (CT) `Glob_Filter' added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    24-Mar-2005 (CT) Use `TFL.sos` instead of `sos`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL      import TFL
 
@@ -97,7 +93,7 @@ class File :
                 result = self.name
             self.full_name = result
             return result
-        elif self._stat_map.has_key (name) :
+        elif name in self._stat_map:
             stat_info = TFL.sos.stat (self.full_name)
             for k, v in self._stat_map.items () :
                 setattr (self, k, stat_info [v])

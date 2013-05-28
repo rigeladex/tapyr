@@ -58,7 +58,7 @@ class Meta_Py_Object (TFL.Meta.M_Class) :
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
         if cls.format_code :
-            assert not cls.Table.has_key (cls.format_code)
+            assert cls.format_code not in cls.Table
             cls.Table [cls.format_code] = cls
         if cls.c_types :
             cls.Table [cls.c_types] = cls
@@ -294,7 +294,7 @@ class Py2C_Wrapper :
     def gen_constructor (self, module_name, class_name, i_format, ** kw) :
         c_module     = self.c_module
         C            = self.C
-        if kw.has_key ("function_name") :
+        if "function_name" in kw :
             fct_name = kw ["function_name"]
             del        kw ["function_name"]
         else :

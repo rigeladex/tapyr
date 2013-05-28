@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,6 +51,7 @@
 #    21-Aug-2007 (CED) practically_infinite introduced
 #    27-Apr-2010 (CT) `exec_python_startup` added
 #    21-Jun-2010 (CT) `py_shell` added
+#    28-May-2013 (CT) Use `in`, not `has_key`
 #    ««revision-date»»···
 #--
 
@@ -205,7 +206,7 @@ def module_path (module) :
     """Returns path where `module' resides"""
     # print ">>> sys.path = %s" % sys.path #AGO
     # print ">>> dir () = %s" % dir () #AGO
-    if not _module_pathes.has_key (module) :
+    if module not in _module_pathes :
         if frozen () :
             _path = script_path ()
         elif (   module in sys.modules

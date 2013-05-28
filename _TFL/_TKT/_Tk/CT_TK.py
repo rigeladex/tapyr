@@ -469,13 +469,22 @@
 
 from   __future__       import print_function
 
-import Tkinter
-Tkinter.wantobjects = False
+import sys
+if sys.version_info < (3,) :
+    import Tkinter
+    from   Tkconstants       import *
+    from   Tkinter           import *
+    from   Tkinter           import _flatten, _default_root
+    from   Canvas            import *
+    import tkMessageBox
+else :
+    import tkinter           as Tkinter
+    from   tkinter.constants import *
+    from   tkinter           import *
+    from   tkinter           import _flatten, _default_root
+    from   tkinter           import messagebox as tkMessageBox
 
-from   Tkconstants import *
-from   Tkinter     import *
-from   Tkinter     import _flatten, _default_root
-from   Canvas      import *
+Tkinter.wantobjects = False
 
 from   _TFL.Filename    import Filename
 from   _TFL.Functor     import *
@@ -487,11 +496,8 @@ from   _TFL             import TFL
 import _TFL._Meta.Object
 import _TFL.r_eval
 
-import tkMessageBox
-
 import imp
 import re
-import sys
 import traceback
 import types
 import zipfile

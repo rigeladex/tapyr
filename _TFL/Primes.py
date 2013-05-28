@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2001-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,12 +29,8 @@
 #    25-Mar-2001 (CT)  Creation
 #    11-Feb-2006 (CT)  Moved into package `TFL`
 #     8-Nov-2006 (PGO) Primes are immutable
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL               import TFL
 import _TFL.Ordered_Set
@@ -48,7 +44,7 @@ class Primes (TFL.Immutable_Ordered_Set) :
     U_Factors    = {}
 
     def is_prime (self, p) :
-        return self.index_dict.has_key (p)
+        return p in self.index_dict
     # end def is_prime
 
     def factors (self, number, _i = 0) :

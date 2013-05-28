@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -944,7 +944,7 @@ class Command_Line (Command_Spec) :
                     name  = match_group ("name")
                     value = match_group ("value")
                     hpat  = re.escape   (name)
-                    if self.option.has_key (name) :
+                    if name in self.option :
                         option = self.option [name]
                         if (option.valued and (not value) and (i + 1 < n)) :
                             i     = i + 1
@@ -1022,7 +1022,7 @@ class Command_Line (Command_Spec) :
 
     def key_value (self, name) :
         """Returns the value of the keyword parameter `name'."""
-        if self.keywords.has_key (name) :
+        if name in self.keywords :
             return self.keywords [name]
         else :
             return TFL.sos.environ.get (name, "")
@@ -1051,12 +1051,12 @@ class Command_Line (Command_Spec) :
                 return result.value_1 ()
             else :
                 return result.values  ()
-        elif self.arg_dict.has_key (name) :
+        elif name in self.arg_dict :
             return self.arg_dict [name].value
         _name = "_" + name
         if _name [:2] != "__" and hasattr (self, _name) :
             return getattr (self, _name)
-        if self.keywords.has_key (name) :
+        if name in self.keywords :
             return self.keywords [name].value
         raise AttributeError, name
     # end def _attribute_value

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -635,7 +635,7 @@ class _Field_Entry_ :
         ### copy the default of the class to the instance
         self.customize = self.customize.copy ()
         for par_name, par_value in parameters.items () :
-            if not self.customize.has_key (par_name) :
+            if par_name not in self.customize :
                 raise UndefinedParameter, par_name
             self.customize [par_name] = par_value
     # end def __init__
@@ -892,7 +892,7 @@ def _ask_file (tk_fct, kw) :
 
 def _ask_file_name (tk_fct, kw) :
     kw = kw.copy ()
-    if kw.has_key ("init_val") :
+    if "init_val" in kw :
         kw ["initialdir"], kw ["initialfile"] = sos.path.split (kw ["init_val"])
         del kw ["init_val"]
     return _ask_file (tk_fct, kw)
@@ -908,7 +908,7 @@ def ask_save_file_name (name = None, prompt = None, ** kw) :
 
 def _ask_dir_name (mustexist, kw) :
     kw ["mustexist"] = mustexist
-    if kw.has_key ("init_val") :
+    if "init_val" in kw :
         kw ["initialdir"] = kw ["init_val"]
         del kw ["init_val"]
     for x in "defaultextension", "filetypes", "initialfile" :

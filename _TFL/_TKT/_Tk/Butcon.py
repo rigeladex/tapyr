@@ -103,7 +103,7 @@ class _Tk_Butcon_ (TFL.TKT.Tk.Widget, TFL.TKT.Butcon) :
     # XXXX FIXME: bitmap_mgr add and caching of seen bitmaps should
     # probably be done by framework
     def _get_bitmap (self, bitmap) :
-        if not self.bitmaps.has_key (bitmap) :
+        if bitmap not in self.bitmaps :
             CTK.bitmap_mgr.add (bitmap + '.xbm')
             self.bitmaps [bitmap] = 1
         return CTK.bitmap_mgr [bitmap]

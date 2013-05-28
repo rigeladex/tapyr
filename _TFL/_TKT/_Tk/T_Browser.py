@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
@@ -280,7 +280,7 @@ class T_Node :
             self.tag   = clean.sub (by, self.tag)
         self.bind_tag  = self.tag + "#bind"
         self.level_tag = "level" + `self.level`
-        if browser.node_map.has_key (self.tag) :
+        if self.tag in browser.node_map :
             raise Name_Clash, self.tag
         browser.node_map [self.tag] = self
 
@@ -640,7 +640,7 @@ class T_Node :
         if self.level == 0 :
             self._delete (self.head_mark, self.tail_mark + " lineend +1 char")
             self.browser.nodes.remove (self)
-        if self.browser.node_map.has_key (self.tag) :
+        if self.tag in self.browser.node_map :
             del self.browser.node_map [self.tag]
     # end def destroy
 

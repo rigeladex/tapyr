@@ -925,7 +925,7 @@ class Command_Group (_Command_Group_) :
     # end def _handle_dyn_commands
 
     def __getitem__ (self, index) :
-        if self._group.has_key (index) :
+        if index in self._group :
             return self._group [index]
         return self.command [index]
     # end def __getitem__

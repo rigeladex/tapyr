@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2002-2008 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2002-2013 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -73,7 +73,7 @@ class M_Struct (TFL.Meta.M_Class) :
                 cls.needs_struct.append (cls)
             if getattr (cls, "uses_global_buffer", 0) :
                 cls.uses_global_buffers.append (cls)
-                if not cls.__dict__.has_key ("field_name") :
+                if "field_name" not in cls.__dict__ :
                     if name.startswith (cls.prefix) :
                         name = name [len (cls.prefix):]
                     setattr (cls, "field_name", name.lower ())
