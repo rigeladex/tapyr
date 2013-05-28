@@ -61,6 +61,9 @@
 #    26-May-2013 (CT) Add support for authorization migration
 #    27-May-2013 (CT) Add optional argument `mig_auth_file` to
 #                     `_handle_load_auth_mig` and `_read_auth_mig`
+#    28-May-2013 (CT) Move `-Auth_Migrate` to `MOM_Command._opts`
+#                     (some descendents call `_handle_create` from handlers
+#                     of other commands)
 #    ««revision-date»»···
 #--
 
@@ -146,7 +149,8 @@ class MOM_Command (TFL.Command.Root_Command) :
         ( copyright_start   = 2010
         )
     _opts                   = \
-        ( "-copyright_start:I?Start of copyright for this application"
+        ( "-Auth_Migrate:B?Migrate authorization objects"
+        , "-copyright_start:I?Start of copyright for this application"
         , TFL.CAO.Abs_Path
             ( name        = "db_name"
             , description = "Default name of database"
@@ -165,23 +169,12 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
-    class _MOM_New_DB_Command_ (_Sub_Command_) :
-        ### Base for commands that create a new database
-
-        is_partial              = True
-        _opts                   = \
-            ( "-Auth_Migrate:B?Migrate authorization objects"
-            ,
-            )
-
-    # end class _MOM_New_DB_Command_
-
     class _MOM_Auth_Mig_ (_Sub_Command_) :
         """Create a migration of the authorization objects"""
 
     _Auth_Mig_ = _MOM_Auth_Mig_ # end class
 
-    class _MOM_Create_ (_MOM_New_DB_Command_) :
+    class _MOM_Create_ (_Sub_Command_) :
         """Create database specified by `-db_url`."""
 
     _Create_ = _MOM_Create_ # end class
@@ -206,7 +199,7 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     _Load_Auth_Mig_ = _MOM_Load_Auth_Mig_ # end class
 
-    class _MOM_Migrate_ (_MOM_New_DB_Command_) :
+    class _MOM_Migrate_ (_Sub_Command_) :
         """Migrate database specified by `-db_url` to `-target_db_url`."""
 
         _opts                   = \
