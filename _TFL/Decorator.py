@@ -54,6 +54,8 @@
 #    13-Mar-2010 (CT)  `decorator` keyword argument added to `Add_To_Class`, too
 #     9-Aug-2012 (CT)  Add `getattr_safe`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    28-May-2013 (CT)  Add `subclass_responsibility`
+#    28-May-2013 (CT)  Change `Decorator` to properly support `classmethod`
 #    ««revision-date»»···
 #--
 
@@ -99,21 +101,26 @@ def Decorator (decorator) :
            >>> foo.__name__, foo.__doc__
            ('foo', 'Function to test decoration')
     """
+    def _update (wrapper, wrapped) :
+        wrapper.__name__   = wrapped.__name__
+        wrapper.__module__ = getattr (wrapped, "__module__", "<builtin>")
+        wrapper.__doc__    = wrapped.__doc__
+        wrapper.__dict__.update (getattr (wrapped, "__dict__", {}))
+        wrapper._globals   = getattr \
+            (wrapped, "_globals", getattr (wrapped, "__globals__", {}))
     def wrapper (f) :
-        decorated             = decorator (f)
-        decorated.__name__    = f.__name__
-        decorated.__module__  = getattr (f, "__module__", "<builtin>")
-        decorated.__doc__     = f.__doc__
-        decorated.__dict__.update (getattr (f, "__dict__", {}))
-        decorated._globals    = \
-            getattr (f, "_globals", getattr (f, "__globals__", {}))
+        if isinstance (f, (classmethod, staticmethod)) :
+            orig_f                = f.__func__
+            cors                  = f.__class__
+            orig_f.is_classmethod = cors is classmethod
+            wrapper               = decorator (orig_f)
+            decorated             = cors (wrapper)
+            _update (wrapper, orig_f)
+        else :
+            decorated = decorator (f)
+            _update (decorated, f)
         return decorated
-    wrapper.__name__   = decorator.__name__
-    wrapper.__module__ = decorator.__module__
-    wrapper.__doc__    = decorator.__doc__
-    wrapper.__dict__.update (decorator.__dict__)
-    wrapper._globals   = getattr \
-        (decorator, "_globals", getattr (decorator, "__globals__", {}))
+    _update (wrapper, decorator)
     return wrapper
 # end def Decorator
 
@@ -278,6 +285,34 @@ def Override_Method (cls) :
         return f
     return decorator
 # end def Override_Method
+
+@Decorator
+def subclass_responsibility (f) :
+    """Raise a NotImplementedError unless the method is redefined in
+       descendents.
+
+       For classmethods, use `subclass_responsibility` as first decorator::
+
+           @subclass_responsibility
+           @classmethod
+           def meth (cls, ...) :
+               ...
+
+    """
+    ### For methods decorated with `@classmethod`, `Decorator` passes the
+    ### original method but marks it with `is_classmethod`
+    is_classmethod = getattr (f, "is_classmethod", False)
+    fmt = "%s must implement method %r"
+    if isinstance (f, classmethod) or is_classmethod :
+        name = f.__name__ if is_classmethod else f.__func__.__name__
+        def _ (cls, * args, ** kw) :
+            raise NotImplementedError (fmt % (cls.__name__, name))
+    else :
+        name = f.__name__
+        def _ (self, * args, ** kw) :
+            raise NotImplementedError (fmt % (self.__class__.__name__, name))
+    return _
+# end def subclass_responsibility
 
 __doc__ = """
 Module `Decorator`

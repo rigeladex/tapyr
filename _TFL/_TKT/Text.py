@@ -64,12 +64,15 @@
 #                      respectively
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty`.
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
+#    28-May-2013 (CT)  Use `@subclass_responsibility` instead of home-grown code
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function
 
 from   _TFL                 import TFL
+from   _TFL.Decorator       import subclass_responsibility
+
 import _TFL._TKT.Mixin
 
 class Text (TFL.TKT.Mixin) :
@@ -213,6 +216,7 @@ class Text (TFL.TKT.Mixin) :
         self.insert (self.buffer_tail, text, style)
     # end def append
 
+    @subclass_responsibility
     def apply_style (self, style, head = None, tail = None, delta = 0, lift = False, tag = None) :
         """Apply `style` from position/mark `head` (default:
            `self.buffer_head`) plus `delta` to position/mark `tail` (default:
@@ -224,16 +228,13 @@ class Text (TFL.TKT.Mixin) :
            lmargin2 must alway be applied in the same style (this is an
            implementation restriction of GTK).
         """
-        raise NotImplementedError \
-            ("%s must define apply_style" % (self.__class__.__name__, ))
     # end def apply_style
 
+    @subclass_responsibility
     def bol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
         """Return position of begin of physical line of `pos_or_mark` plus
            `delta` plus `line_delta`.
         """
-        raise NotImplementedError \
-            ("%s must define bol_pos" % (self.__class__.__name__, ))
     # end def bol_pos
 
     def clear (self) :
@@ -241,125 +242,108 @@ class Text (TFL.TKT.Mixin) :
         self.remove (self.buffer_head, self.buffer_tail)
     # end def clear
 
+    @subclass_responsibility
     def eol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
         """Return position of end of physical line of `pos_or_mark` plus
            `delta` plus `line_delta`.
         """
-        raise NotImplementedError \
-            ("%s must define eol_pos" % (self.__class__.__name__, ))
     # end def eol_pos
 
+    @subclass_responsibility
     def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
         """Return the position of (the first character of) `text` in the
            buffer between position/mark `head` (default: `self.buffer_head`)
            plus `delta` and position/mark `tail` (default: `self.buffer_tail`).
         """
-        raise NotImplementedError \
-            ("%s must define find" % (self.__class__.__name__, ))
     # end def find
 
+    @subclass_responsibility
     def free_mark (self, * mark) :
         """Free all marks passed as arguments."""
-        raise NotImplementedError \
-            ("%s must define free_mark" % (self.__class__.__name__, ))
     # end def free_mark
 
+    @subclass_responsibility
     def get (self, head = None, tail = None, delta= 0) :
         """Return `text` between position/mark `head` (default:
            `self.buffer_head`) plus `delta` to position/mark `tail` (default:
            `self.buffer_tail`)."""
-        raise NotImplementedError \
-            ("%s must define get" % (self.__class__.__name__, ))
     # end def get
 
+    @subclass_responsibility
     def insert (self, pos_or_mark, text, style = None, delta = 0) :
         """Insert `text` at `pos_or_mark` plus `delta`with `style`."""
-        raise NotImplementedError \
-            ("%s must define insert" % (self.__class__.__name__, ))
     # end def insert
 
+    @subclass_responsibility
     def insert_image (self, pos_or_mark, image_name, style = None, delta = 0) :
         """Insert image with name `image_name` at `pos_or_mark` plus
            `delta` with `style`.
         """
-        raise NotImplementedError \
-            ("%s must define insert_image" % (self.__class__.__name__, ))
     # end def insert_image
 
+    @subclass_responsibility
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
         """Insert `widget` at `pos_or_mark` plus `delta` with `style`."""
-        raise NotImplementedError \
-            ("%s must define insert_widget" % (self.__class__.__name__, ))
     # end def insert_widget
 
+    @subclass_responsibility
     def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
         """Return a mark with `name` at position `pos` plus `delta`."""
-        raise NotImplementedError \
-            ("%s must define mark_at" % (self.__class__.__name__, ))
     # end def mark_at
 
+    @subclass_responsibility
     def place_cursor (self, pos_or_mark) :
         """Move the insertion cursor to `pos_or_mark`"""
-        raise NotImplementedError \
-            ("%s must define place_cursor" % (self.__class__.__name__, ))
     # end def place_cursor
 
+    @subclass_responsibility
     def pop_style (self) :
         """Pop lastly pushed `style` (and remove its effect from
            `self.wtk_widget`).
         """
-        raise NotImplementedError \
-            ("%s must define pop_style" % (self.__class__.__name__, ))
     # end def pop_style
 
+    @subclass_responsibility
     def pos_at (self, pos, delta = 0) :
         """Return position `pos` plus `delta`."""
-        raise NotImplementedError \
-            ("%s must define pos_at" % (self.__class__.__name__, ))
     # end def pos_at
 
+    @subclass_responsibility
     def push_style (self, style) :
         """Push `style` (i.e., apply it in a way that can be reversed by
            calling `pop_style` later).
         """
         assert style.callback is None
-        raise NotImplementedError \
-            ("%s must define push_style" % (self.__class__.__name__, ))
     # end def push_style
 
+    @subclass_responsibility
     def remove (self, head, tail = None, delta = 0) :
         """Remove text between `head` and `tail` from buffer."""
-        raise NotImplementedError \
-            ("%s must define remove" % (self.__class__.__name__, ))
     # end def remove
 
+    @subclass_responsibility
     def remove_style (self, style, head, tail = None, delta = 0) :
         """Remove `style` from position/mark `head` plus `delta` to
            position/mark `tail` (default: `self.buffer_tail`).
         """
-        raise NotImplementedError \
-            ("%s must define remove_style" % (self.__class__.__name__, ))
     # end def remove_style
 
+    @subclass_responsibility
     def see (self, pos_or_mark) :
         """Adjust view of `self` so that `pos_or_mark` is completely visible.
         """
-        raise NotImplementedError \
-            ("%s must define see" % (self.__class__.__name__, ))
     # end def see
 
+    @subclass_responsibility
     def set_tabs (self, * tabs) :
         """Set tabulator positions. Unit is pixels."""
-        raise NotImplementedError \
-            ("%s must define set_tabs" % (self.__class__.__name__, ))
     # end def set_tabs
 
+    @subclass_responsibility
     def tags_at (self, pos_or_mark) :
         """Return the names of all tags active at position specified by
            `pos_or_mark`.
         """
-        raise NotImplementedError \
-            ("%s must define tags_at" % (self.__class__.__name__, ))
     # end def tags_at
 
 # end class Text

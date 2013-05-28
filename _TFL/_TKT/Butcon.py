@@ -34,12 +34,13 @@
 #                      failing doctest of TGW.
 #    25-Feb-2005 (RSC) Added style-related doctests
 #    23-May-2013 (CT)  Fix bitmap-names in tests
+#    28-May-2013 (CT) Use `@subclass_responsibility` instead of home-grown code
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL                 import TFL
+from   _TFL.Decorator       import subclass_responsibility
+
 import _TFL._TKT.Mixin
 
 class Butcon (TFL.TKT.Mixin) :
@@ -60,22 +61,19 @@ class Butcon (TFL.TKT.Mixin) :
         IndexError: pop from empty list
     """
 
+    @subclass_responsibility
     def apply_bitmap (self, bitmap) :
         """Apply `bitmap` to our widget, replacing existing bitmap."""
-        raise NotImplementedError \
-            ("%s must define apply_bitmap" % (self.__class__.__name__, ))
     # end def apply_bitmap
 
+    @subclass_responsibility
     def apply_style (self, style) :
         """Apply `style` to our widget."""
-        raise NotImplementedError \
-            ("%s must define apply_style" % (self.__class__.__name__, ))
     # end def apply_style
 
+    @subclass_responsibility
     def remove_style (self, style) :
         """Remove `style` from our widget."""
-        raise NotImplementedError \
-            ("%s must define remove_style" % (self.__class__.__name__, ))
     # end def apply_style
 
 # end class Butcon

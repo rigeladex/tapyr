@@ -34,15 +34,17 @@
 #                     (passlib fails *after* import if bcrypt's c-extension
 #                     is AWOL)
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#    28-May-2013 (CT) Use `@subclass_responsibility` instead of home-grown code
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _TFL       import TFL
-from   _TFL.pyk   import pyk
+from   _TFL           import TFL
+from   _TFL.pyk       import pyk
 
-from   _TFL._Meta import Meta
+from   _TFL._Meta     import Meta
+from   _TFL.Decorator import subclass_responsibility
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -89,7 +91,20 @@ class M_Password_Hasher (Meta.Object.__class__) :
 # end class M_Password_Hasher
 
 class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
-    """Base class for password hashers"""
+    """Base class for password hashers
+
+    >>> pr = "Ao9ug9wahWae"
+    >>> ph = Password_Hasher.hashed (pr, "salt")
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Password_Hasher must implement method 'hashed'
+
+    >>> Password_Hasher.verify (pr, pr)
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: Password_Hasher must implement method 'verify'
+
+    """
 
     rank          = 0
 
@@ -97,10 +112,10 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
         raise TypeError ("Cannot instantiate %s" % (self.__class__, ))
     # end def __init__
 
+    @subclass_responsibility
     @classmethod
     def hashed (cls, clear_password, salt = None) :
         """Hashed value of `clear_password` using `salt`"""
-        raise NotImplementedError ("%s must implement hashed" % cls.__name__)
     # end def hashed
 
     @classmethod
@@ -108,10 +123,10 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
         return uuid.uuid4 ().hex
     # end def salt
 
+    @subclass_responsibility
     @classmethod
     def verify (cls, clear_password, hashed_password) :
         """True if `clear_password` and `hashed_password` match"""
-        raise NotImplementedError ("%s must implement verify" % cls.__name__)
     # end def verify
 
     @classmethod
