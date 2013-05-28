@@ -28,7 +28,8 @@
 #
 # Revision Dates
 #     5-Jun-2005 (CT) Creation
-#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
+#    28-May-2013 (CT) Fix doc-test for print-function
 #    ««revision-date»»···
 #--
 
@@ -41,33 +42,51 @@ Caveats:
 - all arguments passed to the function/methods must be hashable
 - keyword arguments cannot be used
 
->>> class Test :
-...     def method (self, i) :
-...         print ("Test.method called with", i,)
-...         return i * i
-...
->>> Memoizer.add_method (Test, "method")
->>> t = Test ()
->>> for j in range (5) :
-...     print ("First  call", j, t.method (j))
-...     print ("Second call", j, t.method (j))
-...
-First  call 0 Test.method called with 0 0
-Second call 0 0
-First  call 1 Test.method called with 1 1
-Second call 1 1
-First  call 2 Test.method called with 2 4
-Second call 2 4
-First  call 3 Test.method called with 3 9
-Second call 3 9
-First  call 4 Test.method called with 4 16
-Second call 4 16
+    >>> class Test :
+    ...     def method (self, i) :
+    ...         print ("    Test.method called with", i)
+    ...         return i * i
+    ...
+    >>> Memoizer.add_method (Test, "method")
+    >>> t = Test ()
+    >>> for j in range (5) :
+    ...     print ("First  call", j)
+    ...     print ("   ", t.method (j))
+    ...     print ("Second call", j)
+    ...     print ("   ", t.method (j))
+    ...
+    First  call 0
+        Test.method called with 0
+        0
+    Second call 0
+        0
+    First  call 1
+        Test.method called with 1
+        1
+    Second call 1
+        1
+    First  call 2
+        Test.method called with 2
+        4
+    Second call 2
+        4
+    First  call 3
+        Test.method called with 3
+        9
+    Second call 3
+        9
+    First  call 4
+        Test.method called with 4
+        16
+    Second call 4
+        16
 
 """
 
 from   __future__       import print_function
 
-from   _TFL                   import TFL
+from   _TFL             import TFL
+from   _TFL.pyk         import pyk
 import _TFL._FMW.Wrapper
 import _TFL.Undef
 

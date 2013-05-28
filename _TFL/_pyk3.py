@@ -35,6 +35,7 @@
 #    24-May-2013 (CT) Add `int_types`
 #    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
 #    26-May-2013 (CT) Convert to class/instance to allow lazy imports
+#    28-May-2013 (CT) Fix `new_instancemethod`
 #    ««revision-date»»···
 #--
 
@@ -101,11 +102,13 @@ class _Pyk_ (object) :
 
     @staticmethod
     def new_instancemethod (function, instance, cls) :
-        ### XXX how to implement this ???
         if instance is None :
+            @functools.wraps (function)
+            def _ (* args, ** kw) :
+                return function (* args, ** kw)
+            return _
+        else :
             return function
-        raise NotImplementedError \
-            ("new_instancemethod for instance %s" % (instance, ))
     # end def new_instancemethod
 
     @lazy_property
