@@ -64,6 +64,7 @@
 #    28-May-2013 (CT) Move `-Auth_Migrate` to `MOM_Command._opts`
 #                     (some descendents call `_handle_create` from handlers
 #                     of other commands)
+#    28-May-2013 (CT) Use `sos.expanded_path` in `_read_auth_mig`
 #    ««revision-date»»···
 #--
 
@@ -425,11 +426,13 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _print_info
 
     def _read_auth_mig (self, cmd, scope, mig_auth_file = None) :
+        if mig_auth_file is None :
+            mig_auth_file = cmd.mig_auth_file
         try :
-            f = open (mig_auth_file or cmd.mig_auth_file, "rb")
+            f = open (sos.expanded_path (mig_auth_file), "rb")
         except IOError as exc :
             print \
-                ( "Couldn't open", cmd.mig_auth_file, "due to exception\n    "
+                ( "Couldn't open", mig_auth_file, "due to exception\n    "
                 , exc
                 )
         else :
@@ -438,7 +441,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             mig = pyk.pickle.loads (cargo)
             scope.Auth.Account.apply_migration (mig)
             if cmd.verbose :
-                print ("Loaded authorization objects from", cmd.mig_auth_file)
+                print ("Loaded authorization objects from", mig_auth_file)
     # end def _read_auth_mig
 
 Command = MOM_Command # end class
