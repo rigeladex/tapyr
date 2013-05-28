@@ -133,6 +133,7 @@
 #     9-Apr-2013 (CT) Add column `time` to table `change_history`
 #    26-Apr-2013 (CT) Remove `A_AIS_Value`
 #    28-May-2013 (CT) Rename class `Type_Name` to `Type_Name_Kind`
+#    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
 #    ««revision-date»»···
 #--
 
@@ -159,7 +160,7 @@ class Type_Name_Kind (object) :
     """A fake kind which is used to retrive the type_name of an entity"""
 
     class attr (object) :
-        name             = "Type_Name"
+        name             = "type_name"
         SAS_PC_Transform = None
     # end class attr
 
@@ -187,7 +188,7 @@ class SAS_Interface (TFL.Meta.Object) :
         ### for this e_type
         self.e_type_columns = e_type_columns = TFL.defaultdict (ddict_list)
         if e_type is e_type.relevant_root :
-            columns = [cm ["Type_Name"]]
+            columns = [cm ["type_name"]]
             e_type_columns [e_type] [Type_Name_Kind] = columns
             e_type_columns [None]   [Type_Name_Kind] = columns
         self._setup_columns (e_type, e_type_columns)
@@ -376,20 +377,27 @@ class SAS_Interface (TFL.Meta.Object) :
         return result
     # end def transitive_children
 
-    def value_dict ( self, entity
-                   , e_type         = None
-                   , defaults       = None
-                   , attrs          = None
-                   , columns        = None
-                   ) :
+    def value_dict \
+            ( self, entity
+            , e_type         = None
+            , defaults       = None
+            , attrs          = None
+            , columns        = None
+            ) :
         if columns is None :
             columns = self.e_type_columns [e_type]
         result      = defaults or {}
         attrs       = attrs or set (kind.attr.name for kind in columns)
         for attr_name in tuple (attrs) :
-            kind = getattr (e_type, attr_name, Type_Name_Kind)
-            if kind is not Type_Name_Kind :
-                attrs.remove (attr_name)
+            if attr_name == Type_Name_Kind.attr.name :
+                kind = Type_Name_Kind
+            else :
+                try :
+                    kind = getattr (e_type, attr_name)
+                except AttributeError :
+                    continue
+                else :
+                    attrs.remove (attr_name)
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \
                     ( self.value_dict
@@ -669,7 +677,7 @@ class Session_S (_Session_) :
 
     def instance_from_row (self, e_type, row) :
         ### get the real etype for this entity from the database
-        e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
+        e_type = getattr (self.scope, row [e_type._SAQ.type_name])
         pid    = row [e_type._SAQ.pid]
         pim    = self._pid_map
         entity = pim.get (pid, None)
@@ -848,7 +856,7 @@ class Session_PC (_Session_) :
 
     def instance_from_row (self, e_type, row) :
         ### get the real etype for this entity from the database
-        ### e_type = getattr (self.scope.app_type, row [e_type._SAQ.Type_Name])
+        ### e_type = getattr (self.scope.app_type, row [e_type._SAQ.type_name])
         return dict (e_type._SAS.pickle_cargo (row))
     # end def instance_from_row
 

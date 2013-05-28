@@ -39,6 +39,7 @@
 #     4-Aug-2012 (CT) Add stub for `retire`
 #     5-Aug-2012 (MG) Fix `reserve_pid`
 #    19-Jan-2013 (MG) Fix column name for type-name
+#    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         self.insert  = sa_table.insert ()
         self.select  = sa_table.select ()
         self.pid_col = sa_table.c.pid
-        self.tn_col  = sa_table.c.Type_Name
+        self.tn_col  = sa_table.c.type_name
         self.dbs     = self.ems.DBW.DBS_map [db_url.scheme]
     # end def __init__
 
@@ -98,10 +99,10 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def max_pid
 
     def new (self, entity, commit = True) :
-        Type_Name = None
+        type_name = None
         if entity :
-            Type_Name = entity.type_name
-        sql    = self.insert.values      (Type_Name = Type_Name)
+            type_name = entity.type_name
+        sql    = self.insert.values      (type_name = type_name)
         result = self.connection.execute (sql)
         if commit :
             self.commit ()
@@ -121,20 +122,20 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
 
     def reserve (self, entity, pid, commit = True) :
         self.dbs.reserve_pid (self.connection, pid)
-        Type_Name = None
+        type_name = None
         if entity :
-            Type_Name  = entity.type_name
+            type_name  = entity.type_name
             entity.pid = pid
         result = self.connection.execute \
             (self.select.where (self.pid_col == pid)).fetchone ()
         if result :
-            if Type_Name and result.Type_Name != Type_Name :
+            if type_name and result.type_name != type_name :
                 raise ValueError \
                     ( "Try to reverse pid %d with changed type_name %s != %d"
-                    % (pid, result.Type_Name, Type_Name)
+                    % (pid, result.type_name, type_name)
                     )
         else :
-            sql    = self.insert.values      (Type_Name = Type_Name, pid = pid)
+            sql    = self.insert.values      (type_name = type_name, pid = pid)
             result = self.connection.execute (sql)
             if commit :
                 self.commit ()
@@ -154,8 +155,8 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
             (self.select.where (self.pid_col == pid))
         found  = result.fetchone ()
         self.commit              ()
-        if found and found.Type_Name :
-            return found.Type_Name
+        if found and found.type_name :
+            return found.type_name
         raise LookupError ("No object with pid `%d` found" % (pid, ))
     # end def type_name
 
@@ -163,8 +164,8 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         result = self.connection.execute \
             (self.select.order_by (self.pid_col.asc ()))
         for row in result :
-            if row.Type_Name :
-                yield row.pid, row.Type_Name
+            if row.type_name :
+                yield row.pid, row.type_name
     # end def __iter__
 
 # end class Pid_Manager

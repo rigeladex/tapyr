@@ -114,6 +114,7 @@
 #                     `MOM.Query` objects
 #     7-Mar-2013 (CT) Use `polymorphic_relevant_epk`, not `polymorphic_epk`
 #     9-Apr-2013 (CT) Add `db_sig`, add column `time` to table `change_history`
+#    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
 #    ««revision-date»»···
 #--
 
@@ -218,7 +219,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 , primary_key = True
                 )
             , schema.Column
-                ( "Type_Name", Type_Name_Type, nullable = True)
+                ( "type_name", Type_Name_Type, nullable = True)
             )
         , scope_metadata     =
             ( schema.Column ("pk",        types.Integer, primary_key = True)
@@ -525,7 +526,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     ( schema.Column
                         (pk_name, types.Integer, primary_key = True)
                     )
-                result.append (schema.Column ("Type_Name", Type_Name_Type))
+                result.append (schema.Column ("type_name", Type_Name_Type))
             e_type._sa_pk_name = pk_name
         for name, kind in \
                 ((n, k) for (n, k) in db_attrs.iteritems () if k.save_to_db) :

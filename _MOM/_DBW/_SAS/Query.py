@@ -75,6 +75,7 @@
 #                     association access cached roles)
 #    31-Jan-2013 (MG) Add `eq` and `ne` support for `Cached_Role_Query`
 #    23-Apr-2013 (CT) Fix typos, style
+#    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
 #    ««revision-date»»···
 #--
 
@@ -103,8 +104,6 @@ class Query (TFL.Meta.Object) :
         columns               = sa_table.columns
         for col in columns :
             setattr (self, col.name, col)
-            if col.name == "type_name" :
-                self.Type_Name = col
         for syn, attr in attr_map.iteritems () :
             setattr (self, syn, getattr (self, attr))
     # end def __init__
@@ -136,11 +135,9 @@ class _MOM_Query_ (TFL.Meta.Object) :
 
     def SAS_EQ_Clause (self, attr, cooked) :
         db = cooked
-        if   attr == "type_name" :
-            attr = "Type_Name"
-        elif isinstance (cooked, MOM.Id_Entity) :
+        if isinstance (cooked, MOM.Id_Entity) :
             db   = cooked.pid
-        else :
+        elif attr != "type_name" :
             kind = getattr (self._E_TYPE [0], attr, None)
             if kind and kind.Pickler :
                 db = kind.Pickler.as_cargo (kind, kind.attr, cooked)
@@ -177,10 +174,10 @@ class MOM_Query (_MOM_Query_) :
         self._query_fct        = {}
         self.delayed = delayed = []
         if e_type is e_type.relevant_root :
-            self.Type_Name    = columns.Type_Name
+            self.type_name    = columns.type_name
             self.pid          = columns.pid
             self.pid.MOM_Kind = None
-            self._ATTRIBUTES.extend (("Type_Name", "pid"))
+            self._ATTRIBUTES.extend (("type_name", "pid"))
         for name, kind in db_attrs.iteritems () :
             attr = kind.attr
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
@@ -415,7 +412,7 @@ class Join_Query (_MOM_Query_) :
                           )
                         ,
                         )
-                oc    = (pid_Table.c.Type_Name, column)
+                oc    = (pid_Table.c.type_name, column)
             elif sub_attr == "type_name" :
                 ### special handling of type_name queries
                 pid_Table = MOM.DBW.SAS.Manager.sa_pid
@@ -426,7 +423,7 @@ class Join_Query (_MOM_Query_) :
                           )
                         ,
                         )
-                oc    = (pid_Table.c.Type_Name, )
+                oc    = (pid_Table.c.type_name, )
             else :
                 type_name  = column.mom_kind.P_Type.type_name
                 raise TypeError \

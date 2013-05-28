@@ -50,6 +50,7 @@
 #     6-Dec-2012 (MG) Fix query attribute handling
 #    26-Jan-2013 (MG) Handle cached role queries
 #    31-Jan-2013 (MG) Bugfixing
+#    28-May-2013 (CT) Remove `type_name` from `SAS_Attr_Map`
 #    ««revision-date»»···
 #--
 
@@ -62,9 +63,7 @@ import _TFL.Q_Exp
 from    sqlalchemy.sql   import expression, func, extract
 from    _MOM.Q_Exp_Raw   import _Get_Raw_
 
-SAS_Attr_Map = dict \
-    ( type_name = TFL.Getter.Type_Name
-    )
+SAS_Attr_Map = dict ()
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp._Get_)
 def _sa_filter (self, SAQ) :
