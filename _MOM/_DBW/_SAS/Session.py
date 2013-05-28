@@ -132,6 +132,7 @@
 #    30-Jan-2013 (MG) Bug fixing for `keep_zombies` handling
 #     9-Apr-2013 (CT) Add column `time` to table `change_history`
 #    26-Apr-2013 (CT) Remove `A_AIS_Value`
+#    28-May-2013 (CT) Rename class `Type_Name` to `Type_Name_Kind`
 #    ««revision-date»»···
 #--
 
@@ -154,7 +155,7 @@ import  contextlib
 ddict_list = lambda : TFL.defaultdict (list)
 attrgetter = operator.attrgetter
 
-class Type_Name (object) :
+class Type_Name_Kind (object) :
     """A fake kind which is used to retrive the type_name of an entity"""
 
     class attr (object) :
@@ -167,7 +168,7 @@ class Type_Name (object) :
         return (entity.type_name, )
     # end def get_pickle_cargo
 
-# end class Type_Name
+# end class Type_Name_Kind
 
 class SAS_Interface (TFL.Meta.Object) :
     """Helper object to store the information how to get all/some values
@@ -187,8 +188,8 @@ class SAS_Interface (TFL.Meta.Object) :
         self.e_type_columns = e_type_columns = TFL.defaultdict (ddict_list)
         if e_type is e_type.relevant_root :
             columns = [cm ["Type_Name"]]
-            e_type_columns [e_type] [Type_Name] = columns
-            e_type_columns [None]   [Type_Name] = columns
+            e_type_columns [e_type] [Type_Name_Kind] = columns
+            e_type_columns [None]   [Type_Name_Kind] = columns
         self._setup_columns (e_type, e_type_columns)
     # end def __init__
 
@@ -386,8 +387,8 @@ class SAS_Interface (TFL.Meta.Object) :
         result      = defaults or {}
         attrs       = attrs or set (kind.attr.name for kind in columns)
         for attr_name in tuple (attrs) :
-            kind = getattr (e_type, attr_name, Type_Name)
-            if kind is not Type_Name :
+            kind = getattr (e_type, attr_name, Type_Name_Kind)
+            if kind is not Type_Name_Kind :
                 attrs.remove (attr_name)
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \

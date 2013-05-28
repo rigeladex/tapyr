@@ -354,8 +354,9 @@ class _MOM_Composite_Query_ (_MOM_Query_) :
             result = []
             op     = getattr (operator, op)
             for an in self._QUERY_ATTRIBUTES :
-                result.append \
-                    (op (getattr (self, an), getattr (rhs, an, rhs)))
+                l = getattr (self, an)
+                r = getattr (rhs, an, rhs)
+                result.append (op (l, r))
             return sql.and_ (* result)
         raise TypeError \
             ("`%s` is not supported for composites" % (op_desc, ))
