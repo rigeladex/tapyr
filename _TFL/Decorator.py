@@ -56,6 +56,7 @@
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    28-May-2013 (CT)  Add `subclass_responsibility`
 #    28-May-2013 (CT)  Change `Decorator` to properly support `classmethod`
+#    29-May-2013 (CT)  Kludge around Python2.6 lack of classmethod introspection
 #    ««revision-date»»···
 #--
 
@@ -102,7 +103,10 @@ def Decorator (decorator) :
            ('foo', 'Function to test decoration')
     """
     def _update (wrapper, wrapped) :
-        wrapper.__name__   = wrapped.__name__
+        try :
+            wrapper.__name__   = wrapped.__name__
+        except AttributeError :
+            pass ### Python 2.6 doesn't support `__name__` for classmethod
         wrapper.__module__ = getattr (wrapped, "__module__", "<builtin>")
         wrapper.__doc__    = wrapped.__doc__
         wrapper.__dict__.update (getattr (wrapped, "__dict__", {}))
@@ -110,11 +114,16 @@ def Decorator (decorator) :
             (wrapped, "_globals", getattr (wrapped, "__globals__", {}))
     def wrapper (f) :
         if isinstance (f, (classmethod, staticmethod)) :
-            orig_f                = f.__func__
-            cors                  = f.__class__
-            orig_f.is_classmethod = cors is classmethod
-            wrapper               = decorator (orig_f)
-            decorated             = cors (wrapper)
+            cors = f.__class__
+            try :
+                orig_f = f.__func__
+            except AttributeError :
+                ### Python 2.6 doesn't support `__func__` for classmethod
+                orig_f = f
+            else :
+                orig_f.is_classmethod = cors is classmethod
+            wrapper    = decorator (orig_f)
+            decorated  = cors (wrapper)
             _update (wrapper, orig_f)
         else :
             decorated = decorator (f)
@@ -304,7 +313,15 @@ def subclass_responsibility (f) :
     is_classmethod = getattr (f, "is_classmethod", False)
     fmt = "%s must implement method %r"
     if isinstance (f, classmethod) or is_classmethod :
-        name = f.__name__ if is_classmethod else f.__func__.__name__
+        if is_classmethod :
+            name = f.__name__
+        else :
+            try :
+                name = f.__func__.__name__
+            except AttributeError :
+                ### Python 2.6 doesn't support `__func__` nor `__name__`
+                ### for classmethod
+                name = "the classmethod"
         def _ (cls, * args, ** kw) :
             raise NotImplementedError (fmt % (cls.__name__, name))
     else :
