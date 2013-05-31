@@ -96,6 +96,8 @@
 #     3-May-2013 (CT) Add `auth_required` and use in `allow_method`
 #     6-May-2013 (CT) Add optional argument `xtra` to `send_error_email`
 #     6-May-2013 (CT) Add and use `_password_elider`, `_error_email_cleaner`
+#    31-May-2013 (CT) Add `HTTP method` to `send_error_email`
+#    31-May-2013 (CT) Add guard against unknown HTTP method to `allow_method`
 #    ««revision-date»»···
 #--
 
@@ -112,6 +114,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.Filename            import Filename
+from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import callable, first, uniq
 from   _TFL.Regexp              import Re_Replacer, Multi_Re_Replacer, re
 
@@ -533,7 +536,13 @@ class _RST_Base_ (TFL.Meta.Object) :
                (user and user.authenticated and user.active) :
             return False
         if isinstance (method, basestring) :
-            method = GTW.RST.HTTP_Method.Table [method]
+            try :
+                method = GTW.RST.HTTP_Method.Table [method]
+            except KeyError :
+                raise self.Status.Method_Not_Allowed \
+                    ( _T ("Unknown HTTP method `%s` requested") % (method, )
+                    , valid_methods = sorted (self.SUPPORTED_METHODS)
+                    )
         if not (user and user.superuser) :
             pn = method.mode + "_permissions"
             permissions = getattr (self, pn)
@@ -601,10 +610,12 @@ class _RST_Base_ (TFL.Meta.Object) :
         email     = self.email_from
         headers   = request.headers
         message   = \
-            ( "Headers:\n    %s"
+            ( "HTTP method: %s"
+              "\n\nHeaders:\n    %s"
               "\n\nBody:\n    %s"
               "\n\nRequest data:\n%s"
-            %   ( "\n    ".join
+            %   ( request.method
+                , "\n    ".join
                     ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
                 , formatted (request.body)
                 , formatted (request.req_data.data)
@@ -1484,12 +1495,12 @@ class RST_Root (_Ancestor) :
     # end def wsgi_app
 
     def _http_response (self, resource, request, response) :
-        Status = self.Status
-        user   = request.user
+        Status    = self.Status
+        user      = request.user
         with self._http_response_context (resource, request, response) :
             auth      = user and user.authenticated
-            resource  = resource._effective
             meth_name = request.method
+            resource  = resource._effective
             if meth_name not in resource.SUPPORTED_METHODS :
                 raise Status.Method_Not_Allowed \
                     (valid_methods = sorted (resource.SUPPORTED_METHODS))

@@ -44,6 +44,8 @@
 #    18-Aug-2012 (CT) Fix `_do_change_info`: apply `or` to `last`, `etag`
 #    10-Sep-2012 (CT) Replace `_do_change_info` by `_skip_render`
 #     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
+#    31-May-2013 (CT) Fix `_Meta_.__init__`: use
+#                     `not name.startswith ("HTTP_Method")`, not `name !=...`
 #    ««revision-date»»···
 #--
 
@@ -66,7 +68,7 @@ class _Meta_ (TFL.Meta.M_Class) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         name = cls.__name__
-        if name != "HTTP_Method" and not name.startswith ("_") :
+        if not name.startswith (("HTTP_Method", "_")) :
             cls.name = name
             if name not in cls.Table :
                 cls.Table [name] = cls
