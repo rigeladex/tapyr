@@ -80,6 +80,7 @@
 #    12-Dec-2012 (CT) Ignore `LookupError` in `Entity_Link.__call__`
 #     7-May-2013 (CT) Add `Entity.add_links`
 #    15-May-2013 (CT) Adapt `Entity_Link._get_assoc` to `MOM.Attr._A_Rev_Ref`
+#     3-Jun-2013 (CT) Use `.attr_prop`, not `getattr`, to get attributes
 #    ««revision-date»»···
 #--
 
@@ -248,7 +249,7 @@ class _Field_ (_Base_) :
 class _Field_Entity_Mixin_ (_Entity_Mixin_, _Field_) :
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
-        attr = getattr (E_Type, self.name)
+        attr = E_Type.attr_prop (self.name)
         return self.__super.__call__ \
             ( attr.P_Type, self, set ()
             , ** self._field_kw (attr, E_Type, ** kw)
@@ -295,7 +296,7 @@ class Entity_Link (Entity) :
             pass
         else :
             role_name  = self._get_role_name (assoc, E_Type)
-            role       = getattr (assoc, role_name)
+            role       = assoc.attr_prop (role_name)
             r_name     = role.generic_role_name
             max_links  = kw.get ("max_links", role.max_links)
             seen       = set ([r_name])
@@ -313,7 +314,7 @@ class Entity_Link (Entity) :
     # end def __call__
 
     def _get_assoc (self, name, E_Type) :
-        ref_attr = getattr (E_Type, name, None)
+        ref_attr = E_Type.attr_prop (name)
         if ref_attr is not None :
             ref_type = ref_attr.Ref_Type
             name     = getattr (ref_type, "type_name", ref_type)
@@ -359,7 +360,7 @@ class Field (_Field_) :
     Type     = Element.Field
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
-        attr = getattr   (E_Type, self.name)
+        attr = E_Type.attr_prop (self.name)
         ekw  = dict      (self.defaults, ** kw)
         return self.Type (** self._field_kw (attr, E_Type, ** ekw))
     # end def __call__

@@ -40,6 +40,7 @@
 #     7-Aug-2012 (CT) Add `example`
 #    25-Feb-2013 (CT) Remove `alive.auto_up_depends`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
+#     3-Jun-2013 (CT) Simplify `ui_display_format`
 #    ««revision-date»»···
 #--
 
@@ -134,10 +135,10 @@ class Date_Interval (_Ancestor_Essence) :
 
     @property
     def ui_display_format (self) :
-        attrs = [self.__class__.start]
+        attrs = ["start"]
         if self.finish and self.finish != self.start :
-            attrs.append (self.__class__.finish)
-        return self.ui_display_sep.join ("%%(%s)s" % a.name for a in attrs)
+            attrs.append ("finish")
+        return self.ui_display_sep.join ("%%(%s)s" % name for name in attrs)
     # end def ui_display_format
 
     def __nonzero__ (self) :

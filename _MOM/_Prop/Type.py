@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Mar-2013 (CT) Creation (factored from MOM.Attr.A_Attr_Type)
+#     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ class _Prop_Type_ (TFL.Meta.Object) :
     _doc_properties     = ("description", "explanation")
 
     @TFL.Meta.Class_and_Instance_Method
-    def fix_doc (soc, e_type) :
+    def fix_doc (soc, et_scope) :
         def fix (soc, name, et_scope) :
             v = getattr (soc, name)
             if v and "%(" in v :
@@ -59,7 +60,6 @@ class _Prop_Type_ (TFL.Meta.Object) :
                     pass
                 else :
                     setattr (soc, name, v)
-        et_scope = TFL.Caller.Object_Scope (e_type)
         for k in soc._doc_properties :
             fix (soc, k, et_scope)
         if soc.description :

@@ -134,6 +134,10 @@
 #    26-Apr-2013 (CT) Remove `A_AIS_Value`
 #    28-May-2013 (CT) Rename class `Type_Name` to `Type_Name_Kind`
 #    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
+#     3-Jun-2013 (CT) Get attribute descriptors from `.attributes` or
+#                     `.attr_prop`, not by applying `getattr` to the `E_Type`
+#                     itself
+#     3-Jun-2013 (MG) Use `e_type` parameter in `SAS_Interface.value_dict`
 #    ««revision-date»»···
 #--
 
@@ -384,6 +388,11 @@ class SAS_Interface (TFL.Meta.Object) :
             , attrs          = None
             , columns        = None
             ) :
+        ### within this function we use the e-type passed as parameter
+        ### for all access to the e-type. This is required to ensure that
+        ### only attributes which are defined in this sepcific e_type are
+        ### handled. All other attributes will be handled by different calls
+        ### to value_dict
         if columns is None :
             columns = self.e_type_columns [e_type]
         result      = defaults or {}
@@ -392,12 +401,12 @@ class SAS_Interface (TFL.Meta.Object) :
             if attr_name == Type_Name_Kind.attr.name :
                 kind = Type_Name_Kind
             else :
-                try :
-                    kind = getattr (e_type, attr_name)
-                except AttributeError :
+                kind = e_type.attr_prop (attr_name)
+                if kind is None :
+                    ### this e-type does not know about this attribute
+                    ### attribute will be handled later
                     continue
-                else :
-                    attrs.remove (attr_name)
+                attrs.remove (attr_name)
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \
                     ( self.value_dict
@@ -417,7 +426,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def value_dict
 
     def update (self, session, entity, attrs = set ()) :
-        ### TFL.BREAK ()
+        ### import pdb;pdb.set_trace ()
         if not session._in_rollback :
             for b in self.bases :
                 b._SAS.update (session, entity, attrs)
@@ -719,7 +728,7 @@ class Session_S (_Session_) :
         ### dict will be modified
         for pid, e in tuple (self._pid_map.iteritems ()) :
             if force_reload :
-                setattr (e, e.__class__.last_cid.ckd_name, -1)
+                setattr (e, e.attributes ["last_cid"].ckd_name, -1)
             if isinstance (e, MOM._Id_Entity_Destroyed_Mixin_) :
                 ### need to be 2 if's so that the elif parts works as expected
                 if not keep_zombies :
@@ -775,14 +784,15 @@ class Session_S (_Session_) :
     # end def _modify_change_iter
 
     def update (self, entity, new_attr) :
-        attrs    = set (new_attr)
-        ET       = entity.__class__
-        for an in new_attr :
-            a = getattr (ET, an, None)
-            if a is not None :
-                attrs.update (d.name for d in a.dependent_attrs)
-        ### import pdb; pdb.set_trace ()
-        entity._SAS.update (self, entity, attrs)
+        if entity is not None :
+            attrs    = set (new_attr)
+            ET       = entity.__class__
+            for an in new_attr :
+                a = ET.attr_prop (an) or getattr (ET, an, None)
+                if a is not None :
+                    attrs.update (d.name for d in a.dependent_attrs)
+            ### import pdb; pdb.set_trace ()
+            entity._SAS.update (self, entity, attrs)
     # end def update
 
     def update_change (self, change) :

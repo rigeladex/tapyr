@@ -99,6 +99,7 @@
 #    12-May-2013 (CT) Remove setup of `auto_cache_roles` from `_m_setup_roles`
 #    12-May-2013 (CT) Add `rev_type` to calls of `_m_create_rev_ref_attr`
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
+#     3-Jun-2013 (CT) Add `role_name` to aliases of `attributes` dictionary
 #    ««revision-date»»···
 #--
 
@@ -469,6 +470,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                         ( cls, r.role_name
                         , TFL.Meta.Alias_Property (r.generic_role_name)
                         )
+                    cls.attributes.add_alias (r.role_name, r.generic_role_name)
                 r.role_index = i
                 for key in set \
                         (( r.default_role_name, r.generic_role_name

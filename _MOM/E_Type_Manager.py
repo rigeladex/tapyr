@@ -127,6 +127,7 @@
 #    26-Feb-2013 (CT) Adapt to change of `MOM.Error.Multiplicity`
 #    13-May-2013 (CT) Change `r_query` to look at non-role id-entity
 #                     attributes, not call `ems.r_query`
+#     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
 #    ««revision-date»»···
 #--
 
@@ -197,7 +198,7 @@ class Entity (TFL.Meta.Object) :
         for n in name.split (".") :
             if etype is None :
                 raise AttributeError (name)
-            result = getattr (etype, n)
+            result = etype.attributes [n]
             etype  = getattr (result, "P_Type", None)
         return result
     # end def get_etype_attribute
@@ -217,7 +218,11 @@ class Entity (TFL.Meta.Object) :
     # end def raw_query_attrs
 
     def __getattr__ (self, name) :
-        return getattr (self._etype, name)
+        etype = self._etype
+        try :
+            return etype.attributes [name]
+        except Exception :
+            return getattr (etype, name)
     # end def __getattr__
 
     def __instancecheck__ (self, instance) :

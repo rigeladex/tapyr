@@ -467,11 +467,10 @@ class Store_S (Store) :
         max_cid = scope.ems.max_cid
         max_pid = scope.ems.max_pid
         with self._save_context (x_name, scope, info, max_cid, max_pid) :
-            sk     = TFL.Sorted_By ("pid")
             s_name = TFL.Filename ("by_pid", self.x_uri)
             cargo  = \
                 [   e.as_pickle_cargo ()
-                for e in sorted (scope.ems.pm.table.itervalues (), key = sk)
+                for pid, e in sorted (scope.ems.pm.table.iteritems ())
                 ]
             with open (s_name.name, "wb") as file :
                 pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)

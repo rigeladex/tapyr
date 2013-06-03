@@ -39,6 +39,7 @@
 #     9-Sep-2012 (MG) Test for `convert_creation_change` added
 #     9-Sep-2012 (RS) Add `last_changed` and `creation_date` checks
 #    30-Jan-2013 (CT) Adapt to `Unique` predicates
+#     3-Jun-2013 (CT) Add `_test_instances_committed`, `_test_instances_pending`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,13 @@ _test_code = """
     >>> bc = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> bc
     SRM.Boat_Class (u'optimist')
+
+    >>> bc.pid
+    1
+    >>> scope.commit ()
+
+    >>> scope.SRM.Boat_Class.query ().all ()
+    [SRM.Boat_Class (u'optimist')]
     >>> change = scope.query_changes (pid = bc.pid).one ()
     >>> change.c_time == change.time, change.c_user ==change.user
     (True, True)
@@ -354,9 +362,66 @@ _test_code = """
 
 """
 
+_test_instances_committed = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> SRM = scope.SRM
+
+    >>> opti = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> opti
+    SRM.Boat_Class (u'optimist')
+    >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
+    >>> b = SRM.Boat.instance_or_new (opti, u"AUT", u"1107", raw = True)
+    >>> c = SRM.Boat (u"Optimist", None, "42", "OE", raw = True)
+
+    >>> scope.commit ()
+
+    >>> show_by_pid (scope.SRM.Boat_Class)
+    1   : Boat_Class (u'Optimist', 'SRM.Boat_Class')
+    2   : Boat_Class (u'Laser', 'SRM.Boat_Class')
+
+    >>> show_by_pid (scope.SRM.Boat)
+    3   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat')
+    4   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'', u'42', u'OE', 'SRM.Boat')
+
+"""
+
+_test_instances_pending = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> SRM = scope.SRM
+
+    >>> opti = SRM.Boat_Class ("Optimist", max_crew = 1)
+    >>> opti
+    SRM.Boat_Class (u'optimist')
+    >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
+    >>> b = SRM.Boat.instance_or_new (opti, u"AUT", u"1107", raw = True)
+    >>> c = SRM.Boat (u"Optimist", None, "42", "OE", raw = True)
+
+    >>> show_by_pid (scope.SRM.Boat_Class)
+    1   : Boat_Class (u'Optimist', 'SRM.Boat_Class')
+    2   : Boat_Class (u'Laser', 'SRM.Boat_Class')
+
+    >>> show_by_pid (scope.SRM.Boat)
+    3   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'1107', u'', 'SRM.Boat')
+    4   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'', u'42', u'OE', 'SRM.Boat')
+
+"""
+
+def show_by_pid (ETM) :
+    for x in ETM.query ().order_by (Q.pid) :
+        print ("%-3s : %-10s %s" % (x.pid, x.type_base_name, x.epk_raw))
+# end def show_by_pid
+
 from _GTW.__test__.model import *
 import datetime
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( committed = _test_instances_committed
+        , pending   = _test_instances_pending
+        , main      = _test_code
+        )
+    )
 
 ### __END__ GTW.__test__.Boat

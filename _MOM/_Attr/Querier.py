@@ -75,6 +75,7 @@
 #    11-Apr-2013 (CT) Include `children_np` in `Sig_Map`
 #    18-Apr-2013 (CT) Change `E_Types_CNP` to use
 #                     `selectable_e_types_unique_epk`, not `children_np`
+#     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
 #    ««revision-date»»···
 #--
 
@@ -503,11 +504,11 @@ class _Composite_ (_Container_, _Type_) :
         except AttributeError :
             head, _, tail = split_hst (name, ".")
             try :
-                result = getattr (self.E_Type, head).AQ.Wrapped (self)
+                result = self.E_Type.attributes [head].AQ.Wrapped (self)
                 setattr (self, head, result)
                 if tail :
-                    result = getattr (result, tail)
-            except AttributeError :
+                    result = getattr (Filter.Q, tail) (result)
+            except LookupError :
                 raise AttributeError (name)
         return result
     # end def __getattr__
@@ -838,10 +839,13 @@ class E_Type (_Container_) :
 
     def __getattr__ (self, name) :
         head, _, tail = split_hst (name, ".")
-        result = getattr (self.E_Type, head).AQ.Wrapped (self)
-        setattr (self, head, result)
-        if tail :
-            result = getattr (Filter.Q, tail) (result)
+        try :
+            result = self.E_Type.attributes [head].AQ.Wrapped (self)
+            setattr (self, head, result)
+            if tail :
+                result = getattr (Filter.Q, tail) (result)
+        except LookupError :
+            raise AttributeError (name)
         return result
     # end def __getattr__
 

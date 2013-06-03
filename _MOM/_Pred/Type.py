@@ -56,6 +56,7 @@
 #    26-Feb-2013 (CT) Fix `set_c_attr_value` for case that `result` is taken
 #                     from `val_dict`, not `obj`
 #    11-Mar-2013 (CT) Derive `_Condition_` from `MOM.Prop.Type`, not `object`
+#     3-Jun-2013 (CT) Print exception info to stderr, not stdout
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class _Condition_ (MOM.Prop.Type):
     def set_s_attr_value (self, obj, dict, name, val_dict) :
         result = None
         if name in dict :
-            attr   = getattr (obj.__class__, name, None)
+            attr   = obj.attr_prop (name)
             result = dict [name]
             if attr is not None and result is not None :
                 try :
@@ -378,8 +379,10 @@ class _Quantifier_ (_Condition_) :
     def _q_sequence (self, obj, glob_dict, val_dict) :
         try :
             return list (eval (self.seq_code, glob_dict, val_dict))
-        except StandardError :
+        except Exception as exc :
             if __debug__ :
+                import sys
+                print >> sys.stderr, "Exception in _q_sequence", self, obj
                 traceback.print_exc ()
             return ()
     # end def _q_sequence

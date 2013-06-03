@@ -65,6 +65,7 @@
 #    15-May-2013 (CT) Add `e_type.link_ref_attr`
 #    16-May-2013 (CT) Use `Selector.A_Type` instead of home-grown code
 #    16-May-2013 (CT) Add `e_type.rev_ref_attr`
+#     3-Jun-2013 (CT) Factor `_prop_map_name`
 #    ««revision-date»»···
 #--
 
@@ -108,21 +109,19 @@ class Spec (MOM.Prop.Spec) :
     _prop_dict_cls  = TFL.Alias_Dict
     _prop_dict      = TFL.Meta.Alias_Property ("_attr_dict")
     _prop_kind      = TFL.Meta.Alias_Property ("_attr_kind")
+    _prop_map_name  = "attributes"
 
     def __init__ (self, e_type) :
-        self._db_attr     = []
-        self._syncable    = []
-        self._user_attr   = []
-        self.__super.__init__ (e_type)
-        sk = TFL.Sorted_By ("rank", "name")
-        e_type.attributes = self._prop_dict
-        e_type.db_attr    = self._db_attr
-        e_type.user_attr  = self._user_attr
-        e_type.db_attr.sort   (key = sk)
-        e_type.user_attr.sort (key = sk)
-        self._setup_attrs     (e_type)
-        e_type.edit_attr = tuple (MOM.Attr.Selector.editable (e_type))
-        e_type.ui_attr   = tuple (MOM.Attr.Selector.all      (e_type))
+        sk                      = TFL.Sorted_By ("rank", "name")
+        self._syncable          = []
+        self._db_attr           = e_type.db_attr    = []
+        self._user_attr         = e_type.user_attr  = []
+        self.__super.__init__     (e_type)
+        e_type.db_attr.sort       (key = sk)
+        e_type.user_attr.sort     (key = sk)
+        self._setup_attrs         (e_type)
+        e_type.edit_attr        = tuple (MOM.Attr.Selector.editable (e_type))
+        e_type.ui_attr          = tuple (MOM.Attr.Selector.all      (e_type))
         e_type.id_entity_attr   = tuple \
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)

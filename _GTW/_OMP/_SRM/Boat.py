@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -50,6 +50,7 @@
 #     8-Sep-2012 (CT) Set `sail_number_x.ignore_case` to `"upper"`
 #    11-Sep-2012 (CT) Add add `sail_number` to `valid_sail_number_x`
 #    11-Sep-2012 (CT) Fix typo introduced in last change
+#     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    ««revision-date»»···
 #--
 
@@ -189,11 +190,12 @@ class Boat (_Ancestor_Essence) :
 
     @property
     def ui_display_format (self) :
-        cls  = self.__class__
+        prop = self.attr_prop
         head = result = "%(left)s"
         tail = self.ui_display_sep.join \
             (   "%%(%s)s" % (a.name, )
-            for a in (cls.nation, cls.sail_number_x, cls.sail_number)
+            for a in
+                (prop (n) for n in ("nation", "sail_number_x", "sail_number"))
             if  a.has_substance (self)
             )
         if tail :
@@ -206,5 +208,3 @@ class Boat (_Ancestor_Essence) :
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")
 ### __END__ GTW.OMP.SRM.Boat
-
-

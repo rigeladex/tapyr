@@ -40,6 +40,7 @@
 #    17-Dec-2012 (CT) Change `_Kind_Selection_.attrs` to honor `hidden` for
 #                     kind `query`
 #    16-May-2013 (CT) Add `A_Type` (plus `_A_Type_Selection_`)
+#     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
 #    ««revision-date»»···
 #--
 
@@ -177,7 +178,8 @@ class _Name_Selection_ (_Selection_) :
 
     @TFL.Meta.Once_Property
     def attrs (self) :
-        return tuple (getattr (self.E_Type, n) for n in self.names)
+        attributes = self.E_Type.attributes
+        return tuple (attributes [n] for n in self.names)
     # end def attrs
 
     @property
@@ -218,7 +220,7 @@ class _Primary_Followers_ (_Selection_) :
 
     @TFL.Meta.Once_Property
     def attrs (self) :
-        anchor = getattr (self.E_Type, self.anchor)
+        anchor = self.E_Type.attributes [self.anchor]
         return tuple \
             (  a for a in getattr (self.E_Type, "primary")
             if a.rank > anchor.rank

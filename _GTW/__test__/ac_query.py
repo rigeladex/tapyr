@@ -180,7 +180,7 @@ _attr_ac_query = """
     ((u'glasauergasse 32/2', u'1130', u'wien', u'austria'), (48.1902777778, 16.2686111111))
     >>> print a4p.position
     (48.1902777778, 16.2686111111)
-    >>> print a4p.__class__.position.as_code (a4p.position)
+    >>> print a4p.attr_prop ("position").as_code (a4p.position)
     (48.1902777778, 16.2686111111)
 
     >>> p42 = scope.MOM.Position (42.4242, 137.137137)

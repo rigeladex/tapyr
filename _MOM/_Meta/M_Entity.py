@@ -191,6 +191,8 @@
 #    12-May-2013 (CT) Add `rev_type` to `_m_create_rev_ref_attr`
 #    13-May-2013 (CT) Fix `.__subclasscheck__`, again
 #    27-May-2013 (CT) Kludge around Python 2.6's broken type.__subclasscheck__
+#     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
+#     3-Jun-2013 (CT) Pass `et_scope` to `fix_doc`
 #    ««revision-date»»···
 #--
 
@@ -951,21 +953,17 @@ class M_E_Type (M_E_Mixin) :
     # end def _m_finish_init
 
     def _m_fix_doc (cls) :
-        doc = cls._dyn_doc
+        doc      = cls._dyn_doc
+        et_scope = TFL.Caller.Object_Scope (cls, locls = cls.attributes)
         if doc :
-            os          = TFL.Caller.Object_Scope (cls)
-            cls.__doc__ = doc % os
+            cls.__doc__ = doc % et_scope
         for S in (cls._Attributes, cls._Predicates) :
-            S.fix_doc (cls)
+            S.fix_doc (et_scope)
     # end def _m_fix_doc
 
     def _m_fix_refuse_links (cls, app_type) :
         pass
     # end def _m_fix_refuse_links
-
-    def _m_get_attribute (cls, etype, name) :
-        return getattr (etype, name)
-    # end def _m_get_attribute
 
     def _m_scope (cls, scope = None, ** kw) :
         if scope is None :
@@ -1112,7 +1110,7 @@ class M_E_Type_Id (M_E_Type) :
                 if refuse and k.type_name in refuse :
                     def _filter (k, v):
                         for n in v :
-                            a = getattr (k, n, None)
+                            a = k.attr_prop (n)
                             if not isinstance (a, MOM.Attr.Link_Role) :
                                 yield a
                     v = tuple (_filter (k, v))
@@ -1152,7 +1150,7 @@ class M_E_Type_Id (M_E_Type) :
                 rs = list \
                     (r for r in ET.Role_Attrs if issubclass (cls, r.E_Type))
                 for r in rs :
-                    a = getattr (ET, r.name)
+                    a = ET.attr_prop (r.name)
                     a.refuse_e_types.add (cls.type_name)
     # end def _m_fix_refuse_links
 

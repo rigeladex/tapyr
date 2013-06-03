@@ -94,10 +94,10 @@ _test_code = """
     >>> PAP.Company_P.query (sort_key = PAP.Company_P.sorted_by_epk).count ()
     2
 
-    >>> print (PAP.Association.E_Type.name.description)
+    >>> print (PAP.Association.E_Type.attr_prop ("name").description)
     Name of association.
 
-    >>> print (PAP.Company.E_Type.name.description)
+    >>> print (PAP.Company.E_Type.attr_prop ("name").description)
     Name of company.
 
     >>> for s in PAP.Subject.query_s () :

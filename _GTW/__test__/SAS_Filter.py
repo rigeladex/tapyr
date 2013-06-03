@@ -271,20 +271,17 @@ from   _GTW.__test__.model import *
 from   _MOM.import_MOM     import Q
 import  datetime
 
-_tests = Scaffold.create_test_dict \
+__test__ = Scaffold.create_test_dict \
     ( dict
-        ( date_queries = _date_queries
+        ( composite    = _composite
+        , date_queries = _date_queries
+        , link1_role   = _link1_role
+        , link2_link1  = _link2_link1
+        , query_attr   = _query_attr
         , sub_query    = _sub_query
         , type_name    = _type_name_query
         )
+    , ignore       = "HPS"
     )
 
-
-__test__ = dict \
-    ( composite    = _composite
-    , link1_role   = _link1_role
-    , link2_link1  = _link2_link1
-    , query_attr   = _query_attr
-    , ** _tests
-    )
 ### __END__ GTW.__test__.SAS_Filter

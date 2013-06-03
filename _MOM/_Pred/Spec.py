@@ -37,6 +37,7 @@
 #    29-Jan-2013 (CT) Fix `MOM.Pred.Unique.New_Pred`
 #    29-Jan-2013 (CT) Move predicate creation to redefined `_create_properties`
 #    29-Jan-2013 (CT) Add `uniqueness_dbw` and `uniqueness_ems`
+#    31-May-2013 (CT) Factor `_prop_map_name`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,7 @@ class Spec (MOM.Prop.Spec) :
     _Prop_Spec_Name = "_Predicates"
     _prop_dict      = TFL.Meta.Alias_Property ("_pred_dict")
     _prop_kind      = TFL.Meta.Alias_Property ("_pred_kind")
+    _prop_map_name  = "predicates"
 
     @TFL.Meta.Once_Property
     def uniqueness_dbw (self) :
@@ -86,7 +88,6 @@ class Spec (MOM.Prop.Spec) :
     def __init__ (self, e_type) :
         self.__super.__init__ (e_type)
         self._attr_map    = TFL.defaultdict (list)
-        e_type.predicates = self._prop_dict
         self.uniqueness   = e_type.P_uniqueness
     # end def __init__
 

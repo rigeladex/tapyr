@@ -43,17 +43,22 @@
 #    12-Sep-2012 (CT) Add `e_type` to `kind.__init__`
 #    29-Jan-2013 (CT) Factor `_sort_properties`
 #    11-Mar-2013 (CT) Add `fix_doc`
+#     3-Jun-2013 (CT) Assign `_prop_dict` to attribute named by `_prop_map_name`
+#     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
 #    ««revision-date»»···
 #--
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._Meta.M_Prop_Spec
 import _MOM._Prop
 
 import _TFL._Meta.Object
 import _TFL.Sorted_By
+
+import itertools
 
 class _Prop_Spec_ (TFL.Meta.Object) :
     """Base class for attribute and predicate specification."""
@@ -68,16 +73,17 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     _mixed_kinds        = dict ()
 
     def __init__ (self, e_type) :
-        self._own_names = dict  (self._own_names) ### class to instance
-        self._names     = dict  (self._names)     ### class to instance
+        self._own_names  = dict  (self._own_names) ### class to instance
+        self._names      = dict  (self._names)     ### class to instance
         self._create_prop_dict  (e_type)
         self._create_properties (e_type)
         self._sort_properties   (e_type)
+        setattr (e_type, self._prop_map_name, self._prop_dict)
     # end def __init__
 
-    def fix_doc (self, e_type) :
+    def fix_doc (self, et_scope) :
         for p in self._prop_dict.itervalues () :
-            p.prop.fix_doc (e_type)
+            p.prop.fix_doc (et_scope)
             if p.prop.description :
                 p.__doc__ = p.prop.description
     # end def fix_doc
@@ -103,10 +109,14 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         for n, prop_type in self._own_names.iteritems () :
             if prop_type is not None :
                 self._add_prop (e_type, n, prop_type)
+        base_props = {}
+        for b in e_type.__bases__ [::-1] :
+            bps = getattr (b, self._prop_map_name, {})
+            base_props.update (bps)
         for n, prop_type in self._names.iteritems () :
             if n not in self._prop_dict :
                 ### Inherited property: include in `_prop_dict` and `_prop_kind`
-                prop = getattr (e_type, n, None)
+                prop = base_props.get (n)
                 if prop is not None :
                     self._setup_prop (e_type, n, prop.kind, prop)
     # end def _create_properties

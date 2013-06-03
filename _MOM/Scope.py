@@ -113,8 +113,11 @@
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #    30-Jan-2013 (CT) Add optional argument `allow_zombie` to `pid_query`
 #    10-May-2013 (CT) Allow non-string arguments to `__getitem__`
+#     3-Jun-2013 (CT) Print exception info to stderr, not stdout
 #    ««revision-date»»···
 #--
+
+from   __future__            import print_function
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -137,6 +140,7 @@ import _TFL._Meta.Once_Property
 
 import atexit
 import itertools
+import sys
 import traceback
 import uuid
 
@@ -364,13 +368,17 @@ class Scope (TFL.Meta.Object) :
         if Type :
             try :
                 result = Type.from_attr_pickle_cargo (self, cargo)
-            except Exception, exc :
+            except Exception as exc :
                 self.db_errors.append ((type_name, pid, cargo))
                 if __debug__ :
                     traceback.print_exc ()
-                print repr (exc)
-                print "   Couldn't restore %s %s %s (app-type %s)" % \
-                    (type_name, pid, cargo, self.app_type)
+                print (repr (exc), file = sys.stderr)
+                print \
+                    ( "   add_from_pickle_cargo: couldn't restore"
+                      " %s %s %s (app-type %s)"
+                    % (type_name, pid, cargo, self.app_type)
+                    , file = sys.stderr
+                    )
             else :
                 self.ems.add (result, pid = pid)
                 if not result.init_finished :
@@ -447,10 +455,11 @@ class Scope (TFL.Meta.Object) :
                     ) :
                 try :
                     e.compute_defaults_internal ()
-                except StandardError as exc :
+                except Exception as exc :
                     print \
                         ( "Exception in compute_defaults_internal for %s:\n    %s"
                         % (e, exc)
+                        , file = sys.stderr
                         )
                     if __debug__ :
                         traceback.print_exc ()
@@ -731,8 +740,11 @@ class Scope (TFL.Meta.Object) :
                     err_result.append (e)
                 if ews.warnings :
                     wrn_result.append (e)
-            except StandardError :
-                print "Error during evaluation of invariant for ", e
+            except Exception :
+                print \
+                    ( "Error during evaluation of", kind, "invariant for ", e
+                    , file = sys.stderr
+                    )
                 traceback.print_exc ()
                 err_result.append (e)
         return MOM.Pred.Err_and_Warn_List \

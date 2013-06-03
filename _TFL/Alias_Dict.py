@@ -23,11 +23,12 @@
 #    TFL.Alias_Dict
 #
 # Purpose
-#    «text»···
+#    Dictionary with support for aliases for the keys
 #
 # Revision Dates
 #    30-Sep-2009 (CT) Creation
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#     2-Jun-2013 (CT) Add `copy`
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,12 @@ class Alias_Dict (TFL.Meta.BaM (dict, metaclass = TFL.Meta.M_Class)) :
     def add_alias (self, alias_name, real_name) :
         self._alias_names [alias_name] = real_name
     # end def add_alias
+
+    def copy (self, ** kw) :
+        result = self.__class__ (self, ** kw)
+        result._alias_names = dict (self._alias_names)
+        return result
+    # end def copy
 
     def get (self, key, default = None) :
         key = self._alias_names.get (key, key)

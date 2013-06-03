@@ -46,6 +46,7 @@
 #    17-May-2013 (CT) Redefine `_get_objects` to return `[]`
 #    17-May-2013 (CT) Add support for `rels`; derive from `Dir_V`, not `Leaf`
 #    17-May-2013 (CT) Take `seen` from `request._rst_seen`
+#     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    ««revision-date»»···
 #--
 
@@ -271,7 +272,7 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         def _gen (et_map) :
             E_Type = self.E_Type
             for k in et_map :
-                a = getattr (E_Type, k)
+                a = E_Type.attr_prop (k)
                 if not a.Ref_Type.is_partial :
                     yield k
         return sorted (_gen (self._entry_type_map))

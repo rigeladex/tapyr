@@ -296,10 +296,10 @@
 #                     add `_A_Id_Entity_List_`
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    17-May-2013 (CT) Add `sort_key` to `_A_Rev_Ref_.query`, `.query_x`
-#     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
-#     3-Jun-2013 (CT) Change `A_Email.example` to be syntactically valid
 #     3-Jun-2013 (CT) Change `_A_Id_Entity_.example` to return example
 #                     instance, not `.as_string`
+#     3-Jun-2013 (CT) Change `A_Email.example` to be syntactically valid
+#     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
 #    ««revision-date»»···
 #--
 
@@ -693,7 +693,11 @@ class _A_Entity_ (A_Attr_Type) :
 
     def __getattr__ (self, name) :
         ### to support calls like `scope.PAP.Person.lifetime.start.AQ
-        return getattr (self.P_Type, name)
+        P_Type = self.P_Type
+        try :
+            return P_Type.attributes [name]
+        except LookupError :
+            return getattr (P_Type, name)
     # end def __getattr__
 
 # end class _A_Entity_
@@ -763,7 +767,10 @@ class _A_Composite_ (_A_Entity_) :
 
     def epk_def_set_ckd (self) :
         ### this becomes part of a `classmethod` of the owning `e_type`
-        form = "if %(name)s is None : %(name)s = cls.%(name)s.P_Type ()"
+        form = \
+            ( "if %(name)s is None "
+              ": %(name)s = cls.attr_prop ('%(name)s').P_Type ()"
+            )
         return self.kind.epk_def_set (form % dict (name = self.name))
     # end def epk_def_set_ckd
 
@@ -1979,6 +1986,7 @@ class A_Email (Syntax_Re_Mixin, _A_String_) :
     """An email address"""
 
     typ                = _ ("Email")
+    example            = "foo@bar.baz"
     max_length         = 80
     _syntax_re         = Regexp \
         ( r"^[-_#=!?$&'+*/^~a-z0-9.]+"

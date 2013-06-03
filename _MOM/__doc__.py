@@ -707,11 +707,14 @@ managers<_MOM.E_Type_Manager>`::
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
     [Blob `FO`, Role_Ref `catcher`, String `color`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Name `name`, Link_Ref_List `sickness`, Link_Ref `trap_link`, Link_Ref_List `trap_links`, String `ui_display`, String `ui_repr`, Float `weight`, Boolean `x_locked`]
 
-    >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
+    >>> last_name_prop = ET_Person.attr_prop ("last_name")
+    >>> last_name_prop.name, last_name_prop.ui_name
     ('last_name', u'Last name')
     >>> sorted (ET_Person._Attributes._own_names)
     ['first_name', 'last_name', 'middle_name', 'owns_trap_links', 'sets_trap_links', 'traps', 'ui_display']
-    >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
+
+    >>> color_prop = ET_Mouse.attr_prop ("color")
+    >>> color_prop.name, color_prop.ui_name
     ('color', u'Color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
@@ -1003,9 +1006,9 @@ appropriate class::
 Creating a link will automatically change `auto_rev_ref` attributes of the
 objects participating of the link, like `Trap.setter`::
 
-    >>> t1.__class__.setter
+    >>> t1.attr_prop ("setter")
     Role_Ref `setter`
-    >>> t1.__class__.setter_links
+    >>> t1.attr_prop ("setter_links")
     Link_Ref_List `setter_links`
 
     >>> print t1.setter ### before creation of Person_sets_Trap for t1

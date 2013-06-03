@@ -48,6 +48,7 @@
 #    24-Apr-2013 (CT) Add check for `is_born and is_dead` to `Pid.__nonzero__`
 #    24-Apr-2013 (CT) Don't add `new` for `is_dead` to `attribute_changes`
 #    24-Apr-2013 (CT) Add `Summary.entity_changes`
+#     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,7 @@ class _Entity_Summary_ (TFL.Meta.Object) :
     def check_attr_conflicts (self, entity, initial_values) :
         result = False
         for name, acs in self.attribute_changes.iteritems () :
-            attr    = getattr (entity.__class__, name)
+            attr    = entity.attr_prop   (name)
             ini     = initial_values.get (name)
             result += acs.check_conflict (attr, entity, ini)
         return result
@@ -80,7 +81,7 @@ class _Entity_Summary_ (TFL.Meta.Object) :
         result    = False
         check_all = not self.is_dead
         for name, ini in initial_values.iteritems () :
-            attr  = getattr (entity.__class__, name)
+            attr  = entity.attr_prop (name)
             if check_all or not attr.electric :
                 result += acs.check_ini_vs_cur (attr, entity, ini, r_name)
         return result

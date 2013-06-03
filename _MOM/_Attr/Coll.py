@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -34,6 +34,7 @@
 #     7-Sep-2010 (CT) `old` added to `_override` and passed to
 #                     `record_attr_change`
 #     8-Sep-2010 (CT) `M_Coll.__init__` changed to apply `_override` only once
+#     3-Jun-2013 (CT) Use `.attr_prop` to get attribute descriptors
 #    ««revision-date»»···
 #--
 
@@ -98,7 +99,7 @@ class _Mixin_ (object) :
            holds `self`.
         """
         if self.owner and self.attr_name :
-            return getattr (self.owner.__class__, self.attr_name)
+            return self.owner.attr_prop (self.attr_name)
     # end def owner_attr
 
     def record_attr_change (self, old) :

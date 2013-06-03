@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -35,6 +35,7 @@
 #     5-Sep-2012 (CT) Call `improve_connectors`, `add_guides` -> `set_guides`
 #     6-Sep-2012 (CT) Add `guide_offset`
 #    25-Sep-2012 (CT) Add `desc` and `title` to `Graph`
+#     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop`
 #    ««revision-date»»···
 #--
 
@@ -133,7 +134,7 @@ class Attr (_Spec_Rel_) :
     R_Type = MOM.Graph.Relation.Attr
 
     def _instantiate (self, graph, anchor, offset = None) :
-        attr = getattr (anchor.e_type, self._name)
+        attr = anchor.e_type.attr_prop (self._name)
         if attr.E_Type :
             spec = getattr (ET, attr.E_Type.type_name)
             if self._args or self._kw  :
@@ -211,7 +212,7 @@ class Skip (_Spec_Item_) :
     """Specify that a role should be skipped"""
 
     def _instantiate (self, graph, anchor, offset = None) :
-        attr = getattr (anchor.e_type, self._name)
+        attr = anchor.e_type.attr_prop (self._name)
         anchor.skip.add (attr)
     # end def _instantiate
 

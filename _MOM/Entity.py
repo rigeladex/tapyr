@@ -242,6 +242,8 @@
 #    30-Apr-2013 (CT) Add `add_error`
 #    10-May-2013 (CT) Add `show_in_ui_T`
 #    26-May-2013 (CT) Add `Id_Entity.as_migration`
+#     3-Jun-2013 (CT) Add `attr_prop`, get attribute descriptors from
+#                     `.attributes`, not from `__class__`
 #    ««revision-date»»···
 #--
 
@@ -370,8 +372,8 @@ class Entity (TFL.Meta.Object) :
                 if "." in name :
                     obj, attr = self._get_nested_attr (obj, name)
                 else :
-                    attr = getattr (obj.__class__, name)
-            except AttributeError :
+                    attr = obj.attributes [name]
+            except LookupError :
                 result = repr (getter (obj))
             else :
                 if isinstance (attr, MOM.Attr.Kind) :
@@ -408,11 +410,10 @@ class Entity (TFL.Meta.Object) :
         def _get_nested_attr (self, obj, name) :
             names = name.split (".")
             p     = names [0]
-            attr  = getattr (obj.__class__, p)
+            attr  = obj.attributes [p]
             for n in names [1:] :
                 obj  = getattr (obj, p)
-                cls  = obj.__class__
-                attr = getattr (cls, n)
+                attr = obj.attributes [n]
                 p    = n
             return obj, attr
         # end def _get_nested_attr
@@ -509,6 +510,15 @@ class Entity (TFL.Meta.Object) :
         uai = self.user_attr_iter ()
         return ", ".join ("%s = %s" % (a.name, a.as_code (v)) for (a, v) in uai)
     # end def attr_as_code
+
+    @classmethod
+    def attr_prop (cls, name) :
+        """Return the property of the attribute named `name`.
+           Return None if there is no such attribute.
+        """
+        if name not in ("pid", "type_name") :
+            return cls.attributes.get (name)
+    # end def attr_prop
 
     def attr_value_maybe (self, name) :
         attr = self.attributes.get (name)
@@ -755,10 +765,10 @@ class Entity (TFL.Meta.Object) :
     # end def _record_context
 
     def _record_iter (self, kw) :
-        e_type     = self.__class__
+        attributes = self.__class__.attributes
         recordable = self.recordable_attrs
         for name, value in kw.iteritems () :
-            attr = getattr (e_type, name, None)
+            attr = attributes.get (name, None)
             if attr in recordable :
                 yield attr, attr.name, value
     # end def _record_iter
@@ -909,7 +919,7 @@ class An_Entity (Entity) :
            holds `self`.
         """
         if self.owner and self.attr_name :
-            return getattr (self.owner.__class__, self.attr_name, None)
+            return self.owner.attr_prop (self.attr_name)
     # end def owner_attr
 
     def set (self, on_error = None, ** kw) :
@@ -1423,7 +1433,9 @@ class Id_Entity (Entity) :
         if isinstance (soc, Entity) :
             return soc.x_locked or soc.electric
         else :
-            return soc.x_locked.default or soc.electric.default
+            x_locked = soc.attributes ["x_locked"]
+            electric = soc.attributes ["electric"]
+            return x_locked.default or electric.default
     # end def is_locked
 
     def notify_dependencies_destroy (self) :

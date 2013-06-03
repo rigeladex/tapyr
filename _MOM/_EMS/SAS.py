@@ -61,6 +61,8 @@
 #    14-Sep-2012 (MG) Change object update handling
 #    30-Jan-2013 (CT) Refactor `add` into `MOM.EMS._Manager_.add` and `_add`
 #    30-Jan-2013 (MG) Remove argument from `.rollback` call in `commit`
+#     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop` not by
+#                     applying `getattr` to the `E_Type` itself
 #    ««revision-date»»···
 #--
 
@@ -90,7 +92,7 @@ class Change_Summary (MOM.SCM.Summary) :
             ET   = scope [c.type_name].E_Type
             pacs = set (mo)
             for an in mo :
-                a = getattr (ET, an, None)
+                a = ET.attr_prop (an) or getattr (ET, an, None)
                 if a is not None :
                     pacs.update (d.name for d in a.dependent_attrs)
             self.pending_attr_changes [c.pid].update (pacs)

@@ -153,9 +153,9 @@ _test_code = """
     (Person `left`, Address `right`)
     >>> ET.edit_attr
     (Person `left`, Address `right`, String `desc`)
-    >>> ET.left, ET.person
+    >>> ET.attributes ["left"], ET.attributes ["person"]
     (Person `left`, Person `left`)
-    >>> ET.right, ET.address
+    >>> ET.attributes ["right"], ET.attributes ["address"]
     (Address `right`, Address `right`)
 
     >>> for T, l in children_trans_iter (scope.PAP.Subject_has_Property) :

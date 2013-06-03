@@ -76,6 +76,9 @@
 #    31-Jan-2013 (MG) Add `eq` and `ne` support for `Cached_Role_Query`
 #    23-Apr-2013 (CT) Fix typos, style
 #    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
+#     3-Jun-2013 (CT) Get attribute descriptors from `.attributes` or
+#                     `.attr_prop`, not by applying `getattr` to the `E_Type`
+#                     itself
 #    ««revision-date»»···
 #--
 
@@ -126,7 +129,8 @@ class _MOM_Query_ (TFL.Meta.Object) :
     @Once_Property
     @getattr_safe
     def attributes (self) :
-        return dict (self._E_TYPE [0].attributes, pid = "pid")
+        ET_attrs = self._E_TYPE [0].attributes
+        return ET_attrs.copy (pid = "pid")
     # end def attributes
 
     def raw_attr (self, key) :
@@ -137,8 +141,9 @@ class _MOM_Query_ (TFL.Meta.Object) :
         db = cooked
         if isinstance (cooked, MOM.Id_Entity) :
             db   = cooked.pid
-        elif attr != "type_name" :
-            kind = getattr (self._E_TYPE [0], attr, None)
+        elif attr not in ("pid", "type_name", ) :
+            kind = self.attributes.get \
+                (attr) or getattr (self._E_TYPE [0], attr, None)
             if kind and kind.Pickler :
                 db = kind.Pickler.as_cargo (kind, kind.attr, cooked)
         return (), (getattr (self, attr) == db, )
@@ -232,8 +237,8 @@ class MOM_Query (_MOM_Query_) :
                     setattr (self, name, crq) ### XXX
                     self._CACHED_ROLES [name] = crq
         for rname, col in self._ROLE_ATTRIBUTES.iteritems () :
-            kind = getattr (e_type, rname)
-            setattr        (self, kind.role_name, col)
+            kind = self.attributes [rname]
+            setattr (self, kind.role_name, col)
     # end def __init__
 
     def _add_cached_role (self, name, rc, assoc) :
@@ -275,7 +280,7 @@ class MOM_Query (_MOM_Query_) :
                 etype   = self._E_TYPE [0]
                 for et in itertools.chain \
                     ((etype, ), etype.children.itervalues ()) :
-                    kind = getattr (et, attr.name)
+                    kind = et.attr_prop (attr.name) or getattr (et, attr.name)
                     if kind :
                         saq = et._SAQ
                         saq._add_q (column, kind, name)
@@ -313,14 +318,13 @@ class _MOM_Composite_Query_ (_MOM_Query_) :
             if not an.startswith ("__raw_")
             )  :
             col            = columns [idx]
-            c_kind         = getattr (e_type, name)
+            c_kind         = e_type.attr_prop (name) or getattr (e_type, name)
             col.MOM_Kind   = c_kind
             col.MOM_C_Kind = kind
             setattr                (self, name,            col)
             setattr                (self, c_kind.ckd_name, col)
             self._COLUMNS.append   (col)
             if c_kind.needs_raw_value :
-                c_kind                      = getattr (e_type, name)
                 col                         = columns [idx + 1]
                 col.MOM_Kind                = c_kind
                 col.MOM_C_Kind              = kind
@@ -465,7 +469,7 @@ class Cached_Role_Query (_MOM_Query_) :
     def __init__ (self, source, assoc, attr_name, oattr_name, orole_et) :
         self.source       = source
         self.assoc        = assoc
-        self. attr_name   =  attr_name
+        self.attr_name    = attr_name
         self.oattr_name   = oattr_name
         self.orole_et     = orole_et
     # end def __init__
@@ -477,8 +481,8 @@ class Cached_Role_Query (_MOM_Query_) :
         ### we have to use the _SAQ.left.table to get the table which defines
         ### the left/right attribute
         sa_assoc       = self.assoc._SAQ.left.table
-        role_et        = getattr (self.assoc, self. attr_name).P_Type
-        attr_col       = getattr (self.assoc._SAQ, self. attr_name)
+        role_et        = self.assoc.attributes [self.attr_name].P_Type
+        attr_col       = getattr (self.assoc._SAQ, self.attr_name)
         oattr_col      = getattr (self.assoc._SAQ, self.oattr_name)
         role_col       =       role_et._SAQ.pid
         orole_col      = self.orole_et._SAQ.pid

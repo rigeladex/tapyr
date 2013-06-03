@@ -204,6 +204,7 @@
 #    26-Apr-2013 (CT) Remove support for `Primary_AIS`
 #     8-May-2013 (CT) Factor `_Query_` to fool `DBW.SAS`
 #     3-Jun-2013 (CT) Support forward references in `_EPK_Mixin_`
+#     3-Jun-2013 (CT) Add guard for class access to `Kind.__get__` (type_name..)
 #    ««revision-date»»···
 #--
 
@@ -270,6 +271,8 @@ class Kind (MOM.Prop.Kind) :
 
     def __get__ (self, obj, cls) :
         if obj is None :
+            if self.name in ("pid", "type_name", "electric", "x_locked") :
+                raise RuntimeError ("Access to %s over class %s" % (self, cls))
             return self
         return self.get_value (obj)
     # end def __get__
@@ -1414,7 +1417,7 @@ class _Id_Entity_Reference_Mixin_ (_EPK_Mixin_) :
         except AttributeError :
             pass
         else :
-            unregister (obj)        
+            unregister (obj)
         try :
             del obj.object_referring_attributes [old_value]
         except KeyError :

@@ -135,9 +135,10 @@ _test_code = """
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
 
+    >>> ET_lifetime    = PAP.Person.E_Type.attributes ["lifetime"]
     >>> person_attrs   = MOM.Attr.Selector.all (PAP.Person.E_Type)
     >>> php_attrs      = MOM.Attr.Selector.all (PAP.Person_has_Phone.E_Type)
-    >>> lifetime_attrs = MOM.Attr.Selector.all (PAP.Person.E_Type.lifetime)
+    >>> lifetime_attrs = MOM.Attr.Selector.all (ET_lifetime)
 
     >>> person_attrs.names
     ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex')
@@ -199,7 +200,7 @@ _test_code = """
     Boolean <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in lifetime_attrs :
-    ...     print attr, getattr (PAP.Person.E_Type.lifetime.AQ, attr.name)
+    ...     print attr, getattr (ET_lifetime.AQ, attr.name)
     Date `start` <lifetime.start.AQ [Attr.Type.Querier Date]>
     Date `finish` <lifetime.finish.AQ [Attr.Type.Querier Date]>
     Boolean `alive` <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
@@ -227,11 +228,12 @@ _test_code = """
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Boolean <Attr.Type.Querier Boolean ('EQ',)>
 
-    >>> print PAP.Person_has_Phone.E_Type.person.AQ
+    >>> PhP_ET_person = PAP.Person_has_Phone.E_Type.attributes ["left"]
+    >>> print PhP_ET_person.AQ
     <left.AQ [Attr.Type.Querier Id_Entity]>
-    >>> print PAP.Person_has_Phone.E_Type.person.AQ.lifetime
+    >>> print PhP_ET_person.AQ.lifetime
     <left.lifetime.AQ [Attr.Type.Querier Composite]>
-    >>> print PAP.Person_has_Phone.E_Type.person.AQ.lifetime.start
+    >>> print PhP_ET_person.AQ.lifetime.start
     <left.lifetime.start.AQ [Attr.Type.Querier Date]>
 
     >>> print PAP.Person_has_Phone.E_Type.AQ.person

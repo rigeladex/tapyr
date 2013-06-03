@@ -173,6 +173,7 @@ if 1 :
                , link2_link1     = _link2_link1
                , query_attr      = _query_attr
                )
+        , ignore       = "HPS"
         )
 
 from _GTW.__test__.model import *

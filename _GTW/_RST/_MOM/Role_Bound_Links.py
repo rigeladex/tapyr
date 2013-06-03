@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-May-2013 (CT) Creation
+#     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,7 @@ class _RST_MOM_Role_Bound_Links_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
 
     def __init__ (self, name, ** kw) :
         self.role          = role = self.parent.obj
-        self.link_ref_attr = lra  = getattr (role.__class__, name)
+        self.link_ref_attr = lra  = role.attr_prop (name)
         self._ETM          = lra.E_Type.type_name
         self.__super.__init__ (name = name, ** kw)
     # end def __init__

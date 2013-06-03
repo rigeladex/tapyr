@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -34,9 +34,11 @@
 #     8-Feb-2010 (CT) `snapshot` removed
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    26-Jul-2012 (CT) Add debug info to `do_updates_pending`
+#     3-Jun-2013 (CT) Print exception info to stderr, not stdout
 #    ««revision-date»»···
 #--
 
+from   __future__            import print_function
 from   __future__            import unicode_literals
 
 from   _MOM                  import MOM
@@ -70,9 +72,12 @@ class Manager (TFL.Meta.Object) :
                 try :
                     a.update (obj)
                 except Exception as exc :
-                    import traceback; traceback.print_exc ()
-                    print "Error in `update` of attribute %s for %r" % (a, obj)
-                    print "   ", repr (a.get_raw (obj))
+                    import sys, traceback; traceback.print_exc ()
+                    print \
+                        ( "Error in `update` of attribute %s for %r" % (a, obj)
+                        , file = sys.stderr
+                        )
+                    print ("   ", repr (a.get_raw (obj)), file = sys.stderr)
                     raise
             self.reset_updates_pending ()
     # end def do_updates_pending

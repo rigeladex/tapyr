@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -41,6 +41,7 @@
 #    23-Oct-2012 (CT) Always `len (rels)` to index `_offset_map`
 #     9-Nov-2012 (CT) Fix typo in `Dir_Placer.add`
 #     6-Dec-2012 (CT) Allow anchor cycle in `Entity.anchor.setter`
+#     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop`
 #    ««revision-date»»···
 #--
 
@@ -590,10 +591,10 @@ class Link2 (Entity) :
         if result is None :
             e_type = self.e_type
             label  = e_type.type_base_name
-            l_tbn  = e_type.left.E_Type.type_base_name
+            l_tbn  = e_type.attr_prop ("left").E_Type.type_base_name
             if label.startswith (l_tbn) :
                 label = label [len (l_tbn):]
-            r_tbn  = e_type.right.E_Type.type_base_name
+            r_tbn  = e_type.attr_prop ("right").E_Type.type_base_name
             if label.endswith (r_tbn) :
                 label = label [:- len (r_tbn)]
             if label == e_type.type_base_name :

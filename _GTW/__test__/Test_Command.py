@@ -38,6 +38,7 @@
 #     3-May-2013 (CT) Add `GTW_RST_Test_Command.v1_auth_required`
 #    13-May-2013 (CT) Fix `RAT` handling in `create_rst`
 #    26-May-2013 (CT) Import `pyk`
+#     3-Jun-2013 (CT) Commit and compact `scope` in `do_create`
 #    ««revision-date»»···
 #--
 
@@ -261,8 +262,10 @@ class GTW_Test_Command (_Ancestor) :
 
     def do_create (self, cmd) :
         scope = self.scope (cmd.db_url, cmd.db_name, create = True)
-        self.fixtures  (scope)
-        scope.destroy ()
+        self.fixtures      (scope)
+        scope.commit       ()
+        scope.ems.compact  ()
+        scope.destroy      ()
     # end def do_create
 
     def fixtures (self, scope) :
