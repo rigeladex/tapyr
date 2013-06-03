@@ -1401,14 +1401,14 @@ _test_example_1 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    Auth.Account : ------
-    Auth.Account_Activation : ------
-    Auth.Account_Anonymous : ------
+    Auth.Account : (u'foo@bar.baz', 'Auth.Account')
+    Auth.Account_Activation : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
+    Auth.Account_Anonymous : (u'foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
-    Auth.Account_in_Group : ------
-    Auth.Certificate : ------
+    Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1419,7 +1419,7 @@ _test_example_1 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Account : ------
+    PAP.Person_has_Account : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'foo@bar.baz', 'Auth.Account'), 'PAP.Person_has_Account')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1458,14 +1458,14 @@ _test_example_2 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    Auth.Account : ------
-    Auth.Account_Activation : ------
-    Auth.Account_Anonymous : ------
+    Auth.Account : (u'foo@bar.baz', 'Auth.Account')
+    Auth.Account_Activation : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
+    Auth.Account_Anonymous : (u'foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
-    Auth.Account_in_Group : ------
-    Auth.Certificate : ------
+    Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1476,7 +1476,7 @@ _test_example_2 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Account : ------
+    PAP.Person_has_Account : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'foo@bar.baz', 'Auth.Account'), 'PAP.Person_has_Account')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1537,7 +1537,7 @@ _test_example_3 = r"""
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
-    PAP.Person_has_Account : ------
+    PAP.Person_has_Account : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'foo@bar.baz', 'Auth.Account'), 'PAP.Person_has_Account')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
@@ -1548,14 +1548,14 @@ _test_example_3 = r"""
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     Auth.Group : (u'foo', 'Auth.Group')
-    Auth.Certificate : ------
-    Auth.Account_in_Group : ------
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
     Auth.Account_Password_Reset : ------
-    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Anonymous : ------
-    Auth.Account_Activation : ------
-    Auth.Account : ------
+    Auth.Account_Anonymous : (u'foo@bar.baz', 'Auth.Account_Anonymous')
+    Auth.Account_Activation : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
+    Auth.Account : (u'foo@bar.baz', 'Auth.Account')
 
 """
 
@@ -1570,14 +1570,14 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    Auth.Account : ------
-    Auth.Account_Activation : ------
-    Auth.Account_Anonymous : ------
+    Auth.Account : (u'foo@bar.baz', 'Auth.Account')
+    Auth.Account_Activation : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
+    Auth.Account_Anonymous : (u'foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
-    Auth.Account_in_Group : ------
-    Auth.Certificate : ------
+    Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1588,7 +1588,7 @@ _test_example_4 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Account : ------
+    PAP.Person_has_Account : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'foo@bar.baz', 'Auth.Account'), 'PAP.Person_has_Account')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1623,14 +1623,14 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
-    Auth.Account : ------
-    Auth.Account_Activation : ------
-    Auth.Account_Anonymous : ------
+    Auth.Account : (u'foo@bar.baz', 'Auth.Account')
+    Auth.Account_Activation : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
+    Auth.Account_Anonymous : (u'foo@bar.baz', 'Auth.Account_Anonymous')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
-    Auth.Account_in_Group : ------
-    Auth.Certificate : ------
+    Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1641,7 +1641,7 @@ _test_example_4 = r"""
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
-    PAP.Person_has_Account : ------
+    PAP.Person_has_Account : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'foo@bar.baz', 'Auth.Account'), 'PAP.Person_has_Account')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
@@ -1700,7 +1700,7 @@ _test_example_4 = r"""
     PAP.Person_has_Phone : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'43', u'1', u'234567', 'PAP.Phone'), u'99', 'PAP.Person_has_Phone')
     PAP.Person_has_Email : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'john.doe@example.com', 'PAP.Email'), 'PAP.Person_has_Email')
     PAP.Person_has_Address : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), 'PAP.Person_has_Address')
-    PAP.Person_has_Account : ------
+    PAP.Person_has_Account : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), (u'foo@bar.baz', 'Auth.Account'), 'PAP.Person_has_Account')
     PAP.Person : (u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person')
     PAP.Email : (u'john.doe@example.com', 'PAP.Email')
     PAP.Company_has_Url : ((u'John Doe, Inc.', u'NY', 'PAP.Company'), (u'http://xkcd.com/327/', 'PAP.Url'), 'PAP.Company_has_Url')
@@ -1711,14 +1711,14 @@ _test_example_4 = r"""
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     Auth.Group : (u'foo', 'Auth.Group')
-    Auth.Certificate : ------
-    Auth.Account_in_Group : ------
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
     Auth.Account_Password_Reset : ------
-    Auth.Account_Password_Change_Required : ------
+    Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_EMail_Verification : ------
-    Auth.Account_Anonymous : ------
-    Auth.Account_Activation : ------
-    Auth.Account : ------
+    Auth.Account_Anonymous : (u'foo@bar.baz', 'Auth.Account_Anonymous')
+    Auth.Account_Activation : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Activation')
+    Auth.Account : (u'foo@bar.baz', 'Auth.Account')
 
 """
 

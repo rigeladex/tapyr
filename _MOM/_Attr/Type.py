@@ -296,6 +296,10 @@
 #                     add `_A_Id_Entity_List_`
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    17-May-2013 (CT) Add `sort_key` to `_A_Rev_Ref_.query`, `.query_x`
+#     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
+#     3-Jun-2013 (CT) Change `A_Email.example` to be syntactically valid
+#     3-Jun-2013 (CT) Change `_A_Id_Entity_.example` to return example
+#                     instance, not `.as_string`
 #    ««revision-date»»···
 #--
 
@@ -1103,7 +1107,7 @@ class _A_Id_Entity_ (_A_Entity_) :
                     logging.exception \
                         ("\n    %s [%s] .example", self, self.E_Type)
             else :
-                return self.as_string (result)
+                return result
         else :
             raise MOM.Error.Partial_Type \
                 ( "Partial E_Type %s needs a default child"
