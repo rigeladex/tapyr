@@ -203,6 +203,7 @@
 #                     `Id_Entity_Reference_Mixin._set_cooked_value`
 #    26-Apr-2013 (CT) Remove support for `Primary_AIS`
 #     8-May-2013 (CT) Factor `_Query_` to fool `DBW.SAS`
+#     3-Jun-2013 (CT) Support forward references in `_EPK_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -556,6 +557,29 @@ class _EPK_Mixin_ (Kind) :
             return (ref.pid, )
         return (None, )
     # end def get_pickle_cargo
+
+    def get_value (self, obj) :
+        result = self.__super.get_value (obj)
+        if isinstance (result, int) :
+            ### try to resolve forward reference
+            ETM    = obj.home_scope [self.attr.P_Type.type_name]
+            result = ETM.pid_query (result)
+            if result is not None :
+                self._set_cooked_value (obj, result, changed = True)
+        return result
+    # end def get_value
+
+    def set_pickle_cargo (self, obj, cargo) :
+        try :
+            value = self.from_pickle_cargo (obj.home_scope, cargo)
+        except KeyError :
+            ### assume forward reference
+            pid = cargo [0]
+            self._set_cooked_value_inner (obj, pid)
+        else :
+            if value is not None :
+                self._set_cooked_value (obj, value, changed = True)
+    # end def set_pickle_cargo
 
     def sort_key (self, obj) :
         v = self.get_value (obj)
@@ -1385,7 +1409,12 @@ class _Id_Entity_Reference_Mixin_ (_EPK_Mixin_) :
     # end def _register
 
     def _unregister (self, obj, old_value) :
-        old_value.unregister_dependency (obj)
+        try :
+            unregister = old_value.unregister_dependency
+        except AttributeError :
+            pass
+        else :
+            unregister (obj)        
         try :
             del obj.object_referring_attributes [old_value]
         except KeyError :
