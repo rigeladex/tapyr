@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -18,41 +18,37 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _JNJ/html/e_type_afs.jnj:93
+#: _JNJ/html/e_type_afs.jnj:96
 msgid "Accept changes"
 msgstr ""
 
-#: _JNJ/html/activate.jnj:41
-msgid "Activation for"
-msgstr ""
-
-#: _JNJ/html/e_type.m.jnj:147 _JNJ/html/e_type.m.jnj:257
-#: _JNJ/html/e_type.m.jnj:330 _JNJ/html/e_type_afs.jnj:75
+#: _JNJ/html/e_type.m.jnj:175 _JNJ/html/e_type.m.jnj:285
+#: _JNJ/html/e_type.m.jnj:358 _JNJ/html/e_type_afs.jnj:77
 #: _JNJ/html/rform.jnj:342 _JNJ/html/rform.jnj:345
 msgid "Add"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:258
+#: _JNJ/html/e_type.m.jnj:286
 msgid "Add a rule to restrict the objects to a specific attribute value"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:331
+#: _JNJ/html/e_type.m.jnj:359
 msgid "Add an attribute to be displayed"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:148
+#: _JNJ/html/e_type.m.jnj:176
 msgid "Add an order-by criterion"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:332
+#: _JNJ/html/e_type.m.jnj:360
 msgid "Add attribute"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:149
+#: _JNJ/html/e_type.m.jnj:177
 msgid "Add criterion"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:259
+#: _JNJ/html/e_type.m.jnj:287
 msgid "Add restriction"
 msgstr ""
 
@@ -76,8 +72,8 @@ msgstr ""
 msgid "Anchor year for calendar display"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:91 _JNJ/html/e_type.m.jnj:132
-#: _JNJ/html/e_type.m.jnj:240 _JNJ/html/e_type.m.jnj:315
+#: _JNJ/html/e_type.m.jnj:95 _JNJ/html/e_type.m.jnj:160
+#: _JNJ/html/e_type.m.jnj:268 _JNJ/html/e_type.m.jnj:343
 #: _JNJ/html/cal/wr.jnj:179
 msgid "Apply"
 msgstr ""
@@ -86,9 +82,9 @@ msgstr ""
 msgid "Bad request"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:97 _JNJ/html/e_type.m.jnj:137
-#: _JNJ/html/e_type.m.jnj:320 _JNJ/html/e_type_afs.jnj:76
-#: _JNJ/html/form.jnj:168 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
+#: _JNJ/html/e_type.m.jnj:101 _JNJ/html/e_type.m.jnj:165
+#: _JNJ/html/e_type.m.jnj:348 _JNJ/html/e_type_afs.jnj:78
+#: _JNJ/html/form.jnj:176 _JNJ/html/rform.jnj:259 _JNJ/html/rform.jnj:457
 msgid "Cancel"
 msgstr ""
 
@@ -96,19 +92,19 @@ msgstr ""
 msgid "Cannot be changed"
 msgstr ""
 
-#: _JNJ/html/news.jnj:62
+#: _JNJ/html/form.jnj:321
+msgid "Certificate login"
+msgstr ""
+
+#: _JNJ/html/news.jnj:63
 msgid "Change"
 msgstr ""
 
-#: _JNJ/html/change_password.jnj:40
-msgid "Change Password for"
-msgstr ""
-
-#: _JNJ/html/e_type_afs.jnj:94
+#: _JNJ/html/e_type_afs.jnj:97
 msgid "Change attributes of this object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:382
+#: _JNJ/html/form.jnj:401
 msgid "Change email"
 msgstr ""
 
@@ -116,26 +112,27 @@ msgstr ""
 msgid "Change email for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:381
+#: _JNJ/html/form.jnj:400
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:353
+#: _JNJ/html/e_type.m.jnj:393
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:389
+#: _JNJ/html/form.jnj:408
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:388
+#: _JNJ/html/form.jnj:407
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
 
-#: _JNJ/html/console.jnj:42 _JNJ/html/e_type.m.jnj:102
-#: _JNJ/html/e_type.m.jnj:142 _JNJ/html/e_type.m.jnj:325
+#: _JNJ/html/console.jnj:42 _JNJ/html/e_type.m.jnj:106
+#: _JNJ/html/e_type.m.jnj:170 _JNJ/html/e_type.m.jnj:353
+#: _JNJ/html/e_type_afs.jnj:79
 msgid "Clear"
 msgstr ""
 
@@ -147,7 +144,7 @@ msgstr ""
 msgid "Click to jump to the next error"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:250
+#: _JNJ/html/e_type.m.jnj:278
 msgid "Config"
 msgstr ""
 
@@ -155,16 +152,29 @@ msgstr ""
 msgid "Confirm new email address"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:77
+#: _JNJ/html/e_type_afs.jnj:80
 msgid "Copy"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:343 _JNJ/html/e_type.m.jnj:347
-#: _JNJ/html/e_type_afs.jnj:89
+#: _JNJ/html/make_client_cert.jnj:66
+msgid "Create certificate request"
+msgstr ""
+
+#: _JNJ/html/make_client_cert.jnj:63
+#, python-format
+msgid "Create certificate request for user %s"
+msgstr ""
+
+#: _JNJ/html/e_type.m.jnj:368
+#, python-format
+msgid "Create new %s"
+msgstr ""
+
+#: _JNJ/html/e_type.m.jnj:144 _JNJ/html/e_type_afs.jnj:91
 msgid "Create new object"
 msgstr ""
 
-#: _JNJ/html/change_email.jnj:55 _JNJ/html/form.jnj:407
+#: _JNJ/html/change_email.jnj:55 _JNJ/html/form.jnj:438
 msgid "Current Password"
 msgstr ""
 
@@ -172,20 +182,20 @@ msgstr ""
 msgid "Currently selected day"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:147
+#: _JNJ/html/navigation.jnj:150
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:78
+#: _JNJ/html/e_type_afs.jnj:81
 msgid "Delete"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:361
+#: _JNJ/html/e_type.m.jnj:401
 msgid "Delete object"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:92
+#: _JNJ/html/e_type_afs.jnj:95
 msgid "Delete this object"
 msgstr ""
 
@@ -193,15 +203,19 @@ msgstr ""
 msgid "Delta"
 msgstr ""
 
+#: _JNJ/html/make_client_cert.jnj:51
+msgid "Description"
+msgstr ""
+
 #: _JNJ/html/e_type_admin.jnj:74
 msgid "Disable"
 msgstr ""
 
-#: _JNJ/html/form.jnj:447 _JNJ/html/rform.jnj:431
+#: _JNJ/html/form.jnj:478 _JNJ/html/rform.jnj:431
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:167 _JNJ/html/form.jnj:438 _JNJ/html/rform.jnj:258
+#: _JNJ/html/form.jnj:175 _JNJ/html/form.jnj:469 _JNJ/html/rform.jnj:258
 #: _JNJ/html/rform.jnj:422
 msgid "Discard all changes and leave form"
 msgstr ""
@@ -214,7 +228,7 @@ msgstr ""
 msgid "Discard all changes made and leave popup-form"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:90
+#: _JNJ/html/e_type_afs.jnj:92
 msgid "Discard changes"
 msgstr ""
 
@@ -226,19 +240,19 @@ msgstr ""
 msgid "Display calendar for the selected values"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:178
+#: _JNJ/html/e_type.m.jnj:206
 msgid "Display first batch of objects matching the restriction"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:188
+#: _JNJ/html/e_type.m.jnj:216
 msgid "Display last batch of objects matching the restriction"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:241
+#: _JNJ/html/e_type.m.jnj:269
 msgid "Display list of objects matching the restriction"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:198
+#: _JNJ/html/e_type.m.jnj:226
 msgid "Display next batch of objects matching the restriction"
 msgstr ""
 
@@ -250,11 +264,11 @@ msgstr ""
 msgid "Display objects in descending order of the attribute"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:208
+#: _JNJ/html/e_type.m.jnj:236
 msgid "Display previous batch of objects matching the restriction"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:79
+#: _JNJ/html/e_type_afs.jnj:82
 msgid "Done"
 msgstr ""
 
@@ -266,11 +280,11 @@ msgstr ""
 msgid "Drag the order-by criteria up or down to change their priority"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:80 _JNJ/html/rform.jnj:406
+#: _JNJ/html/e_type_afs.jnj:83 _JNJ/html/rform.jnj:406
 msgid "Edit"
 msgstr ""
 
-#: _JNJ/html/news.jnj:59
+#: _JNJ/html/news.jnj:60
 msgid "Edit this entry"
 msgstr ""
 
@@ -284,23 +298,23 @@ msgid_plural "Errors"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _JNJ/html/e_type.m.jnj:280
+#: _JNJ/html/e_type.m.jnj:308
 msgid "Field(s) to use for ordering entities"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:177 _JNJ/html/gallery.jnj:49
+#: _JNJ/html/e_type.m.jnj:205 _JNJ/html/gallery.jnj:51
 msgid "First"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:49
+#: _JNJ/html/gallery.jnj:51
 msgid "First picture"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:47 _JNJ/html/photo.jnj:40
+#: _JNJ/html/gallery.jnj:49 _JNJ/html/photo.jnj:40
 msgid "Gallery"
 msgstr ""
 
-#: _JNJ/html/form.jnj:338
+#: _JNJ/html/form.jnj:356
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -313,75 +327,93 @@ msgstr ""
 msgid "Javascript is needed to fully use this page"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:64
+#: _JNJ/html/e_type_afs.jnj:66
 msgid "Javascript is needed to use this page"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:143
+#: _JNJ/html/make_client_cert.jnj:44
+msgid "Keysize"
+msgstr ""
+
+#: _JNJ/html/navigation.jnj:146
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:142
+#: _JNJ/html/navigation.jnj:145
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:187 _JNJ/html/gallery.jnj:53
+#: _JNJ/html/e_type.m.jnj:215 _JNJ/html/gallery.jnj:55
 msgid "Last"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:53
+#: _JNJ/html/gallery.jnj:55
 msgid "Last picture"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:321
+#: _JNJ/html/e_type.m.jnj:349
 msgid "Leave form without changing set of attributes to display"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:138
+#: _JNJ/html/e_type.m.jnj:166
 msgid "Leave form without changing set of order-by criteria"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:98
-msgid "Leave form without selecting entity "
+#: _JNJ/html/e_type.m.jnj:102
+#, python-format
+msgid "Leave form without selecting %s"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:268
+#: _JNJ/html/e_type.m.jnj:296
 msgid "Limit number of entities displayed"
 msgstr ""
 
-#: _JNJ/html/form.jnj:328
+#: _JNJ/html/form.jnj:346
 msgid "Log into website or go to account page"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:172
+#: _JNJ/html/navigation.jnj:175
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:171
+#: _JNJ/html/navigation.jnj:174
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:329 _JNJ/html/navigation.jnj:177
+#: _JNJ/html/form.jnj:347 _JNJ/html/navigation.jnj:180
 msgid "Login"
 msgstr ""
 
-#: _JNJ/html/login.jnj:42
+#: _JNJ/html/login.jnj:43
 msgid "Login for"
 msgstr ""
 
-#: _JNJ/html/error_401.jnj:38
+#: _JNJ/html/error_401.jnj:39
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:371 _JNJ/html/form.jnj:372
+#: _JNJ/html/form.jnj:320
+msgid "Login with a previously created client certificate"
+msgstr ""
+
+#: _JNJ/html/form.jnj:390 _JNJ/html/form.jnj:391
 #, python-format
 msgid "Logout %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:91
+#: _JNJ/html/form.jnj:414
+#, python-format
+msgid "Make a client certificate for account %s"
+msgstr ""
+
+#: _JNJ/html/e_type_afs.jnj:94
 msgid "Make a copy of this object"
+msgstr ""
+
+#: _JNJ/html/form.jnj:416
+msgid "Make client certificate"
 msgstr ""
 
 #: _JNJ/html/error_405.jnj:38
@@ -404,11 +436,11 @@ msgstr ""
 msgid "New Email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:411 _JNJ/html/register.jnj:59
+#: _JNJ/html/form.jnj:442 _JNJ/html/register.jnj:59
 msgid "New Password"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:197 _JNJ/html/gallery.jnj:52
+#: _JNJ/html/e_type.m.jnj:225 _JNJ/html/gallery.jnj:54
 msgid "Next"
 msgstr ""
 
@@ -416,11 +448,11 @@ msgstr ""
 msgid "Next error"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:52 _JNJ/html/photo.jnj:48
+#: _JNJ/html/gallery.jnj:54 _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:274
+#: _JNJ/html/e_type.m.jnj:302
 msgid "Number of first entity to display"
 msgstr ""
 
@@ -428,11 +460,19 @@ msgstr ""
 msgid "Number of weeks displayed"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:281
+#: _JNJ/html/e_type_doc.m.jnj:130
+msgid "Only during initialization"
+msgstr ""
+
+#: _JNJ/html/make_client_cert.jnj:53
+msgid "Optional descritpion for client certificate"
+msgstr ""
+
+#: _JNJ/html/e_type.m.jnj:309
 msgid "Order by"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:121
+#: _JNJ/html/e_type.m.jnj:149
 msgid "Order-by Criteria"
 msgstr ""
 
@@ -440,20 +480,24 @@ msgstr ""
 msgid "Page doesn't exist"
 msgstr ""
 
+#: _JNJ/html/error_410.jnj:37
+msgid "Page doesn't exist anymore"
+msgstr ""
+
 #: _JNJ/email/reset_password.jnj:37
 #, python-format
 msgid "Password of %s reset"
 msgstr ""
 
-#: _JNJ/html/news.jnj:47
+#: _JNJ/html/news.jnj:48
 msgid "Permanent link"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:51
+#: _JNJ/html/gallery.jnj:53
 msgid "Play"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:86
+#: _JNJ/html/e_type_afs.jnj:88
 msgid "Please change the fields that have errors"
 msgstr ""
 
@@ -467,11 +511,11 @@ msgstr ""
 msgid "Please try again later. "
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:207 _JNJ/html/gallery.jnj:50
+#: _JNJ/html/e_type.m.jnj:235 _JNJ/html/gallery.jnj:52
 msgid "Prev"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:50 _JNJ/html/photo.jnj:42
+#: _JNJ/html/gallery.jnj:52 _JNJ/html/photo.jnj:42
 msgid "Previous picture"
 msgstr ""
 
@@ -487,11 +531,11 @@ msgstr ""
 msgid "Reenable"
 msgstr ""
 
-#: _JNJ/html/form.jnj:349
+#: _JNJ/html/form.jnj:367
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:348
+#: _JNJ/html/form.jnj:366
 msgid "Register a new account"
 msgstr ""
 
@@ -499,11 +543,15 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
+#: _JNJ/html/e_type_afs.jnj:93
+msgid "Remove value from entry field"
+msgstr ""
+
 #: _JNJ/html/change_email.jnj:63
 msgid "Repeat Email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:415 _JNJ/html/register.jnj:63
+#: _JNJ/html/form.jnj:446 _JNJ/html/register.jnj:63
 msgid "Repeat Password"
 msgstr ""
 
@@ -515,24 +563,24 @@ msgstr ""
 msgid "Request password reset"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:81 _JNJ/html/form.jnj:448 _JNJ/html/rform.jnj:432
+#: _JNJ/html/e_type_afs.jnj:84 _JNJ/html/form.jnj:479 _JNJ/html/rform.jnj:432
 #: _JNJ/html/rform.jnj:454
 msgid "Reset"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:103
+#: _JNJ/html/e_type.m.jnj:107
 msgid "Reset fields"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:95
+#: _JNJ/html/e_type_afs.jnj:98
 msgid "Reset fields to start values"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:326
+#: _JNJ/html/e_type.m.jnj:354
 msgid "Reset form to default"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:143
+#: _JNJ/html/e_type.m.jnj:171
 msgid "Reset order-by criteria"
 msgstr ""
 
@@ -541,11 +589,11 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:83 _JNJ/html/rform.jnj:451
+#: _JNJ/html/e_type_afs.jnj:85 _JNJ/html/rform.jnj:451
 msgid "Save"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:97
+#: _JNJ/html/e_type_afs.jnj:99
 msgid "Save the attribute values as displayed in form fields"
 msgstr ""
 
@@ -558,37 +606,39 @@ msgstr ""
 msgid "Scroll by %s weeks to anchor %s."
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:82
-msgid "Select"
+#: _JNJ/html/e_type.m.jnj:89 _JNJ/html/e_type.m.jnj:115
+#: _JNJ/html/e_type.m.jnj:122
+#, python-format
+msgid "Select %s for attribute %s"
 msgstr ""
 
-#: _JNJ/html/e_type_afs.jnj:96
-msgid "Select an object as value for this field"
+#: _JNJ/html/e_type.m.jnj:124
+#, python-format
+msgid "Select a %s"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:252
+#: _JNJ/html/e_type.m.jnj:280
 msgid "Select attributes"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:83
-#, python-format
-msgid "Select entity for attribute %s"
-msgstr ""
-
-#: _JNJ/html/navigation.jnj:154
+#: _JNJ/html/navigation.jnj:157
 #, python-format
 msgid "Select language %s"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:251 _JNJ/html/e_type.m.jnj:305
+#: _JNJ/html/e_type.m.jnj:118
+msgid "Select one of the types below"
+msgstr ""
+
+#: _JNJ/html/e_type.m.jnj:279 _JNJ/html/e_type.m.jnj:333
 msgid "Select the attributes to be displayed for each object"
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:63
+#: _JNJ/html/gallery.jnj:66
 msgid "Selected picture"
 msgstr ""
 
-#: _JNJ/html/afs.jnj:157 _JNJ/html/form.jnj:452 _JNJ/html/rform.jnj:436
+#: _JNJ/html/afs.jnj:166 _JNJ/html/form.jnj:483 _JNJ/html/rform.jnj:436
 msgid "Send form data to server and leave form"
 msgstr ""
 
@@ -604,11 +654,11 @@ msgstr ""
 msgid "Service is temporarily unavailable. "
 msgstr ""
 
-#: _JNJ/html/gallery.jnj:51
+#: _JNJ/html/gallery.jnj:53
 msgid "Slide show"
 msgstr ""
 
-#: _JNJ/html/afs.jnj:158 _JNJ/html/form.jnj:453 _JNJ/html/rform.jnj:437
+#: _JNJ/html/afs.jnj:167 _JNJ/html/form.jnj:484 _JNJ/html/rform.jnj:437
 msgid "Submit"
 msgstr ""
 
@@ -619,6 +669,11 @@ msgstr ""
 
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
+msgstr ""
+
+#: _JNJ/html/error_410.jnj:57
+#, python-format
+msgid "The object referred to by the web address %s was deleted"
 msgstr ""
 
 #: _JNJ/html/error_400.jnj:46
@@ -648,7 +703,7 @@ msgstr ""
 msgid "Update Email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:421 _JNJ/html/form.jnj:422
+#: _JNJ/html/form.jnj:452 _JNJ/html/form.jnj:453
 msgid "Update password"
 msgstr ""
 
@@ -657,11 +712,11 @@ msgstr ""
 msgid "Use one of the HTTP methods (%s), instead."
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:316
+#: _JNJ/html/e_type.m.jnj:344
 msgid "Use set of attributes currently displayed in form"
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:133
+#: _JNJ/html/e_type.m.jnj:161
 msgid "Use set of criteria currently displayed in order-by form"
 msgstr ""
 
@@ -670,8 +725,9 @@ msgstr ""
 msgid "Use the HTTP method '%s', instead."
 msgstr ""
 
-#: _JNJ/html/e_type.m.jnj:92
-msgid "Use the currently selected entity"
+#: _JNJ/html/e_type.m.jnj:96
+#, python-format
+msgid "Use the currently selected %s"
 msgstr ""
 
 #: _JNJ/html/error_500.jnj:52
@@ -705,9 +761,13 @@ msgstr ""
 msgid "You are not authorized to access this page"
 msgstr ""
 
-#: _JNJ/html/error_401.jnj:47
+#: _JNJ/html/error_401.jnj:48
 #, python-format
 msgid "You need to be logged in to access the page %s"
+msgstr ""
+
+#: _JNJ/html/error_410.jnj:47
+msgid "You requested a page that doesn't exist anymore: "
 msgstr ""
 
 #: _JNJ/html/error_404.jnj:48
@@ -720,6 +780,11 @@ msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:165
 msgid "day"
+msgstr ""
+
+#: _JNJ/html/e_type_doc.m.jnj:111
+#, python-format
+msgid "maximum length: %s"
 msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:167

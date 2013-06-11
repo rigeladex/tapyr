@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2012 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2013 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,110 +18,142 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
+#: _GTW/_RST/_TOP/Auth.py:332
+#, python-format
+msgid "%s Password for %s on website %s"
+msgstr "Kennwort für Anwender %s auf Webseite %s %s"
+
 #: _GTW/_Form/_MOM/Javascript.py:68
 #, python-format
 msgid "%s `%s` does not exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_RST/_MOM/Mixin.py:250
+#: _GTW/_RST/_MOM/Mixin.py:418
 #, python-format
 msgid "%s `%s` doesn't exist anymore!"
 msgstr "%s `%s` existiert nicht mehr"
 
 #: _GTW/_NAV/_E_Type/Admin.py:315 _GTW/_NAV/_E_Type/Admin.py:560
-#: _GTW/_NAV/_E_Type/Admin.py:1095 _GTW/_RST/_MOM/Mixin.py:275
+#: _GTW/_NAV/_E_Type/Admin.py:1095 _GTW/_RST/_MOM/Mixin.py:384
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
+
+#: _GTW/_RST/_MOM/Query_Restriction.py:391
+#, python-format
+msgid "%s doesn't have an attribute named `%s`"
+msgstr "%s hat kein Attribute mit Namen `%s`"
 
 #: _GTW/_NAV/_E_Type/Admin.py:393
 #, python-format
 msgid "%s only works with content-type json"
 msgstr "%s funktioniert nur mit dem Inhaltstyp json"
 
-#: _GTW/_NAV/_E_Type/SRM.py:238 _GTW/_RST/_TOP/_MOM/SRM.py:234
+#: _GTW/_NAV/_E_Type/SRM.py:239
 #, python-format
 msgid "%s: regatta registration"
 msgstr "%s: Regatta Registrierung"
 
-#: _GTW/_NAV/Auth.py:190 _GTW/_RST/_TOP/Auth.py:371
+#: _GTW/_RST/_TOP/_MOM/SRM.py:327
+#, python-format
+msgid "%s: regatta registration %s"
+msgstr "%s: Regatta Registrierung %s"
+
+#: _GTW/_NAV/Auth.py:191 _GTW/_RST/_TOP/Auth.py:305
 msgid "A confirmation email has been sent to the new email address."
 msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 
-#: _GTW/_NAV/Auth.py:327 _GTW/_RST/_TOP/Auth.py:541
+#: _GTW/_NAV/Auth.py:328 _GTW/_RST/_TOP/Auth.py:589
 msgid "A confirmation has been sent to your email address."
 msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
-#: _GTW/_Form/Auth.py:79 _GTW/_Form/Auth.py:235 _GTW/_RST/_TOP/Auth.py:149
+#: _GTW/_Form/Auth.py:80 _GTW/_Form/Auth.py:236 _GTW/_RST/Auth_Mixin.py:112
 msgid "A user name is required to login."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_Form/Auth.py:260
+#: _GTW/_Form/Auth.py:261
 msgid "A user name is required."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_RST/_TOP/Auth.py:577
+#: _GTW/_RST/_MOM/Query_Restriction.py:273
+#, python-format
+msgid ""
+"AQ argument must contain the values `attribute_name`, `operator`, `value`"
+" separated by commas; got `%s` instead"
+msgstr ""
+
+#: _GTW/_RST/_TOP/Auth.py:625
 msgid "Account could not be found"
 msgstr "Benutzerkonto nicht gefunden"
 
-#: _GTW/_RST/_TOP/Auth.py:512
+#: _GTW/_RST/_TOP/Auth.py:559
 msgid "Account with this Email address already registered"
 msgstr "Es gibt bereits ein Benutzerkonto mit dieser Emailadresse"
 
-#: _GTW/_NAV/Auth.py:143 _GTW/_RST/_TOP/Auth.py:246
+#: _GTW/_RST/_TOP/Auth.py:165
+#, python-format
+msgid "Activate account for %s on website %s"
+msgstr "Activiere Benutzerkonto für Anwender %s auf Webseite %s"
+
+#: _GTW/_NAV/Auth.py:144 _GTW/_RST/_TOP/Auth.py:180
 msgid "Activation successful."
 msgstr "Die Aktivierung war erfolgreich."
 
-#: _GTW/_NAV/_E_Type/Manager.py:166 _GTW/_RST/_TOP/_MOM/Display.py:122
+#: _GTW/_NAV/_E_Type/Manager.py:166 _GTW/_RST/_TOP/_MOM/Display.py:127
 msgid "Admin"
 msgstr "Verwaltung"
 
-#: _GTW/_RST/_TOP/_MOM/Display.py:125
+#: _GTW/_RST/_TOP/_MOM/Display.py:130
 msgid "Administration"
 msgstr "Verwaltung"
 
-#: _GTW/_NAV/Calendar.py:95 _GTW/_RST/_TOP/Calendar.py:230
+#: _GTW/_NAV/Calendar.py:95 _GTW/_RST/_TOP/Calendar.py:232
 msgid "Apr"
 msgstr "Apr"
 
-#: _GTW/_NAV/Calendar.py:101 _GTW/_RST/_TOP/Calendar.py:236
+#: _GTW/_NAV/Calendar.py:101 _GTW/_RST/_TOP/Calendar.py:238
 msgid "April"
 msgstr "April"
 
 #: _GTW/_NAV/_E_Type/Admin.py:335 _GTW/_NAV/_E_Type/Admin.py:1106
-#: _GTW/_RST/_TOP/_MOM/Admin.py:144
+#: _GTW/_RST/_TOP/_MOM/Admin.py:170
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
 
-#: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:231
+#: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:233
 msgid "Aug"
 msgstr "Aug"
 
-#: _GTW/_NAV/Calendar.py:102 _GTW/_RST/_TOP/Calendar.py:237
+#: _GTW/_NAV/Calendar.py:102 _GTW/_RST/_TOP/Calendar.py:239
 msgid "August"
 msgstr "August"
 
-#: _GTW/__test__/model.py:232
+#: _GTW/__test__/Test_Command.py:208
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/model.py:234
+#: _GTW/__test__/Test_Command.py:210
 msgid "Authorization and Account handling"
 msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
-#: _GTW/__test__/model.py:240
+#: _GTW/__test__/Test_Command.py:216
 msgid "Choice of language used for localization"
 msgstr "Auswahl der Sprache für Lokalisierung"
 
-#: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:232
+#: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:234
 msgid "Dec"
 msgstr "Dez"
 
-#: _GTW/_NAV/Calendar.py:103 _GTW/_RST/_TOP/Calendar.py:238
+#: _GTW/_NAV/Calendar.py:103 _GTW/_RST/_TOP/Calendar.py:240
 msgid "December"
 msgstr "Dezember"
 
-#: _GTW/_NAV/Auth.py:108
+#: _GTW/_RST/_TOP/_MOM/Doc.py:140
+#, python-format
+msgid "Documentation for package namespace %s"
+msgstr ""
+
+#: _GTW/_NAV/Auth.py:109
 msgid "EMail verification successful."
 msgstr "Die Bestätigung der Email war erfolgreich."
 
@@ -131,17 +163,17 @@ msgid ""
 "request."
 msgstr "Änderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verändert."
 
-#: _GTW/_NAV/Auth.py:178 _GTW/_NAV/Auth.py:316 _GTW/_RST/_TOP/Auth.py:359
-#: _GTW/_RST/_TOP/Auth.py:530
+#: _GTW/_NAV/Auth.py:179 _GTW/_NAV/Auth.py:317 _GTW/_RST/_TOP/Auth.py:293
+#: _GTW/_RST/_TOP/Auth.py:578
 #, python-format
 msgid "Email confirmation for %s"
 msgstr "Email Bestätigung für %s"
 
-#: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:229
+#: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:231
 msgid "Feb"
 msgstr "Feb"
 
-#: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:235
+#: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:237
 msgid "February"
 msgstr "Feber"
 
@@ -151,49 +183,58 @@ msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
 
 #: _GTW/_NAV/_E_Type/Admin.py:267 _GTW/_NAV/_E_Type/Admin.py:283
-#: _GTW/_RST/_TOP/_MOM/Admin.py:112 _GTW/_RST/_TOP/_MOM/Admin.py:121
+#: _GTW/_RST/_TOP/_MOM/Admin.py:139 _GTW/_RST/_TOP/_MOM/Admin.py:148
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr "Fehlerhaftes Formular (unbekanntes Element %s)"
 
-#: _GTW/_AFS/Value.py:228
+#: _GTW/_AFS/Value.py:230
 #, python-format
 msgid "Form/element is unknown (unknown id: %s)"
 msgstr "Unbekanntes Formular oder Feld (%s)"
 
-#: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:222
+#: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:224
 msgid "Fri"
 msgstr "FR"
 
-#: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:226
+#: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:228
 msgid "Friday"
 msgstr "Freitag"
 
-#: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:229
+#: _GTW/_AFS/_MOM/TinyMCE.py:64
+msgid "Image Selection"
+msgstr "Bildauswahl"
+
+#: _GTW/_RST/_MOM/Mixin.py:422
+#, python-format
+msgid "It was deleted by user `%s` on %s"
+msgstr "Es wurde vom Anwender `%s` am %s gelöscht"
+
+#: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:231
 msgid "Jan"
 msgstr "Jan"
 
-#: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:235
+#: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:237
 msgid "January"
 msgstr "Jänner"
 
-#: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:231
+#: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:233
 msgid "Jul"
 msgstr "Jul"
 
-#: _GTW/_NAV/Calendar.py:102 _GTW/_RST/_TOP/Calendar.py:237
+#: _GTW/_NAV/Calendar.py:102 _GTW/_RST/_TOP/Calendar.py:239
 msgid "July"
 msgstr "Juli"
 
-#: _GTW/_NAV/Calendar.py:95 _GTW/_RST/_TOP/Calendar.py:230
+#: _GTW/_NAV/Calendar.py:95 _GTW/_RST/_TOP/Calendar.py:232
 msgid "Jun"
 msgstr "Jun"
 
-#: _GTW/_NAV/Calendar.py:101 _GTW/_RST/_TOP/Calendar.py:236
+#: _GTW/_NAV/Calendar.py:101 _GTW/_RST/_TOP/Calendar.py:238
 msgid "June"
 msgstr "Juni"
 
-#: _GTW/__test__/model.py:238
+#: _GTW/__test__/Test_Command.py:214
 msgid "L10N"
 msgstr ""
 
@@ -202,160 +243,174 @@ msgstr ""
 msgid "Language %s selected"
 msgstr "Sprache %s wurde ausgewählt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:165 _GTW/_RST/_TOP/_MOM/SRM.py:159
+#: _GTW/_NAV/_E_Type/SRM.py:166 _GTW/_RST/_TOP/_MOM/SRM.py:224
 msgid "List of participants for"
 msgstr "Liste der Teilnehmer für"
 
-#: _GTW/_NAV/Auth.py:282 _GTW/_RST/_TOP/Auth.py:484
+#: _GTW/_NAV/Auth.py:283 _GTW/_RST/_TOP/Auth.py:430
 msgid "Logout successful."
 msgstr "Abmelden war erfolgreich."
 
-#: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:229
+#: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:231
 msgid "Mar"
 msgstr "Mrz"
 
-#: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:235
+#: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:237
 msgid "March"
 msgstr "März"
 
 #: _GTW/_NAV/Calendar.py:95 _GTW/_NAV/Calendar.py:101
-#: _GTW/_RST/_TOP/Calendar.py:230 _GTW/_RST/_TOP/Calendar.py:236
+#: _GTW/_RST/_TOP/Calendar.py:232 _GTW/_RST/_TOP/Calendar.py:238
 msgid "May"
 msgstr "Mai"
 
-#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:221
+#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:223
 msgid "Mon"
 msgstr "MO"
 
-#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:225
+#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:227
 msgid "Monday"
 msgstr "Montag"
 
-#: _GTW/HTML.py:80
+#: _GTW/HTML.py:83
 #, python-format
 msgid "Need Javascript for displaying %s"
 msgstr "Für die Darstellung der %s ist Javascript erforderlich"
 
-#: _GTW/_Form/Auth.py:193
+#: _GTW/_Form/Auth.py:194
 msgid "New email address"
 msgstr "Emailadresse"
 
-#: _GTW/_Form/Auth.py:132
+#: _GTW/_Form/Auth.py:133
 msgid "New password"
 msgstr "Neues Kennwort"
 
-#: _GTW/_RST/_TOP/Auth.py:239
+#: _GTW/_RST/_TOP/Auth.py:173
 msgid "No activation request for this account"
 msgstr "Es gibt keine Aktivierungsanfrage für dieses Benutzerkonto"
 
-#: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:174
+#: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:200
 msgid "Not authorized for this page"
 msgstr "Fehlende Autorisierung für den Zugriff auf diese Seite"
 
-#: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:169
+#: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:195
 msgid "Not logged in or login-session is expired"
 msgstr "Felhende Anmeldung oder die Sitzung ist abgelaufen."
 
-#: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:232
+#: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:234
 msgid "Nov"
 msgstr "Nov"
 
-#: _GTW/_NAV/Calendar.py:103 _GTW/_RST/_TOP/Calendar.py:238
+#: _GTW/_NAV/Calendar.py:103 _GTW/_RST/_TOP/Calendar.py:240
 msgid "November"
 msgstr "November"
 
 #: _GTW/_NAV/_E_Type/Admin.py:773 _GTW/_NAV/_E_Type/Admin.py:800
-#: _GTW/_RST/_TOP/_MOM/Admin.py:601 _GTW/_RST/_TOP/_MOM/Admin.py:610
+#: _GTW/_RST/_TOP/_MOM/Admin.py:677 _GTW/_RST/_TOP/_MOM/Admin.py:686
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr "Objekt \"%s\" gelöscht"
 
-#: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:232
+#: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:234
 msgid "Oct"
 msgstr "Okt"
 
-#: _GTW/_NAV/Calendar.py:103 _GTW/_RST/_TOP/Calendar.py:238
+#: _GTW/_NAV/Calendar.py:103 _GTW/_RST/_TOP/Calendar.py:240
 msgid "October"
 msgstr "Oktober"
 
-#: _GTW/_Form/Auth.py:181
+#: _GTW/_Form/Auth.py:182
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:138 _GTW/_RST/_TOP/_MOM/SRM.py:127
+#: _GTW/_NAV/_E_Type/SRM.py:139 _GTW/_RST/_TOP/_MOM/SRM.py:192
 msgid "Participants"
 msgstr "Teilnehmer"
 
-#: _GTW/_Form/Auth.py:68 _GTW/_Form/Auth.py:164 _GTW/_Form/Auth.py:197
+#: _GTW/_Form/Auth.py:69 _GTW/_Form/Auth.py:165 _GTW/_Form/Auth.py:198
 msgid "Password"
 msgstr "Kennwort"
 
-#: _GTW/_NAV/Auth.py:369 _GTW/_RST/_TOP/Auth.py:596
+#: _GTW/_NAV/Auth.py:370 _GTW/_RST/_TOP/Auth.py:645
 #, python-format
 msgid "Password reset for user %s on website %s"
 msgstr "Kennwort für Anwender %s auf Webseite %s zurückgesetzt"
 
-#: _GTW/_Form/Auth.py:144
+#: _GTW/_Form/Auth.py:145
 msgid "Passwords don't match."
 msgstr "Kennworte stimmen nicht überein."
 
-#: _GTW/_Form/Auth.py:142
+#: _GTW/_RST/Auth_Mixin.py:143
+msgid "Please enter a username"
+msgstr "Bitte Benutzername eingeben"
+
+#: _GTW/_Form/Auth.py:143
 msgid "Please repeat the new password."
 msgstr "Bitte neues Kennwort wiederholen."
 
-#: _GTW/_NAV/_E_Type/SRM.py:170 _GTW/_RST/_TOP/_MOM/SRM.py:164
+#: _GTW/_RST/_MOM/Query_Restriction.py:398
+#, python-format
+msgid "Query for cached role attribute `%s` of %s not yet supported"
+msgstr ""
+
+#: _GTW/_RST/_MOM/Mixin.py:580
+#, python-format
+msgid "Query restriction triggered error: %s '%s'"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/SRM.py:171 _GTW/_RST/_TOP/_MOM/SRM.py:229
 msgid "Registration list"
 msgstr "Meldeliste"
 
-#: _GTW/_Form/Auth.py:134
+#: _GTW/_Form/Auth.py:135
 msgid "Repeat new password"
 msgstr "Wiederhole neues Kennwort"
 
-#: _GTW/_RST/_TOP/Auth.py:331
+#: _GTW/_RST/_TOP/Auth.py:265
 msgid "Repeat the EMail for verification."
 msgstr "Wiederhole die Emailadresse zur Überprüfung."
 
-#: _GTW/_RST/_TOP/Auth.py:161
+#: _GTW/_RST/Auth_Mixin.py:125
 msgid "Repeat the password for verification."
 msgstr "Wiederhole das Kennwort zur Überprüfung."
 
-#: _GTW/_NAV/_E_Type/SRM.py:139 _GTW/_RST/_TOP/_MOM/SRM.py:128
+#: _GTW/_NAV/_E_Type/SRM.py:140 _GTW/_RST/_TOP/_MOM/SRM.py:193
 msgid "Results"
 msgstr "Resultate"
 
-#: _GTW/_NAV/_E_Type/SRM.py:161 _GTW/_RST/_TOP/_MOM/SRM.py:156
+#: _GTW/_NAV/_E_Type/SRM.py:162 _GTW/_RST/_TOP/_MOM/SRM.py:221
 msgid "Results for"
 msgstr "Resultate für"
 
-#: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:222
+#: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:224
 msgid "Sat"
 msgstr "SA"
 
-#: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:226
+#: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:228
 msgid "Saturday"
 msgstr "Samstag"
 
-#: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:231
+#: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:233
 msgid "Sep"
 msgstr "Sep"
 
-#: _GTW/_NAV/Calendar.py:102 _GTW/_RST/_TOP/Calendar.py:237
+#: _GTW/_NAV/Calendar.py:102 _GTW/_RST/_TOP/Calendar.py:239
 msgid "September"
 msgstr "September"
 
-#: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:222
+#: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:224
 msgid "Sun"
 msgstr "SO"
 
-#: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:226
+#: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:228
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: _GTW/_RST/_TOP/Auth.py:327
+#: _GTW/_RST/_TOP/Auth.py:261
 msgid "The Email is required."
 msgstr "Die Emailadresse muss ausgefüllt werden."
 
-#: _GTW/_RST/_TOP/Auth.py:335
+#: _GTW/_RST/_TOP/Auth.py:269
 msgid "The Email's don't match."
 msgstr "Die Emailadressen stimmen nicht überein."
 
@@ -367,112 +422,141 @@ msgstr "Die Sitzung ist abgelaufen oder die Werte des Formulars sind korrumpiert
 msgid "The edit session has expired."
 msgstr "Die Sitzung ist abgelaufen."
 
-#: _GTW/_Form/Auth.py:209
+#: _GTW/_Form/Auth.py:210
 msgid "The new E-Mail address is required."
 msgstr "Die neue E-Mail Adresse muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:140
+#: _GTW/_Form/Auth.py:141
 msgid "The new password is required."
 msgstr "Das neue Kennwort muss ausgefüllt werden."
 
-#: _GTW/_Form/Auth.py:176
+#: _GTW/_Form/Auth.py:177
 msgid "The old password is required."
 msgstr "Das alte Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:225 _GTW/_RST/_TOP/Auth.py:402
+#: _GTW/_NAV/Auth.py:226 _GTW/_RST/_TOP/Auth.py:342
 msgid "The password has been changed."
 msgstr "Das Kennwort wurde geändert"
 
-#: _GTW/_Form/Auth.py:214
+#: _GTW/_Form/Auth.py:215
 msgid "The password is incorrect"
 msgstr "Das Kennwort sind nicht korrekt"
 
-#: _GTW/_Form/Auth.py:81 _GTW/_Form/Auth.py:207 _GTW/_RST/_TOP/Auth.py:157
+#: _GTW/_Form/Auth.py:82 _GTW/_Form/Auth.py:208 _GTW/_RST/Auth_Mixin.py:121
 msgid "The password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_RST/_TOP/Auth.py:165
+#: _GTW/_RST/Auth_Mixin.py:129
 msgid "The passwords don't match."
 msgstr "Die Kennworte stimmen nicht überein."
 
-#: _GTW/_NAV/Auth.py:381 _GTW/_RST/_TOP/Auth.py:608
+#: _GTW/_NAV/Auth.py:382 _GTW/_RST/_TOP/Auth.py:657
 msgid "The reset password instructions have been sent to your email address."
 msgstr ""
 "Die Information über das Setzen eines neuen Kennworts wurde an die "
 "Emailadresse versandt."
 
-#: _GTW/_Form/Auth.py:87 _GTW/_RST/_TOP/Auth.py:183
+#: _GTW/_Form/Auth.py:88 _GTW/_RST/Auth_Mixin.py:148
 msgid "This account is currently inactive"
 msgstr "Dieses Benutzerkonto ist gegenwärtig nicht verfügbar"
 
-#: _GTW/_Form/Auth.py:240
+#: _GTW/_Form/Auth.py:241
 msgid "This username is already in use."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_Form/Auth.py:265
+#: _GTW/_Form/Auth.py:266
 msgid "This username is not registered"
 msgstr "Dieser Benutzername ist nicht bekannt"
 
-#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:221
+#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:223
 msgid "Thu"
 msgstr "DO"
 
-#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:225
+#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:227
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:221
+#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:223
 msgid "Tue"
 msgstr "DI"
 
-#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:225
+#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:227
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: _GTW/_Form/Auth.py:67 _GTW/_Form/Auth.py:224 _GTW/_Form/Auth.py:250
+#: _GTW/_RST/_TOP/_MOM/Doc.py:269
+#, python-format
+msgid "Unknown E_Type '%s'"
+msgstr ""
+
+#: _GTW/_RST/Resource.py:543
+#, python-format
+msgid "Unknown HTTP method `%s` requested"
+msgstr ""
+
+#: _GTW/_RST/_MOM/Query_Restriction.py:345
+#, python-format
+msgid "Unknown attribute %s.%s"
+msgstr "Unbekanntes Attribut %s.%s"
+
+#: _GTW/_RST/_MOM/Query_Restriction.py:367
+#, python-format
+msgid "Unknown attribute %s.%s[%s].%s"
+msgstr "Unbekanntes Attribut %s.%s[%s].%s"
+
+#: _GTW/_RST/_MOM/Query_Restriction.py:350
+#, python-format
+msgid "Unknown type %s for attribute %s.%s"
+msgstr ""
+
+#: _GTW/_Form/Auth.py:68 _GTW/_Form/Auth.py:225 _GTW/_Form/Auth.py:251
 msgid "Username"
 msgstr "Benutzername"
 
-#: _GTW/_Form/Auth.py:85 _GTW/_RST/_TOP/Auth.py:181
+#: _GTW/_Form/Auth.py:86 _GTW/_RST/Auth_Mixin.py:146
 msgid "Username or password incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:221
+#: _GTW/_NAV/Calendar.py:86 _GTW/_RST/_TOP/Calendar.py:223
 msgid "Wed"
 msgstr "MI"
 
-#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:225
+#: _GTW/_NAV/Calendar.py:90 _GTW/_RST/_TOP/Calendar.py:227
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: _GTW/_NAV/Auth.py:262 _GTW/_RST/_TOP/Auth.py:459
+#: _GTW/_NAV/Auth.py:263 _GTW/_RST/_TOP/Auth.py:404
 #, python-format
 msgid "Welcome %s."
 msgstr "Willkommen, %s."
 
 #: _GTW/_NAV/_E_Type/Admin.py:780 _GTW/_NAV/_E_Type/Admin.py:808
-#: _GTW/_RST/_TOP/_MOM/Admin.py:594
+#: _GTW/_RST/_TOP/_MOM/Admin.py:670
 msgid "You need to specify a pid!"
 msgstr "Es muss eine Pid spezifiert werden!"
 
-#: _GTW/_RST/_MOM/Mixin.py:270
+#: _GTW/_RST/_MOM/Mixin.py:379
 #, python-format
 msgid "`%s` refers to %s, not %s"
 msgstr "`%s` bezieht sich auf %s, nicht %s"
 
-#: _GTW/_RST/_TOP/_MOM/Mixin.py:151
-msgid "a"
-msgstr ""
+#: _GTW/_RST/_MOM/Mixin.py:407
+msgid "anonymous"
+msgstr "anonym"
 
-#: _GTW/HTML.py:62
+#: _GTW/_RST/_TOP/_MOM/Admin_Restricted.py:47
+msgid "created by"
+msgstr "eingegeben durch"
+
+#: _GTW/HTML.py:65
 msgid "email address"
 msgstr "Emailadresse"
 
-#: _GTW/HTML.py:63
+#: _GTW/HTML.py:66
 msgid "phone number"
 msgstr "Telefonnummer"
 
-#: _GTW/_NAV/_E_Type/Gallery.py:100 _GTW/_RST/_TOP/_MOM/Gallery.py:85
+#: _GTW/_NAV/_E_Type/Gallery.py:100 _GTW/_RST/_TOP/_MOM/Gallery.py:86
 msgid "picture"
 msgstr "Bild"
 

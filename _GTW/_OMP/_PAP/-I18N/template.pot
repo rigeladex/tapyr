@@ -1,15 +1,15 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2012 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2013 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _GTW/_OMP/_PAP/Person.py:156 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:159 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr ""
 
@@ -26,15 +26,22 @@ msgstr ""
 msgid "Academic title."
 msgstr ""
 
-#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Subject_has_Address:0
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Address_Position:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Subject_has_Address:0
-msgid "Address where subject lives or works"
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Address of subject"
 msgstr ""
+
+#: _GTW._OMP._PAP.Address_Position:0
+msgid "Address_Position"
+msgid_plural "Address_Positions"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
@@ -48,28 +55,49 @@ msgstr ""
 msgid "City, town, or village"
 msgstr ""
 
-#: _GTW._OMP._PAP.Company:0 _GTW._OMP._PAP.Company_has_Address:0
-#: _GTW._OMP._PAP.Company_has_Email:0 _GTW._OMP._PAP.Company_has_Phone:0
+#: _GTW._OMP._PAP.Company:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company"
 msgid_plural "Companys"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Company_has_Address:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company linked to Address"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company linked to Email"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company linked to Phone"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company linked to Url"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company_has_Address"
 msgid_plural "Company_has_Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Company_has_Email:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company_has_Email"
 msgid_plural "Company_has_Emails"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Company_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company_has_Phone"
 msgid_plural "Company_has_Phones"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company_has_Url"
+msgid_plural "Company_has_Urls"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -81,24 +109,11 @@ msgstr ""
 msgid "Country code"
 msgstr ""
 
-#: _GTW._OMP._PAP.Entity_created_by_Person:0
-msgid "Created-By association for all kinds of entities"
-msgstr ""
-
-#: _GTW._OMP._PAP.Entity_created_by_Person:0
-msgid "Creator"
-msgstr ""
-
 #: _GTW._OMP._PAP.Subject:0
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:76 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Email:0
-#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Description"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Email.py:65 _GTW._OMP._PAP.Email:0
+#: _GTW/_OMP/_PAP/Email.py:66 _GTW._OMP._PAP.Email:0
 msgid "Email address"
 msgstr ""
 
@@ -106,30 +121,24 @@ msgstr ""
 msgid "Email address (including domain)"
 msgstr ""
 
-#: _GTW._OMP._PAP.Subject_has_Email:0
-msgid "Email address of subject"
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Email of subject"
 msgstr ""
 
-#: _GTW._OMP._PAP.Entity_created_by_Person:0
-msgid "Entity created by `person`."
-msgstr ""
-
-#: _GTW._OMP._PAP.Entity_created_by_Person:0
-msgid "Entity_created_by_Person"
-msgid_plural "Entity_created_by_Persons"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Extension"
 msgstr ""
 
-#: _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Extension number used in PBX"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Attr_Type.py:52
 msgid "Female"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/IM_Handle.py:52
+msgid "First internet-wide instant messaging service"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
@@ -148,8 +157,16 @@ msgstr ""
 msgid "Geographical longitude"
 msgstr ""
 
-#: _GTW._OMP._PAP.Address:0
+#: _GTW._OMP._PAP.Address_Position:0
 msgid "Geographical position"
+msgstr ""
+
+#: _GTW._OMP._PAP.Address_Position:0
+msgid "Geographical position of an Address."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/graph.py:94
+msgid "Graph displaying PAP partial object model"
 msgstr ""
 
 #: _MOM._Attr.Position:0
@@ -164,6 +181,10 @@ msgstr ""
 msgid "International country code of phone number (without prefix)"
 msgstr ""
 
+#: _GTW/_OMP/_PAP/IM_Handle.py:53
+msgid "Internet relay chat"
+msgstr ""
+
 #: _GTW._OMP._PAP.Person:0
 msgid "Last name"
 msgstr ""
@@ -176,8 +197,46 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
+#: _GTW._OMP._PAP.Legal_Entity:0
+msgid "Legal_Entity"
+msgid_plural "Legal_Entitys"
+msgstr[0] ""
+msgstr[1] ""
+
 #: _GTW._OMP._PAP.Subject:0
 msgid "Lifetime"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a company to a address"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a company to a email"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a company to a phone number"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a company to a url"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a person to a address"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a person to a email"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a person to a phone number"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Link a person to a url"
 msgstr ""
 
 #: _MOM._Attr.Position:0
@@ -220,32 +279,12 @@ msgstr ""
 msgid "Model an email address"
 msgstr ""
 
-#: _GTW._OMP._PAP.Company_has_Phone:0
-msgid "Model the link between a company and a phone number"
-msgstr ""
-
-#: _GTW._OMP._PAP.Company_has_Address:0
-msgid "Model the link between a company and an address"
-msgstr ""
-
-#: _GTW._OMP._PAP.Company_has_Email:0
-msgid "Model the link between a company and an email address"
-msgstr ""
-
-#: _GTW._OMP._PAP.Person_has_Phone:0
-msgid "Model the link between a person and a phone number"
-msgstr ""
-
-#: _GTW._OMP._PAP.Person_has_Address:0
-msgid "Model the link between a person and an address"
-msgstr ""
-
-#: _GTW._OMP._PAP.Person_has_Email:0
-msgid "Model the link between a person and an email address"
-msgstr ""
-
 #: _GTW._OMP._PAP.Company:0
 msgid "Name of company."
+msgstr ""
+
+#: _GTW._OMP._PAP.Legal_Entity:0
+msgid "Name of legal_entity."
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
@@ -256,42 +295,75 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: _GTW._OMP._PAP.Person:0 _GTW._OMP._PAP.Person_has_Address:0
-#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW/_OMP/_PAP/Property.py:63
+msgid "Office"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/graph.py:95
+msgid "PAP graph"
+msgstr ""
+
+#: _GTW._OMP._PAP.Person:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person"
 msgid_plural "Persons"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Entity_created_by_Person:0
-msgid "Person that created the `entity`."
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person linked to Address"
 msgstr ""
 
-#: _GTW._OMP._PAP.Person_has_Address:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person linked to Email"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person linked to Phone"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person linked to Url"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person_has_Address"
 msgid_plural "Person_has_Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person_has_Email"
 msgid_plural "Person_has_Emails"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Person_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person_has_Phone"
 msgid_plural "Person_has_Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person_has_Url"
+msgid_plural "Person_has_Urls"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Phone"
 msgid_plural "Phones"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Subject_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Phone number of company"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Phone number of person"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Phone number of subject"
 msgstr ""
 
@@ -299,14 +371,36 @@ msgstr ""
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
-#: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
+#: _GTW._OMP._PAP.Company:0
+msgid "Place where this (type_base_name.lower ())s is registered."
+msgstr ""
+
+#: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address_Position:0
 msgid "Position"
 msgid_plural "Positions"
 msgstr[0] ""
 msgstr[1] ""
 
+#: _GTW._OMP._PAP.Address_Position:0
+msgid "Postal address of the `position`"
+msgstr ""
+
+#: _GTW._OMP._PAP.Property:0 _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Property"
+msgid_plural "Propertys"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Property of subject"
+msgstr ""
+
 #: _GTW._OMP._PAP.Address:0
 msgid "Region"
+msgstr ""
+
+#: _GTW._OMP._PAP.Company:0
+msgid "Registered in"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
@@ -332,7 +426,7 @@ msgid "Short description of the address"
 msgstr ""
 
 #: _GTW._OMP._PAP.Email:0
-msgid "Short description of the email address"
+msgid "Short description of the email"
 msgstr ""
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
@@ -340,15 +434,27 @@ msgid "Short description of the link"
 msgstr ""
 
 #: _GTW._OMP._PAP.Phone:0
-msgid "Short description of the phone number"
+msgid "Short description of the phone"
 msgstr ""
 
-#: _GTW._OMP._PAP.Company:0
+#: _GTW._OMP._PAP.Property:0
+msgid "Short description of the property"
+msgstr ""
+
+#: _GTW._OMP._PAP.Url:0
+msgid "Short description of the url"
+msgstr ""
+
+#: _GTW._OMP._PAP.Legal_Entity:0 _GTW._OMP._PAP.Company:0
 msgid "Short name"
 msgstr ""
 
 #: _GTW._OMP._PAP.Company:0
-msgid "Short name of company"
+msgid "Short name of company."
+msgstr ""
+
+#: _GTW._OMP._PAP.Legal_Entity:0
+msgid "Short name of legal_entity."
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
@@ -369,19 +475,39 @@ msgid_plural "Subjects"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Subject_has_Address:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject linked to Address"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject linked to Email"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject linked to Phone"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject linked to Property"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject linked to Url"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject_has_Address"
 msgid_plural "Subject_has_Addresses"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Subject_has_Email:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject_has_Email"
 msgid_plural "Subject_has_Emails"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._PAP.Subject_has_Phone:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject_has_Phone"
 msgid_plural "Subject_has_Phones"
 msgstr[0] ""
@@ -392,6 +518,28 @@ msgid "Subject_has_Property"
 msgid_plural "Subject_has_Propertys"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject_has_Url"
+msgid_plural "Subject_has_Urls"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._PAP.Url:0
+msgid "URL value referrring to a specific resource."
+msgstr ""
+
+#: _GTW._OMP._PAP.Url:0
+msgid "Uniform resource locator, aka URL"
+msgstr ""
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Url of subject"
+msgstr ""
+
+#: _GTW._OMP._PAP.Url:0
+msgid "Value"
+msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code"

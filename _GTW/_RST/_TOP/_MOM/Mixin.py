@@ -148,9 +148,10 @@ class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.E_Type_Mixin) :
         E_Type      = self.E_Type
         name        = kw.pop  ("name",  E_Type.ui_name)
         title       = kw.pop  ("title", _T (E_Type.__doc__))
+        a           = "a" ### Fool Babel extract
         short_title = kw.pop  \
             ( "short_title"
-            , _T (name.capitalize () if name [0] >= "a" else name)
+            , _T (name.capitalize () if name [0] >= a else name)
             )
         self.__super.__init__ \
             ( name          = TFL.Ascii.sanitized_filename (unicode (name))

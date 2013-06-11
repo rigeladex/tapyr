@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2012 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2012-2013 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2012.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,35 +18,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _ReST/Roles.py:83
+#: _ReST/Roles.py:94
 msgid "\\u2018"
 msgstr "\\u201A"
 
-#: _ReST/Roles.py:83
+#: _ReST/Roles.py:94
 msgid "\\u2019"
 msgstr "\\u2018"
 
-#: _ReST/Roles.py:80
-msgid "\\u201c"
+#: _ReST/Roles.py:91
+msgid "\\u201C"
 msgstr "\\u201D"
 
-#: _ReST/Roles.py:80
-msgid "\\u201d"
+#: _ReST/Roles.py:91
+msgid "\\u201D"
 msgstr "\\u201C"
 
-#: _ReST/Roles.py:81
+#: _ReST/Roles.py:92
 msgid "\\u2039"
 msgstr "\\u203A"
 
-#: _ReST/Roles.py:81
-msgid "\\u203a"
+#: _ReST/Roles.py:92
+msgid "\\u203A"
 msgstr "\\u2039"
 
-#: _ReST/Roles.py:82
+#: _ReST/Roles.py:93
 msgid "«"
 msgstr "»"
 
-#: _ReST/Roles.py:82
+#: _ReST/Roles.py:93
 msgid "»"
 msgstr "«"
-

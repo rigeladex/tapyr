@@ -63,7 +63,7 @@ class _PAP_Company_ (_Ancestor_Essence) :
         # end class name
 
         class registered_in (A_String) :
-            """Place where this (type_base_name.lower ())s is registered."""
+            """Place where this %(type_base_name.lower ())s is registered."""
 
             kind               = Attr.Primary_Optional
             max_length         = 64

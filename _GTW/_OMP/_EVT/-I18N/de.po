@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2011 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2013 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr "Kalendar des Ereignisses"
 msgid "Count"
 msgstr "Anzahl"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Daily"
 msgstr "Täglich"
 
@@ -68,6 +68,10 @@ msgstr "Kalenderdaten, die in die Wiederholungsregel eingeschlossen werden."
 msgid "Detail"
 msgstr "Detail"
 
+#: _GTW/_OMP/_EVT/graph.py:61
+msgid "EVT graph"
+msgstr ""
+
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Easter offset"
 msgstr "Osterabstand"
@@ -95,6 +99,10 @@ msgstr[1] "Termine"
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Finish date of the recurrence."
 msgstr "Schlussdatum der Wiederholungsregel."
+
+#: _GTW/_OMP/_EVT/graph.py:60
+msgid "Graph displaying EVT partial object model"
+msgstr "Graphische Darstellung des EVT Modells"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "If true, exclude the dates specified by this rule."
@@ -128,7 +136,7 @@ msgstr "Monat"
 msgid "Month day"
 msgstr "Monatstag"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Monthly"
 msgstr "Monatlich"
 
@@ -282,7 +290,7 @@ msgstr "Woche"
 msgid "Week day"
 msgstr "Wochentag"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Weekly"
 msgstr "Wöchentlich"
 
@@ -290,7 +298,6 @@ msgstr "Wöchentlich"
 msgid "Year day"
 msgstr "Tag des Jahres"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:392
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Yearly"
 msgstr "Jährlich"
-

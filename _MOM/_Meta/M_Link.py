@@ -109,7 +109,7 @@ from   _TFL                  import TFL
 import _MOM._Meta.M_Entity
 import _MOM.E_Type_Manager
 
-from   _TFL.I18N             import _, _T
+from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.predicate        import cartesian, plural_of, uniq
 import _TFL.multimap
 import _TFL.Undef
@@ -165,7 +165,9 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             ( Attr_Type, name, role, role_type, cls
             , assoc        = cls ### XXX remove after auto_cache_roles are removed
             , description  =
-                _T ("`%s` link%s") % (_T (cls.ui_name), "s" if plural else "")
+                ( _Tn ( "`%s` link", "`%s` links", 7 if plural else 1)
+                % (_T (cls.ui_name), )
+                )
             )
     # end def _m_create_link_ref_attr
 

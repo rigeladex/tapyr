@@ -1,15 +1,15 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2012 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2013 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,12 +51,6 @@ msgid_plural "Account_EMail_Verifications"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._Auth.Account:0
-msgid "Account_P"
-msgid_plural "Account_Ps"
-msgstr[0] ""
-msgstr[1] ""
-
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Password_Change_Required"
 msgid_plural "Account_Password_Change_Requireds"
@@ -83,6 +77,42 @@ msgstr ""
 msgid "An acount which uses passwords for authorization."
 msgstr ""
 
+#: _GTW/_OMP/_Auth/graph.py:63
+msgid "Auth graph"
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Certificate"
+msgid_plural "Certificates"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Certificate that can be used to authenticate an account."
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Date and time when the certificate was revoked"
+msgstr ""
+
+#: _MOM._Attr.Date_Time_Interval:0
+msgid "Date_Time_Interval"
+msgid_plural "Date_Time_Intervals"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _MOM._Attr.Date_Time_Interval:0
+msgid "Date_Time_Interval_C"
+msgid_plural "Date_Time_Interval_Cs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _MOM._Attr.Date_Time_Interval:0
+msgid "Date_Time_Interval_N"
+msgid_plural "Date_Time_Interval_Ns"
+msgstr[0] ""
+msgstr[1] ""
+
 #: _GTW._OMP._Auth.Account:0
 msgid "Default account for users which are not logging in."
 msgstr ""
@@ -91,8 +121,16 @@ msgstr ""
 msgid "Desc"
 msgstr ""
 
+#: _GTW/_OMP/_Auth/Certificate.py:81 _GTW._OMP._Auth.Certificate:0
+msgid "Description"
+msgstr ""
+
 #: _GTW._OMP._Auth.Group:0
 msgid "Description of group"
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Email of account"
 msgstr ""
 
 #: _GTW._OMP._Auth.Account:0
@@ -109,6 +147,10 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Expires"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/graph.py:62
+msgid "Graph displaying Auth partial object model"
 msgstr ""
 
 #: _GTW._OMP._Auth.Group:0 _GTW._OMP._Auth.Account_in_Group:0
@@ -137,6 +179,24 @@ msgstr ""
 msgid "Pending email verification."
 msgstr ""
 
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Revocation date"
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Short description of the certificate"
+msgstr ""
+
+#: _GTW._OMP._Auth.Account:0
+msgid "Specifies if this account has super-user permissions."
+msgstr ""
+
+#: _GTW._OMP._Auth.Account:0
+msgid ""
+"Specifies if this account is currently enabled\n"
+"(the user can login)."
+msgstr ""
+
 #: _GTW._OMP._Auth.Account:0
 msgid "Superuser"
 msgstr ""
@@ -151,16 +211,12 @@ msgid ""
 "login."
 msgstr ""
 
+#: _GTW._OMP._Auth.Certificate:0
+msgid "The revocation date cannot be in the future."
+msgstr ""
+
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "The temporary password."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "This account has super-user permissions."
-msgstr ""
-
-#: _GTW._OMP._Auth.Account:0
-msgid "This account is currently enabled (the user can login)."
 msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
@@ -169,5 +225,17 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Unique token which identifies this action."
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Validity"
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "Validity date interval"
+msgstr ""
+
+#: _GTW._OMP._Auth.Certificate:0
+msgid "valid_revocation_date"
 msgstr ""
 

@@ -1,15 +1,15 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2012 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2013 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2012-09-11 17:33+0200\n"
+"POT-Creation-Date: 2013-06-11 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,35 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: _ReST/Roles.py:82
+#: _ReST/Roles.py:94
+msgid "\\u2018"
+msgstr ""
+
+#: _ReST/Roles.py:94
+msgid "\\u2019"
+msgstr ""
+
+#: _ReST/Roles.py:91
+msgid "\\u201C"
+msgstr ""
+
+#: _ReST/Roles.py:91
+msgid "\\u201D"
+msgstr ""
+
+#: _ReST/Roles.py:92
+msgid "\\u2039"
+msgstr ""
+
+#: _ReST/Roles.py:92
+msgid "\\u203A"
+msgstr ""
+
+#: _ReST/Roles.py:93
 msgid "«"
 msgstr ""
 
-#: _ReST/Roles.py:82
+#: _ReST/Roles.py:93
 msgid "»"
-msgstr ""
-
-#: _ReST/Roles.py:83
-msgid "\u2018"
-msgstr ""
-
-#: _ReST/Roles.py:83
-msgid "\u2019"
-msgstr ""
-
-#: _ReST/Roles.py:80
-msgid "\u201c"
-msgstr ""
-
-#: _ReST/Roles.py:80
-msgid "\u201d"
-msgstr ""
-
-#: _ReST/Roles.py:81
-msgid "\u2039"
-msgstr ""
-
-#: _ReST/Roles.py:81
-msgid "\u203a"
 msgstr ""
 
