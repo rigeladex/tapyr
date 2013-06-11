@@ -99,7 +99,7 @@ class Boat (_Ancestor_Essence) :
         # end class nation
 
         class sail_number (A_Int) :
-            """Sail number of boat"""
+            """Sail number of boat (without nation!)"""
 
             kind               = Attr.Primary_Optional
             example            = "2827"
