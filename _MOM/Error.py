@@ -84,6 +84,7 @@
 #    18-Apr-2013 (CT) Change `Link_Error` to `Wrong_Type`
 #    25-Apr-2013 (CT) Add `Permission`
 #     6-May-2013 (CT) Change `Error.as_unicode` to use `__doc__`, unless `.args`
+#    11-Jun-2013 (CT) Add guard to `Attribute.bindings`
 #    ««revision-date»»···
 #--
 
@@ -398,10 +399,11 @@ class Attribute (Error) :
 
     @Once_Property
     def bindings (self) :
-        FO    = self.entity.FO
-        name  = self.attribute
-        value = str (FO (name, self.value))
-        return ((name, value), )
+        if self.entity :
+            FO    = self.entity.FO
+            name  = self.attribute
+            value = str (FO (name, self.value))
+            return ((name, value), )
     # end def bindings
 
     def correct (self) :

@@ -117,6 +117,7 @@
 #                     is no conflict (needed for composite attributes)
 #    17-Dec-2012 (CT) Fix `allow_new` in `Field_Entity.__call__`
 #    28-Mar-2013 (CT) Add `polymorphic_epk` to `Field_Entity.__call__`
+#    11-Jun-2013 (CT) Improve message logged by `_create_instance`
 #    ««revision-date»»···
 #--
 
@@ -222,8 +223,9 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
                 matches = ETM.query_s (* rqas)
             except Exception as exc :
                 logging.exception \
-                    ( "Exception from ETM.query_s "
-                      "(* ETM.raw_query_attrs (akw, akw)) for akw = %s"
+                    ( "Exception from "
+                      "`ETM.query_s (* ETM.raw_query_attrs (akw, akw))` "
+                      "for akw = %s"
                     % (sorted (akw.iteritems ()), )
                     )
                 raise

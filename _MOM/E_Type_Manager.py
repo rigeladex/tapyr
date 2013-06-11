@@ -128,6 +128,7 @@
 #    13-May-2013 (CT) Change `r_query` to look at non-role id-entity
 #                     attributes, not call `ems.r_query`
 #     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
+#    11-Jun-2013 (CT) Add error guards to `raw_query_attrs`
 #    ««revision-date»»···
 #--
 
@@ -209,11 +210,25 @@ class Entity (TFL.Meta.Object) :
         def _gen (self, names, values, AQ) :
             if values is None :
                 for n in names :
-                    yield getattr (AQ, n)
+                    aq = getattr (AQ, n)
+                    if aq is not None :
+                        yield aq
+                    else :
+                        raise MOM.Error.Attribute_Unknown (None, n, None)
             else :
                 for n in names :
                     if n in values :
-                        yield getattr (AQ, n).EQ (values [n])
+                        aq = getattr (AQ, n)
+                        v  = values [n]
+                        if aq is not None :
+                            eq = aq.EQ (v)
+                            if eq is not None :
+                                yield eq
+                            else :
+                                raise MOM.Error.Attribute_Syntax \
+                                    (None, aq._attr, v)
+                        else :
+                            raise MOM.Error.Attribute_Unknown (None, n, v)
         return tuple (_gen (self, names, values, AQ))
     # end def raw_query_attrs
 
