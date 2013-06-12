@@ -176,6 +176,7 @@
 #     8-Sep-2011 (CT)  `first_n` added
 #    12-Sep-2012 (CT)  Use `itertools.product` for `cartesian`, if available
 #    10-May-2013 (CT)  Add `plural_of`
+#    12-Jun-2013 (CT) Change `bool_split` to use `bool_split_iters`
 #    ««revision-date»»···
 #--
 
@@ -189,11 +190,11 @@ import _TFL.Generators
 import itertools
 
 ### legacy aliases
-IV_Pairs        = enumerate
-dict_from_list  = dict.fromkeys
-enumerate_slice = TFL.enumerate_slice
-pairwise        = TFL.pairwise
-window_wise     = TFL.window_wise
+IV_Pairs         = enumerate
+dict_from_list   = dict.fromkeys
+enumerate_slice  = TFL.enumerate_slice
+pairwise         = TFL.pairwise
+window_wise      = TFL.window_wise
 
 def all_true (seq) :
     """Returns True if all elements of `seq` are true,
@@ -271,11 +272,7 @@ def bool_split (seq, predicate) :
        >>> bool_split (range (5), lambda x : x > 4)
        ([0, 1, 2, 3, 4], [])
     """
-    result = ([], [])
-    add    = [r.append for r in result]
-    for e in seq :
-        add [bool (predicate (e))] (e)
-    return result
+    return tuple (list (x) for x in TFL.bool_split_iters (seq, predicate))
 # end def bool_split
 
 def byte_alignment (bytes) :

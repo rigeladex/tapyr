@@ -46,6 +46,7 @@
 #     3-Nov-2009 (CT) `paired_map` fixed, `paired_zip` removed
 #    11-Nov-2009 (CT) Exception handler changed for 3-compatibility
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    12-Jun-2013 (CT) Add `bool_split_iters`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ from   _TFL             import TFL
 from   _TFL.pyk         import pyk
 
 import _TFL.Undef
+
+import itertools
 
 def alt_iter (* iterables) :
     """Alternating iterator
@@ -84,6 +87,27 @@ def alt_iter (* iterables) :
             else :
                 i += 1
 # end def alt_iter
+
+def bool_split_iters (seq, predicate = bool) :
+    """Return an iterator pair yielding the false, respectively true,
+       elements of `seq`, as determined by `predicate`
+
+    >>> seq = list (pyk.xrange (10))
+    >>> list (list (x) for x in bool_split_iters (seq))
+    [[0], [1, 2, 3, 4, 5, 6, 7, 8, 9]]
+    >>> list (list (x) for x in bool_split_iters (seq, lambda i : i % 2))
+    [[0, 2, 4, 6, 8], [1, 3, 5, 7, 9]]
+    >>> list (list (x) for x in bool_split_iters (seq, lambda i : i % 3))
+    [[0, 3, 6, 9], [1, 2, 4, 5, 7, 8]]
+    >>> list (list (x) for x in bool_split_iters (seq, lambda i : i < 5))
+    [[5, 6, 7, 8, 9], [0, 1, 2, 3, 4]]
+
+    """
+    a, b = itertools.tee ((predicate (x), x) for x in seq)
+    f_it = (x for (p, x) in a if not p)
+    t_it = (x for (p, x) in b if p)
+    return f_it, t_it
+# end def bool_split_iters
 
 @pyk.adapt__bool__
 class Look_Ahead_Gen (object) :
