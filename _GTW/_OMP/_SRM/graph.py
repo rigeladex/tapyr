@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SRM.
@@ -31,6 +31,7 @@
 #    31-Aug-2012 (CT) Adapt to MOM.Graph.Spec API change
 #     3-Sep-2012 (CT) Add `Page`, specify `source_side` for `Crew_Member`
 #    24-Sep-2012 (CT) Add `Command`, rename from `Graph.py` to `graph.py`
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -105,14 +106,6 @@ class Command (MOM.Graph.Command) :
     def PNS (self) :
         return GTW.OMP.SRM
     # end def PNS
-
-    @property
-    def PNS_Aliases (self) :
-        return dict \
-            ( PAP             = GTW.OMP.PAP
-            , SRM             = GTW.OMP.SRM
-            )
-    # end def PNS_Aliases
 
 # end class Command
 

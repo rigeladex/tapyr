@@ -33,6 +33,7 @@
 #     9-Nov-2012 (CT) Rotate graph by roughly 90 degrees
 #     7-May-2013 (CT) Add `Association`, `Person_has_Account`, if imported
 #     7-May-2013 (CT) Shift `Subject_has_Property` to center of graph
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -133,13 +134,6 @@ class Command (MOM.Graph.Command) :
     def PNS (self) :
         return GTW.OMP.PAP
     # end def PNS
-
-    @property
-    def PNS_Aliases (self) :
-        return dict \
-            ( PAP             = GTW.OMP.PAP
-            )
-    # end def PNS_Aliases
 
 # end class Command
 

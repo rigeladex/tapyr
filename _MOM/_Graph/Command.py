@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -51,8 +52,6 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
 
     min_args = max_args     = 0
 
-    PNS_Aliases             = dict ()
-
     _opts                   = \
         ( "-dir:P?Directory of output file"
         , "-name:P?Name of output file"
@@ -66,8 +65,7 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
     def app_type (self) :
         from _MOM._DBW._HPS.Manager import Manager as DBW
         from _MOM._EMS.Hash         import Manager as EMS
-        apt = MOM.App_Type \
-            (self.PNS._._bname, self.PNS, PNS_Aliases = self.PNS_Aliases)
+        apt = MOM.App_Type (self.PNS._._bname, self.PNS)
         return apt.Derived (EMS, DBW)
     # end def app_type
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Martin Glueck All rights reserved
+# Copyright (C) 2009-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -74,9 +75,7 @@ import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP .import_PAP
 import _GTW._OMP._PAP.Nav
 
-apt = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP, Auth = GTW.OMP.Auth)
-    ).Derived (EMS, DBW)
+apt = MOM.App_Type (u"HWO", GTW).Derived (EMS, DBW)
 
 scope        = MOM.Scope.new (apt, None)
 

@@ -42,6 +42,8 @@
 #    26-Jun-2012 (CT) Add `PNS_Aliases_R`
 #     9-Apr-2013 (CT) Add `DBW.db_sig` to `db_sig`
 #    10-May-2013 (CT) Add `all_attribute_types`
+#    13-Jun-2013 (CT) Move `PNS_Aliases`, `PNS_Aliases_R` to `MOM.Entity`
+#    13-Jun-2013 (CT) Add `PNS_Set`
 #    ««revision-date»»···
 #--
 
@@ -163,6 +165,16 @@ class _App_Type_D_ (_App_Type_) :
     # end def db_sig
 
     @property
+    def PNS_Aliases (self) :
+        return MOM.Entity.PNS_Aliases
+    # end def PNS_Aliases
+
+    @property
+    def PNS_Aliases_R (self) :
+        return MOM.Entity.PNS_Aliases_R
+    # end def PNS_Aliases_R
+
+    @property
     def Root_Type (self) :
         if self.Root_Type_Name :
             return self.etypes [self.Root_Type_Name]
@@ -184,14 +196,8 @@ class _App_Type_D_ (_App_Type_) :
         self.init_callback    = TFL.Ordered_Set ()
         self.kill_callback    = TFL.Ordered_Set ()
         self.PNS_Map          = parent.PNS_Map
-        self.PNS_Aliases      = parent.PNS_Aliases
-        self.PNS_Aliases_R    = dict \
-            (   (v._Package_Namespace__qname, k)
-            for k, v in self.PNS_Aliases.iteritems ()
-            )
-        assert len (self.PNS_Aliases) == len (self.PNS_Aliases_R)
+        self.PNS_Set          = parent.PNS_Set
         self.finalized        = False
-        import _MOM.Entity
         MOM.Entity.m_setup_etypes (self)
         self.finalized        = True
     # end def __init__
@@ -199,12 +205,14 @@ class _App_Type_D_ (_App_Type_) :
     def add_type (self, etype) :
         assert not self.finalized
         pns = etype.PNS
-        qn  = pns._Package_Namespace__qname
-        self.PNS_Map [qn]                      = pns
-        self.etypes  [etype.Essence.type_name] = \
-            self.etypes [etype.type_name]      = etype
-        self.etypes_by_pns [qn].append (etype)
-        self._T_Extension.append       (etype)
+        qn  = etype.pns_name
+        fqn = pns._Package_Namespace__qname
+        self.etypes [etype.type_name]          = \
+            self.etypes [etype.type_name_fq]   = etype
+        self.PNS_Map [qn] = self.PNS_Map [fqn] = self.PNS_Set [qn] = pns
+        self.etypes_by_pns [ qn].append  (etype)
+        self.etypes_by_pns [fqn].append  (etype)
+        self._T_Extension.append         (etype)
     # end def add_type
 
     def delete_database (self, db_url) :
@@ -248,7 +256,7 @@ class App_Type (_App_Type_) :
     parent           = None
     _T_Extension     = None
 
-    def __init__ (self, name, ANS, Root_Type_Name = None, PNS_Aliases = None) :
+    def __init__ (self, name, ANS, Root_Type_Name = None) :
         assert bool (name)
         assert name not in self.Table
         self.Table [name]   = self
@@ -259,7 +267,7 @@ class App_Type (_App_Type_) :
         self.init_callback  = TFL.Ordered_Set ()
         self.kill_callback  = TFL.Ordered_Set ()
         self.PNS_Map        = {}
-        self.PNS_Aliases    = PNS_Aliases if PNS_Aliases is not None else {}
+        self.PNS_Set        = {}
     # end def __init__
 
     def Derived (self, EMS, DBW) :
@@ -295,21 +303,6 @@ Class `MOM.App_Type`
 
       Specifies the package namespace of the application (Application
       Name Space).
-
-    .. attribute:: PNS_Aliases
-
-      Specifies an optional mapping of package namespace aliases to
-      the canonical package namespace name. This allows the decoupling
-      of the concrete package structure from the abstract view of the
-      object model.
-
-      For instance::
-
-          PNS_Aliases = dict \\
-              ( PAP             = GTW.OMP.PAP
-              , SRM             = GTW.OMP.SRM
-              , SWP             = GTW.OMP.SWP
-              )
 
     .. attribute:: Root_Type_Name
 

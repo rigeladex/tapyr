@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -30,6 +30,7 @@
 #     3-Feb-2010 (MG) `is_partial` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    28-Aug-2012 (CT) Use `MOM.derive_pns_bases` instead of home-grown code
+#    13-Jun-2013 (CT) Pass `pns_alias` to `MOM.derive_pns_bases`
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,7 @@ import _MOM.derive_pns_bases
 
 import _GTW._OMP._PAP
 
-MOM.derive_pns_bases (GTW.OMP.PAP, MOM)
+MOM.derive_pns_bases (GTW.OMP.PAP, MOM, pns_alias = "PAP")
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")

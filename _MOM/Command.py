@@ -65,6 +65,7 @@
 #                     (some descendents call `_handle_create` from handlers
 #                     of other commands)
 #    28-May-2013 (CT) Use `sos.expanded_path` in `_read_auth_mig`
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -125,7 +126,6 @@ class MOM_Command (TFL.Command.Root_Command) :
     ANS                     = None
     DB_Man                  = MOM.DB_Man
     nick                    = "NN"
-    PNS_Aliases             = {}
     Scope                   = MOM.Scope
 
     _buns                   = \
@@ -255,8 +255,7 @@ class MOM_Command (TFL.Command.Root_Command) :
         assert self.ANS is not None
         result = MOM.App_Type.Table.get (self.nick)
         if result is None :
-            result = MOM.App_Type \
-                (self.nick, self.ANS, PNS_Aliases = self.PNS_Aliases)
+            result = MOM.App_Type   (self.nick, self.ANS)
         if ems_dbw :
             result = result.Derived (* ems_dbw)
         return result

@@ -114,6 +114,7 @@
 #    30-Jan-2013 (CT) Add optional argument `allow_zombie` to `pid_query`
 #    10-May-2013 (CT) Allow non-string arguments to `__getitem__`
 #     3-Jun-2013 (CT) Print exception info to stderr, not stdout
+#    13-Jun-2013 (CT) Simplify `_setup_pkg_ns` using new `PNS_Map` semantics
 #    ««revision-date»»···
 #--
 
@@ -323,7 +324,6 @@ class Scope (TFL.Meta.Object) :
         self.db_errors      = []
         self._attr_errors   = []
         self._etm           = {}
-        self._pkg_ns        = {}
         self._roots         = {}
         self._setup_pkg_ns  (app_type)
         old_active = Scope.active
@@ -800,17 +800,13 @@ class Scope (TFL.Meta.Object) :
     # end def _run_init_callbacks
 
     def _setup_pkg_ns (self, app_type) :
-        _pkg_ns = self._pkg_ns
+        _pkg_ns = self._pkg_ns = {}
         Pkg_NS  = self.Pkg_NS
         for name, pns in sorted \
                 (app_type.PNS_Map.iteritems (), key = TFL.Getter [0]) :
-            if name not in _pkg_ns :
-                _pkg_ns [name]  = Pkg_NS (self, pns, name)
-                for outer, pns in self._outer_pgk_ns (name, pns, _pkg_ns):
-                    _pkg_ns [outer] = Pkg_NS (self, pns, outer)
-        for alias, pns in app_type.PNS_Aliases.iteritems () :
-            assert not alias in _pkg_ns
-            _pkg_ns [alias] = _pkg_ns [pns._Package_Namespace__qname]
+            _pkg_ns [name]  = Pkg_NS (self, pns, name)
+            for outer, pns in self._outer_pgk_ns (name, pns, _pkg_ns):
+                _pkg_ns [outer] = Pkg_NS (self, pns, outer)
     # end def _setup_pkg_ns
 
     def _setup_root (self, app_type, root_epk) :

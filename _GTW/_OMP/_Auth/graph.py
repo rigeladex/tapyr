@@ -29,6 +29,7 @@
 #    24-Sep-2012 (CT) Creation
 #    26-Sep-2012 (CT) Fix typo in `_Export`
 #     7-May-2013 (CT) Add `Person_has_Account`, remove `_Account_Action_`
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -82,13 +83,6 @@ class Command (MOM.Graph.Command) :
     def PNS (self) :
         return GTW.OMP.Auth
     # end def PNS
-
-    @property
-    def PNS_Aliases (self) :
-        return dict \
-            ( Auth            = GTW.OMP.Auth
-            )
-    # end def PNS_Aliases
 
 # end class Command
 

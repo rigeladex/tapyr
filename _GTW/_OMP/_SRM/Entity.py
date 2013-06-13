@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    13-Jun-2013 (CT) Pass `pns_alias` to `MOM.derive_pns_bases`
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,7 @@ import _MOM.derive_pns_bases
 import _GTW._OMP._PAP.Person
 import _GTW._OMP._SRM
 
-MOM.derive_pns_bases (GTW.OMP.SRM, MOM)
+MOM.derive_pns_bases (GTW.OMP.SRM, MOM, pns_alias = "SRM")
 
 if __name__ != "__main__" :
     GTW.OMP.SRM._Export ("*")

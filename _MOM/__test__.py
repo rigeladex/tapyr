@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Feb-2010 (MG) Creation
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -53,10 +54,10 @@ Version = Product_Version \
         )
     )
 
-def define_app_type (name, PKG, EMS, DBW, ** pns_aliases) :
+def define_app_type (name, PKG, EMS, DBW) :
     if name not in MOM.App_Type.Table :
         PKG.Version = Version
-        MOM.App_Type (name, PKG, PNS_Aliases = pns_aliases)
+        MOM.App_Type (name, PKG)
     app = MOM.App_Type.Table [name]
     return app.Derived (EMS, DBW)
 # end def define_app_type

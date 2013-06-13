@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -28,6 +28,7 @@
 # Revision Dates
 #     6-Feb-2010 (MG) Creation
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -67,9 +68,7 @@ GTW.Version = Product_Version \
         )
     )
 
-apt = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP, Auth = GTW.OMP.Auth)
-    ).Derived (EMS, DBW)
+apt = MOM.App_Type (u"HWO", GTW).Derived (EMS, DBW)
 
 if 1:
     scope        = MOM.Scope.new (apt, None)

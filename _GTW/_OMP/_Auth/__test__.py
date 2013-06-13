@@ -362,7 +362,7 @@ from   _GTW._NAV._Test               import Templateer
 import _GTW._OMP._Auth
 import _GTW._OMP._Auth.import_Auth
 
-apt       = define_app_type ("Auth_Test", GTW, EMS, DBW, Auth = GTW.OMP.Auth)
+apt       = define_app_type ("Auth_Test", GTW, EMS, DBW)
 scope     = MOM.Scope.new                (apt, None)
 anonymous = scope.Auth.Account_Anonymous ("anonymous")
 NAV       = GTW.NAV.Root \

@@ -53,6 +53,7 @@
 #     3-May-2013 (CT) Add `test_rat`, import `GTW.OMP.Auth`
 #     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
 #    17-May-2013 (CT) Add tests for `rels`
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -78,13 +79,6 @@ def run_server (db_url = "hps://", db_name = None, scaffold_name = "Scaffold") :
 class _GTW_Test_Command_ (GTW_RST_Test_Command) :
 
     _rn_prefix            = "_GTW_Test"
-
-    PNS_Aliases           = dict \
-        ( Auth            = GTW.OMP.Auth
-        , PAP             = GTW.OMP.PAP
-        , SRM             = GTW.OMP.SRM
-        , SWP             = GTW.OMP.SWP
-        )
 
     SALT                  = bytes \
         ( "c9cac445-3fd8-451d-9eff-dd56c7a91485")

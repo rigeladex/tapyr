@@ -30,6 +30,7 @@
 #    12-Sep-2012 (RS) Add `Id_Entity` needed by `FFM.Firmware`
 #    15-May-2013 (CT) Remove `Link2_Ordered`
 #    15-May-2013 (CT) Make derived `Id_Entity` a mixin of `Link*` and `Object`
+#    13-Jun-2013 (CT) Add optional argument `pns_alias` to `derive_pns_bases`
 #    ««revision-date»»···
 #--
 
@@ -58,18 +59,22 @@ def _derived (PNS, postfix, base, mixin = None, ** kw) :
     return result
 # end def _derived
 
-def derive_pns_bases (PNS, parent_PNS = MOM) :
+def derive_pns_bases (PNS, parent_PNS = MOM, pns_alias = None) :
     """Derive and inject MOM-base classes for a specific package namespace"""
-    __module__ = TFL.Caller.globals () ["__name__"]
+    kw         = dict (__module__ = TFL.Caller.globals () ["__name__"])
     postfix    = "_" + PNS._._bname
     pPNS       = parent_PNS
-    E = _derived (PNS, postfix, pPNS.Entity,       __module__ = __module__)
-    I = _derived (PNS, postfix, pPNS.Id_Entity, E, __module__ = __module__)
+    if pns_alias :
+        qn = PNS._Package_Namespace__qname
+        if qn not in MOM.Entity.PNS_Aliases :
+            MOM.Entity.m_add_PNS_Alias (pns_alias, PNS)
+    E = _derived (PNS, postfix, pPNS.Entity, ** kw)
+    I = _derived (PNS, postfix, pPNS.Id_Entity, E, ** kw)
     for base in \
             (pPNS.Link1, pPNS.Link2, pPNS.Link3, pPNS.Object) :
-        _derived (PNS, postfix, base, I, __module__ = __module__)
+        _derived (PNS, postfix, base, I, ** kw)
     _derived \
-        (PNS, postfix, pPNS.Named_Object, PNS.Object, __module__ = __module__)
+        (PNS, postfix, pPNS.Named_Object, PNS.Object, ** kw)
 # end def derive_pns_bases
 
 if __name__ != "__main__" :

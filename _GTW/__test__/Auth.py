@@ -32,6 +32,7 @@
 #     6-Dec-2012 (MG) Fix test executaion, new test for query attribute added
 #     1-May-2013 (CT) Add `@foo.bar` to email addresses
 #    26-May-2013 (CT) Add `_test_migration`
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -578,7 +579,6 @@ def fixtures (self, scope) :
 # end def fixtures
 
 user_config.time_zone                 = "Europe/Vienna"
-GTW_Test_Command.PNS_Aliases ["Auth"] = GTW.OMP.Auth
 
 Scaffold = GTW_Test_Command ()
 Scaffold.__class__.fixtures = fixtures

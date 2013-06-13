@@ -1,4 +1,3 @@
-
 # -*- coding: iso-8859-15 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -298,8 +297,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     def _gen_entries (self) :
         app_type = self.top.App_Type
-        for k, pns in sorted (app_type.PNS_Map.iteritems ()) :
-            k      = app_type.PNS_Aliases_R.get (k, k)
+        for k, pns in sorted (app_type.PNS_Set.iteritems ()) :
             parent = self
             if "." in k :
                 names  = k.split (".")

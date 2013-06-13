@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -44,6 +44,7 @@
 #    17-Apr-2012 (CT) Add `formatted`, `formatted_1`
 #    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
 #    18-Sep-2012 (CT) Factor _GTW/__test__/Test_Command.py
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -54,9 +55,6 @@ import _GTW._OMP._Auth.import_Auth
 if sos.environ.get ("GTW_FULL_OBJECT_MODEL", "True") != "False" :
     import _GTW._OMP._EVT.import_EVT
     import _GTW._OMP._EVT.Nav
-    PNS_Dict = dict (EVT = GTW.OMP.EVT)
-else :
-    PNS_Dict = dict ()
 
 import _GTW._OMP._PAP.import_PAP
 import _GTW._OMP._SRM.import_SRM
@@ -69,14 +67,6 @@ import _GTW._OMP._SWP.Nav
 class _GTW_Test_Command_ (GTW_Test_Command) :
 
     _rn_prefix            = "_GTW_Test"
-
-    PNS_Aliases           = dict \
-        ( Auth            = GTW.OMP.Auth
-        , PAP             = GTW.OMP.PAP
-        , SRM             = GTW.OMP.SRM
-        , SWP             = GTW.OMP.SWP
-        , ** PNS_Dict
-        )
 
     SALT                  = bytes \
         ( "ohQueiro7theG4vai9shi4oi9iedeethaeshooqu7oThi9Eecephaj")

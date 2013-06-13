@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -33,6 +33,7 @@
 #     6-Sep-2010 (CT) `perma_name.max_length` set to `80` (bad MySQL)
 #    13-Oct-2010 (CT) `creator` removed
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    13-Jun-2013 (CT) Pass `pns_alias` to `MOM.derive_pns_bases`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ from   _GTW                     import GTW
 import _GTW._OMP._PAP.Person
 import _GTW._OMP._SWP
 
-MOM.derive_pns_bases (GTW.OMP.SWP, MOM)
+MOM.derive_pns_bases (GTW.OMP.SWP, MOM, pns_alias = "SWP")
 
 _Ancestor_Essence = GTW.OMP.SWP.Object
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #    13-Jan-2010 (MG) Creation
 #    16-Jan-2010 (CT) `Object` added
 #     3-Feb-2010 (MG) `is_partial` added
+#    13-Jun-2013 (CT) Pass `pns_alias` to `MOM.derive_pns_bases`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ import _MOM.derive_pns_bases
 
 import _GTW._OMP._Auth
 
-MOM.derive_pns_bases (GTW.OMP.Auth, MOM)
+MOM.derive_pns_bases (GTW.OMP.Auth, MOM, pns_alias = "Auth")
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

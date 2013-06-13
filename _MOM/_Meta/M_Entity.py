@@ -193,6 +193,11 @@
 #    27-May-2013 (CT) Kludge around Python 2.6's broken type.__subclasscheck__
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #     3-Jun-2013 (CT) Pass `et_scope` to `fix_doc`
+#    13-Jun-2013 (CT) Add `M_E_Mixin.PNS_Aliases`, `.PNS_Aliases_R`, and
+#                     `m_add_PNS_Alias`
+#    13-Jun-2013 (CT) Add `pns_name`, `pns_name_fq`, `pns_qualified_f`, and
+#                     `type_name_fq`
+#    13-Jun-2013 (CT) Add and use `M_Id_Entity._m_fix_type_set`
 #    ««revision-date»»···
 #--
 
@@ -238,6 +243,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 
     _S_Extension   = []     ### List of E_Spec
     _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
+    _PNS_Aliases   = {}
+    _PNS_Aliases_R = None
     _type_names    = set ()
 
     m_sorted_by    = TFL.Sorted_By ("i_rank")
@@ -248,6 +255,47 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     ### `ui_type_name` can be used in docstrings of attribute types, where
     ### `ui_name` would refer to the attribute's ui-name, not the E_Type's
     ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
+
+    @property
+    def PNS_Aliases (cls) :
+        return M_E_Mixin._PNS_Aliases
+    # end def PNS_Aliases
+
+    @PNS_Aliases.setter
+    def PNS_Aliases (cls, value) :
+        M_E_Mixin._PNS_Aliases   = value
+        M_E_Mixin._PNS_Aliases_R = None
+    # end def PNS_Aliases
+
+    @property
+    def PNS_Aliases_R (cls) :
+        result = M_E_Mixin._PNS_Aliases_R
+        if result is None :
+            result = M_E_Mixin._PNS_Aliases_R = dict \
+                (  (v._Package_Namespace__qname, k)
+                for k, v in M_E_Mixin._PNS_Aliases.iteritems ()
+                )
+        return result
+    # end def PNS_Aliases_R
+
+    @property
+    def pns_name (cls) :
+        result = getattr (cls, "pns_alias", None)
+        if result is None :
+            PNS = getattr (cls, "PNS", None)
+            if PNS :
+                result = PNS._Package_Namespace__qname
+        if result in cls.PNS_Aliases_R :
+            result = cls.PNS_Aliases_R [result]
+        return result
+    # end def pns_name
+
+    @property
+    def pns_name_fq (cls) :
+        PNS = getattr (cls, "PNS", None)
+        if PNS :
+            return PNS._Package_Namespace__qname
+    # end def pns_name_fq
 
     def __init__ (cls, name, bases, dct) :
         cls._children_np            = None
@@ -334,6 +382,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             cls._default_child = child
     # end def default_child
 
+    def m_add_PNS_Alias (cls, alias, PNS) :
+        M_E_Mixin._PNS_Aliases [alias] = PNS
+        M_E_Mixin._PNS_Aliases_R       = None
+    # end def m_add_PNS_Alias
+
     def m_setup_etypes (cls, app_type) :
         """Setup EMS- and DBW -specific essential types for all classes in
            `cls._S_Extension`.
@@ -350,18 +403,21 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             t._m_setup_relevant_roots ()
     # end def m_setup_etypes
 
+    def pns_qualified_f (cls, name) :
+        """Returns the `name` qualified with `cls.pns_name_fq`."""
+        pn = cls.pns_name_fq
+        if pn :
+            result = ".".join ((pn, name))
+        else :
+            result = name
+        return unicode (result)
+    # end def pns_qualified_f
+
     def pns_qualified (cls, name) :
-        """Returns the `name` qualified with `Package_Namespace` of `cls`
-           (i.e., includes the name of the Package_Namespace `cls` lives in,
-           if any).
-        """
-        pkg_ns = getattr (cls, "PNS", None)
-        if pkg_ns :
-            app_type = getattr (cls, "app_type", None)
-            qn       = pkg_ns._Package_Namespace__qname
-            if app_type is not None and qn in app_type.PNS_Aliases_R :
-                qn = app_type.PNS_Aliases_R [qn]
-            result = ".".join ((qn, name))
+        """Returns the `name` qualified with `cls.pns_name`."""
+        pn = cls.pns_name
+        if pn :
+            result = ".".join ((pn, name))
         else :
             result = name
         return unicode (result)
@@ -492,10 +548,12 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     # end def _m_setup_prop_names
 
     def _set_type_names (cls, base_name) :
-        cls.type_base_name = cls.Type_Name_Type (base_name)
-        cls.type_name      = cls.Type_Name_Type (cls.pns_qualified (base_name))
-        cls.set_ui_name      (cls.__dict__.get ("ui_name", base_name))
-        cls._type_names.add  (cls.type_name)
+        TNT = cls.Type_Name_Type
+        cls.type_base_name = TNT (base_name)
+        cls.type_name      = TNT (cls.pns_qualified   (base_name))
+        cls.type_name_fq   = TNT (cls.pns_qualified_f (base_name))
+        cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
+        cls._type_names.add (cls.type_name)
     # end def _set_type_names
 
     def __repr__ (cls) :
@@ -566,8 +624,8 @@ class M_Entity (M_E_Mixin) :
         """Initialize bare essential types for all classes in `cls._S_Extension`."""
         if not cls._BET_map :
             SX = cls._S_Extension
-            cls._m_setup_auto_props    (SX)
-            cls._m_create_base_e_types (SX)
+            cls._m_setup_auto_props     (SX)
+            cls._m_create_base_e_types  (SX)
     # end def m_setup_etypes
 
     def _m_add_prop (cls, prop, _Properties, verbose, override = False) :
@@ -608,7 +666,7 @@ class M_Entity (M_E_Mixin) :
                     , __module__          = s.__module__
                     )
                 )
-            bet.Essence = s.Essence = BX [tbn] = bet
+            bet.Essence = s.Essence = BX [s.type_name] = bet
             setattr   (bet,                        "__BET", bet)
             setattr   (s,                          "__BET", bet)
             setattr   (s.PNS,                      tbn,     bet)
@@ -783,6 +841,18 @@ class M_Id_Entity (M_Entity) :
         return result
     # end def _m_create_rev_ref_attr
 
+    def _m_fix_type_set (cls, type_set) :
+        PNS_Aliases   = cls.PNS_Aliases
+        PNS_Aliases_R = cls.PNS_Aliases_R
+        for r in tuple (type_set) :
+            pn, tn = r.rsplit (".", 1)
+            type_set.update \
+                ( ".".join ((A [pn], tn))
+                for A  in (PNS_Aliases, PNS_Aliases_R)
+                if  pn in A
+                )
+    # end def _m_fix_type_set
+
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         def _typ (a) :
             return getattr (a, "P_Type_S", a.P_Type)
@@ -824,12 +894,15 @@ class M_Id_Entity (M_Entity) :
     # end def _m_new_e_type_dict
 
     def _m_setup_roles (cls) :
+        cls._m_fix_type_set (cls.refuse_links)
         cls.__m_super._m_setup_roles ()
         def _gen_refs (cls) :
             for a in cls._Attributes._names.itervalues () :
                 if a is not None and issubclass (a, MOM.Attr.A_Id_Entity) :
                     yield a
         for ref in _gen_refs (cls) :
+            cls._m_fix_type_set (ref.allow_e_types)
+            cls._m_fix_type_set (ref.refuse_e_types)
             rev_name = ref.rev_ref_attr_name
             if rev_name :
                 r_type = ref.E_Type
@@ -1142,16 +1215,13 @@ class M_E_Type_Id (M_E_Type) :
     # end def _m_auto_epkified
 
     def _m_fix_refuse_links (cls, app_type) :
-        refuse_links = cls.refuse_links
-        for tn in tuple (cls.refuse_links) :
+        for tn in cls.refuse_links :
             ET = app_type.etypes.get (tn)
             if ET is not None :
-                refuse_links.add (ET.type_name)
-                rs = list \
-                    (r for r in ET.Role_Attrs if issubclass (cls, r.E_Type))
+                rs = (r for r in ET.Role_Attrs if issubclass (cls, r.E_Type))
                 for r in rs :
                     a = ET.attr_prop (r.name)
-                    a.refuse_e_types.add (cls.type_name)
+                    a.refuse_e_types.update ((cls.type_name, cls.type_name_fq))
     # end def _m_fix_refuse_links
 
     def _m_setup_attributes (cls) :
@@ -1276,6 +1346,21 @@ Class `MOM.Meta.M_Entity`
     model. It is the common base class for
     :class:`MOM.Meta.M_Object<_MOM._Meta.M_Object.M_Object>` and
     :class:`MOM.Meta.M_Link<_MOM._Meta.M_Link.M_Link>`.
+
+    .. attribute:: PNS_Aliases
+
+      Specifies an optional mapping of package namespace aliases to
+      the canonical package namespace name. This allows the decoupling
+      of the concrete package structure from the abstract view of the
+      object model.
+
+      For instance::
+
+          MOM.Entity.PNS_Aliases = dict \\
+              ( PAP             = GTW.OMP.PAP
+              , SRM             = GTW.OMP.SRM
+              , SWP             = GTW.OMP.SWP
+              )
 
 XXX
 

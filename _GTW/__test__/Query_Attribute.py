@@ -36,6 +36,7 @@
 #    12-Feb-2013 (CT) Set `Person_has_Wrzlbrmft.left.max_links` to `1`,
 #                     remove `Person_has_Wrzlbrmft.right.max_links`
 #    15-May-2013 (CT) Disable tests for SAS backends
+#    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -306,11 +307,6 @@ class Person_has_Account_Test (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Person_has_Account_Test
-
-GTW_Test_Command.PNS_Aliases           = dict \
-    ( Auth            = GTW.OMP.Auth
-    , PAP             = GTW.OMP.PAP
-    )
 
 Scaffold = GTW_Test_Command ()
 __test__ = Scaffold.create_test_dict \

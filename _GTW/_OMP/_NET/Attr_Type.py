@@ -42,6 +42,7 @@
 #    10-Oct-2012 (CT) Add `PNS` to `IP_Address`
 #    12-Oct-2012 (RS) Add `code_format`
 #     5-Mar-2013 (CT) Add `sort_key_address`
+#    13-Jun-2013 (CT) Add `pns_alias`
 #    ««revision-date»»···
 #--
 
@@ -186,7 +187,8 @@ _Ancestor_Essence = MOM.An_Entity
 class IP_Address (_Ancestor_Essence) :
     """Model an abstract IP Address."""
 
-    PNS = GTW.OMP.NET
+    PNS       = GTW.OMP.NET
+    pns_alias = "NET"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
