@@ -98,6 +98,7 @@
 #     6-May-2013 (CT) Add and use `_password_elider`, `_error_email_cleaner`
 #    31-May-2013 (CT) Add `HTTP method` to `send_error_email`
 #    31-May-2013 (CT) Add guard against unknown HTTP method to `allow_method`
+#    14-Jun-2013 (CT) Add guard against unsupported `method` to `allow_method`
 #    ««revision-date»»···
 #--
 
@@ -543,7 +544,7 @@ class _RST_Base_ (TFL.Meta.Object) :
                     ( _T ("Unknown HTTP method `%s` requested") % (method, )
                     , valid_methods = sorted (self.SUPPORTED_METHODS)
                     )
-        if not (user and user.superuser) :
+        if method and not (user and user.superuser) :
             pn = method.mode + "_permissions"
             permissions = getattr (self, pn)
             return all (p (user, self) for p in permissions)
