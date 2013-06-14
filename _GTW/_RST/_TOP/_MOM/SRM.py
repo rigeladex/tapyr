@@ -45,6 +45,7 @@
 #                     factor methods from `_register_submit_callback`
 #    23-May-2013 (CT) Add `_regatta_registration_changed_msg`, call it in
 #                     `_register_submit_error_callback`
+#    14-Jun-2013 (CT) Add CSV-rendering for `Regatta.Registration`
 #    ««revision-date»»···
 #--
 
@@ -65,9 +66,18 @@ from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first, uniq
 
+import _TFL.defaultdict
+
 from   posixpath                import join as pp_join
 
 import datetime
+import itertools
+
+class _Regatta_Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
+
+    skip_etag           = True
+
+# end class _Regatta_Page_
 
 _Ancestor = GTW.RST.TOP.Dir
 
@@ -78,25 +88,88 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     register_email_template = "regatta_register_email"
     skip_etag               = True
 
-    class _Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
-
-        skip_etag           = True
-
-    # end class _Page_
-
-    class Registration (_Page_) :
+    class Registration (_Regatta_Page_) :
 
         page_template_name  = u"regatta_registration"
 
+        class _Regatta_GET_ (_Regatta_Page_.GET) :
+
+            _real_name      = "GET"
+            _renderers      = _Regatta_Page_.GET._renderers + \
+                (GTW.RST.Mime_Type.CSV, )
+
+            def _response_body (self, resource, request, response) :
+                if response.renderer and response.renderer.name == "CSV" :
+                    returner = self._response_body_csv
+                else :
+                    returner = self.__super._response_body
+                return returner (resource, request, response)
+            # end def _response_body
+
+            def _response_body_csv (self, resource, request, response) :
+                def conv (s) :
+                    return unicode (s).encode ("utf-8", "replace")
+                boats    = resource.obj.boats
+                max_crew = max (len (b.crew) for b in boats)
+                b_names  = \
+                    [ "registration_date"
+                    , "nation"
+                    , "sailnumber"
+                    , "boat_class"
+                    ]
+                c_names  = ["first_name", "last_name", "club", "oesv_no"]
+                s_names  = list (".".join (["skipper", c]) for c in c_names)
+                s_len    = len (s_names)
+                w_names  = list \
+                    (   ".".join (["crew", str (i), c])
+                    for i in range (1, max_crew+1) for c in c_names
+                    )
+                names    = list (itertools.chain (b_names, s_names, w_names))
+                print ("*" * 5, max_crew, names)
+                rows     = []
+                result   = dict (names = names, rows = rows)
+                for b in boats :
+                    row  = dict \
+                        ( registration_date = b.FO.registration_date
+                        , nation            = b.boat.FO.nation
+                        , sailnumber        = b.boat.FO.sail_number
+                        , boat_class        = b.boat.FO.b_class
+                        )
+                    row.update (self._crew_attrs (s_names, b.skipper))
+                    for i, c in enumerate (b.crew) :
+                        off = s_len * i
+                        row.update (self._crew_attrs (w_names [off:], c))
+                    rows.append \
+                        ( TFL.defaultdict
+                            (str, ((k, conv (v)) for k, v in row.items ()))
+                        )
+                return result
+            # end def _response_body_csv
+
+            def _crew_attrs (self, names, crew) :
+                return dict \
+                    ( zip
+                        ( names
+                        , [ crew.FO.person.first_name
+                          , crew.FO.person.last_name
+                          , crew.FO.club
+                          , crew.FO.mna_number or ""
+                          ]
+                        )
+                    )
+            # end def _crew_attrs
+
+        GET = _Regatta_GET_ # end class
+
     # end class Registration
 
-    class Result (_Page_) :
+    class Result (_Regatta_Page_) :
 
         page_template_name  = u"regatta_result"
 
     # end class Result
 
-    class Result_Teamrace (_Page_) :
+    class Result_Teamrace (_Regatta_Page_) :
 
         page_template_name  = u"regatta_result_teamrace"
 

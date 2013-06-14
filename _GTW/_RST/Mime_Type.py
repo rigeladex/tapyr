@@ -35,6 +35,7 @@
 #    25-Sep-2012 (CT) Add `SVG`
 #     5-Oct-2012 (CT) Add and use `JSON.json_dump_kw`
 #    14-Jan-2013 (CT) Add `User_Cert`
+#    14-Jun-2013 (CT) Add default implementation for `CSV.rendered`
 #    ««revision-date»»···
 #--
 
@@ -183,6 +184,21 @@ class RST_CSV (_Base_) :
 
     _real_name                 = "CSV"
     mime_types                 = ("text/csv", )
+
+    def rendered (self, request, response, body) :
+        if isinstance (body, dict) :
+            import csv
+            from   StringIO import StringIO
+            names = body ["names"]
+            rows  = body ["rows"]
+            if names :
+                nm = dict ((n, n) for n in names)
+                f  = StringIO       ()
+                dw = csv.DictWriter (f, names)
+                dw.writerow         (nm)
+                dw.writerows        (rows)
+                return f.getvalue   ()
+    # end def rendered
 
 CSV = RST_CSV # end class
 

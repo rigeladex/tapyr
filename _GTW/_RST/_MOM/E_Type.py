@@ -50,6 +50,7 @@
 #    17-May-2013 (CT) Add `_rbl_entry_type_map`
 #    20-May-2013 (CT) Fix `_rbl_entry_type_map`
 #                     (use E_Type.GTW.rst_mom_rbl_spec, not LET.GTW.rst_...)
+#    14-Jun-2013 (CT) Factor `GTW.RST.Mime_Type.CSV.rendered`
 #    ««revision-date»»···
 #--
 
@@ -80,18 +81,12 @@ class _E_Type_CSV_ (GTW.RST.Mime_Type.CSV) :
     mime_type_parameters       = ("header=present", )
 
     def rendered (self, request, response, body) :
-        import csv
-        from   StringIO import StringIO
         names  = body.get ("attribute_names")
         an     = "attributes_raw" if request.raw else "attributes"
         if names :
-            nm = dict ((n, n) for n in names)
             rs = list (dotted_dict (e [an]) for e in body ["entries"])
-            f  = StringIO       ()
-            dw = csv.DictWriter (f, names)
-            dw.writerow         (nm)
-            dw.writerows        (rs)
-            return f.getvalue   ()
+            return self.__super.rendered \
+                (request, response, dict (names = names, rows = rs))
     # end def rendered
 
 # end class _E_Type_CSV_
