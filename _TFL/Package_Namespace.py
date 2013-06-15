@@ -143,8 +143,11 @@
 #     9-Oct-2012 (CT) Add `_desc_` to `Package_Namespace.__init__`
 #     6-Dec-2012 (CT) Fix `_Add_Import_Callback`
 #     6-Dec-2012 (CT) Change  `_run_import_callback` to `classmethod`
+#    15-Jun-2013 (CT) Add `lazy_resolvers`; factor `_args_from_kw`
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 from   _TFL.pyk    import pyk
 
@@ -153,8 +156,8 @@ import sys
 
 from   collections import defaultdict
 
-def _caller_globals () :
-    return sys._getframe (1).f_back.f_globals
+def _caller_globals (depth = 1) :
+    return sys._getframe (depth).f_back.f_globals
 # end def _caller_globals
 
 class _Module_Space_ :
@@ -185,26 +188,22 @@ class Package_Namespace (object) :
 
     _Import_Callback_Map = defaultdict (lambda : defaultdict (list))
 
-    def __init__ (self, module_name = None, name = None, c_scope = None) :
-        if c_scope is None :
-            c_scope = _caller_globals ()
-        if not module_name :
-            module_name = c_scope ["__name__"]
-        if not name :
-            name = module_name
-        qname = self._leading_underscores.sub (r"\1", name)
-        bname = qname.split (".") [-1]
-        self.__bname        = bname
-        self.__qname        = self.__name__ = qname
-        self.__module_name  = module_name
-        self.__module_space = self._ = _Module_Space_ \
+    def __init__ (self, * lazy_resolvers, ** kw) :
+        c_scope, module_name, name = self._args_from_kw (kw)
+        qname                      = self._leading_underscores.sub (r"\1", name)
+        bname                      = qname.split (".") [-1]
+        self.__lazy_resolvers      = list (lazy_resolvers)
+        self.__bname               = bname
+        self.__qname               = self.__name__ = qname
+        self.__module_name         = module_name
+        self.__module_space        = self._ = _Module_Space_ \
             (bname, module_name, qname)
-        self.__modules      = {}
-        self.__seen         = {}
-        self.__reload       = 0
-        self._Outer         = None
-        self.__doc__        = c_scope.get ("__doc__", str (self))
-        self._desc_         = c_scope.get ("_desc_",  None)
+        self.__modules             = {}
+        self.__seen                = {}
+        self.__reload              = 0
+        self._Outer                = None
+        self.__doc__               = c_scope.get ("__doc__", str (self))
+        self._desc_                = c_scope.get ("_desc_",  None)
     # end def __init__
 
     def _Add (self, ** kw) :
@@ -229,6 +228,25 @@ class Package_Namespace (object) :
             cls._Import_Callback_Map [package] [module_name].append \
                 ((callback, args, kw))
     # end def _Add_Import_Callback
+
+    def _Add_Lazy_Resolver (self, * lazy_resolvers) :
+        """Add the callables in `lazy_resolvers` to Package_Namespace `self`."""
+        self.__lazy_resolvers.extend (lazy_resolvers)
+    # end def _Add_Lazy_Resolver
+
+    def _args_from_kw (self, kw) :
+        c_scope     = kw.pop ("c_scope",     None) or _caller_globals (2)
+        module_name = kw.pop ("module_name", None) or c_scope ["__name__"]
+        name        = kw.pop ("name",        None) or module_name
+        if kw :
+            raise TypeError \
+                ( "%s `%s` called with unknwon arguments: (%s)"
+                % ( self.__class__.__name__, name, ", ".join
+                      ("%s = %r" % (k, v) for k, v in sorted (kw.items ()))
+                  )
+                )
+        return c_scope, module_name, name
+    # end def _args_from_kw
 
     def _Cache_Module (self, module_name, mod) :
         if not module_name in self.__modules :
@@ -370,6 +388,19 @@ class Package_Namespace (object) :
                 cb (module, * args, ** kw)
     # end def _run_import_callbacks
 
+    def __getattr__ (self, name) :
+        for lr in self.__lazy_resolvers :
+            try :
+                result = lr (self, name)
+            except AttributeError :
+                pass
+            else :
+                if result is not None :
+                    setattr (self, name, result)
+                return result
+        raise AttributeError (name)
+    # end def __getattr__
+
     def __repr__ (self) :
         return "<%s %s>" % (self.__class__.__name__, self.__name__)
     # end def __repr__
@@ -411,12 +442,14 @@ class Derived_Package_Namespace (Package_Namespace) :
 
     """
 
-    def __init__ (self, parent, name = None) :
-        c_scope     = _caller_globals ()
-        module_name = c_scope ["__name__"]
-        if not name :
-            name = module_name
-        Package_Namespace.__init__ (self, module_name, name, c_scope)
+    def __init__ (self, parent, * lazy_resolvers, ** kw) :
+        c_scope, module_name, name = self._args_from_kw (kw)
+        Package_Namespace.__init__ \
+            ( self, * lazy_resolvers
+            , module_name = module_name
+            , name        = name
+            , c_scope     = c_scope
+            )
         self._parent  = parent
         self.__cached = {}
         mod           = sys.modules [module_name]
@@ -433,10 +466,13 @@ class Derived_Package_Namespace (Package_Namespace) :
     # end def _Reload
 
     def __getattr__ (self, name) :
-        result  = getattr (self._parent, name)
-        self.__cached [name] = result
-        setattr (self, name, result)
-        return  result
+        try :
+            return Package_Namespace.__getattr__ (self, name)
+        except AttributeError :
+            result  = getattr (self._parent, name)
+            self.__cached [name] = result
+            setattr (self, name, result)
+            return  result
     # end def __getattr__
 
 # end class Derived_Package_Namespace
@@ -552,13 +588,14 @@ So, the canonical use of Package_Namespaces looks like::
 
 .. note::
 
- The methods `_Export`, `_Export_Module`, `_Import_Module`, and
- `_Reload` are part of the public interface of `Package_Namespaces`
- (they start with an underscore to avoid name clashes with
- user-defined attributes of package namespaces).
+ The methods `_Add_Import_Callback`, `_Add_Lazy_Resolver`, `_Export`,
+ `_Export_Module`, `_Import_Module`, and `_Reload` are part of the public
+ interface of `Package_Namespaces` (they start with an underscore to avoid
+ name clashes with user-defined attributes of package namespaces).
 
 .. autoclass:: _TFL.Package_Namespace.Package_Namespace
-   :members: _Export, _Export_Module, _Import_Module, _Reload
+   :members: _Add_Import_Callback, _Add_Lazy_Resolver, _Export,
+       _Export_Module, _Import_Module, _Reload
 
 .. autoclass:: _TFL.Package_Namespace.Derived_Package_Namespace
    :members:
