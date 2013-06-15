@@ -36,6 +36,7 @@
 #     5-Oct-2012 (CT) Add and use `JSON.json_dump_kw`
 #    14-Jan-2013 (CT) Add `User_Cert`
 #    14-Jun-2013 (CT) Add default implementation for `CSV.rendered`
+#    15-Jun-2013 (CT) Guard `CSV.rendered` against empty `body`
 #    ««revision-date»»···
 #--
 
@@ -189,15 +190,15 @@ class RST_CSV (_Base_) :
         if isinstance (body, dict) :
             import csv
             from   StringIO import StringIO
-            names = body ["names"]
-            rows  = body ["rows"]
+            names = body.get ("names")
             if names :
-                nm = dict ((n, n) for n in names)
-                f  = StringIO       ()
-                dw = csv.DictWriter (f, names)
-                dw.writerow         (nm)
-                dw.writerows        (rows)
-                return f.getvalue   ()
+                rs  = body ["rows"]
+                nm  = dict ((n, n) for n in names)
+                f   = StringIO       ()
+                dw  = csv.DictWriter (f, names)
+                dw.writerow          (nm)
+                dw.writerows         (rs)
+                return f.getvalue    ()
     # end def rendered
 
 CSV = RST_CSV # end class

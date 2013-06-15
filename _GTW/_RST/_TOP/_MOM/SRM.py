@@ -46,6 +46,7 @@
 #    23-May-2013 (CT) Add `_regatta_registration_changed_msg`, call it in
 #                     `_register_submit_error_callback`
 #    14-Jun-2013 (CT) Add CSV-rendering for `Regatta.Registration`
+#    15-Jun-2013 (CT) Add guard to CSV-rendering against empty `boats`
 #    ««revision-date»»···
 #--
 
@@ -110,6 +111,8 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                 def conv (s) :
                     return unicode (s).encode ("utf-8", "replace")
                 boats    = resource.obj.boats
+                if not boats :
+                    return {}
                 max_crew = max (len (b.crew) for b in boats)
                 b_names  = \
                     [ "registration_date"
