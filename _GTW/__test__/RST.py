@@ -246,6 +246,8 @@ _test_cqf = r"""
         (Q.type_name.in_ (['PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url'],),)
     PAP-Legal_Entity
         (Q.type_name.in_ (['PAP.Company'],),)
+    PAP-Link
+        (Q.type_name.in_ (['PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url'],),)
     PAP-Link1
         (Q.type_name.in_ (['PAP.Address_Position'],),)
     PAP-Link2
@@ -372,6 +374,7 @@ _test_cqf = r"""
     PAP-Email    (Email `address`, String `desc`)
     PAP-Id_Entity    ()
     PAP-Legal_Entity    (String `name`, Date_Interval `lifetime`, String `short_name`)
+    PAP-Link    (Left `left`,)
     PAP-Link1    (Left `left`,)
     PAP-Link2    (Left `left`, Right `right`)
     PAP-Object    ()
@@ -422,7 +425,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Named\_Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Account\_|Auth\-Object|Auth\-Named\_Object|Auth\-Link2|Auth\-Link1|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Named\_Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_Account\_|Auth\-Object|Auth\-Named\_Object|Auth\-Link2|Auth\-Link1|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -655,6 +658,7 @@ _test_doc = r"""
             , 'PAP-Email'
             , 'PAP-Id_Entity'
             , 'PAP-Legal_Entity'
+            , 'PAP-Link'
             , 'PAP-Link1'
             , 'PAP-Link2'
             , 'PAP-Object'
@@ -1818,6 +1822,7 @@ _test_get = r"""
             , 'PAP-Email'
             , 'PAP-Id_Entity'
             , 'PAP-Legal_Entity'
+            , 'PAP-Link'
             , 'PAP-Link1'
             , 'PAP-Link2'
             , 'PAP-Object'
@@ -1903,6 +1908,7 @@ _test_get = r"""
             , '/v1/PAP-Email'
             , '/v1/PAP-Id_Entity'
             , '/v1/PAP-Legal_Entity'
+            , '/v1/PAP-Link'
             , '/v1/PAP-Link1'
             , '/v1/PAP-Link2'
             , '/v1/PAP-Object'

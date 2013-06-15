@@ -36,6 +36,7 @@
 #     4-May-2010 (CT) `Q` moved to `MOM.Attr.Type`
 #     5-Jul-2011 (CT) `MOM.Attr.Selector` added
 #    19-Jul-2011 (CT) `MOM.Q_Exp_Raw` added
+#    15-Jun-2013 (CT) Import `Derived_PNS`
 #    ««revision-date»»···
 #--
 
@@ -52,8 +53,10 @@ import _MOM.Scope
 
 import _MOM._Attr.Selector
 
-from   _MOM._Attr.Type import *
-from   _MOM._Attr      import Attr
-from   _MOM._Pred      import Pred
+from   _MOM._Attr.Type  import *
+from   _MOM._Attr       import Attr
+from   _MOM._Pred       import Pred
+
+import _MOM.Derived_PNS
 
 ### __END__ MOM.import_MOM

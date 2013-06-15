@@ -161,15 +161,7 @@ test_code = r"""
         ('MOM.Document', ['left'])
     PAP.Id_Entity
         ('MOM.Document', ['left'])
-    PAP.Link1
-        ('MOM.Document', ['left'])
-    PAP.Link2
-        ('MOM.Document', ['left'])
-    PAP.Link3
-        ('MOM.Document', ['left'])
     PAP.Object
-        ('MOM.Document', ['left'])
-    PAP.Named_Object
         ('MOM.Document', ['left'])
     PAP.Subject
         ('MOM.Document', ['left'])
@@ -244,7 +236,13 @@ test_code = r"""
         ('MOM.Document', ['left'])
         ('PAP.Company_has_Url', ['right'])
         ('PAP.Person_has_Url', ['right'])
+    PAP.Link
+        ('MOM.Document', ['left'])
+    PAP.Link1
+        ('MOM.Document', ['left'])
     PAP.Address_Position
+        ('MOM.Document', ['left'])
+    PAP.Link2
         ('MOM.Document', ['left'])
     PAP.Subject_has_Property
         ('MOM.Document', ['left'])

@@ -179,11 +179,7 @@ _test_code = r"""
     EVT.Calendar                                   True   False  False
     PAP.Entity                                     False  True   True
     PAP.Id_Entity                                  False  True   True
-    PAP.Link1                                      False  True   True
-    PAP.Link2                                      False  True   True
-    PAP.Link3                                      False  False  False
     PAP.Object                                     False  True   True
-    PAP.Named_Object                               False  False  False
     PAP.Subject                                    False  True   True
     PAP.Person                                     True   False  False
     SWP.Entity                                     False  True   True
@@ -209,7 +205,10 @@ _test_code = r"""
     PAP.Email                                      True   False  False
     PAP.Phone                                      True   False  False
     PAP.Url                                        True   False  False
+    PAP.Link                                       False  True   True
+    PAP.Link1                                      False  True   True
     PAP.Address_Position                           True   False  False
+    PAP.Link2                                      False  True   True
     PAP.Subject_has_Property                       False  True   True
     PAP.Person_has_Account                         True   False  False
     SRM.Regatta_Result                             False  False  False
@@ -289,8 +288,6 @@ _test_code = r"""
     EVT.Object                                     ['EVT.Calendar']
     EVT.Calendar                                   EVT.Calendar 0
     PAP.Id_Entity                                  ['PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url']
-    PAP.Link1                                      ['PAP.Address_Position']
-    PAP.Link2                                      ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
     PAP.Object                                     ['PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url']
     PAP.Subject                                    ['PAP.Company', 'PAP.Person']
     PAP.Person                                     PAP.Person 0
@@ -312,7 +309,10 @@ _test_code = r"""
     PAP.Email                                      PAP.Email 0
     PAP.Phone                                      PAP.Phone 0
     PAP.Url                                        PAP.Url 0
+    PAP.Link                                       ['PAP.Address_Position', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
+    PAP.Link1                                      ['PAP.Address_Position']
     PAP.Address_Position                           PAP.Address_Position 0
+    PAP.Link2                                      ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
     PAP.Subject_has_Property                       ['PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
     PAP.Person_has_Account                         PAP.Person_has_Account 0
     SRM.Id_Entity                                  ['SRM.Boat', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Race_Result', 'SRM.Regatta', 'SRM.Regatta_Event', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SRM._Boat_Class_']

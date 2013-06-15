@@ -1077,17 +1077,17 @@ _test_entity_attr = """
         recurrence                          query      EVT.Recurrence_Spec       EVT.Recurrence_Spec
     ....EVT.Event_occurs
         essence                             computed   MOM.Id_Entity
+    ...SWP.Link1
+    ....SWP.Clip_O
+        left                                primary    SWP.Object_PN             SWP.Clip_O
+    ....SWP.Picture
+        left                                primary    SWP.Gallery               SWP.Picture
     ...PAP.Link1
     ....PAP.Address_Position
         left                                primary    PAP.Address               PAP.Address_Position
     ....PAP.Biz_Man
         left                                primary    PAP.Person                PAP.Biz_Man
         owns                                query      PAP.Company_P             PAP.Company_P
-    ...SWP.Link1
-    ....SWP.Clip_O
-        left                                primary    SWP.Object_PN             SWP.Clip_O
-    ....SWP.Picture
-        left                                primary    SWP.Gallery               SWP.Picture
     ...SRM.Link1
     ....SRM.Regatta
         boat_class                          primary    SRM._Boat_Class_
@@ -1148,6 +1148,7 @@ _test_entity_attr = """
         left                                primary    SRM.Team                  SRM.Team_has_Boat_in_Regatta
         right                               primary    SRM.Boat_in_Regatta       SRM.Team_has_Boat_in_Regatta
     ...MOM.Link3
+    ..PAP.Link
     .MOM.Object
     ..MOM.Named_Object
     ...Auth.Named_Object
@@ -1460,10 +1461,9 @@ _test_entity_attr = """
     PAP.Email                                True
     PAP.Id_Entity                            True
     PAP.Legal_Entity                         True
+    PAP.Link                                 True
     PAP.Link1                                True
     PAP.Link2                                True
-    PAP.Link3                                False
-    PAP.Named_Object                         False
     PAP.Object                               True
     PAP.Person                               True
     PAP.Person_has_Account                   True

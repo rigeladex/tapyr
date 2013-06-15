@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package GTW.OMP.
@@ -29,21 +29,20 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #     9-Oct-2012 (CT) Add `_desc_`
+#    15-Jun-2013 (CT) Use `MOM.Derived_PNS`
 #    ««revision-date»»···
 #--
 
 from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
-from   _TFL.Package_Namespace import Derived_Package_Namespace
+import _MOM.Derived_PNS
 
 _desc_ = """
 Partial object model for (natural and legal) persons and their (contact)
 properties.
 """
 
-PAP = Derived_Package_Namespace (parent = MOM)
+PAP = MOM.Derived_PNS (parent = MOM, pns_alias = "PAP")
 OMP._Export ("PAP")
-
-del Derived_Package_Namespace
 
 ### __END__ GTW.OMP.PAP.__init__

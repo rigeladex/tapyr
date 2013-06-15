@@ -226,11 +226,11 @@ _test_code = """
               EVT.Recurrence_Rule  . . . . . . . . . .    True          True   True
             EVT.Event  . . . . . . . . . . . . . . . .    True          True   True
             EVT.Event_occurs . . . . . . . . . . . . .    True          True   True
-          PAP.Link1  . . . . . . . . . . . . . . . . .           True   True
-            PAP.Address_Position . . . . . . . . . . .    True                 True
           SWP.Link1  . . . . . . . . . . . . . . . . .           True   True
             SWP.Clip_O . . . . . . . . . . . . . . . .    True          True   True
             SWP.Picture  . . . . . . . . . . . . . . .    True                 True
+          PAP.Link1  . . . . . . . . . . . . . . . . .           True   True
+            PAP.Address_Position . . . . . . . . . . .    True                 True
           SRM.Link1  . . . . . . . . . . . . . . . . .           True   True
             SRM.Regatta  . . . . . . . . . . . . . . .    True                 True
               SRM.Regatta_C  . . . . . . . . . . . . .    True
@@ -266,6 +266,7 @@ _test_code = """
               SRM.Boat_in_Regatta  . . . . . . . . . .    True                 True
               SRM.Crew_Member  . . . . . . . . . . . .    True                 True
               SRM.Team_has_Boat_in_Regatta . . . . . .    True                 True
+        PAP.Link . . . . . . . . . . . . . . . . . . .           True   True
       MOM.Object . . . . . . . . . . . . . . . . . . .           True   True
             Auth.Group . . . . . . . . . . . . . . . .    True
         Auth.Object  . . . . . . . . . . . . . . . . .           True   True

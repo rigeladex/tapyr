@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glück. All rights reserved
+# Copyright (C) 2010-2013 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -28,20 +28,19 @@
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
 #     9-Oct-2012 (CT) Add `_desc_`
+#    15-Jun-2013 (CT) Use `MOM.Derived_PNS`
 #    ««revision-date»»···
 #--
 
 from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
-from   _TFL.Package_Namespace import Derived_Package_Namespace
+import _MOM.Derived_PNS
 
 _desc_ = """
 Partial object model for authentication: accounts, groups, and their relations.
 """
 
-Auth = Derived_Package_Namespace (parent = MOM)
+Auth = MOM.Derived_PNS (parent = MOM, pns_alias = "Auth")
 OMP._Export ("Auth")
-
-del Derived_Package_Namespace
 
 ### __END__ GTW.OMP.Auth.__init__

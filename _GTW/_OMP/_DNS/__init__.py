@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # ****************************************************************************
 # This package is part of the package GTW.OMP.
@@ -28,16 +28,15 @@
 #
 # Revision Dates
 #    27-Aug-2012 (RS) Creation
+#    15-Jun-2013 (CT) Use `MOM.Derived_PNS`
 #    ««revision-date»»···
 #--
 
 from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
-from   _TFL.Package_Namespace import Derived_Package_Namespace
+import _MOM.Derived_PNS
 
-DNS = Derived_Package_Namespace (parent = MOM)
+DNS = MOM.Derived_PNS (parent = MOM, pns_alias = "DNS")
 OMP._Export ("DNS")
-
-del Derived_Package_Namespace
 
 ### __END__ GTW.OMP.DNS.__init__

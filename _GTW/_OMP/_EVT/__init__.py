@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This package is part of the package GTW.OMP.
@@ -28,20 +28,19 @@
 # Revision Dates
 #    10-Mar-2010 (CT) Creation
 #     9-Oct-2012 (CT) Add `_desc_`
+#    15-Jun-2013 (CT) Use `MOM.Derived_PNS`
 #    ««revision-date»»···
 #--
 
 from   _GTW._OMP              import OMP
 from   _MOM                   import MOM
-from   _TFL.Package_Namespace import Derived_Package_Namespace
+import _MOM.Derived_PNS
 
 _desc_ = """
 Partial object model for calendary events.
 """
 
-EVT = Derived_Package_Namespace (parent = MOM)
+EVT = MOM.Derived_PNS (parent = MOM, pns_alias = "EVT")
 OMP._Export ("EVT")
-
-del Derived_Package_Namespace
 
 ### __END__ GTW.OMP.EVT.__init__
