@@ -107,6 +107,7 @@
 #    18-Mar-2013 (CT) Change `_Number_._resolve_range_1` to save match variables
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    23-May-2013 (CT) Improve Python-3 compatibility
+#    16-Jun-2013 (CT) Support `args` and `kw` in `Cmd.__call__`, `CAO.__call__`
 #    ««revision-date»»···
 #--
 
@@ -1201,6 +1202,8 @@ class Cmd (TFL.Meta.Object) :
         """Setup and call an instance of :class:`CAO` by calling `use` (if
            `_kw` is given) or `parse` (with `_argv or sys.argv [1:]`).
         """
+        handler_args = _kw.pop ("args", ())
+        handler_kw   = _kw.pop ("kw",   {})
         if _kw :
             assert not _argv, "Cannot specify both `_argv` and `_kw`"
             cao = self.use (** _kw)
@@ -1219,7 +1222,7 @@ class Cmd (TFL.Meta.Object) :
                     return
                 else :
                     raise
-        return cao ()
+        return cao (* handler_args, ** handler_kw)
     # end def __call__
 
     @TFL.Meta.Once_Property
@@ -1396,7 +1399,7 @@ class CAO (TFL.Meta.Object) :
         self._key_values      = dict ()
     # end def __init__
 
-    def __call__ (self) :
+    def __call__ (self, * args, ** kw) :
         handler = self._cmd._handler
         if self.Pdb_on_Exception :
             ### Inspired by http://code.activestate.com/recipes/65287/ (r5)
@@ -1414,7 +1417,7 @@ class CAO (TFL.Meta.Object) :
         if self.help :
             self._cmd.help (self)
         elif handler :
-            return handler (self)
+            return handler (self, * args, ** kw)
         return self
     # end def __call__
 
