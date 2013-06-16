@@ -167,6 +167,7 @@
 #    30-Jun-2008 (CT) `Opt_D` added
 #     8-Jan-2009 (CT) `raw_value` added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#    16-Jun-2013 (CT) Fix option matching in `Command_Line.__init__`
 #    ««revision-date»»···
 #--
 
@@ -944,7 +945,23 @@ class Command_Line (Command_Spec) :
                     name  = match_group ("name")
                     value = match_group ("value")
                     hpat  = re.escape   (name)
-                    if name in self.option :
+                    try :
+                        option = self.option [name]
+                    except KeyError :
+                        if re.match (hpat, "help") or re.match (hpat, "?") :
+                            print self.help ()
+                            if i == 1 and n == 2 :
+                                raise SystemExit
+                        else :
+                            matching = self.option.matching_keys (name)
+                            if matching and not name [:2] == "__" :
+                                raise Cmd_Error \
+                                    ( "\nAmbiguous option `%s' matches %s\n"
+                                    % (name, matching)
+                                    )
+                            else :
+                                raise Cmd_Error ("Unknown option `%s'" % name)
+                    else :
                         option = self.option [name]
                         if (option.valued and (not value) and (i + 1 < n)) :
                             i     = i + 1
@@ -953,19 +970,6 @@ class Command_Line (Command_Spec) :
                                 value = None
                         option.set_value (value, i)
                         self.optn = self.optn + 1
-                    elif re.match (hpat, "help") or re.match (hpat, "?") :
-                        print self.help ()
-                        if i == 1 and n == 2 :
-                            raise SystemExit
-                    else :
-                        matching = self.option.matching_keys (name)
-                        if matching and not name [:2] == "__" :
-                            raise Cmd_Error \
-                                ( "\nAmbiguous option `%s' matches %s\n"
-                                % (name, matching)
-                                )
-                        else :
-                            raise Cmd_Error ("Unknown option `%s'" % name)
                 else :
                     j = self._handle_arg (arg, i, j)
                 i = i + 1
