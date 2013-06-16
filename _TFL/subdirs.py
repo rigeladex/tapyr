@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,11 +35,16 @@
 #     6-Oct-2004 (CT) `subdir_names` added
 #     6-Oct-2004 (CT) `-basenames` and `-lstrip` added
 #    14-Feb-2006 (CT) Moved into package `TFL`
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL import TFL
 from   _TFL import sos
+
+import _TFL.CAO
 
 def subdirs (of_dir = None) :
     """Return list of all subdirectories contained in `of_dir'"""
@@ -64,27 +69,9 @@ def subdirs_transitive (of_dir = None) :
     return result
 # end def subdirs_transitive
 
-def _command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( option_spec =
-          ( "-basenames:B"
-                "?Print basenames of directories instead of full pathes"
-                "(beware: doesn't work if -transitive is also specified)"
-          , "-exclude:S #100?List of directories to exclude (space separated)"
-          , "-lstrip:S?String to strip from front of directories"
-          , "-newlines:B?print new lines between subdirs"
-          , "-re_exclude:S?Exclude all directories matching regular expression"
-          , "-separator:S= ?Separator between subdirs"
-          , "-transitive:B?Print closure of subdirs"
-          )
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     import sys
-    dirs = cmd.argv.body or (".", )
+    dirs = cmd.argv or (".", )
     if cmd.newlines :
         sep = "\n"
     else :
@@ -111,8 +98,22 @@ def _main (cmd) :
         sys.stdout.write (sep.join (result) + "\n")
 # end def _main
 
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , opts          =
+        ( "-basenames:B"
+              "?Print basenames of directories instead of full pathes "
+              "(beware: doesn't work if -transitive is also specified)"
+        , "-exclude:S #100?List of directories to exclude (space separated)"
+        , "-lstrip:S?String to strip from front of directories"
+        , "-newlines:B?print new lines between subdirs"
+        , "-re_exclude:S?Exclude all directories matching regular expression"
+        , "-separator:S= ?Separator between subdirs"
+        , "-transitive:B?Print closure of subdirs"
+        )
+    )
 if __name__ != "__main__" :
     TFL._Export ("*")
 else :
-    _main (_command_spec ())
+    _Command ()
 ### __END__ TFL.subdirs

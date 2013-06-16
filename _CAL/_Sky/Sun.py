@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #     1-Jan-2008 (CT) `-day_length` and `-transit` added
 #    31-Mar-2008 (CT) Doctests adapted to change of RTS to consider `dst` for
 #                     local times
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -50,8 +51,9 @@ from   _TFL.Angle               import Angle_D, Angle_R
 
 import _CAL._Sky.Location
 import _CAL._Sky.RTS
-import _TFL._Meta.Object
 
+import _TFL._Meta.Object
+import _TFL.CAO
 
 class Sun (TFL.Meta.Object) :
     """Model behavior of sun for a single day.
@@ -321,30 +323,7 @@ class RTS_Sun (CAL.Sky.RTS) :
 
 # end class RTS_Sun
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    import _CAL.Date
-    return Command_Line \
-        ( arg_spec    =
-            ( "date:S=%s" % CAL.Date ()
-            ,
-            )
-        , option_spec =
-            ( "astro_twilight:B?Show astro twilight (-18 degrees below horizon)"
-            , "civil_twilight:B?Show civil twilight (-6 degrees below horizon)"
-            , "day_length:B?Show length of day in hours"
-            , "latitude:F=48.2333333333?Latitude (north is positive)"
-            , "longitude:F=-16.3333333333"
-                "?Longitude (negative is east of Greenwich)"
-            , "-nautic_twilight:B"
-                "?Show time of nautic twilight (sun -12 degrees below horizon)"
-            , "-transit:B?Show transit height"
-            )
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     date = CAL.Date.from_string (cmd.date)
     rts  = RTS_Sun.On_Day (date, CAL.Sky.Location (cmd.latitude, cmd.longitude))
     print "Sunrise : %s, transit : %s, sunset : %s" % \
@@ -364,22 +343,29 @@ def main (cmd) :
     if cmd.astro_twilight :
         print "Astro  twilight starts %s, ends %s" % \
             (rts.astro_twilight_start, rts.astro_twilight_finis)
-# end def main
+# end def _main
 
-if __name__ == "__main__":
-    main (command_spec ())
-else :
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "date:S=%s" % CAL.Date ()
+        ,
+        )
+    , opts          =
+        ( "astro_twilight:B?Show astro twilight (-18 degrees below horizon)"
+        , "civil_twilight:B?Show civil twilight (-6 degrees below horizon)"
+        , "day_length:B?Show length of day in hours"
+        , "latitude:F=48.2333333333?Latitude (north is positive)"
+        , "longitude:F=-16.3333333333?Longitude (negative is east of Greenwich)"
+        , "-nautic_twilight:B"
+            "?Show time of nautic twilight (sun -12 degrees below horizon)"
+        , "-transit:B?Show transit height"
+        )
+    , max_args      = 1
+    )
+
+if __name__ != "__main__":
     CAL.Sky._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.Sky.Sun
-
-"""
-from _CAL._Sky.Sun import *
-import _CAL.Date
-s = Sun (CAL.Date (2007, 6, 13))
-rts = RTS_Sun ((s - 1, s, s + 1), Angle_D (48, 14), Angle_D (-16, -20))
-[str (x.time) for x in (rts.rise, rts.transit, rts.set)]
-[str (x.time) for x in (rts.civil_twilight_start, rts.civil_twilight_finis)]
-[str (x.time) for x in (rts.nautic_twilight_start, rts.nautic_twilight_finis)]
-[str (x.time) for x in (rts.astro_twilight_start, rts.astro_twilight_finis)]
-rts = RTS_Sun.On_Day (CAL.Date (2007, 6, 13), CAL.Sky.Location (Angle_D (48, 14), Angle_D (-16, -20)))
-"""

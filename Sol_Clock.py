@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    18-Nov-2007 (CT) `close_balloon` added
 #     1-Jan-2008 (CT) `_balloon_show` changed to show length of day and
 #                     transit height
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ import _CAL._Sky.Location
 import _CAL._Sky.Sun
 
 import _TFL._Meta.Object
+import _TFL.CAO
 import _TFL.defaultdict
 
 class Display (TFL.Meta.Object) :
@@ -317,29 +319,7 @@ class Toplevel (TFL.Meta.Object) :
 
 # end class Toplevel
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec    =
-            ( "date:S=%s" % CAL.Date ()
-            ,
-            )
-        , option_spec =
-            ( "border:I=14?Border around clock"
-            , "font:S=Arial"
-            , "font_grid_size:I=8"
-            , "font_time_size:I=13"
-            , "latitude:F?Latitude (north is positive)"
-            , "location:S=Vienna?Location of observer"
-            , "longitude:F?Longitude (negative is east of Greenwich)"
-            , "pos:S?Position of display in geometry-format"
-            , "size:I=100?Size of clock (square)"
-            )
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     date = CAL.Date.from_string (cmd.date)
     if cmd.latitude and cmd.longitude :
         location = CAL.Sky.Location \
@@ -353,8 +333,28 @@ def main (cmd) :
         a.toplevel.geometry (cmd.pos)
     CTK.root.withdraw ()
     a.mainloop ()
-# end def main
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "date:S=%s" % CAL.Date ()
+        ,
+        )
+    , opts          =
+        ( "border:I=14?Border around clock"
+        , "font:S=Arial"
+        , "font_grid_size:I=8"
+        , "font_time_size:I=13"
+        , "latitude:F?Latitude (north is positive)"
+        , "location:S=Vienna?Location of observer"
+        , "longitude:F?Longitude (negative is east of Greenwich)"
+        , "pos:S?Position of display in geometry-format"
+        , "size:I=100?Size of clock (square)"
+        )
+    , max_args      = 1
+    )
 
 if __name__ == "__main__":
-    main (command_spec ())
+    _Command ()
 ### __END__ Sol_Clock

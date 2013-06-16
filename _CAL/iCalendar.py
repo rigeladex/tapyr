@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# Copyright (C) 2005-2013 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -30,13 +30,16 @@
 #     9-Aug-2006 (CT) `__hash__` changed to return
 #                     `hash ((self.address, self.role))` instead of `id (self)`
 #    29-Aug-2008 (CT) s/super(...)/__m_super/
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
+
 import _TFL._Meta.Object
 import _TFL._Meta.Property
 import _TFL._Meta.M_Class
+import _TFL.CAO
 
 from   _CAL              import CAL
 import _CAL.Date_Time
@@ -257,32 +260,24 @@ class Calendar (_Component_) :
 
 # end class Calendar
 
-for ical_cls in ( icalendar.cal.Component
-                , icalendar.Event
-                , icalendar.Alarm
-                , icalendar.Timezone
-                , icalendar.Todo
-                , icalendar.Journal
-                , icalendar.FreeBusy
-                ) :
+for ical_cls in \
+        ( icalendar.cal.Component
+        , icalendar.Event
+        , icalendar.Alarm
+        , icalendar.Timezone
+        , icalendar.Todo
+        , icalendar.Journal
+        , icalendar.FreeBusy
+        ) :
     type (_Component_) \
-        ( ical_cls.__name__, (_Component_, ),
-          dict ( wrapped     = ical_cls
-               , __module__  = _Component_.__module__
-               )
+        ( ical_cls.__name__, (_Component_, )
+        , dict
+            ( wrapped     = ical_cls
+            , __module__  = _Component_.__module__
+            )
         )
 
-if __name__ == "__main__" :
-    import _TFL.Command_Line
-
-    cmd = TFL.Command_Line \
-        ( arg_spec    = ( "ical_file:S"
-                        , "ical_file_old:S"
-                        )
-        , min_args    = 1
-        , max_args    = 2
-        , help_on_err = True
-        )
+def _main (cmd) :
     cal = Calendar (cmd.ical_file)
     print cal
     if cmd.ical_file_old :
@@ -295,4 +290,18 @@ if __name__ == "__main__" :
         print sep
         for where, new, old in cal.diff (old) :
             print format % (where, old, new)
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "ical_file:S"
+        , "ical_file_old:S"
+        )
+    , min_args      = 1
+    , max_args      = 2
+    )
+
+if __name__ == "__main__" :
+    _Command ()
 ### __END__ iCalendar

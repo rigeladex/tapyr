@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,13 +39,16 @@
 #    31-Oct-2004 (CT) `_main` changed to display date, too
 #     5-Nov-2004 (CT) Use `//` for int division
 #    16-Jun-2010 (CT) Use unicode for holiday names
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 from   _CAL                    import CAL
+
 import _CAL.Date
 import _CAL.Delta
+import _TFL.CAO
 
 def easter_date_gauss (year) :
     """Returns date of easter sunday computed by Gauß' rule as given by
@@ -134,18 +137,6 @@ def holidays (Y) :
     return result
 # end def holidays
 
-def _command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line
-    today    = CAL.Date ()
-    year     = today.year
-    return Command_Line \
-        ( arg_spec   =
-            ( "year:I=%d?Year for which to show holidays" % (year, )
-            )
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     from _TFL.predicate import sorted
     import _CAL.Year
@@ -157,8 +148,19 @@ def _main (cmd) :
         print "%3d %s %s" % (o, Y.cal._days [ordinal], name)
 # end def _main
 
-if __name__ == "__main__" :
-    _main (_command_spec ())
-else :
+today    = CAL.Date ()
+year     = today.year
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "year:I=%d?Year for which to show holidays" % (year, )
+        ,
+        )
+    , max_args      = 1
+    )
+
+if __name__ != "__main__" :
     CAL._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.Holiday

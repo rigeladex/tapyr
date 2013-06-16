@@ -30,12 +30,15 @@
 #    20-Aug-2003 (CT) s/\n/\\n/ to avoid
 #                         `ValueError: inconsistent leading whitespace`
 #                     from the $%&@*$ doc-test
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function
 
-from _TFL.Regexp import *
+from   _TFL.Regexp import *
+
+import _TFL.CAO
 
 class String_Swapper :
     """Swaps all occurences of two strings in some text"""
@@ -71,16 +74,21 @@ def swap_2strings (s1, s2, text) :
     return String_Swapper (s1, s2) (text)
 # end def swap_2strings
 
-if __name__ == "__main__" :
-    from   _TFL.Command_Line import Command_Line
+def _main (cmd) :
     import sys
-    cmd = Command_Line \
-        ( arg_spec =
-            ( "s1:S"
-            , "s2:S"
-            )
-        , min_args = 2
-        , max_args = 2
-        )
     print (swap_2strings (cmd.s1, cmd.s2, sys.stdin.read ()), end="")
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "s1:S"
+        , "s2:S"
+        )
+    , min_args      = 2
+    , max_args      = 2
+    )
+
+if __name__ == "__main__" :
+    _Command ()
 ### __END__ swap_2strings

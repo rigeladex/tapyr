@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -123,6 +123,7 @@
 #     6-Nov-2006 (CED) `pkg_chain` added
 #    27-Sep-2007 (CED) Added support for derived PNS import of root file
 #    18-Nov-2009 (CT)  3-compatibility
+#    16-Jun-2013 (CT)  Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -136,6 +137,7 @@ from   _TFL.Composition  import Composition
 import sys
 
 import _TFL._Meta.Object
+import _TFL.CAO
 import _TFL.sos
 
 class P_M (TFL.Meta.Object) :
@@ -495,34 +497,7 @@ class Import_Closure :
 
 # end class Import_Closure
 
-def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec    =
-            ( "python_module"
-            , "import_path=./"
-            , "separator= "
-            )
-        , option_spec =
-            ( "-as_code:B?Print import closure as executable python code"
-            , "-debug:I=0"
-            , "-Diff:S"
-                  "?Name of python_module which import closure gets subtracted"
-            , "-files:B?Show all files in import closure"
-            , "-ignore:S,=U_Test?Ignore modules specified"
-            , "-packages:B?Show all packages in import closure"
-            , "-Pathsep:S=:?Path separator used by `import_path'"
-            , "-toplevels:B?Show all toplevel packages in import closure"
-            , "-script_code:B?Add imports following the "
-              "__name__ == '__main__' line"
-            )
-        , min_args    = 1
-        , max_args    = 3
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     import_path = map \
         (TFL.sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
     ignore      = dict_from_list (cmd.ignore)
@@ -560,10 +535,35 @@ def main (cmd) :
     if cmd.files or not out_opts :
         print sep.join \
             (sorted ([str (m) for m in result.pym_dict.values ()]))
-# end def main
+# end def _main
 
-if __name__ == "__main__":
-    main (command_spec ())
-else :
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "python_module:S"
+        , "import_path:P=./"
+        , "separator:S= "
+        )
+    , opts          =
+        ( "-as_code:B?Print import closure as executable python code"
+        , "-debug:I=0"
+        , "-Diff:S"
+              "?Name of python_module which import closure gets subtracted"
+        , "-files:B?Show all files in import closure"
+        , "-ignore:S,=U_Test?Ignore modules specified"
+        , "-packages:B?Show all packages in import closure"
+        , "-Pathsep:S=:?Path separator used by `import_path'"
+        , "-toplevels:B?Show all toplevel packages in import closure"
+        , "-script_code:B?Add imports following the "
+          "__name__ == '__main__' line"
+        )
+    , min_args      = 1
+    , max_args      = 3
+    )
+
+if __name__ != "__main__":
     TFL._Export ("Import_Closure", "Derived_PNS_Finder")
+else :
+    _Command ()
+#    main (command_spec ())
 ### __END__ TFL.Import_Closure

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -72,8 +72,12 @@
 #    24-Sep-2009 (CT) Use `in` operator instead of `has_key` method
 #     6-Dec-2009 (CT) 3-compatibility
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    16-Jun-2013 (CT) Improve 3-compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 ### Note: this module is obsolete and shouldn't be used for new code
 
@@ -81,6 +85,7 @@ from   _TFL        import TFL
 from   _TFL.Regexp import *
 from   time        import *
 
+import _TFL.CAO
 import _TFL.r_eval
 
 class Time_Tuple :
@@ -153,7 +158,7 @@ class Time_Tuple :
         for k in kw.keys () :
             if kw [k] is not None :
                 if k not in self.index :
-                    raise NameError, k
+                    raise NameError (k)
                 body [self.index [k]] = self._sanitized (k, kw [k])
         self.body = tuple (body)
     # end def __init__
@@ -199,7 +204,7 @@ class Time_Tuple :
         if name == "week" :
             result = self.week = self._week ()
             return result
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __str__      (self)       : return str  (self.body)
@@ -301,7 +306,7 @@ def day_to_time_tuple (day_string) :
         match = pat.match (day_string)
         if match :
             return Time_Tuple (** match.groupdict ())
-    raise ValueError, day_string
+    raise ValueError (day_string)
 # end def time_tuple
 
 class Date :
@@ -314,12 +319,14 @@ class Date :
         else :
             if isinstance (date, str) :
                 date  = day_to_time_tuple (date)
-            if isinstance (date, (Time_Tuple, tuple)) :
+            if isinstance (date, Time_Tuple) :
+                date  = mktime (date.body)
+            elif isinstance (date, tuple) :
                 date  = mktime (date)
             elif isinstance (date, Date) :
                 date  = mktime (date.local_tuple ())
             elif not isinstance (date, d.__class__) :
-                raise ValueError, date
+                raise ValueError (date)
         self.value = date
     # end def __init__
 
@@ -382,17 +389,28 @@ class Date :
 
 # end class Date
 
-if __name__ == "__main__":
-    from _TFL.Command_Line import Command_Line
-    cmd = Command_Line \
-        ( arg_spec    = ("format:S=%Y%m%d?Format for date", )
-        , option_spec = ("-delta:I=0?delta to current date in days", )
-        , max_args    = 1
+def _main (cmd) :
+    format = cmd.format
+    delta  = cmd.delta * 86400
+    now    = localtime (time () + delta)
+    print (strftime (format, now))
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "format:S=%Y%m%d?Format for date"
+        ,
         )
-    format = cmd.arg    ("format")
-    delta  = cmd.option ["delta"].value_1 () * 86400
-    now    = localtime  (time () + delta)
-    print strftime      (format, now)
-else :
+    , opts          =
+        ( "-delta:I=0?delta to current date in days"
+        ,
+        )
+    , max_args      = 1
+    )
+
+if __name__ != "__main__":
     TFL._Export ("*")
+else :
+    _Command ()
 ### __END__ TFL.Date_Time

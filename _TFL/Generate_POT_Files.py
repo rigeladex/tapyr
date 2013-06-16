@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2013 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -255,5 +255,3 @@ def main (cmd) :
 if __name__ == "__main__" :
     main (command_line ())
 ### __END__ Generate_POT_Files
-
-

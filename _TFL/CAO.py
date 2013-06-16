@@ -108,6 +108,7 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    23-May-2013 (CT) Improve Python-3 compatibility
 #    16-Jun-2013 (CT) Support `args` and `kw` in `Cmd.__call__`, `CAO.__call__`
+#    16-Jun-2013 (CT) Add `CAO.HELP`
 #    ««revision-date»»···
 #--
 
@@ -1424,6 +1425,10 @@ class CAO (TFL.Meta.Object) :
     def GET (self, name, default) :
         return getattr (self, name, default)
     # end def GET
+
+    def HELP (self) :
+        self._cmd.help (self)
+    # end def HELP
 
     def _attribute_value (self, name, map = None) :
         if map is None :

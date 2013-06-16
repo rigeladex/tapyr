@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,14 +28,17 @@
 # Revision Dates
 #    19-Sep-2004 (CT) Creation
 #     1-May-2006 (CT) `Alias_Mgr.transitive_translation` added
+#    16-Jun-2013 (CT) Correct import of `Regexp`
 #    ««revision-date»»···
 #--
 
-from   Regexp                  import *
 from   _TFL                    import TFL
 from   _PMA                    import PMA
-import _TFL._Meta.Object
+
+from   _TFL.Regexp             import *
 from   _PMA                    import Lib
+
+import _TFL._Meta.Object
 
 class Alias (TFL.Meta.Object) :
     """Model a single alias"""

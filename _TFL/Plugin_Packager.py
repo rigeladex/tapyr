@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #                      if needed
 #     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
 #    11-Nov-2009 (CT)  Use `hashlib.md5`  instead of `md5.new` (3-compatibility)
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ import hashlib
 import sys
 
 import _TFL.Accessor
+import _TFL.CAO
 import _TFL.Import_Closure
 import _TFL.import_module
 import _TFL._Meta.Object
@@ -203,29 +205,7 @@ class Plugin_Packager (TFL.Meta.Object) :
 
 # end class Plugin_Packager
 
-def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec    =
-            ( "pi_root_name"
-            , "target_root"
-            , "import_path=./"
-            )
-        , option_spec =
-            ( "-AP_Closure:S"
-                  "?Name of file containing the import closure of application"
-            , "-Diff:S"
-                  "?Name of python_module which import closure gets subtracted"
-            , "-ignore:S,=U_Test?Ignore modules specified"
-            , "-Pathsep:S=:?Path separator used by `import_path'"
-            )
-        , min_args    = 2
-        , max_args    = 3
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     import_path = map \
         (TFL.sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
     ignore      = dict_from_list (cmd.ignore)
@@ -244,12 +224,29 @@ def main (cmd) :
         raise SystemExit, 9
     packager = Plugin_Packager \
         (cmd.pi_root_name, ap_closure, import_path, cmd.target_root, ignore)
-# end def main
+# end def _main
 
-if __name__ == "__main__":
-    main (command_spec ())
-### to test:
-### python ~/lib/python/_TFL/Plugin_Packager.py -Diff TTP_Build.py ~/NCO/lib/python/_Plugins/_MPC555_AS8202/Board.py /tmp/PIP_Test ~/NCO/external/ttpbuild/src/code:~/NCO/lib/python
-else :
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "pi_root_name:S"
+        , "target_root:S"
+        , "import_path:P=./"
+        )
+    , opts          =
+        ( "-AP_Closure:S"
+              "?Name of file containing the import closure of application"
+        , "-Diff:S"
+              "?Name of python_module which import closure gets subtracted"
+        , "-ignore:S,=U_Test?Ignore modules specified"
+        , "-Pathsep:S=:?Path separator used by `import_path'"
+        )
+    , min_args      = 2
+    , max_args      = 3
+    )
+
+if __name__ != "__main__":
     TFL._Export ("Plugin_Packager")
+else :
+    _Command ()
 ### __END__ TFL.Plugin_Packager

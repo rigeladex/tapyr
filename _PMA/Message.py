@@ -165,10 +165,11 @@
 #     8-Jun-2009 (CT) Use `with` instead of `try..finally` for opening files
 #    28-Mar-2013 (CT) Add `defaults` to `Msg_Scope`,
 #                     allow `msg=None` in `Msg_Scope`
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
-from   __future__              import with_statement
+from   __future__              import print_function
 
 ### XXX to do
 ### - still need `headers_to_show` ??? If not, remomve
@@ -184,6 +185,7 @@ import _PMA.SB
 import _TFL.Accessor
 import _TFL.Ascii
 import _TFL.Caller
+import _TFL.CAO
 import _TFL.FCM
 import _TFL.Filename
 import _TFL._Meta.M_Class
@@ -901,8 +903,10 @@ class _Pending_Action_ (TFL.Meta.Object) :
             try :
                 source.delete (msg)
             except Exception, exc :
-                print "Couldn't delete `%s (%s)` due to exception `%s`" % \
-                    (msg.number, msg.name, exc)
+                print \
+                    ( "Couldn't delete `%s (%s)` due to exception `%s`"
+                    % (msg.number, msg.name, exc)
+                    )
             else :
                 self._delete = None
                 affected_boxes.add (source)
@@ -998,48 +1002,35 @@ def message_from_string (msg, parser = None) :
     return PMA.Message (email)
 # end def message_from_string
 
-def _command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec    = ("message:S?Message to print")
-        , option_spec =
-            ( "encoding:S?Encoding to use for output"
-            ,
-            )
-        , description = "Print mail messages"
-        , max_args    = 0
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     parser = Lib.Parser ()
     if cmd.encoding :
         PMA.default_encoding = cmd.encoding
     for m in cmd.argv :
         msg = PMA.message_from_file (m, parser)
-        print u"\n".join \
-            (msg.formatted ()).encode (PMA.default_encoding, "replace")
+        print \
+            ( u"\n".join
+                (msg.formatted ()).encode (PMA.default_encoding, "replace")
+            )
 # end def _main
 
-"""
-from   _PMA                    import PMA
-import _PMA.Mailbox
-mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
-print mb.summary ().encode (PMA.default_encoding, "replace")
-m = mb.messages [-1]
-def show (m, head = "") :
-    for p in m.part_iter () :
-        print head, type (p), p.name, p.type, id (p.email), p.email.is_multipart()
-        show (p, head + " ")
-
-show (m)
-"""
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "message:S?Message to print"
+        ,
+        )
+    , opts          =
+        ( "encoding:S?Encoding to use for output"
+        ,
+        )
+    , description   = "Print mail messages"
+    )
 
 if __name__ != "__main__" :
     PMA._Export ("*")
 else :
     import _PMA.Message
-    PMA.load_user_config ()
-    _PMA.Message._main (_PMA.Message._command_spec ())
+    PMA.load_user_config  ()
+    _PMA.Message._Command ()
 ### __END__ PMA.Message

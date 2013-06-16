@@ -28,12 +28,15 @@
 # Revision Dates
 #     3-Aug-2003 (CT) Creation
 #    29-Sep-2006 (CT) Two more doctests added
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from   __future__  import print_function
 
-from _TFL import TFL
+from   _TFL import TFL
+
+import _TFL.CAO
 
 def bayesian (p_h, p_o_h, p_o_not_h) :
     """Calculate the probability of hypothesis `h` given the new observation
@@ -79,32 +82,26 @@ def bayesian (p_h, p_o_h, p_o_not_h) :
     return p_h_times_p_o_h / (p_h_times_p_o_h + (p_not_h * p_o_not_h))
 # end def bayesian
 
-def _command_spec (arg_array = None) :
-    from Command_Line import Command_Line
-    return Command_Line \
-        ( arg_spec    =
-            ( "p_h:F"
-                "?probability of hypothesis"
-                " before the new observation was made"
-            , "p_o_h:F"
-                "?probability of the observation"
-                " when the hypothesis `h` is true"
-            , "p_o_not_h:F"
-                "?probability of the observation"
-                " when the hypothesis `h` is false"
-            )
-        , max_args    = 3
-        , min_args    = 3
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     print ("%5.3f" % bayesian (cmd.p_h, cmd.p_o_h, cmd.p_o_not_h))
 # end def _main
 
-if __name__ == "__main__" :
-    _main (_command_spec ())
-else :
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "p_h:F"
+            "?probability of hypothesis  before the new observation was made"
+        , "p_o_h:F"
+            "?probability of the observation when the hypothesis `h` is true"
+        , "p_o_not_h:F"
+            "?probability of the observation when the hypothesis `h` is false"
+        )
+    , min_args      = 3
+    , max_args      = 3
+    )
+
+if __name__ != "__main__" :
     TFL._Export ("*")
+else :
+    _Command ()
 ### __END__ TFL.bayesian

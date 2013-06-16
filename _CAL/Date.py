@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -294,8 +294,8 @@ class Date (CAL._DTW_) :
         elif 5 <= t <= 50 :
             return round (62.92 + t * (0.32217 + t * 0.005589))
         else :
-            raise ValueError, \
-                "Algorithm is restricted to 1800..2050, fails for %s" % (y, )
+            raise ValueError \
+                ("Algorithm is restricted to 1800..2050, fails for %s" % (y, ))
     # end def delta_T
 
     @classmethod
@@ -317,7 +317,7 @@ class Date (CAL._DTW_) :
         if match :
             return cls (** cls._from_string_match_kw (s, match))
         else :
-            raise ValueError, s
+            raise ValueError (s)
     # end def from_string
 
     @Once_Property

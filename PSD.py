@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,6 +40,7 @@
 #    14-Feb-2011 (CT) `ACPI_Updater` adapted to multiple batteries
 #    15-Feb-2011 (CT) Changed to use `LNX.Bat_Charge` (multiple batteries,
 #                     again)
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -51,8 +52,10 @@ from   _TFL.predicate        import *
 from   _TFL.Regexp           import *
 from   _TFL._D2              import D2
 from   _TFL._D2.Screen       import Rect
+
 import _TFL._D2.Point
 import _TFL._Meta.Object
+import _TFL.CAO
 
 from   _TFL                  import sos
 
@@ -662,26 +665,24 @@ class Toplevel (TFL.Meta.Object) :
 
 # end class Toplevel
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( option_spec =
-            ( "pos:S?Position of display in geometry-format"
-            , "width:I=100?Width of display"
-            )
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     a = Toplevel \
         ("ACPI", cmd.width, Date_Entry, ACPI_Entry, ACPI_Gauge, CPU_Entry)
     if cmd.pos :
         a.toplevel.geometry (cmd.pos)
     CTK.root.withdraw ()
     a.mainloop ()
-# end def main
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , opts          =
+        ( "pos:S?Position of display in geometry-format"
+        , "width:I=100?Width of display"
+        )
+    , max_args      = 0
+    )
 
 if __name__ == "__main__":
-    main (command_spec ())
+    _Command ()
 ### __END__ PSD

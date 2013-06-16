@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,19 @@
 #    20-Mar-2009 (CT) `convert_one` factored and `-add_to_dir` added
 #     1-Dec-2009 (CT) Ignore `__getslice__` warnings
 #    14-Jan-2011 (CT) `-format`, `-color`, `-x_off`, and `-y_off` added
+#    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    ««revision-date»»···
 #--
+
+from   __future__         import print_function
+
+from   _CAL.Date          import Date
 
 from   _TFL               import TFL
 from   _TFL               import sos
 from   _TFL.Filename      import *
+
+import _TFL.CAO
 
 from   PIL import Image, ImageDraw, ImageFile, ImageFont, ExifTags
 
@@ -58,41 +65,12 @@ def convert_one (src, name, i_size, t_size, holder, year, font, imp, thp, format
         draw = ImageDraw.Draw (im)
         draw.text \
             ((xo, yo), "(C) %s %s" % (year, holder), fill = color, font = font)
-    print name, im.size, th.size
+    print (name, im.size, th.size)
     im.save (imp, format, progressive = True)
     th.save (thp, format, progressive = True)
 # end def convert_one
 
-def command_spec (arg_array = None) :
-    from _TFL.Command_Line import Command_Line
-    from _CAL.Date         import Date
-    today = Date ()
-    year  = today.year
-    return Command_Line \
-        ( arg_spec    =
-            ( "target_dir:P?Directory to put gallery into"
-            , "picture:P"
-                "?Name of picture(s) to convert and put into `target_dir`"
-            )
-        , option_spec =
-            ( "add_to_dir:B"
-                "?Add pictures to existing directory (no `im` and `th` subdirectories)"
-            , "color:S=white?Color to use for copyright notice"
-            , "format:S=JPEG?Image format used for output"
-            , "i_size:I=800?Size of images in gallery (larger dimension)"
-            , "photographer:S?Name of photographer"
-            , "start_pid:I=0?Start value for picture count"
-            , "t_size:I=150?Size of thumbnails in gallery (larger dimension)"
-            , "x_off:I=5?X offset of copyright notice"
-            , "y_off:I=-15?Y offset of copyright notice"
-            , "-year:I=%s?Year for copyright" % (year, )
-            )
-        , min_args    = 2
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     font   = ImageFont.load_default ()
     color  = cmd.color
     fmt    = cmd.format
@@ -108,7 +86,7 @@ def main (cmd) :
     td     = sos.expanded_path (cmd.target_dir)
     if cmd.add_to_dir :
         if not sos.path.isdir (td) :
-            print "Making directory %s" % (td, )
+            print ("Making directory %s" % (td, ))
             sos.mkdir_p (td)
         for src in cmd.argv [1:] :
             src, name = src.split ("=")
@@ -126,7 +104,7 @@ def main (cmd) :
         td_th = sos.path.join (td, "th")
         for x in td_im, td_th :
             if not sos.path.isdir (x) :
-                print "Making directory %s" % (x, )
+                print ("Making directory %s" % (x, ))
                 sos.mkdir_p (x)
         pid  = cmd.start_pid
         for src in sorted (sos.expanded_globs (* cmd.argv [1:])) :
@@ -138,12 +116,38 @@ def main (cmd) :
                 ( src, name, i_size, t_size, holder, year, font, imp, thp
                 , fmt, color, x_off, y_off
                 )
-# end def main
+# end def _main
+
+today = Date ()
+year  = today.year
+
+_Command = TFL.CAO.Cmd \
+    ( handler       = _main
+    , args          =
+        ( "target_dir:P?Directory to put gallery into"
+        , "picture:P?Name of picture(s) to convert and put into `target_dir`"
+        )
+    , opts          =
+        ( "add_to_dir:B"
+            "?Add pictures to existing directory "
+            "(no `im` and `th` subdirectories)"
+        , "color:S=white?Color to use for copyright notice"
+        , "format:S=JPEG?Image format used for output"
+        , "i_size:I=800?Size of images in gallery (larger dimension)"
+        , "photographer:S?Name of photographer"
+        , "start_pid:I=0?Start value for picture count"
+        , "t_size:I=150?Size of thumbnails in gallery (larger dimension)"
+        , "x_off:I=5?X offset of copyright notice"
+        , "y_off:I=-15?Y offset of copyright notice"
+        , "-year:I=%s?Year for copyright" % (year, )
+        )
+    , min_args      = 2
+    )
 
 import warnings
 warnings.filterwarnings \
     ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
 
 if __name__ == "__main__" :
-    main (command_spec ())
+    _Command ()
 ### __END__ make_photo_gallery
