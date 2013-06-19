@@ -244,6 +244,13 @@
 #    26-May-2013 (CT) Add `Id_Entity.as_migration`
 #     3-Jun-2013 (CT) Add `attr_prop`, get attribute descriptors from
 #                     `.attributes`, not from `__class__`
+#     4-Jun-2013 (CT) Simplify `is_locked`
+#     4-Jun-2013 (CT) Exclude attribute `type_name` from `as_migration`
+#     4-Jun-2013 (CT) Add attribute `type_name`
+#     4-Jun-2013 (CT) Add attribute `pid`
+#     5-Jun-2013 (CT) Set `x_locked.q_able` to `False`
+#     6-Jun-2013 (CT) Add `destroy_dependency` to
+#                     `_Id_Entity_Destroyed_Mixin_.__getattr__`
 #    ««revision-date»»···
 #--
 
@@ -516,7 +523,7 @@ class Entity (TFL.Meta.Object) :
         """Return the property of the attribute named `name`.
            Return None if there is no such attribute.
         """
-        if name not in ("pid", "type_name") :
+        if name not in ("pid", ) :
             return cls.attributes.get (name)
     # end def attr_prop
 
@@ -993,7 +1000,6 @@ class Id_Entity (Entity) :
     has_identity          = True
     is_partial            = True
     max_count             = 0
-    pid                   = None  ### set by `scope.ems.add`
     record_changes        = True
     refuse_links          = set ()
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
@@ -1058,17 +1064,17 @@ class Id_Entity (Entity) :
         class electric (A_Boolean) :
             """Indicates if object/link was created automatically or not."""
 
-            kind          = Attr.Internal
-            default       = False
-            hidden        = True
+            kind               = Attr.Internal
+            default            = False
+            hidden             = True
 
         # end class electric
 
         class is_used (A_Int) :
             """Specifies whether entity is used by another entity."""
 
-            kind          = Attr.Cached
-            default       = 1
+            kind               = Attr.Cached
+            default            = 1
 
         # end class is_used
 
@@ -1126,12 +1132,34 @@ class Id_Entity (Entity) :
 
         # end class last_cid
 
+        class pid (A_Surrogate) :
+            """Permanent id of the instance."""
+
+            explanation        = """
+                The `pid` is unique over all entities in a given scope. Once
+                created, the `pid` of an instance never changes and is not ever
+                reused for a different instance.
+
+                The `pid` remains unchanged during database migrations.
+            """
+
+        # end class pid
+
+        class type_name (A_String) :
+            """Name of type of this entity."""
+
+            kind               = Attr.Internal
+            Kind_Mixins        = (Attr._Type_Name_Mixin_, )
+
+        # end class type_name
+
         class x_locked (A_Boolean) :
             """Specifies if object can be changed by user"""
 
-            kind          = Attr.Internal
-            default       = False
-            hidden        = True
+            kind               = Attr.Internal
+            default            = False
+            hidden             = True
+            q_able             = False
 
         # end class x_locked
 
@@ -1305,8 +1333,9 @@ class Id_Entity (Entity) :
 
     def as_migration (self) :
         def _gen (self) :
+            skip = set (("last_cid", "pid", "type_name"))
             for ak in self.db_attr :
-                if not (ak.is_primary or ak.name == "last_cid") :
+                if not (ak.is_primary or ak.name in skip) :
                     yield ak.name, ak.get_raw_epk (self)
         return (self.epk_raw, dict (_gen (self)))
     # end def as_migration
@@ -1430,12 +1459,7 @@ class Id_Entity (Entity) :
 
     @TFL.Meta.Class_and_Instance_Method
     def is_locked (soc) :
-        if isinstance (soc, Entity) :
-            return soc.x_locked or soc.electric
-        else :
-            x_locked = soc.attributes ["x_locked"]
-            electric = soc.attributes ["electric"]
-            return x_locked.default or electric.default
+        return soc.x_locked or soc.electric
     # end def is_locked
 
     def notify_dependencies_destroy (self) :
@@ -1659,6 +1683,18 @@ class Id_Entity (Entity) :
         return hash ((self.pid, self.home_scope.guid))
     # end def __hash__
 
+    def __setattr__ (self, name, value) :
+        ### If an attribute descriptor's `__get__` does not return `self`
+        ### when accessed via the class it's `__set__` won't be used by Python
+        ### --> call it manually here, instead
+        try :
+            attr = self.attributes [name]
+        except KeyError :
+            return self.__super.__setattr__ (name, value)
+        else :
+            attr.__set__ (self, value)
+    # end def __setattr__
+
     def __unicode__ (self) :
         epk = self.epk
         if len (epk) == 1 :
@@ -1670,7 +1706,16 @@ class Id_Entity (Entity) :
 
 # end class Id_Entity
 
-class _Id_Entity_Reload_Mixin_ (object) :
+class _Id_Entity_Mixin_ (object) :
+
+    def __setattr__ (self, name, value) :
+        ### Avoid `Id_Entity.__setattr__` triggering infinite recursion
+        object.__setattr__ (self, name, value)
+    # end def __setattr__
+
+# end class _Id_Entity_Mixin_
+
+class _Id_Entity_Reload_Mixin_ (_Id_Entity_Mixin_) :
     """Mixin triggering a reload from the database on any attribute access."""
 
     def __getattribute__ (self, name) :
@@ -1708,7 +1753,7 @@ class _Id_Entity_Reload_Mixin_ (object) :
 
 # end class _Id_Entity_Reload_Mixin_
 
-class _Id_Entity_Destroyed_Mixin_ (object) :
+class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
     """Mixin indicating an entity that was already destroyed."""
 
     def __getattribute__ (self, name) :
@@ -1728,6 +1773,8 @@ class _Id_Entity_Destroyed_Mixin_ (object) :
             cls = self.__class__
             self.__class__ = cls.__bases__ [1]
             return getattr (self, name)
+        elif name == "destroy_dependency" :
+            return lambda s : True
         else :
             raise MOM.Error.Destroyed_Entity \
                 ( "%r: access to attribute %r not allowed"

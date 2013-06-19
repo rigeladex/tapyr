@@ -217,6 +217,7 @@ class Scope (TFL.Meta.Object) :
     Fatal_Exceptions       = property (TFL.Getter.ems.pm.dbs.Fatal_Exceptions)
     max_cid                = property (TFL.Getter.ems.max_cid)
     max_pid                = property (TFL.Getter.ems.max_pid)
+    max_surrs              = property (TFL.Getter.ems.max_surrs)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
     T_Extension            = property (TFL.Getter.app_type._T_Extension)

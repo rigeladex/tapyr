@@ -42,6 +42,7 @@
 #    10-Oct-2012 (CT) Add `PNS` to `IP_Address`
 #    12-Oct-2012 (RS) Add `code_format`
 #     5-Mar-2013 (CT) Add `sort_key_address`
+#     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    13-Jun-2013 (CT) Add `pns_alias`
 #    ««revision-date»»···
 #--
@@ -531,10 +532,7 @@ GTW.OMP.NET._Add_Import_Callback \
 GTW.OMP.NET._Add_Import_Callback \
     ("_MOM._DBW._SAS.Query",     _import_sas_mixins)
 
-__all__ = tuple \
-    (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    )
+__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
 
 if __name__ != "__main__" :
     GTW.OMP.NET._Export ("*")

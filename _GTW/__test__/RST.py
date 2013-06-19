@@ -348,16 +348,16 @@ _test_cqf = r"""
 
     >>> for e in v1.entries :
     ...     print ("%%s    %%s" %% (e.name, e.attributes))
-    Auth-Account    (Email `name`, Boolean `enabled`, Boolean `superuser`, Boolean `active`)
+    Auth-Account    (Email `name`, Boolean `enabled`, Boolean `superuser`)
     Auth-Account_in_Group    (Account `left`, Group `right`)
-    Auth-Certificate    (Email `email`, Date_Time_Interval `validity`, String `desc`, Date-Time `revocation_date`, Boolean `alive`)
+    Auth-Certificate    (Email `email`, Date_Time_Interval `validity`, String `desc`, Date-Time `revocation_date`)
     Auth-Group    (Name `name`, String `desc`)
     Auth-Id_Entity    ()
     Auth-Link1    (Left `left`,)
     Auth-Link2    (Left `left`, Right `right`)
     Auth-Named_Object    (Name `name`,)
     Auth-Object    ()
-    Auth-_Account_    (Email `name`, Boolean `enabled`, Boolean `superuser`, Boolean `active`)
+    Auth-_Account_    (Email `name`, Boolean `enabled`, Boolean `superuser`)
     MOM-Id_Entity    ()
     MOM-Link    (Left `left`,)
     MOM-Link1    (Left `left`,)
@@ -4237,7 +4237,6 @@ _test_rat = r"""
             [ 'name'
             , 'enabled'
             , 'superuser'
-            , 'active'
             ]
         , 'entries' :
             [ { 'attributes' :

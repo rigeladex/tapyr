@@ -79,6 +79,7 @@
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #    30-Jan-2013 (CT) Add `add` and `_check_uniqueness`
 #    30-Jan-2013 (CT) Fix handling of `Integrity_Error` in `add`
+#     6-Jun-2013 (CT) Use `@subclass_responsibility`
 #    ««revision-date»»···
 #--
 
@@ -91,8 +92,10 @@ import _MOM._SCM.Summary
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Decorator
+import _TFL.defaultdict
 import _TFL.Q_Result
 
+from   _TFL.Decorator        import subclass_responsibility
 from   _TFL.I18N             import _, _T, _Tn
 
 import itertools
@@ -107,6 +110,8 @@ class _Manager_ (TFL.Meta.Object) :
 
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
+
+    max_surrs          = TFL.defaultdict (int)
 
     class Integrity_Error (Exception) :
         """Raised when `DBW` signals an integrity error."""
@@ -236,9 +241,9 @@ class _Manager_ (TFL.Meta.Object) :
         return result
     # end def instance
 
+    @subclass_responsibility
     def load_root (self) :
         """Redefine to load `guid`, `pid`, and `root` of scope from database."""
-        raise NotImplementedError
     # end def load_root
 
     def pid_query (self, pid, Type = None) :
@@ -304,8 +309,9 @@ class _Manager_ (TFL.Meta.Object) :
         pass ### redefine as necessary in descendents
     # end def update
 
+    @subclass_responsibility
     def _add (self, entity, pid = None) :
-        raise NotImplementedError ("%s must implement `_add`" % self.__class__)
+        pass
     # end def _add
 
     def _check_uniqueness (self, entity, uniqueness_predicates) :
@@ -319,19 +325,19 @@ class _Manager_ (TFL.Meta.Object) :
             raise MOM.Error.Invariants (errors)
     # end def _check_uniqueness
 
+    @subclass_responsibility
     def _query_multi_root (self, Type) :
-        raise NotImplementedError \
-            ("%s needs to define %s" % (self.__class__, "_query_multi_root"))
+        pass
     # end def _query_multi_root
 
+    @subclass_responsibility
     def _query_single_root (self, Type, root) :
-        raise NotImplementedError \
-            ("%s needs to define %s" % (self.__class__, "_query_single_root"))
+        pass
     # end def _query_single_root
 
+    @subclass_responsibility
     def _remove (self, entity) :
-        raise NotImplementedError \
-            ("%s needs to define %s" % (self.__class__, "_remove"))
+        pass
     # end def _remove
 
     def _reset_transaction (self) :

@@ -128,6 +128,7 @@
 #    13-May-2013 (CT) Change `r_query` to look at non-role id-entity
 #                     attributes, not call `ems.r_query`
 #     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
+#     4-Jun-2013 (CT) Change `getattr` to try `etype` first, then `.attributes`
 #    11-Jun-2013 (CT) Add error guards to `raw_query_attrs`
 #    ««revision-date»»···
 #--
@@ -235,9 +236,12 @@ class Entity (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         etype = self._etype
         try :
-            return etype.attributes [name]
-        except Exception :
             return getattr (etype, name)
+        except Exception :
+            try :
+                return etype.attributes [name]
+            except KeyError :
+                raise AttributeError
     # end def __getattr__
 
     def __instancecheck__ (self, instance) :

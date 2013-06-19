@@ -205,11 +205,14 @@
 #     8-May-2013 (CT) Factor `_Query_` to fool `DBW.SAS`
 #     3-Jun-2013 (CT) Support forward references in `_EPK_Mixin_`
 #     3-Jun-2013 (CT) Add guard for class access to `Kind.__get__` (type_name..)
+#     4-Jun-2013 (CT) Add `_Type_Name_Mixin_`
+#     5-Jun-2013 (CT) Add `q_able`
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__            import absolute_import, division
+from   __future__            import print_function, unicode_literals
 
 from   _TFL                  import TFL
 from   _MOM                  import MOM
@@ -252,6 +255,7 @@ class Kind (MOM.Prop.Kind) :
     void_raw_values       = property (lambda s : ("", s.attr.raw_default))
 
     _k_rank               = 0
+    _q_able               = False
 
     def __init__ (self, Attr_Type, e_type) :
         attr = Attr_Type      (self, e_type)
@@ -272,8 +276,11 @@ class Kind (MOM.Prop.Kind) :
 
     def __get__ (self, obj, cls) :
         if obj is None :
-            if self.name in ("pid", "type_name", "electric", "x_locked") :
-                raise RuntimeError ("Access to %s over class %s" % (self, cls))
+            if self.name in ("pid", ) :
+                raise RuntimeError \
+                    ( "Access to %s over class %s"
+                     % (self.name, cls.Essence.__name__)
+                    )
             return self
         return self.get_value (obj)
     # end def __get__
@@ -313,6 +320,11 @@ class Kind (MOM.Prop.Kind) :
             result = attr.default
         return result
     # end def default
+
+    @TFL.Meta.Once_Property
+    def q_able (self) :
+        return self._q_able and self.attr.q_able
+    # end def q_able
 
     def from_pickle_cargo (self, scope, cargo) :
         Pickler = self.attr.Pickler
@@ -414,9 +426,10 @@ class Kind (MOM.Prop.Kind) :
 
     def sync_cooked (self, obj, raw_value) :
         if __debug__ :
-            print _T \
-                ( "Trying to sync pending attribute %s of %s to `%s`"
-                ) % (self.name, obj.name, raw_value)
+            print \
+                ( _T ("Trying to sync pending attribute %s of %s to `%s`")
+                % (self.name, obj.name, raw_value)
+                )
         self.set_raw (obj, raw_value)
     # end def sync_cooked
 
@@ -927,11 +940,40 @@ class _Sticky_Mixin_ (Kind) :
 
 # end class _Sticky_Mixin_
 
+class _Type_Name_Mixin_ (Kind) :
+
+    is_settable    = False
+    record_changes = False
+
+    def __get__ (self, obj, cls) :
+        return cls._type_name
+    # end def __get__
+
+    def __set__ (self, obj, value) :
+        if obj is not None and value != obj._type_name :
+            raise AttributeError \
+                (  _T ("Attribute `%s.%s` cannot be changed")
+                % (obj._type_name, self.name)
+                )
+    # end def __set__
+
+    def get_value (self, obj) :
+        if obj is not None :
+            return obj._type_name
+    # end def get_value
+
+    def reset (self, obj) :
+        pass
+    # end def reset
+
+# end class _Type_Name_Mixin_
+
 class _DB_Attr_ (Kind) :
     """Attributes stored in DB."""
 
     record_changes = True
     save_to_db     = True
+    _q_able        = True
 
     def to_save (self, obj) :
         raw_val = self.get_raw (obj)
@@ -1176,7 +1218,7 @@ class Auto_Cached (_Cached_) :
 
        This kind must **not** be used if the value of the attribute depends
        on other objects (use :class:`Sync_Cached` or :class:`Computed` if
-       that's the case).
+       that is the case).
     """
 
     def get_value (self, obj) :
@@ -1255,7 +1297,7 @@ class Cached_Role_Set (_Cached_) :
 class Computed (_Cached_, _Computed_Mixin_) :
     """Computed attribute: the value is computed for each and every attribute
        access. This is quite inefficient and should only be used if
-       :class:`Auto_Cached` or :class:`Sync_Cached` don't work.
+       :class:`Auto_Cached` or :class:`Sync_Cached` dooes not work.
     """
 
     kind        = _ ("computed")
@@ -1296,8 +1338,10 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
             if isinstance (result, Undef) :
                 exc = getattr (result, "exc", None)
                 if 0 and exc :
-                    print "%s.%s query `%s` raises: `%s`" % \
-                        (obj.type_name, self.name, attr.query, exc)
+                    print \
+                        ( "%s.%s query `%s` raises: `%s`"
+                        % (obj.type_name, self.name, attr.query, exc)
+                        )
                 result = None
             if result is not None :
                 return attr.cooked (result)
@@ -1319,9 +1363,10 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
 
 class Query (_Query_) :
     ### XXX fold `_Query_` back into `Query` after SAS has been fixed
-    pass
-# end class Query
 
+    _q_able               = True
+
+# end class Query
 
 class Computed_Mixin (_Computed_Mixin_) :
     """Mixin to compute attribute value if empty, i.e., if no value was

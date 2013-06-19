@@ -33,6 +33,7 @@
 #    25-Feb-2013 (CT) Simplify `alive.query_fct` by relying on
 #                     `.query_preconditions`
 #    26-Apr-2013 (CT) Remove `cert_id`, make `email`, `validity`, `desc` primary
+#     5-Jun-2013 (CT) Add `cert_id` again, now as `A_Surrogate`
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,13 @@ class Certificate (_Ancestor_Essence) :
             ui_name            = _("Description")
 
         # end class desc
+
+        ### Non-primary attributes
+
+        class cert_id (A_Surrogate) :
+            """Id of certificate"""
+
+        # end class cert_id
 
         class revocation_date (A_Date_Time) :
             """Date and time when the certificate was revoked"""

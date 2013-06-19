@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -34,6 +34,7 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    19-Jul-2012 (RS) Use `A_Angle` instead of `A_Float` for `lat`, `lon`
+#     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -106,10 +107,7 @@ class A_Position (_A_Composite_) :
 
 # end class A_Position
 
-__all__ = tuple \
-    (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    )
+__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

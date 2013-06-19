@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -28,69 +28,84 @@
 # Revision Dates
 #    28-Sep-2009 (CT) Creation (factored from TOM.Meta.M_Attr_Type)
 #    29-Sep-2009 (CT) `ckd_name` and `raw_name` added
-#     7-Oct-2009 (CT) `M_Attr_Type_Named_Value` added
-#     7-Oct-2009 (CT) `M_Attr_Type.__init__` changed to add `syntax`
+#     7-Oct-2009 (CT) `Named_Value` added
+#     7-Oct-2009 (CT) `Root.__init__` changed to add `syntax`
 #     9-Oct-2009 (CT) Handling of `default` and `raw_default` added
-#     4-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to add `default_role_name`
-#    27-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to remove `description`
+#     4-Nov-2009 (CT) `Link_Role` changed to add `default_role_name`
+#    27-Nov-2009 (CT) `Link_Role` changed to remove `description`
 #                     for classes without `role_type`
-#    30-Dec-2009 (CT) `M_Attr_Type_Decimal` added
+#    30-Dec-2009 (CT) `Decimal` added
 #    21-Jan-2010 (CT) `__init__` changed to take `default` from `dct`
-#     2-Feb-2010 (CT) `M_Attr_Type_Named_Object` added
-#     9-Feb-2010 (CT) `M_Attr_Type.__init__` changed to add `query`
-#    22-Feb-2010 (CT) `M_Attr_Type_String` added (`ignore_case`)
-#    12-Mar-2010 (CT) `M_Attr_Type_Typed_Collection` added
-#    13-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` implemented
-#    15-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` corrected
+#     2-Feb-2010 (CT) `Named_Object` added
+#     9-Feb-2010 (CT) `Root.__init__` changed to add `query`
+#    22-Feb-2010 (CT) `String` added (`ignore_case`)
+#    12-Mar-2010 (CT) `Typed_Collection` added
+#    13-Mar-2010 (CT) `Typed_Collection.Pickler` implemented
+#    15-Mar-2010 (CT) `Typed_Collection.Pickler` corrected
 #    16-Mar-2010 (CT) `_Pickle_Mixin_` factored
 #    23-Mar-2010 (CT) `assert` added to guard against `check` being a string
 #    23-Mar-2010 (CT) `renameds` added
 #     9-Apr-2010 (CT) Don't add attributes starting with `_` to `renameds`
 #    19-Apr-2010 (CT) `_d_rank` added (sequence of attribute definition)
-#    20-Apr-2010 (CT) `M_Attr_Type_Named_Object` changed to create a derived
+#    20-Apr-2010 (CT) `Named_Object` changed to create a derived
 #                     `Pickler` to avoid aliasing
-#    28-Apr-2010 (CT) s/_M_Pickler_/M_Attr_Type__Pickler/
-#     1-Jul-2010 (MG) `M_Attr_Type__Pickler.Pickle_Mixin` removed
+#    28-Apr-2010 (CT) s/_M_Pickler_/_M_Bin_Pickler_/
+#     1-Jul-2010 (MG) `_M_Bin_Pickler.Pickle_Mixin` removed
 #    26-Aug-2010 (CT) s/simple_cooked/cooked/
 #     2-Sep-2010 (CT) Signatures of `Pickler.as_cargo` and `.from_cargo` changed
-#     6-Sep-2010 (CT) `M_Attr_Type_Typed_Collection` changed to use `tuple`
+#     6-Sep-2010 (CT) `Typed_Collection` changed to use `tuple`
 #                     and `R_Type` in `as_cargo` and `from_cargo`, respectively
 #    14-Oct-2010 (CT) `symbolic_ref_pat` and `_symbolic_default` removed
-#    24-Nov-2010 (CT) `M_Attr_Type_Typed_Collection._elements_from_cargo_p`
+#    24-Nov-2010 (CT) `Typed_Collection._elements_from_cargo_p`
 #                     fixed (`C_Type`)
 #    13-Dec-2011 (CT) Set `raw_name` to `ckd_name` unless `needs_raw_value`
 #    16-Dec-2011 (CT) Set `raw_name` to `name` unless `needs_raw_value`
 #                     (`name` because that will trigger `computed` if necessary)
-#     8-Sep-2012 (CT) Add `M_Attr_Type_Enum`
+#     8-Sep-2012 (CT) Add `Enum`
 #     8-Sep-2012 (CT) Add `_unicode_ignore_case`
-#    19-Sep-2012 (CT) Add `force_role_name` to `M_Attr_Type_Link_Role`
-#    13-Nov-2012 (CT) Add support for redefined `cooked` to `M_Attr_Type_String`
-#    20-Nov-2012 (CT) Change `M_Attr_Type_Unit` to allow manual `_default_unit`
-#    20-Nov-2012 (CT) Change `M_Attr_Type_Unit` to use inherited `_default_unit`
+#    19-Sep-2012 (CT) Add `force_role_name` to `Link_Role`
+#    13-Nov-2012 (CT) Add support for redefined `cooked` to `String`
+#    20-Nov-2012 (CT) Change `Unit` to allow manual `_default_unit`
+#    20-Nov-2012 (CT) Change `Unit` to use inherited `_default_unit`
+#     5-Jun-2013 (CT) DRY names: export module, remove M_Attr_Type_ prefix
+#     5-Jun-2013 (CT) Add `Surrogate`
+#     7-Jun-2013 (CT) Add guards against redefinition to `Surrogate`
+#    12-Jun-2013 (CT) Add and use `is_partial_p`
 #    ««revision-date»»···
 #--
 
 from   _MOM                import MOM
 from   _TFL                import TFL
+from   _TFL.pyk            import pyk
 
 import _MOM._Meta.M_Prop_Type
 
 import _TFL._Meta.Once_Property
 
-class M_Attr_Type (MOM.Meta.M_Prop_Type) :
+class Root (MOM.Meta.M_Prop_Type) :
     """Meta class for MOM.Attr.Type classes."""
 
     count = 0
 
+    def __new__ (meta, name, bases, dct) :
+        dct.setdefault \
+            ( "is_partial_p"
+            , (   name.startswith (("_A_", "A_"))
+              or (name.startswith ("_") and name.endswith ("_"))
+              )
+            )
+        return super (Root, meta).__new__ (meta, name, bases, dct)
+    # end def __new__
+
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        M_Attr_Type.count += 1
-        cls._d_rank = M_Attr_Type.count
-        if not name.startswith (("_A_", "A_")) :
+        Root.count += 1
+        cls._d_rank = Root.count
+        if not cls.is_partial_p :
             cls.ckd_name = "__%s" % (cls.name, )
             cls.raw_name = \
                 (    "__raw_%s" % (cls.name, ) if cls.needs_raw_value
-                else cls.name ### don't want `ckd_name` here (`computed`...)
+                else cls.name ### do not want `ckd_name` here (`computed`...)
                 )
             cls.renameds = set ()
             for b in bases :
@@ -132,9 +147,9 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
                 )
     # end def __init__
 
-# end class M_Attr_Type
+# end class Root
 
-class M_Attr_Type_Decimal (M_Attr_Type) :
+class Decimal (Root) :
     """Meta class for MOM.Attr.A_Decimal classes."""
 
     def __init__ (cls, name, bases, dict) :
@@ -147,9 +162,9 @@ class M_Attr_Type_Decimal (M_Attr_Type) :
             cls.D_Quant   = decimal.Decimal (10) ** -cls.decimal_places
     # end def __init__
 
-# end class M_Attr_Type_Decimal
+# end class Decimal
 
-class M_Attr_Type_Enum (M_Attr_Type) :
+class Enum (Root) :
     """Meta class for MOM.Attr.A_Enum."""
 
     def __init__ (cls, name, bases, dct) :
@@ -158,9 +173,9 @@ class M_Attr_Type_Enum (M_Attr_Type) :
             cls.P_Type = cls.C_Type.P_Type
     # end def __init__
 
-# end class M_Attr_Type_Enum
+# end class Enum
 
-class M_Attr_Type_Link_Role (M_Attr_Type) :
+class Link_Role (Root) :
     """Meta class for MOM.Attr.A_Link_Role classes."""
 
     def __init__ (cls, name, bases, dct) :
@@ -173,12 +188,12 @@ class M_Attr_Type_Link_Role (M_Attr_Type) :
             cls.description = None
     # end def __init__
 
-# end class M_Attr_Type_Link_Role
+# end class Link_Role
 
-class M_Attr_Type_Named_Value (M_Attr_Type) :
+class Named_Value (Root) :
     """Meta class for MOM.Attr._A_Named_Value_ classes.
 
-       `M_Attr_Type_Named_Value` adds Once_Property for `Elbat` (reverse
+       `Named_Value` adds Once_Property for `Elbat` (reverse
        mapping) for `Table` and for `syntax`, if these aren't defined by the
        descendent of `A_Named_Value`.
     """
@@ -212,12 +227,12 @@ class M_Attr_Type_Named_Value (M_Attr_Type) :
             )
     # end def syntax
 
-# end class M_Attr_Type_Named_Value
+# end class Named_Value
 
-class M_Attr_Type_Named_Object (M_Attr_Type_Named_Value) :
+class Named_Object (Named_Value) :
     """Meta class for MOM.Attr._A_Named_Object_ classes.
 
-       `M_Attr_Type_Named_Object` adds `Type` to `cls.Pickler`, if any.
+       `Named_Object` adds `Type` to `cls.Pickler`, if any.
     """
 
     def __init__ (cls, name, bases, dct) :
@@ -230,7 +245,7 @@ class M_Attr_Type_Named_Object (M_Attr_Type_Named_Value) :
                     (Type = MOM.Attr._A_String_.New (max_length = max_length))
     # end def __init__
 
-# end class M_Attr_Type_Named_Object
+# end class Named_Object
 
 def _unicode_lower (s) :
     return unicode (s).lower ()
@@ -248,10 +263,10 @@ _unicode_ignore_case = dict \
     , upper          = _unicode_upper
     )
 
-class M_Attr_Type_String (M_Attr_Type) :
+class String (Root) :
     """Meta class for MOM.Attr._A_String_ classes.
 
-       `M_Attr_Type_String` interprets `ignore_case` and sets
+       `String` interprets `ignore_case` and sets
        `needs_raw_value` and `cooked` accordingly.
     """
 
@@ -272,23 +287,62 @@ class M_Attr_Type_String (M_Attr_Type) :
         cls.cooked = decorator (cooked)
     # end def __init__
 
-# end class M_Attr_Type_String
+# end class String
 
-class M_Attr_Type__Pickler (TFL.Meta.Object.__class__) :
+class Surrogate (Root) :
+    """Meta class for MOM.Attr.A_Surrogate."""
+
+    max_surrogate_id = 0
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if name != "A_Surrogate" :
+            if cls.surrogate_id :
+                raise TypeError \
+                    ( "Cannot redefine surrogate attribute %s"
+                      "\n    bases: %s"
+                      "\n    %s"
+                    % ( cls, bases
+                      , "\n    ".join
+                          ( "%s : %s"
+                          % (k, v) for k, v in sorted (pyk.iteritems (dct))
+                          )
+                      )
+                    )
+            elif cls.dyn_doc_p :
+                raise TypeError \
+                    ( "Cannot define surrogate attribute %s with dynamic doc"
+                      "\n    bases: %s"
+                      "\n    %s"
+                    % ( cls, bases
+                      , "\n    ".join
+                          ( "%s : %s"
+                          % (k, v) for k, v in sorted (pyk.iteritems (dct))
+                          )
+                      )
+                    )
+            else :
+                cls.__class__.max_surrogate_id += 1
+                cls.surrogate_id = cls.max_surrogate_id
+    # end def __init__
+
+# end class Surrogate
+
+class _M_Bin_Pickler_ (TFL.Meta.Object.__class__) :
 
     @TFL.Meta.Once_Property
     def Type (cls) :
         return MOM.Attr._A_Binary_String_
     # end def Type
 
-# end class M_Attr_Type__Pickler
+# end class _M_Bin_Pickler_
 
-class M_Attr_Type_Typed_Collection (M_Attr_Type) :
+class Typed_Collection (Root) :
     """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
 
     class _Pickler_ (TFL.Meta.Object) :
 
-        __metaclass__ = M_Attr_Type__Pickler
+        __metaclass__ = _M_Bin_Pickler_
 
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :
@@ -351,12 +405,12 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
             return attr_type.R_Type (cargo)
     # end def _elements_from_cargo_s
 
-# end class M_Attr_Type_Typed_Collection
+# end class Typed_Collection
 
-class M_Attr_Type_Unit (M_Attr_Type) :
+class Unit (Root) :
     """Meta class for MOM.Attr._A_Unit_ classes.
 
-       `M_Attr_Type_Unit` defines the class attributes:
+       `Unit` defines the class attributes:
 
        .. attribute:: _default_unit
 
@@ -410,24 +464,24 @@ class M_Attr_Type_Unit (M_Attr_Type) :
                         ) % name
     # end def __init__
 
-# end class M_Attr_Type_Unit
+# end class Unit
 
 __doc__ = """
-Class `MOM.Meta.M_Attr_Type`
-============================
+Module `MOM.Meta.M_Attr_Type`
+==============================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-.. autoclass:: M_Attr_Type
-.. autoclass:: M_Attr_Type_Decimal
-.. autoclass:: M_Attr_Type_Link_Role
-.. autoclass:: M_Attr_Type_Named_Value
-.. autoclass:: M_Attr_Type_Named_Object
-.. autoclass:: M_Attr_Type_String
-.. autoclass:: M_Attr_Type_Unit
+.. autoclass:: Root
+.. autoclass:: Decimal
+.. autoclass:: Link_Role
+.. autoclass:: Named_Value
+.. autoclass:: Named_Object
+.. autoclass:: String
+.. autoclass:: Unit
 
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("*")
+    MOM.Meta._Export_Module ()
 ### __END__ MOM.Meta.M_Attr_Type

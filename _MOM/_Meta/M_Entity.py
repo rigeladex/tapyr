@@ -193,6 +193,15 @@
 #    27-May-2013 (CT) Kludge around Python 2.6's broken type.__subclasscheck__
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #     3-Jun-2013 (CT) Pass `et_scope` to `fix_doc`
+#     4-Jun-2013 (CT) Set `_type_name` to same value as `type_name`
+#     7-Jun-2013 (CT) Add property `type_name` to `M_E_Type`, redefine
+#                     `M_E_Type._m_finish_init` and `.__set_type_names` to
+#                     temporarily remove that property
+#     7-Jun-2013 (CT) Add properties `M_E_Type_Id.electric` and `.x_locked`,
+#                     redefine `M_E_Type_Id._m_finish_init`  to
+#                     temporarily remove these properties
+#    12-Jun-2013 (CT) Add argument `app_type` to `_m_setup_prop_names`,
+#                     `m_setup_names`
 #    13-Jun-2013 (CT) Add `M_E_Mixin.PNS_Aliases`, `.PNS_Aliases_R`, and
 #                     `m_add_PNS_Alias`
 #    13-Jun-2013 (CT) Add `pns_name`, `pns_name_fq`, `pns_qualified_f`, and
@@ -214,7 +223,7 @@ import _TFL.Decorator
 import _TFL.Sorted_By
 import _TFL.Undef
 
-from   _TFL.predicate        import any_true
+from   _TFL.predicate        import any_true, first
 from   _TFL.object_globals   import class_globals
 from   _TFL.I18N             import _, _T, _Tn
 
@@ -397,7 +406,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             ### Call `_m_setup_prop_names` again to make sure automatically
             ### created properties are included in subclasses, too
             for s in cls._S_Extension :
-                s._m_setup_prop_names ()
+                s._m_setup_prop_names (app_type)
         cls._m_create_e_types (app_type, cls._S_Extension)
         for t in reversed (app_type._T_Extension) :
             t._m_setup_relevant_roots ()
@@ -448,7 +457,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         for s in SX :
             app_type.add_type (s._m_new_e_type (app_type, etypes))
         for t in reversed (app_type._T_Extension) :
-            ### let `polymorphic_epk` and `polymorphic_relevant_epk` bubble up
+            ### let `polymorphic_epk`, `polymorphic_relevant_epk` bubble up
             ###     `_m_new_e_type_dict` only sets `polymorphic_epk` of
             ###     immediate parent, but grandparents and higher ups also
             ###     need it set
@@ -458,8 +467,8 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
                     if b.relevant_root :
                         b.polymorphic_relevant_epk = True
         for t in app_type._T_Extension :
-            ### set up attributes and predicates only after all etypes are
-            ### registered in app_type
+            ### set up attributes and predicates only after all
+            ### etypes are registered in app_type
             t._m_finish_init ()
         for t in app_type._T_Extension :
             t.polymorphic_epks = t.polymorphic_epk or any \
@@ -490,9 +499,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     # end def _m_create_e_types
 
     def _m_new_e_type (cls, app_type, etypes) :
-        bases  = cls._m_new_e_type_bases (app_type, etypes)
-        dct    = cls._m_new_e_type_dict  (app_type, etypes, bases)
-        result = cls.M_E_Type            (dct.pop ("__name__"), bases, dct)
+        M_E_Type = cls.M_E_Type
+        bases    = cls._m_new_e_type_bases (app_type, etypes)
+        dct      = cls._m_new_e_type_dict  (app_type, etypes, bases)
+        name     = dct.pop                 ("__name__")
+        result   = M_E_Type                (name, bases, dct)
         return result
     # end def _m_new_e_type
 
@@ -542,18 +553,19 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
                     parents.append (b)
     # end def _m_setup_children
 
-    def _m_setup_prop_names (cls) :
+    def _m_setup_prop_names (cls, app_type = None) :
         for P in cls._Attributes, cls._Predicates :
-            P.m_setup_names ()
+            P.m_setup_names (cls, app_type)
     # end def _m_setup_prop_names
 
     def _set_type_names (cls, base_name) :
         TNT = cls.Type_Name_Type
+        tn  = TNT (cls.pns_qualified (base_name))
         cls.type_base_name = TNT (base_name)
-        cls.type_name      = TNT (cls.pns_qualified   (base_name))
+        cls.type_name      = cls._type_name = tn
         cls.type_name_fq   = TNT (cls.pns_qualified_f (base_name))
-        cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
-        cls._type_names.add (cls.type_name)
+        cls.set_ui_name      (cls.__dict__.get ("ui_name", base_name))
+        cls._type_names.add  (tn)
     # end def _set_type_names
 
     def __repr__ (cls) :
@@ -933,6 +945,14 @@ class M_E_Type (M_E_Mixin) :
             (a for a in cls.attributes.itervalues () if a.record_changes)
     # end def m_recordable_attrs
 
+    @property
+    def type_name (cls) :
+        """Qualified name of essential class."""
+        ### Define `type_name` as property to make changes of the class
+        ### attribute impossible
+        return cls._type_name
+    # end def type_name
+
     def __init__ (cls, name, bases, dct) :
         if issubclass (cls, MOM._Id_Entity_Destroyed_Mixin_) :
             type.__init__ (cls, name, bases, dct)
@@ -1021,7 +1041,10 @@ class M_E_Type (M_E_Mixin) :
     # end def _m_entity_type
 
     def _m_finish_init (cls) :
-        cls._m_setup_attributes ()
+        with TFL.Context.attr_let (M_E_Type, type_name = cls._type_name) :
+            ### temporarily disable metaclass property `type_name` to allow
+            ### assignment of attribute descriptor to `cls`
+            cls._m_setup_attributes ()
         cls._m_fix_doc          ()
     # end def _m_finish_init
 
@@ -1084,6 +1107,13 @@ class M_E_Type (M_E_Mixin) :
         pass
     # end def _m_setup_sorted_by
 
+    def _set_type_names (cls, base_name) :
+        with TFL.Context.attr_let (M_E_Type, type_name = None) :
+            ### temporarily disable metaclass property `type_name` to allow
+            ### change
+            cls.__m_super._set_type_names (base_name)
+    # end def _set_type_names
+
     def __getattr__ (cls, name) :
         ### just to ease up-chaining in descendents
         raise AttributeError ("%s.%s" % (cls.type_name, name))
@@ -1129,6 +1159,13 @@ class M_E_Type_Id (M_E_Type) :
     _epkified_tail = """return (%(epk)s), kw\n"""
 
     @property
+    def electric (cls) :
+        ### Define `electric` as property to make changes of the class
+        ### attribute impossible
+        return cls.attr_prop ("electric").default
+    # end def electric
+
+    @property
     def Ref_Map (cls) :
         result = cls._all_ref_map
         if result is None :
@@ -1155,6 +1192,13 @@ class M_E_Type_Id (M_E_Type) :
                 ("Ref_Req_Map", "_own_ref_req_map", cls.refuse_links)
         return result
     # end def Ref_Req_Map
+
+    @property
+    def x_locked (cls) :
+        ### Define `x_locked` as property to make changes of the class
+        ### attribute impossible
+        return cls.attr_prop ("x_locked").default
+    # end def x_locked
 
     def sort_key_pm (cls, sort_key = None) :
         return TFL.Sorted_By \
@@ -1213,6 +1257,14 @@ class M_E_Type_Id (M_E_Type) :
         result.source_code = code
         return classmethod (result)
     # end def _m_auto_epkified
+
+    def _m_finish_init (cls) :
+        with TFL.Context.attr_let \
+                 (cls.__class__, electric = None, x_locked = None) :
+            ### temporarily disable metaclass properties to allow
+            ### assignment of attribute descriptors to `cls`
+            cls.__m_super._m_finish_init ()
+    # end def _m_finish_init
 
     def _m_fix_refuse_links (cls, app_type) :
         for tn in cls.refuse_links :

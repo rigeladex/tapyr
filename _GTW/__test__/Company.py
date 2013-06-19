@@ -146,6 +146,14 @@ _test_code = """
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <owner.left.salutation.AQ [Attr.Type.Querier String]> -----
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.electric.AQ [Attr.Type.Querier Boolean]> -----
+    <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.left.type_name.AQ [Attr.Type.Querier String]> -----
+    <owner.electric.AQ [Attr.Type.Querier Boolean]> -----
+    <owner.last_cid.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.pid.AQ [Attr.Type.Querier Ckd]> -----
+    <owner.type_name.AQ [Attr.Type.Querier String]> -----
     <registered_in.AQ [Attr.Type.Querier String]> -----
     <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
     <lifetime.start.AQ [Attr.Type.Querier Date]> -----
@@ -166,6 +174,14 @@ _test_code = """
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.left.salutation.AQ [Attr.Type.Querier String]> -----
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.electric.AQ [Attr.Type.Querier Boolean]> -----
+    <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.left.type_name.AQ [Attr.Type.Querier String]> -----
+    <affiliate.owner.electric.AQ [Attr.Type.Querier Boolean]> -----
+    <affiliate.owner.last_cid.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.pid.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.owner.type_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.registered_in.AQ [Attr.Type.Querier String]> -----
     <affiliate.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
     <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]> -----
@@ -173,6 +189,14 @@ _test_code = """
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.short_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
+    <affiliate.electric.AQ [Attr.Type.Querier Boolean]> -----
+    <affiliate.last_cid.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.pid.AQ [Attr.Type.Querier Ckd]> -----
+    <affiliate.type_name.AQ [Attr.Type.Querier String]> -----
+    <electric.AQ [Attr.Type.Querier Boolean]> -----
+    <last_cid.AQ [Attr.Type.Querier Ckd]> -----
+    <pid.AQ [Attr.Type.Querier Ckd]> -----
+    <type_name.AQ [Attr.Type.Querier String]> -----
 
     >>> AQ
     <Attr.Type.Querier.E_Type for PAP.Company_P>
@@ -189,6 +213,14 @@ _test_code = """
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <owner.left.salutation.AQ [Attr.Type.Querier String]>
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]>
+    <owner.left.electric.AQ [Attr.Type.Querier Boolean]>
+    <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <owner.left.pid.AQ [Attr.Type.Querier Ckd]>
+    <owner.left.type_name.AQ [Attr.Type.Querier String]>
+    <owner.electric.AQ [Attr.Type.Querier Boolean]>
+    <owner.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <owner.pid.AQ [Attr.Type.Querier Ckd]>
+    <owner.type_name.AQ [Attr.Type.Querier String]>
     <registered_in.AQ [Attr.Type.Querier String]>
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
@@ -204,11 +236,27 @@ _test_code = """
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <affiliate.owner.left.salutation.AQ [Attr.Type.Querier String]>
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.owner.left.electric.AQ [Attr.Type.Querier Boolean]>
+    <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.owner.left.type_name.AQ [Attr.Type.Querier String]>
+    <affiliate.owner.electric.AQ [Attr.Type.Querier Boolean]>
+    <affiliate.owner.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.owner.pid.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.owner.type_name.AQ [Attr.Type.Querier String]>
     <affiliate.registered_in.AQ [Attr.Type.Querier String]>
     <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]>
     <affiliate.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <affiliate.short_name.AQ [Attr.Type.Querier String]>
+    <affiliate.electric.AQ [Attr.Type.Querier Boolean]>
+    <affiliate.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.pid.AQ [Attr.Type.Querier Ckd]>
+    <affiliate.type_name.AQ [Attr.Type.Querier String]>
+    <electric.AQ [Attr.Type.Querier Boolean]>
+    <last_cid.AQ [Attr.Type.Querier Ckd]>
+    <pid.AQ [Attr.Type.Querier Ckd]>
+    <type_name.AQ [Attr.Type.Querier String]>
 
     >>> for aq in AQ.Unwrapped_Atoms :
     ...     print (aq)
@@ -227,6 +275,10 @@ _test_code = """
     <affiliate.owner.left.middle_name.AQ [Attr.Type.Querier String]>
     <affiliate.owner.left.title.AQ [Attr.Type.Querier String]>
     <affiliate.registered_in.AQ [Attr.Type.Querier String]>
+    <electric.AQ [Attr.Type.Querier Boolean]>
+    <last_cid.AQ [Attr.Type.Querier Ckd]>
+    <pid.AQ [Attr.Type.Querier Ckd]>
+    <type_name.AQ [Attr.Type.Querier String]>
 
     >>> print (formatted (AQ.As_Json_Cargo))
     { 'filters' :
@@ -279,10 +331,42 @@ _test_code = """
                       , 'sig_key' : 0
                       , 'ui_name' : 'Sex'
                       }
+                    , { 'name' : 'electric'
+                      , 'sig_key' : 1
+                      , 'ui_name' : 'Electric'
+                      }
+                    , { 'name' : 'last_cid'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Last cid'
+                      }
+                    , { 'name' : 'pid'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Pid'
+                      }
+                    , { 'name' : 'type_name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Type name'
+                      }
                     ]
                 , 'name' : 'left'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Man'
+                }
+              , { 'name' : 'electric'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Electric'
+                }
+              , { 'name' : 'last_cid'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Last cid'
+                }
+              , { 'name' : 'pid'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Pid'
+                }
+              , { 'name' : 'type_name'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Type name'
                 }
               ]
           , 'name' : 'owner'
@@ -365,10 +449,42 @@ _test_code = """
                             , 'sig_key' : 0
                             , 'ui_name' : 'Sex'
                             }
+                          , { 'name' : 'electric'
+                            , 'sig_key' : 1
+                            , 'ui_name' : 'Electric'
+                            }
+                          , { 'name' : 'last_cid'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Last cid'
+                            }
+                          , { 'name' : 'pid'
+                            , 'sig_key' : 0
+                            , 'ui_name' : 'Pid'
+                            }
+                          , { 'name' : 'type_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Type name'
+                            }
                           ]
                       , 'name' : 'left'
                       , 'sig_key' : 2
                       , 'ui_name' : 'Man'
+                      }
+                    , { 'name' : 'electric'
+                      , 'sig_key' : 1
+                      , 'ui_name' : 'Electric'
+                      }
+                    , { 'name' : 'last_cid'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Last cid'
+                      }
+                    , { 'name' : 'pid'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Pid'
+                      }
+                    , { 'name' : 'type_name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Type name'
                       }
                     ]
                 , 'name' : 'owner'
@@ -405,10 +521,42 @@ _test_code = """
                 , 'sig_key' : 2
                 , 'ui_name' : 'Affiliate'
                 }
+              , { 'name' : 'electric'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Electric'
+                }
+              , { 'name' : 'last_cid'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Last cid'
+                }
+              , { 'name' : 'pid'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Pid'
+                }
+              , { 'name' : 'type_name'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Type name'
+                }
               ]
           , 'name' : 'affiliate'
           , 'sig_key' : 2
           , 'ui_name' : 'Affiliate'
+          }
+        , { 'name' : 'electric'
+          , 'sig_key' : 1
+          , 'ui_name' : 'Electric'
+          }
+        , { 'name' : 'last_cid'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Last cid'
+          }
+        , { 'name' : 'pid'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Pid'
+          }
+        , { 'name' : 'type_name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Type name'
           }
         ]
     , 'name_sep' : '__'
@@ -608,6 +756,42 @@ _test_code = """
                   , sig_key = 0
                   , ui_name = 'Owner/Man/Sex'
                   )
+                , Record
+                  ( attr = Boolean `electric`
+                  , choices =
+                      [ 'no'
+                      , 'yes'
+                      ]
+                  , full_name = 'owner.left.electric'
+                  , id = 'owner__left__electric'
+                  , name = 'electric'
+                  , sig_key = 1
+                  , ui_name = 'Owner/Man/Electric'
+                  )
+                , Record
+                  ( attr = Int `last_cid`
+                  , full_name = 'owner.left.last_cid'
+                  , id = 'owner__left__last_cid'
+                  , name = 'last_cid'
+                  , sig_key = 0
+                  , ui_name = 'Owner/Man/Last cid'
+                  )
+                , Record
+                  ( attr = Surrogate `pid`
+                  , full_name = 'owner.left.pid'
+                  , id = 'owner__left__pid'
+                  , name = 'pid'
+                  , sig_key = 0
+                  , ui_name = 'Owner/Man/Pid'
+                  )
+                , Record
+                  ( attr = String `type_name`
+                  , full_name = 'owner.left.type_name'
+                  , id = 'owner__left__type_name'
+                  , name = 'type_name'
+                  , sig_key = 3
+                  , ui_name = 'Owner/Man/Type name'
+                  )
                 ]
             , full_name = 'owner.left'
             , id = 'owner__left'
@@ -616,6 +800,39 @@ _test_code = """
             , type_name = 'PAP.Person'
             , ui_name = 'Owner/Man'
             , ui_type_name = 'Person'
+            )
+          , Record
+            ( attr = Boolean `electric`
+            , choices = <Recursion on list...>
+            , full_name = 'owner.electric'
+            , id = 'owner__electric'
+            , name = 'electric'
+            , sig_key = 1
+            , ui_name = 'Owner/Electric'
+            )
+          , Record
+            ( attr = Int `last_cid`
+            , full_name = 'owner.last_cid'
+            , id = 'owner__last_cid'
+            , name = 'last_cid'
+            , sig_key = 0
+            , ui_name = 'Owner/Last cid'
+            )
+          , Record
+            ( attr = Surrogate `pid`
+            , full_name = 'owner.pid'
+            , id = 'owner__pid'
+            , name = 'pid'
+            , sig_key = 0
+            , ui_name = 'Owner/Pid'
+            )
+          , Record
+            ( attr = String `type_name`
+            , full_name = 'owner.type_name'
+            , id = 'owner__type_name'
+            , name = 'type_name'
+            , sig_key = 3
+            , ui_name = 'Owner/Type name'
             )
           ]
       , full_name = 'owner'
@@ -779,6 +996,39 @@ _test_code = """
                         , sig_key = 0
                         , ui_name = 'Affiliate/Owner/Man/Sex'
                         )
+                      , Record
+                        ( attr = Boolean `electric`
+                        , choices = <Recursion on list...>
+                        , full_name = 'affiliate.owner.left.electric'
+                        , id = 'affiliate__owner__left__electric'
+                        , name = 'electric'
+                        , sig_key = 1
+                        , ui_name = 'Affiliate/Owner/Man/Electric'
+                        )
+                      , Record
+                        ( attr = Int `last_cid`
+                        , full_name = 'affiliate.owner.left.last_cid'
+                        , id = 'affiliate__owner__left__last_cid'
+                        , name = 'last_cid'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Owner/Man/Last cid'
+                        )
+                      , Record
+                        ( attr = Surrogate `pid`
+                        , full_name = 'affiliate.owner.left.pid'
+                        , id = 'affiliate__owner__left__pid'
+                        , name = 'pid'
+                        , sig_key = 0
+                        , ui_name = 'Affiliate/Owner/Man/Pid'
+                        )
+                      , Record
+                        ( attr = String `type_name`
+                        , full_name = 'affiliate.owner.left.type_name'
+                        , id = 'affiliate__owner__left__type_name'
+                        , name = 'type_name'
+                        , sig_key = 3
+                        , ui_name = 'Affiliate/Owner/Man/Type name'
+                        )
                       ]
                   , full_name = 'affiliate.owner.left'
                   , id = 'affiliate__owner__left'
@@ -787,6 +1037,39 @@ _test_code = """
                   , type_name = 'PAP.Person'
                   , ui_name = 'Affiliate/Owner/Man'
                   , ui_type_name = 'Person'
+                  )
+                , Record
+                  ( attr = Boolean `electric`
+                  , choices = <Recursion on list...>
+                  , full_name = 'affiliate.owner.electric'
+                  , id = 'affiliate__owner__electric'
+                  , name = 'electric'
+                  , sig_key = 1
+                  , ui_name = 'Affiliate/Owner/Electric'
+                  )
+                , Record
+                  ( attr = Int `last_cid`
+                  , full_name = 'affiliate.owner.last_cid'
+                  , id = 'affiliate__owner__last_cid'
+                  , name = 'last_cid'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Owner/Last cid'
+                  )
+                , Record
+                  ( attr = Surrogate `pid`
+                  , full_name = 'affiliate.owner.pid'
+                  , id = 'affiliate__owner__pid'
+                  , name = 'pid'
+                  , sig_key = 0
+                  , ui_name = 'Affiliate/Owner/Pid'
+                  )
+                , Record
+                  ( attr = String `type_name`
+                  , full_name = 'affiliate.owner.type_name'
+                  , id = 'affiliate__owner__type_name'
+                  , name = 'type_name'
+                  , sig_key = 3
+                  , ui_name = 'Affiliate/Owner/Type name'
                   )
                 ]
             , full_name = 'affiliate.owner'
@@ -858,6 +1141,39 @@ _test_code = """
             , ui_name = 'Affiliate/Affiliate'
             , ui_type_name = 'Company_P'
             )
+          , Record
+            ( attr = Boolean `electric`
+            , choices = <Recursion on list...>
+            , full_name = 'affiliate.electric'
+            , id = 'affiliate__electric'
+            , name = 'electric'
+            , sig_key = 1
+            , ui_name = 'Affiliate/Electric'
+            )
+          , Record
+            ( attr = Int `last_cid`
+            , full_name = 'affiliate.last_cid'
+            , id = 'affiliate__last_cid'
+            , name = 'last_cid'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Last cid'
+            )
+          , Record
+            ( attr = Surrogate `pid`
+            , full_name = 'affiliate.pid'
+            , id = 'affiliate__pid'
+            , name = 'pid'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Pid'
+            )
+          , Record
+            ( attr = String `type_name`
+            , full_name = 'affiliate.type_name'
+            , id = 'affiliate__type_name'
+            , name = 'type_name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Type name'
+            )
           ]
       , full_name = 'affiliate'
       , id = 'affiliate'
@@ -866,6 +1182,39 @@ _test_code = """
       , type_name = 'PAP.Company_P'
       , ui_name = 'Affiliate'
       , ui_type_name = 'Company_P'
+      )
+    , Record
+      ( attr = Boolean `electric`
+      , choices = <Recursion on list...>
+      , full_name = 'electric'
+      , id = 'electric'
+      , name = 'electric'
+      , sig_key = 1
+      , ui_name = 'Electric'
+      )
+    , Record
+      ( attr = Int `last_cid`
+      , full_name = 'last_cid'
+      , id = 'last_cid'
+      , name = 'last_cid'
+      , sig_key = 0
+      , ui_name = 'Last cid'
+      )
+    , Record
+      ( attr = Surrogate `pid`
+      , full_name = 'pid'
+      , id = 'pid'
+      , name = 'pid'
+      , sig_key = 0
+      , ui_name = 'Pid'
+      )
+    , Record
+      ( attr = String `type_name`
+      , full_name = 'type_name'
+      , id = 'type_name'
+      , name = 'type_name'
+      , sig_key = 3
+      , ui_name = 'Type name'
       )
     ]
 

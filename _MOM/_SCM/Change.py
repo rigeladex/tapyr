@@ -87,6 +87,7 @@
 #                     Update `last_cid` in `Copy`
 #    30-Jan-2013 (CT) Change `Create.redo` to pass `entity` to `_create`
 #    30-Jan-2013 (CT) Change `Create.redo` to pass `allow_zombie` to `pid_query`
+#     4-Jun-2013 (CT) Add `pid` to `kw` in `_Entity_._create`
 #    ««revision-date»»···
 #--
 
@@ -326,7 +327,7 @@ class _Entity_ (Undoable) :
     # end def type_repr
 
     def _create (self, scope, attr, entity = None) :
-        kw = dict (attr, raw = True)
+        kw = dict (attr, pid = self.pid, raw = True)
         if entity is None :
             etm          = scope [self.type_name]
             kw ["__pid"] = self.pid

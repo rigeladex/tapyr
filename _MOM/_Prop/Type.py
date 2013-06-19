@@ -28,6 +28,7 @@
 # Revision Dates
 #    11-Mar-2013 (CT) Creation (factored from MOM.Attr.A_Attr_Type)
 #     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
+#    14-Jun-2013 (CT) Use `dyn_doc_p` to `fix_doc`
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,7 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
@@ -51,17 +53,13 @@ class _Prop_Type_ (TFL.Meta.Object) :
 
     @TFL.Meta.Class_and_Instance_Method
     def fix_doc (soc, et_scope) :
-        def fix (soc, name, et_scope) :
-            v = getattr (soc, name)
-            if v and "%(" in v :
-                try :
-                    v = v % et_scope
-                except Exception :
-                    pass
-                else :
-                    setattr (soc, name, v)
-        for k in soc._doc_properties :
-            fix (soc, k, et_scope)
+        for name, v in pyk.iteritems (soc.dyn_doc_p) :
+            try :
+                v = v % et_scope
+            except Exception :
+                pass
+            else :
+                setattr (soc, name, v)
         if soc.description :
             soc.__doc__ = soc.description
     # end def fix_doc

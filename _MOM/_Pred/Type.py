@@ -57,6 +57,7 @@
 #                     from `val_dict`, not `obj`
 #    11-Mar-2013 (CT) Derive `_Condition_` from `MOM.Prop.Type`, not `object`
 #     3-Jun-2013 (CT) Print exception info to stderr, not stdout
+#    14-Jun-2013 (CT) Add `DET`, `DET_Base`, and `DET_Root`
 #    ««revision-date»»···
 #--
 
@@ -102,6 +103,9 @@ class _Condition_ (MOM.Prop.Type):
 
     ### DBW backend may set `do_check` to `False` if database performs the check
     do_check = True
+
+    ### set by MOM.Meta.M_Prop_Spec
+    DET = DET_Base = DET_Root = None
 
     def __init__ (self, kind, obj, attr_dict = {}) :
         self.kind           = kind

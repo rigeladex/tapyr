@@ -300,6 +300,16 @@
 #                     instance, not `.as_string`
 #     3-Jun-2013 (CT) Change `A_Email.example` to be syntactically valid
 #     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
+#     4-Jun-2013 (CT) Add `A_Surrogate`
+#     5-Jun-2013 (CT) Add `q_able`
+#     5-Jun-2013 (CT) Add `is_attr_type`
+#     5-Jun-2013 (CT) Dry `M_Attr_Type` names
+#     5-Jun-2013 (CT) Add metaclass to `A_Surrogate`
+#     6-Jun-2013 (CT) Add `A_Surrogate.q_name`
+#     6-Jun-2013 (CT) Use `pyk.int_types`, not `int`;
+#                     `pyk.string_types`, not `basestring`
+#    14-Jun-2013 (CT) Add `DET`, `DET_Base`, and `DET_Root`
+#    14-Jun-2013 (CT) Set `dat_base` and `det_root`
 #    ««revision-date»»···
 #--
 
@@ -308,6 +318,7 @@ from   __future__            import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 from   _MOM._Attr.Filter     import Q
 
@@ -337,10 +348,14 @@ import time
 
 plain_number_pat = r"\d+ (?: \.\d*)? (?: [eE]\d+)? \s*"
 
+def is_attr_type (x) :
+    return isinstance (x, MOM.Meta.M_Attr_Type.Root)
+# end def is_attr_type
+
 class A_Attr_Type (MOM.Prop.Type) :
     """Root class for attribute types for the MOM meta object model."""
 
-    __metaclass__       = MOM.Meta.M_Attr_Type
+    __metaclass__       = MOM.Meta.M_Attr_Type.Root
     _doc_properties     = ("syntax", )
     _sets_to_combine    = MOM.Prop.Type._sets_to_combine  + ("check", )
     _lists_to_combine   = MOM.Prop.Type._lists_to_combine + ("Kind_Mixins", )
@@ -369,6 +384,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     P_Type              = None  ### Python type of attribute values
     Q_Ckd_Type          = MOM.Attr.Querier.Ckd
     Q_Raw_Type          = MOM.Attr.Querier.Raw
+    q_able              = True
     query               = None
     query_fct           = None
     query_preconditions = ()
@@ -384,6 +400,9 @@ class A_Attr_Type (MOM.Prop.Type) :
     ui_length           = 20
 
     _t_rank             = 0
+
+    ### set by MOM.Meta.M_Prop_Spec
+    DET = DET_Base = DET_Root = None
 
     @TFL.Meta.Once_Property
     def AQ (self) :
@@ -435,6 +454,11 @@ class A_Attr_Type (MOM.Prop.Type) :
         self.e_type      = e_type
         self.kind        = kind
         self.is_required = kind.is_required
+        et_map           = e_type.app_type.etypes
+        DB               = self.DET_Base
+        DR               = self.DET_Root
+        self.det_base    = et_map [DB] if DB else None
+        self.det_root    = et_map [DR] if DR else None
     # end def __init__
 
     def ac_ui_display (self, value) :
@@ -686,7 +710,8 @@ class _A_Entity_ (A_Attr_Type) :
     def __init__ (self, kind, e_type) :
         P_Type = self.P_Type
         if P_Type :
-            tn = P_Type if isinstance (P_Type, basestring) else P_Type.type_name
+            tn = P_Type if isinstance (P_Type, pyk.string_types) \
+                else P_Type.type_name
             self.P_Type = e_type.app_type.etypes [tn]
         self.__super.__init__ (kind, e_type)
     # end def __init__
@@ -872,7 +897,7 @@ class _A_Date_ (A_Attr_Type) :
 class _A_Named_Value_ (A_Attr_Type) :
     """Common base class for attributes holding named values."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Value
+    __metaclass__     = MOM.Meta.M_Attr_Type.Named_Value
 
     C_Type            = None ### Attribute type applicable to cooked values
 
@@ -1207,7 +1232,7 @@ class _A_Id_Entity_ (_A_Entity_) :
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if isinstance (s, MOM.Entity) :
             return s ### `check_type` called by `kind._set_cooked_value`
-        elif isinstance (s, int) :
+        elif isinstance (s, pyk.int_types) :
             scope = self._get_scope (obj)
             return scope.pid_query (s)
         elif s :
@@ -1274,7 +1299,7 @@ class _A_Rev_Ref_ (A_Attr_Type) :
         for k in ("P_Type", "Ref_Type") :
             T = getattr (self, k, None)
             if T :
-                tn = T if isinstance (T, basestring) else T.type_name
+                tn = T if isinstance (T, pyk.string_types) else T.type_name
                 setattr (self, k, e_type.app_type.etypes [tn])
         self.__super.__init__ (kind, e_type)
     # end def __init__
@@ -1398,7 +1423,7 @@ class _A_Filename_ (_A_String_Base_) :
 class _A_String_ (Atomic_Json_Mixin, _A_String_Base_) :
     """Base class for string-valued attributes of an object."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_String
+    __metaclass__     = MOM.Meta.M_Attr_Type.String
 
     ignore_case       = False
     needs_raw_value   = False
@@ -1436,7 +1461,7 @@ class _A_Named_Object_ (_A_Named_Value_) :
        directly put into a database).
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Object
+    __metaclass__     = MOM.Meta.M_Attr_Type.Named_Object
 
     class Pickler (TFL.Meta.Object) :
 
@@ -1475,7 +1500,7 @@ class _A_Typed_Collection_ (_A_Collection_) :
        values.
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Typed_Collection
+    __metaclass__     = MOM.Meta.M_Attr_Type.Typed_Collection
     Kind_Mixins       = (MOM.Attr._Typed_Collection_Mixin_, )
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1491,7 +1516,7 @@ class _A_Typed_Collection_ (_A_Collection_) :
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         result = None
         t      = s or []
-        if isinstance (t, basestring) :
+        if isinstance (t, pyk.string_types) :
             result = self._from_string (s, obj, glob, locl)
         elif t :
             C_fs   = self.C_Type.from_string
@@ -1586,7 +1611,7 @@ class _A_Unit_ (A_Attr_Type) :
        units.
     """
 
-    __metaclass__  = MOM.Meta.M_Attr_Type_Unit
+    __metaclass__  = MOM.Meta.M_Attr_Type.Unit
     _default_unit  = None ### set by meta class
     _unit_dict     = {}
     _unit_pattern  = Regexp \
@@ -1615,7 +1640,7 @@ class _A_Unit_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         val = soc.from_string (value) \
-            if isinstance (value, basestring) else value
+            if isinstance (value, pyk.string_types) else value
         return super (_A_Unit_, soc).cooked (val)
     # end def cooked
 
@@ -1724,7 +1749,7 @@ class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             try :
                 return soc.Table_X [value.lower ()]
             except KeyError :
@@ -1774,7 +1799,7 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
         for k in ("P_Type", ) :
             T = getattr (self, k, None)
             if T :
-                tn = T if isinstance (T, basestring) else T.type_name
+                tn = T if isinstance (T, pyk.string_types) else T.type_name
                 setattr (self, k, e_type.app_type.etypes [tn])
         self.__super.__init__ (kind, e_type)
     # end def __init__
@@ -1813,7 +1838,7 @@ class A_Date (_A_Date_) :
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
             value = value.date ()
-        elif isinstance (value, basestring) :
+        elif isinstance (value, pyk.string_types) :
             try :
                 value = soc._from_string (value)
             except ValueError :
@@ -1902,7 +1927,7 @@ class A_Date_Time (_A_Date_) :
         if not isinstance (value, datetime.datetime) :
             if isinstance (value, datetime.date) :
                 value = datetime.datetime (value.year, value.month, value.day)
-            elif isinstance (value, basestring) :
+            elif isinstance (value, pyk.string_types) :
                 try :
                     value = soc._from_string (value)
                 except ValueError :
@@ -1938,7 +1963,7 @@ class A_Date_Time_List (_A_Typed_List_) :
 class A_Decimal (_A_Decimal_) :
     """Decimal number."""
 
-    __metaclass__  = MOM.Meta.M_Attr_Type_Decimal
+    __metaclass__  = MOM.Meta.M_Attr_Type.Decimal
 
     decimal_places = 2
     max_digits     = 12
@@ -2003,7 +2028,7 @@ class A_Enum (A_Attr_Type) :
        description.
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Enum
+    __metaclass__     = MOM.Meta.M_Attr_Type.Enum
 
     C_Type            = None ### Attribute type applicable to cooked values
     needs_raw_value   = False
@@ -2175,6 +2200,7 @@ class A_Link_Ref (_A_Link_Ref_, _A_Id_Entity_) :
     """Reverse reference to link referring to an `entity`"""
 
     typ                 = _ ("Link_Ref")
+    q_able              = True
 
     finished_query      = _A_Link_Ref_.finished_query_one
 
@@ -2192,7 +2218,7 @@ class A_Link_Ref_List (_A_Link_Ref_, _A_Id_Entity_List_) :
 class A_Link_Role (_A_Id_Entity_) :
     """Link-role."""
 
-    __metaclass__       = MOM.Meta.M_Attr_Type_Link_Role
+    __metaclass__       = MOM.Meta.M_Attr_Type.Link_Role
 
     auto_rev_ref        = False
     auto_rev_ref_np     = False
@@ -2263,7 +2289,7 @@ class A_Numeric_String (_A_String_Base_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             value = value.replace (" ", "").lstrip ("+-")
         if value :
             value = soc.as_number (value)
@@ -2305,6 +2331,7 @@ class A_Role_Ref (_A_Role_Ref_, _A_Id_Entity_) :
     """Reverse reference to role linked to an `entity`"""
 
     typ                 = _ ("Role_Ref")
+    q_able              = True
 
     def finished_query (self, q) :
         result = self.finished_query_one (q)
@@ -2339,6 +2366,27 @@ class A_String (_A_String_) :
 
 # end class A_String
 
+class A_Surrogate (_A_Int_) :
+    """A surrogate key. There can be only one per class."""
+
+    __metaclass__  = MOM.Meta.M_Attr_Type.Surrogate
+
+    typ            = _ ("Surrogate")
+    kind           = MOM.Attr.Internal
+    Kind_Mixins    = (MOM.Attr.Just_Once_Mixin, )
+    default        = None
+    min_value      = 0
+    record_changes = False
+
+    surrogate_id   = None
+
+    def __init__ (self, kind, e_type) :
+        self.__super.__init__ (kind, e_type)
+        self.q_name = "%s.%s" % (e_type.type_name, self.name)
+    # end def __init__
+
+# end class A_Surrogate
+
 class A_Text (_A_String_) :
     """Arbitrary-length text.
     """
@@ -2369,7 +2417,7 @@ class A_Time (_A_Date_) :
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
             value = value.time ()
-        elif isinstance (value, basestring) :
+        elif isinstance (value, pyk.string_types) :
             try :
                 value = soc._from_string (value)
             except ValueError :
@@ -2551,8 +2599,8 @@ Class `MOM.Attr.A_Attr_Type`
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    ) + ("decimal", "Eval_Mixin", "Q", "Syntax_Re_Mixin")
+    if is_attr_type (v)
+    ) + ("decimal", "is_attr_type", "Eval_Mixin", "Q", "Syntax_Re_Mixin")
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

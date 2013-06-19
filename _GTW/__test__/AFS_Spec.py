@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is free software: you can redistribute it and/or modify
@@ -131,7 +131,7 @@ _test_code = """
     Entity_Link Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
     Field_Role_Hidden left Person u'Person linked to Address' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Address u'Address of subject' afs_div_seq
+    Field_Entity right Address u'Address of person' afs_div_seq
     Field street Street u'Street (or place) and house number' None
     Field zip Zip code u'Zip code of address' None
     Field city City u'City, town, or village' None
@@ -142,7 +142,7 @@ _test_code = """
     Entity_Link Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
     Field_Role_Hidden left Person u'Person linked to Email' afs_div_seq
     Fieldset primary None u'' afs_div_seq
-    Field_Entity right Email u'Email of subject' afs_div_seq
+    Field_Entity right Email u'Email of person' afs_div_seq
     Field address Email address u'Email address (including domain)' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
@@ -1396,7 +1396,7 @@ _person_test = """
     Entity_Link Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
     Field_Role_Hidden left Person u'Person linked to Email' afs_div_seq
     Fieldset primary  u'' afs_div_seq
-    Field_Entity right Email u'Email of subject' afs_div_seq
+    Field_Entity right Email u'Email of person' afs_div_seq
     Field address Email address u'Email address (including domain)' None
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None

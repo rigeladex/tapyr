@@ -241,7 +241,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     def attributes (self) :
         result = self._attributes
         if result is None :
-            result = self._attributes = self.E_Type.ui_attr
+            result = self._attributes = self.E_Type.edit_attr
         return result
     # end def attributes
 

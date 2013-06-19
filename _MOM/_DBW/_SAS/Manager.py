@@ -115,6 +115,10 @@
 #     7-Mar-2013 (CT) Use `polymorphic_relevant_epk`, not `polymorphic_epk`
 #     9-Apr-2013 (CT) Add `db_sig`, add column `time` to table `change_history`
 #    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
+#     4-Jun-2013 (CT) Remove column `type_name` from `_setup_columns`
+#                     * MOM.Id_Entity has an explicit `type_name` attribute now
+#     5-Jun-2013 (CT) Remove column `pid` from `_setup_columns`
+#                     * MOM.Id_Entity has an explicit `pid` attribute now
 #    ««revision-date»»···
 #--
 
@@ -516,17 +520,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     ( schema.Column
                         ( pk_name, types.Integer
                         , schema.ForeignKey (base._sa_table.c[base._sa_pk_name])
-                        , primary_key = True
+                        , primary_key = not e_type.own_surrogate
                         )
                     )
                 e_type._sa_pk_base [base.type_name] = pk_name
             else :
                 pk_name = "pid"
-                result.append \
-                    ( schema.Column
-                        (pk_name, types.Integer, primary_key = True)
-                    )
-                result.append (schema.Column ("type_name", Type_Name_Type))
             e_type._sa_pk_name = pk_name
         for name, kind in \
                 ((n, k) for (n, k) in db_attrs.iteritems () if k.save_to_db) :

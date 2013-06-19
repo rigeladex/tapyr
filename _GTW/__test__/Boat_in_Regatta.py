@@ -203,10 +203,18 @@ _test_code = r"""
     (<left.left.beam.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<left.left.loa.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<left.left.sail_area.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.left.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<left.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<left.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<left.sail_number.AQ [Attr.Type.Querier Raw]>, u'-----')
     (<left.sail_number_x.AQ [Attr.Type.Querier String]>, u'-----')
     (<left.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<left.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta')
     (<right.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta_Event')
     (<right.left.name.AQ [Attr.Type.Querier String]>, u'-----')
@@ -217,10 +225,23 @@ _test_code = r"""
     (<right.left.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<right.left.club.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.club.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.left.club.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.left.club.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.left.club.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.desc.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.left.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.boat_class.AQ [Attr.Type.Querier Id_Entity]>, 'SRM._Boat_Class_')
     (<right.boat_class.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.boat_class.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.boat_class.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.boat_class.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.boat_class.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<right.kind.AQ [Attr.Type.Querier String]>, u'-----')
@@ -229,6 +250,11 @@ _test_code = r"""
     (<right.result.date.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.result.software.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.result.status.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<right.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.type_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Sailor')
     (<skipper.left.AQ [Attr.Type.Querier Id_Entity]>, 'PAP.Person')
     (<skipper.left.last_name.AQ [Attr.Type.Querier String_FL]>, u'-----')
@@ -241,13 +267,31 @@ _test_code = r"""
     (<skipper.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<skipper.left.salutation.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.left.sex.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.left.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<skipper.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
     (<skipper.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<skipper.club.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.club.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<skipper.club.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.club.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.club.type_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<skipper.electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<skipper.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<skipper.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<place.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<points.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<electric.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<type_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<rank.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<registration_date.AQ [Attr.Type.Querier Date]>, u'-----')
 
     >>> BiR.AQ
     <Attr.Type.Querier.E_Type for SRM.Boat_in_Regatta>
@@ -259,19 +303,40 @@ _test_code = r"""
     left__left__beam
     left__left__loa
     left__left__sail_area
+    left__left__electric
+    left__left__last_cid
+    left__left__pid
+    left__left__type_name
     left__nation
     left__sail_number
     left__sail_number_x
     left__name
+    left__electric
+    left__last_cid
+    left__pid
+    left__type_name
     right__left__name
     right__left__date__start
     right__left__date__finish
     right__left__date__alive
     right__left__club__name
     right__left__club__long_name
+    right__left__club__electric
+    right__left__club__last_cid
+    right__left__club__pid
+    right__left__club__type_name
     right__left__desc
     right__left__is_cancelled
+    right__left__electric
+    right__left__last_cid
+    right__left__pid
+    right__left__type_name
+    right__left__perma_name
     right__boat_class__name
+    right__boat_class__electric
+    right__boat_class__last_cid
+    right__boat_class__pid
+    right__boat_class__type_name
     right__discards
     right__is_cancelled
     right__kind
@@ -279,6 +344,11 @@ _test_code = r"""
     right__result__date
     right__result__software
     right__result__status
+    right__electric
+    right__last_cid
+    right__pid
+    right__type_name
+    right__perma_name
     skipper__left__last_name
     skipper__left__first_name
     skipper__left__middle_name
@@ -288,12 +358,30 @@ _test_code = r"""
     skipper__left__lifetime__alive
     skipper__left__salutation
     skipper__left__sex
+    skipper__left__electric
+    skipper__left__last_cid
+    skipper__left__pid
+    skipper__left__type_name
     skipper__nation
     skipper__mna_number
     skipper__club__name
     skipper__club__long_name
+    skipper__club__electric
+    skipper__club__last_cid
+    skipper__club__pid
+    skipper__club__type_name
+    skipper__electric
+    skipper__last_cid
+    skipper__pid
+    skipper__type_name
     place
     points
+    electric
+    last_cid
+    pid
+    type_name
+    rank
+    registration_date
 
     >>> fs
     (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish, Q.boat_class.__raw_name)
@@ -313,18 +401,18 @@ _test_code = r"""
     >>> list (q.attrs (* fst))
     [(SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')),), (SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')),)]
 
-    >>> AQ  = BiR.AQ.Select (MOM.Attr.Selector.all)
+    >>> AQ  = BiR.AQ.Select (MOM.Attr.Selector.ui_attr)
     >>> AQ
     <Attr.Type.Querier.E_Type for SRM.Boat_in_Regatta>
     >>> AQ._attr_selector
-    <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
+    <MOM.Attr.Selector.Kind q_able>
     >>> AQ.left._attr_selector
-    <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
+    <MOM.Attr.Selector.Kind q_able>
     >>> AQ.right.left.date._attr_selector
-    <MOM.Attr.Selector.List ['<MOM.Attr.Selector.Kind primary>', '<MOM.Attr.Selector.Kind user_attr>', '<MOM.Attr.Selector.Kind query>']>
+    <MOM.Attr.Selector.Kind q_able>
 
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
-    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status)
+    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.club.electric, Q.right.left.club.last_cid, Q.right.left.club.pid, Q.right.left.club.type_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.electric, Q.right.left.last_cid, Q.right.left.pid, Q.right.left.type_name, Q.right.left.perma_name, Q.right.boat_class.__raw_name, Q.right.boat_class.electric, Q.right.boat_class.last_cid, Q.right.boat_class.pid, Q.right.boat_class.type_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.electric, Q.right.last_cid, Q.right.pid, Q.right.type_name, Q.right.perma_name)
 
     >>> scope.query_changes (type_name = "SRM.Regatta").order_by (Q.cid).first ()
     >>> scope.query_changes (type_name = "SRM.Regatta_C").order_by (Q.cid).first ()

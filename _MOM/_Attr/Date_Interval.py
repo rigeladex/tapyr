@@ -41,6 +41,7 @@
 #    25-Feb-2013 (CT) Remove `alive.auto_up_depends`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #     3-Jun-2013 (CT) Simplify `ui_display_format`
+#     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -209,10 +210,7 @@ class A_Date_Interval_N (A_Date_Interval) :
 
 # end class A_Date_Interval_N
 
-__all__ = tuple \
-    (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    )
+__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

@@ -43,6 +43,7 @@
 #     1-Jul-2010 (CT) `compact` added
 #    22-Jun-2012 (MG) `close_connections` added
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
+#     6-Jun-2013 (CT) Add `max_surrs`
 #    ««revision-date»»···
 #--
 
@@ -136,10 +137,11 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.commit ()
         else :
-            info         = self._info
-            ems          = self.scope.ems
-            info.max_cid = ems.max_cid
-            info.max_pid = ems.max_pid
+            info           = self._info
+            ems            = self.scope.ems
+            info.max_cid   = ems.max_cid
+            info.max_pid   = ems.max_pid
+            info.max_surrs = ems.max_surrs
     # end def commit
 
     def compact (self) :

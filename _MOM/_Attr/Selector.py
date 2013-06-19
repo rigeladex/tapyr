@@ -41,6 +41,8 @@
 #                     kind `query`
 #    16-May-2013 (CT) Add `A_Type` (plus `_A_Type_Selection_`)
 #     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
+#     5-Jun-2013 (CT) Add `q_able`, rename `all` to `ui_attr`, define
+#                     `ui_attr` as synonym for `q_able`
 #    ««revision-date»»···
 #--
 
@@ -353,11 +355,12 @@ necessary   = Kind ("necessary")
 optional    = Kind ("optional")
 primary     = Kind ("primary")
 query       = Kind ("query")
+q_able      = Kind ("q_able")
 required    = Kind ("required")
 sig         = Kind ("sig_attr")
 user        = Kind ("user_attr")
 
-all         = List (primary, user, query)
+ui_attr     = q_able ### List (primary, user, query)
 editable    = List (primary, user)
 
 P_optional  = Not_Pred (TFL.Getter.is_required, user)

@@ -93,6 +93,7 @@
 #    30-Jan-2013 (CT) Replace `add` by `_add` (called by `__super.add`)
 #    30-Jan-2013 (CT) Call `.pm.flush_zombies` in `commit` and `_rollback`
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
+#     6-Jun-2013 (CT) Add `max_surrs`; add support for surrogates to `_add`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,7 @@ class Manager (MOM.EMS._Manager_) :
     def __init__ (self, scope, db_url) :
         self.__super.__init__ (scope, db_url)
         self._counts    = TFL.defaultdict (int)
+        self.max_surrs  = TFL.defaultdict (int)
         self._r_map     = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self._tables    = TFL.defaultdict (dict)
     # end def __init__
@@ -266,6 +268,16 @@ class Manager (MOM.EMS._Manager_) :
                 r_map [r] [obj.pid].add (entity)
         count [entity.type_name] += 1
         table [entity.hpk]        = entity
+        max_surrs = self.max_surrs
+        for sk in entity.surrogate_attr [1:] :
+            v  = sk.get_value (entity)
+            ms = max_surrs [sk.q_name]
+            if v is None :
+                ms += 1
+                sk.__set__ (entity, ms)
+            else :
+                ms = max (v, ms)
+            max_surrs [sk.q_name] = ms
     # end def _add
 
     def _load_objects (self, scope = None) :

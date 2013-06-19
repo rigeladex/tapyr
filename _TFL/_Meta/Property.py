@@ -310,7 +310,17 @@ def Class_Property (getter) :
         >>> foo.bar
         Normal method bar called
         42
-        >>>
+        >>> foo.bar = 137
+        >>> Foo.bar
+        Normal method bar called
+        42
+        >>> foo.bar
+        137
+
+        >>> Foo.bar = 23
+        >>> Foo.bar
+        23
+
         >>> Foo.baz
         classmethod baz called
         'Frozz'

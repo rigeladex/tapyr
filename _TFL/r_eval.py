@@ -28,12 +28,14 @@
 # Revision Dates
 #     7-Jun-2012 (CT) Creation
 #     8-Jun-2012 (CT) Add `\s*` to `_eval_restrict_pat`
+#     6-Jun-2013 (CT) Change guard to `isinstance (source, pyk.string_types)`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function
 
 from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 
 import re
 
@@ -70,7 +72,7 @@ def r_eval (source, ** kw) :
     Traceback (most recent call last):
     ValueError: Cannot safely evaluate '((). __class__)'
     """
-    if source :
+    if isinstance (source, pyk.string_types) :
         if _eval_restrict_pat.search (source) :
             raise ValueError ("Cannot safely evaluate %r" % source)
         scope = dict (kw, __builtins__ = {})

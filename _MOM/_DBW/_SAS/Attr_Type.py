@@ -69,6 +69,10 @@
 #    24-Sep-2012 (RS) SAS magic for `_A_IP_Address` now in `GTW.OMP.NET`
 #    11-Jan-2013 (CT) Add support for `A_AIS_Value`
 #    26-Apr-2013 (CT) Remove support for `A_AIS_Value`
+#     4-Jun-2013 (CT) Add support for `A_Surrogate`
+#     5-Jun-2013 (CT) Set `primary_key` for `A_Surrogate` depending on
+#                     `own_surrogate`
+#     7-Jun-2013 (CT) Add `Sequence` to column of `A_Surrogate`
 #    27-Jun-2013 (CT) Define `Case_Sensitive_String` as alias for `types.String`
 #    ««revision-date»»···
 #--
@@ -132,6 +136,19 @@ def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     col.mom_kind = kind
     return (col, )
 # end def _sa_columns_simple
+
+@Add_Classmethod ("_sa_columns", Attr.A_Surrogate)
+def _sa_columns_surrogate (cls, attr, kind, unique, owner_etype, ** kw) :
+    c_args = ()
+    c_kw   = dict (primary_key = True)
+    if attr.name == "pid" :
+        ### only works in SAS because SAS doesn't make a table for Id_Entity
+        c_kw.update (primary_key = not owner_etype.own_surrogate)
+    else :
+        c_args += (schema.Sequence (attr.q_name + "_seq"), )
+    col = schema.Column (attr._sa_col_name, types.Integer (), * c_args, ** c_kw)
+    return (col, )
+# end def _sa_columns_surrogate
 
 @Add_Classmethod ("_sa_columns", Attr._A_Id_Entity_)
 def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :

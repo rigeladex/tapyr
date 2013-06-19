@@ -43,6 +43,9 @@ _test_create = """
     Creating new scope ...
     >>> Auth  = scope.Auth
 
+    >>> a1 = Auth.Account (name = "foo@bar")
+    >>> a2 = Auth.Account (name = "foo@baz")
+
     >>> Auth.Certificate.query_s ().all ()
     []
 
@@ -110,6 +113,14 @@ _test_create = """
 
     >>> (c5, c5.alive)
     (Auth.Certificate (u'bar@foo', ('2013/02/25', ), u''), False)
+
+    >>> for c in Auth.Certificate.query ().order_by (Q.cert_id) :
+    ...     (int (c.pid), int (c.cert_id or 0) or None)
+    (3, 1)
+    (4, 2)
+    (5, 3)
+    (6, 4)
+    (7, 5)
 
 """
 

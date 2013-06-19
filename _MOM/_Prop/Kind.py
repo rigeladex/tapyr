@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2009 (CT) Creation
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
+#     7-Jun-2013 (CT) Add `assign`
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
@@ -51,6 +52,10 @@ class _Prop_Kind_ (property) :
         self.name    = prop.name
         self.__doc__ = prop.description
     # end def __init__
+
+    def assign (self, e_type, name) :
+        setattr (e_type, name, self)
+    # end def assign
 
     def __getattr__ (self, name) :
         if not name.startswith ("_") :

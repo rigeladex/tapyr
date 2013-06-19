@@ -30,6 +30,7 @@
 #    11-Oct-2012 (RS) Insert magic _sa_filter into `rsclib.IP_Address`
 #    27-Feb-2013 (CT) Add `_SAS_IP4_Address_Query_Mixin_.contains`
 #     7-Mar-2013 (RS) Add missing `contains` methods
+#     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -286,10 +287,7 @@ def _sa_filter (self, SAQ) :
     return ((), (str (self),))
 # end def _sa_filter
 
-__all__ = tuple \
-    (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    )
+__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
 
 if __name__ != "__main__" :
     GTW.OMP.NET._Export ("*")

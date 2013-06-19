@@ -138,6 +138,9 @@
 #                     `.attr_prop`, not by applying `getattr` to the `E_Type`
 #                     itself
 #     3-Jun-2013 (MG) Use `e_type` parameter in `SAS_Interface.value_dict`
+#     6-Jun-2013 (CT) Change `add`, `value_dict` to handle surrogates
+#     7-Jun-2013 (CT) Redefine `DB_Meta_Data`
+#     7-Jun-2013 (CT) Add/use argument `db_meta_data` to/in `consume`
 #    ««revision-date»»···
 #--
 
@@ -159,6 +162,75 @@ import  contextlib
 
 ddict_list = lambda : TFL.defaultdict (list)
 attrgetter = operator.attrgetter
+
+class _SAS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
+    """Provide meta data for SAS backend."""
+
+    _real_name   = "DB_Meta_Data"
+    _max_props   = set (("max_cid", "max_pid", "max_surrs"))
+    _properties  = MOM.DB_Meta_Data._properties | set (("scope", "_max_props"))
+    scope        = None
+
+    @classmethod
+    def NEW (cls, app_type, scope = None, ** _kw) :
+        result  = super (DB_Meta_Data, cls).NEW \
+            ( app_type, scope
+            , ** _kw
+            )
+        result.scope = scope
+        return result
+    # end def NEW
+
+    @property
+    def max_cid (self) :
+        return getattr (self.scope, "max_cid", 0)
+    # end def max_cid
+
+    @property
+    def max_pid (self) :
+        return getattr (self.scope, "max_pid", 0)
+    # end def max_pid
+
+    @property
+    def max_surrs (self) :
+        return TFL.defaultdict (int) ### XXX
+    # end def max_surrs
+
+    def __getattr__ (self, name) :
+        if name in self._max_props :
+            prop = getattr (self.__class__, name)
+            return prop.fget (self)
+        else :
+            return self.__super.__getattr__ (name)
+    # end def __getattr__
+
+    def __getitem__ (self, name) :
+        if name in self._max_props :
+            return getattr (self, name)
+        else :
+            return self.__super.__getitem__ (name)
+    # end def __getitem__
+
+    def __iter__ (self) :
+        for x in self.__super.__iter__ () :
+            yield x
+        for x in self._max_props :
+            try :
+                getattr (self, x)
+            except LookupError :
+                pass
+            else :
+                yield x
+    # end def __iter__
+
+    def __setitem__ (self, name, value) :
+        if name in self._max_props :
+            pass
+        else :
+            return self.__super.__setitem__ (name, value)
+    # end def __setitem__
+
+DB_Meta_Data = _SAS_DB_Meta_Data_ # end class
 
 class Type_Name_Kind (object) :
     """A fake kind which is used to retrive the type_name of an entity"""
@@ -230,7 +302,7 @@ class SAS_Interface (TFL.Meta.Object) :
                 ( self.table.insert ().values
                     (self.value_dict (entity, self.e_type, base_pks))
                 )
-            return result.inserted_primary_key [0]
+            return int (result.inserted_primary_key [0])
     # end def insert
 
     def insert_cargo (self, session, pid, pickle_cargo, type_name = None) :
@@ -416,12 +488,16 @@ class SAS_Interface (TFL.Meta.Object) :
                         )
                     )
             else :
+                is_surrogate = isinstance (kind.attr, MOM.Attr.A_Surrogate)
                 pickle_cargo = kind.get_pickle_cargo (entity)
                 pc_transform = kind.attr.SAS_PC_Transform
                 if pc_transform :
                     pickle_cargo = pc_transform.dump (pickle_cargo)
                 for column, value in zip (columns [kind], pickle_cargo) :
-                    result [column.name] = value
+                    if is_surrogate and value is None :
+                        pass
+                    else :
+                        result [column.name] = value
         return result
     # end def value_dict
 
@@ -532,8 +608,7 @@ class _Session_ (TFL.Meta.Object) :
         scope = self.scope
         q     = self.connection.execute (self._sa_scope.select ().limit (1))
         si = q.fetchone                 ()
-        meta_data         = si.meta_data
-        self.db_meta_data = meta_data
+        self.db_meta_data = meta_data = si.meta_data
         meta_readonly     = getattr (meta_data, "readonly", False)
         if meta_readonly != si.readonly :
             self.change_readonly (meta_readonly)
@@ -552,6 +627,8 @@ class _Session_ (TFL.Meta.Object) :
                 % (scope.app_type.db_version_hash, meta_data.dbv_hash)
                 )
         self._scope_pk    = si.pk
+        self.db_meta_data = DB_Meta_Data.COPY \
+            (meta_data, scope.app_type, scope)
     # end def load_info
 
     @property
@@ -569,8 +646,8 @@ class _Session_ (TFL.Meta.Object) :
         kw ["meta_data"] = self.db_meta_data
         kw ["readonly"]  = getattr (self.db_meta_data, "readonly", False)
         result = self.execute (self._sa_scope.insert ().values (** kw))
-        self.commit           ()
-        self._scope_pk   = result.inserted_primary_key [0]
+        self.commit ()
+        self._scope_pk   = int (result.inserted_primary_key [0])
     # end def register_scope
 
     def rollback (self, * args, ** kw) :
@@ -578,7 +655,7 @@ class _Session_ (TFL.Meta.Object) :
     # end def rollback
 
     def _new_db_meta_data (self, scope) :
-        return MOM.DB_Meta_Data.NEW (scope.app_type, scope)
+        return DB_Meta_Data.NEW (scope.app_type, scope)
     # end def _new_db_meta_data
 
 # end class _Session_
@@ -596,7 +673,11 @@ class Session_S (_Session_) :
 
     def add (self, entity, pid = None) :
         with self.scope.ems.pm.context (entity, pid) :
-            entity.__class__._SAS.insert  (self, entity)
+            cls = entity.__class__
+            pk  = cls._SAS.insert (self, entity)
+            if len (cls.surrogate_attr) > 1 :
+                pk_attr = cls.surrogate_attr [-1]
+                pk_attr.__set__ (entity, pk)
         self._pid_map [entity.pid] = entity
     # end def add
 
@@ -614,7 +695,7 @@ class Session_S (_Session_) :
                         )
                     )
                 )
-            change.cid = result.inserted_primary_key [0]
+            change.cid = int (result.inserted_primary_key [0])
     # end def add_change
 
     def commit (self) :
@@ -814,7 +895,7 @@ class Session_PC (_Session_) :
         return query.filter (** kw).order_by (TFL.Sorted_By ("cid"))
     # end def change_query
 
-    def consume (self, entity_iter, change_iter, chunk_size) :
+    def consume (self, entity_iter, change_iter, chunk_size, db_meta_data) :
         apt      = self.scope.app_type
         pm       = self.scope.ems.pm
         self.register_scope (self.scope)
@@ -827,18 +908,21 @@ class Session_PC (_Session_) :
                 self.commit ()
         self.commit         ()
         self._count  = 0
-        self.max_cid = 0
         self._consume_change_iter (change_iter, chunk_size, None)
         self.commit         ()
-        pm.dbs.reserve_cid  (self.connection, self.max_cid)
-        self.commit         ()
+        pm.dbs.reserve_cid  (self.connection, db_meta_data.max_cid)
+        max_pid = db_meta_data.max_pid
+        try :
+            pm.query (max_pid)
+        except LookupError :
+            pm.reserve (None, max_pid)
+        self.commit ()
     # end def consume
 
     def _consume_change_iter (self, change_iter, chunk_size, parent_cid) :
         table  = MOM.SCM.Change._Change_._sa_table
         for no, (chg_cls, chg_dct, children_pc) in enumerate (change_iter) :
             cid          = chg_dct ["cid"]
-            self.max_cid = max (self.max_cid, cid)
             self.execute \
                 ( table.insert
                     ( values = dict
@@ -853,7 +937,7 @@ class Session_PC (_Session_) :
                         )
                     )
                 )
-            self._count    += 1
+            self._count += 1
             if self._count == chunk_size :
                 self.commit ()
                 self._count = 0
@@ -902,7 +986,7 @@ class Session_PC (_Session_) :
 
     def _new_db_meta_data (self, scope) :
         if scope.src :
-            return MOM.DB_Meta_Data.COPY \
+            return DB_Meta_Data.COPY \
                 (scope.src.db_meta_data, scope.app_type, scope)
         else :
             return self.__super._new_db_meta_data (scope)

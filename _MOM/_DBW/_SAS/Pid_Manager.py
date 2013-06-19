@@ -40,6 +40,8 @@
 #     5-Aug-2012 (MG) Fix `reserve_pid`
 #    19-Jan-2013 (MG) Fix column name for type-name
 #    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
+#     6-Jun-2013 (CT) Fix argument to `ValueError` in `reserve`
+#     6-Jun-2013 (CT) Improve exception message from `query`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +79,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     def context (self, entity, pid) :
         try :
             yield self (entity, pid, commit = False)
-        except :
+        except Exception :
             self.rollback ()
             raise
         else :
@@ -113,11 +115,12 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
     # end def new
 
     def query (self, pid) :
+        type_name = self.type_name (pid)
         try :
-            type_name = self.type_name (pid)
             return self.ems.scope [type_name].query (pid = pid).one ()
-        except StandardError :
-            raise LookupError ("No object with pid `%d` found" % (pid, ))
+        except Exception :
+            raise LookupError \
+                ("No %s object with pid `%d` found" % (type_name, pid))
     # end def query
 
     def reserve (self, entity, pid, commit = True) :
@@ -131,7 +134,7 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         if result :
             if type_name and result.type_name != type_name :
                 raise ValueError \
-                    ( "Try to reverse pid %d with changed type_name %s != %d"
+                    ( "Try to reserve pid %d with changed type_name %s != %s"
                     % (pid, result.type_name, type_name)
                     )
         else :
