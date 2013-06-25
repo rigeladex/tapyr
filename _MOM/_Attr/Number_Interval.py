@@ -32,6 +32,7 @@
 #    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
 #    25-Feb-2013 (CT) Add `query_preconditions` to `center`, `length`
 #                     remove `auto_up_depends` from `center`, `length`
+#    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
 
@@ -112,18 +113,18 @@ def make (bounds_type, name = None) :
     >>> Int_Interval, A_Int_Interval = MOM.Attr.Number_Interval.make (A_Int)
     >>> Int_Interval
     <class 'MOM.Int_Interval' [Spec Essence]>
-    >>> Int_Interval._Attributes.lower.mro () [:2]
-    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Int'>]
+    >>> Int_Interval._Attributes.lower.__mro__ [:2]
+    (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Int'>)
     >>> Int_Interval._Attributes.lower.P_Type
     <type 'int'>
 
-    >>> Float_Interval._Attributes.lower.mro () [:2]
-    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Float'>]
+    >>> Float_Interval._Attributes.lower.__mro__ [:2]
+    (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Float'>)
     >>> Float_Interval._Attributes.lower.P_Type
     <type 'float'>
 
-    >>> Frequency_Interval._Attributes.lower.mro () [:2]
-    [<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Frequency'>]
+    >>> Frequency_Interval._Attributes.lower.__mro__ [:2]
+    (<class 'Number_Interval.lower'>, <class '_MOM._Attr.Type.A_Frequency'>)
     >>> Frequency_Interval._Attributes.lower.P_Type
     <type 'float'>
 

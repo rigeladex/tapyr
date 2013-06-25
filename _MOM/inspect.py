@@ -32,6 +32,7 @@
 #    25-Aug-2012 (CT) Add `definers`
 #    20-Sep-2012 (CT) Add `children_trans_iter`
 #     6-Mar-2013 (CT) Add optional argument `sort_key` to `children_trans_iter`
+#    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,7 @@ import _TFL.Accessor
 
 def ancestors (T) :
     """Return the essential ancestors of essential type `T`."""
-    return list (p for p in T.mro () if isinstance (p, MOM.Meta.M_E_Type))
+    return list (p for p in T.__mro__ if isinstance (p, MOM.Meta.M_E_Type))
 # end def ancestors
 
 def children_trans_iter (T, level = 0, seen = None, sort_key = None) :
@@ -66,11 +67,11 @@ def children_trans_iter (T, level = 0, seen = None, sort_key = None) :
 def definers (ioc, name) :
     """Return the classes defining `name` in `mro` of `ioc`"""
     try :
-        mro = ioc.mro
+        mro = ioc.__mro__
     except AttributeError :
-        mro = ioc.__class__.mro
+        mro = ioc.__class__.__mro__
     def _gen (mro, name) :
-        for c in mro () :
+        for c in mro :
             v = c.__dict__.get (name)
             if v is not None :
                 yield c, v

@@ -205,6 +205,7 @@
 #     8-May-2013 (CT) Factor `_Query_` to fool `DBW.SAS`
 #     3-Jun-2013 (CT) Support forward references in `_EPK_Mixin_`
 #     3-Jun-2013 (CT) Add guard for class access to `Kind.__get__` (type_name..)
+#    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
 
@@ -816,7 +817,7 @@ class _Computed_Mixin_ (Kind) :
             raise TypeError \
                 ( "%s is %s but has default %r "
                   "(i.e., `computed` will never be called)\n    %s"
-                % (attr_type, kind, default, self.__class__.mro ())
+                % (attr_type, kind, default, self.__class__.__mro__)
                 )
     # end def _check_sanity
 

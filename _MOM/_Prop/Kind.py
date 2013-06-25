@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2009 (CT) Creation
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
+#    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class _Prop_Kind_ (property) :
         if not name.startswith ("_") :
             return getattr (self.prop, name)
         raise AttributeError \
-            ("%s [%s: %s]" % (name, self, self.__class__.mro ()))
+            ("%s [%s: %s]" % (name, self, self.__class__.__mro__))
     # end def __getattr__
 
 Kind = _Prop_Kind_ # end class

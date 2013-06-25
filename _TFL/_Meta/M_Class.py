@@ -60,6 +60,7 @@
 #    28-Sep-2012 (CT)  Improve TypeError message from `_most_specific_meta`
 #    20-Mar-2013 (CT)  Add support for `__name__` to `New`
 #    23-May-2013 (CT)  Add and use `BaM` for Python-3 compatibility
+#    25-Jun-2013 (CT)  Use `__mro__`, not `mro ()`
 #    ««revision-date»»···
 #--
 
@@ -105,10 +106,7 @@ def BaM (* bases, ** kw) :
     ...    pass
 
     >>> def show (cls) :
-    ...     try :
-    ...         mro = cls.mro (cls)
-    ...     except TypeError :
-    ...         mro = cls.mro ()
+    ...     mro = cls.__mro__
     ...     return \\
     ...         ( cls.__class__.__name__
     ...         , tuple (b.__name__ for b in cls.__bases__)
@@ -319,7 +317,7 @@ class M_Autorename (M_Base) :
                 print (" " * 3, b)
                 print \
                     ( " " * 6
-                    , "\n       ".join (str (c) for c in b.mro () [1:])
+                    , "\n       ".join (str (c) for c in b.__mro__ [1:])
                     )
             raise
     # end def __new__
@@ -374,7 +372,7 @@ class M_Autosuper (M_Base) :
         _super_value = super (cls)
         if __debug__ :
             from _TFL.predicate import any_true
-            ancestors = cls.mro () [1:]
+            ancestors = cls.__mro__ [1:]
             if (   name == dict.get ("__real_name")
                and any_true
                      ( name == b.__name__ == b.__dict__.get ("__real_name")
