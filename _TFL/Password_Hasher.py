@@ -35,16 +35,17 @@
 #                     is AWOL)
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    28-May-2013 (CT) Use `@subclass_responsibility` instead of home-grown code
+#    25-Jun-2013 (CT) Make doctest Python-2.6 compatible
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _TFL           import TFL
-from   _TFL.pyk       import pyk
+from   _TFL                import TFL
+from   _TFL.pyk            import pyk
 
-from   _TFL._Meta     import Meta
-from   _TFL.Decorator import subclass_responsibility
+from   _TFL._Meta          import Meta
+from   _TFL.Decorator      import subclass_responsibility
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -94,15 +95,15 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
     """Base class for password hashers
 
     >>> pr = "Ao9ug9wahWae"
-    >>> ph = Password_Hasher.hashed (pr, "salt")
+    >>> ph = Password_Hasher.hashed (pr, "salt") # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    NotImplementedError: Password_Hasher must implement method 'hashed'
+    NotImplementedError: Password_Hasher must implement method ...
 
-    >>> Password_Hasher.verify (pr, pr)
+    >>> Password_Hasher.verify (pr, pr) # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
-    NotImplementedError: Password_Hasher must implement method 'verify'
+    NotImplementedError: Password_Hasher must implement method ...
 
     """
 

@@ -55,6 +55,8 @@
 #    22-Sep-2011 (CT) `Class_Property` added
 #    29-Jan-2013 (CT) Allow dotted names for `Alias_Property`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#    25-Jun-2013 (CT) Make `_Class_Property_Function_.__get__` Python-2.6
+#                     compatible
 #    ««revision-date»»···
 #--
 
@@ -254,7 +256,16 @@ class _Class_Property_Function_ (object) :
         if obj is None :
             obj = cls
             cls = cls.__class__
-        return self.getter (cls)
+        getter  = self.getter
+        try :
+            return getter (cls)
+        except TypeError :
+            if isinstance (getter, classmethod) :
+                ### Python 2.6 doesn't support calling an instance of
+                ### classmethod directly
+                return getter.__get__ (obj, cls) ()
+            else :
+                raise
     # end def __get__
 
 # end class _Class_Property_Function_
@@ -318,6 +329,12 @@ def Class_Property (getter) :
         Once property qux
         1764
         >>> foo.qux
+        1764
+
+        >>> foo2 = Foo ()
+        >>> foo2.qux
+        1764
+        >>> Foo.qux
         1764
 
     """
