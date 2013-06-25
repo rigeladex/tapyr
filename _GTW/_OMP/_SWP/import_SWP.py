@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -35,8 +35,8 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 
+import _GTW._OMP._SWP.Object_PN
 import _GTW._OMP._SWP.Clip
-import _GTW._OMP._SWP.Entity
 import _GTW._OMP._SWP.Format
 import _GTW._OMP._SWP.Gallery
 import _GTW._OMP._SWP.Page
