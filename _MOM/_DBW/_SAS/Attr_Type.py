@@ -69,6 +69,7 @@
 #    24-Sep-2012 (RS) SAS magic for `_A_IP_Address` now in `GTW.OMP.NET`
 #    11-Jan-2013 (CT) Add support for `A_AIS_Value`
 #    26-Apr-2013 (CT) Remove support for `A_AIS_Value`
+#    27-Jun-2013 (CT) Define `Case_Sensitive_String` as alias for `types.String`
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,8 @@ from sqlalchemy.sql import extract, expression
 
 import datetime
 import math
+
+Case_Sensitive_String = types.String
 
 _sa_type_map = \
     { bool              : types.Boolean
@@ -170,20 +173,6 @@ def _sa_columns_composite (cls, attr, kind, unique, owner_etype, ** kw) :
     kind._sa_prefix = prefix
     return columns
 # end def _sa_columns_composite
-
-class Case_Sensitive_String (types.TypeDecorator) :
-    """A string column which is case sensitive (which is not the default for
-       MySQL)
-    """
-
-    impl = types.String
-
-    def load_dialect_impl (self, dialect) :
-        self.impl.binary = True
-        return super (Case_Sensitive_String, self).load_dialect_impl (dialect)
-    # end def load_dialect_impl(dialect
-
-# end class Case_Sensitive_String
 
 @Add_Classmethod ("_sa_type", Attr.A_Attr_Type)
 def _sa_type_generic (cls, attr, kind, ** kw) :
@@ -280,4 +269,4 @@ class Python_Pickle_Transform (object) :
 Attr.A_Attr_Type.             SAS_PC_Transform = None
 Attr._A_Typed_Collection_.    SAS_PC_Transform = Python_Pickle_Transform
 
-### __END__ MOM.DBW.SAS.Type
+### __END__ MOM.DBW.SAS.Attr_Type

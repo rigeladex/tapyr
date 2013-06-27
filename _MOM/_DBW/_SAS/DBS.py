@@ -60,6 +60,7 @@
 #    31-Jul-2012 (CT) Restore compatibility to sqlalchemy 0.6.x (no `events`)
 #    22-Jan-2013 (MG) Add `reserve_cid` to sqlite
 #    23-Jan-2013 (MG) Add `rollback_context`
+#    27-Jun-2013 (CT) Specify collation `utf8_bin` in `MySQL.create_database`
 #    ««revision-date»»···
 #--
 
@@ -202,14 +203,16 @@ class MySQL (_NFB_) :
     query_last_cid_on_update  = True
 
     @classmethod
-    def create_database (cls, db_url, manager, encoding = "utf8") :
+    def create_database (cls, db_url, manager, encoding  = "utf8") :
         try :
             engine = cls.create_engine (TFL.Url (db_url.scheme_auth))
             engine.execute \
-                ( "CREATE DATABASE IF NOT EXISTS %s character set %s"
-                % (str (db_url.path), encoding)
+                ( "CREATE DATABASE IF NOT EXISTS %s "
+                    "DEFAULT CHARACTER SET %s "
+                    "DEFAULT COLLATE %s_bin"
+                % (str (db_url.path), encoding, encoding)
                 )
-        except sqlalchemy.exc.OperationalError :
+        except sqlalchemy.exc.OperationalError as exc :
             pass
     # end def create_database
 
