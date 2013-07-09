@@ -90,7 +90,7 @@
 ##--
 #}
 
-{%- import html_version as X -%}
+{%- import (html_version or "html/5.jnj") as X -%}
 
 {%- macro aid_div_seq (pfo, aid, widget_type = None) -%}
   {%- set fo = aid.form -%}

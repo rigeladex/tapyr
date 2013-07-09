@@ -1,6 +1,6 @@
 {#- jinja template: wr.jnj -#}
 {#
-## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -46,7 +46,7 @@
 ##--
 #}
 
-{%- import html_version as X -%}
+{%- import (html_version or "html/5.jnj") as X -%}
 
 {%- macro week_roller (cal, weeks, W) -%}
   <table class="calendar">

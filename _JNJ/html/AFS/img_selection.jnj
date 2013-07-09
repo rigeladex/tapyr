@@ -1,6 +1,6 @@
 {#- jinja template: html/AFS/img_selection.jnj -#}
 {#
-## Copyright (C) 2012 Martin Glueck All rights reserved
+## Copyright (C) 2012-2013 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -22,7 +22,7 @@
 ##    ««revision-date»»···
 ##--
 #}
-{%- import  html_version          as X -%}
+{%- import (html_version or "html/5.jnj") as X -%}
 {%- import "html/AFS/input.jnj"   as IN %}
 {%- import "html/AFS/div_seq.jnj" as DS %}
 

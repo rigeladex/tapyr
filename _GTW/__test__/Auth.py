@@ -41,6 +41,9 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 _login_logout = r"""
     >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
+    >>> print (root.top.Templateer.env.globals ["html_version"])
+    html/5.jnj
+
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> resp   = Scaffold.test_post ("/Auth/login.html")

@@ -1,6 +1,6 @@
 {#- jinja template: rform.jnj -#}
 {#
-## Copyright (C) 2010 Martin Glueck All rights reserved
+## Copyright (C) 2010-2013 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ## ****************************************************************************
 ## This template is part of the package JNJ/html.
@@ -45,8 +45,8 @@
 ##    ««revision-date»»···
 ##--
 #}
+{%- import (html_version or "html/5.jnj") as X   -%}
 {%- import "html/form.jnj" as Form %}
-{%- import html_version    as X   -%}
 
 {%- macro aid_div_seq (pfo, aid) -%}
   {%- set fo = aid.form -%}
