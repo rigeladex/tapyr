@@ -31,6 +31,7 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
+#    25-Jul-2013 (CT) Add import of `SWP.Object_PN`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 from   _MOM._Attr.Date_Interval import *
 
+import _GTW._OMP._SWP.Object_PN
 import _GTW._OMP._SWP.Page
 from   _GTW._OMP._SWP.Format    import A_Format
 
