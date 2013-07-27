@@ -368,7 +368,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
                 )
             )
         clean = self.pbl ["find"] \
-            [cmd.app_dir, cmd.lib_dir, "-name", '"*.py[co]"', "-delete"]
+            [cmd.app_dir, cmd.lib_dir, "-name", "*.py[co]", "-delete"]
         with cwd (root) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", self.pbl.path ())
