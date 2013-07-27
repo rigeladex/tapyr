@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.
@@ -49,6 +49,7 @@
 #     4-Jun-2012 (CT) Change `Shell.handler` to `_handle_shell`
 #     4-Jun-2012 (CT) Rewrite `_handle_update` to use `_handle_vc`
 #    11-Sep-2012 (CT) Fix `_handle_babel_extract` (assign `P`)
+#    27-Jul-2013 (CT) Remove old `.pyc` and `.pyo` files in `_handle_pycompile`
 #    ««revision-date»»···
 #--
 
@@ -366,11 +367,15 @@ class GTWD_Command (TFL.Command.Root_Command) :
                 , [cmd.app_dir, cmd.lib_dir]
                 )
             )
+        clean = self.pbl ["find"] \
+            [cmd.app_dir, cmd.lib_dir, "-name", '"*.py[co]"' "-delete"]
         with cwd (root) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", self.pbl.path ())
+                print (clean)
                 print (P.python, " ".join (args))
             if not cmd.dry_run :
+                clean ()
                 P.python (* args)
     # end def _handle_pycompile
 
