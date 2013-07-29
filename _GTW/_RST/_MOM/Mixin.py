@@ -75,6 +75,7 @@
 #    30-Apr-2013 (CT) Add `Pre_Commit_Entity_Check.__repr__`
 #     1-May-2013 (CT) Improve error message of `_handle_method_context`
 #    17-May-2013 (CT) Add `request._rst_seen`  (in `_handle_method_context`)
+#    29-Jul-2013 (CT) Accept GET-output in `_resolve_nested_request_attrs`
 #    ««revision-date»»···
 #--
 
@@ -157,6 +158,9 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
                 etn = iea.E_Type.type_name
                 ETM = scope [etn]
                 v   = attrs [k]
+                if isinstance (v, dict) and set (v) == set (("pid", "url")) :
+                    ### pid/url json object as produced by `GET`
+                    v = v ["pid"]
                 if isinstance (v, dict) :         ### attribute dictionary
                     self._resolve_request_attrs \
                         (resource, request, response, iea.E_Type, v)

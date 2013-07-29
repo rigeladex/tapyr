@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -29,6 +29,7 @@
 #    30-Apr-2010 (CT) Creation
 #    14-Nov-2011 (CT) Add tests for `query` and `query_s` with `sort_key`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    29-Jul-2013 (CT) Add tests for `set` of `name`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,30 @@ _test_code = """
     [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))]
     >>> list (RE.query_s (sort_key = sort_key))
     [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))]
+
+    >>> scope.commit ()
+
+    >>> rev.set (name = "himmelfahrt")
+    0
+
+    >>> rev.set_raw (name = "Himmelfahrt")
+    0
+
+    >>> rev.set (name = "Himmelfahrt")
+    1
+
+    >>> RE.query ().all ()
+    [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))]
+
+    >>> for x in RE.query () :
+    ...     print x.ui_display
+    Himmelfahrt 2008/05/01
+
+    >>> rev.set_raw (name = "Himmelfahrtskommando")
+    1
+
+    >>> RE.query ().all ()
+    [SRM.Regatta_Event (u'himmelfahrtskommando', (u'2008/05/01', u'2008/05/01'))]
 
 """
 

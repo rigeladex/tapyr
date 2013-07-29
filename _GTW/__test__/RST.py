@@ -54,6 +54,7 @@
 #     8-May-2013 (CT) Remove `.pid`, `.url` from `attribute_names`, unless CSV
 #    17-May-2013 (CT) Add tests for `rels`
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#    29-Jul-2013 (CT) Add `test_put`
 #    ««revision-date»»···
 #--
 
@@ -3832,6 +3833,88 @@ _test_post = r"""
 
 """
 
+_test_put = r"""
+    >>> server  = run_server (%(p1)s, %(n1)s)
+    >>> headers = { "Content-Type": "application/json" }
+
+    >>> r = show (R.get ("/v1/PAP-Person/1?raw"))
+    { 'json' :
+        { 'attributes_raw' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'pid' : 1
+        , 'rels' :
+            [ '/v1/PAP-Person/1/account_links'
+            , '/v1/PAP-Person/1/address_links'
+            , '/v1/PAP-Person/1/email_links'
+            , '/v1/PAP-Person/1/phone_links'
+            , '/v1/PAP-Person/1/property_links'
+            , '/v1/PAP-Person/1/sailors'
+            , '/v1/PAP-Person/1/url_links'
+            ]
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/1'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1?raw'
+    }
+
+    >>> rj = req_json (r)
+    >>> cargo_c = json.dumps (
+    ...   dict
+    ...     ( attributes_raw = rj ["attributes_raw"]
+    ...     , cid            = rj ["cid"]
+    ...     )
+    ... )
+    >>> ru = requests.utils.urlparse (r.url)
+    >>> p  = "%%s://%%s%%s" %% (ru.scheme, ru.netloc, req_json (r) ["url"])
+    >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
+    { 'json' :
+        { 'attributes_raw' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : ''
+            }
+        , 'cid' : 1
+        , 'pid' : 1
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/1'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
+    }
+
+    >>> sj = req_json (s)
+    >>> cargo_c = json.dumps (
+    ...   dict
+    ...     ( attributes_raw = dict (sj ["attributes_raw"], title = "Mag.")
+    ...     , cid            = sj ["cid"]
+    ...     )
+    ... )
+    >>> s2 = show (requests.put (p, data=cargo_c, headers=headers))
+    { 'json' :
+        { 'attributes_raw' :
+            { 'first_name' : 'Christian'
+            , 'last_name' : 'Tanzer'
+            , 'middle_name' : ''
+            , 'title' : 'Mag.'
+            }
+        , 'cid' : 17
+        , 'pid' : 1
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/1'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
+    }
+
+"""
+
 _test_query = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
@@ -4189,6 +4272,7 @@ __test__ = Scaffold.create_test_dict \
         , test_options        = _test_options
         , test_rat            = _test_rat
         , test_post           = _test_post
+        , test_put            = _test_put
         , test_query          = _test_query
         , test_qr_local       = _test_qr_local
         )
