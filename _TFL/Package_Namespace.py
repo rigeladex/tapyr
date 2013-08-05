@@ -144,6 +144,8 @@
 #     6-Dec-2012 (CT) Fix `_Add_Import_Callback`
 #     6-Dec-2012 (CT) Change  `_run_import_callback` to `classmethod`
 #    15-Jun-2013 (CT) Add `lazy_resolvers`; factor `_args_from_kw`
+#     4-Aug-2013 (CT) Add `_Derived_Module_` to properly support
+#                     `_Export_Module` for `Derived_Package_Namespace`
 #    ««revision-date»»···
 #--
 
@@ -159,6 +161,26 @@ from   collections import defaultdict
 def _caller_globals (depth = 1) :
     return sys._getframe (depth).f_back.f_globals
 # end def _caller_globals
+
+class _Derived_Module_ (object) :
+    """Wrapper around module exported by Derived_Package_Namespace"""
+
+    def __init__ (self, name, module, parent) :
+        self.__name__   = name
+        self.__module   = module
+        self.__parent   = parent
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        try :
+            result = getattr (self.__module, name)
+        except AttributeError :
+            result = getattr (self.__parent, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
+
+# end class _Derived_Module_
 
 class _Module_Space_ :
 
@@ -304,7 +326,7 @@ class Package_Namespace (object) :
                     ( "ambiguous name %s refers to %s and %s"
                     % (module_name, mod, old)
                     )
-        self.__dict__  [module_name] = mod
+        self.__dict__  [module_name] = self._exported_module (module_name, mod)
         self._Cache_Module        (module_name, mod)
         self._run_import_callback (mod)
     # end def _Export_Module
@@ -315,6 +337,10 @@ class Package_Namespace (object) :
         return _TFL.import_module.import_module \
             (".".join ((self.__module_name, name)))
     # end def _Import_Module
+
+    def _exported_module (self, module_name, mod) :
+        return mod
+    # end def _exported_module
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
@@ -464,6 +490,15 @@ class Derived_Package_Namespace (Package_Namespace) :
         self._parent._Reload ()
         Package_Namespace._Reload (self, * modules)
     # end def _Reload
+
+    def _exported_module (self, module_name, mod) :
+        try :
+            parent_module = getattr (self._parent, module_name)
+        except AttributeError :
+            return mod
+        else :
+            return _Derived_Module_ (module_name, mod, parent_module)
+    # end def _exported_module
 
     def __getattr__ (self, name) :
         try :
