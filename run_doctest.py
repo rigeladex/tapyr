@@ -58,6 +58,8 @@
 #    10-Aug-2012 (MG) Add new command line option for `exclude`
 #    17-Jan-2013 (CT) Add package-path to `sys.path`
 #    29-Jan-2013 (CT) Improve DRY of _main
+#     6-Aug-2013 (CT) Use `timeit.default_timer`, not `time.time`
+#     6-Aug-2013 (CT) Print summary to `sys.stderr`
 #    ««revision-date»»···
 #--
 
@@ -75,11 +77,12 @@ import _TFL.Caller
 import _TFL.CAO
 import _TFL.Package_Namespace
 
-import  doctest
-import  sys
-import  subprocess
-import  time
-import  fnmatch
+from   timeit     import default_timer as _timer
+
+import doctest
+import sys
+import subprocess
+import fnmatch
 
 TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 
@@ -170,18 +173,18 @@ def _main (cmd) :
         if not cmd.nodiff :
             flags |= doctest.REPORT_NDIFF
         try :
-            start  = time.time ()
+            start  = _timer ()
             module = __import__ (m)
             f, t   = doctest.testmod \
                 ( module
                 , verbose     = cmd.verbose
                 , optionflags = flags
                 )
-            exec_time = time.time () - start
+            exec_time = _timer () - start
         except KeyboardInterrupt :
             raise
         except Exception as exc :
-            exec_time = time.time () - start
+            exec_time = _timer () - start
             if cmd.timing :
                 et = " in %7.5fs" % (exec_time, )
             print (format_x % (replacer (a), exc, et), file = sys.stderr)
@@ -227,7 +230,7 @@ def _main (cmd) :
                     run_dir (s)
         else :
             run_dir = run_mods
-        start = time.time ()
+        start = _timer ()
         for a in cmd.argv :
             if sos.path.isdir (a) :
                 run_dir (a)
@@ -237,8 +240,8 @@ def _main (cmd) :
         if cmd.summary :
             format = format_f if summary.failed else format_s
             if cmd.timing :
-                et = " in %7.5fs" % (time.time () - start, )
-            print ("=" * 79)
+                et = " in %7.5fs" % (_timer () - start, )
+            print ("=" * 79, file = sys.stderr)
             print \
                 ( format % TFL.Caller.Scope
                     ( f      = summary.failed
@@ -248,13 +251,18 @@ def _main (cmd) :
                     )
                 , "[%s/%s modules fail]" %
                     (len (summary.failures), summary.modules)
+                , file = sys.stderr
                 )
             print \
                 ( "    %s"
                 % ("\n    ".join ("%-68s : %s" % f for f in summary.failures))
+                , file = sys.stderr
                 )
             if summary.excluded :
-                print ("    %s excluded" % (", ".join (summary.excluded), ))
+                print \
+                    ("    %s excluded" % (", ".join (summary.excluded), )
+                    , file = sys.stderr
+                    )
 # end def _main
 
 _Command = TFL.CAO.Cmd \
