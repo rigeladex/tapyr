@@ -60,6 +60,7 @@
 #    29-Jan-2013 (CT) Improve DRY of _main
 #     6-Aug-2013 (CT) Use `timeit.default_timer`, not `time.time`
 #     6-Aug-2013 (CT) Print summary to `sys.stderr`
+#     6-Aug-2013 (CT) Add number of test-cases to output
 #    ««revision-date»»···
 #--
 
@@ -89,19 +90,20 @@ TFL.Package_Namespace._check_clashes = False ### avoid spurious ImportErrors
 _doctest_pat   = Regexp (r"^( *>>> |__test__ *=)", re.MULTILINE)
 
 summary        = TFL.Record \
-    ( excluded = []
+    ( cases    = 0
+    , excluded = []
     , failed   = 0
     , failures = []
     , modules  = 0
     , total    = 0
     )
 
-format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests%(et)s"""
-format_s = """%(module.__file__)s passes all of %(t)s doc-tests%(et)s"""
+format_f = """%(module.__file__)s fails %(f)s of %(t)s doc-tests in %(cases)s test-cases%(et)s"""
+format_s = """%(module.__file__)s passes all of %(t)s doc-tests in %(cases)s test-cases%(et)s"""
 format_x = """%s raises exception `%r` during doc-tests%s"""
 sum_pat  = Regexp \
     ( "(?P<module>.+?) (?:fails (?P<failed>\d+)|passes all) of "
-      "(?P<total>\d+) doc-tests"
+      "(?P<total>\d+) doc-tests (?:in (?P<cases>\d+) test-cases)?"
     )
 exc_pat  = Regexp \
     ("(?P<module>.*?) raises exception `(?P<exc>[^`]+)` during doc-tests")
@@ -131,6 +133,7 @@ def _subp_step (subp) :
             for l in err.split ("\n") :
                 if sum_pat.match (l) :
                     summary.total += int (sum_pat.total)
+                    summary.cases += int (sum_pat.cases or 1)
                     f = int (sum_pat.failed or 0)
                     if f :
                         summary.failed += f
@@ -175,6 +178,7 @@ def _main (cmd) :
         try :
             start  = _timer ()
             module = __import__ (m)
+            cases  = len (getattr (module, "__test__", ())) or 1
             f, t   = doctest.testmod \
                 ( module
                 , verbose     = cmd.verbose
@@ -247,6 +251,7 @@ def _main (cmd) :
                     ( f      = summary.failed
                     , module = TFL.Record (__file__ = " ".join (cmd.argv))
                     , t      = summary.total
+                    , cases  = summary.cases
                     , et     = et
                     )
                 , "[%s/%s modules fail]" %
