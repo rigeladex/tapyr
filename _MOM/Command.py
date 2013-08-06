@@ -66,6 +66,8 @@
 #                     of other commands)
 #    28-May-2013 (CT) Use `sos.expanded_path` in `_read_auth_mig`
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#     6-Aug-2013 (CT) Add exception handler to `_handle_auth_mig`,
+#                     `_handle_load_auth_mig`
 #    ««revision-date»»···
 #--
 
@@ -326,16 +328,19 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _do_migration
 
     def _handle_auth_mig (self, cmd) :
-        scope = self._handle_load (cmd)
-        mig   = pyk.pickle.dumps  (scope.Auth.Account.migration ())
-        with open (cmd.mig_auth_file, "wb") as f :
-            sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
-            f.write (mig)
-        if cmd.verbose :
-            print ("Wrote authorization objects to", cmd.mig_auth_file)
-        scope.commit      ()
-        scope.ems.compact ()
-        scope.destroy     ()
+        try :
+            scope = self._handle_load (cmd)
+            mig   = pyk.pickle.dumps  (scope.Auth.Account.migration ())
+            with open (cmd.mig_auth_file, "wb") as f :
+                sos.fchmod (f.fileno (), stat.S_IRUSR | stat.S_IWUSR)
+                f.write (mig)
+            if cmd.verbose :
+                print ("Wrote authorization objects to", cmd.mig_auth_file)
+            scope.commit      ()
+            scope.ems.compact ()
+            scope.destroy     ()
+        except Exception as exc :
+            print ("Saving auth-migration failed with exception\n   ", exc)
     # end def _handle_auth_mig
 
     def _handle_create (self, cmd) :
@@ -367,11 +372,14 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _handle_load
 
     def _handle_load_auth_mig (self, cmd, url = None, mig_auth_file = None) :
-        scope = self._handle_load (cmd, url)
-        self._read_auth_mig       (cmd, scope, mig_auth_file)
-        scope.commit              ()
-        scope.ems.compact         ()
-        scope.destroy             ()
+        try :
+            scope = self._handle_load (cmd, url)
+            self._read_auth_mig       (cmd, scope, mig_auth_file)
+            scope.commit              ()
+            scope.ems.compact         ()
+            scope.destroy             ()
+        except Exception as exc :
+            print ("Loading auth-migration failed with exception\n   ", exc)
     # end def _handle_load_auth_mig
 
     def _handle_migrate (self, cmd) :
