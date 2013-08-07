@@ -27,6 +27,7 @@
 # Revision Dates
 #    25-Jul-2011 (MG) Creation
 #    28-Mar-2013 (CT) Add `-summary` to be more compatible with `run_doctest`
+#     7-Aug-2013 (CT) Add `cases` (adapt to change of `run_doctest`)
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,7 @@ def _main (cmd) :
         print >> sys.stderr, format_x % (replacer (a), exc, et)
         raise
     else :
+        cases  = int (bool (t))
         format = format_f if f else format_s
         print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
 # end def _main
