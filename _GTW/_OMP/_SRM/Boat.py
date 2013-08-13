@@ -51,6 +51,7 @@
 #    11-Sep-2012 (CT) Add add `sail_number` to `valid_sail_number_x`
 #    11-Sep-2012 (CT) Fix typo introduced in last change
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
+#    13-Aug-2013 (CT) Change `sail_number` from `Primary_Optional` to `Primary`
 #    ««revision-date»»···
 #--
 
@@ -101,7 +102,7 @@ class Boat (_Ancestor_Essence) :
         class sail_number (A_Int) :
             """Sail number of boat (without nation!)"""
 
-            kind               = Attr.Primary_Optional
+            kind               = Attr.Primary
             example            = "2827"
             min_value          = 0
             max_value          = 999999

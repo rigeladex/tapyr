@@ -118,6 +118,7 @@
 #    17-Dec-2012 (CT) Fix `allow_new` in `Field_Entity.__call__`
 #    28-Mar-2013 (CT) Add `polymorphic_epk` to `Field_Entity.__call__`
 #    11-Jun-2013 (CT) Improve message logged by `_create_instance`
+#    13-Aug-2013 (CT) Change `_create_instance` to check `Required_Missing`
 #    ««revision-date»»···
 #--
 
@@ -233,13 +234,24 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
                 count   = matches.count ()
             if not count :
                 result = ETM (raw = 1, on_error = on_error, ** akw)
-            elif count == 1 :
-                result = matches.one ()
             else :
-                error = MOM.Error.Ambiguous_Epk \
-                    (ETM.E_Type, (), akw, count, * matches.limit (3).all ())
-                if on_error is not None :
-                    on_error (error)
+                error = None
+                try :
+                    epks = ETM.E_Type.epkified (** akw)
+                except MOM.Error.Required_Missing as exc :
+                    error = exc
+                except Exception :
+                    pass
+                if error is None :
+                    if count == 1 :
+                        result = matches.one ()
+                    else :
+                        error = MOM.Error.Ambiguous_Epk \
+                            ( ETM.E_Type, (), akw, count
+                            , * matches.limit (3).all ()
+                            )
+                    if error is not None and on_error is not None :
+                        on_error (error)
         except MOM.Error.Invariants as exc :
             if not exc.any_required_empty :
                 raise
