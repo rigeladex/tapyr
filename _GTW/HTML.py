@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -39,6 +39,7 @@
 #     4-Dec-2012 (CT) Sort query parameters of `Video`
 #     4-Dec-2012 (CT) Correct `Vimeo.player_url`
 #     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
+#    20-Aug-2013 (CT) Add `(TM)` to, change `(c)` and `...` in, `Entity_Map`
 #    ««revision-date»»···
 #--
 
@@ -143,9 +144,10 @@ class Cleaner (TFL.Meta.Object) :
 # end class Cleaner
 
 Entity_Map = \
-    { r"---"          : r"&#0032;&mdash;&#0032;"
-    , r"..."          : r"&#8230;"
-    , r"(c)"          : r"&#0032;&copy;&#0032;"
+    { r"---"          : r"&#2009;&mdash;&#2009;"
+    , r"..."          : r"&#2009;&hellip;&#2009;"
+    , r"(c)"          : r"&copy;&nbsp;"
+    , r"(TM)"         : r"&trade;"
     , r"!="           : r"&ne;"
     , r"=="           : r"&equiv;"
     , r">="           : r"&ge;"

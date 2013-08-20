@@ -31,6 +31,8 @@
 #    28-Feb-2012 (CT) Add `_quoted_role`
 #     7-Mar-2013 (CT) Add `_added_role`
 #     8-Mar-2013 (CT) Use `...-inline` for short text `added` or `deleted`
+#    20-Aug-2013 (CT) Add `_char_entity`
+#    20-Aug-2013 (CT) Change `_uri_role` to replace space by thin no-break space
 #    ««revision-date»»···
 #--
 
@@ -60,6 +62,7 @@ def _uri_role (role, rawtext, text, lineno, inliner, options={}, content=[]) :
         ref  = "%s:%s" % (scheme, uri)
     else :
         ref  = uri
+    text = text.replace    (" ", "\u202F") ### narrow non breaking space
     node = nodes.reference (rawtext, text, refuri = ref, ** options)
     return [node], []
 # end def _uri_role
@@ -86,7 +89,7 @@ def _deleted_role (role, rawtext, text, lineno, inliner, options={}, content=[])
 
 register_local_role ("deleted", _deleted_role)
 
-### http://de.wikipedia.org/wiki/Anf%C3%BChrungszeichen
+### http://de.wikipedia.org/wiki/Anf%C3%BChrungszeichen#Kodierung
 _quot_map = dict \
     ( qd  = (_("\u201C"), _("\u201D")) # ("&ldquo;",  "&rdquo;")
     , qf  = (_("\u2039"), _("\u203A")) # ("&lsaquo;", "&rsaquo;")
@@ -107,5 +110,27 @@ register_local_role ("qd", _quoted_role)
 register_local_role ("qf", _quoted_role)
 register_local_role ("qg", _quoted_role)
 register_local_role ("qs", _quoted_role)
+
+_char_entity_map = \
+    { "~"        : "\u00A0" ### non breaking space
+    , ","        : "\u202F" ### narrow non breaking space
+    , "."        : "\u00B7" ### middle dot
+    , "0"        : "\u2007" ### figure space
+    , "deg"      : "\u00B0" ### degree symbol
+    , "mu"       : "\u00B5" ### micro sign
+    , "ne"       : "\u2260" ### not equal sign
+    , "x"        : "\u00D7" ### multiplication sign
+    , "/"        : "\u00F7" ### division sign
+    , "$"        : "¤"
+    }
+
+def _char_entity \
+        (role, rawtext, text, lineno, inliner, options={}, content=[]) :
+    char   = _char_entity_map.get (text, text)
+    node   = nodes.inline (rawtext, char, ** options)
+    return [node], []
+# end def _char_entity
+
+register_local_role ("x", _char_entity)
 
 ### __END__ ReST.Roles
