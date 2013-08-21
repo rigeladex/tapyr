@@ -144,8 +144,8 @@ class Cleaner (TFL.Meta.Object) :
 # end class Cleaner
 
 Entity_Map = \
-    { r"---"          : r"&#2009;&mdash;&#2009;"
-    , r"..."          : r"&#2009;&hellip;&#2009;"
+    { r"---"          : r"&#0032;&mdash;&#0032;"
+    , r"..."          : r"&hellip;"
     , r"(c)"          : r"&copy;&nbsp;"
     , r"(TM)"         : r"&trade;"
     , r"!="           : r"&ne;"
