@@ -85,6 +85,7 @@
 #    25-Apr-2013 (CT) Add `Permission`
 #     6-May-2013 (CT) Change `Error.as_unicode` to use `__doc__`, unless `.args`
 #    11-Jun-2013 (CT) Add guard to `Attribute.bindings`
+#    21-Aug-2013 (CT) Guard `is_required` in `Attribute_Syntax.__init__`
 #    ««revision-date»»···
 #--
 
@@ -429,7 +430,10 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         self.obj          = obj
         self.attribute    = attr
         self.attributes   = (attr.name, )
-        self.is_required  = attr.is_required
+        try :
+            self.is_required  = attr.is_required
+        except AttributeError :
+            self.is_required  = getattr (attr.kind, "is_required", False)
         self.value        = val
         self.exc_str      = exc_str
     # end def __init__
