@@ -44,6 +44,7 @@
 #    10-May-2013 (CT) Add `all_attribute_types`
 #    13-Jun-2013 (CT) Move `PNS_Aliases`, `PNS_Aliases_R` to `MOM.Entity`
 #    13-Jun-2013 (CT) Add `PNS_Set`
+#    23-Aug-2013 (CT) Add guard for `fqn != qn` to `add_type`
 #    ««revision-date»»···
 #--
 
@@ -210,9 +211,10 @@ class _App_Type_D_ (_App_Type_) :
         self.etypes [etype.type_name]          = \
             self.etypes [etype.type_name_fq]   = etype
         self.PNS_Map [qn] = self.PNS_Map [fqn] = self.PNS_Set [qn] = pns
-        self.etypes_by_pns [ qn].append  (etype)
-        self.etypes_by_pns [fqn].append  (etype)
-        self._T_Extension.append         (etype)
+        self.etypes_by_pns [ qn].append (etype)
+        if fqn != qn :
+            self.etypes_by_pns [fqn].append (etype)
+        self._T_Extension.append (etype)
     # end def add_type
 
     def delete_database (self, db_url) :

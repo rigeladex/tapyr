@@ -99,6 +99,7 @@
 #    31-May-2013 (CT) Add `HTTP method` to `send_error_email`
 #    31-May-2013 (CT) Add guard against unknown HTTP method to `allow_method`
 #    14-Jun-2013 (CT) Add guard against unsupported `method` to `allow_method`
+#    23-Aug-2013 (CT) Add `or False` to property `auth_required`
 #    ««revision-date»»···
 #--
 
@@ -322,6 +323,7 @@ class _RST_Base_ (TFL.Meta.Object) :
             (  self._auth_required
             or self.permission
             or (self.parent and self.parent.auth_required)
+            or False
             )
     # end def auth_required
 
