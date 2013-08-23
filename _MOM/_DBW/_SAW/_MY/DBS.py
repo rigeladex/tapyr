@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Jun-2013 (CT) Creation
 #    17-Jul-2013 (CT) Remove dependency on `MOM.DBW.SAS`
+#    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_scheme`
 #    ««revision-date»»···
 #--
 
@@ -49,8 +50,7 @@ class MY_DBS (MOM.DBW.SAW._NFB_DBS_) :
     _real_name                = "DBS"
 
     query_last_cid_on_update  = True
-    sa_scheme                 = "mysql"
-    scheme                    = "my"
+    scheme                    = "mysql"
     table_kw                  = dict \
         ( mysql_engine        = "InnoDB"
         , mysql_charset       = "utf8"

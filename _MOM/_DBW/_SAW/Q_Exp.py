@@ -74,7 +74,8 @@ _ob_cache = {}
 
 @TFL.Add_To_Class ("_saw_attr_wrapper", TFL.Q_Exp.Q_Root)
 def _saw_attr_wrapper (self, QR, ETW) :
-    head, _, tail = split_hst (self._name, ".")
+    name = self._name
+    head, _, tail = split_hst (name, ".")
     try :
         wrapper = ETW.q_able_attrs [head]
     except KeyError as exc :

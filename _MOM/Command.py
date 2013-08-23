@@ -167,6 +167,9 @@ class MOM_Command (TFL.Command.Root_Command) :
             )
         , "-db_url:S=hps://"
             "?Database url (form: `dialect://user:password@host:port/db_name`)"
+        , "-Engine_Echo:B"
+             "?Set the echo flag of the database engine, if appropriate for "
+             "the backend"
         , TFL.CAO.Abs_Path
             ( name        = "mig_auth_file"
             , description = "Default name of auth migration file"
@@ -291,8 +294,16 @@ class MOM_Command (TFL.Command.Root_Command) :
               , default_path = None
               , create       = True
               , verbose      = False
+              , engine_echo  = False
               ) :
         apt, url = self.app_type_and_url (db_url, default_path)
+        if engine_echo :
+            try :
+                EP = apt.DBW.PNS.DBS.Engine_Parameter
+            except AttributeError :
+                pass
+            else :
+                EP ["echo"] = True
         create = create or url.create
         if create :
             if verbose :
@@ -351,7 +362,11 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     def _handle_create (self, cmd) :
         scope = self.scope \
-            (cmd.db_url, cmd.db_name, create = True, verbose = cmd.verbose)
+            ( cmd.db_url, cmd.db_name
+            , create      = True
+            , verbose     = cmd.verbose
+            , engine_echo = cmd.Engine_Echo
+            )
         if cmd.Auth_Migrate :
             self._read_auth_mig (cmd, scope)
         scope.commit      ()
@@ -374,7 +389,11 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _handle_info
 
     def _handle_load (self, cmd, url = None) :
-        return self.scope (url or cmd.db_url, cmd.db_name, create = False)
+        return self.scope \
+            ( url or cmd.db_url, cmd.db_name
+            , create      = False
+            , engine_echo = cmd.Engine_Echo
+            )
     # end def _handle_load
 
     def _handle_load_auth_mig (self, cmd, url = None, mig_auth_file = None) :

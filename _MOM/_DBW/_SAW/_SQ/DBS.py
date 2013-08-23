@@ -93,8 +93,7 @@ class SQ_DBS (MOM.DBW.SAW.DBS) :
     Con_Man_Seq         = Con_Man_Seq
 
     default_url         = "sqlite:///:memory:"
-    sa_scheme           = "sqlite"
-    scheme              = "sq"
+    scheme              = "sqlite"
 
     @classmethod
     def create_engine (cls, db_url, isolation_level = None) :

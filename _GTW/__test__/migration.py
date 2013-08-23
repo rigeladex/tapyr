@@ -52,7 +52,7 @@ class _Migration_Scaffold_ (Scaffold.__class__) :
         ( Scaffold.Backend_Parameters
         , HPS             = "'hps:///test.hps'"
         , SQL             = "'sqlite:///test.sql'"
-        , sq              = "'sq:///test.sql'"
+        , sq              = "'sqlite:///test.sql'"
         )
 
 # end class _Migration_Scaffold_

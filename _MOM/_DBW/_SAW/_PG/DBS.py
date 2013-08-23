@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Jun-2013 (CT) Creation
 #    17-Jul-2013 (CT) Remove dependency on `MOM.DBW.SAS`
+#    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_scheme`
 #    ««revision-date»»···
 #--
 
@@ -58,8 +59,7 @@ class PG_DBS (MOM.DBW.SAW._NFB_DBS_) :
     ISOLATION_AUTO_COMMIT  = getattr (PE, "ISOLATION_LEVEL_AUTOCOMMIT",   -1)
     ISOLATION_SERIALIZABLE = getattr (PE, "ISOLATION_LEVEL_SERIALIZABLE", -1)
 
-    sa_scheme              = "postgresql"
-    scheme                 = "pg"
+    scheme                 = "postgresql"
 
     @classmethod
     def connect_change_isolation_level \

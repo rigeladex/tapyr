@@ -20,15 +20,15 @@
 #
 #++
 # Name
-#    GTW.__test__.MOM_SAS
+#    GTW.__test__.MOM_SAW
 #
 # Purpose
-#    Proxy for the MOM.DBW.SAS.__doc__ tests
+#    Proxy for the MOM.DBW.SAW.__doc__ tests
 #
 # Revision Dates
 #    12-Feb-2010 (MG) Creation
 #    16-Feb-2010 (MG) Test for database migration added
-#    27-Sep-2012 (CT) Move test code from `MOM.DBW.SAS.__doc__` in here
+#    27-Sep-2012 (CT) Move test code from `MOM.DBW.SAW.__doc__` in here
 #    ««revision-date»»···
 #--
 
@@ -44,13 +44,13 @@ filter_dbw_pat = re.compile \
     , re.DOTALL | re.X | re.MULTILINE
     )
 
-fixer = Dict_Replacer ({"__Hash" : "__SAS", "__HPS": "__SAS", "hps://" : "sqlite://"})
+fixer = Dict_Replacer ({"__Hash" : "__SAW", "__HPS": "__SAW", "hps://" : "sqlite://"})
 
 __doc__ = fixer \
     ( filter_dbw_pat.sub ("", dt_form)
     % dict
-        ( import_DBW = "from _MOM._DBW._SAS.Manager import Manager"
-        , import_EMS = "from _MOM._EMS.SAS          import Manager"
+        ( import_DBW = "from _MOM._DBW._SAW.Manager import Manager"
+        , import_EMS = "from _MOM._EMS.SAW          import Manager"
         , db_path    = "'test.sqlite'"
         , db_scheme  = "'sqlite://'"
         )
@@ -59,12 +59,11 @@ __doc__ = fixer \
 _db_mig_test = """
 >>> from _MOM._DBW._HPS.Manager import Manager as DBW_HPS
 >>> from _MOM._EMS.Hash         import Manager as EMS_HPS
->>> from _MOM._DBW._SAS.Manager import Manager as DBW_SAS
->>> from _MOM._EMS.SAS          import Manager as EMS_SAS
+>>> from _MOM._DBW._SAW.Manager import Manager as DBW_SAW
+>>> from _MOM._EMS.SAW          import Manager as EMS_SAW
 
->>> DBW_SAS.Reset_Metadata    ()
 >>> apt_gen = MOM.App_Type    (u"BMT_DBM", BMT)
->>> apt_sas = apt_gen.Derived (EMS_SAS, DBW_SAS)
+>>> apt_sas = apt_gen.Derived (EMS_SAW, DBW_SAW)
 >>> apt_hps = apt_gen.Derived (EMS_HPS, DBW_HPS)
 >>> apt_sas is apt_hps
 False
@@ -108,7 +107,7 @@ again to perform the migration
 >>> scope_2.destroy                  ()
 >>> scope_3.destroy                  ()
 
-Now we load the load and the new SAS based scopes and compare them
+Now we load the old and the new SAW based scopes and compare them
 >>> scope_1 = MOM.Scope.load         (apt_sas, "sqlite:///%s" % (db_path_old, ))
 >>> scope_3 = MOM.Scope.load         (apt_sas, "sqlite:///%s" % (db_path_new, ))
 >>> tuple (s.MOM.Id_Entity.count for s in (scope_1, scope_3))
@@ -117,13 +116,16 @@ Now we load the load and the new SAS based scopes and compare them
 []
 >>> scope_1.destroy ()
 >>> scope_3.destroy ()
+
 >>> remove          (db_path_old)
 >>> remove          (db_path_new)
 >>> remove          (hps_filename + ".bak")
 >>> remove          (hps_path)
 >>> remove          (hps_path + ".X", True)
+
 """
-__test__ = dict (db_migration = _db_mig_test)
+
+__test__ = dict (test_db_migration = _db_mig_test)
 
 def remove (file, is_dir = False) :
     if sos.path.exists (file) :
@@ -133,4 +135,4 @@ def remove (file, is_dir = False) :
             sos.unlink (file)
 # end def remove
 
-### __END__ GTW.__test__.MOM_SAS
+### __END__ GTW.__test__.MOM_SAW

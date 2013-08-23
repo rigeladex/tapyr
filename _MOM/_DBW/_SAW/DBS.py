@@ -37,6 +37,7 @@
 #                     with `Con_Man` instances
 #     5-Aug-2013 (CT) Change guard of `connection`, reset `needs_commit` there
 #     5-Aug-2013 (CT) Add `Con_Man.save_point`, factor `Con_Man._reset`
+#    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_url`
 #    ««revision-date»»···
 #--
 
@@ -175,8 +176,8 @@ class _SAW_DBS_ (MOM.DBW._DBS_) :
 
     @classmethod
     def create_engine (cls, db_url, ** kw) :
-        url = cls.sa_url (db_url).value or cls.default_url
-        ekw = dict (cls.Engine_Parameter, ** kw)
+        url       = db_url.value or cls.default_url
+        ekw       = dict (cls.Engine_Parameter, ** kw)
         sa_engine = SA.engine.create_engine (url, ** ekw)
         return cls (sa_engine)
     # end def create_engine
@@ -225,15 +226,6 @@ class _SAW_DBS_ (MOM.DBW._DBS_) :
         yield
     # end def rollback_context
 
-    @classmethod
-    def sa_url (cls, url) :
-        scheme = cls.scheme
-        value  = url.value
-        if value and value.startswith (scheme) :
-            return cls.Url (cls.sa_scheme + value [len (scheme):], None)
-        return url
-    # end def sa_url
-
     def __getattr__ (self, name) :
         return getattr (self._sa_engine, name)
     # end def __getattr__
@@ -248,17 +240,16 @@ class _NFB_DBS_ (_SAW_DBS_) :
 
     @classmethod
     def delete_database (cls, db_url, manager) :
-        url = cls.sa_url (db_url)
         try :
-            cls._drop_database (url, manager)
+            cls._drop_database (db_url, manager)
         except SA.Exception.DBAPIError as e:
             ### looks like we don't have the permissions to drop the database
             ### -> let's delete all tables we find using the reflection
             ### mechanism of sqlalchemy
-            engine = cls.create_engine (url)
+            engine = cls.create_engine (db_url)
             meta   = SA.MetaData       (bind = engine)
             try :
-                meta.reflect                   ()
+                meta.reflect ()
                 if meta.tables :
                     cls._drop_database_content (engine, meta)
             except SA.Exception.DBAPIError :

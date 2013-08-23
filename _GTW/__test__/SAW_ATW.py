@@ -12572,7 +12572,7 @@ __test__ = Scaffold.create_test_dict \
         , test_tables           = _test_tables
         , test_unique           = _test_unique
         )
-    , ignore = ("HPS", "MYS", "POS", "SQL")
+    , ignore = ("HPS", )
     )
 
 import sqlalchemy
@@ -12583,7 +12583,7 @@ if sqlalchemy.__version__ >= "0.8" :
                 ( test_q_result   = _test_q_result
                 , test_q_result_x = _test_q_result_x
                 )
-              , ignore = ("HPS", "MYS", "POS", "SQL")
+              , ignore = ("HPS", )
             )
         )
 
@@ -12592,7 +12592,7 @@ __test__.update \
         ( dict
             ( test_date_extraction = _test_date_extraction_pg
             )
-        , ignore = ("HPS", "MYS", "POS", "SQL", "sq")
+        , ignore = ("HPS", "MYS", "SQL", "sq")
         )
     )
 
@@ -12601,13 +12601,13 @@ __test__.update \
         ( dict
             ( test_date_extraction = _test_date_extraction_sq
             )
-        , ignore = ("HPS", "MYS", "POS", "SQL", "pg")
+        , ignore = ("HPS", "MYS", "POS", "pg")
         )
     )
 
 debug__test__ = Scaffold.create_test_dict \
     ( dict (debug = _debug)
-    , ignore = ("HPS", "MYS", "POS", "SQL")
+    , ignore = ("HPS", )
     )
 
 if __name__ == "__main__" :

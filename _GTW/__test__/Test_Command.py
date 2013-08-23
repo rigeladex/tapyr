@@ -140,9 +140,9 @@ class GTW_Test_Command (_Ancestor) :
         , POS             = "'postgresql://regtest:regtest@localhost/regtest'"
         , MYS             = "'mysql://:@localhost/test'"
         , MYST            = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
-        , my              = "'my://:@localhost/test'"
-        , pg              = "'pg://regtest:regtest@localhost/regtest'"
-        , sq              = "'sq://'"
+        , my              = "'mysql://:@localhost/test'"
+        , pg              = "'postgresql://regtest:regtest@localhost/regtest'"
+        , sq              = "'sqlite://'"
         )
     Backend_Default_Path  = dict \
         ( (k, None) for k in Backend_Parameters)
