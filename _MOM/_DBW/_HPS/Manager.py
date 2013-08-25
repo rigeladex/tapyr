@@ -45,6 +45,7 @@
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #     6-Jun-2013 (CT) Add `max_surrs`
 #    24-Jun-2013 (CT) Factor `close_connections`, `rollback` to `DBW._Manager_`
+#    25-Aug-2013 (CT) Redefine `update_etype` to disable `P_uniqueness [0]`
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,13 @@ class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
         except OSError :
             pass
     # end def delete_database
+
+    def update_etype (cls, e_type, app_type) :
+        try :
+            e_type.P_uniqueness [0].ems_check = False
+        except Exception :
+            pass
+    # end def update_etype
 
     def _new_manager (cls, db_url, scope, store_fct) :
         store = None

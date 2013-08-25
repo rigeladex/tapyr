@@ -99,6 +99,7 @@
 #    17-Jul-2013 (CT) Remove `async_changes`, `db_cid`
 #     1-Aug-2013 (CT) Don't reset `max_pid` in `rollback`
 #    21-Aug-2013 (CT) Redefine `query` to kludgely support `MD_Change`
+#    25-Aug-2013 (CT) Change `_add` to check `hpk in table` (optimization)
 #    ««revision-date»»···
 #--
 
@@ -267,6 +268,12 @@ class Manager (MOM.EMS._Manager_) :
         count = self._counts
         root  = entity.relevant_root
         table = self._tables [root.type_name]
+        hpk   = entity.hpk
+        if hpk in table :
+            ### `hpk in table` is way more efficient, uniqueness predicate
+            ### gives nicer (and backend-independent) error message
+            ### --> trigger error of uniqueness predicate
+            self._check_uniqueness (entity, entity.E_Type.uniqueness_dbw)
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         self.pm (entity, pid)
@@ -280,8 +287,8 @@ class Manager (MOM.EMS._Manager_) :
                 obj.register_dependency (entity.__class__)
                 r_map [r] [obj.pid].add (entity)
         count [entity.type_name] += 1
-        table [entity.hpk]        = entity
-        max_surrs = self.max_surrs
+        table [hpk] = entity
+        max_surrs   = self.max_surrs
         for sk in entity.surrogate_attr [1:] :
             v  = sk.get_value (entity)
             ms = max_surrs [sk.q_name]
