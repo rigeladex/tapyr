@@ -30,6 +30,7 @@
 #    12-Sep-2012 (CT) Add `__init__` argument `e_type`
 #     7-Jun-2013 (CT) Add `assign`
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
+#    26-Jun-2013 (CT) Derive from `TFL.Meta.Object`, not `property`
 #    ««revision-date»»···
 #--
 
@@ -39,9 +40,9 @@ from   _TFL                  import TFL
 import _MOM._Meta.M_Prop_Kind
 import _MOM._Prop
 
-import _TFL._Meta.M_Class
+import _TFL._Meta.Object
 
-class _Prop_Kind_ (property) :
+class _Prop_Kind_ (TFL.Meta.Object) :
     """Base class for attribute and predicate kinds."""
 
     __metaclass__ = MOM.Meta.M_Prop_Kind

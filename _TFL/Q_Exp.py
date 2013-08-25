@@ -54,6 +54,11 @@
 #    22-Dec-2011 (CT) Change `_Bin_.__repr__` to honor `reverse`
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    25-Feb-2013 (CT) Change `_Get_.predicate` to set `Q.undef.exc`
+#     9-Jul-2013 (CT) Add support for unary minus (`_Una_Expr_`, `__neg__`)
+#    11-Jul-2013 (CT) Add support for unary not   (`_Una_Bool_`, `__invert__`)
+#    27-Jul-2013 (CT) Add `BVAR` to support bound variables
+#    28-Jul-2013 (CT) Add `_BVAR_Get_.NEW`, `BVAR.bind`, `BVAR.predicate`
+#    28-Jul-2013 (CT) Add `BVAR_Man`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +78,12 @@ This module implements a query expression language::
     'foo'
     >>> q0.predicate (r1)
     42
+
+    >>> qm = - q0
+    >>> qm
+    - Q.foo
+    >>> qm.predicate (r1)
+    -42
 
     >>> q1 = Q.foo == Q.bar
     >>> q1, q1.lhs, q1.rhs, q1.op.__name__
@@ -421,6 +432,45 @@ class _Bin_ (Q_Root) :
 
 @TFL.Add_New_Method (Base)
 @pyk.adapt__bool__
+class _Una_ (Q_Root) :
+    """Unary query expression"""
+
+    op_map               = dict \
+        ( __invert__     = "~"
+        , __neg__        = "-"
+        )
+
+    predicate_precious_p = True
+
+    def __init__ (self, lhs, op, undefs) :
+        self.Q       = lhs.Q
+        self.lhs     = lhs
+        self.op      = op
+        self.undefs  = undefs
+    # end def __init__
+
+    def predicate (self, obj) :
+        l = self.lhs.predicate (obj)
+        if not any ((l is u) for u in self.undefs) :
+            ### Call `op` only if `l` is not an undefined value
+            return self.op (l)
+    # end def predicate
+
+    def __bool__ (self) :
+        return TypeError \
+            ("Result of `%s` cannot be used in a boolean context" % (self, ))
+    # end def __bool__
+
+    def __repr__ (self) :
+        op  = self.op.__name__
+        lhs = self.lhs
+        return "%s %s" % (self.op_map.get (op, op), lhs)
+    # end def __repr__
+
+# end class _Una_
+
+@TFL.Add_New_Method (Base)
+@pyk.adapt__bool__
 class _Call_ (Q_Root) :
     """Query expression calling a method."""
 
@@ -452,8 +502,8 @@ class _Call_ (Q_Root) :
 
 # end class _Call_
 
-def __binary (op, Class) :
-    name    = op.__name__
+def __binary (op_fct, Class) :
+    name    = op_fct.__name__
     reverse = name in _Bin_.rop_map
     key     = _Bin_.rop_map [name] if reverse else name
     op      = getattr (operator, key)
@@ -467,7 +517,7 @@ def __binary (op, Class) :
         return getattr (self.Q, Class) (self, op, rhs, undefs, reverse)
     _.__doc__    = op.__doc__
     _.__name__   = name
-    _.__module__ = op.__module__
+    _.__module__ = op_fct.__module__
     return _
 # end def __binary
 
@@ -649,6 +699,17 @@ class _Exp_ (_Exp_Base_) :
     @_binary
     def __rsub__ (self, rhs) : pass
 
+    ### Unary queries
+    def __invert__ (self) :
+        Q = self.Q
+        return Q._Una_Bool_ (self, operator.__invert__, (None, Q.undef))
+    # end def __invert__
+
+    def __neg__ (self) :
+        Q = self.Q
+        return Q._Una_Expr_ (self, operator.__neg__, (None, Q.undef))
+    # end def __neg__
+
     ### Method calls
     @_method
     def BETWEEN () :
@@ -825,6 +886,22 @@ class _Q_Exp_Bin_Expr_ (_Bin_, _Exp_) :
 _Bin_Expr_ = _Q_Exp_Bin_Expr_ # end class
 
 @TFL.Add_New_Method (Base)
+class _Q_Exp_Una_Bool_ (_Una_, _Exp_B_) :
+    """Unary query expression evaluating to boolean"""
+
+    _real_name = "_Una_Bool_"
+
+_Una_Bool_ = _Q_Exp_Una_Bool_ # end class
+
+@TFL.Add_New_Method (Base)
+class _Q_Exp_Una_Expr_ (_Una_, _Exp_) :
+    """Unary query expression"""
+
+    _real_name = "_Una_Expr_"
+
+_Una_Expr_ = _Q_Exp_Una_Expr_ # end class
+
+@TFL.Add_New_Method (Base)
 class _Sum_ (Q_Root) :
     """Query function for building a sum."""
 
@@ -850,6 +927,120 @@ class _Sum_ (Q_Root) :
     # end def __repr__
 
 # end class _Sum_
+
+class _BVAR_Get_ (TFL.Meta.Object) :
+    """Syntactic sugar for creating bound variables for query expressions."""
+
+    _unique_count = 0
+
+    def __init__ (self, Q) :
+        self.Q = Q
+    # end def __init__
+
+    @property
+    def NEW (self) :
+        """Create a new unique BVAR"""
+        cls                = self.__class__
+        cls._unique_count += 1
+        name               = "__bv_%d" % (cls._unique_count, )
+        return self.BVAR (self.Q, name)
+    # end def NEW
+
+    def __getattr__ (self, name) :
+        return self.BVAR (self.Q, name)
+    # end def __getattr__
+
+# end class _BVAR_Get_
+
+class _BVAR_Descriptor_ (object) :
+    """Descriptor to create bound variables for query expression.
+
+       The descriptor is assigned to `Base` and returns a `_BVAR_Get_`
+       instance that is bound to the `Q` object for which the descriptor was
+       invoked. The `_BVAR_Get_` instance returns a bound variable for
+       each attribute access. Bound variable are `_Exp_` instances and can
+       therefore participate in further query expressions like operator
+       application or function calls...
+    """
+
+    def __get__ (self, obj, cls) :
+        if obj is None :
+            return self
+        return _BVAR_Get_ (obj)
+    # end def __get__
+
+# end class _RAW_DESC_
+
+Base.BVAR = _BVAR_Descriptor_ ()
+
+@TFL.Add_New_Method (_BVAR_Get_)
+class BVAR (_Exp_) :
+    """Bound variable for query expression.
+
+    >>> Q.foo == Q.BVAR.bar
+    Q.foo == Q.BVAR.bar
+
+    >>> Q.BVAR.foo == 42
+    Q.BVAR.foo == 42
+
+    >>> Q.baz == Q.BVAR.NEW
+    Q.baz == Q.BVAR.__bv_1
+
+    """
+
+    predicate_precious_p = True
+
+    def __init__ (self, Q, name) :
+        self.Q      = Q
+        self._name  = name
+        self._value = None
+    # end def __init__
+
+    def bind (self, value) :
+        self._value = value
+    # end def bind
+
+    def predicate (self, obj) :
+        return self._value
+    # end def predicate
+
+    def __repr__ (self) :
+        return "Q.BVAR.%s" % (self._name, )
+    # end def __repr__
+
+# end class BVAR
+
+@TFL.Add_New_Method (Base)
+@pyk.adapt__bool__
+class BVAR_Man (TFL.Meta.Object) :
+    """Manager for bound variables"""
+
+    def __init__ (self, bvar_man = None) :
+        self.bvars    = bvars    = {}
+        self.bindings = bindings = {}
+        if bvar_man is not None :
+            bvars.update    (bvar_man.bvars)
+            bindings.update (bvar_man.bindings)
+    # end def __init__
+
+    def add (self, * bvars) :
+        for bv in bvars :
+            self.bvars [bv._name] = bv
+    # end def add
+
+    def bind (self, ** bindings) :
+        self.bindings.update (bindings)
+    # end def bind
+
+    def clone (self) :
+        return self.__class__ (self)
+    # end def clone
+
+    def __bool__ (self) :
+        return bool (self.bvars)
+    # end def __bool__
+
+# end class BVAR_Man
 
 if __name__ != "__main__" :
     TFL._Export ("Q")

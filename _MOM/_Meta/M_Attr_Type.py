@@ -71,6 +71,8 @@
 #     5-Jun-2013 (CT) Add `Surrogate`
 #     7-Jun-2013 (CT) Add guards against redefinition to `Surrogate`
 #    12-Jun-2013 (CT) Add and use `is_partial_p`
+#    25-Jun-2013 (CT) Set `_max_ui_length` to None
+#    26-Jun-2013 (CT) Pass `postfix` to `_A_String_.New`
 #    ««revision-date»»···
 #--
 
@@ -99,15 +101,16 @@ class Root (MOM.Meta.M_Prop_Type) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        Root.count += 1
-        cls._d_rank = Root.count
+        Root.count        += 1
+        cls._d_rank        = Root.count
+        cls._max_ui_length = None
         if not cls.is_partial_p :
-            cls.ckd_name = "__%s" % (cls.name, )
-            cls.raw_name = \
+            cls.ckd_name   = "__%s" % (cls.name, )
+            cls.raw_name   = \
                 (    "__raw_%s" % (cls.name, ) if cls.needs_raw_value
                 else cls.name ### do not want `ckd_name` here (`computed`...)
                 )
-            cls.renameds = set ()
+            cls.renameds   = set ()
             for b in bases :
                 bn = getattr (b, "ckd_name", None)
                 if bn and (not b.name.startswith ("_")) and cls.name != b.name :
@@ -239,10 +242,12 @@ class Named_Object (Named_Value) :
         cls.__m_super.__init__ (name, bases, dct)
         Table = getattr (cls, "Table", None)
         if Table and cls.Pickler :
-            max_length = max (len (k) for k in Table)
+            max_length = cls.max_length = max (len (k) for k in Table)
             if max_length != cls.Pickler.Type.max_length :
                 cls.Pickler = cls.Pickler.New \
-                    (Type = MOM.Attr._A_String_.New (max_length = max_length))
+                    ( Type = MOM.Attr._A_String_.New
+                        (name + "_", max_length = max_length)
+                    )
     # end def __init__
 
 # end class Named_Object
@@ -332,7 +337,7 @@ class _M_Bin_Pickler_ (TFL.Meta.Object.__class__) :
 
     @TFL.Meta.Once_Property
     def Type (cls) :
-        return MOM.Attr._A_Binary_String_
+        return MOM.Attr.A_Binary_String_P
     # end def Type
 
 # end class _M_Bin_Pickler_

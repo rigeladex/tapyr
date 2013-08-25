@@ -244,13 +244,13 @@ _test_code = """
                 , 'sig_key' : 2
                 , 'ui_name' : 'Class'
                 }
-              , { 'name' : 'nation'
-                , 'sig_key' : 0
-                , 'ui_name' : 'Nation'
-                }
               , { 'name' : 'sail_number'
                 , 'sig_key' : 4
                 , 'ui_name' : 'Sail number'
+                }
+              , { 'name' : 'nation'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Nation'
                 }
               , { 'name' : 'sail_number_x'
                 , 'sig_key' : 3
@@ -431,8 +431,8 @@ _test_code = """
     <left.AQ [Attr.Type.Querier Id_Entity]> <SRM.Boat_in_Regatta.AQ>
         <left.left.AQ [Attr.Type.Querier Id_Entity]> <left.AQ [Attr.Type.Querier Id_Entity]>
             <left.left.name.AQ [Attr.Type.Querier String]> <left.left.AQ [Attr.Type.Querier Id_Entity]>
-        <left.nation.AQ [Attr.Type.Querier Ckd]> <left.AQ [Attr.Type.Querier Id_Entity]>
         <left.sail_number.AQ [Attr.Type.Querier Raw]> <left.AQ [Attr.Type.Querier Id_Entity]>
+        <left.nation.AQ [Attr.Type.Querier Ckd]> <left.AQ [Attr.Type.Querier Id_Entity]>
         <left.sail_number_x.AQ [Attr.Type.Querier String]> <left.AQ [Attr.Type.Querier Id_Entity]>
     <right.AQ [Attr.Type.Querier Id_Entity]> <SRM.Boat_in_Regatta.AQ>
         <right.left.AQ [Attr.Type.Querier Id_Entity]> <right.AQ [Attr.Type.Querier Id_Entity]>
@@ -470,6 +470,14 @@ _test_code = """
             , type_name = 'SRM.Boat_Class'
             , ui_name = 'Boat/Class'
             , ui_type_name = 'Boat_Class'
+            )
+          , Record
+            ( attr = Int `sail_number`
+            , full_name = 'left.sail_number'
+            , id = 'left__sail_number'
+            , name = 'sail_number'
+            , sig_key = 4
+            , ui_name = 'Boat/Sail number'
             )
           , Record
             ( attr = Nation `nation`
@@ -644,14 +652,6 @@ _test_code = """
             , name = 'nation'
             , sig_key = 0
             , ui_name = 'Boat/Nation'
-            )
-          , Record
-            ( attr = Int `sail_number`
-            , full_name = 'left.sail_number'
-            , id = 'left__sail_number'
-            , name = 'sail_number'
-            , sig_key = 4
-            , ui_name = 'Boat/Sail number'
             )
           , Record
             ( attr = String `sail_number_x`

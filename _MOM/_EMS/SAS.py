@@ -63,6 +63,12 @@
 #    30-Jan-2013 (MG) Remove argument from `.rollback` call in `commit`
 #     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop` not by
 #                     applying `getattr` to the `E_Type` itself
+#    24-Jun-2013 (CT) DRY `max_pid`
+#    26-Jun-2013 (CT) Add `lazy_load_p`
+#     4-Jul-2013 (CT) Move table gymnastics from `register_change` to
+#                     `.session.add_change`
+#     5-Jul-2013 (CT) Change sig of `_query_single_root`, `_query_multi_root`
+#    17-Jul-2013 (CT) Remove `db_cid`
 #    ««revision-date»»···
 #--
 
@@ -108,11 +114,13 @@ class Change_Summary (MOM.SCM.Summary) :
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
-    type_name          = "SAS"
+    type_name           = "SAS"
 
-    Change_Summary     = Change_Summary
+    Change_Summary      = Change_Summary
 
-    Q_Result           = MOM.DBW.SAS.Q_Result
+    Q_Result            = MOM.DBW.SAS.Q_Result
+
+    lazy_load_p         = True
 
     @property
     def max_cid (self) :
@@ -129,7 +137,7 @@ class Manager (MOM.EMS._Manager_) :
 
     @property
     def max_pid (self) :
-        return self.scope.ems.pm.max_pid
+        return self.pm.max_pid
     # end def max_cid
 
     @property
@@ -153,8 +161,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def commit
 
     def load_root (self) :
-        result            = self.session.load_root (self.scope)
-        self.scope.db_cid = self.max_cid
+        result = self.session.load_root (self.scope)
         return result
     # end def load_root
 
@@ -173,14 +180,7 @@ class Manager (MOM.EMS._Manager_) :
 
     def register_change (self, change) :
         self.session.add_change (change)
-        if change.children :
-            Table  = MOM.SCM.Change._Change_._sa_table
-            update = Table.update ().where \
-                ( Table.c.cid.in_ (c.cid for c in change.children)
-                ).values (parent_cid = change.cid)
-            self.session.connection.execute (update)
         uncommitted_changes = self.uncommitted_changes
-        self.scope.db_cid   = change.cid
         self.__super.register_change    (change)
         uncommitted_changes.add_pending (change, self.scope)
         self.session.update_change      (change)
@@ -214,14 +214,14 @@ class Manager (MOM.EMS._Manager_) :
             raise self.Integrity_Error
     # end def _add
 
-    def _query_multi_root (self, Type) :
+    def _query_multi_root (self, Type, strict = False) :
         QR = self.Q_Result
         S  = self.session
         return self.Q_Result_Composite \
             ([QR (t, self.session) for t in Type.relevant_roots.itervalues ()])
     # end def _query_multi_root
 
-    def _query_single_root (self, Type, root) :
+    def _query_single_root (self, Type, strict = False) :
         Type = getattr (Type, "_etype", Type)
         return self.Q_Result (Type, self.session)
     # end def _query_single_root

@@ -70,6 +70,8 @@
 #     5-Jun-2013 (CT) Add `e_type.q_able`
 #     6-Jun-2013 (CT) Add `e_type.surrogate_attr`
 #     7-Jun-2013 (CT) Change `own_surrogate`, update `surrogate_map`
+#    17-Jun-2013 (CT) Sort `rev_ref_attr` and `link_ref_attr`
+#    12-Jul-2013 (CT) Change `rev_ref_attr` to select all `_A_Rev_Ref_` types
 #    ««revision-date»»···
 #--
 
@@ -137,14 +139,20 @@ class Spec (MOM.Prop.Spec) :
             if isinstance (a, MOM.Attr._EPK_Mixin_)
             )
         e_type.link_ref_attr    = tuple \
-            (MOM.Attr.Selector.A_Type (MOM.Attr.A_Link_Ref_List) (e_type))
+            ( sorted
+                ( MOM.Attr.Selector.A_Type (MOM.Attr.A_Link_Ref_List) (e_type)
+                , key = sk
+                )
+            )
         e_type.surrogate_attr   = tuple \
             (   a for a in e_type.db_attr
             if  isinstance (a.attr, MOM.Attr.A_Surrogate)
             )
         e_type.rev_ref_attr     = tuple \
-            ( MOM.Attr.Selector.A_Type
-                ((MOM.Attr.A_Rev_Ref_Set, MOM.Attr._A_Role_Ref_)) (e_type)
+            ( sorted
+                ( MOM.Attr.Selector.A_Type (MOM.Attr._A_Rev_Ref_) (e_type)
+                , key = sk
+                )
             )
         e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)

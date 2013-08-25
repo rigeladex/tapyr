@@ -57,7 +57,6 @@ _test_code = """
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -72,7 +71,6 @@ _test_code = """
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -89,7 +87,6 @@ _test_code = """
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -105,7 +102,6 @@ _test_code = """
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -121,7 +117,6 @@ _test_code = """
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <left.salutation.AQ [Attr.Type.Querier String]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
-    <left.electric.AQ [Attr.Type.Querier Boolean]>
     <left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <left.pid.AQ [Attr.Type.Querier Ckd]>
     <left.type_name.AQ [Attr.Type.Querier String]>
@@ -129,13 +124,11 @@ _test_code = """
     <right.area_code.AQ [Attr.Type.Querier String]>
     <right.number.AQ [Attr.Type.Querier String]>
     <right.desc.AQ [Attr.Type.Querier String]>
-    <right.electric.AQ [Attr.Type.Querier Boolean]>
     <right.last_cid.AQ [Attr.Type.Querier Ckd]>
     <right.pid.AQ [Attr.Type.Querier Ckd]>
     <right.type_name.AQ [Attr.Type.Querier String]>
     <extension.AQ [Attr.Type.Querier String]>
     <desc.AQ [Attr.Type.Querier String]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -151,7 +144,6 @@ _test_code = """
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <left.salutation.AQ [Attr.Type.Querier String]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
-    <left.electric.AQ [Attr.Type.Querier Boolean]>
     <left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <left.pid.AQ [Attr.Type.Querier Ckd]>
     <left.type_name.AQ [Attr.Type.Querier String]>
@@ -166,7 +158,6 @@ _test_code = """
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
     <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -177,9 +168,9 @@ _test_code = """
     >>> lifetime_attrs = MOM.Attr.Selector.ui_attr (ET_lifetime)
 
     >>> person_attrs.names
-    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex', 'electric', 'last_cid', 'pid', 'type_name')
+    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex', 'last_cid', 'pid', 'type_name')
     >>> php_attrs.names
-    ('left', 'right', 'extension', 'desc', 'electric', 'last_cid', 'pid', 'type_name')
+    ('left', 'right', 'extension', 'desc', 'last_cid', 'pid', 'type_name')
     >>> lifetime_attrs.names
     ('start', 'finish', 'alive')
 
@@ -192,7 +183,6 @@ _test_code = """
     Date_Interval <lifetime.AQ [Attr.Type.Querier Composite]>
     String <salutation.AQ [Attr.Type.Querier String]>
     Sex <sex.AQ [Attr.Type.Querier Ckd]>
-    Boolean <electric.AQ [Attr.Type.Querier Boolean]>
     Int <last_cid.AQ [Attr.Type.Querier Ckd]>
     Surrogate <pid.AQ [Attr.Type.Querier Ckd]>
     String <type_name.AQ [Attr.Type.Querier String]>
@@ -206,7 +196,6 @@ _test_code = """
     Date_Interval <Attr.Composite_Auto_Complete lifetime.EQ [auto-complete]>
     String <Attr.Auto_Complete_S salutation.STARTSWITH [auto-complete]>
     Sex <Attr.Auto_Complete sex.EQ [auto-complete]>
-    Boolean <Attr.Auto_Complete electric.EQ [auto-complete]>
     Int <Attr.Auto_Complete last_cid.EQ [auto-complete]>
     Surrogate <Attr.Auto_Complete pid.EQ [auto-complete]>
     String <Attr.Auto_Complete_S type_name.STARTSWITH [auto-complete]>
@@ -220,7 +209,6 @@ _test_code = """
     Date_Interval <Attr.Composite_Greater_Equal lifetime.GE [>=]>
     String <Attr.Greater_Equal salutation.GE [>=]>
     Sex <Attr.Greater_Equal sex.GE [>=]>
-    Boolean ** GE undefined **
     Int <Attr.Greater_Equal last_cid.GE [>=]>
     Surrogate <Attr.Greater_Equal pid.GE [>=]>
     String <Attr.Greater_Equal type_name.GE [>=]>
@@ -234,7 +222,6 @@ _test_code = """
     Date_Interval ** CONTAINS undefined **
     String <Attr.Contains salutation.CONTAINS [contains]>
     Sex ** CONTAINS undefined **
-    Boolean ** CONTAINS undefined **
     Int ** CONTAINS undefined **
     Surrogate ** CONTAINS undefined **
     String <Attr.Contains type_name.CONTAINS [contains]>
@@ -266,7 +253,6 @@ _test_code = """
     Date_Interval <Attr.Type.Querier Composite ()>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
-    Boolean <Attr.Type.Querier Boolean ('EQ',)>
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Surrogate <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
@@ -277,7 +263,6 @@ _test_code = """
     Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
-    Boolean <Attr.Type.Querier Boolean ('EQ',)>
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Surrogate <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
@@ -321,7 +306,6 @@ _test_code = """
         alive               1
       salutation          3
       sex                 0
-      electric            1
       last_cid            0
       pid                 0
       type_name           3
@@ -330,7 +314,6 @@ _test_code = """
       area_code           3
       number              3
       desc                3
-      electric            1
       last_cid            0
       pid                 0
       type_name           3
@@ -345,15 +328,13 @@ _test_code = """
         beam                0
         loa                 0
         sail_area           0
-        electric            1
         last_cid            0
         pid                 0
         type_name           3
-      nation              0
       sail_number         4
+      nation              0
       sail_number_x       3
       name                3
-      electric            1
       last_cid            0
       pid                 0
       type_name           3
@@ -367,20 +348,17 @@ _test_code = """
         club                2
           name                3
           long_name           3
-          electric            1
           last_cid            0
           pid                 0
           type_name           3
         desc                3
         is_cancelled        1
-        electric            1
         last_cid            0
         pid                 0
         type_name           3
         perma_name          3
       boat_class          2
         name                3
-        electric            1
         last_cid            0
         pid                 0
         type_name           3
@@ -392,7 +370,6 @@ _test_code = """
         date                0
         software            3
         status              3
-      electric            1
       last_cid            0
       pid                 0
       type_name           3
@@ -409,7 +386,6 @@ _test_code = """
           alive               1
         salutation          3
         sex                 0
-        electric            1
         last_cid            0
         pid                 0
         type_name           3
@@ -418,17 +394,14 @@ _test_code = """
       club                2
         name                3
         long_name           3
-        electric            1
         last_cid            0
         pid                 0
         type_name           3
-      electric            1
       last_cid            0
       pid                 0
       type_name           3
     place               0
     points              0
-    electric            1
     last_cid            0
     pid                 0
     type_name           3
@@ -452,25 +425,22 @@ _test_code = """
         Float `beam` left.left.beam
         Float `loa` left.left.loa
         Float `sail_area` left.left.sail_area
-        Boolean `electric` left.left.electric
         Int `last_cid` left.left.last_cid
         Surrogate `pid` left.left.pid
         String `type_name` left.left.type_name
-        Nation `nation` left.nation
         Int `sail_number` left.sail_number
+        Nation `nation` left.nation
         String `sail_number_x` left.sail_number_x
         String `name` left.name
-        Boolean `electric` left.electric
         Int `last_cid` left.last_cid
         Surrogate `pid` left.pid
         String `type_name` left.type_name
     Boat `left` unwrapped
         String `name` left.name
-        Nation `nation` nation
         Int `sail_number` sail_number
+        Nation `nation` nation
         String `sail_number_x` sail_number_x
         String `name` name
-        Boolean `electric` electric
         Int `last_cid` last_cid
         Surrogate `pid` pid
         String `type_name` type_name
@@ -481,19 +451,16 @@ _test_code = """
         Boolean `alive` right.left.date.alive
         String `name` right.left.club.name
         String `long_name` right.left.club.long_name
-        Boolean `electric` right.left.club.electric
         Int `last_cid` right.left.club.last_cid
         Surrogate `pid` right.left.club.pid
         String `type_name` right.left.club.type_name
         String `desc` right.left.desc
         Boolean `is_cancelled` right.left.is_cancelled
-        Boolean `electric` right.left.electric
         Int `last_cid` right.left.last_cid
         Surrogate `pid` right.left.pid
         String `type_name` right.left.type_name
         String `perma_name` right.left.perma_name
         String `name` right.boat_class.name
-        Boolean `electric` right.boat_class.electric
         Int `last_cid` right.boat_class.last_cid
         Surrogate `pid` right.boat_class.pid
         String `type_name` right.boat_class.type_name
@@ -504,7 +471,6 @@ _test_code = """
         Date-Time `date` right.result.date
         String `software` right.result.software
         String `status` right.result.status
-        Boolean `electric` right.electric
         Int `last_cid` right.last_cid
         Surrogate `pid` right.pid
         String `type_name` right.type_name
@@ -521,7 +487,6 @@ _test_code = """
         Date-Time `date` result.date
         String `software` result.software
         String `status` result.status
-        Boolean `electric` electric
         Int `last_cid` last_cid
         Surrogate `pid` pid
         String `type_name` type_name
@@ -536,7 +501,6 @@ _test_code = """
         Boolean `alive` skipper.left.lifetime.alive
         String `salutation` skipper.left.salutation
         Sex `sex` skipper.left.sex
-        Boolean `electric` skipper.left.electric
         Int `last_cid` skipper.left.last_cid
         Surrogate `pid` skipper.left.pid
         String `type_name` skipper.left.type_name
@@ -544,11 +508,9 @@ _test_code = """
         Int `mna_number` skipper.mna_number
         String `name` skipper.club.name
         String `long_name` skipper.club.long_name
-        Boolean `electric` skipper.club.electric
         Int `last_cid` skipper.club.last_cid
         Surrogate `pid` skipper.club.pid
         String `type_name` skipper.club.type_name
-        Boolean `electric` skipper.electric
         Int `last_cid` skipper.last_cid
         Surrogate `pid` skipper.pid
         String `type_name` skipper.type_name
@@ -560,7 +522,6 @@ _test_code = """
         Nation `nation` nation
         Int `mna_number` mna_number
         String `name` club.name
-        Boolean `electric` electric
         Int `last_cid` last_cid
         Surrogate `pid` pid
         String `type_name` type_name
@@ -572,10 +533,6 @@ _test_code = """
         Int `points` points
     Int `points` unwrapped
         Int `points` points
-    Boolean `electric`
-        Boolean `electric` electric
-    Boolean `electric` unwrapped
-        Boolean `electric` electric
     Int `last_cid`
         Int `last_cid` last_cid
     Int `last_cid` unwrapped

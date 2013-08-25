@@ -141,6 +141,10 @@
 #     6-Jun-2013 (CT) Change `add`, `value_dict` to handle surrogates
 #     7-Jun-2013 (CT) Redefine `DB_Meta_Data`
 #     7-Jun-2013 (CT) Add/use argument `db_meta_data` to/in `consume`
+#    18-Jun-2013 (CT) Use `join`, not `outerjoin`, for `transitive_bases`
+#    24-Jun-2013 (CT) Cleanup `flush` (remove obsolete, commented-out code)
+#     4-Jul-2013 (CT) Add `change.children` handling to `add_change`
+#                     (used to be done by `MOM.EMS.SAS.register_change`)
 #    ««revision-date»»···
 #--
 
@@ -421,10 +425,10 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def finish (self) :
         ### setup the select statement for this class with all the joins
-        tables      = [self.table]
+        tables = [self.table]
         joins  = self.table
         for b in self.transitive_bases :
-            joins = joins.outerjoin (b._sa_table)
+            joins = joins.join      (b._sa_table)
             tables.append           (b._sa_table)
         for c in self.transitive_children :
             joins = joins.outerjoin (c._sa_table)
@@ -695,7 +699,11 @@ class Session_S (_Session_) :
                         )
                     )
                 )
-            change.cid = int (result.inserted_primary_key [0])
+            change.cid = cid = int (result.inserted_primary_key [0])
+            if change.children :
+                where = table.c.cid.in_ (c.cid for c in change.children)
+                self.execute \
+                    (table.update ().where (where).values (parent_cid = cid))
     # end def add_change
 
     def commit (self) :
@@ -755,14 +763,8 @@ class Session_S (_Session_) :
     # end def expunge
 
     def flush (self) :
-        #self.engine.echo = True
         pending = self.scope.uncommitted_changes.pending_attr_changes
-        #for pid, attrs in pending.iteritems () :
-        #    entity = self._pid_map.get (pid)
-        #    if entity is not None :
-        #        entity.__class__._SAS.update (self, entity, attrs)
         pending.clear ()
-        #self.engine.echo = False
     # end def flush
 
     def instance_from_row (self, e_type, row) :
@@ -866,13 +868,12 @@ class Session_S (_Session_) :
 
     def update (self, entity, new_attr) :
         if entity is not None :
-            attrs    = set (new_attr)
-            ET       = entity.__class__
+            attrs = set (new_attr)
+            ET    = entity.__class__
             for an in new_attr :
                 a = ET.attr_prop (an) or getattr (ET, an, None)
                 if a is not None :
                     attrs.update (d.name for d in a.dependent_attrs)
-            ### import pdb; pdb.set_trace ()
             entity._SAS.update (self, entity, attrs)
     # end def update
 

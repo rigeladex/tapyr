@@ -30,6 +30,7 @@
 #    22-Sep-2011 (CT) s/C_Type/P_Type/ for _A_Composite_ attributes
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
+#    27-Jun-2013 (CT) Add `_D2_Value_.is_partial`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,8 @@ _Ancestor_Essence = MOM.An_Entity
 
 class _D2_Value_ (_Ancestor_Essence) :
     """Base class for two-dimensional values (e.g., position or size)."""
+
+    is_partial    = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -39,6 +39,7 @@
 #    29-Mar-2012 (CT) Factor `all_links` to `MOM.Id_Entity`
 #    18-Jun-2012 (CT) Add `_Object_Reload_Mixin_`
 #     1-Aug-2012 (CT) Add `_Object_Destroyed_Mixin_`
+#    17-Jun-2013 (CT) Remove `Named_Object`
 #    ««revision-date»»···
 #--
 
@@ -95,24 +96,6 @@ class _Object_Reload_Mixin_ (MOM._Id_Entity_Reload_Mixin_) :
 
 # end class _Object_Reload_Mixin_
 
-class Named_Object (Object) :
-    """Common base class for essential named objects of MOM."""
-
-    is_partial            = True
-
-    class _Attributes (Object._Attributes) :
-
-        class name (A_Name) :
-            """Unique name of the object."""
-
-            kind        = Attr.Primary
-
-        # end class name
-
-    # end class _Attributes
-
-# end class Named_Object
-
 __doc__ = """
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
@@ -124,16 +107,6 @@ Class `MOM.Object`
    `MOM.Object` provides the framework for defining essential classes.
 
    It is based on :class:`~_MOM.Entity.Id_Entity`.
-
-Class `MOM.Named_Object`
-========================
-
-.. class:: Named_Object
-
-   `MOM.Named_Object` provides the framework for defining essential classes
-   uniquely identified by a simple unstructured :attr:`name`.
-
-   It is based on :class:`~_MOM.Object.Object`.
 
 """
 

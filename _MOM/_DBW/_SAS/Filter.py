@@ -51,6 +51,7 @@
 #    26-Jan-2013 (MG) Handle cached role queries
 #    31-Jan-2013 (MG) Bugfixing
 #    28-May-2013 (CT) Remove `type_name` from `SAS_Attr_Map`
+#     8-Jul-2013 (CT) Use `.op_name`.not home-grown code
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,8 @@ def _sa_filter (self, SAQ) :
         col            = columns [0]
         _sa_filter     = getattr (col, "_sa_filter", None)
         if _sa_filter :
+            ### XXX this clause seems to be dead code
+            ###     None of the tests comes through here XXX
             aj, ac = _sa_filter ()
             columns.extend      (ac)
             joins.extend        (aj)
@@ -89,7 +92,7 @@ def _sa_filter (self, SAQ) :
         ### if the column is not in the table the SAQ object is linked to ->
         ### add a join to correct table as well
         elif getattr (col, "table", SAQ._SA_TABLE) != SAQ._SA_TABLE :
-           joins.append ((SAQ._SA_TABLE, col.table, None, False))
+            joins.append ((SAQ._SA_TABLE, col.table, None, False))
     return joins, columns
 # end def _sa_filter
 
@@ -127,10 +130,7 @@ def _sa_filter (self, SAQ) :
 TFL._Filter_Q_.predicate_precious_p = True
 @TFL.Add_To_Class ("_sa_filter", TFL.Filter_And, TFL.Filter_Or, TFL.Filter_Not)
 def _sa_filter (self, SAQ) :
-    sa_exp = getattr \
-        ( expression
-        , "%s_" % (self.__class__.__name__.rsplit ("_",1) [-1].lower (), )
-        )
+    sa_exp = getattr (expression, self.op_name + "_")
     joins  = []
     clause = []
     for p in self.predicates :

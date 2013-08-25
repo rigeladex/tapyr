@@ -67,7 +67,7 @@
 #     3-Aug-2012 (CT) Use `Ref_Req_Map`, not `link_map`
 #    11-Oct-2012 (CT) Add test for `signified`, import `MOM.Attr.Position`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
-#     6-Dec-2012 (CT) Add attributes `creation_change`, ...
+#     6-Dec-2012 (CT) Add attributes `creation`, ...
 #    23-Jan-2013 (MG) Use `last_change` instead of `max_cid` in some tests
 #    25-Feb-2013 (CT) Replace `up_ex_q.auto_up_depends` by `query_preconditions`
 #                     add tests for `up_ex_q`
@@ -114,6 +114,24 @@ Version = Product_Version \
         , comp_min        = 0
         )
     )
+
+class Named_Object (MOM.Object) :
+    """Common base class for essential named objects of MOM."""
+
+    is_partial            = True
+
+    class _Attributes (MOM.Object._Attributes) :
+
+        class name (A_Name) :
+            """Unique name of the object."""
+
+            kind        = Attr.Primary
+
+        # end class name
+
+    # end class _Attributes
+
+# end class Named_Object
 
 _Ancestor_Essence = MOM.Object
 
@@ -193,7 +211,7 @@ class Person (_Ancestor_Essence) :
 
 # end class Person
 
-_Ancestor_Essence = MOM.Named_Object
+_Ancestor_Essence = Named_Object
 
 class Rodent (_Ancestor_Essence) :
     """Model a rodent of the Better Mouse Trap application."""
@@ -275,7 +293,7 @@ class Otter (_Ancestor_Essence) :
 
 # end class Otter
 
-_Ancestor_Essence = MOM.Named_Object
+_Ancestor_Essence = Named_Object
 
 class Trap (_Ancestor_Essence) :
     """Model a trap of the Better Mouse Trap application."""
@@ -750,11 +768,9 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
         return (left, right, location), kw
 
     >>> for et in apt._T_Extension :
-    ...   if issubclass (et, MOM.An_Entity) :
+    ...   if issubclass (et, MOM.An_Entity) and et.signified :
     ...     print "***", et.type_name, "***", et.usr_sig
     ...     print et.signified and et.signified.source_code.rstrip ()
-    *** MOM.An_Entity *** ()
-    None
     *** MOM.Date_Interval *** ('start', 'finish')
     def signified (cls, start = undefined, finish = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
@@ -766,10 +782,6 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     *** MOM.Date_Interval_N *** ('start', 'finish')
     def signified (cls, start = undefined, finish = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
-        return kw
-    *** MOM._Interval_ *** ('lower', 'upper')
-    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
     *** MOM.Float_Interval *** (u'lower', u'upper')
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
@@ -791,11 +803,13 @@ Each entity_type knows about its children:
     ...     print et.type_name
     ...     print "   ", sorted (et.children)
     MOM.Entity
-        ['MOM.An_Entity', 'MOM.Id_Entity']
+        ['MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity']
     MOM.An_Entity
         ['MOM.Date_Interval', 'MOM.Position', 'MOM._Interval_']
     MOM.Id_Entity
         ['MOM.Link', 'MOM.Object']
+    MOM.MD_Entity
+        ['MOM.MD_Change']
     MOM.Link
         ['MOM.Link1', 'MOM._MOM_Link_n_']
     MOM.Link1
@@ -806,12 +820,12 @@ Each entity_type knows about its children:
         ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent_in_Trap']
     MOM.Object
         ['BMT.Location', 'BMT.Person', 'MOM.Named_Object']
-    MOM.Named_Object
-        ['BMT.Rodent', 'BMT.Trap']
     MOM.Date_Interval
         ['MOM.Date_Interval_C', 'MOM.Date_Interval_N']
     MOM._Interval_
         ['MOM.Float_Interval', 'MOM.Frequency_Interval']
+    MOM.Named_Object
+        ['BMT.Rodent', 'BMT.Trap']
     BMT.Rodent
         ['BMT.Mouse', 'BMT.Rat']
     BMT.Mouse
@@ -827,8 +841,11 @@ Each entity_type knows about its children:
     ...     print "   ", sorted (et.children)
     ...     print "   ", sorted (et.children_np)
     MOM.Entity
-        ['MOM.An_Entity', 'MOM.Id_Entity']
-        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM.Position', 'MOM._Interval_']
+        ['MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.MD_Change', 'MOM.Position']
+    MOM.An_Entity
+        ['MOM.Date_Interval', 'MOM.Position', 'MOM._Interval_']
+        ['MOM.Date_Interval', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Position']
     MOM.Id_Entity
         ['MOM.Link', 'MOM.Object']
         ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -872,7 +889,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Role_Ref `catcher`, String `color`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Name `name`, Surrogate `pid`, Link_Ref_List `sickness`, Link_Ref `trap_link`, Link_Ref_List `trap_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `weight`, Boolean `x_locked`]
+    [Blob `FO`, Role_Ref `catcher`, String `color`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Name `name`, Surrogate `pid`, Link_Ref_List `sickness`, Link_Ref `trap_link`, Link_Ref_List `trap_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `weight`, Boolean `x_locked`]
 
     >>> last_name_prop = ET_Person.attr_prop ("last_name")
     >>> last_name_prop.name, last_name_prop.ui_name
@@ -889,13 +906,13 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Supertrap._Attributes._own_names)
     ['ui_display', 'weights']
     >>> sorted (ET_Trap._Attributes._names)
-    ['FO', 'catch', 'created_by', 'creation_change', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['FO', 'catch', 'created_by', 'creation_change', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
+    ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Blob `creation_change`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Blob `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
+    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
 
     >>> print formatted1 (sorted (ET_Id_Entity.relevant_roots))
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -916,19 +933,20 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> print formatted1 (sorted (apt.etypes))
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM.Position', 'MOM._Interval_', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.MD_Change', 'MOM.MD_Entity', 'MOM.Named_Object', 'MOM.Object', 'MOM.Position', 'MOM._Interval_', 'MOM._MOM_Link_n_']
     >>> print formatted1 ([t.type_name for t in apt._T_Extension])
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Position', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity', 'MOM.MD_Change', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Position', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
+    MOM.MD_Entity                       ()
+    MOM.MD_Change                       ()
     MOM.Link                            ('left',)
     MOM.Link1                           ('left',)
     MOM._MOM_Link_n_                    ('left', 'right')
     MOM.Link2                           ('left', 'right')
     MOM.Link3                           ('left', 'middle', 'right')
     MOM.Object                          ()
-    MOM.Named_Object                    ('name',)
     MOM.Date_Interval                   ()
     MOM.Date_Interval_C                 ()
     MOM.Date_Interval_N                 ()
@@ -936,6 +954,7 @@ The app-type specific entity-types are ready to be used by
     MOM.Float_Interval                  ()
     MOM.Frequency_Interval              ()
     MOM.Position                        ()
+    MOM.Named_Object                    ('name',)
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -953,7 +972,11 @@ The app-type specific entity-types are ready to be used by
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%s%%s    %%s" %% (t.type_name, NL, t.sorted_by.criteria)
     MOM.Id_Entity
-        ('tn_pid',)
+        ('type_name', 'pid')
+    MOM.MD_Entity
+        ()
+    MOM.MD_Change
+        (u'-cid',)
     MOM.Link
         ('left',)
     MOM.Link1
@@ -965,9 +988,7 @@ The app-type specific entity-types are ready to be used by
     MOM.Link3
         ('left', 'middle', 'right')
     MOM.Object
-        ('tn_pid',)
-    MOM.Named_Object
-        ('name',)
+        ('type_name', 'pid')
     MOM.Date_Interval
         ('start', 'finish')
     MOM.Date_Interval_C
@@ -982,6 +1003,8 @@ The app-type specific entity-types are ready to be used by
         (u'lower', u'upper')
     MOM.Position
         ('lat', 'lon', 'height')
+    MOM.Named_Object
+        ('name',)
     BMT.Location
         ('lon', 'lat')
     BMT.Person
@@ -1053,6 +1076,8 @@ The app-type specific entity-types are ready to be used by
               BMT.Supertrap
           BMT.Location
           BMT.Person
+      MOM.MD_Entity
+        MOM.MD_Change
 
 Scope
 -----
@@ -1626,8 +1651,6 @@ Attribute queries
     [BMT.Trap (u'x', 1), BMT.Trap (u'y', 1)]
     >>> scope.BMT.Trap.query_s (Q.serial_no %% 2).all ()
     [BMT.Trap (u'x', 1), BMT.Trap (u'y', 1), BMT.Trap (u'z', 3)]
-    >>> scope.BMT.Trap.query_s (Q.serial_no %% 2 == 0).all ()
-    [BMT.Trap (u'x', 2), BMT.Trap (u'y', 2)]
 
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight))
     (42.0, 42.0)
@@ -1841,7 +1864,7 @@ Replaying changes
 
     >>> t3.max_weight = 25
     >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
-    [(('BMT.Trap', (u'y', u'1', 'BMT.Trap')), {'max_weight': ((25.0,), u'<Missing>')})]
+    [(('BMT.Trap', (u'y', u'1', 'BMT.Trap')), {'max_weight': ((25.0,), (None,))})]
     >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
     1
     >>> sorted (scope.user_diff (scop2, ignore = ["last_cid"]).iteritems ())
@@ -1943,27 +1966,6 @@ Primary key attributes
     Invariants: Condition `name_not_empty` : name is not None and name != ''
         name = ''
 
-Rollback of uncommited changes
-------------------------------
-
-    >>> scope.changes_to_save
-    2
-    >>> scope.commit ()
-    >>> scope.changes_to_save, scope.ems.max_cid ### before rollback
-    (0, 50)
-    >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
-    >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
-    >>> rbl = scope.BMT.Rodent_in_Trap (rbm, rbt)
-    >>> scope.changes_to_save, scope.ems.max_cid
-    (3, 53)
-    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
-    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
-    >>> scope.rollback ()
-    >>> scope.changes_to_save, last_change (scope).cid ### after rollback
-    (0, 50)
-    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
-    []
-
 Auto-updating attributes
 -------------------------
 
@@ -2037,10 +2039,15 @@ Setting attribute values with Queries
     >>> sorted (scope.BMT.Trap.query (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
     [(2, 5.0, 10.0), (3, None, None)]
 
-    >>> scope.BMT.Trap.query_s (Q.serial_no != None).set (max_weight = 25)
+    >>> for x in scope.BMT.Trap.query_s (Q.serial_no != None):
+    ...     _ = x.set (max_weight = 25)
     >>> sorted (scope.BMT.Trap.query (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
     [(2, 25.0, 50.0), (3, 25.0, 75.0)]
 
+    >>> scope.commit ()
+
+    >>> sorted (scope.BMT.Trap.query (Q.serial_no != None).attrs (Q.serial_no, Q.max_weight, Q.up_ex_q))
+    [(2, 25.0, 50.0), (3, 25.0, 75.0)]
 
 """
 

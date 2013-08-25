@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jun-2013 (CT) Creation
+#     1-Aug-2013 (CT) Add `test_no_reuse`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,9 @@ _test_map = """
     Date_Time_Interval `validity`
     String `desc`
     Date-Time `revocation_date`
+    Rev_Ref `creation`
     Boolean `electric`
+    Rev_Ref `last_change`
     Int `last_cid`
     Surrogate `pid`
     String `type_name`
@@ -58,16 +61,73 @@ _test_map = """
     Boolean `alive`
 
     >>> sorted ((k, t.type_name) for k, t in pyk.iteritems (scope.app_type.surrogate_t_map))
-    [(1, 'MOM.Id_Entity'), (2, 'Auth.Certificate')]
+    [(1, 'MOM.Id_Entity'), (2, 'MOM.MD_Change'), (3, 'Auth.Certificate')]
 
     >>> sorted ((str (k), a) for k, a in pyk.iteritems (scope.app_type.surrogate_map))
-    [('Auth.Certificate.cert_id', Surrogate `cert_id`), ('MOM.Id_Entity.pid', Surrogate `pid`)]
+    [('Auth.Certificate.cert_id', Surrogate `cert_id`), ('MOM.Id_Entity.pid', Surrogate `pid`), ('MOM.MD_Change.cid', Surrogate `cid`)]
+
+"""
+
+_test_no_reuse = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> SRM = scope.SRM
+    >>> bc = SRM.Boat_Class ("Optimist", max_crew = 2)
+    >>> b1 = SRM.Boat       (bc, 1, "AUT")
+
+    >>> int (bc.pid), int (b1.pid)
+    (1, 2)
+
+    >>> scope.ems.pm.reserve (None, 100)
+    100
+
+    >>> b2 = SRM.Boat (bc, 2, "AUT")
+    >>> int (b2.pid)
+    101
+
+    >>> scope.commit () ### 1
+
+    >>> scope.max_cid, scope.max_pid ### after commit 1
+    (3, 101)
+
+    >>> b3 = SRM.Boat (bc, 3, "AUT") ### 1
+    >>> int (b3.pid)
+    102
+
+    >>> b1.last_cid ### 1 before change
+    2
+    >>> _ = b1.set (sail_number = 42) ### 1
+    >>> b1.last_cid ### 1 after change
+    5
+
+    >>> scope.max_cid, scope.max_pid ### before rollback 2
+    (5, 102)
+
+    >>> scope.rollback () ### 2
+
+    >>> scope.max_cid, scope.max_pid ### after rollback 2
+    (5, 102)
+
+    >>> b3 = SRM.Boat (bc, 3, "AUT") ### 2
+    >>> int (b3.pid)
+    103
+
+    >>> b1.last_cid ### 2 before change
+    2
+    >>> _ = b1.set (sail_number = 42) ## 2
+    >>> b1.last_cid ### 2 after change
+    7
+
+    >>> scope.max_cid, scope.max_pid ### after changes after rollback 2
+    (7, 103)
 
 """
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( test_map = _test_map
+        ( test_map      = _test_map
+        , test_no_reuse = _test_no_reuse
         )
     )
 

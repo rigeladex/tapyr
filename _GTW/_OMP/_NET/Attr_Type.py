@@ -41,9 +41,11 @@
 #    24-Sep-2012 (RS) Move `SAS` specific stuff to `SAS_Attr_Type`
 #    10-Oct-2012 (CT) Add `PNS` to `IP_Address`
 #    12-Oct-2012 (RS) Add `code_format`
-#     5-Mar-2013 (CT) Add `sort_key_address`
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    13-Jun-2013 (CT) Add `pns_alias`
+#     2-Aug-2013 (CT) Use `A_Int.max_value...`, not literals
+#     2-Aug-2013 (CT) Add import callback for `_GTW._OMP._NET.SAW`, `.SAW_PG`
+#     6-Aug-2013 (CT) Remove composite attributes, aka, major surgery
 #    ««revision-date»»···
 #--
 
@@ -54,6 +56,7 @@ from   _MOM.import_MOM       import _A_Composite_, _A_String_
 
 from   _GTW                  import GTW
 
+from   _TFL.pyk              import pyk
 from   _TFL.I18N             import _
 from   _TFL.Regexp           import Regexp, re
 
@@ -65,7 +68,7 @@ import _GTW._OMP._NET
 
 import _TFL.Sorted_By
 
-class _A_IP_Address_ (A_Attr_Type) :
+class _A_CIDR_ (A_Attr_Type) :
     """Model abstract address of IP network."""
 
     P_Type      = R_IP_Address
@@ -96,24 +99,16 @@ class _A_IP_Address_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
+        if isinstance (value, pyk.string_types) :
+            value = soc.P_Type (value)
         if not isinstance (value, R_IP_Address) :
-            raise TypeError, "Invalid type for cooked -- forgot `raw = True`?"
+            raise TypeError ("Invalid type for cooked : got %r" % (value, ))
         return value
     # end def cooked
 
-# end class _A_IP_Address_
+# end class _A_CIDR_
 
-class _A_IP4_Address_ (_A_IP_Address_) :
-    """Models an address in a IP4 network."""
-    ### MGL: Use inet type for the _A_IP4_Address_
-
-    P_Type            = R_IP4_Address
-    example           = "192.168.42.137"
-    typ               = "IP4-address"
-    max_length        = 15
-    syntax            = _ \
-        ( u"IP4 address must contain 4 decimal octets separated by `.`."
-        )
+class _A_IP_Address_ (_A_CIDR_) :
 
     def check_syntax (self, obj, val) :
         if val and val.mask != self.P_Type.bitlen :
@@ -126,380 +121,69 @@ class _A_IP4_Address_ (_A_IP_Address_) :
                 )
     # end def check_syntax
 
-# end class _A_IP4_Address_
+# end class _A_IP_Address_
 
-class _A_IP4_Network_ (_A_IP_Address_) :
-    """Model a IP4 network in CIDRR notation."""
-
-    ### MGL: Use cidr type for the _A_IP4_Network_
+class A_IP4_Address (_A_IP_Address_) :
+    """Models an address in a IP4 network."""
 
     P_Type            = R_IP4_Address
-    _adr_type         = _A_IP4_Address_
+    example           = "192.168.42.137"
+    typ               = "IP4-address"
+    max_length        = 15
+    syntax            = _ \
+        ( "IP4 address must contain 4 decimal octets separated by `.`."
+        )
+
+# end class A_IP4_Address
+
+class A_IP4_Network (_A_CIDR_) :
+    """Model a IP4 network in CIDRR notation."""
+
+    P_Type            = R_IP4_Address
+    _adr_type         = A_IP4_Address
     _mask_len         = len (str (P_Type.bitlen))
     example           = "192.168.42.0/28"
     typ               = "IP4-network"
     max_length        = _adr_type.max_length + _mask_len + 1
     syntax            = _ \
-        ( u"IP4 network must contain 4 decimal octets separated by `.`, "
+        ( "IP4 network must contain 4 decimal octets separated by `.`, "
           "optionally followed by `/` and a number between 0 and 32."
           " The bits right of the netmask are automatically set to zero."
         )
 
-# end class _A_IP4_Network_
+# end class A_IP4_Network
 
-class _A_IP6_Address_ (_A_IP4_Address_) :
+class A_IP6_Address (_A_IP_Address_) :
     """Models an address in a IP6 network."""
-    ### MGL: Use inet type for the _A_IP6_Address_
 
     P_Type            = R_IP6_Address
     example           = "2001:db8:85a3::8a2e:370:7334"
     typ               = "IP6-address"
     max_length        = 39
     syntax            = _ \
-        ( u"IP6 address must contain up to 8 hexadecimal "
-          u"numbers with up to 4 digits separated by `:`. "
-          u"A single empty group `::` can be used."
+        ( "IP6 address must contain up to 8 hexadecimal "
+          "numbers with up to 4 digits separated by `:`. "
+          "A single empty group `::` can be used."
         )
 
-# end class _A_IP6_Address_
+# end class A_IP6_Address
 
-class _A_IP6_Network_ (_A_IP_Address_) :
+class A_IP6_Network (_A_CIDR_) :
     """Model a IP6 network in CIDRR notation."""
-    ### MGL: Use cidr type for the _A_IP6_Network_
 
     P_Type            = R_IP6_Address
-    _adr_type         = _A_IP6_Address_
+    _adr_type         = A_IP6_Address
     _mask_len         = len (str (P_Type.bitlen))
     example           = "2001:db8::/32"
     typ               = "IP6-network"
     max_length        = _adr_type.max_length + _mask_len + 1
     syntax            = _ \
-        ( u"IP6 network must contain up to 8 hexadecimal "
-          u"numbers with up to 4 digits separated by `:`. "
-          u"A single empty group `::` can be used."
-          u" This is optionally followed by `/` and a number between 0 and 128."
-          u" The bits right of the netmask are automatically set to zero."
+        ( "IP6 network must contain up to 8 hexadecimal "
+          "numbers with up to 4 digits separated by `:`. "
+          "A single empty group `::` can be used."
+          " This is optionally followed by `/` and a number between 0 and 128."
+          " The bits right of the netmask are automatically set to zero."
         )
-
-# end class _A_IP6_Network_
-
-_Ancestor_Essence = MOM.An_Entity
-
-class IP_Address (_Ancestor_Essence) :
-    """Model an abstract IP Address."""
-
-    PNS       = GTW.OMP.NET
-    pns_alias = "NET"
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class address (_A_IP_Address_) :
-            """IP Address"""
-
-            kind = Attr.Necessary
-
-        # end class address
-
-    # end class _Attributes
-
-    def __cmp__ (self, rhs) :
-        return cmp (self.address, rhs.address)
-    # end def cmp
-
-    def __contains__ (self, rhs) :
-        return rhs.address in self.address
-    # end def __contains__
-
-# end class IP_Address
-
-_Ancestor_Essence = IP_Address
-
-class IP4_Address (_Ancestor_Essence) :
-    """Model an IPv4 Address (without netmask)."""
-
-    sort_key_address = TFL.Sorted_By ("numeric_address")
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class address (_A_IP4_Address_) :
-            """IPv4 Address"""
-
-            kind = Attr.Necessary
-
-        # end class address
-
-        class numeric_address (A_Int) :
-            """ Numeric IP address. """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = -0x80000000
-            max_value       =  0x7FFFFFFF
-
-            def computed (self, obj) :
-                """ We must fit the 32 bit IP address into the signed
-                    integer range supported by databases. To correctly
-                    support comparison (later needed for checking if an
-                    address is contained within a network) we subtract
-                    0x80000000 -- so we don't use the usual 2-complement
-                    here!
-                """
-                a = obj.address.ip
-                return a - 0x80000000
-            # end def computed
-
-        # end class numeric_address
-
-    # end class _Attributes
-
-# end class IP4_Address
-
-_Ancestor_Essence = IP4_Address
-
-class IP4_Network (_Ancestor_Essence) :
-    """Model an IPv4 Network with netmask."""
-
-    sort_key_address = TFL.Sorted_By ("mask_len", "numeric_address")
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class address (_A_IP4_Network_) :
-            """IPv4 Network"""
-
-            kind = Attr.Necessary
-
-        # end class address
-
-        class mask_len (A_Int) :
-            """ Length of network mask. """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = 0
-            max_value       = 32
-
-            def computed (self, obj) :
-                return obj.address.mask
-            # end def computed
-
-        # end class mask_len
-
-        class upper_bound (A_Int) :
-            """ Numeric IP address of upper bound of network range. """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = -0x80000000
-            max_value       =  0x7FFFFFFF
-
-            def computed (self, obj) :
-                """ We must fit the 32 bit IP address into the signed
-                    integer range supported by databases. To correctly
-                    support comparison (later needed for checking if an
-                    address is contained within a network) we subtract
-                    0x80000000 -- so we don't use the usual 2-complement
-                    here!
-                """
-                a = obj.address._broadcast
-                return a - 0x80000000
-            # end def computed
-
-        # end class upper_bound
-
-    # end class _Attributes
-
-# end class IP4_Network
-
-_Ancestor_Essence = IP_Address
-
-class IP6_Address (_Ancestor_Essence) :
-    """Model an IPv6 Address (without netmask)."""
-
-    sort_key_address = TFL.Sorted_By \
-        ("numeric_address_high", "numeric_address_low")
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class address (_A_IP6_Address_) :
-            """IPv6 Address"""
-
-            kind = Attr.Necessary
-
-        # end class address
-
-        class numeric_address_low (A_Int) :
-            """ Numeric IP address -- low 64 bit.
-                We must fit the 64 bit part into the signed integer
-                range supported by databases. To correctly support
-                comparison (later needed for checking if an address is
-                contained within a network) we subtract the minimum
-                bigint -- so we don't use the usual 2-complement here!
-            """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = 0x8000000000000000
-            max_value       = 0x7FFFFFFFFFFFFFFF
-
-            def computed (self, obj) :
-                adr = obj.address.ip
-                return (adr & 0xFFFFFFFFFFFFFFFF) - 0x8000000000000000
-            # end def computed
-
-        # end class numeric_address_low
-
-        class numeric_address_high (A_Int) :
-            """ Numeric IP address -- high 64 bit.
-                We must fit the 64 bit part into the signed integer
-                range supported by databases. To correctly support
-                comparison (later needed for checking if an address is
-                contained within a network) we subtract the minimum
-                bigint -- so we don't use the usual 2-complement here!
-            """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = 0x8000000000000000
-            max_value       = 0x7FFFFFFFFFFFFFFF
-
-            def computed (self, obj) :
-                adr = obj.address.ip
-                return (adr >> 64) - 0x8000000000000000
-            # end def computed
-
-        # end class numeric_address_high
-
-    # end class _Attributes
-
-# end class IP6_Address
-
-_Ancestor_Essence = IP6_Address
-
-class IP6_Network (_Ancestor_Essence) :
-    """Model an IPv6 Network with netmask."""
-
-    sort_key_address = TFL.Sorted_By \
-        ("mask_len", "numeric_address_high", "numeric_address_low")
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class address (_A_IP6_Network_) :
-            """IPv6 Network"""
-
-            kind = Attr.Necessary
-
-        # end class address
-
-        class mask_len (A_Int) :
-            """ Length of network mask. """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = 0
-            max_value       = 128
-
-            def computed (self, obj) :
-                return obj.address.mask
-            # end def computed
-
-        # end class mask_len
-
-        class upper_bound_low (A_Int) :
-            """ Numeric IP address of upper bound of network range low 64 bit.
-                We must fit the 64 bit part into the signed integer
-                range supported by databases. To correctly support
-                comparison (later needed for checking if an address is
-                contained within a network) we subtract the minimum
-                bigint -- so we don't use the usual 2-complement here!
-            """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = 0x8000000000000000
-            max_value       = 0x7FFFFFFFFFFFFFFF
-
-            def computed (self, obj) :
-                a = obj.address._broadcast
-                return (a & 0xFFFFFFFFFFFFFFFF) - 0x8000000000000000
-            # end def computed
-
-        # end class numeric_address_high
-
-        class upper_bound_high (A_Int) :
-            """ Numeric IP address of upper bound of network range high 64 bit.
-                We must fit the 64 bit part into the signed integer
-                range supported by databases. To correctly support
-                comparison (later needed for checking if an address is
-                contained within a network) we subtract the minimum
-                bigint -- so we don't use the usual 2-complement here!
-            """
-
-            kind            = Attr.Internal
-            auto_up_depends = ("address", )
-            min_value       = 0x8000000000000000
-            max_value       = 0x7FFFFFFFFFFFFFFF
-
-            def computed (self, obj) :
-                a = obj.address._broadcast
-                return (a >> 64) - 0x8000000000000000
-            # end def computed
-
-        # end class numeric_address_high
-
-    # end class _Attributes
-
-# end class IP6_Network
-
-class _A_Composite_IP_Address_ (_A_Composite_) :
-
-    P_Type = IP_Address
-    typ    = "IP_Address"
-
-# end class _A_Composite_IP_Address_
-
-class A_IP4_Address (_A_Composite_IP_Address_) :
-    """IPv4 Address (without netmask)."""
-
-    P_Type           = IP4_Address
-    sort_key_address = P_Type.sort_key_address
-    typ              = "IP4_Address"
-
-# end class A_IP4_Address
-
-class A_IP4_Network (_A_Composite_IP_Address_) :
-    """IPv4 Address with netmask."""
-
-    P_Type           = IP4_Network
-    sort_key_address = P_Type.sort_key_address
-    typ              = "IP4_Network"
-
-# end class A_IP4_Network
-
-class A_IP6_Address (_A_Composite_IP_Address_) :
-    """IPv6 Address (without netmask)."""
-
-    P_Type           = IP6_Address
-    sort_key_address = P_Type.sort_key_address
-    typ              = "IP6_Address"
-
-# end class A_IP6_Address
-
-class A_IP6_Network (_A_Composite_IP_Address_) :
-    """IPv6 Address with netmask."""
-
-    P_Type           = IP6_Network
-    sort_key_address = P_Type.sort_key_address
-    typ              = "IP6_Network"
 
 # end class A_IP6_Network
 
@@ -523,14 +207,16 @@ class A_MAC_Address (Syntax_Re_Mixin, A_String) :
 
 # end class A_MAC_Address
 
-def _import_sas_mixins (module) :
-    import _GTW._OMP._NET.SAS_Attr_Type
-# end def _import_sas_mixins
+def _import_saw (module) :
+    import _GTW._OMP._NET.SAW
+# end def _import_saw
 
-GTW.OMP.NET._Add_Import_Callback \
-    ("_MOM._DBW._SAS.Attr_Type", _import_sas_mixins)
-GTW.OMP.NET._Add_Import_Callback \
-    ("_MOM._DBW._SAS.Query",     _import_sas_mixins)
+def _import_saw_pg (module) :
+    import _GTW._OMP._NET.SAW_PG
+# end def _import_saw_pg
+
+GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAW.Manager",     _import_saw)
+GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAW._PG.Manager", _import_saw_pg)
 
 __all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -27,11 +27,13 @@
 #
 # Revision Dates
 #     5-Jul-2012 (CT) Creation
+#    18-Jun-2013 (CT) Add `import_MOM`, fix `root3._template_names` output
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
+from   _MOM.import_MOM           import *
 from   _GTW._RST._TOP.import_TOP import *
 
 from   _TFL.Formatter            import Formatter, formatted_1
@@ -94,7 +96,7 @@ __doc__ = """
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
     >>> sorted (root3._template_names)
-    [u'account_change_email', u'account_change_password', u'account_register', u'account_reset_password', u'console', u'e_type_admin', u'e_type_afs', u'e_type_aggregator', u'e_type_delete', u'gallery', u'login', u'photo', u'regatta_calendar', u'regatta_page', u'regatta_registration', u'regatta_result', u'regatta_result_teamrace', u'site_admin']
+    [u'account_change_email', u'account_change_password', u'account_make_cert', u'account_register', u'account_reset_password', u'calendar', u'calendar_day', u'console', u'e_type_admin', u'e_type_afs', u'e_type_aggregator', u'e_type_delete', u'gallery', u'login', u'photo', u'regatta_calendar', u'regatta_page', u'regatta_registration', u'regatta_result', u'regatta_result_teamrace', u'site_admin']
 
     >>> auth = root3.SC.Auth
     >>> auth

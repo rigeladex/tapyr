@@ -42,13 +42,14 @@
 #    28-May-2013 (CT) Use `type_name`, not `Type_Name`, as column name
 #     6-Jun-2013 (CT) Fix argument to `ValueError` in `reserve`
 #     6-Jun-2013 (CT) Improve exception message from `query`
+#    19-Jun-2013 (CT) Import _MOM._DBW._SAS, not _MOM._DBW._HPS
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 from   _TFL       import TFL
 
-import _MOM._DBW._HPS
+import _MOM._DBW._SAS
 import _MOM._DBW.Pid_Manager
 
 class Pid_Manager (MOM.DBW.Pid_Manager) :

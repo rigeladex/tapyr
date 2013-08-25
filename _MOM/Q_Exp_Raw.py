@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -29,6 +29,10 @@
 #    19-Jul-2011 (CT) Creation
 #    19-Jul-2011 (MG) `_name` converted to `Once_Property`
 #    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
+#     8-Jul-2013 (CT) Derive `_RAW_DESC_` from `object`, not `property`
+#    19-Jul-2013 (CT) Derive `Raw_Attr_Query` from `Attr_Query`;
+#                     set `Q_Exp.Base.RAW` to `Raw_Attr_Query ()`;
+#                     remove `_RAW_` and `_RAW_DESC_` (nice simplification)
 #    ««revision-date»»···
 #--
 
@@ -41,32 +45,20 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _MOM.Entity
 import _TFL.Q_Exp
 
-class _RAW_ (TFL.Meta.Object) :
-    """Query generator for raw value queries."""
-
-    def __init__ (self, Q) :
-        self.Q = Q
-    # end def __init__
+class Raw_Attr_Query (TFL.Attr_Query) :
+    """Syntactic sugar for creating Filter objects based on raw attribute
+       queries.
+    """
 
     def __getattr__ (self, name) :
-        return self._Get_Raw_ (self.Q, name)
+        return self._Get_Raw_ (self, name)
     # end def __getattr__
 
-# end class _RAW_
+# end class Raw_Attr_Query
 
-class _RAW_DESC_ (property) :
+TFL.Q_Exp.Base.RAW = Raw_Attr_Query ()
 
-    def __get__ (self, obj, cls) :
-        if obj is None :
-            return self
-        return _RAW_ (obj)
-    # end def __get__
-
-# end class _RAW_DESC_
-
-TFL.Q_Exp.Base.RAW = _RAW_DESC_ ()
-
-@TFL.Add_New_Method (_RAW_)
+@TFL.Add_New_Method (Raw_Attr_Query)
 class _Get_Raw_ (TFL.Q_Exp._Get_) :
     """Query getter for raw values."""
 
@@ -89,7 +81,10 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
         if hasattr (obj, "raw_attr") and key in obj.attributes :
             return obj.raw_attr (key)
         else :
-            return unicode (getattr (obj, key))
+            result = getattr (obj, key)
+            if isinstance (obj, MOM.Entity) :
+                result = unicode (result)
+            return result
     # end def _getter
 
     @Once_Property
@@ -109,4 +104,6 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
 
 # end class _Get_Raw_
 
+if __name__ != "__main__" :
+    MOM._Export_Module ()
 ### __END__ MOM.Q_Exp_Raw

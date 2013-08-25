@@ -29,6 +29,7 @@
 #    11-Mar-2013 (CT) Creation (factored from MOM.Attr.A_Attr_Type)
 #     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
 #    14-Jun-2013 (CT) Use `dyn_doc_p` to `fix_doc`
+#    14-Jun-2013 (CT) Add `DET`, `DET_Base`, and `DET_Root`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,9 @@ class _Prop_Type_ (TFL.Meta.Object) :
     _real_name          = "Type"
     _sets_to_combine    = ("_doc_properties", )
     _doc_properties     = ("description", "explanation")
+
+    ### set by MOM.Meta.M_Prop_Spec
+    DET = DET_Base = DET_Root = None
 
     @TFL.Meta.Class_and_Instance_Method
     def fix_doc (soc, et_scope) :

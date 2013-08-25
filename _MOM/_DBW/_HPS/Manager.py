@@ -44,6 +44,7 @@
 #    22-Jun-2012 (MG) `close_connections` added
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
 #     6-Jun-2013 (CT) Add `max_surrs`
+#    24-Jun-2013 (CT) Factor `close_connections`, `rollback` to `DBW._Manager_`
 #    ««revision-date»»···
 #--
 
@@ -106,6 +107,7 @@ class Manager (MOM.DBW._Manager_) :
 
     db_meta_data  = TFL.Meta.Alias_Property ("info")
     pcm           = TFL.Meta.Alias_Property ("store")
+    readonly      = property (TFL.Getter.info.readonly)
 
     type_name     = "HPS"
 
@@ -128,10 +130,6 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.close ()
     # end def close
-
-    def close_connections (self) :
-        pass
-    # end def close_connections
 
     def commit (self) :
         if self.store is not None :
@@ -166,10 +164,6 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.load_objects ()
     # end def load_objects
-
-    def rollback (self, keep_zombies = False) :
-        pass ### Nothing needs to be done here
-    # end def rollback
 
 # end class Manager
 

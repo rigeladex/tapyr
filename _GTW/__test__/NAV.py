@@ -221,7 +221,7 @@ _test_qr = """
     >>> crad.E_Type.AQ.affiliate.QR
     Q.affiliate
     >>> tuple (a.QR for a in crad.E_Type.AQ.affiliate.Attrs)
-    (Q.affiliate.__raw_name, Q.affiliate.__raw_registered_in, Q.affiliate.lifetime, Q.affiliate.__raw_short_name, Q.affiliate.affiliate, Q.affiliate.owner, Q.affiliate.electric, Q.affiliate.last_cid, Q.affiliate.pid, Q.affiliate.type_name)
+    (Q.affiliate.__raw_name, Q.affiliate.__raw_registered_in, Q.affiliate.lifetime, Q.affiliate.__raw_short_name, Q.affiliate.affiliate, Q.affiliate.owner, Q.affiliate.last_cid, Q.affiliate.pid, Q.affiliate.type_name)
 
     >>> print (formatted (QR.Filter_Atoms (QR.Filter (crad.E_Type, "affiliate"))))
     ( Record
@@ -421,18 +421,6 @@ _test_qr = """
           , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
           , ui_type_name = 'Subject'
-          )
-        , Record
-          ( attr = Boolean `electric`
-          , choices =
-              [ 'no'
-              , 'yes'
-              ]
-          , full_name = 'affiliate.electric'
-          , id = 'affiliate__electric'
-          , name = 'electric'
-          , sig_key = 1
-          , ui_name = 'Affiliate/Electric'
           )
         , Record
           ( attr = Int `last_cid`
@@ -829,18 +817,6 @@ _test_qr = """
             , ui_type_name = 'Subject'
             )
           , Record
-            ( attr = Boolean `electric`
-            , choices =
-                [ 'no'
-                , 'yes'
-                ]
-            , full_name = 'affiliate.electric'
-            , id = 'affiliate__electric'
-            , name = 'electric'
-            , sig_key = 1
-            , ui_name = 'Affiliate/Electric'
-            )
-          , Record
             ( attr = Int `last_cid`
             , full_name = 'affiliate.last_cid'
             , id = 'affiliate__last_cid'
@@ -960,15 +936,6 @@ _test_qr = """
       , type_name = 'PAP.Subject'
       , ui_name = 'Owner'
       , ui_type_name = 'Subject'
-      )
-    , Record
-      ( attr = Boolean `electric`
-      , choices = <Recursion on list...>
-      , full_name = 'electric'
-      , id = 'electric'
-      , name = 'electric'
-      , sig_key = 1
-      , ui_name = 'Electric'
       )
     , Record
       ( attr = Int `last_cid`
@@ -1177,18 +1144,6 @@ _test_esf = """
           , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
           , ui_type_name = 'Subject'
-          )
-        , Record
-          ( attr = Boolean `electric`
-          , choices =
-              [ 'no'
-              , 'yes'
-              ]
-          , full_name = 'affiliate.electric'
-          , id = 'affiliate__electric'
-          , name = 'electric'
-          , sig_key = 1
-          , ui_name = 'Affiliate/Electric'
           )
         , Record
           ( attr = Int `last_cid`
@@ -1431,25 +1386,6 @@ _test_esf = """
           )
       , sig_key = 0
       , ui_name = 'Lifetime/Finish'
-      , value = None
-      )
-    , Record
-      ( AQ = <electric.AQ [Attr.Type.Querier Boolean]>
-      , attr = Boolean `electric`
-      , choices =
-          [ 'no'
-          , 'yes'
-          ]
-      , edit = None
-      , full_name = 'electric'
-      , id = 'electric___AC'
-      , name = 'electric___AC'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = 'auto-complete'
-          )
-      , sig_key = 1
-      , ui_name = 'Electric'
       , value = None
       )
     , Record

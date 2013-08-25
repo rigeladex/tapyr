@@ -32,8 +32,9 @@
 #     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
 #    19-Mar-2013 (CT) Add test for `AQ` for recursive attribute `affiliate`
 #    19-Mar-2013 (CT) Add test for `AQ.Atoms`, `AQ.Unwrapped_Atoms`
-#    11-May-2013 (CT) Add `_test_entity_attr`
+#    11-May-2013 (CT) Add `test_entity_attr`
 #    15-May-2013 (CT) Add test for `link_ref_attr`
+#    24-Jul-2013 (CT) Add `test_saw`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,9 @@ _test_code = """
     >>> PAP.Company_P.query (sort_key = TFL.Sorted_By ("pid")).count ()
     1
 
+    >>> PAP.Person.query ().count ()
+    1
+
     >>> PAP.Person.query (sort_key = PAP.Person.sorted_by_epk).count ()
     1
     >>> PAP.Biz_Man.query (sort_key = PAP.Biz_Man.sorted_by_epk).count ()
@@ -99,6 +103,13 @@ _test_code = """
 
     >>> print (PAP.Company.E_Type.attr_prop ("name").description)
     Name of company.
+
+    >>> for s in PAP.Subject.query ().order_by (TFL.Sorted_By ("type_name", "pid")) :
+    ...     print (s.ui_repr)
+    PAP.Association (u'Towel Carriers Association',)
+    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
+    PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
+    PAP.Person (u'Doe', u'Jane', u'', u'')
 
     >>> for s in PAP.Subject.query_s () :
     ...     print (s.ui_repr)
@@ -146,11 +157,9 @@ _test_code = """
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <owner.left.salutation.AQ [Attr.Type.Querier String]> -----
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
-    <owner.left.electric.AQ [Attr.Type.Querier Boolean]> -----
     <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
     <owner.left.type_name.AQ [Attr.Type.Querier String]> -----
-    <owner.electric.AQ [Attr.Type.Querier Boolean]> -----
     <owner.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <owner.pid.AQ [Attr.Type.Querier Ckd]> -----
     <owner.type_name.AQ [Attr.Type.Querier String]> -----
@@ -174,11 +183,9 @@ _test_code = """
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.left.salutation.AQ [Attr.Type.Querier String]> -----
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.owner.left.electric.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.left.type_name.AQ [Attr.Type.Querier String]> -----
-    <affiliate.owner.electric.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.pid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.type_name.AQ [Attr.Type.Querier String]> -----
@@ -189,11 +196,9 @@ _test_code = """
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.short_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
-    <affiliate.electric.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.pid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.type_name.AQ [Attr.Type.Querier String]> -----
-    <electric.AQ [Attr.Type.Querier Boolean]> -----
     <last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <pid.AQ [Attr.Type.Querier Ckd]> -----
     <type_name.AQ [Attr.Type.Querier String]> -----
@@ -213,11 +218,9 @@ _test_code = """
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <owner.left.salutation.AQ [Attr.Type.Querier String]>
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]>
-    <owner.left.electric.AQ [Attr.Type.Querier Boolean]>
     <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <owner.left.pid.AQ [Attr.Type.Querier Ckd]>
     <owner.left.type_name.AQ [Attr.Type.Querier String]>
-    <owner.electric.AQ [Attr.Type.Querier Boolean]>
     <owner.last_cid.AQ [Attr.Type.Querier Ckd]>
     <owner.pid.AQ [Attr.Type.Querier Ckd]>
     <owner.type_name.AQ [Attr.Type.Querier String]>
@@ -236,11 +239,9 @@ _test_code = """
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <affiliate.owner.left.salutation.AQ [Attr.Type.Querier String]>
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.owner.left.electric.AQ [Attr.Type.Querier Boolean]>
     <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.owner.left.type_name.AQ [Attr.Type.Querier String]>
-    <affiliate.owner.electric.AQ [Attr.Type.Querier Boolean]>
     <affiliate.owner.last_cid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.owner.pid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.owner.type_name.AQ [Attr.Type.Querier String]>
@@ -249,11 +250,9 @@ _test_code = """
     <affiliate.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <affiliate.short_name.AQ [Attr.Type.Querier String]>
-    <affiliate.electric.AQ [Attr.Type.Querier Boolean]>
     <affiliate.last_cid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.pid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.type_name.AQ [Attr.Type.Querier String]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -275,7 +274,6 @@ _test_code = """
     <affiliate.owner.left.middle_name.AQ [Attr.Type.Querier String]>
     <affiliate.owner.left.title.AQ [Attr.Type.Querier String]>
     <affiliate.registered_in.AQ [Attr.Type.Querier String]>
-    <electric.AQ [Attr.Type.Querier Boolean]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
@@ -331,10 +329,6 @@ _test_code = """
                       , 'sig_key' : 0
                       , 'ui_name' : 'Sex'
                       }
-                    , { 'name' : 'electric'
-                      , 'sig_key' : 1
-                      , 'ui_name' : 'Electric'
-                      }
                     , { 'name' : 'last_cid'
                       , 'sig_key' : 0
                       , 'ui_name' : 'Last cid'
@@ -351,10 +345,6 @@ _test_code = """
                 , 'name' : 'left'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Man'
-                }
-              , { 'name' : 'electric'
-                , 'sig_key' : 1
-                , 'ui_name' : 'Electric'
                 }
               , { 'name' : 'last_cid'
                 , 'sig_key' : 0
@@ -449,10 +439,6 @@ _test_code = """
                             , 'sig_key' : 0
                             , 'ui_name' : 'Sex'
                             }
-                          , { 'name' : 'electric'
-                            , 'sig_key' : 1
-                            , 'ui_name' : 'Electric'
-                            }
                           , { 'name' : 'last_cid'
                             , 'sig_key' : 0
                             , 'ui_name' : 'Last cid'
@@ -469,10 +455,6 @@ _test_code = """
                       , 'name' : 'left'
                       , 'sig_key' : 2
                       , 'ui_name' : 'Man'
-                      }
-                    , { 'name' : 'electric'
-                      , 'sig_key' : 1
-                      , 'ui_name' : 'Electric'
                       }
                     , { 'name' : 'last_cid'
                       , 'sig_key' : 0
@@ -521,10 +503,6 @@ _test_code = """
                 , 'sig_key' : 2
                 , 'ui_name' : 'Affiliate'
                 }
-              , { 'name' : 'electric'
-                , 'sig_key' : 1
-                , 'ui_name' : 'Electric'
-                }
               , { 'name' : 'last_cid'
                 , 'sig_key' : 0
                 , 'ui_name' : 'Last cid'
@@ -541,10 +519,6 @@ _test_code = """
           , 'name' : 'affiliate'
           , 'sig_key' : 2
           , 'ui_name' : 'Affiliate'
-          }
-        , { 'name' : 'electric'
-          , 'sig_key' : 1
-          , 'ui_name' : 'Electric'
           }
         , { 'name' : 'last_cid'
           , 'sig_key' : 0
@@ -757,18 +731,6 @@ _test_code = """
                   , ui_name = 'Owner/Man/Sex'
                   )
                 , Record
-                  ( attr = Boolean `electric`
-                  , choices =
-                      [ 'no'
-                      , 'yes'
-                      ]
-                  , full_name = 'owner.left.electric'
-                  , id = 'owner__left__electric'
-                  , name = 'electric'
-                  , sig_key = 1
-                  , ui_name = 'Owner/Man/Electric'
-                  )
-                , Record
                   ( attr = Int `last_cid`
                   , full_name = 'owner.left.last_cid'
                   , id = 'owner__left__last_cid'
@@ -800,15 +762,6 @@ _test_code = """
             , type_name = 'PAP.Person'
             , ui_name = 'Owner/Man'
             , ui_type_name = 'Person'
-            )
-          , Record
-            ( attr = Boolean `electric`
-            , choices = <Recursion on list...>
-            , full_name = 'owner.electric'
-            , id = 'owner__electric'
-            , name = 'electric'
-            , sig_key = 1
-            , ui_name = 'Owner/Electric'
             )
           , Record
             ( attr = Int `last_cid`
@@ -997,15 +950,6 @@ _test_code = """
                         , ui_name = 'Affiliate/Owner/Man/Sex'
                         )
                       , Record
-                        ( attr = Boolean `electric`
-                        , choices = <Recursion on list...>
-                        , full_name = 'affiliate.owner.left.electric'
-                        , id = 'affiliate__owner__left__electric'
-                        , name = 'electric'
-                        , sig_key = 1
-                        , ui_name = 'Affiliate/Owner/Man/Electric'
-                        )
-                      , Record
                         ( attr = Int `last_cid`
                         , full_name = 'affiliate.owner.left.last_cid'
                         , id = 'affiliate__owner__left__last_cid'
@@ -1037,15 +981,6 @@ _test_code = """
                   , type_name = 'PAP.Person'
                   , ui_name = 'Affiliate/Owner/Man'
                   , ui_type_name = 'Person'
-                  )
-                , Record
-                  ( attr = Boolean `electric`
-                  , choices = <Recursion on list...>
-                  , full_name = 'affiliate.owner.electric'
-                  , id = 'affiliate__owner__electric'
-                  , name = 'electric'
-                  , sig_key = 1
-                  , ui_name = 'Affiliate/Owner/Electric'
                   )
                 , Record
                   ( attr = Int `last_cid`
@@ -1142,15 +1077,6 @@ _test_code = """
             , ui_type_name = 'Company_P'
             )
           , Record
-            ( attr = Boolean `electric`
-            , choices = <Recursion on list...>
-            , full_name = 'affiliate.electric'
-            , id = 'affiliate__electric'
-            , name = 'electric'
-            , sig_key = 1
-            , ui_name = 'Affiliate/Electric'
-            )
-          , Record
             ( attr = Int `last_cid`
             , full_name = 'affiliate.last_cid'
             , id = 'affiliate__last_cid'
@@ -1182,15 +1108,6 @@ _test_code = """
       , type_name = 'PAP.Company_P'
       , ui_name = 'Affiliate'
       , ui_type_name = 'Company_P'
-      )
-    , Record
-      ( attr = Boolean `electric`
-      , choices = <Recursion on list...>
-      , full_name = 'electric'
-      , id = 'electric'
-      , name = 'electric'
-      , sig_key = 1
-      , ui_name = 'Electric'
       )
     , Record
       ( attr = Int `last_cid`
@@ -1426,11 +1343,6 @@ _test_entity_attr = """
         recurrence                          query      EVT.Recurrence_Spec       EVT.Recurrence_Spec
     ....EVT.Event_occurs
         essence                             computed   MOM.Id_Entity
-    ...SWP.Link1
-    ....SWP.Clip_O
-        left                                primary    SWP.Object_PN             SWP.Clip_O
-    ....SWP.Picture
-        left                                primary    SWP.Gallery               SWP.Picture
     ...PAP.Link1
     ....PAP.Address_Position
         left                                primary    PAP.Address               PAP.Address_Position
@@ -1459,6 +1371,11 @@ _test_entity_attr = """
         boat_links                          query      SRM.Team_has_Boat_in_Rega SRM.Team_has_Boat_in_Regatta
         leader                              optional   PAP.Person
         left                                primary    SRM.Regatta_C             SRM.Team
+    ...SWP.Link1
+    ....SWP.Clip_O
+        left                                primary    SWP.Object_PN             SWP.Clip_O
+    ....SWP.Picture
+        left                                primary    SWP.Gallery               SWP.Picture
     ..MOM._MOM_Link_n_
     ...MOM.Link2
     ....Auth.Link2
@@ -1496,14 +1413,15 @@ _test_entity_attr = """
     .....SRM.Team_has_Boat_in_Regatta
         left                                primary    SRM.Team                  SRM.Team_has_Boat_in_Regatta
         right                               primary    SRM.Boat_in_Regatta       SRM.Team_has_Boat_in_Regatta
-    ...MOM.Link3
+    ...Auth._MOM_Link_n_
+    ...PAP._MOM_Link_n_
+    ...SRM._MOM_Link_n_
+    ..Auth.Link
+    ..EVT.Link
     ..PAP.Link
+    ..SRM.Link
+    ..SWP.Link
     .MOM.Object
-    ..MOM.Named_Object
-    ...Auth.Named_Object
-    ....Auth.Group
-        account_links                       query      Auth.Account_in_Group     Auth.Account_in_Group
-        accounts                            query      Auth.Account              Auth.Account_in_Group
     ..Auth.Object
     ...Auth._Account_
     ....Auth.Account
@@ -1520,8 +1438,46 @@ _test_entity_attr = """
         person                              query      PAP.Person                PAP.Person_has_Account
         person_link                         query      PAP.Person_has_Account    PAP.Person_has_Account
         person_links                        query      PAP.Person_has_Account    PAP.Person_has_Account
+    ...Auth.Group
+        account_links                       query      Auth.Account_in_Group     Auth.Account_in_Group
+        accounts                            query      Auth.Account              Auth.Account_in_Group
     ..EVT.Object
+    ..SWP.Object
+    ...SWP.Object_PN
+        clip_os                             query      SWP.Clip_O                SWP.Clip_O
+    ....SWP.Page
+        events                              query      EVT.Event                 EVT.Event
+    .....SRM.Page
+        event                               primary    SRM.Regatta_Event
+    ....SWP.Gallery
+        pictures                            query      SWP.Picture               SWP.Picture
     ..PAP.Object
+    ...PAP.Property
+        subject_links                       query      PAP.Subject_has_Property  PAP.Subject_has_Property
+    ....PAP.Address
+        association_links                   query      PAP.Association_has_Addre PAP.Association_has_Address
+        associations                        query      PAP.Association           PAP.Association_has_Address
+        companies                           query      PAP.Company               PAP.Company_has_Address
+        company_links                       query      PAP.Company_has_Address   PAP.Company_has_Address
+        gps                                 query      PAP.Address_Position      PAP.Address_Position
+        person_links                        query      PAP.Person_has_Address    PAP.Person_has_Address
+        persons                             query      PAP.Person                PAP.Person_has_Address
+        subject_links                       query      PAP.Subject_has_Address   PAP.Subject_has_Address
+    ....PAP.Email
+        association_links                   query      PAP.Association_has_Email PAP.Association_has_Email
+        company_links                       query      PAP.Company_has_Email     PAP.Company_has_Email
+        person_links                        query      PAP.Person_has_Email      PAP.Person_has_Email
+        subject_links                       query      PAP.Subject_has_Email     PAP.Subject_has_Email
+    ....PAP.Phone
+        association_links                   query      PAP.Association_has_Phone PAP.Association_has_Phone
+        company_links                       query      PAP.Company_has_Phone     PAP.Company_has_Phone
+        person_links                        query      PAP.Person_has_Phone      PAP.Person_has_Phone
+        subject_links                       query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
+    ....PAP.Url
+        association_links                   query      PAP.Association_has_Url   PAP.Association_has_Url
+        company_links                       query      PAP.Company_has_Url       PAP.Company_has_Url
+        person_links                        query      PAP.Person_has_Url        PAP.Person_has_Url
+        subject_links                       query      PAP.Subject_has_Url       PAP.Subject_has_Url
     ...PAP.Subject
         address_links                       query      PAP.Subject_has_Address   PAP.Subject_has_Address
         addresses                           query      PAP.Address               PAP.Subject_has_Address
@@ -1554,41 +1510,6 @@ _test_entity_attr = """
         phone_links                         query      PAP.Person_has_Phone      PAP.Person_has_Phone
         sailors                             query      SRM.Sailor                SRM.Sailor
         url_links                           query      PAP.Person_has_Url        PAP.Person_has_Url
-    ...PAP.Property
-        subject_links                       query      PAP.Subject_has_Property  PAP.Subject_has_Property
-    ....PAP.Address
-        association_links                   query      PAP.Association_has_Addre PAP.Association_has_Address
-        associations                        query      PAP.Association           PAP.Association_has_Address
-        companies                           query      PAP.Company               PAP.Company_has_Address
-        company_links                       query      PAP.Company_has_Address   PAP.Company_has_Address
-        gps                                 query      PAP.Address_Position      PAP.Address_Position
-        person_links                        query      PAP.Person_has_Address    PAP.Person_has_Address
-        persons                             query      PAP.Person                PAP.Person_has_Address
-        subject_links                       query      PAP.Subject_has_Address   PAP.Subject_has_Address
-    ....PAP.Email
-        association_links                   query      PAP.Association_has_Email PAP.Association_has_Email
-        company_links                       query      PAP.Company_has_Email     PAP.Company_has_Email
-        person_links                        query      PAP.Person_has_Email      PAP.Person_has_Email
-        subject_links                       query      PAP.Subject_has_Email     PAP.Subject_has_Email
-    ....PAP.Phone
-        association_links                   query      PAP.Association_has_Phone PAP.Association_has_Phone
-        company_links                       query      PAP.Company_has_Phone     PAP.Company_has_Phone
-        person_links                        query      PAP.Person_has_Phone      PAP.Person_has_Phone
-        subject_links                       query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
-    ....PAP.Url
-        association_links                   query      PAP.Association_has_Url   PAP.Association_has_Url
-        company_links                       query      PAP.Company_has_Url       PAP.Company_has_Url
-        person_links                        query      PAP.Person_has_Url        PAP.Person_has_Url
-        subject_links                       query      PAP.Subject_has_Url       PAP.Subject_has_Url
-    ..SWP.Object
-    ...SWP.Object_PN
-        clip_os                             query      SWP.Clip_O                SWP.Clip_O
-    ....SWP.Page
-        events                              query      EVT.Event                 EVT.Event
-    .....SRM.Page
-        event                               primary    SRM.Regatta_Event
-    ....SWP.Gallery
-        pictures                            query      SWP.Picture               SWP.Picture
     ..SRM.Object
     ...SRM._Boat_Class_
     ....SRM.Boat_Class
@@ -1597,8 +1518,8 @@ _test_entity_attr = """
         regattas                            query      SRM.Regatta               SRM.Regatta
     .Auth.Id_Entity
     .EVT.Id_Entity
-    .PAP.Id_Entity
     .SWP.Id_Entity
+    .PAP.Id_Entity
     .SRM.Id_Entity
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
@@ -1618,8 +1539,8 @@ _test_entity_attr = """
         rules
     PAP.Address
         subject_links
-        person_links
         company_links
+        person_links
         association_links
     PAP.Association
         property_links
@@ -1641,8 +1562,8 @@ _test_entity_attr = """
         address_links
     PAP.Email
         subject_links
-        person_links
         company_links
+        person_links
         association_links
     PAP.Person
         property_links
@@ -1654,13 +1575,13 @@ _test_entity_attr = """
         address_links
     PAP.Phone
         subject_links
-        person_links
         company_links
+        person_links
         association_links
     PAP.Url
         subject_links
-        person_links
         company_links
+        person_links
         association_links
     SRM.Boat
         regatta_links
@@ -1704,54 +1625,280 @@ _test_entity_attr = """
     ...             if a.Ref_Type.show_in_ui :
     ...                  print (" " * 3, a.name)
     Auth.Account
+        creation
+        last_change
+        group_links
         groups
         person
+        person_links
+        person_link
+    Auth.Account_Activation
+        creation
+        last_change
+    Auth.Account_Anonymous
+        creation
+        last_change
+    Auth.Account_EMail_Verification
+        creation
+        last_change
+    Auth.Account_Password_Change_Required
+        creation
+        last_change
+    Auth.Account_Password_Reset
+        creation
+        last_change
+    Auth.Account_in_Group
+        creation
+        last_change
+    Auth.Certificate
+        creation
+        last_change
     Auth.Group
+        creation
+        last_change
         accounts
+        account_links
+    EVT.Calendar
+        creation
+        last_change
+    EVT.Event
+        creation
+        last_change
+        occurs
+        recurrence
+    EVT.Event_occurs
+        creation
+        last_change
+    EVT.Recurrence_Rule
+        creation
+        last_change
+    EVT.Recurrence_Spec
+        creation
+        last_change
+        rules
     PAP.Address
-        persons
+        creation
+        last_change
+        gps
+        subject_links
         companies
+        company_links
+        persons
+        person_links
         associations
+        association_links
+    PAP.Address_Position
+        creation
+        last_change
     PAP.Association
+        creation
+        last_change
+        property_links
+        url_links
         urls
+        phone_links
         phones
+        email_links
         emails
+        address_links
         addresses
+    PAP.Association_has_Address
+        creation
+        last_change
+    PAP.Association_has_Email
+        creation
+        last_change
+    PAP.Association_has_Phone
+        creation
+        last_change
+    PAP.Association_has_Url
+        creation
+        last_change
     PAP.Biz_Man
+        creation
+        last_change
         owns
     PAP.Company
+        creation
+        last_change
+        property_links
+        url_links
         urls
+        phone_links
         phones
+        email_links
         emails
+        address_links
         addresses
     PAP.Company_P
+        creation
+        last_change
+        property_links
+        url_links
         urls
+        phone_links
         phones
+        email_links
         emails
+        address_links
         addresses
+    PAP.Company_has_Address
+        creation
+        last_change
+    PAP.Company_has_Email
+        creation
+        last_change
+    PAP.Company_has_Phone
+        creation
+        last_change
+    PAP.Company_has_Url
+        creation
+        last_change
     PAP.Email
-        persons
+        creation
+        last_change
+        subject_links
         companies
+        company_links
+        persons
+        person_links
         associations
+        association_links
     PAP.Person
+        creation
+        last_change
+        property_links
+        account_links
         accounts
+        sailors
+        biz_man
+        url_links
         urls
+        phone_links
         phones
+        email_links
         emails
+        address_links
         addresses
+    PAP.Person_has_Account
+        creation
+        last_change
+    PAP.Person_has_Address
+        creation
+        last_change
+    PAP.Person_has_Email
+        creation
+        last_change
+    PAP.Person_has_Phone
+        creation
+        last_change
+    PAP.Person_has_Url
+        creation
+        last_change
     PAP.Phone
-        persons
+        creation
+        last_change
+        subject_links
         companies
+        company_links
+        persons
+        person_links
         associations
+        association_links
     PAP.Url
-        persons
+        creation
+        last_change
+        subject_links
         companies
+        company_links
+        persons
+        person_links
         associations
+        association_links
+    SRM.Boat
+        creation
+        last_change
+        regatta_links
+    SRM.Boat_Class
+        creation
+        last_change
+        boats
     SRM.Boat_in_Regatta
+        creation
+        last_change
+        race_results
+        sailor_links
         _crew
         teams
-    SRM.Team
+        team_links
+    SRM.Club
+        creation
+        last_change
+    SRM.Crew_Member
+        creation
+        last_change
+    SRM.Handicap
+        creation
+        last_change
+    SRM.Page
+        creation
+        last_change
+        events
+        clip_os
+    SRM.Race_Result
+        creation
+        last_change
+    SRM.Regatta_C
+        creation
+        last_change
         boats
+        teams
+    SRM.Regatta_Event
+        creation
+        last_change
+        regattas
+    SRM.Regatta_H
+        creation
+        last_change
+        boats
+    SRM.Sailor
+        creation
+        last_change
+        boat_in_regatta_links
+    SRM.Team
+        creation
+        last_change
+        boat_links
+        boats
+    SRM.Team_has_Boat_in_Regatta
+        creation
+        last_change
+    SWP.Clip_O
+        creation
+        last_change
+    SWP.Clip_X
+        creation
+        last_change
+        events
+        clip_os
+    SWP.Gallery
+        creation
+        last_change
+        clip_os
+        pictures
+    SWP.Page
+        creation
+        last_change
+        events
+        clip_os
+    SWP.Page_Y
+        creation
+        last_change
+        events
+        clip_os
+    SWP.Picture
+        creation
+        last_change
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
     ...     print ("%%-40s %%s" %% (T.type_name, T.show_in_ui))
@@ -1765,22 +1912,20 @@ _test_entity_attr = """
     Auth.Certificate                         True
     Auth.Group                               True
     Auth.Id_Entity                           True
+    Auth.Link                                True
     Auth.Link1                               True
     Auth.Link2                               True
-    Auth.Link3                               False
-    Auth.Named_Object                        True
     Auth.Object                              True
     Auth._Account_                           True
     Auth._Account_Action_                    False
     Auth._Account_Token_Action_              False
+    Auth._MOM_Link_n_                        True
     EVT.Calendar                             True
     EVT.Event                                True
     EVT.Event_occurs                         True
     EVT.Id_Entity                            True
+    EVT.Link                                 True
     EVT.Link1                                True
-    EVT.Link2                                False
-    EVT.Link3                                False
-    EVT.Named_Object                         False
     EVT.Object                               True
     EVT.Recurrence_Rule                      True
     EVT.Recurrence_Spec                      True
@@ -1790,7 +1935,6 @@ _test_entity_attr = """
     MOM.Link1                                True
     MOM.Link2                                True
     MOM.Link3                                False
-    MOM.Named_Object                         True
     MOM.Object                               True
     MOM._MOM_Link_n_                         True
     PAP.Address                              True
@@ -1829,6 +1973,7 @@ _test_entity_attr = """
     PAP.Subject_has_Property                 True
     PAP.Subject_has_Url                      True
     PAP.Url                                  True
+    PAP._MOM_Link_n_                         True
     SRM.Boat                                 True
     SRM.Boat_Class                           True
     SRM.Boat_in_Regatta                      True
@@ -1836,10 +1981,9 @@ _test_entity_attr = """
     SRM.Crew_Member                          True
     SRM.Handicap                             True
     SRM.Id_Entity                            True
+    SRM.Link                                 True
     SRM.Link1                                True
     SRM.Link2                                True
-    SRM.Link3                                False
-    SRM.Named_Object                         False
     SRM.Object                               True
     SRM.Page                                 True
     SRM.Race_Result                          True
@@ -1851,19 +1995,105 @@ _test_entity_attr = """
     SRM.Team                                 True
     SRM.Team_has_Boat_in_Regatta             True
     SRM._Boat_Class_                         True
+    SRM._MOM_Link_n_                         True
     SWP.Clip_O                               True
     SWP.Clip_X                               True
     SWP.Gallery                              True
     SWP.Id_Entity                            True
+    SWP.Link                                 True
     SWP.Link1                                True
-    SWP.Link2                                False
-    SWP.Link3                                False
-    SWP.Named_Object                         False
     SWP.Object                               True
     SWP.Object_PN                            True
     SWP.Page                                 True
     SWP.Page_Y                               True
     SWP.Picture                              True
+
+"""
+
+_test_saw = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> PAP = scope.PAP
+
+    >>> print (PAP.Biz_Man.query ())
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_biz_man."left" AS pap_biz_man_left,
+           pap_biz_man.pid AS pap_biz_man_pid
+         FROM mom_id_entity
+           JOIN pap_biz_man ON mom_id_entity.pid = pap_biz_man.pid
+
+
+    >>> print (PAP.Subject._SAW.sa_joins_strict)
+    mom_id_entity
+
+    >>> print (PAP.Subject._SAW.sa_joins)
+    mom_id_entity
+      LEFT OUTER JOIN pap_company ON mom_id_entity.pid = pap_company.pid
+      LEFT OUTER JOIN pap_company_p ON pap_company.pid = pap_company_p.pid
+      LEFT OUTER JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+      LEFT OUTER JOIN pap_association ON mom_id_entity.pid = pap_association.pid
+
+    >>> print (PAP.Subject.query ())
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_association.__raw_name AS pap_association___raw_name,
+           pap_association.__raw_short_name AS pap_association___raw_short_name,
+           pap_association.lifetime__finish AS pap_association_lifetime__finish,
+           pap_association.lifetime__start AS pap_association_lifetime__start,
+           pap_association.name AS pap_association_name,
+           pap_association.pid AS pap_association_pid,
+           pap_association.short_name AS pap_association_short_name,
+           pap_company.__raw_name AS pap_company___raw_name,
+           pap_company.__raw_registered_in AS pap_company___raw_registered_in,
+           pap_company.__raw_short_name AS pap_company___raw_short_name,
+           pap_company.lifetime__finish AS pap_company_lifetime__finish,
+           pap_company.lifetime__start AS pap_company_lifetime__start,
+           pap_company.name AS pap_company_name,
+           pap_company.pid AS pap_company_pid,
+           pap_company.registered_in AS pap_company_registered_in,
+           pap_company.short_name AS pap_company_short_name,
+           pap_company_p.affiliate AS pap_company_p_affiliate,
+           pap_company_p.owner AS pap_company_p_owner,
+           pap_company_p.pid AS pap_company_p_pid,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.salutation AS pap_person_salutation,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title
+         FROM mom_id_entity
+           LEFT OUTER JOIN pap_company ON mom_id_entity.pid = pap_company.pid
+           LEFT OUTER JOIN pap_company_p ON pap_company.pid = pap_company_p.pid
+           LEFT OUTER JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+           LEFT OUTER JOIN pap_association ON mom_id_entity.pid = pap_association.pid
+         WHERE mom_id_entity.pid = pap_company.pid
+            OR mom_id_entity.pid = pap_company_p.pid
+            OR mom_id_entity.pid = pap_person.pid
+            OR mom_id_entity.pid = pap_association.pid
+
+    >>> p1 = PAP.Person ("Doe", "Jane", lifetime = ("20010101", ), raw = True)
+    >>> bm = PAP.Biz_Man (p1)
+    >>> cp = PAP.Company_P ("Doe, Inc.", bm, raw = True)
+    >>> ta = PAP.Association ("Towel Carriers Association", short_name = "TCA", raw = True)
+    >>> cq = PAP.Company_P ("Jane's, Inc.", bm)
+
 
 """
 
@@ -1965,8 +2195,17 @@ def show_T_attrs (Root, format, seen, sk, lead = ".") :
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( main          = _test_code
-        , entity_attr   = _test_entity_attr
+        ( test_main        = _test_code
+        , test_entity_attr = _test_entity_attr
+        )
+    )
+
+__test__.update \
+    ( Scaffold.create_test_dict \
+        ( dict
+            ( test_saw     = _test_saw
+            )
+        , ignore           = ("HPS", "MYS", "POS", "SQL")
         )
     )
 

@@ -130,6 +130,7 @@
 #     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
 #     4-Jun-2013 (CT) Change `getattr` to try `etype` first, then `.attributes`
 #    11-Jun-2013 (CT) Add error guards to `raw_query_attrs`
+#    21-Aug-2013 (CT) Factor `ems` and `query` from `Id_Entity` to `Entity`
 #    ««revision-date»»···
 #--
 
@@ -171,6 +172,12 @@ class Entity (TFL.Meta.Object) :
 
     @property
     @getattr_safe
+    def ems (self) :
+        return self.home_scope.ems
+    # end def ems
+
+    @property
+    @getattr_safe
     def E_Type (self) :
         return self._etype
     # end def E_Type
@@ -204,6 +211,28 @@ class Entity (TFL.Meta.Object) :
             etype  = getattr (result, "P_Type", None)
         return result
     # end def get_etype_attribute
+
+    def query (self, * filters, ** kw) :
+        """Return all entities matching the conditions in `filters` and `kw`.
+
+           When no `filters` or `kw` are specified, `query` returns the
+           transitive extension of the type in question, i.e., all instances
+           of the type and all its subclasses.
+
+           When `strict = True` is specified as the only argument, `query`
+           returns the strict extension, i.e., all instances of the type in
+           question, but none of its subclasses.
+
+           All other filters reduce the number of instances returned to those
+           that satisfy the filter conditions.
+        """
+        sort_key = kw.pop ("sort_key", None)
+        Type     = self._etype
+        result   = self.ems.query (Type, * filters, ** kw)
+        if sort_key is not None :
+            result = result.order_by (sort_key)
+        return result
+    # end def query
 
     def raw_query_attrs (self, names, values = None, AQ = None) :
         if AQ is None :
@@ -301,12 +330,6 @@ class Id_Entity (Entity) :
         return result
     # end def count_strict
 
-    @property
-    @getattr_safe
-    def ems (self) :
-        return self.home_scope.ems
-    # end def ems
-
     def cooked_epk (self, epk, kw) :
         (epk, kw), this  = self._epkified (* epk, ** kw)
         raw      = kw.get ("raw", False)
@@ -356,28 +379,6 @@ class Id_Entity (Entity) :
         return self.ems.pid_query (pid, self._etype)
     # end def pid_query
 
-    def query (self, * filters, ** kw) :
-        """Return all entities matching the conditions in `filters` and `kw`.
-
-           When no `filters` or `kw` are specified, `query` returns the
-           transitive extension of the type in question, i.e., all instances
-           of the type and all its subclasses.
-
-           When `strict = True` is specified as the only argument, `query`
-           returns the strict extension, i.e., all instances of the type in
-           question, but none of its subclasses.
-
-           All other filters reduce the number of instances returned to those
-           that satisfy the filter conditions.
-        """
-        sort_key = kw.pop ("sort_key", None)
-        Type     = self._etype
-        result   = self.ems.query (Type, * filters, ** kw)
-        if sort_key is not None :
-            result = result.order_by (sort_key)
-        return result
-    # end def query
-
     def query_s (self, * filters, ** kw) :
         """Return `self.query (* filters, ** kw)`
            sorted by `kw.get ("sort_key", Type.sort_key)`.
@@ -416,6 +417,12 @@ class Id_Entity (Entity) :
     # end def _epkified
 
 # end class Id_Entity
+
+class MD_Entity (Entity) :
+    """Scope-specific manager for a specific type of meta-data entities."""
+
+
+# end class MD_Entity
 
 class Object (Id_Entity) :
     """Scope-specific manager for essential object-types."""

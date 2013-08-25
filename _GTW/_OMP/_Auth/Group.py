@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -29,6 +29,7 @@
 #    16-Jan-2010 (CT) Creation
 #    28-Feb-2010 (CT) `desc` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    17-Jun-2013 (CT) Derive `Group` from `MOM.Object`, not `MOM.Named_Object`
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,7 @@ from   _GTW                   import GTW
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
-_Ancestor_Essence = Auth.Named_Object
+_Ancestor_Essence = Auth.Object
 
 class _Auth_Group_ (_Ancestor_Essence) :
     """Model a group of accounts."""
@@ -51,8 +52,12 @@ class _Auth_Group_ (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class name (_Ancestor.name) :
-            """Name of group"""
+        class name (A_String) :
+            """Name of %(type_base_name.lower ())s."""
+
+            kind               = Attr.Primary
+            max_length         = 32
+            completer          = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
         # end class name
 

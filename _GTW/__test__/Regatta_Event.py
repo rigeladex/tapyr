@@ -39,8 +39,11 @@ _test_code = """
     >>> SRM = scope.SRM
     >>> RE  = SRM.Regatta_Event
     >>> rev = RE (u"Himmelfahrt", ("20080501", ), raw = True)
+    >>> rev.pid
+    1
     >>> rev.epk_raw
     (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event')
+
     >>> RE.instance (* rev.epk_raw, raw = True)
     SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))
     >>> RE.instance (* rev.epk)

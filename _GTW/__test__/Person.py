@@ -81,6 +81,15 @@ _test_code = """
     >>> _ = PAP.Person ("Tanzer", "Martin")
     >>> _ = PAP.Person ("Tanzer", "Michael")
 
+    >>> print PAP.Person.count
+    5
+    >>> print PAP.Person.query ().count ()
+    5
+    >>> print PAP.Person.query (Q.first_name.CONTAINS ("i")).count ()
+    3
+    >>> print PAP.Person.query (Q.RAW.first_name.STARTSWITH ("M")).count ()
+    2
+
     >>> S = MOM.Attr.Selector
     >>> S.primary (PAP.Person).names
     ('last_name', 'first_name', 'middle_name', 'title')
@@ -246,23 +255,22 @@ _test_roles = """
     PAP.Subject_has_Phone Phone `right` PAP.Phone
     PAP.Subject_has_Url Subject `left` PAP.Subject
     PAP.Subject_has_Url Url `right` PAP.Url
-    PAP.Person_has_Url Person `left` PAP.Person
-    PAP.Person_has_Url Url `right` PAP.Url
     PAP.Company_has_Url Company `left` PAP.Company
     PAP.Company_has_Url Url `right` PAP.Url
-    PAP.Person_has_Phone Person `left` PAP.Person
-    PAP.Person_has_Phone Phone `right` PAP.Phone
+    PAP.Person_has_Url Person `left` PAP.Person
+    PAP.Person_has_Url Url `right` PAP.Url
     PAP.Company_has_Phone Company `left` PAP.Company
     PAP.Company_has_Phone Phone `right` PAP.Phone
-    PAP.Person_has_Email Person `left` PAP.Person
-    PAP.Person_has_Email Email `right` PAP.Email
+    PAP.Person_has_Phone Person `left` PAP.Person
+    PAP.Person_has_Phone Phone `right` PAP.Phone
     PAP.Company_has_Email Company `left` PAP.Company
     PAP.Company_has_Email Email `right` PAP.Email
-    PAP.Person_has_Address Person `left` PAP.Person
-    PAP.Person_has_Address Address `right` PAP.Address
+    PAP.Person_has_Email Person `left` PAP.Person
+    PAP.Person_has_Email Email `right` PAP.Email
     PAP.Company_has_Address Company `left` PAP.Company
     PAP.Company_has_Address Address `right` PAP.Address
-
+    PAP.Person_has_Address Person `left` PAP.Person
+    PAP.Person_has_Address Address `right` PAP.Address
 
 """
 

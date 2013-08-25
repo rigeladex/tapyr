@@ -51,6 +51,7 @@
 #                     `polymorphic_epk`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
+#    25-Jun-2013 (CT) Add `max_value`, `example`, to integer attributes
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,8 @@ class Regatta (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             default            = 0
+            example            = "1"
+            max_value          = 32
             min_value          = 0
 
         # end class discards
@@ -158,6 +161,8 @@ class Regatta (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             default            = 0
+            example            = "7"
+            max_value          = 32
             min_value          = 0
 
         # end class races

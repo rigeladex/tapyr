@@ -57,7 +57,6 @@
 #                     from `val_dict`, not `obj`
 #    11-Mar-2013 (CT) Derive `_Condition_` from `MOM.Prop.Type`, not `object`
 #     3-Jun-2013 (CT) Print exception info to stderr, not stdout
-#    14-Jun-2013 (CT) Add `DET`, `DET_Base`, and `DET_Root`
 #    ««revision-date»»···
 #--
 
@@ -103,9 +102,6 @@ class _Condition_ (MOM.Prop.Type):
 
     ### DBW backend may set `do_check` to `False` if database performs the check
     do_check = True
-
-    ### set by MOM.Meta.M_Prop_Spec
-    DET = DET_Base = DET_Root = None
 
     def __init__ (self, kind, obj, attr_dict = {}) :
         self.kind           = kind
@@ -511,10 +507,11 @@ class Unique (_Condition_) :
         qfs      = self._query_filters (obj, val_dict)
         scope    = obj.home_scope
         ETM      = scope [obj.E_Type.epk_sig_root.type_name]
-        q        = ETM.query_s (* qfs)
+        q        = ETM.query (* qfs)
         result   = q.count () == 0
         if not result :
-            self._extra_links_d = self.clashes = q.all ()
+            self._extra_links_d = self.clashes = \
+                sorted (q.all (), key = obj.E_Type.sort_key)
             self.error = MOM.Error.Not_Unique (obj, self)
         return result
     # end def satisfied

@@ -33,6 +33,7 @@
 #    11-Sep-2012 (CT) Change `Unique` to use `attr_none`, not `attributes`
 #    29-Jan-2013 (CT) Force `Unique.kind` to `Uniqueness`, not `Region`
 #    12-Jun-2013 (CT) Add `is_partial_p`
+#    31-Jul-2013 (CT) Change `Unique.__init__` to set `error` to `None`
 #    ««revision-date»»···
 #--
 
@@ -221,6 +222,7 @@ class Unique (_Condition_) :
         if cls.attr_none :
             from _MOM._Attr.Filter import Q
             setattr (cls, "aqs", tuple (getattr (Q, a) for a in cls.attr_none))
+        cls.error = None
     # end def __init__
 
     def __str__  (cls) :

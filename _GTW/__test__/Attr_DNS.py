@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    06-Sep-2012 (RS) Creation
 #    23-Sep-2012 (RS) Add `raw = True` to records
+#     7-Aug-2013 (CT) Adapt to major surgery of GTW.OMP.NET.Attr_Type
 #    ««revision-date»»···
 #--
 
@@ -44,19 +45,19 @@ _test_code = """
     >>> dnsa1 = DNS.A_Record \\
     ...     ( left    = z
     ...     , name    = "test.example.com"
-    ...     , address = dict (address = "1.2.3.4")
+    ...     , address = "1.2.3.4"
     ...     , raw     = True
     ...     )
     >>> dnsa1b = DNS.A_Record \\
     ...     ( left    = z
     ...     , name    = "test.example.com"
-    ...     , address = dict (address = "1.2.3.5")
+    ...     , address = "1.2.3.5"
     ...     , raw     = True
     ...     )
     >>> dnsa2 = DNS.A_Record \\
     ...     ( left    = z
     ...     , name    = "test2.example.com"
-    ...     , address = dict (address = "2.3.4.5")
+    ...     , address = "2.3.4.5"
     ...     , raw     = True
     ...     )
     >>> cn1 = DNS.CNAME_Record \\

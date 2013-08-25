@@ -33,6 +33,8 @@
 #    15-Jul-2010 (MG) `__str__` added
 #    19-Jan-2013 (MG) Add support for `legacy_lifter`
 #     7-Jun-2013 (CT) Pass `src.db_meta_data` to `consume`
+#     2-Aug-2013 (CT) Add `entity_type` to increase compatibility with `Scope`
+#    25-Aug-2013 (CT) Add `reserve_surrogates`
 #    ««revision-date»»···
 #--
 
@@ -51,10 +53,12 @@ class DB_Man (TFL.Meta.Object) :
     src                    = None
 
     db_meta_data           = property (TFL.Getter.ems.db_meta_data)
+    entity_type            = property (TFL.Getter.app_type.entity_type)
     max_cid                = property (TFL.Getter.ems.max_cid)
     max_pid                = property (TFL.Getter.ems.max_pid)
     max_surrs              = property (TFL.Getter.ems.max_surrs)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
+    reserve_surrogates     = False
 
     ### DB_Man creation methods
     @classmethod

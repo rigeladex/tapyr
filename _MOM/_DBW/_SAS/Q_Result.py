@@ -78,19 +78,24 @@
 #    19-Jan-2013 (MG) Support new sqlalchmey version
 #     2-Apr-2013 (CT) Make `Q_Result.__str__` deterministic (sort SELECT args)
 #     9-Apr-2013 (CT) Change `attr_name` for `SUM` in `_getters_to_columns`
+#    18-Jun-2013 (CT) Change `Q_Result.__str__` to format/sort `JOIN` clauses
+#    30-Jul-2013 (CT) Remove `set`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
-import _TFL.Decorator
+
 import _TFL.Accessor
+import _TFL.Decorator
+import _TFL.Regexp
 import _TFL._Meta.Object
 
 from   _MOM.import_MOM      import MOM, Q
 import _MOM._DBW._SAS.Filter
 import _MOM._DBW._SAS.Sorted_By
 
-from    sqlalchemy          import sql
+import itertools
+from   sqlalchemy           import sql
 
 try :
     SQL_Operators = sql.expression.Operators
@@ -309,24 +314,6 @@ class _Q_Result_ (TFL.Meta.Object) :
         return sa_query, joined
     # end def _sql_query
 
-    def set (self, * args, ** kw) :
-        if not self._filter :
-            raise TypeError \
-                ( "%s.set() requires at least one filter criteria"
-                % (self.__class__.__name__)
-                )
-        tables = TFL.defaultdict (dict)
-        SAQ    = self.e_type._SAQ
-        kw     = dict (args, ** kw)
-        where  = sql.expression.and_ (* self._filter)
-        conn   = self.session.connection
-        for n, v in kw.iteritems () :
-            column = getattr (TFL.Getter, n) (SAQ)
-            tables [column.table] [column.name] = v
-        for t, vd in tables.iteritems () :
-            conn.execute (t.update ().values (** vd).where (where))
-    # end def set
-
     def where (self, expr) :
         self._filter.append (expr)
         return self
@@ -356,6 +343,15 @@ class _Q_Result_ (TFL.Meta.Object) :
                     h, t = p.split (" ", 1)
                     p = "\n       ".join \
                         ((h, ",\n       ".join (sorted (t.split (", ")))))
+                elif "JOIN" in p :
+                    rerep = TFL.Re_Replacer \
+                        ( "((?:[A-Z]+ )*JOIN)"
+                        , "\n       \\1"
+                        )
+                    p  = rerep (p)
+                    ps = list (x.rstrip () for x in p.split ("\n"))
+                    p  = "\n".join \
+                        (itertools.chain ([ps [0]], sorted (ps [1:])))
                 yield p
         sa_query = "\n     ".join (q_parts (self))
         return "SQL: %s" % (sa_query, )

@@ -52,15 +52,17 @@ _test_hierarchy = """
     Auth.Certificate               Internal__Type_Name Type_Name_Type Auth.Certificate
     Auth.Group                     Internal__Type_Name Type_Name_Type Auth.Group
     Auth.Id_Entity                 Internal__Type_Name Type_Name_Type Auth.Id_Entity
+    Auth.Link                      Internal__Type_Name Type_Name_Type Auth.Link
     Auth.Link1                     Internal__Type_Name Type_Name_Type Auth.Link1
     Auth.Link2                     Internal__Type_Name Type_Name_Type Auth.Link2
-    Auth.Named_Object              Internal__Type_Name Type_Name_Type Auth.Named_Object
     Auth.Object                    Internal__Type_Name Type_Name_Type Auth.Object
     Auth._Account_                 Internal__Type_Name Type_Name_Type Auth._Account_
+    Auth._MOM_Link_n_              Internal__Type_Name Type_Name_Type Auth._MOM_Link_n_
     EVT.Calendar                   Internal__Type_Name Type_Name_Type EVT.Calendar
     EVT.Event                      Internal__Type_Name Type_Name_Type EVT.Event
     EVT.Event_occurs               Internal__Type_Name Type_Name_Type EVT.Event_occurs
     EVT.Id_Entity                  Internal__Type_Name Type_Name_Type EVT.Id_Entity
+    EVT.Link                       Internal__Type_Name Type_Name_Type EVT.Link
     EVT.Link1                      Internal__Type_Name Type_Name_Type EVT.Link1
     EVT.Object                     Internal__Type_Name Type_Name_Type EVT.Object
     EVT.Recurrence_Rule            Internal__Type_Name Type_Name_Type EVT.Recurrence_Rule
@@ -70,7 +72,6 @@ _test_hierarchy = """
     MOM.Link                       Internal__Type_Name Type_Name_Type MOM.Link
     MOM.Link1                      Internal__Type_Name Type_Name_Type MOM.Link1
     MOM.Link2                      Internal__Type_Name Type_Name_Type MOM.Link2
-    MOM.Named_Object               Internal__Type_Name Type_Name_Type MOM.Named_Object
     MOM.Object                     Internal__Type_Name Type_Name_Type MOM.Object
     MOM._MOM_Link_n_               Internal__Type_Name Type_Name_Type MOM._MOM_Link_n_
     PAP.Address                    Internal__Type_Name Type_Name_Type PAP.Address
@@ -83,6 +84,7 @@ _test_hierarchy = """
     PAP.Email                      Internal__Type_Name Type_Name_Type PAP.Email
     PAP.Id_Entity                  Internal__Type_Name Type_Name_Type PAP.Id_Entity
     PAP.Legal_Entity               Internal__Type_Name Type_Name_Type PAP.Legal_Entity
+    PAP.Link                       Internal__Type_Name Type_Name_Type PAP.Link
     PAP.Link1                      Internal__Type_Name Type_Name_Type PAP.Link1
     PAP.Link2                      Internal__Type_Name Type_Name_Type PAP.Link2
     PAP.Object                     Internal__Type_Name Type_Name_Type PAP.Object
@@ -101,6 +103,7 @@ _test_hierarchy = """
     PAP.Subject_has_Property       Internal__Type_Name Type_Name_Type PAP.Subject_has_Property
     PAP.Subject_has_Url            Internal__Type_Name Type_Name_Type PAP.Subject_has_Url
     PAP.Url                        Internal__Type_Name Type_Name_Type PAP.Url
+    PAP._MOM_Link_n_               Internal__Type_Name Type_Name_Type PAP._MOM_Link_n_
     SRM.Boat                       Internal__Type_Name Type_Name_Type SRM.Boat
     SRM.Boat_Class                 Internal__Type_Name Type_Name_Type SRM.Boat_Class
     SRM.Boat_in_Regatta            Internal__Type_Name Type_Name_Type SRM.Boat_in_Regatta
@@ -108,6 +111,7 @@ _test_hierarchy = """
     SRM.Crew_Member                Internal__Type_Name Type_Name_Type SRM.Crew_Member
     SRM.Handicap                   Internal__Type_Name Type_Name_Type SRM.Handicap
     SRM.Id_Entity                  Internal__Type_Name Type_Name_Type SRM.Id_Entity
+    SRM.Link                       Internal__Type_Name Type_Name_Type SRM.Link
     SRM.Link1                      Internal__Type_Name Type_Name_Type SRM.Link1
     SRM.Link2                      Internal__Type_Name Type_Name_Type SRM.Link2
     SRM.Object                     Internal__Type_Name Type_Name_Type SRM.Object
@@ -121,10 +125,12 @@ _test_hierarchy = """
     SRM.Team                       Internal__Type_Name Type_Name_Type SRM.Team
     SRM.Team_has_Boat_in_Regatta   Internal__Type_Name Type_Name_Type SRM.Team_has_Boat_in_Regatta
     SRM._Boat_Class_               Internal__Type_Name Type_Name_Type SRM._Boat_Class_
+    SRM._MOM_Link_n_               Internal__Type_Name Type_Name_Type SRM._MOM_Link_n_
     SWP.Clip_O                     Internal__Type_Name Type_Name_Type SWP.Clip_O
     SWP.Clip_X                     Internal__Type_Name Type_Name_Type SWP.Clip_X
     SWP.Gallery                    Internal__Type_Name Type_Name_Type SWP.Gallery
     SWP.Id_Entity                  Internal__Type_Name Type_Name_Type SWP.Id_Entity
+    SWP.Link                       Internal__Type_Name Type_Name_Type SWP.Link
     SWP.Link1                      Internal__Type_Name Type_Name_Type SWP.Link1
     SWP.Object                     Internal__Type_Name Type_Name_Type SWP.Object
     SWP.Object_PN                  Internal__Type_Name Type_Name_Type SWP.Object_PN

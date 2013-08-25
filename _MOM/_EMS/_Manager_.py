@@ -80,6 +80,16 @@
 #    30-Jan-2013 (CT) Add `add` and `_check_uniqueness`
 #    30-Jan-2013 (CT) Fix handling of `Integrity_Error` in `add`
 #     6-Jun-2013 (CT) Use `@subclass_responsibility`
+#    24-Jun-2013 (CT) Add `close_connections`
+#    26-Jun-2013 (CT) Add `lazy_load_p`
+#     5-Jul-2013 (CT) Change sig of `_query_single_root`, `_query_multi_root`
+#    17-Jul-2013 (CT) Remove `async_changes`, `db_cid`
+#    24-Jul-2013 (CT) Use `SCM.Change.Create.update` method, not home-grown code
+#     3-Aug-2013 (CT) Re-raise `Integrity_Error` if it wasn't a uniqueness
+#                     constraint
+#     5-Aug-2013 (CT) Add `rollback_pending_change`
+#                     * calls `scope.rollback_pending_change`; can be redefined
+#     5-Aug-2013 (CT) Add `save_point`
 #    ««revision-date»»···
 #--
 
@@ -104,14 +114,15 @@ import logging
 class _Manager_ (TFL.Meta.Object) :
     """Base class for entity managers."""
 
-    type_name          = "XXX"
+    type_name           = "XXX"
 
-    Change_Summary     = MOM.SCM.Summary
+    Change_Summary      = MOM.SCM.Summary
 
-    Q_Result           = TFL.Q_Result
-    Q_Result_Composite = TFL.Q_Result_Composite
+    Q_Result            = TFL.Q_Result
+    Q_Result_Composite  = TFL.Q_Result_Composite
 
-    max_surrs          = TFL.defaultdict (int)
+    lazy_load_p         = False
+    max_surrs           = TFL.defaultdict (int)
 
     class Integrity_Error (Exception) :
         """Raised when `DBW` signals an integrity error."""
@@ -142,10 +153,11 @@ class _Manager_ (TFL.Meta.Object) :
     # end def new
 
     def __init__ (self, scope, db_url) :
-        self.scope  = scope
-        self.db_url = db_url
-        self.DBW    = DBW = scope.app_type.DBW
-        self.pm     = DBW.Pid_Manager (self, db_url)
+        self.scope        = scope
+        self.db_url       = db_url
+        self.DBW          = DBW = scope.app_type.DBW
+        self.pm           = DBW.Pid_Manager (self, db_url)
+        scope.lazy_load_p = self.lazy_load_p
         self._reset_transaction ()
     # end def __init__
 
@@ -155,17 +167,12 @@ class _Manager_ (TFL.Meta.Object) :
         try :
             return self._add (entity, pid)
         except self.Integrity_Error as exc :
-            self.scope.rollback_pending_change ()
+            self.rollback_pending_change ()
             self._check_uniqueness (entity, e_type.uniqueness_dbw)
+            ### if it wasn't a uniqueness constraint,
+            ### re-raise the original exception
+            raise
     # end def add
-
-    def async_changes (self, * filters, ** kw) :
-        from _MOM.import_MOM import Q
-        result = self.changes (Q.cid > self.scope.db_cid)
-        if filters or kw :
-            result = result.filter (* filters, ** kw)
-        return result
-    # end def async_changes
 
     def change_readonly (self, state) :
         self.session.change_readonly (state)
@@ -178,9 +185,12 @@ class _Manager_ (TFL.Meta.Object) :
         self.session.close ()
     # end def close
 
+    def close_connections (self) :
+        self.session.close_connections ()
+    # end def close_connections
+
     def commit (self) :
         if self.uncommitted_changes :
-            self.scope.db_cid = self.max_cid
             self.session.commit     ()
             self._reset_transaction ()
     # end def commit
@@ -212,7 +222,7 @@ class _Manager_ (TFL.Meta.Object) :
                 ( "Unknown arguments to convert_creation_change: %s"
                 % (sorted (kw), )
                 )
-        cc.__dict__.update (ckw)
+        cc.update (ckw)
         self.session._commit_creation_change (cc, kw)
     # end def convert_creation_change
 
@@ -232,7 +242,8 @@ class _Manager_ (TFL.Meta.Object) :
         result   = None
         epk_dict = dict (zip (Type.epk_sig, epk))
         try :
-            result = self.query (Type, ** epk_dict).one ()
+            qr     = self.query (Type, ** epk_dict)
+            result = qr.one ()
         except IndexError :
             pass
         else :
@@ -259,10 +270,8 @@ class _Manager_ (TFL.Meta.Object) :
     def query (self, Type, * filters, ** kw) :
         root   = Type.relevant_root
         strict = kw.pop ("strict", False)
-        if root :
-            result = self._query_single_root (Type, root)
-        else :
-            result = self._query_multi_root (Type)
+        _query = self._query_single_root if root else self._query_multi_root
+        result = _query (Type, strict)
         if filters or kw :
             result = result.filter (* filters, ** kw)
         if strict :
@@ -305,9 +314,19 @@ class _Manager_ (TFL.Meta.Object) :
         self._reset_transaction ()
     # end def rollback
 
+    def rollback_pending_change (self) :
+        self.scope.rollback_pending_change ()
+    # end def rollback_pending_change
+
     def update (self, entity, change) :
         pass ### redefine as necessary in descendents
     # end def update
+
+    @TFL.Contextmanager
+    def save_point (self) :
+        ### override if the backend supports savepoints
+        yield
+    # end def save_point
 
     @subclass_responsibility
     def _add (self, entity, pid = None) :
@@ -326,12 +345,12 @@ class _Manager_ (TFL.Meta.Object) :
     # end def _check_uniqueness
 
     @subclass_responsibility
-    def _query_multi_root (self, Type) :
+    def _query_multi_root (self, Type, strict = False) :
         pass
     # end def _query_multi_root
 
     @subclass_responsibility
-    def _query_single_root (self, Type, root) :
+    def _query_single_root (self, Type, strict = False) :
         pass
     # end def _query_single_root
 
@@ -359,7 +378,7 @@ class _Manager_ (TFL.Meta.Object) :
     def __iter__ (self) :
         sk = TFL.Sorted_By ("pid")
         return itertools.chain \
-            (* (   self._query_single_root (r, r).order_by (sk)
+            (* (   self._query_single_root (r).order_by (sk)
                for r in self.scope.relevant_roots
                )
             )

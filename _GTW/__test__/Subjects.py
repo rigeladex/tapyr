@@ -160,24 +160,24 @@ _test_code = """
 
     >>> for T, l in children_trans_iter (scope.PAP.Subject_has_Property) :
     ...     rr = T.relevant_root.type_name if T.relevant_root else sorted (T.relevant_roots)
-    ...     print ("%%-30s %%-5s %%s" %% ("%%s%%s" %% ("  " * l, T.type_name), T.is_partial, rr))
-    PAP.Subject_has_Property       True  ['PAP.Association_has_Address', 'PAP.Association_has_Email', 'PAP.Association_has_Phone', 'PAP.Association_has_Url', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url']
-      PAP.Subject_has_Address      True  ['PAP.Association_has_Address', 'PAP.Company_has_Address', 'PAP.Person_has_Address']
-        PAP.Person_has_Address     False PAP.Person_has_Address
-        PAP.Company_has_Address    False PAP.Company_has_Address
-        PAP.Association_has_Address False PAP.Association_has_Address
-      PAP.Subject_has_Email        True  ['PAP.Association_has_Email', 'PAP.Company_has_Email', 'PAP.Person_has_Email']
-        PAP.Person_has_Email       False PAP.Person_has_Email
-        PAP.Company_has_Email      False PAP.Company_has_Email
-        PAP.Association_has_Email  False PAP.Association_has_Email
-      PAP.Subject_has_Phone        True  ['PAP.Association_has_Phone', 'PAP.Company_has_Phone', 'PAP.Person_has_Phone']
-        PAP.Person_has_Phone       False PAP.Person_has_Phone
-        PAP.Company_has_Phone      False PAP.Company_has_Phone
-        PAP.Association_has_Phone  False PAP.Association_has_Phone
-      PAP.Subject_has_Url          True  ['PAP.Association_has_Url', 'PAP.Company_has_Url', 'PAP.Person_has_Url']
-        PAP.Person_has_Url         False PAP.Person_has_Url
-        PAP.Company_has_Url        False PAP.Company_has_Url
-        PAP.Association_has_Url    False PAP.Association_has_Url
+    ...     print ("%%-32s %%-5s %%s" %% ("%%s%%s" %% ("  " * l, T.type_name), T.is_partial, rr))
+    PAP.Subject_has_Property         True  PAP.Subject_has_Property
+      PAP.Subject_has_Address        True  PAP.Subject_has_Property
+        PAP.Company_has_Address      False PAP.Subject_has_Property
+        PAP.Person_has_Address       False PAP.Subject_has_Property
+        PAP.Association_has_Address  False PAP.Subject_has_Property
+      PAP.Subject_has_Email          True  PAP.Subject_has_Property
+        PAP.Company_has_Email        False PAP.Subject_has_Property
+        PAP.Person_has_Email         False PAP.Subject_has_Property
+        PAP.Association_has_Email    False PAP.Subject_has_Property
+      PAP.Subject_has_Phone          True  PAP.Subject_has_Property
+        PAP.Company_has_Phone        False PAP.Subject_has_Property
+        PAP.Person_has_Phone         False PAP.Subject_has_Property
+        PAP.Association_has_Phone    False PAP.Subject_has_Property
+      PAP.Subject_has_Url            True  PAP.Subject_has_Property
+        PAP.Company_has_Url          False PAP.Subject_has_Property
+        PAP.Person_has_Url           False PAP.Subject_has_Property
+        PAP.Association_has_Url      False PAP.Subject_has_Property
 
     >>> fmt = "%%(type_name)-20s %%(is_relevant)-5s %%(polymorphic_epk)-5s %%(polymorphic_epks)-6s %%(epk_sig)s"
     >>> for i, et in enumerate (scope.app_type._T_Extension) :
@@ -189,9 +189,9 @@ _test_code = """
     type_name            relev p_epk p_epks epk_sig
     ===========================================================================
     PAP.Subject          False True  True   ()
-    PAP.Person           True  False False  ('last_name', 'first_name', 'middle_name', 'title')
     PAP.Legal_Entity     False True  True   ('name',)
     PAP.Company          True  False False  ('name', 'registered_in')
+    PAP.Person           True  False False  ('last_name', 'first_name', 'middle_name', 'title')
     PAP.Association      True  True  True   ('name',)
     PAP.Association_S    True  True  True   ('name',)
     PAP.Association_T    True  False False  ('name', 'epk_new')
@@ -199,7 +199,7 @@ _test_code = """
     >>> sk = lambda x : (not bool (x.children), x.i_rank)
     >>> for i, (T, l) in enumerate (children_trans_iter (scope.MOM.Id_Entity, sort_key = sk)) :
     ...     if not i :
-    ...         print ("%%-50s %%6s %%6s %%6s %%6s" %% ("type_name", "relev", "p_epk", "p_epks", "pr_epk"))
+    ...         print ("%%-50s   %%6s %%6s %%6s %%6s" %% ("type_name", "relev", "p_epk", "p_epks", "pr_epk"))
     ...         print ("=" * 80)
     ...     et = T.E_Type
     ...     fs = (et.is_relevant, et.polymorphic_epk, et.polymorphic_epks, et.polymorphic_relevant_epk)
@@ -209,7 +209,7 @@ _test_code = """
     ...         sep = (" " if hdl %% 2 else "") + ". " * ((50 - hdl) // 2)
     ...         ts  = tuple ((x or "") for x in fs)
     ...         print (("%%s %%s %%6s %%6s %%6s %%6s" %% ((hd, sep) + ts)).rstrip ())
-    type_name                                           relev  p_epk p_epks pr_epk
+    type_name                                             relev  p_epk p_epks pr_epk
     ================================================================================
     MOM.Id_Entity  . . . . . . . . . . . . . . . . . .           True   True
       MOM.Link . . . . . . . . . . . . . . . . . . . .           True   True
@@ -222,73 +222,63 @@ _test_code = """
               Auth.Account_Password_Change_Required  .    True
           EVT.Link1  . . . . . . . . . . . . . . . . .           True   True
             EVT._Recurrence_Mixin_ . . . . . . . . . .           True   True
-              EVT.Recurrence_Spec  . . . . . . . . . .    True          True   True
-              EVT.Recurrence_Rule  . . . . . . . . . .    True          True   True
-            EVT.Event  . . . . . . . . . . . . . . . .    True          True   True
-            EVT.Event_occurs . . . . . . . . . . . . .    True          True   True
-          SWP.Link1  . . . . . . . . . . . . . . . . .           True   True
-            SWP.Clip_O . . . . . . . . . . . . . . . .    True          True   True
-            SWP.Picture  . . . . . . . . . . . . . . .    True                 True
+              EVT.Recurrence_Spec  . . . . . . . . . .    True          True
+              EVT.Recurrence_Rule  . . . . . . . . . .    True          True
+            EVT.Event  . . . . . . . . . . . . . . . .    True          True
+            EVT.Event_occurs . . . . . . . . . . . . .    True          True
           PAP.Link1  . . . . . . . . . . . . . . . . .           True   True
-            PAP.Address_Position . . . . . . . . . . .    True                 True
+            PAP.Address_Position . . . . . . . . . . .    True
           SRM.Link1  . . . . . . . . . . . . . . . . .           True   True
-            SRM.Regatta  . . . . . . . . . . . . . . .    True                 True
+            SRM.Regatta  . . . . . . . . . . . . . . .    True
               SRM.Regatta_C  . . . . . . . . . . . . .    True
               SRM.Regatta_H  . . . . . . . . . . . . .    True
-            SRM.Boat . . . . . . . . . . . . . . . . .    True                 True
-            SRM.Sailor . . . . . . . . . . . . . . . .    True                 True
-            SRM.Race_Result  . . . . . . . . . . . . .    True                 True
-            SRM.Team . . . . . . . . . . . . . . . . .    True                 True
+            SRM.Boat . . . . . . . . . . . . . . . . .    True
+            SRM.Sailor . . . . . . . . . . . . . . . .    True
+            SRM.Race_Result  . . . . . . . . . . . . .    True
+            SRM.Team . . . . . . . . . . . . . . . . .    True
+          SWP.Link1  . . . . . . . . . . . . . . . . .           True   True
+            SWP.Clip_O . . . . . . . . . . . . . . . .    True          True
+            SWP.Picture  . . . . . . . . . . . . . . .    True
         MOM._MOM_Link_n_ . . . . . . . . . . . . . . .           True   True
           MOM.Link2  . . . . . . . . . . . . . . . . .           True   True
-            Auth.Link2 . . . . . . . . . . . . . . . .           True   True
-              Auth.Account_in_Group  . . . . . . . . .    True                 True
+              Auth.Account_in_Group  . . . . . . . . .    True
             PAP.Link2  . . . . . . . . . . . . . . . .           True   True
-              PAP.Subject_has_Property . . . . . . . .           True   True
-                PAP.Subject_has_Address  . . . . . . .           True   True
-                  PAP.Person_has_Address . . . . . . .    True                 True
-                  PAP.Company_has_Address  . . . . . .    True                 True
-                  PAP.Association_has_Address  . . . .    True          True   True
-                PAP.Subject_has_Email  . . . . . . . .           True   True
-                  PAP.Person_has_Email . . . . . . . .    True                 True
-                  PAP.Company_has_Email  . . . . . . .    True                 True
-                  PAP.Association_has_Email  . . . . .    True          True   True
-                PAP.Subject_has_Phone  . . . . . . . .           True   True
-                  PAP.Person_has_Phone . . . . . . . .    True                 True
-                  PAP.Company_has_Phone  . . . . . . .    True                 True
-                  PAP.Association_has_Phone  . . . . .    True          True   True
-                PAP.Subject_has_Url  . . . . . . . . .           True   True
-                  PAP.Person_has_Url . . . . . . . . .    True                 True
-                  PAP.Company_has_Url  . . . . . . . .    True                 True
-                  PAP.Association_has_Url  . . . . . .    True          True   True
-              PAP.Person_has_Account . . . . . . . . .    True                 True
-            SRM.Link2  . . . . . . . . . . . . . . . .           True   True
-              SRM.Boat_in_Regatta  . . . . . . . . . .    True                 True
-              SRM.Crew_Member  . . . . . . . . . . . .    True                 True
-              SRM.Team_has_Boat_in_Regatta . . . . . .    True                 True
+              PAP.Subject_has_Property . . . . . . . .    True   True   True   True
+                PAP.Subject_has_Address  . . . . . . .    True          True
+                  PAP.Company_has_Address  . . . . . .    True
+                  PAP.Person_has_Address . . . . . . .    True
+                  PAP.Association_has_Address  . . . .    True          True
+                PAP.Subject_has_Email  . . . . . . . .    True          True
+                  PAP.Company_has_Email  . . . . . . .    True
+                  PAP.Person_has_Email . . . . . . . .    True
+                  PAP.Association_has_Email  . . . . .    True          True
+                PAP.Subject_has_Phone  . . . . . . . .    True          True   True
+                  PAP.Company_has_Phone  . . . . . . .    True
+                  PAP.Person_has_Phone . . . . . . . .    True
+                  PAP.Association_has_Phone  . . . . .    True          True
+                PAP.Subject_has_Url  . . . . . . . . .    True          True
+                  PAP.Company_has_Url  . . . . . . . .    True
+                  PAP.Person_has_Url . . . . . . . . .    True
+                  PAP.Association_has_Url  . . . . . .    True          True
+              PAP.Person_has_Account . . . . . . . . .    True
+              SRM.Boat_in_Regatta  . . . . . . . . . .    True
+              SRM.Crew_Member  . . . . . . . . . . . .    True
+              SRM.Team_has_Boat_in_Regatta . . . . . .    True
+          PAP._MOM_Link_n_ . . . . . . . . . . . . . .           True   True
+        Auth.Link  . . . . . . . . . . . . . . . . . .           True   True
+        EVT.Link . . . . . . . . . . . . . . . . . . .           True   True
         PAP.Link . . . . . . . . . . . . . . . . . . .           True   True
+        SRM.Link . . . . . . . . . . . . . . . . . . .           True   True
+        SWP.Link . . . . . . . . . . . . . . . . . . .           True   True
       MOM.Object . . . . . . . . . . . . . . . . . . .           True   True
-            Auth.Group . . . . . . . . . . . . . . . .    True
         Auth.Object  . . . . . . . . . . . . . . . . .           True   True
-          Auth._Account_ . . . . . . . . . . . . . . .    True                 True
+          Auth._Account_ . . . . . . . . . . . . . . .    True
             Auth.Account_Anonymous . . . . . . . . . .    True
             Auth.Account . . . . . . . . . . . . . . .    True
-          Auth.Certificate . . . . . . . . . . . . . .    True                 True
+          Auth.Certificate . . . . . . . . . . . . . .    True
+          Auth.Group . . . . . . . . . . . . . . . . .    True
         EVT.Object . . . . . . . . . . . . . . . . . .           True   True
-          EVT.Calendar . . . . . . . . . . . . . . . .    True                 True
-        PAP.Object . . . . . . . . . . . . . . . . . .           True   True
-          PAP.Subject  . . . . . . . . . . . . . . . .           True   True
-            PAP.Legal_Entity . . . . . . . . . . . . .           True   True
-              PAP.Association  . . . . . . . . . . . .    True   True   True   True
-                PAP.Association_S  . . . . . . . . . .    True   True   True   True
-                  PAP.Association_T  . . . . . . . . .    True                 True
-              PAP.Company  . . . . . . . . . . . . . .    True                 True
-            PAP.Person . . . . . . . . . . . . . . . .    True                 True
-          PAP.Property . . . . . . . . . . . . . . . .           True   True
-            PAP.Address  . . . . . . . . . . . . . . .    True                 True
-            PAP.Email  . . . . . . . . . . . . . . . .    True                 True
-            PAP.Phone  . . . . . . . . . . . . . . . .    True                 True
-            PAP.Url  . . . . . . . . . . . . . . . . .    True                 True
+          EVT.Calendar . . . . . . . . . . . . . . . .    True
         SWP.Object . . . . . . . . . . . . . . . . . .           True   True
           SWP.Object_PN  . . . . . . . . . . . . . . .           True   True
             SWP.Page . . . . . . . . . . . . . . . . .    True   True   True   True
@@ -296,17 +286,31 @@ _test_code = """
               SWP.Clip_X . . . . . . . . . . . . . . .    True
               SRM.Page . . . . . . . . . . . . . . . .    True                 True
             SWP.Gallery  . . . . . . . . . . . . . . .    True
+        PAP.Object . . . . . . . . . . . . . . . . . .           True   True
+          PAP.Property . . . . . . . . . . . . . . . .           True   True
+            PAP.Address  . . . . . . . . . . . . . . .    True
+            PAP.Email  . . . . . . . . . . . . . . . .    True
+            PAP.Phone  . . . . . . . . . . . . . . . .    True
+            PAP.Url  . . . . . . . . . . . . . . . . .    True
+          PAP.Subject  . . . . . . . . . . . . . . . .           True   True
+            PAP.Legal_Entity . . . . . . . . . . . . .           True   True
+              PAP.Association  . . . . . . . . . . . .    True   True   True   True
+                PAP.Association_S  . . . . . . . . . .    True   True   True   True
+                  PAP.Association_T  . . . . . . . . .    True                 True
+              PAP.Company  . . . . . . . . . . . . . .    True
+            PAP.Person . . . . . . . . . . . . . . . .    True
         SRM.Object . . . . . . . . . . . . . . . . . .           True   True
-          SRM._Boat_Class_ . . . . . . . . . . . . . .    True                 True
+          SRM._Boat_Class_ . . . . . . . . . . . . . .    True
             SRM.Boat_Class . . . . . . . . . . . . . .    True
             SRM.Handicap . . . . . . . . . . . . . . .    True
-          SRM.Club . . . . . . . . . . . . . . . . . .    True                 True
-          SRM.Regatta_Event  . . . . . . . . . . . . .    True                 True
+          SRM.Club . . . . . . . . . . . . . . . . . .    True
+          SRM.Regatta_Event  . . . . . . . . . . . . .    True
       Auth.Id_Entity . . . . . . . . . . . . . . . . .           True   True
       EVT.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
-      PAP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
       SWP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
+      PAP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
       SRM.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
+
 
 """
 

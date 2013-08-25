@@ -119,6 +119,9 @@
 #                     * MOM.Id_Entity has an explicit `type_name` attribute now
 #     5-Jun-2013 (CT) Remove column `pid` from `_setup_columns`
 #                     * MOM.Id_Entity has an explicit `pid` attribute now
+#    19-Jun-2013 (CT) Remove `@classmethod` from `_add_check_constraints`
+#    24-Jun-2013 (CT) Add argument `app_type` to `prepare`
+#     8-Jul-2013 (CT) Add argument `app_type` to `finalize`
 #    ««revision-date»»···
 #--
 
@@ -144,7 +147,7 @@ import  cPickle                as Pickle
 from   sqlalchemy import schema, types, sql
 import sqlalchemy
 
-if sqlalchemy.__version__.split (".") [1] < "6" :
+if sqlalchemy.__version__.split (".")  < ["0", "6"] :
     from sqlalchemy.engine.base import ResultProxy
     @property
     def inserted_primary_key (self) :
@@ -249,7 +252,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             )
     # end def db_sig
 
-    @classmethod
     def _add_check_constraints (cls, e_type, sa_table) :
         own_names = e_type._Predicates._own_names
         for pk in e_type.P_uniqueness :
@@ -354,12 +356,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return e_type
     # end def etype_decorator
 
-    def finalize (cls) :
+    def finalize (cls, app_type) :
         for saq in cls.finalize_query_objects :
             saq.finalize ()
     # end def finalize
 
-    def prepare (cls) :
+    def prepare (cls, app_type) :
         cls._create_pid_table                        (cls.metadata)
         cls._create_scope_table                      (cls.metadata)
         cls._create_SCM_table                        (cls.metadata)

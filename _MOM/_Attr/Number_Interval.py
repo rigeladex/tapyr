@@ -34,6 +34,7 @@
 #                     remove `auto_up_depends` from `center`, `length`
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
+#     7-Aug-2013 (CT) Set `_Interval_.is_partial` to `True`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,7 @@ _Ancestor_Essence = MOM.An_Entity
 class _Interval_ (_Ancestor_Essence) :
     """Model an interval (lower, upper)."""
 
+    is_partial     = True
     ui_display_sep = " - "
 
     class _Attributes (_Ancestor_Essence._Attributes) :

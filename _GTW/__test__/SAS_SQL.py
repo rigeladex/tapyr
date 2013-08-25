@@ -30,16 +30,17 @@
 #     2-Apr-2013 (CT) Adapt to change of `MOM.DBW.SAS.Q_Result.__str__`
 #    30-May-2013 (CT) Add `test_select` and `test_tables`
 #     3-Jun-2013 (CT) Add `MOM_Kind` to `formatted_table`
+#    18-Jun-2013 (CT) Add `test_joins`; factor `_SAS_test_functions`
 #    ««revision-date»»···
 #--
 
 from   __future__          import print_function
 from   __future__          import unicode_literals
 
-from   _GTW.__test__.model import *
-from   _MOM.import_MOM     import Q
-from   _MOM.inspect        import children_trans_iter
-from   _TFL.predicate      import split_hst
+from   _GTW.__test__.model               import *
+from   _GTW.__test__._SAS_test_functions import *
+
+from   _MOM.import_MOM                   import Q
 
 _test_filters = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -154,6 +155,350 @@ _test_filters = r"""
            "PAP__Person".x_locked AS "PAP__Person_x_locked"
          FROM "PAP__Person"
          WHERE lower("PAP__Person".__raw_last_name) LIKE :lower_1 || '%%%%'
+
+    >>> print (scope.PAP.Person_has_Phone.query (Q.extension == None))
+    SQL: SELECT
+           "PAP__Person_has_Phone"."desc" AS "PAP__Person_has_Phone_desc",
+           "PAP__Person_has_Phone".electric AS "PAP__Person_has_Phone_electric",
+           "PAP__Person_has_Phone".extension AS "PAP__Person_has_Phone_extension",
+           "PAP__Person_has_Phone".last_cid AS "PAP__Person_has_Phone_last_cid",
+           "PAP__Person_has_Phone".left_pid AS "PAP__Person_has_Phone_left_pid",
+           "PAP__Person_has_Phone".pid AS "PAP__Person_has_Phone_pid",
+           "PAP__Person_has_Phone".right_pid AS "PAP__Person_has_Phone_right_pid",
+           "PAP__Person_has_Phone".type_name AS "PAP__Person_has_Phone_type_name",
+           "PAP__Person_has_Phone".x_locked AS "PAP__Person_has_Phone_x_locked"
+         FROM "PAP__Person_has_Phone"
+         WHERE "PAP__Person_has_Phone".extension IS NULL
+
+    >>> print (scope.PAP.Person_has_Phone.query (Q.left.last_name.STARTSWITH ("H")))
+    SQL: SELECT
+           "PAP__Person_has_Phone"."desc" AS "PAP__Person_has_Phone_desc",
+           "PAP__Person_has_Phone".electric AS "PAP__Person_has_Phone_electric",
+           "PAP__Person_has_Phone".extension AS "PAP__Person_has_Phone_extension",
+           "PAP__Person_has_Phone".last_cid AS "PAP__Person_has_Phone_last_cid",
+           "PAP__Person_has_Phone".left_pid AS "PAP__Person_has_Phone_left_pid",
+           "PAP__Person_has_Phone".pid AS "PAP__Person_has_Phone_pid",
+           "PAP__Person_has_Phone".right_pid AS "PAP__Person_has_Phone_right_pid",
+           "PAP__Person_has_Phone".type_name AS "PAP__Person_has_Phone_type_name",
+           "PAP__Person_has_Phone".x_locked AS "PAP__Person_has_Phone_x_locked"
+         FROM "PAP__Person_has_Phone"
+           JOIN "PAP__Person" ON "PAP__Person_has_Phone".left_pid = "PAP__Person".pid
+         WHERE "PAP__Person".last_name LIKE :last_name_1 || '%%%%'
+
+    >>> print (scope.PAP.Person_has_Phone.query ().attrs (Q.pid, Q.left, Q.right))
+    SQL: SELECT
+           "PAP__Person_has_Phone".left_pid,
+           "PAP__Person_has_Phone".pid,
+           "PAP__Person_has_Phone".right_pid
+         FROM "PAP__Person_has_Phone"
+
+    >>> print (scope.PAP.Person_has_Phone.query ().attrs (Q.pid, Q.left.last_name, Q.right.number))
+    SQL: SELECT
+           "PAP__Person".last_name,
+           "PAP__Person_has_Phone".pid,
+           "PAP__Phone".number
+         FROM "PAP__Person_has_Phone", "PAP__Person", "PAP__Phone"
+
+    >>> print (scope.SRM.Boat_in_Regatta.query (Q.right.left.date.start > "2009/05/21"))
+    SQL: SELECT
+           "SRM__Boat_in_Regatta".electric AS "SRM__Boat_in_Regatta_electric",
+           "SRM__Boat_in_Regatta".last_cid AS "SRM__Boat_in_Regatta_last_cid",
+           "SRM__Boat_in_Regatta".left_pid AS "SRM__Boat_in_Regatta_left_pid",
+           "SRM__Boat_in_Regatta".pid AS "SRM__Boat_in_Regatta_pid",
+           "SRM__Boat_in_Regatta".place AS "SRM__Boat_in_Regatta_place",
+           "SRM__Boat_in_Regatta".points AS "SRM__Boat_in_Regatta_points",
+           "SRM__Boat_in_Regatta".rank AS "SRM__Boat_in_Regatta_rank",
+           "SRM__Boat_in_Regatta".registration_date AS "SRM__Boat_in_Regatta_registration_date",
+           "SRM__Boat_in_Regatta".right_pid AS "SRM__Boat_in_Regatta_right_pid",
+           "SRM__Boat_in_Regatta".skipper_pid AS "SRM__Boat_in_Regatta_skipper_pid",
+           "SRM__Boat_in_Regatta".type_name AS "SRM__Boat_in_Regatta_type_name",
+           "SRM__Boat_in_Regatta".x_locked AS "SRM__Boat_in_Regatta_x_locked"
+         FROM "SRM__Boat_in_Regatta"
+           JOIN "SRM__Regatta" ON "SRM__Boat_in_Regatta".right_pid = "SRM__Regatta".pid
+           JOIN "SRM__Regatta_Event" ON "SRM__Regatta".left_pid = "SRM__Regatta_Event".pid
+         WHERE "SRM__Regatta_Event".__date_start > :__date_start_1
+
+    >>> print (scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page"))
+    SQL: SELECT
+           "SWP__Clip_O".__date_finish AS "SWP__Clip_O___date_finish",
+           "SWP__Clip_O".__date_start AS "SWP__Clip_O___date_start",
+           "SWP__Clip_O".__date_x_finish AS "SWP__Clip_O___date_x_finish",
+           "SWP__Clip_O".__date_x_start AS "SWP__Clip_O___date_x_start",
+           "SWP__Clip_O".abstract AS "SWP__Clip_O_abstract",
+           "SWP__Clip_O".contents AS "SWP__Clip_O_contents",
+           "SWP__Clip_O".electric AS "SWP__Clip_O_electric",
+           "SWP__Clip_O".last_cid AS "SWP__Clip_O_last_cid",
+           "SWP__Clip_O".left_pid AS "SWP__Clip_O_left_pid",
+           "SWP__Clip_O".pid AS "SWP__Clip_O_pid",
+           "SWP__Clip_O".prio AS "SWP__Clip_O_prio",
+           "SWP__Clip_O".type_name AS "SWP__Clip_O_type_name",
+           "SWP__Clip_O".x_locked AS "SWP__Clip_O_x_locked"
+         FROM "SWP__Clip_O"
+           JOIN pids ON "SWP__Clip_O".left_pid = pids.pid
+         WHERE pids.type_name = :type_name_1
+
+"""
+
+_test_joins = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> show_joins (scope)
+    Auth._Account_ ['Auth__Account', 'Auth__Account_Anonymous', 'Auth___Account_']
+        SQL: SELECT
+           "Auth__Account"."Auth___Account__pid" AS "Auth__Account_Auth___Account__pid",
+           "Auth__Account".password AS "Auth__Account_password",
+           "Auth__Account".ph_name AS "Auth__Account_ph_name",
+           "Auth__Account_Anonymous"."Auth___Account__pid" AS "Auth__Account_Anonymous_Auth___Account__pid",
+           "Auth___Account_".electric AS "Auth___Account__electric",
+           "Auth___Account_".enabled AS "Auth___Account__enabled",
+           "Auth___Account_".last_cid AS "Auth___Account__last_cid",
+           "Auth___Account_".name AS "Auth___Account__name",
+           "Auth___Account_".pid AS "Auth___Account__pid",
+           "Auth___Account_".superuser AS "Auth___Account__superuser",
+           "Auth___Account_".suspended AS "Auth___Account__suspended",
+           "Auth___Account_".type_name AS "Auth___Account__type_name",
+           "Auth___Account_".x_locked AS "Auth___Account__x_locked"
+         FROM "Auth___Account_"
+           LEFT OUTER JOIN "Auth__Account" ON "Auth___Account_".pid = "Auth__Account"."Auth___Account__pid"
+           LEFT OUTER JOIN "Auth__Account_Anonymous" ON "Auth___Account_".pid = "Auth__Account_Anonymous"."Auth___Account__pid"
+    Auth.Account ['Auth__Account', 'Auth___Account_']
+        SQL: SELECT
+           "Auth__Account"."Auth___Account__pid" AS "Auth__Account_Auth___Account__pid",
+           "Auth__Account".password AS "Auth__Account_password",
+           "Auth__Account".ph_name AS "Auth__Account_ph_name",
+           "Auth___Account_".electric AS "Auth___Account__electric",
+           "Auth___Account_".enabled AS "Auth___Account__enabled",
+           "Auth___Account_".last_cid AS "Auth___Account__last_cid",
+           "Auth___Account_".name AS "Auth___Account__name",
+           "Auth___Account_".pid AS "Auth___Account__pid",
+           "Auth___Account_".superuser AS "Auth___Account__superuser",
+           "Auth___Account_".suspended AS "Auth___Account__suspended",
+           "Auth___Account_".type_name AS "Auth___Account__type_name",
+           "Auth___Account_".x_locked AS "Auth___Account__x_locked"
+         FROM "Auth__Account"
+           JOIN "Auth___Account_" ON "Auth___Account_".pid = "Auth__Account"."Auth___Account__pid"
+    Auth.Account_Anonymous ['Auth__Account_Anonymous', 'Auth___Account_']
+        SQL: SELECT
+           "Auth__Account_Anonymous"."Auth___Account__pid" AS "Auth__Account_Anonymous_Auth___Account__pid",
+           "Auth___Account_".electric AS "Auth___Account__electric",
+           "Auth___Account_".enabled AS "Auth___Account__enabled",
+           "Auth___Account_".last_cid AS "Auth___Account__last_cid",
+           "Auth___Account_".name AS "Auth___Account__name",
+           "Auth___Account_".pid AS "Auth___Account__pid",
+           "Auth___Account_".superuser AS "Auth___Account__superuser",
+           "Auth___Account_".suspended AS "Auth___Account__suspended",
+           "Auth___Account_".type_name AS "Auth___Account__type_name",
+           "Auth___Account_".x_locked AS "Auth___Account__x_locked"
+         FROM "Auth__Account_Anonymous"
+           JOIN "Auth___Account_" ON "Auth___Account_".pid = "Auth__Account_Anonymous"."Auth___Account__pid"
+    SRM.Regatta ['SRM__Regatta', 'SRM__Regatta_C', 'SRM__Regatta_H']
+        SQL: SELECT
+           "SRM__Regatta".__result_date AS "SRM__Regatta___result_date",
+           "SRM__Regatta".__result_software AS "SRM__Regatta___result_software",
+           "SRM__Regatta".__result_status AS "SRM__Regatta___result_status",
+           "SRM__Regatta".boat_class_pid AS "SRM__Regatta_boat_class_pid",
+           "SRM__Regatta".discards AS "SRM__Regatta_discards",
+           "SRM__Regatta".electric AS "SRM__Regatta_electric",
+           "SRM__Regatta".is_cancelled AS "SRM__Regatta_is_cancelled",
+           "SRM__Regatta".kind AS "SRM__Regatta_kind",
+           "SRM__Regatta".last_cid AS "SRM__Regatta_last_cid",
+           "SRM__Regatta".left_pid AS "SRM__Regatta_left_pid",
+           "SRM__Regatta".perma_name AS "SRM__Regatta_perma_name",
+           "SRM__Regatta".pid AS "SRM__Regatta_pid",
+           "SRM__Regatta".races AS "SRM__Regatta_races",
+           "SRM__Regatta".type_name AS "SRM__Regatta_type_name",
+           "SRM__Regatta".x_locked AS "SRM__Regatta_x_locked",
+           "SRM__Regatta_C"."SRM__Regatta_pid" AS "SRM__Regatta_C_SRM__Regatta_pid",
+           "SRM__Regatta_C".is_team_race AS "SRM__Regatta_C_is_team_race",
+           "SRM__Regatta_H"."SRM__Regatta_pid" AS "SRM__Regatta_H_SRM__Regatta_pid"
+         FROM "SRM__Regatta"
+           LEFT OUTER JOIN "SRM__Regatta_C" ON "SRM__Regatta".pid = "SRM__Regatta_C"."SRM__Regatta_pid"
+           LEFT OUTER JOIN "SRM__Regatta_H" ON "SRM__Regatta".pid = "SRM__Regatta_H"."SRM__Regatta_pid"
+    SRM.Regatta_C ['SRM__Regatta', 'SRM__Regatta_C']
+        SQL: SELECT
+           "SRM__Regatta".__result_date AS "SRM__Regatta___result_date",
+           "SRM__Regatta".__result_software AS "SRM__Regatta___result_software",
+           "SRM__Regatta".__result_status AS "SRM__Regatta___result_status",
+           "SRM__Regatta".boat_class_pid AS "SRM__Regatta_boat_class_pid",
+           "SRM__Regatta".discards AS "SRM__Regatta_discards",
+           "SRM__Regatta".electric AS "SRM__Regatta_electric",
+           "SRM__Regatta".is_cancelled AS "SRM__Regatta_is_cancelled",
+           "SRM__Regatta".kind AS "SRM__Regatta_kind",
+           "SRM__Regatta".last_cid AS "SRM__Regatta_last_cid",
+           "SRM__Regatta".left_pid AS "SRM__Regatta_left_pid",
+           "SRM__Regatta".perma_name AS "SRM__Regatta_perma_name",
+           "SRM__Regatta".pid AS "SRM__Regatta_pid",
+           "SRM__Regatta".races AS "SRM__Regatta_races",
+           "SRM__Regatta".type_name AS "SRM__Regatta_type_name",
+           "SRM__Regatta".x_locked AS "SRM__Regatta_x_locked",
+           "SRM__Regatta_C"."SRM__Regatta_pid" AS "SRM__Regatta_C_SRM__Regatta_pid",
+           "SRM__Regatta_C".is_team_race AS "SRM__Regatta_C_is_team_race"
+         FROM "SRM__Regatta_C"
+           JOIN "SRM__Regatta" ON "SRM__Regatta".pid = "SRM__Regatta_C"."SRM__Regatta_pid"
+    SRM.Regatta_H ['SRM__Regatta', 'SRM__Regatta_H']
+        SQL: SELECT
+           "SRM__Regatta".__result_date AS "SRM__Regatta___result_date",
+           "SRM__Regatta".__result_software AS "SRM__Regatta___result_software",
+           "SRM__Regatta".__result_status AS "SRM__Regatta___result_status",
+           "SRM__Regatta".boat_class_pid AS "SRM__Regatta_boat_class_pid",
+           "SRM__Regatta".discards AS "SRM__Regatta_discards",
+           "SRM__Regatta".electric AS "SRM__Regatta_electric",
+           "SRM__Regatta".is_cancelled AS "SRM__Regatta_is_cancelled",
+           "SRM__Regatta".kind AS "SRM__Regatta_kind",
+           "SRM__Regatta".last_cid AS "SRM__Regatta_last_cid",
+           "SRM__Regatta".left_pid AS "SRM__Regatta_left_pid",
+           "SRM__Regatta".perma_name AS "SRM__Regatta_perma_name",
+           "SRM__Regatta".pid AS "SRM__Regatta_pid",
+           "SRM__Regatta".races AS "SRM__Regatta_races",
+           "SRM__Regatta".type_name AS "SRM__Regatta_type_name",
+           "SRM__Regatta".x_locked AS "SRM__Regatta_x_locked",
+           "SRM__Regatta_H"."SRM__Regatta_pid" AS "SRM__Regatta_H_SRM__Regatta_pid"
+         FROM "SRM__Regatta_H"
+           JOIN "SRM__Regatta" ON "SRM__Regatta".pid = "SRM__Regatta_H"."SRM__Regatta_pid"
+    SRM.Page ['SRM__Page', 'SWP__Page']
+        SQL: SELECT
+           "SRM__Page"."SWP__Page_pid" AS "SRM__Page_SWP__Page_pid",
+           "SRM__Page"."desc" AS "SRM__Page_desc",
+           "SRM__Page".event_pid AS "SRM__Page_event_pid",
+           "SWP__Page".__date_finish AS "SWP__Page___date_finish",
+           "SWP__Page".__date_start AS "SWP__Page___date_start",
+           "SWP__Page".contents AS "SWP__Page_contents",
+           "SWP__Page".electric AS "SWP__Page_electric",
+           "SWP__Page".format AS "SWP__Page_format",
+           "SWP__Page".head_line AS "SWP__Page_head_line",
+           "SWP__Page".hidden AS "SWP__Page_hidden",
+           "SWP__Page".last_cid AS "SWP__Page_last_cid",
+           "SWP__Page".perma_name AS "SWP__Page_perma_name",
+           "SWP__Page".pid AS "SWP__Page_pid",
+           "SWP__Page".prio AS "SWP__Page_prio",
+           "SWP__Page".short_title AS "SWP__Page_short_title",
+           "SWP__Page".text AS "SWP__Page_text",
+           "SWP__Page".title AS "SWP__Page_title",
+           "SWP__Page".type_name AS "SWP__Page_type_name",
+           "SWP__Page".x_locked AS "SWP__Page_x_locked"
+         FROM "SRM__Page"
+           JOIN "SWP__Page" ON "SWP__Page".pid = "SRM__Page"."SWP__Page_pid"
+    SRM._Boat_Class_ ['SRM__Boat_Class', 'SRM__Handicap', 'SRM___Boat_Class_']
+        SQL: SELECT
+           "SRM__Boat_Class"."SRM___Boat_Class__pid" AS "SRM__Boat_Class_SRM___Boat_Class__pid",
+           "SRM__Boat_Class".beam AS "SRM__Boat_Class_beam",
+           "SRM__Boat_Class".loa AS "SRM__Boat_Class_loa",
+           "SRM__Boat_Class".max_crew AS "SRM__Boat_Class_max_crew",
+           "SRM__Boat_Class".sail_area AS "SRM__Boat_Class_sail_area",
+           "SRM__Handicap"."SRM___Boat_Class__pid" AS "SRM__Handicap_SRM___Boat_Class__pid",
+           "SRM___Boat_Class_".__raw_name AS "SRM___Boat_Class____raw_name",
+           "SRM___Boat_Class_".electric AS "SRM___Boat_Class__electric",
+           "SRM___Boat_Class_".last_cid AS "SRM___Boat_Class__last_cid",
+           "SRM___Boat_Class_".name AS "SRM___Boat_Class__name",
+           "SRM___Boat_Class_".pid AS "SRM___Boat_Class__pid",
+           "SRM___Boat_Class_".type_name AS "SRM___Boat_Class__type_name",
+           "SRM___Boat_Class_".x_locked AS "SRM___Boat_Class__x_locked"
+         FROM "SRM___Boat_Class_"
+           LEFT OUTER JOIN "SRM__Boat_Class" ON "SRM___Boat_Class_".pid = "SRM__Boat_Class"."SRM___Boat_Class__pid"
+           LEFT OUTER JOIN "SRM__Handicap" ON "SRM___Boat_Class_".pid = "SRM__Handicap"."SRM___Boat_Class__pid"
+    SRM.Boat_Class ['SRM__Boat_Class', 'SRM___Boat_Class_']
+        SQL: SELECT
+           "SRM__Boat_Class"."SRM___Boat_Class__pid" AS "SRM__Boat_Class_SRM___Boat_Class__pid",
+           "SRM__Boat_Class".beam AS "SRM__Boat_Class_beam",
+           "SRM__Boat_Class".loa AS "SRM__Boat_Class_loa",
+           "SRM__Boat_Class".max_crew AS "SRM__Boat_Class_max_crew",
+           "SRM__Boat_Class".sail_area AS "SRM__Boat_Class_sail_area",
+           "SRM___Boat_Class_".__raw_name AS "SRM___Boat_Class____raw_name",
+           "SRM___Boat_Class_".electric AS "SRM___Boat_Class__electric",
+           "SRM___Boat_Class_".last_cid AS "SRM___Boat_Class__last_cid",
+           "SRM___Boat_Class_".name AS "SRM___Boat_Class__name",
+           "SRM___Boat_Class_".pid AS "SRM___Boat_Class__pid",
+           "SRM___Boat_Class_".type_name AS "SRM___Boat_Class__type_name",
+           "SRM___Boat_Class_".x_locked AS "SRM___Boat_Class__x_locked"
+         FROM "SRM__Boat_Class"
+           JOIN "SRM___Boat_Class_" ON "SRM___Boat_Class_".pid = "SRM__Boat_Class"."SRM___Boat_Class__pid"
+    SRM.Handicap ['SRM__Handicap', 'SRM___Boat_Class_']
+        SQL: SELECT
+           "SRM__Handicap"."SRM___Boat_Class__pid" AS "SRM__Handicap_SRM___Boat_Class__pid",
+           "SRM___Boat_Class_".__raw_name AS "SRM___Boat_Class____raw_name",
+           "SRM___Boat_Class_".electric AS "SRM___Boat_Class__electric",
+           "SRM___Boat_Class_".last_cid AS "SRM___Boat_Class__last_cid",
+           "SRM___Boat_Class_".name AS "SRM___Boat_Class__name",
+           "SRM___Boat_Class_".pid AS "SRM___Boat_Class__pid",
+           "SRM___Boat_Class_".type_name AS "SRM___Boat_Class__type_name",
+           "SRM___Boat_Class_".x_locked AS "SRM___Boat_Class__x_locked"
+         FROM "SRM__Handicap"
+           JOIN "SRM___Boat_Class_" ON "SRM___Boat_Class_".pid = "SRM__Handicap"."SRM___Boat_Class__pid"
+    SWP.Page ['SRM__Page', 'SWP__Clip_X', 'SWP__Page', 'SWP__Page_Y']
+        SQL: SELECT
+           "SRM__Page"."SWP__Page_pid" AS "SRM__Page_SWP__Page_pid",
+           "SRM__Page"."desc" AS "SRM__Page_desc",
+           "SRM__Page".event_pid AS "SRM__Page_event_pid",
+           "SWP__Clip_X"."SWP__Page_pid" AS "SWP__Clip_X_SWP__Page_pid",
+           "SWP__Clip_X".link_to AS "SWP__Clip_X_link_to",
+           "SWP__Page".__date_finish AS "SWP__Page___date_finish",
+           "SWP__Page".__date_start AS "SWP__Page___date_start",
+           "SWP__Page".contents AS "SWP__Page_contents",
+           "SWP__Page".electric AS "SWP__Page_electric",
+           "SWP__Page".format AS "SWP__Page_format",
+           "SWP__Page".head_line AS "SWP__Page_head_line",
+           "SWP__Page".hidden AS "SWP__Page_hidden",
+           "SWP__Page".last_cid AS "SWP__Page_last_cid",
+           "SWP__Page".perma_name AS "SWP__Page_perma_name",
+           "SWP__Page".pid AS "SWP__Page_pid",
+           "SWP__Page".prio AS "SWP__Page_prio",
+           "SWP__Page".short_title AS "SWP__Page_short_title",
+           "SWP__Page".text AS "SWP__Page_text",
+           "SWP__Page".title AS "SWP__Page_title",
+           "SWP__Page".type_name AS "SWP__Page_type_name",
+           "SWP__Page".x_locked AS "SWP__Page_x_locked",
+           "SWP__Page_Y"."SWP__Page_pid" AS "SWP__Page_Y_SWP__Page_pid",
+           "SWP__Page_Y".year AS "SWP__Page_Y_year"
+         FROM "SWP__Page"
+           LEFT OUTER JOIN "SRM__Page" ON "SWP__Page".pid = "SRM__Page"."SWP__Page_pid"
+           LEFT OUTER JOIN "SWP__Clip_X" ON "SWP__Page".pid = "SWP__Clip_X"."SWP__Page_pid"
+           LEFT OUTER JOIN "SWP__Page_Y" ON "SWP__Page".pid = "SWP__Page_Y"."SWP__Page_pid"
+    SWP.Clip_X ['SWP__Clip_X', 'SWP__Page']
+        SQL: SELECT
+           "SWP__Clip_X"."SWP__Page_pid" AS "SWP__Clip_X_SWP__Page_pid",
+           "SWP__Clip_X".link_to AS "SWP__Clip_X_link_to",
+           "SWP__Page".__date_finish AS "SWP__Page___date_finish",
+           "SWP__Page".__date_start AS "SWP__Page___date_start",
+           "SWP__Page".contents AS "SWP__Page_contents",
+           "SWP__Page".electric AS "SWP__Page_electric",
+           "SWP__Page".format AS "SWP__Page_format",
+           "SWP__Page".head_line AS "SWP__Page_head_line",
+           "SWP__Page".hidden AS "SWP__Page_hidden",
+           "SWP__Page".last_cid AS "SWP__Page_last_cid",
+           "SWP__Page".perma_name AS "SWP__Page_perma_name",
+           "SWP__Page".pid AS "SWP__Page_pid",
+           "SWP__Page".prio AS "SWP__Page_prio",
+           "SWP__Page".short_title AS "SWP__Page_short_title",
+           "SWP__Page".text AS "SWP__Page_text",
+           "SWP__Page".title AS "SWP__Page_title",
+           "SWP__Page".type_name AS "SWP__Page_type_name",
+           "SWP__Page".x_locked AS "SWP__Page_x_locked"
+         FROM "SWP__Clip_X"
+           JOIN "SWP__Page" ON "SWP__Page".pid = "SWP__Clip_X"."SWP__Page_pid"
+    SWP.Page_Y ['SWP__Page', 'SWP__Page_Y']
+        SQL: SELECT
+           "SWP__Page".__date_finish AS "SWP__Page___date_finish",
+           "SWP__Page".__date_start AS "SWP__Page___date_start",
+           "SWP__Page".contents AS "SWP__Page_contents",
+           "SWP__Page".electric AS "SWP__Page_electric",
+           "SWP__Page".format AS "SWP__Page_format",
+           "SWP__Page".head_line AS "SWP__Page_head_line",
+           "SWP__Page".hidden AS "SWP__Page_hidden",
+           "SWP__Page".last_cid AS "SWP__Page_last_cid",
+           "SWP__Page".perma_name AS "SWP__Page_perma_name",
+           "SWP__Page".pid AS "SWP__Page_pid",
+           "SWP__Page".prio AS "SWP__Page_prio",
+           "SWP__Page".short_title AS "SWP__Page_short_title",
+           "SWP__Page".text AS "SWP__Page_text",
+           "SWP__Page".title AS "SWP__Page_title",
+           "SWP__Page".type_name AS "SWP__Page_type_name",
+           "SWP__Page".x_locked AS "SWP__Page_x_locked",
+           "SWP__Page_Y"."SWP__Page_pid" AS "SWP__Page_Y_SWP__Page_pid",
+           "SWP__Page_Y".year AS "SWP__Page_Y_year"
+         FROM "SWP__Page_Y"
+           JOIN "SWP__Page" ON "SWP__Page".pid = "SWP__Page_Y"."SWP__Page_pid"
+
 """
 
 _test_select = """
@@ -698,6 +1043,64 @@ _test_tables = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
+    >>> scope.app_type._T_Extension [0]._sa_table = None
+    >>> for T in scope.app_type._T_Extension :
+    ...     if T._sa_table is not None :
+    ...         print (T.type_name)
+    Auth._Account_
+    Auth.Account_Anonymous
+    Auth.Account
+    Auth.Certificate
+    Auth.Group
+    Auth.Account_in_Group
+    Auth.Account_Activation
+    Auth.Account_Password_Change_Required
+    Auth.Account_EMail_Verification
+    Auth.Account_Password_Reset
+    EVT.Calendar
+    SWP.Page
+    SWP.Page_Y
+    EVT.Event
+    EVT.Event_occurs
+    EVT.Recurrence_Spec
+    EVT.Recurrence_Rule
+    PAP.Address
+    PAP.Company
+    PAP.Email
+    PAP.Phone
+    PAP.Person
+    PAP.Url
+    PAP.Address_Position
+    PAP.Person_has_Account
+    SRM._Boat_Class_
+    SRM.Boat_Class
+    SRM.Handicap
+    SRM.Boat
+    SRM.Club
+    SRM.Regatta_Event
+    SWP.Clip_O
+    SWP.Clip_X
+    SWP.Gallery
+    SWP.Picture
+    SRM.Page
+    SRM.Regatta
+    SRM.Regatta_C
+    SRM.Regatta_H
+    SRM.Sailor
+    SRM.Boat_in_Regatta
+    SRM.Race_Result
+    SRM.Team
+    SRM.Crew_Member
+    SRM.Team_has_Boat_in_Regatta
+    PAP.Company_has_Url
+    PAP.Person_has_Url
+    PAP.Company_has_Phone
+    PAP.Person_has_Phone
+    PAP.Company_has_Email
+    PAP.Person_has_Email
+    PAP.Company_has_Address
+    PAP.Person_has_Address
+
     >>> show_tables (scope)
     Auth.Account_in_Group <Table Auth__Account_in_Group>
         Column electric                  : Boolean              Internal Boolean electric
@@ -724,7 +1127,7 @@ _test_tables = """
         Column desc                      : Varchar(20)          Optional String desc
         Column electric                  : Boolean              Internal Boolean electric
         Column last_cid                  : Integer              Internal Int last_cid
-        Column name                      : Varchar(32)          Primary Name name
+        Column name                      : Varchar(32)          Primary String name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary
         Column type_name                 : Varchar(64)          Internal__Type_Name String type_name
         Column x_locked                  : Boolean              Internal Boolean x_locked
@@ -835,7 +1238,7 @@ _test_tables = """
         Column left_pid                  : Integer              Link_Role__Init_Only Boat_in_Regatta left
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary
         Column points                    : Integer              Necessary Int points
-        Column race                      : Integer              Primary Int race
+        Column race                      : Smallint             Primary Int race
         Column status                    : Varchar(8)           Optional String status
         Column type_name                 : Varchar(64)          Internal__Type_Name String type_name
         Column x_locked                  : Boolean              Internal Boolean x_locked
@@ -1184,83 +1587,14 @@ _test_tables = """
 
 """
 
-def formatted_select (T, nl, indent) :
-    sep            = nl + indent
-    text           = str        (T._sa_table.select ())
-    head, _, tail  = split_hst  (text, " ")
-    lines          = tail.split (nl)
-    def _gen () :
-        s = "," + sep + (" " * 7)
-        for l in lines :
-            if "," in l :
-                comps = sorted (c.strip () for c in l.split (","))
-                yield s.join (comps)
-            else :
-                yield l
-    result = " ".join ((head, sep.join (x.rstrip () for x in _gen ())))
-    return result
-# end def formatted_select
-
-def formatted_table (T, nl, indent) :
-    sep   = nl + indent
-    SQ    = T._SAQ
-    ST    = T._sa_table
-    def _gen () :
-        for c in ST.columns :
-            tail = []
-            c_MOM_Kind = getattr (c, "MOM_Kind", None)
-            if c_MOM_Kind :
-                tail.append \
-                    ( "%s %s %s"
-                    % ( c_MOM_Kind.__class__.__name__
-                      , c_MOM_Kind.typ
-                      , getattr (c_MOM_Kind, "name", c_MOM_Kind)
-                      )
-                    )
-            else :
-                tail.append ("-" * 10)
-            if c.primary_key :
-                tail.append ("primary")
-            if c.foreign_keys :
-                tail.extend (str (fk) for fk in sorted (c.foreign_keys))
-            r = ( "Column %-25s : %-20s %s"
-                % (c.name, str (c.type).capitalize (), " ".join (tail))
-                ).strip ()
-            yield r
-    return sep.join (x.rstrip () for x in sorted (_gen ()))
-# end def formatted_table
-
-nl     = chr (10)
-indent = "  " * 2
-sk     = lambda x : (x.type_name, x.i_rank, )
-
-def show_select (scope) :
-    for T, l in (children_trans_iter (scope.MOM.Id_Entity, sort_key = sk)) :
-        if T.relevant_root and T.show_in_ui :
-            second = "" if T.relevant_root is T \
-                      else T.relevant_root.type_name
-            head   = ("%s %s" % (T.type_name, second)).strip ()
-            print ("%s%s" % (head, nl), "  ", formatted_select (T, nl, indent))
-# end def show_select
-
-def show_tables (scope) :
-    for T, l in (children_trans_iter (scope.MOM.Id_Entity, sort_key = sk)) :
-        if T.relevant_root and T.show_in_ui :
-            ST = T._sa_table
-            second = "" if T.relevant_root is T \
-                      else T.relevant_root.type_name
-            head   = ("%s %s" % (T.type_name, second)).strip ()
-            head   = ("%s <Table %s>" % (head, T._sa_table)).strip ()
-            print ("%s%s" % (head, nl), "  ", formatted_table (T, nl, indent))
-# end def show_tables
-
 __test__ = Scaffold.create_test_dict \
     ( dict
         ( test_filters = _test_filters
+        , test_joins   = _test_joins
         , test_select  = _test_select
         , test_tables  = _test_tables
         )
-    , ignore = "HPS"
+    , ignore = ("HPS", "my", "pg", "sq")
     )
 
 ### __END__ GTW.__test__.SAS_SQL

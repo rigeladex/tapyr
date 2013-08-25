@@ -204,18 +204,27 @@
 #    26-Apr-2013 (CT) Remove support for `Primary_AIS`
 #     8-May-2013 (CT) Factor `_Query_` to fool `DBW.SAS`
 #     3-Jun-2013 (CT) Support forward references in `_EPK_Mixin_`
-#     3-Jun-2013 (CT) Add guard for class access to `Kind.__get__` (type_name..)
 #     4-Jun-2013 (CT) Add `_Type_Name_Mixin_`
 #     5-Jun-2013 (CT) Add `q_able`
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
+#    26-Jun-2013 (CT) Improve support for lazy references in `_EPK_Mixin_`
+#                     * Add optional argument `old_value` to
+#                       `_set_cooked_value`, `_set_cooked_value_inner`
+#    26-Jun-2013 (CT) Add `is_composite`
+#    10-Jul-2013 (CT) Add `_Rev_Query_`
+#    10-Jul-2013 (CT) Add `show_in_ui`
+#    28-Jul-2013 (CT) Guard against `LookupError`, not `KeyError`, in
+#                     `_EPK_Mixin_.set_pickle_cargo`
+#     1-Aug-2013 (CT) Factor `_SPK_Mixin_` from `_EPK_Mixin_`
 #    ««revision-date»»···
 #--
 
 from   __future__            import absolute_import, division
 from   __future__            import print_function, unicode_literals
 
-from   _TFL                  import TFL
 from   _MOM                  import MOM
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
@@ -242,6 +251,7 @@ class Kind (MOM.Prop.Kind) :
     db_sig_version        = 0
     electric              = True
     is_changeable         = True
+    is_composite          = False
     is_primary            = False
     is_required           = False
     is_settable           = True
@@ -256,11 +266,13 @@ class Kind (MOM.Prop.Kind) :
 
     _k_rank               = 0
     _q_able               = False
+    _show_in_ui           = True ### but only if `q_able`, too
 
     def __init__ (self, Attr_Type, e_type) :
         attr = Attr_Type      (self, e_type)
         self.__super.__init__ (attr, e_type)
         self._check_sanity    (attr, e_type)
+        attr._fix_det         (self, e_type)
         self.dependent_attrs = set ()
         self.rank            = attr.sig_rank
         self.record_changes  = attr.record_changes and self.record_changes
@@ -276,11 +288,6 @@ class Kind (MOM.Prop.Kind) :
 
     def __get__ (self, obj, cls) :
         if obj is None :
-            if self.name in ("pid", ) :
-                raise RuntimeError \
-                    ( "Access to %s over class %s"
-                     % (self.name, cls.Essence.__name__)
-                    )
             return self
         return self.get_value (obj)
     # end def __get__
@@ -325,6 +332,11 @@ class Kind (MOM.Prop.Kind) :
     def q_able (self) :
         return self._q_able and self.attr.q_able
     # end def q_able
+
+    @TFL.Meta.Once_Property
+    def show_in_ui (self) :
+        return self.q_able and self._show_in_ui and not self.attr.hidden
+    # end def show_in_ui
 
     def from_pickle_cargo (self, scope, cargo) :
         Pickler = self.attr.Pickler
@@ -503,20 +515,21 @@ class Kind (MOM.Prop.Kind) :
         return self._set_cooked_value (obj, value, changed)
     # end def _set_cooked_inner
 
-    def _set_cooked_value (self, obj, value, changed = 42) :
+    def _set_cooked_value (self, obj, value, changed = 42, old_value = None) :
         if changed == 42 :
             ### if the caller didn't pass a (boolean) value, evaluate it here
-            changed = self.get_value (obj) != value
+            old_value = self.get_value (obj)
+            changed   = old_value != value
         if changed :
-            attr_man = obj._attr_man
-            self._set_cooked_value_inner (obj, value)
+            attr_man  = obj._attr_man
+            self._set_cooked_value_inner (obj, value, old_value)
             self.inc_changes (attr_man, obj, value)
             if self.dependent_attrs :
                 attr_man.updates_pending.extend (self.dependent_attrs)
             return True
     # end def _set_cooked_value
 
-    def _set_cooked_value_inner (self, obj, value) :
+    def _set_cooked_value_inner (self, obj, value, old_value = None) :
         setattr (obj, self.attr.ckd_name, value)
     # end def _set_cooked_value_inner
 
@@ -534,33 +547,78 @@ class Kind (MOM.Prop.Kind) :
 
 # end class Kind
 
-class _EPK_Mixin_ (Kind) :
-    """Mixin for attributes referring to entities with `epk`."""
+class _SPK_Mixin_ (Kind) :
+    """Mixin for attributes referring to an entity identified by a spk."""
 
     @TFL.Meta.Once_Property
     def db_sig (self) :
         return self.__super.db_sig + (self.attr.P_Type.type_name, )
     # end def db_sig
 
-    def get_raw_epk (self, obj) :
-        ref = self.get_value (obj)
-        if ref is not None :
-            return ref.epk_raw
-        return u""
-    # end def get_raw_epk
-
-    def get_raw_pid (self, obj) :
-        ref = self.get_value (obj)
-        if ref is not None :
-            return ref.pid
-        return u""
-    # end def get_raw_pid
-
-    def from_pickle_cargo (self, scope, cargo) :
-        if cargo and cargo [0] :
-            ETM = scope [self.attr.P_Type.type_name]
-            return ETM.pid_query (cargo [0])
+    def from_pickle_cargo (self, scope, cargo, lazy = False) :
+        spk = cargo and cargo [0]
+        if spk :
+            if lazy :
+                return spk
+            else :
+                ETM = scope [self.attr.P_Type.type_name]
+                return self._entity_from_spk (scope, ETM, spk)
     # end def from_pickle_cargo
+
+    def get_pickle_cargo (self, obj) :
+        ### don't resolve forward or lazy reference
+        ref = self.__super.get_value (obj)
+        if ref is not None :
+            if not isinstance (ref, int) :
+                ref = ref.spk
+            return (ref, )
+        return (None, )
+    # end def get_pickle_cargo
+
+    def get_raw_spk (self, obj) :
+        ### don't resolve forward or lazy reference
+        result = self.__super.get_value (obj)
+        if result is None :
+            result = u""
+        elif not isinstance (result, int) :
+            result = result.spk
+        return result
+    # end def get_raw_spk
+
+    def get_value (self, obj) :
+        result = self.__super.get_value (obj)
+        if isinstance (result, int) :
+            ### try to resolve forward or lazy reference
+            scope  = obj.home_scope
+            ETM    = scope [self.attr.P_Type.type_name]
+            result = self._entity_from_spk (scope, ETM, result)
+            if result is not None :
+                self._set_cooked_value \
+                    (obj, result, changed = True, old_value = result)
+        return result
+    # end def get_value
+
+    def set_pickle_cargo (self, obj, cargo) :
+        try :
+            scope = obj.home_scope
+            value = self.from_pickle_cargo \
+                (scope, cargo, lazy = scope.lazy_load_p)
+        except LookupError :
+            ### assume forward reference
+            value = cargo [0]
+        if isinstance (value, int) :
+            ### `get_value` will convert from spk to entity later
+            self._set_cooked_value_inner (obj, value, value)
+        elif value is not None :
+            self._set_cooked_value (obj, value, changed = True)
+    # end def set_pickle_cargo
+
+# end class _SPK_Mixin_
+
+class _EPK_Mixin_ (_SPK_Mixin_) :
+    """Mixin for attributes referring to entities with `epk`."""
+
+    get_raw_pid = TFL.Meta.Alias_Property ("get_raw_spk")
 
     def get_hash (self, obj, value = None) :
         ref = value if (value is not None) else self.get_value (obj)
@@ -568,35 +626,12 @@ class _EPK_Mixin_ (Kind) :
             return ref.pid
     # end def get_hash
 
-    def get_pickle_cargo (self, obj) :
+    def get_raw_epk (self, obj) :
         ref = self.get_value (obj)
         if ref is not None :
-            return (ref.pid, )
-        return (None, )
-    # end def get_pickle_cargo
-
-    def get_value (self, obj) :
-        result = self.__super.get_value (obj)
-        if isinstance (result, int) :
-            ### try to resolve forward reference
-            ETM    = obj.home_scope [self.attr.P_Type.type_name]
-            result = ETM.pid_query (result)
-            if result is not None :
-                self._set_cooked_value (obj, result, changed = True)
-        return result
-    # end def get_value
-
-    def set_pickle_cargo (self, obj, cargo) :
-        try :
-            value = self.from_pickle_cargo (obj.home_scope, cargo)
-        except KeyError :
-            ### assume forward reference
-            pid = cargo [0]
-            self._set_cooked_value_inner (obj, pid)
-        else :
-            if value is not None :
-                self._set_cooked_value (obj, value, changed = True)
-    # end def set_pickle_cargo
+            return ref.epk_raw
+        return u""
+    # end def get_raw_epk
 
     def sort_key (self, obj) :
         v = self.get_value (obj)
@@ -607,6 +642,10 @@ class _EPK_Mixin_ (Kind) :
         v = self.get_value (obj)
         return v.__class__.sort_key_pm () (v)
     # end def sort_key_pm
+
+    def _entity_from_spk (self, scope, ETM, spk) :
+        return ETM.pid_query (spk)
+    # end def _entity_from_spk
 
     def _set_cooked_inner (self, obj, value, changed = 42) :
         scope = obj.home_scope
@@ -682,14 +721,15 @@ class _Auto_Update_Lazy_Mixin_ (_Auto_Update_Mixin_) :
 class _Co_Base_ (Kind) :
     """Base for collection and composite mixin classes."""
 
-    def _set_cooked_value (self, obj, value, changed = 42) :
+    def _set_cooked_value (self, obj, value, changed = 42, old_value = None) :
         if value is None :
             ### Need an empty collection/composite at all times
             return self.reset (obj)
         else :
             if not self.electric :
                 value = self._update_owner (obj, value)
-            return self.__super._set_cooked_value (obj, value, changed)
+            return self.__super._set_cooked_value \
+                (obj, value, changed, old_value)
     # end def _set_cooked_value
 
     def _update_owner (self, obj, value) :
@@ -707,6 +747,7 @@ class _Composite_Mixin_ (_Co_Base_) :
     """Mixin for composite attributes."""
 
     get_substance   = TFL.Meta.Alias_Property ("get_raw")
+    is_composite    = True
     void_values     = property (lambda s : s.void_raw_values)
 
     def from_pickle_cargo (self, scope, cargo) :
@@ -1104,17 +1145,19 @@ class Link_Role (_EPK_Mixin_, Primary) :
 
     get_role               = TFL.Meta.Alias_Property ("get_value")
 
-    def _set_cooked_value (self, obj, value, changed = 42) :
+    def _set_cooked_value (self, obj, value, changed = 42, old_value = None) :
         if value :
             self.attr.check_type (value)
         if obj.init_finished :
             ac = obj.__class__.acr_map.get (self.name)
             if ac :
-                old_value = self.get_value (obj)
-                if old_value is not None :
+                if old_value is None :
+                    old_value = self.get_value (obj)
+                if value != old_value and old_value is not None :
                     ### remove old value from `auto_cache`
                     ac (obj, no_value = True)
-        return self.__super._set_cooked_value (obj, value, changed = changed)
+        return self.__super._set_cooked_value \
+            (obj, value, changed = changed, old_value = old_value)
     # end def _set_cooked_value
 
 # end class Link_Role
@@ -1324,6 +1367,8 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
 
     kind                  = _ ("query")
     is_changeable         = False
+    _q_able               = True
+
 
     def _get_computed (self, obj) :
         Undef = TFL.Undef
@@ -1361,10 +1406,15 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
 
 # end class _Query_
 
-class Query (_Query_) :
-    ### XXX fold `_Query_` back into `Query` after SAS has been fixed
+class _Rev_Query_ (_Query_) :
+    """Query for reverse reference"""
 
-    _q_able               = True
+    _show_in_ui           = False
+
+# end class _Rev_Query_
+
+class Query (_Query_) :
+    """Query attribute restricted to db-attrs of `obj`"""
 
 # end class Query
 
@@ -1401,15 +1451,16 @@ class Just_Once_Mixin (Kind) :
         return old_value != self.default
     # end def _change_forbidden
 
-    def _set_cooked_value_inner (self, obj, value) :
+    def _set_cooked_value_inner (self, obj, value, old_value = None) :
         if obj.init_finished :
-            old_value = self.get_value (obj)
-            if self._change_forbidden (old_value) :
+            if old_value is None :
+                old_value = self.get_value (obj)
+            if value != old_value and self._change_forbidden (old_value) :
                 raise AttributeError \
                     ( _T (self._x_format)
                     % (_T (obj.ui_name), self.name, old_value, value)
                     )
-        self.__super._set_cooked_value_inner (obj, value)
+        self.__super._set_cooked_value_inner (obj, value, old_value)
     # end def _set_cooked_value_inner
 
 # end class Just_Once_Mixin
@@ -1483,12 +1534,13 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
         self.__super._check_sanity (attr_type, e_type)
     # end def _check_sanity
 
-    def _set_cooked_value (self, obj, value, changed = 42) :
+    def _set_cooked_value (self, obj, value, changed = 42, old_value = None) :
         attr          = self.attr
         init_finished = obj.init_finished
         try :
             ### Don't use `self.get_value`: don't want  `computed` to be called
-            old_value = getattr (obj, attr.ckd_name, None)
+            if old_value is None :
+                old_value = getattr (obj, attr.ckd_name, None)
         except (ValueError, TypeError) :
             old_value = None
         changed       = old_value is not value
@@ -1508,8 +1560,6 @@ class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     # end def _set_cooked_value
 
 # end class Id_Entity_Reference_Mixin
-
-### XXX Object-Reference- and Link-related kinds
 
 __doc__ = """
 Class `MOM.Attr.Kind`

@@ -27,6 +27,10 @@
 #
 # Revision Dates
 #    25-Jun-2013 (CT) Creation
+#    27-Jun-2013 (CT) Add `Single_Dispatch_Method.__new__` to allow arguments
+#                     when used as decorator
+#    27-Jun-2013 (CT) Add `Single_Dispatch_Method.__call__` to allow calls of
+#                     un-bound method
 #    ««revision-date»»···
 #--
 
@@ -125,6 +129,19 @@ class Single_Dispatch_Method (TFL.Meta.Method_Descriptor) :
        non-self, argument.
     """
 
+    def __new__ \
+            ( sdm_cls
+            , method = None, cls = None, T = object, dispatch_on = None
+            ) :
+        if method is None :
+            return \
+                ( lambda method, cls = cls, T = T, dispatch_on = dispatch_on
+                    : sdm_cls
+                          (method, cls = cls, T = T, dispatch_on = dispatch_on)
+                )
+        return super (Single_Dispatch_Method, sdm_cls).__new__ (sdm_cls)
+    # end def __new__
+
     def __init__ (self, method, cls = None, T = object, dispatch_on = None) :
         func = method
         if isinstance (func, TFL.Meta.Method_Descriptor) :
@@ -134,6 +151,10 @@ class Single_Dispatch_Method (TFL.Meta.Method_Descriptor) :
             , cls = cls
             )
     # end def __init__
+
+    def __call__ (self, * args, ** kw) :
+        return self.method (* args, ** kw)
+    # end def __call__
 
     def add_type (self, T, func = None) :
         if func is None :

@@ -54,6 +54,8 @@ _q_result = r"""
     >>> a   = PAP.Address ("S", "C", "Z", "C")
     >>> pha = PAP.Person_has_Address (p, a)
 
+    >>> scope.commit ()
+
     >>> q   = PAP.Person.query ()
     >>> print q.count ()
     5
@@ -73,28 +75,29 @@ _q_result = r"""
     >>> sorted (q.attrs (Q.first_name, Q.lifetime.start, "last_name"))
     [(u'fn 1', datetime.date(2010, 1, 1), u'ln 1'), (u'fn 2', None, u'ln 2'), (u'fn 3', datetime.date(2010, 3, 1), u'ln 3'), (u'fn 4', None, u'ln 4'), (u'fn 5', None, u'ln 5')]
 
-    >>> p = PAP.Person.query (pid = 1).one ()
-    >>> p.salutation
-    u''
+    ### ??? >>> scope.commit ()
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
-    >>> q = PAP.Person.query (pid = 1)
-    >>> q.set (("salutation", "Mr"), )
+
     >>> p = PAP.Person.query (pid = 1).one ()
-    >>> p.salutation
-    u'Mr'
     >>> p.lifetime # 1
     MOM.Date_Interval (u'2010/01/01')
-    >>> q.set (("lifetime.finish", datetime.date(2010, 12, 31)), )
-    >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
-    >>> p = PAP.Person.query (pid = 1).one ()
+
+    >>> p.lifetime.finish = datetime.date (2010, 12, 31)
+
     >>> p.lifetime # 2
     MOM.Date_Interval (u'2010/01/01', u'2010/12/31')
     >>> first (PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
     (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
     >>> first (PAP.Person.query (pid = 1).attr (Q.lifetime))
     MOM.Date_Interval (u'2010/01/01', u'2010/12/31')
+
     >>> sorted (PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
     [(u'fn 1', MOM.Date_Interval (u'2010/01/01', u'2010/12/31'))]
+
+    >>> sorted (PAP.Person.query (pid = 1).attrs (Q.RAW.first_name, Q.lifetime))
+    [(u'FN 1', MOM.Date_Interval (u'2010/01/01', u'2010/12/31'))]
+
+    >>> scope.rollback ()
 
     >>> sorted (PAP.Person_has_Address.query ().attr ("left"))
     [PAP.Person (u'ln 3', u'fn 3', u'', u'')]
@@ -213,6 +216,8 @@ _attrs_query = r"""
     >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
     >>> _   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2010/01/16"), title = "DI")
     >>> _   = scope.PAP.Person  ("LN 5", "FN 5", lifetime = DI ("2010/02/01"), title = "DI")
+
+    >>> scope.commit ()
 
     >>> q   = scope.PAP.Person.query ()
     >>> q.attr  ("last_name").order_by (Q.last_name).all ()

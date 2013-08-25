@@ -48,6 +48,7 @@
 #    19-Dec-2011 (CT) Add shortcut `Attr_Query.NOT`
 #    10-Aug-2012 (CT) Add `_rank` to allow defined order
 #    22-Feb-2013 (CT) Define `Ignore_Exception` as `tuple`
+#     8-Jul-2013 (CT) Add `op_name` to `Filter_Not`, `Filter_And`, `Filter_Or`
 #    ««revision-date»»···
 #--
 
@@ -257,6 +258,8 @@ class Filter (_Filter_S_) :
 class Filter_Not (_Filter_S_) :
     """Return all items from an iterable which don't satisfy the predicate."""
 
+    op_name = "not"
+
     def __new__ (cls, predicate, ** kw) :
         if isinstance (predicate, Filter_Not) :
             return ~ predicate
@@ -317,7 +320,8 @@ class _Filter_Q_ (_Filter_) :
 class Filter_And (_Filter_Q_) :
     """Return all items from an iterable which satisfy all predicates."""
 
-    quant = staticmethod (all_true)
+    op_name = "and"
+    quant   = staticmethod (all_true)
 
     def __invert__ (self) :
         return Filter_Or (* self._inverted_predicate ())
@@ -328,7 +332,8 @@ class Filter_And (_Filter_Q_) :
 class Filter_Or (_Filter_Q_) :
     """Return all items from an iterable which satisfy any of the predicates."""
 
-    quant = staticmethod (any_true)
+    op_name = "or"
+    quant   = staticmethod (any_true)
 
     def __invert__ (self) :
         return Filter_And (* self._inverted_predicate ())

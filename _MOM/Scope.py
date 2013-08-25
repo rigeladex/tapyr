@@ -115,6 +115,9 @@
 #    10-May-2013 (CT) Allow non-string arguments to `__getitem__`
 #     3-Jun-2013 (CT) Print exception info to stderr, not stdout
 #    13-Jun-2013 (CT) Simplify `_setup_pkg_ns` using new `PNS_Map` semantics
+#    17-Jul-2013 (CT) Remove `async_changes`, `db_cid`
+#     5-Aug-2013 (CT) Use `with ems.save_point ()` in `add` and `record_change`
+#    25-Aug-2013 (CT) Add `reserve_surrogates`
 #    ««revision-date»»···
 #--
 
@@ -220,6 +223,7 @@ class Scope (TFL.Meta.Object) :
     max_surrs              = property (TFL.Getter.ems.max_surrs)
     name                   = property (lambda s : s.qname or s.bname)
     readonly               = property (TFL.Getter.ems.db_meta_data.readonly)
+    reserve_surrogates     = True
     T_Extension            = property (TFL.Getter.app_type._T_Extension)
     uncommitted_changes    = property (TFL.Getter.ems.uncommitted_changes)
 
@@ -320,7 +324,6 @@ class Scope (TFL.Meta.Object) :
         self.init_callback  = self.init_callback [:] ### copy from cls to self
         self.kill_callback  = self.kill_callback [:] ###
         self.root           = None
-        self.db_cid         = 0
         self.historian      = MOM.SCM.Tracker (self)
         self.db_errors      = []
         self._attr_errors   = []
@@ -357,10 +360,11 @@ class Scope (TFL.Meta.Object) :
         """Adds `entity` to scope `self`."""
         if entity._home_scope is None :
             entity.home_scope = self
-        self.ems.add (entity, pid = pid)
-        if not entity.init_finished :
-            entity._finish__init__ ()
-        self.record_change (MOM.SCM.Change.Create, entity)
+        with self.ems.save_point () :
+            self.ems.add (entity, pid = pid)
+            if not entity.init_finished :
+                entity._finish__init__ ()
+            self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
 
     def add_from_pickle_cargo (self, type_name, cargo, pid) :
@@ -413,10 +417,6 @@ class Scope (TFL.Meta.Object) :
         with Scope.LET (active = self) :
             yield
     # end def as_active
-
-    def async_changes (self, * filter, ** kw) :
-        return self.ems.async_changes (* filter, ** kw)
-    # end def async_changes
 
     def canonical_type_name (self, type_name) :
         return self._deprecated_type_names.get (type_name, type_name)
@@ -492,7 +492,7 @@ class Scope (TFL.Meta.Object) :
     # end def count_change
 
     def close_connections (self) :
-        self.ems.session.close_connections ()
+        self.ems.close_connections ()
     # end def close_connections
 
     def destroy (self) :
@@ -638,12 +638,13 @@ class Scope (TFL.Meta.Object) :
 
     def record_change (self, Change, * args, ** kw) :
         """Record the `Change` specified by `args` and `kw`"""
-        result = self.historian.record (Change, * args, ** kw)
-        if result is not None :
-            result.user = self.user
-            self.ems.register_change (result)
-            result.do_callbacks      (self)
-        return result
+        with self.ems.save_point () :
+            result = self.historian.record (Change, * args, ** kw)
+            if result is not None :
+                result.user = self.user
+                self.ems.register_change (result)
+                result.do_callbacks      (self)
+            return result
     # end def record_change
 
     def remove (self, entity) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2007-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #    24-Sep-2009 (CT) `_del` added to `Once_Property`
 #     7-Oct-2009 (CT) `Once_Property` implemented as wrapper around
 #                     `Lazy_Property`
+#    26-Jun-2013 (CT) Add `Class_and_Instance_Once_Property`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,11 @@ def Once_Property (f) :
     return TFL.Meta.Lazy_Property (f.__name__, f, f.__doc__)
 # end def Once_Property
 
+def Class_and_Instance_Once_Property (f) :
+    """Decorator returning a `Class_and_Instance_Lazy_Property`."""
+    return TFL.Meta.Class_and_Instance_Lazy_Property (f.__name__, f, f.__doc__)
+# end def Class_and_Instance_Once_Property
+
 if __name__ != "__main__" :
-    TFL.Meta._Export ("Once_Property")
+    TFL.Meta._Export ("*")
 ### __END__ TFL.Meta.Once_Property

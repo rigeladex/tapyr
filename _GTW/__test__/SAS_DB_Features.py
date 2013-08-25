@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Aug-2012 (MG) Creation
+#    21-Jul-2013 (CT) Ignore SAW backends
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
 
 GTW.OMP.PAP.Person.use_indices = ( ("first_name", "last_name"), )
-__test__ = Scaffold.create_test_dict (_test_code, ignore = ("HPS", ))
+__test__ = Scaffold.create_test_dict \
+    (_test_code, ignore = ("HPS", "my", "pg", "sq"))
 
 ### __END__ SAS_DB_Features

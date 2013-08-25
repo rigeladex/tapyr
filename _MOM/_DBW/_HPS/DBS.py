@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -46,7 +46,10 @@ class HPS (MOM.DBW._DBS_) :
     def Url (cls, value, ANS, default_path = None) :
         result = super (HPS, cls).Url (value, ANS, default_path)
         if result.authority :
-            raise ValueError ("HPS url cannot specify authority: %s" % value)
+            raise ValueError \
+                ( "HPS url cannot specify authority `%s`: %s"
+                % (result.authority, value)
+                )
         if result.path :
             result._parsed.path = TFL.Filename \
                 ( result.path

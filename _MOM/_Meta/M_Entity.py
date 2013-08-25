@@ -207,6 +207,14 @@
 #    13-Jun-2013 (CT) Add `pns_name`, `pns_name_fq`, `pns_qualified_f`, and
 #                     `type_name_fq`
 #    13-Jun-2013 (CT) Add and use `M_Id_Entity._m_fix_type_set`
+#    24-Jun-2013 (CT) Pass argument `app_type` to `DBW.prepare`
+#     8-Jul-2013 (CT) Pass `app_type` to `DBW.finalize`
+#     5-Aug-2013 (CT) Fix `polymorphic_epk` and `polymorphic_relevant_epk` in
+#                     `M_Id_Entity._m_new_e_type_dict`
+#    13-Aug-2013 (CT) Add `M_E_Type.ancestors`
+#    21-Aug-2013 (CT) Add `M_E_Type_Md.relevant_roots`
+#    22-Aug-2013 (CT) Replace `tn_pid` by `type_name, pid` as default sort-key
+#    25-Aug-2013 (CT) Change `M_Entity.__init__` to set `E_Spec`
 #    ««revision-date»»···
 #--
 
@@ -453,7 +461,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         etypes   = app_type.etypes
         e_deco   = app_type.DBW.etype_decorator
         e_update = app_type.DBW.update_etype
-        app_type.DBW.prepare ()
+        app_type.DBW.prepare (app_type)
         for s in SX :
             app_type.add_type (s._m_new_e_type (app_type, etypes))
         for t in reversed (app_type._T_Extension) :
@@ -495,7 +503,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             e_update (t, app_type)
         ### give the DBW a final chance to make some adjustments after all
         ### etypes have been updated
-        app_type.DBW.finalize ()
+        app_type.DBW.finalize (app_type)
     # end def _m_create_e_types
 
     def _m_new_e_type (cls, app_type, etypes) :
@@ -601,6 +609,7 @@ class M_Entity (M_E_Mixin) :
         cls.__m_super.__init__  (name, bases, dict)
         cls._m_init_prop_specs  (name, bases, dict)
         cls._S_Extension.append (cls)
+        cls.E_Spec = cls
         cls.i_rank = len (cls._S_Extension) - 1
         cls.g_rank = 1 + max \
             ([getattr (b, "g_rank", -1) for b in bases] + [-1])
@@ -882,8 +891,12 @@ class M_Id_Entity (M_Entity) :
         pr_epk      = False
         for eb in epk_bases :
             if eb.epk_sig_t != epk_sig_t :
-                eb.polymorphic_epk = pr_epk = True
-                eb.polymorphic_relevant_epk = eb.is_relevant
+                if eb.is_relevant and eb.epk_sig_t :
+                    if epk_sig_t :
+                        eb.polymorphic_epk = pr_epk = True
+                        eb.polymorphic_relevant_epk = eb.is_relevant
+                else :
+                    eb.polymorphic_epk = True
         r_kw   = dict \
             ( epk_bases                = epk_bases
             , epk_sig                  = epk_sig
@@ -925,6 +938,22 @@ class M_Id_Entity (M_Entity) :
 
 # end class M_Id_Entity
 
+class M_MD_Entity (M_Entity) :
+    """Meta class for MOM.MD_Entity"""
+
+    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        result = cls.__m_super._m_new_e_type_dict \
+            ( app_type, etypes, bases
+            , polymorphic_epk          = False
+            , polymorphic_epks         = False
+            , polymorphic_relevant_epk = False
+            , ** kw
+            )
+        return result
+    # end def _m_new_e_type_dict
+
+# end class M_MD_Entity
+
 @TFL.Add_To_Class ("M_E_Type", M_Entity)
 class M_E_Type (M_E_Mixin) :
     """Meta class for for essence of MOM.Entity."""
@@ -932,6 +961,12 @@ class M_E_Type (M_E_Mixin) :
     app_type    = None
 
     _Class_Kind = "Essence"
+
+    @TFL.Meta.Once_Property
+    def ancestors (cls) :
+        M_Root = cls.M_Root
+        return tuple (b for b in cls.__mro__ if isinstance (b, M_Root))
+    # end def ancestors
 
     @TFL.Meta.Once_Property
     def db_sig (cls) :
@@ -1315,7 +1350,7 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_setup_sorted_by (cls) :
         sbs        = []
-        sb_default = ["tn_pid"]
+        sb_default = ["type_name", "pid"]
         if cls.epk_sig :
             def _pka_sorted_by (name, et) :
                 return tuple ("%s.%s" % (name, s) for s in et.sorted_by)
@@ -1327,8 +1362,12 @@ class M_E_Type_Id (M_E_Type) :
                             if pka_sb :
                                 sbs.extend (pka_sb)
                             else :
-                                ### Class is too abstract: need to use `tn_pid`
-                                sbs.append ("%s.tn_pid" % (pka.name, ))
+                                ### Class is too abstract:
+                                ### need to use `type_name, pid`
+                                sbs.extend \
+                                    (   "%s.%s" % (pka.name, k)
+                                    for k in ["type_name", "pid"]
+                                    )
                         elif isinstance (pka.attr, MOM.Attr._A_Composite_) :
                             sbs.extend (pka_sb)
                     else :
@@ -1384,6 +1423,16 @@ class M_E_Type_Id_Reload (_M_E_Type_Id_RC_) :
     """Meta class for reload classes."""
 
 # end class M_E_Type_Id_Reload
+
+@TFL.Add_To_Class ("M_E_Type", M_MD_Entity)
+class M_E_Type_MD (M_E_Type) :
+    """Meta class for essence of MOM.MD_Entity."""
+
+    Manager        = MOM.E_Type_Manager.MD_Entity
+
+    relevant_roots = {}
+
+# end class M_E_Type_MD
 
 __doc__ = """
 Class `MOM.Meta.M_Entity`

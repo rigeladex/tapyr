@@ -60,6 +60,8 @@
 #                     comparison first
 #     2-May-2013 (CT) Change `Q_Result_Composite.limit` to `@super_ordered`,
 #                     not `@super_ordered_delegate` (gave wrong order sometimes)
+#    30-Jul-2013 (CT) Remove `set`
+#    25-Aug-2013 (CT) Allow strings as `criterion` for `order_by`
 #    ««revision-date»»···
 #--
 
@@ -441,21 +443,6 @@ class _Q_Result_ (TFL.Meta.Object) :
         return self._Q_Result_Ordered_ (self, criterion, self._distinct)
     # end def order_by
 
-    def set (self, * args, ** kw) :
-        def _g (args) :
-            Q = self.Q
-            for k, v in args :
-                if isinstance (k, basestring) :
-                    k = getattr (Q, k)
-                yield k, v
-        args = tuple (_g (args))
-        for r in self :
-            for k, v in pyk.iteritems (kw) :
-                setattr (r, k, v)
-            for k, v in args :
-                k.SET (r, v)
-    # end def set
-
     def slice (self, start, stop = None) :
         return self._Q_Result_Sliced_ (self, start, stop, self._distinct)
     # end def slice
@@ -592,6 +579,8 @@ class _Q_Result_Ordered_ (_Q_Result_) :
 
     def __init__ (self, iterable, criterion, _distinct = False) :
         self.__super.__init__ (iterable, _distinct = _distinct)
+        if isinstance (criterion, pyk.string_types) :
+            criterion = TFL.Sorted_By (criterion)
         self._criterion = criterion
     # end def __init__
 
@@ -715,6 +704,8 @@ class Q_Result_Composite (_Q_Result_) :
     # end def offset
 
     def order_by (self, criterion) :
+        if isinstance (criterion, pyk.string_types) :
+            criterion = TFL.Sorted_By (criterion)
         self._order_by = criterion
         return self
     # end def order_by

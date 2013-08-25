@@ -38,24 +38,25 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> SRM = scope.SRM
     >>> bc = SRM.Boat_Class ("Optimist", max_crew = 2)
-    >>> b1 = SRM.Boat       (bc, "AUT", 1)
+    >>> b1 = SRM.Boat       (bc, 1, "AUT")
     >>> int (bc.pid), int (b1.pid)
     (1, 2)
     >>> scope.ems.pm.reserve (None, 100)
     100
-    >>> b2 = SRM.Boat       (bc, "AUT", 2)
+    >>> b2 = SRM.Boat       (bc, 2, "AUT")
     >>> int (b2.pid)
     101
-    >>> b3 = SRM.Boat       (bc, "AUT", 2) # doctest:+ELLIPSIS
+    >>> b3 = SRM.Boat       (bc, 2, "AUT") # doctest:+ELLIPSIS
     Traceback (most recent call last):
         ...
-    Invariants: The attribute values for ('left', 'nation', 'sail_number', 'sail_number_x') must be unique for each object
-      The new definition of Boat SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'2', u'') would clash with 1 existing entities
+    Invariants: The attribute values for ('left', 'sail_number', 'nation', 'sail_number_x') must be unique for each object
+      The new definition of Boat SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'2', u'AUT', u'') would clash with 1 existing entities
       Already existing:
-        SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'AUT', u'2', u'')
-    >>> b3 = SRM.Boat       (bc, "AUT", 3)
-    >>> int (b3.pid)
-    102
+        SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'2', u'AUT', u'')
+    >>> b3 = SRM.Boat       (bc, 3, "AUT")
+    >>> b3.pid > b2.pid
+    True
+
 """
 
 __test__ = Scaffold.create_test_dict (_test_code)

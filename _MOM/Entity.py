@@ -222,7 +222,7 @@
 #    12-Oct-2012 (CT) Call `An_Entity.attr_as_code`, not `_formatted_user_attr`,
 #                     in `An_Entity._repr` and `.__unicode__`
 #    16-Oct-2012 (CT) Factor `attr_tuple_to_save` from `An_Entity.attr_as_code`
-#     6-Dec-2012 (CT) Factor `creation_change` and `last_change`,
+#     6-Dec-2012 (CT) Factor `creation` and `last_change`,
 #                     add `created_by` and `last_changed_by`
 #    10-Dec-2012 (CT) Add support for nested attributes to `FO`
 #    11-Dec-2012 (CT) Move `_Class_Kind` from `Entity` to `M_Entity`
@@ -251,6 +251,23 @@
 #     5-Jun-2013 (CT) Set `x_locked.q_able` to `False`
 #     6-Jun-2013 (CT) Add `destroy_dependency` to
 #                     `_Id_Entity_Destroyed_Mixin_.__getattr__`
+#    12-Jul-2013 (CT) Add `MD_Entity._Attributes.kind`
+#    12-Jul-2013 (CT) Add `Id_Entity.creation_q`
+#    17-Jul-2013 (CT) Add `MD_Entity._main__init__`, `._repr`
+#    17-Jul-2013 (CT) Add `MD_Change._Attributes.scm_change.Pickler`,
+#                     remove `MD_Change._Attributes.pickle`
+#    17-Jul-2013 (CT) Change `async_changes` to use `scope.query_changes`
+#    18-Jul-2013 (CT) Add `An_Entity.attr_tuple`
+#    22-Jul-2013 (CT) Add `_Sync_Change_` to, remove `Just_Once_Mixin` from,
+#                     `MD_Change._Attributes._Derived_Attr_`
+#    24-Jul-2013 (CT) Add `c_time` and `c_user` to `MD_Change`
+#     1-Aug-2013 (CT) Add `spk_attr_name` and `spk`
+#     9-Aug-2013 (CT) Set `_A_Id_Entity_.P_Type_S` to `Id_Entity`
+#    21-Aug-2013 (CT) Convert `creation` and `last_change` to Query,
+#                     remove `creation_q`, factor _A_Change_
+#    22-Aug-2013 (CT) Remove `tn_pid`
+#    25-Aug-2013 (CT) Change `as_attr_pickle_cargo` to use `a.save_to_db`, not
+#                     `a.to_save (self)`
 #    ««revision-date»»···
 #--
 
@@ -259,6 +276,7 @@ from   __future__  import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._Attr.Kind
 import _MOM._Attr.Manager
@@ -305,18 +323,21 @@ class Entity (TFL.Meta.Object) :
     is_partial            = True
     is_relevant           = False
     is_used               = True
-    polymorphic_epk       = False  ### Set by meta machinery
-    polymorphic_epks      = False  ### Set by meta machinery
-    relevant_root         = None   ### Set by meta machinery
-    show_in_ui            = True   ### Modified by meta machinery
-    show_in_ui_T          = True   ### Default for descendent classes
-    show_package_prefix   = False  ### Include `PNS` in `ui_name` ???
+    polymorphic_epk       = False ### Set by meta machinery
+    polymorphic_epks      = False ### Set by meta machinery
+    relevant_root         = None  ### Set by meta machinery
+    show_in_ui            = True  ### Modified by meta machinery
+    show_in_ui_T          = True  ### Default for descendent classes
+    show_package_prefix   = False ### Include `PNS` in `ui_name` ???
+    spk                   = None
+    spk_attr_name         = None  ### Name of `surrogate primary key` attribute
     ui_display_sep        = ", "
     x_locked              = False
 
     _app_globals          = {}
     _dicts_to_combine     = ("deprecated_attr_names", )
     _home_scope           = None
+    _Reload_Mixin_        = None
 
     class _Attributes (MOM.Attr.Spec) :
 
@@ -505,7 +526,7 @@ class Entity (TFL.Meta.Object) :
     def as_attr_pickle_cargo (self) :
         return dict \
             (   (a.name, a.get_pickle_cargo  (self))
-            for a in self.attributes.itervalues () if a.to_save (self)
+            for a in self.attributes.itervalues () if a.save_to_db
             )
     # end def as_attr_pickle_cargo
 
@@ -901,6 +922,10 @@ class An_Entity (Entity) :
         return result
     # end def attr_tuple_to_save
 
+    def attr_tuple (self) :
+        return tuple (a.get_value (self) for a in self.user_attr)
+    # end def attr_tuple
+
     def copy (self, ** kw) :
         scope  = kw.pop  ("scope", self.home_scope)
         etype  = scope.entity_type (self.type_name)
@@ -989,9 +1014,10 @@ class An_Entity (Entity) :
 
 # end class An_Entity
 
-@TFL.Add_To_Class ("P_Type", _A_Id_Entity_)
+@TFL.Add_To_Class ("P_Type",   _A_Id_Entity_)
+@TFL.Add_To_Class ("P_Type_S", _A_Id_Entity_)
 class Id_Entity (Entity) :
-    """Internal root class for MOM entities with identity, i.e.,
+    """Root class for MOM entities with identity, i.e.,
        objects and links.
     """
 
@@ -1003,6 +1029,8 @@ class Id_Entity (Entity) :
     record_changes        = True
     refuse_links          = set ()
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
+    spk                   = TFL.Meta.Alias_Property ("pid")
+    spk_attr_name         = "pid" ### Name of `surrogate primary key` attribute
     tutorial              = None
 
     ### Thanks to `Alias_Property`, `uniqueness_dbw` and `uniqueness_ems` are
@@ -1016,6 +1044,17 @@ class Id_Entity (Entity) :
 
     class _Attributes (Entity._Attributes) :
 
+        class _A_Change_ (A_Rev_Ref) :
+            """Creation change of the object"""
+
+            P_Type             = "MOM.MD_Change"
+            Ref_Type           = P_Type
+            ref_name           = "pid"
+            hidden             = False
+            q_able             = True
+
+        # end class _A_Change_
+
         class created_by (A_Id_Entity) :
             """User that created the entity"""
 
@@ -1023,7 +1062,7 @@ class Id_Entity (Entity) :
             P_Type             = "MOM.Id_Entity"
 
             def computed (self, obj) :
-                cc = obj.creation_change
+                cc = obj.creation
                 if cc is not None :
                     try :
                         return obj.home_scope.pid_query (cc.c_user)
@@ -1033,20 +1072,12 @@ class Id_Entity (Entity) :
 
         # end class created_by
 
-        class creation_change (A_Blob) :
-            """Last change of the object"""
+        class creation (_A_Change_) :
+            """Creation change of the object"""
 
-            kind               = Attr.Computed
+            sqx_filter         = (Q.kind == "Create")
 
-            def computed (self, obj) :
-                try :
-                    return obj.changes ().order_by \
-                        (TFL.Sorted_By ("cid")).first ()
-                except IndexError :
-                    pass
-            # end def computed
-
-        # end class creation_change
+        # end class creation
 
         class creation_date (A_Date_Time) :
             """Date/time of creation."""
@@ -1054,7 +1085,7 @@ class Id_Entity (Entity) :
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                cc = obj.creation_change
+                cc = obj.creation
                 if cc is not None :
                     return cc.c_time
             # end def computed
@@ -1078,18 +1109,11 @@ class Id_Entity (Entity) :
 
         # end class is_used
 
-        class last_change (A_Blob) :
+        class last_change (_A_Change_) :
             """Last change of the object"""
 
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                try :
-                    return obj.changes ().order_by \
-                        (TFL.Sorted_By ("-cid")).first ()
-                except IndexError :
-                    pass
-            # end def computed
+            finished_query     = A_Rev_Ref.finished_query_first
+            sort_key           = TFL.Sorted_By ("-cid")
 
         # end class last_change
 
@@ -1115,10 +1139,13 @@ class Id_Entity (Entity) :
             def computed (self, obj) :
                 lc = obj.last_change
                 if lc is not None :
-                    try :
-                        return obj.home_scope.pid_query (lc.user)
-                    except Exception :
-                        pass
+                    result = lc.user
+                    if isinstance (result, pyk.int_types) :
+                        try :
+                            result = obj.home_scope.pid_query (lc.user)
+                        except Exception :
+                            return
+                    return result
             # end def computed
 
         # end class last_changed_by
@@ -1285,11 +1312,6 @@ class Id_Entity (Entity) :
     # end def SCM_Change_Attr
 
     @property
-    def tn_pid (self) :
-        return (self.type_name, self.pid)
-    # end def tn_pid
-
-    @property
     def ui_display_format (self) :
         return self.ui_display_sep.join \
             ( "%%(%s)s" % a.name for (a, v) in zip (self.primary, self.epk)
@@ -1325,7 +1347,8 @@ class Id_Entity (Entity) :
     # end def all_referrers
 
     def async_changes (self, * filter, ** kw) :
-        result = self.home_scope.async_changes (pid = self.pid)
+        result = self.home_scope.query_changes \
+            (Q.cid > self.last_cid, Q.pid == self.pid)
         if filters or kw :
             result = result.filter (* filters, ** kw)
         return result
@@ -1353,7 +1376,7 @@ class Id_Entity (Entity) :
 
     def changes (self, * filters, ** kw) :
         """Return change objects related to `self`."""
-        result = self.home_scope.query_changes (pid = self.pid)
+        result = self.home_scope.query_changes (Q.pid == self.pid)
         if filters or kw :
             result = result.filter (* filters, ** kw)
         return result
@@ -1804,6 +1827,181 @@ class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
     # end def __repr__
 
 # end class _Id_Entity_Destroyed_Mixin_
+
+class MD_Entity (Entity) :
+    """Root class for meta-data entities, e.g., entities recording changes to
+       the object model.
+    """
+
+    __metaclass__         = MOM.Meta.M_MD_Entity
+
+    is_locked             = True
+    is_partial            = True
+    record_changes        = False
+    sorted_by             = TFL.Sorted_By ()
+    x_locked              = True
+
+    def _main__init__ (self, * args, ** kw) :
+        pass
+    # end def _main__init__
+
+    def _repr (self, type_name) :
+        return u"%s" % (type_name, )
+    # end def _repr
+
+# end class MD_Entity
+
+_Ancestor_Essence = MD_Entity
+
+class MD_Change (_Ancestor_Essence) :
+    """Meta-data about changes of the object model."""
+
+    record_changes        = False
+    sorted_by             = TFL.Sorted_By ("-cid")
+    spk                   = TFL.Meta.Alias_Property ("cid")
+    spk_attr_name         = "cid" ### Name of `surrogate primary key` attribute
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class _Derived_Attr_ (A_Attr_Type) :
+
+            class _Sync_Change_ (Attr.Kind) :
+
+                def _set_cooked_value_inner \
+                        (self, obj, value, old_value = None) :
+                    setattr (obj.scm_change, self.scm_name, value)
+                # end def _set_cooked_value_inner
+
+                def reset (self, obj) :
+                    pass
+                # end def reset
+
+            # end class _Sync_Change_
+
+            kind               = Attr.Internal
+            Kind_Mixins        = (_Sync_Change_, Attr._Computed_Mixin_)
+            record_changes     = False
+
+            def computed (self, obj) :
+                return getattr (obj.scm_change, self.scm_name, None)
+            # end def computed
+
+            @property
+            def scm_name (self) :
+                return self.name
+            # end def scm_name
+
+        # end class _Derived_Attr_
+
+        class cid (_Derived_Attr_, A_Surrogate) :
+            """Change id."""
+
+        # end class cid
+
+        class c_time (_Derived_Attr_, A_Date_Time) :
+            """Creation date and time (only for creation changes)."""
+
+        # end class c_time
+
+        class c_user (_Derived_Attr_, A_Id_Entity) :
+            """User that triggered the creation change, if known."""
+
+            P_Type             = Id_Entity
+
+        # end class c_user
+
+        class parent (A_Int) :
+
+            kind               = Attr.Query
+            query              = Q.parent_cid
+
+        # end class parent
+
+        class parent_cid (_Derived_Attr_, A_Int) :
+            """Cid of parent change, if any."""
+
+            def computed (self, obj) :
+                parent = obj.scm_change.parent
+                if parent is not None :
+                    return parent.cid
+            # end def computed
+
+        # end class parent_cid
+
+        class kind (_Derived_Attr_, A_String) :
+            """Kind of change"""
+
+            max_length         = 10
+
+        # end class kind
+
+        class pid (_Derived_Attr_, A_Int) :
+            """Permanent id of the entity that was changed, if any."""
+
+        # end class pid
+
+        class scm_change (A_Blob) :
+            """SCM.Change instance describing the change."""
+
+            kind               = Attr.Internal
+            record_changes     = False
+
+            class Pickler (TFL.Meta.Object) :
+
+                Type = _A_Binary_String_
+
+                @classmethod
+                def as_cargo (cls, attr_kind, attr_type, value) :
+                    if value is not None :
+                        return value.as_pickle ()
+                # end def as_cargo
+
+                @classmethod
+                def from_cargo (cls, scope, attr_kind, attr_type, cargo) :
+                    if cargo is not None :
+                        return MOM.SCM.Change._Change_.from_pickle (cargo)
+                # end def from_cargo
+
+            # end class Pickler
+
+        # end class scm_change
+
+        class time (_Derived_Attr_, A_Date_Time) :
+            """Date and time of the change."""
+
+        # end class time
+
+        class type_name (_Derived_Attr_, A_String) :
+            """Name of type of the entity that was changed, if any."""
+
+        # end class type_name
+
+        class user (_Derived_Attr_, A_Id_Entity) :
+            """User that triggered the change, if known."""
+
+            P_Type             = Id_Entity
+
+        # end class user
+
+    # end class _Attributes
+
+    def __init__ (self, scm_change) :
+        self.__super.__init__ ()
+        self.scm_change           = scm_change
+    # end def __init__
+
+    def _repr (self, type_name) :
+        return u"%s [%s]: %s, %s, %s" % \
+            (type_name, self.kind, self.cid, self.time, self.pid)
+    # end def _repr
+
+    def __getattr__ (self, name) :
+        return getattr (self.scm_change, name)
+    # end def __getattr__
+
+# end class MD_Change
 
 __doc__  = """
 Class `MOM.Id_Entity`

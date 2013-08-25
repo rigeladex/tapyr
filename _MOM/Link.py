@@ -71,6 +71,7 @@
 #    15-May-2013 (CT) Remove `Link2_Ordered`
 #    15-May-2013 (CT) Remove `_Cacher_` and role- and link-cacher children
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
+#    17-Jun-2013 (CT) Add `_MOM_Link_n_` to `_Export`
 #    ««revision-date»»···
 #--
 
@@ -473,10 +474,8 @@ DFC-synthesis for an association `X_has_P` would be defined like::
 
         # end class _Attributes
 
-
-
 """
 
 if __name__ != "__main__" :
-    MOM._Export ("*")
+    MOM._Export ("*", "_MOM_Link_n_")
 ### __END__ MOM.Link

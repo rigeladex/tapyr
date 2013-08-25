@@ -154,8 +154,8 @@ _attr_ac_query = """
 
     >>> SRM   = scope.SRM
     >>> opti  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b1    = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True) ### 1
-    >>> b2    = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1208", raw = True) ### 2
+    >>> b1    = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True) ### 1
+    >>> b2    = SRM.Boat.instance_or_new (u'Optimist', u"1208", u"AUT", raw = True) ### 2
     >>> for value in "11", "12" :
     ...    q = SRM.Boat.AQ.sail_number.AC (value)
     ...    for o in (b1, b2) :

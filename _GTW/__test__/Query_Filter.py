@@ -20,11 +20,10 @@
 #
 #++
 # Name
-#    GTW.__test__.SAS_Filter
+#    GTW.__test__.Query_Filter
 #
 # Purpose
-#    Test the SAS function for sorting by attributes of a composite using the
-#    SAS backend.
+#    Test the query filters
 #
 # Revision Dates
 #    30-Apr-2010 (MG) Creation
@@ -37,6 +36,7 @@
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    15-Apr-2012 (CT) Use `show` to guarantee deterministic order
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    30-Jul-2013 (CT) Add `show` and `.order_by`, enable HPS
 #    ««revision-date»»···
 #--
 
@@ -44,8 +44,9 @@ def show (q) :
     return sorted (str (x) for x in q)
 
 _composite = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
     >>> EVT = scope.EVT
     >>> SWP = scope.SWP
     >>> p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
@@ -78,8 +79,9 @@ _composite = r"""
 """
 
 _link1_role = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
     >>> EVT = scope.EVT
     >>> SWP = scope.SWP
     >>> p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
@@ -118,12 +120,13 @@ _link1_role = r"""
 """
 
 _link2_link1 = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "1107", "AUT", raw = True)
     >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
@@ -139,37 +142,38 @@ _link2_link1 = r"""
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
     >>> date = datetime.date (2009, 1, 1)
-    >>> q = scope.SRM.Boat_in_Regatta.query ()
-    >>> for r in q.filter (Q.right.left.date.start > date) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
+    >>> q = scope.SRM.Boat_in_Regatta.query ().order_by (Q.pid)
+    >>> for r in show (q.filter (Q.right.left.date.start > date)) : print r ### SRM.Boat_in_Regatta
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.filter (Q.right.left.date.start < date) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT',  u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
     >>> date2 = datetime.date (2009, 12, 31)
     >>> qf = (Q.right.left.date.start >= date ) \
     ...    & (Q.right.left.date.start <= date2)
     >>> for r in q.filter (qf) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
 
     >>> date3 = datetime.date (2010, 05, 13)
     >>> for r in q.filter (Q.right.left.date.start == date3) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
     >>> for r in q.filter (Q.RAW.right.left.date.start == "2010/05/13") : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
 
 
 """
 
 _query_attr = r"""
-    >>> scope = Scaffold.scope ("sqlite://")
-    Creating new scope MOMT__SAS__SAS in memory
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
     >>> PAP  = scope.PAP
     >>> SRM  = scope.SRM
     >>> bc   = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True)
+    >>> b    = SRM.Boat.instance_or_new (u'Optimist', "1107", "AUT", raw = True)
     >>> p    = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s    = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
@@ -184,7 +188,7 @@ _query_attr = r"""
     >>> reg = SRM.Regatta_C     (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
     >>> bir = SRM.Boat_in_Regatta (b.epk_raw, reg.epk_raw, skipper = s.epk_raw, raw = True)
 
-    >>> q = SRM.Regatta_C.query ()
+    >>> q = SRM.Regatta_C.query ().order_by  (Q.pid)
     >>> for r in q : print r.year, r
     2008 ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
     2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
@@ -259,10 +263,10 @@ _type_name_query = r"""
     >>> c4 = scope.SWP.Clip_O (left = y2, abstract = "abstract-y2.1")
     >>> scope.commit ()
 
-    >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page").all ()
+    >>> scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page").all ()
     [SWP.Clip_O ((u'page-1', ), ()), SWP.Clip_O ((u'page-2', ), ())]
 
-    >>> scope.SWP.Clip_O.query_s (Q.left.type_name == "SWP.Page_Y").all ()
+    >>> scope.SWP.Clip_O.query (Q.left.type_name == "SWP.Page_Y").all ()
     [SWP.Clip_O ((u'year-1', 2011), ()), SWP.Clip_O ((u'year-2', 2012), ())]
 
 """
@@ -281,7 +285,6 @@ __test__ = Scaffold.create_test_dict \
         , sub_query    = _sub_query
         , type_name    = _type_name_query
         )
-    , ignore       = "HPS"
     )
 
-### __END__ GTW.__test__.SAS_Filter
+### __END__ GTW.__test__.Query_Filter

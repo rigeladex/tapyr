@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Martin Glück. All rights reserved
+# Copyright (C) 2009-2013 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -176,7 +176,7 @@ TFL.Sorted_By._sa_cache = {}
 @TFL.Add_Method (TFL.Sorted_By)
 def _sa_order_by (self, SAQ, joins = None, order_clause = None, desc = False) :
     key = (self, SAQ)
-    if self not in self._sa_cache :
+    if key not in self._sa_cache :
         if joins        is None :
             joins        = []
         if order_clause is None :

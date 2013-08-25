@@ -20,11 +20,10 @@
 #
 #++
 # Name
-#    GTW.__test__.SAS_Sorted_By
+#    GTW.__test__.Query_Sorted_By
 #
 # Purpose
-#    Test the SAS function for sorting by attributes of a composite using the
-#    SAS backend.
+#    Test sorting of queries
 #
 # Revision Dates
 #    30-Apr-2010 (MG) Creation
@@ -35,6 +34,7 @@
 #    20-Dec-2010 (CT) Python 2.7 compatibility
 #    19-Mar-2012 (CT) Adapt to `Boat_Class.name.ignore_case` now being `True`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
+#    30-Jul-2013 (CT) Rename to `Query_Sorted_By`, enable `HPS`
 #    ««revision-date»»···
 #--
 
@@ -97,7 +97,7 @@ _link2_link1 = r"""
     >>> PAP = scope.PAP
     >>> SRM = scope.SRM
     >>> bc  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', "AUT", u"1107", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"1107", "AUT", raw = True)
     >>> p   = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
@@ -114,14 +114,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
-    (((u'optimist', ), u'AUT',  1107, u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
 
 
 """
@@ -132,7 +132,7 @@ _query_attr = r"""
     >>> PAP  = scope.PAP
     >>> SRM  = scope.SRM
     >>> bc   = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b    = SRM.Boat.instance_or_new (u'Optimist', "AUT", u"1107", raw = True)
+    >>> b    = SRM.Boat.instance_or_new (u'Optimist', u"1107", "AUT", raw = True)
     >>> p    = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> s    = SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
@@ -160,38 +160,22 @@ _query_attr = r"""
 
 """
 
-if 1 :
-    if 0 :
-        import warnings
-        from sqlalchemy import exc as sa_exc
-        warnings.filterwarnings \
-            (action = "error", category = sa_exc.SAWarning)
-    from _GTW.__test__.model import *
-    __test__ = Scaffold.create_test_dict \
-        ( dict ( composite       = _composite
-               , link1_role      = _link1_role
-               , link2_link1     = _link2_link1
-               , query_attr      = _query_attr
-               )
-        , ignore       = "HPS"
-        )
+if 0 :
+    import warnings
+    from sqlalchemy import exc as sa_exc
+    warnings.filterwarnings \
+        (action = "error", category = sa_exc.SAWarning)
 
 from _GTW.__test__.model import *
 from _MOM.import_MOM     import Q
 
-if __name__ == "__main__11" :
-    import doctest, SAS_Sorted_By
-    TFL.Environment.exec_python_startup ()
-    exec (doctest.testsource (SAS_Sorted_By, "SAS_Sorted_By.test"))
-    BIR = scope.SRM.Boat_in_Regatta.E_Type
-    R   = scope.SRM.Regatta.E_Type
-    RE  = scope.SRM.Regatta_Event.E_Type
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( composite       = _composite
+        , link1_role      = _link1_role
+        , link2_link1     = _link2_link1
+        , query_attr      = _query_attr
+        )
+    )
 
-    BIRs = BIR._sa_table
-    Rs   = R._sa_table
-    REs  = RE._sa_table
-
-    E    = scope.ems.session.execute
-    q = BIR._SAS.select.select_from (BIRs.join (Rs).join (REs))
-    print q
-### __END__ GTW.__test__.SAS_Sorted_By
+### __END__ GTW.__test__.Query_Sorted_By
