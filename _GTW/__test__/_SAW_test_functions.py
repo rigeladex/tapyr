@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Aug-2013 (CT) Creation
+#    26-Aug-2013 (CT) Add `show_key_o_p`, `show_sequence`
 #    ««revision-date»»···
 #--
 
@@ -201,6 +202,17 @@ def show_attr_wrappers (apt, pred = pred) :
         show (ETW)
 # end def show_attr_wrappers
 
+def show_key_o_p (apt) :
+    def _show (k) :
+        return getattr (k, "name", None)
+    for ETW in apt._SAW.e_types_t :
+        if ETW.key_o or ETW.key_p :
+            print \
+                ( "%-40s : %-15s %-15s"
+                % (ETW.type_name, _show (ETW.key_o), _show (ETW.key_p))
+                )
+# end def show_key_o_p
+
 def show_q_able (apt, pred = pred) :
     def _gen (ETW) :
         for k, q in sorted (pyk.iteritems (ETW.q_able_attrs)) :
@@ -273,6 +285,13 @@ def show_selects (apt, name = "select", pred = pred) :
             head   = ("%s %s" % (T.type_name, second)).strip ()
             print ("%s%s" % (head, nl), "  ", formatted_select (ETW, name = name))
 # end def show_selects
+
+def show_sequence (apt) :
+    for ETW in apt._SAW.e_types_t :
+        seq = ETW.sequence
+        if seq:
+            print ("%-40s : %s" % (ETW.type_name, seq.seq_name))
+# end def show_sequence
 
 def show_sequences (apt) :
     for ETW in apt._SAW.e_types_t :

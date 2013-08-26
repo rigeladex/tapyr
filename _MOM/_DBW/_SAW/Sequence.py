@@ -37,6 +37,7 @@
 #    31-Jul-2013 (CT) Use `session.con_man_seq`
 #    31-Jul-2013 (CT) Change `reserve` to act only on `value > max_value`
 #     1-Aug-2013 (CT) Update `session.seq_high`
+#    26-Aug-2013 (CT) Split into `Sequence`, `Sequence_PID`, `Sequence_X`
 #    ««revision-date»»···
 #--
 
@@ -55,61 +56,77 @@ import _MOM._DBW._SAW.DBS
 import _MOM._DBW._SAW.SA_Type
 
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
-class _SAW_Sequence_ (TFL.Meta.Object) :
-    """Wrap or emulate a database sequence"""
+class _Sequence_ (TFL.Meta.Object) :
 
-    _real_name          = "Sequence"
+    col_args            = ()
+    sa_column           = None
+    sa_seq              = None
+    sa_table            = None
+    table_name          = ""
 
     _column_kw          = {}
     _table_kw           = {}
 
-    def __init__ (self, attr, e_type) :
-        self.e_type     = e_type
-        self.ATW        = e_type.app_type._SAW
-        self.DBW        = DBW   = e_type.app_type.DBW
-        self.PNS        = PNS   = DBW.PNS
+    def __init__ (self, attr, ETW) :
+        self.ATW        = ETW.ATW
+        self.DBW        = DBW   = ETW.DBW
+        self.ETW        = ETW
+        self.PNS        = PNS   = ETW.PNS
         self.dbs        = PNS.DBS
         self.attr       = attr
         self.name       = attr.name
+        self.e_type     = e_type = ETW.e_type
         self.type_name  = e_type.type_name
-        self.seq_name   = sn    = \
+        self.seq_name   = \
             ("%s_%s_seq" % (e_type._saw_table_name (DBW), attr.name))
-        self.table_name = tn    = "%s_table"  % (sn, )
-        self.sa_column  = col   = self._define_column (attr, DBW)
-        self.sa_table   = table = self._define_table  (tn,   DBW, col)
-        self.delete     = table.delete ().where (col < SA.sql.bindparam ("max"))
-        self.insert     = table.insert ()
-        self.select     = SA.sql.select([col]).limit (1).order_by (col.desc ())
     # end def __init__
 
     def commit (self, session) :
-        session.con_man_seq.commit ()
+        pass
     # end def commit
 
     def close (self, session) :
-        self.rollback (session)
+        pass
     # end def close
 
+    def extract (self, session, entity, kw, sa_result) :
+        pass
+    # end def extract
+
+    def insert (self, session, entity, spks, kw) :
+        attr  = self.attr
+        v     = attr.get_value (entity)
+        spk   = spks.get (attr.name)
+        if spk is not None :
+            if v is None :
+                v = spk
+            elif v != spk :
+                raise TypeError \
+                    ( "Cannot pass %s %s when entity already has %s"
+                    % (attr.name, spk, v)
+                    )
+        if v is None :
+            v = self.next_value (session)
+            if v is not None :
+                v = int (v)
+                attr.__set__ (entity, v)
+        elif session.scope.reserve_surrogates :
+            self.reserve (session, v)
+        if v is not None :
+            akw = self.ETW.db_attrs [attr.name]
+            kw [akw.ckd_name] = v
+    # end def insert
+
     def max_value (self, session) :
-        conn    = session.con_man_seq.connection
+        conn = self.connection (session)
         return conn.execute (self.select).scalar () or 0
     # end def max_value
 
-    def next_value (self, session, commit = True) :
-        con_man = session.con_man_seq
-        conn    = con_man.connection
-        sar     = conn.execute (self.insert.values ())
-        result  = session.seq_high [self] = int (sar.inserted_primary_key [0])
-        conn.execute (self.delete, max = result)
-        if commit :
-            con_man.commit ()
-        return result
-    # end def next_value
-
     def reserve (self, session, value, commit = True) :
-        conn      = session.con_man_seq.connection
-        max_value = self.max_value (session)
+        conn      = self.connection (session)
+        max_value = self.max_value  (session)
         ### `undo` of changes comes here with existing values, ignore those
         if value > max_value :
             self._reserve (conn, value)
@@ -120,6 +137,138 @@ class _SAW_Sequence_ (TFL.Meta.Object) :
     # end def reserve
 
     def rollback (self, session) :
+        pass
+    # end def rollback
+
+    def _reserve (self, conn, value) :
+        pass
+    # end def _reserve
+
+    def __repr__ (self) :
+        attr = self.attr
+        return "<Sequence for %s attribute %s.%s>" % \
+            (attr.typ, self.type_name, attr.name)
+    # end def __repr__
+
+# end class _Sequence_
+
+class _Sequence_S_ (_Sequence_) :
+    """Wrap a database sequence for a RDBMS supporting sequences"""
+
+    _seq_kw             = {}
+
+    def __init__ (self, attr, ETW, ** kw) :
+        self._seq_kw = dict (self._seq_kw, ** kw) ### merge _seq_kw of class, kw
+        self.__super.__init__ (attr, ETW)
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def sa_seq (self) :
+        return SA.schema.Sequence (self.seq_name, ** self._seq_kw)
+    # end def sa_seq
+
+    @TFL.Meta.Once_Property
+    def col_args (self) :
+        return (self.sa_seq, )
+    # end def col_args
+
+# end class _SAW_Sequence_S_
+
+class Sequence (_Sequence_) :
+    """Wrap or emulate a database sequence without its own sequence table"""
+
+    @TFL.Meta.Once_Property
+    def select (self) :
+        col = self.ETW.spk_col
+        return SA.sql.select ([col]).order_by (col.desc ()).limit (1)
+    # end def select
+
+    @TFL.Meta.Once_Property
+    def sa_table (self) :
+        return self.ETW.sa_table
+    # end def sa_table
+
+    @TFL.Meta.Once_Property
+    def table_name (self) :
+        return self.ETW.table_name
+    # end def table_name
+
+    def connection (self, session) :
+        return session.con_man.connection
+    # end def connection
+
+    def extract (self, session, entity, kw, sa_result) :
+        attr   = self.attr
+        result = int (sa_result.inserted_primary_key [0])
+        akw    = self.ETW.db_attrs [attr.name]
+        attr.__set__ (entity, result)
+        kw [akw.ckd_name] = result
+        return result
+    # end def extract
+
+    def next_value (self, session, commit = True) :
+        pass
+    # end def next_value
+
+# end class Sequence
+
+class Sequence_PID (Sequence) :
+    """Wrap or emulate a database sequence for `pid`"""
+
+    @TFL.Meta.Once_Property
+    def select_md_change (self) :
+        ETW = self.ATW ["MOM.MD_Change"]
+        col = ETW.QC   ["pid"]
+        return SA.sql.select ([col]).order_by (col.desc ()).limit (1)
+    # end def select_md_change
+
+    def max_value (self, session) :
+        conn = session.con_man.connection
+        return max \
+            ( conn.execute (self.select).scalar () or 0
+            , conn.execute (self.select_md_change).scalar () or 0
+            )
+    # end def max_value
+
+# end class Sequence_PID
+
+class Sequence_X (_Sequence_) :
+    """Wrap or emulate a database sequence with its own sequence table"""
+
+    def __init__ (self, attr, ETW) :
+        self.__super.__init__ (attr, ETW)
+        self.table_name = tn  = "%s_table"  % (self.seq_name, )
+        self.sa_column  = col = self._define_column (attr, self.DBW)
+        self.sa_table   = tab = self._define_table  (tn,   self.DBW, col)
+        self.del_stmt   = tab.delete ().where (col < SA.sql.bindparam ("max"))
+        self.ins_stmt   = tab.insert ()
+        self.select     = SA.sql.select ([col]).limit (1).order_by (col.desc ())
+    # end def __init__
+
+    def close (self, session) :
+        self.rollback (session)
+    # end def close
+
+    def commit (self, session) :
+        session.con_man_seq.commit ()
+    # end def commit
+
+    def connection (self, session) :
+        return session.con_man_seq.connection
+    # end def connection
+
+    def next_value (self, session, commit = True) :
+        con_man = session.con_man_seq
+        conn    = con_man.connection
+        sar     = conn.execute (self.ins_stmt.values ())
+        result  = session.seq_high [self] = int (sar.inserted_primary_key [0])
+        conn.execute (self.del_stmt, max = result)
+        if commit :
+            con_man.commit ()
+        return result
+    # end def next_value
+
+    def rollback (self, session) :
         session.con_man_seq.rollback ()
     # end def rollback
 
@@ -127,7 +276,7 @@ class _SAW_Sequence_ (TFL.Meta.Object) :
         return SA.schema.Column \
             ( attr.name
             , self.ATW.SA_Type.sized_int_type (attr.Pickled_Type)
-            , * args
+            , * (self.col_args + args)
             , ** dict (self._column_kw, primary_key = True, ** kw)
             )
     # end def _define_column
@@ -140,35 +289,22 @@ class _SAW_Sequence_ (TFL.Meta.Object) :
     # end def _define_table
 
     def _reserve (self, conn, value) :
-        conn.execute (self.insert.values (** {self.attr.name : value}))
-        conn.execute (self.delete, max = value)
+        conn.execute (self.ins_stmt.values (** {self.attr.name : value}))
+        conn.execute (self.del_stmt, max = value)
     # end def _reserve
 
-    def __repr__ (self) :
-        attr = self.attr
-        return "<Sequence for %s attribute %s.%s>" % \
-            (attr.typ, self.type_name, attr.name)
-    # end def __repr__
+# end class Sequence_X
 
-Sequence = _SAW_Sequence_ # end class
+MOM.Attr.A_Surrogate._saw_sequence_type_name                 = "Sequence_X"
+MOM.Id_Entity.E_Spec._Attributes.pid._saw_sequence_type_name = "Sequence_PID"
+MOM.MD_Change.E_Spec._Attributes.cid._saw_sequence_type_name = "Sequence"
 
-class _SAW_Sequence_S_ (Sequence) :
-    """Wrap a database sequence for a RDBMS supporting sequences"""
-
-    _seq_kw             = {}
-
-    def __init__ (self, attr, type_name, ** kw) :
-        self._seq_kw = kw
-        self.__super.__init__ (attr, type_name)
-    # end def __init__
-
-    def _define_column (self, name, DBW, * args, ** kw) :
-        self.sa_seq = seq = SA.schema.Sequence (self.seq_name, ** self._seq_kw)
-        return self.__super._define_column     (name, DBW, seq, * args, ** kw)
-    # end def _define_column
-
-# end class _SAW_Sequence_S_
+@TFL.Add_To_Class ("_saw_sequence", MOM.Attr.A_Surrogate)
+def _saw_sequence (self, ETW) :
+    ST = getattr (ETW.PNS, self._saw_sequence_type_name)
+    return ST (self.kind, ETW)
+# end def _saw_sequence
 
 if __name__ != "__main__" :
-    MOM.DBW.SAW._Export ("*", "_SAW_Sequence_S_")
+    MOM.DBW.SAW._Export ("*", "_Sequence_", "_Sequence_S_")
 ### __END__ MOM.DBW.SAW.Sequence

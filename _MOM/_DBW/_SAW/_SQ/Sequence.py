@@ -29,6 +29,7 @@
 #    24-Jun-2013 (CT) Creation
 #    17-Jul-2013 (CT) Redefine `reserve`
 #    31-Jul-2013 (CT) Redefine `_reserve`, not `reserve`
+#    26-Aug-2013 (CT) Split into `Sequence`, `Sequence_PID`, `Sequence_X`
 #    ««revision-date»»···
 #--
 
@@ -44,10 +45,9 @@ import _MOM._DBW
 import _MOM._DBW._SAW._SQ.DBS
 import _MOM._DBW._SAW.Sequence
 
-class _SAW_SQ_Sequence_ (MOM.DBW.SAW.Sequence) :
+class _SQ_Sequence_ (MOM.DBW.SAW._Sequence_) :
     """Emulate a database sequence for SQLite"""
 
-    _real_name          = "Sequence"
     _table_kw           = dict \
         ( sqlite_autoincrement = True
         )
@@ -62,7 +62,28 @@ class _SAW_SQ_Sequence_ (MOM.DBW.SAW.Sequence) :
         return result
     # end def reserve
 
-Sequence = _SAW_SQ_Sequence_ # end class
+# end class _SQ_Sequence_
+
+class SQ_Sequence (_SQ_Sequence_, MOM.DBW.SAW.Sequence) :
+    """Emulate a database sequence for SQLite without its own sequence table"""
+
+    _real_name          = "Sequence"
+
+Sequence = SQ_Sequence # end class
+
+class SQ_Sequence_PID (_SQ_Sequence_, MOM.DBW.SAW.Sequence_PID) :
+    """Emulate a database sequence for SQLite for `pid`"""
+
+    _real_name          = "Sequence_PID"
+
+Sequence_PID = SQ_Sequence_PID # end class
+
+class SQ_Sequence_X (_SQ_Sequence_, MOM.DBW.SAW.Sequence_X) :
+    """Emulate a database sequence for SQLite with its own sequence table"""
+
+    _real_name          = "Sequence_X"
+
+Sequence_X = SQ_Sequence_X # end class
 
 if __name__ != "__main__" :
     MOM.DBW.SAW.SQ._Export ("*")

@@ -81,17 +81,6 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         self.sequence.commit (self.session)
     # end def commit
 
-    @TFL.Contextmanager
-    def context (self, entity, pid) :
-        try :
-            yield self (entity, pid, commit = False)
-        except Exception :
-            self.rollback ()
-            raise
-        else :
-            self.commit   ()
-    # end def context
-
     def close (self) :
         self.rollback ()
     # end def close

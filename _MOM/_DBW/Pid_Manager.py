@@ -32,6 +32,7 @@
 #    17-May-2010 (MG) `kw` added to `__call__`
 #     4-Aug-2012 (CT) Remove implementation of `retire`
 #     6-Jun-2013 (CT) Use `@subclass_responsibility`
+#    26-Aug-2013 (CT) Move `__call__` to `HPS`
 #    ««revision-date»»···
 #--
 
@@ -51,14 +52,6 @@ class _Pid_Manager_ (TFL.Meta.Object) :
     def __init__ (self, ems, db_url) :
         self.ems = ems
     # end def __init__
-
-    def __call__ (self, entity, pid = None, ** kw) :
-        if pid is None :
-            pid = self.new (entity, ** kw)
-        else :
-            self.reserve (entity, pid, ** kw)
-        return pid
-    # end def __call__
 
     @subclass_responsibility
     def new (self, entity) :

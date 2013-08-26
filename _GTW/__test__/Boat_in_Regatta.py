@@ -650,10 +650,10 @@ _test_referential_integrity = r"""
 
     >>> for c in scope.uncommitted_changes :
     ...     show_change (c)
-    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
-        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
-    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '<n>'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
+    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '<n>'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '<n>', 'registration_date' : u'<today>', 'skipper' : 5}>
 
     >>> for c in scope.uncommitted_changes :
     ...     print c.cid, c.pid, c.type_name, c.epk_pid
@@ -668,12 +668,12 @@ _test_referential_integrity = r"""
 
     >>> for c in scope.uncommitted_changes :
     ...     show_change (c)
-    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
-        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
-    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '9'}>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
-    <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '13'}>
-    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '14', 'registration_date' : u'<today>', 'skipper' : 5}>
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '<n>'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
+    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '<n>'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '<n>', 'registration_date' : u'<today>', 'skipper' : 5}>
+    <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '<n>'}>
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '<n>', 'registration_date' : u'<today>', 'skipper' : 5}>
 
 """
 
@@ -726,8 +726,8 @@ _test_undo = r"""
     (9, 10)
     >>> for c in scope.uncommitted_changes : ### after first destroy
     ...     show_change (c)
-    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
-        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '9'}>
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '<n>'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
 
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 3
     [1, 3, 4, 5, 6, 7, 8]
@@ -755,22 +755,20 @@ _test_undo = r"""
 
     >>> s                   ### after second destroy
     SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
-    >>> s.last_cid          ### after second destroy
-    11
 
     >>> for c in scope.query_changes () : ### after second destroy of club
-    ...     print ("%%2d %%s" %% (c.cid, clean_change (c)))
-     1 <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'1'}>
-     2 <Create SRM.Club (u'SC-AMS', 'SRM.Club'), new-values = {'last_cid' : '2'}>
-     3 <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), new-values = {'last_cid' : '3'}>
-     4 <Create PAP.Person (u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '4'}>
-     5 <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', (u'SC-AMS', 'SRM.Club'), 'SRM.Sailor'), new-values = {'last_cid' : '5'}>
-     6 <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '6', 'perma_name' : u'himmelfahrt'}>
-     7 <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
-     8 <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
-    11 <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '11'}>
-    12 <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
-        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '11'}>
+    ...     print (clean_change (c))
+    <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '<n>', 'max_crew' : u'1'}>
+    <Create SRM.Club (u'SC-AMS', 'SRM.Club'), new-values = {'last_cid' : '<n>'}>
+    <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), new-values = {'last_cid' : '<n>'}>
+    <Create PAP.Person (u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '<n>'}>
+    <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', (u'SC-AMS', 'SRM.Club'), 'SRM.Sailor'), new-values = {'last_cid' : '<n>'}>
+    <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '<n>', 'perma_name' : u'himmelfahrt'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '<n>', 'perma_name' : u'optimist'}>
+    <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '<n>', 'registration_date' : u'<today>', 'skipper' : 5}>
+    <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '<n>'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
 
     >>> s.destroy ()
 
@@ -781,10 +779,10 @@ _test_undo = r"""
 
     >>> for c in scope.uncommitted_changes : ### after second destroy
     ...     show_change (c)
-    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '2'}>
-        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '5'}, new-values = {'club' : u'', 'last_cid' : '11'}>
-    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '11'}>
-        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '8', 'registration_date' : u'<today>', 'skipper' : 5}>
+    <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '<n>'}>
+        <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
+    <Destroy SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'last_cid' : '<n>'}>
+        <Destroy SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), old-values = {'last_cid' : '<n>', 'registration_date' : u'<today>', 'skipper' : 5}>
     >>> print (sorted (scope.MOM.Id_Entity.query ().attr ("pid"))) ### 4
     [1, 3, 4, 6, 7]
 
@@ -818,17 +816,23 @@ _test_undo = r"""
 
 from   _GTW.__test__.model import *
 from   _TFL.predicate      import first
-from   _TFL.Regexp         import Re_Replacer, re
+from   _TFL.Regexp         import Multi_Re_Replacer, Re_Replacer, re
 from   datetime            import datetime
 
-_clean_registration_date = Re_Replacer \
-    ( r"u'%s'" % (datetime.now ().strftime("%Y/%m/%d"), )
-    , r"u'<today>'"
+_clean_change = Multi_Re_Replacer \
+    ( Re_Replacer
+        ( r"u'%s'" % (datetime.now ().strftime("%Y/%m/%d"), )
+        , r"u'<today>'"
+        )
+    , Re_Replacer
+        ( r"'last_cid' : '\d+'"
+        , r"'last_cid' : '<n>'"
+        )
     )
 
 def clean_change (c) :
     result = str (c)
-    result = _clean_registration_date (result)
+    result = _clean_change (result)
     return result
 # end def clean_change
 

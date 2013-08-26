@@ -100,8 +100,6 @@
 #    25-Aug-2013 (CT) Use `MOM.Id_Entity.E_Spec._Attributes`
 #    25-Aug-2013 (CT) Add `default` to `_saw_column_kw`, `_saw_columns_raw_kind`
 #    26-Aug-2013 (CT) Add `col_args` to `_saw_columns_surrogate`
-#    28-Aug-2013 (CT) Change `_saw_column_type` to look at `_Pickler_Type`
-#                     before `P_Type_Map [p_type]`
 #    ««revision-date»»···
 #--
 
@@ -1240,10 +1238,12 @@ def _saw_columns_named_value (self, DBW, wrapper, ** kw) :
 @TFL.Add_To_Class ("_saw_columns", MOM.Attr.A_Surrogate)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_columns_surrogate (self, DBW, wrapper, ** kw) :
+    seq      = wrapper.ETW.sequence
+    col_args = seq.col_args if seq.sa_column is None else ()
     col_type = DBW.PNS.Attr._saw_column_type_int \
         (self, DBW, wrapper, self.Pickled_Type)
     return self._saw_one_typed_column \
-        (DBW, wrapper, col_type, primary_key = True, ** kw)
+        (DBW, wrapper, col_type, * col_args, primary_key = True, ** kw)
 # end def _saw_columns_surrogate
 
 ### Attr-Type specific functions returning sa-specific types ###################

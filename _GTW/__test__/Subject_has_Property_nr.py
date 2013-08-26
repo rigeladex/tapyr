@@ -12961,9 +12961,22 @@ _test_tables = """
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
         Column right                     : Integer              Link_Role Address right Id_Entity()
     <Table for Surrogate `pid`>
-        Column pid                       : Integer              ---------- primary
+        Column electric                  : Boolean              Internal Boolean electric
+        Column last_cid                  : Integer              Internal Int last_cid
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary
+        Column type_name                 : Smallint             Internal__Type_Name String type_name
+        Column x_locked                  : Boolean              Internal Boolean x_locked
     <Table for Surrogate `cid`>
-        Column cid                       : Integer              ---------- primary
+        Column c_time                    : Datetime             Internal__Computed__Sync_Change Date-Time c_time
+        Column c_user                    : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity c_user Id_Entity()
+        Column cid                       : Integer              Internal__Computed__Sync_Change__Just_Once Surrogate cid primary
+        Column kind                      : Varchar(10)          Internal__Computed__Sync_Change String kind
+        Column parent_cid                : Integer              Internal__Computed__Sync_Change Int parent_cid
+        Column pid                       : Integer              Internal__Computed__Sync_Change Int pid
+        Column scm_change                : Blob                 Internal Blob scm_change
+        Column time                      : Datetime             Internal__Computed__Sync_Change Date-Time time
+        Column type_name                 : Smallint             Internal__Computed__Sync_Change String type_name
+        Column user                      : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity user Id_Entity()
     <Table for Surrogate `cert_id`>
         Column cert_id                   : Integer              ---------- primary
 

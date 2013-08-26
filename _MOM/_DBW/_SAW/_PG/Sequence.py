@@ -29,6 +29,7 @@
 #    24-Jun-2013 (CT) Creation
 #    26-Jul-2013 (CT) Redefine `_reserve`, not `reserve`
 #    28-Jul-2013 (CT) Quote `seq_name` in `SELECT setval`; fix typo
+#    26-Aug-2013 (CT) Split into `Sequence`, `Sequence_PID`, `Sequence_X`
 #    ««revision-date»»···
 #--
 
@@ -44,10 +45,8 @@ import _MOM._DBW
 import _MOM._DBW._SAW._PG.DBS
 import _MOM._DBW._SAW.Sequence
 
-class _SAW_PG_Sequence_ (MOM.DBW.SAW._SAW_Sequence_S_) :
+class _PG_Sequence_ (MOM.DBW.SAW._Sequence_S_) :
     """Wrap a PostgreSQL sequence"""
-
-    _real_name          = "Sequence"
 
     def _reserve (self, conn, value) :
         result = self.__super._reserve (conn, value)
@@ -56,7 +55,28 @@ class _SAW_PG_Sequence_ (MOM.DBW.SAW._SAW_Sequence_S_) :
         return result
     # end def _reserve
 
-Sequence = _SAW_PG_Sequence_ # end class
+# end class _PG_Sequence_
+
+class PG_Sequence (_PG_Sequence_, MOM.DBW.SAW.Sequence) :
+    """Wrap a PostgreSQL sequence without its own sequence table"""
+
+    _real_name          = "Sequence"
+
+Sequence = PG_Sequence # end class
+
+class PG_Sequence_PID (_PG_Sequence_, MOM.DBW.SAW.Sequence_PID) :
+    """Wrap a PostgreSQL sequence for `pid`"""
+
+    _real_name          = "Sequence_PID"
+
+Sequence_PID = PG_Sequence_PID # end class
+
+class PG_Sequence_X (_PG_Sequence_, MOM.DBW.SAW.Sequence_X) :
+    """Wrap a PostgreSQL sequence with its own sequence table"""
+
+    _real_name          = "Sequence_X"
+
+Sequence_X = PG_Sequence_X # end class
 
 if __name__ != "__main__" :
     MOM.DBW.SAW.PG._Export ("*")

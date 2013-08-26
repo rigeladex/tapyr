@@ -32,6 +32,7 @@
 #    12-May-2010 (CT) `reserve` corrected (corner cases)
 #     4-Aug-2012 (CT) Change `retire` not to set `pid` to None
 #    30-Jan-2013 (CT) Add `zombies`
+#    26-Aug-2013 (CT) Move `__call__` in here from `MOM.DBW.Pid_Manager`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,14 @@ class Pid_Manager (MOM.DBW.Pid_Manager) :
         self.table   = {}
         self.zombies = {}
     # end def __init__
+
+    def __call__ (self, entity, pid = None, ** kw) :
+        if pid is None :
+            pid = self.new (entity, ** kw)
+        else :
+            self.reserve (entity, pid, ** kw)
+        return pid
+    # end def __call__
 
     def flush_zombies (self) :
         self.zombies = {}

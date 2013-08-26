@@ -434,7 +434,7 @@ class Session_S (_Session_) :
             self.change_count += 1
             self.needs_commit  = True
             ETW           = entity.__class__._SAW
-            spk           = ETW.insert (self, entity, pid)
+            spk           = ETW.insert (self, entity, pid = pid)
             spk_map       = self._spk_maps [ETW.spk_name]
             spk_map [spk] = entity
     # end def add

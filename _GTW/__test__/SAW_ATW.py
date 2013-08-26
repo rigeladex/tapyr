@@ -42,6 +42,7 @@
 #     4-Aug-2013 (CT) Add `test_date_extraction` for `pg` and `sq`
 #    20-Aug-2013 (CT) Exclude `test_q_result` for old sqlalchemy versions
 #    25-Aug-2013 (CT) Add `test_q_result_x`
+#    26-Aug-2013 (CT) Add `test_key_o_p`; call of `show_sequence`
 #    ««revision-date»»···
 #--
 
@@ -1516,6 +1517,71 @@ _test_fk_cols = """
     SRM.Team_has_Boat_in_Regatta
         Column left                      : Integer              Link_Role Team left Id_Entity()
         Column right                     : Integer              Link_Role Boat_in_Regatta right Id_Entity()
+
+"""
+
+_test_key_o_p = """
+    >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
+
+    >>> show_key_o_p (apt)
+    MOM.Id_Entity                            : pid             None
+    MOM.MD_Change                            : cid             None
+    Auth._Account_                           : None            pid
+    Auth.Account_Anonymous                   : None            pid
+    Auth.Account                             : None            pid
+    Auth.Certificate                         : cert_id         pid
+    Auth.Group                               : None            pid
+    Auth.Account_in_Group                    : None            pid
+    Auth.Account_Activation                  : None            pid
+    Auth.Account_Password_Change_Required    : None            pid
+    Auth.Account_EMail_Verification          : None            pid
+    Auth.Account_Password_Reset              : None            pid
+    EVT.Calendar                             : None            pid
+    SWP.Page                                 : None            pid
+    SWP.Page_Y                               : None            pid
+    EVT.Event                                : None            pid
+    EVT.Event_occurs                         : None            pid
+    EVT.Recurrence_Spec                      : None            pid
+    EVT.Recurrence_Rule                      : None            pid
+    PAP.Address                              : None            pid
+    PAP.Company                              : None            pid
+    PAP.Email                                : None            pid
+    PAP.Phone                                : None            pid
+    PAP.Person                               : None            pid
+    PAP.Url                                  : None            pid
+    PAP.Address_Position                     : None            pid
+    PAP.Subject_has_Property                 : None            pid
+    PAP.Person_has_Account                   : None            pid
+    SRM._Boat_Class_                         : None            pid
+    SRM.Boat_Class                           : None            pid
+    SRM.Handicap                             : None            pid
+    SRM.Boat                                 : None            pid
+    SRM.Club                                 : None            pid
+    SRM.Regatta_Event                        : None            pid
+    SWP.Clip_O                               : None            pid
+    SWP.Clip_X                               : None            pid
+    SWP.Gallery                              : None            pid
+    SWP.Picture                              : None            pid
+    SRM.Page                                 : None            pid
+    SRM.Regatta                              : None            pid
+    SRM.Regatta_C                            : None            pid
+    SRM.Regatta_H                            : None            pid
+    SRM.Sailor                               : None            pid
+    SRM.Boat_in_Regatta                      : None            pid
+    SRM.Race_Result                          : None            pid
+    SRM.Team                                 : None            pid
+    SRM.Crew_Member                          : None            pid
+    SRM.Team_has_Boat_in_Regatta             : None            pid
+    PAP.Subject_has_Phone                    : None            pid
+    PAP.Company_has_Url                      : None            pid
+    PAP.Person_has_Url                       : None            pid
+    PAP.Company_has_Phone                    : None            pid
+    PAP.Person_has_Phone                     : None            pid
+    PAP.Company_has_Email                    : None            pid
+    PAP.Person_has_Email                     : None            pid
+    PAP.Company_has_Address                  : None            pid
+    PAP.Person_has_Address                   : None            pid
+
 
 """
 
@@ -11820,9 +11886,14 @@ _test_select_strict = """
 _test_sequences = """
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
 
+    >>> show_sequence (apt)
+    MOM.Id_Entity                            : mom_id_entity_pid_seq
+    MOM.MD_Change                            : mom_md_change_cid_seq
+    Auth.Certificate                         : auth_certificate_cert_id_seq
+
     >>> show_sequences (apt)
     MOM.Id_Entity                            : mom_id_entity_pid_seq
-    MOM.MD_Change                     : mom_md_change_cid_seq
+    MOM.MD_Change                            : mom_md_change_cid_seq
     Auth._Account_                           : mom_id_entity_pid_seq
     Auth.Account_Anonymous                   : mom_id_entity_pid_seq
     Auth.Account                             : mom_id_entity_pid_seq
@@ -12405,9 +12476,22 @@ _test_tables = """
     PAP.Person_has_Address (PAP.Subject_has_Property) PAP.Subject_has_Property <Table pap_person_has_address>
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'pap_subject_has_property.pid')
     <Table for Surrogate `pid`>
-        Column pid                       : Integer              ---------- primary
+        Column electric                  : Boolean              Internal Boolean electric
+        Column last_cid                  : Integer              Internal Int last_cid
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary
+        Column type_name                 : Smallint             Internal__Type_Name String type_name
+        Column x_locked                  : Boolean              Internal Boolean x_locked
     <Table for Surrogate `cid`>
-        Column cid                       : Integer              ---------- primary
+        Column c_time                    : Datetime             Internal__Computed__Sync_Change Date-Time c_time
+        Column c_user                    : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity c_user Id_Entity()
+        Column cid                       : Integer              Internal__Computed__Sync_Change__Just_Once Surrogate cid primary
+        Column kind                      : Varchar(10)          Internal__Computed__Sync_Change String kind
+        Column parent_cid                : Integer              Internal__Computed__Sync_Change Int parent_cid
+        Column pid                       : Integer              Internal__Computed__Sync_Change Int pid
+        Column scm_change                : Blob                 Internal Blob scm_change
+        Column time                      : Datetime             Internal__Computed__Sync_Change Date-Time time
+        Column type_name                 : Smallint             Internal__Computed__Sync_Change String type_name
+        Column user                      : Integer              Internal__Computed__Sync_Change__Id_Entity_Reference Entity user Id_Entity()
     <Table for Surrogate `cert_id`>
         Column cert_id                   : Integer              ---------- primary
 
@@ -12563,6 +12647,7 @@ __test__ = Scaffold.create_test_dict \
         ( test_ancestors        = _test_ancestors
         , test_attr_wrappers    = _test_attr_wrappers
         , test_fk_cols          = _test_fk_cols
+        , test_key_o_p          = _test_key_o_p
         , test_parents          = _test_parents
         , test_q_able           = _test_q_able
         , test_qc_map           = _test_qc_map

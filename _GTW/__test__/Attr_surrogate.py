@@ -101,26 +101,26 @@ _test_no_reuse = """
     >>> b1.last_cid ### 1 after change
     5
 
-    >>> scope.max_cid, scope.max_pid ### before rollback 2
-    (5, 102)
+    >>> scope.max_cid, scope.max_pid >= b2.pid ### before rollback 2
+    (5, True)
 
     >>> scope.rollback () ### 2
 
-    >>> scope.max_cid, scope.max_pid ### after rollback 2
-    (5, 102)
+    >>> scope.max_cid >= b2.last_cid, scope.max_pid >= b2.pid ### after rollback 2
+    (True, True)
 
     >>> b3 = SRM.Boat (bc, 3, "AUT") ### 2
-    >>> int (b3.pid)
-    103
+    >>> b3.pid > b2.pid ### 2
+    True
 
-    >>> b1.last_cid ### 2 before change
-    2
+    >>> b1.last_cid >= b3.last_cid ### 2 before change
+    False
     >>> _ = b1.set (sail_number = 42) ## 2
-    >>> b1.last_cid ### 2 after change
-    7
+    >>> b1.last_cid >= b3.last_cid ### 2 after change
+    True
 
-    >>> scope.max_cid, scope.max_pid ### after changes after rollback 2
-    (7, 103)
+    >>> scope.max_cid >= b3.last_cid , scope.max_pid >= b3.pid ### after changes after rollback 2
+    (True, True)
 
 """
 
