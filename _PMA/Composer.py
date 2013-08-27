@@ -54,6 +54,9 @@
 #    27-Mar-2013 (CT) Add options `-HTML`, `-receiver`, `-subject`
 #    28-Mar-2013 (CT) Put `receiver`, `subject` in `defaults`
 #    28-Mar-2013 (CT) Use `Msg_Scope` even if there isn't a `msg`
+#    27-Aug-2013 (CT) Change `_as_message` to include `plain` with `html`
+#    27-Aug-2013 (CT) Add `addressee` to `forward_format`, `resend_format`,
+#                     `defaults`
 #    ««revision-date»»···
 #--
 
@@ -134,6 +137,7 @@ class Editor_Thread (PMA.Thread) :
 class Composer (TFL.Meta.Object) :
     """Support interactive sending of emails"""
 
+    addressee           = ""
     body_marker         = "--text follows this line--"
     domain              = TFL.Environment.mailname ()
     editor              = "emacsclient --alternate-editor vi"
@@ -156,7 +160,7 @@ class Composer (TFL.Meta.Object) :
 
     forward_format = "\n".join \
         ( ( """From:        %(email_address)s"""
-          , """To:          %(receiver)s"""
+          , """To:          %(addressee)s"""
           , """Subject:     FW: %(subject)s"""
           , """Cc:          """
           , """Bcc:         %(email_address)s"""
@@ -190,7 +194,7 @@ class Composer (TFL.Meta.Object) :
 
     resend_format  = "\n".join \
         ( ( """From:        %(email_address)s"""
-          , """To:          %(receiver)s"""
+          , """To:          %(addressee)s"""
           , """Cc:          """
           , """Bcc:         """
           )
@@ -236,7 +240,8 @@ class Composer (TFL.Meta.Object) :
             , version          = PMA.version
             )
         self.defaults          = dict \
-            ( receiver         = self.receiver
+            ( addressee        = receiver or ""
+            , receiver         = receiver or self.receiver
             , subject          = self.subject
             )
     # end def __init__
@@ -320,11 +325,19 @@ class Composer (TFL.Meta.Object) :
     # end def _as_html
 
     def _as_message (self, buffer) :
+        result = Lib.message_from_string (buffer.replace (self.body_marker, ""))
         if self.rst2html or self._rest2html_header in buffer :
-            result = self._as_html (buffer)
+            plain    = result
+            html     = self._as_html      (buffer)
+            result   = self._as_multipart (html, _subtype = "alternative")
+            result.attach \
+                ( Lib.MIMEText
+                    ( _text    = plain.get_payload         (decode = True)
+                    , _subtype = plain.get_content_subtype ()
+                    , _charset = PMA.default_encoding
+                    )
+                )
         else :
-            result = Lib.message_from_string \
-                (buffer.replace (self.body_marker, ""))
             self._add_header_maybe \
                 ( result
                 , "Content-type"
@@ -333,18 +346,21 @@ class Composer (TFL.Meta.Object) :
         return result
     # end def _as_message
 
-    def _as_multipart (self, email) :
+    def _as_multipart (self, email, ** kw) :
         result = email
         if not email.is_multipart () :
-            result = Lib.MIMEMultipart ()
+            result = Lib.MIMEMultipart (** kw)
             ignore = set (result.keys ())
             for k, v in email.items () :
                 if k not in ignore :
                     result [k] = v
-            cs = email.get_charset () or PMA.default_encoding
+            cs = email.get_content_charset () or PMA.default_encoding
             result.attach \
                 ( Lib.MIMEText
-                    (email.get_payload (decode = True), _charset = cs)
+                    ( _text    = email.get_payload         (decode = True)
+                    , _subtype = email.get_content_subtype ()
+                    , _charset = cs
+                    )
                 )
         return result
     # end def _as_multipart
