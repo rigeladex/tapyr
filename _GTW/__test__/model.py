@@ -45,6 +45,7 @@
 #    26-Jul-2012 (CT) Adapt to use of `GTW.RST.TOP` instead of `GTW.NAV`
 #    18-Sep-2012 (CT) Factor _GTW/__test__/Test_Command.py
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#    24-Jun-2013 (CT) Change `__main__` to consider `GTW_test_backends`
 #    ««revision-date»»···
 #--
 
@@ -111,4 +112,11 @@ _Command_  = _GTW_Test_Command_ # end class
 
 Scaffold   = _Command_ ()
 
+if __name__ == "__main__" :
+    db_url = sos.environ.get ("GTW_test_backends", "sqlite:///auth.sqlite")
+    if db_url in Scaffold.Backend_Parameters :
+        db_url = Scaffold.Backend_Parameters [db_url].strip ("'")
+    db_opt = "-db_url=%s" % db_url
+    Scaffold (["create", db_opt])
+    Scaffold (["shell", "-wsgi", db_opt])
 ### __END__ GTW.__test__.model

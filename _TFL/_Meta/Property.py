@@ -57,6 +57,7 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    25-Jun-2013 (CT) Make `_Class_Property_Function_.__get__` Python-2.6
 #                     compatible
+#    26-Jun-2013 (CT) Add `Class_and_Instance_Lazy_Property`
 #    ««revision-date»»···
 #--
 
@@ -310,7 +311,17 @@ def Class_Property (getter) :
         >>> foo.bar
         Normal method bar called
         42
-        >>>
+        >>> foo.bar = 137
+        >>> Foo.bar
+        Normal method bar called
+        42
+        >>> foo.bar
+        137
+
+        >>> Foo.bar = 23
+        >>> Foo.bar
+        23
+
         >>> Foo.baz
         classmethod baz called
         'Frozz'
@@ -571,18 +582,33 @@ class Lazy_Property (object) :
     def __init__ (self, name, computer, doc = None) :
         self.name     = self.__name__ = name
         self.computer = self.__func__ = computer
-        self.__doc__  = doc
+        self.__doc__  = doc or computer.__doc__
     # end def __init__
 
     def __get__ (self, obj, cls = None) :
         if obj is None :
-            return self
+            return self._class_get (cls)
         result = self.computer (obj)
         setattr (obj, self.name, result)
         return result
     # end def __get__
 
+    def _class_get (self, cls) :
+        return self
+    # end def _class_get
+
 # end class Lazy_Property
+
+class Class_and_Instance_Lazy_Property (Lazy_Property) :
+    """Property applicable to both class and instance, caching in the
+       instance.
+    """
+
+    def _class_get (self, cls) :
+        return self.computer (cls)
+    # end def _class_get
+
+# end class Class_and_Instance_Lazy_Property
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_Property_")

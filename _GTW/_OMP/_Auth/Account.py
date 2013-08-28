@@ -68,6 +68,7 @@
 #    10-May-2013 (CT) Set `Account_Anonymous.show_in_ui = False`
 #    26-May-2013 (CT) Add `Account_Manager.apply_migration`, `.migration`
 #    27-May-2013 (CT) Make `create_new_account_x` argument `password` optional
+#     5-Jun-2013 (CT) Set `password.q_able` to `False`
 #    ««revision-date»»···
 #--
 
@@ -296,6 +297,7 @@ class Account (_Ancestor_Essence) :
 
             kind               = Attr.Internal
             Kind_Mixins        = (Attr.Sticky_Mixin, )
+            q_able             = False
 
             def computed_default (self) :
                 ### Need to use `self.e_type` to access E_Type
@@ -307,8 +309,9 @@ class Account (_Ancestor_Essence) :
         class password (A_String) :
             """Password for this account"""
 
-            kind       = Attr.Internal
-            max_length = 120
+            kind               = Attr.Internal
+            max_length         = 120
+            q_able             = False
 
         # end class password
 

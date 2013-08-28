@@ -507,10 +507,11 @@ class Unique (_Condition_) :
         qfs      = self._query_filters (obj, val_dict)
         scope    = obj.home_scope
         ETM      = scope [obj.E_Type.epk_sig_root.type_name]
-        q        = ETM.query_s (* qfs)
+        q        = ETM.query (* qfs)
         result   = q.count () == 0
         if not result :
-            self._extra_links_d = self.clashes = q.all ()
+            self._extra_links_d = self.clashes = \
+                sorted (q.all (), key = obj.E_Type.sort_key)
             self.error = MOM.Error.Not_Unique (obj, self)
         return result
     # end def satisfied

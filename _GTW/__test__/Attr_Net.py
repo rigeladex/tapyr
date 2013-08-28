@@ -41,6 +41,8 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    12-Oct-2012 (RS) Changed `code_format` in `GTW.OMP.NET.Attr_Type`
 #     7-Mar-2013 (RS) Test `CONTAINS`
+#     6-Aug-2013 (CT) Adapt to major surgery of GTW.OMP.NET.Attr_Type
+#    18-Aug-2013 (RS) Fix sort order of IP networks
 #    ««revision-date»»···
 #--
 
@@ -142,17 +144,348 @@ class MAC_Address (_Ancestor_Essence) :
 
 # end class MAC_Address
 
-_test_code = """
+_test_ip4 = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> NET = scope.GTW.OMP.NET
     >>> Test_IP4_Address = NET.Test_IP4_Address
     >>> Test_IP4_Network = NET.Test_IP4_Network
+
+    >>> Test_IP4_Address ('1.2.3.4', raw = True)
+    GTW.OMP.NET.Test_IP4_Address ("1.2.3.4")
+
+    >>> Test_IP4_Address (address = '111.222.233.244', raw = True)
+    GTW.OMP.NET.Test_IP4_Address ("111.222.233.244")
+
+    >>> Test_IP4_Address ('111.222.233.244/22', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to `111.222.232.0/22`
+        Invalid netmask: 22; must be empty or 32
+
+    >>> Test_IP4_Address (address = '1.2.3.4/22', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to `1.2.0.0/22`
+        Invalid netmask: 22; must be empty or 32
+
+    >>> Test_IP4_Address (address = '256.255.255.2', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP4_Address.address to `u'256.255.255.2'`
+        `Invalid octet: 256` for : `IP4-address `address``
+         expected type  : `IP4-address`
+         got      value : `256.255.255.2`
+    IP4 address must contain 4 decimal octets separated by `.`.
+    >>> Test_IP4_Address (address = '2560.255.2.2', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP4_Address.address to `u'2560.255.2.2'`
+        `Invalid octet: 2560` for : `IP4-address `address``
+        expected type  : `IP4-address`
+        got      value : `2560.255.2.2`
+    IP4 address must contain 4 decimal octets separated by `.`.
+    >>> Test_IP4_Network (address = '111.222.233.244/31', raw = True)
+    GTW.OMP.NET.Test_IP4_Network ("111.222.233.244/31")
+    >>> Test_IP4_Network (address = '1.2.3.4/30', raw = True)
+    GTW.OMP.NET.Test_IP4_Network ("1.2.3.4/30")
+    >>> Test_IP4_Network (address = '1.2.3.4/32', raw = True)
+    GTW.OMP.NET.Test_IP4_Network ("1.2.3.4")
+    >>> Test_IP4_Network (address = '0.0.0.0/0', raw = True)
+    GTW.OMP.NET.Test_IP4_Network ("0.0.0.0/0")
+    >>> Test_IP4_Network (address = '1.2.3.4/22', raw = True)
+    GTW.OMP.NET.Test_IP4_Network ("1.2.0.0/22")
+    >>> Test_IP4_Network (address = '1.2.3.4/33', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP4_Network.address to `u'1.2.3.4/33'`
+        `Invalid netmask: 33` for : `IP4-network `address``
+         expected type  : `IP4-network`
+         got      value : `1.2.3.4/33`
+    IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
+    >>> Test_IP4_Network (address = '1.2.3.4/333', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP4_Network.address to `u'1.2.3.4/333'`
+        `Invalid netmask: 333` for : `IP4-network `address``
+         expected type  : `IP4-network`
+         got      value : `1.2.3.4/333`
+    IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
+
+"""
+
+_test_ip6 = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> NET = scope.GTW.OMP.NET
     >>> Test_IP6_Address = NET.Test_IP6_Address
     >>> Test_IP6_Network = NET.Test_IP6_Network
+
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:0db8:85a3:0000:0000:8a2e:0370:7334'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8:85a3::8a2e:370:7334")
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:db8:85a3:0:0:8a2e:370:7335'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8:85a3::8a2e:370:7335")
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:db8:85a3::8a2e:370:7336'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8:85a3::8a2e:370:7336")
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:0db8:0000:0000:0000:0000:1428:57ab'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8::1428:57ab")
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:0db8:0000:0000:0000::1428:57ac'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8::1428:57ac")
+    >>> Test_IP6_Address (address = '2001:0db8:0:0:0:0:1428:57ad', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8::1428:57ad")
+    >>> Test_IP6_Address (address = '2001:0db8:0:0::1428:57ae', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8::1428:57ae")
+    >>> Test_IP6_Address (address = '2001:0db8::1428:57af', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8::1428:57af")
+    >>> Test_IP6_Address (address = '2001:db8::1428:57b0', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8::1428:57b0")
+    >>> Test_IP6_Address \\
+    ...     ( address = '0000:0000:0000:0000:0000:0000:0000:0001'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("::1")
+    >>> Test_IP6_Address (address = '::2', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("::2")
+    >>> Test_IP6_Address (address = '::ffff:0c22:384e', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("::ffff:c22:384e")
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:0db8:1234:0000:0000:0000:0000:0000'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8:1234::")
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:0db8:1234:ffff:ffff:ffff:ffff:ffff'
+    ...     , raw = True
+    ...     )
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8:1234:ffff:ffff:ffff:ffff:ffff")
+    >>> Test_IP6_Address (address = '2001:db8:a::123', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("2001:db8:a::123")
+    >>> Test_IP6_Address (address = 'fe80::', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("fe80::")
+    >>> Test_IP6_Address (address = '::ffff:c000:280', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("::ffff:c000:280")
+    >>> Test_IP6_Address (address = '::', raw = True)
+    GTW.OMP.NET.Test_IP6_Address ("::")
+    >>> Test_IP6_Address (address = '::ffff:12.34.56.78', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:12.34.56.78'`
+        `Hex value too long: 12.34.56.78` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `::ffff:12.34.56.78`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '::ffff:192.0.2.128', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:192.0.2.128'`
+        `Hex value too long: 192.0.2.128` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `::ffff:192.0.2.128`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '123', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'123'`
+        `Not enough hex parts in address: 123` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `123`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = 'ldkfj', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'ldkfj'`
+        `Hex value too long: ldkfj` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `ldkfj`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '2001::FFD3::57ab', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'2001::FFD3::57ab'`
+        `Only one '::' allowed` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `2001::FFD3::57ab`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:db8:85a3::8a2e:37023:7334'
+    ...     , raw = True
+    ...     )
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'2001:db8:85a3::8a2e:37023:7334'`
+        `Hex value too long: 37023` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `2001:db8:85a3::8a2e:37023:7334`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address \\
+    ...     ( address = '2001:db8:85a3::8a2e:370k:7334'
+    ...     , raw = True
+    ...     )
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'2001:db8:85a3::8a2e:370k:7334'`
+        `invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `2001:db8:85a3::8a2e:370k:7334`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1:2:3:4:5:6:7:8:9', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:2:3:4:5:6:7:8:9'`
+        `Too many hex parts in address: 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `1:2:3:4:5:6:7:8:9`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1::2::3', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1::2::3'`
+        `Only one '::' allowed` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `1::2::3`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1:::3:4:5', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:::3:4:5'`
+        `Too many ':': 1:::3:4:5` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `1:::3:4:5`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1:2:3::4:5:6:7:8:9', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:2:3::4:5:6:7:8:9'`
+        `Too many hex parts in address: 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `1:2:3::4:5:6:7:8:9`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '::ffff:2.3.4', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:2.3.4'`
+        `Hex value too long: 2.3.4` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `::ffff:2.3.4`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '::ffff:257.1.2.3', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:257.1.2.3'`
+        `Hex value too long: 257.1.2.3` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `::ffff:257.1.2.3`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1.2.3.4', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1.2.3.4'`
+        `Hex value too long: 1.2.3.4` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `1.2.3.4`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = ':aa:aa:aa', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u':aa:aa:aa'`
+        `No single ':' at start allowed` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `:aa:aa:aa`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = 'aa:aa:aa:', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'aa:aa:aa:'`
+        `No single ':' at end allowed` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `aa:aa:aa:`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1:2:3:4:5:6:7', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:2:3:4:5:6:7'`
+        `Not enough hex parts in address: 1:2:3:4:5:6:7` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `1:2:3:4:5:6:7`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = ':::', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u':::'`
+        `No ':' at start and end` for : `IP6-address `address``
+         expected type  : `IP6-address`
+         got      value : `:::`
+    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
+    >>> Test_IP6_Address (address = '1:2:3::/127', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set IP6-address `address` attribute Test_IP6_Address.address to `1:2:3::/127`
+        Invalid netmask: 127; must be empty or 128
+
+    >>> Test_IP6_Network (address = '1:2:3::/48', raw = True)
+    GTW.OMP.NET.Test_IP6_Network ("1:2:3::/48")
+    >>> Test_IP6_Network (address = '1:2:3::/128', raw = True)
+    GTW.OMP.NET.Test_IP6_Network ("1:2:3::")
+
+    >>> n = Test_IP6_Network (address = '2001:db8:a::123', raw = True)
+    >>> n
+    GTW.OMP.NET.Test_IP6_Network ("2001:db8:a::123")
+
+    >>> n.address, n.address.__class__.__name__
+    (2001:db8:a::123, 'IP6_Address')
+
+    >>> int (n.address.mask)
+    128
+
+    >>> Test_IP6_Network (address = '::/0', raw = True)
+    GTW.OMP.NET.Test_IP6_Network ("::/0")
+    >>> Test_IP6_Network (address = '1:2:3::/1', raw = True)
+    GTW.OMP.NET.Test_IP6_Network ("::/1")
+    >>> Test_IP6_Network (address = '1:2:3::/129', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Network.address to `u'1:2:3::/129'`
+        `Invalid netmask: 129` for : `IP6-network `address``
+         expected type  : `IP6-network`
+         got      value : `1:2:3::/129`
+    IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
+    >>> Test_IP6_Network (address = '1:2:3::/1290', raw = True)
+    Traceback (most recent call last):
+     ...
+    Attribute_Value: Can't set primary attribute Test_IP6_Network.address to `u'1:2:3::/1290'`
+        `Invalid netmask: 1290` for : `IP6-network `address``
+         expected type  : `IP6-network`
+         got      value : `1:2:3::/1290`
+    IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
+
+"""
+
+_test_mac = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> NET = scope.GTW.OMP.NET
     >>> MAC_Address = NET.MAC_Address
+
     >>> MAC_Address ("00:11:22:33:44:55")
     GTW.OMP.NET.MAC_Address (u'00:11:22:33:44:55')
+
     >>> MAC_Address ("000:11:22:33:44:55")
     Traceback (most recent call last):
      ...
@@ -163,6 +496,7 @@ _test_code = """
          expected type  : `MAC-address`
          got      value : `000:11:22:33:44:55`
     A MAC address must contain 6 hexadecimal octets separated by `:`.
+
     >>> MAC_Address ("00:11:22:33:44")
     Traceback (most recent call last):
      ...
@@ -170,6 +504,7 @@ _test_code = """
          expected type  : `MAC-address`
          got      value : `00:11:22:33:44`
     A MAC address must contain 6 hexadecimal octets separated by `:`.
+
     >>> MAC_Address ("00:11:22:33:44:55:66")
     Traceback (most recent call last):
      ...
@@ -180,311 +515,9 @@ _test_code = """
          expected type  : `MAC-address`
          got      value : `00:11:22:33:44:55:66`
     A MAC address must contain 6 hexadecimal octets separated by `:`.
-    >>> Test_IP4_Address (dict (address = '1.2.3.4'), raw = True)
-    GTW.OMP.NET.Test_IP4_Address (("1.2.3.4", ))
-    >>> Test_IP4_Address (dict (address = '111.222.233.244'), raw = True)
-    GTW.OMP.NET.Test_IP4_Address (("111.222.233.244", ))
-    >>> Test_IP4_Address (dict (address = '111.222.233.244/22'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set IP4-address `address` attribute IP4_Address.address to `111.222.232.0/22`
-        Invalid netmask: 22; must be empty or 32
-    >>> Test_IP4_Address (dict (address = '1.2.3.4/22'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set IP4-address `address` attribute IP4_Address.address to `1.2.0.0/22`
-        Invalid netmask: 22; must be empty or 32
-    >>> Test_IP4_Address (dict (address = '256.255.255.2'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP4_Address.address to `u'256.255.255.2'`
-        `Invalid octet: 256` for : `IP4-address `address``
-         expected type  : `IP4-address`
-         got      value : `256.255.255.2`
-    IP4 address must contain 4 decimal octets separated by `.`.
-    >>> Test_IP4_Address (dict (address = '2560.255.2.2'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP4_Address.address to `u'2560.255.2.2'`
-        `Invalid octet: 2560` for : `IP4-address `address``
-        expected type  : `IP4-address`
-        got      value : `2560.255.2.2`
-    IP4 address must contain 4 decimal octets separated by `.`.
-    >>> Test_IP4_Network (dict (address = '111.222.233.244/31'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (("111.222.233.244/31", ))
-    >>> Test_IP4_Network (dict (address = '1.2.3.4/30'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (("1.2.3.4/30", ))
-    >>> Test_IP4_Network (dict (address = '1.2.3.4/32'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (("1.2.3.4", ))
-    >>> Test_IP4_Network (dict (address = '0.0.0.0/0'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (("0.0.0.0/0", ))
-    >>> Test_IP4_Network (dict (address = '1.2.3.4/22'), raw = True)
-    GTW.OMP.NET.Test_IP4_Network (("1.2.0.0/22", ))
-    >>> Test_IP4_Network (dict (address = '1.2.3.4/33'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP4_Network.address to `u'1.2.3.4/33'`
-        `Invalid netmask: 33` for : `IP4-network `address``
-         expected type  : `IP4-network`
-         got      value : `1.2.3.4/33`
-    IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
-    >>> Test_IP4_Network (dict (address = '1.2.3.4/333'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP4_Network.address to `u'1.2.3.4/333'`
-        `Invalid netmask: 333` for : `IP4-network `address``
-         expected type  : `IP4-network`
-         got      value : `1.2.3.4/333`
-    IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:0db8:85a3:0000:0000:8a2e:0370:7334')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8:85a3::8a2e:370:7334", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:db8:85a3:0:0:8a2e:370:7335')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8:85a3::8a2e:370:7335", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:db8:85a3::8a2e:370:7336')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8:85a3::8a2e:370:7336", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:0db8:0000:0000:0000:0000:1428:57ab')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8::1428:57ab", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:0db8:0000:0000:0000::1428:57ac')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8::1428:57ac", ))
-    >>> Test_IP6_Address (dict (address = '2001:0db8:0:0:0:0:1428:57ad'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8::1428:57ad", ))
-    >>> Test_IP6_Address (dict (address = '2001:0db8:0:0::1428:57ae'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8::1428:57ae", ))
-    >>> Test_IP6_Address (dict (address = '2001:0db8::1428:57af', raw = True))
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8::1428:57af", ))
-    >>> Test_IP6_Address (dict (address = '2001:db8::1428:57b0'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8::1428:57b0", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '0000:0000:0000:0000:0000:0000:0000:0001')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("::1", ))
-    >>> Test_IP6_Address (dict (address = '::2'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("::2", ))
-    >>> Test_IP6_Address (dict (address = '::ffff:0c22:384e'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("::ffff:c22:384e", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:0db8:1234:0000:0000:0000:0000:0000')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8:1234::", ))
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:0db8:1234:ffff:ffff:ffff:ffff:ffff')
-    ...     , raw = True
-    ...     )
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8:1234:ffff:ffff:ffff:ffff:ffff", ))
-    >>> Test_IP6_Address (dict (address = '2001:db8:a::123'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("2001:db8:a::123", ))
-    >>> Test_IP6_Address (dict (address = 'fe80::'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("fe80::", ))
-    >>> Test_IP6_Address (dict (address = '::ffff:c000:280'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("::ffff:c000:280", ))
-    >>> Test_IP6_Address (dict (address = '::'), raw = True)
-    GTW.OMP.NET.Test_IP6_Address (("::", ))
-    >>> Test_IP6_Address (dict (address = '::ffff:12.34.56.78'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:12.34.56.78'`
-        `Hex value too long: 12.34.56.78` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:12.34.56.78`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '::ffff:192.0.2.128'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:192.0.2.128'`
-        `Hex value too long: 192.0.2.128` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:192.0.2.128`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '123'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'123'`
-        `Not enough hex parts in address: 123` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `123`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = 'ldkfj'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'ldkfj'`
-        `Hex value too long: ldkfj` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `ldkfj`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '2001::FFD3::57ab'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'2001::FFD3::57ab'`
-        `Only one '::' allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `2001::FFD3::57ab`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:db8:85a3::8a2e:37023:7334')
-    ...     , raw = True
-    ...     )
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'2001:db8:85a3::8a2e:37023:7334'`
-        `Hex value too long: 37023` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `2001:db8:85a3::8a2e:37023:7334`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address \\
-    ...     ( dict (address = '2001:db8:85a3::8a2e:370k:7334')
-    ...     , raw = True
-    ...     )
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'2001:db8:85a3::8a2e:370k:7334'`
-        `invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `2001:db8:85a3::8a2e:370k:7334`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1:2:3:4:5:6:7:8:9'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:2:3:4:5:6:7:8:9'`
-        `Too many hex parts in address: 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:2:3:4:5:6:7:8:9`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1::2::3'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1::2::3'`
-        `Only one '::' allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1::2::3`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1:::3:4:5'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:::3:4:5'`
-        `Too many ':': 1:::3:4:5` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:::3:4:5`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1:2:3::4:5:6:7:8:9'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:2:3::4:5:6:7:8:9'`
-        `Too many hex parts in address: 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:2:3::4:5:6:7:8:9`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '::ffff:2.3.4'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:2.3.4'`
-        `Hex value too long: 2.3.4` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:2.3.4`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '::ffff:257.1.2.3'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'::ffff:257.1.2.3'`
-        `Hex value too long: 257.1.2.3` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:257.1.2.3`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1.2.3.4'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1.2.3.4'`
-        `Hex value too long: 1.2.3.4` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1.2.3.4`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = ':aa:aa:aa'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u':aa:aa:aa'`
-        `No single ':' at start allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `:aa:aa:aa`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = 'aa:aa:aa:'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'aa:aa:aa:'`
-        `No single ':' at end allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `aa:aa:aa:`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1:2:3:4:5:6:7'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u'1:2:3:4:5:6:7'`
-        `Not enough hex parts in address: 1:2:3:4:5:6:7` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:2:3:4:5:6:7`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = ':::'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Address.address to `u':::'`
-        `No ':' at start and end` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `:::`
-    IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
-    >>> Test_IP6_Address (dict (address = '1:2:3::/127'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set IP6-address `address` attribute IP6_Address.address to `1:2:3::/127`
-        Invalid netmask: 127; must be empty or 128
-
-    >>> Test_IP6_Network (dict (address = '1:2:3::/48'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (("1:2:3::/48", ))
-    >>> Test_IP6_Network (dict (address = '1:2:3::/128'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (("1:2:3::", ))
-    >>> n = Test_IP6_Network (dict (address = '2001:db8:a::123'), raw = True)
-    >>> n
-    GTW.OMP.NET.Test_IP6_Network (("2001:db8:a::123", ))
-    >>> n.address.mask_len
-    128
-    >>> Test_IP6_Network (dict (address = '::/0'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (("::/0", ))
-    >>> Test_IP6_Network (dict (address = '1:2:3::/1'), raw = True)
-    GTW.OMP.NET.Test_IP6_Network (("::/1", ))
-    >>> Test_IP6_Network (dict (address = '1:2:3::/129'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Network.address to `u'1:2:3::/129'`
-        `Invalid netmask: 129` for : `IP6-network `address``
-         expected type  : `IP6-network`
-         got      value : `1:2:3::/129`
-    IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
-    >>> Test_IP6_Network (dict (address = '1:2:3::/1290'), raw = True)
-    Traceback (most recent call last):
-     ...
-    Attribute_Value: Can't set necessary attribute IP6_Network.address to `u'1:2:3::/1290'`
-        `Invalid netmask: 1290` for : `IP6-network `address``
-         expected type  : `IP6-network`
-         got      value : `1:2:3::/1290`
-    IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
 
 """
-
-_query_test = r"""
+_test_query = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> NET = scope.GTW.OMP.NET
@@ -493,36 +526,36 @@ _query_test = r"""
     >>> Test_IP6_Address = NET.Test_IP6_Address
     >>> Test_IP6_Network = NET.Test_IP6_Network
 
-    >>> i40 = Test_IP4_Address (dict (address = '192.168.0.1'),    raw = True)
-    >>> i41 = Test_IP4_Address (dict (address = '192.168.1.1'),    raw = True)
-    >>> i42 = Test_IP4_Address (dict (address = '192.168.1.2'),    raw = True)
-    >>> i43 = Test_IP4_Address (dict (address = '192.168.1.20'),   raw = True)
-    >>> i40.address.address
+    >>> i40 = Test_IP4_Address (address = '192.168.0.1',    raw = True)
+    >>> i41 = Test_IP4_Address (address = '192.168.1.1',    raw = True)
+    >>> i42 = Test_IP4_Address (address = '192.168.1.2',    raw = True)
+    >>> i43 = Test_IP4_Address (address = '192.168.1.20',   raw = True)
+    >>> i40.address
     192.168.0.1
-    >>> i41.address.address
+    >>> i41.address
     192.168.1.1
-    >>> i42.address.address
+    >>> i42.address
     192.168.1.2
-    >>> i43.address.address
+    >>> i43.address
     192.168.1.20
 
-    >>> n41 = Test_IP4_Network (dict (address = '192.168.1.0/28'), raw = True)
-    >>> n42 = Test_IP4_Network (dict (address = '192.168.1.0/29'), raw = True)
-    >>> n43 = Test_IP4_Network (dict (address = '192.168.1.8/29'), raw = True)
-    >>> n44 = Test_IP4_Network (dict (address = '192.168.2.0/28'), raw = True)
-    >>> n45 = Test_IP4_Network (dict (address = '192.168.1.0/27'), raw = True)
-    >>> n46 = Test_IP4_Network (dict (address = '192.168.0.0/27'), raw = True)
-    >>> n41.address.address
+    >>> n41 = Test_IP4_Network (address = '192.168.1.0/28', raw = True)
+    >>> n42 = Test_IP4_Network (address = '192.168.1.0/29', raw = True)
+    >>> n43 = Test_IP4_Network (address = '192.168.1.8/29', raw = True)
+    >>> n44 = Test_IP4_Network (address = '192.168.2.0/28', raw = True)
+    >>> n45 = Test_IP4_Network (address = '192.168.1.0/27', raw = True)
+    >>> n46 = Test_IP4_Network (address = '192.168.0.0/27', raw = True)
+    >>> n41.address
     192.168.1.0/28
-    >>> n42.address.address
+    >>> n42.address
     192.168.1.0/29
-    >>> n43.address.address
+    >>> n43.address
     192.168.1.8/29
-    >>> n44.address.address
+    >>> n44.address
     192.168.2.0/28
-    >>> n45.address.address
+    >>> n45.address
     192.168.1.0/27
-    >>> n46.address.address
+    >>> n46.address
     192.168.0.0/27
     >>> scope.commit ()
 
@@ -541,14 +574,49 @@ _query_test = r"""
     >>> Test_IP4_Address.query (Q.address <= address).count ()
     2
 
+    >>> Test_IP4_Address.query (Q.address.mask == 27).count ()
+    Traceback (most recent call last):
+      ...
+    AttributeError: mask
+
+    >>> Test_IP4_Address.query (Q.address.mask_len == 27).count ()
+    0
+
+    >>> Test_IP4_Address.query (Q.address.mask_len <  27).count ()
+    0
+
+    >>> Test_IP4_Address.query (Q.address.mask_len >  27).count ()
+    4
+
+    >>> Test_IP4_Network.query (Q.address.mask_len == 27).count ()
+    2
+
+    >>> Test_IP4_Network.query (Q.address.mask_len <  27).count ()
+    0
+
+    >>> Test_IP4_Network.query (Q.address.mask_len >  27).count ()
+    4
+
+    >>> Test_IP4_Address.query (Q.address.IN ("192.168.1.0/28")).count ()
+    2
+
     >>> Test_IP4_Address.query (Q.address.IN (network)).count ()
     2
+
+    >>> Test_IP4_Network.query (Q.address.IN ("192.168.1.0/27")).count ()
+    4
+
+    >>> Test_IP4_Network.query (Q.address.IN ("192.168.1.0/28")).count ()
+    3
+
+    >>> Test_IP4_Network.query (Q.address.IN ("192.168.1.0/29")).count ()
+    1
 
     >>> Test_IP4_Network.query (Q.address.IN (network)).count ()
     3
     >>> r = Test_IP4_Network.query (Q.address.IN (network)).all ()
-    >>> list (sorted (x.address.address for x in r))
-    [192.168.1.0/29, 192.168.1.0/28, 192.168.1.8/29]
+    >>> list (sorted (x.address for x in r))
+    [192.168.1.0/28, 192.168.1.0/29, 192.168.1.8/29]
 
     >>> n42a = n42.address
     >>> Test_IP4_Network.query (Q.address.CONTAINS (n42a)).count ()
@@ -570,38 +638,56 @@ _query_test = r"""
     >>> Test_IP4_Network.query (Q.address <= network).count ()
     3
 
-    >>> i60 = Test_IP6_Address (dict (address = '2001:db7::1'),      raw = True)
-    >>> i61 = Test_IP6_Address (dict (address = '2001:db8::1'),      raw = True)
-    >>> i62 = Test_IP6_Address (dict (address = '2001:db8::2'),      raw = True)
-    >>> i63 = Test_IP6_Address (dict (address = '2001:db8::20'),     raw = True)
-    >>> i60.address.address
+    >>> i60 = Test_IP6_Address (address = '2001:db7::1',      raw = True)
+    >>> i61 = Test_IP6_Address (address = '2001:db8::1',      raw = True)
+    >>> i62 = Test_IP6_Address (address = '2001:db8::2',      raw = True)
+    >>> i63 = Test_IP6_Address (address = '2001:db8::20',     raw = True)
+    >>> i60.address
     2001:db7::1
-    >>> i61.address.address
+    >>> i61.address
     2001:db8::1
-    >>> i62.address.address
+    >>> i62.address
     2001:db8::2
-    >>> i63.address.address
+    >>> i63.address
     2001:db8::20
 
-    >>> n61 = Test_IP6_Network (dict (address = '2001:db8::/124'),   raw = True)
-    >>> n62 = Test_IP6_Network (dict (address = '2001:db8::/125'),   raw = True)
-    >>> n63 = Test_IP6_Network (dict (address = '2001:db8::8/125'),  raw = True)
-    >>> n64 = Test_IP6_Network (dict (address = '2001:db8::10/124'), raw = True)
-    >>> n65 = Test_IP6_Network (dict (address = '2001:db8::/123'),   raw = True)
-    >>> n66 = Test_IP6_Network (dict (address = '2001:db7::/123'),   raw = True)
-    >>> n61.address.address
+    >>> n61 = Test_IP6_Network (address = '2001:db8::/124',   raw = True)
+    >>> n62 = Test_IP6_Network (address = '2001:db8::/125',   raw = True)
+    >>> n63 = Test_IP6_Network (address = '2001:db8::8/125',  raw = True)
+    >>> n64 = Test_IP6_Network (address = '2001:db8::10/124', raw = True)
+    >>> n65 = Test_IP6_Network (address = '2001:db8::/123',   raw = True)
+    >>> n66 = Test_IP6_Network (address = '2001:db7::/123',   raw = True)
+    >>> n61.address
     2001:db8::/124
-    >>> n62.address.address
+    >>> n62.address
     2001:db8::/125
-    >>> n63.address.address
+    >>> n63.address
     2001:db8::8/125
-    >>> n64.address.address
+    >>> n64.address
     2001:db8::10/124
-    >>> n65.address.address
+    >>> n65.address
     2001:db8::/123
-    >>> n66.address.address
+    >>> n66.address
     2001:db7::/123
     >>> scope.commit ()
+
+    >>> Test_IP6_Address.query (Q.address.mask_len == 124).count ()
+    0
+
+    >>> Test_IP6_Address.query (Q.address.mask_len <  124).count ()
+    0
+
+    >>> Test_IP6_Address.query (Q.address.mask_len >  124).count ()
+    4
+
+    >>> Test_IP6_Network.query (Q.address.mask_len == 124).count ()
+    2
+
+    >>> Test_IP6_Network.query (Q.address.mask_len <  124).count ()
+    2
+
+    >>> Test_IP6_Network.query (Q.address.mask_len >  124).count ()
+    2
 
     >>> address = i61.address
     >>> network = n61.address
@@ -624,8 +710,8 @@ _query_test = r"""
     >>> Test_IP6_Network.query (Q.address.IN (network)).count ()
     3
     >>> r = Test_IP6_Network.query (Q.address.IN (network)).all ()
-    >>> list (sorted (x.address.address for x in r))
-    [2001:db8::/125, 2001:db8::/124, 2001:db8::8/125]
+    >>> list (sorted (x.address for x in r))
+    [2001:db8::/124, 2001:db8::/125, 2001:db8::8/125]
 
     >>> n62a = n62.address
     >>> Test_IP6_Network.query (Q.address.CONTAINS (n62a)).count ()
@@ -648,25 +734,31 @@ _query_test = r"""
     >>> Test_IP6_Network.query (Q.address <= network).count ()
     3
 
-    >>> qd  = dict (address = dict (address = '192.168.1.8/29'))
+    >>> qd  = dict (address = '192.168.1.8/29')
     >>> rqs = Test_IP4_Network.raw_query_attrs (qd, qd)
     >>> rqs
-    (Q.address.address == 192.168.1.8/29,)
+    (Q.address == 192.168.1.8/29,)
     >>> type (rqs [0].rhs)
     <class 'rsclib.IP_Address.IP4_Address'>
     >>> matches = Test_IP4_Network.query_s (* rqs).all ()
     >>> print "\n".join (repr (x) for x in matches)
-    GTW.OMP.NET.Test_IP4_Network (("192.168.1.8/29", ))
+    GTW.OMP.NET.Test_IP4_Network ("192.168.1.8/29")
 
-    >>> matches2 = Test_IP4_Network.query_s (Q.address.address == n43.address.address).all ()
+    >>> matches2 = Test_IP4_Network.query_s (Q.address == n43.address).all ()
     >>> print "\n".join (repr (x) for x in matches2)
-    GTW.OMP.NET.Test_IP4_Network (("192.168.1.8/29", ))
-
+    GTW.OMP.NET.Test_IP4_Network ("192.168.1.8/29")
 
 """
+
 from _GTW.__test__.model import *
 
 __test__ = Scaffold.create_test_dict \
-    ( dict (test_code = _test_code, query_test = _query_test))
+    ( dict
+        ( test_ip4   = _test_ip4
+        , test_ip6   = _test_ip6
+        , test_mac   = _test_mac
+        , test_query = _test_query
+        )
+    )
 
 ### __END__ GTW.__test__.Attr_Net

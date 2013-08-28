@@ -45,6 +45,7 @@
 #    11-Mar-2013 (CT) Add `fix_doc`
 #     3-Jun-2013 (CT) Assign `_prop_dict` to attribute named by `_prop_map_name`
 #     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
+#     6-Jun-2013 (CT) Use `prop.assign`, not `setattr`, to assign to `e_type`
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         if kind is not None :
             prop = self._new_prop (name, kind, prop_type, e_type)
             self._setup_prop      (e_type, name, kind.kind, prop)
-        setattr (e_type, name, prop)
+        prop.assign (e_type, name)
         return prop
     # end def _add_prop
 

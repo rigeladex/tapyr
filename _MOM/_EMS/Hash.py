@@ -93,6 +93,13 @@
 #    30-Jan-2013 (CT) Replace `add` by `_add` (called by `__super.add`)
 #    30-Jan-2013 (CT) Call `.pm.flush_zombies` in `commit` and `_rollback`
 #    26-Apr-2013 (CT) Remove support for `primary_ais`
+#     6-Jun-2013 (CT) Add `max_surrs`; add support for surrogates to `_add`
+#    26-Jun-2013 (CT) Add `lazy_load_p`
+#     5-Jul-2013 (CT) Change sig of `_query_single_root`, `_query_multi_root`
+#    17-Jul-2013 (CT) Remove `async_changes`, `db_cid`
+#     1-Aug-2013 (CT) Don't reset `max_pid` in `rollback`
+#    21-Aug-2013 (CT) Redefine `query` to kludgely support `MD_Change`
+#    25-Aug-2013 (CT) Change `_add` to check `hpk in table` (optimization)
 #    ««revision-date»»···
 #--
 
@@ -119,15 +126,17 @@ import logging
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
-    type_name = "Hash"
+    type_name           = "Hash"
 
-    cm        = property (TFL.Getter.session.cm)
-    max_cid   = property (TFL.Getter.cm.max_cid)
-    max_pid   = property (TFL.Getter.pm.max_pid)
+    cm                  = property (TFL.Getter.session.cm)
+    lazy_load_p         = False
+    max_cid             = property (TFL.Getter.cm.max_cid)
+    max_pid             = property (TFL.Getter.pm.max_pid)
 
     def __init__ (self, scope, db_url) :
         self.__super.__init__ (scope, db_url)
         self._counts    = TFL.defaultdict (int)
+        self.max_surrs  = TFL.defaultdict (int)
         self._r_map     = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self._tables    = TFL.defaultdict (dict)
     # end def __init__
@@ -140,11 +149,6 @@ class Manager (MOM.EMS._Manager_) :
             )
         return result
     # end def all_links
-
-    def async_changes (self, * filters, ** kw) :
-        return False
-        raise NotImplementedError
-    # end def async_changes
 
     def changes (self, * filters, ** kw) :
         if self.cm.to_load :
@@ -200,12 +204,24 @@ class Manager (MOM.EMS._Manager_) :
     def load_root (self) :
         scope           = self.scope
         info            = self.session.info
-        self.cm.max_cid = scope.db_cid = info.max_cid
+        self.cm.max_cid = info.max_cid
         self.pm.max_pid = info.max_pid
         scope.guid      = info.guid
         scope._setup_root       (scope.app_type, info.root_epk)
         scope.add_init_callback (self._load_objects)
     # end def load_root
+
+    def query (self, Type, * filters, ** kw) :
+        if Type.type_name == "MOM.MD_Change" :
+            ### XXX
+            ### * returns MOM.SCM.Change, not MOM.MD_Change, instances
+            ### * change that
+            kw.pop ("strict", None)
+            result = self.changes (* filters, ** kw)
+        else :
+            result = self.__super.query (Type, * filters, ** kw)
+        return result
+    # end def query
 
     def register_change (self, change) :
         self.cm.add                  (change)
@@ -252,6 +268,12 @@ class Manager (MOM.EMS._Manager_) :
         count = self._counts
         root  = entity.relevant_root
         table = self._tables [root.type_name]
+        hpk   = entity.hpk
+        if hpk in table :
+            ### `hpk in table` is way more efficient, uniqueness predicate
+            ### gives nicer (and backend-independent) error message
+            ### --> trigger error of uniqueness predicate
+            self._check_uniqueness (entity, entity.E_Type.uniqueness_dbw)
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         self.pm (entity, pid)
@@ -265,14 +287,24 @@ class Manager (MOM.EMS._Manager_) :
                 obj.register_dependency (entity.__class__)
                 r_map [r] [obj.pid].add (entity)
         count [entity.type_name] += 1
-        table [entity.hpk]        = entity
+        table [hpk] = entity
+        max_surrs   = self.max_surrs
+        for sk in entity.surrogate_attr [1:] :
+            v  = sk.get_value (entity)
+            ms = max_surrs [sk.q_name]
+            if v is None :
+                ms += 1
+                sk.__set__ (entity, ms)
+            else :
+                ms = max (v, ms)
+            max_surrs [sk.q_name] = ms
     # end def _add
 
     def _load_objects (self, scope = None) :
         self.session.load_objects ()
     # end def _load_objects
 
-    def _query_multi_root (self, Type) :
+    def _query_multi_root (self, Type, strict = False) :
         tables = self._tables
         return self.Q_Result_Composite \
             ([self.Q_Result (tables [t].itervalues ())
@@ -281,7 +313,8 @@ class Manager (MOM.EMS._Manager_) :
             )
     # end def _query_multi_root
 
-    def _query_single_root (self, Type, root) :
+    def _query_single_root (self, Type, strict = False) :
+        root   = Type.relevant_root
         tables = self._tables
         result = tables [root.type_name].itervalues ()
         if root is not Type :
@@ -329,7 +362,6 @@ class Manager (MOM.EMS._Manager_) :
     def _rollback (self, keep_zombies) :
         self._rollback_uncommitted_changes ()
         self.cm.rollback (self.session)
-        self.pm.max_pid = self.session.info.max_pid
         self.__super._rollback (keep_zombies)
         if not keep_zombies :
             self.pm.flush_zombies ()

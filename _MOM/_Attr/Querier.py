@@ -76,6 +76,7 @@
 #    18-Apr-2013 (CT) Change `E_Types_CNP` to use
 #                     `selectable_e_types_unique_epk`, not `children_np`
 #     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
+#     5-Jun-2013 (CT) Use `Selector.ui_attr`, not `.all`
 #    ««revision-date»»···
 #--
 
@@ -391,7 +392,7 @@ class _Type_ (_Base_) :
     def _attr_selector (self, value) :
         if value is None :
             value = MOM.Attr.Selector.sig
-        elif not (  value is MOM.Attr.Selector.all
+        elif not (  value is MOM.Attr.Selector.ui_attr
                  or isinstance (value, MOM.Attr.Selector.Kind)
                  ) :
             value = MOM.Attr.Selector.sig
@@ -834,7 +835,7 @@ class E_Type (_Container_) :
 
     @_attr_selector.setter
     def _attr_selector (self, value) :
-        setattr (self, "__attr_selector", value or MOM.Attr.Selector.all)
+        setattr (self, "__attr_selector", value or MOM.Attr.Selector.ui_attr)
     # end def _attr_selector
 
     def __getattr__ (self, name) :

@@ -36,6 +36,10 @@
 #     9-Sep-2012 (CT) Add `_commit_creation_change`
 #    31-Jan-2013 (MG) Add `finalize`
 #     9-Apr-2013 (CT) Add `db_sig`
+#    19-Jun-2013 (CT) Add `delete_database`; use `@subclass_responsibility`
+#    24-Jun-2013 (CT) Add argument `app_type` to `prepare`
+#    24-Jun-2013 (CT) Add missing methods-stubs to `_Manager_`
+#     8-Jul-2013 (CT) Add argument `app_type` to `finalize`
 #    ««revision-date»»···
 #--
 
@@ -47,29 +51,38 @@ import _MOM._DBW.Pid_Manager
 
 import _TFL._Meta.Object
 
+from   _TFL.Decorator    import subclass_responsibility
+
 class _M_Manager_ (TFL.Meta.Object.__class__) :
     """Backend independent _Manager_, describes the common interface."""
 
     DBS_map = {}
     db_sig  = ()
 
+    @subclass_responsibility
+    def connect_database (cls, db_url, scope) :
+        pass
+    # end def connect_database
+
+    @subclass_responsibility
     def create_database (cls, db_url, scope) :
-        raise NotImplementedError
+        pass
     # end def create_database
 
-    def connect_database (cls, db_url, scope) :
-        raise NotImplementedError
-    # end def connect_database
+    @subclass_responsibility
+    def delete_database (cls, db_url) :
+        pass
+    # end def delete_database
 
     def etype_decorator (cls, e_type) :
         return e_type
     # end def etype_decorator
 
-    def finalize (cls) :
+    def finalize (cls, app_type) :
         pass
     # end def finalize
 
-    def prepare (cls) :
+    def prepare (cls, app_type) :
         pass
     # end def prepare
 
@@ -87,9 +100,32 @@ class _Manager_ (TFL.Meta.Object) :
     Pid_Manager      = MOM.DBW.Pid_Manager
     type_name        = "Bare"
 
+    @subclass_responsibility
+    def change_readonly (self, state) :
+        pass
+    # end def change_readonly
+
+    @subclass_responsibility
+    def close (self) :
+        pass
+    # end def close
+
+    def close_connections (self) :
+        pass ### redefine as necessary for descendents
+    # end def close_connections
+
+    @subclass_responsibility
     def commit (self) :
-        raise NotImplementedError
+        pass
     # end def commit
+
+    def compact (self) :
+        pass ### redefine as necessary for descendents
+    # end def compact
+
+    def rollback (self, keep_zombies = False) :
+        pass ### Nothing needs to be done here
+    # end def rollback
 
     def _commit_creation_change (self, cc, kw) :
         pass ### redefine as necessary for descendents

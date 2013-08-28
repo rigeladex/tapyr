@@ -49,6 +49,7 @@
 #                     (to achieve determistic test output)
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
+#     3-Aug-2013 (CT) Add guard to `Event._change_callback`
 #    ««revision-date»»···
 #--
 
@@ -186,7 +187,10 @@ class Event (_Ancestor_Essence) :
         if "date" in change.attr_changes or isinstance \
                (change, MOM.SCM.Change.Create):
             self = change.entity (scope)
-            self.compute_occurrences ()
+            if self is not None :
+                self.compute_occurrences ()
+            else :
+                print "No entity found for %s change-callback for change %s" % (cls, change)
     # end def _change_callback
 
 # end class Event

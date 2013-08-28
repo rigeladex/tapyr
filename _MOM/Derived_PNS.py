@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Jun-2013 (CT) Creation
+#    17-Jun-2013 (CT) Add `_MOM_Link_n_` to `MOM_bases`, `MOM_base_parents`
 #    ««revision-date»»···
 #--
 
@@ -92,12 +93,10 @@ class _Lazy_Resolver_ (TFL.Meta.Object) :
         if result is None :
             def _gen () :
                 for bn, cls in pyk.iteritems (self.MOM_bases) :
-                    while cls.parents :
+                    if cls.parents :
                         cls = cls.parents [0]
                         pbn = cls.type_base_name
-                        if not pbn.startswith ("_") :
-                            yield bn, pbn
-                            break
+                        yield bn, pbn
                     else :
                         yield bn, None
             result = self.__class__._MOM_base_parents = dict (_gen ())
@@ -112,8 +111,7 @@ class _Lazy_Resolver_ (TFL.Meta.Object) :
                 for b in MOM.Entity._S_Extension :
                     tbn = b.type_base_name
                     if b.type_name.startswith ("MOM.") :
-                        if not tbn.startswith ("_") :
-                            yield tbn, b
+                        yield tbn, b
                     else :
                         break
             result = self.__class__._MOM_bases = dict (_gen ())

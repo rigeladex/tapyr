@@ -37,6 +37,7 @@
 #     6-Dec-2012 (CT) Add `PAP.Person_has_Account`
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
+#    28-Jul-2013 (CT) Replace `tn_pid` by `type_name` and `pid`
 #    ««revision-date»»···
 #--
 
@@ -80,8 +81,8 @@ test_code = r"""
     <Create SWP.Page (u'title_2', 'SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '3', 'text' : u'text 2'}>
     <Create SWP.Page (u'title_3', 'SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
 
-    >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("tn_pid").all ()
-    [(('PAP.Person', 1),), (('SWP.Page', 2),), (('SWP.Page', 3),), (('SWP.Page', 4),), (('MOM.Document', 5),), (('MOM.Document', 6),), (('MOM.Document', 7),)]
+    >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("type_name", "pid").all ()
+    [('PAP.Person', 1), ('SWP.Page', 2), ('SWP.Page', 3), ('SWP.Page', 4), ('MOM.Document', 5), ('MOM.Document', 6), ('MOM.Document', 7)]
 
     >>> show_ref_maps (scope, "Ref_Req_Map")
     MOM.Id_Entity
@@ -98,21 +99,11 @@ test_code = r"""
         ('MOM.Document', ['left'])
     MOM.Object
         ('MOM.Document', ['left'])
-    MOM.Named_Object
-        ('MOM.Document', ['left'])
     MOM.Document
         ('MOM.Document', ['left'])
     Auth.Id_Entity
         ('MOM.Document', ['left'])
-    Auth.Link1
-        ('MOM.Document', ['left'])
-    Auth.Link2
-        ('MOM.Document', ['left'])
-    Auth.Link3
-        ('MOM.Document', ['left'])
     Auth.Object
-        ('MOM.Document', ['left'])
-    Auth.Named_Object
         ('MOM.Document', ['left'])
     Auth._Account_
         ('MOM.Document', ['left'])
@@ -131,7 +122,15 @@ test_code = r"""
     Auth.Group
         ('Auth.Account_in_Group', ['right'])
         ('MOM.Document', ['left'])
+    Auth.Link
+        ('MOM.Document', ['left'])
+    Auth._MOM_Link_n_
+        ('MOM.Document', ['left'])
+    Auth.Link2
+        ('MOM.Document', ['left'])
     Auth.Account_in_Group
+        ('MOM.Document', ['left'])
+    Auth.Link1
         ('MOM.Document', ['left'])
     Auth._Account_Action_
         ('MOM.Document', ['left'])
@@ -147,43 +146,17 @@ test_code = r"""
         ('MOM.Document', ['left'])
     EVT.Id_Entity
         ('MOM.Document', ['left'])
-    EVT.Link1
-        ('MOM.Document', ['left'])
-    EVT.Link2
-        ('MOM.Document', ['left'])
-    EVT.Link3
-        ('MOM.Document', ['left'])
     EVT.Object
-        ('MOM.Document', ['left'])
-    EVT.Named_Object
         ('MOM.Document', ['left'])
     EVT.Calendar
         ('MOM.Document', ['left'])
-    PAP.Id_Entity
+    EVT.Link
         ('MOM.Document', ['left'])
-    PAP.Object
+    EVT.Link1
         ('MOM.Document', ['left'])
-    PAP.Subject
-        ('MOM.Document', ['left'])
-    PAP.Person
-        ('MOM.Document', ['left'])
-        ('PAP.Person_has_Account', ['left'])
-        ('PAP.Person_has_Address', ['left'])
-        ('PAP.Person_has_Email', ['left'])
-        ('PAP.Person_has_Phone', ['left'])
-        ('PAP.Person_has_Url', ['left'])
-        ('SRM.Sailor', ['left'])
     SWP.Id_Entity
         ('MOM.Document', ['left'])
-    SWP.Link1
-        ('MOM.Document', ['left'])
-    SWP.Link2
-        ('MOM.Document', ['left'])
-    SWP.Link3
-        ('MOM.Document', ['left'])
     SWP.Object
-        ('MOM.Document', ['left'])
-    SWP.Named_Object
         ('MOM.Document', ['left'])
     SWP.Object_PN
         ('MOM.Document', ['left'])
@@ -209,6 +182,10 @@ test_code = r"""
         ('MOM.Document', ['left'])
     EVT.Recurrence_Rule
         ('MOM.Document', ['left'])
+    PAP.Id_Entity
+        ('MOM.Document', ['left'])
+    PAP.Object
+        ('MOM.Document', ['left'])
     PAP.Property
         ('MOM.Document', ['left'])
     PAP.Address
@@ -216,6 +193,8 @@ test_code = r"""
         ('PAP.Address_Position', ['left'])
         ('PAP.Company_has_Address', ['right'])
         ('PAP.Person_has_Address', ['right'])
+    PAP.Subject
+        ('MOM.Document', ['left'])
     PAP.Legal_Entity
         ('MOM.Document', ['left'])
     PAP.Company
@@ -232,6 +211,14 @@ test_code = r"""
         ('MOM.Document', ['left'])
         ('PAP.Company_has_Phone', ['right'])
         ('PAP.Person_has_Phone', ['right'])
+    PAP.Person
+        ('MOM.Document', ['left'])
+        ('PAP.Person_has_Account', ['left'])
+        ('PAP.Person_has_Address', ['left'])
+        ('PAP.Person_has_Email', ['left'])
+        ('PAP.Person_has_Phone', ['left'])
+        ('PAP.Person_has_Url', ['left'])
+        ('SRM.Sailor', ['left'])
     PAP.Url
         ('MOM.Document', ['left'])
         ('PAP.Company_has_Url', ['right'])
@@ -242,6 +229,8 @@ test_code = r"""
         ('MOM.Document', ['left'])
     PAP.Address_Position
         ('MOM.Document', ['left'])
+    PAP._MOM_Link_n_
+        ('MOM.Document', ['left'])
     PAP.Link2
         ('MOM.Document', ['left'])
     PAP.Subject_has_Property
@@ -250,15 +239,7 @@ test_code = r"""
         ('MOM.Document', ['left'])
     SRM.Id_Entity
         ('MOM.Document', ['left'])
-    SRM.Link1
-        ('MOM.Document', ['left'])
-    SRM.Link2
-        ('MOM.Document', ['left'])
-    SRM.Link3
-        ('MOM.Document', ['left'])
     SRM.Object
-        ('MOM.Document', ['left'])
-    SRM.Named_Object
         ('MOM.Document', ['left'])
     SRM._Boat_Class_
         ('MOM.Document', ['left'])
@@ -269,6 +250,10 @@ test_code = r"""
     SRM.Handicap
         ('MOM.Document', ['left'])
         ('SRM.Regatta_H', ['boat_class'])
+    SRM.Link
+        ('MOM.Document', ['left'])
+    SRM.Link1
+        ('MOM.Document', ['left'])
     SRM.Boat
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['left'])
@@ -279,6 +264,10 @@ test_code = r"""
         ('SRM.Page', ['event'])
         ('SRM.Regatta_C', ['left'])
         ('SRM.Regatta_H', ['left'])
+    SWP.Link
+        ('MOM.Document', ['left'])
+    SWP.Link1
+        ('MOM.Document', ['left'])
     SWP.Clip_O
         ('MOM.Document', ['left'])
     SWP.Clip_X
@@ -309,6 +298,10 @@ test_code = r"""
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['skipper'])
         ('SRM.Crew_Member', ['right'])
+    SRM._MOM_Link_n_
+        ('MOM.Document', ['left'])
+    SRM.Link2
+        ('MOM.Document', ['left'])
     SRM.Boat_in_Regatta
         ('MOM.Document', ['left'])
         ('SRM.Crew_Member', ['left'])
@@ -331,21 +324,21 @@ test_code = r"""
         ('MOM.Document', ['left'])
     PAP.Subject_has_Url
         ('MOM.Document', ['left'])
-    PAP.Person_has_Url
-        ('MOM.Document', ['left'])
     PAP.Company_has_Url
         ('MOM.Document', ['left'])
-    PAP.Person_has_Phone
+    PAP.Person_has_Url
         ('MOM.Document', ['left'])
     PAP.Company_has_Phone
         ('MOM.Document', ['left'])
-    PAP.Person_has_Email
+    PAP.Person_has_Phone
         ('MOM.Document', ['left'])
     PAP.Company_has_Email
         ('MOM.Document', ['left'])
-    PAP.Person_has_Address
+    PAP.Person_has_Email
         ('MOM.Document', ['left'])
     PAP.Company_has_Address
+        ('MOM.Document', ['left'])
+    PAP.Person_has_Address
         ('MOM.Document', ['left'])
 
     >>> show_ref_maps (scope, "Ref_Opt_Map")

@@ -30,6 +30,7 @@
 #     7-Oct-2011 (CT) `race.min_value` set to `1`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
+#    25-Jun-2013 (CT) Add `max_value`, `example` to integer attributes
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,8 @@ class Race_Result (_Ancestor_Essence) :
             """Number of race."""
 
             kind               = Attr.Primary
+            example            = "5"
+            max_value          = 32
             min_value          = 1
 
         # end class race
@@ -86,6 +89,7 @@ class Race_Result (_Ancestor_Essence) :
             """Points of boat in this race."""
 
             kind               = Attr.Necessary
+            example            = "42"
             min_value          = 1
             rank               = 1
 

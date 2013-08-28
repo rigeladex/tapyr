@@ -67,18 +67,18 @@ _test_code = r"""
 
     >>> scope.commit ()
 
-    >>> x = SRM.Boat ((u'Optimist',),    "AUT", 1)
+    >>> x = SRM.Boat ((u'Optimist',),     1, "AUT")
     >>> x.nation
     u'AUT'
-    >>> x = SRM.Boat ((u'Optimist',),    "AUT", 2)
-    >>> x = SRM.Boat ((u'Laser',),       "AUT", 3)
-    >>> x = SRM.Boat ((u'Seascape 18',), "AUT", 14)
+    >>> x = SRM.Boat ((u'Optimist',),     2, "AUT")
+    >>> x = SRM.Boat ((u'Laser',),        3, "AUT")
+    >>> x = SRM.Boat ((u'Seascape 18',), 14, "AUT")
 
     >>> scope.commit ()
 
     >>> bc  = SRM.Boat_Class.instance ("Optimist")
     >>> ys  = SRM.Handicap ("Yardstick")
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = "20080501", raw = True), raw = True)
@@ -94,7 +94,7 @@ _test_code = r"""
     36
     >>> int (scope.query_changes ().count ())
     36
-    >>> int (scope.ems.max_cid)
+    >>> int (scope.max_cid)
     36
 
     >>> bc.set (loa = 2.43)
@@ -109,7 +109,7 @@ _test_code = r"""
     36
     >>> int (scope.query_changes ().count ())
     39
-    >>> int (scope.ems.max_cid)
+    >>> int (scope.max_cid)
     39
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
@@ -126,7 +126,7 @@ _test_code = r"""
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop2))
     True
-    >>> int (scop2.ems.max_cid)
+    >>> int (scop2.max_cid)
     39
     >>> len (scop2.SRM.Regatta_Event.query ().first ().regattas)
     2
@@ -141,7 +141,7 @@ _test_code = r"""
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scope, scop3))
     True
-    >>> int (scop3.ems.max_cid)
+    >>> int (scop3.max_cid)
     39
     >>> len (scop3.SRM.Regatta_Event.query ().first ().regattas)
     2
@@ -160,7 +160,7 @@ _test_code = r"""
     (36, 36)
     >>> all (s.as_pickle_cargo () == t.as_pickle_cargo () for (s, t) in zip (scop3, scop4))
     True
-    >>> int (scop4.ems.max_cid)
+    >>> int (scop4.max_cid)
     39
     >>> len (scop4.SRM.Regatta_Event.query ().first ().regattas)
     2

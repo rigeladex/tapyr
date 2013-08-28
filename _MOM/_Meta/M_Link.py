@@ -100,6 +100,8 @@
 #    12-May-2013 (CT) Add `rev_type` to calls of `_m_create_rev_ref_attr`
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #     3-Jun-2013 (CT) Add `role_name` to aliases of `attributes` dictionary
+#    12-Jun-2013 (CT) Add `None` guard to `_m_init_prop_specs`
+#    12-Jun-2013 (CT) Add argument `app_type` to `m_setup_names`
 #    ««revision-date»»···
 #--
 
@@ -274,13 +276,13 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 
     def _m_init_prop_specs (cls, name, bases, dct) :
         result = cls.__m_super._m_init_prop_specs (name, bases, dct)
-        cls._Attributes.m_setup_names ()
+        cls._Attributes.m_setup_names (cls)
         def _gen_roles (cls) :
             for a in sorted \
                     ( cls._Attributes._names.itervalues ()
                     , key = TFL.Sorted_By ("rank", "name")
                     ) :
-                if issubclass (a, MOM.Attr.A_Link_Role) :
+                if a is not None and issubclass (a, MOM.Attr.A_Link_Role) :
                     yield a
         cls.Role_Attrs = tuple (_gen_roles (cls))
         return result

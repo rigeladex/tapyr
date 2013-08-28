@@ -87,6 +87,8 @@
 #                     Update `last_cid` in `Copy`
 #    30-Jan-2013 (CT) Change `Create.redo` to pass `entity` to `_create`
 #    30-Jan-2013 (CT) Change `Create.redo` to pass `allow_zombie` to `pid_query`
+#     4-Jun-2013 (CT) Add `pid` to `kw` in `_Entity_._create`
+#    24-Jul-2013 (CT) Add `Create.update`
 #    ««revision-date»»···
 #--
 
@@ -107,7 +109,7 @@ import weakref
 class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
 
-    kind               = "Composite change"
+    kind               = "Composite"
 
     attr_changes       = ()
     callbacks          = None
@@ -271,7 +273,8 @@ class _Entity_ (Undoable) :
             etype     = scope.entity_type (self.type_name)
             type_name = etype.Essence.type_name
             if type_name in callbacks :
-                callbacks [type_name] (scope, self)
+                cb = callbacks [type_name]
+                cb (scope, self)
     # end def do_callbacks
 
     def entity (self, scope) :
@@ -326,7 +329,7 @@ class _Entity_ (Undoable) :
     # end def type_repr
 
     def _create (self, scope, attr, entity = None) :
-        kw = dict (attr, raw = True)
+        kw = dict (attr, pid = self.pid, raw = True)
         if entity is None :
             etm          = scope [self.type_name]
             kw ["__pid"] = self.pid
@@ -451,6 +454,14 @@ class Create (_Entity_Last_Cid_Update_Mixin_, _Entity_) :
         self.__super.undo (scope)
         self._destroy     (scope)
     # end def undo
+
+    def update (self, kw) :
+        self.__dict__.update (kw)
+        new_attr = self._new_attr
+        for k in new_attr :
+            if k in kw :
+                new_attr [k] = kw [k]
+    # end def update
 
     def _pickle_attrs (self) :
         return dict \
@@ -624,7 +635,7 @@ class Attr_Composite (_Attr_) :
 
     def _update_entity (self, scope) :
         entity = self.__super.entity (scope)
-        scope.ems.update     (entity, (self.attr_name, ))
+        scope.ems.update (entity, (self.attr_name, ))
     # end def _update_entity
 
 # end class Attr_Composite

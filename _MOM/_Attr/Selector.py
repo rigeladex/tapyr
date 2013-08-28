@@ -41,6 +41,9 @@
 #                     kind `query`
 #    16-May-2013 (CT) Add `A_Type` (plus `_A_Type_Selection_`)
 #     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
+#     5-Jun-2013 (CT) Add `q_able`, rename `all` to `ui_attr`, define
+#                     `ui_attr` as synonym for `q_able`
+#    10-Jul-2013 (CT) Define `ui_attr` as `Pred (Q.show_in_ui, q_able)`
 #    ««revision-date»»···
 #--
 
@@ -52,7 +55,7 @@ from   _TFL                  import TFL
 
 from   _TFL.predicate        import uniq
 
-import _MOM._Attr
+from   _MOM._Attr.Filter     import Q
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -327,6 +330,10 @@ class Pred (_Selector_) :
         self.sel  = sel if sel is not None else user
     # end def __init__
 
+    def __repr__ (self) :
+        return "<MOM.Attr.Selector.Pred %s if %s>" % (self.sel, self.pred)
+    # end def __repr__
+
 # end class Pred
 
 class Not_Pred (Pred) :
@@ -335,6 +342,11 @@ class Not_Pred (Pred) :
     def __init__ (self, pred, sel = None) :
         self.__super.__init__ ((lambda x : not pred (x)), sel)
     # end def __init__
+
+    def __repr__ (self) :
+        return "<MOM.Attr.Selector.Not_Pred %s if not %s>" % \
+            (self.sel, self.pred)
+    # end def __repr__
 
 # end class Not_Pred
 
@@ -349,19 +361,20 @@ class Primary_Followers (_Selector_) :
 
 # end class Primary_Followers
 
-necessary   = Kind ("necessary")
-optional    = Kind ("optional")
-primary     = Kind ("primary")
-query       = Kind ("query")
-required    = Kind ("required")
-sig         = Kind ("sig_attr")
-user        = Kind ("user_attr")
+necessary   = Kind     ("necessary")
+optional    = Kind     ("optional")
+primary     = Kind     ("primary")
+query       = Kind     ("query")
+q_able      = Kind     ("q_able")
+required    = Kind     ("required")
+sig         = Kind     ("sig_attr")
+user        = Kind     ("user_attr")
 
-all         = List (primary, user, query)
-editable    = List (primary, user)
+ui_attr     = Pred     (Q.show_in_ui, q_able)
+editable    = List     (primary, user)
 
-P_optional  = Not_Pred (TFL.Getter.is_required, user)
-P_required  = Pred     (TFL.Getter.is_required, user)
+P_optional  = Not_Pred (Q.is_required, user)
+P_required  = Pred     (Q.is_required, user)
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()

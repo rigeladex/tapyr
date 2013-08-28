@@ -608,6 +608,6 @@ __test__ = Scaffold.create_test_dict \
         , test_migration  = _test_migration
         , test_query_attr = _test_query_attr
         )
-    , backends = ("SQL", )
+    , ignore = ("HPS", "MYS", "POS", "sq", "pg", "my")
     )
 ### __END__ GTW.__test__.Auth

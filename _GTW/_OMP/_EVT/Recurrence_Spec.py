@@ -32,6 +32,7 @@
 #    14-May-2012 (CT) Replace `unit.C_Type` by `unit.P_Type`
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
+#    27-Jun-2013 (CT) Add `unit.C_Type`
 #    ««revision-date»»···
 #--
 
@@ -391,12 +392,14 @@ class Recurrence_Rule (_Ancestor_Essence) :
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
             P_Type             = int
+            C_Type             = A_Int
             Table              = dict \
                 (  (k, getattr (dateutil.rrule, k.upper ()))
                 for k in (_("Daily"), _("Weekly"), _("Monthly"), _("Yearly"))
                 )
             typ                = "Unit"
             default            = Table ["Daily"]
+            max_value          = len (Table)
             rank               = -99
 
             rrule_name         = "freq"

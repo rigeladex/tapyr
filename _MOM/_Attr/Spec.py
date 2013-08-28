@@ -66,6 +66,12 @@
 #    16-May-2013 (CT) Use `Selector.A_Type` instead of home-grown code
 #    16-May-2013 (CT) Add `e_type.rev_ref_attr`
 #     3-Jun-2013 (CT) Factor `_prop_map_name`
+#     5-Jun-2013 (CT) Add `e_type.own_surrogate` and sanity check
+#     5-Jun-2013 (CT) Add `e_type.q_able`
+#     6-Jun-2013 (CT) Add `e_type.surrogate_attr`
+#     7-Jun-2013 (CT) Change `own_surrogate`, update `surrogate_map`
+#    17-Jun-2013 (CT) Sort `rev_ref_attr` and `link_ref_attr`
+#    12-Jul-2013 (CT) Change `rev_ref_attr` to select all `_A_Rev_Ref_` types
 #    ««revision-date»»···
 #--
 
@@ -73,6 +79,7 @@ from   __future__            import unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._Attr.Type
 import _MOM._Attr.Kind
@@ -83,7 +90,7 @@ import _TFL._Meta.Property
 import _TFL.Alias_Dict
 import _TFL.Sorted_By
 
-from   _TFL.predicate        import callable, uniq
+from   _TFL.predicate        import callable, first, uniq
 
 class Spec (MOM.Prop.Spec) :
     """Attribute specification for MOM entities (objects and links).
@@ -120,22 +127,59 @@ class Spec (MOM.Prop.Spec) :
         e_type.db_attr.sort       (key = sk)
         e_type.user_attr.sort     (key = sk)
         self._setup_attrs         (e_type)
+        e_type.q_able           = tuple \
+            ( sorted
+                ( (a for a in pyk.itervalues (e_type.attributes) if a.q_able)
+                , key = sk
+                )
+            )
         e_type.edit_attr        = tuple (MOM.Attr.Selector.editable (e_type))
-        e_type.ui_attr          = tuple (MOM.Attr.Selector.all      (e_type))
         e_type.id_entity_attr   = tuple \
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)
             )
         e_type.link_ref_attr    = tuple \
-            (MOM.Attr.Selector.A_Type (MOM.Attr.A_Link_Ref_List) (e_type))
+            ( sorted
+                ( MOM.Attr.Selector.A_Type (MOM.Attr.A_Link_Ref_List) (e_type)
+                , key = sk
+                )
+            )
+        e_type.surrogate_attr   = tuple \
+            (   a for a in e_type.db_attr
+            if  isinstance (a.attr, MOM.Attr.A_Surrogate)
+            )
         e_type.rev_ref_attr     = tuple \
-            ( MOM.Attr.Selector.A_Type
-                ((MOM.Attr.A_Rev_Ref_Set, MOM.Attr._A_Role_Ref_)) (e_type)
+            ( sorted
+                ( MOM.Attr.Selector.A_Type (MOM.Attr._A_Rev_Ref_) (e_type)
+                , key = sk
+                )
             )
         e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)
         e_type.primary_optional = list \
             (p for p in e_type.primary [len (pr): ] if not p.electric)
+        e_type.ui_attr          = tuple (MOM.Attr.Selector.ui_attr (e_type))
+        own_surrogates          = tuple \
+            (a for a in e_type.surrogate_attr if a.name in self._own_names)
+        if len (own_surrogates) > 1 :
+            raise TypeError \
+                ( "%s cannot have more than 1 own surrogate attributes; got %s"
+                  "\n    %s"
+                % ( e_type.type_name, len (own_surrogates)
+                  , ", ".join (repr (a.name) for a in own_surrogates)
+                  )
+                )
+        else :
+            try :
+                e_type.own_surrogate = s = first (own_surrogates)
+            except LookupError :
+                e_type.own_surrogate = None
+            else :
+                suid                 = s.surrogate_id
+                app_type             = e_type.app_type
+                if suid not in app_type.surrogate_map :
+                    app_type.surrogate_t_map [suid]     = e_type
+                    app_type.surrogate_map   [s.q_name] = s
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

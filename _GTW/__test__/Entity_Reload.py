@@ -39,8 +39,8 @@ _test_code = """
 
     >>> opti  = SRM.Boat_Class (name = "Optimist", max_crew = 1)
     >>> laser = SRM.Boat_Class (name = "Laser", max_crew = 1)
-    >>> b1    = SRM.Boat (u'Optimist', u"AUT", u"1107", raw = True) ### 1
-    >>> b2    = SRM.Boat (u"Laser", None, "42", "OE", raw = True)
+    >>> b1    = SRM.Boat (u'Optimist', u"1107", u"AUT", raw = True) ### 1
+    >>> b2    = SRM.Boat (u"Laser", "42", None, "OE", raw = True)
 
     >>> laser.max_crew ### before commit
     1
@@ -67,6 +67,7 @@ from multiprocessing     import Process
 _Ancestor_Essence = GTW.OMP.SRM.Boat
 
 Scaffold.Backend_Parameters ["SQL"] = "'sqlite:///test.sqlite'"
+Scaffold.Backend_Parameters ["sq"]  = "'sqlite:///test.sqlite'"
 
 def _modify_scope (* args) :
     scope          = Scaffold.scope (* args, create = False, verbose = False)
@@ -74,7 +75,6 @@ def _modify_scope (* args) :
     laser.max_crew = 2
     boat           = scope.SRM.Boat.query (nation = u"AUT").one ()
     boat.name      = "My Boat"
-    ### print (laser.max_crew, boat.name)
     scope.commit  ()
     scope.destroy ()
 # end def _modify_scope
@@ -85,7 +85,6 @@ def modify_scope (* args) :
         p.start       ()
         p.join        ()
     else :
-        import pdb; pdb.set_trace ()
         _modify_scope (* args)
 # end def modify_scope
 

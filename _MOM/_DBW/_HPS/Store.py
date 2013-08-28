@@ -68,6 +68,8 @@
 #    16-Aug-2010 (CT) `_copy_ignore` added and redefinition of `COPY` removed
 #    16-Aug-2010 (CT) `close` change to use `_check_sync`, not `_check_sync_ro`
 #    26-May-2013 (CT) Use `chmod` to limit readability of files
+#     6-Jun-2013 (CT) Simplify signature of `_save_context`; add `max_surrs`
+#     7-Jun-2013 (CT) Add/use argument `db_meta_data` to/in `consume`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +85,7 @@ import _MOM._DBW._HPS.Change_Manager
 
 import _TFL._Meta.Object
 import _TFL._Meta.Property
+import _TFL.defaultdict
 import _TFL.Error
 import _TFL.FCM
 import _TFL.Filename
@@ -134,12 +137,17 @@ class _HPS_DB_Meta_Data_ (MOM.DB_Meta_Data) :
 
     @classmethod
     def NEW (cls, app_type, scope = None, ** _kw) :
-        ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
+        ems     = TFL.Record\
+            ( max_cid   = getattr (scope, "max_cid",   0)
+            , max_pid   = getattr (scope, "max_pid",   0)
+            , max_surrs = getattr (scope, "max_surrs", TFL.defaultdict (int))
+            )
         kw      = dict (_kw)
         result  = super (DB_Meta_Data, cls).NEW \
             ( app_type, scope
-            , max_cid = kw.pop ("max_cid", ems.max_cid)
-            , max_pid = kw.pop ("max_pid", ems.max_pid)
+            , max_cid   = kw.pop ("max_cid",   ems.max_cid)
+            , max_pid   = kw.pop ("max_pid",   ems.max_pid)
+            , max_surrs = kw.pop ("max_surrs", ems.max_surrs)
             , ** kw
             )
         return result
@@ -310,20 +318,18 @@ class Store_PC (Store) :
         pass
     # end def commit
 
-    def consume (self, e_iter, c_iter, chunk_size = 10000) :
+    def consume (self, e_iter, c_iter, chunk_size, db_meta_data) :
         assert sos.path.exists (self.x_uri.name), self.x_uri.name
         assert not self.info.commits
         assert not self.info.pending
         assert not self.info.stores
         db_uri  = self.db_uri
         x_name  = self.x_uri.name
-        max_cid = max_pid = 0
         with TFL.lock_file (x_name) :
             info    = self.info
             stores  = info.stores  = []
             commits = info.commits = []
             for i, cargo in enumerate (sliced (e_iter, chunk_size)) :
-                max_pid = cargo [-1] [-1]
                 s_name  = TFL.Filename ("by_pid_%d" % i, self.x_uri)
                 with open (s_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
@@ -334,8 +340,8 @@ class Store_PC (Store) :
                 with open (c_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
                 commits.append ((max_cid, c_name.base_ext))
-            info.max_cid = max_cid
-            info.max_pid = max_pid
+            info.max_cid = db_meta_data.max_cid
+            info.max_pid = db_meta_data.max_pid
             self._save_info (info)
     # end def consume
 
@@ -398,9 +404,8 @@ class Store_S (Store) :
         if ucc :
             cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
             max_cid = scope.ems.max_cid
-            max_pid = scope.ems.max_pid
             x_name  = self.x_uri.name
-            with self._save_context (x_name, scope, info, max_cid, max_pid) :
+            with self._save_context (x_name, scope, info) :
                 c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
                 with open (c_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
@@ -449,13 +454,15 @@ class Store_S (Store) :
     # end def _rollback
 
     @TFL.Contextmanager
-    def _save_context (self, x_name, scope, info, max_cid, max_pid) :
+    def _save_context (self, x_name, scope, info) :
         Version = self.Version
         with TFL.lock_file (x_name) :
             self._check_sync_ro (info)
             yield info
-            info.max_cid = max_cid
-            info.max_pid = max_pid
+            ems            = scope.ems
+            info.max_cid   = ems.max_cid
+            info.max_pid   = ems.max_pid
+            info.max_surrs = ems.max_surrs
             self._save_info (info)
     # end def _save_context
 
@@ -464,9 +471,7 @@ class Store_S (Store) :
         scope   = self.scope
         stores  = info.stores = []
         x_name  = self.x_uri.name
-        max_cid = scope.ems.max_cid
-        max_pid = scope.ems.max_pid
-        with self._save_context (x_name, scope, info, max_cid, max_pid) :
+        with self._save_context (x_name, scope, info) :
             s_name = TFL.Filename ("by_pid", self.x_uri)
             cargo  = \
                 [   e.as_pickle_cargo ()

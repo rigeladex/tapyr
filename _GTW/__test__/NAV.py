@@ -221,7 +221,7 @@ _test_qr = """
     >>> crad.E_Type.AQ.affiliate.QR
     Q.affiliate
     >>> tuple (a.QR for a in crad.E_Type.AQ.affiliate.Attrs)
-    (Q.affiliate.__raw_name, Q.affiliate.__raw_registered_in, Q.affiliate.lifetime, Q.affiliate.__raw_short_name, Q.affiliate.affiliate, Q.affiliate.owner)
+    (Q.affiliate.__raw_name, Q.affiliate.__raw_registered_in, Q.affiliate.lifetime, Q.affiliate.__raw_short_name, Q.affiliate.affiliate, Q.affiliate.owner, Q.affiliate.last_cid, Q.affiliate.pid, Q.affiliate.type_name)
 
     >>> print (formatted (QR.Filter_Atoms (QR.Filter (crad.E_Type, "affiliate"))))
     ( Record
@@ -421,6 +421,30 @@ _test_qr = """
           , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
           , ui_type_name = 'Subject'
+          )
+        , Record
+          ( attr = Int `last_cid`
+          , full_name = 'affiliate.last_cid'
+          , id = 'affiliate__last_cid'
+          , name = 'last_cid'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Last cid'
+          )
+        , Record
+          ( attr = Surrogate `pid`
+          , full_name = 'affiliate.pid'
+          , id = 'affiliate__pid'
+          , name = 'pid'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Pid'
+          )
+        , Record
+          ( attr = String `type_name`
+          , full_name = 'affiliate.type_name'
+          , id = 'affiliate__type_name'
+          , name = 'type_name'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Type name'
           )
         ]
     , edit = None
@@ -792,6 +816,30 @@ _test_qr = """
             , ui_name = 'Affiliate/Owner'
             , ui_type_name = 'Subject'
             )
+          , Record
+            ( attr = Int `last_cid`
+            , full_name = 'affiliate.last_cid'
+            , id = 'affiliate__last_cid'
+            , name = 'last_cid'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Last cid'
+            )
+          , Record
+            ( attr = Surrogate `pid`
+            , full_name = 'affiliate.pid'
+            , id = 'affiliate__pid'
+            , name = 'pid'
+            , sig_key = 0
+            , ui_name = 'Affiliate/Pid'
+            )
+          , Record
+            ( attr = String `type_name`
+            , full_name = 'affiliate.type_name'
+            , id = 'affiliate__type_name'
+            , name = 'type_name'
+            , sig_key = 3
+            , ui_name = 'Affiliate/Type name'
+            )
           ]
       , full_name = 'affiliate'
       , id = 'affiliate'
@@ -888,6 +936,30 @@ _test_qr = """
       , type_name = 'PAP.Subject'
       , ui_name = 'Owner'
       , ui_type_name = 'Subject'
+      )
+    , Record
+      ( attr = Int `last_cid`
+      , full_name = 'last_cid'
+      , id = 'last_cid'
+      , name = 'last_cid'
+      , sig_key = 0
+      , ui_name = 'Last cid'
+      )
+    , Record
+      ( attr = Surrogate `pid`
+      , full_name = 'pid'
+      , id = 'pid'
+      , name = 'pid'
+      , sig_key = 0
+      , ui_name = 'Pid'
+      )
+    , Record
+      ( attr = String `type_name`
+      , full_name = 'type_name'
+      , id = 'type_name'
+      , name = 'type_name'
+      , sig_key = 3
+      , ui_name = 'Type name'
       )
     ]
 
@@ -1072,6 +1144,30 @@ _test_esf = """
           , type_name = 'PAP.Subject'
           , ui_name = 'Affiliate/Owner'
           , ui_type_name = 'Subject'
+          )
+        , Record
+          ( attr = Int `last_cid`
+          , full_name = 'affiliate.last_cid'
+          , id = 'affiliate__last_cid'
+          , name = 'last_cid'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Last cid'
+          )
+        , Record
+          ( attr = Surrogate `pid`
+          , full_name = 'affiliate.pid'
+          , id = 'affiliate__pid'
+          , name = 'pid'
+          , sig_key = 0
+          , ui_name = 'Affiliate/Pid'
+          )
+        , Record
+          ( attr = String `type_name`
+          , full_name = 'affiliate.type_name'
+          , id = 'affiliate__type_name'
+          , name = 'type_name'
+          , sig_key = 3
+          , ui_name = 'Affiliate/Type name'
           )
         ]
     , edit = None
@@ -1290,6 +1386,51 @@ _test_esf = """
           )
       , sig_key = 0
       , ui_name = 'Lifetime/Finish'
+      , value = None
+      )
+    , Record
+      ( AQ = <last_cid.AQ [Attr.Type.Querier Ckd]>
+      , attr = Int `last_cid`
+      , edit = None
+      , full_name = 'last_cid'
+      , id = 'last_cid___AC'
+      , name = 'last_cid___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 0
+      , ui_name = 'Last cid'
+      , value = None
+      )
+    , Record
+      ( AQ = <pid.AQ [Attr.Type.Querier Ckd]>
+      , attr = Surrogate `pid`
+      , edit = None
+      , full_name = 'pid'
+      , id = 'pid___AC'
+      , name = 'pid___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute is equal to the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 0
+      , ui_name = 'Pid'
+      , value = None
+      )
+    , Record
+      ( AQ = <type_name.AQ [Attr.Type.Querier String]>
+      , attr = String `type_name`
+      , edit = None
+      , full_name = 'type_name'
+      , id = 'type_name___AC'
+      , name = 'type_name___AC'
+      , op = Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Type name'
       , value = None
       )
     )

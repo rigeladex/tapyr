@@ -48,12 +48,11 @@ from _GTW.__test__.model import *
 
 class _Migration_Scaffold_ (Scaffold.__class__) :
 
-    Backend_Parameters = dict \
-        ( HPS  = "'hps:///test.hps'"
-        , SQL  = "'sqlite:///test.sql'"
-        , POS  = "'postgresql://regtest:regtest@localhost/regtest'"
-        , MYS  = "'mysql://:@localhost/test'"
-        , MYST = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
+    Backend_Parameters    = dict \
+        ( Scaffold.Backend_Parameters
+        , HPS             = "'hps:///test.hps'"
+        , SQL             = "'sqlite:///test.sql'"
+        , sq              = "'sqlite:///test.sql'"
         )
 
 # end class _Migration_Scaffold_
@@ -121,16 +120,16 @@ _test_code = r"""
 
     >>> scope.commit ()
 
-    >>> x = SRM.Boat ((u'Optimist',),    u"AUT", 1)
-    >>> x = SRM.Boat ((u'Optimist',),    u"AUT", 2)
-    >>> x = SRM.Boat ((u'Laser',),       u"AUT", 3)
-    >>> x = SRM.Boat ((u'Seascape 18',), u"AUT", 14)
+    >>> x = SRM.Boat ((u'Optimist',),     1, u"AUT")
+    >>> x = SRM.Boat ((u'Optimist',),     2, u"AUT")
+    >>> x = SRM.Boat ((u'Laser',),        3, u"AUT")
+    >>> x = SRM.Boat ((u'Seascape 18',), 14, u"AUT")
 
     >>> scope.commit ()
 
     >>> bc  = SRM.Boat_Class.instance (u"Optimist")
     >>> ys  = SRM.Handicap ("Yardstick")
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"AUT", u"1107", raw = True)
+    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
@@ -292,6 +291,11 @@ _test_code = r"""
 
 """
 
-__test__ = Scaffold.create_test_dict (_test_code, ignore = ("HPS", ))
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_code = _test_code
+        )
+    , ignore = ("HPS", )
+    )
 
 ### __END__ migration

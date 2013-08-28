@@ -43,6 +43,9 @@
 #     1-Jul-2010 (CT) `compact` added
 #    22-Jun-2012 (MG) `close_connections` added
 #    30-Jan-2013 (CT) Add optional argument `keep_zombies` to `rollback`
+#     6-Jun-2013 (CT) Add `max_surrs`
+#    24-Jun-2013 (CT) Factor `close_connections`, `rollback` to `DBW._Manager_`
+#    25-Aug-2013 (CT) Redefine `update_etype` to disable `P_uniqueness [0]`
 #    ««revision-date»»···
 #--
 
@@ -84,6 +87,13 @@ class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
             pass
     # end def delete_database
 
+    def update_etype (cls, e_type, app_type) :
+        try :
+            e_type.P_uniqueness [0].ems_check = False
+        except Exception :
+            pass
+    # end def update_etype
+
     def _new_manager (cls, db_url, scope, store_fct) :
         store = None
         uri   = db_url and db_url.path
@@ -105,6 +115,7 @@ class Manager (MOM.DBW._Manager_) :
 
     db_meta_data  = TFL.Meta.Alias_Property ("info")
     pcm           = TFL.Meta.Alias_Property ("store")
+    readonly      = property (TFL.Getter.info.readonly)
 
     type_name     = "HPS"
 
@@ -128,18 +139,15 @@ class Manager (MOM.DBW._Manager_) :
             self.store.close ()
     # end def close
 
-    def close_connections (self) :
-        pass
-    # end def close_connections
-
     def commit (self) :
         if self.store is not None :
             self.store.commit ()
         else :
-            info         = self._info
-            ems          = self.scope.ems
-            info.max_cid = ems.max_cid
-            info.max_pid = ems.max_pid
+            info           = self._info
+            ems            = self.scope.ems
+            info.max_cid   = ems.max_cid
+            info.max_pid   = ems.max_pid
+            info.max_surrs = ems.max_surrs
     # end def commit
 
     def compact (self) :
@@ -164,10 +172,6 @@ class Manager (MOM.DBW._Manager_) :
         if self.store is not None :
             self.store.load_objects ()
     # end def load_objects
-
-    def rollback (self, keep_zombies = False) :
-        pass ### Nothing needs to be done here
-    # end def rollback
 
 # end class Manager
 

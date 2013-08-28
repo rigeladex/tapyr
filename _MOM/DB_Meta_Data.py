@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -32,6 +32,7 @@
 #    16-Aug-2010 (CT) `NEW`  changed to pop from `kw`
 #    30-Jan-2011 (CT) `dbid` added
 #    20-Jul-2011 (CT) Use `datetime.utcnow` instead of `datetime.now`
+#     7-Jun-2013 (CT) Change `COPY` to iterate over `other`, not `other._kw`
 #    ««revision-date»»···
 #--
 
@@ -48,15 +49,15 @@ class _MOM_DB_Meta_Data_ (TFL.Record) :
     """Provide meta data for MOM data base."""
 
     _real_name   = "DB_Meta_Data"
-    _copy_ignore = set (( "readonly", "dbid", "dbv_hash"))
+    _properties  = set (TFL.Record._properties)
+    _copy_ignore = set (("readonly", "dbid", "dbv_hash"))
 
     @classmethod
     def COPY (cls, other, app_type, scope = None) :
         ignore = cls._copy_ignore | other._copy_ignore
-        kw     = other._kw
         return cls.NEW \
             ( app_type, scope
-            , ** dict ((k, kw [k]) for k in kw if k not in ignore)
+            , ** dict ((k, other [k]) for k in other if k not in ignore)
             )
     # end def COPY
 

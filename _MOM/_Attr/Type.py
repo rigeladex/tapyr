@@ -300,6 +300,31 @@
 #                     instance, not `.as_string`
 #     3-Jun-2013 (CT) Change `A_Email.example` to be syntactically valid
 #     3-Jun-2013 (CT) Get attribute descriptors from `etype.attributes`
+#     4-Jun-2013 (CT) Add `A_Surrogate`
+#     5-Jun-2013 (CT) Add `q_able`
+#     5-Jun-2013 (CT) Add `is_attr_type`
+#     5-Jun-2013 (CT) Dry `M_Attr_Type` names
+#     5-Jun-2013 (CT) Add metaclass to `A_Surrogate`
+#     6-Jun-2013 (CT) Add `A_Surrogate.q_name`
+#     6-Jun-2013 (CT) Use `pyk.int_types`, not `int`;
+#                     `pyk.string_types`, not `basestring`
+#    14-Jun-2013 (CT) Set `det_base` and `det_root`
+#    19-Jun-2013 (CT) Add `det` and `det_kind`
+#    26-Jun-2013 (CT) Add `max_ui_length`
+#    26-Jun-2013 (CT) Add numeric properties, e.g., `max_digits`, to `db_sig`
+#    26-Jun-2013 (CT) Add `Pickled_Type`, use `Class_and_Instance_Once_Property`
+#    27-Jun-2013 (CT) Change `_A_Binary_String_.max_length` from `None` to `0`
+#     1-Jul-2013 (CT) Factor `q_name` from `A_Surrogate` to `A_Attr_Type`
+#     3-Jul-2013 (CT) Add `q_able_names`
+#     4-Jul-2013 (CT) DRY `Pickled_Type`, fix `Pickled_Type_Raw`
+#    10-Jul-2013 (CT) Change `_A_Rev_Ref_.kind` to `_Rev_Query_`
+#    10-Jul-2013 (CT) Factor `_A_Rev_Ref_.sqx`, use `MOM.SQ`
+#    12-Jul-2013 (CT) Derive `A_Role_Ref_Set` from `A_Rev_Ref_Set`,
+#                     not `_A_Id_Entity_Set_`
+#    12-Jul-2013 (CT) Add `A_Rev_Ref`
+#    12-Jul-2013 (CT) Add support for `sqx_filter` to `_A_Rev_Ref_`
+#     1-Aug-2013 (CT) Factor `_A_SPK_Entity_`, add `_A_MD_Change_`
+#    21-Aug-2013 (CT) Add `_A_Rev_Ref_.finished_query_first`, `.sort_key`
 #    ««revision-date»»···
 #--
 
@@ -308,8 +333,10 @@ from   __future__            import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 from   _MOM._Attr.Filter     import Q
+from   _MOM.SQ               import SQ
 
 import _MOM._Attr.Coll
 import _MOM._Attr.Completer
@@ -320,11 +347,14 @@ import _MOM._Meta.M_Attr_Type
 import _MOM._Prop.Type
 
 from   _TFL.I18N             import _, _T
+from   _TFL.predicate        import uniq
 from   _TFL.Regexp           import *
 from   _TFL                  import sos
 
+import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
+import _TFL.Decorator
 import _TFL.Currency
 import _TFL.r_eval
 
@@ -337,10 +367,77 @@ import time
 
 plain_number_pat = r"\d+ (?: \.\d*)? (?: [eE]\d+)? \s*"
 
+def is_attr_type (x) :
+    return isinstance (x, MOM.Meta.M_Attr_Type.Root)
+# end def is_attr_type
+
+@TFL.Decorator
+def _pts_prop (f) :
+    name = f.__name__
+    def _ (self) :
+        result = getattr (self._Pickler_Type, name, None)
+        if result is None :
+            result = getattr (self._attr_type, name, None)
+        return result
+    return _
+# end def _pts_prop
+
+@pyk.adapt__bool__
+class Pickled_Type_Spec (TFL.Meta.Object) :
+
+    def __init__ (self, p_type, attr_type, Pickler_Type = None) :
+        self.p_type        = p_type
+        self.__name__      = p_type and p_type.__name__
+        self._Pickler_Type = Pickler_Type
+        self._attr_type    = attr_type
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def decimal_places (self) : pass
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def ignore_case (self) : pass
+
+    @TFL.Meta.Once_Property
+    def length (self) :
+        result = self.max_length
+        if result is None :
+            result = self.max_ui_length
+        return result
+    # end def length
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def max_digits (self) : pass
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def max_length (self) : pass
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def max_ui_length (self) : pass
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def max_value (self) : pass
+
+    @TFL.Meta.Once_Property
+    @_pts_prop
+    def min_value (self) : pass
+
+    def __bool__ (self) :
+        return self.p_type is not None
+    # end def __bool__
+
+# end class Pickled_Type_Spec
+
 class A_Attr_Type (MOM.Prop.Type) :
     """Root class for attribute types for the MOM meta object model."""
 
-    __metaclass__       = MOM.Meta.M_Attr_Type
+    __metaclass__       = MOM.Meta.M_Attr_Type.Root
     _doc_properties     = ("syntax", )
     _sets_to_combine    = MOM.Prop.Type._sets_to_combine  + ("check", )
     _lists_to_combine   = MOM.Prop.Type._lists_to_combine + ("Kind_Mixins", )
@@ -369,6 +466,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     P_Type              = None  ### Python type of attribute values
     Q_Ckd_Type          = MOM.Attr.Querier.Ckd
     Q_Raw_Type          = MOM.Attr.Querier.Raw
+    q_able              = True
     query               = None
     query_fct           = None
     query_preconditions = ()
@@ -379,7 +477,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     sort_skip           = False ### don't include in sorted_by_epk if True
     store_default       = False
     typ                 = None
-    ui_name             = TFL.Meta.Once_Property \
+    ui_name             = TFL.Meta.Class_and_Instance_Once_Property \
         (lambda s : s.name.capitalize ().replace ("_", " "))
     ui_length           = 20
 
@@ -390,20 +488,62 @@ class A_Attr_Type (MOM.Prop.Type) :
         return self.Q_Raw if self.needs_raw_value else self.Q_Ckd
     # end def AQ
 
+    @TFL.Meta.Class_and_Instance_Once_Property
+    def Pickled_Type (self) :
+        args = (self.P_Type, self)
+        if self.Pickler :
+            PT = getattr (self.Pickler, "Type", None)
+            if is_attr_type (PT) :
+                args = (PT.P_Type, self, PT)
+            elif PT is not None :
+                args = (PT, self)
+        return Pickled_Type_Spec (* args)
+    # end def Pickled_Type
+
+    @TFL.Meta.Class_Property
     @TFL.Meta.Once_Property
+    def Pickled_Type_Raw (self) :
+        if self.needs_raw_value :
+            return Pickled_Type_Spec (unicode, self)
+    # end def Pickled_Type_Raw
+
+    @TFL.Meta.Class_and_Instance_Once_Property
     def Q_Ckd (self) :
         return self.Q_Ckd_Type (self)
     # end def Q_Ckd
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def Q_Raw (self) :
         return self.Q_Raw_Type (self)
     # end def Q_Raw
 
     @TFL.Meta.Once_Property
+    def q_able_names (self) :
+        return tuple (uniq (itertools.chain ((self.name, ), self.renameds)))
+    # end def q_able_names
+
+    @TFL.Meta.Once_Property
+    def q_name (self) :
+        ### use `_type_name` here because `type_name` property isn't set up
+        ### properly when attribute is instantiated
+        tn = self.e_type._type_name
+        return "%s.%s" % (tn, self.name)
+    # end def q_name
+
+    @TFL.Meta.Class_and_Instance_Once_Property
     def example (self) :
         return self.raw_default
     # end def example
+
+    @TFL.Meta.Class_Property
+    @TFL.Meta.Class_and_Instance_Method
+    def max_ui_length (self) :
+        result = self._max_ui_length
+        if result is None :
+            result = self._max_ui_length = max \
+                (self.ui_length, (getattr (self, "max_length", 0) or 0) + 1)
+        return result
+    # end def max_ui_length
 
     @TFL.Meta.Once_Property
     def raw_query (self) :
@@ -416,8 +556,7 @@ class A_Attr_Type (MOM.Prop.Type) :
         return self.AQ.EQ
     # end def raw_query_eq
 
-    @TFL.Meta.Class_Property
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def sig_rank (soc) :
         """Rank of attribute in signature of `__init__`."""
         k_rank = getattr (soc.kind, "_k_rank", 0)
@@ -432,9 +571,19 @@ class A_Attr_Type (MOM.Prop.Type) :
     # end def ui_name_T
 
     def __init__ (self, kind, e_type) :
-        self.e_type      = e_type
-        self.kind        = kind
-        self.is_required = kind.is_required
+        self.e_type       = e_type
+        self.kind         = kind
+        self.is_required  = kind.is_required
+        if kind.save_to_db and not issubclass (e_type, MOM.An_Entity) :
+            et_map        = e_type.app_type.etypes
+            DT            = self.DET
+            DB            = self.DET_Base
+            DR            = self.DET_Root
+            self.det_base = et_map [DB] if DB else None
+            self.det_root = et_map [DR] if DR else None
+            self.det = dt = et_map [DT] if DT else e_type
+            self.det_kind = (dt.attr_prop (self.name) or kind) \
+                if DT != e_type.type_name else kind
     # end def __init__
 
     def ac_ui_display (self, value) :
@@ -492,14 +641,10 @@ class A_Attr_Type (MOM.Prop.Type) :
         return value
     # end def cooked
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
-        return \
-            ( self.typ
-            , self.db_sig_version
-            , getattr (self, "max_length", 0)
-            , self.needs_raw_value
-            )
+        max_length = getattr (self, "max_length", 0)
+        return (self.typ, self.db_sig_version, max_length, self.needs_raw_value)
     # end def db_sig
 
     def epk_def_set_ckd (self) :
@@ -540,6 +685,15 @@ class A_Attr_Type (MOM.Prop.Type) :
         return result
     # end def _cls_attr
 
+    def _fix_det (self, kind, e_type) :
+        if kind.save_to_db and not issubclass (e_type, MOM.An_Entity) :
+            base  = self.det_base or self.det_root
+            bdk   = base.attr_prop (self.name)
+            b_det = getattr (bdk, "det", None)
+            if b_det and self.det_kind.db_sig == bdk.det_kind.db_sig :
+                self.det      = b_det
+                self.det_kind = b_det.attr_prop (self.name) or bdk
+    # end def _fix_det
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj, glob, locl) :
@@ -603,7 +757,7 @@ class _A_Binary_String_ (A_Attr_Type) :
     """Base type for attributes written to database as binary string."""
 
     hidden              = True
-    max_length          = None
+    max_length          = 0
     P_Type              = bytes
 
     def as_code (self, value) :
@@ -649,7 +803,7 @@ class _A_Collection_ (A_Attr_Type) :
         return soc.R_Type (soc.C_Type.cooked (v) for v in val)
     # end def cooked
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
         return \
             ( self.__super.db_sig
@@ -686,7 +840,8 @@ class _A_Entity_ (A_Attr_Type) :
     def __init__ (self, kind, e_type) :
         P_Type = self.P_Type
         if P_Type :
-            tn = P_Type if isinstance (P_Type, basestring) else P_Type.type_name
+            tn = P_Type if isinstance (P_Type, pyk.string_types) \
+                else P_Type.type_name
             self.P_Type = e_type.app_type.etypes [tn]
         self.__super.__init__ (kind, e_type)
     # end def __init__
@@ -709,7 +864,7 @@ class _A_Composite_ (_A_Entity_) :
 
     Q_Ckd_Type          = MOM.Attr.Querier.Composite
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
         return \
             ( self.__super.db_sig
@@ -717,7 +872,7 @@ class _A_Composite_ (_A_Entity_) :
             )
     # end def db_sig
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def sorted_by (self) :
         return self.P_Type.sorted_by
     # end def sorted_by
@@ -774,7 +929,7 @@ class _A_Composite_ (_A_Entity_) :
         return self.kind.epk_def_set (form % dict (name = self.name))
     # end def epk_def_set_ckd
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def example (self) :
         E_Type = self.E_Type
         if E_Type :
@@ -872,7 +1027,7 @@ class _A_Date_ (A_Attr_Type) :
 class _A_Named_Value_ (A_Attr_Type) :
     """Common base class for attributes holding named values."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Value
+    __metaclass__     = MOM.Meta.M_Attr_Type.Named_Value
 
     C_Type            = None ### Attribute type applicable to cooked values
 
@@ -894,7 +1049,7 @@ class _A_Named_Value_ (A_Attr_Type) :
             raise
     # end def as_string
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def Choices (self) :
         return sorted (self.Table)
     # end def Choices
@@ -932,7 +1087,12 @@ class _A_Number_ (A_Attr_Type) :
 
     _string_fixer       = None
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
+    def db_sig (self) :
+        return self.__super.db_sig + (self.min_value, self.max_value)
+    # end def db_sig
+
+    @TFL.Meta.Class_and_Instance_Once_Property
     def example (self) :
         if self.min_value is not None :
             if self.max_value is not None :
@@ -943,16 +1103,28 @@ class _A_Number_ (A_Attr_Type) :
             result = self.max_value - 42
         else :
             result = 42
-        return self.as_string (result)
+        return self.as_string (self.cooked (result))
     # end def example
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_Property
+    @TFL.Meta.Class_and_Instance_Method
+    def max_ui_length (self) :
+        result = self._max_ui_length
+        if result is None :
+            mv = max (abs (self.max_value or 0), abs (self.min_value or 0))
+            if not mv :
+                mv = _A_Int_.max_value_64
+            result = self._max_ui_length = \
+                int (math.ceil (math.log (mv, 10)) + 1)
+        return result
+    # end def max_ui_length
+
+    @TFL.Meta.Class_and_Instance_Once_Property
     def ui_length (self) :
-        if self.max_value :
-            import math
-            return int (math.ceil (math.log10 (self.max_value) + 1))
-        else :
-            return 12
+        mv = max (abs (self.max_value or 0), abs (self.min_value or 0))
+        if not mv :
+            mv = _A_Int_.max_value_32
+        return int (math.ceil (math.log (mv, 10) + 1))
     # end def ui_length
 
     def _checkers (self, e_type, kind) :
@@ -985,30 +1157,60 @@ class _A_Number_ (A_Attr_Type) :
 class _A_Decimal_ (_A_Number_) :
     """Decimal-number valued attribute of an object."""
 
-    typ            = _ ("Decimal")
-    P_Type         = decimal.Decimal
-    code_format    = "%s"
+    typ               = _ ("Decimal")
+    P_Type            = decimal.Decimal
+    code_format       = "%s"
+    decimal_places    = 2
+    max_digits        = 12
 
-    _string_fixer  = Re_Replacer \
+    _string_fixer     = Re_Replacer \
         ( r"([-+]?\d*\.\d+([eE][-+]?\d+)?)"
         , r"""Decimal("\1")"""
         )
+
+    @TFL.Meta.Class_and_Instance_Once_Property
+    def db_sig (self) :
+        return self.__super.db_sig + (self.decimal_places, self.max_digits)
+    # end def db_sig
+
+    @TFL.Meta.Class_Property
+    @TFL.Meta.Class_and_Instance_Method
+    def max_ui_length (self) :
+        result = self._max_ui_length
+        if result is None :
+            max_digits = self.max_digits
+            if max_digits :
+                self._max_ui_length = result = max_digits + 2
+            else :
+                result = super (_A_Decimal_, self).max_ui_length
+        return result
+    # end def max_ui_length
 
 # end class _A_Decimal_
 
 class _A_Float_ (Atomic_Json_Mixin, _A_Number_) :
     """Floating-point attribute."""
 
-    typ         = _ ("Float")
-    P_Type      = float
+    typ               = _ ("Float")
+    P_Type            = float
+    max_ui_length     = 22
 
 # end class _A_Float_
 
 class _A_Int_ (Atomic_Json_Mixin, _A_Number_) :
     """Integer attribute."""
 
-    typ         = _ ("Int")
-    P_Type      = int
+    typ               = _ ("Int")
+    P_Type            = int
+
+    max_value_8       = +0x7F
+    max_value_16      = +0x7FFF
+    max_value_32      = +0x7FFFFFFF
+    max_value_64      = +0x7FFFFFFFFFFFFFFF
+    min_value_8       = -0x80
+    min_value_16      = -0x8000
+    min_value_32      = -0x80000000
+    min_value_64      = -0x8000000000000000
 
 # end class _A_Int_
 
@@ -1062,7 +1264,76 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
 
 # end class _A_Link_Role_Right_
 
-class _A_Id_Entity_ (_A_Entity_) :
+class _A_SPK_Entity_ (_A_Entity_) :
+    """Attribute referring to an entity identified by a spk"""
+
+    rev_ref_attr_name   = None
+    rev_ref_singular    = False
+
+    def as_code (self, value) :
+        if value is not None :
+            return tuple \
+                (a.as_code (a.get_value (value)) for a in value.primary)
+        return repr ("")
+    # end def as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            return soc.format % \
+                ( tuple
+                    (a.as_string (a.get_value (value)) for a in value.primary)
+                ,
+                )
+        return ""
+    # end def as_string
+
+    def check_type (self, value) :
+        E_Type = self.E_Type
+        if not isinstance (value, E_Type.Essence) :
+            typ       = _T (getattr (value, "ui_name", value.__class__))
+            v_display = getattr (value, "ui_display", unicode (value))
+            raise MOM.Error.Wrong_Type \
+                ( _T
+                    ( "%s '%s' not eligible for attribute %s,"
+                      "\n"
+                      "    must be instance of %s"
+                    )
+                % (typ, v_display, self.name, _T (E_Type.ui_name))
+                )
+        tn = value.type_name
+        if tn in self.refuse_e_types_transitive :
+            typ = _T (value.E_Type.ui_name)
+            raise MOM.Error.Wrong_Type \
+                ( _T
+                    ( "%s '%s' not eligible for attribute %s,"
+                      "\n"
+                      "    must be instance of %s, but not %s"
+                    )
+                % (typ, value.ui_display, self.name, _T (E_Type.ui_name), typ)
+                )
+        return value
+    # end def check_type
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        return value
+    # end def cooked
+
+    @TFL.Meta.Class_and_Instance_Method
+    def etype_manager (soc, obj = None) :
+        if soc.P_Type :
+            return getattr (soc._get_scope (obj), soc.P_Type.type_name, None)
+    # end def etype_manager
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _get_scope (soc, obj) :
+        return obj.home_scope if obj else MOM.Scope.active
+    # end def _get_scope
+
+# end class _A_SPK_Entity_
+
+class _A_Id_Entity_ (_A_SPK_Entity_) :
     """Attribute referring to an entity."""
 
     _sets_to_combine    = \
@@ -1071,8 +1342,6 @@ class _A_Id_Entity_ (_A_Entity_) :
     Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
 
     is_link_role        = False
-    rev_ref_attr_name   = None
-    rev_ref_singular    = False
 
     allow_e_types       = set ()
     refuse_e_types      = set ()
@@ -1143,71 +1412,15 @@ class _A_Id_Entity_ (_A_Entity_) :
         return set (_gen (self.E_Type)) - self.refuse_e_types_transitive
     # end def selectable_e_types_unique_epk
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def sorted_by (self) :
         return self.P_Type.sorted_by_epk
     # end def sorted_by
 
-    def as_code (self, value) :
-        if value is not None :
-            return tuple \
-                (a.as_code (a.get_value (value)) for a in value.primary)
-        return repr ("")
-    # end def as_code
-
-    @TFL.Meta.Class_and_Instance_Method
-    def as_string (soc, value) :
-        if value is not None :
-            return soc.format % \
-                ( tuple
-                    (a.as_string (a.get_value (value)) for a in value.primary)
-                ,
-                )
-        return ""
-    # end def as_string
-
-    def check_type (self, value) :
-        E_Type = self.E_Type
-        if not isinstance (value, E_Type.Essence) :
-            typ       = _T (getattr (value, "ui_name", value.__class__))
-            v_display = getattr (value, "ui_display", unicode (value))
-            raise MOM.Error.Wrong_Type \
-                ( _T
-                    ( "%s '%s' not eligible for attribute %s,"
-                      "\n"
-                      "    must be instance of %s"
-                    )
-                % (typ, v_display, self.name, _T (E_Type.ui_name))
-                )
-        tn = value.type_name
-        if tn in self.refuse_e_types_transitive :
-            typ = _T (value.E_Type.ui_name)
-            raise MOM.Error.Wrong_Type \
-                ( _T
-                    ( "%s '%s' not eligible for attribute %s,"
-                      "\n"
-                      "    must be instance of %s, but not %s"
-                    )
-                % (typ, value.ui_display, self.name, _T (E_Type.ui_name), typ)
-                )
-        return value
-    # end def check_type
-
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        return value
-    # end def cooked
-
-    @TFL.Meta.Class_and_Instance_Method
-    def etype_manager (soc, obj = None) :
-        if soc.P_Type :
-            return getattr (soc._get_scope (obj), soc.P_Type.type_name, None)
-    # end def etype_manager
-
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         if isinstance (s, MOM.Entity) :
             return s ### `check_type` called by `kind._set_cooked_value`
-        elif isinstance (s, int) :
+        elif isinstance (s, pyk.int_types) :
             scope = self._get_scope (obj)
             return scope.pid_query (s)
         elif s :
@@ -1248,17 +1461,27 @@ class _A_Id_Entity_ (_A_Entity_) :
                 )
     # end def _get_object
 
-    @TFL.Meta.Class_and_Instance_Method
-    def _get_scope (soc, obj) :
-        return obj.home_scope if obj else MOM.Scope.active
-    # end def _get_scope
-
 # end class _A_Id_Entity_
+
+class _A_MD_Change_ (_A_SPK_Entity_) :
+    """Attribute referring to a MD_Change instance"""
+
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+        if isinstance (s, MOM.Entity) :
+            return s ### `check_type` called by `kind._set_cooked_value`
+        elif isinstance (s, pyk.int_types) :
+            scope = self._get_scope (obj)
+            return scope.MOM.MD_Change.query (Q.cid == s).first ()
+        elif s :
+            raise ValueError (s)
+    # end def from_string
+
+# end class _A_MD_Change_
 
 class _A_Rev_Ref_ (A_Attr_Type) :
 
     ### need to recompute each time value is accessed ### ???
-    kind                = MOM.Attr._Query_
+    kind                = MOM.Attr._Rev_Query_
     Kind_Mixins         = (MOM.Attr.Computed, )
 
     ### set by meta machinery
@@ -1266,6 +1489,8 @@ class _A_Rev_Ref_ (A_Attr_Type) :
     E_Type              = TFL.Meta.Alias_Property ("P_Type")
     Ref_Type            = None
     ref_name            = None
+    sort_key            = None
+    sqx_filter          = None
 
     electric            = True
     hidden              = True
@@ -1274,7 +1499,7 @@ class _A_Rev_Ref_ (A_Attr_Type) :
         for k in ("P_Type", "Ref_Type") :
             T = getattr (self, k, None)
             if T :
-                tn = T if isinstance (T, basestring) else T.type_name
+                tn = T if isinstance (T, pyk.string_types) else T.type_name
                 setattr (self, k, e_type.app_type.etypes [tn])
         self.__super.__init__ (kind, e_type)
     # end def __init__
@@ -1287,6 +1512,13 @@ class _A_Rev_Ref_ (A_Attr_Type) :
     def finished_query_all (self, q) :
         return q.all ()
     # end def finished_query_all
+
+    def finished_query_first (self, q) :
+        try :
+            return q.first ()
+        except IndexError :
+            pass
+    # end def finished_query_first
 
     def finished_query_one (self, q) :
         try :
@@ -1301,9 +1533,19 @@ class _A_Rev_Ref_ (A_Attr_Type) :
     # end def query
 
     def query_x (self, obj, sort_key = None) :
-        ETM = obj.home_scope [self.Ref_Type]
-        return ETM.query (self.ref_filter == obj, sort_key = sort_key)
+        sq = self.sqx (obj, sort_key)
+        return sq.apply (obj.home_scope)
     # end def query_x
+
+    def sqx (self, obj, sort_key = None) :
+        if sort_key is None :
+            sort_key = self.sort_key
+        result = SQ [self.Ref_Type].filter \
+            (self.ref_filter == obj, sort_key = sort_key)
+        if self.sqx_filter is not None :
+            result = result.filter (self.sqx_filter)
+        return result
+    # end def sqx
 
 # end class _A_Rev_Ref_
 
@@ -1314,7 +1556,8 @@ class _A_String_Base_ (A_Attr_Type) :
     example           = "foo"
     max_length        = 0
     Q_Ckd_Type        = MOM.Attr.Querier.String
-    ui_length         = TFL.Meta.Once_Property (lambda s : s.max_length or 120)
+    ui_length         = TFL.Meta.Class_and_Instance_Once_Property \
+        (lambda s : s.max_length or 120)
 
     @TFL.Meta.Once_Property
     def AQ (self) :
@@ -1398,13 +1641,13 @@ class _A_Filename_ (_A_String_Base_) :
 class _A_String_ (Atomic_Json_Mixin, _A_String_Base_) :
     """Base class for string-valued attributes of an object."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_String
+    __metaclass__     = MOM.Meta.M_Attr_Type.String
 
     ignore_case       = False
     needs_raw_value   = False
     P_Type            = unicode
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
         return self.__super.db_sig + (self.ignore_case, )
     # end def db_sig
@@ -1436,7 +1679,7 @@ class _A_Named_Object_ (_A_Named_Value_) :
        directly put into a database).
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Object
+    __metaclass__     = MOM.Meta.M_Attr_Type.Named_Object
 
     class Pickler (TFL.Meta.Object) :
 
@@ -1460,7 +1703,7 @@ class _A_Named_Object_ (_A_Named_Value_) :
 
     # end class Pickler
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def Choices (self) :
         return sorted \
             ( ((k, str (v)) for k, v in self.Table.iteritems ())
@@ -1475,7 +1718,7 @@ class _A_Typed_Collection_ (_A_Collection_) :
        values.
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Typed_Collection
+    __metaclass__     = MOM.Meta.M_Attr_Type.Typed_Collection
     Kind_Mixins       = (MOM.Attr._Typed_Collection_Mixin_, )
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1491,7 +1734,7 @@ class _A_Typed_Collection_ (_A_Collection_) :
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         result = None
         t      = s or []
-        if isinstance (t, basestring) :
+        if isinstance (t, pyk.string_types) :
             result = self._from_string (s, obj, glob, locl)
         elif t :
             C_fs   = self.C_Type.from_string
@@ -1499,7 +1742,7 @@ class _A_Typed_Collection_ (_A_Collection_) :
         return result
     # end def from_string
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def ui_length (self) :
         return (self.C_Type.ui_length + 2) * 5
     # end def ui_length
@@ -1586,7 +1829,7 @@ class _A_Unit_ (A_Attr_Type) :
        units.
     """
 
-    __metaclass__  = MOM.Meta.M_Attr_Type_Unit
+    __metaclass__  = MOM.Meta.M_Attr_Type.Unit
     _default_unit  = None ### set by meta class
     _unit_dict     = {}
     _unit_pattern  = Regexp \
@@ -1615,7 +1858,7 @@ class _A_Unit_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         val = soc.from_string (value) \
-            if isinstance (value, basestring) else value
+            if isinstance (value, pyk.string_types) else value
         return super (_A_Unit_, soc).cooked (val)
     # end def cooked
 
@@ -1691,6 +1934,13 @@ class A_Angle (_A_Float_) :
 
 # end class A_Angle
 
+class A_Binary_String_P (_A_Binary_String_) :
+    """Binary attribute that is written to the database as a pickle."""
+
+    typ                 = _ ("Binary_Pickled")
+
+# end class A_Binary_String_P
+
 class A_Blob (A_Attr_Type) :
     """Generic type for binary attributes that aren't set by the user."""
 
@@ -1724,7 +1974,7 @@ class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             try :
                 return soc.Table_X [value.lower ()]
             except KeyError :
@@ -1774,7 +2024,7 @@ class A_Cached_Role_Set (_A_Id_Entity_Set_) :
         for k in ("P_Type", ) :
             T = getattr (self, k, None)
             if T :
-                tn = T if isinstance (T, basestring) else T.type_name
+                tn = T if isinstance (T, pyk.string_types) else T.type_name
                 setattr (self, k, e_type.app_type.etypes [tn])
         self.__super.__init__ (kind, e_type)
     # end def __init__
@@ -1813,7 +2063,7 @@ class A_Date (_A_Date_) :
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
             value = value.date ()
-        elif isinstance (value, basestring) :
+        elif isinstance (value, pyk.string_types) :
             try :
                 value = soc._from_string (value)
             except ValueError :
@@ -1846,6 +2096,7 @@ class A_Date_Slug (_A_String_) :
     example        = "20101010_000042_137"
     typ            = _ ("Date-Slug")
     ui_length      = 22
+    max_length     = 32
 
     def computed_default (self) :
         now    = datetime.datetime.utcnow ()
@@ -1866,7 +2117,7 @@ class A_Date_Time (_A_Date_) :
     example        = "2010/10/10 06:42"
     typ            = _ ("Date-Time")
     P_Type         = datetime.datetime
-    ui_length      = 18
+    ui_length      = 22
     input_formats  = tuple \
         ( itertools.chain
             ( * (  (f + " %H:%M:%S", f + " %H:%M", f)
@@ -1902,7 +2153,7 @@ class A_Date_Time (_A_Date_) :
         if not isinstance (value, datetime.datetime) :
             if isinstance (value, datetime.date) :
                 value = datetime.datetime (value.year, value.month, value.day)
-            elif isinstance (value, basestring) :
+            elif isinstance (value, pyk.string_types) :
                 try :
                     value = soc._from_string (value)
                 except ValueError :
@@ -1938,12 +2189,9 @@ class A_Date_Time_List (_A_Typed_List_) :
 class A_Decimal (_A_Decimal_) :
     """Decimal number."""
 
-    __metaclass__  = MOM.Meta.M_Attr_Type_Decimal
+    __metaclass__  = MOM.Meta.M_Attr_Type.Decimal
 
-    decimal_places = 2
-    max_digits     = 12
     rounding       = decimal.ROUND_HALF_UP
-    ui_length      = TFL.Meta.Once_Property (lambda s : s.max_digits + 2)
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -1955,7 +2203,7 @@ class A_Decimal (_A_Decimal_) :
         return value.quantize (soc.D_Quant)
     # end def cooked
 
-    @TFL.Meta.Once_Property
+    @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
         return self.__super.db_sig + (self.decimal_places, self.max_digits)
     # end def db_sig
@@ -2003,7 +2251,7 @@ class A_Enum (A_Attr_Type) :
        description.
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_Enum
+    __metaclass__     = MOM.Meta.M_Attr_Type.Enum
 
     C_Type            = None ### Attribute type applicable to cooked values
     needs_raw_value   = False
@@ -2175,6 +2423,7 @@ class A_Link_Ref (_A_Link_Ref_, _A_Id_Entity_) :
     """Reverse reference to link referring to an `entity`"""
 
     typ                 = _ ("Link_Ref")
+    q_able              = True
 
     finished_query      = _A_Link_Ref_.finished_query_one
 
@@ -2192,7 +2441,7 @@ class A_Link_Ref_List (_A_Link_Ref_, _A_Id_Entity_List_) :
 class A_Link_Role (_A_Id_Entity_) :
     """Link-role."""
 
-    __metaclass__       = MOM.Meta.M_Attr_Type_Link_Role
+    __metaclass__       = MOM.Meta.M_Attr_Type.Link_Role
 
     auto_rev_ref        = False
     auto_rev_ref_np     = False
@@ -2216,6 +2465,22 @@ class A_Link_Role (_A_Id_Entity_) :
     _t_rank                   = -100
 
     @TFL.Meta.Once_Property
+    def q_able_names (self) :
+        base_role_names = \
+            (getattr (b, "role_name", None) for b in self.__class__.__bases__)
+        return tuple \
+            (uniq
+                (   name for name in itertools.chain
+                    ( self.__super.q_able_names
+                    , (self.role_name, self.generic_role_name)
+                    , base_role_names
+                    )
+                if  name
+                )
+            )
+    # end def q_able_names
+
+    @TFL.Meta.Class_and_Instance_Once_Property
     def ui_name (self) :
         role_name = self.role_name
         if role_name :
@@ -2263,7 +2528,7 @@ class A_Numeric_String (_A_String_Base_) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             value = value.replace (" ", "").lstrip ("+-")
         if value :
             value = soc.as_number (value)
@@ -2280,6 +2545,15 @@ class A_Id_Entity (_A_Id_Entity_) :
 
 # end class A_Id_Entity
 
+class A_Rev_Ref (_A_Rev_Ref_) :
+    """Reverse reference to a single entity referring to an `entity`."""
+
+    typ                 = _ ("Rev_Ref")
+
+    finished_query      = _A_Rev_Ref_.finished_query_one
+
+# end class A_Rev_Ref
+
 class A_Rev_Ref_Set (_A_Rev_Ref_, _A_Id_Entity_Set_) :
     """Reverse reference to set of entities referring to an `entity`."""
 
@@ -2294,10 +2568,9 @@ class _A_Role_Ref_ (_A_Rev_Ref_) :
     role_filter         = TFL.Meta.Alias_Property ("ref_filter")
     role_name           = TFL.Meta.Alias_Property ("ref_name")
 
-    def query_x (self, obj, sort_key = None) :
-        return self.__super.query_x \
-            (obj, sort_key = sort_key).attr (self.other_role_name)
-    # end def query_x
+    def sqx (self, obj, sort_key = None) :
+        return self.__super.sqx (obj, sort_key).attr (self.other_role_name)
+    # end def sqx
 
 # end class _A_Role_Ref_
 
@@ -2305,6 +2578,7 @@ class A_Role_Ref (_A_Role_Ref_, _A_Id_Entity_) :
     """Reverse reference to role linked to an `entity`"""
 
     typ                 = _ ("Role_Ref")
+    q_able              = True
 
     def finished_query (self, q) :
         result = self.finished_query_one (q)
@@ -2316,7 +2590,7 @@ class A_Role_Ref (_A_Role_Ref_, _A_Id_Entity_) :
 
 # end class A_Role_Ref
 
-class A_Role_Ref_Set (_A_Role_Ref_, _A_Id_Entity_Set_) :
+class A_Role_Ref_Set (_A_Role_Ref_, A_Rev_Ref_Set) :
     """Reverse reference to set of roles linked to an `entity`."""
 
     typ                 = _ ("Role_Ref_Set")
@@ -2339,12 +2613,30 @@ class A_String (_A_String_) :
 
 # end class A_String
 
+class A_Surrogate (_A_Int_) :
+    """A surrogate key. There can be only one per class."""
+
+    __metaclass__  = MOM.Meta.M_Attr_Type.Surrogate
+
+    typ            = _ ("Surrogate")
+    kind           = MOM.Attr.Internal
+    Kind_Mixins    = (MOM.Attr.Just_Once_Mixin, )
+    default        = None
+    min_value      = 0
+    if "you need **really** many entities" == "true" :
+        max_value  = _A_Int_.max_value_64
+    record_changes = False
+
+    surrogate_id   = None
+
+# end class A_Surrogate
+
 class A_Text (_A_String_) :
     """Arbitrary-length text.
     """
 
     typ            = _ ("Text")
-    max_length     = None
+    max_length     = 0
 
 # end class A_Text
 
@@ -2369,7 +2661,7 @@ class A_Time (_A_Date_) :
     def cooked (soc, value) :
         if isinstance (value, datetime.datetime) :
             value = value.time ()
-        elif isinstance (value, basestring) :
+        elif isinstance (value, pyk.string_types) :
             try :
                 value = soc._from_string (value)
             except ValueError :
@@ -2549,10 +2841,19 @@ Class `MOM.Attr.A_Attr_Type`
 
 """
 
-__all__ = tuple \
+__all__  = tuple \
     (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type)
-    ) + ("decimal", "Eval_Mixin", "Q", "Syntax_Re_Mixin")
+    if is_attr_type (v)
+    )
+
+__all__ += \
+    ( "decimal"
+    , "is_attr_type"
+    , "Eval_Mixin"
+    , "Q"
+    , "Pickled_Type_Spec"
+    , "Syntax_Re_Mixin"
+    )
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

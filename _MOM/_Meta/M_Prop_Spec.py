@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,9 @@
 #    23-Mar-2010 (CT) Remove names in `renameds` from `_names`
 #     9-Apr-2010 (CT) `m_setup_names` changed to ignore attributes set to `None`
 #    12-Sep-2012 (CT) Add support for `dyn_doc_p`
+#    12-Jun-2013 (CT) Use `is_partial_p`
+#    12-Jun-2013 (CT) Add argument `app_type` to `m_setup_names`
+#    12-Jun-2013 (CT) Set `DET`, `DET_Base`, and `DET_Root` in `m_setup_names`
 #    ««revision-date»»···
 #--
 
@@ -44,7 +47,7 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
     """Root meta class for for attribute-spec and predicate-spec metaclasses.
     """
 
-    def m_setup_names (cls) :
+    def m_setup_names (cls, e_type, app_type = None) :
         dct        = cls.__dict__
         _names     = {}
         _own_names = {}
@@ -54,12 +57,20 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
             _names.update (getattr (b, "_names", {}))
         _own_names.update \
             (  (n, v)
-            for n, v in _names.iteritems () if v.dyn_doc_p
+            for n, v in _names.iteritems () if v and v.dyn_doc_p
             )
         for n, v in dct.iteritems () :
-            if n.startswith ("_") and n.endswith ("_") :
+            if getattr (v, "is_partial_p", True) :
                 continue
-            if v is None or isinstance (v, MOM.Meta.M_Prop_Type) :
+            if v is None :
+                _names [n] = _own_names [n] = None
+            elif isinstance (v, MOM.Meta.M_Prop_Type) :
+                if app_type :
+                    if v.DET_Root is None :
+                        v.DET_Root = e_type.type_name
+                    else :
+                        v.DET_Base = v.DET
+                    v.DET = e_type.type_name
                 _names [n] = _own_names [n] = v
                 if v is not None :
                     for bn in v.renameds :

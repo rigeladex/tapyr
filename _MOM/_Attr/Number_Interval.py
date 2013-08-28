@@ -32,7 +32,9 @@
 #    20-Aug-2012 (RS) Fix typo, now `A_Frequency`
 #    25-Feb-2013 (CT) Add `query_preconditions` to `center`, `length`
 #                     remove `auto_up_depends` from `center`, `length`
+#     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
+#     7-Aug-2013 (CT) Set `_Interval_.is_partial` to `True`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +52,7 @@ _Ancestor_Essence = MOM.An_Entity
 class _Interval_ (_Ancestor_Essence) :
     """Model an interval (lower, upper)."""
 
+    is_partial     = True
     ui_display_sep = " - "
 
     class _Attributes (_Ancestor_Essence._Attributes) :
@@ -175,7 +178,7 @@ Frequency_Interval, A_Frequency_Interval = make (A_Frequency)
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
-    if isinstance (v, MOM.Meta.M_Attr_Type) and not v.__name__ == "_Interval_"
+    if is_attr_type (v) and not v.__name__ == "_Interval_"
     )
 
 if __name__ != "__main__" :

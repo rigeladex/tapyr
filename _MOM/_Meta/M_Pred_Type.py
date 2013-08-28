@@ -32,6 +32,8 @@
 #    12-Aug-2012 (CT) Use `_Export_Module`, DRY class names
 #    11-Sep-2012 (CT) Change `Unique` to use `attr_none`, not `attributes`
 #    29-Jan-2013 (CT) Force `Unique.kind` to `Uniqueness`, not `Region`
+#    12-Jun-2013 (CT) Add `is_partial_p`
+#    31-Jul-2013 (CT) Change `Unique.__init__` to set `error` to `None`
 #    ««revision-date»»···
 #--
 
@@ -58,12 +60,15 @@ class _Condition_ (MOM.Meta.M_Prop_Type) :
         , "parameters"
         )
 
-    def __new__ (meta, name, bases, dict) :
+    def __new__ (meta, name, bases, dct) :
         for a in meta._force_tuple :
-            if a in dict and isinstance (dict [a], (str, unicode)) :
-                dict [a] = (dict [a], )
-        return super (_Condition_, meta).__new__ \
-            (meta, name, bases, dict)
+            if a in dct and isinstance (dct [a], (str, unicode)) :
+                dct [a] = (dct [a], )
+        dct.setdefault \
+            ( "is_partial_p"
+            , name.startswith ("_") and name.endswith ("_")
+            )
+        return super (_Condition_, meta).__new__ (meta, name, bases, dct)
     # end def __new__
 
 # end class _Condition_
@@ -75,8 +80,8 @@ class Condition (_Condition_) :
        `guard` into `guard_code`.
     """
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         ### We must compile here even if `cls.assert_code` already exists.
         ### Otherwise overriding `assertion` would not work.
         ass = cls.assertion
@@ -131,8 +136,8 @@ class Quantifier (_Condition_) :
     ### visible inside the `lambda' evaluating the quantifier's `assertion'
     quantifier_fmt = "map (lambda %s, this=this : %s, seq)"
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         if cls.bvar and cls.assertion :
             quantifier = cls.quantifier_fmt % (cls.bvar, cls.assertion)
             setattr \
@@ -179,8 +184,8 @@ class Quantifier (_Condition_) :
 class N_Quantifier (Quantifier) :
     """Meta class for :class:`~_MOM._Pred.Type.N_Quant`"""
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         if cls.lower_limit is not None and cls.upper_limit is None :
             setattr (cls, "upper_limit", cls.lower_limit)
     # end def __init__
@@ -217,6 +222,7 @@ class Unique (_Condition_) :
         if cls.attr_none :
             from _MOM._Attr.Filter import Q
             setattr (cls, "aqs", tuple (getattr (Q, a) for a in cls.attr_none))
+        cls.error = None
     # end def __init__
 
     def __str__  (cls) :

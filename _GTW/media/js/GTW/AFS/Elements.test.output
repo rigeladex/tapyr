@@ -2,9 +2,9 @@ FB : Form ''
   FB-0 : Entity 'Boat', root = `Entity 'Boat'`
     FB-0:0 : Fieldset 'primary'
       FB-0:0:0 : Field_Entity 'Class', anchor = `Entity 'Boat'`
-      FB-0:0:1 : Field 'Nation', anchor = `Entity 'Boat'`
-      FB-0:0:2 : Field 'Sail number', anchor = `Entity 'Boat'`, completer = sail_number,left,nation,sail_number_x
-      FB-0:0:3 : Field 'Sail number x', anchor = `Entity 'Boat'`, completer = sail_number_x,left,nation,sail_number
+      FB-0:0:1 : Field 'Sail number', anchor = `Entity 'Boat'`, completer = sail_number,left,nation,sail_number_x
+      FB-0:0:2 : Field 'Nation', anchor = `Entity 'Boat'`
+      FB-0:0:3 : Field 'Sail number x', anchor = `Entity 'Boat'`, completer = sail_number_x,left,sail_number,nation
     FB-0:1 : Fieldset 'optional'
       FB-0:1:0 : Field 'Name', anchor = `Entity 'Boat'`
     FB-0:2 : Entity_List 'Boat_in_Regatta', root = `Entity 'Boat'`, anchor = `Entity 'Boat'`
@@ -48,9 +48,9 @@ FB-0 value :
             pid = 1
         sid = "qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg"
     FB-0:0:1 :
-        init = "AUT"
-    FB-0:0:2 :
         init = "1107"
+    FB-0:0:2 :
+        init = "AUT"
     FB-0:0:3 :
         init = ""
     FB-0:1:0 :
@@ -58,7 +58,7 @@ FB-0 value :
     init :
         cid = 2
         pid = 2
-    sid = "iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ"
+    sid = "ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg"
 FB-0:2::0 value :
     $child_ids :
         0 = "FB-0:2::0-0"
@@ -177,9 +177,9 @@ Form values :
                 pid = 1
             sid = "qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg"
         FB-0:0:1 :
-            init = "AUT"
-        FB-0:0:2 :
             init = "1107"
+        FB-0:0:2 :
+            init = "AUT"
         FB-0:0:3 :
             init = ""
         FB-0:1:0 :
@@ -187,7 +187,7 @@ Form values :
         init :
             cid = 2
             pid = 2
-        sid = "iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ"
+        sid = "ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg"
     FB-0:2::0 :
         $child_ids :
             0 = "FB-0:2::0-0"
@@ -309,8 +309,8 @@ $GTW :
                             field_name_map :
                                 left = "FB-0:0:0"
                                 name = "FB-0:1:0"
-                                nation = "FB-0:0:1"
-                                sail_number = "FB-0:0:2"
+                                nation = "FB-0:0:2"
+                                sail_number = "FB-0:0:1"
                                 sail_number_x = "FB-0:0:3"
                             name = "Boat"
                             root_id = "FB-0"
@@ -342,9 +342,9 @@ $GTW :
                                         pid = 1
                                     sid = "qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg"
                                 FB-0:0:1 :
-                                    init = "AUT"
-                                FB-0:0:2 :
                                     init = "1107"
+                                FB-0:0:2 :
+                                    init = "AUT"
                                 FB-0:0:3 :
                                     init = ""
                                 FB-0:1:0 :
@@ -352,7 +352,7 @@ $GTW :
                                 init :
                                     cid = 2
                                     pid = 2
-                                sid = "iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ"
+                                sid = "ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg"
                         1 :
                             $id = "FB-0:2::0"
                             anchor_id = "FB-0"
@@ -475,8 +475,8 @@ $GTW :
                     field_name_map :
                         left = "FB-0:0:0"
                         name = "FB-0:1:0"
-                        nation = "FB-0:0:1"
-                        sail_number = "FB-0:0:2"
+                        nation = "FB-0:0:2"
+                        sail_number = "FB-0:0:1"
                         sail_number_x = "FB-0:0:3"
                     name = "Boat"
                     root_id = "FB-0"
@@ -508,9 +508,9 @@ $GTW :
                                 pid = 1
                             sid = "qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg"
                         FB-0:0:1 :
-                            init = "AUT"
-                        FB-0:0:2 :
                             init = "1107"
+                        FB-0:0:2 :
+                            init = "AUT"
                         FB-0:0:3 :
                             init = ""
                         FB-0:1:0 :
@@ -518,7 +518,7 @@ $GTW :
                         init :
                             cid = 2
                             pid = 2
-                        sid = "iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ"
+                        sid = "ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg"
                 FB-0:0 :
                     $id = "FB-0:0"
                     children :
@@ -563,17 +563,6 @@ $GTW :
                     $id = "FB-0:0:1"
                     _super = undefined
                     anchor_id = "FB-0"
-                    kind = "primary"
-                    label = "Nation"
-                    name = "nation"
-                    type = "Field"
-                    function update(dict)
-                    value :
-                        init = "AUT"
-                FB-0:0:2 :
-                    $id = "FB-0:0:2"
-                    _super = undefined
-                    anchor_id = "FB-0"
                     completer :
                         embedded_p = false
                         entity_p = true
@@ -586,10 +575,22 @@ $GTW :
                     kind = "primary"
                     label = "Sail number"
                     name = "sail_number"
+                    required = true
                     type = "Field"
                     function update(dict)
                     value :
                         init = "1107"
+                FB-0:0:2 :
+                    $id = "FB-0:0:2"
+                    _super = undefined
+                    anchor_id = "FB-0"
+                    kind = "primary"
+                    label = "Nation"
+                    name = "nation"
+                    type = "Field"
+                    function update(dict)
+                    value :
+                        init = "AUT"
                 FB-0:0:3 :
                     $id = "FB-0:0:3"
                     _super = undefined
@@ -600,8 +601,8 @@ $GTW :
                         names :
                             0 = "sail_number_x"
                             1 = "left"
-                            2 = "nation"
-                            3 = "sail_number"
+                            2 = "sail_number"
+                            3 = "nation"
                         treshold = 1
                     kind = "primary"
                     label = "Sail number x"
@@ -1049,8 +1050,8 @@ $GTW :
                         field_name_map :
                             left = "FB-0:0:0"
                             name = "FB-0:1:0"
-                            nation = "FB-0:0:1"
-                            sail_number = "FB-0:0:2"
+                            nation = "FB-0:0:2"
+                            sail_number = "FB-0:0:1"
                             sail_number_x = "FB-0:0:3"
                         name = "Boat"
                         root_id = "FB-0"
@@ -1082,9 +1083,9 @@ $GTW :
                                     pid = 1
                                 sid = "qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg"
                             FB-0:0:1 :
-                                init = "AUT"
-                            FB-0:0:2 :
                                 init = "1107"
+                            FB-0:0:2 :
+                                init = "AUT"
                             FB-0:0:3 :
                                 init = ""
                             FB-0:1:0 :
@@ -1092,7 +1093,7 @@ $GTW :
                             init :
                                 cid = 2
                                 pid = 2
-                            sid = "iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ"
+                            sid = "ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg"
                     1 :
                         $id = "FB-0:2::0"
                         anchor_id = "FB-0"
@@ -1235,4 +1236,4 @@ $GTW :
 FB-0:2::0 value jsonified :
   {"init":{"cid":7,"pid":7},"sid":"QSvku2fc3JI02:LH5rBsLqrXDzWvSbNZ-hXkBQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"73AhMKVvgduSBcdc9J-WeU1hPS8BJa7jWlFOkw","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"s:FQz-HZIl9NAA:-YHx4IFRn3WMzvWHFWK:b5Q","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OMXS5mItieYGgFiLVGNgcS:zMWmtL8cV6qw9CA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Fy2PPgkt0OF-ExUfoga3fcrKvv3qjOABiCN9rQ","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"vPwcc9Gqe25rUmpJ7cBwLBH9yc6iGCbRVfNrEg","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}
 Form values jsonified :
-  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg","$id":"FB-0:0:0","$child_ids":[],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true},"FB-0:0:1":{"init":"AUT"},"FB-0:0:2":{"init":"1107"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"QSvku2fc3JI02:LH5rBsLqrXDzWvSbNZ-hXkBQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"73AhMKVvgduSBcdc9J-WeU1hPS8BJa7jWlFOkw","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"s:FQz-HZIl9NAA:-YHx4IFRn3WMzvWHFWK:b5Q","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OMXS5mItieYGgFiLVGNgcS:zMWmtL8cV6qw9CA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Fy2PPgkt0OF-ExUfoga3fcrKvv3qjOABiCN9rQ","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"vPwcc9Gqe25rUmpJ7cBwLBH9yc6iGCbRVfNrEg","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}
+  {"$id":"FB","sid":0,"$child_ids":["FB-0","FB-0:2::0"],"FB-0":{"init":{"cid":2,"pid":2},"sid":"ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg","$id":"FB-0","$child_ids":["FB-0:0:0","FB-0:0:1","FB-0:0:2","FB-0:0:3","FB-0:1:0"],"edit":{"cid":2,"pid":2},"FB-0:0:0":{"init":{"cid":1,"pid":1},"sid":"qhCKKsimOo:3Hla747-HuSlL5hzwvBqKojyvIg","$id":"FB-0:0:0","$child_ids":[],"edit":{"cid":1,"pid":1},"anchor_id":"FB-0","allow_new":true},"FB-0:0:1":{"init":"1107"},"FB-0:0:2":{"init":"AUT"},"FB-0:0:3":{"init":""},"FB-0:1:0":{"init":""}},"FB-0:2::0":{"init":{"cid":7,"pid":7},"sid":"QSvku2fc3JI02:LH5rBsLqrXDzWvSbNZ-hXkBQ","$id":"FB-0:2::0","$child_ids":["FB-0:2::0-0","FB-0:2::0-1:0","FB-0:2::0-2:0","FB-0:2::0-3:0","FB-0:2::0-3:1"],"edit":{"cid":7,"pid":7},"FB-0:2::0-0":{"init":{"cid":2,"pid":2},"sid":"73AhMKVvgduSBcdc9J-WeU1hPS8BJa7jWlFOkw","role_id":"FB-0","edit":{"cid":2,"pid":2},"allow_new":false},"FB-0:2::0-1:0":{"init":{"cid":6,"pid":6},"sid":"s:FQz-HZIl9NAA:-YHx4IFRn3WMzvWHFWK:b5Q","$id":"FB-0:2::0-1:0","$child_ids":[],"edit":{"cid":6,"pid":6},"anchor_id":"FB-0:2::0","allow_new":false},"FB-0:2::0-2:0":{"init":{"cid":4,"pid":4},"sid":"OMXS5mItieYGgFiLVGNgcS:zMWmtL8cV6qw9CA","$id":"FB-0:2::0-2:0","$child_ids":["FB-0:2::0-2:0:0","FB-0:2::0-2:0:1","FB-0:2::0-2:0:2","FB-0:2::0-2:0:3"],"edit":{"cid":4,"pid":4},"anchor_id":"FB-0:2::0","allow_new":true,"FB-0:2::0-2:0:0":{"init":{"cid":3,"pid":3},"sid":"Fy2PPgkt0OF-ExUfoga3fcrKvv3qjOABiCN9rQ","$id":"FB-0:2::0-2:0:0","$child_ids":[],"edit":{"cid":3,"pid":3},"anchor_id":"FB-0:2::0-2:0","allow_new":false},"FB-0:2::0-2:0:1":{"init":"AUT"},"FB-0:2::0-2:0:2":{"init":"29676"},"FB-0:2::0-2:0:3":{"init":{},"sid":"vPwcc9Gqe25rUmpJ7cBwLBH9yc6iGCbRVfNrEg","$id":"FB-0:2::0-2:0:3","$child_ids":["FB-0:2::0-2:0:3:0"],"edit":{},"anchor_id":"FB-0:2::0-2:0","allow_new":true,"FB-0:2::0-2:0:3:0":{"init":""}}},"FB-0:2::0-3:0":{"init":""},"FB-0:2::0-3:1":{"init":""}}}

@@ -43,11 +43,14 @@ _test_create = """
     Creating new scope ...
     >>> Auth  = scope.Auth
 
+    >>> a1 = Auth.Account (name = "foo@bar", raw = True)
+    >>> a2 = Auth.Account (name = "foo@baz", raw = True)
+
     >>> Auth.Certificate.query_s ().all ()
     []
 
-    >>> c1 = Auth.Certificate (email = "foo@bar", validity = ("20130116", ))
-    >>> c2 = Auth.Certificate (email = "foo@baz", validity = ("20130131", ))
+    >>> c1 = Auth.Certificate (email = "foo@bar", validity = ("20130116", ), raw = True)
+    >>> c2 = Auth.Certificate (email = "foo@baz", validity = ("20130131", ), raw = True)
 
     >>> scope.commit ()
 
@@ -60,7 +63,7 @@ _test_create = """
     Auth.Certificate (u'foo@bar', ('2013/01/16', ), u'', ) 2013-01-16 00:00:00
     Auth.Certificate (u'foo@baz', ('2013/01/31', ), u'', ) 2013-01-31 00:00:00
 
-    >>> c3 = Auth.Certificate (email = "foo@baz", validity = ("20150131", ))
+    >>> c3 = Auth.Certificate (email = "foo@baz", validity = ("20150131", ), raw = True)
 
     >>> scope.commit ()
 
@@ -93,7 +96,7 @@ _test_create = """
     >>> (c1, c1.alive)
     (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
 
-    >>> c4 = Auth.Certificate (email = "foo@foo", validity = ())
+    >>> c4 = Auth.Certificate (email = "foo@foo", validity = (), raw = True)
 
     >>> (c4, c4.alive)
     (Auth.Certificate (u'foo@foo', (), u''), None)
@@ -106,16 +109,37 @@ _test_create = """
     >>> (c4, c4.alive)
     (Auth.Certificate (u'foo@foo', ('2013/02/25', ), u''), True)
 
-    >>> c5 = Auth.Certificate (email = "bar@foo", validity = ("20130225", ))
+    >>> c5 = Auth.Certificate (email = "bar@foo", validity = ("20130225", ), raw = True)
 
     >>> (c5, c5.alive)
     (Auth.Certificate (u'bar@foo', ('2013/02/25', ), u''), False)
 
+    >>> for c in Auth.Certificate.query ().order_by (Q.cert_id) :
+    ...     (int (c.pid), int (c.cert_id or 0) or None)
+    (3, 1)
+    (4, 2)
+    (5, 3)
+    (6, 4)
+    (7, 5)
+
 """
+
+class _Certificate_Scaffold_ (Scaffold.__class__) :
+
+    Backend_Parameters    = dict \
+        ( Scaffold.Backend_Parameters
+        , HPS             = "'hps:///test.hps'"
+        , SQL             = "'sqlite:///test.sql'"
+        , sq              = "'sqlite:///test.sql'"
+        )
+
+# end class _Certificate_Scaffold_
+
+Scaffold = _Certificate_Scaffold_ ()
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( create = _test_create
+        ( test_create  = _test_create
         )
     )
 

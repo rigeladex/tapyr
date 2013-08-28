@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This package is part of the package GTW.OMP.DNS.
@@ -27,14 +27,18 @@
 #
 # Revision Dates
 #    27-Aug-2012 (RS) Creation
+#     7-Aug-2013 (CT) Use `A_IP4_Address`, not `_A_Composite_IP_Address_`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
+from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
+
 from   _GTW._OMP._DNS           import DNS
-from   _GTW._OMP._NET.Attr_Type import _A_Composite_IP_Address_
+
+import _GTW._OMP._NET.Attr_Type
 import _GTW._OMP._DNS.Entity
 import _GTW._OMP._DNS.Zone
 
@@ -61,7 +65,7 @@ class Secondary (_Ancestor_Essence) :
 
         # end class name
 
-        class address (_A_Composite_IP_Address_) :
+        class address (GTW.OMP.NET.A_IP4_Address) :
             """IP Address of secondary server"""
 
             kind               = Attr.Primary

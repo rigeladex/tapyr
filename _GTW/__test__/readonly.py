@@ -37,6 +37,10 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> p = scope.PAP.Person (u"LN", u"FN")
     >>> scope.commit () ### should work
+
+    >>> scope.ems.session.readonly ### 1
+    False
+
     >>> scope.destroy ()
 
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
@@ -47,12 +51,18 @@ _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
 
+    >>> scope.ems.session.readonly ### 2
+    True
+
     The scope is now readonly. So commiting a change should raise an error
     >>> p2 = scope.PAP.Person (u"LN2", u"FN")
-    >>> scope.commit () # create failes
+    >>> scope.commit () # commit after create fails
     Traceback (most recent call last):
        ...
     Readonly_DB: Database is set to readonly.
+
+    >>> scope.ems.session.readonly ### 3
+    True
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p = scope.PAP.Person.query ().one ()
@@ -62,6 +72,9 @@ _test_code = r"""
     Traceback (most recent call last):
        ...
     Readonly_DB: Database is set to readonly.
+
+    >>> scope.ems.session.readonly ### 4
+    True
 
     >>> scope.PAP.Person.query ().all () ### without title
     [PAP.Person (u'ln', u'fn', u'', u'')]
@@ -76,15 +89,21 @@ _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
     Loading scope MOMT__...
     >>> p = scope.PAP.Person.query ().one ()
+
+    >>> scope.ems.session.readonly ### 5
+    False
+
     >>> p.set_raw (title = u"Ing.")
     1
     >>> scope.commit           () # last
     >>> apt.delete_database    (url)
+
 """
 
 from _GTW.__test__.model import *
 
 Scaffold.Backend_Default_Path ["SQL"] = "'test.sqlite'"
+Scaffold.Backend_Default_Path ["sq"]  = "'test.sqlite'"
 Scaffold.Backend_Default_Path ["HPS"] = "'test.hps'"
 
 __test__ = Scaffold.create_test_dict (_test_code)

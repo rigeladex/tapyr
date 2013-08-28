@@ -57,7 +57,8 @@ _Ancestor_Essence = PAP.Link2
 class Subject_has_Property (_Ancestor_Essence) :
     """Link a %(left.role_name)s to a %(right.role_name)s"""
 
-    is_partial = True
+    is_partial  = True
+    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

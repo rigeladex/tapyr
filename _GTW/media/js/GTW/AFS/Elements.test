@@ -95,14 +95,6 @@ var f = new $GTW.AFS.Form (
                             }
                         }
                       , { '$id' : 'FB-0:0:1'
-                        , 'kind' : 'primary'
-                        , 'label' : 'Nation'
-                        , 'name' : 'nation'
-                        , 'type' : 'Field'
-                        , 'value' :
-                            { 'init' : 'AUT' }
-                        }
-                      , { '$id' : 'FB-0:0:2'
                         , 'completer' :
                             { 'entity_p' : True
                             , 'names' :
@@ -116,9 +108,18 @@ var f = new $GTW.AFS.Form (
                         , 'kind' : 'primary'
                         , 'label' : 'Sail number'
                         , 'name' : 'sail_number'
+                        , 'required' : True
                         , 'type' : 'Field'
                         , 'value' :
                             { 'init' : '1107' }
+                        }
+                      , { '$id' : 'FB-0:0:2'
+                        , 'kind' : 'primary'
+                        , 'label' : 'Nation'
+                        , 'name' : 'nation'
+                        , 'type' : 'Field'
+                        , 'value' :
+                            { 'init' : 'AUT' }
                         }
                       , { '$id' : 'FB-0:0:3'
                         , 'completer' :
@@ -126,8 +127,8 @@ var f = new $GTW.AFS.Form (
                             , 'names' :
                                 [ 'sail_number_x'
                                 , 'left'
-                                , 'nation'
                                 , 'sail_number'
+                                , 'nation'
                                 ]
                             , 'treshold' : 1
                             }
@@ -366,7 +367,7 @@ var f = new $GTW.AFS.Form (
                     { 'cid' : 2
                     , 'pid' : 2
                     }
-                , 'sid' : 'iriaN9SLJFHNUMW:4rmK5GuoeFrHTozYyu8IMQ'
+                , 'sid' : 'ZE5i0RV4B6i6wEn0wszdszAuXDu121dutn0uEg'
                 }
             }
           ]

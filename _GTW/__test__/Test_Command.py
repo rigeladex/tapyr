@@ -39,6 +39,7 @@
 #    13-May-2013 (CT) Fix `RAT` handling in `create_rst`
 #    26-May-2013 (CT) Import `pyk`
 #     3-Jun-2013 (CT) Commit and compact `scope` in `do_create`
+#    27-Jun-2013 (CT) Add `SAW`-based backends
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,9 @@ class GTW_Test_Command (_Ancestor) :
         , POS             = "'postgresql://regtest:regtest@localhost/regtest'"
         , MYS             = "'mysql://:@localhost/test'"
         , MYST            = "'mysql://:@localhost/test?unix_socket=/var/run/mysqld/mysqld-ram.sock'"
+        , my              = "'mysql://:@localhost/test'"
+        , pg              = "'postgresql://regtest:regtest@localhost/regtest'"
+        , sq              = "'sqlite://'"
         )
     Backend_Default_Path  = dict \
         ( (k, None) for k in Backend_Parameters)

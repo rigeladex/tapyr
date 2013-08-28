@@ -68,6 +68,9 @@
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #     6-Aug-2013 (CT) Add exception handler to `_handle_auth_mig`,
 #                     `_handle_load_auth_mig`
+#    23-Aug-2013 (CT) Add option `-Engine_Echo`
+#    25-Aug-2013 (CT) Add and use `_cleaned_url` to avoid leaking DB passwords
+#    25-Aug-2013 (CT) Change `_print_info` to elide commits, if too many
 #    ««revision-date»»···
 #--
 
@@ -80,6 +83,7 @@ import _MOM._EMS.Backends
 
 from   _TFL                   import sos
 from   _TFL.pyk               import pyk
+from   _TFL.Regexp            import Re_Replacer, re
 
 import _TFL.CAO
 import _TFL.Command
@@ -90,6 +94,8 @@ import _TFL._Meta.Once_Property
 
 import contextlib
 import stat
+
+_cleaned_url = Re_Replacer (r"(://\w+:)(\w+)@", r"\1<elided>@")
 
 class SA_WE_Opt (TFL.CAO.Bool) :
     """Turn SA warnings into errors"""
@@ -161,6 +167,9 @@ class MOM_Command (TFL.Command.Root_Command) :
             )
         , "-db_url:S=hps://"
             "?Database url (form: `dialect://user:password@host:port/db_name`)"
+        , "-Engine_Echo:B"
+             "?Set the echo flag of the database engine, if appropriate for "
+             "the backend"
         , TFL.CAO.Abs_Path
             ( name        = "mig_auth_file"
             , description = "Default name of auth migration file"
@@ -285,8 +294,16 @@ class MOM_Command (TFL.Command.Root_Command) :
               , default_path = None
               , create       = True
               , verbose      = False
+              , engine_echo  = False
               ) :
         apt, url = self.app_type_and_url (db_url, default_path)
+        if engine_echo :
+            try :
+                EP = apt.DBW.PNS.DBS.Engine_Parameter
+            except AttributeError :
+                pass
+            else :
+                EP ["echo"] = True
         create = create or url.create
         if create :
             if verbose :
@@ -294,7 +311,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             scope = self._create_scope (apt, url, verbose)
         else :
             if verbose :
-                print ("Loading scope", apt, url)
+                print ("Loading scope", apt, _cleaned_url (str (url)))
             scope = self._load_scope (apt, url)
         return scope
     # end def scope
@@ -345,7 +362,11 @@ class MOM_Command (TFL.Command.Root_Command) :
 
     def _handle_create (self, cmd) :
         scope = self.scope \
-            (cmd.db_url, cmd.db_name, create = True, verbose = cmd.verbose)
+            ( cmd.db_url, cmd.db_name
+            , create      = True
+            , verbose     = cmd.verbose
+            , engine_echo = cmd.Engine_Echo
+            )
         if cmd.Auth_Migrate :
             self._read_auth_mig (cmd, scope)
         scope.commit      ()
@@ -368,7 +389,11 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _handle_info
 
     def _handle_load (self, cmd, url = None) :
-        return self.scope (url or cmd.db_url, cmd.db_name, create = False)
+        return self.scope \
+            ( url or cmd.db_url, cmd.db_name
+            , create      = False
+            , engine_echo = cmd.Engine_Echo
+            )
     # end def _handle_load
 
     def _handle_load_auth_mig (self, cmd, url = None, mig_auth_file = None) :
@@ -387,8 +412,8 @@ class MOM_Command (TFL.Command.Root_Command) :
             self._handle_auth_mig (cmd)
         if cmd.verbose :
             print \
-                ( "Migrating scope", cmd.db_url, cmd.db_name
-                , "-->", cmd.target_db_url
+                ( "Migrating scope", _cleaned_url (cmd.db_url), cmd.db_name
+                , "-->", _cleaned_url (cmd.target_db_url)
                 )
         apt_s, url_s = self.app_type_and_url (cmd.db_url,        cmd.db_name)
         apt_t, url_t = self.app_type_and_url (cmd.target_db_url, cmd.db_name)
@@ -425,9 +450,14 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def _load_scope
 
     def _print_info (self, apt, url, dbmd, indent = "") :
-        print ("%sInfo for database" % (indent, ), apt, url)
+        print ("%sInfo for database" % (indent, ), apt, _cleaned_url (str (url)))
         for k in sorted (dbmd) :
-            print ("%s%-12s : %s" % (indent, k, dbmd [k]))
+            v = dbmd [k]
+            if k == "commits" and isinstance (v, list) :
+                lv = len (v)
+                if lv > 5 :
+                    v = [v [0], "... %s commits..." % (lv, ), v [-1]]
+            print ("%s%-12s : %s" % (indent, k, v))
         print ("%s%-12s : %s" % (indent, "dbv_hash/apt", apt.db_version_hash))
         print ()
     # end def _print_info

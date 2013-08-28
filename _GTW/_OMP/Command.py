@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.
@@ -55,6 +55,8 @@
 #    30-Jul-2012 (CT) Remove import of `HTTP.Application`
 #    30-Jul-2012 (CT) Remove option `-port`
 #    14-Aug-2012 (MG) Add option `media_domain`
+#    23-Aug-2013 (CT) Replace `shell` otpion `echo`
+#                     * use new generic option `-Engine_Echo` instead
 #    ««revision-date»»···
 #--
 
@@ -201,7 +203,7 @@ class GTW_Command (MOM.Command) :
 
         _opts                   = \
             ( "wsgi:B?Create the wsgi application before entering the shell"
-            , "echo:B?Set the echo flag of the SQLAlchemy engine"
+            ,
             )
 
     _Shell_ = _GTW_Shell_ # end class
@@ -239,9 +241,6 @@ class GTW_Command (MOM.Command) :
     # end def _handle_setup_cache
 
     def _handle_shell (self, cmd) :
-        if cmd.echo :
-            from _MOM._DBW._SAS.DBS import Postgresql
-            Postgresql.Engine_Parameter ["echo"] = True
         from _MOM.import_MOM import Q
         scope = self._handle_load (cmd)
         if cmd.wsgi :

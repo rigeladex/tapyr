@@ -42,6 +42,8 @@
 #    26-Jun-2012 (CT) Add `PNS_Aliases_R`
 #     9-Apr-2013 (CT) Add `DBW.db_sig` to `db_sig`
 #    10-May-2013 (CT) Add `all_attribute_types`
+#     5-Jun-2013 (CT) Add `surrogate_map`
+#     7-Jun-2013 (CT) Add `surrogate_t_map`
 #    13-Jun-2013 (CT) Move `PNS_Aliases`, `PNS_Aliases_R` to `MOM.Entity`
 #    13-Jun-2013 (CT) Add `PNS_Set`
 #    23-Aug-2013 (CT) Add guard for `fqn != qn` to `add_type`
@@ -198,6 +200,8 @@ class _App_Type_D_ (_App_Type_) :
         self.kill_callback    = TFL.Ordered_Set ()
         self.PNS_Map          = parent.PNS_Map
         self.PNS_Set          = parent.PNS_Set
+        self.surrogate_map    = {}
+        self.surrogate_t_map  = {}
         self.finalized        = False
         MOM.Entity.m_setup_etypes (self)
         self.finalized        = True
