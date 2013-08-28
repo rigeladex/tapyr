@@ -100,6 +100,7 @@
 #     1-Aug-2013 (CT) Don't reset `max_pid` in `rollback`
 #    21-Aug-2013 (CT) Redefine `query` to kludgely support `MD_Change`
 #    25-Aug-2013 (CT) Change `_add` to check `hpk in table` (optimization)
+#    28-Aug-2013 (CT) Change `instance` to use `relevant_roots`, not `query`
 #    ««revision-date»»···
 #--
 
@@ -190,14 +191,26 @@ class Manager (MOM.EMS._Manager_) :
     # end def exists
 
     def instance (self, Type, epk) :
-        root = Type.relevant_root
-        hpk  = Type.epk_to_hpk (* epk)
+        root   = Type.relevant_root
+        tables = self._tables
         if root :
-            result = self._tables [root.type_name].get (hpk)
+            hpk    = Type.epk_to_hpk (* epk)
+            result = tables [root.type_name].get (hpk)
             if not isinstance (result, Type.Essence) :
                 result = None
         else :
-            return self.__super.instance (Type, epk)
+            roots   = Type.relevant_roots
+            results = \
+                [   e
+                for e in (   tables [n].get (R.epk_to_hpk (* epk))
+                         for (n, R) in roots.iteritems ()
+                         )
+                if  isinstance (e, Type.Essence)
+                ]
+            if len (results) > 1 :
+                raise LookupError ("Multiple matches for %s" % (epk, ))
+            else :
+                result = results [0] if results else None
         return result
     # end def instance
 
