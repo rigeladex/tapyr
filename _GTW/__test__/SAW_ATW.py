@@ -43,6 +43,8 @@
 #    20-Aug-2013 (CT) Exclude `test_q_result` for old sqlalchemy versions
 #    25-Aug-2013 (CT) Add `test_q_result_x`
 #    26-Aug-2013 (CT) Add `test_key_o_p`; call of `show_sequence`
+#    29-Aug-2013 (CT) Add test case for
+#                     `Q.person.lifetime == ("2013/07/15", "2013/07/21")`
 #    ««revision-date»»···
 #--
 
@@ -5537,6 +5539,29 @@ _test_q_result = """
            JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
            JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
          WHERE pap_person_1.lifetime__start = :lifetime__start_1
+
+    >>> print (qrt.filter (Q.person.lifetime == ("2013/07/15", "2013/07/21"))) ### Auth.Account
+    SQL: SELECT
+           auth__account_.enabled AS auth__account__enabled,
+           auth__account_.name AS auth__account__name,
+           auth__account_.pid AS auth__account__pid,
+           auth__account_.superuser AS auth__account__superuser,
+           auth__account_.suspended AS auth__account__suspended,
+           auth_account.password AS auth_account_password,
+           auth_account.ph_name AS auth_account_ph_name,
+           auth_account.pid AS auth_account_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
+           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
+           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
+         WHERE pap_person_1.lifetime__start = :lifetime__start_1
+            AND pap_person_1.lifetime__finish = :lifetime__finish_1
 
     >>> str (qrt.filter (Q.RAW.person.lifetime == ("2013/07/15", ))) == str (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### Auth.Account
     True
