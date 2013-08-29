@@ -100,6 +100,8 @@
 #    31-May-2013 (CT) Add guard against unknown HTTP method to `allow_method`
 #    14-Jun-2013 (CT) Add guard against unsupported `method` to `allow_method`
 #    23-Aug-2013 (CT) Add `or False` to property `auth_required`
+#    29-Aug-2013 (CT) Don't pass `exc` to `Internal_Server_Error` in
+#                     `_http_response_error` (shows up in webbrowser otherwise)
 #    ««revision-date»»···
 #--
 
@@ -1545,7 +1547,7 @@ class RST_Root (_Ancestor) :
 
     def _http_response_error (self, request, response, exc, tbi = None) :
         self.send_error_email (request, exc, tbi)
-        return self.Status.Internal_Server_Error (exc) (self, request, response)
+        return self.Status.Internal_Server_Error () (self, request, response)
     # end def _http_response_error
 
     def _http_response_need_auth (self, resource, request, response, auth) :
