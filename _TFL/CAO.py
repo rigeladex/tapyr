@@ -109,6 +109,8 @@
 #    23-May-2013 (CT) Improve Python-3 compatibility
 #    16-Jun-2013 (CT) Support `args` and `kw` in `Cmd.__call__`, `CAO.__call__`
 #    16-Jun-2013 (CT) Add `CAO.HELP`
+#    29-Aug-2013 (CT) Add `Rel_Path.__init__` to allow `base_dirs` without "_",
+#                     add call of `.expanded_path` to `Rel_Path.base_dirs`
 #    ««revision-date»»···
 #--
 
@@ -1006,6 +1008,11 @@ class Rel_Path (Path) :
     _base_dir     = None
     _base_dirs    = ()
 
+    def __init__ (self, * args, ** kw) :
+        self.pop_to_self (kw, "base_dir", "base_dirs", prefix = "_")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
     @TFL.Meta.Once_Property
     def base_dirs (self) :
         def _gen (bds) :
@@ -1013,7 +1020,8 @@ class Rel_Path (Path) :
                 if TFL.callable (bd) :
                     bd = bd ()
                 if bd is not None :
-                    yield bd
+                    xbd = sos.expanded_path (bd)
+                    yield xbd
         return tuple (_gen (self._base_dirs or (self._base_dir, )))
     # end def base_dirs
 
