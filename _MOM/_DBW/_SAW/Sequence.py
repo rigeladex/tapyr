@@ -38,6 +38,7 @@
 #    31-Jul-2013 (CT) Change `reserve` to act only on `value > max_value`
 #     1-Aug-2013 (CT) Update `session.seq_high`
 #    26-Aug-2013 (CT) Split into `Sequence`, `Sequence_PID`, `Sequence_X`
+#    29-Aug-2013 (CT) Add optional argument `force` to `reserve`
 #    ««revision-date»»···
 #--
 
@@ -124,11 +125,11 @@ class _Sequence_ (TFL.Meta.Object) :
         return conn.execute (self.select).scalar () or 0
     # end def max_value
 
-    def reserve (self, session, value, commit = True) :
+    def reserve (self, session, value, commit = True, force = False) :
         conn      = self.connection (session)
         max_value = self.max_value  (session)
         ### `undo` of changes comes here with existing values, ignore those
-        if value > max_value :
+        if force or value > max_value :
             self._reserve (conn, value)
             session.seq_high [self] = value
             if commit :

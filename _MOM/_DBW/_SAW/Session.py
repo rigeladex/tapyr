@@ -53,6 +53,7 @@
 #     5-Aug-2013 (CT) Add `rollback_pending_change`, `save_point`
 #    25-Aug-2013 (CT) Increase `change_count` for `commit` and `rollback` to
 #                     invalidate `q_cache`
+#    29-Aug-2013 (CT) Pass `force=True` to `seq.reserve` (`Session_PC.consume`)
 #    ««revision-date»»···
 #--
 
@@ -625,7 +626,7 @@ class Session_PC (_Session_) :
             else :
                 max_value = getattr (db_meta_data, "max_" + attr.name, None)
             if max_value is not None :
-                seq.reserve (self, max_value, commit = False)
+                seq.reserve (self, max_value, commit = False, force = True)
         self.commit ()
     # end def consume
 
