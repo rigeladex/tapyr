@@ -467,7 +467,7 @@ referential integrity. You need to pass ``cid`` as query parameter. If the
 ``cid`` of the instance has changed in the meantime, the ``DELETE`` request will
 fail with a HTTP status code of 409.
 
-.. _q`RESTful web service`: http://en.wikipedia.org/wiki/Representational_State_Transfer
+.. _`RESTful web service`: http://en.wikipedia.org/wiki/Representational_State_Transfer
 .. _`REST`: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 .. _`standard HTTP methods`: http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods
 .. _`JSON`: http://en.wikipedia.org/wiki/JSON
