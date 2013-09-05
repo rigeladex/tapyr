@@ -5339,6 +5339,30 @@ _test_q_result = """
          WHERE mom_id_entity.pid = pap_company_has_email.pid
             OR mom_id_entity.pid = pap_person_has_email.pid
 
+    >>> print (qrt.filter (Q.left.lifetime.start > "2000/01/01")) ### PAP.Subject_has_Email
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_company_has_email.pid AS pap_company_has_email_pid,
+           pap_person_has_email.pid AS pap_person_has_email_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_company_has_email ON pap_subject_has_property.pid = pap_company_has_email.pid
+           LEFT OUTER JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
+           LEFT OUTER JOIN pap_company ON pap_company.pid = pap_subject_has_property."left"
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE (mom_id_entity.pid = pap_company_has_email.pid
+            OR mom_id_entity.pid = pap_person_has_email.pid)
+            AND (pap_company.lifetime__start > :lifetime__start_1
+            OR pap_person.lifetime__start > :lifetime__start_2)
+
     >>> print (qrt.filter (Q.right.address == "lucky@mangari.org")) ### PAP.Subject_has_Email
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
