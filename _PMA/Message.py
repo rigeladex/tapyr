@@ -166,6 +166,8 @@
 #    28-Mar-2013 (CT) Add `defaults` to `Msg_Scope`,
 #                     allow `msg=None` in `Msg_Scope`
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#     8-Sep-2013 (CT) Change `decoded_header` to allow `unknown`
+#                     (shame on: Oracle Communications Messaging Server)
 #    ««revision-date»»···
 #--
 
@@ -205,7 +207,10 @@ def decoded_header (header) :
     result = []
     if header :
         for p, c in Lib.decode_header (header) :
-            result.append (p.decode (c or PMA.default_encoding, "replace"))
+            enc = c or PMA.default_encoding
+            if enc == "unknown" :
+                enc = PMA.default_encoding
+            result.append (p.decode (enc, "replace"))
     result = u" ".join (result)
     return result
 # end def decoded_header
