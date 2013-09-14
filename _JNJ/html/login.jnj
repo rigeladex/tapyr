@@ -33,12 +33,13 @@
 ##    29-Jun-2010 (CT) Use `request.host` instead of `page.site_url`
 ##    16-Aug-2012 (MG) Use `form.login_inline`
 ##     9-Oct-2012 (CT) Pass `class` and `username` to `Form.login_inline`
+##    14-Sep-2013 (MG) Fix import of `form.jnj` (missing `with context`)
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "STD::html/form.jnj" as Form %}
+{%- import "STD::html/form.jnj" as Form with context %}
 
 {%- set title = GTW._T ("Login for") + " " + request.host %}
 

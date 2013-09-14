@@ -41,6 +41,7 @@
 #    23-Aug-2012 (CT) Add missing import for `fcntl`
 #    24-Aug-2012 (MG) Import for `fcntl` moved to `posix` part
 #     2-May-2013 (CT) Call `fchmod` to clear permissions for `group` and `other`
+#    14-Sep-2013 (MG) Move `fchmod` call to posix function
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,7 @@ elif os.name == "posix":
             flags |= fcntl.LOCK_NB
         try:
             fcntl.flock (file.fileno (), flags)
+            os.fchmod   (file.fileno (), stat.S_IRUSR | stat.S_IWUSR)
         except IOError as exc_value:
             #  IOError: [Errno 11] Resource temporarily unavailable
             if exc_value[0] == 11:
@@ -153,7 +155,6 @@ class Locked_File (object) :
     def __enter__ (self) :
         self._file = result = open (self.file_name, self.mode)
         self._lock ()
-        os.fchmod (result.fileno (), stat.S_IRUSR | stat.S_IWUSR)
         return result
     # end def __enter__
 
