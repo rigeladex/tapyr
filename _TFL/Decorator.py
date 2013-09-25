@@ -57,6 +57,7 @@
 #    28-May-2013 (CT)  Add `subclass_responsibility`
 #    28-May-2013 (CT)  Change `Decorator` to properly support `classmethod`
 #    29-May-2013 (CT)  Kludge around Python2.6 lack of classmethod introspection
+#    18-Sep-2013 (CT) Add `dict_from_class`
 #    ««revision-date»»···
 #--
 
@@ -266,6 +267,11 @@ def Add_To_Class (name, * classes, ** kw) :
         return x
     return decorator
 # end def Add_To_Class
+
+def dict_from_class (cls) :
+    """Return `cls.__dict__`."""
+    return cls.__dict__
+# end def dict_from_class
 
 @Decorator
 def getattr_safe (f) :

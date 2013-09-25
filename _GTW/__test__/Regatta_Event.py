@@ -70,7 +70,7 @@ _test_code = """
     0
 
     >>> rev.set (name = "Himmelfahrt")
-    1
+    0
 
     >>> RE.query ().all ()
     [SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))]
@@ -84,6 +84,9 @@ _test_code = """
 
     >>> RE.query ().all ()
     [SRM.Regatta_Event (u'himmelfahrtskommando', (u'2008/05/01', u'2008/05/01'))]
+
+    >>> rev.set (name = "Himmelfahrt")
+    1
 
 """
 

@@ -268,6 +268,8 @@
 #    22-Aug-2013 (CT) Remove `tn_pid`
 #    25-Aug-2013 (CT) Change `as_attr_pickle_cargo` to use `a.save_to_db`, not
 #                     `a.to_save (self)`
+#    18-Sep-2013 (CT) Change `_extract_primary_ckd` to call `pka.cooked (w)`
+#    18-Sep-2013 (CT) Add change-guard for `new_epk` to `_set_ckd`, `_set_raw`
 #    ««revision-date»»···
 #--
 
@@ -1575,8 +1577,9 @@ class Id_Entity (Entity) :
         for pka in self.primary :
             name = pka.name
             if name in pkas_ckd :
-                v = pkas_ckd [name]
-                pkas_raw [name] = pka.as_string (v)
+                w               = pkas_ckd      [name]
+                v               = pka.cooked    (w)
+                pkas_raw [name] = pka.as_string (w)
             else :
                 v = getattr (self, name)
             new_epk.append (v)
@@ -1661,7 +1664,7 @@ class Id_Entity (Entity) :
         result = 0
         if kw :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
-            if pkas_ckd :
+            if pkas_ckd and tuple (new_epk) != self.epk [:-1] :
                 result += self._rename (new_epk, pkas_raw, pkas_ckd)
             result += self.__super._set_ckd (on_error, ** kw)
         return result
@@ -1671,7 +1674,7 @@ class Id_Entity (Entity) :
         result = 0
         if kw :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
-            if pkas_ckd :
+            if pkas_ckd and tuple (new_epk) != self.epk [:-1] :
                 result += self._rename (new_epk, pkas_raw, pkas_ckd)
             result += self.__super._set_raw (on_error, ** kw)
         return result

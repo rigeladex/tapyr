@@ -62,6 +62,8 @@
 #                     not `@super_ordered_delegate` (gave wrong order sometimes)
 #    30-Jul-2013 (CT) Remove `set`
 #    25-Aug-2013 (CT) Allow strings as `criterion` for `order_by`
+#    17-Sep-2013 (CT) Add `fixed_order_by` to support different `criteria`
+#    17-Sep-2013 (CT) Change signature of `order_by` to allow multiple arguments
 #    ««revision-date»»···
 #--
 
@@ -173,6 +175,9 @@ from   _TFL.pyk                   import pyk
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.Filter
+import _TFL.Sorted_By
+
+from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 from   _TFL.predicate             import first, uniq, uniq_p
 
 import itertools
@@ -439,8 +444,8 @@ class _Q_Result_ (TFL.Meta.Object) :
         return result
     # end def one
 
-    def order_by (self, criterion) :
-        return self._Q_Result_Ordered_ (self, criterion, self._distinct)
+    def order_by (self, * criteria) :
+        return self._Q_Result_Ordered_ (self, criteria, self._distinct)
     # end def order_by
 
     def slice (self, start, stop = None) :
@@ -579,9 +584,7 @@ class _Q_Result_Ordered_ (_Q_Result_) :
 
     def __init__ (self, iterable, criterion, _distinct = False) :
         self.__super.__init__ (iterable, _distinct = _distinct)
-        if isinstance (criterion, pyk.string_types) :
-            criterion = TFL.Sorted_By (criterion)
-        self._criterion = criterion
+        self._criterion = fixed_order_by (criterion)
     # end def __init__
 
     def _fill_cache (self) :
@@ -703,11 +706,8 @@ class Q_Result_Composite (_Q_Result_) :
         pass
     # end def offset
 
-    def order_by (self, criterion) :
-        if isinstance (criterion, pyk.string_types) :
-            criterion = TFL.Sorted_By (criterion)
-        self._order_by = criterion
-        return self
+    def order_by (self, * criteria) :
+        return self.__class__ ([self], fixed_order_by (criteria))
     # end def order_by
 
     @super_ordered
@@ -731,6 +731,32 @@ class Q_Result_Composite (_Q_Result_) :
     # end def __nonzero__
 
 # end class Q_Result_Composite
+
+@Single_Dispatch
+def fixed_order_by (x) :
+    if hasattr (x, "__call__") :
+        return x
+    else :
+        raise ValueError ("Cannot order by %s %r" % (x.__class__.__name__, x))
+# end def fixed_order_by
+
+@fixed_order_by.add_type (TFL.Sorted_By, TFL.Q_Exp.Base)
+def _fixed_order_by_sorted_by_ (x) :
+    return x
+# end def _fixed_order_by_sorted_by_
+
+@fixed_order_by.add_type (* pyk.string_types)
+def _fixed_order_by_str_ (x) :
+    return TFL.Sorted_By (x)
+# end def _fixed_order_by_str_
+
+@fixed_order_by.add_type (tuple)
+def _fixed_order_by_tuple (xs) :
+    if len (xs) == 1 :
+        return fixed_order_by (xs [0])
+    else :
+        return TFL.Sorted_By (* tuple (fixed_order_by (x) for x in xs))
+# end def _fixed_order_by_tuple
 
 if __name__ != "__main__" :
     TFL._Export ("*", "_Q_Result_")

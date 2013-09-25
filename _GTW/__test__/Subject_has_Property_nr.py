@@ -40,7 +40,8 @@
 #    16-Jul-2013 (CT) Add test for `Q_Result.E_Type_Reload` to `test_q_result`
 #    19-Jul-2013 (CT) Add tests for `Q.RAW`
 #     4-Aug-2013 (CT) Add `test_date_extraction` for `pg` and `sq`
-#    ««»»···
+#    19-Sep-2013 (CT) Add `test_qx`
+#    ««revision-date»»···
 #--
 
 from   __future__                          import division, print_function
@@ -549,7 +550,7 @@ _test_attr_wrappers = """
     MOM.MD_Change
       Kind_Date_Time_Wrapper : Date-Time `c_time`
           _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_EPK_Wrapper : Entity `c_user`
+      Kind_Wrapper_S : Entity `c_user`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : Surrogate `cid`
           Just_Once_Mixin, _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
@@ -567,7 +568,7 @@ _test_attr_wrappers = """
           _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : String `type_name`
           _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_EPK_Wrapper : Entity `user`
+      Kind_Wrapper_S : Entity `user`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, _Sync_Change_, Internal, _DB_System_, _DB_Attr_, _System_
     MOM.Link
       Kind_Wrapper_P : Left `left`
@@ -668,7 +669,7 @@ _test_attr_wrappers = """
           Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Date_Time_Wrapper : Date-Time `revocation_date`
           Optional, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Date_Time_Interval `validity`
+      Kind_Wrapper_C : Date_Time_Interval `validity`
           _Composite_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
         MOM.Date_Time_Interval
           Kind_Wrapper_Q : Boolean `alive`
@@ -700,9 +701,9 @@ _test_attr_wrappers = """
       Kind_Wrapper_P : Right `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_in_Group
-      Kind_EPK_Wrapper : Account `left`
+      Kind_Wrapper_S : Account `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Group `right`
+      Kind_Wrapper_S : Group `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Link1
       Kind_Wrapper_P : Left `left`
@@ -711,10 +712,10 @@ _test_attr_wrappers = """
       Kind_Wrapper_P : Account `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_Activation
-      Kind_EPK_Wrapper : Account `left`
+      Kind_Wrapper_S : Account `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth.Account_Password_Change_Required
-      Kind_EPK_Wrapper : Account `left`
+      Kind_Wrapper_S : Account `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     Auth._Account_Token_Action_
       Kind_Wrapper_P : Date-Time `expires`
@@ -726,7 +727,7 @@ _test_attr_wrappers = """
     Auth.Account_EMail_Verification
       Kind_Date_Time_Wrapper : Date-Time `expires`
           Necessary, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Account `left`
+      Kind_Wrapper_S : Account `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Email `new_email`
           Optional, _User_, _DB_Attr_
@@ -735,7 +736,7 @@ _test_attr_wrappers = """
     Auth.Account_Password_Reset
       Kind_Date_Time_Wrapper : Date-Time `expires`
           Necessary, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Account `left`
+      Kind_Wrapper_S : Account `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `password`
           Necessary, _User_, _DB_Attr_
@@ -749,28 +750,28 @@ _test_attr_wrappers = """
     MOM.Date_Interval
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-      Kind_Date_Wrapper : Date `finish`
+      Kind_Wrapper_Date : Date `finish`
           _Nested_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Date_Wrapper : Date `start`
+      Kind_Wrapper_Date : Date `start`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     MOM.Date_Interval_C
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-      Kind_Date_Wrapper : Date `finish`
+      Kind_Wrapper_Date : Date `finish`
           _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_Date_Wrapper : Date `start`
+      Kind_Wrapper_Date : Date `start`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     MOM.Date_Interval_N
       Kind_Wrapper_Q : Boolean `alive`
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-      Kind_Date_Wrapper : Date `finish`
+      Kind_Wrapper_Date : Date `finish`
           _Nested_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Date_Wrapper : Date `start`
+      Kind_Wrapper_Date : Date `start`
           _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
     MOM.Time_Interval
-      Kind_Time_Wrapper : Time `finish`
+      Kind_Wrapper_Time : Time `finish`
           _Nested_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Time_Wrapper : Time `start`
+      Kind_Wrapper_Time : Time `start`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     EVT.Link
       Kind_Wrapper_P : Left `left`
@@ -807,14 +808,14 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Text `contents`
           _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_Composite_Wrapper : Date_Interval `date`
+      Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         MOM.Date_Interval_N
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `events`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -838,20 +839,20 @@ _test_attr_wrappers = """
       Kind_Wrapper : Int `year`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
     EVT.Event
-      Kind_EPK_Wrapper : Entity `calendar`
+      Kind_Wrapper_S : Entity `calendar`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Date_Interval `date`
+      Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Date_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `detail`
           Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Page `left`
+      Kind_Wrapper_S : Page `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `occurs`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -859,24 +860,24 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `short_title`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Time_Interval `time`
+      Kind_Wrapper_C : Time_Interval `time`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Time_Interval
-          Kind_Time_Wrapper : Time `finish`
+          Kind_Wrapper_Time : Time `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Time_Wrapper : Time `start`
+          Kind_Wrapper_Time : Time `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     EVT.Event_occurs
-      Kind_Date_Wrapper : Date `date`
+      Kind_Wrapper_Date : Date `date`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Event `left`
+      Kind_Wrapper_S : Event `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Time_Interval `time`
+      Kind_Wrapper_C : Time_Interval `time`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Time_Interval
-          Kind_Time_Wrapper : Time `finish`
+          Kind_Wrapper_Time : Time `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Time_Wrapper : Time `start`
+          Kind_Wrapper_Time : Time `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     EVT._Recurrence_Mixin_
       Kind_Wrapper_P : Left `left`
@@ -886,7 +887,7 @@ _test_attr_wrappers = """
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Date_List `dates`
           Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Event `left`
+      Kind_Wrapper_S : Event `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `rules`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -897,11 +898,11 @@ _test_attr_wrappers = """
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int_List `easter_offset`
           Optional, _User_, _DB_Attr_
-      Kind_Date_Wrapper : Date `finish`
+      Kind_Wrapper_Date : Date `finish`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Boolean `is_exception`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Recurrence_Spec `left`
+      Kind_Wrapper_S : Recurrence_Spec `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int_List `month`
           Optional, _User_, _DB_Attr_
@@ -911,7 +912,7 @@ _test_attr_wrappers = """
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Int_List `restrict_pos`
           Optional, _User_, _DB_Attr_
-      Kind_Date_Wrapper : Date `start`
+      Kind_Wrapper_Date : Date `start`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Unit `unit`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
@@ -1013,14 +1014,14 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Role_Ref_Set `emails`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Composite_Wrapper : Date_Interval `lifetime`
+      Kind_Wrapper_C : Date_Interval `lifetime`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         MOM.Date_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -1089,14 +1090,14 @@ _test_attr_wrappers = """
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `last_name`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Date_Interval `lifetime`
+      Kind_Wrapper_C : Date_Interval `lifetime`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         MOM.Date_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `middle_name`
           _Raw_Value_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
@@ -1140,9 +1141,9 @@ _test_attr_wrappers = """
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Address_Position
-      Kind_EPK_Wrapper : Address `left`
+      Kind_Wrapper_S : Address `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Position `position`
+      Kind_Wrapper_C : Position `position`
           _Composite_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
         MOM.Position
           Kind_Wrapper : Float `height`
@@ -1169,9 +1170,9 @@ _test_attr_wrappers = """
       Kind_Wrapper_P : Property `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Person_has_Account
-      Kind_EPK_Wrapper : Person `left`
+      Kind_Wrapper_S : Person `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Account `right`
+      Kind_Wrapper_S : Account `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SRM.Regatta_Result
       Kind_Date_Time_Wrapper : Date-Time `date`
@@ -1201,7 +1202,7 @@ _test_attr_wrappers = """
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SRM.Boat
-      Kind_EPK_Wrapper : Boat_Class `left`
+      Kind_Wrapper_S : Boat_Class `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           Optional, _User_, _DB_Attr_
@@ -1219,16 +1220,16 @@ _test_attr_wrappers = """
       Kind_Wrapper : String `name`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SRM.Regatta_Event
-      Kind_EPK_Wrapper : Entity `club`
+      Kind_Wrapper_S : Entity `club`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Date_Interval `date`
+      Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
         MOM.Date_Interval_C
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `desc`
           Optional, _User_, _DB_Attr_
@@ -1251,25 +1252,25 @@ _test_attr_wrappers = """
           Required, _Required_Mixin_, _User_, _DB_Attr_
       Kind_Wrapper : Text `contents`
           _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_Composite_Wrapper : Date_Interval `date`
+      Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
         MOM.Date_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Date_Interval `date_x`
+      Kind_Wrapper_C : Date_Interval `date_x`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Date_Interval
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Object_PN `left`
+      Kind_Wrapper_S : Object_PN `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `prio`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
@@ -1279,14 +1280,14 @@ _test_attr_wrappers = """
     SWP.Gallery
       Kind_Wrapper_R : Link_Ref_List `clip_os`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Composite_Wrapper : Date_Interval `date`
+      Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         MOM.Date_Interval_N
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Date_Wrapper : Date `finish`
+          Kind_Wrapper_Date : Date `finish`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Date_Wrapper : Date `start`
+          Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : Directory `directory`
           Necessary, _User_, _DB_Attr_
@@ -1323,13 +1324,13 @@ _test_attr_wrappers = """
       Kind_Wrapper : X `width`
           _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     SWP.Picture
-      Kind_EPK_Wrapper : Gallery `left`
+      Kind_Wrapper_S : Gallery `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Int `number`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Picture `photo`
+      Kind_Wrapper_C : Picture `photo`
           _Composite_Mixin_, Necessary, _User_, _DB_Attr_
         MOM._Pic_
           Kind_Wrapper : String `extension`
@@ -1338,7 +1339,7 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
           Kind_Wrapper : X `width`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Thumbnail `thumb`
+      Kind_Wrapper_C : Thumbnail `thumb`
           _Composite_Mixin_, Necessary, _User_, _DB_Attr_
         MOM._Thumb_
           Kind_Wrapper : String `extension`
@@ -1350,10 +1351,10 @@ _test_attr_wrappers = """
     SRM.Page
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Entity `event`
+      Kind_Wrapper_S : Entity `event`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SRM.Regatta
-      Kind_EPK_Wrapper : Entity `boat_class`
+      Kind_Wrapper_S : Entity `boat_class`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `boats`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -1363,13 +1364,13 @@ _test_attr_wrappers = """
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `kind`
           Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Regatta_Event `left`
+      Kind_Wrapper_S : Regatta_Event `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `perma_name`
           Computed_Set_Mixin, Computed_Mixin, _Auto_Update_Lazy_Mixin_, _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : Int `races`
           Optional, _User_, _DB_Attr_
-      Kind_Composite_Wrapper : Regatta_Result `result`
+      Kind_Wrapper_C : Regatta_Result `result`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         SRM.Regatta_Result
           Kind_Date_Time_Wrapper : Date-Time `date`
@@ -1386,9 +1387,9 @@ _test_attr_wrappers = """
     SRM.Sailor
       Kind_Wrapper_R : Link_Ref_List `boat_in_regatta_links`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_EPK_Wrapper : Entity `club`
+      Kind_Wrapper_S : Entity `club`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Person `left`
+      Kind_Wrapper_S : Person `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `mna_number`
           _Raw_Value_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
@@ -1407,7 +1408,7 @@ _test_attr_wrappers = """
     SRM.Boat_in_Regatta
       Kind_Wrapper_R : Role_Ref_Set `_crew`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_EPK_Wrapper : Boat `left`
+      Kind_Wrapper_S : Boat `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `place`
           Optional, _User_, _DB_Attr_
@@ -1417,13 +1418,13 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Int `rank`
           Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_Date_Wrapper : Date `registration_date`
+      Kind_Wrapper_Date : Date `registration_date`
           Init_Only_Mixin, Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_EPK_Wrapper : Regatta `right`
+      Kind_Wrapper_S : Regatta `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `sailor_links`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_EPK_Wrapper : Entity `skipper`
+      Kind_Wrapper_S : Entity `skipper`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Required, _Required_Mixin_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `team_links`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -1432,7 +1433,7 @@ _test_attr_wrappers = """
     SRM.Race_Result
       Kind_Wrapper : Boolean `discarded`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Boat_in_Regatta `left`
+      Kind_Wrapper_S : Boat_in_Regatta `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `points`
           Necessary, _User_, _DB_Attr_
@@ -1445,33 +1446,33 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Role_Ref_Set `boats`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_EPK_Wrapper : Entity `club`
+      Kind_Wrapper_S : Entity `club`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `desc`
           Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Entity `leader`
+      Kind_Wrapper_S : Entity `leader`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Regatta_C `left`
+      Kind_Wrapper_S : Regatta_C `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `name`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : Int `place`
           Optional, _User_, _DB_Attr_
-      Kind_Date_Wrapper : Date `registration_date`
+      Kind_Wrapper_Date : Date `registration_date`
           Internal, _DB_System_, _DB_Attr_, _System_
     SRM.Crew_Member
       Kind_Wrapper : Int `key`
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Boat_in_Regatta `left`
+      Kind_Wrapper_S : Boat_in_Regatta `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Sailor `right`
+      Kind_Wrapper_S : Sailor `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `role`
           Optional, _User_, _DB_Attr_
     SRM.Team_has_Boat_in_Regatta
-      Kind_EPK_Wrapper : Team `left`
+      Kind_Wrapper_S : Team `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Boat_in_Regatta `right`
+      Kind_Wrapper_S : Boat_in_Regatta `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Subject_has_Address
       Kind_Wrapper_P : String `desc`
@@ -1506,62 +1507,62 @@ _test_attr_wrappers = """
     PAP.Company_has_Url
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Company `left`
+      Kind_Wrapper_S : Company `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Url `right`
+      Kind_Wrapper_S : Url `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Person_has_Url
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Person `left`
+      Kind_Wrapper_S : Person `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Url `right`
+      Kind_Wrapper_S : Url `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Company_has_Phone
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Numeric_String `extension`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Company `left`
+      Kind_Wrapper_S : Company `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Phone `right`
+      Kind_Wrapper_S : Phone `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Person_has_Phone
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Numeric_String `extension`
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Person `left`
+      Kind_Wrapper_S : Person `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Phone `right`
+      Kind_Wrapper_S : Phone `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Company_has_Email
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Company `left`
+      Kind_Wrapper_S : Company `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Email `right`
+      Kind_Wrapper_S : Email `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Person_has_Email
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Person `left`
+      Kind_Wrapper_S : Person `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Email `right`
+      Kind_Wrapper_S : Email `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Company_has_Address
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Company `left`
+      Kind_Wrapper_S : Company `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Address `right`
+      Kind_Wrapper_S : Address `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     PAP.Person_has_Address
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Person `left`
+      Kind_Wrapper_S : Person `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_EPK_Wrapper : Address `right`
+      Kind_Wrapper_S : Address `right`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
 
     >>> show_attr_mro (apt ["Auth.Account"])
@@ -6184,11 +6185,11 @@ _test_q_result = """
          FROM mom_id_entity
            LEFT OUTER JOIN pap_company ON mom_id_entity.pid = pap_company.pid
            LEFT OUTER JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-           JOIN mom_md_change AS mom_md_change_1 ON mom_md_change_1.pid = mom_id_entity.pid
+           LEFT OUTER JOIN mom_md_change AS mom_md_change__1 ON mom_md_change__1.pid = mom_id_entity.pid
          WHERE (mom_id_entity.pid = pap_company.pid
             OR mom_id_entity.pid = pap_person.pid)
-            AND mom_md_change_1."user" = :user_1
-            AND mom_md_change_1.kind = :kind_1
+            AND mom_md_change__1.kind = :kind_1
+            AND mom_md_change__1."user" = :user_1
 
     >>> ET = apt ["MOM.MD_Change"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -6220,11 +6221,11 @@ _test_q_result = """
            mom_md_change.time AS mom_md_change_time,
            mom_md_change.type_name AS mom_md_change_type_name
          FROM mom_md_change
-           JOIN mom_id_entity AS mom_id_entity_1 ON mom_id_entity_1.pid = mom_md_change."user"
-           JOIN mom_md_change AS mom_md_change_1 ON mom_md_change_1.pid = mom_id_entity_1.pid
-         WHERE mom_md_change_1."user" = mom_md_change."user"
-           AND mom_md_change_1.kind = :kind_1
-           AND mom_md_change.parent_cid = :parent_cid_1
+           JOIN mom_id_entity AS mom_id_entity__2 ON mom_id_entity__2.pid = mom_md_change."user"
+           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__2.pid
+         WHERE mom_md_change__2.kind = :kind_1
+            AND mom_md_change__2."user" = mom_md_change."user"
+            AND mom_md_change.parent_cid = :parent_cid_1
 
     >>> ET = apt ["SRM.Regatta_H"]
     >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = True)
@@ -6312,8 +6313,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            LEFT OUTER JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta."left"
-         WHERE srm_regatta_event_1.date__start = :date__start_1
+           JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
+         WHERE srm_regatta_event__1.date__start = :date__start_1
 
     >>> ET = apt ["SRM.Regatta_C"]
     >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = True)
@@ -6492,8 +6493,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_boat_class AS srm_boat_class_1 ON srm_boat_class_1.pid = srm_regatta.boat_class
-         WHERE srm_boat_class_1.max_crew <= :max_crew_1
+           JOIN srm_boat_class AS srm_boat_class__1 ON srm_boat_class__1.pid = srm_regatta.boat_class
+         WHERE srm_boat_class__1.max_crew <= :max_crew_1
 
     >>> print (qrt.filter (Q.RAW.races == "3")) ### SRM.Regatta_C
     SQL: SELECT
@@ -6593,8 +6594,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm__boat_class_ AS srm__boat_class__1 ON srm__boat_class__1.pid = srm_regatta.boat_class
-         WHERE srm__boat_class__1.name != :name_1
+           JOIN srm_boat_class AS srm_boat_class__1 ON srm_boat_class__1.pid = srm_regatta.boat_class
+           JOIN srm__boat_class_ AS srm__boat_class___1 ON srm__boat_class___1.pid = srm_regatta.boat_class
+         WHERE srm__boat_class___1.name != :name_1
 
     >>> print (qrt.filter (Q.boat_class.name == "Seascape 18")) ### SRM.Regatta_C
     SQL: SELECT
@@ -6619,8 +6621,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm__boat_class_ AS srm__boat_class__1 ON srm__boat_class__1.pid = srm_regatta.boat_class
-         WHERE srm__boat_class__1.name = :name_1
+           JOIN srm_boat_class AS srm_boat_class__1 ON srm_boat_class__1.pid = srm_regatta.boat_class
+           JOIN srm__boat_class_ AS srm__boat_class___1 ON srm__boat_class___1.pid = srm_regatta.boat_class
+         WHERE srm__boat_class___1.name = :name_1
 
     >>> print (qrt.filter (Q.boat_class.name == Q.perma_name)) ### SRM.Regatta_C
     SQL: SELECT
@@ -6645,8 +6648,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm__boat_class_ AS srm__boat_class__1 ON srm__boat_class__1.pid = srm_regatta.boat_class
-         WHERE srm__boat_class__1.name = srm_regatta.perma_name
+           JOIN srm_boat_class AS srm_boat_class__1 ON srm_boat_class__1.pid = srm_regatta.boat_class
+           JOIN srm__boat_class_ AS srm__boat_class___1 ON srm__boat_class___1.pid = srm_regatta.boat_class
+         WHERE srm__boat_class___1.name = srm_regatta.perma_name
 
     >>> print (qrt.filter (Q.boat_class.max_crew)) ### SRM.Regatta_C
     SQL: SELECT
@@ -6671,14 +6675,14 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_boat_class AS srm_boat_class_1 ON srm_boat_class_1.pid = srm_regatta.boat_class
-         WHERE srm_boat_class_1.max_crew IS NOT NULL
-            AND srm_boat_class_1.max_crew != :max_crew_1
+           JOIN srm_boat_class AS srm_boat_class__1 ON srm_boat_class__1.pid = srm_regatta.boat_class
+         WHERE srm_boat_class__1.max_crew IS NOT NULL
+            AND srm_boat_class__1.max_crew != :max_crew_1
 
     >>> print (qrt.filter (Q.result)) ### SRM.Regatta_C
     Traceback (most recent call last):
       ...
-    ArgumentError: SQL expression object or string expected.
+    TypeError: Cannot filter by composite attribute SRM.Regatta_Result.result
 
     >>> print (qrt.filter (Q.result == ("2013-05-26", ))) ### SRM.Regatta_C
     SQL: SELECT
@@ -6778,8 +6782,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta."left"
-         WHERE srm_regatta_event_1.date__start IS NOT NULL
+           JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
+         WHERE srm_regatta_event__1.date__start IS NOT NULL
 
     >>> print (qrt.filter (Q.left.date.start == "2013-07-21")) ### SRM.Regatta_C
     SQL: SELECT
@@ -6804,8 +6808,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta."left"
-         WHERE srm_regatta_event_1.date__start = :date__start_1
+           JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
+         WHERE srm_regatta_event__1.date__start = :date__start_1
 
     >>> print (qrt.filter (Q.left.date.alive)) ### SRM.Regatta_C
     SQL: SELECT
@@ -6830,9 +6834,11 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta."left"
-         WHERE (srm_regatta_event_1.date__start IS NULL OR srm_regatta_event_1.date__start <= :date__start_1)
-           AND (srm_regatta_event_1.date__finish IS NULL OR srm_regatta_event_1.date__finish >= :date__finish_1)
+           JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
+         WHERE (srm_regatta_event__1.date__start IS NULL
+            OR srm_regatta_event__1.date__start <= :date__start_1)
+            AND (srm_regatta_event__1.date__finish IS NULL
+            OR srm_regatta_event__1.date__finish >= :date__finish_1)
 
     >>> ET = apt ["SRM.Boat_in_Regatta"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -6854,9 +6860,9 @@ _test_q_result = """
            srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
-           JOIN srm_regatta AS srm_regatta_1 ON srm_regatta_1.pid = srm_boat_in_regatta."right"
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta_1."left"
-         WHERE srm_regatta_event_1.date__start > :date__start_1
+           JOIN srm_regatta AS srm_regatta__1 ON srm_regatta__1.pid = srm_boat_in_regatta."right"
+           JOIN srm_regatta_event AS srm_regatta_event__2 ON srm_regatta_event__2.pid = srm_regatta__1."left"
+         WHERE srm_regatta_event__2.date__start > :date__start_1
 
     >>> print (qrt.filter (Q.right.left.date.start > "2009/05/21")) ### SRM.Boat_in_Regatta
     SQL: SELECT
@@ -6875,9 +6881,9 @@ _test_q_result = """
            srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
-           JOIN srm_regatta AS srm_regatta_1 ON srm_regatta_1.pid = srm_boat_in_regatta."right"
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta_1."left"
-         WHERE srm_regatta_event_1.date__start > :date__start_1
+           JOIN srm_regatta AS srm_regatta__1 ON srm_regatta__1.pid = srm_boat_in_regatta."right"
+           JOIN srm_regatta_event AS srm_regatta_event__2 ON srm_regatta_event__2.pid = srm_regatta__1."left"
+         WHERE srm_regatta_event__2.date__start > :date__start_1
 
     >>> ET  = apt ["PAP.Person_has_Phone"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -6905,20 +6911,20 @@ _test_q_result = """
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
 
     >>> print (qrt.attr (Q.person.lifetime.start)) ### PAP.Person_has_Phone
-    SQL: SELECT pap_person_1.lifetime__start AS pap_person_1_lifetime__start
+    SQL: SELECT pap_person__1.lifetime__start AS pap_person__1_lifetime__start
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_phone."left"
+           JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
 
     >>> print (qrt.attrs (Q.phone.number, Q.desc, Q.person.lifetime.start)) ### PAP.Person_has_Phone
     SQL: SELECT
-           pap_person_1.lifetime__start AS pap_person_1_lifetime__start,
+           pap_person__1.lifetime__start AS pap_person__1_lifetime__start,
            pap_person_has_phone."desc" AS pap_person_has_phone_desc,
-           pap_phone_1.number AS pap_phone_1_number
+           pap_phone__1.number AS pap_phone__1_number
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
-           JOIN pap_phone AS pap_phone_1 ON pap_phone_1.pid = pap_person_has_phone."right"
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_phone."left"
+           JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_person_has_phone."right"
+           JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
 
     >>> print (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### PAP.Person_has_Phone
     SQL: SELECT
@@ -6934,8 +6940,8 @@ _test_q_result = """
            pap_person_has_phone.pid AS pap_person_has_phone_pid
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_phone."left"
-         WHERE pap_person_1.lifetime__start = :lifetime__start_1
+           JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
+         WHERE pap_person__1.lifetime__start = :lifetime__start_1
 
     >>> print (qrt.order_by (Q.person.lifetime)) ### PAP.Person_has_Phone
     SQL: SELECT
@@ -6951,8 +6957,8 @@ _test_q_result = """
            pap_person_has_phone.pid AS pap_person_has_phone_pid
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_phone."left"
-         ORDER BY pap_person_1.lifetime__start, pap_person_1.lifetime__finish
+           JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
+         ORDER BY pap_person__1.lifetime__start, pap_person__1.lifetime__finish
 
     >>> ET = apt ["PAP.Subject_has_Email"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -6975,12 +6981,12 @@ _test_q_result = """
          FROM mom_id_entity
            LEFT OUTER JOIN pap_company_has_email ON mom_id_entity.pid = pap_company_has_email.pid
            LEFT OUTER JOIN pap_person_has_email ON mom_id_entity.pid = pap_person_has_email.pid
-           LEFT OUTER JOIN pap_email AS pap_email_1 ON pap_email_1.pid = pap_company_has_email."right"
-           LEFT OUTER JOIN pap_email AS pap_email_2 ON pap_email_2.pid = pap_person_has_email."right"
+           LEFT OUTER JOIN pap_email AS pap_email__1 ON pap_email__1.pid = pap_company_has_email."right"
+           LEFT OUTER JOIN pap_email AS pap_email__2 ON pap_email__2.pid = pap_person_has_email."right"
          WHERE (mom_id_entity.pid = pap_company_has_email.pid
             OR mom_id_entity.pid = pap_person_has_email.pid)
-            AND (pap_email_1.address = :address_1
-            OR pap_email_2.address = :address_2)
+            AND (pap_email__1.address = :address_1
+            OR pap_email__2.address = :address_2)
 
     >>> print (qrt.filter (Q.right.address.ENDSWITH ("@mangari.org"))) ### PAP.Subject_has_Email
     SQL: SELECT
@@ -7000,12 +7006,12 @@ _test_q_result = """
          FROM mom_id_entity
            LEFT OUTER JOIN pap_company_has_email ON mom_id_entity.pid = pap_company_has_email.pid
            LEFT OUTER JOIN pap_person_has_email ON mom_id_entity.pid = pap_person_has_email.pid
-           LEFT OUTER JOIN pap_email AS pap_email_1 ON pap_email_1.pid = pap_company_has_email."right"
-           LEFT OUTER JOIN pap_email AS pap_email_2 ON pap_email_2.pid = pap_person_has_email."right"
+           LEFT OUTER JOIN pap_email AS pap_email__1 ON pap_email__1.pid = pap_company_has_email."right"
+           LEFT OUTER JOIN pap_email AS pap_email__2 ON pap_email__2.pid = pap_person_has_email."right"
          WHERE (mom_id_entity.pid = pap_company_has_email.pid
             OR mom_id_entity.pid = pap_person_has_email.pid)
-            AND ((pap_email_1.address LIKE '%%%%' || :address_1)
-            OR (pap_email_2.address LIKE '%%%%' || :address_2))
+            AND ((pap_email__1.address LIKE '%%%%' || :address_1)
+            OR (pap_email__2.address LIKE '%%%%' || :address_2))
 
     >>> ET = apt ["PAP.Subject_has_Phone"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7089,14 +7095,14 @@ _test_q_result = """
     >>> print (qrt.attrs (Q.enabled, Q.person, Q.person.lifetime)) ### Auth.Account
     SQL: SELECT
            auth__account_.enabled AS auth__account__enabled,
-           pap_person_1.lifetime__finish AS pap_person_1_lifetime__finish,
-           pap_person_1.lifetime__start AS pap_person_1_lifetime__start,
-           pap_person_has_account_1."left" AS pap_person_has_account_1_left
+           pap_person__2.lifetime__finish AS pap_person__2_lifetime__finish,
+           pap_person__2.lifetime__start AS pap_person__2_lifetime__start,
+           pap_person_has_account__1."left" AS pap_person_has_account__1_left
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
 
     >>> print (apt.DBW.PNS.Q_Result.E_Type_Reload (ET)) ### Auth.Account
     SQL: SELECT
@@ -7137,8 +7143,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-         WHERE pap_person_has_account_1."left" IS NOT NULL
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         WHERE pap_person_has_account__1."left" IS NOT NULL
 
     >>> print (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### Auth.Account
     SQL: SELECT
@@ -7158,9 +7165,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         WHERE pap_person_1.lifetime__start = :lifetime__start_1
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         WHERE pap_person__2.lifetime__start = :lifetime__start_1
 
     >>> str (qrt.filter (Q.RAW.person.lifetime == ("2013/07/15", ))) == str (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### Auth.Account
     True
@@ -7183,9 +7190,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         WHERE pap_person_1.__raw_last_name = :__raw_last_name_1
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         WHERE pap_person__2.__raw_last_name = :__raw_last_name_1
 
     >>> print (qrt.filter (Q.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7205,9 +7212,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         WHERE pap_person_1.last_name = :last_name_1
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         WHERE pap_person__2.last_name = :last_name_1
 
     >>> print (qrt.filter (Q.person.last_name.STARTSWITH ("tan"))) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7227,9 +7234,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         WHERE pap_person_1.last_name LIKE :last_name_1 || '%%%%'
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         WHERE pap_person__2.last_name LIKE :last_name_1 || '%%%%'
 
     >>> print (qrt.order_by (- Q.superuser).order_by (Q.name)) ### Auth.Account
     SQL: SELECT
@@ -7269,8 +7276,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           LEFT OUTER JOIN pap_person ON pap_person.pid = :pid_1
-         ORDER BY pap_person.last_name, pap_person.first_name, pap_person.middle_name, pap_person.title
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         ORDER BY pap_person__2.last_name, pap_person__2.first_name, pap_person__2.middle_name, pap_person__2.title
 
     >>> print (qrt.order_by (Q.person.lifetime)) ### Auth.Account
     SQL: SELECT
@@ -7290,9 +7298,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         ORDER BY pap_person_1.lifetime__start, pap_person_1.lifetime__finish
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         ORDER BY pap_person__2.lifetime__start, pap_person__2.lifetime__finish
 
     >>> print (qrt.order_by (TFL.Sorted_By ("person.last_name", "-name"))) ### Auth.Account
     SQL: SELECT
@@ -7312,9 +7320,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         ORDER BY pap_person_1.last_name, auth__account_.name DESC
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         ORDER BY pap_person__2.last_name, auth__account_.name DESC
 
     >>> print (qrt.order_by ("person.last_name")) ### Auth.Account
     SQL: SELECT
@@ -7334,9 +7342,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         ORDER BY pap_person_1.last_name
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         ORDER BY pap_person__2.last_name
 
     >>> print (qrt.order_by (Q.person.last_name)) ### Auth.Account
     SQL: SELECT
@@ -7356,9 +7364,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         ORDER BY pap_person_1.last_name
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         ORDER BY pap_person__2.last_name
 
     >>> print (qrt.order_by (- Q.person.last_name)) ### Auth.Account
     SQL: SELECT
@@ -7378,9 +7386,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         ORDER BY pap_person_1.last_name DESC
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         ORDER BY pap_person__2.last_name DESC
 
     >>> print (qrt.filter (Q.person.last_name.STARTSWITH ("tan") | Q.person.last_name.ENDSWITH ("beck"))) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7400,10 +7408,10 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         WHERE (pap_person_1.last_name LIKE :last_name_1 || '%%%%')
-            OR (pap_person_1.last_name LIKE '%%%%' || :last_name_2)
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account__1."left"
+         WHERE (pap_person__2.last_name LIKE :last_name_1 || '%%%%')
+            OR (pap_person__2.last_name LIKE '%%%%' || :last_name_2)
 
     >>> print (qrt.filter (Q.person_links)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7423,8 +7431,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-         WHERE pap_person_has_account_1."right" IS NOT NULL
+           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+         WHERE pap_person_has_account__2."right" IS NOT NULL
 
     >>> print (qrt.filter (Q.person_links.person)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7444,8 +7452,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-         WHERE pap_person_has_account_1."left" IS NOT NULL
+           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+         WHERE pap_person_has_account__2."left" IS NOT NULL
 
     >>> print (qrt.filter (Q.person_links.person == 42)) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7465,8 +7473,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-         WHERE pap_person_has_account_1."left" = :left_1
+           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+         WHERE pap_person_has_account__2."left" = :left_1
 
     >>> print (qrt.filter (Q.person_links.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7486,9 +7494,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-         WHERE pap_person_1.last_name = :last_name_1
+           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__2."left"
+         WHERE pap_person__3.last_name = :last_name_1
 
     >>> print (qrt.filter (Q.person_links.person.account_links.account.name == "foo@bar.baz")) ### Auth.Account # doctest:+ELLIPSIS
     SQL: SELECT
@@ -7508,11 +7516,12 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account_1 ON pap_person_has_account_1."right" = auth_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account_1."left"
-           JOIN pap_person_has_account AS pap_person_has_account_2 ON pap_person_has_account_2."left" = pap_person_1.pid
-           JOIN auth__account_ AS auth__account__1 ON auth__account__1.pid = pap_person_has_account_2."right"
-         WHERE auth__account__1.name = :name_1
+           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__2."left"
+           JOIN pap_person_has_account AS pap_person_has_account__3 ON pap_person_has_account__3."left" = pap_person__3.pid
+           JOIN auth_account AS auth_account__1 ON auth_account__1.pid = pap_person_has_account__3."right"
+           JOIN auth__account_ AS auth__account___1 ON auth__account___1.pid = pap_person_has_account__3."right"
+         WHERE auth__account___1.name = :name_1
 
     >>> ET = apt ["PAP.Person_has_Account"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7529,8 +7538,8 @@ _test_q_result = """
            pap_person_has_account.pid AS pap_person_has_account_pid
          FROM mom_id_entity
            JOIN pap_person_has_account ON mom_id_entity.pid = pap_person_has_account.pid
-           JOIN pap_person AS pap_person_1 ON pap_person_1.pid = pap_person_has_account."left"
-         WHERE pap_person_1.last_name = :last_name_1
+           JOIN pap_person AS pap_person__4 ON pap_person__4.pid = pap_person_has_account."left"
+         WHERE pap_person__4.last_name = :last_name_1
 
     >>> ET = apt ["PAP.Subject"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7568,13 +7577,13 @@ _test_q_result = """
            LEFT OUTER JOIN pap_company ON mom_id_entity.pid = pap_company.pid
            LEFT OUTER JOIN pap_person ON mom_id_entity.pid = pap_person.pid
            LEFT OUTER JOIN pap_company_has_phone ON pap_company_has_phone."left" = mom_id_entity.pid
+           LEFT OUTER JOIN pap_phone AS pap_phone__2 ON pap_phone__2.pid = pap_company_has_phone."right"
            LEFT OUTER JOIN pap_person_has_phone ON pap_person_has_phone."left" = mom_id_entity.pid
-           LEFT OUTER JOIN pap_phone AS pap_phone_1 ON pap_phone_1.pid = pap_company_has_phone."right"
-           LEFT OUTER JOIN pap_phone AS pap_phone_2 ON pap_phone_2.pid = pap_person_has_phone."right"
+           LEFT OUTER JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_person_has_phone."right"
          WHERE (mom_id_entity.pid = pap_company.pid
             OR mom_id_entity.pid = pap_person.pid)
-            AND (pap_phone_1.number = :number_1
-            OR pap_phone_2.number = :number_2)
+            AND (pap_phone__2.number = :number_1
+            OR pap_phone__1.number = :number_2)
 
     >>> ET = apt ["SRM.Sailor"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7669,8 +7678,8 @@ _test_q_result = """
            swp_clip_o.prio AS swp_clip_o_prio
          FROM mom_id_entity
            JOIN swp_clip_o ON mom_id_entity.pid = swp_clip_o.pid
-           LEFT OUTER JOIN mom_id_entity AS mom_id_entity_1 ON mom_id_entity_1.pid = swp_clip_o."left"
-         WHERE mom_id_entity_1.type_name = :type_name_1
+           LEFT OUTER JOIN mom_id_entity AS mom_id_entity__19 ON mom_id_entity__19.pid = swp_clip_o."left"
+         WHERE mom_id_entity__19.type_name = :type_name_1
 
     >>> ET = apt ["SRM.Team"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7693,10 +7702,10 @@ _test_q_result = """
            srm_team.registration_date AS srm_team_registration_date
          FROM mom_id_entity
            JOIN srm_team ON mom_id_entity.pid = srm_team.pid
-           JOIN srm_regatta_c AS srm_regatta_c_1 ON srm_regatta_c_1.pid = srm_team."left"
-           JOIN srm_regatta AS srm_regatta_1 ON srm_regatta_1.pid = srm_regatta_c_1.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta_1."left"
-         WHERE srm_regatta_event_1.date__start = :date__start_1
+           JOIN srm_regatta_c AS srm_regatta_c__1 ON srm_regatta_c__1.pid = srm_team."left"
+           JOIN srm_regatta AS srm_regatta__2 ON srm_regatta__2.pid = srm_team."left"
+           JOIN srm_regatta_event AS srm_regatta_event__3 ON srm_regatta_event__3.pid = srm_regatta__2."left"
+         WHERE srm_regatta_event__3.date__start = :date__start_1
 
     >>> ET  = apt ["MOM.MD_Change"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -7716,6 +7725,93 @@ _test_q_result = """
          FROM mom_md_change
          WHERE mom_md_change.cid = :spk
          LIMIT :param_1
+
+"""
+
+_test_qx = """
+    >>> from _GTW.__test__.SAW_QX import QX, show
+    >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
+
+    >>> ET = apt ["PAP.Subject"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+    >>> qxs = QX.Mapper (qrt)
+
+    >>> show (qxs (Q.phone_links.phone.number == 42))
+    <PAP.Subject_has_Phone | QX.Kind_Partial for
+         <SAW : Phone `right` (PAP.Company_has_Phone | PAP.Person_has_Phone)>>
+        <PAP.Subject | QX.Kind_Rev_Query for
+             <SAW : Link_Ref_List `phone_links`>>
+      Bin:__eq__:
+        <PAP.Phone | QX.Kind for
+             <SAW : Numeric_String `number` [pap_phone__2.number]>>
+            <PAP.Company_has_Phone | QX.Kind_EPK for
+                 <SAW : Phone `right` [pap_company_has_phone.right]>>
+                <PAP.Subject | QX.Kind_Rev_Query for
+                     <SAW : Link_Ref_List `phone_links`>>
+        42
+      Bin:__eq__:
+        <PAP.Phone | QX.Kind for
+             <SAW : Numeric_String `number` [pap_phone__1.number]>>
+            <PAP.Person_has_Phone | QX.Kind_EPK for
+                 <SAW : Phone `right` [pap_person_has_phone.right]>>
+                <PAP.Subject | QX.Kind_Rev_Query for
+                     <SAW : Link_Ref_List `phone_links`>>
+        42
+
+
+    >>> ET = apt ["PAP.Subject_has_Email"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+    >>> qxh = QX.Mapper (qrt)
+
+    >>> show (qxh (Q.right))
+    <PAP.Subject_has_Email | QX.Kind_Partial for
+         <SAW : Email `right` (PAP.Company_has_Email | PAP.Person_has_Email)>>
+      <PAP.Company_has_Email | QX.Kind_EPK for
+           <SAW : Email `right` [pap_company_has_email.right]>>
+      <PAP.Person_has_Email | QX.Kind_EPK for
+           <SAW : Email `right` [pap_person_has_email.right]>>
+
+    >>> show (qxh (Q.right.address))
+    <PAP.Subject_has_Email | QX.Kind_Partial for
+         <SAW : Email `right` (PAP.Company_has_Email | PAP.Person_has_Email)>>
+      <PAP.Email | QX.Kind for
+           <SAW : Email `address` [pap_email__1.address, pap_email__1.__raw_address]>>
+          <PAP.Company_has_Email | QX.Kind_EPK for
+               <SAW : Email `right` [pap_company_has_email.right]>>
+      <PAP.Email | QX.Kind for
+           <SAW : Email `address` [pap_email__2.address, pap_email__2.__raw_address]>>
+          <PAP.Person_has_Email | QX.Kind_EPK for
+               <SAW : Email `right` [pap_person_has_email.right]>>
+
+    >>> show (qxh (Q.right.address == "lucky@mangari.org"))
+    <PAP.Subject_has_Email | QX.Kind_Partial for
+         <SAW : Email `right` (PAP.Company_has_Email | PAP.Person_has_Email)>>
+      Bin:__eq__:
+        <PAP.Email | QX.Kind for
+             <SAW : Email `address` [pap_email__1.address, pap_email__1.__raw_address]>>
+            <PAP.Company_has_Email | QX.Kind_EPK for
+                 <SAW : Email `right` [pap_company_has_email.right]>>
+        lucky@mangari.org
+      Bin:__eq__:
+        <PAP.Email | QX.Kind for
+             <SAW : Email `address` [pap_email__2.address, pap_email__2.__raw_address]>>
+            <PAP.Person_has_Email | QX.Kind_EPK for
+                 <SAW : Email `right` [pap_person_has_email.right]>>
+        lucky@mangari.org
+
+    >>> show (qxh (Q.right.address.ENDSWITH ("@mangari.org")))
+    <PAP.Subject_has_Email | QX.Kind_Partial for
+         <SAW : Email `right` (PAP.Company_has_Email | PAP.Person_has_Email)>>
+      Call:endswith:
+        <PAP.Email | QX.Kind for
+             <SAW : Email `address` [pap_email__1.address, pap_email__1.__raw_address]>>
+            <PAP.Company_has_Email | QX.Kind_EPK for
+                 <SAW : Email `right` [pap_company_has_email.right]>>
+      Call:endswith:
+        <PAP.Email | QX.Kind for
+             <SAW : Email `address` [pap_email__2.address, pap_email__2.__raw_address]>>
+            <PAP.Person_has_Email | QX.Kind_EPK for
+                 <SAW : Email `right` [pap_person_has_email.right]>>
 
 """
 
@@ -7740,8 +7836,8 @@ _test_relevant_root = """
         PAP.Company_has_Url        False PAP.Company_has_Url
         PAP.Person_has_Url         False PAP.Person_has_Url
 
-
 """
+
 _test_select = """
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
 
@@ -13218,7 +13314,7 @@ _test_date_extraction_pg = """
     >>> ET = apt ["SRM.Regatta_C"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.left.date.start.year == 2013)) ### SRM.Regatta_C
+    >>> print (qrt.filter (Q.left.date.start.year == 2012)) ### SRM.Regatta_C
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -13241,8 +13337,8 @@ _test_date_extraction_pg = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta."left"
-         WHERE EXTRACT(year FROM srm_regatta_event_1.date__start) = :param_1
+           JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
+         WHERE EXTRACT(year FROM srm_regatta_event__1.date__start) = :param_1
 
 """
 
@@ -13252,7 +13348,7 @@ _test_date_extraction_sq = """
     >>> ET = apt ["SRM.Regatta_C"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.left.date.start.year == 2013)) ### SRM.Regatta_C
+    >>> print (qrt.filter (Q.left.date.start.year == 2016)) ### SRM.Regatta_C
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -13275,20 +13371,21 @@ _test_date_extraction_sq = """
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
-           JOIN srm_regatta_event AS srm_regatta_event_1 ON srm_regatta_event_1.pid = srm_regatta."left"
-         WHERE CAST(strftime(:strftime_1, srm_regatta_event_1.date__start) AS INTEGER) = :param_1
+           JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
+         WHERE CAST(strftime(:strftime_1, srm_regatta_event__1.date__start) AS INTEGER) = :param_1
 
 """
 
 _debug = """
+    >>> from _GTW.__test__.SAW_QX import show, QX
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
 
     >>> ET = apt ["PAP.Subject_has_Email"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+    >>> qxh = QX.Mapper (qrt)
 
-    >>> print (qrt.filter (Q.right.address == "lucky@mangari.org")) ### PAP.Subject_has_Email
+    >>> show (qxh (Q.right.address))
 
-    >>> print (qrt.filter (Q.right.address.ENDSWITH ("@mangari.org"))) ### PAP.Subject_has_Email
 
 """
 
@@ -13301,6 +13398,7 @@ __test__ = Scaffold.create_test_dict \
         , test_q_able           = _test_q_able
         , test_qc_map           = _test_qc_map
         , test_q_result         = _test_q_result
+        , test_qx               = _test_qx
         , test_relevant_root    = _test_relevant_root
         , test_select           = _test_select
         , test_select_strict    = _test_select_strict
@@ -13314,22 +13412,22 @@ __test__ = Scaffold.create_test_dict \
 __test__.update \
     ( Scaffold.create_test_dict
         ( dict
-            ( test_date_extraction = _test_date_extraction_pg
+            ( test_date_extraction_pg = _test_date_extraction_pg
             )
-        , ignore = ("HPS", "MYS", "POS", "SQL", "sq")
+        , ignore = ("HPS", "MYS", "SQL", "sq")
         )
     )
 
 __test__.update \
     ( Scaffold.create_test_dict
         ( dict
-            ( test_date_extraction = _test_date_extraction_sq
+            ( test_date_extraction_sq = _test_date_extraction_sq
             )
-        , ignore = ("HPS", "MYS", "POS", "SQL", "pg")
+        , ignore = ("HPS", "MYS", "POS", "pg")
         )
     )
 
-debug__test__ = Scaffold.create_test_dict \
+X__test__ = Scaffold.create_test_dict \
     ( dict (debug = _debug)
     , ignore = ("HPS", "MYS", "POS", "SQL")
     )

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -43,6 +43,7 @@
 #    26-Sep-2012 (CT) Remove `hidden` from `is_current_dir`
 #    26-Sep-2012 (CT) Redefine `show_in_nav`
 #     7-Dec-2012 (CT) Check `allow_method` in `_effective_entry`
+#    17-Sep-2013 (CT) Move `IndexError` from `_effective` to `_effective_entry`
 #    ««revision-date»»···
 #--
 
@@ -102,13 +103,14 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
     @property
     @getattr_safe
     def _effective (self) :
-        dt = self.dir_template
+        result = self
+        dt     = self.dir_template
         if dt is None :
             try :
-                return self._effective_entry
-            except (IndexError, TypeError) :
-                pass
-        return self
+                result = self._effective_entry
+            except TypeError as exc :
+                print ("TypeError in %s._effective: %s" % (self, exc))
+        return result
     # end def _effective
 
     @property
@@ -122,8 +124,12 @@ class _TOP_Dir_ (_Ancestor, GTW.RST._Dir_) :
             method  = self.request.method
             user    = self.user
             entries = (e for e in entries if e.allow_method (method, user))
-        page = first (entries)
-        return page._effective
+        try :
+            page = first (entries)
+        except IndexError :
+            return self
+        else :
+            return page._effective
     # end def _effective_entry
 
     def show_in_nav (self, nav_page) :

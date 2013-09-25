@@ -35,6 +35,7 @@
 #     8-Apr-2013 (CT) Add `chdir (base_dir)` to `__doc__`
 #     8-Apr-2013 (CT) Add `Rule` and its children, `Rule_Definition`,
 #                     factor `_Parameter_`
+#    19-Sep-2013 (CT) Pass `AttributeError` to `TFL.Attr_Query`
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ import _TFL.Caller
 import _TFL.Filter
 import _TFL.Q_Exp
 
-P = TFL.Attr_Query ()
+P = TFL.Attr_Query (Ignore_Exception = AttributeError)
 
 def ddict (* ds) :
     result = {}

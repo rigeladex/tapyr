@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -67,12 +67,12 @@ _test_code = r"""
 
     >>> scope.rollback ()
 
-    >>> SRM.Team.query ().order_by (TFL.Sorted_By ("-left.left.date.start", "name")).all ()
+    >>> SRM.Team.query ().order_by ("-left.left.date.start", "name").all ()
     [SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/2')]
 
     >>> scope.rollback ()
 
-    >>> SRM.Team.query ().order_by (TFL.Sorted_By ("-regatta.event.date.start", "name")).all ()
+    >>> SRM.Team.query ().order_by ("regatta.event.date.-start", "name").all ()
     [SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011/10/15', u'2011/10/15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010/09/18', u'2010/09/18')), (u'optimist', )), u'wien/2')]
 
 

@@ -74,6 +74,13 @@
 #    26-Aug-2013 (CT) Change `_setup` to include `seq._table_kw`, if any
 #    28-Aug-2013 (CT) Factor `del_stmt`, `ins_stmt`, `upd_stmt`, `where_spk`,
 #                     `_exec_update`, move MySQL specifics to `SAW.MY`
+#    31-Aug-2013 (CT) Add explicit `alias_name` to `E_Type_Wrapper_Alias`
+#     5-Sep-2013 (CT) Change `attr_join_etw_alias` to include both table
+#                     names into `alias`
+#    24-Sep-2013 (CT) Add optional argument `X_ETW` to `attr_join_etw_alias`
+#    24-Sep-2013 (CT) Change `E_Type_Wrapper_Alias`:
+#                     * change `table_name` to use `.sa_table_x.name`, if any
+#                     * use `_mangled_alias` in `_get_sa_table_alias`
 #    ««revision-date»»···
 #--
 
@@ -308,14 +315,19 @@ class _E_Type_Wrapper_Base_ (TFL.Meta.Object) :
         return self.db_attrs.get ("type_name")
     # end def type_name_wrapper
 
-    def attr_join_etw_alias (self, akw, E_Type) :
-        name = akw.ckd_name
-        xtra = ()
+    def attr_join_etw_alias (self, akw, E_Type, X_ETW = None) :
+        ETW    = E_Type._SAW
+        a_name = akw.ckd_name
+        t_name = ETW.table_name
+        middle = (self if X_ETW is None else X_ETW).table_name
+        key    = (t_name, middle, a_name)
+        xtra   = ()
         try :
-            result = self._aja_map [name]
+            result = self._aja_map [key]
         except KeyError :
-            result = self._aja_map [name] = E_Type_Wrapper_Alias (E_Type._SAW)
-        if akw.columns and name not in self.sa_table_x.c :
+            alias  = "%s____%s__%s" % key
+            result = self._aja_map [key] = E_Type_Wrapper_Alias (ETW, alias)
+        if akw.columns and a_name not in self.sa_table_x.c :
             ### need an extra join because `akw`'s column is not in
             ### `self.sa_table_x` but in that of a parent
             ###     --> join the parent's table, too
@@ -516,9 +528,10 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
 
     def __init__ (self, e_type) :
         self.__super.__init__ (e_type)
-        self.table_name = e_type._saw_table_name (self.ATW.DBW)
-        self.children   = []
-        self.fk_cols    = []
+        self.table_name         = e_type._saw_table_name (self.ATW.DBW)
+        self.children           = []
+        self.fk_cols            = []
+        self._sa_alias_name_map = {}
         self._setup (e_type)
     # end def __init__
 
@@ -710,6 +723,15 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
                 yield name, kind_wrapper
     # end def _insert_iter
 
+    def _mangled_alias (self, alias) :
+        map = self._sa_alias_name_map
+        try :
+            result = map [alias]
+        except KeyError :
+            result = map [alias] = "%s__%d" % (self.table_name, len (map) + 1)
+        return result
+    # end def _mangled_alias
+
     def _setup (self, e_type) :
         db_attrs_o = self.db_attrs_o
         if db_attrs_o or not e_type.is_partial :
@@ -722,8 +744,9 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
                 seq = self.sequence
                 if seq and seq.sa_column is None :
                     kw.update (seq._table_kw)
-                self.sa_table = SA.schema.Table \
+                self.sa_table = sa_table = SA.schema.Table \
                     (t_name, ATW.metadata,  * cols, ** kw)
+                sa_table.MOM_Wrapper = self
             self.unique_o = tuple (sorted (unique))
             parent = self.parent
             if parent :
@@ -778,8 +801,9 @@ class E_Type_Wrapper_Alias (_E_Type_Wrapper_Base_) :
 
     QC_Type                 = _Column_Mapper_Alias_
 
-    def __init__ (self, ETW) :
+    def __init__ (self, ETW, alias_name) :
         self._ETW           = ETW
+        self._alias_name    = alias_name
         self._sa_table_map  = {}
         self.__super.__init__ ()
     # end def __init__
@@ -799,6 +823,11 @@ class E_Type_Wrapper_Alias (_E_Type_Wrapper_Base_) :
             for k, v in pyk.iteritems (self._ETW.db_attrs_o)
             )
     # end def db_attrs_o
+
+    @TFL.Meta.Once_Property
+    def e_type (self) :
+        return self._ETW.e_type
+    # end def e_type
 
     @TFL.Meta.Once_Property
     def q_able_attrs_i (self) :
@@ -851,6 +880,18 @@ class E_Type_Wrapper_Alias (_E_Type_Wrapper_Base_) :
             return tuple (self._get_sa_table_alias (t) for t in tables)
     # end def sa_tables_strict
 
+    @TFL.Meta.Once_Property
+    def table_name (self) :
+        table = self.sa_table_x
+        if table is not None :
+            result = table.name
+        else :
+            table  = self._ETW.sa_table_x
+            result = table.name if table is not None else \
+                self.e_type._saw_table_name (self.ATW.DBW)
+        return result
+    # end def table_name
+
     def _get_sa_col_alias (self, col) :
         table  = self._get_sa_table_alias (col.table)
         result = table.c [col.name]
@@ -858,12 +899,24 @@ class E_Type_Wrapper_Alias (_E_Type_Wrapper_Base_) :
     # end def _get_sa_col_alias
 
     def _get_sa_table_alias (self, table) :
-        name   = table.name
-        result = self._sa_table_map.get (name)
+        ETW   = table.MOM_Wrapper
+        name  = table.name
+        alias = self._alias_name
+        if self._ETW.e_type != table.MOM_Wrapper.e_type :
+            alias = "%s____%s" % (name, self._alias_name)
+        alias  = ETW._mangled_alias (alias)
+        map    = self._sa_table_map
+        result = map.get (alias)
         if result is None :
-            result = self._sa_table_map [name] = table.alias ()
+            result = map [alias] = table.alias (alias)
+            result.MOM_Wrapper   = self
         return result
     # end def _get_sa_table
+
+    def _mangled_alias (self, alias) :
+        ### `self.e_type._SAW` is the outermost, i.e., un-aliased, ETW
+        return self.e_type._SAW._mangled_alias (alias)
+    # end def _mangled_alias
 
     def __getattr__ (self, name) :
         return getattr (self._ETW, name)
@@ -906,6 +959,11 @@ class Partial_E_Type_Wrapper (_E_Type_Wrapper_) :
     def sa_table_x (self) :
         return self.parent.sa_table
     # end def sa_table_x
+
+    @TFL.Meta.Once_Property
+    def table_name (self) :
+        return self.e_type._saw_table_name (self.ATW.DBW)
+    # end def table_name
 
     @TFL.Meta.Once_Property
     def unique_o (self) :

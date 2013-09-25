@@ -234,6 +234,7 @@ class Sorted_By (TFL.Meta.Object) :
 
     """
 
+    Desc             = Desc_Getter
     Ignore_Exception = (LookupError, AttributeError)
 
     type_name_map = dict \

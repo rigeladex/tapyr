@@ -40,6 +40,7 @@
 #    26-May-2013 (CT) Import `pyk`
 #     3-Jun-2013 (CT) Commit and compact `scope` in `do_create`
 #    27-Jun-2013 (CT) Add `SAW`-based backends
+#    25-Sep-2013 (CT) Add `debug`
 #    ««revision-date»»···
 #--
 
@@ -102,6 +103,12 @@ Version = Product_Version \
         , db_extension    = ".momt"
         )
     )
+
+def debug (** kw) :
+    from _TFL.Record import Record
+    X = Record (** kw)
+    import pdb; pdb.set_trace ()
+# end def debug
 
 class Test_Response (BaseResponse) :
     """Enhance the reponse for the test setup"""

@@ -216,6 +216,8 @@
 #    28-Jul-2013 (CT) Guard against `LookupError`, not `KeyError`, in
 #                     `_EPK_Mixin_.set_pickle_cargo`
 #     1-Aug-2013 (CT) Factor `_SPK_Mixin_` from `_EPK_Mixin_`
+#    31-Aug-2013 (CT) Change `_Composite_Mixin_._check_sanity` to forbid
+#                     attributes that refer to other entities
 #    ««revision-date»»···
 #--
 
@@ -237,6 +239,7 @@ import _MOM._Prop.Kind
 
 from   _TFL.I18N             import _, _T, _Tn
 
+import itertools
 import logging
 import pickle
 
@@ -783,9 +786,24 @@ class _Composite_Mixin_ (_Co_Base_) :
 
     def _check_sanity (self, attr_type, e_type) :
         if __debug__ :
-            if not attr_type.P_Type :
+            P_Type = attr_type.P_Type
+            if not P_Type :
                 raise TypeError \
                     ("%s needs to define `P_Type`" % attr_type)
+            else :
+                forbidden = \
+                    ( P_Type.id_entity_attr
+                    , P_Type.rev_ref_attr
+                    , P_Type.surrogate_attr
+                    )
+                if any (forbidden) :
+                    offenders = ", ".join \
+                        (str (a) for a in itertools.chain (* forbidden))
+                    raise TypeError \
+                        ( "%s cannot have any attributes referring "
+                          "to other entities; offending attribute(s): %s"
+                        % (P_Type.type_name, offenders, )
+                        )
             for name in ("computed_default", "default", "raw_default") :
                 d = getattr (attr_type, name)
                 if d :

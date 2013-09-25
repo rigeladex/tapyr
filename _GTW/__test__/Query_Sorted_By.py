@@ -123,6 +123,16 @@ _link2_link1 = r"""
     (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
     (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
 
+    Unfortunately, we cannot use `.attrs (* qa)` because
+    * `HPS` doesn't currently support expressions for `attrs`
+    * PostgreSQL returns floating point numbers for the expression `qd`
+    >>> qd = Q.right.left.date.finish.day - Q.right.left.date.start.month
+    >>> qa = (Q.right.left, qd, Q.right.left.date.start.year)
+    >>> for x in q.order_by (qd) :
+    ...     print tuple (q (x) for q in qa)
+    (SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), -4, 2008)
+    (SRM.Regatta_Event (u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), 8, 2010)
+    (SRM.Regatta_Event (u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), 16, 2009)
 
 """
 

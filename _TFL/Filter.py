@@ -49,6 +49,9 @@
 #    10-Aug-2012 (CT) Add `_rank` to allow defined order
 #    22-Feb-2013 (CT) Define `Ignore_Exception` as `tuple`
 #     8-Jul-2013 (CT) Add `op_name` to `Filter_Not`, `Filter_And`, `Filter_Or`
+#    30-Aug-2013 (CT) Fix `Filter_Not.__repr__`
+#    19-Sep-2013 (CT) Remove `Ignore_Exception` from `Attr_Query`
+#    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
 #    ««revision-date»»···
 #--
 
@@ -264,7 +267,7 @@ class Filter_Not (_Filter_S_) :
         if isinstance (predicate, Filter_Not) :
             return ~ predicate
         else :
-            return super  (Filter_Not, cls).__new__ (cls, predicate, ** kw)
+            return super (Filter_Not, cls).__new__ (cls, predicate, ** kw)
     # end def __new__
 
     def __init__ (self, predicate, ** kw) :
@@ -281,7 +284,7 @@ class Filter_Not (_Filter_S_) :
     # end def __invert__
 
     def __repr__ (self) :
-        return "<%s NOT %s>" % (self.__class__.__name__, self.predicate)
+        return "<%s NOT %s>" % (self.__class__.__name__, self._not_predicate)
     # end def __repr__
 
 # end class Filter_Not
@@ -308,7 +311,7 @@ class _Filter_Q_ (_Filter_) :
     # end def predicate
 
     def _inverted_predicate (self) :
-        return [Filter_Not (p) for p in self.predicates]
+        return (Filter_Not (p) for p in self.predicates)
     # end def _inverted_predicate
 
     def __repr__ (self) :
@@ -399,16 +402,13 @@ class Attr_Query (TFL.Q_Exp.Base) :
            0
 
            >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
-           >>> (Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)
-           <Filter_And [Q.bar.lower () == Q.baz.lower (), Q.baz.lower () == Q.qux.lower ()]>
            >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
            False
-           >>> ((Q.bar.LOWER == Q.baz.LOWER) & (Q.baz.LOWER == Q.qux.LOWER)) (r3)
-           True
+
+            >>> Q.DISPLAY (Q.NOT (Q.foo % 2 * -Q.bar / 3))
+            '<Filter_Not NOT Q.foo % 2 * - Q.bar / 3>'
 
     """
-
-    Ignore_Exception = (AttributeError, )
 
     AND              = Filter_And
     NOT              = Filter_Not
@@ -425,10 +425,6 @@ class Attr_Query (TFL.Q_Exp.Base) :
     class _Call_ (_Filter_S_, TFL.Q_Exp._Call_) :
         pass
     # end class _Call_
-
-    class _Func_ (_Filter_S_, TFL.Q_Exp._Func_) :
-        pass
-    # end class _Func_
 
 # end class Attr_Query
 

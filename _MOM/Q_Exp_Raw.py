@@ -33,6 +33,7 @@
 #    19-Jul-2013 (CT) Derive `Raw_Attr_Query` from `Attr_Query`;
 #                     set `Q_Exp.Base.RAW` to `Raw_Attr_Query ()`;
 #                     remove `_RAW_` and `_RAW_DESC_` (nice simplification)
+#    30-Aug-2013 (CT) Remove `SET`
 #    ««revision-date»»···
 #--
 
@@ -67,12 +68,6 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
         self._postfix = postfix
         self._prefix  = prefix
     # end def __init__
-
-    def SET (self, obj, value) :
-        if self._prefix :
-            obj = getattr (TFL.Getter, self._prefix) (obj)
-        obj.set_raw (** { self._postfix : value })
-    # end def SET
 
     def _getter (self, obj) :
         if self._prefix :

@@ -31,6 +31,9 @@
 #                     when used as decorator
 #    27-Jun-2013 (CT) Add `Single_Dispatch_Method.__call__` to allow calls of
 #                     un-bound method
+#    12-Sep-2013 (CT) Return `func`, not `self`, from
+#                     `Single_Dispatch_Method.add_type` (decorator chaining)
+#    12-Sep-2013 (CT) Allow more than one type arg for `add_type`
 #    ««revision-date»»···
 #--
 
@@ -78,18 +81,20 @@ class Single_Dispatch (TFL.Meta.Object) :
         return func (* args, ** kw)
     # end def __call__
 
-    def add_type (self, T, func = None) :
-        """Add implementation for type `T`"""
+    def add_type (self, * Types, ** kw) :
+        """Add implementations for `Types`"""
+        func = kw.pop ("func", None)
         if func is None :
-            return lambda func : self.add_type (T, func)
+            return lambda func : self.add_type (* Types, func = func)
         else :
-            registry = self.registry
-            if T in registry :
-                raise TypeError \
-                    ( "Duplicate implementation for function %r for type %s"
-                    % (self.top_func.__name__, T)
-                    )
-            registry [T] = func
+            for T in Types :
+                registry = self.registry
+                if T in registry :
+                    raise TypeError \
+                        ( "Duplicate implementation for function %r for type %s"
+                        % (self.top_func.__name__, T)
+                        )
+                registry [T] = func
             self.cache.clear ()
             return func
     # end def add_type
@@ -156,12 +161,14 @@ class Single_Dispatch_Method (TFL.Meta.Method_Descriptor) :
         return self.method (* args, ** kw)
     # end def __call__
 
-    def add_type (self, T, func = None) :
+    def add_type (self, * Types, ** kw) :
+        func = kw.pop ("func", None)
         if func is None :
-            return lambda func : self.add_type (T, func)
+            return lambda func : self.add_type (* Types, func = func)
         else :
-            self.method.add_type (T, func)
-            return self
+            self.method.add_type (* Types, func = func)
+            ### `add_type` needs to return `func` to allow decorator chaining
+            return func
     # end def add_type
 
     def dispatch (self, T) :

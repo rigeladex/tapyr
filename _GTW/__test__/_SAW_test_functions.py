@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-Aug-2013 (CT) Creation
 #    26-Aug-2013 (CT) Add `show_key_o_p`, `show_sequence`
+#    18-Sep-2013 (CT) Add `show_query` (uses `compile` to show `params`)
 #    ««revision-date»»···
 #--
 
@@ -263,6 +264,16 @@ def show_qc_map (apt, pred = pred) :
             print (ETW)
             _show (ETW.QC)
 # end def show_qc_map
+
+def show_query (qr) :
+    sq = qr.sa_query
+    cq = sq.compile ()
+    print (qr)
+    if cq.params :
+        print ("Parameters:")
+        for k, v in sorted (pyk.iteritems (cq.params)) :
+            print ("     %-20s : %r" % (k, v))
+# end def show_query
 
 def show_root_table (apt, pred = pred) :
     sk = lambda x : (x.e_type.i_rank, )

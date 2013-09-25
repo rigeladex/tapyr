@@ -51,6 +51,11 @@
 #     5-Aug-2013 (CT) Assign `_SAW_Q_Result` for `MOM.Id_Entity`,
 #                     `MOM.MD_Change`
 #     9-Aug-2013 (CT) Simplify `_extend_join` to check for `table` in `joined`
+#    11-Sep-2013 (CT) Change `_get_filters` to use `SAW.QX`
+#    17-Sep-2013 (CT) Change `_get_order_by` to use `SAW.QX`
+#    17-Sep-2013 (CT) Change `order_by` to allow multiple criteria
+#    18-Sep-2013 (CT) Facter `_get_xs`, add and use `_get_attr_exprs`
+#    23-Sep-2013 (CT) Rename `_Base_.__str__` to `.__repr__`
 #    ««revision-date»»···
 #--
 
@@ -64,7 +69,6 @@ from   _MOM.import_MOM           import MOM, Q
 from   _MOM._DBW._SAW            import SAW, SA
 
 import _MOM._DBW._SAW.Attr
-import _MOM._DBW._SAW.Q_Exp
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -93,15 +97,11 @@ class _Base_ (TFL.Meta.Object) :
         self.polymorphic = False
     # end def __init__
 
-    @property
-    def _order_by (self) :
-        result = self._order_by_cached
-        if result is None :
-            result = self._order_by_cached = []
-            for obs in reversed (self._order_bys) :
-                result.extend (obs)
-        return result
-    # end def _order_by
+    @TFL.Meta.Once_Property
+    def QX (self) :
+        from _MOM._DBW._SAW import QX
+        return QX
+    # end def QX
 
     @property
     def sa_query (self) :
@@ -138,6 +138,16 @@ class _Base_ (TFL.Meta.Object) :
             raise AttributeError \
                 ("Cannot change session from %s to %s" % (old_value, value))
     # end def session
+
+    @property
+    def _order_by (self) :
+        result = self._order_by_cached
+        if result is None :
+            result = self._order_by_cached = []
+            for obs in reversed (self._order_bys) :
+                result.extend (obs)
+        return result
+    # end def _order_by
 
     def all (self) :
         return list (self)
@@ -234,12 +244,15 @@ class _Base_ (TFL.Meta.Object) :
         return result [0]
     # end def one
 
-    def order_by (self, criterion) :
+    def order_by (self, * criteria) :
         result    = self._clone ()
         sa_query  = result._sa_query
-        obs, join = result._get_order_by  (criterion, sa_query)
+        obs, join = result._get_order_by  (criteria, sa_query)
         if join is not None :
             result._sa_query = sa_query.select_from (join)
+        ### `obs` is a list; use `append` here to be apple to later reverse
+        ### `_order_bys` while keeping the sequence of items in `obs`
+        ### this allows later `order_by` calls to dominate earlier ones
         result._order_bys.append (obs)
         return result
     # end def order_by
@@ -277,30 +290,19 @@ class _Base_ (TFL.Meta.Object) :
         return join
     # end def _extend_join
 
-    def _get_col_exprs (self, criteria, sa_query) :
-        ETW    = self.ETW
-        joined = self._joined
-        join   = orig_join = sa_query.froms [-1]
-        wxs    = []
-        for c in criteria :
-            if isinstance (c, SA.Operators) :
-                wx = [c]
-            else :
-                try :
-                    sf = c._saw_filter
-                except AttributeError :
-                    raise TypeError ("Invalid filter criterion %s" % c)
-                else :
-                    wx, jx = sf (self, ETW)
-                    join   = self._extend_join (join, joined, jx)
-            wxs.extend (wx)
-        return wxs, None if join is orig_join else join
-    # end def _get_col_exprs
+    def _get_attr_exprs (self, axes, sa_query) :
+        axes = list \
+            (   (getattr (Q, ax) if isinstance (ax, pyk.string_types) else ax)
+            for ax in axes
+            )
+        return self._get_xs (axes, sa_query, "XS_ATTR", TFL.Method.extend)
+    # end def _get_attr_exprs
 
     def _get_filters (self, criteria, sa_query) :
-        wxs, join = self._get_col_exprs (criteria, sa_query)
-        wxs       = SAW.Attr.fix_bool (self, self.ETW, wxs)
-        return (wxs [0] if len (wxs) == 1 else SA.expression.and_ (* wxs), join)
+        wxs, join = self._get_xs \
+            (criteria, sa_query, "XS_FILTER", TFL.Method.append)
+        wxs = wxs [0] if len (wxs) == 1 else SA.expression.and_ (* wxs)
+        return wxs, join
     # end def _get_filters
 
     def _get_group_by (self, columns) :
@@ -316,24 +318,28 @@ class _Base_ (TFL.Meta.Object) :
                 yield c (ETW_Q)
     # end def _get_group_by
 
-    def _get_order_by (self, criterion, sa_query) :
-        ETW    = self.ETW
+    def _get_order_by (self, criteria, sa_query) :
+        return self._get_xs \
+            ( self.QX.fixed_order_by (criteria), sa_query
+            , "XS_ORDER_BY", TFL.Method.extend
+            )
+    # end def _get_order_by
+
+    def _get_xs (self, criteria, sa_query, xs_name, adder) :
+        QX     = self.QX
         joined = self._joined
         join   = orig_join = sa_query.froms [-1]
-        if isinstance (criterion, SA.Operators) :
-            obs = (criterion, )
-        else :
-            if isinstance (criterion, pyk.string_types) :
-                criterion = getattr (Q, criterion)
-            try :
-                so = criterion._saw_order_by
-            except AttributeError :
-                raise TypeError ("Invalid order-by criterion %s" % criterion)
+        xs     = []
+        for c in criteria :
+            if isinstance (c, SA.Operators) :
+                xs.append (c)
             else :
-                obs, jxs = so (self, ETW)
-                join     = self._extend_join (join, joined, jxs)
-        return obs, None if join is orig_join else join
-    # end def _get_order_by
+                qx   = QX.Mapper (self) (c)
+                x    = getattr (qx, xs_name)
+                join = self._extend_join (join, joined, qx.JOINS)
+                adder (xs, x)
+        return xs, None if join is orig_join else join
+    # end def _get_xs
 
     def __bool__ (self) :
         result = self.session.q_cache.get (self)
@@ -356,7 +362,7 @@ class _Base_ (TFL.Meta.Object) :
                 yield element
     # end def __iter__
 
-    def __str__ (self) :
+    def __repr__ (self) :
         def q_parts (self) :
             for p in str (self.sa_query).split ("\n") :
                 p = p.strip ()
@@ -389,7 +395,7 @@ class _Base_ (TFL.Meta.Object) :
                 yield p
         sa_query = "\n     ".join (q_parts (self))
         return "SQL: %s" % (sa_query, )
-    # end def __str__
+    # end def __repr__
 
 # end class _Base_
 
@@ -397,19 +403,15 @@ class _Attr_Base_ (_Base_) :
     """Base class for `_Attr_` and `_Attrs_`"""
 
     def __init__ (self, parent, axes) :
-        axes = list \
-            (   (getattr (Q, ax) if isinstance (ax, pyk.string_types) else ax)
-            for ax in axes
-            )
         self.__super.__init__ (parent.session)
-        self.__dict__.update (parent.__dict__, _joined = set (parent._joined))
-        cols, join = self._get_col_exprs (axes, self._sa_query)
+        self.__dict__.update  (parent.__dict__, _joined = set (parent._joined))
+        cols, join = self._get_attr_exprs (axes, self._sa_query)
         self.cols  = cols
         self._setup_query (cols, join)
     # end def __init__
 
     def _col_value_from_row (self, col, row, scope) :
-        if isinstance (col, MOM.DBW.SAW.Attr.Kind_Composite_Wrapper) :
+        if isinstance (col, MOM.DBW.SAW.Attr.Kind_Wrapper_C) :
             pc     = col.row_as_pickle_cargo    (row)
             result = col.kind.from_pickle_cargo (scope, pc)
         else :
@@ -423,12 +425,12 @@ class _Attr_Base_ (_Base_) :
     def _setup_query (self, cols, join) :
         def _gen (cols) :
             for c in cols :
-                if isinstance (c, MOM.DBW.SAW.Attr.Kind_Composite_Wrapper) :
+                if isinstance (c, MOM.DBW.SAW.Attr.Kind_Wrapper_C) :
                     for cc in c.columns :
                         yield cc
                 else :
                     yield c
-        sa_query   = self._sa_query
+        sa_query = self._sa_query
         if join is not None :
             sa_query   = sa_query.select_from       (join)
         self._sa_query = sa_query.with_only_columns (_gen (cols))
@@ -514,10 +516,10 @@ class E_Type_Reload (E_Type) :
     def _sa_query (self) :
         result = self.__dict__ ["_sa_query"]
         if not self._init_p :
-            E_Type       = self.E_Type
-            Q_spk        = getattr (Q, E_Type.spk_attr_name)
-            filters      = (Q_spk == SA.sql.bindparam ("spk"), )
-            obs          = ()
+            E_Type   = self.E_Type
+            Q_spk    = getattr (Q, E_Type.spk_attr_name)
+            filters  = (Q_spk == SA.sql.bindparam ("spk"), )
+            obs      = ()
             wx, join = self._get_filters (filters, result)
             if join is not None :
                 raise RuntimeError \

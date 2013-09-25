@@ -35,16 +35,16 @@
 #     3-Jul-2013 (CT) Add `_Kind_Wrapper_.Derived`, `.eff`, `.q_able_names`
 #     4-Jul-2013 (CT) Change `Kind_Wrapper.columns` to return `eff.columns`,
 #                     if any
-#     4-Jul-2013 (CT) Add `Kind_Composite_Wrapper.q_able_attrs`
+#     4-Jul-2013 (CT) Add `Kind_Wrapper_C.q_able_attrs`
 #     4-Jul-2013 (CT) Add `Kind_Wrapper.name` and use in `__str__`
 #     4-Jul-2013 (CT) Factor `pc_transform`, `col_values*`, and
 #                     `row_as_pickle_cargo` up to `_Kind_Wrapper_`
 #     5-Jul-2013 (CT) Add `prefix` to `q_able_names`; add `update_col_map`
 #     8-Jul-2013 (CT) Use `.ATW.SA_Type`; add `_saw_column_type_type_name`
 #     8-Jul-2013 (CT) Add `q_exp_get` to `_Kind_Wrapper_`
-#     8-Jul-2013 (CT) Add `Kind_EPK_Wrapper`
+#     8-Jul-2013 (CT) Add `Kind_Wrapper_S`
 #     9-Jul-2013 (CT) Split `Kind_Wrapper_P` from `Kind_Wrapper_Q`,
-#                     add `q_exp_get` to them and `Kind_Composite_Wrapper`
+#                     add `q_exp_get` to them and `Kind_Wrapper_C`
 #     9-Jul-2013 (CT) Add `q_exp_bin` to `_Kind_Wrapper_`
 #    10-Jul-2013 (CT) Set `_SAW` of kind descriptors
 #    10-Jul-2013 (CT) Add `Kind_Wrapper_R` for `_Rev_Query_` attributes
@@ -55,23 +55,23 @@
 #    12-Jul-2013 (CT) Reify `A_Join`
 #    15-Jul-2013 (CT) Add `q_exp_get_ob`
 #    15-Jul-2013 (CT) Redefine `_q_exp_bin_combine` for
-#                     `Kind_Composite_Wrapper`, `Kind_EPK_Wrapper`,
+#                     `Kind_Wrapper_C`, `Kind_Wrapper_S`,
 #                     and `Kind_Wrapper_R`
 #    18-Jul-2013 (CT) Deal with instances of `.attr.E_Type` in
-#                     `Kind_Composite_Wrapper._q_exp_bin_combine`
+#                     `Kind_Wrapper_C._q_exp_bin_combine`
 #    19-Jul-2013 (CT) Add support for `Q.RAW`
-#    21-Jul-2013 (CT) Change `Kind_Composite_Wrapper._q_exp_bin_combine` to
+#    21-Jul-2013 (CT) Change `Kind_Wrapper_C._q_exp_bin_combine` to
 #                     delegate dealing with nested attributes to `.__super`
 #    21-Jul-2013 (CT) Fix `Kind_Wrapper_Q.q_exp_get`
 #                     (pass self.outer to `sf`, if any)
-#    21-Jul-2013 (CT) Fix `Kind_EPK_Wrapper.q_exp_get` (`jxs`)
+#    21-Jul-2013 (CT) Fix `Kind_Wrapper_S.q_exp_get` (`jxs`)
 #    21-Jul-2013 (CT) Fix `Kind_Wrapper_R._q_exp_bin_combine` (don't add joins)
 #    22-Jul-2013 (CT) Add `alias`, use `attr_join_etw_alias`
 #    23-Jul-2013 (CT) Add `_setup_alias_columns`, `_setup_alias_attrs`
 #    23-Jul-2013 (CT) Redefine `Kind_Wrapper_P.q_exp_bin` and
 #                     change `Kind_Wrapper_R._wrap_super_q_exp` to
 #                     * OR-combine children's expressions
-#    23-Jul-2013 (CT) Add `Kind_Composite_Wrapper.__getattr__` to trigger `QC`
+#    23-Jul-2013 (CT) Add `Kind_Wrapper_C.__getattr__` to trigger `QC`
 #    23-Jul-2013 (CT) Factor `_column_joins`, `_column_joins_pkn`
 #    24-Jul-2013 (CT) Fix handling of extra columns due to `sqx_filter`
 #    30-Jul-2013 (CT) Don't pass `tail_name` to kind-wrapper for `tail_name`
@@ -88,18 +88,22 @@
 #                     `None`, for non-nullable columns
 #     4-Aug-2013 (CT) Add `fix_bool` and `_saw_bool` methods
 #     4-Aug-2013 (CT) Add and use Single_Dispatch_Method `_saw_kind_wrapper`
-#     4-Aug-2013 (CT) Add `Kind_Date_Wrapper`, `Kind_Date_Time_Wrapper`, and
-#                     `Kind_Time_Wrapper` plus the supporting infrastructure
+#     4-Aug-2013 (CT) Add `Kind_Wrapper_Date`, `Kind_Date_Time_Wrapper`, and
+#                     `Kind_Wrapper_Time` plus the supporting infrastructure
 #     6-Aug-2013 (CT) Factor `_q_exp_bin_apply`, `_q_exp_call_apply`
 #     6-Aug-2013 (CT) Add optional argument `columns` to `update_col_map`
 #     6-Aug-2013 (CT) Use `.attr._saw_kind_wrapper`, if any
 #     9-Aug-2013 (CT) Factor `_col_q_able_names`, redefine for
-#                     `Kind_EPK_Wrapper`
+#                     `Kind_Wrapper_S`
 #     9-Aug-2013 (CT) Use `self.kind`, not `self.eff.kind`, unless accessing
 #                     `columns`
 #    25-Aug-2013 (CT) Use `MOM.Id_Entity.E_Spec._Attributes`
 #    25-Aug-2013 (CT) Add `default` to `_saw_column_kw`, `_saw_columns_raw_kind`
 #    26-Aug-2013 (CT) Add `col_args` to `_saw_columns_surrogate`
+#    30-Aug-2013 (CT) Move defaults for `fields` to `_Kind_Wrapper_`
+#     2-Sep-2013 (CT) Change `_Kind_Wrapper_.__init__` to set  `e_type`
+#     2-Sep-2013 (CT) Change `A_Join.__repr__` to display table aliases properly
+#    20-Sep-2013 (CT) Remove `q_exp_*` methods (superseded by SAW.QX)
 #    ««revision-date»»···
 #--
 
@@ -148,8 +152,9 @@ class A_Join (TFL.Meta.Object) :
     # end def __call__
 
     def __repr__ (self) :
+        name = self.table.name
         return "<%s %s on (%s, %s)>" % \
-            ((self.__class__.__name__, self.table) + self.cols)
+            ((self.__class__.__name__, name) + self.cols)
     # end def __repr__
 
 # end class A_Join
@@ -158,6 +163,7 @@ class _Kind_Wrapper_ (TFL.Meta.Object) :
 
     columns         = ()
     db_attrs_o      = db_attrs     = {}
+    fields          = set ()
     q_able_attrs_o  = q_able_attrs = {}
 
     _ETW            = TFL.Meta.Alias_Property ("ETW")
@@ -167,6 +173,7 @@ class _Kind_Wrapper_ (TFL.Meta.Object) :
         self.ETW    = ETW
         self.PNS    = ETW.PNS
         self.DBW    = ETW.PNS.Manager
+        self.e_type = ETW.e_type
         self.kind   = kind
         self.attr   = kind.attr
         self.outer  = outer
@@ -263,83 +270,6 @@ class _Kind_Wrapper_ (TFL.Meta.Object) :
             return self.__class__ (ETW, kind, outer = outer, parent = self.eff)
     # end def Derived
 
-    def q_exp_bin (self, q_exp, QR, ETW, tail_name) :
-        lcols, rcols, jxs = self._q_exp_bin_cols (q_exp, QR, ETW, tail_name)
-        cols, jx          = self._q_exp_bin_combine \
-            (q_exp, QR, ETW, tail_name, lcols, rcols)
-        jxs += jx
-        return cols, jxs
-    # end def q_exp_bin
-
-    def q_exp_call (self, q_exp, QR, ETW, tail_name) :
-        func, args, jxs = self._q_exp_call_parts (q_exp, QR, ETW, tail_name)
-        return (func (* args), ), jxs
-    # end def q_exp_call
-
-    def q_exp_func (self, q_exp, QR, ETW, tail_name) :
-        lhs        = q_exp.lhs
-        op_name    = q_exp.op.__name__.lower ()
-        func       = getattr (SA.sql.func, op_name)
-        cols, jxs  = lhs._saw_filter (QR, ETW)
-        return [func (c) for c in cols], jxs
-    # end def q_exp_func
-
-    def q_exp_get \
-            (self, q_getter, QR, col, tail_name, saw_name = "_saw_filter") :
-        cols, jxs = [col], ()
-        key       = q_getter._name
-        if tail_name :
-            ETW   = self.outer.ETW if self.outer else self.ETW
-            try :
-                t_col = ETW.QC [key]
-            except KeyError :
-                return self._q_exp_get_from_key \
-                    (ETW, key, q_getter, QR, col, tail_name, "_saw_filter")
-            if isinstance (t_col, _Kind_Wrapper_) :
-                cols, jxs = t_col.q_exp_get \
-                    (q_getter, QR, col, "", saw_name)
-            else :
-                cols = [t_col]
-        if isinstance (q_getter, Q.RAW._Get_Raw_) :
-            if len (cols) > 1 :
-                raise TypeError \
-                    ("Got more than 1 column for %s: %s" % (q_getter, cols))
-            col = self.columns [0]
-            akw = col.MOM_Wrapper
-            if akw.attr.needs_raw_value :
-                col  = akw.columns [-1]
-                cols = [col]
-        return cols, jxs
-    # end def q_exp_get
-
-    def q_exp_get_ob (self, q_getter, QR, col, tail_name) :
-        return self.q_exp_get \
-            (q_getter, QR, col, tail_name, saw_name = "_saw_order_by")
-    # end def q_exp_get_ob
-
-    def q_exp_get_ob_epk (self, q_getter, QR, head_col, tail_name) :
-        ET     = self.attr.E_Type
-        ETW    = ET._SAW
-        result = obs, jxs = [], []
-        if ET.epk_sig :
-            for k in ET.epk_sig :
-                q_g    = getattr (Q, k)
-                ob, jx = q_g._saw_order_by (QR, ETW)
-                obs.extend (ob)
-                jxs.extend (jx)
-            outer  = QR.polymorphic or not self.is_required
-            joiner = TFL.Method.outerjoin if outer else TFL.Method.join
-            jxs.extend (self._column_joins_pkn (ETW, obs, head_col, joiner))
-        return result
-    # end def q_exp_get_ob_epk
-
-    def q_exp_una (self, q_exp, QR, ETW, tail_name) :
-        lhs        = q_exp.lhs
-        op_name    = q_exp.op.__name__
-        cols, jxs  = lhs._saw_filter (QR, ETW)
-        return [getattr (c, op_name) () for c in cols], jxs
-    # end def q_exp_una
-
     def row_as_pickle_cargo (self, row) :
         result = tuple (row [c] for c in self.columns)
         return result
@@ -393,101 +323,6 @@ class _Kind_Wrapper_ (TFL.Meta.Object) :
                 yield (A_Join (col, ctab.c [pkn], head_col, joiner))
     # end def _column_joins_pkn
 
-    def _q_exp_bin_apply (self, q_exp, QR, ETW, lhs, op_name, rhs) :
-        return getattr (lhs, op_name) (rhs)
-    # end def _q_exp_bin_apply
-
-    def _q_exp_bin_cols (self, q_exp, QR, ETW, tail_name) :
-        lhs        = q_exp.lhs
-        rhs        = q_exp.rhs
-        lcols, jxs = lhs._saw_filter (QR, ETW)
-        try :
-            sf     = getattr (rhs, "_saw_filter")
-        except AttributeError :
-            if isinstance (lhs, Q.RAW._Get_Raw_) :
-                lcol0 = lcols and lcols [0]
-                if not getattr (lcol0, "MOM_Is_Raw", False) :
-                    lk = getattr (lcol0, "MOM_Kind", None)
-                    if lk is not None :
-                        rhs = lk.from_string (rhs)
-            if isinstance (rhs, (MOM.Id_Entity, MOM.MD_Change)) :
-                rhs = rhs.spk ### XXX ??? is this needed ???
-            rcols = [rhs]
-        else :
-            rcols, rjxs  = sf (QR, ETW)
-            jxs         += rjxs
-        return lcols, rcols, jxs
-    # end def _q_exp_bin_cols
-
-    def _q_exp_bin_combine \
-            (self, q_exp, QR, ETW, tail_name, lcols, rcols, jxs = ()) :
-        op_name   = q_exp.op.__name__
-        lhss, lxs = bool_split (lcols, Q.MOM_EXTRA)
-        rhss, rxs = bool_split (rcols, Q.MOM_EXTRA)
-        ll        = len (lhss)
-        rl        = len (rhss)
-        if rl == 1 < ll :
-            rhss  = itertools.repeat (rhss [0], ll)
-        elif ll != rl :
-            raise NotImplementedError \
-                ( "Cannot combine query expression `%s` for (%s, %s) "
-                  "combination: %s, %s"
-                % (q_exp, ll, rl, lcols, rcols)
-                )
-        applier   = functools.partial (self._q_exp_bin_apply, q_exp, QR, ETW)
-        cols      = list (applier (l, op_name, r) for l, r in zip (lhss, rhss))
-        extras    = lxs + rxs
-        if extras :
-            cols  = [SA.expression.and_ (* (cols + extras))]
-        return cols, jxs
-    # end def _q_exp_bin_combine
-
-    def _q_exp_call_apply (self, q_exp, QR, ETW, lhs, op_name) :
-        return getattr (lhs, op_name)
-    # end def _q_exp_call_apply
-
-    def _q_exp_call_parts (self, q_exp, QR, ETW, tail_name) :
-        args       = q_exp.args
-        lhs        = q_exp.lhs
-        op_name    = q_exp.op.__name__
-        cols, jxs  = lhs._saw_filter (QR, ETW)
-        if len (cols) > 1 :
-            raise ValueError ("%s expands to more than one column" % (q_exp, ))
-        if op_name == "in_" :
-            if len (args) > 1 :
-                raise NotImplementedError \
-                    ( "%s expression for more than 1 argument is "
-                      "not implemented"
-                    % (q_exp, )
-                    )
-            arg0 = args [0]
-            if isinstance (arg0, MOM.DBW.SAW.Q_Result._Base_) :
-                args = q_exp.args = (arg0.sa_query, )
-        applier  = functools.partial (self._q_exp_call_apply, q_exp, QR, ETW)
-        return applier (cols [0], op_name), args, jxs
-    # end def _q_exp_call_parts
-
-    def _q_exp_get_from_key \
-            (self, ETW, key, q_getter, QR, col, tail_name, saw_name) :
-        k, _, t = rsplit_hst (key, ".")
-        if k and t :
-            try :
-                col = ETW.QC [k]
-            except KeyError :
-                pass
-            else :
-                try :
-                    akw = col.MOM_Wrapper
-                except AttributeError :
-                    pass
-                else :
-                    return akw.q_exp_get_field (q_getter, QR, col, t, saw_name)
-        raise TypeError \
-            ( "Unknown column expression %s for %s"
-            % (key, ETW.type_name)
-            )
-    # end def _q_exp_get_from_key
-
     def _setup_alias_columns (self, ETW_alias, result) :
         def _gen (self, ETW_alias, result) :
             for c in self.columns :
@@ -525,45 +360,10 @@ class Kind_Wrapper (_Kind_Wrapper_) :
 # end class Kind_Wrapper
 
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr._EPK_Mixin_)
-class Kind_EPK_Wrapper (Kind_Wrapper) :
+class Kind_Wrapper_S (Kind_Wrapper) :
     """SAW specific information about an epk-referring db-attribute kind
        descriptor in the context of a specific E_Type_Wrapper
     """
-
-    def q_exp_get \
-            (self, q_getter, QR, head_col, tail_name, saw_name = "_saw_filter"):
-        if tail_name and tail_name != "pid" :
-            tq        = getattr (q_getter.Q, tail_name)
-            method    = getattr (tq, saw_name)
-            ETW, xtra = self.ETW.attr_join_etw_alias (self, self.attr.E_Type)
-            cols, jxs = method  (QR, ETW)
-            jxs       = list (jxs)
-            cjxs      = []
-            joiner    = \
-                TFL.Method.outerjoin if QR.polymorphic else TFL.Method.join
-            if not jxs :
-                cjxs  = list \
-                    (self._column_joins_pkn (ETW, cols, head_col, joiner))
-            if xtra :
-                a, b = xtra
-                cjxs = list (self._column_joins ([a], b, joiner)) + cjxs
-            if cjxs :
-                jxs   = cjxs + jxs
-            else :
-                jcol  = ETW.spk_col
-                jxs   = list \
-                    (self._column_joins ([jcol], head_col, joiner)) + jxs
-            return cols, jxs
-        else :
-            return [head_col], ()
-    # end def q_exp_get
-
-    def q_exp_get_ob (self, q_getter, QR, head_col, tail_name) :
-        if tail_name :
-            return self.__super.q_exp_get_ob (q_getter, QR, head_col, tail_name)
-        else :
-            return self.q_exp_get_ob_epk (q_getter, QR, head_col, tail_name)
-    # end def q_exp_get_ob
 
     def _col_q_able_names (self, col) :
         ### Use `self.q_able_names` here to support derived attributes with
@@ -571,37 +371,7 @@ class Kind_EPK_Wrapper (Kind_Wrapper) :
         return self.q_able_names
     # end def _col_q_able_names
 
-    def _q_exp_bin_combine \
-            (self, q_exp, QR, ETW, tail_name, lcols, rcols, jxs = ()) :
-        op_name   = q_exp.op.__name__
-        lhss, lxs = bool_split (lcols, Q.MOM_EXTRA)
-        ll        = len (lhss)
-        if ll == 1 and isinstance (lhss [0], Kind_Composite_Wrapper) :
-            ### We get here for query expressions like::
-            ###   `Q.person.lifetime == ("2013/07/15", )` for an E_Type where
-            ###   `person` is an `_A_Id_Entity_`, e.g., PAP.Person_has_Phone
-            akw       = lhss [0]
-            q_getter  = q_exp.lhs
-            k         = q_getter._name.split (".", 1) [1]
-            lh        = getattr (Q, k)
-            qx        = getattr (lh, op_name) (q_exp.rhs)
-            akw_ETW   = akw.outer.ETW if akw.outer else akw.ETW
-            spk_col   = akw_ETW.spk_col
-            ref_col   = self.columns [0]
-            outer     = QR.polymorphic or not akw.is_required
-            joiner    = TFL.Method.outerjoin if outer else TFL.Method.join
-            jxs      += tuple (self._column_joins ([spk_col], ref_col, joiner))
-            cols, jxs = akw._q_exp_bin_combine \
-                (qx, QR, ETW, "", [akw], rcols, jxs)
-            if lxs :
-                cols = [SA.expression.and_ (* (cols + lxs))]
-            return cols, jxs
-        else :
-            return self.__super._q_exp_bin_combine \
-                (q_exp, QR, ETW, tail_name, lcols, rcols, jxs)
-    # end def _q_exp_bin_combine
-
-# end class Kind_EPK_Wrapper
+# end class Kind_Wrapper_S
 
 class _Kind_Wrapper_PQ_ (_Kind_Wrapper_) :
 
@@ -630,68 +400,6 @@ class Kind_Wrapper_P (_Kind_Wrapper_PQ_) :
        descriptor in the context of a specific E_Type_Wrapper
     """
 
-    def q_exp_bin (self, q_exp, QR, ETW, tail_name) :
-        lcols = []
-        rcols = []
-        jxs   = []
-        for ETW in self.ETW.children :
-            ls, rs, js = self._q_exp_bin_cols (q_exp, QR, ETW, tail_name)
-            if 0 < len (ls) != len (rs) != 1 :
-                raise NotImplementedError \
-                    ( "Polymorphic query expression involving multiple "
-                      "columns is not implemented: %s applied to %s --> %s, %s"
-                    % (q_exp, ETW.type_name, ls, rs)
-                    )
-            lcols.extend (ls)
-            rcols.extend (rs)
-            jxs.extend   (js)
-        wxs, jx = self._q_exp_bin_combine \
-            (q_exp, QR, ETW, tail_name, lcols, rcols)
-        jxs += jx
-        return (SA.expression.or_ (* wxs), ), jxs
-    # end def q_exp_bin
-
-    def q_exp_call (self, q_exp, QR, ETW, tail_name) :
-        calls   = []
-        jxs     = []
-        for ETW in self.ETW.children :
-            func, args, js = self._q_exp_call_parts (q_exp, QR, ETW, tail_name)
-            calls.append ((func, args))
-            jxs.extend   (js)
-        return (SA.expression.or_ (* tuple (f (* a) for f, a in calls)), ), jxs
-    # end def q_exp_call
-
-    def q_exp_func (self, q_exp, QR, ETW, tail_name) :
-        lhs     = q_exp.lhs
-        op_name = q_exp.op.__name__.lower ()
-        func    = getattr (SA.sql.func, op_name)
-        cols    = []
-        jxs     = []
-        for ETW in self.ETW.children :
-            cs, jx = lhs._saw_filter (QR, ETW)
-            if len (cs) > 1 :
-                raise NotImplementedError \
-                    ( "Polymorphic query expression involving multiple "
-                      "columns is not implemented: %s applied to %s --> %s"
-                    % (q_exp, ETW.type_name, cs)
-                    )
-            cols.extend (cs)
-            jxs.extend  (js)
-        return (SA.expression.or_ (* tuple (func (c) for c in cols)), ), jxs
-    # end def q_exp_func
-
-    def q_exp_get \
-            (self, q_getter, QR, head_col, tail_name, saw_name = "_saw_filter"):
-        jxs = []
-        wxs = []
-        for ETW in self.ETW.children :
-            sf     = getattr (q_getter, saw_name)
-            wx, jx = sf (QR, ETW)
-            wxs.extend (wx)
-            jxs.extend (jx)
-        return wxs, jxs
-    # end def q_exp_get
-
     def __repr__ (self) :
         tail = " (%s)" % \
             (" | ".join (sorted (c.type_name for c in self.ETW.children)), )
@@ -707,36 +415,6 @@ class Kind_Wrapper_Q (_Kind_Wrapper_PQ_) :
        descriptor in the context of a specific E_Type_Wrapper
     """
 
-    def q_exp_get \
-            (self, q_getter, QR, head_col, tail_name, saw_name = "_saw_filter"):
-        q = self.attr.query
-        try :
-            sf = getattr (q, saw_name)
-        except AttributeError :
-            raise TypeError ("Invalid filter criterion %s" % q_getter)
-        ETW = self.outer if self.outer else self.ETW
-        cols, jxs = sf (QR, ETW)
-        if tail_name :
-            ### if `q` resolves to ref-attribute(s), we need to delegate
-            ### `tail_name` to that/those
-            t_cols = []
-            jxs    = list (jxs)
-            for c in cols :
-                try :
-                    w = c.MOM_Wrapper
-                except AttributeError :
-                    raise TypeError \
-                        ("%s doesn't support access to %s" % (c, tail_name))
-                else :
-                    qg     = getattr (getattr (Q, w.attr.name), tail_name)
-                    sf     = getattr (qg, saw_name)
-                    cs, js = sf (QR, w.ETW)
-                    t_cols.extend (cs)
-                    jxs.extend    (js)
-            cols = t_cols
-        return cols, jxs
-    # end def q_exp_get
-
     def __repr__ (self) :
         kind = self.kind
         return "<SAW : %s `%s`>" % (kind.typ, self.name)
@@ -750,128 +428,6 @@ class Kind_Wrapper_R (_Kind_Wrapper_PQ_) :
        descriptor in the context of a specific E_Type_Wrapper
     """
 
-    @TFL.Decorator
-    def _wrap_super_q_exp (method) :
-        method_name = method.__name__
-        def _ (self, q_exp, QR, ETW, tail_name) :
-            super_method = getattr (self.__super, method_name)
-            cols, jxs    = super_method (q_exp, QR, ETW, tail_name)
-            if self.attr.Ref_Type._SAW.sa_table is None :
-                ### polymorphic : need to OR the expressions of the children
-                cols = [SA.expression.or_ (* cols)]
-            return cols, jxs
-        return _
-    # end def _wrap_super_q_exp
-
-    @_wrap_super_q_exp
-    def q_exp_bin (self, q_exp, QR, ETW, tail_name) :
-        pass
-
-    @_wrap_super_q_exp
-    def q_exp_call (self, q_exp, QR, ETW, tail_name) :
-        pass
-
-    @_wrap_super_q_exp
-    def q_exp_func (self, q_exp, QR, ETW, tail_name) :
-        pass
-
-    def q_exp_get \
-            (self, q_getter, QR, head_col, tail_name, saw_name = "_saw_filter"):
-        Q             = q_getter.Q ### might be `Q.RAW`
-        attr          = self.attr
-        ETW           = self.outer.ETW if self.outer else self.ETW
-        spk_col       = ETW.spk_col
-        ref_etw, xtra = self.ETW.attr_join_etw_alias (self, attr.Ref_Type)
-        ref_col       = ref_etw.QC [attr.ref_name]
-        ref_filter    = attr.ref_filter (Q)
-        polymorph     = ref_etw.sa_table is None
-        x_cols        = []
-        with QR.LET (polymorphic = polymorph or QR.polymorphic) :
-            if not polymorph :
-                joiner    = TFL.Method.join
-                cols, jxs = [ref_col], []
-            else :
-                joiner    = TFL.Method.outerjoin
-                cols, jxs = ref_col.q_exp_get \
-                    (ref_filter, QR, ref_col, "", saw_name)
-            if xtra :
-                a, b = xtra
-                jxs.extend (self._column_joins ([a], b, joiner))
-            jxs.extend (self._column_joins (cols, spk_col, joiner))
-            if attr.sqx_filter is not None :
-                ### if called from `q_exp_bin`, ... `q_exp_una` the
-                ### col-expressions from `sqx_filter` must not
-                ### participate in those operations:
-                ###     --> mark as `MOM_EXTRA`
-                sqx_method = getattr (attr.sqx_filter, saw_name)
-                for c in cols :
-                    xcs, xjxs = sqx_method (QR, ref_etw)
-                    x_cols.extend (xcs)
-                    jxs.extend    (xjxs)
-            rev_sq = attr.sqx (spk_col)
-            if rev_sq._attr :
-                ### `A_Role_Ref` and `A_Role_Ref_Set` need this
-                ### need to get the right alias here so that `join` and
-                ### `q_getter_ref` for `tail_name` (next `if` below) match
-                ref_col       = ref_etw.QC [rev_sq._attr]
-                ref_wrapper   = ref_col.MOM_Wrapper
-                ref_etw, xtra = ref_wrapper.ETW.attr_join_etw_alias \
-                    (ref_wrapper, ref_wrapper.attr.E_Type)
-                cols, rjxs    = ref_col.MOM_Wrapper.q_exp_get \
-                    (getattr (Q, tail_name), QR, ref_col, tail_name, saw_name)
-                if xtra :
-                    a, b = xtra
-                    jxs.extend (self._column_joins ([a], b, joiner))
-                jxs.extend (rjxs)
-            if tail_name and tail_name != "pid" and saw_name == "_saw_filter" :
-                q_getter_ref = getattr (Q, tail_name)
-                cols, rjxs   = q_getter_ref._saw_filter (QR, ref_etw)
-                jxs.extend (rjxs)
-        cols = tuple (uniq (cols))
-        if x_cols :
-            def _gen (xs) :
-                for x in xs :
-                    x.MOM_EXTRA = True
-                    yield x
-            cols = tuple (itertools.chain (cols, _gen (x_cols)))
-        return cols, jxs
-    # end def q_exp_get
-
-    def q_exp_get_ob (self, q_getter, QR, head_col, tail_name) :
-        if tail_name :
-            return self.__super.q_exp_get_ob (q_getter, QR, head_col, tail_name)
-        else :
-            return self.q_exp_get_ob_epk (q_getter, QR, head_col, tail_name)
-    # end def q_exp_get_ob
-
-    @_wrap_super_q_exp
-    def q_exp_una (self, q_exp, QR, ETW, tail_name) :
-        pass
-
-    def _q_exp_bin_combine \
-            (self, q_exp, QR, ETW, tail_name, lcols, rcols, jxs = ()) :
-        op_name   = q_exp.op.__name__
-        lhss, lxs = bool_split (lcols, Q.MOM_EXTRA)
-        ll        = len (lhss)
-        if ll == 1 and isinstance (lhss [0], Kind_Composite_Wrapper) :
-            ### We get here for query expressions like::
-            ###   `Q.person.lifetime == ("2013/07/15", )` for an E_Type where
-            ###   `person` is a `Rev_Ref`, e.g., of `Auth.Account`
-            akw      = lhss [0]
-            q_getter = q_exp.lhs
-            k        = q_getter._name.split (".", 1) [1]
-            lh       = getattr (Q, k)
-            qx       = getattr (lh, op_name) (q_exp.rhs)
-            cols, jxs = akw._q_exp_bin_combine \
-                (qx, QR, ETW, "", [akw], rcols, jxs)
-            if lxs :
-                cols = [SA.expression.and_ (* (cols + lxs))]
-            return cols, jxs
-        else :
-            return self.__super._q_exp_bin_combine \
-                (q_exp, QR, ETW, tail_name, lcols, rcols, jxs)
-    # end def _q_exp_bin_combine
-
     def __repr__ (self) :
         kind = self.kind
         return "<SAW : %s `%s`>" % (kind.typ, self.name)
@@ -880,7 +436,7 @@ class Kind_Wrapper_R (_Kind_Wrapper_PQ_) :
 # end class Kind_Wrapper_R
 
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr._Composite_Mixin_)
-class Kind_Composite_Wrapper (_Kind_Wrapper_) :
+class Kind_Wrapper_C (_Kind_Wrapper_) :
     """SAW specific information about an composite-attribute kind descriptor in
        the context of a specific E_Type_Wrapper
     """
@@ -889,9 +445,9 @@ class Kind_Composite_Wrapper (_Kind_Wrapper_) :
     q_able_attrs_i = {}
 
     def __init__ (self, ETW, kind, outer = None, parent = None) :
-        self.e_type = kind.attr.P_Type
         self.__super.__init__ (ETW, kind, outer = outer, parent = parent)
-        self._setup_attrs     (ETW, parent)
+        self.e_type = kind.attr.P_Type
+        self._setup_attrs (ETW, parent)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -937,31 +493,6 @@ class Kind_Composite_Wrapper (_Kind_Wrapper_) :
                     yield k, v
     # end def col_values
 
-    def q_exp_get \
-            (self, q_getter, QR, head_col, tail_name, saw_name = "_saw_filter"):
-        if tail_name :
-            return self.__super.q_exp_get \
-                (q_getter, QR, head_col, tail_name, saw_name)
-        else :
-            return [self], ()
-    # end def q_exp_get
-
-    def q_exp_get_ob (self, q_getter, QR, head_col, tail_name) :
-        if tail_name :
-            result = self.__super.q_exp_get_ob \
-                (q_getter, QR, head_col, tail_name)
-        else :
-            ET     = self.attr.E_Type
-            result = obs, jxs = [], []
-            if ET.usr_sig :
-                for k in ET.usr_sig :
-                    ob, jx = self.q_exp_get_ob \
-                        (getattr (q_getter, k), QR, head_col, k)
-                    obs.extend (ob)
-                    jxs.extend (jx)
-        return result
-    # end def q_exp_get_ob
-
     def row_as_pickle_cargo (self, row) :
         return (self.ETW.row_as_pickle_cargo (row, self.db_attrs), )
     # end def row_as_pickle_cargo
@@ -970,39 +501,6 @@ class Kind_Composite_Wrapper (_Kind_Wrapper_) :
         self.__super.update_col_map (mapper, col_map)
         self._setup_QC (mapper.__class__ (self, self.ckd_name), col_map)
     # end def update_col_map
-
-    def _q_exp_bin_combine \
-            (self, q_exp, QR, ETW, tail_name, lcols, rcols, jxs = ()) :
-        if tail_name :
-            return self.__super._q_exp_bin_combine \
-                (q_exp, QR, ETW, tail_name, lcols, rcols, jxs)
-        else :
-            assert lcols [0] is self
-            ET       = self.attr.E_Type
-            q_getter = q_exp.lhs
-            op_name  = q_exp.op.__name__
-            lcols    = []
-            rcol0    = rcols and rcols [0]
-            if isinstance (rcol0, ET) :
-                rcols = rcol0.attr_tuple ()
-            if isinstance (rcols, (tuple, list)) :
-                for k in ET.usr_sig [:len (rcols)]:
-                    ob, jx = self.q_exp_get_ob \
-                        (getattr (q_getter, k), QR, self, k)
-                    lcols.extend (ob)
-                    jxs += jx
-            elif isinstance (rcols, dict) :
-                rcols_list = []
-                for k, v in pyk.iteritems (rcols) :
-                    ob, jx = self.q_exp_get_ob \
-                        (getattr (q_getter, k), QR, self, k)
-                    lcols.extend      (ob)
-                    rcols_list.append (v)
-                    jxs += jx
-                rcols = rcols_list
-            return self.__super._q_exp_bin_combine \
-                (q_exp, QR, ETW, tail_name, lcols, rcols, jxs)
-    # end def _q_exp_bin_combine
 
     def _setup_alias_attrs (self, ETW_alias, result) :
         parent = result.eff
@@ -1066,43 +564,31 @@ class Kind_Composite_Wrapper (_Kind_Wrapper_) :
         raise AttributeError (name)
     # end def __getattr__
 
-# end class Kind_Composite_Wrapper
+# end class Kind_Wrapper_C
 
 class _Kind_Wrapper_Field_Extractor_ (_Kind_Wrapper_) :
     """Kind wrapper that can extract fields from the column"""
 
-    fields = set ()
-
-    def q_exp_get_field \
-            (self, q_getter, QR, col, tail_name, saw_name = "_saw_filter") :
-        if tail_name in self.fields :
-            f = self.attr._saw_extract_field (self.ETW.DBW, col, tail_name)
-            cols, jxs = [f], ()
-        else :
-            raise AttributeError (tail_name)
-        return cols, jxs
-    # end def q_exp_get
-
 # end class _Kind_Wrapper_Field_Extractor_
 
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr.A_Date)
-class Kind_Date_Wrapper (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
+class Kind_Wrapper_Date (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
 
     fields = set (("year", "month", "day"))
 
-# end class Kind_Date_Wrapper
+# end class Kind_Wrapper_Date
 
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr.A_Time)
-class Kind_Time_Wrapper (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
+class Kind_Wrapper_Time (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
 
     fields = set (("hour", "minute", "second"))
 
-# end class Kind_Time_Wrapper
+# end class Kind_Wrapper_Time
 
 @TFL.Add_To_Class ("_SAW_Wrapper", MOM.Attr.A_Date_Time)
 class Kind_Date_Time_Wrapper (_Kind_Wrapper_Field_Extractor_, Kind_Wrapper) :
 
-    fields = Kind_Date_Wrapper.fields | Kind_Time_Wrapper.fields
+    fields = Kind_Wrapper_Date.fields | Kind_Wrapper_Time.fields
 
 # end class Kind_Date_Time_Wrapper
 

@@ -517,6 +517,7 @@ _test_mac = """
     A MAC address must contain 6 hexadecimal octets separated by `:`.
 
 """
+
 _test_query = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -638,6 +639,15 @@ _test_query = r"""
     >>> Test_IP4_Network.query (Q.address <= network).count ()
     3
 
+    >>> for a, m in Test_IP4_Network.query ().order_by ("-address.mask_len", "address").attrs ("address", "address.mask_len") :
+    ...     print a, m
+    192.168.1.0/29 29
+    192.168.1.8/29 29
+    192.168.1.0/28 28
+    192.168.2.0/28 28
+    192.168.0.0/27 27
+    192.168.1.0/27 27
+
     >>> i60 = Test_IP6_Address (address = '2001:db7::1',      raw = True)
     >>> i61 = Test_IP6_Address (address = '2001:db8::1',      raw = True)
     >>> i62 = Test_IP6_Address (address = '2001:db8::2',      raw = True)
@@ -750,6 +760,192 @@ _test_query = r"""
 
 """
 
+_test_qx_pg = """
+    >>> from _GTW.__test__.SAW_QX import QX, show
+    >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
+
+    >>> ET = apt ["GTW.OMP.NET.Test_IP4_Address"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+    >>> qxa = QX.Mapper (qrt)
+
+    >>> show (qxa (Q.address == "192.168.1.0/28"))
+    Bin:__eq__:
+      <GTW.OMP.NET.Test_IP4_Address | QX._QX_CIDR_ for
+           <SAW : IP4-address `address` [gtw_omp_net_test_ip4_address.address]>>
+      192.168.1.0/28
+
+    >>> show (qxa (Q.address.IN ("192.168.1.0/28")))
+    Call:in_:
+      <GTW.OMP.NET.Test_IP4_Address | QX._QX_CIDR_ for
+           <SAW : IP4-address `address` [gtw_omp_net_test_ip4_address.address]>>
+
+    >>> from _GTW.__test__._SAW_test_functions import show_query
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope ...
+
+    >>> NET = scope.GTW.OMP.NET
+    >>> Test_IP4_Address = NET.Test_IP4_Address
+    >>> Test_IP4_Network = NET.Test_IP4_Network
+    >>> Test_IP6_Address = NET.Test_IP6_Address
+    >>> Test_IP6_Network = NET.Test_IP6_Network
+    >>> n41 = Test_IP4_Network (address = '192.168.1.0/28', raw = True)
+    >>> network = n41.address
+
+    >>> show_query (Test_IP4_Address.query (Q.address.IN (n41)))
+    SQL: SELECT
+           gtw_omp_net_test_ip4_address.address AS gtw_omp_net_test_ip4_address_address,
+           gtw_omp_net_test_ip4_address.pid AS gtw_omp_net_test_ip4_address_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN gtw_omp_net_test_ip4_address ON mom_id_entity.pid = gtw_omp_net_test_ip4_address.pid
+         WHERE gtw_omp_net_test_ip4_address.address <<= :address_1
+    Parameters:
+         address_1            : GTW.OMP.NET.Test_IP4_Network ("192.168.1.0/28")
+
+    >>> show_query (Test_IP4_Address.query (Q.address.IN ("192.168.23.0/28")))
+    SQL: SELECT
+           gtw_omp_net_test_ip4_address.address AS gtw_omp_net_test_ip4_address_address,
+           gtw_omp_net_test_ip4_address.pid AS gtw_omp_net_test_ip4_address_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN gtw_omp_net_test_ip4_address ON mom_id_entity.pid = gtw_omp_net_test_ip4_address.pid
+         WHERE gtw_omp_net_test_ip4_address.address <<= :address_1
+    Parameters:
+         address_1            : u'192.168.23.0/28'
+
+    >>> show_query (Test_IP4_Network.query (Q.address != network))
+    SQL: SELECT
+           gtw_omp_net_test_ip4_network.address AS gtw_omp_net_test_ip4_network_address,
+           gtw_omp_net_test_ip4_network.pid AS gtw_omp_net_test_ip4_network_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN gtw_omp_net_test_ip4_network ON mom_id_entity.pid = gtw_omp_net_test_ip4_network.pid
+         WHERE gtw_omp_net_test_ip4_network.address != :address_1
+    Parameters:
+         address_1            : 192.168.1.0/28
+
+"""
+
+_test_qx_sq = """
+    >>> from _GTW.__test__.SAW_QX import QX, show
+    >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
+
+    >>> ET = apt ["GTW.OMP.NET.Test_IP4_Address"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+    >>> qxa = QX.Mapper (qrt)
+
+    >>> show (qxa (Q.address == "192.168.1.0/28"))
+    Bin:__eq__:
+      <GTW.OMP.NET.Test_IP4_Address | QX._QX_CIDR_ for
+           <SAW : IP4-address `address` [gtw_omp_net_test_ip4_address.address, gtw_omp_net_test_ip4_address.address__numeric]>>
+      192.168.1.0/28
+
+    >>> show (qxa (Q.address.IN ("192.168.1.0/28")))
+    Call:in_:
+      <GTW.OMP.NET.Test_IP4_Address | QX._QX_CIDR_ for
+           <SAW : IP4-address `address` [gtw_omp_net_test_ip4_address.address, gtw_omp_net_test_ip4_address.address__numeric]>>
+
+    >>> from _GTW.__test__._SAW_test_functions import show_query
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope ...
+
+    >>> NET = scope.GTW.OMP.NET
+    >>> Test_IP4_Address = NET.Test_IP4_Address
+    >>> Test_IP4_Network = NET.Test_IP4_Network
+    >>> Test_IP6_Address = NET.Test_IP6_Address
+    >>> Test_IP6_Network = NET.Test_IP6_Network
+    >>> n41 = Test_IP4_Network (address = '192.168.1.0/28', raw = True)
+    >>> network = n41.address
+
+    >>> show_query (Test_IP4_Address.query (Q.address.IN (n41)))
+    SQL: SELECT
+           gtw_omp_net_test_ip4_address.address AS gtw_omp_net_test_ip4_address_address,
+           gtw_omp_net_test_ip4_address.address__numeric AS gtw_omp_net_test_ip4_address_address__numeric,
+           gtw_omp_net_test_ip4_address.pid AS gtw_omp_net_test_ip4_address_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN gtw_omp_net_test_ip4_address ON mom_id_entity.pid = gtw_omp_net_test_ip4_address.pid
+         WHERE gtw_omp_net_test_ip4_address.address__numeric >= :address__numeric_1
+            AND gtw_omp_net_test_ip4_address.address__numeric <= :address__numeric_2
+    Parameters:
+         address__numeric_1   : 1084752128L
+         address__numeric_2   : 1084752143L
+
+    >>> show_query (Test_IP4_Address.query (Q.address.IN ("192.168.23.0/28")))
+    SQL: SELECT
+           gtw_omp_net_test_ip4_address.address AS gtw_omp_net_test_ip4_address_address,
+           gtw_omp_net_test_ip4_address.address__numeric AS gtw_omp_net_test_ip4_address_address__numeric,
+           gtw_omp_net_test_ip4_address.pid AS gtw_omp_net_test_ip4_address_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN gtw_omp_net_test_ip4_address ON mom_id_entity.pid = gtw_omp_net_test_ip4_address.pid
+         WHERE gtw_omp_net_test_ip4_address.address__numeric >= :address__numeric_1
+            AND gtw_omp_net_test_ip4_address.address__numeric <= :address__numeric_2
+    Parameters:
+         address__numeric_1   : 1084757760L
+         address__numeric_2   : 1084757775L
+
+    >>> show_query (Test_IP4_Network.query (Q.address != network))
+    SQL: SELECT
+           gtw_omp_net_test_ip4_network.address AS gtw_omp_net_test_ip4_network_address,
+           gtw_omp_net_test_ip4_network.address__mask_len AS gtw_omp_net_test_ip4_network_address__mask_len,
+           gtw_omp_net_test_ip4_network.address__numeric AS gtw_omp_net_test_ip4_network_address__numeric,
+           gtw_omp_net_test_ip4_network.address__upper_bound AS gtw_omp_net_test_ip4_network_address__upper_bound,
+           gtw_omp_net_test_ip4_network.pid AS gtw_omp_net_test_ip4_network_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN gtw_omp_net_test_ip4_network ON mom_id_entity.pid = gtw_omp_net_test_ip4_network.pid
+         WHERE gtw_omp_net_test_ip4_network.address__numeric != :address__numeric_1
+            OR gtw_omp_net_test_ip4_network.address__mask_len != :address__mask_len_1
+    Parameters:
+         address__mask_len_1  : 28
+         address__numeric_1   : 1084752128L
+
+
+"""
+
+_test_debug = """
+    >>> from _GTW.__test__._SAW_test_functions import show_query
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    >>> NET = scope.GTW.OMP.NET
+    >>> Test_IP4_Address = NET.Test_IP4_Address
+    >>> Test_IP4_Network = NET.Test_IP4_Network
+    >>> Test_IP6_Address = NET.Test_IP6_Address
+    >>> Test_IP6_Network = NET.Test_IP6_Network
+
+    >>> i40 = Test_IP4_Address (address = '192.168.0.1',    raw = True)
+    >>> n41 = Test_IP4_Network (address = '192.168.1.0/28', raw = True)
+    >>> network = n41.address
+
+
+    >>> Test_IP4_Network.query (Q.address != network).count ()
+
+"""
+
 from _GTW.__test__.model import *
 
 __test__ = Scaffold.create_test_dict \
@@ -758,6 +954,30 @@ __test__ = Scaffold.create_test_dict \
         , test_ip6   = _test_ip6
         , test_mac   = _test_mac
         , test_query = _test_query
+        )
+    )
+
+__test__.update \
+    ( Scaffold.create_test_dict
+        ( dict
+            ( test_qx_pg = _test_qx_pg
+            )
+        , ignore = ("HPS", "MYS", "SQL", "sq")
+        )
+    )
+
+__test__.update \
+    ( Scaffold.create_test_dict
+        ( dict
+            ( test_qx_sq = _test_qx_sq
+            )
+        , ignore = ("HPS", "MYS", "POS", "pg")
+        )
+    )
+
+X__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_debug     = _test_debug
         )
     )
 

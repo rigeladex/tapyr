@@ -37,6 +37,7 @@
 #    15-Apr-2012 (CT) Use `show` to guarantee deterministic order
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    30-Jul-2013 (CT) Add `show` and `.order_by`, enable HPS
+#    23-Sep-2013 (CT) Add test `sub_query_sql`
 #    ««revision-date»»···
 #--
 
@@ -193,18 +194,27 @@ _query_attr = r"""
     2008 ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
     2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
     2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
+
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2010)) : print r.year, r
     2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
+
     >>> for r in q.filter (Q.event.date.start.D.YEAR (2009)) : print r.year, r
     2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
 
+    >>> for r in q.filter (Q.event.date.start.year == 2010) : print r.year, r
+    2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
+
+    >>> for r in q.filter (Q.event.date.start >= "2010/01/01", Q.event.date.start <= "2010/12/31") : print r.year, r
+    2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
+
     >>> PAP.Person.query (Q.last_name == "tanzer").all ()
     [PAP.Person (u'tanzer', u'christian', u'', u'')]
+
     >>> PAP.Person.query (Q.last_name == "Tanzer").all ()
     []
+
     >>> PAP.Person.query (Q.RAW.last_name == "Tanzer").all ()
     [PAP.Person (u'tanzer', u'christian', u'', u'')]
-
 
 """
 
@@ -243,9 +253,87 @@ _sub_query = """
 
     >>> q1 = scope.PAP.Person.query (last_name = "ln 1").attr ("pid")
     >>> q2 = scope.PAP.Person.query (last_name = "ln 2").attr ("pid")
+
+    >>> print q1.order_by ("pid").all ()
+    [1, 2]
+
+    >>> print q2.order_by ("pid").all ()
+    [3, 4]
+
     >>> q  = scope.PAP.Person.query_s (Q.pid.IN (q1))
     >>> print q.all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u''), PAP.Person (u'ln 1', u'fn 2', u'', u'')]
+
+"""
+
+_sub_query_sql = """
+    >>> from _GTW.__test__._SAW_test_functions import show_query
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 2", lifetime = DI ("2010/01/03"))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 3", lifetime = DI ("2010/02/01"))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 4", lifetime = DI ("2011/01/03"))
+    >>> scope.commit ()
+
+    >>> q1 = scope.PAP.Person.query (last_name = "ln 1").attr ("pid")
+    >>> qe = scope.PAP.Person.query (Q.pid.IN ([]))
+    >>> qs = scope.PAP.Person.query (Q.pid.IN (q1))
+
+    >>> show_query (qe)
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.salutation AS pap_person_salutation,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+         WHERE false
+
+    >>> show_query (qs)
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.salutation AS pap_person_salutation,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+         WHERE mom_id_entity.pid IN (SELECT mom_id_entity.pid AS mom_id_entity_pid
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+         WHERE pap_person.last_name = :last_name_1)
+    Parameters:
+         last_name_1          : u'ln 1'
 
 """
 
@@ -284,6 +372,15 @@ __test__ = Scaffold.create_test_dict \
         , query_attr   = _query_attr
         , sub_query    = _sub_query
         , type_name    = _type_name_query
+        )
+    )
+
+__test__.update \
+    ( Scaffold.create_test_dict
+        ( dict
+            ( sub_query_swl = _sub_query_sql
+            )
+        , ignore = ("HPS", )
         )
     )
 

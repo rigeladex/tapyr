@@ -52,13 +52,21 @@
 #    16-Sep-2011 (MG) `_SUM_._name` added
 #    21-Sep-2011 (CT) `BETWEEN` changed to guard against `val is None`
 #    22-Dec-2011 (CT) Change `_Bin_.__repr__` to honor `reverse`
-#    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
+#    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    25-Feb-2013 (CT) Change `_Get_.predicate` to set `Q.undef.exc`
 #     9-Jul-2013 (CT) Add support for unary minus (`_Una_Expr_`, `__neg__`)
 #    11-Jul-2013 (CT) Add support for unary not   (`_Una_Bool_`, `__invert__`)
 #    27-Jul-2013 (CT) Add `BVAR` to support bound variables
 #    28-Jul-2013 (CT) Add `_BVAR_Get_.NEW`, `BVAR.bind`, `BVAR.predicate`
 #    28-Jul-2013 (CT) Add `BVAR_Man`
+#    30-Aug-2013 (CT) Fix `__div__`
+#    30-Aug-2013 (CT) Add `display`
+#    30-Aug-2013 (CT) Move `__invert__` up to `_Exp_Base_` (from `_Exp_`)
+#    30-Aug-2013 (CT) Add and use `_una_bool`, `_una_expr`;
+#                     add `_Bin_.Table`, `_Una_.Table`
+#     5-Sep-2013 (CT) Change `_Func_` to inherit from `(_Call_, _Exp_)`,
+#                     not `(_Exp_, _Call_)`; add `_Call_.Table`
+#    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +81,7 @@ This module implements a query expression language::
     >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
     >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef", d = date (2010, 12, 14), dt = datetime (2010, 12, 14, 11, 36))
     >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
+    >>> r4 = R (foo = 45)
     >>> q0 = Q.foo
     >>> q0._name
     'foo'
@@ -109,6 +118,9 @@ This module implements a query expression language::
     (11, 11)
     >>> (q4 == Q.baz).predicate (r1)
     True
+    >>> (~ (q4 == Q.baz)).predicate (r1)
+    False
+
     >>> q3.lhs.predicate (r1)
     42
 
@@ -146,6 +158,7 @@ This module implements a query expression language::
     >>> q9.predicate (r1)
     >>> q9.predicate (r2)
     True
+
     >>> qa = QQ.qux.STARTSWITH ("abc")
     >>> qa.predicate (r1)
     >>> qa.predicate (r2)
@@ -196,25 +209,21 @@ This module implements a query expression language::
     >>> Q.dt.DT.QUARTER (4, 2010) (r2)
     True
 
-    >>> Q.bar.LOWER.STARTSWITH ("ab")
-    Q.bar.lower ().startswith ('ab',)
-
     >>> (Q.bar == Q.baz) (r3)
     False
-    >>> (Q.bar.LOWER == Q.baz.LOWER) (r3)
-    True
-    >>> Q.bar (r3), Q.bar.LOWER (r3)
-    ('AbCd', 'abcd')
     >>> Q.bar.STARTSWITH ("ab") (r3)
-    False
-    >>> Q.bar.LOWER.STARTSWITH ("ab") (r3)
-    True
-    >>> Q.bar.LOWER.STARTSWITH ("bc") (r3)
     False
     >>> Q.bar.CONTAINS ("bc") (r3)
     False
-    >>> Q.bar.LOWER.CONTAINS ("bc") (r3)
-    True
+
+    >>> print ("%.3f" % ((Q.foo / 7) (r4), ))
+    6.429
+    >>> (Q.foo // 7) (r4)
+    6
+    >>> print ("%.3f" % ((70 / Q.foo) (r4), ))
+    1.556
+    >>> (70 // Q.foo) (r4)
+    1
 
 Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
 no way to simulate this by defining operator methods. Therefore,
@@ -222,11 +231,6 @@ no way to simulate this by defining operator methods. Therefore,
 `Q.a < Q.b < Q.c` isn't possible::
 
     >>> Q.a < Q.b < Q.c # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-      ...
-    TypeError: ...
-
-    >>> Q.bar.LOWER == Q.baz.LOWER == Q.qux.LOWER # doctest:+ELLIPSIS
     Traceback (most recent call last):
       ...
     TypeError: ...
@@ -293,21 +297,63 @@ Q.SUM needs documenting::
     >>> Q.SUM (Q.foo - Q.bar)  (r1)
     -95
 
+`display` (also available as `TFL.Q.DISPLAY`) displays the structure of
+q-expressions::
+
+    >>> display (Q.foo < 42)
+    '__lt__ (Q.foo, 42)'
+    >>> display (42 <= Q.foo)
+    '__ge__ (Q.foo, 42)'
+
+    >>> display (Q.foo * 42)
+    '__mul__ (Q.foo, 42)'
+    >>> display (Q.foo / 42)
+    '__truediv__ (Q.foo, 42)'
+    >>> display (Q.foo // 42)
+    '__floordiv__ (Q.foo, 42)'
+
+    >>> display (42 / Q.foo)
+    '__truediv__/r (Q.foo, 42)'
+    >>> display (42 * Q.foo)
+    '__mul__/r (Q.foo, 42)'
+
+    >>> Q.DISPLAY (Q.foo % 2 == 0)
+    '__eq__ (__mod__ (Q.foo, 2), 0)'
+    >>> Q.DISPLAY (Q.foo % 2 == Q.bar * 3)
+    '__eq__ (__mod__ (Q.foo, 2), __mul__ (Q.bar, 3))'
+    >>> Q.DISPLAY (Q.foo % 2 == -Q.bar * 3)
+    '__eq__ (__mod__ (Q.foo, 2), __mul__ (__neg__ (Q.bar), 3))'
+    >>> Q.DISPLAY (- (Q.foo % 2 * -Q.bar / 3))
+    '__neg__ (__truediv__ (__mul__ (__mod__ (Q.foo, 2), __neg__ (Q.bar)), 3))'
+
+    >>> Q.DISPLAY (~ (Q.foo % 2 * -Q.bar / 3))
+    '__not__ (__truediv__ (__mul__ (__mod__ (Q.foo, 2), __neg__ (Q.bar)), 3))'
+
+    >>> Q.DISPLAY (Q.baz.STARTSWITH ("qux"))
+    'Call:startswith: (Q.baz, qux)'
+
+    >>> Q.DISPLAY (Q.foo.D.YEAR (2013))
+    'Call:between: (Q.foo, 2013-01-01, 2013-12-31)'
+
+    >>> Q.DISPLAY (Q.foo.IN ((1, 2, 3)))
+    'Call:in_: (Q.foo, (1, 2, 3))'
+
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 """
 
-from   __future__  import print_function
+from   __future__                 import division, print_function
 
-from   _TFL                     import TFL
-from   _TFL.pyk                 import pyk
+from   _TFL                       import TFL
+from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.Undef
 
-from   _TFL.predicate           import callable
+from   _TFL._Meta.Single_Dispatch import Single_Dispatch
+from   _TFL.predicate             import callable
 
 import operator
 
@@ -367,8 +413,9 @@ class _Bin_ (Q_Root) :
 
     op_map               = dict \
         ( __add__        = "+"
-        , __truediv__    = "/"
         , __eq__         = "=="
+        , __div__        = "/"
+        , __floordiv__   = "//"
         , __ge__         = ">="
         , __gt__         = ">"
         , __le__         = "<="
@@ -378,18 +425,23 @@ class _Bin_ (Q_Root) :
         , __rmul__       = "*"
         , __pow__        = "**"
         , __sub__        = "-"
+        , __truediv__    = "/"
         )
 
     rop_map              = dict \
         ( __radd__       = "__add__"
         , __rdiv__       = "__truediv__"
+        , __rfloordiv__  = "__floordiv__"
         , __rmod__       = "__mod__"
         , __rmul__       = "__mul__"
         , __rpow__       = "__pow__"
         , __rsub__       = "__sub__"
+        , __rtruediv__   = "__truediv__"
         )
 
     predicate_precious_p = True
+
+    Table                = {}
 
     def __init__ (self, lhs, op, rhs, undefs, reverse = False) :
         self.Q       = lhs.Q
@@ -437,10 +489,19 @@ class _Una_ (Q_Root) :
 
     op_map               = dict \
         ( __invert__     = "~"
+        , __not__        = "~"
         , __neg__        = "-"
+        )
+    op_patch             = dict \
+        ( _Una_Bool_     = dict
+            ( __invert__ = "__not__"
+            )
+        , _Una_Expr_     = {}
         )
 
     predicate_precious_p = True
+
+    Table                = {}
 
     def __init__ (self, lhs, op, undefs) :
         self.Q       = lhs.Q
@@ -475,6 +536,8 @@ class _Call_ (Q_Root) :
     """Query expression calling a method."""
 
     predicate_precious_p = True
+
+    Table                = {}
 
     def __init__ (self, lhs, op, * args, ** kw) :
         self.Q      = lhs.Q
@@ -518,16 +581,18 @@ def __binary (op_fct, Class) :
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = op_fct.__module__
+    if op not in _Bin_.Table :
+        _Bin_.Table [name] = (op, reverse)
     return _
 # end def __binary
 
-def _binary (op) :
-    return __binary (op, "_Bin_Expr_")
-# end def _binary
-
-def _boolean (op) :
+def _bin_bool (op) :
     return __binary (op, "_Bin_Bool_")
-# end def _boolean
+# end def _bin_bool
+
+def _bin_expr (op) :
+    return __binary (op, "_Bin_Expr_")
+# end def _bin_expr
 
 def _method (meth) :
     name = meth.__name__
@@ -537,6 +602,8 @@ def _method (meth) :
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = meth.__module__
+    if name not in _Call_.Table :
+        _Call_.Table [op.__name__] = op
     return _
 # end def _method
 
@@ -553,6 +620,28 @@ def _type_error (op) :
     _.__module__ = op.__module__
     return _
 # end def _type_error
+
+def __unary (op_fct, Class) :
+    name   = op_fct.__name__
+    op     = getattr (operator, _Una_.op_patch [Class].get (name, name))
+    undefs = (None, Q.undef)
+    def _ (self) :
+        return getattr (self.Q, Class) (self, op, undefs)
+    _.__doc__    = op.__doc__
+    _.__name__   = name
+    _.__module__ = op_fct.__module__
+    if op not in _Una_.Table :
+        _Una_.Table [name] = op
+    return _
+# end def __unary
+
+def _una_bool (op) :
+    return __unary (op, "_Una_Bool_")
+# end def _una_bool
+
+def _una_expr (op) :
+    return __unary (op, "_Una_Expr_")
+# end def _una_expr
 
 @TFL.Add_New_Method (Base)
 class _Date_ (TFL.Meta.Object) :
@@ -626,11 +715,16 @@ class _Date_ (TFL.Meta.Object) :
 class _Exp_Base_ (Q_Root) :
 
     ### Equality queries
-    @_boolean
+    @_bin_bool
     def __eq__ (self, rhs) : pass
 
-    @_boolean
+    @_bin_bool
     def __ne__ (self, rhs) : pass
+
+    def __bool__ (self) :
+        return TypeError \
+            ("Result of `%s` cannot be used in a boolean context" % (self, ))
+    # end def __bool__
 
     def __hash__ (self) :
         ### Override `__hash__` just to silence DeprecationWarning:
@@ -638,77 +732,76 @@ class _Exp_Base_ (Q_Root) :
         raise NotImplementedError
     # end def __hash__
 
-    def __bool__ (self) :
-        return TypeError \
-            ("Result of `%s` cannot be used in a boolean context" % (self, ))
-    # end def __bool__
+    ### Unary queries
+    @_una_bool
+    def __invert__ (self) : pass
 
 # end class _Exp_Base_
 
+@pyk.adapt__div__
 class _Exp_ (_Exp_Base_) :
     """Query expression"""
 
     ### Order queries
-    @_boolean
+    @_bin_bool
     def __ge__ (self, rhs) : pass
 
-    @_boolean
+    @_bin_bool
     def __gt__ (self, rhs) : pass
 
-    @_boolean
+    @_bin_bool
     def __le__ (self, rhs) : pass
 
-    @_boolean
+    @_bin_bool
     def __lt__ (self, rhs) : pass
 
     ### Binary non-boolean queries
-    @_binary
+    @_bin_expr
     def __add__ (self, rhs) : pass
 
-    @_binary
-    def __truediv__ (self, rhs) : pass
+    @_bin_expr
+    def __floordiv__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __mod__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __mul__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __pow__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __sub__ (self, rhs) : pass
 
+    @_bin_expr
+    def __truediv__ (self, rhs) : pass
+
     ### Binary non-boolean reflected queries
-    @_binary
+    @_bin_expr
     def __radd__ (self, rhs) : pass
 
-    @_binary
-    def __rdiv__ (self, rhs) : pass
+    @_bin_expr
+    def __rfloordiv__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __rmod__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __rmul__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __rpow__ (self, rhs) : pass
 
-    @_binary
+    @_bin_expr
     def __rsub__ (self, rhs) : pass
 
-    ### Unary queries
-    def __invert__ (self) :
-        Q = self.Q
-        return Q._Una_Bool_ (self, operator.__invert__, (None, Q.undef))
-    # end def __invert__
+    @_bin_expr
+    def __rtruediv__ (self, rhs) : pass
 
-    def __neg__ (self) :
-        Q = self.Q
-        return Q._Una_Expr_ (self, operator.__neg__, (None, Q.undef))
-    # end def __neg__
+    ### Unary queries
+    @_una_expr
+    def __neg__ (self) : pass
 
     ### Method calls
     @_method
@@ -749,13 +842,6 @@ class _Exp_ (_Exp_Base_) :
         return in_
     # end def IN
 
-    @property
-    def LOWER (self) :
-        def lower (val) :
-            return val.lower ()
-        return self.Q._Func_ (self, lower)
-    # end def LOWER
-
     @_method
     def STARTSWITH () :
         def startswith (l, r) :
@@ -787,7 +873,7 @@ class _Exp_B_ (_Exp_Base_) :
     def __add__ (self, rhs) : pass
 
     @_type_error
-    def __truediv__ (self, rhs) : pass
+    def __floordiv__ (self, rhs) : pass
 
     @_type_error
     def __mod__ (self, rhs) : pass
@@ -801,12 +887,15 @@ class _Exp_B_ (_Exp_Base_) :
     @_type_error
     def __sub__ (self, rhs) : pass
 
+    @_type_error
+    def __truediv__ (self, rhs) : pass
+
     ### Binary non-boolean reflected queries
     @_type_error
     def __radd__ (self, rhs) : pass
 
     @_type_error
-    def __rdiv__ (self, rhs) : pass
+    def __rfloordiv__ (self, rhs) : pass
 
     @_type_error
     def __rmod__ (self, rhs) : pass
@@ -820,13 +909,10 @@ class _Exp_B_ (_Exp_Base_) :
     @_type_error
     def __rsub__ (self, rhs) : pass
 
+    @_type_error
+    def __rtruediv__ (self, rhs) : pass
+
 # end class _Exp_B_
-
-@TFL.Add_New_Method (Base)
-class _Func_ (_Exp_, _Call_) :
-    """Query function with a result that can be used in query expressions."""
-
-# end class _Func_
 
 @TFL.Add_New_Method (Base)
 class _Get_ (_Exp_) :
@@ -1041,6 +1127,31 @@ class BVAR_Man (TFL.Meta.Object) :
     # end def __bool__
 
 # end class BVAR_Man
+
+@TFL.Add_To_Class ("DISPLAY", Base)
+@Single_Dispatch
+def display (q) :
+    return str (q)
+# end def display
+
+@display.add_type (_Bin_)
+def _display_bin_ (q) :
+    rs = "/r" if q.reverse else ""
+    lhs, rhs = q.lhs, q.rhs
+    return "%s%s (%s, %s)" % (q.op.__name__, rs, display (lhs), display (rhs))
+# end def _display_bin_
+
+@display.add_type (_Una_)
+def _display_una_ (q) :
+    return "%s (%s)" % (q.op.__name__, display (q.lhs))
+# end def _display_una_
+
+@display.add_type (_Call_)
+def _display_call_ (q) :
+    args = (q.lhs, ) + q.args
+    return "Call:%s: (%s)" % \
+        (q.op.__name__, ", ".join (display (a) for a in args))
+# end def _display_call_
 
 if __name__ != "__main__" :
     TFL._Export ("Q")

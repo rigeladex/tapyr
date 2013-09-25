@@ -713,8 +713,10 @@ _test_DET = """
     ...     print ("=" * 110)
     ...   if len (ET.Roles) > 1 :
     ...     det = kind.attr.det.type_name
-    ...     db  = Q.type_name (kind.attr.det_base)
-    ...     print ("%%-30s %%-30s %%-30s %%s" %% (ET.type_name, det, db, Q.type_name (kind.E_Type)))
+    ...     deb = kind.attr.det_base
+    ...     db  = deb.type_name if deb else "<Undef/value>"
+    ...     at  = kind.E_Type.type_name if kind.E_Type else "<Undef/value>"
+    ...     print ("%%-30s %%-30s %%-30s %%s" %% (ET.type_name, det, db, at))
     E_Type                         det                            det_base                       attr.E_Type
     ==============================================================================================================
     MOM._MOM_Link_n_               MOM.Link                       <Undef/value>                  <Undef/value>
@@ -748,8 +750,10 @@ _test_DET = """
     ...         print ("%%-30s %%-30s %%-30s %%s" %% ("E_Type", "det", "det_base", "attr.E_Type"))
     ...         print ("=" * 110)
     ...     det = kind.attr.det.type_name
-    ...     db  = Q.type_name (kind.attr.det_base)
-    ...     print ("%%-30s %%-30s %%-30s %%s" %% (ET.type_name, det, db, Q.type_name (kind.E_Type)))
+    ...     deb = kind.attr.det_base
+    ...     db  = deb.type_name if deb else "<Undef/value>"
+    ...     at  = kind.E_Type.type_name if kind.E_Type else "<Undef/value>"
+    ...     print ("%%-30s %%-30s %%-30s %%s" %% (ET.type_name, det, db, at))
     E_Type                         det                            det_base                       attr.E_Type
     ==============================================================================================================
     MOM._MOM_Link_n_               MOM._MOM_Link_n_               <Undef/value>                  <Undef/value>

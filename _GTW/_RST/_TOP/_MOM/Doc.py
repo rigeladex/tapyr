@@ -269,7 +269,8 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
             else :
                 if resource.dir_template is None :
                     eff = resource._effective_entry
-                    return eff.top._http_response (eff, request, response)
+                    if eff is not resource :
+                        return eff.top._http_response (eff, request, response)
                 else :
                     return self.__super.__call__ (resource, request, response)
         # end def __call__

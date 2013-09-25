@@ -231,7 +231,7 @@ class Person_has_Wrzlbrmft (_Ancestor_Essence) :
         class right (_Ancestor.right) :
 
             role_type          = Wrzlbrmft
-            auto_rev_ref         = True
+            auto_rev_ref       = True
 
         # end class right
 
@@ -311,7 +311,7 @@ class Person_has_Account_Test (_Ancestor_Essence) :
 Scaffold = GTW_Test_Command ()
 __test__ = Scaffold.create_test_dict \
     ( dict (query = _query_test)
-    , ignore = ("SQL", "MYS", "POS") ### XXX remove after fixing SAS queries
+    , ignore = ("SQL", "MYS", "POS", "sq", "pg") ### XXX remove after fixing SAW queries
     )
 
 ### __END__ GTW.__test__.Query_Attribute

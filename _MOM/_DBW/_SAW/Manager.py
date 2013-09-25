@@ -48,6 +48,7 @@
 #                     has a `root_table`
 #     9-Aug-2013 (CT) Change `update_etype` to fix `children` of partial
 #                     descendents of relevant E_Types
+#    20-Sep-2013 (CT) Use `QX.Mapper`, not `qs._saw_filter`
 #    ««revision-date»»···
 #--
 
@@ -258,15 +259,17 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
     def _add_check_constraints (cls, e_type, ETW, sa_table) :
         own_names = e_type._Predicates._own_names
         QR        = ETW.Q_Result
+        QX        = QR.QX
         for pk in e_type.P_uniqueness :
             if pk.name in own_names :
                 pred    = pk.pred
                 columns = []
                 tables  = set ((sa_table, ))
                 for qs in pred.aqs :
-                    cols, join = qs._saw_filter (QR, ETW)
-                    columns.extend (cols)
-                    if join :
+                    qx  = QX.Mapper (QR) (qs)
+                    x   = qx.XS_ATTR
+                    columns.extend (x)
+                    for join in qx.JOINS :
                         tables.update (j.table for j in join)
                 if len (tables) == 1 :
                     unique = SA.schema.UniqueConstraint \
