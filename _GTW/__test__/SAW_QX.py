@@ -939,17 +939,17 @@ _test_joins = """
 
     >>> show_joins (apt, "PAP.Subject_has_Phone", Q.subject.electric)
     PAP.Subject_has_Phone  :  Q.subject.electric
-      JOIN  pap_subject_has_property.pid = pap_subject_has_phone.pid
+      OUTER pap_subject_has_property.pid = pap_subject_has_phone.pid
       OUTER mom_id_entity__1.pid = pap_subject_has_property.left
 
     >>> show_joins (apt, "PAP.Subject_has_Phone", Q.subject.lifetime)
     PAP.Subject_has_Phone  :  Q.subject.lifetime
-      JOIN  pap_subject_has_property.pid = pap_subject_has_phone.pid
+      OUTER pap_subject_has_property.pid = pap_subject_has_phone.pid
       OUTER mom_id_entity__1.pid = pap_subject_has_property.left
 
     >>> show_joins (apt, "PAP.Subject_has_Phone", Q.subject.lifetime.start)
     PAP.Subject_has_Phone  :  Q.subject.lifetime.start
-      JOIN  pap_subject_has_property.pid = pap_subject_has_phone.pid
+      OUTER pap_subject_has_property.pid = pap_subject_has_phone.pid
       OUTER mom_id_entity__1.pid = pap_subject_has_property.left
       OUTER pap_company__1.pid = pap_subject_has_property.left
       OUTER pap_person__1.pid = pap_subject_has_property.left

@@ -30,6 +30,9 @@
 #    ...
 #    25-Sep-2013 (CT) Continue creation...
 #    26-Sep-2013 (CT) Redefine `Kind_Query._op_bin`, `_op_call`, `_op_una`
+#    26-Sep-2013 (CT) Change `_add_join_parent` to honor `_polymorphic`
+#    26-Sep-2013 (CT) Add optional arg `polymorphic` to `_add_join_parent`,
+#                     `_add_joins_col`, `_add_joins_inner`
 #    ««revision-date»»···
 #--
 
@@ -809,7 +812,7 @@ class _Attr_ (_RAW_, _Base_) :
         return result
     # end def _xtra_qxs
 
-    def _add_joins_col (self, head_col, * cols) :
+    def _add_joins_col (self, head_col, * cols, ** kw) :
         def _gen (head_col, cols, joiner) :
             A_Join = SAW.Attr.A_Join
             for col in cols :
@@ -821,12 +824,13 @@ class _Attr_ (_RAW_, _Base_) :
                 else :
                     yield A_Join (col, col, head_col, joiner)
         X      = self.X
-        joiner = TFL.Method.outerjoin if self._polymorphic else TFL.Method.join
+        joiner = TFL.Method.outerjoin \
+            if self._polymorphic or kw.get ("polymorphic") else TFL.Method.join
         joins  = tuple (_gen (head_col, cols, joiner))
         X._add_joins (* joins)
     # end def _add_joins_col
 
-    def _add_joins_inner (self, inner, head_col) :
+    def _add_joins_inner (self, inner, head_col, polymorphic = False) :
         def _gen (ETW, head_col, cols, joiner) :
             A_Join = SAW.Attr.A_Join
             pkn    = ETW.spk_name
@@ -838,17 +842,19 @@ class _Attr_ (_RAW_, _Base_) :
                     pass
                 else :
                     yield A_Join (col, ctab.c [pkn], head_col, joiner)
-        X      = self.X
-        joiner = TFL.Method.outerjoin if self._polymorphic else TFL.Method.join
+        X           = self.X
+        polymorphic = self._polymorphic or inner._polymorphic or polymorphic
+        joiner      = TFL.Method.outerjoin if polymorphic else TFL.Method.join
         if inner._columns :
             X._add_joins (* _gen (inner.ETW, head_col, inner._columns, joiner))
     # end def _add_joins_inner
 
-    def _add_join_parent (self, pj) :
+    def _add_join_parent (self, pj, polymorphic = False) :
         if pj :
             s_col, t_col = pj
-            self.X._add_joins \
-                (SAW.Attr.A_Join (s_col, s_col, t_col, TFL.Method.join))
+            joiner = TFL.Method.outerjoin \
+                if self._polymorphic or polymorphic else TFL.Method.join
+            self.X._add_joins (SAW.Attr.A_Join (s_col, s_col, t_col, joiner))
     # end def _add_join_parent
 
     def _add_join_partial_child_outer (self, inner) :
@@ -1002,8 +1008,8 @@ class Kind_Composite (_Attr_) :
                 (outer._akw, self.ETW.e_type, outer._akw.ETW)
             akw     = ETW.QC [".".join ((self._akw.name, name))].MOM_Wrapper
             result  = self._inner (akw, ETW = ETW)
-            self._add_join_parent (pj)
-            self._add_joins_inner (result, outer._head_col)
+            self._add_join_parent (pj, polymorphic = True)
+            self._add_joins_inner (result, outer._head_col, polymorphic = True)
         else :
             akw    = self._akw.q_able_attrs [name]
             result = self._inner (akw)
@@ -1415,7 +1421,7 @@ class Kind_Rev_Query (_Attr_) :
         except AttributeError :
             pass
         else :
-            self._add_joins_col (self.ETW.spk_col, col)
+            self._add_joins_col (self.ETW.spk_col, col, polymorphic = True)
     # end def _add_join_partial_child_outer
 
     def _get_attr (self, name) :
