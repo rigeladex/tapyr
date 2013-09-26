@@ -41,6 +41,7 @@
 #     3-Jun-2013 (CT) Commit and compact `scope` in `do_create`
 #    27-Jun-2013 (CT) Add `SAW`-based backends
 #    25-Sep-2013 (CT) Add `debug`
+#    26-Sep-2013 (CT) Add `_backend_reset`
 #    ««revision-date»»···
 #--
 
@@ -284,6 +285,7 @@ class GTW_Test_Command (_Ancestor) :
     # end def fixtures
 
     def reset (self) :
+        self._backend_reset ()
         for cb in self.reset_callbacks :
             try :
                 cb ()
@@ -330,6 +332,19 @@ class GTW_Test_Command (_Ancestor) :
         kw ["method"] = "POST"
         return self.test_request (* args, ** kw)
     # end def test_request_post
+
+    def _backend_reset (self) :
+        for apt in pyk.itervalues (MOM.App_Type.Table) :
+            for apt_d in pyk.itervalues (apt.derived) :
+                try :
+                    SAW = apt_d._SAW
+                except AttributeError :
+                    pass
+                else :
+                    ### reset caches to avoid sequence dependencies between
+                    ### different test cases
+                    SAW.reset_cache ()
+    # end def _backend_reset
 
     def _backend_spec (self, backends) :
         for i, b in enumerate (backends) :

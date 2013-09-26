@@ -81,6 +81,7 @@
 #    24-Sep-2013 (CT) Change `E_Type_Wrapper_Alias`:
 #                     * change `table_name` to use `.sa_table_x.name`, if any
 #                     * use `_mangled_alias` in `_get_sa_table_alias`
+#    26-Sep-2013 (CT) Add `reset_cache`
 #    ««revision-date»»···
 #--
 
@@ -335,6 +336,10 @@ class _E_Type_Wrapper_Base_ (TFL.Meta.Object) :
             xtra    = (getattr (akw_col.table.c, self.spk_name), self.spk_col)
         return result, xtra
     # end def attr_join_etw_alias
+
+    def reset_cache (self) :
+        self._aja_map = {}
+    # end def reset_cache
 
 # end class _E_Type_Wrapper_Base_
 
@@ -654,6 +659,11 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
             entity._reloaded_last_cid = entity.last_cid
         return entity
     # end def reload
+
+    def reset_cache (self) :
+        self._sa_alias_name_map = {}
+        self.__super.reset_cache ()
+    # end def reset_cache
 
     def row_as_pickle_cargo (self, row, db_attrs = None) :
         result = TFL.defaultdict (tuple)

@@ -29,6 +29,7 @@
 #    30-Aug-2013 (CT) Creation
 #    ...
 #    25-Sep-2013 (CT) Continue creation...
+#    26-Sep-2013 (CT) Redefine `Kind_Query._op_bin`, `_op_call`, `_op_una`
 #    ««revision-date»»···
 #--
 
@@ -1286,6 +1287,18 @@ class Kind_Query (_Attr_) :
         result._outer = self
         return result
     # end def _inner_qx
+
+    def _op_bin (self, rhs, name, op, reverse) :
+        return self._inner_qx._op_bin (rhs, name, op, reverse)
+    # end def _op_bin
+
+    def _op_call (self, name, op, * args, ** kw) :
+        return self._inner_qx._op_call (name, op, * args, ** kw)
+    # end def _op_call
+
+    def _op_una (self, name, op) :
+        return self._inner_qx._op_una (name, op)
+    # end def _op_una
 
     @TFL.Meta.Once_Property
     def _xtra_qxs (self) :

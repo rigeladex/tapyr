@@ -6221,8 +6221,8 @@ _test_q_result = """
            mom_md_change.time AS mom_md_change_time,
            mom_md_change.type_name AS mom_md_change_type_name
          FROM mom_md_change
-           JOIN mom_id_entity AS mom_id_entity__2 ON mom_id_entity__2.pid = mom_md_change."user"
-           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__2.pid
+           JOIN mom_id_entity AS mom_id_entity__1 ON mom_id_entity__1.pid = mom_md_change."user"
+           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__1.pid
          WHERE mom_md_change__2.kind = :kind_1
             AND mom_md_change__2."user" = mom_md_change."user"
             AND mom_md_change.parent_cid = :parent_cid_1
@@ -7743,7 +7743,7 @@ _test_qx = """
              <SAW : Link_Ref_List `phone_links`>>
       Bin:__eq__:
         <PAP.Phone | QX.Kind for
-             <SAW : Numeric_String `number` [pap_phone__2.number]>>
+             <SAW : Numeric_String `number` [pap_phone__1.number]>>
             <PAP.Company_has_Phone | QX.Kind_EPK for
                  <SAW : Phone `right` [pap_company_has_phone.right]>>
                 <PAP.Subject | QX.Kind_Rev_Query for
@@ -7751,7 +7751,7 @@ _test_qx = """
         42
       Bin:__eq__:
         <PAP.Phone | QX.Kind for
-             <SAW : Numeric_String `number` [pap_phone__1.number]>>
+             <SAW : Numeric_String `number` [pap_phone__2.number]>>
             <PAP.Person_has_Phone | QX.Kind_EPK for
                  <SAW : Phone `right` [pap_person_has_phone.right]>>
                 <PAP.Subject | QX.Kind_Rev_Query for

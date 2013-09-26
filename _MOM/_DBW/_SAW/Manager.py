@@ -49,6 +49,7 @@
 #     9-Aug-2013 (CT) Change `update_etype` to fix `children` of partial
 #                     descendents of relevant E_Types
 #    20-Sep-2013 (CT) Use `QX.Mapper`, not `qs._saw_filter`
+#    26-Sep-2013 (CT) Add `reset_cache`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,11 @@ class App_Type_Wrapper (TFL.Meta.Object) :
         for tid, tn in enumerate (names) :
             tn_map.update (((tid, tn), (tn, tid)))
     # end def finalize
+
+    def reset_cache (self) :
+        for etw in pyk.itervalues (self.et_map) :
+            etw.reset_cache ()
+    # end def reset_cache
 
     def __getitem__ (self, key) :
         key = getattr (key, "type_name", key)

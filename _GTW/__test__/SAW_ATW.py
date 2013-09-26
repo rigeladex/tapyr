@@ -4628,8 +4628,8 @@ _test_q_result = """
            mom_md_change.time AS mom_md_change_time,
            mom_md_change.type_name AS mom_md_change_type_name
          FROM mom_md_change
-           JOIN mom_id_entity AS mom_id_entity__2 ON mom_id_entity__2.pid = mom_md_change."user"
-           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__2.pid
+           JOIN mom_id_entity AS mom_id_entity__1 ON mom_id_entity__1.pid = mom_md_change."user"
+           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__1.pid
          WHERE mom_md_change__2.kind = :kind_1
             AND mom_md_change__2."user" = mom_md_change."user"
             AND mom_md_change.parent_cid = :parent_cid_1
