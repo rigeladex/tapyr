@@ -114,7 +114,16 @@ class _RAW_ (TFL.Meta.Object) :
 # end class _RAW_
 
 class Mapper (_RAW_) :
-    """Map attribute names to Kind_Wrapper-specific column handlers"""
+    """Map a generic query expression into a SQLAlchemy specific
+       expression.
+
+       An instance of `Mapper` is related to a specific
+       :class:`Q_Result<_MOM._DBW._SAW.Q_Result.Q_Result>` instance.
+       When called with a generic query expression as argument,
+       the mapper instance will evaluate the query expression and
+       return a SQLAlchemy specific expression that is an instance of
+       the appropriate subclass of :class:`_Base_`.
+    """
 
     _is_raw               = False
 
@@ -296,6 +305,57 @@ class _Q_SUM_Proxy_ (_Q_Exp_Proxy_) :
 
 @_add_operators
 class _Base_ (TFL.Meta.Object) :
+    """Base class for SQLAlchemy specific expression nodes.
+
+       All SQLAlchemy specific expression nodes provide the
+       properties:
+
+       * :attr:`JOINS`: the joins necessary for the evaluation of the query
+         expression.
+
+       * :attr:`XS_ATTR`: SQLAlchemy specific query expressions usable
+         for the `.attr` and `.attrs` methods of a
+         :class:`Q_Result<_MOM._DBW._SAW.Q_Result.Q_Result>` instance.
+
+         These can be used as arguments for a call to the SQLAlchemy
+         method `select_from`.
+
+       * :attr:`XS_FILTER`: SQLAlchemy specific query expressions usable
+         for the `.filter` method of a
+         :class:`Q_Result<_MOM._DBW._SAW.Q_Result.Q_Result>` instance.
+
+         These can be used as arguments for a call to the SQLAlchemy
+         method `where`.
+
+       * :attr:`XS_GROUP_BY`: SQLAlchemy specific query expressions usable
+         for the `.group_by` method of a
+         :class:`Q_Result<_MOM._DBW._SAW.Q_Result.Q_Result>` instance.
+
+         These can be used as arguments for a call to the SQLAlchemy
+         method `group_by`.
+
+       * :attr:`XS_ORDER_BY`: SQLAlchemy specific query expressions usable
+         for the `.order_by` method of a
+         :class:`Q_Result<_MOM._DBW._SAW.Q_Result.Q_Result>` instance.
+
+         These can be used as arguments for a call to the SQLAlchemy
+         method `order_by`.
+
+       The most important classes derived from `_Base_` are:
+
+       .. autoclass:: _Attr_()
+       .. autoclass:: Kind()
+       .. autoclass:: Kind_Composite()
+       .. autoclass:: Kind_EPK()
+       .. autoclass:: Kind_Partial()
+       .. autoclass:: Kind_Query()
+       .. autoclass:: Kind_Rev_Query()
+       .. autoclass:: Bin()
+       .. autoclass:: Call()
+       .. autoclass:: Func()
+       .. autoclass:: Una()
+
+    """
 
     undef                   = TFL.Undef ("arg")
 
@@ -409,6 +469,7 @@ def _xs_filter_rhs_QX_ (self, rhs) :
 # end def _xs_filter_rhs_QX_
 
 class _BVAR_ (_Base_, Q.BVAR.BVAR) :
+    """Map a reference to a bound variable to a SQLAlchemy bound variable."""
 
     @TFL.Meta.Once_Property
     def XS_ATTR (self) :
@@ -517,6 +578,7 @@ class _Bool_ (_Q_Exp_Proxy_, _Base_) :
 # end class _Bool_
 
 class And (_Bool_) :
+    """Map an AND expression to the corresponding SQLAlchemy expression."""
 
     name = "AND"
     op   = staticmethod (SA.expression.and_)
@@ -524,6 +586,7 @@ class And (_Bool_) :
 # end class And
 
 class Or (_Bool_) :
+    """Map an OR expression to the corresponding SQLAlchemy expression."""
 
     name = "OR"
     op   = staticmethod (SA.expression.or_)
@@ -655,6 +718,7 @@ class _SUM_ (_Op_) :
 # end class _SUM_
 
 class Bin (_Op_) :
+    """Map a binary expression to the corresponding SQLAlchemy expression."""
 
     def __init__ (self, lhs, name, op, rhs, reverse) :
         self.__super.__init__ (lhs, name, op)
@@ -716,12 +780,12 @@ class Bin (_Op_) :
 # end class Bin
 
 class Call (_Op_) :
-
-    pass
+    """Map a method call to the corresponding SQLAlchemy call."""
 
 # end class Call
 
 class Func (_Op_) :
+    """Map a function call to the corresponding SQL function."""
 
     def apply (self, lhs) :
         op_name = self.op.__name__.lower ()
@@ -732,6 +796,7 @@ class Func (_Op_) :
 # end class Func
 
 class Not (_Q_Exp_Proxy_, _Op_) :
+    """Map a NOT expression to the corresponding SQL expression ."""
 
     _xs_filter_una_delegate = "XS_FILTER"
 
@@ -750,6 +815,7 @@ class Not (_Q_Exp_Proxy_, _Op_) :
 # end class Not
 
 class Una (_Op_) :
+    """Map an unary expression to the corresponding SQLAlchemy expression."""
 
     @TFL.Meta.Once_Property
     def XS_ORDER_BY (self) :
@@ -948,7 +1014,7 @@ class _Attr_ (_RAW_, _Base_) :
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper)
 class Kind (_Attr_) :
-    """QX mapper for normal attribute kind"""
+    """Map a reference to a simple attribute to a single SQLAlchemy column."""
 
     XS_ATTR          = \
     XS_GROUP_BY      = TFL.Meta.Alias_Property ("_qxs")
@@ -982,7 +1048,9 @@ class Kind (_Attr_) :
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_C)
 class Kind_Composite (_Attr_) :
-    """QX mapper for composite attribute kind"""
+    """Map a reference to a composite attribute to one or more
+       SQLAlchemy columns.
+    """
 
     XS_ORDER_BY      = TFL.Meta.Alias_Property ("_columns_ob")
 
@@ -1074,7 +1142,10 @@ class Kind_Composite (_Attr_) :
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_S)
 class Kind_EPK (_Attr_) :
-    """QX mapper for epk-referring attribute kind"""
+    """Map a reference to an attribute that refers to another entity
+       to one or more SQLAlchemy columns of a different table plus the
+       necessary joins.
+    """
 
     @TFL.Meta.Once_Property
     def _columns (self) :
@@ -1115,7 +1186,10 @@ class Kind_EPK (_Attr_) :
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_P)
 class Kind_Partial (_Attr_) :
-    """QX mapper for partial attribute kind"""
+    """Map a reference to a polymorphic attribute to a set of
+       SQLAlchemy columns of one or more different tables plus the
+       necessary joins.
+    """
 
     _postfix         = None
     __is_raw         = False
@@ -1265,7 +1339,9 @@ def _op_bin_partial_lr_ (self, rhs, name, op, reverse) :
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_Q)
 class Kind_Query (_Attr_) :
-    """QX mapper for query attribute kind"""
+    """Map a reference to a query attribute to whatever columns that
+       query resolves to.
+    """
 
     @TFL.Meta.Once_Property
     def XS_ATTR (self) :
@@ -1352,7 +1428,9 @@ class Kind_Query (_Attr_) :
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_R)
 class Kind_Rev_Query (_Attr_) :
-    """QX mapper for rev-query attribute kind"""
+    """Map a reference to a reverse query attribute to whatever
+       columns that reverse query resolves to.
+    """
 
     @TFL.Meta.Once_Property
     def _columns (self) :
@@ -1739,6 +1817,97 @@ def _fixed_order_by_tuple (xs) :
         for r in fixed_order_by (x) :
             yield r
 # end def _fixed_order_by_tuple
+
+__doc__ = """
+Module MOM.DBW.SAW.QX
+=======================
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+The functions and classes of this module map generic query expressions
+into expressions usable for SQLAlchemy queries.
+
+The method :meth:`query <_MOM.E_Type_Manager.Entity.query>`
+returns a query object that provides the methods `filter`, `group_by`,
+`order_by`, `attr` and `attrs`. `query` and its methods accept generic
+query expressions as arguments.
+
+A generic query expression looks like ::
+
+    Q.lifetime.start > "2012/07/01"
+
+where `Q` is a query generator provided by `MOM` --- it is an instance
+of the :class:`TFL.Attr_Query<_TFL.Filter.Attr_Query>`. `Q`
+expressions represent symbolic expressions. Calling a `Q` expression
+instance triggers the evaluation of the symbolic expression as applied
+to the single argument passed.
+
+For instance, if `p` is an instance of the essential class
+`PAP.Person` and `q` is a reference to the example expression given
+above,
+
+    q (p)
+
+will evaluate to `True` or `False`, depending on the value of
+`p.lifetime.start`.
+
+Given a :class:`scope<_MOM.Scope.Scope>` instance `s`, you can find
+all persons born after the turn of the last century by using the
+query ::
+
+    s.PAP.Person.query \\
+        (Q.lifetime.start >= "2000/01/01").order_by (Q.lifetime)
+
+In general, a Q expression is a tree of Q instances. The leafs of such
+a tree are either literal values or references to attributes of
+essential objects. Inner nodes of the tree represent either operators or
+function calls. Calling a Q expression instance leads to the
+evaluation of all nodes of the tree, starting with the leaf nodes.
+
+If the scope `s` is connected to a relational database management
+system (RDBMS) wrapped by SQLAlchemy, such Q expressions need to be
+mapped to SQLAlchemy expressions. For simple expressions, there is a
+one-to-one correspondence between the generic tree and the SQLAlchemy
+tree. For more complex expressions, the SQLAlchemy tree contains many
+additional nodes.
+
+The complexity of a Q expression depends on the type of attributes
+referenced by the expression. Whereas operators and function calls map
+directly to SQLAlchemy, the mapping of attribute references depends on
+the type of attributes:
+
+* References to simple attributes, e.g., `A_Int` or `A_String`, map to
+  a single SQLAlchemy column instance.
+
+* References to composite attributes, e.g., `A_Date_Interval`, map to
+  one or more SQLAlchemy column instances.
+
+* References to attributes referring to other instances map to
+  one or more SQLAlchemy column instances of a different table and
+  need one or more joins.
+
+* References to polymorphic attributes, i.e., attributes referring to
+  instances of any of a set of essential types, map to a set of
+  SQLAlchemy column instances of different tables, needing several
+  joins.
+
+  + If such references are used as operands in an expression, that
+    expression needs to be evaluated for each of the possible types
+    (SQL tables).
+
+* References to query and reverse query attributes can resolve to any
+  of the above cases.
+
+* There are some special types of attributes that need specific
+  mapping. For instance, an attribute referring to a network address
+  (CIDR) might be stored as a number of columns unless the RDBMS
+  supports a native datatype for CIDR (currently only supported by
+  PostgreSQL).
+
+.. autoclass:: Mapper
+.. autoclass:: _Base_
+
+"""
 
 if __name__ != "__main__" :
     MOM.DBW.SAW._Export_Module ()

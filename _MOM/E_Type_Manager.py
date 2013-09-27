@@ -162,6 +162,7 @@ class Entity (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def default_child (self) :
+        """The default child of partial entity types, if any."""
         dc = self._etype.default_child
         if dc is not None :
             try :
@@ -708,12 +709,17 @@ Module `MOM.E_Type_Manager`
 
 
 
+.. autoclass:: Entity()
+    :members:
+
 .. autoclass:: Object()
     :members:
     :inherited-members:
+
 .. autoclass:: Link()
     :members:
     :inherited-members:
+
 
 """
 

@@ -86,7 +86,7 @@ def BaM (* bases, ** kw) :
        metaclass instantiates the new class with the `metaclass` and the
        `bases` passed to `BaM`, ignoring the temporary base and meta classes.
 
-       I stole the idea for `BaM` from Armin Ronacher's `with_metaclass`[*]_,
+       I stole the idea for `BaM` from Armin Ronacher's `with_metaclass` [*]_,
        but defined BaM's signature to be compatible with the inheritance
        signature of class statements in Python 3.
 

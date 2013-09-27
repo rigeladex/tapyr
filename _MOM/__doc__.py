@@ -71,6 +71,7 @@
 #    15-May-2013 (CT) Adapt to
 #                     * addition of A_Link_Ref and A_Link_Ref_Set attributes
 #                     * change from `auto_cache` to `auto_rev_ref`
+#     4-Oct-2013 (CT) Add `DBW` and `DBW.SAW` to `toctree` directive
 #    ««revision-date»»···
 #--
 
@@ -1901,6 +1902,8 @@ Modules and nested package namespaces
    Attr/index
    Pred/index
    SCM/index
+   DBW/index
+   DBW/SAW/index
    Meta/index
    bib
 

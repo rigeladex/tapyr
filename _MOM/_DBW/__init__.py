@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Martin Glück. All rights reserved
+# Copyright (C) 2009-2013 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This package is part of the package _MOM.
@@ -37,5 +37,12 @@ DBW = Package_Namespace ()
 MOM._Export ("DBW")
 
 del Package_Namespace
+
+__doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+`MOM.DBW` contains packages with database wrappers for various backends.
+
+"""
 
 ### __END__ MOM.DBW.__init__

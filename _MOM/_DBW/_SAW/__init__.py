@@ -38,4 +38,12 @@ DBW._Export ("SAW")
 
 del Package_Namespace
 
+__doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+`MOM.DBW.SAW` provides a database wrapper for databases accessed via
+SQLAlchemy.
+
+"""
+
 ### __END__ MOM.DBW.SAW.__init__
