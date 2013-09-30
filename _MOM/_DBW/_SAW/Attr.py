@@ -104,6 +104,8 @@
 #     2-Sep-2013 (CT) Change `_Kind_Wrapper_.__init__` to set  `e_type`
 #     2-Sep-2013 (CT) Change `A_Join.__repr__` to display table aliases properly
 #    20-Sep-2013 (CT) Remove `q_exp_*` methods (superseded by SAW.QX)
+#    30-Sep-2013 (CT) Return `Kind_Wrapper_P` if `self.is_partial` from
+#                     `_saw_kind_wrapper_pq`
 #    ««revision-date»»···
 #--
 
@@ -612,7 +614,8 @@ def _saw_kind_wrapper (self, DBW, ETW, ** kw) :
 @TFL.Add_To_Class ("_saw_kind_wrapper_pq", MOM.Attr.Kind)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_kind_wrapper_pq (self, DBW, ETW, ** kw) :
-    return self._SAW_Wrapper_PQ (ETW, self, ** kw)
+    W_PQ = Kind_Wrapper_P if self.is_partial else self._SAW_Wrapper_PQ
+    return W_PQ (ETW, self, ** kw)
 # end def _saw_kind_wrapper_pq
 
 ### Attr-Kind specific functions returning column keyword arguments ############

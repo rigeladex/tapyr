@@ -218,6 +218,7 @@
 #     1-Aug-2013 (CT) Factor `_SPK_Mixin_` from `_EPK_Mixin_`
 #    31-Aug-2013 (CT) Change `_Composite_Mixin_._check_sanity` to forbid
 #                     attributes that refer to other entities
+#    30-Sep-2013 (CT) Add `is_partial` to `Kind` and `_Query_`
 #    ««revision-date»»···
 #--
 
@@ -330,6 +331,11 @@ class Kind (MOM.Prop.Kind) :
             result = attr.default
         return result
     # end def default
+
+    @TFL.Meta.Once_Property
+    def is_partial (self) :
+        return False
+    # end def is_partial
 
     @TFL.Meta.Once_Property
     def q_able (self) :
@@ -1387,6 +1393,10 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
     is_changeable         = False
     _q_able               = True
 
+    @TFL.Meta.Once_Property
+    def is_partial (self) :
+        return not TFL.callable (getattr (self.attr, "query", None))
+    # end def is_partial
 
     def _get_computed (self, obj) :
         Undef = TFL.Undef
@@ -1414,7 +1424,7 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
         self.__super._check_sanity (attr_type, e_type)
         if __debug__ :
             query = getattr (attr_type, "query", None)
-            if not TFL.callable (query) :
+            if not (e_type.is_partial or TFL.callable (query)) :
                 raise TypeError \
                     ( "Attribute `%s` of kind Query needs to define a "
                       "`query` expression or `query_fct` method"
