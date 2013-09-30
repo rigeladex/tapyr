@@ -33,6 +33,7 @@
 #    26-Sep-2013 (CT) Change `_add_join_parent` to honor `_polymorphic`
 #    26-Sep-2013 (CT) Add optional arg `polymorphic` to `_add_join_parent`,
 #                     `_add_joins_col`, `_add_joins_inner`
+#    30-Sep-2013 (CT) Add support for `Q.SELF`
 #    ««revision-date»»···
 #--
 
@@ -262,6 +263,17 @@ class _Q_Call_Proxy_ (_Q_Exp_Proxy_) :
 
 # end class _Q_Call_Proxy_
 
+class _Q_Self_Proxy_ (Q._Self_) :
+    """Proxy for a Q.SELF expression"""
+
+    def predicate (self, obj) :
+        if isinstance (obj, Mapper) :
+            return _Self_ (obj)
+        return obj
+    # end def predicate
+
+# end class _Q_Self_Proxy_
+
 class _Q_SUM_Proxy_ (_Q_Exp_Proxy_) :
     """Proxy for a TFL.Q.SUM instance"""
 
@@ -346,7 +358,7 @@ class _Base_ (TFL.Meta.Object) :
         result = rhs
         qxa    = self._qx_attr
         if qxa is not None :
-            attr = qxa._akw.attr
+            attr = qxa._attr
             if qxa._is_raw :
                 if not attr.needs_raw_value :
                     result = attr.from_string (result)
@@ -795,6 +807,11 @@ class _Attr_ (_RAW_, _Base_) :
     # end def _XS_FILTER
 
     @TFL.Meta.Once_Property
+    def _attr (self) :
+        return self._akw.attr
+    # end def _attr
+
+    @TFL.Meta.Once_Property
     def _qx_attr (self) :
         return self
     # end def _qx_attr
@@ -861,8 +878,7 @@ class _Attr_ (_RAW_, _Base_) :
         pass
     # end def _add_join_partial_child_outer
 
-    def _columns_ob_epk_iter (self) :
-        ET = self._akw.attr.E_Type
+    def _columns_ob_epk_iter (self, ET) :
         for k in ET.epk_sig :
             qx = getattr (self, k)
             for c in qx._columns_ob :
@@ -872,6 +888,12 @@ class _Attr_ (_RAW_, _Base_) :
     def _get_attr (self, name) :
         raise AttributeError (name)
     # end def _get_attr
+
+    def _get_field (self, name, head, tail) :
+        if head in self._akw.fields and not tail :
+            self._field = head
+            return self
+    # end def _get_field
 
     def _inner (self, _akw, ** kw) :
         ikw    = self._inner_kw (_akw, ** kw)
@@ -906,10 +928,9 @@ class _Attr_ (_RAW_, _Base_) :
             try :
                 result = self._get_attr (head)
             except AttributeError as exc :
-                if head in self._akw.fields and not tail :
-                    self._field = head
-                    return self
-                raise
+                result = self._get_field (name, head, tail)
+                if result is None :
+                    raise
         if tail :
             result = getattr (result, tail)
         return result
@@ -1063,7 +1084,7 @@ class Kind_EPK (_Attr_) :
 
     @TFL.Meta.Once_Property
     def _columns_ob (self) :
-        return list (self._columns_ob_epk_iter ())
+        return list (self._columns_ob_epk_iter (self._akw.attr.E_Type))
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
@@ -1342,7 +1363,7 @@ class Kind_Rev_Query (_Attr_) :
     def _columns_ob (self) :
         ET = self._akw.attr.E_Type
         if ET.epk_sig :
-            return list (self._columns_ob_epk_iter ())
+            return list (self._columns_ob_epk_iter (ET))
         else :
             return self._columns
     # end def _columns_ob
@@ -1436,6 +1457,67 @@ class Kind_Rev_Query (_Attr_) :
 
 # end class Kind_Rev_Query
 
+class _Self_ (_Attr_) :
+    """Map a Q.self query attribute to  column(s) expressions of SQLAlchemy"""
+
+    def __init__ (self, X, ETW = None, _is_raw = False, _outer = None, _polymorphic = None) :
+        self.X            = X
+        self.ETW          = ETW if ETW is not None else X.ETW
+        self._is_raw      = _is_raw or X._is_raw
+        self._outer       = _outer
+        self._polymorphic = \
+            _polymorphic if _polymorphic is not None else X._polymorphic
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    def XS_FILTER (self) :
+        return True
+    # end def XS_FILTER
+
+    @TFL.Meta.Once_Property
+    def E_Type (self) :
+        return self.ETW.e_type
+    # end def E_Type
+
+    @TFL.Meta.Once_Property
+    def _attr (self) :
+        return self.E_Type.spk
+    # end def _attr
+
+    @TFL.Meta.Once_Property
+    def _columns (self) :
+        return [self._head_col]
+    # end def _columns
+
+    @TFL.Meta.Once_Property
+    def _columns_ob (self) :
+        return list (self._columns_ob_epk_iter (self.E_Type))
+    # end def _columns_ob
+
+    @TFL.Meta.Once_Property
+    def _head_col (self) :
+        return self.ETW.spk_col
+    # end def _head_col
+
+    def _get_attr (self, name) :
+        if name == self.E_Type.spk_attr_name or not name :
+            result  = self
+        else :
+            result  = getattr (self.X, name)
+        return result
+    # end def _get_attr
+
+    def _get_field (self, name, head, tail) :
+        pass ### no fields here
+    # end def _get_field
+
+    def __repr__ (self) :
+        return "<%s | QX.%s for SELF>" % \
+            (self.E_Type.type_name, self.__class__.__name__)
+    # end def __repr__
+
+# end class _Self_
+
 ###############################################################################
 ### Generic functions to display a tree of QX instances
 @Single_Dispatch
@@ -1463,6 +1545,20 @@ def _display_qx_attr_ (q, level = 0, sep0 = "", show_inner = True) :
         parts.append (display (q._outer, level + 2, show_inner = False))
     return "\n".join (parts)
 # end def _display_qx_attr_
+
+@display.add_type (_Self_)
+def _display_qx_self_ (q, level = 0, sep0 = "", show_inner = True) :
+    indent  = "  " * level
+    parts   = \
+        [ "%s%s<%s | QX.%s for SELF>"
+        % ( sep0, indent
+          , q.E_Type.type_name, q.__class__.__name__
+          )
+        ]
+    if q._outer :
+        parts.append (display (q._outer, level + 2, show_inner = False))
+    return "\n".join (parts)
+# end def _display_qx_self_
 
 @display.add_type (_BVAR_)
 def _display_qx_bvar_ (q, level = 0, sep0 = "", show_inner = True) :
@@ -1561,6 +1657,11 @@ def _fixed_q_exp_get_ (x) :
 def _fixed_q_exp_get_raw_ (x) :
     return x.__class__ (x.Q, x._postfix, x._prefix)
 # end def _fixed_q_exp_get_raw_
+
+@fixed_q_exp.add_type (Q._Self_)
+def _fixed_q_exp_self_ (x) :
+    return _Q_Self_Proxy_ (x.Q)
+# end def _fixed_q_exp_self_
 
 @fixed_q_exp.add_type (Q._Sum_)
 def _fixed_q_exp_sum_ (x) :

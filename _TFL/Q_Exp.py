@@ -67,6 +67,8 @@
 #     5-Sep-2013 (CT) Change `_Func_` to inherit from `(_Call_, _Exp_)`,
 #                     not `(_Exp_, _Call_)`; add `_Call_.Table`
 #    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
+#    30-Sep-2013 (CT) Remove obsolete `SET`
+#    30-Sep-2013 (CT) Add `SELF`
 #    ««revision-date»»···
 #--
 
@@ -369,6 +371,11 @@ class Base (TFL.Meta.Object) :
         if Ignore_Exception is not None :
             self.Ignore_Exception = Ignore_Exception
     # end def __init__
+
+    @property
+    def SELF (self) :
+        return self._Self_ (self)
+    # end def SELF
 
     def SUM (self, rhs = 1) :
         return self._Sum_ (self, rhs)
@@ -935,14 +942,6 @@ class _Get_ (_Exp_) :
             return Q.undef
     # end def predicate
 
-    def SET (self, obj, value) :
-        name = self._name
-        if "." in name :
-            head, name = name.rsplit (".", 1)
-            obj = getattr (TFL.Getter, head) (obj)
-        setattr (obj, name, value)
-    # end def SET
-
     def __getattr__ (self, name) :
         full_name = ".".join ((self._name, name))
         getter    = getattr (TFL.Getter, full_name)
@@ -986,6 +985,26 @@ class _Q_Exp_Una_Expr_ (_Una_, _Exp_) :
     _real_name = "_Una_Expr_"
 
 _Una_Expr_ = _Q_Exp_Una_Expr_ # end class
+
+@TFL.Add_New_Method (Base)
+class _Self_ (_Get_) :
+    """Query reference to object to which query is applied."""
+
+    _name      = "SELF"
+
+    def __init__ (self, Q) :
+        self.Q = Q
+    # end def __init__
+
+    def predicate (self, obj) :
+        return obj
+    # end def predicate
+
+    def __getattr__ (self, name) :
+        return getattr (self.Q, name)
+    # end def __getattr__
+
+# end class _Self_
 
 @TFL.Add_New_Method (Base)
 class _Sum_ (Q_Root) :
