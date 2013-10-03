@@ -56,6 +56,8 @@
 #    17-Sep-2013 (CT) Change `order_by` to allow multiple criteria
 #    18-Sep-2013 (CT) Facter `_get_xs`, add and use `_get_attr_exprs`
 #    23-Sep-2013 (CT) Rename `_Base_.__str__` to `.__repr__`
+#     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
+#     3-Oct-2013 (CT) Change `_Base_.__repr__` to consider `DISTINCT`
 #    ««revision-date»»···
 #--
 
@@ -153,8 +155,8 @@ class _Base_ (TFL.Meta.Object) :
         return list (self)
     # end def all
 
-    def attr (self, getter) :
-        return self._Attr_ (self, getter)
+    def attr (self, getter, allow_duplicates = False) :
+        return self._Attr_ (self, getter, allow_duplicates = allow_duplicates)
     # end def attr
 
     def attrs (self, * getters, ** kw) :
@@ -163,7 +165,7 @@ class _Base_ (TFL.Meta.Object) :
                 ( "%s.attrs() requires at least one argument"
                 % self.__class__.__name__
                 )
-        return self._Attrs_ (self, getters)
+        return self._Attrs_ (self, getters, ** kw)
     # end def attrs
 
     def bind (self, _session = None, ** bindings) :
@@ -362,36 +364,34 @@ class _Base_ (TFL.Meta.Object) :
                 yield element
     # end def __iter__
 
+    _join_fixer   = TFL.Re_Replacer ("((?:[A-Z]+ )*JOIN)",      "\n       \\1")
+    _order_fixer  = TFL.Re_Replacer ("\s+(ORDER BY)",           "\n     \\1")
+    _where_fixer  = TFL.Re_Replacer ("((?:\s+)*(?:AND|OR)\s+)", "\n       \\1")
+    _select_pat   = TFL.Regexp      ("(SELECT(?: DISTINCT)?) .*,")
+
     def __repr__ (self) :
         def q_parts (self) :
+            _select_pat   = self._select_pat
+            _join_fixer   = self._join_fixer
+            _order_fixer  = self._order_fixer
+            _where_fixer  = self._where_fixer
             for p in str (self.sa_query).split ("\n") :
                 p = p.strip ()
-                if ", " in p and p.startswith ("SELECT") :
-                    h, t = p.split (" ", 1)
+                if _select_pat.match (p) :
+                    h = _select_pat.group  (1)
+                    t = p [_select_pat.end (1):].strip ()
                     p = "\n       ".join \
                         ((h, ",\n       ".join (sorted (t.split (", ")))))
                 elif "JOIN" in p :
-                    rerep = TFL.Re_Replacer \
-                        ( "((?:[A-Z]+ )*JOIN)"
-                        , "\n       \\1"
-                        )
-                    p  = rerep (p)
-                    ps = list (x.rstrip () for x in p.split ("\n"))
+                    px = _join_fixer (p)
+                    ps = list (x.rstrip () for x in px.split ("\n"))
                     p  = "\n".join (ps)
                 elif "WHERE" in p :
-                    rerep = TFL.Re_Replacer \
-                        ( "((?:\s+)*(?:AND|OR)\s+)"
-                        , "\n       \\1"
-                        )
-                    p  = rerep (p)
-                    ps = list (x.rstrip () for x in p.split ("\n"))
+                    px = _where_fixer (p)
+                    ps = list (x.rstrip () for x in px.split ("\n"))
                     p  = "\n".join (ps)
                 if "ORDER BY" in p :
-                    rerep = TFL.Re_Replacer \
-                        ( "\s+(ORDER BY)"
-                        , "\n     \\1"
-                        )
-                    p  = rerep (p)
+                    p  = _order_fixer (p)
                 yield p
         sa_query = "\n     ".join (q_parts (self))
         return "SQL: %s" % (sa_query, )
@@ -402,12 +402,12 @@ class _Base_ (TFL.Meta.Object) :
 class _Attr_Base_ (_Base_) :
     """Base class for `_Attr_` and `_Attrs_`"""
 
-    def __init__ (self, parent, axes) :
+    def __init__ (self, parent, axes, allow_duplicates = False) :
         self.__super.__init__ (parent.session)
         self.__dict__.update  (parent.__dict__, _joined = set (parent._joined))
         cols, join = self._get_attr_exprs (axes, self._sa_query)
         self.cols  = cols
-        self._setup_query (cols, join)
+        self._setup_query (cols, join, allow_duplicates)
     # end def __init__
 
     def _col_value_from_row (self, col, row, scope) :
@@ -422,7 +422,7 @@ class _Attr_Base_ (_Base_) :
         return result
     # end def _col_value_from_row
 
-    def _setup_query (self, cols, join) :
+    def _setup_query (self, cols, join, allow_duplicates) :
         def _gen (cols) :
             for c in cols :
                 if isinstance (c, MOM.DBW.SAW.Attr.Kind_Wrapper_C) :
@@ -432,8 +432,11 @@ class _Attr_Base_ (_Base_) :
                     yield c
         sa_query = self._sa_query
         if join is not None :
-            sa_query   = sa_query.select_from       (join)
-        self._sa_query = sa_query.with_only_columns (_gen (cols))
+            sa_query = sa_query.select_from   (join)
+        sa_query = sa_query.with_only_columns (_gen (cols))
+        if not allow_duplicates :
+            sa_query = sa_query.distinct ()
+        self._sa_query = sa_query
     # end def _setup_query
 
 # end class _Attr_Base_
@@ -442,8 +445,8 @@ class _Attr_Base_ (_Base_) :
 class _Attr_ (_Attr_Base_) :
     """Q_Result for a single attribute value"""
 
-    def __init__ (self, parent, ax) :
-        self.__super.__init__ (parent, [ax])
+    def __init__ (self, parent, ax, allow_duplicates = False) :
+        self.__super.__init__ (parent, [ax], allow_duplicates)
         cols = self.cols
         if len (cols) != 1 :
             raise TypeError \

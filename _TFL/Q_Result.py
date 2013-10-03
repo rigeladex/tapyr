@@ -64,6 +64,7 @@
 #    25-Aug-2013 (CT) Allow strings as `criterion` for `order_by`
 #    17-Sep-2013 (CT) Add `fixed_order_by` to support different `criteria`
 #    17-Sep-2013 (CT) Change signature of `order_by` to allow multiple arguments
+#     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
 #    ««revision-date»»···
 #--
 
@@ -344,16 +345,21 @@ class _Q_Result_ (TFL.Meta.Object) :
         return list (self)
     # end def all
 
-    def attr (self, getter) :
+    def attr (self, getter, allow_duplicates = False) :
         _Attr_ = self._Attr_
         if isinstance (getter, basestring) :
             getter = getattr (self.Q, getter)
-        return Q_Result \
-            ((_Attr_ (getter, getter (r)) for r in self), self._distinct)
+        distinct = self._distinct or not allow_duplicates
+        if distinct and isinstance (distinct, bool) :
+            distinct = uniq
+        return Q_Result ((_Attr_ (getter, getter (r)) for r in self), distinct)
     # end def attr
 
-    def attrs (self, * getters) :
-        _Attrs_Tuple_ = self._Attrs_Tuple_
+    def attrs (self, * getters, ** kw) :
+        allow_duplicates = kw.pop ("allow_duplicates", False)
+        if kw :
+            raise TypeError ("Unknown keyword arguments %s" % sorted (kw))
+        _Attrs_Tuple_    = self._Attrs_Tuple_
         if not getters :
             raise TypeError \
                 ( "%s.attrs() requires at least one argument"
@@ -365,10 +371,13 @@ class _Q_Result_ (TFL.Meta.Object) :
                 if isinstance (getter, basestring) :
                     getter = getattr (Q, getter)
                 yield getter
-        getters = tuple (_g (getters))
+        getters  = tuple (_g (getters))
+        distinct = self._distinct or not allow_duplicates
+        if distinct and isinstance (distinct, bool) :
+            distinct = uniq
         return Q_Result \
             ( (_Attrs_Tuple_ (getters, (g (r) for g in getters)) for r in self)
-            , self._distinct
+            , distinct
             )
     # end def attrs
 
@@ -455,9 +464,10 @@ class _Q_Result_ (TFL.Meta.Object) :
     def _fill_cache (self) :
         if self._cache is None :
             iterable = self.iterable
-            if self._distinct :
-                iterable = self._distinct (iterable)
-            self._cache = list (iterable)
+            distinct = self._distinct
+            if distinct :
+                iterable = distinct (iterable)
+            self._cache  = list (iterable)
     # end def _fill_cache
 
     def __getitem__ (self, key) :

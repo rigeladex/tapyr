@@ -328,7 +328,7 @@ _sub_query_sql = """
            pap_person.title AS pap_person_title
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-         WHERE mom_id_entity.pid IN (SELECT mom_id_entity.pid AS mom_id_entity_pid
+         WHERE mom_id_entity.pid IN (SELECT DISTINCT mom_id_entity.pid AS mom_id_entity_pid
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
          WHERE pap_person.last_name = :last_name_1)

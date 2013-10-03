@@ -4362,7 +4362,7 @@ _test_q_result = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
     >>> print (qrt.filter (pid = 1).attr (Q.lifetime)) ### PAP.Person
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            pap_person.lifetime__finish AS pap_person_lifetime__finish,
            pap_person.lifetime__start AS pap_person_lifetime__start
          FROM mom_id_entity
@@ -4370,7 +4370,7 @@ _test_q_result = """
          WHERE mom_id_entity.pid = :pid_1
 
     >>> print (qrt.attrs (Q.last_name, Q.lifetime)) ### PAP.Person
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            pap_person.last_name AS pap_person_last_name,
            pap_person.lifetime__finish AS pap_person_lifetime__finish,
            pap_person.lifetime__start AS pap_person_lifetime__start
@@ -4503,7 +4503,7 @@ _test_q_result = """
          __raw_title_1        : u'D'
 
     >>> show_query (qrt.filter (Q.RAW.title.STARTSWITH ("D")).attrs (Q.title, Q.SUM (1))) ### PAP.Person
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            pap_person.title AS pap_person_title,
            sum(:param_1) AS sum_1
          FROM mom_id_entity
@@ -5377,7 +5377,7 @@ _test_q_result = """
          WHERE mom_id_entity.pid = :spk
          LIMIT :param_1
 
-    >>> print (qrt.attr (Q.desc)) ### PAP.Person_has_Phone
+    >>> print (qrt.attr (Q.desc, allow_duplicates = True)) ### PAP.Person_has_Phone
     SQL: SELECT pap_subject_has_property."desc" AS pap_subject_has_property_desc
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
@@ -5385,7 +5385,7 @@ _test_q_result = """
            JOIN pap_person_has_phone ON pap_subject_has_phone.pid = pap_person_has_phone.pid
 
     >>> print (qrt.attr (Q.person.lifetime.start)) ### PAP.Person_has_Phone
-    SQL: SELECT pap_person__1.lifetime__start AS pap_person__1_lifetime__start
+    SQL: SELECT DISTINCT pap_person__1.lifetime__start AS pap_person__1_lifetime__start
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
@@ -5393,7 +5393,7 @@ _test_q_result = """
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_subject_has_property."left"
 
     >>> print (qrt.attrs (Q.phone.number, Q.desc, Q.person.lifetime.start)) ### PAP.Person_has_Phone
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            pap_person__1.lifetime__start AS pap_person__1_lifetime__start,
            pap_phone__1.number AS pap_phone__1_number,
            pap_subject_has_property."desc" AS pap_subject_has_property_desc
@@ -5660,7 +5660,7 @@ _test_q_result = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
     >>> print (qrt.attrs (Q.enabled, Q.person, Q.person.lifetime)) ### Auth.Account
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            auth__account_.enabled AS auth__account__enabled,
            pap_person__3.lifetime__finish AS pap_person__3_lifetime__finish,
            pap_person__3.lifetime__start AS pap_person__3_lifetime__start,

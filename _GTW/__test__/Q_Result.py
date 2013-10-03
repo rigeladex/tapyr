@@ -124,11 +124,17 @@ _q_result = r"""
     >>> q1.count ()
     3
 
-    >>> q9  = q0.attrs (Q.RAW.title)
+    >>> q9  = q0.attrs (Q.RAW.title, allow_duplicates = True)
     >>> sorted (q9.all ())
     [(u'DI',), (u'DI',), (u'Dr.',)]
     >>> q9.count ()
     3
+
+    >>> q10 = q0.attrs (Q.RAW.title)
+    >>> sorted (q10.all ())
+    [(u'DI',), (u'Dr.',)]
+    >>> q10.count ()
+    2
 
     >>> q2  = q1.attrs (Q.RAW.title).order_by (Q.RAW.title)
     >>> q3  = q1.attrs (Q.RAW.title).order_by (Q.RAW.title)
@@ -163,7 +169,7 @@ _q_result = r"""
 
     >>> sorted (q0.all (), key = PAP.Person.sort_key)
     [PAP.Person (u'ln 2', u'fn 2', u'', u'dr.'), PAP.Person (u'ln 4', u'fn 4', u'', u'di'), PAP.Person (u'ln 5', u'fn 5', u'', u'di')]
-    >>> print sorted ((t, int (c)) for (t, c) in q0.attrs (Q.title, Q.SUM (1)).group_by (Q.title))
+    >>> print sorted ((t, int (c)) for (t, c) in q0.attrs (Q.title, Q.SUM (1), allow_duplicates = True).group_by (Q.title))
     [(u'di', 2), (u'dr.', 1)]
 
     >>> qy = PAP.Person.AQ.lifetime.start.AC ("2010")

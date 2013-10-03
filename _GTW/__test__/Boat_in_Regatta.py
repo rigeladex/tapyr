@@ -379,9 +379,12 @@ _test_code = r"""
     [(u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1), u'Optimist'), (u'Himmelfahrt', datetime.date(2008, 5, 1), datetime.date(2008, 5, 1), u'Yardstick')]
 
     >>> list (q.attrs (* fss))
-    [(u'Himmelfahrt', MOM.Date_Interval_C (u'2008/05/01', u'2008/05/01')), (u'Himmelfahrt', MOM.Date_Interval_C (u'2008/05/01', u'2008/05/01'))]
+    [(u'Himmelfahrt', MOM.Date_Interval_C (u'2008/05/01', u'2008/05/01'))]
 
     >>> list (q.attrs (* fst))
+    [(SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')),)]
+
+    >>> list (q.attrs (* fst, allow_duplicates = True))
     [(SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')),), (SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')),)]
 
     >>> AQ  = BiR.AQ.Select (MOM.Attr.Selector.ui_attr)

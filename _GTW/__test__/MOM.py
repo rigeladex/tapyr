@@ -1635,7 +1635,7 @@ Attribute queries
     >>> scope.BMT.Rodent.query_s (Q.weight != None).all ()
     [BMT.Mouse (u'Magic_Mouse'), BMT.Mouse (u'mighty_mouse')]
     >>> scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight).all ()
-    [42.0, 42.0]
+    [42.0]
     >>> scope.BMT.Rodent.query_s (Q.weight == None).all ()
     [BMT.Rat (u'betty'), BMT.Rat (u'rutty_rat'), BMT.Beaver (u'toothy_beaver')]
     >>> scope.BMT.Rodent.query_s (Q.weight > 0).all ()
@@ -1647,7 +1647,7 @@ Attribute queries
     >>> scope.BMT.Trap.query_s (Q.serial_no %% 2).all ()
     [BMT.Trap (u'x', 1), BMT.Trap (u'y', 1), BMT.Trap (u'z', 3)]
 
-    >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight))
+    >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight, allow_duplicates = True))
     (42.0, 42.0)
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight == None).attrs (Q.name, "color"))
     ((u'betty', u''), (u'rutty_rat', u''), (u'toothy_beaver', u''))
@@ -1656,7 +1656,7 @@ Attribute queries
     (`query_s` returns a `TFL.Q_Result_Composite`).
 
     >>> sorted (scope.BMT.Trap.query (Q.serial_no %% 2).attr (Q.up_ex_q))
-    [None, None, 20.0]
+    [None, 20.0]
 
     >>> tuple (scope.BMT.Trap.query (Q.max_weight != None).attr (Q.up_ex_q))
     (20.0,)

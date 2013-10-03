@@ -6019,14 +6019,14 @@ _test_q_result = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
     >>> print (qrt.filter (pid = 1).attr (Q.lifetime)) ### PAP.Person
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            pap_person.lifetime__finish AS pap_person_lifetime__finish,
            pap_person.lifetime__start AS pap_person_lifetime__start
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
          WHERE mom_id_entity.pid = :pid_1
 
-    >>> print (qrt.attrs (Q.last_name, Q.lifetime)) ### PAP.Person
+    >>> print (qrt.attrs (Q.last_name, Q.lifetime, allow_duplicates = True)) ### PAP.Person
     SQL: SELECT
            pap_person.last_name AS pap_person_last_name,
            pap_person.lifetime__finish AS pap_person_lifetime__finish,
@@ -6906,18 +6906,18 @@ _test_q_result = """
          LIMIT :param_1
 
     >>> print (qrt.attr (Q.desc)) ### PAP.Person_has_Phone
-    SQL: SELECT pap_person_has_phone."desc" AS pap_person_has_phone_desc
+    SQL: SELECT DISTINCT pap_person_has_phone."desc" AS pap_person_has_phone_desc
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
 
     >>> print (qrt.attr (Q.person.lifetime.start)) ### PAP.Person_has_Phone
-    SQL: SELECT pap_person__1.lifetime__start AS pap_person__1_lifetime__start
+    SQL: SELECT DISTINCT pap_person__1.lifetime__start AS pap_person__1_lifetime__start
          FROM mom_id_entity
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
 
     >>> print (qrt.attrs (Q.phone.number, Q.desc, Q.person.lifetime.start)) ### PAP.Person_has_Phone
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            pap_person__1.lifetime__start AS pap_person__1_lifetime__start,
            pap_person_has_phone."desc" AS pap_person_has_phone_desc,
            pap_phone__1.number AS pap_phone__1_number
@@ -7093,7 +7093,7 @@ _test_q_result = """
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
     >>> print (qrt.attrs (Q.enabled, Q.person, Q.person.lifetime)) ### Auth.Account
-    SQL: SELECT
+    SQL: SELECT DISTINCT
            auth__account_.enabled AS auth__account__enabled,
            pap_person__2.lifetime__finish AS pap_person__2_lifetime__finish,
            pap_person__2.lifetime__start AS pap_person__2_lifetime__start,

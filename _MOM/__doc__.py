@@ -1515,10 +1515,17 @@ Q-expressions::
     [BMT.Trap (u'x', 2), BMT.Trap (u'y', 2)]
 
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight))
+    (42.0,)
+
+    >>> tuple (scope.BMT.Rodent.query_s (Q.weight != None).attr (Q.weight, allow_duplicates = True))
     (42.0, 42.0)
+
     >>> tuple (scope.BMT.Rodent.query_s (Q.weight == None).attrs (Q.name, "color"))
     ((u'Sick_Rodent', u''), (u'betty', u''), (u'rutty_rat', u''), (u'toothy_beaver', u''))
     >>> tuple (scope.BMT.Trap.query_s (Q.serial_no %% 2).attr (Q.up_ex_q))
+    (20.0, None)
+
+    >>> tuple (scope.BMT.Trap.query_s (Q.serial_no %% 2).attr (Q.up_ex_q, allow_duplicates = True))
     (20.0, None, None)
 
     >>> Ris.query_s (Q.sick_leave.start.D.YEAR (2010)).count ()
