@@ -270,6 +270,7 @@
 #                     `a.to_save (self)`
 #    18-Sep-2013 (CT) Change `_extract_primary_ckd` to call `pka.cooked (w)`
 #    18-Sep-2013 (CT) Add change-guard for `new_epk` to `_set_ckd`, `_set_raw`
+#     4-Oct-2013 (CT) Remove guard for `pid` from `attr_prop`
 #    ««revision-date»»···
 #--
 
@@ -546,8 +547,7 @@ class Entity (TFL.Meta.Object) :
         """Return the property of the attribute named `name`.
            Return None if there is no such attribute.
         """
-        if name not in ("pid", ) :
-            return cls.attributes.get (name)
+        return cls.attributes.get (name)
     # end def attr_prop
 
     def attr_value_maybe (self, name) :
