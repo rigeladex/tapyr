@@ -49,6 +49,8 @@
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #     4-Oct-2013 (CT) Add `fields` and `add_fields` to `_handle_method_context`
 #     4-Oct-2013 (CT) Add `add_attributes` to `_response_obj_attrs`
+#     4-Oct-2013 (CT) Use `attr_prop` for `add_attributes` in
+#                     `_response_obj_attrs`
 #    ««revision-date»»···
 #--
 
@@ -229,11 +231,18 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
                 if  a.to_save (obj)
                 )
             add_attrs = getattr (resource, "add_attributes", ())
-            result.update \
-                ( self._response_attr
-                    (resource, request, response, obj, a, seen, getter, a_name)
-                for a in add_attrs
-                )
+            if add_attrs :
+                def _gen (obj, add_attrs) :
+                    ET = obj.E_Type
+                    for a in add_attrs :
+                        yield obj.attr_prop (a.name)
+                result.update \
+                    ( self._response_attr
+                        ( resource, request, response
+                        , obj, a, seen, getter, a_name
+                        )
+                    for a in _gen (obj, add_attrs)
+                    )
             return result
         # end def _response_obj_attrs
 

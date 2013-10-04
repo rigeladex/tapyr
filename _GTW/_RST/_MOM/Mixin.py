@@ -78,6 +78,7 @@
 #    29-Jul-2013 (CT) Accept GET-output in `_resolve_nested_request_attrs`
 #     4-Oct-2013 (CT) Factor `Base_Mixin._gen_attr_kinds`
 #     4-Oct-2013 (CT) Add `add_fields` to `E_Type_Mixin._handle_method_context`
+#     4-Oct-2013 (CT) Fix `E_Type_Mixin._handle_method_context` (use tuple)
 #    ««revision-date»»···
 #--
 
@@ -604,8 +605,10 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
                     , _old_cid     = object ()
                     )
             if "add_fields" in request.req_data :
-                kw ["add_attributes"] = self._gen_attr_kinds \
-                    (request.req_data ["add_fields"].split (","))
+                kw ["add_attributes"] = tuple \
+                    ( self._gen_attr_kinds
+                        (request.req_data ["add_fields"].split (","))
+                    )
             with self.LET (** kw) :
                 yield
     # end def _handle_method_context
