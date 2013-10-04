@@ -47,6 +47,8 @@
 #    17-May-2013 (CT) Add support for `rels`; derive from `Dir_V`, not `Leaf`
 #    17-May-2013 (CT) Take `seen` from `request._rst_seen`
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
+#     4-Oct-2013 (CT) Add `fields` and `add_fields` to `_handle_method_context`
+#     4-Oct-2013 (CT) Add `add_attributes` to `_response_obj_attrs`
 #    ««revision-date»»···
 #--
 
@@ -220,12 +222,19 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
                 ( self, resource, request, response, obj, attrs, seen
                 , getter, a_name
                 ) :
-            return dict \
+            result = dict \
                 ( self._response_attr
                     (resource, request, response, obj, a, seen, getter, a_name)
                 for a in attrs
                 if  a.to_save (obj)
                 )
+            add_attrs = getattr (resource, "add_attributes", ())
+            result.update \
+                ( self._response_attr
+                    (resource, request, response, obj, a, seen, getter, a_name)
+                for a in add_attrs
+                )
+            return result
         # end def _response_obj_attrs
 
     GET = _RST_MOM_Entity_GET_ # end class
@@ -321,10 +330,6 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
 
     def _handle_method (self, method, request, response) :
         self.add_doc_link_header (response)
-        return self.__super._handle_method (method, request, response)
-    # end def _handle_method
-
-    def _handle_method (self, method, request, response) :
         for link, rel in self._entry_type_links :
             response.add_link (rel, link)
         return self.__super._handle_method (method, request, response)
@@ -340,7 +345,13 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
                     show_rels = (rels [0],) if rels [0] else self._default_rels
                 else :
                     show_rels = sorted (rels)
-            with self.LET (show_rels = show_rels) :
+            kw = dict (show_rels = show_rels)
+            if "fields" in request.req_data :
+                kw ["attributes"] = request.req_data ["fields"].split (",")
+            if "add_fields" in request.req_data :
+                kw ["add_attributes"] = self._gen_attr_kinds \
+                    (request.req_data ["add_fields"].split (","))
+            with self.LET (** kw) :
                 yield
     # end def _handle_method_context
 

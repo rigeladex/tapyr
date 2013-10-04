@@ -76,6 +76,8 @@
 #     1-May-2013 (CT) Improve error message of `_handle_method_context`
 #    17-May-2013 (CT) Add `request._rst_seen`  (in `_handle_method_context`)
 #    29-Jul-2013 (CT) Accept GET-output in `_resolve_nested_request_attrs`
+#     4-Oct-2013 (CT) Factor `Base_Mixin._gen_attr_kinds`
+#     4-Oct-2013 (CT) Add `add_fields` to `E_Type_Mixin._handle_method_context`
 #    ««revision-date»»···
 #--
 
@@ -247,21 +249,8 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
 
     @attributes.setter
     def attributes (self, value) :
-        def _gen (vs) :
-            ET = self.E_Type
-            AQ = ET.AQ
-            for v in vs :
-                if isinstance (v, basestring) :
-                    try :
-                        v = getattr (AQ, v)._attr
-                    except AttributeError as exc :
-                        print ("*" * 4, exc, E_Type, v)
-                        pass
-                    else :
-                        yield v.kind
-                elif isinstance (v, MOM.Attr.Kind) :
-                    yield v
-        self._attributes = tuple (_gen (value)) if value is not None else None
+        self._attributes = \
+            tuple (self._gen_attr_kinds (value)) if value is not None else None
     # end def attributes
 
     @attributes.deleter
@@ -274,6 +263,22 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     def type_name (self) :
         return self.E_Type.type_name
     # end def type_name
+
+    def _gen_attr_kinds (self, vs) :
+        ET = self.E_Type
+        AQ = ET.AQ
+        for v in vs :
+            if isinstance (v, basestring) :
+                try :
+                    v = getattr (AQ, v)._attr
+                except AttributeError as exc :
+                    print ("*" * 4, exc, ET, v)
+                    pass
+                else :
+                    yield v.kind
+            elif isinstance (v, MOM.Attr.Kind) :
+                yield v
+    # end def _gen_attr_kinds
 
 Base_Mixin = _RST_MOM_Base_Mixin_ # end class
 
@@ -598,6 +603,9 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
                     , _objects     = []
                     , _old_cid     = object ()
                     )
+            if "add_fields" in request.req_data :
+                kw ["add_attributes"] = self._gen_attr_kinds \
+                    (request.req_data ["add_fields"].split (","))
             with self.LET (** kw) :
                 yield
     # end def _handle_method_context

@@ -55,6 +55,7 @@
 #    17-May-2013 (CT) Add tests for `rels`
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    29-Jul-2013 (CT) Add `test_put`
+#     4-Oct-2013 (CT) Add test for query argument `fields`
 #    ««revision-date»»···
 #--
 
@@ -2151,6 +2152,41 @@ _test_get = r"""
     >>> r = show (R.head ("/v1/PAP-Person/1"))
     { 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
+    }
+
+    >>> r = showf (R.get ("/v1/PAP-Person/1?fields=first_name,last_name"))
+    { 'headers' :
+        { 'cache-control' : 'no-cache'
+        , 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
+        , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
+        , 'last-modified' : '<datetime instance>'
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
+        , 'server' : '<server>'
+        , 'x-last-cid' : '1'
+        }
+    , 'json' :
+        { 'attributes' :
+            { 'first_name' : 'christian'
+            , 'last_name' : 'tanzer'
+            }
+        , 'cid' : 1
+        , 'pid' : 1
+        , 'rels' :
+            [ '/v1/PAP-Person/1/account_links'
+            , '/v1/PAP-Person/1/address_links'
+            , '/v1/PAP-Person/1/email_links'
+            , '/v1/PAP-Person/1/phone_links'
+            , '/v1/PAP-Person/1/property_links'
+            , '/v1/PAP-Person/1/sailors'
+            , '/v1/PAP-Person/1/url_links'
+            ]
+        , 'type_name' : 'PAP.Person'
+        , 'url' : '/v1/PAP-Person/1'
+        }
+    , 'status' : 200
+    , 'url' : 'http://localhost:9999/v1/PAP-Person/1?fields=first_name,last_name'
     }
 
     >>> r = showf (R.get ("/v1/PAP-Person/1?RELS"))

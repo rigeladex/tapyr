@@ -31,6 +31,7 @@
 #    13-Mar-2013 (CT) Improve documentation
 #    16-Apr-2013 (CT) Add more documentation about AQ expressions
 #     3-May-2013 (CT) Add `META`
+#     4-Oct-2013 (CT) Add `fields` and `add_fields`
 #    ««revision-date»»···
 #--
 
@@ -291,6 +292,11 @@ returned or to search for specific instances. Possible query parameters are:
 
 - ``count``: Return just the count, not the list, of instances.
 
+- ``fields``: Select the database columns to include in output.
+
+- ``add_fields``: Select additional fields for the output; you can specify
+  any of the query attributes supported by the e-type in question.
+
 - ``limit``: Restrict the number of returned instances to the value specified.
 
 - ``offset``: Number of first instance to return; can be used together with
@@ -407,8 +413,9 @@ the instance as returned by a ``GET`` method.
 ~~~~~~~~
 
 Use the HTTP method ``GET`` to retrieve the value of the instance. ``GET``
-returns a `JSON`_ object with the same structure as a ``verbose`` ``GET`` applied
-to the resource of the instance's e-type.
+returns a `JSON`_ object with the same structure as a ``verbose`` ``GET``
+applied to the resource of the instance's e-type; the query arguments
+``fields``, ``add_fields``, ``META``, and ``RELS`` can be used here, too.
 
 For instance::
 
