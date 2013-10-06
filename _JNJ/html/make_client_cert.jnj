@@ -31,11 +31,12 @@
 ##     8-Jan-2013 (CT) Creation
 ##    14-Jan-2013 (CT) Remove hidden `input` element for `challenge`
 ##    15-Jan-2013 (CT) Add `desc`
+##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
 ##    ««revision-date»»···
 ##--
 #}
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "html/form.jnj" as Form %}
+{%- import "html/form.jnj" as Form with context %}
 
 {%- block document -%}
   {% call Form.form () -%}

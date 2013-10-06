@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: calendar.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -30,12 +30,13 @@
 ## Revision Dates
 ##     8-Mar-2010 (CT) Creation
 ##    12-Nov-2010 (CT) `week_roller_ctrl` added
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- block document -%}
-  {%- import "html/cal/wr.jnj" as C %}
+  {%- import "html/cal/wr.jnj" as C with context %}
 
   {%- if page.desc %}
     <h1>{{ page.desc }}</h1>

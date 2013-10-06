@@ -50,12 +50,13 @@
 ##     3-Apr-2013 (CT) Split hidden `input` field "__attribute_selector_for__"
 ##                     into two: "__esf_for_attr__"  and "__esf_for_type__"
 ##     3-Apr-2013 (CT) Add `entity_selector_form_p`
+##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "html/form.jnj" as Form %}
+{%- import "html/form.jnj" as Form with context %}
 
 {%- macro attr_filter_table (filters, need_op = True) -%}
   <table class="{{ kwargs.get ("class", "attrs") }}">

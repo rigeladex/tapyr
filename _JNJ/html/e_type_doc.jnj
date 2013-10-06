@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: e_type_doc.jnj -#}
 {#
-## Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This module is part of the package JNJ.
@@ -29,11 +29,12 @@
 ##
 ## Revision Dates
 ##     8-Aug-2012 (CT) Creation
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import "html/e_type_doc.m.jnj" as etd %}
+{%- import "html/e_type_doc.m.jnj" as etd with context %}
 
 {%- block document -%}
   {{- etd.e_type (resource, rst_cargo) -}}

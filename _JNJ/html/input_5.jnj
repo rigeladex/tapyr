@@ -1,6 +1,6 @@
 {#- jinja template:  html/input_5.jnj -#}
 {#
-## Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -39,6 +39,7 @@
 ##    30-Nov-2011 (CT) Add handling of `required` to `_input`
 ##     2-Dec-2011 (CT) Change `_input` to `pop` empty `name`
 ##    19-Apr-2012 (CT) Change `number` to use `_input_c`, not `_input`
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
@@ -50,7 +51,7 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 - required
 -#}
 
-{%- import "html/_input.jnj" as _common %}
+{%- import "html/_input.jnj" as _common with context %}
 {%- set option   = _common.option       %}
 {%- set select   = _common.select       %}
 {%- set select_v = _common.select_v     %}

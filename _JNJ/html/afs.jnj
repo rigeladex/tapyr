@@ -46,12 +46,13 @@
 ##    30-Apr-2013 (CT) Add optional argument `het_c` to `do_element`
 ##    30-Apr-2013 (CT) Add optional argument `het_h` to `do_head`
 ##     1-May-2013 (CT) Add `caller` to `do_label`
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
-{%- import "html/form.jnj" as FM %}
+{%- import "html/form.jnj" as FM with context %}
 
 {%- macro do_button (name) -%}
   <a class="{{ name.lower () }} button">{{GTW._T (name)}}</a>

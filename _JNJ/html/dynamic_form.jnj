@@ -1,6 +1,6 @@
 {#- jinja template: JNJ/html/dynamic_form.jnj -#}
 {#
-## Copyright (C) 2010 Martin Glueck All rights reserved
+## Copyright (C) 2010-2013 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ## ****************************************************************************
 ## This template is part of the package JNJ/html.
@@ -30,10 +30,11 @@
 ##    14-May-2010 (MG) Creation
 ##    26-May-2010 (MG) Allow the inclusion of this template in the context of
 ##                     link inline rendering
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
-{%- import "html/rform.jnj" as RForm %}
+{%- import "html/rform.jnj" as RForm with context %}
 <div class="Object-Editor {% if popup_form -%}
     gtw-ui-popup-form ui-helper-hidden
   {% endif -%}">

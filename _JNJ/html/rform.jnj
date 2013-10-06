@@ -42,11 +42,12 @@
 ##    19-Aug-2010 (CT) popup-form-buttons changed to same sequence as in form
 ##                     (Save/reset/cancel)
 ##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
+##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
 ##    ««revision-date»»···
 ##--
 #}
 {%- import (html_version or "html/5.jnj") as X   -%}
-{%- import "html/form.jnj" as Form %}
+{%- import "html/form.jnj" as Form with context %}
 
 {%- macro aid_div_seq (pfo, aid) -%}
   {%- set fo = aid.form -%}

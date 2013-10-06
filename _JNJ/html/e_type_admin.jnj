@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: e_type_admin.jnj -#}
 {#
-## Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -49,11 +49,12 @@
 ##     7-Dec-2011 (CT) Add `qx_esf`, reorganize `options`
 ##    16-Jan-2012 (CT) Add `qx_asf`, `select_attr_sortable`
 ##    16-Mar-2012 (CT) Add `<noscript>` to signal need of Javascript
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
 
-{%- import "html/e_type.m.jnj" as e_type %}
+{%- import "html/e_type.m.jnj" as e_type with context %}
 
 {%- block document %}
   <noscript>

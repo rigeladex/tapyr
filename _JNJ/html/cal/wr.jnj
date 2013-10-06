@@ -42,6 +42,7 @@
 ##    26-Nov-2010 (CT) `week_roller_slider` added
 ##    27-Nov-2010 (CT) `div.echo` added to `week_roller_slider`
 ##     2-Aug-2012 (CT) Remove auto-executing code
+##     6-Oct-2013 (CT) Add `with context` to imports
 ##    ««revision-date»»···
 ##--
 #}
@@ -84,7 +85,7 @@
 {%- endmacro -%} {#- week_roller -#}
 
 {%- macro week_roller_body (cal, weeks) -%}
-  {%- import "html/cal/wr_body.jnj" as W %}
+  {%- import "html/cal/wr_body.jnj" as W with context %}
   {%- set wr_caller = kwargs.pop ("caller",   None) -%}
   <div class="week-roller">
     {%- if wr_caller -%}{{- wr_caller () -}}{%- endif -%}
@@ -93,7 +94,7 @@
 {%- endmacro -%} {#- week_roller_body -#}
 
 {%- macro week_roller_ctrl (cal, weeks) -%}
-  {%- import "html/form.jnj" as Form %}
+  {%- import "html/form.jnj" as Form with context %}
   {%- set action = cal.q_href -%}
   {% call Form.form (action = action, method = "get", class = "ctrl") -%}
       <label class="anchor"
@@ -210,7 +211,7 @@
 {%- endmacro -%} {#- week_roller_slider -#}
 
 {%- macro week_roller_nav (cal, weeks) -%}
-  {%- import "html/cal/wr_nav.jnj" as W %}
+  {%- import "html/cal/wr_nav.jnj" as W with context %}
   {{ week_roller (cal, weeks, W, ** kwargs)}}
 {%- endmacro -%} {#- week_roller_nav -#}
 

@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: clip_aggregator.jnj -#}
 {#
-## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -29,13 +29,14 @@
 ##
 ## Revision Dates
 ##    12-Apr-2010 (CT) Creation
+##     6-Oct-2013 (CT) Add `with context` to import
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- macro aggregator (page) -%}
   {%- if calendar %}
-    {%- import "html/cal/wr.jnj" as C %}
+    {%- import "html/cal/wr.jnj" as C with context %}
     {%- set n = 2 if calendar.today.weekday < 4  else 3 %}
     {{- C.week_roller_body (calendar, weeks = calendar.weeks [1:n]) -}}
   {% endif %}
