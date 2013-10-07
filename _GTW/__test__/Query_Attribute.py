@@ -99,10 +99,16 @@ _query_test = """
     >>> phw
     PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))
 
+    >>> PAP.Wrzlbrmft.query (Q.my_wolp == wolp).all ()
+    [PAP.Wrzlbrmft (u'WRZL', (u'Wolp', ))]
+
     >>> PAP.Person_has_Wrzlbrmft.query_s (Q.right == w).all ()
     [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
 
     >>> PAP.Person_has_Wrzlbrmft.query_s (Q.wrzlbrmft == w).all ()
+    [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
+
+    >>> PAP.Person_has_Wrzlbrmft.query_s (Q.wrzlbrmft.my_wolp == wolp).all ()
     [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
 
     >>> PAP.Person.query_s (Q.wrzlbrmft == w).all ()
@@ -119,6 +125,144 @@ _query_test = """
 
     >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.my_wolp == wolp).all ()
     [Auth.Account_T (u'test-ln+fn@foo.bar')]
+
+    >>> Auth.Account_T.query_s (Q.p_wrzl.my_wolp == wolp).all ()
+    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+
+    >>> Auth.Account_T.query_s (Q.p_nick.name == "nicky").all ()
+    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+
+"""
+
+_test_saw = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> Auth  = scope.Auth
+    >>> PAP   = scope.PAP
+
+    >>> from   _MOM._DBW._SAW import QX
+
+    >>> qfa = Q.qt.wrzlbrmft.wolp == 42
+    >>> qra = Auth.Account_T.query ()
+    >>> qxa = QX.Mapper (qra)
+    >>> qza = qxa (qfa)
+
+    >>> print (QX.display (qza))
+    Bin:__eq__:
+      <PAP.Wrzlbrmft | QX.Kind_EPK for
+           <SAW : Entity `wolp` [pap_wrzlbrmft__1.wolp]>>
+          <PAP.Person | QX.Kind_Rev_Query for
+               <SAW : Role_Ref `wrzlbrmft`>>
+              <Auth.Account | QX.Kind_Rev_Query for
+                   <SAW : Role_Ref `person`>>
+                  <Auth.Account_T | QX.Kind_Query for
+                       <SAW : Entity `qt`>>
+      42
+
+    >>> qra.filter (qfa)
+    SQL: SELECT
+           auth__account_.enabled AS auth__account__enabled,
+           auth__account_.name AS auth__account__name,
+           auth__account_.pid AS auth__account__pid,
+           auth__account_.superuser AS auth__account__superuser,
+           auth__account_.suspended AS auth__account__suspended,
+           auth_account.password AS auth_account_password,
+           auth_account.ph_name AS auth_account_ph_name,
+           auth_account.pid AS auth_account_pid,
+           auth_account_t.pid AS auth_account_t_pid,
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked
+         FROM mom_id_entity
+           JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
+           JOIN auth_account ON auth__account_.pid = auth_account.pid
+           JOIN auth_account_t ON auth_account.pid = auth_account_t.pid
+           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_account__1."left"
+           JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__1 ON pap_person_has_wrzlbrmft__1."left" = pap_person__1.pid
+           JOIN pap_wrzlbrmft AS pap_wrzlbrmft__1 ON pap_wrzlbrmft__1.pid = pap_person_has_wrzlbrmft__1."right"
+         WHERE pap_wrzlbrmft__1.wolp = :wolp_1
+
+    >>> qfh = Q.owner.wrzlbrmft.my_wolp == 17
+    >>> qrh = PAP.Person_has_Account_Test.query ()
+    >>> qxh = QX.Mapper (qrh)
+
+    >>> print (QX.display (qxh (qfh)))
+    Bin:__eq__:
+      <PAP.Wrzlbrmft | QX.Kind_EPK for
+           <SAW : Entity `wolp` [pap_wrzlbrmft__2.wolp]>>
+          <PAP.Wrzlbrmft | QX.Kind_Query for
+               <SAW : Entity `my_wolp`>>
+              <PAP.Person | QX.Kind_Rev_Query for
+                   <SAW : Role_Ref `wrzlbrmft`>>
+                  <PAP.Person_has_Account | QX.Kind_EPK for
+                       <SAW : Person `left` [pap_person_has_account.left]>>
+                      <PAP.Person_has_Account_Test | QX.Kind_Query for
+                           <SAW : Entity `owner`>>
+      17
+
+    >>> qrh.filter (qfh)
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person_has_account."left" AS pap_person_has_account_left,
+           pap_person_has_account."right" AS pap_person_has_account_right,
+           pap_person_has_account.pid AS pap_person_has_account_pid,
+           pap_person_has_account_test.pid AS pap_person_has_account_test_pid
+         FROM mom_id_entity
+           JOIN pap_person_has_account ON mom_id_entity.pid = pap_person_has_account.pid
+           JOIN pap_person_has_account_test ON pap_person_has_account.pid = pap_person_has_account_test.pid
+           JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account."left"
+           JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__2 ON pap_person_has_wrzlbrmft__2."left" = pap_person__2.pid
+           JOIN pap_wrzlbrmft AS pap_wrzlbrmft__2 ON pap_wrzlbrmft__2.pid = pap_person_has_wrzlbrmft__2."right"
+         WHERE pap_wrzlbrmft__2.wolp = :wolp_1
+
+    >>> qfp = Q.wrzlbrmft.wolp == 23
+    >>> qrp = PAP.Person.query ()
+    >>> qxp = QX.Mapper (qrp)
+
+    >>> print (QX.display (qxp (qfp)))
+    Bin:__eq__:
+      <PAP.Wrzlbrmft | QX.Kind_EPK for
+           <SAW : Entity `wolp` [pap_wrzlbrmft__3.wolp]>>
+          <PAP.Person | QX.Kind_Rev_Query for
+               <SAW : Role_Ref `wrzlbrmft`>>
+      23
+
+    >>> qrp.filter (qfp)
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.salutation AS pap_person_salutation,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+           JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__3 ON pap_person_has_wrzlbrmft__3."left" = pap_person.pid
+           JOIN pap_wrzlbrmft AS pap_wrzlbrmft__3 ON pap_wrzlbrmft__3.pid = pap_person_has_wrzlbrmft__3."right"
+         WHERE pap_wrzlbrmft__3.wolp = :wolp_1
+
+
+    >>> str (Auth.Account_T.query (Q.p_wrzl.my_wolp == 42)) == str(Auth.Account_T.query (Q.p_wrzl.wolp == 42))
+    True
 
 """
 
@@ -137,9 +281,10 @@ class Person_Nickname_Test (_Ancestor_Essence) :
 
         class left (_Ancestor.left) :
 
-            role_type       = GTW.OMP.PAP.Person
-            max_links       = 1
-            auto_rev_ref    = 'nick'
+            role_type          = GTW.OMP.PAP.Person
+            max_links          = 1
+            auto_rev_ref       = True
+            link_ref_attr_name = "nick"
 
         # end class left
 
@@ -202,7 +347,6 @@ class Wrzlbrmft (_Ancestor_Essence) :
 
             kind               = Attr.Query
             P_Type             = Wolperdinger
-            auto_up_depends    = ("wolp", )
             hidden             = True
             query              = Q.wolp
 
@@ -252,31 +396,28 @@ class Account_T (_Ancestor_Essence) :
             """Test of access to cached role attribute"""
 
             kind               = Attr.Query
-            auto_up_depends    = ("person",)
             P_Type             = GTW.OMP.PAP.Person
             query              = Q.person
 
         # end class qt
 
-#        class account_nick (A_Id_Entity) :
-#            """Test of access to query attributes via cached role"""
-#
-#            kind               = Attr.Query
-#            auto_up_depends    = ("person.nick",)
-#            P_Type             = Person_Nickname_Test
-#            query              = Q.person.nick
-#
-#        # end class account_nick
+        class p_nick (A_Id_Entity) :
+            """Test of access to query attributes via cached role"""
 
-#        class account_wrzl (A_Id_Entity) :
-#            """ Test of access to query attribute via cached role """
-#
-#            kind               = Attr.Query
-#            auto_up_depends    = ("person.wrzlbrmft",)
-#            P_Type             = Wrzlbrmft
-#            query              = Q.person.wrzlbrmft
-#
-#        # end class account_wrzl
+            kind               = Attr.Query
+            P_Type             = Person_Nickname_Test
+            query              = Q.person.nick
+
+        # end class p_nick
+
+        class p_wrzl (A_Id_Entity) :
+            """ Test of access to query attribute via cached role """
+
+            kind               = Attr.Query
+            P_Type             = Wrzlbrmft
+            query              = Q.person.wrzlbrmft
+
+        # end class p_wrzl
 
     # end class _Attributes
 
@@ -300,7 +441,6 @@ class Person_has_Account_Test (_Ancestor_Essence) :
 
             kind               = Attr.Query
             query              = Q.left
-            auto_up_depends    = ("left", )
 
         # end class owner
 
@@ -309,9 +449,19 @@ class Person_has_Account_Test (_Ancestor_Essence) :
 # end class Person_has_Account_Test
 
 Scaffold = GTW_Test_Command ()
+
 __test__ = Scaffold.create_test_dict \
     ( dict (query = _query_test)
-    , ignore = ("SQL", "MYS", "POS", "sq", "pg") ### XXX remove after fixing SAW queries
     )
+
+__test__.update \
+    ( Scaffold.create_test_dict
+        ( dict
+            ( test_saw = _test_saw
+            )
+        , ignore = ("HPS", )
+        )
+    )
+
 
 ### __END__ GTW.__test__.Query_Attribute

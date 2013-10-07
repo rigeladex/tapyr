@@ -34,6 +34,9 @@
 #    26-Sep-2013 (CT) Add optional arg `polymorphic` to `_add_join_parent`,
 #                     `_add_joins_col`, `_add_joins_inner`
 #    30-Sep-2013 (CT) Add support for `Q.SELF`
+#     7-Oct-2013 (CT) Change `Kind_Rev_Query._ref_etw_col` to pass
+#                     `akw.ETW.spk_col`, not `self.ETW.spk_col`, to
+#                     `_add_joins_col`
 #    ««revision-date»»···
 #--
 
@@ -1473,7 +1476,7 @@ class Kind_Rev_Query (_Attr_) :
         rev_sq      = self._rev_sq
         head_col    = ref_col
         self._add_join_parent (pj)
-        self._add_joins_col   (self.ETW.spk_col, ref_col)
+        self._add_joins_col   (akw.ETW.spk_col, ref_col)
         if rev_sq._attr :
             ### `A_Role_Ref` and `A_Role_Ref_Set` need this
             ref_col     = ref_etw.QC [rev_sq._attr]

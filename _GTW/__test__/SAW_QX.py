@@ -995,7 +995,7 @@ _test_joins = """
     Auth.Account  :  Q.person.account_links.account.name
       JOIN  pap_person_has_account__1.right = auth_account.pid
       JOIN  pap_person__3.pid = pap_person_has_account__1.left
-      JOIN  pap_person_has_account__2.left = auth_account.pid
+      JOIN  pap_person_has_account__2.left = pap_person__3.pid
       JOIN  auth_account__1.pid = pap_person_has_account__2.right
       JOIN  auth__account___1.pid = pap_person_has_account__2.right
 
