@@ -13406,7 +13406,7 @@ __test__ = Scaffold.create_test_dict \
         , test_tables           = _test_tables
         , test_unique           = _test_unique
         )
-    , ignore = ("HPS", "MYS", "POS", "SQL")
+    , ignore = ("HPS", "MYS")
     )
 
 __test__.update \
@@ -13429,7 +13429,7 @@ __test__.update \
 
 X__test__ = Scaffold.create_test_dict \
     ( dict (debug = _debug)
-    , ignore = ("HPS", "MYS", "POS", "SQL")
+    , ignore = ("HPS", "MYS")
     )
 
 if __name__ == "__main__" :

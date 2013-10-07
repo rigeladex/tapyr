@@ -65,6 +65,7 @@
 #                     `Not_Equal_S`
 #    19-Mar-2013 (CT) Add support for empty string to `_Id_Entity_.__call__`
 #    21-Mar-2013 (CT) Add `value` guard to `_Composite_.__call__._gen`
+#     7-Oct-2013 (CT) Set `Q.Ignore_Exception` to `AttributeError`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Filter
 
-Q = TFL.Attr_Query ()
+Q = TFL.Attr_Query (Ignore_Exception = AttributeError)
 
 class _M_Filter_ (TFL.Meta.Object.__class__) :
     """Meta class for Filter classes."""

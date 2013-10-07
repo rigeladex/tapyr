@@ -76,62 +76,10 @@ _test_code = """
 
 """
 
-_test_acr = """
-    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
-    Creating new scope MOMT__...
-    >>> PAP      = scope.PAP
-
-    >>> for T in scope.T_Extension [2:] :
-    ...     if getattr (T, "Roles", None) and T.auto_cache_roles :
-    ...         print T.auto_cache_roles
-    (<Role_Cacher_n (GTW.OMP.Auth.Account_in_Group) account --> accounts [GTW.OMP.Auth.Group]>, <Role_Cacher_n (GTW.OMP.Auth.Account_in_Group) group --> groups [GTW.OMP.Auth.Account]>)
-    (<Link_Cacher_1 (GTW.OMP.Auth.Account_Activation) account --> activation>,)
-    (<Link_Cacher_1 (GTW.OMP.Auth.Account_Password_Change_Required) account --> password_change_required>,)
-    (<Link_Cacher_n (GTW.OMP.EVT.Event) object --> events>,)
-    (<Link_Cacher_n (GTW.OMP.EVT.Event_occurs) event --> occurs>,)
-    (<Link_Cacher_1 (GTW.OMP.EVT.Recurrence_Spec) event --> recurrence>,)
-    (<Link_Cacher_n (GTW.OMP.EVT.Recurrence_Rule) recurrence_spec --> rules>,)
-    (<Link_Cacher_1 (GTW.OMP.PAP.Address_Position) address --> gps>,)
-    (<Role_Cacher_1 (GTW.OMP.PAP.Person_has_Account) person --> person [GTW.OMP.Auth.Account]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Account) account --> accounts [GTW.OMP.PAP.Person]>)
-    (<Link_Cacher_n (GTW.OMP.SWP.Clip_O) object --> clips>,)
-    (<Link_Cacher_n (GTW.OMP.SWP.Picture) gallery --> pictures>,)
-    (<Link_Cacher_n (GTW.OMP.SRM.Regatta) event --> regattas>,)
-    (<Link_Cacher_n (GTW.OMP.SRM.Regatta_C) event --> regattas>,)
-    (<Link_Cacher_n (GTW.OMP.SRM.Regatta_H) event --> regattas>,)
-    (<Link_Cacher_n (GTW.OMP.SRM.Boat_in_Regatta) regatta --> boats>,)
-    (<Link_Cacher_n (GTW.OMP.SRM.Race_Result) boat_in_regatta --> race_results>,)
-    (<Link_Cacher_n (GTW.OMP.SRM.Team) regatta --> teams>,)
-    (<Role_Cacher_n (GTW.OMP.SRM.Crew_Member) sailor --> _crew [GTW.OMP.SRM.Boat_in_Regatta]>,)
-    (<Role_Cacher_n (GTW.OMP.SRM.Team_has_Boat_in_Regatta) team --> teams [GTW.OMP.SRM.Boat_in_Regatta]>, <Role_Cacher_n (GTW.OMP.SRM.Team_has_Boat_in_Regatta) boat --> boats [GTW.OMP.SRM.Team]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Address) address --> addresses [GTW.OMP.PAP.Subject]>,)
-    (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Email) email --> emails [GTW.OMP.PAP.Subject]>,)
-    (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Phone) phone --> phones [GTW.OMP.PAP.Subject]>,)
-    (<Role_Cacher_n (GTW.OMP.PAP.Subject_has_Url) url --> urls [GTW.OMP.PAP.Subject]>,)
-    (<Role_Cacher_n (GTW.OMP.PAP.Person_has_Url) person --> persons [GTW.OMP.PAP.Url]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Url) url --> urls [GTW.OMP.PAP.Person]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Company_has_Url) company --> companies [GTW.OMP.PAP.Url]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Url) url --> urls [GTW.OMP.PAP.Company]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Person_has_Phone) person --> persons [GTW.OMP.PAP.Phone]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Phone) phone --> phones [GTW.OMP.PAP.Person]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Company_has_Phone) company --> companies [GTW.OMP.PAP.Phone]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Phone) phone --> phones [GTW.OMP.PAP.Company]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) person --> persons [GTW.OMP.PAP.Email]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Email) email --> emails [GTW.OMP.PAP.Person]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) company --> companies [GTW.OMP.PAP.Email]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Email) email --> emails [GTW.OMP.PAP.Company]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Person_has_Address) person --> persons [GTW.OMP.PAP.Address]>, <Role_Cacher_n (GTW.OMP.PAP.Person_has_Address) address --> addresses [GTW.OMP.PAP.Person]>)
-    (<Role_Cacher_n (GTW.OMP.PAP.Company_has_Address) company --> companies [GTW.OMP.PAP.Address]>, <Role_Cacher_n (GTW.OMP.PAP.Company_has_Address) address --> addresses [GTW.OMP.PAP.Company]>)
-
-
-"""
-
 from _GTW.__test__.model import *
 
-### XXX: auto cached roles are currently not supported
-### XXX: * either remove _tets_acr or re-add auto-cached roles and fix _tets_acr
-acr_test = Scaffold.create_test_dict \
-    ( dict (acr = _test_acr)
-    , ignore = ("SQL", "MYS", "POS")
-    )
-acr_test = {}
-
 __test__ = dict \
-    ( acr_test
-    , ** Scaffold.create_test_dict (dict (cache = _test_code))
+    ( ** Scaffold.create_test_dict (dict (cache = _test_code))
     )
 
 ### __END__ GTW.__test__.Cached_Role_Test

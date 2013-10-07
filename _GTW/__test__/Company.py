@@ -2205,7 +2205,7 @@ __test__.update \
         ( dict
             ( test_saw     = _test_saw
             )
-        , ignore           = ("HPS", "MYS", "POS", "SQL")
+        , ignore           = ("HPS", "MYS")
         )
     )
 

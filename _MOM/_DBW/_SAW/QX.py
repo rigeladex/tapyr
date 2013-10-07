@@ -37,6 +37,8 @@
 #     7-Oct-2013 (CT) Change `Kind_Rev_Query._ref_etw_col` to pass
 #                     `akw.ETW.spk_col`, not `self.ETW.spk_col`, to
 #                     `_add_joins_col`
+#     7-Oct-2013 (CT) Change `_fixed_q_exp_get_` to reset `Ignore_Exception`;
+#                     ditto for `_fixed_q_exp_get_raw_`
 #    ««revision-date»»···
 #--
 
@@ -1731,12 +1733,16 @@ def _fixed_q_exp_call_ (x) :
 
 @fixed_q_exp.add_type (Q._Get_)
 def _fixed_q_exp_get_ (x) :
-    return x.__class__ (x.Q, x._name, x._getter)
+    QC = x.Q.__class__
+    Q  = QC (Ignore_Exception = QC.Ignore_Exception)
+    return x.__class__ (Q, x._name, x._getter)
 # end def _fixed_q_exp_get_
 
 @fixed_q_exp.add_type (Q.RAW._Get_Raw_)
 def _fixed_q_exp_get_raw_ (x) :
-    return x.__class__ (x.Q, x._postfix, x._prefix)
+    QC = x.Q.__class__
+    Q  = QC (Ignore_Exception = QC.Ignore_Exception)
+    return x.__class__ (Q, x._postfix, x._prefix)
 # end def _fixed_q_exp_get_raw_
 
 @fixed_q_exp.add_type (Q._Self_)
