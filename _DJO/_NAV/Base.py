@@ -179,6 +179,7 @@
 #    23-May-2011 (CT) `copyright_url` added
 #     2-Jun-2012 (CT) Add `DJO` to `context` in `from_nav_list_file`
 #    24-May-2013 (CT) Add `auth_required`, `cutoff_date`; consider in `hidden`
+#     8-Oct-2013 (CT) Robustify `date_dt`
 #    ««revision-date»»···
 #--
 
@@ -276,9 +277,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def date_dt (self) :
-        if self.date :
+        date = getattr (self, "date", None)
+        if date is not None :
             try :
-                return CAL.Date_Time.from_string (self.date)._body
+                return CAL.Date_Time.from_string (date)._body
             except Exception :
                 pass
     # end def date_dt
