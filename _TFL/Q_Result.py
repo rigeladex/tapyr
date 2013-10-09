@@ -65,6 +65,7 @@
 #    17-Sep-2013 (CT) Add `fixed_order_by` to support different `criteria`
 #    17-Sep-2013 (CT) Change signature of `order_by` to allow multiple arguments
 #     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
+#     9-Oct-2013 (CT) Use `adapt__bool__` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -205,6 +206,7 @@ def _comparison_operator (op) :
     return _
 # end def _comparison_operator
 
+@pyk.adapt__bool__
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
 
@@ -255,9 +257,9 @@ class _Attr_ (object) :
     @_comparison_operator
     def __ne__ (self, rhs) : pass
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._VALUE)
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         return repr (self._VALUE)
@@ -328,6 +330,7 @@ class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 
 # end class _Q_Filter_Distinct_
 
+@pyk.adapt__bool__
 class _Q_Result_ (TFL.Meta.Object) :
 
     Q             = TFL.Attr_Query ()
@@ -470,6 +473,12 @@ class _Q_Result_ (TFL.Meta.Object) :
             self._cache  = list (iterable)
     # end def _fill_cache
 
+    def __bool__ (self) :
+        if self._cache is None :
+            self._fill_cache ()
+        return bool (self._cache)
+    # end def __bool__
+
     def __getitem__ (self, key) :
         if isinstance (key, slice) :
             return self.slice (key.start, key.stop)
@@ -487,12 +496,6 @@ class _Q_Result_ (TFL.Meta.Object) :
             self._fill_cache ()
         return iter (self._cache)
     # end def __iter__
-
-    def __nonzero__ (self) :
-        if self._cache is None :
-            self._fill_cache ()
-        return bool (self._cache)
-    # end def __nonzero__
 
 # end class _Q_Result_
 
@@ -644,6 +647,7 @@ class Q_Result (_Q_Result_) :
 
 # end class Q_Result
 
+@pyk.adapt__bool__
 class Q_Result_Composite (_Q_Result_) :
 
     @TFL.Decorator
@@ -736,9 +740,9 @@ class Q_Result_Composite (_Q_Result_) :
                 self.__super._fill_cache ()
     # end def _fill_cache
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return any (self.queries)
-    # end def __nonzero__
+    # end def __bool__
 
 # end class Q_Result_Composite
 
