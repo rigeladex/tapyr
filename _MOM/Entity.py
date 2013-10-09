@@ -271,6 +271,7 @@
 #    18-Sep-2013 (CT) Change `_extract_primary_ckd` to call `pka.cooked (w)`
 #    18-Sep-2013 (CT) Add change-guard for `new_epk` to `_set_ckd`, `_set_raw`
 #     4-Oct-2013 (CT) Remove guard for `pid` from `attr_prop`
+#     9-Oct-2013 (CT) Fix `created_by.computed`
 #    ««revision-date»»···
 #--
 
@@ -1066,10 +1067,13 @@ class Id_Entity (Entity) :
             def computed (self, obj) :
                 cc = obj.creation
                 if cc is not None :
-                    try :
-                        return obj.home_scope.pid_query (cc.c_user)
-                    except Exception :
-                        pass
+                    result = cc.c_user
+                    if isinstance (result, pyk.int_types) :
+                        try :
+                            result = obj.home_scope.pid_query (result)
+                        except Exception :
+                            return
+                    return result
             # end def computed
 
         # end class created_by
@@ -1144,7 +1148,7 @@ class Id_Entity (Entity) :
                     result = lc.user
                     if isinstance (result, pyk.int_types) :
                         try :
-                            result = obj.home_scope.pid_query (lc.user)
+                            result = obj.home_scope.pid_query (result)
                         except Exception :
                             return
                     return result
