@@ -58,6 +58,7 @@
 #    23-Sep-2013 (CT) Rename `_Base_.__str__` to `.__repr__`
 #     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
 #     3-Oct-2013 (CT) Change `_Base_.__repr__` to consider `DISTINCT`
+#     9-Oct-2013 (CT) Add `slice`
 #    ««revision-date»»···
 #--
 
@@ -269,6 +270,13 @@ class _Base_ (TFL.Meta.Object) :
             result.close ()
     # end def row_iter
 
+    def slice (self, start, stop = None) :
+        result = self.offset (start)
+        if stop is not None :
+            result_sa_query = result._sa_query.limit (stop - start)
+        return result
+    # end def slice
+
     def _clone (self, ** kw) :
         cls    = self.__class__
         result = cls.__new__   (cls)
@@ -348,6 +356,10 @@ class _Base_ (TFL.Meta.Object) :
         ### XXX cache
         return bool (result or self.first () is not None)
     # end def __bool__
+
+    def __getslice__ (self, start, stop) :
+        return self.slice (start, stop)
+    # end def __getslice__
 
     def __iter__ (self) :
         session = self.session
