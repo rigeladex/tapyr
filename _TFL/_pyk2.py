@@ -36,10 +36,12 @@
 #    24-May-2013 (CT) Add `int_types`
 #    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
 #    26-May-2013 (CT) Convert to class/instance to allow lazy imports
+#     9-Oct-2013 (CT) Add `izip`
 #    ««revision-date»»···
 #--
 
 import functools
+import itertools
 import sys
 
 def lazy_property (fct) :
@@ -124,6 +126,7 @@ class _Pyk_ (object) :
     # end def fprint
 
     int_types = (int, long)
+    izip      = itertools.izip
 
     @staticmethod
     def iteritems (dct) :

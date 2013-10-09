@@ -36,6 +36,7 @@
 #    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
 #    26-May-2013 (CT) Convert to class/instance to allow lazy imports
 #    28-May-2013 (CT) Fix `new_instancemethod`
+#     9-Oct-2013 (CT) Fix `zip`, `izip`
 #    ««revision-date»»···
 #--
 
@@ -98,7 +99,7 @@ class _Pyk_ (object) :
         return dct.values ()
     # end def itervalues
 
-    izip = zip
+    izip = staticmethod (zip)
 
     @staticmethod
     def new_instancemethod (function, instance, cls) :
@@ -126,10 +127,9 @@ class _Pyk_ (object) :
     string_types       = (str, )
     text_type          = str
     unichr             = chr
-    _zip               = staticmethod (zip)
 
     def zip (self, * args) :
-        return list (self._zip (* args))
+        return list (self.izip (* args))
     # end def zip
 
     xrange = staticmethod (range)
