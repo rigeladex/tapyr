@@ -69,6 +69,9 @@
 #    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
 #    30-Sep-2013 (CT) Remove obsolete `SET`
 #    30-Sep-2013 (CT) Add `SELF`
+#    10-Oct-2013 (CT) Factor `_derive_expr_class`
+#    10-Oct-2013 (CT) Call `_derive_expr_class` for `_Call_` and `_Sum_`, too
+#    11-Oct-2013 (CT) Factor `_Aggr_`, `_derive_aggr_class`, add `_Avg_`...
 #    ««revision-date»»···
 #--
 
@@ -365,7 +368,8 @@ class Base (TFL.Meta.Object) :
 
     class Ignore_Exception (Exception) : pass
 
-    undef = TFL.Undef ("value")
+    expr_class_names = []
+    undef            = TFL.Undef ("value")
 
     def __init__ (self, Ignore_Exception = None) :
         if Ignore_Exception is not None :
@@ -376,10 +380,6 @@ class Base (TFL.Meta.Object) :
     def SELF (self) :
         return self._Self_ (self)
     # end def SELF
-
-    def SUM (self, rhs = 1) :
-        return self._Sum_ (self, rhs)
-    # end def SUM
 
     def __getattr__ (self, name) :
         if "." in name :
@@ -411,6 +411,42 @@ class Q_Root (TFL.Meta.Object) :
     # end def __call__
 
 # end class Q_Root
+
+@TFL.Add_New_Method (Base)
+class _Aggr_ (Q_Root) :
+    """Base for aggregation functions"""
+
+    Table          = {}
+
+    def __init__ (self, Q, rhs = 1) :
+        self.Q     = Q
+        self.rhs   = rhs
+    # end def __init__
+
+    @classmethod
+    def derived (cls, subcls) :
+        name    = subcls.__name__
+        op_name = subcls.op_name = name.strip ("_").upper ()
+        cls.Table [op_name] = subcls
+        setattr (Base, name, subcls)
+        return subcls
+    # end def derived
+
+    def predicate (self, obj) :
+        try :
+            pred   = self.rhs.predicate
+        except AttributeError :
+            result = self.rhs
+        else :
+            result = pred (obj)
+        return result
+    # end def predicate
+
+    def __repr__ (self) :
+        return "Q.%s (%r)" % (self.op_name, self.rhs, )
+    # end def __repr__
+
+# end class _Aggr_
 
 @TFL.Add_New_Method (Base)
 @pyk.adapt__bool__
@@ -605,7 +641,7 @@ def _method (meth) :
     name = meth.__name__
     op   = meth ()
     def _ (self, * args, ** kw) :
-        return self.Q._Call_ (self, op, * args, ** kw)
+        return self.Q._Call_Bool_ (self, op, * args, ** kw)
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = meth.__module__
@@ -955,38 +991,6 @@ class _Get_ (_Exp_) :
 # end class _Get_
 
 @TFL.Add_New_Method (Base)
-class _Q_Exp_Bin_Bool_ (_Bin_, _Exp_B_) :
-    """Binary query expression evaluating to boolean"""
-
-    _real_name = "_Bin_Bool_"
-
-_Bin_Bool_ = _Q_Exp_Bin_Bool_ # end class
-
-@TFL.Add_New_Method (Base)
-class _Q_Exp_Bin_Expr_ (_Bin_, _Exp_) :
-    """Binary query expression"""
-
-    _real_name = "_Bin_Expr_"
-
-_Bin_Expr_ = _Q_Exp_Bin_Expr_ # end class
-
-@TFL.Add_New_Method (Base)
-class _Q_Exp_Una_Bool_ (_Una_, _Exp_B_) :
-    """Unary query expression evaluating to boolean"""
-
-    _real_name = "_Una_Bool_"
-
-_Una_Bool_ = _Q_Exp_Una_Bool_ # end class
-
-@TFL.Add_New_Method (Base)
-class _Q_Exp_Una_Expr_ (_Una_, _Exp_) :
-    """Unary query expression"""
-
-    _real_name = "_Una_Expr_"
-
-_Una_Expr_ = _Q_Exp_Una_Expr_ # end class
-
-@TFL.Add_New_Method (Base)
 class _Self_ (_Get_) :
     """Query reference to object to which query is applied."""
 
@@ -1005,33 +1009,6 @@ class _Self_ (_Get_) :
     # end def __getattr__
 
 # end class _Self_
-
-@TFL.Add_New_Method (Base)
-class _Sum_ (Q_Root) :
-    """Query function for building a sum."""
-
-    _name = "$SUM"
-
-    def __init__ (self, Q, rhs = 1) :
-        self.Q     = Q
-        self.rhs   = rhs
-    # end def __init__
-
-    def predicate (self, obj) :
-        try :
-            pred   = self.rhs.predicate
-        except AttributeError :
-            result = self.rhs
-        else :
-            result = pred (obj)
-        return result
-    # end def predicate
-
-    def __repr__ (self) :
-        return "Q.SUM (%r)" % (self.rhs, )
-    # end def __repr__
-
-# end class _Sum_
 
 class _BVAR_Get_ (TFL.Meta.Object) :
     """Syntactic sugar for creating bound variables for query expressions."""
@@ -1146,6 +1123,47 @@ class BVAR_Man (TFL.Meta.Object) :
     # end def __bool__
 
 # end class BVAR_Man
+
+def _derive_expr_class (cls, base, name) :
+    derived  = base.__class__ \
+        ( "_Q_Exp_%s" % name
+        , (cls, base)
+        , dict
+            ( __doc__    = base.__doc__
+            , _real_name = name
+            )
+        )
+    setattr (Base, name, derived)
+    Base.expr_class_names.append (name)
+    return derived
+# end def _derive_expr_class
+
+_derive_expr_class (_Bin_,  _Exp_B_, "_Bin_Bool_")
+_derive_expr_class (_Bin_,  _Exp_,   "_Bin_Expr_")
+_derive_expr_class (_Call_, _Exp_B_, "_Call_Bool_")
+_derive_expr_class (_Una_,  _Exp_B_, "_Una_Bool_")
+_derive_expr_class (_Una_,  _Exp_,   "_Una_Expr_")
+
+def _derive_aggr_class (name, doc) :
+    cls = _Aggr_.derived \
+        (_Aggr_.__class__ (name, (_Aggr_, ), dict (__doc__ = doc)))
+    expr_cls = _derive_expr_class (cls, _Exp_, "%sExpr" % (name, ))
+    @TFL.Attributed (__name__ = cls.op_name, __doc__ = doc)
+    def _ (self, rhs = 1) :
+        T = getattr (self, expr_cls.__name__)
+        return T (self, rhs)
+    setattr (Base, cls.op_name, _)
+    return cls
+# end def _derive_aggr_class
+
+_derive_aggr_class ("_Avg_",   "Query function building the average")
+_derive_aggr_class ("_Count_", "Query function finding the count")
+_derive_aggr_class ("_Max_",   "Query function finding the maximum")
+_derive_aggr_class ("_Min_",   "Query function finding the minimum")
+_derive_aggr_class ("_Sum_",   "Query function building the sum")
+
+###############################################################################
+### Generic functions to display Q expressions
 
 @TFL.Add_To_Class ("DISPLAY", Base)
 @Single_Dispatch

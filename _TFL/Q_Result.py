@@ -215,7 +215,7 @@ class _Attr_ (object) :
         p            = getter._name.split (".", 1)
         self._NAME   = p.pop              (0)
         self._REST   = p and p.pop        (0)
-        self._IS_SUM = isinstance (getter, TFL.Q_Exp._Sum_) and getter
+        self._IS_SUM = getter if isinstance (getter, TFL.Q._Sum_) else None
     # end def __init__
 
     @_comparison_operator
@@ -291,7 +291,7 @@ class _Attrs_Tuple_ (tuple) :
             p                = g._name.split (".", 1)
             k                = p.pop         (0)
             self._NAMES [k]  = i, p and p.pop (0)
-            if isinstance (g, TFL.Q_Exp._Sum_) :
+            if isinstance (g, TFL.Q._Sum_) :
                 self._IS_SUM = g
                 self._SUM_CO = i
     # end def __init__
@@ -529,8 +529,8 @@ class _Q_Result_Group_By_ (_Q_Result_Filtered_) :
             sum_col     = None
             for row in self.iterable :
                 key    = pred (row)
-                is_sum = getattr (row, "_IS_SUM", False)
-                if is_sum :
+                is_sum = getattr (row, "_IS_SUM", None)
+                if is_sum is not None :
                     sums [key] = is_sum (row)
                     sum_col    = getattr (row, "_SUM_CO", None)
                 result [key]   = row

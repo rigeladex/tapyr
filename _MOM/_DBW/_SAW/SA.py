@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     4-Jul-2013 (CT) Creation
+#    10-Oct-2013 (CT) Add `func` as alias for `sqlalchemy.sql.func`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ from   sqlalchemy            import engine
 from   sqlalchemy.events     import event
 from   sqlalchemy            import exc        as Exception
 from   sqlalchemy.sql        import expression
+from   sqlalchemy.sql        import func       as func
 from   sqlalchemy            import interfaces
 from   sqlalchemy            import MetaData
 from   sqlalchemy            import schema

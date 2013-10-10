@@ -99,7 +99,8 @@ class _Pyk_ (object) :
         return dct.values ()
     # end def itervalues
 
-    izip = staticmethod (zip)
+    izip       = staticmethod (zip)
+    long_types = (type ("no_longin_in_Py3", (object, ), {}), )
 
     @staticmethod
     def new_instancemethod (function, instance, cls) :

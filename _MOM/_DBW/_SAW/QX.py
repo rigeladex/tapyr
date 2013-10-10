@@ -39,6 +39,10 @@
 #                     `_add_joins_col`
 #     7-Oct-2013 (CT) Change `_fixed_q_exp_get_` to reset `Ignore_Exception`;
 #                     ditto for `_fixed_q_exp_get_raw_`
+#    10-Oct-2013 (CT) Use `coalesce` and `label` in `_SUM_.apply`
+#    10-Oct-2013 (CT) Add `Q` to `_Q_SUM_Proxy_`
+#    11-Oct-2013 (CT) Generalize `_SUM_` to `_Aggr_`,
+#                     `_Q_SUM_Proxy_` to `_Q_Aggr_Proxy_`
 #    ««revision-date»»···
 #--
 
@@ -254,6 +258,28 @@ class _Q_Exp_Proxy_ (TFL.Meta.Object) :
 
 # end class _Q_Exp_Proxy_
 
+class _Q_Aggr_Proxy_ (_Q_Exp_Proxy_) :
+    """Proxy for a TFL.Q._Aggr_ instance"""
+
+    def __init__ (self, op_name, Q, rhs) :
+        self.op_name = op_name
+        self.Q       = Q
+        self.rhs     = rhs
+    # end def __init__
+
+    def predicate (self, qx) :
+        """Called during execution of Mapper.__call__ to map a Q._Call_
+           instance to a QX-specific instance.
+        """
+        try :
+            rhs = qx (self.rhs)
+        except Exception :
+            rhs = self.rhs
+        return _Aggr_ (qx, rhs, self.op_name)
+    # end def predicate
+
+# end class _Q_Aggr_Proxy_
+
 class _Q_Call_Proxy_ (_Q_Exp_Proxy_) :
     """Proxy for a TFL.Q._Call_ instance"""
 
@@ -287,26 +313,6 @@ class _Q_Self_Proxy_ (Q._Self_) :
     # end def predicate
 
 # end class _Q_Self_Proxy_
-
-class _Q_SUM_Proxy_ (_Q_Exp_Proxy_) :
-    """Proxy for a TFL.Q.SUM instance"""
-
-    def __init__ (self, rhs) :
-        self.rhs = rhs
-    # end def __init__
-
-    def predicate (self, qx) :
-        """Called during execution of Mapper.__call__ to map a Q._Call_
-           instance to a QX-specific instance.
-        """
-        try :
-            rhs = qx (self.rhs)
-        except Exception :
-            rhs = self.rhs
-        return _SUM_ (qx, rhs)
-    # end def predicate
-
-# end class _Q_SUM_Proxy_
 
 @_add_operators
 class _Base_ (TFL.Meta.Object) :
@@ -665,17 +671,26 @@ class _Op_ (_Base_) :
 
 # end class _Op_
 
-class _SUM_ (_Op_) :
+class _Aggr_ (_Op_) :
 
-    name = ""
+    _need_coalesce = set (("sum", "count"))
 
-    def __init__ (self, X, lhs) :
-        self._X  = X
-        self.lhs = lhs
+    def __init__ (self, X, lhs, name) :
+        self._X   = X
+        self.lhs  = lhs
+        self.name = name
     # end def __init__
 
     def apply (self, lhs) :
-        return SA.sql.func.sum (lhs)
+        name   = self.name.lower ()
+        op     = getattr (SA.func, name)
+        result = op (lhs)
+        if isinstance (lhs, SA.Operators) and name in self._need_coalesce :
+            ### use `coalesce` to avoid contamination with `null` values
+            result = SA.func.coalesce (result, 0)
+        if isinstance (lhs, SA.schema.Column) :
+            result = result.label ("%s_%s" % (lhs.name, name))
+        return result
     # end def apply
 
     @TFL.Meta.Once_Property
@@ -720,7 +735,7 @@ class _SUM_ (_Op_) :
         return []
     # end def _xtra_qxs
 
-# end class _SUM_
+# end class _Aggr_
 
 class Bin (_Op_) :
     """Map a binary expression to the corresponding SQLAlchemy expression."""
@@ -794,7 +809,7 @@ class Func (_Op_) :
 
     def apply (self, lhs) :
         op_name = self.op.__name__.lower ()
-        op      = getattr (SA.sql.func, op_name)
+        op      = getattr (SA.func, op_name)
         return op (lhs)
     # end def apply
 
@@ -1202,7 +1217,7 @@ class Kind_Partial (_Attr_) :
     @TFL.Meta.Once_Property
     def XS_ATTR (self) :
         xs = tuple (c.XS_ATTR for c in self._children)
-        return SA.sql.functions.coalesce (* xs)
+        return SA.func.coalesce (* xs)
     # end def XS_ATTR
 
     @TFL.Meta.Once_Property
@@ -1214,13 +1229,13 @@ class Kind_Partial (_Attr_) :
     @TFL.Meta.Once_Property
     def XS_GROUP_BY (self) :
         xs = tuple (c.XS_GROUP_BY for c in self._children)
-        return SA.sql.functions.coalesce (* xs)
+        return SA.func.coalesce (* xs)
     # end def XS_GROUP_BY
 
     @TFL.Meta.Once_Property
     def XS_ORDER_BY (self) :
         xs = tuple (c.XS_ORDER_BY for c in self._children)
-        return SA.sql.functions.coalesce (* xs)
+        return SA.func.coalesce (* xs)
     # end def XS_ORDER_BY
 
     @TFL.Meta.Once_Property
@@ -1719,6 +1734,12 @@ def fixed_q_exp (x) :
     return x
 # end def fixed_q_exp
 
+@fixed_q_exp.add_type (Q._Aggr_)
+def _fixed_q_exp_aggr_ (x) :
+    result = _Q_Aggr_Proxy_ (x.op_name, x.Q, fixed_q_exp (x.rhs))
+    return result
+# end def _fixed_q_exp_aggr_
+
 @fixed_q_exp.add_type (Q._Bin_)
 def _fixed_q_exp_bin_ (x) :
     return x.__class__ \
@@ -1749,12 +1770,6 @@ def _fixed_q_exp_get_raw_ (x) :
 def _fixed_q_exp_self_ (x) :
     return _Q_Self_Proxy_ (x.Q)
 # end def _fixed_q_exp_self_
-
-@fixed_q_exp.add_type (Q._Sum_)
-def _fixed_q_exp_sum_ (x) :
-    result = _Q_SUM_Proxy_ (fixed_q_exp (x.rhs))
-    return result
-# end def _fixed_q_exp_sum_
 
 @fixed_q_exp.add_type (Q._Una_)
 def _fixed_q_exp_una_ (x) :

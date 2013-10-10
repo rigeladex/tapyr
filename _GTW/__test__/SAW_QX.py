@@ -642,7 +642,7 @@ _test_expr = """
         2
 
     >>> show (qxp (Q.SUM (1)))
-    _SUM_::
+    _Aggr_:SUM:
       1
 
     >>> ET  = apt ["PAP.Phone"]

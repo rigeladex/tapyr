@@ -52,6 +52,7 @@
 #    30-Aug-2013 (CT) Fix `Filter_Not.__repr__`
 #    19-Sep-2013 (CT) Remove `Ignore_Exception` from `Attr_Query`
 #    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
+#    10-Oct-2013 (CT) Factor `_Filter_S_._add_derived_classes`
 #    ««revision-date»»···
 #--
 
@@ -234,6 +235,23 @@ class _Filter_ (TFL.Meta.Object) :
 class _Filter_S_ (_Filter_) :
     """Base class for simple predicate filters."""
 
+    @classmethod
+    def _add_derived_classes (cls, new_class) :
+        """Add derived classes with `cls` as first base to `new_class`"""
+        for name in TFL.Q_Exp.Base.expr_class_names :
+            base = getattr (TFL.Q_Exp.Base, name)
+            derived  = base.__class__ \
+                ( "%s_Filter_" % name
+                , (cls, base)
+                , dict
+                    ( __doc__    = base.__doc__
+                    , _real_name = name
+                    )
+                )
+            setattr (new_class, name, derived)
+        return new_class
+    # end def _add_derived_classes
+
 # end class _Filter_S_
 
 class Filter (_Filter_S_) :
@@ -344,6 +362,7 @@ class Filter_Or (_Filter_Q_) :
 
 # end class Filter_Or
 
+@_Filter_S_._add_derived_classes
 class Attr_Query (TFL.Q_Exp.Base) :
     """Syntactic sugar for creating Filter objects based on attribute queries.
 
@@ -413,18 +432,6 @@ class Attr_Query (TFL.Q_Exp.Base) :
     AND              = Filter_And
     NOT              = Filter_Not
     OR               = Filter_Or
-
-    class _Bin_Bool_ (_Filter_S_, TFL.Q_Exp._Bin_Bool_) :
-        pass
-    # end class _Bin_Bool_
-
-    class _Bin_Expr_ (_Filter_S_, TFL.Q_Exp._Bin_Expr_) :
-        pass
-    # end class _Bin_Expr_
-
-    class _Call_ (_Filter_S_, TFL.Q_Exp._Call_) :
-        pass
-    # end class _Call_
 
 # end class Attr_Query
 

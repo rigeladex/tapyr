@@ -120,7 +120,7 @@ def _saw_column_type_CIDR_PG (self, DBW, wrapper, pts) :
 @GTW.OMP.NET._A_CIDR_._saw_extract_field.add_type (PG_Man_Class)
 def _saw_extract_field_mask_CIDR_PG (self, DBW, col, field) :
     if field == "mask_len" :
-        return SA.sql.func.masklen (col)
+        return SA.func.masklen (col)
     raise AttributeError (field)
 # end def _saw_extract_field_mask_CIDR_PG
 

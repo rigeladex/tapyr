@@ -58,9 +58,9 @@ _strftime_map = dict \
 ### Functions to extract fields from date column ##############################
 @MOM.Attr._A_Date_._saw_extract_field.add_type (SAW.SQ.Manager.__class__)
 def _saw_extract_date_field_sq (self, DBW, col, field) :
-    fmt_c  = _strftime_map        [field]
-    clause = SA.sql.func.strftime ("%%%s" % (fmt_c, ), col)
-    return SA.expression.cast     (clause, SA.types.Integer)
+    fmt_c  = _strftime_map    [field]
+    clause = SA.func.strftime ("%%%s" % (fmt_c, ), col)
+    return SA.expression.cast (clause, SA.types.Integer)
 # end def _saw_extract_date_field_sq
 
 if __name__ != "__main__" :

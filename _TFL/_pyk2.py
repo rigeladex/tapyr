@@ -149,6 +149,8 @@ class _Pyk_ (object) :
         return itertools.izip
     # end def izip
 
+    long_types = (long, )
+
     @lazy_property
     def new_instancemethod (self) :
         import new

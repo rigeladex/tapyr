@@ -6425,6 +6425,36 @@ _test_q_result = """
     Parameters:
          type_name_1          : u'SWP.Page_Y'
 
+    >>> ET = apt ["SRM.Race_Result"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+
+    >>> show_query (qrt.attrs (Q.left, Q.SUM (Q.points), Q.left.points).group_by (Q.left)) ### SRM.Race_Result
+    SQL: SELECT DISTINCT
+           coalesce(sum(srm_race_result.points), :param_1) AS points_sum,
+           srm_boat_in_regatta__1.points AS srm_boat_in_regatta__1_points,
+           srm_race_result."left" AS srm_race_result_left
+         FROM mom_id_entity
+           JOIN srm_race_result ON mom_id_entity.pid = srm_race_result.pid
+           JOIN srm_boat_in_regatta AS srm_boat_in_regatta__1 ON srm_boat_in_regatta__1.pid = srm_race_result."left"
+         GROUP BY srm_race_result."left"
+    Parameters:
+         param_1              : 0
+
+    >>> ET = apt ["SRM.Boat_in_Regatta"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+
+    >>> show_query (qrt.attrs (Q.boat, Q.SUM (Q.race_results.points), Q.points).group_by (Q.boat)) ### SRM.Boat_in_Regatta
+    SQL: SELECT DISTINCT
+           coalesce(sum(srm_race_result__1.points), :param_1) AS points_sum,
+           srm_boat_in_regatta."left" AS srm_boat_in_regatta_left,
+           srm_boat_in_regatta.points AS srm_boat_in_regatta_points
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+           JOIN srm_race_result AS srm_race_result__1 ON srm_race_result__1."left" = srm_boat_in_regatta.pid
+         GROUP BY srm_boat_in_regatta."left"
+    Parameters:
+         param_1              : 0
+
 """
 
 _test_q_result_x = """
@@ -13084,10 +13114,6 @@ _test_date_extraction_sq = """
 
 _debug = """
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
-
-    >>> ET  = apt ["SWP.Clip_O"]
-    >>> qrc = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
-
 
 
 """

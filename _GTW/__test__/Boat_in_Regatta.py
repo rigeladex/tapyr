@@ -49,6 +49,7 @@
 #    26-Jul-2013 (CT) Add `_test_polymorph`
 #    20-Aug-2013 (CT) Remove `show_ora`, `show_dep` from `test_code`
 #                     Lazy loading of objects breaks this in SAS, SAW backends
+#     9-Oct-2013 (CT) Add `_test_qr_grouped_by`
 #    ««revision-date»»···
 #--
 
@@ -555,6 +556,65 @@ _test_polymorph = r"""
 
 """
 
+_test_qr_grouped_by = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP   = scope.PAP
+    >>> SRM   = scope.SRM
+    >>> BiR   = SRM.Boat_in_Regatta
+    >>> today = BiR.registration_date.default
+    >>> bc    = SRM.Boat_Class ("Optimist", max_crew = 1, raw = True)
+    >>> ol    = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True)
+    >>> oc    = SRM.Boat.instance_or_new (u'Optimist', u"1134", u"AUT", raw = True)
+    >>> pl    = PAP.Person.instance_or_new (u"Tanzer", u"Laurens", raw = True)
+    >>> pc    = PAP.Person.instance_or_new (u"Tanzer", u"Clarissa", raw = True)
+    >>> sl    = SRM.Sailor.instance_or_new (pl, nation = u"AUT", raw = True)
+    >>> sc    = SRM.Sailor.instance_or_new (pc, nation = u"AUT", raw = True)
+    >>> rev   = SRM.Regatta_Event (u"Himmelfahrt", (u"20080501", ), raw = True)
+    >>> reg   = SRM.Regatta_C (rev.epk_raw, bc, raw = True)
+
+    >>> birl  = BiR (ol, reg, skipper = sl)
+    >>> birc  = BiR (oc, reg, skipper = sc)
+
+    >>> _     = SRM.Race_Result (birl, 1, points = 1)
+    >>> _     = SRM.Race_Result (birl, 2, points = 2)
+    >>> _     = SRM.Race_Result (birl, 3, points = 3)
+
+    >>> _     = SRM.Race_Result (birc, 1, points = 2)
+    >>> _     = SRM.Race_Result (birc, 2, points = 1)
+    >>> _     = SRM.Race_Result (birc, 3, points = 6)
+
+    >>> q     = SRM.Boat_in_Regatta.query ()
+    >>> qa    = q.attrs (Q.pid, Q.boat, Q.SUM (Q.race_results.points), Q.SUM (1))
+    >>> qag   = qa.group_by (Q.pid, Q.boat)
+    >>> for x in sorted (qag, key = TFL.Getter [2]) :
+    ...     print (x [1:])
+    (SRM.Boat ((u'optimist', ), 1107, u'AUT', u''), 6, 3)
+    (SRM.Boat ((u'optimist', ), 1134, u'AUT', u''), 9, 3)
+
+    >>> q = SRM.Race_Result.query ()
+    >>> for x in sorted (q.attrs (Q.left, Q.SUM (Q.points)).group_by (Q.left), key = TFL.Getter [1]) :
+    ...     print (x [1:])
+    (6,)
+    (9,)
+
+    >>> for x in sorted (q.attrs (Q.left, Q.SUM (Q.points), Q.SUM (1)).group_by (Q.left), key = TFL.Getter [1]) :
+    ...     print (x [1:])
+    (6, 3)
+    (9, 3)
+
+    >>> for x in sorted (q.attrs (Q.left, Q.SUM (Q.points), Q.SUM (Q.points) / Q.SUM (1)).group_by (Q.left), key = TFL.Getter [1]) :
+    ...     print (x [1:])
+    (6, 2)
+    (9, 3)
+
+    >>> for x in sorted (q.attrs (Q.left, Q.MIN (Q.points), Q.MAX (Q.points), Q.AVG (Q.points), Q.COUNT (Q.points)).group_by (Q.left), key = TFL.Getter [1]) :
+    ...     print (", ".join (tuple ("%%g" %% (y, ) for y in x [1:])))
+    1, 3, 2, 3
+    1, 6, 3, 3
+
+"""
+
 _test_referential_integrity = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -867,6 +927,7 @@ __test__ = Scaffold.create_test_dict \
         ( normal        = _test_code
         , delayed       = _test_delayed
         , polymorph     = _test_polymorph
+        , qr_grouped_by = _test_qr_grouped_by
         , ref_int       = _test_referential_integrity
         , undo          = _test_undo
         )

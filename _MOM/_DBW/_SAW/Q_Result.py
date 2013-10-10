@@ -59,6 +59,8 @@
 #     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
 #     3-Oct-2013 (CT) Change `_Base_.__repr__` to consider `DISTINCT`
 #     9-Oct-2013 (CT) Add `slice`
+#    10-Oct-2013 (CT) Improve `_Base_.__repr__` (`_fix_by`, `_select_sep`)
+#    10-Oct-2013 (CT) Normalize `long` values in `_col_value_from_row`
 #    ««revision-date»»···
 #--
 
@@ -121,7 +123,7 @@ class _Base_ (TFL.Meta.Object) :
     @property
     def sa_query_count (self) :
         result = SA.sql.select \
-            ( [SA.sql.func.count ("*").label ("count")]
+            ( [SA.func.count ("*").label ("count")]
             , from_obj = self._sa_query.alias ("__count__")
             )
         return result
@@ -376,34 +378,37 @@ class _Base_ (TFL.Meta.Object) :
                 yield element
     # end def __iter__
 
-    _join_fixer   = TFL.Re_Replacer ("((?:[A-Z]+ )*JOIN)",      "\n       \\1")
-    _order_fixer  = TFL.Re_Replacer ("\s+(ORDER BY)",           "\n     \\1")
-    _where_fixer  = TFL.Re_Replacer ("((?:\s+)*(?:AND|OR)\s+)", "\n       \\1")
-    _select_pat   = TFL.Regexp      ("(SELECT(?: DISTINCT)?) .*,")
+    _fix_by     = TFL.Re_Replacer ("\s+((?:GROUP|ORDER) BY)", "\n     \\1")
+    _fix_join   = TFL.Re_Replacer ("((?:[A-Z]+ )*JOIN)",      "\n       \\1")
+    _fix_where  = TFL.Re_Replacer ("((?:\s+)*(?:AND|OR)\s+)", "\n       \\1")
+    _select_pat = TFL.Regexp      ("(SELECT(?: DISTINCT)?) .*,")
+    _select_sep = TFL.Regexp      ("(?<!\)), ")
 
     def __repr__ (self) :
         def q_parts (self) :
+            _fix_by       = self._fix_by
+            _fix_join     = self._fix_join
+            _fix_where    = self._fix_where
             _select_pat   = self._select_pat
-            _join_fixer   = self._join_fixer
-            _order_fixer  = self._order_fixer
-            _where_fixer  = self._where_fixer
+            _select_split = self._select_sep.split
+            sep_1         = "\n       "
+            sep_n         = "," + sep_1
             for p in str (self.sa_query).split ("\n") :
                 p = p.strip ()
                 if _select_pat.match (p) :
-                    h = _select_pat.group  (1)
-                    t = p [_select_pat.end (1):].strip ()
-                    p = "\n       ".join \
-                        ((h, ",\n       ".join (sorted (t.split (", ")))))
+                    h  = _select_pat.group  (1)
+                    t  = p [_select_pat.end (1):].strip ()
+                    ts = _select_split (t)
+                    p  = sep_1.join ((h, sep_n.join (sorted (ts))))
                 elif "JOIN" in p :
-                    px = _join_fixer (p)
+                    px = _fix_join (p)
                     ps = list (x.rstrip () for x in px.split ("\n"))
                     p  = "\n".join (ps)
                 elif "WHERE" in p :
-                    px = _where_fixer (p)
+                    px = _fix_where (p)
                     ps = list (x.rstrip () for x in px.split ("\n"))
                     p  = "\n".join (ps)
-                if "ORDER BY" in p :
-                    p  = _order_fixer (p)
+                p  = _fix_by (p)
                 yield p
         sa_query = "\n     ".join (q_parts (self))
         return "SQL: %s" % (sa_query, )
@@ -431,6 +436,8 @@ class _Attr_Base_ (_Base_) :
             kind   = getattr (col, "MOM_Kind", None)
             if kind is not None :
                 result = kind.from_pickle_cargo (scope, (result, ))
+        if isinstance (result, pyk.long_types) :
+            result = int (result)
         return result
     # end def _col_value_from_row
 
