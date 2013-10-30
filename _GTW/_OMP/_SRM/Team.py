@@ -32,6 +32,7 @@
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
+#    30-Oct-2013 (CT) Remove unnecessary `Team.left.rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,6 @@ class Team (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Regatta_C
             role_name          = "regatta"
-            rev_ref_attr_name  = "team"
 
         # end class left
 

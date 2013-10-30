@@ -31,6 +31,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    25-Jun-2013 (CT) Add `max_value`, `example` to integer attributes
+#    30-Oct-2013 (CT) Remove unnecessary `Race_Result.left.rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,6 @@ class Race_Result (_Ancestor_Essence) :
             """`Boat_in_Regatta` the crew member sails on."""
 
             role_type          = GTW.OMP.SRM.Boat_in_Regatta
-            rev_ref_attr_name  = "race_result"
 
         # end class left
 

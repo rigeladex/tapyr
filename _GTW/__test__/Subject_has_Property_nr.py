@@ -780,7 +780,7 @@ _test_attr_wrappers = """
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
     SWP.Object_PN
-      Kind_Wrapper_R : Link_Ref_List `clip_os`
+      Kind_Wrapper_R : Link_Ref_List `clips`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_P : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
@@ -804,7 +804,7 @@ _test_attr_wrappers = """
       Kind_Wrapper : Text `text`
           Required, _Required_Mixin_, _User_, _DB_Attr_
     SWP.Page
-      Kind_Wrapper_R : Link_Ref_List `clip_os`
+      Kind_Wrapper_R : Link_Ref_List `clips`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Text `contents`
           _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
@@ -1278,7 +1278,7 @@ _test_attr_wrappers = """
       Kind_Wrapper : Url `link_to`
           Optional, _User_, _DB_Attr_
     SWP.Gallery
-      Kind_Wrapper_R : Link_Ref_List `clip_os`
+      Kind_Wrapper_R : Link_Ref_List `clips`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
@@ -2314,7 +2314,7 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SWP.Object_PN [mom_id_entity]>
-      <SAW : Link_Ref_List `clip_os`>
+      <SAW : Link_Ref_List `clips`>
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
@@ -2334,7 +2334,7 @@ _test_q_able = """
       <SAW : Int `prio` [prio]>
       <SAW : Text `text` [text]>
     <SAW : SWP.Page [swp_page : mom_id_entity]>
-      <SAW : Link_Ref_List `clip_os`>
+      <SAW : Link_Ref_List `clips`>
       <SAW : Text `contents` [swp_page.contents]>
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` [swp_page.date__finish, swp_page.date__start]>
@@ -2355,7 +2355,7 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SWP.Page_Y [swp_page_y : swp_page : mom_id_entity]>
-      <SAW : Link_Ref_List `clip_os`>
+      <SAW : Link_Ref_List `clips`>
       <SAW : Text `contents` [swp_page.contents]>
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` [swp_page.date__finish, swp_page.date__start]>
@@ -2847,7 +2847,7 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SWP.Clip_X [swp_clip_x : swp_page : mom_id_entity]>
-      <SAW : Link_Ref_List `clip_os`>
+      <SAW : Link_Ref_List `clips`>
       <SAW : Text `contents` [swp_page.contents]>
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` [swp_page.date__finish, swp_page.date__start]>
@@ -2869,7 +2869,7 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SWP.Gallery [swp_gallery : mom_id_entity]>
-      <SAW : Link_Ref_List `clip_os`>
+      <SAW : Link_Ref_List `clips`>
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` [swp_gallery.date__finish, swp_gallery.date__start]>
       <SAW : Boolean `date.alive`>
@@ -2912,7 +2912,7 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SRM.Page [srm_page : swp_page : mom_id_entity]>
-      <SAW : Link_Ref_List `clip_os`>
+      <SAW : Link_Ref_List `clips`>
       <SAW : Text `contents` [swp_page.contents]>
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` [swp_page.date__finish, swp_page.date__start]>
@@ -3604,7 +3604,7 @@ _test_q_able = """
       type_name                     : type_name
       x_locked                      : x_locked
     <SAW : SWP.Object_PN [mom_id_entity]>
-      clip_os                       : clip_os
+      clips                         : clips
       creation                      : creation
       date                          : date
       electric                      : electric
@@ -3624,7 +3624,7 @@ _test_q_able = """
       prio                          : prio
       text                          : text
     <SAW : SWP.Page [swp_page : mom_id_entity]>
-      clip_os                       : clip_os
+      clips                         : clips
       contents                      : contents
       creation                      : creation
       date                          : date
@@ -3647,7 +3647,7 @@ _test_q_able = """
       type_name                     : type_name
       x_locked                      : x_locked
     <SAW : SWP.Page_Y [swp_page_y : swp_page : mom_id_entity]>
-      clip_os                       : clip_os
+      clips                         : clips
       contents                      : contents
       creation                      : creation
       date                          : date
@@ -4160,7 +4160,7 @@ _test_q_able = """
       type_name                     : type_name
       x_locked                      : x_locked
     <SAW : SWP.Clip_X [swp_clip_x : swp_page : mom_id_entity]>
-      clip_os                       : clip_os
+      clips                         : clips
       contents                      : contents
       creation                      : creation
       date                          : date
@@ -4184,7 +4184,7 @@ _test_q_able = """
       type_name                     : type_name
       x_locked                      : x_locked
     <SAW : SWP.Gallery [swp_gallery : mom_id_entity]>
-      clip_os                       : clip_os
+      clips                         : clips
       creation                      : creation
       date                          : date
           alive                         : date.alive
@@ -4235,7 +4235,7 @@ _test_q_able = """
       type_name                     : type_name
       x_locked                      : x_locked
     <SAW : SRM.Page [srm_page : swp_page : mom_id_entity]>
-      clip_os                       : clip_os
+      clips                         : clips
       contents                      : contents
       creation                      : creation
       date                          : date
@@ -4927,7 +4927,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SWP.Object_PN [mom_id_entity]>
-        clip_os                   : <SAW : Link_Ref_List `clip_os`>
+        clips                     : <SAW : Link_Ref_List `clips`>
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page)>
         electric                  : mom_id_entity.electric
@@ -4940,7 +4940,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SWP.Page [swp_page : mom_id_entity]>
-        clip_os                   : <SAW : Link_Ref_List `clip_os`>
+        clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N>
@@ -4966,7 +4966,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SWP.Page_Y [swp_page_y : swp_page : mom_id_entity]>
-        clip_os                   : <SAW : Link_Ref_List `clip_os`>
+        clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N>
@@ -5534,7 +5534,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SWP.Clip_X [swp_clip_x : swp_page : mom_id_entity]>
-        clip_os                   : <SAW : Link_Ref_List `clip_os`>
+        clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N>
@@ -5561,7 +5561,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SWP.Gallery [swp_gallery : mom_id_entity]>
-        clip_os                   : <SAW : Link_Ref_List `clip_os`>
+        clips                     : <SAW : Link_Ref_List `clips`>
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N>
             alive                 : <SAW : Boolean `date.alive`>
@@ -5612,7 +5612,7 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SRM.Page [srm_page : swp_page : mom_id_entity]>
-        clip_os                   : <SAW : Link_Ref_List `clip_os`>
+        clips                     : <SAW : Link_Ref_List `clips`>
         contents                  : swp_page.contents
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <Col-Mapper for MOM.Date_Interval_N>

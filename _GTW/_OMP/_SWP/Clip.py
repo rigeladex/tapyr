@@ -32,6 +32,8 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    25-Jul-2013 (CT) Add import of `SWP.Object_PN`
+#    30-Oct-2013 (CT) Fix `Clip_O.left` to set `link_ref_attr_name`, not
+#                     `rev_ref_attr_name`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,7 @@ class Clip_O (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SWP.Object_PN
             role_name          = "object"
-            rev_ref_attr_name  = "clips"
+            link_ref_attr_name = "clip"
 
         # end class left
 

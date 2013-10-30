@@ -1444,7 +1444,7 @@ _test_entity_attr = """
     ..EVT.Object
     ..SWP.Object
     ...SWP.Object_PN
-        clip_os                             query      SWP.Clip_O                SWP.Clip_O
+        clips                               query      SWP.Clip_O                SWP.Clip_O
     ....SWP.Page
         events                              query      EVT.Event                 EVT.Event
     .....SRM.Page
@@ -1593,7 +1593,7 @@ _test_entity_attr = """
         team_links
     SRM.Page
         events
-        clip_os
+        clips
     SRM.Regatta_C
         boats
         teams
@@ -1607,16 +1607,16 @@ _test_entity_attr = """
         boat_links
     SWP.Clip_X
         events
-        clip_os
+        clips
     SWP.Gallery
-        clip_os
+        clips
         pictures
     SWP.Page
         events
-        clip_os
+        clips
     SWP.Page_Y
         events
-        clip_os
+        clips
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
     ...     if T.rev_ref_attr and not T.is_partial :
@@ -1844,7 +1844,7 @@ _test_entity_attr = """
         creation
         last_change
         events
-        clip_os
+        clips
     SRM.Race_Result
         creation
         last_change
@@ -1880,22 +1880,22 @@ _test_entity_attr = """
         creation
         last_change
         events
-        clip_os
+        clips
     SWP.Gallery
         creation
         last_change
-        clip_os
+        clips
         pictures
     SWP.Page
         creation
         last_change
         events
-        clip_os
+        clips
     SWP.Page_Y
         creation
         last_change
         events
-        clip_os
+        clips
     SWP.Picture
         creation
         last_change
