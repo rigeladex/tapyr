@@ -146,7 +146,7 @@ class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.E_Type_Mixin) :
         self.top = self.parent.top
         self.pop_to_self (kw, "ETM", prefix = "_")
         E_Type      = self.E_Type
-        name        = kw.pop  ("name",  E_Type.ui_name)
+        name        = kw.pop  ("name", E_Type.ui_name)
         title       = kw.pop  ("title", _T (E_Type.__doc__))
         a           = "a" ### Fool Babel extract
         short_title = kw.pop  \

@@ -62,6 +62,7 @@
 #     4-May-2013 (CT) Add `submit_error_callback`
 #     7-May-2013 (CT) Fix `Expander.rendered` for `An_Entity` elements
 #     7-May-2013 (CT) Set `Deleter.argn` to `None`, not `1`
+#    30-Oct-2013 (CT) Change `Group._pns_entries` to set `name` of E_Type_Alias
 #    ««revision-date»»···
 #--
 
@@ -1415,7 +1416,10 @@ class Group (_Ancestor) :
                         T = E_Type
                         if admin :
                             T = E_Type_Alias
-                            aa ["target"] = admin
+                            aa.update \
+                                ( name   = ET.ui_name
+                                , target = admin
+                                )
                         if aa :
                             yield T (parent = self, ** aa)
     # end def _pns_entries
