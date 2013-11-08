@@ -48,7 +48,7 @@ class _Cpu_Info_ (TFL.Meta.Object) :
     _ws_rep     = Re_Replacer (r"\s\s+",           " ")
     _ignore_rep = Multi_Re_Replacer \
         ( Re_Replacer (r"Intel\s+|CPU.*",  "")
-        , Re_Replacer (r"(i\d)-\d+[A-Z]+", "\1")
+        , Re_Replacer (r"(i\d)-\d+[A-Z]+", r"\1")
         )
     _space_rep  = Re_Replacer (r" ", "_")
 
