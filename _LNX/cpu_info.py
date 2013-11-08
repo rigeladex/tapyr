@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package LNX.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    12-May-2009 (CT) Creation
+#     8-Nov-2013 (CT) Improve `_ignore_rep` for `i[357]` CPUs
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,10 @@ class _Cpu_Info_ (TFL.Meta.Object) :
 
     _paren_rep  = Re_Replacer (r"\s*\([^)]*\)\s*", " ")
     _ws_rep     = Re_Replacer (r"\s\s+",           " ")
-    _ignore_rep = Re_Replacer (r"Intel\s+|CPU.*",  "")
+    _ignore_rep = Multi_Re_Replacer \
+        ( Re_Replacer (r"Intel\s+|CPU.*",  "")
+        , Re_Replacer (r"(i\d)-\d+[A-Z]+", "\1")
+        )
     _space_rep  = Re_Replacer (r" ", "_")
 
     def items (self) :
