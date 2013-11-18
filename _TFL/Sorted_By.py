@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -44,7 +44,7 @@
 #     4-Dec-2009 (CT) `Sorted_By_Strict` added
 #     4-Dec-2009 (CT) `Sorted_By.__call__` and `Desc_Getter.__call__` changed
 #                     to allow comparison of unequal types in Python 3.x
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    15-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
 #    30-Oct-2013 (CT) Remove unnecessary `Team.left.rev_ref_attr_name`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division

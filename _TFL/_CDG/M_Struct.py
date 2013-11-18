@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2002-2013 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
 # Name
@@ -19,7 +19,7 @@
 #    11-Nov-2005 (MG)  `define_access_macros` added
 #    11-Nov-2005 (MG)  `reference_field` handling changed (no need to specify
 #                      a name for the field)
-#    14-Nov-2005 (MG) ´as_dot` added
+#    14-Nov-2005 (MG) Å½as_dot` added
 #    01-Dec-2005 (MG)  `typedef_prefix` added
 #    02-Dec-2005 (MG)  Use `typedef_prefix` to define the `type_name`
 #    04-Dec-2005 (KZU) `typedef_prefix` added to method buffer_fields
@@ -32,7 +32,7 @@
 #    24-Apr-2007 (DAL) `as_tex` addded
 #     1-Oct-2007 (DAL) unit added to `as_tex` output table
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL             import TFL

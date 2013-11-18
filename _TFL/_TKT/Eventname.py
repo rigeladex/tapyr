@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #                      `_check` made informative instead of prescriptive
 #    10-Aug-2005 (CT)  `canonical_key_name` added
 #    26-Apr-2006 (PGO) import of Set removed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

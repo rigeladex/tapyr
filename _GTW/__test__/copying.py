@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #     6-Sep-2010 (CT) Adapted to change of `Race_Result` from Composite-List
 #                     to `Link1`
 #    24-Jan-2013 (CT) Change `nation` from `Austria` to `AUT`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _GTW.__test__.model import *

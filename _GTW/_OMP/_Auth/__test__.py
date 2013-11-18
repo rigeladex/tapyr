@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    15-Dec-2010 (CT) s/Account_Pasword_Reset/Account_Password_Reset/
 #     5-Apr-2012 (CT) Use `.create_new_account_x` to create accounts
 #    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """
@@ -50,13 +50,9 @@ let's create some accounts
     >>> acc1.name, acc2.name
     (u'user1@example.com', u'user2@example.com')
 
-Make sure that only hased versions of the passwords are stored
+Make sure that only hashed versions of the passwords are stored
     >>> acc1.password != "passwd1", acc2.password != "passwd2"
     (True, True)
-
-and that both account's use a different salt
-    >>> acc1.salt != acc2.salt
-    True
 
 Now, let's test the login/logout handlers
     >>> handler = GET ("/account/login")
@@ -364,12 +360,12 @@ import _GTW._OMP._Auth.import_Auth
 
 apt       = define_app_type ("Auth_Test", GTW, EMS, DBW)
 scope     = MOM.Scope.new                (apt, None)
-anonymous = scope.Auth.Account_Anonymous ("anonymous")
+anonymous = scope.Auth.Account_Anonymous ("anonymous@example.com")
 NAV       = GTW.NAV.Root \
     ( src_dir           = "."
     , copyright_start   = 2008
-    , encoding          = "iso-8859-15"
-    , input_encoding    = "iso-8859-15"
+    , encoding          = "utf-8"
+    , input_encoding    = "utf-8"
     , account_manager   = scope.Auth.Account
     , anonymous         = anonymous
     , scope             = scope

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -46,7 +46,7 @@
 #     3-Jun-2013 (CT) Assign `_prop_dict` to attribute named by `_prop_map_name`
 #     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
 #     6-Jun-2013 (CT) Use `prop.assign`, not `setattr`, to assign to `e_type`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM                  import MOM

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -168,7 +168,7 @@
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #     8-Sep-2013 (CT) Change `decoded_header` to allow `unknown`
 #                     (shame on: Oracle Communications Messaging Server)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__              import print_function

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -28,13 +28,13 @@
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
 #    19-Jul-2011 (MG) `_name` converted to `Once_Property`
-#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_«name»_`
+#    13-Sep-2011 (CT) All Q_Exp internal classes renamed to `_Â«nameÂ»_`
 #     8-Jul-2013 (CT) Derive `_RAW_DESC_` from `object`, not `property`
 #    19-Jul-2013 (CT) Derive `Raw_Attr_Query` from `Attr_Query`;
 #                     set `Q_Exp.Base.RAW` to `Raw_Attr_Query ()`;
 #                     remove `_RAW_` and `_RAW_DESC_` (nice simplification)
 #    30-Aug-2013 (CT) Remove `SET`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__               import unicode_literals

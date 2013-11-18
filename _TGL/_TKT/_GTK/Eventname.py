@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -33,7 +33,7 @@
 #     3-Apr-2005 (MG) `Combined_Binder._call` typo fixed
 #     7-Apr-2005 (MG) `s/Button_Signal_Binder/Mouse_Button_Binder/g`
 #    30-Jul-2005 (MG) Debug output added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

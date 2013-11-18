@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -38,7 +38,7 @@
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #    28-Jul-2013 (CT) Replace `tn_pid` by `type_name` and `pid`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 test_code = r"""

@@ -43,10 +43,10 @@ msgid "\\u203A"
 msgstr ""
 
 #: _ReST/Roles.py:93
-msgid "«"
+msgid "Â«"
 msgstr ""
 
 #: _ReST/Roles.py:93
-msgid "»"
+msgid "Â»"
 msgstr ""
 

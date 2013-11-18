@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -50,7 +50,7 @@
 #     4-Jun-2012 (CT) Rewrite `_handle_update` to use `_handle_vc`
 #    11-Sep-2012 (CT) Fix `_handle_babel_extract` (assign `P`)
 #    27-Jul-2013 (CT) Remove old `.pyc` and `.pyo` files in `_handle_pycompile`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function #, unicode_literals
@@ -99,7 +99,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         ( active_name       = "active"
         , app_dir           = "app"
         , bugs_address      = "tanzer@swing.co.at,martin@mangari.org"
-        , copyright_holder  = "Mag. Christian Tanzer, Martin Glück"
+        , copyright_holder  = "Mag. Christian Tanzer, Martin GlÃ¼ck"
         , lib_dir           = "lib"
         , output_encoding   = "utf-8"
         , passive_name      = "passive"

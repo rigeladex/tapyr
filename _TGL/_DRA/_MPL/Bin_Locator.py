@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    13-Dec-2006 (CT) `pad` added
 #    30-Jun-2008 (CT) Adapted to (undocumented [Arrrg]) changes in
 #                     matplotlib 0.98
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL import TGL

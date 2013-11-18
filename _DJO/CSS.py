@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #    11-Sep-2009 (CT) `Parameters`, `Parameter_Scope` and `Style_Sheet.Read`
 #                     added
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__                 import with_statement

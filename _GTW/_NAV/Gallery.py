@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -163,7 +163,7 @@
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #     3-Jan-2011 (CT) Introduce `template_name`
 #    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `prefix`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

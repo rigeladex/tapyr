@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -39,7 +39,7 @@
 #    20-May-2005 (MG) `V_Scrolled_Text` removed
 #    20-May-2005 (MG) `show` methods added
 #    16-Aug-2005 (MG) Call `show' in `__init__`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL.predicate           import dict_from_list

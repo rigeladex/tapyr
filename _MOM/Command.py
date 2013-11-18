@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -71,7 +71,7 @@
 #    23-Aug-2013 (CT) Add option `-Engine_Echo`
 #    25-Aug-2013 (CT) Add and use `_cleaned_url` to avoid leaking DB passwords
 #    25-Aug-2013 (CT) Change `_print_info` to elide commits, if too many
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

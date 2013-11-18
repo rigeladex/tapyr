@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -55,7 +55,7 @@
 #    11-Jun-2012 (CT) Remove trailing `/` from `href`
 #    18-Jun-2012 (CT) Rename `email` to `email_from`
 #    28-Jan-2013 (CT) Fix spelling of `Action_Expired`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

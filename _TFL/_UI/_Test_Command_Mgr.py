@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
 # Name
@@ -14,7 +14,7 @@
 #    19-Jan-2005 (CT) Test fixed
 #    20-Jan-2005 (CT) Test fixed again
 #    11-Jun-2009 (CT) Test fixed onceagain
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

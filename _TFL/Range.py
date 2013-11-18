@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #    21-Feb-2002 (CT) `Range_` renamed to `_Range_`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    11-Nov-2009 (CT) Use `slice` instead of `types.SliceType`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _TFL import TFL

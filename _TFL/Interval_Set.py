@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
 # Web: http://www.runtux.com Email: office@runtux.com
@@ -58,7 +58,7 @@
 #    11-Apr-2007 (CT)  `_difference_iter` changed to skip empty intervals of
 #                      `other`
 #     2-Aug-2007 (CED) Property `length` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                  import TFL

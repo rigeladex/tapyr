@@ -27,7 +27,7 @@
 **
 ** Revision Dates
 **     2-May-2010 (MG) Creation (based on model_edit_ui.js)
-++    ««revision-date»»···
+++    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 **--
 */
 (function ($)

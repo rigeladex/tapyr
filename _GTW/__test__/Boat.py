@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #     9-Sep-2012 (RS) Add `last_changed` and `creation_date` checks
 #    30-Jan-2013 (CT) Adapt to `Unique` predicates
 #     3-Jun-2013 (CT) Add `_test_instances_committed`, `_test_instances_pending`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = """

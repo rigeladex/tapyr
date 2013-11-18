@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -43,7 +43,7 @@
 #     5-Jan-2006 (CT) `_new_delivery_box` factored and changed to load
 #                     mailbox-specific config file, if any
 #    24-Jan-2006 (MG) `virtual_mailbox_path` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL

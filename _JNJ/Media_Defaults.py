@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -48,7 +48,7 @@
 #     7-Mar-2013 (CT) Add `border_added` and `border_deleted`
 #     3-Apr-2013 (CT) Add `Rule`, `Rule.clearfix`
 #     8-Apr-2013 (CT) Add lots of rules to `Rule`, e.g., `disabled`, `focus`...
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _GTW._CSS.import_CSS import *

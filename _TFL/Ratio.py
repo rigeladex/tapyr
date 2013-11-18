@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #     8-Feb-2005 (CED) Various improvements
 #     9-Feb-2005 (CED) Some simplifications done
 #    24-Mar-2005 (CT)  Use `Math_Func.gcd` instead of `predicate.gcd`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

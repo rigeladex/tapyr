@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #     6-Dec-2011 (CT) Use `GTW.Script._...` instead of home-grown definitions
 #     3-Jan-2012 (CT) Remove `Script` references covered by `requires`
 #     3-Jan-2012 (CT) Move remaining `GTW.Script` to `html/afs.jnj.media`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 Include ("html/afs.jnj.media")

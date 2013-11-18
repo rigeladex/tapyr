@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -31,7 +31,7 @@
 #     2-Jul-2012 (CT) Add `has_option`
 #     3-Jul-2012 (CT) Redefine `values` to conditionally return `json`
 #    31-Jul-2012 (CT) Add `HTTP_Exception`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -28,7 +28,7 @@
 # Revision Dates
 #    17-Sep-2006 (CT) Creation
 #    23-Dec-2010 (CT) Use `_print` for doctest (`%s` instead of `%r` for `v`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL import TFL

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -35,7 +35,7 @@
 #     7-Aug-2012 (CT) Fix typo (`.admin`, not `._admin`)
 #     9-Nov-2012 (CT) Redefine `E_Type_Mixin._get_child_page`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

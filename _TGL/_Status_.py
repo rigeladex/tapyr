@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #    05-Jan-2006 (MG) Open the files in binary mode in the `load` functions
 #                     (they are stored in binary mode too)
 #    10-Nov-2009 (CT) Use `pickle` instead of `cPickle` to silence `-3`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL

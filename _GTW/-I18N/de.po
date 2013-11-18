@@ -14,14 +14,14 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: _GTW/_RST/_TOP/Auth.py:332
 #, python-format
 msgid "%s Password for %s on website %s"
-msgstr "Kennwort für Anwender %s auf Webseite %s %s"
+msgstr "Kennwort fÃ¼r Anwender %s auf Webseite %s %s"
 
 #: _GTW/_Form/_MOM/Javascript.py:68
 #, python-format
@@ -61,19 +61,19 @@ msgstr "%s: Regatta Registrierung %s"
 
 #: _GTW/_NAV/Auth.py:191 _GTW/_RST/_TOP/Auth.py:305
 msgid "A confirmation email has been sent to the new email address."
-msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
+msgstr "Eine BestÃ¤tigungsemail wurde an die neue Email Adresse versendet."
 
 #: _GTW/_NAV/Auth.py:328 _GTW/_RST/_TOP/Auth.py:589
 msgid "A confirmation has been sent to your email address."
-msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
+msgstr "Eine BestÃ¤tigung wurde an die neue Emailadresse versendet."
 
 #: _GTW/_Form/Auth.py:80 _GTW/_Form/Auth.py:236 _GTW/_RST/Auth_Mixin.py:112
 msgid "A user name is required to login."
-msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
+msgstr "FÃ¼r die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_Form/Auth.py:261
 msgid "A user name is required."
-msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
+msgstr "FÃ¼r die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_RST/_MOM/Query_Restriction.py:273
 #, python-format
@@ -93,7 +93,7 @@ msgstr "Es gibt bereits ein Benutzerkonto mit dieser Emailadresse"
 #: _GTW/_RST/_TOP/Auth.py:165
 #, python-format
 msgid "Activate account for %s on website %s"
-msgstr "Activiere Benutzerkonto für Anwender %s auf Webseite %s"
+msgstr "Activiere Benutzerkonto fÃ¼r Anwender %s auf Webseite %s"
 
 #: _GTW/_NAV/Auth.py:144 _GTW/_RST/_TOP/Auth.py:180
 msgid "Activation successful."
@@ -138,7 +138,7 @@ msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
 #: _GTW/__test__/Test_Command.py:216
 msgid "Choice of language used for localization"
-msgstr "Auswahl der Sprache für Lokalisierung"
+msgstr "Auswahl der Sprache fÃ¼r Lokalisierung"
 
 #: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:234
 msgid "Dec"
@@ -155,19 +155,19 @@ msgstr ""
 
 #: _GTW/_NAV/Auth.py:109
 msgid "EMail verification successful."
-msgstr "Die Bestätigung der Email war erfolgreich."
+msgstr "Die BestÃ¤tigung der Email war erfolgreich."
 
 #: _GTW/_AFS/Error.py:72
 msgid ""
 "Edit conflict: at least one value was changed asynchronously by another "
 "request."
-msgstr "Änderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verändert."
+msgstr "Ã„nderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verÃ¤ndert."
 
 #: _GTW/_NAV/Auth.py:179 _GTW/_NAV/Auth.py:317 _GTW/_RST/_TOP/Auth.py:293
 #: _GTW/_RST/_TOP/Auth.py:578
 #, python-format
 msgid "Email confirmation for %s"
-msgstr "Email Bestätigung für %s"
+msgstr "Email BestÃ¤tigung fÃ¼r %s"
 
 #: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:231
 msgid "Feb"
@@ -180,7 +180,7 @@ msgstr "Feber"
 #: _GTW/_Form/Plain.py:95
 #, python-format
 msgid "Field `%(field)s` is required"
-msgstr "Feld `%(field)s` muss ausgefüllt werden"
+msgstr "Feld `%(field)s` muss ausgefÃ¼llt werden"
 
 #: _GTW/_NAV/_E_Type/Admin.py:267 _GTW/_NAV/_E_Type/Admin.py:283
 #: _GTW/_RST/_TOP/_MOM/Admin.py:139 _GTW/_RST/_TOP/_MOM/Admin.py:148
@@ -208,7 +208,7 @@ msgstr "Bildauswahl"
 #: _GTW/_RST/_MOM/Mixin.py:422
 #, python-format
 msgid "It was deleted by user `%s` on %s"
-msgstr "Es wurde vom Anwender `%s` am %s gelöscht"
+msgstr "Es wurde vom Anwender `%s` am %s gelÃ¶scht"
 
 #: _GTW/_NAV/Calendar.py:94 _GTW/_RST/_TOP/Calendar.py:231
 msgid "Jan"
@@ -216,7 +216,7 @@ msgstr "Jan"
 
 #: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:237
 msgid "January"
-msgstr "Jänner"
+msgstr "JÃ¤nner"
 
 #: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:233
 msgid "Jul"
@@ -241,11 +241,11 @@ msgstr ""
 #: _GTW/_NAV/L10N.py:74 _GTW/_RST/_TOP/L10N.py:74
 #, python-format
 msgid "Language %s selected"
-msgstr "Sprache %s wurde ausgewählt"
+msgstr "Sprache %s wurde ausgewÃ¤hlt"
 
 #: _GTW/_NAV/_E_Type/SRM.py:166 _GTW/_RST/_TOP/_MOM/SRM.py:224
 msgid "List of participants for"
-msgstr "Liste der Teilnehmer für"
+msgstr "Liste der Teilnehmer fÃ¼r"
 
 #: _GTW/_NAV/Auth.py:283 _GTW/_RST/_TOP/Auth.py:430
 msgid "Logout successful."
@@ -257,7 +257,7 @@ msgstr "Mrz"
 
 #: _GTW/_NAV/Calendar.py:100 _GTW/_RST/_TOP/Calendar.py:237
 msgid "March"
-msgstr "März"
+msgstr "MÃ¤rz"
 
 #: _GTW/_NAV/Calendar.py:95 _GTW/_NAV/Calendar.py:101
 #: _GTW/_RST/_TOP/Calendar.py:232 _GTW/_RST/_TOP/Calendar.py:238
@@ -275,7 +275,7 @@ msgstr "Montag"
 #: _GTW/HTML.py:83
 #, python-format
 msgid "Need Javascript for displaying %s"
-msgstr "Für die Darstellung der %s ist Javascript erforderlich"
+msgstr "FÃ¼r die Darstellung der %s ist Javascript erforderlich"
 
 #: _GTW/_Form/Auth.py:194
 msgid "New email address"
@@ -287,11 +287,11 @@ msgstr "Neues Kennwort"
 
 #: _GTW/_RST/_TOP/Auth.py:173
 msgid "No activation request for this account"
-msgstr "Es gibt keine Aktivierungsanfrage für dieses Benutzerkonto"
+msgstr "Es gibt keine Aktivierungsanfrage fÃ¼r dieses Benutzerkonto"
 
 #: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:200
 msgid "Not authorized for this page"
-msgstr "Fehlende Autorisierung für den Zugriff auf diese Seite"
+msgstr "Fehlende Autorisierung fÃ¼r den Zugriff auf diese Seite"
 
 #: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:195
 msgid "Not logged in or login-session is expired"
@@ -309,7 +309,7 @@ msgstr "November"
 #: _GTW/_RST/_TOP/_MOM/Admin.py:677 _GTW/_RST/_TOP/_MOM/Admin.py:686
 #, python-format
 msgid "Object \"%s\" deleted"
-msgstr "Objekt \"%s\" gelöscht"
+msgstr "Objekt \"%s\" gelÃ¶scht"
 
 #: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:234
 msgid "Oct"
@@ -334,11 +334,11 @@ msgstr "Kennwort"
 #: _GTW/_NAV/Auth.py:370 _GTW/_RST/_TOP/Auth.py:645
 #, python-format
 msgid "Password reset for user %s on website %s"
-msgstr "Kennwort für Anwender %s auf Webseite %s zurückgesetzt"
+msgstr "Kennwort fÃ¼r Anwender %s auf Webseite %s zurÃ¼ckgesetzt"
 
 #: _GTW/_Form/Auth.py:145
 msgid "Passwords don't match."
-msgstr "Kennworte stimmen nicht überein."
+msgstr "Kennworte stimmen nicht Ã¼berein."
 
 #: _GTW/_RST/Auth_Mixin.py:143
 msgid "Please enter a username"
@@ -368,11 +368,11 @@ msgstr "Wiederhole neues Kennwort"
 
 #: _GTW/_RST/_TOP/Auth.py:265
 msgid "Repeat the EMail for verification."
-msgstr "Wiederhole die Emailadresse zur Überprüfung."
+msgstr "Wiederhole die Emailadresse zur ÃœberprÃ¼fung."
 
 #: _GTW/_RST/Auth_Mixin.py:125
 msgid "Repeat the password for verification."
-msgstr "Wiederhole das Kennwort zur Überprüfung."
+msgstr "Wiederhole das Kennwort zur ÃœberprÃ¼fung."
 
 #: _GTW/_NAV/_E_Type/SRM.py:140 _GTW/_RST/_TOP/_MOM/SRM.py:193
 msgid "Results"
@@ -380,7 +380,7 @@ msgstr "Resultate"
 
 #: _GTW/_NAV/_E_Type/SRM.py:162 _GTW/_RST/_TOP/_MOM/SRM.py:221
 msgid "Results for"
-msgstr "Resultate für"
+msgstr "Resultate fÃ¼r"
 
 #: _GTW/_NAV/Calendar.py:87 _GTW/_RST/_TOP/Calendar.py:224
 msgid "Sat"
@@ -408,11 +408,11 @@ msgstr "Sonntag"
 
 #: _GTW/_RST/_TOP/Auth.py:261
 msgid "The Email is required."
-msgstr "Die Emailadresse muss ausgefüllt werden."
+msgstr "Die Emailadresse muss ausgefÃ¼llt werden."
 
 #: _GTW/_RST/_TOP/Auth.py:269
 msgid "The Email's don't match."
-msgstr "Die Emailadressen stimmen nicht überein."
+msgstr "Die Emailadressen stimmen nicht Ã¼berein."
 
 #: _GTW/_AFS/Error.py:82
 msgid "The edit session has expired or the form values are corrupted."
@@ -424,19 +424,19 @@ msgstr "Die Sitzung ist abgelaufen."
 
 #: _GTW/_Form/Auth.py:210
 msgid "The new E-Mail address is required."
-msgstr "Die neue E-Mail Adresse muss ausgefüllt werden."
+msgstr "Die neue E-Mail Adresse muss ausgefÃ¼llt werden."
 
 #: _GTW/_Form/Auth.py:141
 msgid "The new password is required."
-msgstr "Das neue Kennwort muss ausgefüllt werden."
+msgstr "Das neue Kennwort muss ausgefÃ¼llt werden."
 
 #: _GTW/_Form/Auth.py:177
 msgid "The old password is required."
-msgstr "Das alte Kennwort muss ausgefüllt werden."
+msgstr "Das alte Kennwort muss ausgefÃ¼llt werden."
 
 #: _GTW/_NAV/Auth.py:226 _GTW/_RST/_TOP/Auth.py:342
 msgid "The password has been changed."
-msgstr "Das Kennwort wurde geändert"
+msgstr "Das Kennwort wurde geÃ¤ndert"
 
 #: _GTW/_Form/Auth.py:215
 msgid "The password is incorrect"
@@ -444,25 +444,25 @@ msgstr "Das Kennwort sind nicht korrekt"
 
 #: _GTW/_Form/Auth.py:82 _GTW/_Form/Auth.py:208 _GTW/_RST/Auth_Mixin.py:121
 msgid "The password is required."
-msgstr "Das Kennwort muss ausgefüllt werden."
+msgstr "Das Kennwort muss ausgefÃ¼llt werden."
 
 #: _GTW/_RST/Auth_Mixin.py:129
 msgid "The passwords don't match."
-msgstr "Die Kennworte stimmen nicht überein."
+msgstr "Die Kennworte stimmen nicht Ã¼berein."
 
 #: _GTW/_NAV/Auth.py:382 _GTW/_RST/_TOP/Auth.py:657
 msgid "The reset password instructions have been sent to your email address."
 msgstr ""
-"Die Information über das Setzen eines neuen Kennworts wurde an die "
+"Die Information Ã¼ber das Setzen eines neuen Kennworts wurde an die "
 "Emailadresse versandt."
 
 #: _GTW/_Form/Auth.py:88 _GTW/_RST/Auth_Mixin.py:148
 msgid "This account is currently inactive"
-msgstr "Dieses Benutzerkonto ist gegenwärtig nicht verfügbar"
+msgstr "Dieses Benutzerkonto ist gegenwÃ¤rtig nicht verfÃ¼gbar"
 
 #: _GTW/_Form/Auth.py:241
 msgid "This username is already in use."
-msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
+msgstr "FÃ¼r die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_Form/Auth.py:266
 msgid "This username is not registered"

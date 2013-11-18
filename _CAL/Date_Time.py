@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -41,7 +41,7 @@
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    29-Mar-2012 (CT) Add support for `tzinfo`; factor `as_local`; use
 #                     `CAL.Time._from_string_match_kw`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                     import TFL

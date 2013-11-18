@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -168,7 +168,7 @@
 #     8-Jan-2009 (CT) `raw_value` added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    16-Jun-2013 (CT) Fix option matching in `Command_Line.__init__`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

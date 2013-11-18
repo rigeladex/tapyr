@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    23-Aug-2009 (MG) Changed location of jquery-ui css
 #     7-Sep-2009 (CT) Use `/media/css/djo/m2m.css` instead of
 #                     `/media/css/style.css`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _DJO          import DJO

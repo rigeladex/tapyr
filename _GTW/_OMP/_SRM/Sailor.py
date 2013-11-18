@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    20-Jan-2012 (CT) Change `mna_number` from `A_String` to `A_Int`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #    24-Jun-2013 (CT) Add argument `app_type` to `prepare`
 #    24-Jun-2013 (CT) Add missing methods-stubs to `_Manager_`
 #     8-Jul-2013 (CT) Add argument `app_type` to `finalize`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL       import TFL

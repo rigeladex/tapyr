@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -77,7 +77,7 @@
 #                     `selectable_e_types_unique_epk`, not `children_np`
 #     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
 #     5-Jun-2013 (CT) Use `Selector.ui_attr`, not `.all`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

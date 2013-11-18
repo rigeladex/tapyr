@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    15-Apr-2010 (MG) `Media` moved in here (was in
 #                     `GTW.Form.Field_Group_Description`)
 #     3-May-2010 (MG) `defaults` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                                 import TFL

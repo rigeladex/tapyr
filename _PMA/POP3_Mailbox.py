@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -44,7 +44,7 @@
 #     4-Jan-2006 (CT) `MB_Type` changed to update `_pma_msg_no` and
 #                     `_pma_size` for messages already in `seen`
 #     4-Jan-2006 (CT) `_msg_no` changed to consider `max_no`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                       import TFL

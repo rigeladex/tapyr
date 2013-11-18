@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -62,7 +62,7 @@
 #     1-Jul-2010 (CT) `expanded_glob` changed to return `[pathname]` over `[]`
 #    24-May-2013 (CT) Improve Python-3.3 compatibility
 #    24-May-2013 (CT) Don't inclode magic `os` properties
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from    _TFL import TFL

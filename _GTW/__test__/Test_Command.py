@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -42,7 +42,7 @@
 #    27-Jun-2013 (CT) Add `SAW`-based backends
 #    25-Sep-2013 (CT) Add `debug`
 #    26-Sep-2013 (CT) Add `_backend_reset`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, unicode_literals

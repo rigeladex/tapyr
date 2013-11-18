@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -30,7 +30,7 @@
 #    26-Jul-2013 (CT) Redefine `_reserve`, not `reserve`
 #    28-Jul-2013 (CT) Quote `seq_name` in `SELECT setval`; fix typo
 #    26-Aug-2013 (CT) Split into `Sequence`, `Sequence_PID`, `Sequence_X`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import division, print_function

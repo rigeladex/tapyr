@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -45,7 +45,7 @@
 #                     `Date_Time_Delta`, and `Time_Delta`
 #    15-Apr-2012 (CT) Fix `_from_string_match_kw` (use `+=` instead of `=` in
 #                     `else` of `k.startswith ("sub")`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL                     import CAL

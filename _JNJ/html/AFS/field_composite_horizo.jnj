@@ -33,7 +33,7 @@
 ##                     `do_element`, and `do_head`
 ##     2-Dec-2011 (CT) Remove argument `form` from call of `input_widget`
 ##    23-Feb-2012 (CT) Factor `do_label` to `afs.jnj`
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 

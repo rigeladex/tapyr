@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -50,7 +50,7 @@
 #    31-Dec-2010 (CT) `Multi_Regexp.search_all` and `.search_iter` added
 #    25-Mar-2013 (CT) Add `Copy`, `__nonzero__`, doctest to `Regexp`
 #    27-Mar-2013 (CT) Add `Multi_Re_Replacer.add`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division

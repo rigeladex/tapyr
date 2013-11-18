@@ -29,7 +29,7 @@
 ## Revision Dates
 ##    19-Feb-2010 (CT) Creation
 ##    30-Apr-2012 (CT) Use `page.encoding`
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 -#}
 {%- block headers -%}

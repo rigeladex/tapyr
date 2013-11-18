@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -29,7 +29,7 @@
 #     2-Mar-2011 (CT) Creation
 #     8-Mar-2011 (CT) `Corrupted` added
 #     1-Aug-2011 (CT) `Base.__str__` redefined
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

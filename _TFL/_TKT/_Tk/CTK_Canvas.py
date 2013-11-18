@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    16-Mar-2006 (CT) Style
 #     7-Nov-2007 (CT) Moved into package _TFL._TKT._Tk
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL._TKT._Tk.CTK import *
@@ -115,7 +115,7 @@ class Tagged_Canvas (Tagged_Object) :
     obj_map         = {}
 
     ###+
-    ### the following _delegate_«binding» functions are necessary in order to
+    ### the following _delegate_Â«bindingÂ» functions are necessary in order to
     ### avoid individual tag-bindings for different canvas tag types
     ###
     ### we avoid tag-bindings since Tkinter doesn't seem to free them after

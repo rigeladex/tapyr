@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #    21-Feb-2008 (MG) `__init__`: use getattr chain to handle all sorts of
 #                     callables as `function`
 #    15-Apr-2008 (MG) `function` class attribute added (needed for unpickling)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL             import TFL

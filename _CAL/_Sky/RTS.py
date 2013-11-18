@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2007-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -38,7 +38,7 @@
 #    31-Mar-2008 (CT) `_to_local_time` changed to consider `dst`
 #    31-Mar-2008 (CT) `azimuth` added to newly factored `_Rise_` and `_Set_`
 #    17-Jul-2009 (CT) Don't display floating point values in doctest
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL                     import CAL

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -85,7 +85,7 @@
 #    13-Jun-2008 (CT)  `intersection` changed to never return an empty
 #                      `sections` if `min_size == 0`
 #    17-Jan-2013 (CT) Raise `Timeline_Error`, not `AssertionError`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                  import TFL

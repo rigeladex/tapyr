@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 
 from   __future__                 import with_statement
 
@@ -51,7 +51,7 @@ class Entry (DJO.Model) :
         , from_fields  = "date_pub"
         , field_fmt_kw = dict (date_pub = dict (output_format  = "%Y%m%d"))
         , help_text    =
-            "Kurzbezeichnung des Newseintrags (wird für Url verwendet)"
+            "Kurzbezeichnung des Newseintrags (wird fÃ¼r Url verwendet)"
         , max_length   = 24
         )
     kind               = MF.Choice \

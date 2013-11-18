@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -44,7 +44,7 @@
 #    10-Jun-2005 (MG) `_tag`: delete tag if a tag with the passed name
 #                     already exists
 #     5-Sep-2005 (MG) `remove_style`: check if the style to remove has a tag
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL                   import TGL

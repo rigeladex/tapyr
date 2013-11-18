@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -38,7 +38,7 @@
 #     5-Aug-2013 (CT) Change guard of `connection`, reset `needs_commit` there
 #     5-Aug-2013 (CT) Add `Con_Man.save_point`, factor `Con_Man._reset`
 #    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_url`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__                import division, print_function

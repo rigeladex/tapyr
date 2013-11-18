@@ -14,13 +14,13 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "A password reset is pending for the linked account."
-msgstr "Zurücksetzen des Kennworts für dieses Benutzerkonto ist ausständig."
+msgstr "ZurÃ¼cksetzen des Kennworts fÃ¼r dieses Benutzerkonto ist ausstÃ¤ndig."
 
 #: _GTW._OMP._Auth.Account:0 _GTW._OMP._Auth.Account_in_Group:0
 #: _GTW._OMP._Auth.Account_Handling:0
@@ -48,8 +48,8 @@ msgstr[1] "Anonyme Benutzerkonten"
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_EMail_Verification"
 msgid_plural "Account_EMail_Verifications"
-msgstr[0] "Überprüfung von Benutzerkonto und Email"
-msgstr[1] "Überprüfungen von Benutzerkonten und Emails"
+msgstr[0] "ÃœberprÃ¼fung von Benutzerkonto und Email"
+msgstr[1] "ÃœberprÃ¼fungen von Benutzerkonten und Emails"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Password_Change_Required"
@@ -75,7 +75,7 @@ msgstr "Aktivierung des Benutzerkontos."
 
 #: _GTW._OMP._Auth.Account:0
 msgid "An acount which uses passwords for authorization."
-msgstr "Ein Benutzerkonto, das zur Anmeldung ein Kennwort benötigt."
+msgstr "Ein Benutzerkonto, das zur Anmeldung ein Kennwort benÃ¶tigt."
 
 #: _GTW/_OMP/_Auth/graph.py:63
 msgid "Auth graph"
@@ -93,7 +93,7 @@ msgstr "Zertifikat, das zur Anmeldung verwendet werden kann."
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "Date and time when the certificate was revoked"
-msgstr "Datum und Uhrzeit, zu dem das Zertifikat ungültig erklärt wurde"
+msgstr "Datum und Uhrzeit, zu dem das Zertifikat ungÃ¼ltig erklÃ¤rt wurde"
 
 #: _MOM._Attr.Date_Time_Interval:0
 msgid "Date_Time_Interval"
@@ -115,7 +115,7 @@ msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Default account for users which are not logging in."
-msgstr "Anonymes Benutzerkonto, für nicht angemeldete Besucher."
+msgstr "Anonymes Benutzerkonto, fÃ¼r nicht angemeldete Besucher."
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Desc"
@@ -136,7 +136,7 @@ msgstr "Emailaddresse des Benutzerkontos"
 #: _GTW._OMP._Auth.Account:0
 msgid "Email that serves as user name for this account"
 msgstr ""
-"Emailaddresse, die als Benutzername für dieses Benutzerkonto verwendet "
+"Emailaddresse, die als Benutzername fÃ¼r dieses Benutzerkonto verwendet "
 "wird"
 
 #: _GTW._OMP._Auth.Account:0
@@ -145,11 +145,11 @@ msgstr "Freigeschaltet"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Exipre time of this action"
-msgstr "Verfalldatum für diese Aktion"
+msgstr "Verfalldatum fÃ¼r diese Aktion"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Expires"
-msgstr "Verfällt"
+msgstr "VerfÃ¤llt"
 
 #: _GTW/_OMP/_Auth/graph.py:62
 msgid "Graph displaying Auth partial object model"
@@ -167,7 +167,7 @@ msgstr "Gruppe von Benutzerkonten."
 
 #: _GTW._OMP._Auth.Account_in_Group:0
 msgid "Model association Account_in_Group"
-msgstr "Verknüpfung zwischen Benutzerkonto und Gruppe"
+msgstr "VerknÃ¼pfung zwischen Benutzerkonto und Gruppe"
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Name of group"
@@ -179,7 +179,7 @@ msgstr "Neue Emailaddresse"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Pending email verification."
-msgstr "Ausständige Bestätigung der Email Adresse."
+msgstr "AusstÃ¤ndige BestÃ¤tigung der Email Adresse."
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "Revocation date"
@@ -187,7 +187,7 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "Short description of the certificate"
-msgstr "Kurze Erläuterung zu dem Zertifikat"
+msgstr "Kurze ErlÃ¤uterung zu dem Zertifikat"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Specifies if this account has super-user permissions."
@@ -197,7 +197,7 @@ msgstr "Legt fest, ob Benutzerkonto alle Berechtigungen hat."
 msgid ""
 "Specifies if this account is currently enabled\n"
 "(the user can login)."
-msgstr "Legt fest, ob dieses Benutzerkonto gegenwärtig freigeschaltet ist."
+msgstr "Legt fest, ob dieses Benutzerkonto gegenwÃ¤rtig freigeschaltet ist."
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Superuser"
@@ -205,14 +205,14 @@ msgstr "Wunderwuzzi"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "The new email address for the linked account."
-msgstr "Die neue Emailaddresse für das zugehörige Benutzerkonto."
+msgstr "Die neue Emailaddresse fÃ¼r das zugehÃ¶rige Benutzerkonto."
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid ""
 "The password of the linked account must be changed after the next\n"
 "login."
 msgstr ""
-"Das Kennwort des Benutzerkontos muss bei der nächsten Anmeldung geändert "
+"Das Kennwort des Benutzerkontos muss bei der nÃ¤chsten Anmeldung geÃ¤ndert "
 "werden."
 
 #: _GTW._OMP._Auth.Certificate:0
@@ -221,7 +221,7 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "The temporary password."
-msgstr "Vorübergehendes Kennwort."
+msgstr "VorÃ¼bergehendes Kennwort."
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Token"
@@ -233,11 +233,11 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "Validity"
-msgstr "Gültigkeit"
+msgstr "GÃ¼ltigkeit"
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "Validity date interval"
-msgstr "Gültigkeitsintervall"
+msgstr "GÃ¼ltigkeitsintervall"
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "valid_revocation_date"

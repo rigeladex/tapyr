@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -28,7 +28,7 @@
 # Revision Dates
 #     5-Apr-2003 (CT) Creation
 #    22-Mar-2005 (CT) Moved from lib/python/_TFL to svn repository
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace

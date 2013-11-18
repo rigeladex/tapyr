@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -58,7 +58,7 @@
 #    28-May-2013 (CT)  Change `Decorator` to properly support `classmethod`
 #    29-May-2013 (CT)  Kludge around Python2.6 lack of classmethod introspection
 #    18-Sep-2013 (CT) Add `dict_from_class`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL         import TFL

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -45,7 +45,7 @@
 #    14-Feb-2006 (CT) Moved into package `TFL`
 #     9-Aug-2006 (CT) `__hash__` changed to return `hash (id (self))`
 #                     instead of `id (self)`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL             import TFL

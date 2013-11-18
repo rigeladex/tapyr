@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -28,7 +28,7 @@
 # Revision Dates
 #    15-Jun-2013 (CT) Creation
 #    17-Jun-2013 (CT) Add `_MOM_Link_n_` to `MOM_bases`, `MOM_base_parents`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__             import division, print_function

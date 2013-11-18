@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #    20-Feb-2010 (MG) Creation
 #    17-Aug-2012 (MG) Add new `Cached` property and adapt pickle behavior
 #    18-Aug-2012 (MG) Fix `discarge` to avoid `empty` head/tail result
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 """
 Short test for the notification framework

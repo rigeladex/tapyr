@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -31,7 +31,7 @@
 #    20-Sep-2012 (RS) Fix marker parameters for new size computation
 #    20-Sep-2012 (RS) smaller `attr_marker_size`
 #    25-Sep-2012 (CT) Add `partial_node_opacity`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

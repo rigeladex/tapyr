@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008 Martin Glück All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2008 Martin GlÃ¼ck All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -35,7 +35,7 @@
 #                     `_Dir_.default_view_pattern` tested, directory
 #                     delagation changed and therfore the test cases changed
 #                     as well
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 """
 For each `name` exactly one Memo_Url_Resolver shall be created (that will

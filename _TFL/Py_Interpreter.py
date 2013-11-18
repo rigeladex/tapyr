@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2010 DI Christian Eder <eder@tttech.com>
 # ****************************************************************************
 #
@@ -29,7 +29,7 @@
 #     9-Jun-2005 (CED) `locals` added to `__call__`
 #    25-Jul-2005 (CT)  `__call__` fixed (`or {}` considered harmful)
 #    25-Jul-2007 (PGO) Reduced not-invented-here-ness
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL             import TFL

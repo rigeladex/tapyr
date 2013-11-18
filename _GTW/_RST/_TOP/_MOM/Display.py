@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -35,7 +35,7 @@
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

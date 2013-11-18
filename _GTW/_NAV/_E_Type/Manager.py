@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -67,7 +67,7 @@
 #     2-Feb-2012 (CT) Robustify `_get_child` (`Manager`, `Manager_T_Archive`)
 #    26-Apr-2012 (CT) Redefine `Manager.template_iter` to also yield
 #                     `._admin...`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

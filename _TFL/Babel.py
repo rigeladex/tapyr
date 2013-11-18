@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #    17-Feb-2010 (CT) `compile` changed to use `__import__` instead of
 #                     `execfile`
 #    26-Feb-2010 (CT) `process_count` forced to `1`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL           import TFL

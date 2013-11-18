@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -66,7 +66,7 @@
 #    17-Sep-2013 (CT) Change signature of `order_by` to allow multiple arguments
 #     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
 #     9-Oct-2013 (CT) Use `adapt__bool__` (3-compatibility)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

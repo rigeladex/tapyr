@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #     3-Sep-2010 (CT) Creation
 #    28-Sep-2010 (CT) `__nonzero__` added
 #    22-Feb-2013 (CT) Add doc-tests
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

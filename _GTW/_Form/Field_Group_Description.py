@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #     3-May-2010 (MG) New form handling implemented
 #     6-May-2010 (MG) `widget` replace by `render_mode_description`
 #    29-Jun-2010 (MG) Legacy `widget` re-added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

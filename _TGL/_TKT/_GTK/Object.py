@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2008 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -54,7 +54,7 @@
 #    21-Jan-2006 (MG) Imports fixed
 #    22-Jan-2006 (MG) `Object`: optional parameter `wtk_object` added
 #    29-Aug-2008 (CT) s/super(...)/__m_super/
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                   import TFL

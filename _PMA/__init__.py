@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -42,7 +42,7 @@
 #                     `load_user_config` interface changed (`* config_fn`)
 #     9-Jul-2007 (CT) `text_output_width` added
 #    27-Dec-2010 (CT) `minor_version` version increased to 7
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace

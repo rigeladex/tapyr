@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2007 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2006-2007 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -29,7 +29,7 @@
 # Revision Dates
 #    29-May-2007 (MG) Creation
 #    15-Dec-2007 (MG) Missing import added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 #
 from   django.core.paginator      import ObjectPaginator

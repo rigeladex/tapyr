@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -47,7 +47,7 @@
 #    13-Jun-2013 (CT) Move `PNS_Aliases`, `PNS_Aliases_R` to `MOM.Entity`
 #    13-Jun-2013 (CT) Add `PNS_Set`
 #    23-Aug-2013 (CT) Add guard for `fqn != qn` to `add_type`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM                  import MOM

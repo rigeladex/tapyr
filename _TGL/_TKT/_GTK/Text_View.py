@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2007 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2007 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -30,7 +30,7 @@
 #     2-Apr-2005 (MG) `__init__` added
 #     5-Apr-2005 (MG) `Styler` and `background` property added
 #    14-Dec-2007 (MG) Import fixed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL.predicate            import dict_from_list

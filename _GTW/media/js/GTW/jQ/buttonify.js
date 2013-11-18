@@ -19,7 +19,7 @@
 //    15-Dec-2011 (CT) Use `UI_Icon_Map`, add `gtw_iconify`
 //    19-Mar-2012 (CT) Change `gtw_iconify` to use `.ui-state-default` in
 //                     parent of `.ui-icon`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

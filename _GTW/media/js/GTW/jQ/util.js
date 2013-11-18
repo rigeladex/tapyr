@@ -17,7 +17,7 @@
 //    27-Jul-2011 (CT) Creation
 //    18-Apr-2013 (CT) Add `alert` to `options.error`
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` in here
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #     8-Feb-2011 (CT) s/Required/Necessary/, s/Mandatory/Required/
 #    18-Mar-2011 (CT) `choices` changed to be `property`
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW               import GTW

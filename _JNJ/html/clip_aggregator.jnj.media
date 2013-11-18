@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #     2-Jan-2011 (CT) Creation
 #     5-Jan-2011 (CT) Bug fixes
 #    27-Oct-2011 (CT) Script and JS_On_Ready for `GTW_pixpander` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 style_sheet = Style_Sheet \

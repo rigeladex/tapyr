@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -31,7 +31,7 @@
 #     5-Apr-2005 (MG) `pixbuf` property added
 #     9-Apr-2005 (MG) Stock icon support added
 #    14-Aug-2005 (MG) `load` improved
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL._TKT._GTK         import GTK

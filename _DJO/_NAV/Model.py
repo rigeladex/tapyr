@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -71,7 +71,7 @@
 #    20-Aug-2009 (CT) `Admin.Completed` added
 #    21-Aug-2009 (MG) `Complete*` changed to used unbound nested form group
 #    21-Dec-2010 (CT) `h_title` removed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__               import with_statement

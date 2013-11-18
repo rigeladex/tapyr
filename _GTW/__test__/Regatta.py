@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    29-Mar-2012 (CT) Add test for cached role `regattas`
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = """

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -48,7 +48,7 @@
 #    27-May-2010 (MG) `Form_Errors._order` changed
 #     1-Jun-2010 (MG) `get_raw` `default` parameter added
 #    29-Jun-2010 (MG) `_Form_.inline_fields` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

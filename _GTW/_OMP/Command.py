@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -57,7 +57,8 @@
 #    14-Aug-2012 (MG) Add option `media_domain`
 #    23-Aug-2013 (CT) Replace `shell` otpion `echo`
 #                     * use new generic option `-Engine_Echo` instead
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL                   import CAL
@@ -129,7 +130,7 @@ class GTW_Command (MOM.Command) :
 
     _defaults               = dict \
         ( edit_session_ttl  = CAL.Date_Time_Delta (hours = 3)
-        , input_encoding    = "iso-8859-15"
+        , input_encoding    = "utf-8"
         , languages         = "en,de"
         , local_code        = "en_US"
         , media_domain      = None

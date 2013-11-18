@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -53,7 +53,7 @@
 #     7-May-2013 (CT) Add `Association`, `_import_association_cb`
 #     7-May-2013 (CT) Add `urls` to `include_links` of `Person`
 #    15-May-2013 (CT) Use `*_links` for `include_links`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

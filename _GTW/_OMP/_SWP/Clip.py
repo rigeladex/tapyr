@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    25-Jul-2013 (CT) Add import of `SWP.Object_PN`
 #    30-Oct-2013 (CT) Fix `Clip_O.left` to set `link_ref_attr_name`, not
 #                     `rev_ref_attr_name`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #     7-Nov-2007 (CT) `UI_State._real_name` added
 #    14-Dec-2007 (MG) Support for output redirection suppression added
 #    10-Nov-2009 (CT) `__hash__` added to silence `-3`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                   import TFL

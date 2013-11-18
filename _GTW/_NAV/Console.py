@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    11-Jan-2011 (CT) `rendered` changed to pass `handler` to `update_locals`
 #    11-Mar-2011 (CT) `rendered` changed to update `handler` in all calls
 #    27-Jan-2012 (CT) Use `console_context`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

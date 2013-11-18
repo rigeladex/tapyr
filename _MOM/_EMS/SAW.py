@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -37,7 +37,7 @@
 #     5-Aug-2013 (CT) Move `Q_Result` to `MOM.DBW.SAW.Session`;
 #                     use `.session.SCM_Change_Query`
 #     5-Aug-2013 (CT) Add `rollback_pending_change`, `save_point` --> session
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__          import division, print_function

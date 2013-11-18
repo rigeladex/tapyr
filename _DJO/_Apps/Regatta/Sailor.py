@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    11-Jun-2009 (CT) Use `name` for `Field_Group_Description` and reuse
 #                     `Field_Group_Descriptions` defined by `Person`
 #    14-Jul-2009 (CT) Use `Template` objects instead of strings
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _DJO                       import DJO
@@ -47,7 +47,7 @@ from   django.utils.translation   import gettext_lazy as _
 from   _DJO._Apps.Person.Person   import Person
 
 class Sailor (DJO.Model) :
-    """Modelliert die Person eines Seglers (oder Angehörigen eines Seglers)."""
+    """Modelliert die Person eines Seglers (oder AngehÃ¶rigen eines Seglers)."""
 
     class Meta :
         verbose_name        = _("Sailor")
@@ -65,7 +65,7 @@ class Sailor (DJO.Model) :
         , max_length   = 10
         )
     oesv_nr            = MF.Integer \
-        ( u"ÖSV-Nr."
+        ( u"Ã–SV-Nr."
         , blank        = True
         , null         = True
         , unique       = True

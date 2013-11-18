@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    17-Jul-2012 (CT) Augment `AttributeError` info in `attr_let`
 #    28-Sep-2012 (CT) Add `try` for `fmt % delta` to `time_block`
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL import TFL

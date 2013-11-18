@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -71,7 +71,7 @@
 #    23-Jan-2013 (MG) Use `last_change` instead of `max_cid` in some tests
 #    25-Feb-2013 (CT) Replace `up_ex_q.auto_up_depends` by `query_preconditions`
 #                     add tests for `up_ex_q`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals
@@ -96,7 +96,7 @@ Version = Product_Version \
     , major               = 0
     , minor               = 5
     , patchlevel          = 42
-    , author              = "Christian Tanzer, Martin Glück"
+    , author              = "Christian Tanzer, Martin GlÃ¼ck"
     , copyright_start     = 2009
     , db_version          = IV_Number
         ( "db_version"
@@ -565,7 +565,7 @@ BMT._Export ("*", "Version")
 
 NL = chr (10)
 
-### «text»
+### Â«textÂ»
 
 dt_form = \
 """

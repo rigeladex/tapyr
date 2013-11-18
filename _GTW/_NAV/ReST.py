@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -167,7 +167,7 @@
 #                     `name` from `info` if defined there
 #    17-Mar-2010 (CT) `Page_ReST_F.src_contents` changed to tolerate missing
 #                     source files (HTTP error 404 is way better than 500 :-)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__               import with_statement

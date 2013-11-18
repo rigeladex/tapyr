@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -73,7 +73,7 @@
 #    18-Aug-2010 (MG) `Collection_Inline.setup_javascript` removed
 #    18-Aug-2010 (MG) `Collection_Inline.linked_instances` fixed
 #    22-Sep-2011 (CT) s/Class/P_Type/ for _A_Id_Entity_ attributes
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                                 import TFL

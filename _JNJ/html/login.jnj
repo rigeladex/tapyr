@@ -34,7 +34,7 @@
 ##    16-Aug-2012 (MG) Use `form.login_inline`
 ##     9-Oct-2012 (CT) Pass `class` and `username` to `Form.login_inline`
 ##    14-Sep-2013 (MG) Fix import of `form.jnj` (missing `with context`)
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 

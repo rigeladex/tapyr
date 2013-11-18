@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -50,7 +50,7 @@
 #     2-May-2013 (CT) Convert `New_ID` to instance method,
 #                     use `settings ["hash_fct"]`, if any
 #     5-May-2013 (CT) Add change guard to `username.setter`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

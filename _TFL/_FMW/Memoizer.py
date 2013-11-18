@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #     5-Jun-2005 (CT) Creation
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    28-May-2013 (CT) Fix doc-test for print-function
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

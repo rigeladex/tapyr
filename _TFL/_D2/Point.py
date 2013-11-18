@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -48,7 +48,7 @@
 #     3-Sep-2012 (CT) Add `_Point_.free`
 #    19-Oct-2012 (RS) Fix multiplication by `Point (0, 0)` for `_R_Point_`
 #    19-Oct-2012 (RS) Fix `_R_Point_` arithmetics when `_scale` != (1, 1)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function

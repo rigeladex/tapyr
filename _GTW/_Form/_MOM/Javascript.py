@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2011 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #    23-Jun-2010 (MG) `Completer._send_result` changed to not send `_state_`
 #    24-Jun-2010 (CT) 3-compatibility
 #    11-Jan-2011 (CT) s/handler.json/handler.write_json/
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

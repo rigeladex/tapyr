@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -42,7 +42,7 @@
 #     9-Nov-2012 (CT) Fix typo in `Dir_Placer.add`
 #     6-Dec-2012 (CT) Allow anchor cycle in `Entity.anchor.setter`
 #     3-Jun-2013 (CT) Get attribute descriptors from `.attr_prop`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

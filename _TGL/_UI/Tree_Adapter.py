@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -48,7 +48,7 @@
 #    28-Dec-2005 (MG) `Column.Column_Widget` added and used
 #    09-Jan-2006 (MG) Class attribbute `default_get_fct` added and used
 #    10-Nov-2009 (CT) Import `callable` from `_TFL.predicate` to silence `-3`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL                import TGL

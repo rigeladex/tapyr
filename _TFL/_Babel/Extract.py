@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    24-Feb-2010 (MG) Duplicate message check added
 #    27-Feb-2010 (MG) Allow the extraction method to specify in which file
 #                     the translation was found
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 from   _TFL                          import TFL
 from   _TFL.predicate                import any_true

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -91,7 +91,7 @@
 #     6-Aug-2010 (MG) `M_Instance.scope` added
 #     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM               import MOM

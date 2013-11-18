@@ -29,7 +29,7 @@
 ##
 ## Revision Dates
 ##    15-Jan-2010 (MG) Creation
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 {%- import "html/form.jnj" as Form %}

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #                     `record_attr_change`
 #     8-Sep-2010 (CT) `M_Coll.__init__` changed to apply `_override` only once
 #     3-Jun-2013 (CT) Use `.attr_prop` to get attribute descriptors
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import absolute_import, division

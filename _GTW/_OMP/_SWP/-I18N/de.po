@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
@@ -74,7 +74,7 @@ msgstr[1] "Gallerien"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Gallery to which this picture belongs."
-msgstr "Gallerie, zu der das Bild gehört."
+msgstr "Gallerie, zu der das Bild gehÃ¶rt."
 
 #: _GTW/_OMP/_SWP/graph.py:64
 msgid "Graph displaying SWP partial object model"
@@ -86,7 +86,7 @@ msgid ""
 "HTML must not contain any of the tags:\n"
 "%s"
 msgstr ""
-"Der Text dark keines der nachfolgend aufgeführten HTML Kommandos "
+"Der Text dark keines der nachfolgend aufgefÃ¼hrten HTML Kommandos "
 "enthalten:\n"
 "%s"
 
@@ -109,7 +109,7 @@ msgstr "Kopfzeile der Webseite"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Height of picture."
-msgstr "Höhe des Bildes."
+msgstr "HÃ¶he des Bildes."
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Hidden"
@@ -117,15 +117,15 @@ msgstr "Verborgen"
 
 #: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Higher prio sorts before lower prio."
-msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
+msgstr "HÃ¶here PrioritÃ¤t wird vor niederer PrioritÃ¤t gereiht."
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Link to"
-msgstr "Verknüpfung zu"
+msgstr "VerknÃ¼pfung zu"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Markup format used for `text`"
-msgstr "Textauszeichnungsformat, das für den `text` verwendet wird"
+msgstr "Textauszeichnungsformat, das fÃ¼r den `text` verwendet wird"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Mixin with the attributes of `Page`."
@@ -157,18 +157,18 @@ msgstr "Jahresspezifische Webseite mit statischem Inhalt."
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Name used for perma-link."
-msgstr "Name, der für den Permalink verwendet wird."
+msgstr "Name, der fÃ¼r den Permalink verwendet wird."
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "News clip for a object."
-msgstr "Neuigkeitsschnipsel für ein Objekt."
+msgstr "Neuigkeitsschnipsel fÃ¼r ein Objekt."
 
 #: _GTW._OMP._SWP.Clip:0
 msgid ""
 "News clip for the front page of a website referring to an external web\n"
 "page."
 msgstr ""
-"Neuigkeitsschnipsel für die Startseite, das auf eine externe Webseite "
+"Neuigkeitsschnipsel fÃ¼r die Startseite, das auf eine externe Webseite "
 "verweist."
 
 #: _GTW._OMP._SWP.Picture:0
@@ -219,7 +219,7 @@ msgstr "Bild."
 
 #: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Prio"
-msgstr "Priorität"
+msgstr "PrioritÃ¤t"
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Publication (`start`) and expiration date (`finish`)"
@@ -247,13 +247,13 @@ msgstr "Kurztitel (wird in Navigation verwendet)."
 #: _GTW._OMP._SWP.Clip:0
 msgid "Text for news clip in markup specified by `format`."
 msgstr ""
-"Text für das Neuigkeitsschnipsel, im durch `format` angegebenen "
+"Text fÃ¼r das Neuigkeitsschnipsel, im durch `format` angegebenen "
 "Textauszeichnungsformat formatiert."
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
-"Text für die Webseite, im durch `format` angegebenen "
+"Text fÃ¼r die Webseite, im durch `format` angegebenen "
 "Textauszeichnungsformat formatiert."
 
 #: _GTW._OMP._SWP.Picture:0
@@ -279,8 +279,8 @@ msgstr "Titel der Webseite"
 #: _GTW._OMP._SWP.Clip:0
 msgid "Url of external web page providing information about this clip"
 msgstr ""
-"Adresse der externen Webseite, die Informationen über das "
-"Neuigkeitsschnipsel enthält"
+"Adresse der externen Webseite, die Informationen Ã¼ber das "
+"Neuigkeitsschnipsel enthÃ¤lt"
 
 #: _MOM._Attr.A_2D:0
 msgid "Value in x (horizontal) direction."

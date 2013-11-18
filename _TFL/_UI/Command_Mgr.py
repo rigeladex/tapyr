@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -182,7 +182,7 @@
 #    06-Aug-2007 (CED) Future import removed again
 #    10-Sep-2007 (DAL) Adapted doc-strings to coding guidelines
 #    22-Aug-2008 (CT)  Optional argument `force` added to `update_state`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function

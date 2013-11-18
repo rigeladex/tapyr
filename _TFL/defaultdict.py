@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    20-Mar-2013 (CT) Remove pre-2.5 support
 #    20-Mar-2013 (CT) Add `defaultdict_cb` and `defaultdict_int`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

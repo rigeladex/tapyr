@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -35,7 +35,7 @@
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #     7-Aug-2013 (CT) Set `_Interval_.is_partial` to `True`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

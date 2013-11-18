@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -30,7 +30,7 @@
 #     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
 #    14-Jun-2013 (CT) Use `dyn_doc_p` to `fix_doc`
 #    14-Jun-2013 (CT) Add `DET`, `DET_Base`, and `DET_Root`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

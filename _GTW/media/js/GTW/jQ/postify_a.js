@@ -23,7 +23,7 @@
 //    19-Apr-2012 (CT) If `"hidden_selector" in options` --> set `display` of
 //                     `this` to `"inherit"` to placate Chrome
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

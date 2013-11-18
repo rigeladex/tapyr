@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -42,7 +42,7 @@
 #    24-Aug-2012 (MG) Import for `fcntl` moved to `posix` part
 #     2-May-2013 (CT) Call `fchmod` to clear permissions for `group` and `other`
 #    14-Sep-2013 (MG) Move `fchmod` call to posix function
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

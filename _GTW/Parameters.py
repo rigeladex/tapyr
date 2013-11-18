@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #     8-Apr-2013 (CT) Add `Rule` and its children, `Rule_Definition`,
 #                     factor `_Parameter_`
 #    19-Sep-2013 (CT) Pass `AttributeError` to `TFL.Attr_Query`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

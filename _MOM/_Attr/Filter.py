@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -66,7 +66,7 @@
 #    19-Mar-2013 (CT) Add support for empty string to `_Id_Entity_.__call__`
 #    21-Mar-2013 (CT) Add `value` guard to `_Composite_.__call__._gen`
 #     7-Oct-2013 (CT) Set `Q.Ignore_Exception` to `AttributeError`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

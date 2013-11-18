@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #     5-Jan-2006 (CT) Creation
 #    10-Nov-2009 (CT) s/execfile/exec/ to avoid `-3` warning
 #    30-Jul-2010 (CT) Moved to `TFL`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _TGL import TGL

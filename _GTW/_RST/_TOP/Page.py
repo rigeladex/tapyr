@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -32,7 +32,7 @@
 #     8-Aug-2012 (MG) Fix `Alias.is_current_page`
 #    26-Sep-2012 (CT) Redefine `show_in_nav`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

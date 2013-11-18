@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #    15-Apr-2010 (CT) Creation
 #     9-Oct-2012 (CT) Add `_desc_`
 #    15-Jun-2013 (CT) Use `MOM.Derived_PNS`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW._OMP              import OMP

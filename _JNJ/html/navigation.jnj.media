@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #     7-Jan-2011 (CT) `level-<i>` removed
 #     7-Jan-2011 (CT) Rules for `current-link` and `current-section` changed
 #    21-Feb-2011 (CT) Use `Border`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 style_sheet = Style_Sheet \

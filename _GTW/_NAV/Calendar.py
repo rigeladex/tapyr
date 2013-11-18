@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -49,7 +49,7 @@
 #    14-Nov-2011 (CT) Factor `q_href`, `q_prefix`, and `qx_prefix` to
 #                     `GTW.NAV._Site_Entity_`
 #     2-Feb-2012 (CT) Don't pass `path/url` to `HTTP.Error_*`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL                     import CAL

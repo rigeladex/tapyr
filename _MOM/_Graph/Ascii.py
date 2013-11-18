@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -30,7 +30,7 @@
 #    26-Aug-2012 (CT) Add `Canvas.line`, `Ascii.render_link`
 #     5-Sep-2012 (CT) Add `_clean_rendered`
 #    26-Sep-2012 (CT) Remove `_clean_rendered` (fix `_Renderer_.transform`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

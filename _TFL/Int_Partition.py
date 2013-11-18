@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    30-Apr-2009 (CT) Refactored to remove redundancy and improve caching
 #    30-Apr-2009 (CT) Bug fixed following advice of Daniel Albeseder
 #    30-Apr-2009 (CT) Tests for values of partition function added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -306,7 +306,8 @@
 #                     ditto for some other defaults
 #    20-Jun-2012 (CT) Restrain `__repr__`, remove `__str__`, add `formatted`
 #     6-Jul-2012 (CT) Use `SMTP_Logger`, not `print`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW
@@ -1245,7 +1246,7 @@ class Root (_Dir_) :
     copyright_url              = None
     Create_Scope               = None
     DEBUG                      = False
-    input_encoding             = "iso-8859-15"
+    input_encoding             = "utf-8"
     language                   = "en"
     Media_Parameters           = None
     name                       = "/"

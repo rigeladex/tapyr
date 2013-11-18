@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -54,7 +54,7 @@
 #    25-Aug-2013 (CT) Increase `change_count` for `commit` and `rollback` to
 #                     invalidate `q_cache`
 #    29-Aug-2013 (CT) Pass `force=True` to `seq.reserve` (`Session_PC.consume`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__      import division, print_function

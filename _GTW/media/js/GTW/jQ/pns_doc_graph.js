@@ -17,7 +17,7 @@
 // Revision Dates
 //    25-Sep-2012 (CT) Creation
 //    26-Sep-2012 (CT) Use `.click` not `.on` to bind `cb_click_node`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 ;

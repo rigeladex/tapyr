@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -23,12 +23,12 @@
 #    Generate_POT_Files
 #
 # Purpose
-#    «text»···
+#    Â«textÂ»Â·Â·Â·
 #
 # Revision Dates
 #    28-Oct-2009 (MG) Creation
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 """This is the module doc string which, as a test is long enough to span at
    least two lines in the source file.

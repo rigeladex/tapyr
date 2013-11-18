@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -23,14 +23,15 @@
 #    TFL.Babel.Extractor
 #
 # Purpose
-#    «text»···
+#    Â«textÂ»Â·Â·Â·
 #
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
 #    24-Feb-2010 (MG) Duplicate check moved one level up
 #    27-Feb-2010 (MG) Support for different file name added
 #    30-Nov-2010 (CT) s/save_eval/safe_eval/ and added `strip`-calls
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 from   _TFL                    import TFL
 import _TFL.I18N
@@ -45,7 +46,7 @@ def Python (fobj, keywords, comment_tags, config, method) :
          only new translation keys will be added to the new catalog.
     """
     encoding = parse_encoding (fobj) or config.get \
-        ("encoding", method, default = "iso-8859-1")
+        ("encoding", method, default = "utf-8")
     add_doc_strings = config.get ("add_doc_strings", method, "") == "True"
 
     ### now that we know that we have to parse this file, lets start

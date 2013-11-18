@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     4-Sep-2012 (CT) Fix bugs, factor functions, add optional fields
 #    29-Mar-2013 (CT) Add meta class `M_Entry` to set `Kind`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__        import with_statement

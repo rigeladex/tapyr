@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 # Revision Dates
 #    22-Mar-1998 (CT) Creation
 #     7-Nov-2007 (CT) Moved into package _TFL._TKT._Tk
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 ### I wrote this before really understanding how Python modules and packages

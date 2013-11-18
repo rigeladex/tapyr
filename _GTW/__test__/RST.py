@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -56,7 +56,7 @@
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    29-Jul-2013 (CT) Add `test_put`
 #     4-Oct-2013 (CT) Add test for query argument `fields`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -128,7 +128,7 @@ _Command_RAT_ = _GTW_Test_Command_RAT_ # end class
 Scaffold      = _Command_     ()
 Scaffold_RAT  = _Command_RAT_ ()
 
-### «text» ### The doctest follows::
+### Â«textÂ» ### The doctest follows::
 
 _test_client = r"""
     >>> server = run_server (%(p1)s, %(n1)s)

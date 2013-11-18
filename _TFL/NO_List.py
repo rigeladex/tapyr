@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -49,7 +49,7 @@
 #     9-Sep-2010 (MG) `M_Name_Dict`, `Name_Dict` changed to allow overriding
 #                     the `key_attr_name`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                 import TFL

@@ -112,7 +112,7 @@
 //    13-Nov-2012 (CT) Add `_display_error_extra_links`
 //    13-Dec-2012 (CT) Add missing `else` to `setup_completer._put`
 //    26-Jan-2013 (MG) Move `pre_submit_callbacks` into `Form` object and
-//                     change `_setup_field´ to accept the `Form` object as
+//                     change `_setup_fieldÅ½ to accept the `Form` object as
 //                     parameter
 //     5-Apr-2013 (CT) Add gtw-specific prefix to .`data` keys
 //    18-Apr-2013 (CT) Use `alert`, not `console.error`
@@ -124,7 +124,7 @@
 //     7-May-2013 (CT) Remove `:readonly` fields from `focusables`
 //     7-May-2013 (CT) Don't call `_setup_efs_selector` for `readonly` fields
 //    23-May-2013 (CT) Disable `Reset` for `Entity` (removes `prefill` values)
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

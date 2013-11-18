@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -39,7 +39,7 @@
 #    10-Aug-2005 (CT) `show_menubar` and `show_toolbar` considered
 #    12-Aug-2005 (MG) `TGL.TKT.GTK.Application` factored
 #     2-Jan-2006 (CT) `context_menus` and `event_binders` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                 import TFL

@@ -30,7 +30,7 @@
 #    28-Feb-2012 (CT) Add `ReST`, turn `dirs` into an optional argument
 #    11-May-2012 (CT) Rename to babel.sh, add `compile` command
 #    23-May-2012 (CT) Use `python`, not `/usr/bin/python` in `compile`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 cmd=${1:?"Specify a command: extract | language | compile"}; shift

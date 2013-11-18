@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #     6-Oct-2004 (CT) `-basenames` and `-lstrip` added
 #    14-Feb-2006 (CT) Moved into package `TFL`
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

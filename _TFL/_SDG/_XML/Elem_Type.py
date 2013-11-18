@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #    26-Feb-2012 (MG) `__future__` imports added
 #    27-Aug-2012 (CT) Add `init_arg_defaults` as argument
 #    29-Aug-2012 (CT) Add `_autoconvert` as argument
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """Usage example:
@@ -51,7 +51,7 @@
    >>> d.add (X ("A bar-less X", bar = None))
    >>> d.add (Y (baz = None, x_attrs = dict (qux = 84, quy = 85)))
    >>> d.write_to_xml_stream ()
-   <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+   <?xml version="1.0" encoding="utf-8" standalone="yes"?>
    <Test>
      Test for TFL.SDG.XML.Elem_Type creation and use
      <X bar="42" baz="quuux" foo="wibble">

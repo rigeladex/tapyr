@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2007 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2007 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -44,7 +44,7 @@
 #    27-Jul-2005 (MG) `CI_Event_Binder.add_widget` type corrected
 #    12-Aug-2005 (MG) `CI_Event_Binder.__init__`: allow ** kw
 #    14-Dec-2007 (MG) Name added to groupds and seperator
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 from   _TFL.predicate       import dict_from_list
 from   _TGL                 import TGL

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -59,7 +59,7 @@
 #    30-May-2012 (CT) Change `href_register` to honor `is_cancelled`
 #    18-Jun-2012 (CT) Rename `email` to `email_from`
 #    13-May-2013 (CT) Use `query`, not `r_query`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, unicode_literals

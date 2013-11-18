@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -38,7 +38,8 @@
 #    29-Nov-2007 (CT) Another doctest with over-long attributes added
 #    29-Aug-2008 (CT) Import for `Elem_Type` added to fix doctest
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -66,7 +67,7 @@ class Document (TFL.SDG.XML.Node) :
        ...              )
        >>> lines = list (d.formatted ("xml_format"))
        >>> print (nl.join (lines))
-       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+       <?xml version="1.0" encoding="utf-8" standalone="yes"?>
        <!DOCTYPE memo >
        <!-- Just a test -->
        <Memo>
@@ -82,7 +83,7 @@ class Document (TFL.SDG.XML.Node) :
        ...              , description = "Just a test"
        ...              )
        >>> print (nl.join (d.formatted ("xml_format")))
-       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+       <?xml version="1.0" encoding="utf-8" standalone="yes"?>
        <!DOCTYPE memo SYSTEM "memo.dtd">
        <!-- Just a test -->
        <Memo>
@@ -121,7 +122,7 @@ class Document (TFL.SDG.XML.Node) :
        ...         }
        >>> d = Document (TFL.SDG.XML.Element ("fx:FIBEX", x_attrs = attrs ))
        >>> print (nl.join (d.formatted ("xml_format")))
-       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+       <?xml version="1.0" encoding="utf-8" standalone="yes"?>
        <fx:FIBEX VERSION="1.0.0a"
                  xmlns:flexray="http://www.asam.net/xml/fbx/flexray"
                  xmlns:fx="http://www.asam.net/xml/fbx"
@@ -143,7 +144,7 @@ class Document (TFL.SDG.XML.Node) :
        >>> root.add (child)
        >>> d = Document (root)
        >>> d.write_to_xml_stream ()
-       <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+       <?xml version="1.0" encoding="utf-8" standalone="yes"?>
        <foo xmlns="http://foo/bar">
          <bar baz1="This really is the value of baz1"
               baz2="This really is the value of baz2"
@@ -156,7 +157,7 @@ class Document (TFL.SDG.XML.Node) :
     front_args           = ("root_element", )
     init_arg_defaults    = dict \
         ( doctype        = None
-        , encoding       = "iso-8859-15"
+        , encoding       = "utf-8"
         , root_element   = None
         , standalone     = "yes"
         , xml_version    = 1.0

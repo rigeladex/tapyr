@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstrasse 7, A 1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstrasse 7, A 1040 Wien, Austria. office@tttech.com
 #
 #++
 # Name
@@ -26,7 +26,7 @@
 #    19-Jul-2006 (MZO) [18758] `new_menubar` implemented
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 

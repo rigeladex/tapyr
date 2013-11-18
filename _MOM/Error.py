@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -86,7 +86,7 @@
 #     6-May-2013 (CT) Change `Error.as_unicode` to use `__doc__`, unless `.args`
 #    11-Jun-2013 (CT) Add guard to `Attribute.bindings`
 #    21-Aug-2013 (CT) Guard `is_required` in `Attribute_Syntax.__init__`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,8 @@
 #                      values should *not* be wrapped)
 #    26-Feb-2012 (MG) `__future__` imports added
 #    27-Aug-2012 (CT) Add and use `attr_name_translate`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -61,7 +62,7 @@ class _XML_Node_ (TFL.SDG.Node) :
     attr_names           = ()
     attr_name_translate  = {}
     base_indent          = "  "
-    enconding            = "iso-8859-15"
+    encoding             = "utf-8"
     init_arg_defaults    = dict \
         ( description    = None
         ,

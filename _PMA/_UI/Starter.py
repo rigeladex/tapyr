@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    23-Jan-2006 (MG) `HILD` interface added
 #    23-Jan-2006 (MG) `implicit_imports` fixed
 #    14-Dec-2007 (MG) `Suppress_Redirect` option added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                   import TFL

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -44,7 +44,7 @@
 #    15-Dec-2010 (CT) `_Reset_Password_Mixin_._validate` fixed
 #    15-Dec-2010 (CT) Specify `GTW.Form.Widget_Spec` for "html/field.jnj, email"
 #     5-Jan-2013 (CT) Adapt to change of `password_hash`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__         import unicode_literals

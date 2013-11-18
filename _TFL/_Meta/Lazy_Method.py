@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -41,7 +41,7 @@
 #    28-Feb-2007 (CED) `self.result` also has to be per instance of course
 #    29-Aug-2008 (CT)  s/super(...)/__super/
 #     3-Feb-2009 (CT)  Documentation improved
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function

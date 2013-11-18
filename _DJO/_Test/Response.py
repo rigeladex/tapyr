@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@smangari.org
 # ****************************************************************************
 #
@@ -29,7 +29,7 @@
 #     7-Oct-2008 (MG) Creation
 #    10-Oct-2008 (MG) `check_form_errors` added
 #    02-Jun-2009 (MG) `__str__` and `__unicode__` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                   import TFL

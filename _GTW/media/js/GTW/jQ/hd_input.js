@@ -18,7 +18,7 @@
 //     7-Dec-2011 (CT) Change plugin name to `gtw_hd_input`
 //     7-Mar-2012 (CT) Add `hidden`, set `disabled` of `hidden` to `false`, too
 //    10-Apr-2013 (CT) Add and use `closing_flag`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -33,7 +33,7 @@
 #     4-Sep-2005 (CT) `reduce` monstrosity replaced by call to `any_true_p`
 #     4-Sep-2005 (CT) `run` streamlined
 #     5-Sep-2005 (MG) `overwrite_warning` removed from `Folder_Create_Dialog`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL._TKT._GTK         import GTK

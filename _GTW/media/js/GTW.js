@@ -1,4 +1,4 @@
-//-*- coding: iso-8859-1 -*-
+//-*- coding: utf-8 -*-
 // Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
@@ -22,7 +22,7 @@
 //    26-Jan-2011 (CT) `update_proto` factored, `update` added
 //    27-Jan-2011 (CT) `Module` added and used for `$GTW`
 //    27-Jan-2011 (CT) Argument `meta` added to `extend`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 var $GTW;

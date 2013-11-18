@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1999-2003 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -65,7 +65,7 @@
 #    25-May-2004 (RMA) Fixed itemize_txt
 #    15-Feb-2005 (MG)  Use `isinstance` instead of `type`
 #    15-Feb-2005 (MG) `isinstance (<>, str)`
-#    ««revision-date»»
+#    Â«Â«revision-dateÂ»Â»
 #--
 
 

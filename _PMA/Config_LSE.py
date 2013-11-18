@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -28,7 +28,7 @@
 # Revision Dates
 #    17-Aug-2005 (CT) Creation (factored from `~tanzer/PMA/.config.py`)
 #    27-Mar-2013 (CT) Add `%(receiver)s`, `%(subject)s`, `formatted_replacers`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _PMA                    import PMA
@@ -45,12 +45,12 @@ PMA.Composer.editor           = "emacsclient --alternate-editor vi"
 PMA.Composer.formatted_replacers.add \
     ( Re_Replacer
         ( u"""^Subject: *$"""
-        , u"""Subject:     «text»"""
+        , u"""Subject:     Â«textÂ»"""
         , re.IGNORECASE | re.MULTILINE
         )
     , Re_Replacer
         ( u"""^To: *$"""
-        , u"""To:          «text»"""
+        , u"""To:          Â«textÂ»"""
         , re.IGNORECASE | re.MULTILINE
         )
     )
@@ -62,11 +62,11 @@ PMA.Composer.compose_format   = "\n".join \
       , """Bcc:         %(email_address)s"""
       , """Reply-to:    %(email_address)s"""
       , """X-mailer:    PMA %(version)s"""
-      , """««mail-cc»»"""
-      , """««mail-bcc»»"""
+      , """Â«Â«mail-ccÂ»Â»"""
+      , """Â«Â«mail-bccÂ»Â»"""
       , """%(body_marker)s"""
       , ""
-      , """««text»»"""
+      , """Â«Â«textÂ»Â»"""
       , ""
       )
     )
@@ -77,12 +77,12 @@ PMA.Composer.forward_format   = "\n".join \
       , """Subject:     FW: %(subject)s"""
       , """Bcc:         %(email_address)s"""
       , """X-mailer:    PMA %(version)s"""
-      , """««mail-cc»»"""
-      , """««mail-bcc»»"""
+      , """Â«Â«mail-ccÂ»Â»"""
+      , """Â«Â«mail-bccÂ»Â»"""
       , """%(body_marker)s"""
       , ""
       , """see attached mail"""
-      , """««text»»"""
+      , """Â«Â«textÂ»Â»"""
       , ""
       )
     )
@@ -93,16 +93,16 @@ PMA.Composer.reply_format     = "\n".join \
       , """Subject:     Re: %(subject)s"""
       , """Bcc:         %(email_address)s"""
       , """X-mailer:    PMA %(version)s"""
-      , """««mail-cc»»"""
-      , """««mail-bcc»»"""
+      , """Â«Â«mail-ccÂ»Â»"""
+      , """Â«Â«mail-bccÂ»Â»"""
       , """In-reply-to: Your message of "%(message_date)s" """
       , """             %(message_id)s"""
       , """References:  %(message_id)s"""
       , """Reply-to:    %(email_address)s"""
       , """%(body_marker)s"""
-      , """««text»»%(sender_name)s wrote at %(message_date)s:"""
+      , """Â«Â«textÂ»Â»%(sender_name)s wrote at %(message_date)s:"""
       , ""
-      , """««text»»"""
+      , """Â«Â«textÂ»Â»"""
       , ""
       )
     )
@@ -116,8 +116,8 @@ PMA.Composer.reply_all_format = "\n".join \
 PMA.Composer.resend_format    = "\n".join \
     ( ( """From:        %(email_address)s"""
       , """To:          %(receiver)s"""
-      , """««mail-cc»»"""
-      , """««mail-bcc»»"""
+      , """Â«Â«mail-ccÂ»Â»"""
+      , """Â«Â«mail-bccÂ»Â»"""
       )
     )
 

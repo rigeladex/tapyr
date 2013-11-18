@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2012 Mag. Christian Tanzer. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,7 +37,7 @@
 #    20-Sep-2012 (RS) Add `Arrow_Head_Bar`
 #    26-Sep-2012 (CT) Add `klass` to `Root`
 #    27-Sep-2012 (CT) Add `preserve_aspect_ratio` to `Root`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """
@@ -64,7 +64,7 @@
     ...   points="350,75  379,161 469,161 397,215 423,301 350,250 277,301 "
     ...   "303,215 231,161 321,161"))
     >>> svg.write_to_xml_stream ()
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -166,7 +166,7 @@ class _SVG_Document_ (TFL.SDG.XML.Document) :
 
     >>> svg = Document (Root ())
     >>> svg.write_to_xml_stream ()
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -177,7 +177,7 @@ class _SVG_Document_ (TFL.SDG.XML.Document) :
     >>> svg = Document (
     ...     Root (view_box="10 60 450 260", width="100%", height="100%"))
     >>> svg.write_to_xml_stream (output_width = 65)
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -459,7 +459,7 @@ def Arrow_Head (cls, elid = "SVG:Arrow_Head", design_size = 10, ref_x = None, st
     >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head)", d = "M 100 200 L 500 200 900 400"))
     >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head)", d = "M 100 100 L 500 100 900 50"))
     >>> svg.write_to_xml_stream ()
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -527,7 +527,7 @@ def Arrow_Head_A (cls, elid = "SVG:Arrow_Head_A", design_size = 12, ref_x = None
     >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head_A)", d = "M 100 200 L 500 200 900 400"))
     >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head_A)", d = "M 100 100 L 500 100 900 50"))
     >>> svg.write_to_xml_stream ()
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -630,7 +630,7 @@ def Arrow_Head_Bar (cls, elid = "SVG:Arrow_Head_Bar", design_size = 70, fill = "
     >>> svg.add (Path (fill = "none", stroke = "red", stroke_width = 25, marker_end = "url(#SVG:Arrow_Head_Bar)", d = "M 100 200 L 500 200 900 400"))
     >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Arrow_Head_Bar)", d = "M 100 100 L 500 100 900 50"))
     >>> svg.write_to_xml_stream ()
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -747,7 +747,7 @@ def Plug (cls, elid = "SVG:Plug", size = 2, stroke = "black", marker_height = 3,
     >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width =10, marker_start = "url(#SVG:Plug)", d = "M 100 100 L 500 100 900 50"))
     >>> svg.add (Path (fill = "none", stroke = "blue", stroke_width = 2, marker_start = "url(#SVG:Plug)", d = "M 100 150 L 200 150 400 100"))
     >>> svg.write_to_xml_stream ()
-    <?xml version="1.0" encoding="iso-8859-15" standalone="yes"?>
+    <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <!DOCTYPE svg PUBLIC
         "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">

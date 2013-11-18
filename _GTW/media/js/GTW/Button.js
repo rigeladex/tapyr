@@ -29,7 +29,7 @@
 ** Revision Dates
 **     9-May-2010 (MG) Creation
 **    16-Jun-2010 (MG) Support for non icon buttons
-**    ««revision-date»»···
+**    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 **--
 */
 (function ($)

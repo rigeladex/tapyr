@@ -29,7 +29,7 @@
 ## Revision Dates
 ##    15-Jan-2010 (MG) Creation
 ##    26-May-2010 (MG) Link to next error added
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 {%- macro error_list (error_list, nid = None) -%}

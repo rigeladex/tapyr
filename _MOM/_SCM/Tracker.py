@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    16-Dec-2009 (CT) `nested_recorder` changed to yield change object, if any
 #     8-Feb-2010 (CT) `snapshot` removed
 #    28-Sep-2010 (CT) `temp_recorder` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM          import MOM

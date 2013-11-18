@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -180,7 +180,8 @@
 #     2-Jun-2012 (CT) Add `DJO` to `context` in `from_nav_list_file`
 #    24-May-2013 (CT) Add `auth_required`, `cutoff_date`; consider in `hidden`
 #     8-Oct-2013 (CT) Robustify `date_dt`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _DJO                     import DJO
@@ -234,7 +235,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     desc            = ""
     href            = ""
-    input_encoding  = "iso-8859-15"
+    input_encoding  = "utf-8"
     nick            = ""
     title           = ""
     top             = None

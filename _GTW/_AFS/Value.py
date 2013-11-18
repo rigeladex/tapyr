@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -49,7 +49,7 @@
 #    27-Apr-2012 (CT) Factor `record_errors`, change apply to
 #                     `e.errors.append (exc)` if necessary
 #     4-May-2013 (CT) Change `apply` to save `entity_values`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals, absolute_import

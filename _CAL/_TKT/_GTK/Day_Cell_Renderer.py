@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -23,11 +23,11 @@
 #    CAL.TKT.GTK.Day_Cell_Renderer
 #
 # Purpose
-#    «text»···
+#    Â«textÂ»Â·Â·Â·
 #
 # Revision Dates
 #    17-Jun-2005 (MG) Creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL                   import CAL

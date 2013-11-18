@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    21-Jun-2013 (CT) Fix `SAW` entries of `Map` (DB-specific packages)
 #     7-Jul-2013 (CT) Add `EMS.SAW`
 #    23-Aug-2013 (CT) Remove `SAS` backends
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

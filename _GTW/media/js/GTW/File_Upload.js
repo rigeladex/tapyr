@@ -27,7 +27,7 @@
 **
 ** Revision Dates
 **    24-Jun-2010 (MG) Creation
-**    ««revision-date»»···
+**    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 **--
 */
 

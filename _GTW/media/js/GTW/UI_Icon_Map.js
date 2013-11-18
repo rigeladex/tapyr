@@ -19,7 +19,7 @@
 //    29-Feb-2012 (CT) Add `COPY`, `DELETE`, `EDIT`, and `RESET`
 //     5-Mar-2012 (CT) Add `HELP`, `INFO`, `REFRESH`, and `SELECT`,
 //                     change icons of `CONFIG` and `RESET`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

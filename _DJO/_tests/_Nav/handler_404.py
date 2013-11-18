@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 from django.template           import Context, RequestContext, loader
 from django                    import http
 from _DJO.Navigation           import Root

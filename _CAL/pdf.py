@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -50,7 +50,7 @@
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
 #     5-Feb-2011 (CT) `PDF_Plan_Year` added
 #    12-Feb-2013 (CT) Change `PDF_Plan_Month.one_day` to show single appointment
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL           import TFL
@@ -209,7 +209,7 @@ class PDF_Plan (PDF_P) :
     # end def seq_generator
 
     def _cooked (self, text) :
-        return unicode (text, "iso-8859-1", "replace")
+        return unicode (text, "utf-8", "replace")
     # end def _cooked
 
 # end class PDF_Plan

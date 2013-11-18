@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -37,7 +37,7 @@
 #                     to add the `JNJ.Environment.Default_Extensions` to the
 #                     environment
 #    26-Nov-2010 (CT) Import for `get_spontaneous_environment` fixed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   jinja2              import ext

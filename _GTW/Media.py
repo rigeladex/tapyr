@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -54,7 +54,7 @@
 #    14-Aug-2012 (MG) Add support for domains
 #     4-Dec-2012 (MG) Fix media `Domain` handling
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                               import TFL

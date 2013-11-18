@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -102,7 +102,7 @@
 #     3-Jun-2013 (CT) Add `role_name` to aliases of `attributes` dictionary
 #    12-Jun-2013 (CT) Add `None` guard to `_m_init_prop_specs`
 #    12-Jun-2013 (CT) Add argument `app_type` to `m_setup_names`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM                  import MOM

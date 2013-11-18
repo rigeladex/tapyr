@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
@@ -63,19 +63,19 @@ msgstr[1] "Firmen"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company linked to Address"
-msgstr "Mit der Adresse verknüpfte Firma"
+msgstr "Mit der Adresse verknÃ¼pfte Firma"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company linked to Email"
-msgstr "Mit der Emailadresse verknüpfte Firma"
+msgstr "Mit der Emailadresse verknÃ¼pfte Firma"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company linked to Phone"
-msgstr "Mit der Telefonnummer verknüpfte Firma"
+msgstr "Mit der Telefonnummer verknÃ¼pfte Firma"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company linked to Url"
-msgstr "Mit der Webadresse verknüpfte Firma"
+msgstr "Mit der Webadresse verknÃ¼pfte Firma"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company_has_Address"
@@ -107,7 +107,7 @@ msgstr "Land"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Country code"
-msgstr "Ländervorwahl"
+msgstr "LÃ¤ndervorwahl"
 
 #: _GTW._OMP._PAP.Subject:0
 msgid "Date of birth [`start`] (and death [`finish`])"
@@ -155,7 +155,7 @@ msgstr "Geographische Breite"
 
 #: _MOM._Attr.Position:0
 msgid "Geographical longitude"
-msgstr "Geographische Länge"
+msgstr "Geographische LÃ¤nge"
 
 #: _GTW._OMP._PAP.Address_Position:0
 msgid "Geographical position"
@@ -171,11 +171,11 @@ msgstr "Graphische Darstellung des PAP Modells"
 
 #: _MOM._Attr.Position:0
 msgid "Height"
-msgstr "Höhe"
+msgstr "HÃ¶he"
 
 #: _MOM._Attr.Position:0
 msgid "Height above mean sea level"
-msgstr "Höhe über dem Meererspiegel"
+msgstr "HÃ¶he Ã¼ber dem Meererspiegel"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "International country code of phone number (without prefix)"
@@ -209,43 +209,43 @@ msgstr "Lebenszeit"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a company to a address"
-msgstr "Verknüpfe Firma mit Postanschrift"
+msgstr "VerknÃ¼pfe Firma mit Postanschrift"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a company to a email"
-msgstr "Verknüpfe Firma mit Emailadresse"
+msgstr "VerknÃ¼pfe Firma mit Emailadresse"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a company to a phone number"
-msgstr "Verknüpfe Firma mit Telefonnummer"
+msgstr "VerknÃ¼pfe Firma mit Telefonnummer"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a company to a url"
-msgstr "Verknüpfe Firma mit Webadresse"
+msgstr "VerknÃ¼pfe Firma mit Webadresse"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a person to a address"
-msgstr "Verknüpfe Person mit Postanschrift"
+msgstr "VerknÃ¼pfe Person mit Postanschrift"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a person to a email"
-msgstr "Verknüpfe Person mit Emailadresse"
+msgstr "VerknÃ¼pfe Person mit Emailadresse"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a person to a phone number"
-msgstr "Verknüpfe Person mit Telefonnummer"
+msgstr "VerknÃ¼pfe Person mit Telefonnummer"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Link a person to a url"
-msgstr "Verknüpfe Person mit Webadresse"
+msgstr "VerknÃ¼pfe Person mit Webadresse"
 
 #: _MOM._Attr.Position:0
 msgid "Longitude"
-msgstr "Länge"
+msgstr "LÃ¤nge"
 
 #: _GTW/_OMP/_PAP/Attr_Type.py:53
 msgid "Male"
-msgstr "Männlich"
+msgstr "MÃ¤nnlich"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Middle name"
@@ -297,7 +297,7 @@ msgstr "Nummer"
 
 #: _GTW/_OMP/_PAP/Property.py:63
 msgid "Office"
-msgstr "Büro"
+msgstr "BÃ¼ro"
 
 #: _GTW/_OMP/_PAP/graph.py:95
 msgid "PAP graph"
@@ -311,19 +311,19 @@ msgstr[1] "Personen"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person linked to Address"
-msgstr "Mit Adresse verknüpfte Person"
+msgstr "Mit Adresse verknÃ¼pfte Person"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person linked to Email"
-msgstr "Mit Emailadresse verknüpfte Person"
+msgstr "Mit Emailadresse verknÃ¼pfte Person"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person linked to Phone"
-msgstr "Mit Telefonnummer verknüpfte Person"
+msgstr "Mit Telefonnummer verknÃ¼pfte Person"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person linked to Url"
-msgstr "Mit Webadresse verknüpfte Person"
+msgstr "Mit Webadresse verknÃ¼pfte Person"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person_has_Address"
@@ -431,7 +431,7 @@ msgstr "Kurze Beschreibung der Emailadresse"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Short description of the link"
-msgstr "Kurze Beschreibung der Verknüpfung"
+msgstr "Kurze Beschreibung der VerknÃ¼pfung"
 
 #: _GTW._OMP._PAP.Phone:0
 msgid "Short description of the phone"
@@ -477,23 +477,23 @@ msgstr[1] ""
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Address"
-msgstr "Mit Adresse verknüpftes Subjekt"
+msgstr "Mit Adresse verknÃ¼pftes Subjekt"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Email"
-msgstr "Mit Emailadresse verknüpftes Subjekt"
+msgstr "Mit Emailadresse verknÃ¼pftes Subjekt"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Phone"
-msgstr "Mit Telefonnummer verknüpftes Subjekt"
+msgstr "Mit Telefonnummer verknÃ¼pftes Subjekt"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Property"
-msgstr "Mit Merkmal verknüpftes Subjekt"
+msgstr "Mit Merkmal verknÃ¼pftes Subjekt"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Url"
-msgstr "Mit Webadresse verknüpftes Subjekt"
+msgstr "Mit Webadresse verknÃ¼pftes Subjekt"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject_has_Address"

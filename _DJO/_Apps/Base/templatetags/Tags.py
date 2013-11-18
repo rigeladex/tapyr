@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2006-2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -49,7 +49,7 @@
 #    17-Feb-2008 (MG) `token_parse` Parameter `remove_quotes` added
 #    17-Feb-2008 (MG) `menublock` tag changed to `menuitem`
 #    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   django                      import template

@@ -52,7 +52,7 @@
 //                     fix `attr_select.prefill` call of `toggle` (`af.label`)
 //    11-Apr-2013 (CT) Add polymorphic attributes to attribute filter menu
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

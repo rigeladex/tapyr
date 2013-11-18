@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #    21-Jan-2010 (MG) Creation
 #    30-Jan-2010 (MG) `get_list`: `combine_default` added
 #    15-Apr-2012 (CT) Fix doctests
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL

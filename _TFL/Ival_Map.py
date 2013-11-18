@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    24-Apr-2009 (CT) `index` factored (and changed to use `bisect`)
 #    24-Apr-2009 (CT) `keys`  added
 #    11-Jun-2009 (CT) s/bisect_left/bisect_right/
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

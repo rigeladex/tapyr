@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -67,7 +67,7 @@
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    29-Jan-2013 (CT) Adapt doctest to new option `Pdb_on_Exception`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL              import TFL
@@ -289,7 +289,7 @@ class ATS (EU_Currency) :
 
     to_euro_factor = 13.7603
     name           = "ATS"
-    sloppy_name    = u"öS"
+    sloppy_name    = u"Ã¶S"
     decimal_sign   = ","
     sep_1000       = "."
 
@@ -512,18 +512,18 @@ introduction of the Euro.
     >>> for C in EU_Currency.extension :
     ...   pyk.fprint ("100 %s = %10s" % (C.name, C (100)))
     ...
-    100 ATS =  100,00 öS
-    100 BEF =   34,11 öS
-    100 DEM =  703,55 öS
-    100 ESP =    8,27 öS
-    100 EUR = 1376,03 öS
-    100 FIM =  231,43 öS
-    100 FRF =  209,77 öS
-    100 IEP = 1747,20 öS
-    100 ITL =    0,71 öS
-    100 LUF =   34,11 öS
-    100 NLG =  624,42 öS
-    100 PTE =    6,86 öS
+    100 ATS =  100,00 Ã¶S
+    100 BEF =   34,11 Ã¶S
+    100 DEM =  703,55 Ã¶S
+    100 ESP =    8,27 Ã¶S
+    100 EUR = 1376,03 Ã¶S
+    100 FIM =  231,43 Ã¶S
+    100 FRF =  209,77 Ã¶S
+    100 IEP = 1747,20 Ã¶S
+    100 ITL =    0,71 Ã¶S
+    100 LUF =   34,11 Ã¶S
+    100 NLG =  624,42 Ã¶S
+    100 PTE =    6,86 Ã¶S
 
     >>> EU_Currency.set_target_currency (EU_Currency)
     >>> for C in EU_Currency.extension :

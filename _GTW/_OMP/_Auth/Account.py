@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
@@ -69,7 +69,7 @@
 #    26-May-2013 (CT) Add `Account_Manager.apply_migration`, `.migration`
 #    27-May-2013 (CT) Make `create_new_account_x` argument `password` optional
 #     5-Jun-2013 (CT) Set `password.q_able` to `False`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__             import unicode_literals

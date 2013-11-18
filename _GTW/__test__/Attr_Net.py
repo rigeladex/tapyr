@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
@@ -43,7 +43,7 @@
 #     7-Mar-2013 (RS) Test `CONTAINS`
 #     6-Aug-2013 (CT) Adapt to major surgery of GTW.OMP.NET.Attr_Type
 #    18-Aug-2013 (RS) Fix sort order of IP networks
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

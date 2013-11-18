@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -46,7 +46,7 @@
 #                     `Nested_Model_Form` class as bese for the related forms
 #    21-Aug-2009 (MG) `Nested_Form_Group.__init__` combine media with media
 #                     from `Completer`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                         import TFL

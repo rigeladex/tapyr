@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -41,7 +41,7 @@
 #    15-Feb-2011 (CT) Changed to use `LNX.Bat_Charge` (multiple batteries,
 #                     again)
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                  import TFL

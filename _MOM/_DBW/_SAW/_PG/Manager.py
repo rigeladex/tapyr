@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -29,7 +29,7 @@
 #    21-Jun-2013 (CT) Creation
 #    28-Jul-2013 (CT) Add import for `...PG.Sequence`
 #     2-Aug-2013 (CT) Add import for `...PG.SA_Type`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__                 import division, print_function

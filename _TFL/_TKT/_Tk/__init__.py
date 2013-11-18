@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    23-Feb-2005 (CT) `stop_cb_chaining` added
 #    14-Mar-2005 (CT) `Tk.Error` aliased to `CTK.TclError`
 #    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace

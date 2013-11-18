@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -33,7 +33,7 @@
 #    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    18-May-2005 (MG) Use new `Delegator_EO`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL._TKT._GTK         import GTK

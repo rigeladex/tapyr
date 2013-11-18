@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -29,7 +29,7 @@
 #    12-Sep-2012 (RS) Creation
 #    11-Oct-2012 (RS) Move here from `FFM`, Nickname of `Subject` not `Person`
 #    12-Oct-2012 (RS) Don't `ignore_case`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

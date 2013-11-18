@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -52,7 +52,7 @@
 #    11-Sep-2012 (CT) Fix typo introduced in last change
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    13-Aug-2013 (CT) Change `sail_number` from `Primary_Optional` to `Primary`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

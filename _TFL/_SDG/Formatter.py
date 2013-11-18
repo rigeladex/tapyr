@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -101,7 +101,7 @@
 #    30-Aug-2005 (CT) Use `split_hst` instead of home-grown code
 #    20-Nov-2007 (MG)  Imports fixed
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -428,7 +428,7 @@ class Multi_Line_Formatter (_Formatter_) :
             , tail            = ""
             )
         if x_forms :
-            for spec in x_forms.split ("¡") :
+            for spec in x_forms.split ("Â¡") :
                 key, form = spec.split ("=", 1)
                 setattr (result, key, form)
         nl = "%(NL)s"

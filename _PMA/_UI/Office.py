@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@undefined.dontknow
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@undefined.dontknow
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -105,7 +105,7 @@
 #    24-Jan-2006 (MG) Methods alphabetical ordered
 #    24-Jan-2006 (MG) Started to rewrite using new `PMA.V_Mailbox` features
 #    26-Jan-2006 (MG) Update after `sync` command implemented
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL

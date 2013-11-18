@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -45,7 +45,7 @@
 #    30-May-2009 (CT) `opt_proxy_args` added to `Foreign_Key`
 #     1-Jun-2009 (CT) Support for `real_name` added
 #    11-Jun-2009 (CT) Support for `css_class` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                               import TFL

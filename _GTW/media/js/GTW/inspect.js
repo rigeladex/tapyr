@@ -18,7 +18,7 @@
 //     9-Mar-2011 (CT) `copy` added
 //    31-May-2011 (MG) Mssing `var` added
 //    29-Apr-2013 (CT) Add `show1`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2008 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -65,7 +65,7 @@
 #    26-Mar-2008 (MG)  `Struct` renamed to `_TFL_SDG_Struct_` and `_real_name`
 #                      used
 #    25-Apr-2008 (MG) `Struct.dict` fixed array handling
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                           import TFL

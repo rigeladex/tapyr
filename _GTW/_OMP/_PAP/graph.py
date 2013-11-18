@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -34,7 +34,7 @@
 #     7-May-2013 (CT) Add `Association`, `Person_has_Account`, if imported
 #     7-May-2013 (CT) Shift `Subject_has_Property` to center of graph
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2008-2012 Martin Glück All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2008-2012 Martin GlÃ¼ck All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -36,7 +36,7 @@
 #    15-May-2009 (CT) Alphabetic sequence
 #    15-May-2009 (CT) `tel_uri` added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

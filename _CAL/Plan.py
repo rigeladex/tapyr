@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -41,7 +41,7 @@
 #    17-Dec-2007 (CT) `write_plan` changed to use `Date_Time` instead of
 #                     `Date` to calculate `today`
 #    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                  import TFL

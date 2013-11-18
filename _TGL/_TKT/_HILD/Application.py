@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -30,12 +30,12 @@
 #    12-Aug-2005 (MG) `event_binders` added
 #    16-Aug-2005 (MG) Don't call `show_all` anymore
 #     3-Sep-2005 (MG) correct `_wrap_function`
-#    21-Sep-2005 (MG) Obsolete import of ´Script_Menu_Mgr` removed
+#    21-Sep-2005 (MG) Obsolete import of Å½Script_Menu_Mgr` removed
 #     2-Jan-2006 (MG) `_quit` close the interpreter window to save the
 #                     current state
 #    03-Jan-2006 (MG) `ask_invisible_string` added
 #    21-Jan-2006 (MG) Imports fixed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                 import TFL

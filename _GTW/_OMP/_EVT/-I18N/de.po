@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
@@ -34,7 +34,7 @@ msgstr "Anzahl"
 
 #: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Daily"
-msgstr "T‰glich"
+msgstr "T√§glich"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Date exceptions"
@@ -45,7 +45,7 @@ msgid ""
 "Date interval of event (for non-recurring events, only `start` is "
 "relevant)"
 msgstr ""
-"Datumsinterval des Ereignisses (f¸r nicht wiederholende Ereignisse ist "
+"Datumsinterval des Ereignisses (f√ºr nicht wiederholende Ereignisse ist "
 "nur `Anfang` relevant)"
 
 #: _GTW._OMP._EVT.Event:0
@@ -146,7 +146,7 @@ msgstr "Name des Kalenders"
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Object which this event is bound to."
-msgstr "Objekt, zu dem das Ereignis gehˆrt."
+msgstr "Objekt, zu dem das Ereignis geh√∂rt."
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Occurrence of a calendary event."
@@ -165,7 +165,7 @@ msgstr "Periode"
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Recurrence rule specifying a set of dates to include or exclude."
 msgstr ""
-"Wiederholungsregel, die eine Menge von Kalenderdaten f¸r Einschluss oder "
+"Wiederholungsregel, die eine Menge von Kalenderdaten f√ºr Einschluss oder "
 "Ausschluss definiert."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
@@ -190,15 +190,15 @@ msgstr[1] "Wiederholungsspezifikationen"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Restrict pos"
-msgstr "Schr‰nke Position ein"
+msgstr "Schr√§nke Position ein"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid ""
 "Restrict recurrences to the numbers given. Negative numbers\n"
 "count from the last occurrence (-1 meaning the last occurrence)."
 msgstr ""
-"Schr‰nke die Wiederholungen auf die angegebenen Zahlen ein. Negative "
-"Zahlen z‰hlen von hinten (-1 bedeutet die letzte Wiederholung)."
+"Schr√§nke die Wiederholungen auf die angegebenen Zahlen ein. Negative "
+"Zahlen z√§hlen von hinten (-1 bedeutet die letzte Wiederholung)."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid ""
@@ -206,8 +206,8 @@ msgid ""
 "Negative numbers count from the end of the month\n"
 "(-1 means the last day of the month)."
 msgstr ""
-"Schr‰nke die Wiederholungen auf die angegebenen Monatstage ein.\n"
-"Negative Zahlen z‰hlen vom Ende des Monats\n"
+"Schr√§nke die Wiederholungen auf die angegebenen Monatstage ein.\n"
+"Negative Zahlen z√§hlen vom Ende des Monats\n"
 "(-1 bedeutet den letzten Tag des Monats)."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
@@ -215,7 +215,7 @@ msgid ""
 "Restrict the recurrences to the days of the week specified.\n"
 "(0 means monday, 6 means sunday)."
 msgstr ""
-"Schr‰nke die Wiederholungen auf die angegebenen Wochentage ein.\n"
+"Schr√§nke die Wiederholungen auf die angegebenen Wochentage ein.\n"
 "(0 bedeutet Montag, 6 bedeutet Sonntag)."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
@@ -224,8 +224,8 @@ msgid ""
 "Negative numbers count from the end of the year\n"
 "(-1 means the last day of the year)."
 msgstr ""
-"Schr‰nke die Wiederholungen auf die angegebenen Tage des Jahres ein.\n"
-"Negative Zahlen z‰hlen vom Ende des Jahres\n"
+"Schr√§nke die Wiederholungen auf die angegebenen Tage des Jahres ein.\n"
+"Negative Zahlen z√§hlen vom Ende des Jahres\n"
 "(-1 bedeutet den letzten Tag des Jahres)."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
@@ -233,12 +233,12 @@ msgid ""
 "Restrict the recurrences to the months specified (1 means\n"
 "January, ...)."
 msgstr ""
-"Schr‰nke die Wiederholungen auf die angegebenen Monate ein (1 bedeutet "
-"J‰nner, ...)."
+"Schr√§nke die Wiederholungen auf die angegebenen Monate ein (1 bedeutet "
+"J√§nner, ...)."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Restrict the recurrences to the week numbers specified."
-msgstr "Schr‰nke die Wiederholungen auf die angegebenen Kalenderwochen ein."
+msgstr "Schr√§nke die Wiederholungen auf die angegebenen Kalenderwochen ein."
 
 #: _GTW._OMP._EVT.Calendar:0
 msgid "Short description of calendar"
@@ -250,7 +250,7 @@ msgstr "Kurze Beschreibung der Regel"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Specification for recurrency of event."
-msgstr "Spezifikation f¸r Wiederholungen eines Ereignisses."
+msgstr "Spezifikation f√ºr Wiederholungen eines Ereignisses."
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Start date of the recurrence."
@@ -270,7 +270,7 @@ msgstr "Zeitraum des Ereignisses"
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Time interval of event (for a full-day event, this is empty)"
-msgstr "Zeitraum des Ereignisses (f¸r ein Ganztagesereignis leer)"
+msgstr "Zeitraum des Ereignisses (f√ºr ein Ganztagesereignis leer)"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Unit"
@@ -292,7 +292,7 @@ msgstr "Wochentag"
 
 #: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Weekly"
-msgstr "Wˆchentlich"
+msgstr "W√∂chentlich"
 
 #: _GTW._OMP._EVT.Recurrence_Spec:0
 msgid "Year day"
@@ -300,4 +300,4 @@ msgstr "Tag des Jahres"
 
 #: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
 msgid "Yearly"
-msgstr "J‰hrlich"
+msgstr "J√§hrlich"

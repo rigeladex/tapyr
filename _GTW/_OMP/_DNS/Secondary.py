@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
@@ -28,7 +28,7 @@
 # Revision Dates
 #    27-Aug-2012 (RS) Creation
 #     7-Aug-2013 (CT) Use `A_IP4_Address`, not `_A_Composite_IP_Address_`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

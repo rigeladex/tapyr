@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -38,7 +38,7 @@
 #    12-Oct-2012 (CT) Adapt to repr change of `An_Entity`
 #    30-Jul-2013 (CT) Add `show` and `.order_by`, enable HPS
 #    23-Sep-2013 (CT) Add test `sub_query_sql`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 def show (q) :

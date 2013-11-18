@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -88,7 +88,7 @@
 #    20-May-2010 (CT) `__main__` added
 #    16-May-2012 (CT) Fix `abs_name`, `real_name`, `relative_to` for `Directory`
 #                     (result must NOT contain `base_ext`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """Provides a class that represents a filename with its parts: path, base

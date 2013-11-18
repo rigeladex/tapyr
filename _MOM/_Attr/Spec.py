@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -72,7 +72,7 @@
 #     7-Jun-2013 (CT) Change `own_surrogate`, update `surrogate_map`
 #    17-Jun-2013 (CT) Sort `rev_ref_attr` and `link_ref_attr`
 #    12-Jul-2013 (CT) Change `rev_ref_attr` to select all `_A_Rev_Ref_` types
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

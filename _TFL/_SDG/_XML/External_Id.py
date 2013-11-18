@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #     6-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -52,9 +52,9 @@ class External_Id (TFL.SDG.XML.Node) :
 
     xml_format           = \
         ( """%(kind)s"""
-          """%(:front0= ¡front=%(NL)s    """
-            """¡rear0=¡rear=%(NL)s"""
-            """¡head="¡tail="¡sep=    """
+          """%(:front0= Â¡front=%(NL)s    """
+            """Â¡rear0=Â¡rear=%(NL)s"""
+            """Â¡head="Â¡tail="Â¡sep=    """
             """:@_ext_ids:)s"""
         )
 

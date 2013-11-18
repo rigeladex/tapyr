@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -65,7 +65,7 @@
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty`.
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
 #    28-May-2013 (CT)  Use `@subclass_responsibility` instead of home-grown code
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

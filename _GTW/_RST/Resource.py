@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -102,7 +102,8 @@
 #    23-Aug-2013 (CT) Add `or False` to property `auth_required`
 #    29-Aug-2013 (CT) Don't pass `exc` to `Internal_Server_Error` in
 #                     `_http_response_error` (shows up in webbrowser otherwise)
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -1220,7 +1221,7 @@ class RST_Root (_Ancestor) :
     hash_fct                   = hashlib.sha224
     i18n                       = False
     ignore_picky_accept        = False
-    input_encoding             = "iso-8859-15"
+    input_encoding             = "utf-8"
     language                   = "en"
     languages                  = set (("en", ))
     prefix                     = ""

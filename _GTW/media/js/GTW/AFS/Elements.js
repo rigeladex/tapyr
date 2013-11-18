@@ -1,4 +1,4 @@
-//-*- coding: iso-8859-1 -*-
+//-*- coding: utf-8 -*-
 // Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
@@ -51,7 +51,7 @@
 //     5-Mar-2012 (CT) Change `Field_Entity._setup_value` to copy `allow_new`
 //                     to `value`
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

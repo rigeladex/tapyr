@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -29,7 +29,7 @@
 #     7-Feb-2005 (CT) Creation (factored from CTK_Queued_Stdout)
 #     3-Jun-2005 (MG) `event` parameter added to `update`
 #    27-Aug-2008 (CT) Redirection refactored to `TFL.Output.Redirect_Std`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL           import TFL

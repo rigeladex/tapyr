@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -53,7 +53,7 @@
 #    19-Sep-2013 (CT) Remove `Ignore_Exception` from `Attr_Query`
 #    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
 #    10-Oct-2013 (CT) Factor `_Filter_S_._add_derived_classes`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 """

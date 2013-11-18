@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    29-May-2009 (MG) Creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 """
 >>> fs       = DJO.Field_Group_Description ()

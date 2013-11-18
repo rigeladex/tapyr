@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2008 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.com
 # ****************************************************************************
 #
@@ -38,7 +38,7 @@
 #     9-May-2008 (MG) `render_template`: use `getattr` to retrieve the
 #                     `func_name` because some of the django decorators don't
 #                     behave nice
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _DJO                           import DJO

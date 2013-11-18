@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -31,7 +31,7 @@
 #    26-Jan-2006 (MG) `_Messages_.__init__` allow strings and message objects
 #    26-Jan-2006 (MG) `Remove_Messages` fixed
 #    26-Jan-2006 (MG) `messages_from_box` factored
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _PMA              import PMA

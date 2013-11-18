@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #    06-Aug-2007 (CED) Future import removed again
 #    20-Nov-2007 (MG)  Imports fixed
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -106,8 +106,8 @@ class Doctype (TFL.SDG.XML.Element) :
     xml_format           = \
         ( """<!DOCTYPE %(root_element)s %(::*dtd:)s"""
             """%(:front=%(NL)s  [%(" " * (indent_offset + 1))s"""
-              """¡rear=%(NL)s  ]%(chr (10))s"""
-              """¡sep=%(" " * (indent_offset + 4))s"""
+              """Â¡rear=%(NL)s  ]%(chr (10))s"""
+              """Â¡sep=%(" " * (indent_offset + 4))s"""
               """:*body_children"""
               """:)s"""
           """>"""

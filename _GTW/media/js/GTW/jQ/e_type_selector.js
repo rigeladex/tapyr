@@ -39,7 +39,7 @@
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //     1-May-2013 (CT) Change `gtw_e_type_selector_afs` to
 //                     `gtw_e_type_selector_hd_afs`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

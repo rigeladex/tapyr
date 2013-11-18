@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -39,7 +39,7 @@
 #    13-Sep-2012 (CT) Add `_test_roles`
 #     6-Dec-2012 (CT) Add `Person_has_Account`
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = """

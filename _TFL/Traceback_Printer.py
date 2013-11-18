@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2006  Philipp Gortan <gortan@tttech.com>
 # ****************************************************************************
 #
@@ -34,7 +34,7 @@
 #    20-Jun-2006 (PGO) Support for (deprecated) string exceptions added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 

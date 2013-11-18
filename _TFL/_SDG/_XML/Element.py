@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #     6-Sep-2005 (CT) `xml_format` changed (`elem_type.rear0` empty instead
 #                     of space)
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -51,7 +51,7 @@ class Element (TFL.SDG.XML.Node) :
 
     _xml_format          = """
         %(::*description:)s
-        <%(elem_type)s%(:head= ¡rear0=¡rear=%(NL)s:>@_attr_values:)s>
+        <%(elem_type)s%(:head= Â¡rear0=Â¡rear=%(NL)s:>@_attr_values:)s>
         >%(::*body_children:)s
         </%(elem_type)s>
     """.strip ()
@@ -75,7 +75,7 @@ class Empty (Leaf) :
 
     xml_format           = \
         ( """<%(elem_type)s"""
-            """%(:head= ¡rear0=¡rear=%(NL)s:>@_attr_values:)s"""
+            """%(:head= Â¡rear0=Â¡rear=%(NL)s:>@_attr_values:)s"""
           """/>"""
         )
 

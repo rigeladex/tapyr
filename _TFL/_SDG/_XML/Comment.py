@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -28,7 +28,7 @@
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
 #    06-Aug-2007 (CED) Future import removed again
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -43,7 +43,7 @@ class Comment (TFL.SDG.XML.Leaf) :
 
        >>> c = Comment ("Just a test of a XML comment -- with illicit token")
        >>> print (chr (10).join (c.formatted ("xml_format")))
-       <!-- Just a test of a XML comment ··· with illicit token -->
+       <!-- Just a test of a XML comment Â·Â·Â· with illicit token -->
        >>> c = Comment ('''A two line
        ... comment for a change''')
        >>> print (chr (10).join (c.formatted ("xml_format")))
@@ -60,7 +60,7 @@ class Comment (TFL.SDG.XML.Leaf) :
     elem_type            = "!--"
 
     xml_format           = """
-        <!-- %(:rear0= ¡rear=%(NL)s:>.text:)s-->
+        <!-- %(:rear0= Â¡rear=%(NL)s:>.text:)s-->
     """
 
     _autoconvert         = dict \
@@ -69,7 +69,7 @@ class Comment (TFL.SDG.XML.Leaf) :
 
     def _convert_text (self, v) :
         if v and isinstance (v, pyk.string_types) :
-            v = v.replace ("--", "···").split ("\n")
+            v = v.replace ("--", "Â·Â·Â·").split ("\n")
         return v
     # end def _convert_text
 

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     8-Apr-2005 (CT) `apply` and `string`-method calls removed
 #     7-Nov-2007 (CT) Moved into package _TFL._TKT._Tk
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _TFL._TKT._Tk.CT_TK   import *

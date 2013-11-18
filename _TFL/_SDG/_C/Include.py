@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2011 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@
 #    06-Aug-2007 (CED) Future import removed again
 #    31-Oct-2011 (MG)  imports corrected
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 

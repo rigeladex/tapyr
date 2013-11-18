@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
@@ -38,7 +38,7 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #    15-Apr-2012 (CT) Use `formatted_1` instead of `sorted` to guarantee
 #                     determistic order of nested dicts
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from __future__ import unicode_literals

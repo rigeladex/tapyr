@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    15-Apr-2012 (CT) Adapt to changes of `MOM.Error`
 #    16-Apr-2012 (CT) Adapt to more changes of `MOM.Error`
 #    17-Apr-2012 (CT) Add test for `as_json_cargo (* errors)`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = r"""

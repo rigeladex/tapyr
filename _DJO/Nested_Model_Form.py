@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2007-2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2007-2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -29,7 +29,7 @@
 #    21-Aug-2009 (MG) Creation
 #    21-Aug-2009 (MG) Field for `pk` mst not be part of a `Field_Description`
 #                     because in this case django requires a value during a post
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _DJO                         import DJO

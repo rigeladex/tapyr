@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 
@@ -96,10 +96,10 @@ class Enum (TFL.SDG.C.Node, TFL.SDG.Leaf) :
     c_format = h_format  = \
         ( """enum _%(name)s """
           """%(:front=%(NL)s%(base_indent)s{ """
-          """¡front0={"""
-          """¡sep=%(base_indent)s, """
-          """¡rear=%(NL)s%(base_indent)s}"""
-          """¡rear0=}"""
+          """Â¡front0={"""
+          """Â¡sep=%(base_indent)s, """
+          """Â¡rear=%(NL)s%(base_indent)s}"""
+          """Â¡rear0=}"""
           """:*values:)s%(standalone)s"""
         )
 

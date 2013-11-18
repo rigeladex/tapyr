@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #     6-Dec-2012 (CT) Add `Person_has_Account` (conditional import)
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM.import_MOM        import *

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,10 +35,10 @@
 #    23-Dec-2007 (CT) Use `Re_Replacer` and `Dict_Replacer` instead of
 #                     home-grown code
 #    18-Oct-2010 (CT) `_quote_map` added and used
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
-from   __future__  import print_function
+from   __future__  import print_function, unicode_literals
 
 from   _TFL        import TFL
 from   _TFL.Regexp import Regexp, Re_Replacer, Dict_Replacer, re
@@ -47,41 +47,41 @@ from   itertools   import chain as ichain
 import unicodedata
 
 _diacrit_map    = \
-    { u"Ä"      : u"Ae"
-    , u"Ö"      : u"Oe"
-    , u"Ü"      : u"Ue"
-    , u"ß"      : u"ss"
-    , u"ä"      : u"ae"
-    , u"ö"      : u"oe"
-    , u"ü"      : u"ue"
+    { "Ã„"      : "Ae"
+    , "Ã–"      : "Oe"
+    , "Ãœ"      : "Ue"
+    , "ÃŸ"      : "ss"
+    , "Ã¤"      : "ae"
+    , "Ã¶"      : "oe"
+    , "Ã¼"      : "ue"
     }
 
 _diacrit_rep    = Dict_Replacer (_diacrit_map)
 
 _graph_rep      = Re_Replacer \
-    ( u"(%s)+"
-    % u"|".join   (re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"'))
-    , u"_"
+    ( "(%s)+"
+    % "|".join   (re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"'))
+    , "_"
     )
 
 _non_print_rep  = Re_Replacer \
-    ( u"|".join (re.escape (chr (i)) for i in ichain (range (0, 32), [127]))
-    , u""
+    ( "|".join (re.escape (chr (i)) for i in ichain (range (0, 32), [127]))
+    , ""
     )
 
 _quote_map      = \
-    { u"«"      : u"<<"
-    , u"»"      : u">>"
-    , u"\u2018" : u"'"
-    , u"\u2019" : u"'"
-    , u"\u201A" : u"'"
-    , u"\u201B" : u"'"
-    , u"\u201C" : u'"'
-    , u"\u201D" : u'"'
-    , u"\u201E" : u'"'
-    , u"\u201F" : u'"'
-    , u"\u2039" : u"'"
-    , u"\u203A" : u"'"
+    { "Â«"      : "<<"
+    , "Â»"      : ">>"
+    , "\u2018" : "'"
+    , "\u2019" : "'"
+    , "\u201A" : "'"
+    , "\u201B" : "'"
+    , "\u201C" : '"'
+    , "\u201D" : '"'
+    , "\u201E" : '"'
+    , "\u201F" : '"'
+    , "\u2039" : "'"
+    , "\u203A" : "'"
     }
 
 _quote_rep      = Dict_Replacer (_quote_map)
@@ -98,10 +98,11 @@ def _sanitized_unicode (s, translate_table = None) :
 # end def _sanitized_unicode
 
 def _show (s) :
+    from _TFL.pyk import pyk
     result = repr (s)
     if result.startswith ("b'") :
         result = result [1:]
-    print (result)
+    pyk.fprint (result)
 # end def _show
 
 def sanitized_unicode (s, translate_table = None) :
@@ -109,12 +110,12 @@ def sanitized_unicode (s, translate_table = None) :
        pure ASCII 8-bit string. Caveat: passing in an 8-bit string with
        diacriticals doesn't work.
 
-       >>> _show (sanitized_unicode (u"üxäyözßuÜXÄYÖZbc¡ha!"))
+       >>> _show (sanitized_unicode ("Ã¼xÃ¤yÃ¶zÃŸuÃœXÃ„YÃ–ZbcÂ¡ha!"))
        'uexaeyoezssuUeXAeYOeZbcha!'
-       >>> _show (sanitized_unicode (u"«ÄÖÜ»"))
+       >>> _show (sanitized_unicode ("Â«Ã„Ã–ÃœÂ»"))
        '<<AeOeUe>>'
        >>> _show \\
-       ... (sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord (u"»") : u">"}))
+       ... (sanitized_unicode ("Â«Ã„Ã–ÃœÂ»", {ord ("Â«") : "<", ord ("Â»") : ">"}))
        '<AeOeUe>'
     """
     return _encoded (_sanitized_unicode (s, translate_table))
@@ -125,9 +126,9 @@ def sanitized_filename (s, translate_table = None) :
       characters removed so that the result is usable as a filename.
 
        >>> _show (sanitized_filename \\
-       ...    (u"überflüßig komplexer'; und $gefährlicher*' Filename"))
+       ...    ("Ã¼berflÃ¼ÃŸig komplexer'; und $gefÃ¤hrlicher*' Filename"))
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
-       >>> _show (sanitized_filename (u"«ÄÖÜß»"))
+       >>> _show (sanitized_filename ("Â«Ã„Ã–ÃœÃŸÂ»"))
        '_AeOeUess_'
    """
    s = _sanitized_unicode (s.strip (), translate_table)

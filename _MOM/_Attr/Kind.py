@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -219,7 +219,7 @@
 #    31-Aug-2013 (CT) Change `_Composite_Mixin_._check_sanity` to forbid
 #                     attributes that refer to other entities
 #    30-Sep-2013 (CT) Add `is_partial` to `Kind` and `_Query_`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import absolute_import, division

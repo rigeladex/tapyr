@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -38,7 +38,7 @@
 #    29-Jan-2013 (CT) Move predicate creation to redefined `_create_properties`
 #    29-Jan-2013 (CT) Add `uniqueness_dbw` and `uniqueness_ems`
 #    31-May-2013 (CT) Factor `_prop_map_name`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM                  import MOM

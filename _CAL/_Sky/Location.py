@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -24,7 +24,7 @@
 #
 # Purpose
 #    Model terrestrial location of observer
-#    ««text»»···
+#    Â«Â«textÂ»Â»Â·Â·Â·
 #
 # Revision Dates
 #    14-Nov-2007 (CT) Creation

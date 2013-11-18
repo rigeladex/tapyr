@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -36,7 +36,7 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    28-May-2013 (CT) Use `@subclass_responsibility` instead of home-grown code
 #    25-Jun-2013 (CT) Make doctest Python-2.6 compatible
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

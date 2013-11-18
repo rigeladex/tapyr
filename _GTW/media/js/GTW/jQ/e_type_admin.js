@@ -17,7 +17,7 @@
 //    26-Nov-2011 (CT) Creation
 //    21-Feb-2012 (CT) Use `$GTW.L` to create DOM elements
 //    19-Apr-2012 (CT) Add `options.postify_options.hidden_selector`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

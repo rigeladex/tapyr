@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -35,7 +35,7 @@
 #     5-May-2010 (MG) `render_mode_description` added
 #     6-May-2010 (MG) `needs_header` added
 #    25-Jul-2010 (MG) Render mode `dl_seq` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 from   _TFL               import TFL
 import _TFL._Meta.Object

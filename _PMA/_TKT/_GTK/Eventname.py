@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -24,7 +24,7 @@
 #
 # Purpose
 #    Define PMA specific eventnames for GTK
-#    ««text»»···
+#    Â«Â«textÂ»Â»Â·Â·Â·
 #
 # Revision Dates
 #    28-Jul-2005 (CT) Creation
@@ -32,7 +32,7 @@
 #    31-Jul-2005 (MG) New commands added
 #     2-Jan-2006 (CT) `sync_box` added
 #     5-Jan-2006 (CT) `train_ham` and `train_spam` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _PMA                        import PMA

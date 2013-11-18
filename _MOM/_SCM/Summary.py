@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -49,7 +49,7 @@
 #    24-Apr-2013 (CT) Don't add `new` for `is_dead` to `attribute_changes`
 #    24-Apr-2013 (CT) Add `Summary.entity_changes`
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM               import MOM

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #     5-Feb-2010 (MG) Allow a `Widget_Spec` instance as `default`
 #     5-May-2010 (MG) `__getitem__` added
 #    18-Mar-2011 (CT) Guard for names starting with `__` added to `__getattr__`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                               import GTW

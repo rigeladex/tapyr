@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #     1-Dec-2009 (CT) Ignore `__getslice__` warnings
 #    14-Jan-2011 (CT) `-format`, `-color`, `-x_off`, and `-y_off` added
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__         import print_function

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -47,7 +47,7 @@
 #    20-Feb-2010 (CT) `__contains__` added
 #    20-Jul-2011 (CT) `_properties` added to allow subclasses to define
 #                     property setters that actually work
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL           import TFL

@@ -31,7 +31,7 @@
 ##    26-May-2010 (MG) Allow the inclusion of this template in the context of
 ##                     link inline rendering
 ##     6-Oct-2013 (CT) Add `with context` to import
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 {%- import "html/rform.jnj" as RForm with context %}

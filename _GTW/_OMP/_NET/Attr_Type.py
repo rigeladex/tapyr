@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -46,7 +46,7 @@
 #     2-Aug-2013 (CT) Use `A_Int.max_value...`, not literals
 #     2-Aug-2013 (CT) Add import callback for `_GTW._OMP._NET.SAW`, `.SAW_PG`
 #     6-Aug-2013 (CT) Remove composite attributes, aka, major surgery
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, unicode_literals

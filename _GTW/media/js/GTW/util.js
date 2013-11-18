@@ -1,4 +1,4 @@
-//-*- coding: iso-8859-1 -*-
+//-*- coding: utf-8 -*-
 // Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
@@ -26,7 +26,7 @@
 //    22-Feb-2012 (CT) Change `fix_a_nospam` to take data from `next` `b.nospam`
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `jQ/util.js`
 //    29-Apr-2013 (CT) Add `show_message`
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

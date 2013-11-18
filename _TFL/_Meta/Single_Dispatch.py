@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -34,7 +34,7 @@
 #    12-Sep-2013 (CT) Return `func`, not `self`, from
 #                     `Single_Dispatch_Method.add_type` (decorator chaining)
 #    12-Sep-2013 (CT) Allow more than one type arg for `add_type`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__        import division, print_function

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    17-May-2005 (CT) `PMA.UI.Msg_Display` factored
 #    25-Jul-2005 (CT) `clear` added
 #    25-Jul-2005 (CT) `display` changed to call `msg.status.set_read`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL                    import TGL

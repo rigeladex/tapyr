@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -30,7 +30,7 @@
 #     2-Aug-2012 (CT) Set `response.renderer`, remove `_get_renderer`
 #     6-Aug-2012 (CT) Set `skip_etag` to `True`
 #     5-Dec-2012 (CT) Set `last_page` to `._effective`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -37,7 +37,7 @@
 #    18-Nov-2011 (CT) Add optional argument `sep`
 #    18-Nov-2011 (CT) Add formatting of `TFL.Record`
 #    12-Jun-2012 (CT) Don't show `Recursion` on empty `things`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function

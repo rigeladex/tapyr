@@ -18,7 +18,7 @@
 //    31-Jan-2013 (MG) Fix changing of `_renderItem` to work with new
 //                     jQueryUI versions
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

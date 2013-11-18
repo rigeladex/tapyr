@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -215,7 +215,7 @@
 #    21-Aug-2013 (CT) Add `M_E_Type_Md.relevant_roots`
 #    22-Aug-2013 (CT) Replace `tn_pid` by `type_name, pid` as default sort-key
 #    25-Aug-2013 (CT) Change `M_Entity.__init__` to set `E_Spec`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

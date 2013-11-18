@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -44,7 +44,7 @@
 #     5-Jun-2013 (CT) Add `q_able`, rename `all` to `ui_attr`, define
 #                     `ui_attr` as synonym for `q_able`
 #    10-Jul-2013 (CT) Define `ui_attr` as `Pred (Q.show_in_ui, q_able)`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import absolute_import, division

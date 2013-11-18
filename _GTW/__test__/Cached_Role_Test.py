@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    13-Sep-2012 (CT) Add test for `auto_cache_roles`
 #     6-Dec-2012 (CT) Add `Person_has_Account` role-cacher
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = """

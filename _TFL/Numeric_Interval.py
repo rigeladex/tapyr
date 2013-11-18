@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #    17-Apr-2007 (CT)  `__mod__` added
 #    11-May-2007 (CT)  `set` added
 #    20-Mar-2009 (CT)  Use `practically_infinite` instead of sys.maxint
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                 import TFL

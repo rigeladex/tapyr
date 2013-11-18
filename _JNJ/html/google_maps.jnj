@@ -30,7 +30,7 @@
 ## Revision Dates
 ##    24-Feb-2010 (CT) Creation (ported from Django template)
 ##     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 

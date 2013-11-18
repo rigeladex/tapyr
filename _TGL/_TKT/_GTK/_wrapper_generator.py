@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -30,7 +30,7 @@
 #    27-Mar-2005 (MG) `find_properties` fixed
 #    27-Mar-2005 (MG) Correct auto base name
 #    27-Mar-2005 (MG) Support for `SG_Object_Property` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 import gtk
@@ -43,7 +43,7 @@ from   _TFL.Command_Line import Command_Line
 from   _TFL.Regexp       import Regexp
 
 template = '''# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -71,7 +71,7 @@ template = '''# -*- coding: iso-8859-15 -*-
 #
 # Revision Dates
 #    %(date)s (%(user)s) Automated creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL._TKT._GTK         import GTK

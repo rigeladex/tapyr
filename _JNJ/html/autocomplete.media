@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -31,7 +31,7 @@
 #     5-Apr-2013 (CT) Split rule for `.ui-menu-item` from `.ui-autocomplete`
 #     5-Apr-2013 (CT) Add `overflow_y` to `.ui-autocomplete`
 #     8-Apr-2013 (CT) Add `max_height` to `.ui-autocomplete`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 style_sheet = Style_Sheet \

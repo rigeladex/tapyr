@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -39,7 +39,8 @@
 #    16-Dec-2010 (CT) Add ``__doc__`` for non-partial e-types
 #    27-Jun-2012 (CT) Use `app_type._T_Extension` instead of
 #                     `.etypes.itervalues ()`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 from   _MOM                import MOM
 
@@ -88,7 +89,7 @@ def Add_Translations (encoding, config, method, app_type) :
 def Extract (fobj, keywords, comment_tags, config, method) :
     d        = {}
     encoding = parse_encoding (fobj) or config.get \
-        ("encoding", default = "iso-8859-1")
+        ("encoding", default = "utf-8")
     exec (fobj.read (), globals (), d)
     return d ["main"] (encoding, config, method)
 # end def Extract

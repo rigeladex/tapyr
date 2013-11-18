@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -26,7 +26,7 @@
 #    Provide syntax-sugared analogons to operator.attrgetter and
 #    operator.itemgetter plus an accessor for dynamically-bound methods
 #
-#    Inspired by a post by "Martin v. Löwis" <martin@v.loewis.de> to
+#    Inspired by a post by "Martin v. LÃ¶wis" <martin@v.loewis.de> to
 #    python-dev@python.org
 #        Subject: Re: [Python-Dev] PEP 309: Partial method application
 #        Message-id: <4304E423.9050005@v.loewis.de>
@@ -42,7 +42,7 @@
 #                     callable results (breaks too many users)
 #    16-Aug-2012 (CT) Simplify `_Getter_`: get rid of `_Getter_[01n]_`
 #    22-Feb-2013 (CT) Remove legacy spellings `Attribute` and `Item`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL import TFL

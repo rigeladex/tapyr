@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -35,7 +35,8 @@
 #    12-Jun-2012 (CT) Import `email.utils`, not `email.Utils` (<= Python 2.4)
 #    19-Jun-2012 (CT) Add `header` and apply it in `send_message`
 #     6-Jul-2012 (CT) Add `SMTP_Logger`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `charset` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function
@@ -58,7 +59,7 @@ import socket
 class SMTP (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
-    charset        = "iso-8859-15"
+    charset        = "utf-8"
     local_hostname = None
     mail_host      = "localhost"
     mail_port      = None

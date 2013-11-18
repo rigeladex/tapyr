@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,8 @@
 #     3-Jan-2011 (CT) `CSS_Parameters` added
 #    16-Mar-2011 (CT) Optional argument `GTW` added to `HTML`
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _JNJ               import JNJ
@@ -58,13 +59,13 @@ def HTML \
         , load_path        = ()
         , loader           = None
         , globals          = {}
-        , encoding         = "iso-8859-1"
+        , encoding         = "utf-8"
         , i18n             = False
         , Media_Parameters = None
         , GTW              = None
         , ** kw
         ) :
-    jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "iso-8859-1")
+    jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "utf-8")
     loaders    = []
     if loader :
         loaders.append (loader)

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -37,7 +37,7 @@
 #    10-Jan-2011 (CT) `_Mgr_Base_` changed to use `sanitized_filename` on `name`
 #     9-Sep-2011 (CT) Use `.E_Type` instead of `._etype`
 #    14-Nov-2011 (CT) Factored `_Query_Mixin_`, add `query_restriction`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

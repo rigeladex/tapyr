@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -28,7 +28,7 @@
 # Revision Dates
 #    11-Aug-2010 (MG) Creation
 #    16-Aug-2010 (CT) Don't re-use `db_man` (destroy & re-connect, instead)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = r"""

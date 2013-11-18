@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2013 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    29-Aug-2008 (CT)  Import of TTA removed
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from    _TFL                    import TFL

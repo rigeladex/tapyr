@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    30-Nov-2007 (CT) Moved to TFL
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    23-Dec-2010 (CT) Doctest fixed (don't use `repr` of floating point numbers)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function
@@ -138,7 +138,7 @@ class _Angle_ (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return u"%3.3d°%2.2d'%2.2d''" % self.tuple
+        return u"%3.3dÂ°%2.2d'%2.2d''" % self.tuple
     # end def __str__
 
     def __sub__ (self, rhs) :
@@ -151,11 +151,11 @@ class Angle_D (_Angle_) :
     """Model an angle specified in degrees.
 
        >>> print (Angle_D (45))
-       045°00'00''
+       045Â°00'00''
        >>> print (Angle_D (45.5))
-       045°30'00''
+       045Â°30'00''
        >>> print (Angle_D (45, 20, 40))
-       045°20'40''
+       045Â°20'40''
        >>> Angle_D (45)
        Angle_D (45.0)
        >>> Angle_D (45, 30)

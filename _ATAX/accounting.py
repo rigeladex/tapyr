@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #                      `add'
 #     4-Jan-2000 (CT)  `T_Account' and `Konto_Desc' added
 #     5-Jan-2000 (CT)  `g_anteil' added
-#     9-Jan-2000 (CT)  Erlösminderung und Ausgabenminderung considered in
+#     9-Jan-2000 (CT)  ErlÃ¶sminderung und Ausgabenminderung considered in
 #                      `V_Account', too
 #     9-Jan-2000 (CT)  `_add_ausgabe', `_add_einnahme', `_add_umsatz', and
 #                      `_add_vorsteuer' factored
@@ -161,7 +161,7 @@
 #     4-Jun-2012 (MG) `_ATAX_Command_._add_files` support for glob patterns
 #                     added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _ATAX             import ATAX
@@ -184,7 +184,7 @@ import sys
 from   UserDict          import UserDict
 import glob
 
-ignor_pat              = Regexp ( r"^\s*[«%#]")
+ignor_pat              = Regexp ( r"^\s*[Â«%#]")
 empty_pat              = Regexp ( r"^\s*$")
 ws_head_pat            = Regexp ( r"^\s*")
 ws_tail_pat            = Regexp ( r"\s*\n?$")
@@ -601,7 +601,7 @@ class V_Account (Account) :
             else : ### neither "i" nor "z" nor "r"
                 self.vorsteuer_entries.append (entry)
                 if entry.minderung :
-                    ## Erlösminderung instead of Ausgabe
+                    ## ErlÃ¶sminderung instead of Ausgabe
                     self._add_umsatz    (- netto, - vat, vat_p, entry)
                 else :
                     self._add_vorsteuer (vat)
@@ -714,7 +714,7 @@ class V_Account (Account) :
     def print_summary_old (self) :
         """Print summary for Umsatzsteuervoranmeldung."""
         vat_saldo = self._vat_saldo ()
-        meldung   = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
+        meldung   = ("Ãœberschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign      = (-1.0,         +1.0)            [vat_saldo >= 0]
         print "%-16s : %14s"   % \
             ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
@@ -734,12 +734,12 @@ class V_Account (Account) :
             ("Reverse Charge", self.reverse_charge.as_string_s ())
         self.print_ust_dict_     ( self.reverse_charge_dict, self.ust_revC_dict)
         print "\n%-16s :                %14s" % \
-            ( "USt Übertrag"
+            ( "USt Ãœbertrag"
             , (self.ust + self.ust_igE + self.ust_revCharge).as_string_s ()
             )
         print "--------------- ./.. ---------------------------";
         print "%-16s :                %14s" % \
-            ( "USt Übertrag"
+            ( "USt Ãœbertrag"
             , (self.ust + self.ust_igE + self.ust_revCharge).as_string_s ()
             )
         print "%-16s : %14s" % \
@@ -779,7 +779,7 @@ class V_Account (Account) :
     def print_summary (self) :
         """Print summary for Umsatzsteuervoranmeldung."""
         vat_saldo    = self._vat_saldo ()
-        meldung      = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
+        meldung      = ("Ãœberschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
         print "%-30s     : %29s" % \
@@ -798,12 +798,12 @@ class V_Account (Account) :
             ("Gesamt steuerpflichtig", umsatz_vat.as_string_s ())
         self.print_ust_dict_  (self.umsatz_dict, self.ust_dict, self._ust_cat)
         print "%-30s %3s : %29s" % \
-            ("Reverse Charge §19", "057", self.vorsteuer_revCh.as_string_s ())
+            ("Reverse Charge Â§19", "057", self.vorsteuer_revCh.as_string_s ())
         print
-        print "%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ())
+        print "%-30s     : %29s" % ( "USt Ãœbertrag", self.ust.as_string_s ())
         print "--------------------------------- ./.. ---------------------------"
 
-        print "%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ())
+        print "%-30s     : %29s" % ( "USt Ãœbertrag", self.ust.as_string_s ())
 
         print "%-30s %3s : %14s" % \
             ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
@@ -817,7 +817,7 @@ class V_Account (Account) :
         print "%-30s %3s : %29s" % \
             ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
         print "%-30s %3s : %29s" % \
-            ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
+            ("Reverse Charge Â§19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-30.30s %3s : %29s" % (d, k, vst.as_string_s ())
         print "%-30s %3s : %29s" % \
@@ -849,7 +849,7 @@ class V_Account (Account) :
     def print_summary_online (self) :
         """Print summary for Umsatzsteuervoranmeldung for online entry."""
         vat_saldo    = self._vat_saldo ()
-        meldung      = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
+        meldung      = ("Ãœberschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
         print "*** Lieferungen, sonstige Leistungen und Eigenverbrauch ***"
@@ -864,12 +864,12 @@ class V_Account (Account) :
                 )
         if umsatz_vat :
             print
-            print "Steuersätze"
+            print "SteuersÃ¤tze"
             print "=" * 67
             self.print_ust_dict_online (self.umsatz_dict, self._ust_cat)
         if self.vorsteuer_revCh :
             print "\n%-50s %3s : %10s" % \
-                ( "Reverse Charge §19", "057"
+                ( "Reverse Charge Â§19", "057"
                 , self.vorsteuer_revCh.as_string_s ()
                 )
         print "\n\n"
@@ -879,7 +879,7 @@ class V_Account (Account) :
             print "%-50s %3s : %10s" % \
                 ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
             print
-            print "Steuersätze"
+            print "SteuersÃ¤tze"
             print "=" * 47
             self.print_ust_dict_online (self.erwerb_igE_dict, self._ige_cat)
 
@@ -896,7 +896,7 @@ class V_Account (Account) :
                 ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
         if self.vorsteuer_revCh :
             print "%-50s %3s : %10s" % \
-                ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
+                ("Reverse Charge Â§19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-50.50s %3s : %10s" % (d, k, vst.as_string_s ())
         if self.ust_gut :
@@ -1257,7 +1257,7 @@ class T_Account (Account) :
             , (e_total - a_total).as_string_s ()
             ), tc
         print \
-            ( "\nDas Ergebnis wurde gemäß Par.4/3 EStG nach der "
+            ( "\nDas Ergebnis wurde gemÃ¤ÃŸ Par.4/3 EStG nach der "
               "Nettomethode erstellt."
             )
     # end def print_ein_aus_rechnung

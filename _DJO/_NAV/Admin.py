@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -170,7 +170,7 @@
 #    27-Feb-2009 (CT)  `_model_entries` changed to add `_Field` to (non-DJO)
 #                      models
 #    28-May-2009 (CT) s/_Field/_F/g
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _DJO                     import DJO

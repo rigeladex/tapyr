@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -45,7 +45,7 @@
 #    26-Aug-2013 (CT) Add `test_key_o_p`; call of `show_sequence`
 #    29-Aug-2013 (CT) Add test case for
 #                     `Q.person.lifetime == ("2013/07/15", "2013/07/21")`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__ import division, print_function

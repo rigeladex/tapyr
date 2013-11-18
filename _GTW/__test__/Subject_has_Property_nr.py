@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -41,7 +41,7 @@
 #    19-Jul-2013 (CT) Add tests for `Q.RAW`
 #     4-Aug-2013 (CT) Add `test_date_extraction` for `pg` and `sq`
 #    19-Sep-2013 (CT) Add `test_qx`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__                          import division, print_function

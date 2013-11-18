@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2001-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    24-Jun-2002 (CT) Import `Package_Namespace` absolutely (i.e., from `_TFL`)
 #    10-Feb-2010 (MG) `BREAK` added
 #     8-Apr-2010 (CT) `BREAK` removed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _TFL.Package_Namespace import Package_Namespace

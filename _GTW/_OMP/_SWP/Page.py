@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -42,7 +42,7 @@
 #    14-Jul-2011 (CT) `head_line.max_length` increased to 256 (from 120)
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    11-Aug-2012 (CT) Set `Page` as `Object_PN.default_child`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -41,7 +41,7 @@
 #    19-Mar-2012 (CT) Adapt to reification of `SRM.Handicap`
 #     1-Aug-2012 (MG) Add test type name change queries
 #    24-Jan-2013 (CT) Change `nation` from `Austria` to `AUT`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _GTW.__test__.model import *

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    14-Nov-2006 (CT) `mm_set` added
 #    20-Mar-2013 (CT) Derive from `TFL.defaultdict_cb`, not `._defaultdict_`
 #    16-Apr-2013 (CT) Add `mm_dict_mm_dict`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL import      TFL

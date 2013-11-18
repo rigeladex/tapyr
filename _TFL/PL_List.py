@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -38,7 +38,7 @@
 #    11-Nov-2009 (CT) Signature of `__init__` changed
 #    11-Nov-2009 (CT) `__getitem__` changed to deal with slices
 #     1-Dec-2009 (CT) Calls to `self.__class__` corrected
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

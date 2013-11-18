@@ -1,6 +1,6 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2007 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# SchÃ¶nbrunnerstraÃŸe 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -50,7 +50,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 
@@ -91,7 +91,7 @@ class Macro (_Macro_, TFL.SDG.Leaf) :
     m_head                 = ""
 
     h_format = c_format    = """
-        #%(m_head)s%(name)s%(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
+        #%(m_head)s%(name)s%(:head=(Â¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
         >%(::*description:)s
     """
 
@@ -182,7 +182,7 @@ class Define_Constant (Define) :
     front_args           = ("name", "value")
 
     h_format = c_format  = """
-        #%(m_head)s%(name)s %(:head=(¡tail=):.value:)s
+        #%(m_head)s%(name)s %(:head=(Â¡tail=):.value:)s
         >%(::*description:)s
     """
 

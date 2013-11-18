@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -176,7 +176,7 @@
 #    11-May-2012 (CT) Add exception handler around call of `.write_json` to
 #                     `_Changer_._post_handler` to email `result`
 #    10-Jun-2012 (CT) Remove trailing `/` from `href`, add `/` to `prefix`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

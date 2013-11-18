@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
@@ -85,7 +85,7 @@
 #     2-Aug-2007 (CED) Coding guidelines
 #    19-Nov-2007 (CT)  Imports corrected
 #    19-Nov-2007 (CT)  `string` functions replaced by `str` methods
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL._TKT._Tk.CT_TK import *

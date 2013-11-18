@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -35,7 +35,7 @@
 #    25-Sep-2012 (CT) Change `render` to sort by `type_name`
 #    25-Sep-2012 (CT) Change `render` to sort links by `rid`
 #    26-Sep-2012 (CT) Change `transform` to minimum render coordinates to 0
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

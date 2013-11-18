@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 #
 #++
@@ -14,7 +14,7 @@
 #    16-May-2005 (MG) New `SORT_*` constants added
 #     3-Jun-2005 (MG) Dialog response constants added
 #     6-Aug-2005 (MG) DND constants added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL._TKT._GTK import GTK

@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005-2009 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005-2009 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -48,7 +48,7 @@
 #    16-Sep-2005 (MG) `add`: debug code added
 #    30-Dec-2005 (MG) `Filter_Model.iter` added
 #    17-Jul-2009 (CT) `_check_MRO` and `__init__` added t o`_Proxy_Model_`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                   import TFL

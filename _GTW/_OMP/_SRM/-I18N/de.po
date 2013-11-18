@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
@@ -46,7 +46,7 @@ msgstr "Australien"
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:69
 msgid "Austria"
-msgstr "Österreich"
+msgstr "Ã–sterreich"
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Beam"
@@ -77,7 +77,7 @@ msgstr "Boot einer bestimmten Bootsklasse."
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Boat racing in a regatta."
-msgstr "Boot, das in einer Regatta mitfährt."
+msgstr "Boot, das in einer Regatta mitfÃ¤hrt."
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Boat-class of boat."
@@ -124,15 +124,15 @@ msgstr "Segelclub, der die Regatta veranstaltet."
 
 #: _GTW._OMP._SRM.Sailor:0
 msgid "Club the sailor is starting for."
-msgstr "Segelclub, für den der Segler startet."
+msgstr "Segelclub, fÃ¼r den der Segler startet."
 
 #: _GTW._OMP._SRM.Team:0
 msgid "Club the team is starting for."
-msgstr "Segelclub, für den das Team startet."
+msgstr "Segelclub, fÃ¼r den das Team startet."
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Country for which the boat is registered."
-msgstr "Land, für das das Boot registriert ist."
+msgstr "Land, fÃ¼r das das Boot registriert ist."
 
 #: _GTW._OMP._SRM.Crew_Member:0
 msgid "Crew member of a `Boat_in_Regatta`."
@@ -162,7 +162,7 @@ msgstr "Datum, an dem das Regattaergebnis erstellt wurde."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:75
 msgid "Denmark"
-msgstr "Dänemark"
+msgstr "DÃ¤nemark"
 
 #: _GTW._OMP._SRM.Page:0
 msgid "Description of the purpose of the page."
@@ -248,7 +248,7 @@ msgstr "Italien"
 
 #: _GTW._OMP._SRM.Crew_Member:0
 msgid "Key"
-msgstr "Schlüssel"
+msgstr "SchlÃ¼ssel"
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Kind"
@@ -264,15 +264,15 @@ msgstr "Lettland"
 
 #: _GTW._OMP._SRM.Team:0
 msgid "Leader"
-msgstr "Anführer"
+msgstr "AnfÃ¼hrer"
 
 #: _GTW._OMP._SRM.Team:0
 msgid "Leader of team."
-msgstr "Anführer des Teams."
+msgstr "AnfÃ¼hrer des Teams."
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Length over all (in meters)."
-msgstr "Länge über alles (in Metern)."
+msgstr "LÃ¤nge Ã¼ber alles (in Metern)."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:88
 msgid "Lichtenstein"
@@ -284,15 +284,15 @@ msgstr "Litauen"
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Loa"
-msgstr "Lüa"
+msgstr "LÃ¼a"
 
 #: _GTW._OMP._SRM.Club:0
 msgid "Long name"
-msgstr "Name (ausführlich)"
+msgstr "Name (ausfÃ¼hrlich)"
 
 #: _GTW._OMP._SRM.Club:0
 msgid "Long name of the sailing club."
-msgstr "Ausführlicher Name des Segelclubs."
+msgstr "AusfÃ¼hrlicher Name des Segelclubs."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:90
 msgid "Luxembourg"
@@ -312,7 +312,7 @@ msgstr "Maximale Breite des Boots (in Metern)."
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Maximum number of crew for this class of sailboats."
-msgstr "Maximale Anzahl von Crewmitgliedern für diese Bootsklasse."
+msgstr "Maximale Anzahl von Crewmitgliedern fÃ¼r diese Bootsklasse."
 
 #: _GTW._OMP._SRM.Sailor:0
 msgid "Membership number in Member National Authorities (MNA)."
@@ -328,7 +328,7 @@ msgstr "Bootsklasse."
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Model a handicap formula for sailboats."
-msgstr "Vermessungsformel für Segelboote."
+msgstr "Vermessungsformel fÃ¼r Segelboote."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:93
 msgid "Monaco"
@@ -348,7 +348,7 @@ msgstr "Name der Vermessungsformel."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Name of handicap system used for this regatta."
-msgstr "Name der Vermessungsformel, die für diese Regatta verwendet wird."
+msgstr "Name der Vermessungsformel, die fÃ¼r diese Regatta verwendet wird."
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Name of sailboat."
@@ -372,7 +372,7 @@ msgstr "Nation"
 
 #: _GTW._OMP._SRM.Sailor:0
 msgid "Nation for which the sailor sails."
-msgstr "Land, für das der Segler startet."
+msgstr "Land, fÃ¼r das der Segler startet."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:94
 msgid "Netherlands"
@@ -396,7 +396,7 @@ msgstr "Wettfahrt."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Number of races sailed in regatta"
-msgstr "Anzahl der (tatsächlich) gesegelten Wettfahrten"
+msgstr "Anzahl der (tatsÃ¤chlich) gesegelten Wettfahrten"
 
 #: _GTW._OMP._SRM.Crew_Member:0
 msgid "Person which sails as crew member on `boat_in_regatta`"
@@ -469,15 +469,15 @@ msgstr "Regatta, die von dieser Seite beschrieben wird."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta event to which this regatta belongs."
-msgstr "Regattaveranstaltung, zu der diese Regatta gehört."
+msgstr "Regattaveranstaltung, zu der diese Regatta gehÃ¶rt."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta for a single class of sail boats."
-msgstr "Regatta für eine spezielle Bootsklasse."
+msgstr "Regatta fÃ¼r eine spezielle Bootsklasse."
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Regatta for boats in a handicap system."
-msgstr "Regatta für Boote eines Handicap-Systems."
+msgstr "Regatta fÃ¼r Boote eines Handicap-Systems."
 
 #: _GTW._OMP._SRM.Team:0
 msgid "Regatta in which this team sails."
@@ -527,7 +527,7 @@ msgstr "Rolle des Crewmitglieds."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:99
 msgid "Romania"
-msgstr "Rumänien"
+msgstr "RumÃ¤nien"
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:101
 msgid "Russia"
@@ -539,7 +539,7 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Sail area"
-msgstr "Segelfläche"
+msgstr "SegelflÃ¤che"
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number"
@@ -547,13 +547,13 @@ msgstr "Segelnummer"
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number of boat (without nation!)"
-msgstr "Segelnummer des Boots (OHNE das Nationenkürzel)"
+msgstr "Segelnummer des Boots (OHNE das NationenkÃ¼rzel)"
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number prefix of boat (e.g., \"X\", not the nation code!)."
 msgstr ""
-"Segelnummerprefix des Boots (z.B. \"X\" für eine Konstruktionsklasse, "
-"NICHT das Nationenkürzel)."
+"Segelnummerprefix des Boots (z.B. \"X\" fÃ¼r eine Konstruktionsklasse, "
+"NICHT das NationenkÃ¼rzel)."
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "Sail number x"
@@ -561,11 +561,11 @@ msgstr "Segelnummerprefix"
 
 #: _GTW._OMP._SRM.Regatta_Event:0
 msgid "Sailing regatta event for one or more classes/handicaps."
-msgstr "Segelregatta für ein oder mehrere Bootsklassen/Handicaps."
+msgstr "Segelregatta fÃ¼r ein oder mehrere Bootsklassen/Handicaps."
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "Sailing team boats sail for in regatta."
-msgstr "Team, für das die Boote in dieser Regatta segeln."
+msgstr "Team, fÃ¼r das die Boote in dieser Regatta segeln."
 
 #: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Crew_Member:0
 msgid "Sailor"
@@ -575,7 +575,7 @@ msgstr[1] "Segler"
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Seal area upwind (in square meters)."
-msgstr "Am-Wind Segelfläche (in Quadratmetern)."
+msgstr "Am-Wind SegelflÃ¤che (in Quadratmetern)."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:103
 msgid "Serbia"
@@ -615,7 +615,7 @@ msgstr "Software"
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:100
 msgid "South Africa"
-msgstr "Südafrika"
+msgstr "SÃ¼dafrika"
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:76
 msgid "Spain"
@@ -631,7 +631,7 @@ msgstr "Status des Boots in dieser Wettfahrt (DNS, DNF, BFD, ...)"
 
 #: _GTW._OMP._SRM.Attr_Type:0
 msgid "Status of result (e.g., `preliminary` or `final`)."
-msgstr "Status des Ergebnisses (z.B. `vorläufig` oder `endgültig`)."
+msgstr "Status des Ergebnisses (z.B. `vorlÃ¤ufig` oder `endgÃ¼ltig`)."
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:106
 msgid "Sweden"
@@ -658,7 +658,7 @@ msgid ""
 "The crew members of a boat will be sorted by `key`, if\n"
 "defined, by order of creation otherwise."
 msgstr ""
-"Die Crew-Mitglieder des Boots werden anhand des `Schlüssels` sortiert, "
+"Die Crew-Mitglieder des Boots werden anhand des `SchlÃ¼ssels` sortiert, "
 "falls angegeben, anderenfalls nach der Reihenfolge der Eingabe."
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
@@ -666,7 +666,7 @@ msgid ""
 "The number of crew members must be less than\n"
 "`boat.b_class.max_crew`."
 msgstr ""
-"Die Anzahl der Crewmitglieder muss kleiner als die Maximalzahl für die "
+"Die Anzahl der Crewmitglieder muss kleiner als die Maximalzahl fÃ¼r die "
 "Bootsklasse sein."
 
 #: _GTW._OMP._SRM.Race_Result:0
@@ -691,11 +691,11 @@ msgstr "Webseite mit Informationen zu einer Segelregatta."
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "`Boat_in_Regatta` sailing for `Team`"
-msgstr "Boot, das in der Regatta für das Team segelt."
+msgstr "Boot, das in der Regatta fÃ¼r das Team segelt."
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "`Boat_in_Regatta` sailing for team."
-msgstr "Boot, das in der Regatta für das Team segelt."
+msgstr "Boot, das in der Regatta fÃ¼r das Team segelt."
 
 #: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Crew_Member:0
 msgid "`Boat_in_Regatta` the crew member sails on."
@@ -715,7 +715,7 @@ msgstr "Das Baujahr kann nicht in der Zukunft liegen."
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "crew_number_valid"
-msgstr "Gültige Anzahl an Crewmitgliedern"
+msgstr "GÃ¼ltige Anzahl an Crewmitgliedern"
 
 #: _GTW/_OMP/_SRM/Crew_Member.py:97
 msgid "trimmer"
@@ -727,12 +727,12 @@ msgstr "Ein Segler kann nicht mehrere Boote in ein- und derselben Regatta steuer
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "valid_regatta"
-msgstr "Gültige Regatta"
+msgstr "GÃ¼ltige Regatta"
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_sail_number_x"
-msgstr "Gültiger Segelnummerprefix"
+msgstr "GÃ¼ltiger Segelnummerprefix"
 
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
-msgstr "Gültiges Baujahr"
+msgstr "GÃ¼ltiges Baujahr"

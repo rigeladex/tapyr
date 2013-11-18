@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -49,7 +49,7 @@
 #     6-May-2010 (MG) `table` render mode added
 #    28-May-2010 (MG) `Field_List` factored
 #    25-Jul-2010 (MG) Render mode `dl_seq` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                                 import TFL

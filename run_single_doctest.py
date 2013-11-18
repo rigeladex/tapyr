@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
@@ -28,7 +28,7 @@
 #    25-Jul-2011 (MG) Creation
 #    28-Mar-2013 (CT) Add `-summary` to be more compatible with `run_doctest`
 #     7-Aug-2013 (CT) Add `cases` (adapt to change of `run_doctest`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__   import unicode_literals

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -58,7 +58,7 @@
 #    25-Jun-2013 (CT) Make `_Class_Property_Function_.__get__` Python-2.6
 #                     compatible
 #    26-Jun-2013 (CT) Add `Class_and_Instance_Lazy_Property`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function

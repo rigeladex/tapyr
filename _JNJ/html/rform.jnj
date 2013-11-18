@@ -43,7 +43,7 @@
 ##                     (Save/reset/cancel)
 ##    19-Aug-2010 (CT) `title` added to all Save/reset/cancel buttons
 ##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
-##    ««revision-date»»···
+##    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 ##--
 #}
 {%- import (html_version or "html/5.jnj") as X   -%}

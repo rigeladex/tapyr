@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2006-2013 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
@@ -47,7 +47,7 @@
 #    16-Jun-2010 (CT)  s/print/pyk.fprint/
 #     8-Aug-2012 (CT) Use `parent._._module_name`, not `parent._._name`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL              import TFL

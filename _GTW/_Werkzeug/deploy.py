@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -38,7 +38,7 @@
 #     3-Jun-2012 (CT) Use `self.lib_dir`, not `P.lib_dir`, in
 #                     `_handle_fcgi_script`
 #     5-Jun-2012 (CT) Add `exec` to output of `_handle_fcgi_script`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function #, unicode_literals

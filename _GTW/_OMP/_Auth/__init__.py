@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2013 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010-2013 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -29,7 +29,7 @@
 #    13-Jan-2010 (MG) Creation
 #     9-Oct-2012 (CT) Add `_desc_`
 #    15-Jun-2013 (CT) Use `MOM.Derived_PNS`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW._OMP              import OMP

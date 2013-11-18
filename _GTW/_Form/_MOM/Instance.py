@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #     3-May-2010 (MG) New form handling implemented
 #    15-May-2010 (MG) `css_class`, `widget`, and `default_render_mode` removed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM               import MOM

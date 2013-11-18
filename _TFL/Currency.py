@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -37,7 +37,7 @@
 #     7-Jan-2010 (CT) `__str__` moved from `Currency` to `_Currency_`
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function
@@ -282,7 +282,7 @@ class Currency (_Currency_) :
        You can subclass this to parameterize
 
        - `name`         : default "Eur"
-       - `sloppy_name`  : default "¤"
+       - `sloppy_name`  : default "â‚¬"
        - `decimal_sign` : default "."
        - `sep_1000`     : default ","
 
@@ -310,7 +310,7 @@ class Currency (_Currency_) :
        >>> c
        Currency ("12345.67")
        >>> print (c)
-       12345.67 ¤
+       12345.67 â‚¬
 
        >>> c = Currency ("12345.67")
        >>> d = Currency ("12345.67")
@@ -318,7 +318,7 @@ class Currency (_Currency_) :
        (True, False, True, False)
     """
 
-    _symbol         = u"¤"
+    _symbol         = u"â‚¬"
 
     C     = decimal.Context (prec = 12, rounding = decimal.ROUND_HALF_UP)
     D     = decimal.Decimal

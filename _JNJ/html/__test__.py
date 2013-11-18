@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 """
 
@@ -47,7 +47,7 @@
       <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
       <![endif]-->
-      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <BLANKLINE>
     <BLANKLINE>
               <title>None</title>
@@ -122,7 +122,7 @@
     >
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
       <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <BLANKLINE>
     <BLANKLINE>
               <title>None</title>

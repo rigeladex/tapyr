@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -89,7 +89,7 @@
 #    30-Jan-2013 (CT) Change `Create.redo` to pass `allow_zombie` to `pid_query`
 #     4-Jun-2013 (CT) Add `pid` to `kw` in `_Entity_._create`
 #    24-Jul-2013 (CT) Add `Create.update`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM               import MOM

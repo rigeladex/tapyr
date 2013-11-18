@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #                     (in Python 2.5.2, the import of old-style names fails
 #                     to import `mktime_tz` from `Utils`; arrrg)
 #    20-Apr-2008 (CT) Imports changed so that it really works for 2.5.2 and 2.4
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _PMA                    import PMA

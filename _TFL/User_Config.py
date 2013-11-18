@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -33,7 +33,7 @@
 #    21-Jun-2012 (CT) Handle `time_zone` properly in `set_default`
 #    21-Jun-2012 (CT) Autoconvert `time_zone` values passed as string
 #    21-Jun-2012 (CT) Fix typo
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals, absolute_import

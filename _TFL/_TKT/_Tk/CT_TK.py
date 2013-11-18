@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -464,7 +464,7 @@
 #                      deprecated `sos.tmpnam`)
 #    13-Nov-2009 (CT)  Don't use `map`, `apply`, and `has_key` (3-compatibility)
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function
@@ -6758,15 +6758,15 @@ if root :
         p = tn.new_page ("Entry-Widgets")
         lds = Listdropspinner \
             ( p
-            , ("Completer", "Jänner", "Februar", "März", "April", "Mai", "Juni")
-            , default = "März"
+            , ("Completer", "JÃ¤nner", "Februar", "MÃ¤rz", "April", "Mai", "Juni")
+            , default = "MÃ¤rz"
             )
         Entry_History ().attach (lds)
         lds.pack ()
         H_Separator (p).pack ()
         Listspinner        ( p
                            , ("abc", "abcd", "abcx", "April", "Mai", "Juni")
-                           , default = "März"
+                           , default = "MÃ¤rz"
                            ).pack ()
         H_Separator (p).pack ()
         Num_Spinner        ( p, default = 5, lo_bound = 1, hi_bound = 12
@@ -6780,7 +6780,7 @@ if root :
         eb = Entrybox (p, label = "Horizontal entrybox", labelpos = LEFT)
         eb.pack       ()
         eb.add        ( Listdropspinner ( eb
-                                        , ( "Jänner", "Februar", "März"
+                                        , ( "JÃ¤nner", "Februar", "MÃ¤rz"
                                           , "April", "Mai", "Juni"
                                           , "Juli", "August", "September"
                                           , "Oktober", "November", "Dezember"
@@ -6799,7 +6799,7 @@ if root :
                       )
         eb.pack       ()
         eb.add        ( Listdropspinner ( eb
-                                        , ( "Jänner", "Februar", "März"
+                                        , ( "JÃ¤nner", "Februar", "MÃ¤rz"
                                           , "April", "Mai", "Juni"
                                           , "Juli", "August", "September"
                                           , "Oktober", "November", "Dezember"
@@ -6870,7 +6870,7 @@ if root :
     #            (file = "/swing/python/distrib/ptui-1.1pr1/icons/logo.gif")
     #        , justify = CENTER
     #        ).pack (fill = BOTH, expand = YES)
-        p = tn.new_page ("···")
+        p = tn.new_page ("Â·Â·Â·")
         Label ( p, text = "Under construction...", height = 12
               , justify = CENTER
               ).pack (fill = BOTH, expand = YES)

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -124,7 +124,7 @@
 #    27-Sep-2007 (CED) Added support for derived PNS import of root file
 #    18-Nov-2009 (CT)  3-compatibility
 #    16-Jun-2013 (CT)  Use `TFL.CAO`, not `TFL.Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL              import TFL

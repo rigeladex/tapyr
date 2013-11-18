@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -84,7 +84,7 @@
 #     7-Nov-2007 (CT)  Moved into package _TFL._TKT._Tk
 #     1-Feb-2008 (MG)  `Change_Record.__nonzero__` factored to `Record`
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL._TKT._Tk.CT_TK  import *

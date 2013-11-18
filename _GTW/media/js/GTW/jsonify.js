@@ -16,7 +16,7 @@
 // Revision Dates
 //    26-Jan-2011 (CT) Creation
 //    31-May-2011 (MG) Missing `var` added
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

@@ -18,7 +18,7 @@
 //    18-Aug-2012 (MG) Fix `pre_submit_callbacks` handling
 //    19-Aug-2012 (MG) Set `domain` to allow serving of tinymce from a
 //                     different subdomain
-//    28-Jan-2013 (MG) `_setup_field` now has two parameters//    ««revision-date»»···
+//    28-Jan-2013 (MG) `_setup_field` now has two parameters//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

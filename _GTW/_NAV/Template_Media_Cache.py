@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2012 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # #*** <License> ************************************************************#
@@ -34,7 +34,7 @@
 #     5-Jan-2012 (CT) Add caching for `js`, call `t.get_cached_media` (SURGERY)
 #     9-Jan-2012 (CT) Add `minifier`, cache `js` only `if not root.TEST`
 #    19-Jan-2012 (CT) s/rank/cache_rank/
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                   import GTW

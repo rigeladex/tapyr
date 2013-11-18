@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -50,7 +50,7 @@
 #    20-Aug-2013 (CT) Remove `show_ora`, `show_dep` from `test_code`
 #                     Lazy loading of objects breaks this in SAS, SAW backends
 #     9-Oct-2013 (CT) Add `_test_qr_grouped_by`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

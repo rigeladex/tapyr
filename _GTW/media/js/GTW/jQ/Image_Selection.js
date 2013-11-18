@@ -18,7 +18,7 @@
 //    17-Aug-2012 (MG) Make selection window url configurable
 //    24-Jan-2013 (MG) Use elfinder as media selection interface
 //    28-Jan-2013 (MG) `_setup_field` now has two parameters
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

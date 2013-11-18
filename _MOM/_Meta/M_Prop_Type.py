@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    14-Jun-2013 (CT) Change `dyn_doc_p` to dict
 #    14-Jun-2013 (CT) Use `_doc_properties` in `__init__`, not literal in
 #                     `__new__`  to normalize indent, update `dyn_doc_p`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM                import MOM

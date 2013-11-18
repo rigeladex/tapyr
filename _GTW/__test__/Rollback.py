@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -32,7 +32,7 @@
 #    30-Jul-2012 (CT) Replace obsolete comment by tests showing `count`,
 #                     `query_s`, and length of `uncommitted_changes`
 #    25-Aug-2013 (CT) Add `test_create_m`, fix style
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_attr = r"""

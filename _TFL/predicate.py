@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -177,7 +177,7 @@
 #    12-Sep-2012 (CT)  Use `itertools.product` for `cartesian`, if available
 #    10-May-2013 (CT)  Add `plural_of`
 #    12-Jun-2013 (CT) Change `bool_split` to use `bool_split_iters`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function
@@ -1218,7 +1218,7 @@ def un_nested (l) :
     return l
 # end def un_nested
 
-def xored_string (source, salt = "ß") :
+def xored_string (source, salt = "ÃŸ") :
     salt = ord (salt)
     return "".join (chr (ord (c) ^ salt) for c in source)
 # end def xored_string

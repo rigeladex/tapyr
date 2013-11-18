@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #    31-Mar-2008 (CT) Doctests adapted to change of RTS to consider `dst` for
 #                     local times
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL                     import CAL
@@ -74,7 +74,7 @@ class Sun (TFL.Meta.Object) :
        >>> s.true_longitude
        Angle_D (199.909872663)
        >>> print s.true_longitude
-       199°54'35''
+       199Â°54'35''
        >>> print s.radius_vector
        0.997661950006
        >>> s.omega
@@ -82,11 +82,11 @@ class Sun (TFL.Meta.Object) :
        >>> s.apparent_longitude
        Angle_D (199.90894186)
        >>> print s.apparent_longitude
-       199°54'32''
+       199Â°54'32''
        >>> s.mean_obliquity_ecliptic
        Angle_D (23.4402297955)
        >>> print s.mean_obliquity_ecliptic
-       023°26'24''
+       023Â°26'24''
        >>> print s.mean_obliquity_ecliptic.seconds
        24.8272638004
        >>> s.obliquity_corrected

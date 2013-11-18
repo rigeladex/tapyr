@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2008 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2006-2008 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -32,7 +32,7 @@
 #     9-May-2008 (MG) `Redirect_to_Login` added, `Check_Context` and
 #                     `Input_Has_Value` fixed
 #     9-May-2008 (MG) `Test_Case.login` factored
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 import django.test.testcases           as     unittest

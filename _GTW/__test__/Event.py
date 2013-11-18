@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #     6-Sep-2010 (CT) Adapted to change of Recurrence_Rule and Recurrence_Spec
 #     7-Sep-2010 (CT) Tests for update of `Event_occurs` added
 #     8-Sep-2010 (CT) Tests for Event without `Recurrence_Rule` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 _test_code = """

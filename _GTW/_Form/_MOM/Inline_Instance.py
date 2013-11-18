@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
@@ -60,7 +60,7 @@
 #     9-Jun-2010 (MG) `initial_data.instance` can now be a callable
 #     8-Aug-2010 (MG) State handling changed, inline `testing` changed
 #    19-Aug-2010 (MG) `Collection_Inline_Instance` missing methods added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                                 import TFL

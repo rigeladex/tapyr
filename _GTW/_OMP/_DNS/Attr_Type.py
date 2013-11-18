@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A-3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
@@ -30,7 +30,7 @@
 #    22-Sep-2012 (RS) Factor `A_DNS_Label` and correct syntax
 #    11-Oct-2012 (RS) RFC 1123 section 2.1 permits DNS label
 #                     to start with a digit, change `A_DNS_Label` syntax
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals

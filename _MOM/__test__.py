@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -28,7 +28,7 @@
 # Revision Dates
 #    18-Feb-2010 (MG) Creation
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM.import_MOM           import *
@@ -42,7 +42,7 @@ Version = Product_Version \
     , major               = 0
     , minor               = 5
     , patchlevel          = 42
-    , author              = u"Christian Tanzer, Martin Glück"
+    , author              = u"Christian Tanzer, Martin GlÃ¼ck"
     , copyright_start     = 2010
     , db_version          = IV_Number
         ( "db_version"

@@ -16,7 +16,7 @@
 //
 // Revision Dates
 //    10-Mar-2011 (CT) Creation
-//    ««revision-date»»···
+//    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 //--
 
 "use strict";

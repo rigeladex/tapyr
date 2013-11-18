@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -119,7 +119,7 @@
 #    28-Mar-2013 (CT) Add `polymorphic_epk` to `Field_Entity.__call__`
 #    11-Jun-2013 (CT) Improve message logged by `_create_instance`
 #    13-Aug-2013 (CT) Change `_create_instance` to check `Required_Missing`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

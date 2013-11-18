@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    14-Apr-2006 (CT) Use `Decorator` to define decorators
 #    14-Apr-2010 (CT) Import of `spambayes` modules moved into `try`-clause
 #                     (to avoid gentoo-breakage `ImportError: No module named lockfile`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _PMA                    import PMA

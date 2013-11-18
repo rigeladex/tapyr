@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #     5-Nov-2004 (CT) Use `//` for int division
 #    16-Jun-2010 (CT) Use unicode for holiday names
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL
@@ -51,8 +51,8 @@ import _CAL.Delta
 import _TFL.CAO
 
 def easter_date_gauss (year) :
-    """Returns date of easter sunday computed by Gauß' rule as given by
-       H.H.Voigt: `Abriß der Astronomie`.
+    """Returns date of easter sunday computed by GauÃŸ' rule as given by
+       H.H.Voigt: `AbriÃŸ der Astronomie`.
     """
     if   1583 <= year <= 1699 :
         m, n = 22, 2
@@ -105,12 +105,12 @@ def easter_date (y) :
 
 fixed_holidays = \
   { ( 1,  1) : u"Neujahr"
-  , ( 1,  6) : u"Hl. Drei Könige"
+  , ( 1,  6) : u"Hl. Drei KÃ¶nige"
   , ( 5,  1) : u"Mai-Feiertag"
-  , ( 8, 15) : u"Mariä Himmelfahrt"
+  , ( 8, 15) : u"MariÃ¤ Himmelfahrt"
   , (10, 26) : u"Nationalfeiertag"
   , (11,  1) : u"Allerheiligen"
-  , (12,  8) : u"Mariä Empfängnis"
+  , (12,  8) : u"MariÃ¤ EmpfÃ¤ngnis"
   , (12, 25) : u"1. Weihnachtstag"
   , (12, 26) : u"2. Weihnachtstag"
   }

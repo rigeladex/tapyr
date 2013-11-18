@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2006-2007 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2006-2007 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    06-May-2007 (MG) Creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 ### __END__ DJO.templatetags.__init__

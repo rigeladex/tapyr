@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #    14-Jul-2009 (CT) Use `Template` objects instead of strings
 #    21-Aug-2009 (CT) `Nested_Form_Group_Description` for `Phone_Number`,
 #                     `Email_Address`, and `Addresses` factored
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _DJO                       import DJO

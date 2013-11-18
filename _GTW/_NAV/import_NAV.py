@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -30,7 +30,7 @@
 #    20-Mar-2010 (MG) Import of `Request_Handler` removed
 #    16-Dec-2010 (CT) s/Admin/Site_Admin/
 #    22-Dec-2010 (CT) `Site_Admin` moved to `GTW.NAV.E_Type`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 import _GTW._NAV.Auth

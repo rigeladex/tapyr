@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -111,7 +111,7 @@
 #    16-Jun-2013 (CT) Add `CAO.HELP`
 #    29-Aug-2013 (CT) Add `Rel_Path.__init__` to allow `base_dirs` without "_",
 #                     add call of `.expanded_path` to `Rel_Path.base_dirs`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__       import print_function
@@ -1694,7 +1694,7 @@ def show (cao) :
     pyk.fprint ("    argv       : %s" % (cao.argv, ))
 # end def show
 
-### «text» ### start of documentation
+### Â«textÂ» ### start of documentation
 __doc__ = """
 Module `CAO`
 =============
@@ -1877,7 +1877,7 @@ specified. ::
 
 """
 
-### «text» ### start of doctest
+### Â«textÂ» ### start of doctest
 __test__ = dict \
     ( test = """
 Usage examples

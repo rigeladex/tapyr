@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -33,7 +33,7 @@
 #    15-Mar-2011 (CT) `GTW.afs_id` and `.afs_spec` initialized to `None`
 #    23-Mar-2011 (CT) `GTW.afs_kw` initialized to `None`
 #    17-May-2013 (CT) Add `GTW.rst_mom_rbl_spec`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM import MOM

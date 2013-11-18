@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -325,7 +325,7 @@
 #    12-Jul-2013 (CT) Add support for `sqx_filter` to `_A_Rev_Ref_`
 #     1-Aug-2013 (CT) Factor `_A_SPK_Entity_`, add `_A_MD_Change_`
 #    21-Aug-2013 (CT) Add `_A_Rev_Ref_.finished_query_first`, `.sort_key`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import absolute_import, division
@@ -2719,7 +2719,7 @@ Class `MOM.Attr.A_Attr_Type`
     and links. It is the root class for a hierarchy of classes defining
     abstract attribute types like `A_Int`, `A_String`, `A_Name` and
     many more. All classes specifying abstract attribute types should
-    be named following the convention `A_«type-name»` and must define
+    be named following the convention `A_Â«type-nameÂ»` and must define
     a class attribute `typ` that defines the human-readable name of
     the abstract attribute type, e.g., `int`, `string`, or `name`.
 

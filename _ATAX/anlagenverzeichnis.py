@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -52,7 +52,7 @@
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Feb-2011 (CT) `cat` and `total_per_cat` added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
-#    ´´revision-dateªª∑∑∑
+#    ¬´¬´revision-date¬ª¬ª¬∑¬∑¬∑
 #--
 
 from   _ATAX.accounting import *
@@ -96,11 +96,11 @@ class _IFB_ (TFL.Meta.Object) :
 # end class _IFB_
 
 class FBiG (_IFB_) :
-    """Model a FBiG (Freibetrag f¸r investierte Gewinne)."""
+    """Model a FBiG (Freibetrag f√ºr investierte Gewinne)."""
 
     abbr    = "FBiG"
     account = None
-    name    = "Freibetrag f¸r investierte Gewinne"
+    name    = "Freibetrag f√ºr investierte Gewinne"
 
     def __init__ (self, entry, ifb, source_currency) :
         self.__super.__init__ (entry)
@@ -391,9 +391,9 @@ class Anlagenverzeichnis (_Base_) :
         if len (self.total_per_cat) > 1 :
             for k, v in sorted (self.total_per_cat.iteritems ()) :
                 print (self.out_format % ("", "", "", "", k, v))
-        print self.new_format % ("Neuzug‰nge", "", "", self.total_new_value)
+        print self.new_format % ("Neuzug√§nge", "", "", self.total_new_value)
         print ( self.out_format
-              % ( "Abg‰nge", "", "", "", "", self.total_out_value)
+              % ( "Abg√§nge", "", "", "", "", self.total_out_value)
               )
         if self.total_ifb_value :
             print ( self.out_format

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #     2-Jun-2010 (CT) `prefixed` added to `Wildcard_Field.__call__`
 #    24-Jul-2010 (MG) `Wildcard_Field.`exclude` added
 #     4-Aug-2010 (MG) `exclude` added to `Field_List.both_runs`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                import TFL

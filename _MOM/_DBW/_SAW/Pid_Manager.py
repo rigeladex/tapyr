@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -32,7 +32,7 @@
 #    18-Jul-2013 (CT) Fix various bugs
 #    31-Jul-2013 (CT) Use `scalar`, not `fetchone`, to extract `tn_col`
 #    31-Jul-2013 (CT) Use `session.con_man_seq`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__     import division, print_function

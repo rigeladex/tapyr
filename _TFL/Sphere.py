@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2013 Martin Glueck All rights reserved
 # ****************************************************************************
 #
@@ -28,7 +28,7 @@
 # Revision Dates
 #     6-Apr-2011 (MG) Creation
 #    23-May-2011 (CT) `doctest` fixed (no floating point in output)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import print_function

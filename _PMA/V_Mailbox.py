@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    23-Jan-2006 (MG) Rewritten using the change counter
 #    26-Jan-2006 (MG) `remove_msg` reordered
 #    26-Jan-2006 (MG) Use new `changes_for_observer` feature
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 #
 from   _TFL                    import TFL

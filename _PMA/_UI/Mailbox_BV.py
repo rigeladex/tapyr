@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -37,7 +37,7 @@
 #    31-Jul-2005 (CT) Style `Target` changed to match `Copied` of `Mailbox_MV`
 #    31-Jul-2005 (CT) `_style` fixed (superfluous `return` removed)
 #    26-Jan-2006 (MG) `Filter_Mailbox` have now a italic font style
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL                    import TGL

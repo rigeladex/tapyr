@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -70,7 +70,7 @@
 #    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    16-Jun-2010 (CT) Encode holiday names with `TFL.I18N.Config.encoding`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _CAL              import CAL

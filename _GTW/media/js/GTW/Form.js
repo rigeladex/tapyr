@@ -37,7 +37,7 @@
 **    24-Jun-2010 (MG) Button order and text for popup form are now specified
 **                     in the template
 **     3-Aug-2010 (MG) Bug with copying link inlines fixed
-**    ««revision-date»»···
+**    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 **--
 */
 

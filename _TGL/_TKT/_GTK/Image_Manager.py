@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2005 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -31,7 +31,7 @@
 #     5-Apr-2005 (MG) Store gtk.Pixbuf object's instead of GTK.Image objects
 #    16-May-2005 (MG) `std_pathes` changed
 #    28-Jul-2005 (MG) `std_pathes` moved to `TGL.TKT.GTK.Object`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL                   import TGL

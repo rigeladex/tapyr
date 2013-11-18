@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@
 #    22-May-2012 (CT) Fix typo (`Account_P = dict`, not `Account = dict`)
 #    26-Jul-2012 (CT) Import `_GTW._RST.Permission`, not `_GTW._NAV.Permission`
 #    16-Jan-2013 (CT) Add `Certificate`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

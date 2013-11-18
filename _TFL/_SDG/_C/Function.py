@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -38,7 +38,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    26-Feb-2012 (MG) `__future__` imports added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 
@@ -68,10 +68,10 @@ class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
     _h_format = _c_format  = \
         ( """%(::*return_type:)s %(name)s"""
               """%(:front=%(NL)s%(base_indent * 2)s( """
-                """¡rear=%(NL)s%(base_indent * 2)s)"""
-                """¡front0= ("""
-                """¡rear0=)"""
-                """¡empty= (void)"""
+                """Â¡rear=%(NL)s%(base_indent * 2)s)"""
+                """Â¡front0= ("""
+                """Â¡rear0=)"""
+                """Â¡empty= (void)"""
                 """:*arg_list"""
                 """:)s"""
         )
@@ -126,8 +126,8 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
         ( ( _mod_format
           , _Function_._h_format
           , """%(:empty=;"""
-              """¡front=;%(NL)s%(base_indent * 2)s"""
-              """¡sep=%(base_indent * 2)s"""
+              """Â¡front=;%(NL)s%(base_indent * 2)s"""
+              """Â¡sep=%(base_indent * 2)s"""
               """:*description:)s
                >
           """

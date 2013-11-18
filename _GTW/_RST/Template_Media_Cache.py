@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2012-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -35,7 +35,8 @@
 #    14-Aug-2012 (MG) Consider `Media_Base.Domain` for href creation
 #    17-Aug-2012 (MG) Set `etag`during cache creation
 #     2-May-2013 (CT) Use `root.hash_fct` and `root.b64_encoded`
-#    ««revision-date»»···
+#    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                   import GTW
@@ -176,7 +177,7 @@ class Template_Media_Cache (TFL.Meta.Object) :
             for t in sorted (t_set, key = TFL.Getter.path) :
                 s = t.source
                 if s is not None :
-                    yield s.encode ("iso-8859-1", "replace")
+                    yield s.encode ("utf-8", "replace")
         h = root.hash_fct ("\n".join (_gen (css_map, js_map, t_set))).digest ()
         return root.b64_encoded (h)
     # end def _get_etag

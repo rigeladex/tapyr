@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-15\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
@@ -43,9 +43,9 @@ msgid "\\u203A"
 msgstr "\\u2039"
 
 #: _ReST/Roles.py:93
-msgid "«"
-msgstr "»"
+msgid "Â«"
+msgstr "Â»"
 
 #: _ReST/Roles.py:93
-msgid "»"
-msgstr "«"
+msgid "Â»"
+msgstr "Â«"

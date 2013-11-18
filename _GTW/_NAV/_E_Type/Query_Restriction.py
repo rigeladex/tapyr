@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
@@ -46,7 +46,7 @@
 #    23-Dec-2011 (CT) Creation continued (use `Styler_Safe`, not `Styler`)
 #    16-Jan-2012 (CT) Creation continued (add `fields` and `_setup_fields`)
 #    24-Feb-2012 (CT) Add `kw` to `from_request_data`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals

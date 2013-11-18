@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -72,7 +72,7 @@
 #                     * addition of A_Link_Ref and A_Link_Ref_Set attributes
 #                     * change from `auto_cache` to `auto_rev_ref`
 #     4-Oct-2013 (CT) Add `DBW` and `DBW.SAW` to `toctree` directive
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import unicode_literals
@@ -95,7 +95,7 @@ Version = Product_Version \
     , major               = 0
     , minor               = 5
     , patchlevel          = 42
-    , author              = "Christian Tanzer, Martin Glück"
+    , author              = "Christian Tanzer, Martin GlÃ¼ck"
     , copyright_start     = 2009
     , db_version          = IV_Number
         ( "db_version"
@@ -565,7 +565,7 @@ BMT._Export ("*", "Version")
 
 NL = chr (10)
 
-### «text»
+### Â«textÂ»
 
 dt_form = \
 """

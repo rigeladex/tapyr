@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -46,7 +46,7 @@
 #    31-Mar-2008 (CT) `__init__` changed to dereference `_body` if necessary
 #     3-May-2011 (CT) `_init_kw` added and used for `__repr__`
 #    29-Mar-2012 (CT) Add `_xtra_arg_names` and `_xtra_kw` (to support `tzinfo`)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #                     (and s/Positive_Integer/Integer/)
 #    20-Aug-2009 (MG) `ordering` added
 #    21-Aug-2009 (CT) `Nested_Form_Group_Description` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 ### http://tools.ietf.org/html/rfc3966

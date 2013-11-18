@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009-2011 Martin Glück. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2009-2013 Martin GlÃ¼ck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -31,7 +31,7 @@
 #    14-Jan-2010 (CT) `PNS_Aliases` added and `Account_P` creation enabled
 #    17-Aug-2010 (CT) Switch from `title/desc` to `short_title/title`
 #    11-Mar-2011 (CT) s/cookie_secret/cookie_salt/
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                      import TFL
@@ -75,7 +75,7 @@ GTW.Version = Product_Version \
     , major               = 0
     , minor               = 5
     , patchlevel          = 42
-    , author              = u"Christian Tanzer, Martin Glück"
+    , author              = u"Christian Tanzer, Martin GlÃ¼ck"
     , copyright_start     = 2010
     , db_version          = IV_Number
         ( "db_version"
@@ -111,8 +111,8 @@ template_dirs     = [os.path.join (ROOT_DIR, "templates"), base_template_dir]
 NAV               = GTW.NAV.Root \
     ( src_dir           = "."
     , copyright_start   = 2008
-    , encoding          = "iso-8859-15"
-    , input_encoding    = "iso-8859-15"
+    , encoding          = "utf-8"
+    , input_encoding    = "utf-8"
     , template          = "static.jnj"
     , account_manager   = scope.Auth.Account
     , anonymous         = anonymous
@@ -122,7 +122,7 @@ NAV               = GTW.NAV.Root \
           ( load_path   = template_dirs
           , trim_blocks = True
           , i18n        = True
-          , encoding    = "iso-8859-15"
+          , encoding    = "utf-8"
           , globals     = dict (site_base = "base.jnj")
           , version     = "html/x.jnj"
           )
@@ -211,7 +211,7 @@ if __name__ == "__main__" :
         print "Use Tornado buildin autorelaod feature"
     app = GTW.Tornado.Application \
         ( ((".*$", GTW.NAV.Request_Handler), )
-        , cookie_salt   = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
+        , cookie_salt   = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476WÂ§+@"
         , debug         = cmd.tornado_reload
         , Session_Class = GTW.File_Session
         , session_id    = "SESSION_ID"

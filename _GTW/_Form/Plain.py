@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -34,7 +34,7 @@
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #    23-Feb-2010 (MG) `__init__` fixed
 #     3-Aug-2010 (MG) `get_required` fixed
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

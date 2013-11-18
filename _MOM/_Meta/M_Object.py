@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -37,7 +37,7 @@
 #     1-Aug-2012 (CT) Add `M_E_Type_Object_Destroyed`
 #    17-Aug-2012 (CT) Add `role_map`
 #     4-Sep-2012 (CT) Move `Roles` and `role_map` to `M_Id_Entity`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _MOM        import MOM

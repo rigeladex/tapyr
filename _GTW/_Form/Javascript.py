@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
@@ -31,7 +31,7 @@
 #    02-Mar-2010 (MG) `Multi_Completer` moved in here
 #     3-May-2010 (MG) New form handling implemented
 #    24-Jun-2010 (MG) `js_on_ready_options` added
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL               import TFL

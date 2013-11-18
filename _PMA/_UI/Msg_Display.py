@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -39,7 +39,7 @@
 #                     changed to add a `\t` per level
 #    14-Sep-2005 (CT) Use `sender_name` instead of `sender` in `summary_format`
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TGL                    import TGL

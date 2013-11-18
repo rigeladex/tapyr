@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -33,7 +33,7 @@
 #     8-Mar-2013 (CT) Use `...-inline` for short text `added` or `deleted`
 #    20-Aug-2013 (CT) Add `_char_entity`
 #    20-Aug-2013 (CT) Change `_uri_role` to replace space by thin no-break space
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__  import absolute_import, division
@@ -93,7 +93,7 @@ register_local_role ("deleted", _deleted_role)
 _quot_map = dict \
     ( qd  = (_("\u201C"), _("\u201D")) # ("&ldquo;",  "&rdquo;")
     , qf  = (_("\u2039"), _("\u203A")) # ("&lsaquo;", "&rsaquo;")
-    , qg  = (_("«"),      _("»"))      # ("&laquo;",  "&raquo;")
+    , qg  = (_("Â«"),      _("Â»"))      # ("&laquo;",  "&raquo;")
     , qs  = (_("\u2018"), _("\u2019")) # ("&lsquo;",  "&rsquo;")
     )
 
@@ -121,7 +121,7 @@ _char_entity_map = \
     , "ne"       : "\u2260" ### not equal sign
     , "x"        : "\u00D7" ### multiplication sign
     , "/"        : "\u00F7" ### division sign
-    , "$"        : "¤"
+    , "$"        : "â‚¬"
     }
 
 def _char_entity \

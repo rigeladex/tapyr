@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -40,7 +40,7 @@
 #     4-Dec-2012 (CT) Correct `Vimeo.player_url`
 #     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 #    20-Aug-2013 (CT) Add `(TM)` to, change `(c)` and `...` in, `Entity_Map`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _GTW                     import GTW

@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -23,11 +23,11 @@
 #    GTW.__init__
 #
 # Purpose
-#    Package implementing Glück and Tanzer's Web framework
+#    Package implementing GlÃ¼ck and Tanzer's Web framework
 #
 # Revision Dates
 #    28-Dec-2009 (CT) Creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from _TFL.Package_Namespace import Package_Namespace

@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ReST.
@@ -28,7 +28,7 @@
 # Revision Dates
 #    17-Mar-2010 (CT) Creation
 #    22-Feb-2012 (CT) Import `_ReST.Directives`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _ReST                    import ReST
@@ -117,7 +117,7 @@ __doc__ = """
     ...
     ... The end...
     ... '''
-    >>> print ReST.to_html (text, encoding = "iso-8859-1")
+    >>> print ReST.to_html (text, encoding = "utf-8")
     <h1 class="title">Test of ReST.to_html</h1>
     <BLANKLINE>
     <div class="section" id="section">

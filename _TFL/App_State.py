@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 # Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -47,7 +47,7 @@
 #    20-May-2005 (CT)  Moved to TFL
 #    19-Aug-2008 (CT)  `product_name` added as optional paramter to `__init__`
 #    17-Dec-2009 (CT)  Use `pickle` instead of `cPickle` (3-compatibility)
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL              import TFL

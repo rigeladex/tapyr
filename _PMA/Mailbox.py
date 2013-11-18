@@ -1,5 +1,5 @@
-# -*- coding: iso-8859-15 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# -*- coding: utf-8 -*-
+# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -80,7 +80,7 @@
 #                     `item in`)
 #    20-Feb-2006 (CT) `add_messages` changed to guard against messages
 #                     already contained in `self._msg_dict`
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   _TFL                    import TFL
@@ -672,25 +672,25 @@ class Mailbox (_Mailbox_in_Dir_S_) :
 from   _PMA                    import PMA
 import _PMA.Mailbox
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
-print mb.summary ().encode ("iso-8859-1", "replace")
+print mb.summary ().encode ("utf-8", "replace")
 m = mb.messages [-4]
-print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
+print u"\n".join (m.formatted ()).encode ("utf-8", "replace")
 #mb=PMA.Maildir ("/swing/private/.Tanzer/Maildir")
 mb=PMA.Maildir ("/tmp/Maildir")
 mb=PMA.Unix_Mailbox ("/var/mail/appoyer")
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/CT")
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
-print mb.summary ().encode ("iso-8859-1", "replace")
+print mb.summary ().encode ("utf-8", "replace")
 m = mb.messages [-3]
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
 m = mb.messages [60]
-print u"\n".join (list (m.formatted ()) [:100]).encode ("iso-8859-1", "replace")
-print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
+print u"\n".join (list (m.formatted ()) [:100]).encode ("utf-8", "replace")
+print u"\n".join (m.formatted ()).encode ("utf-8", "replace")
 m = mb.messages [-3]
 tb = PMA.Mailbox ("/swing/private/tanzer/PMA/S")
 tb.import_from_mailbox (mb, transitive = True)
 tb.add_messages (m)
-print tb.summary ().encode ("iso-8859-1", "replace")
+print tb.summary ().encode ("utf-8", "replace")
 sb = mb.sub_boxes[0]
 
 """
