@@ -90,6 +90,7 @@
 #     4-Jun-2013 (CT) Add `pid` to `kw` in `_Entity_._create`
 #    24-Jul-2013 (CT) Add `Create.update`
 #    27-Nov-2013 (MG) Fix `Create` change to allow migration of older scopes
+#    27-Nov-2013 (CT) Fix `_pickle_attrs` migration of `c_user`
 #    ««revision-date»»···
 #--
 
@@ -465,13 +466,11 @@ class Create (_Entity_Last_Cid_Update_Mixin_, _Entity_) :
     # end def update
 
     def _pickle_attrs (self) :
-        c_user = getattr (self, "c_user", None)
-        if c_user is not None :
-            c_user = c_user.pid
+        c_user = getattr (self, "c_user", self.user)
         return dict \
             ( self.__super._pickle_attrs ()
-            , c_time       = getattr (self, "c_time", 0)
-            , c_user       = c_user
+            , c_time       = getattr (self, "c_time", self.time)
+            , c_user       = getattr (c_user, "pid", c_user)
             , pickle_cargo = self.pickle_cargo
             )
     # end def _pickle_attrs
