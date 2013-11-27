@@ -1,6 +1,6 @@
 .emacs*
 *.py[co]
-*.~?~
+*.~*~
 *.sqlite
 _GTW/__test__/test.momt.X
 test.hps

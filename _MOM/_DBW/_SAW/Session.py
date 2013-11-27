@@ -54,6 +54,8 @@
 #    25-Aug-2013 (CT) Increase `change_count` for `commit` and `rollback` to
 #                     invalidate `q_cache`
 #    29-Aug-2013 (CT) Pass `force=True` to `seq.reserve` (`Session_PC.consume`)
+#    27-Nov-2013 (MG) `Session_PC.consume` used getattr for `max_surrs` for
+#                     scopes which have an old meta data structure
 #    ««revision-date»»···
 #--
 
@@ -621,7 +623,7 @@ class Session_PC (_Session_) :
             ### XXX Once all backends fully support `max_surrs` in
             ###     DB_Meta_Data.COPY,
             ###     --> remove the `else` clause of the following `if`
-            if attr.q_name in db_meta_data.max_surrs :
+            if attr.q_name in getattr (db_meta_data, "max_surrs", {}) :
                 max_value = db_meta_data.max_surrs [attr.q_name]
             else :
                 max_value = getattr (db_meta_data, "max_" + attr.name, None)

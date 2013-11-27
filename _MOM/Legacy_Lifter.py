@@ -31,6 +31,8 @@
 #    29-Jan-2013 (MG) Lift `Type_Name` in pickle carge
 #    30-Jan-2013 (MG) Add support for `removing` objects during legacy
 #                     lifting
+#    27-Nov-2013 (MG) Add part of the legacy lifting to the change objects as
+#                     well (renaming of etypes)
 #    ««revision-date»»···
 #--
 
@@ -106,6 +108,17 @@ class Legacy_Lifter (TFL.Meta.Object) :
 
     def change_iter (self, db_man, db_iter) :
         for chg_cls, chg_dct, children_pc in db_iter :
+            type_name             = chg_dct ["type_name"]
+            chg_dct ["type_name"] = self.module.Type_Name_Renaming.get \
+                (type_name, type_name)
+            if type_name != chg_dct ["type_name"] :
+                type_name = chg_dct ["type_name"]
+                ### we changed the type name -> need to change it in the
+                ### pickle cargo and the epk_pid, epk attributes as well
+                for attr in "epk", "epk_pid" :
+                    chg_dct [attr] = chg_dct [attr] [:-1] + (type_name, )
+                chg_dct ["pickle_cargo"] = \
+                    (type_name, ) + chg_dct ["pickle_cargo"] [1:]
             yield chg_cls, chg_dct, children_pc
     # end def change_iter
 
