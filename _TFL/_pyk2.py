@@ -37,6 +37,7 @@
 #    25-May-2013 (CT) Add `new_instancemethod`, `izip`, `zip`
 #    26-May-2013 (CT) Convert to class/instance to allow lazy imports
 #     9-Oct-2013 (CT) Add `izip`
+#    27-Nov-2013 (CT) Add `number_types`
 #    ««revision-date»»···
 #--
 
@@ -156,6 +157,8 @@ class _Pyk_ (object) :
         import new
         return new.instancemethod
     # end def new_instancemethod
+
+    number_types = (int, long, float)
 
     @lazy_property
     def pickle (self) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -29,6 +29,8 @@
 #     9-Jul-2012 (CT) Creation
 #    23-Jul-2012 (CT) Add argument `response` to `_Language_.GET.__call__`
 #    24-Jul-2012 (CT) Fix `_Language_.GET.__call__`
+#    26-Nov-2013 (CT) Use cookie, not session, to store `language`
+#    26-Nov-2013 (CT) Add `_Language_.skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +57,8 @@ _Ancestor = GTW.RST.TOP.Page
 
 class _Language_ (_Ancestor) :
 
-    implicit = True
+    implicit  = True
+    skip_etag = True
 
     class _Language__GET_ (_Ancestor.GET) :
 
@@ -68,7 +71,7 @@ class _Language_ (_Ancestor) :
             with TFL.I18N.context (language) :
                 choice = TFL.I18N.Config.choice
                 if language.startswith (choice [0]) :
-                    response.session ["language"] = (language, )
+                    response.set_cookie ("language", language, max_age = 1<<31)
                     response.add_notification \
                         ( GTW.Notification
                             (_T (u"Language %s selected") % language)

@@ -37,6 +37,8 @@
 #                     `_cookie_signature`, to `GTW.RST.Request`
 #     4-May-2013 (CT) Change `username` to use `__super.username`
 #     4-May-2013 (CT) Redefine `apache_authorized_user` to disable it
+#    26-Nov-2013 (CT) Take `user_locale_codes` from cookie `language`,
+#                     not from session; remove `use_language`
 #    ««revision-date»»···
 #--
 
@@ -107,17 +109,14 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     # end def username
 
     def get_user_locale_codes (self) :
-        session   = self.session
-        supported = getattr (self.root, "languages", set ())
-        result    = tuple \
-            (l for l in session.get ("language", ()) if l in supported)
+        cookie = self.cookie ("language")
+        result = ()
+        if cookie :
+            languages  = getattr (self.root, "languages", set ())
+            if cookie in languages :
+                result = (cookie, )
         return result
     # end def get_user_locale_codes
-
-    def use_language (self, langs) :
-        self.__super.use_language (langs)
-        self.session ["language"] = langs
-    # end def use_language
 
     def _session_hash (self, sig) :
         root   = self.root

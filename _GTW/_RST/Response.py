@@ -34,17 +34,18 @@
 #     4-May-2013 (CT) Add `cookies_to_delete`
 #     4-May-2013 (CT) Don't use werkzeug's `delete_cookie`
 #    17-May-2013 (CT) Change `__call__` to sort link headers
+#    26-Nov-2013 (CT) DRY `__call__`, `set_cookie`
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _GTW                     import GTW
-from   _TFL                     import TFL
+from   _GTW                      import GTW
+from   _TFL                      import TFL
 
 import _GTW._RST
 
-from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL._Meta.Once_Property  import Once_Property
 
 import _TFL._Meta.M_Auto_Combine_Sets
 import _TFL._Meta.M_Class
@@ -78,10 +79,11 @@ class _RST_Response_ (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
+        _request  = self._request
         _response = self._response
-        for c in list (self._request.cookies_to_delete) :
+        for c in list (_request.cookies_to_delete) :
             self.clear_cookie (c)
-        self._request.cookies_to_delete.clear ()
+        _request.cookies_to_delete.clear ()
         for k, v in self._auto_headers.iteritems () :
             _response.add_header (k, v)
         for rel, (value, kw) in sorted (self._links.iteritems ()) :
@@ -104,9 +106,10 @@ class _RST_Response_ (TFL.Meta.Object) :
     # end def clear_cookie
 
     def set_cookie (self, key, value = "", ** kw) :
-        self._request.cookies_to_delete.discard (key)
+        _request  = self._request
+        _request.cookies_to_delete.discard (key)
         if isinstance (value, unicode) :
-            value = value.encode (self._request.cookie_encoding)
+            value = value.encode (_request.cookie_encoding)
         return self._response.set_cookie (key, value, ** kw)
     # end def set_cookie
 
