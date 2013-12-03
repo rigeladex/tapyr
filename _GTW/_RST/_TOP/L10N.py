@@ -67,8 +67,8 @@ class _Language_ (_Ancestor) :
         def __call__ (self, resource, request, response) :
             Status   = resource.Status
             language = resource.language
-            next     = request.req_data.get ("next", request.referrer)
             with TFL.I18N.context (language) :
+                next   = request.req_data.get ("next", request.referrer)
                 choice = TFL.I18N.Config.choice
                 if language.startswith (choice [0]) :
                     response.set_cookie ("language", language, max_age = 1<<31)

@@ -40,6 +40,8 @@
 #                     (after doing: s/_msg/message/g)
 #     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
 #     6-May-2013 (CT) Set `request.Error` to `unicode (.message)`
+#     3-Dec-2013 (CT) Add support for `cache_control`;
+#                     set `no_cache` for `See_Other`, `Temporary_Redirect`
 #    ««revision-date»»···
 #--
 
@@ -96,6 +98,7 @@ class Status (StandardError, TFL.Meta.Object) :
 
     __metaclass__ = _Meta_
 
+    cache_control = None
     description   = None
     status_code   = None
 
@@ -139,10 +142,20 @@ class Status (StandardError, TFL.Meta.Object) :
                 except Exception :
                     request.Error = str (self.message)
         response.status_code  = self.status_code
-        self._add_response_body    (resource, request, response)
-        self._add_response_headers (resource, request, response)
+        self._add_response_body     (resource, request, response)
+        self._add_response_headers  (resource, request, response)
+        if self.cache_control :
+            self._add_cache_control (resource, request, response)
         return response
     # end def __call__
+
+    def _add_cache_control (self, resource, request, response) :
+        cc  = self.cache_control
+        rcc = response.cache_control
+        if cc :
+            for k, v in cc.items () :
+                setattr (rcc, k, v)
+    # end def _add_cache_control
 
     def _add_response_body (self, resource, request, response) :
         with resource.LET (ignore_picky_accept = True) :
@@ -533,9 +546,10 @@ class See_Other (Redirection) :
        SHOULD be retrieved using a GET method on that resource.
     """
 
-    status_code = 303
+    cache_control = dict (no_cache = True)
+    status_code   = 303
 
-    _spec       = \
+    _spec         = \
         """ This method exists primarily to allow the output of a
             POST-activated script to redirect the user agent to a selected
             resource. The new URI is not a substitute reference for the
@@ -625,9 +639,10 @@ class Use_Proxy (Redirection) :
 class Temporary_Redirect (Redirection) :
     """The requested resource resides temporarily under a different URI."""
 
-    status_code = 307
+    cache_control = dict (no_cache = True)
+    status_code   = 307
 
-    _spec       = \
+    _spec         = \
         """ Since the redirection MAY be altered on occasion, the client
             SHOULD continue to use the Request-URI for future requests. This
             response is only cacheable if indicated by a Cache-Control or
