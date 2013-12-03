@@ -73,6 +73,7 @@
 #    25-Sep-2012 (CT) Pass `cmd.log_level` to `I18N.load`
 #     8-Jan-2013 (CT) Add `-cert_auth_path`
 #    15-Jan-2013 (CT) Add `-cc_domain`
+#     3-Dec-2013 (CT) Change `_load_I18N` to log warnings about exceptions
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,8 @@ from   _TFL                     import sos
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL.SMTP
+
+import logging
 
 class RST_App (TFL.Meta.Object) :
 
@@ -402,8 +405,8 @@ class GT2W_Command (GTW.OMP.Command) :
                     , locale_dir = sos.path.join (self.app_dir, "locale")
                     , log_level  = cmd.log_level
                     )
-            except ImportError :
-                pass
+            except Exception as exc :
+                logging.warning ("Exception during I18N.load: %r" % (exc, ))
         return result
     # end def _load_I18N
 
