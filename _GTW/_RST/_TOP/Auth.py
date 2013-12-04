@@ -49,6 +49,8 @@
 #     2-May-2013 (CT) Use `self.hash_fct`, `self.b64_encoded`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #     6-May-2013 (CT) Try to `commit` before sending emails/notifications
+#     4-Dec-2013 (CT) Add `href_request_reset_password`
+#                     fix some stylos
 #    ««revision-date»»···
 #--
 
@@ -188,7 +190,7 @@ class _Activate_ (_Ancestor) :
             result = self.__super._render_context \
                 (resource, request, response, **kw)
             HTTP_Status = resource.top.Status
-            pid                 = int (request.req_data.get ("p", "-1"))
+            pid         = int (request.req_data.get ("p", "-1"))
             try :
                 account = resource.scope.pid_query (pid)
             except LookupError :
@@ -222,16 +224,16 @@ class _Activate_ (_Ancestor) :
             account      = self.account
             resource._check_account (account, self.errors)
             if self.errors :
-                response.errors  = self.errors
-                response.account = self.account
-                result           = resource.GET ()._response_body \
+                response.errors   = self.errors
+                response.account  = self.account
+                result            = resource.GET ()._response_body \
                     (resource, request, response)
                 return result
             else :
-                next    = req_data.get      ("next", "/")
+                next              = req_data.get ("next", "/")
+                response.username = account.name
                 account.change_password     (new_password, suspended = False)
                 top.scope.commit            ()
-                response.username = account.name
                 resource._send_notification (response)
                 raise HTTP_Status.See_Other (next)
         # end def _response_body
@@ -633,8 +635,6 @@ class _Request_Reset_Password_ (_Ancestor) :
                 account       = self.account
                 host          = request.host
                 next          = request.referrer or "/"
-                next_page     = top.resource_from_href \
-                    (urlparse.urlsplit (next).path)
                 passwd, token = Auth.Account.reset_password (account)
                 link = resource.parent.href_action (account, token, request)
                 top.scope.commit ()
@@ -674,7 +674,7 @@ class _Reset_Password_ (_Ancestor) :
     _action_kind            = "Reset"
     _auth_required          = False
 
-# end class _Change_Password_
+# end class _Reset_Password_
 
 _Ancestor = GTW.RST.TOP.Dir_V
 
@@ -721,6 +721,12 @@ class Auth (_Ancestor) :
         return pp_join (self.abs_href, "register")
     # end def href_register
 
+    @property
+    @getattr_safe
+    def href_request_reset_password (self) :
+        return pp_join (self.abs_href, "request_reset_password")
+    # end def href_request_reset_password
+
     @Once_Property
     @getattr_safe
     def _effective (self) :
@@ -753,9 +759,8 @@ class Auth (_Ancestor) :
                 (self.abs_href, "make_cert", p = str (obj.pid))
     # end def href_make_cert
 
-    def href_reset_password (self, obj) :
-        return self._href_q \
-            (self.abs_href, "reset_password", p = str (obj.pid))
+    def href_reset_password (self) :
+        return self._href_q (self.abs_href, "reset_password", p = str (obj.pid))
     # end def href_reset_password
 
     def _href_q (self, * args, ** kw) :
