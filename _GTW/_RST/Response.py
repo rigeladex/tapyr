@@ -35,6 +35,7 @@
 #     4-May-2013 (CT) Don't use werkzeug's `delete_cookie`
 #    17-May-2013 (CT) Change `__call__` to sort link headers
 #    26-Nov-2013 (CT) DRY `__call__`, `set_cookie`
+#     4-Dec-2013 (CT) Add `httponly` to `set_secure_cookie`
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,7 @@ class _RST_Response_ (TFL.Meta.Object) :
 
     def set_secure_cookie (self, name, data, secrets = None, ** kw) :
         cookie = self._request.new_secure_cookie (name, data, secrets)
+        kw.setdefault   ("httponly", True)
         self.set_cookie (name, cookie, ** kw)
         return cookie
     # end def set_secure_cookie
