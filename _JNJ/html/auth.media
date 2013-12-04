@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/auth.media
+#
+# Purpose
+#    Media fragment for auth templates
+#
+# Revision Dates
+#     9-Oct-2012 (CT) Creation
+#    16-Jan-2013 (CT) Add rules for `a.button` and `input`
+#     4-Dec-2013 (CT) Renamed from `login.jnj.media` to `auth.media`
+#    ««revision-date»»···
+#--
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( "form.Auth"
+        , children =
+            [ Rule
+                ( "ul"
+                , list_style     = "none"
+                , margin         = 0
+                , padding        = TRBL0 (l = Em (1./8))
+                , children       =
+                    [ Rule
+                        ( "a.button", "input"
+                        , display          = "inline-block"
+                        , margin_bottom    = Em (0.5)
+                        , min_width        = Em (15.0)
+                        )
+                    , Rule
+                        ( "a.button", "input[type=submit]"
+                        , background_color = P.color_heading
+                        , color            = P.color_selected
+                        , font_size        = Percent (115)
+                        , font_weight      = "bold"
+                        , margin_bottom    = Em (1.0)
+                        )
+                    , Rule
+                        ( ".account-name"
+                        , font_size        = P.h1_font_size + 10
+                        , font_weight      = "bold"
+                        , line_height      = 2.0
+                        )
+                    , Rule
+                        ( "label"
+                        , display          = "inline-block"
+                        , padding          = TRBL (Em (0.2), Em (0.5))
+                        )
+                    ]
+                )
+            ]
+        )
+    )
+
+### __END__ html/auth.media

@@ -32,6 +32,8 @@
 ##    14-Jan-2013 (CT) Remove hidden `input` element for `challenge`
 ##    15-Jan-2013 (CT) Add `desc`
 ##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
+##     4-Dec-2013 (CT) Add class `Auth Client-Cert` to `form`;
+##                     use `<li>`, not `<p>`
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,35 +41,40 @@
 {%- import "html/form.jnj" as Form with context %}
 
 {%- block document -%}
-  {% call Form.form () -%}
-    <p>
-      <label for="F_challenge">
-        {{- GTW._T ("Keysize") }}:
-        <keygen id="F_challenge" name="SPKAC" challenge="{{ challenge }}">
-        {#- -#}
-      </label>
-    </p>
-    <p>
-      <label for="F_desc">
-        {{- GTW._T ("Description") }}:
-        {{ X.input.text
-            ( title = GTW._T ("Optional descritpion for client certificate")
-            , id    = "F_desc"
-            , name  = "desc"
-            )
-        -}}
-      </label>
-    </p>
-    <p>
-      {{ X.input.submit
-          ( title =
-              ( GTW._T ("Create certificate request for user %s")
-              % (request.user.name, )
+  {% call Form.form (class  = "Auth Client-Cert") -%}
+    <ul>
+      <li class="account-name">{{ account.name }}</li>
+      {{- Form.display_errors (errors, None) -}}
+
+      <li>
+        <label for="F_challenge">
+          {{- GTW._T ("Keysize") }}:
+          <keygen id="F_challenge" name="SPKAC" challenge="{{ challenge }}">
+          {#- -#}
+        </label>
+      </li>
+      <li>
+        <label for="F_desc">
+          {{- GTW._T ("Description") }}:
+          {{ X.input.text
+              ( title = GTW._T ("Optional descritpion for client certificate")
+              , id    = "F_desc"
+              , name  = "desc"
               )
-          , value = GTW._T ("Create certificate request")
-          )
-      }}
-    </p>
+          -}}
+        </label>
+      </li>
+      <li>
+        {{ X.input.submit
+            ( title =
+                ( GTW._T ("Create certificate request for user %s")
+                % (request.user.name, )
+                )
+            , value = GTW._T ("Create certificate request")
+            )
+        }}
+      </li>
+    </ul>
   {% endcall %} {# form #}
 {%- endblock document -%}
 

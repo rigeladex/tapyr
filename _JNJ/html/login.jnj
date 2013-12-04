@@ -34,6 +34,7 @@
 ##    16-Aug-2012 (MG) Use `form.login_inline`
 ##     9-Oct-2012 (CT) Pass `class` and `username` to `Form.login_inline`
 ##    14-Sep-2013 (MG) Fix import of `form.jnj` (missing `with context`)
+##     4-Dec-2013 (CT) Add class `Auth` to `form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -52,7 +53,7 @@
 
   {{ Form.login_inline
       ( page, request
-      , class    = "Login"
+      , class    = "Auth Login"
       , next     = next
       , errors   = errors
       , username = username

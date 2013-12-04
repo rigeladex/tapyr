@@ -30,6 +30,7 @@
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
 ##    16-Aug-2012 (MG) Adapt to formless new GTW.RST.TOP.Auth
+##     4-Dec-2013 (CT) Add class `Auth` to `form`, fix class of `account.name`
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,12 +48,18 @@
   <h1>{{ title|safe }}</h1>
 
   {%- set Auth     = page.SC.Auth -%}
-  {% call Form.form (action = Auth.href_change_email (account)) -%}
+  {% call Form.form
+       ( action = Auth.href_change_email (account)
+       , class  = "Auth Email-Change"
+       )
+  -%}
     <ul>
-      <li id="account-name">{{ account.name }}</li>
+      <li class="account-name">{{ account.name }}</li>
       {{- Form.display_errors (errors, None) -}}
 
-      <li><label for="F_password">{{ GTW._T ("Current Password") }}</label></li>
+      <li>
+        <label for="F_password">{{- GTW._T ("Current Password") }}</label>
+      </li>
       <li>{{ X.input.password (id = "F_password", name = "password") }}</li>
       {{- Form.display_errors (errors, "password") -}}
 

@@ -28,42 +28,10 @@
 # Revision Dates
 #     9-Oct-2012 (CT) Creation
 #    16-Jan-2013 (CT) Add rules for `a.button` and `input`
+#     4-Dec-2013 (CT) Factor `auth.media`
 #    ««revision-date»»···
 #--
 
-style_sheet = Style_Sheet \
-    ( Rule
-        ( "form.Login"
-        , children =
-            [ Rule
-                ( "ul"
-                , list_style     = "none"
-                , margin         = 0
-                , padding        = TRBL0 (l = Em (1./8))
-                , children       =
-                    [ Rule
-                        ( "a.button", "input"
-                        , display          = "inline-block"
-                        , margin_bottom    = Em (0.5)
-                        , width            = Em (12.0)
-                        )
-                    , Rule
-                        ( "a.button", "input[type=submit]"
-                        , background_color = P.color_heading
-                        , color            = P.color_selected
-                        , font_size        = Percent (115)
-                        , font_weight      = "bold"
-                        , margin_bottom    = Em (1.0)
-                        )
-                    , Rule
-                        ( "label"
-                        , display          = "inline-block"
-                        , padding          = TRBL (Em (0.2), Em (0.5))
-                        )
-                    ]
-                )
-            ]
-        )
-    )
+Include ("html/auth.media")
 
 ### __END__ html/login.jnj.media

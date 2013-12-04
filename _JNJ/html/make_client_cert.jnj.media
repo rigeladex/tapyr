@@ -20,17 +20,16 @@
 #
 #++
 # Name
-#    html/change_password.jnj.media
+#    html/make_client_cert.jnj.media
 #
 # Purpose
-#    Media fragment for template html/change_password.jnj
+#    Media fragment for template html/make_client_cert.jnj
 #
 # Revision Dates
-#     9-Oct-2012 (CT) Creation
-#     4-Dec-2013 (CT) Factor `auth.media`
+#     4-Dec-2013 (CT) Creation
 #    ««revision-date»»···
 #--
 
 Include ("html/auth.media")
 
-### __END__ html/change_password.jnj.media
+### __END__ html/make_client_cert.jnj.media
