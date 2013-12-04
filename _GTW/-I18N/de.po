@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-06-11 11:19+0200\n"
+"POT-Creation-Date: 2013-12-04 12:50+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -16,25 +16,25 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
 
-#: _GTW/_RST/_TOP/Auth.py:332
+#: _GTW/_RST/_TOP/Auth.py:334
 #, python-format
 msgid "%s Password for %s on website %s"
-msgstr "Kennwort für Anwender %s auf Webseite %s %s"
+msgstr "%s Kennwort für Anwender %s auf Webseite %s"
 
 #: _GTW/_Form/_MOM/Javascript.py:68
 #, python-format
 msgid "%s `%s` does not exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_RST/_MOM/Mixin.py:418
+#: _GTW/_RST/_MOM/Mixin.py:428
 #, python-format
 msgid "%s `%s` doesn't exist anymore!"
 msgstr "%s `%s` existiert nicht mehr"
 
 #: _GTW/_NAV/_E_Type/Admin.py:315 _GTW/_NAV/_E_Type/Admin.py:560
-#: _GTW/_NAV/_E_Type/Admin.py:1095 _GTW/_RST/_MOM/Mixin.py:384
+#: _GTW/_NAV/_E_Type/Admin.py:1095 _GTW/_RST/_MOM/Mixin.py:394
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
@@ -54,16 +54,16 @@ msgstr "%s funktioniert nur mit dem Inhaltstyp json"
 msgid "%s: regatta registration"
 msgstr "%s: Regatta Registrierung"
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:327
+#: _GTW/_RST/_TOP/_MOM/SRM.py:403
 #, python-format
 msgid "%s: regatta registration %s"
 msgstr "%s: Regatta Registrierung %s"
 
-#: _GTW/_NAV/Auth.py:191 _GTW/_RST/_TOP/Auth.py:305
+#: _GTW/_NAV/Auth.py:191 _GTW/_RST/_TOP/Auth.py:307
 msgid "A confirmation email has been sent to the new email address."
 msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 
-#: _GTW/_NAV/Auth.py:328 _GTW/_RST/_TOP/Auth.py:589
+#: _GTW/_NAV/Auth.py:328 _GTW/_RST/_TOP/Auth.py:591
 msgid "A confirmation has been sent to your email address."
 msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
@@ -82,20 +82,20 @@ msgid ""
 " separated by commas; got `%s` instead"
 msgstr ""
 
-#: _GTW/_RST/_TOP/Auth.py:625
+#: _GTW/_RST/_TOP/Auth.py:627
 msgid "Account could not be found"
 msgstr "Benutzerkonto nicht gefunden"
 
-#: _GTW/_RST/_TOP/Auth.py:559
+#: _GTW/_RST/_TOP/Auth.py:561
 msgid "Account with this Email address already registered"
 msgstr "Es gibt bereits ein Benutzerkonto mit dieser Emailadresse"
 
-#: _GTW/_RST/_TOP/Auth.py:165
+#: _GTW/_RST/_TOP/Auth.py:167
 #, python-format
 msgid "Activate account for %s on website %s"
 msgstr "Activiere Benutzerkonto für Anwender %s auf Webseite %s"
 
-#: _GTW/_NAV/Auth.py:144 _GTW/_RST/_TOP/Auth.py:180
+#: _GTW/_NAV/Auth.py:144 _GTW/_RST/_TOP/Auth.py:182
 msgid "Activation successful."
 msgstr "Die Aktivierung war erfolgreich."
 
@@ -116,7 +116,7 @@ msgid "April"
 msgstr "April"
 
 #: _GTW/_NAV/_E_Type/Admin.py:335 _GTW/_NAV/_E_Type/Admin.py:1106
-#: _GTW/_RST/_TOP/_MOM/Admin.py:170
+#: _GTW/_RST/_TOP/_MOM/Admin.py:171
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr "Momentan ist die Datenbank wegen Wartungsarbeiten nicht beschreibbar."
 
@@ -128,15 +128,19 @@ msgstr "Aug"
 msgid "August"
 msgstr "August"
 
-#: _GTW/__test__/Test_Command.py:208
+#: _GTW/__test__/Test_Command.py:220
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/Test_Command.py:210
+#: _GTW/__test__/Test_Command.py:222
 msgid "Authorization and Account handling"
 msgstr "Anmeldung und Verwaltung des Benutzerkontos"
 
-#: _GTW/__test__/Test_Command.py:216
+#: _GTW/_RST/_TOP/Auth.py:330
+msgid "Change"
+msgstr "Ändere"
+
+#: _GTW/__test__/Test_Command.py:228
 msgid "Choice of language used for localization"
 msgstr "Auswahl der Sprache für Lokalisierung"
 
@@ -148,10 +152,10 @@ msgstr "Dez"
 msgid "December"
 msgstr "Dezember"
 
-#: _GTW/_RST/_TOP/_MOM/Doc.py:140
+#: _GTW/_RST/_TOP/_MOM/Doc.py:139
 #, python-format
 msgid "Documentation for package namespace %s"
-msgstr ""
+msgstr "Dokumentation für Packetnamensraum %s"
 
 #: _GTW/_NAV/Auth.py:109
 msgid "EMail verification successful."
@@ -163,8 +167,8 @@ msgid ""
 "request."
 msgstr "Änderungskonflikt: mindestens ein Wert wurde zwischenzeitlich verändert."
 
-#: _GTW/_NAV/Auth.py:179 _GTW/_NAV/Auth.py:317 _GTW/_RST/_TOP/Auth.py:293
-#: _GTW/_RST/_TOP/Auth.py:578
+#: _GTW/_NAV/Auth.py:179 _GTW/_NAV/Auth.py:317 _GTW/_RST/_TOP/Auth.py:295
+#: _GTW/_RST/_TOP/Auth.py:580
 #, python-format
 msgid "Email confirmation for %s"
 msgstr "Email Bestätigung für %s"
@@ -183,7 +187,7 @@ msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
 
 #: _GTW/_NAV/_E_Type/Admin.py:267 _GTW/_NAV/_E_Type/Admin.py:283
-#: _GTW/_RST/_TOP/_MOM/Admin.py:139 _GTW/_RST/_TOP/_MOM/Admin.py:148
+#: _GTW/_RST/_TOP/_MOM/Admin.py:140 _GTW/_RST/_TOP/_MOM/Admin.py:149
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr "Fehlerhaftes Formular (unbekanntes Element %s)"
@@ -205,7 +209,7 @@ msgstr "Freitag"
 msgid "Image Selection"
 msgstr "Bildauswahl"
 
-#: _GTW/_RST/_MOM/Mixin.py:422
+#: _GTW/_RST/_MOM/Mixin.py:432
 #, python-format
 msgid "It was deleted by user `%s` on %s"
 msgstr "Es wurde vom Anwender `%s` am %s gelöscht"
@@ -234,20 +238,20 @@ msgstr "Jun"
 msgid "June"
 msgstr "Juni"
 
-#: _GTW/__test__/Test_Command.py:214
+#: _GTW/__test__/Test_Command.py:226
 msgid "L10N"
 msgstr ""
 
-#: _GTW/_NAV/L10N.py:74 _GTW/_RST/_TOP/L10N.py:74
+#: _GTW/_NAV/L10N.py:74 _GTW/_RST/_TOP/L10N.py:77
 #, python-format
 msgid "Language %s selected"
 msgstr "Sprache %s wurde ausgewählt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:166 _GTW/_RST/_TOP/_MOM/SRM.py:224
+#: _GTW/_NAV/_E_Type/SRM.py:166 _GTW/_RST/_TOP/_MOM/SRM.py:300
 msgid "List of participants for"
 msgstr "Liste der Teilnehmer für"
 
-#: _GTW/_NAV/Auth.py:283 _GTW/_RST/_TOP/Auth.py:430
+#: _GTW/_NAV/Auth.py:283 _GTW/_RST/_TOP/Auth.py:432
 msgid "Logout successful."
 msgstr "Abmelden war erfolgreich."
 
@@ -272,7 +276,7 @@ msgstr "MO"
 msgid "Monday"
 msgstr "Montag"
 
-#: _GTW/HTML.py:83
+#: _GTW/HTML.py:84
 #, python-format
 msgid "Need Javascript for displaying %s"
 msgstr "Für die Darstellung der %s ist Javascript erforderlich"
@@ -285,15 +289,15 @@ msgstr "Emailadresse"
 msgid "New password"
 msgstr "Neues Kennwort"
 
-#: _GTW/_RST/_TOP/Auth.py:173
+#: _GTW/_RST/_TOP/Auth.py:175
 msgid "No activation request for this account"
 msgstr "Es gibt keine Aktivierungsanfrage für dieses Benutzerkonto"
 
-#: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:200
+#: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:201
 msgid "Not authorized for this page"
 msgstr "Fehlende Autorisierung für den Zugriff auf diese Seite"
 
-#: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:195
+#: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:196
 msgid "Not logged in or login-session is expired"
 msgstr "Felhende Anmeldung oder die Sitzung ist abgelaufen."
 
@@ -306,7 +310,7 @@ msgid "November"
 msgstr "November"
 
 #: _GTW/_NAV/_E_Type/Admin.py:773 _GTW/_NAV/_E_Type/Admin.py:800
-#: _GTW/_RST/_TOP/_MOM/Admin.py:677 _GTW/_RST/_TOP/_MOM/Admin.py:686
+#: _GTW/_RST/_TOP/_MOM/Admin.py:678 _GTW/_RST/_TOP/_MOM/Admin.py:687
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr "Objekt \"%s\" gelöscht"
@@ -323,7 +327,7 @@ msgstr "Oktober"
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
-#: _GTW/_NAV/_E_Type/SRM.py:139 _GTW/_RST/_TOP/_MOM/SRM.py:192
+#: _GTW/_NAV/_E_Type/SRM.py:139 _GTW/_RST/_TOP/_MOM/SRM.py:268
 msgid "Participants"
 msgstr "Teilnehmer"
 
@@ -353,12 +357,12 @@ msgstr "Bitte neues Kennwort wiederholen."
 msgid "Query for cached role attribute `%s` of %s not yet supported"
 msgstr ""
 
-#: _GTW/_RST/_MOM/Mixin.py:580
+#: _GTW/_RST/_MOM/Mixin.py:590
 #, python-format
 msgid "Query restriction triggered error: %s '%s'"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:171 _GTW/_RST/_TOP/_MOM/SRM.py:229
+#: _GTW/_NAV/_E_Type/SRM.py:171 _GTW/_RST/_TOP/_MOM/SRM.py:305
 msgid "Registration list"
 msgstr "Meldeliste"
 
@@ -366,7 +370,7 @@ msgstr "Meldeliste"
 msgid "Repeat new password"
 msgstr "Wiederhole neues Kennwort"
 
-#: _GTW/_RST/_TOP/Auth.py:265
+#: _GTW/_RST/_TOP/Auth.py:267
 msgid "Repeat the EMail for verification."
 msgstr "Wiederhole die Emailadresse zur Überprüfung."
 
@@ -374,11 +378,15 @@ msgstr "Wiederhole die Emailadresse zur Überprüfung."
 msgid "Repeat the password for verification."
 msgstr "Wiederhole das Kennwort zur Überprüfung."
 
-#: _GTW/_NAV/_E_Type/SRM.py:140 _GTW/_RST/_TOP/_MOM/SRM.py:193
+#: _GTW/_RST/_TOP/Auth.py:674
+msgid "Reset"
+msgstr "Setze zurück"
+
+#: _GTW/_NAV/_E_Type/SRM.py:140 _GTW/_RST/_TOP/_MOM/SRM.py:269
 msgid "Results"
 msgstr "Resultate"
 
-#: _GTW/_NAV/_E_Type/SRM.py:162 _GTW/_RST/_TOP/_MOM/SRM.py:221
+#: _GTW/_NAV/_E_Type/SRM.py:162 _GTW/_RST/_TOP/_MOM/SRM.py:297
 msgid "Results for"
 msgstr "Resultate für"
 
@@ -406,11 +414,11 @@ msgstr "SO"
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: _GTW/_RST/_TOP/Auth.py:261
+#: _GTW/_RST/_TOP/Auth.py:263
 msgid "The Email is required."
 msgstr "Die Emailadresse muss ausgefüllt werden."
 
-#: _GTW/_RST/_TOP/Auth.py:269
+#: _GTW/_RST/_TOP/Auth.py:271
 msgid "The Email's don't match."
 msgstr "Die Emailadressen stimmen nicht überein."
 
@@ -434,7 +442,7 @@ msgstr "Das neue Kennwort muss ausgefüllt werden."
 msgid "The old password is required."
 msgstr "Das alte Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:226 _GTW/_RST/_TOP/Auth.py:342
+#: _GTW/_NAV/Auth.py:226 _GTW/_RST/_TOP/Auth.py:344
 msgid "The password has been changed."
 msgstr "Das Kennwort wurde geändert"
 
@@ -484,12 +492,12 @@ msgstr "DI"
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: _GTW/_RST/_TOP/_MOM/Doc.py:269
+#: _GTW/_RST/_TOP/_MOM/Doc.py:268
 #, python-format
 msgid "Unknown E_Type '%s'"
 msgstr ""
 
-#: _GTW/_RST/Resource.py:543
+#: _GTW/_RST/Resource.py:549
 #, python-format
 msgid "Unknown HTTP method `%s` requested"
 msgstr ""
@@ -525,22 +533,22 @@ msgstr "MI"
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: _GTW/_NAV/Auth.py:263 _GTW/_RST/_TOP/Auth.py:404
+#: _GTW/_NAV/Auth.py:263 _GTW/_RST/_TOP/Auth.py:406
 #, python-format
 msgid "Welcome %s."
 msgstr "Willkommen, %s."
 
 #: _GTW/_NAV/_E_Type/Admin.py:780 _GTW/_NAV/_E_Type/Admin.py:808
-#: _GTW/_RST/_TOP/_MOM/Admin.py:670
+#: _GTW/_RST/_TOP/_MOM/Admin.py:671
 msgid "You need to specify a pid!"
 msgstr "Es muss eine Pid spezifiert werden!"
 
-#: _GTW/_RST/_MOM/Mixin.py:379
+#: _GTW/_RST/_MOM/Mixin.py:389
 #, python-format
 msgid "`%s` refers to %s, not %s"
 msgstr "`%s` bezieht sich auf %s, nicht %s"
 
-#: _GTW/_RST/_MOM/Mixin.py:407
+#: _GTW/_RST/_MOM/Mixin.py:417
 msgid "anonymous"
 msgstr "anonym"
 
@@ -548,15 +556,14 @@ msgstr "anonym"
 msgid "created by"
 msgstr "eingegeben durch"
 
-#: _GTW/HTML.py:65
+#: _GTW/HTML.py:66
 msgid "email address"
 msgstr "Emailadresse"
 
-#: _GTW/HTML.py:66
+#: _GTW/HTML.py:67
 msgid "phone number"
 msgstr "Telefonnummer"
 
 #: _GTW/_NAV/_E_Type/Gallery.py:100 _GTW/_RST/_TOP/_MOM/Gallery.py:86
 msgid "picture"
 msgstr "Bild"
-

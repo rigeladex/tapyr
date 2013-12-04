@@ -51,6 +51,8 @@
 #                     empty argument
 #    20-Jul-2011 (CT) `_Config_._properties` added
 #    20-Jul-2011 (CT) Use encoding information from `TFL.user_config`
+#     4-Dec-2013 (CT) Change `safe_eval` to not add coding cookie;
+#                     `eval` fails for `unicode` value containing coding cookie
 #    ««revision-date»»···
 #--
 
@@ -213,12 +215,17 @@ def mark (text):
 # end def mark
 
 def safe_eval (value, encoding = None) :
-    # Found in babel....
-    # Unwrap quotes in a safe manner, maintaining the string's encoding
-    # https://sourceforge.net/tracker/?func=detail&atid=355470&aid=617979&group_id=5470
-    if encoding :
-        value = "# coding=%s\n%s" % (encoding, value)
-    result = TFL.r_eval (value)
+    if encoding and not isinstance (value, pyk.text_type) :
+        try :
+            value = value.decode (encoding)
+        except Exception as exc :
+            print repr (value), encoding
+            raise
+    try :
+        result = TFL.r_eval (value)
+    except SyntaxError :
+        print (value)
+        raise
     return result
 # end def safe_eval
 

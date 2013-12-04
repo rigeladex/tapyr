@@ -29,6 +29,7 @@
 #     7-Jun-2012 (CT) Creation
 #     8-Jun-2012 (CT) Add `\s*` to `_eval_restrict_pat`
 #     6-Jun-2013 (CT) Change guard to `isinstance (source, pyk.string_types)`
+#     4-Dec-2013 (CT) Remove `coding` cookie from unicode values
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,11 @@ from   _TFL        import TFL
 from   _TFL.pyk    import pyk
 
 import re
+
+_coding_pat        = re.compile \
+    ( r"^# *(-\*-)?\s*coding[:=]\s*[-a-zA-Z0-9]+ *(-\*-)? *" + "\n"
+    , re.MULTILINE
+    )
 
 _eval_restrict_pat = re.compile \
     ( r"(?: (?: ^|\W)(?: lambda)(?: \W|$))|\.\s*__|(?: ^|\W)inspect\."
@@ -72,6 +78,8 @@ def r_eval (source, ** kw) :
     Traceback (most recent call last):
     ValueError: Cannot safely evaluate '((). __class__)'
     """
+    if isinstance (source, pyk.text_type) :
+        source = _coding_pat.sub ("", source, 1)
     if isinstance (source, pyk.string_types) :
         if _eval_restrict_pat.search (source) :
             raise ValueError ("Cannot safely evaluate %r" % source)

@@ -327,12 +327,12 @@ _Ancestor = _Activate_
 class _Change_Password_ (_Ancestor) :
 
     active_account_required = True
-    _action_kind            = "Change"
+    _action_kind            = _ ("Change")
     _auth_required          = True
 
     def get_title (self, account, request) :
         return _T ("%s Password for %s on website %s") \
-            % (self._action_kind, account.name, request.host)
+            % (_T (self._action_kind), account.name, request.host)
     # end def get_title
 
     def _check_account (self, account, errors) :
@@ -671,7 +671,7 @@ _Ancestor = _Change_Password_
 class _Reset_Password_ (_Ancestor) :
 
     active_account_required = False
-    _action_kind            = "Reset"
+    _action_kind            = _ ("Reset")
     _auth_required          = False
 
 # end class _Reset_Password_

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-06-11 11:19+0200\n"
+"POT-Creation-Date: 2013-12-04 12:50+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
 
 #: _GTW._OMP._EVT.Calendar:0 _GTW._OMP._EVT.Event:0
 msgid "Calendar"
@@ -32,7 +32,7 @@ msgstr "Kalendar des Ereignisses"
 msgid "Count"
 msgstr "Anzahl"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:398
 msgid "Daily"
 msgstr "Täglich"
 
@@ -68,7 +68,7 @@ msgstr "Kalenderdaten, die in die Wiederholungsregel eingeschlossen werden."
 msgid "Detail"
 msgstr "Detail"
 
-#: _GTW/_OMP/_EVT/graph.py:61
+#: _GTW/_OMP/_EVT/graph.py:62
 msgid "EVT graph"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgstr[1] "Termine"
 msgid "Finish date of the recurrence."
 msgstr "Schlussdatum der Wiederholungsregel."
 
-#: _GTW/_OMP/_EVT/graph.py:60
+#: _GTW/_OMP/_EVT/graph.py:61
 msgid "Graph displaying EVT partial object model"
 msgstr "Graphische Darstellung des EVT Modells"
 
@@ -136,7 +136,7 @@ msgstr "Monat"
 msgid "Month day"
 msgstr "Monatstag"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:398
 msgid "Monthly"
 msgstr "Monatlich"
 
@@ -290,7 +290,7 @@ msgstr "Woche"
 msgid "Week day"
 msgstr "Wochentag"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:398
 msgid "Weekly"
 msgstr "Wöchentlich"
 
@@ -298,6 +298,7 @@ msgstr "Wöchentlich"
 msgid "Year day"
 msgstr "Tag des Jahres"
 
-#: _GTW/_OMP/_EVT/Recurrence_Spec.py:396
+#: _GTW/_OMP/_EVT/Recurrence_Spec.py:398
 msgid "Yearly"
 msgstr "Jährlich"
+

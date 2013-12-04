@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-06-11 11:19+0200\n"
+"POT-Creation-Date: 2013-12-04 12:50+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
 
 #: _GTW/_OMP/_PAP/Person.py:159 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
@@ -32,6 +32,14 @@ msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] "Adresse"
 msgstr[1] "Adressen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Address of company"
+msgstr "Adresse der Firma"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Address of person"
+msgstr "Adresse der Person"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Address of subject"
@@ -122,6 +130,14 @@ msgid "Email address (including domain)"
 msgstr "Emailadresse (inkl. Domain)"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Email of company"
+msgstr "Emailadresse der Firma"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Email of person"
+msgstr "Emailadresse der Person"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Email of subject"
 msgstr "Emailadresse des Subjekts"
 
@@ -139,7 +155,7 @@ msgstr "Weiblich"
 
 #: _GTW/_OMP/_PAP/IM_Handle.py:52
 msgid "First internet-wide instant messaging service"
-msgstr ""
+msgstr "Erstes internetweites Sofortnachrichtensystem"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "First name"
@@ -165,7 +181,7 @@ msgstr "Koordinaten"
 msgid "Geographical position of an Address."
 msgstr "Koordinaten der Adresse."
 
-#: _GTW/_OMP/_PAP/graph.py:94
+#: _GTW/_OMP/_PAP/graph.py:95
 msgid "Graph displaying PAP partial object model"
 msgstr "Graphische Darstellung des PAP Modells"
 
@@ -299,7 +315,7 @@ msgstr "Nummer"
 msgid "Office"
 msgstr "Büro"
 
-#: _GTW/_OMP/_PAP/graph.py:95
+#: _GTW/_OMP/_PAP/graph.py:96
 msgid "PAP graph"
 msgstr ""
 
@@ -372,8 +388,8 @@ msgid "Phone number proper (without country code, area code, extension)"
 msgstr "Telefonnummer (ohne Vorwahl oder Durchwahl)"
 
 #: _GTW._OMP._PAP.Company:0
-msgid "Place where this %(type_base_name.lower ())s is registered."
-msgstr "Registrierungsort von %(type_base_name.lower ())s"
+msgid "Place where this company is registered."
+msgstr "Registrierungsort der Firma"
 
 #: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address_Position:0
 msgid "Position"
@@ -532,6 +548,14 @@ msgstr "Auf eine bestimmte Ressource verweisende Webadresse"
 #: _GTW._OMP._PAP.Url:0
 msgid "Uniform resource locator, aka URL"
 msgstr "Webadresse"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Url of company"
+msgstr "Webadresse der Firma"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Url of person"
+msgstr "Webadresse der Person"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Url of subject"
