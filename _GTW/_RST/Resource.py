@@ -103,6 +103,7 @@
 #    29-Aug-2013 (CT) Don't pass `exc` to `Internal_Server_Error` in
 #                     `_http_response_error` (shows up in webbrowser otherwise)
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#     5-Dec-2013 (CT) Make `tbi` optional argument of `send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -611,7 +612,7 @@ class _RST_Base_ (TFL.Meta.Object) :
             return self.Templateer.get_template (template_name, injected)
     # end def get_template
 
-    def send_error_email (self, request, exc, tbi, xtra = None) :
+    def send_error_email (self, request, exc, tbi = None, xtra = None) :
         from _TFL.Formatter import formatted
         email     = self.email_from
         headers   = request.headers

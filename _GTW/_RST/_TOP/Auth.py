@@ -52,6 +52,7 @@
 #     4-Dec-2013 (CT) Add `href_request_reset_password`
 #                     fix some stylos
 #     5-Dec-2013 (CT) Fix `_Make_Cert__POST_._response_body` (missing `SPKAC`)
+#     5-Dec-2013 (CT) `send_error_email` if `SPKAC` is missing from `request`
 #    ««revision-date»»···
 #--
 
@@ -482,7 +483,9 @@ class _Make_Cert_ (_Ancestor) :
             req_data     = request.req_data
             spkac        = req_data.get ("SPKAC", "").replace ("\n", "")
             if not spkac :
-                raise HTTP_Status.Bad_Request ("SPKAC missing")
+                exc = HTTP_Status.Bad_Request ("SPKAC missing")
+                resource.send_error_email (request, exc)
+                raise exc
             challenge    = request.session.get ("spkac_challenge")
             desc         = req_data.get ("desc")
             email        = request.user.name
