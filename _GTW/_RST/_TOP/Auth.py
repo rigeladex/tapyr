@@ -53,6 +53,7 @@
 #                     fix some stylos
 #     5-Dec-2013 (CT) Fix `_Make_Cert__POST_._response_body` (missing `SPKAC`)
 #     5-Dec-2013 (CT) `send_error_email` if `SPKAC` is missing from `request`
+#     5-Dec-2013 (CT) Improve error message for missing `SPKAC`
 #    ««revision-date»»···
 #--
 
@@ -483,7 +484,13 @@ class _Make_Cert_ (_Ancestor) :
             req_data     = request.req_data
             spkac        = req_data.get ("SPKAC", "").replace ("\n", "")
             if not spkac :
-                exc = HTTP_Status.Bad_Request ("SPKAC missing")
+                exc = HTTP_Status.Bad_Request \
+                    ( _T( "The parameter `SPKAC` is missing from the request. "
+                          "Normally, the web browser should supply that "
+                          "parameter automatically."
+                        )
+
+                    )
                 resource.send_error_email (request, exc)
                 raise exc
             challenge    = request.session.get ("spkac_challenge")
