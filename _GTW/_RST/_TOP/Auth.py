@@ -51,6 +51,7 @@
 #     6-May-2013 (CT) Try to `commit` before sending emails/notifications
 #     4-Dec-2013 (CT) Add `href_request_reset_password`
 #                     fix some stylos
+#     5-Dec-2013 (CT) Fix `_Make_Cert__POST_._response_body` (missing `SPKAC`)
 #    ««revision-date»»···
 #--
 
@@ -479,33 +480,33 @@ class _Make_Cert_ (_Ancestor) :
             except Exception :
                 raise HTTP_Status.Not_Found ()
             req_data     = request.req_data
+            spkac        = req_data.get ("SPKAC", "").replace ("\n", "")
+            if not spkac :
+                raise HTTP_Status.Bad_Request ("SPKAC missing")
             challenge    = request.session.get ("spkac_challenge")
-            spkac        = req_data.get ("SPKAC").replace ("\n", "")
             desc         = req_data.get ("desc")
             email        = request.user.name
             cn           = "%s [%s]" % (email, desc) if desc else email
-            if not spkac :
-                raise HTTP_Status.Bad_Request ("SPKAC missing")
             ### Unicode arguments to `X509.new_email` fail [M2Crypto==0.21.1]
-            X = X509.new_extension
-            x1 = X ( b"basicConstraints", b"CA:FALSE", critical = True)
+            X  = X509.new_extension
+            x1 = X (b"basicConstraints", b"CA:FALSE", critical = True)
             x2 = X \
                 ( b"keyUsage"
                 , b"digitalSignature, keyEncipherment, keyAgreement"
                 , critical = True
                 )
-            x3 = X ( b"extendedKeyUsage", b"clientAuth, emailProtection, nsSGC")
-            s = SPKAC \
+            x3 = X (b"extendedKeyUsage", b"clientAuth, emailProtection, nsSGC")
+            s  = SPKAC \
                 ( spkac, challenge, x1, x2, x3
                 , CN     = cn
                 , Email  = email
                 , O      = cert.get_subject ().O
                 )
-            scope = top.scope
-            CTM   = scope.Auth.Certificate
-            start = CTM.E_Type.validity.start.now ()
-            finis = start + datetime.timedelta (days = 365 * 2)
-            c_obj = CTM  (email = email, validity = (start, finis), desc = desc)
+            scope  = top.scope
+            CTM    = scope.Auth.Certificate
+            start  = CTM.E_Type.validity.start.now ()
+            finis  = start + datetime.timedelta (days = 365 * 2)
+            c_obj  = CTM (email = email, validity = (start, finis), desc = desc)
             scope.commit ()
             result = c_obj.pem = s.gen_crt \
                 ( pkey, cert, c_obj.pid
