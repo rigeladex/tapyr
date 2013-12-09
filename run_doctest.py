@@ -61,6 +61,8 @@
 #     6-Aug-2013 (CT) Use `timeit.default_timer`, not `time.time`
 #     6-Aug-2013 (CT) Print summary to `sys.stderr`
 #     6-Aug-2013 (CT) Add number of test-cases to output
+#     9-Dec-2013 (CT) Add call to `logging.disable`
+#     9-Dec-2013 (CT) Use `utf-8`, not `latin-1`
 #    ««revision-date»»···
 #--
 
@@ -81,6 +83,7 @@ import _TFL.Package_Namespace
 from   timeit     import default_timer as _timer
 
 import doctest
+import logging
 import sys
 import subprocess
 import fnmatch
@@ -125,8 +128,8 @@ def _subp_step (subp) :
     except ValueError :
         pass
     else :
-        err = err.decode ("latin-1")
-        out = out.decode ("latin-1")
+        err = err.decode ("utf-8")
+        out = out.decode ("utf-8")
         sys.stdout.write (out)
         sys.stderr.write (err)
         if err :
@@ -176,6 +179,7 @@ def _main (cmd) :
         if not cmd.nodiff :
             flags |= doctest.REPORT_NDIFF
         try :
+            logging.disable (logging.WARNING)
             start  = _timer ()
             module = __import__ (m)
             cases  = len (getattr (module, "__test__", ())) or 1
