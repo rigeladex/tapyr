@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2013 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -33,15 +33,22 @@
 #                     access `creation_date`)
 #    11-May-2012 (CT) Print `pkg` in case of `ImportError`
 #     7-Jun-2012 (CT) Add `verbose` to `combined`
+#     9-Dec-2013 (CT) Fix 3-compatibility
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 from   _TFL                    import TFL
+
+import _TFL._Babel
 import _TFL._Meta.Object
 from   _TFL._Meta.Property     import Alias_Property
+
 from    babel.messages.pofile  import write_po, read_po
 from    babel.messages.mofile  import write_mo
 from    babel.messages.catalog import Catalog
+
 import  os
 import  sys
 import  json
@@ -85,13 +92,13 @@ class PO_File (TFL.Meta.Object) :
         result = cls.load (file_names [0], ** kw)
         verbose = kw.get ("verbose")
         if verbose :
-            print "Combine translations from", file_names [0],
+            print ("Combine translations from", file_names [0], end = " ")
         for file in file_names [1:] :
             if verbose :
-                print file
+                print (file)
             result.merge (file)
         if verbose :
-            print
+            print ()
         return result
     # end def combined
 
@@ -102,7 +109,7 @@ class PO_File (TFL.Meta.Object) :
             try :
                 __import__ (pkg)
             except ImportError as exc :
-                print exc, repr (pkg)
+                print (exc, repr (pkg))
                 raise
             base_dir = os.path.dirname (sys.modules [pkg].__file__)
             pot_file = os.path.join (base_dir, "-I18N", "template.pot")

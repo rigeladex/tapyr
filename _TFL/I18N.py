@@ -53,8 +53,11 @@
 #    20-Jul-2011 (CT) Use encoding information from `TFL.user_config`
 #     4-Dec-2013 (CT) Change `safe_eval` to not add coding cookie;
 #                     `eval` fails for `unicode` value containing coding cookie
+#     9-Dec-2013 (CT) Fix 3-compatibility
 #    ««revision-date»»···
 #--
+
+from   __future__  import print_function
 
 from   _TFL            import TFL
 from   _TFL.pyk        import pyk
@@ -219,7 +222,7 @@ def safe_eval (value, encoding = None) :
         try :
             value = value.decode (encoding)
         except Exception as exc :
-            print repr (value), encoding
+            print (repr (value), encoding)
             raise
     try :
         result = TFL.r_eval (value)
