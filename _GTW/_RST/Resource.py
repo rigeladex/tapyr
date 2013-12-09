@@ -104,6 +104,7 @@
 #                     `_http_response_error` (shows up in webbrowser otherwise)
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #     5-Dec-2013 (CT) Make `tbi` optional argument of `send_error_email`
+#     9-Dec-2013 (CT) Add `request.environ` to `send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -618,14 +619,15 @@ class _RST_Base_ (TFL.Meta.Object) :
         headers   = request.headers
         message   = \
             ( "HTTP method: %s"
-              "\n\nHeaders:\n    %s"
-              "\n\nBody:\n    %s"
+              "\n\nHeaders:\n%s"
+              "\n\nBody:\n  %s"
               "\n\nRequest data:\n%s"
+              "\n\nRequest environment:\n%s"
             %   ( request.method
-                , "\n    ".join
-                    ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
-                , formatted (request.body)
-                , formatted (request.req_data.data)
+                , formatted (dict (headers.items ()), 1)
+                , formatted (request.body,            1)
+                , formatted (request.req_data.data,   1)
+                , formatted (request.environ,         1)
                 )
             )
         if tbi :
@@ -639,6 +641,7 @@ class _RST_Base_ (TFL.Meta.Object) :
             print ("Email", email)
             print (message)
             print (request.data)
+            print (request.environ)
         else :
             kw = {}
             if self.DEBUG :
