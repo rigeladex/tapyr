@@ -36,6 +36,7 @@
 #    21-Mar-2013 (CT) Add `Company_R` and tests for `Query_Restriction_Spec`
 #     2-Apr-2013 (CT) Factor `test_qr`, add `test_esf`
 #    11-Apr-2013 (CT) Adapt to changes in `MOM.Attr.Querier`
+#     9-Dec-2013 (CT) Adapt to style changes of Auth forms
 #    ««revision-date»»···
 #--
 
@@ -176,19 +177,19 @@ _test_nav = """
       , 410
       , 500
       , 503
-      , 'account_change_email'
-      , 'account_make_cert'
       , 'account_register'
-      , 'account_reset_password'
       , 'calendar'
       , 'calendar_day'
       , 'html/static.jnj'
       ]
     ,
       [ 401
+      , 'account_change_email'
+      , 'account_change_password'
+      , 'account_make_cert'
+      , 'account_reset_password'
       , 'login'
       ]
-    , [ 'account_change_password' ]
     , [ 'console' ]
     , [ 'e_type_admin' ]
     ,
