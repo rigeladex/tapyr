@@ -2,7 +2,7 @@
 # Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
-# This module is part of the package GTW.RST.MOM.
+# This module is part of the package GTW.RST.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.RST.MOM
+#    GTW.RST.RAT
 #
 # Purpose
 #    RESTful resource for REST authentication token
@@ -29,6 +29,7 @@
 #     1-May-2013 (CT) Creation
 #     3-May-2013 (CT) Use `request.rat_secret`, not home-grown code
 #     6-May-2013 (CT) Add `send_error_email` to `RAT.POST._response_body`
+#     9-Dec-2013 (CT) Factor `Signed_Token`
 #    ««revision-date»»···
 #--
 
@@ -38,9 +39,10 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST.Auth_Mixin
-import _GTW._RST.Resource
 import _GTW._RST.HTTP_Method
 import _GTW._RST.Mime_Type
+import _GTW._RST.Resource
+import _GTW._RST.Signed_Token
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
@@ -56,7 +58,8 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
     """RESTful resource for REST authentication token"""
 
     cookie_kw                  = dict \
-        ( httponly             = True
+        ( expires              = None
+        , httponly             = True
         , secure               = True
         )
     exclude_robots             = True
@@ -95,13 +98,14 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
                 account = self.account
                 cn      = resource.pid
                 scope   = account.home_scope
-                rat     = result [cn] = response.set_secure_cookie \
-                    ( name     = cn
-                    , data     = account.name if resource.use_name_for_cookie
-                                     else str (account.pid)
-                    , expires  = None
-                    , max_age  = resource.session_ttl
-                    , secrets  = request.rat_secret (account)
+                data    = account.name \
+                    if resource.use_name_for_cookie else str (account.pid)
+                token   = GTW.RST.Signed_Token.REST_Auth \
+                    ( request, account = account, data = data)
+                rat     = result [cn] = token.value
+                response.set_secure_cookie \
+                    ( cn, rat
+                    , max_age = resource.session_ttl
                     , ** resource.cookie_kw
                     )
             return result
@@ -113,4 +117,4 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
 
 if __name__ != "__main__" :
     GTW.RST._Export ("*")
-### __END__ GTW.RST.MOM
+### __END__ GTW.RST.RAT

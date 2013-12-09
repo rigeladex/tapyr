@@ -30,6 +30,8 @@
 #    23-Jul-2012 (CT) Add `username` to `_own_vars`
 #     2-May-2013 (CT) Factor `clear_cookie`, `set_cookie`, and
 #                     `set_secure_cookie` to `GTW.RST.Response`
+#     9-Dec-2013 (CT) Adapt `_set_session_cookie` to signature change of
+#                     `set_secure_cookie`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +44,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 import _GTW._RST._TOP
 import _GTW._RST.Response
+import _GTW._RST.Signed_Token
 
 import base64
 import time
@@ -78,11 +81,12 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     # end def add_notification
 
     def _set_session_cookie (self) :
-        request     = self._request
-        session     = self.session
-        cookie_name = request.session_cookie_name
-        cookie      = self.set_secure_cookie \
-            (cookie_name, session.sid, max_age = self.resource.session_ttl)
+        request = self._request
+        session = self.session
+        name    = request.session_cookie_name
+        value   = request.new_secure_cookie (session.sid)
+        ttl     = self.resource.session_ttl
+        cookie  = self.set_secure_cookie (name, value, max_age = ttl)
         GTW.Notification_Collection (session)
         return cookie
     # end def _set_session_cookie

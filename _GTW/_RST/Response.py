@@ -36,6 +36,8 @@
 #    17-May-2013 (CT) Change `__call__` to sort link headers
 #    26-Nov-2013 (CT) DRY `__call__`, `set_cookie`
 #     4-Dec-2013 (CT) Add `httponly` to `set_secure_cookie`
+#     9-Dec-2013 (CT) Change signature of `set_secure_cookie`
+#                     (to that of `set_cookie`)
 #    ««revision-date»»···
 #--
 
@@ -106,19 +108,21 @@ class _RST_Response_ (TFL.Meta.Object) :
         self._response.set_cookie (name, "", max_age = -1, ** kw)
     # end def clear_cookie
 
-    def set_cookie (self, key, value = "", ** kw) :
+    def set_cookie (self, name, value = "", ** kw) :
         _request  = self._request
-        _request.cookies_to_delete.discard (key)
+        _request.cookies_to_delete.discard (name)
         if isinstance (value, unicode) :
             value = value.encode (_request.cookie_encoding)
-        return self._response.set_cookie (key, value, ** kw)
+        return self._response.set_cookie (name, value, ** kw)
     # end def set_cookie
 
-    def set_secure_cookie (self, name, data, secrets = None, ** kw) :
-        cookie = self._request.new_secure_cookie (name, data, secrets)
-        kw.setdefault   ("httponly", True)
-        self.set_cookie (name, cookie, ** kw)
-        return cookie
+    def set_secure_cookie (self, name, value = "", ** kw) :
+        request = self._request
+        kw.setdefault ("httponly", True)
+        if request.is_secure :
+            kw ["secure"] = True
+        self.set_cookie (name, value, ** kw)
+        return value
     # end def set_secure_cookie
 
     def __getattr__ (self, name) :

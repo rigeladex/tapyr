@@ -44,6 +44,8 @@
 #     4-May-2013 (CT) Factor `apache_authorized_user`
 #     5-May-2013 (CT) Fix `signature` warning of `secure_cookie`
 #     5-May-2013 (CT) Factor `_auth_user_name`, turn `username` into `property`
+#     6-Dec-2013 (CT) Define `current_time` as property, not method
+#     9-Dec-2013 (CT) Factor `Signed_Token`; add `cookie_salt`, `is_secure`
 #    ««revision-date»»···
 #--
 
@@ -53,8 +55,10 @@ from   _GTW                      import GTW
 from   _TFL                      import TFL
 
 import _GTW._RST
+import _GTW._RST.Signed_Token
 
 from   _TFL                      import I18N
+from   _TFL.Decorator            import getattr_safe
 from   _TFL._Meta.Once_Property  import Once_Property
 
 import _TFL._Meta.Object
@@ -120,12 +124,27 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def cookie_encoding
 
     @Once_Property
+    def cookie_salt (self) :
+        return self.settings.get ("cookie_salt")
+    # end def cookie_salt
+
+    @property
+    def current_time (self) :
+        return time.time ()
+    # end def current_time
+
+    @Once_Property
     def http_server_authorized_user (self) :
         result = self.ssl_authorized_user
         if result is None :
             result = self.apache_authorized_user
         return result
     # end def http_server_authorized_user
+
+    @Once_Property
+    def is_secure (self) :
+        return self.scheme == "https"
+    # end def is_secure
 
     @Once_Property
     def locale_codes (self) :
@@ -135,29 +154,16 @@ class _RST_Request_ (TFL.Meta.Object) :
 
     @Once_Property
     def rat_authorized_user (self) :
-        root   = self.root
-        rat    = getattr (root.SC, "RAT", None)
-        result = [None]
+        rat = getattr (self.root.SC, "RAT", None)
         if rat is not None :
-            def agent (self, cargo, timestamp) :
-                user = None
-                try :
-                    pid = int (cargo)
-                except Exception :
-                    user = root._get_user (cargo)
+            cookie = self.cookies.get ("RAT")
+            if cookie :
+                token  = GTW.RST.Signed_Token.REST_Auth.recover \
+                    (self, cookie, ttl_s = rat.session_ttl_s)
+                if token :
+                    return token.account.name
                 else :
-                    user = root.scope.pid_query (pid)
-                if user is not None :
-                    try :
-                        result [0] = user.name
-                        return self.rat_secret (user)
-                    except Exception :
-                        pass
-            cargo = self.secure_cookie ("RAT", agent, rat.session_ttl_s)
-            if cargo is None :
-                self.cookies_to_delete.add ("RAT")
-            else :
-                return result [0]
+                    self.cookies_to_delete.add ("RAT")
     # end def rat_authorized_user
 
     @Once_Property
@@ -199,6 +205,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def ssl_client_verified
 
     @property
+    @getattr_safe
     def user (self) :
         result = self._user
         if result is None and self.username :
@@ -212,6 +219,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def user
 
     @property
+    @getattr_safe
     def username (self) :
         ### `username` is `property` not `Once_Property` to allow
         ### descendent to change redefine `username.setter` (to support `login`)
@@ -239,10 +247,6 @@ class _RST_Request_ (TFL.Meta.Object) :
         return self.cookies.get (name)
     # end def cookie
 
-    def current_time (self) :
-        return time.time ()
-    # end def current_time
-
     def get_browser_locale_codes (self) :
         """Determines the user's locale from Accept-Language header."""
         languages = self.accept_languages
@@ -254,83 +258,26 @@ class _RST_Request_ (TFL.Meta.Object) :
         return getattr (self.root, "default_locale_code", "en")
     # end def get_browser_locale_codes
 
-    def new_secure_cookie (self, name, data, secrets = None) :
-        timestamp = base64.b64encode (str (int (self.current_time ())))
-        cargo     = base64.b64encode \
-            (    data.encode (self.cookie_encoding)
-            if   isinstance  (data, unicode)
-            else data
-            )
-        signature = self._cookie_signature (cargo, timestamp, secrets = secrets)
-        result    = "|".join ((cargo, timestamp, signature))
-        return result
+    def new_secure_cookie (self, data, ** kw) :
+        token = GTW.RST.Signed_Token.Cookie (self, data, ** kw)
+        return token.value
     # end def new_secure_cookie
 
-    def rat_secret (self, user) :
-        rip = getattr (self, "remote_addr", None)
-        return (user.password, self.root.scope.db_meta_data.dbid, user.pid, rip)
-    # end def rat_secret
-
-    def secure_cookie (self, name, secret_agent = None, ttl_s = None) :
-        root   = self.root
+    def secure_cookie (self, name, ttl_s = None) :
         cookie = self.cookies.get (name)
-        if not cookie:
-            return None
-        parts  = cookie.split ("|", 2)
-        if len (parts) != 3 :
-            return None
-        (data, timestamp, signature) = parts
-        enc = self.cookie_encoding
-        try:
-            result = base64.b64decode (data).decode (enc)
-        except Exception :
-            return None
-        secrets = None
-        if secret_agent :
-            secrets = secret_agent (self, result, timestamp)
-        wanted_sig = self._cookie_signature (data, timestamp, secrets = secrets)
-        if not root.HTTP.safe_str_cmp (signature, wanted_sig) :
-            logging.warning ("Invalid cookie signature %r", result)
-            return None
-        try :
-            timestamp = base64.b64decode (timestamp).decode (enc)
-        except Exception :
-            pass
-        try :
-            then = int (timestamp)
-        except Exception :
-            return None
-        now = self.current_time ()
-        ttl = ttl_s if ttl_s is not None else self.resource.session_ttl_s
-        if then < (now - ttl) :
-            logging.warning ("Expired cookie %r older then %s", data, ttl)
-            return None
-        if then > now + 180 :
-            ### don't accept cookies with a timestamp more than 2 minutes in
-            ### the future
-            logging.warning \
-                ( "Time-travelling cookie %r [%s seconds ahead]"
-                , data, then - now
-                )
-            return None
-        return result
+        if cookie :
+            token = GTW.RST.Signed_Token.Cookie.recover \
+                (self, cookie, ttl_s = ttl_s)
+            if token :
+                return token.data
+            else :
+                self.cookies_to_delete.add (name)
     # end def secure_cookie
 
     def use_language (self, langs) :
         self.lang = langs
         I18N.use (* langs)
     # end def use_language
-
-    def _cookie_signature (self, * parts, ** kw):
-        enc     = self.cookie_encoding
-        secrets = (self.settings ["cookie_salt"], kw.pop ("secrets", None))
-        result  = hmac.new \
-            (unicode (secrets).encode (enc), digestmod = self.root.hash_fct)
-        for part in parts:
-            result.update (b":::")
-            result.update (part)
-        return result.hexdigest ()
-    # end def _cookie_signature
 
 Request = _RST_Request_ # end class
 
