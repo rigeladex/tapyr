@@ -215,20 +215,20 @@
   {%- endif %}
 {%- endmacro -%} {# section #}
 
-{%- macro sitemap (links = None, TEST = False) -%}
+{%- macro sitemap (links = None) -%}
   {%- if not links -%}
     {%- set links = page.top.own_links -%}
   {%- endif -%}
-  {{ sitemap_level (links, TEST) }}
+  {{ sitemap_level (links) }}
 {%- endmacro -%} {#- sitemap -#}
 
-{%- macro sitemap_entry (link, TEST = False) -%}
+{%- macro sitemap_entry (link) -%}
   {% if NAV.permissive or (NAV.allow (link, request.user) and not link.hidden) %}
     <li class="nav-link">
       <a href="{{ link.permalink}}"
          {% if link.title %} title="{{ link.title }}"{% endif %}
       >{{ link.short_title|safe }}</a>
-      {% if TEST and request.user.authenticated %}
+      {% if request.verbose and request.user.authenticated %}
         <div class="nav-link-details">
           {% if link.creator %}<p>Creator: {{ link.creator }}</p>{% endif %}
           {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
@@ -248,16 +248,16 @@
           {% endif %}
         </div>
       {% endif %}
-      {{ sitemap_level (link.own_links, TEST) }}
+      {{ sitemap_level (link.own_links) }}
     </li>
   {% endif %}
 {%- endmacro -%} {#- sitemap_entry -#}
 
-{%- macro sitemap_level (links, TEST = False) -%}
+{%- macro sitemap_level (links) -%}
   {%- if links %}
     <ul>
       {%- for link in links  %}
-        {{ sitemap_entry (link, TEST) }}
+        {{ sitemap_entry (link) }}
       {% endfor -%}
     </ul>
   {% endif -%}

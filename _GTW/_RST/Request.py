@@ -46,6 +46,8 @@
 #     5-May-2013 (CT) Factor `_auth_user_name`, turn `username` into `property`
 #     6-Dec-2013 (CT) Define `current_time` as property, not method
 #     9-Dec-2013 (CT) Factor `Signed_Token`; add `cookie_salt`, `is_secure`
+#     9-Dec-2013 (CT) Add properties `origin`, `origin_host`, `same_origin`,
+#                     `server_name`, and `server_port`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +81,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     _resource         = None
     _user             = None
 
+    allow_login       = False
     lang              = None
     original_resource = None
 
@@ -153,6 +156,28 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def locale_codes
 
     @Once_Property
+    def origin (self) :
+        result   = self.environ.get ("HTTP_ORIGIN")
+        if result is None :
+            referrer = self.referrer
+            if referrer :
+                url   = TFL.Url (referrer)
+                parts = []
+                if url.scheme :
+                    parts.extend ((url.scheme, "://"))
+                parts.append (url.authority)
+                result = "".join (parts)
+        return result
+    # end def origin
+
+    @Once_Property
+    def origin_host (self) :
+        origin = self.origin
+        if origin :
+            return origin.split ("//", 1) [-1]
+    # end def origin_host
+
+    @Once_Property
     def rat_authorized_user (self) :
         rat = getattr (self.root.SC, "RAT", None)
         if rat is not None :
@@ -188,6 +213,22 @@ class _RST_Request_ (TFL.Meta.Object) :
     def resource (self, value) :
         self._resource = value
     # end def resource
+
+    @Once_Property
+    def same_origin (self) :
+        return self.server_name == self.origin_host
+    # end def same_origin
+
+    @Once_Property
+    def server_name (self) :
+        env = self.environ
+        return env.get ("HTTP_HOST") or env.get ("SERVER_NAME")
+    # end def server_name
+
+    @Once_Property
+    def server_port (self) :
+        return self.environ.get ("SERVER_PORT")
+    # end def server_port
 
     @property
     def settings (self) :

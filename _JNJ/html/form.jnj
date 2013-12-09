@@ -86,6 +86,8 @@
 ##     8-Jan-2013 (CT) Add `cert_auth_path` to `logout_inline`
 ##    15-Jan-2013 (CT) Add `cc_href` to `login_inline`
 ##    16-Jan-2013 (CT) Remove `class` from `<a>` for `cc_href`
+##     9-Dec-2013 (CT) Add `anti_csrf_token` to macro `form`
+##    10-Dec-2013 (CT) Add `request.is_secure` to `login_section`
 ##    ««revision-date»»···
 ##--
 #}
@@ -157,6 +159,10 @@
     {{ caller () }}
     {%- if next_form_kw %}
       {{ X.input.hidden (** next_form_kw) }}
+    {% endif -%}
+    {%- set anti_csrf_token = response and response.anti_csrf_token %}
+    {%- if anti_csrf_token %}
+      {{ X.input.hidden (name = "F_ACT", value = anti_csrf_token) }}
     {% endif -%}
     {%- if submit_kws or reset_kw or cancel_kw %}
       <div class="buttons">
@@ -315,57 +321,65 @@
     <ul>
       {{- display_errors (errors, None) -}}
       {%- if cc_href %}
-        <li >
-          <a href="{{ cc_href }}" class="button"
-            title="{{ GTW._T ("Login with a previously created client certificate") }}"
-          >{{ GTW._T ("Certificate login") }}</a>
+        <li title="{{ GTW._T ("Login with a previously created client certificate") }}">
+          <a href="{{ cc_href }}" class="button">
+            {{- GTW._T ("Certificate login") -}}
+          </a>
         </li>
       {% endif -%}
-      <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
-      <li>
-        {{ X.input.text
-            ( id            = "F_username"
-            , name          = "username"
-            , maxlength     = "30"
-            , value         = username
-            )
-        }}
-      </li>
-      {{- display_errors (errors, "username") -}}
-      <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
-      <li>
-        {{ X.input.password
-            ( id            = "F_password"
-            , name          = "password"
-            )
-        }}
-      </li>
-      {{- display_errors (errors, "password") -}}
-      <li>
-        {{ X.input.submit
-            ( title = GTW._T ("Log into website or go to account page")
-            , value = GTW._T ("Login")
-            , name  = "Submit"
-            )
-        }}
-        {{ X.input.hidden (name  = "next", value = next) }}
-      </li>
-      {%- if allow_new_pass %}
+      {%- if not (page.TEST or request.is_secure) %}
+        <li title="{{- GTW._T ("Log into %s") % page.s_domain -}}">
+          <a href="{{ page.login_url }}" class="button">
+            {{- GTW._T ("Login") -}}
+          </a>
+        </li>
+      {%- else %}
+        <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
         <li>
-          {{ X.input.submit
-              ( title = GTW._T ("Get a new password for the username specified")
-              , value = GTW._T ("New password")
-              , name  = "Reset"
+          {{ X.input.text
+              ( id            = "F_username"
+              , name          = "username"
+              , maxlength     = "30"
+              , value         = username
               )
           }}
         </li>
-      {% endif -%}
-      {%- if allow_register %}
-        <li class="nav-link level-0">
-          <a href="{{ Auth.href_register }}" class="button"
-            title="{{ GTW._T ("Register a new account") }}"
-          >{{ GTW._T ("Register") }}</a>
+        {{- display_errors (errors, "username") -}}
+        <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
+        <li>
+          {{ X.input.password
+              ( id            = "F_password"
+              , name          = "password"
+              )
+          }}
         </li>
+        {{- display_errors (errors, "password") -}}
+        <li>
+          {{ X.input.submit
+              ( title = GTW._T ("Log into website or go to account page")
+              , value = GTW._T ("Login")
+              , name  = "Submit"
+              )
+          }}
+          {{ X.input.hidden (name  = "next", value = next) }}
+        </li>
+        {%- if allow_new_pass %}
+          <li>
+            {{ X.input.submit
+                ( title = GTW._T ("Get a new password for the username specified")
+                , value = GTW._T ("New password")
+                , name  = "Reset"
+                )
+            }}
+          </li>
+        {% endif -%}
+        {%- if allow_register %}
+          <li class="nav-link level-0">
+            <a href="{{ Auth.href_register }}" class="button"
+              title="{{ GTW._T ("Register a new account") }}"
+            >{{ GTW._T ("Register") }}</a>
+          </li>
+        {% endif -%}
       {% endif -%}
     </ul>
   {% endcall %} {# form #}

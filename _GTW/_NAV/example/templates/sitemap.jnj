@@ -1,7 +1,7 @@
 {%- extends site_base %}
 {#- jinja template: sitemap.jnj -#}
 {#
-## Copyright (C) 2010 Martin Glueck All rights reserved
+## Copyright (C) 2010-2013 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ## ****************************************************************************
 ## This template is part of the package GTW:NAV.
@@ -34,6 +34,6 @@
 #}
 {%- import "html/navigation.jnj" as NT with context %}
 {%- block document -%}
-  {{ NT.sitemap (NAV.own_links, TEST = True) }}
+  {{ NT.sitemap (NAV.own_links) }}
 {%- endblock document -%}
 {#- __END__ jinja template: sitemap.jnj -#}

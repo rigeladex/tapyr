@@ -37,6 +37,7 @@
 #    18-Oct-2012 (CT) Factor `E_Type_Desc`, `ET_Map` to `GTW.RST.Root`
 #    15-Jan-2013 (CT) Add `cc_domain`
 #     2-May-2013 (CT) Add argument `resource` to `_http_response_finish`...
+#    10-Dec-2013 (CT) Add `href_login`; add `s_domain` to `login_url`
 #    ««revision-date»»···
 #--
 
@@ -110,6 +111,13 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
         return self
     # end def home
 
+    @Once_Property
+    @getattr_safe
+    def href_login (self) :
+        if "Auth" in self.SC :
+            return self.SC.Auth.href_login
+    # end def href_login
+
     @property
     @getattr_safe
     def h_title (self) :
@@ -119,8 +127,10 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     @Once_Property
     @getattr_safe
     def login_url (self) :
-        if "Auth" in self.SC :
-            return self.SC.Auth.href_login
+        result = self.href_login
+        if result and self.s_domain :
+            result = self._get_secure_url (result)
+        return result
     # end def login_url
 
     @Once_Property

@@ -74,6 +74,7 @@
 #     8-Jan-2013 (CT) Add `-cert_auth_path`
 #    15-Jan-2013 (CT) Add `-cc_domain`
 #     3-Dec-2013 (CT) Change `_load_I18N` to log warnings about exceptions
+#    10-Dec-2013 (CT) Add `-s_domain`
 #    ««revision-date»»···
 #--
 
@@ -188,6 +189,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 "?Load the translation files during startup"
             , "-log_level:I?Verbosity of logging"
             , "-port:I?Port the server should use"
+            , "-s_domain:S?Domain configured for HTTPS"
             , "-watch_media_files:B"
                 "?Add the .media files to list files watched by "
                 "automatic reloader"
@@ -332,6 +334,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , languages           = set (cmd.languages)
                 , log_level           = cmd.log_level
                 , page_template_name  = cmd.template_file
+                , s_domain            = cmd.s_domain
                 , session_id          = bytes ("SESSION_ID")
                 , smtp                = self._get_smtp (cmd)
                 , use_www_debugger    = cmd.debug

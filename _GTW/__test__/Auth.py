@@ -33,13 +33,14 @@
 #     1-May-2013 (CT) Add `@foo.bar` to email addresses
 #    26-May-2013 (CT) Add `_test_migration`
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#    10-Dec-2013 (CT) Add `-TEST` to avoid CRSF checks
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 _login_logout = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> print (root.top.Templateer.env.globals ["html_version"])
     html/5.jnj
@@ -123,7 +124,7 @@ _login_logout = r"""
 """
 
 _activate        = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -189,17 +190,18 @@ _activate        = r"""
 """
 
 _register        = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> resp   = Scaffold.test_get ("/Auth/register.html")
-    >>> print ("\n".join (str (sorted (t.items ())) for t in resp.PQ (b"input")))
+    >>> print ("\n".join (str (sorted (t.items ())) for t in resp.PQ (b"input"))) # doctest:+ELLIPSIS
     [('id', 'F_username'), ('name', 'username'), ('type', 'text')]
     [('id', 'F_npassword'), ('name', 'npassword'), ('type', 'password')]
     [('id', 'F_vpassword'), ('name', 'vpassword'), ('type', 'password')]
     [('title', 'Update Email'), ('type', 'submit'), ('value', 'Update Email')]
     [('name', 'next'), ('type', 'hidden')]
+    [('name', 'F_ACT'), ('type', 'hidden'), ('value', '...')]
 
     >>> data   = dict ()
     >>> resp   = Scaffold.test_post ("/Auth/register.html", data = data)
@@ -278,7 +280,7 @@ _register        = r"""
 """
 
 _change_email    = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -293,8 +295,8 @@ _change_email    = r"""
     >>> login (Scaffold, a2, passwd)
     True
     >>> resp   = Scaffold.test_get ("/Auth/change_email.html", query_string = "p=%%d" %% (a2.pid, ))
-    >>> print ("".join (t.string for t in resp.PQ (b"li#account-name")))
-    <li id="account-name">a2@foo.bar</li>
+    >>> print ("".join (t.string for t in resp.PQ (b"li.account-name")))
+    <li class="account-name">a2@foo.bar</li>
 
     >>> data   = dict (username = a2.name)
     >>> resp   = Scaffold.test_post ("/Auth/change_email.html", data = data)
@@ -370,7 +372,7 @@ _change_email    = r"""
 """
 
 _change_password = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"])
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"])
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> a2     = Auth.Account.query (name = "a2@foo.bar").one ()
@@ -437,7 +439,7 @@ _change_password = r"""
 """
 
 _password_reset  = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -481,7 +483,7 @@ _password_reset  = r"""
 
 _test_migration     = r"""
 
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> g1     = Auth.Group ("g1")
@@ -546,7 +548,7 @@ _test_migration     = r"""
 """
 
 _test_query_attr    = r"""
-    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth

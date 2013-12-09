@@ -38,6 +38,7 @@
 #     4-Dec-2013 (CT) Add `httponly` to `set_secure_cookie`
 #     9-Dec-2013 (CT) Change signature of `set_secure_cookie`
 #                     (to that of `set_cookie`)
+#     9-Dec-2013 (CT) Add `anti_csrf_token`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,8 @@ class _RST_Response_ (TFL.Meta.Object) :
         ("root", "_auto_headers", "_links", "_request", "_response")
 
     _sets_to_combine  = ("_own_vars", )
+
+    anti_csrf_token   = None
 
     def __init__ (self, _root, _request, * args, ** kw) :
         self.root          = _root

@@ -44,6 +44,7 @@
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #     3-May-2013 (CT) Factor `auth_required` and `allow_method` to
 #                     `GTW.RST.Base`
+#     9-Dec-2013 (CT) Add `csrf_check`
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,14 @@ class _TOP_Base_ (_Ancestor) :
     def q_href (self) :
         return pp_join (self.abs_href, self.q_prefix)
     # end def q_href
+
+    def csrf_check (self, request, response) :
+        x = self.TEST or request.csrf_safe
+        if not x :
+            exc = self.top.Status.See_Other (self.abs_href)
+            self.send_error_email (request, repr (x))
+            raise exc
+    # end def csrf_check
 
     def etype_manager (self, obj) :
         etn = getattr (obj, "type_name", None)

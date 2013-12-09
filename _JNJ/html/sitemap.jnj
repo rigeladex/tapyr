@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: html/sitemap.jnj -#}
 {#
-## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -36,7 +36,7 @@
 {%- import "STD::html/navigation.jnj" as NT with context -%}
 
 {%- block document -%}
-  {{ NT.sitemap (NAV.own_links, TEST = NAV.TEST) }}
+  {{ NT.sitemap (NAV.own_links) }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: html/sitemap.jnj -#}

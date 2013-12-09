@@ -39,6 +39,7 @@
 #     4-May-2013 (CT) Redefine `apache_authorized_user` to disable it
 #    26-Nov-2013 (CT) Take `user_locale_codes` from cookie `language`,
 #                     not from session; remove `use_language`
+#     9-Dec-2013 (CT) Add `allow_login`, `csrf_safe`
 #    ««revision-date»»···
 #--
 
@@ -59,10 +60,24 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     _real_name        = "Request"
 
     @Once_Property
+    def allow_login (self) :
+        resource = self._resource
+        return resource.login_url and \
+            (resource.TEST or resource.s_domain or self.is_secure)
+    # end def allow_login
+
+    @Once_Property
     def apache_authorized_user (self) :
         ### Don't want to support this in TOP context
         pass
     # end def apache_authorized_user
+
+    @Once_Property
+    def csrf_safe (self) :
+        value      = self.req_data.get ("F_ACT", "")
+        csrf_token = GTW.RST.Signed_Token.Anti_CSRF.recover (self, value)
+        return self.same_origin and csrf_token
+    # end def csrf_safe
 
     @Once_Property
     def locale_codes (self) :

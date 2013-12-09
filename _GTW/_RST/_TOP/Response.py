@@ -32,6 +32,7 @@
 #                     `set_secure_cookie` to `GTW.RST.Response`
 #     9-Dec-2013 (CT) Adapt `_set_session_cookie` to signature change of
 #                     `set_secure_cookie`
+#     9-Dec-2013 (CT) Add `anti_csrf_token`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,11 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     """Extend GTW.RST.Response with session handling."""
 
     _own_vars = ("username", )
+
+    @Once_Property
+    def anti_csrf_token (self) :
+        return GTW.RST.Signed_Token.Anti_CSRF (self._request, "don't bug me")
+    # end def anti_csrf_token
 
     @Once_Property
     def session (self) :

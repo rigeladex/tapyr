@@ -105,6 +105,7 @@
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #     5-Dec-2013 (CT) Make `tbi` optional argument of `send_error_email`
 #     9-Dec-2013 (CT) Add `request.environ` to `send_error_email`
+#    10-Dec-2013 (CT) Add `s_domain` and `secure_url`
 #    ««revision-date»»···
 #--
 
@@ -490,6 +491,12 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @Once_Property
     @getattr_safe
+    def secure_url (self) :
+        return self._get_secure_url (self.abs_href)
+    # end def secure_url
+
+    @Once_Property
+    @getattr_safe
     def session_ttl (self) :
         result = getattr (self.top, self.session_ttl_name)
         if not isinstance (result, datetime.timedelta) :
@@ -723,6 +730,12 @@ class _RST_Base_ (TFL.Meta.Object) :
                     yield p
         return uniq (_gen (self, name))
     # end def _get_permissions
+
+    def _get_secure_url (self, href) :
+        s_domain = self.s_domain
+        if s_domain :
+            return "".join (("https://", s_domain, href))
+    # end def _get_secure_url
 
     def _get_user (self, username) :
         result = None
@@ -1215,7 +1228,7 @@ class RST_Root (_Ancestor) :
     Cacher = RST_Root_Cacher # end class
 
     Create_Scope               = None
-    DEBUG                      = False
+    DEBUG = TEST               = False
     Templateer                 = None
 
     default_locale_code        = "en"
@@ -1230,6 +1243,7 @@ class RST_Root (_Ancestor) :
     languages                  = set (("en", ))
     prefix                     = ""
     request                    = None
+    s_domain                   = None
     site_url                   = ""
     skip_etag                  = False
     use_www_debugger           = False

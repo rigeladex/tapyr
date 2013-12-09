@@ -54,6 +54,9 @@
 #     5-Dec-2013 (CT) Fix `_Make_Cert__POST_._response_body` (missing `SPKAC`)
 #     5-Dec-2013 (CT) `send_error_email` if `SPKAC` is missing from `request`
 #     5-Dec-2013 (CT) Improve error message for missing `SPKAC`
+#     9-Dec-2013 (CT) Add call to `resource.csrf_check` to `POST._response_body`
+#    10-Dec-2013 (CT) Add `_Cmd_Method_Mixin_` to redefine `_skip_render` to
+#                     check `request.is_secure`
 #    ««revision-date»»···
 #--
 
@@ -88,13 +91,35 @@ class _Cmd_ (_Ancestor) :
 
     implicit = True
 
+    class _Cmd_Method_Mixin_ (GTW.RST.HTTP_Method) :
+
+        def _skip_render (self, resource, request, response) :
+            result = self.__super._skip_render (resource, request, response)
+            if not result :
+                if not (resource.TEST or request.is_secure) :
+                    Status = resource.top.Status
+                    if resource.s_domain :
+                        raise Status.See_Other (resource.secure_url)
+                    else :
+                        raise Status.Forbidden ()
+            return result
+        # end def _skip_render
+
+    # end class _Cmd_Method_Mixin_
+
+    class _Cmd__GET_ (_Cmd_Method_Mixin_, _Ancestor.GET) :
+
+        _real_name             = "GET"
+
+    GET = _Cmd__GET_ # end class
+
 # end class _Cmd_
 
 class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
 
     active_account_required = True
 
-    class _Form_Cmd__GET_ (_Ancestor.GET) :
+    class _Form_Cmd__GET_ (_Cmd_.GET) :
 
         _real_name             = "GET"
 
@@ -115,7 +140,11 @@ class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
 
     GET = _Form_Cmd__GET_ # end class
 
-    class _Form_Cmd__POST_ (GTW.RST.TOP.HTTP_Method_Mixin, GTW.RST.Auth_Mixin.POST) :
+    class _Form_Cmd__POST_ \
+            ( _Cmd_._Cmd_Method_Mixin_
+            , GTW.RST.TOP.HTTP_Method_Mixin
+            , GTW.RST.Auth_Mixin.POST
+            ) :
 
         _real_name              = "POST"
 
@@ -216,6 +245,7 @@ class _Activate_ (_Ancestor) :
         _real_name              = "POST"
 
         def _response_body (self, resource, request, response) :
+            resource.csrf_check (request, response)
             debug        = getattr (resource.top, "DEBUG", False)
             req_data     = request.req_data
             top          = resource.top
@@ -276,6 +306,7 @@ class _Change_Email_ (_Ancestor) :
         # end def get_email
 
         def _response_body (self, resource, request, response) :
+            resource.csrf_check (request, response)
             debug       = getattr (resource.top, "DEBUG", False)
             req_data    = request.req_data
             top         = resource.top
@@ -373,6 +404,7 @@ class _Login_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
+            resource.csrf_check (request, response)
             req_data = request.req_data
             if req_data.get ("Reset") :
                 resetter = resource.parent._get_child ("request_reset_password")
@@ -426,6 +458,7 @@ class _Logout_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
+            resource.csrf_check (request, response)
             top       = resource.top
             next      = request.req_data.get ("next", request.referrer or "/")
             next_page = top.resource_from_href (urlparse.urlsplit (next).path)
@@ -561,6 +594,7 @@ class _Register_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
+            resource.csrf_check (request, response)
             req_data      = request.req_data
             top           = resource.top
             self.errors   = Errors ()
@@ -627,6 +661,7 @@ class _Request_Reset_Password_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
+            resource.csrf_check (request, response)
             req_data    = request.req_data
             top         = resource.top
             self.errors = Errors ()
@@ -693,7 +728,6 @@ class Auth (_Ancestor) :
     """Navigation directory supporting user authorization."""
 
     pid      = "Auth"
-    T        = TFL.I18N.Name
 
     _entry_type_map = dict \
         ( action                  = _Action_
