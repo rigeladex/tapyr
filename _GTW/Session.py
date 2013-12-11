@@ -50,6 +50,7 @@
 #     2-May-2013 (CT) Convert `New_ID` to instance method,
 #                     use `settings ["hash_fct"]`, if any
 #     5-May-2013 (CT) Add change guard to `username.setter`
+#    11-Dec-2013 (CT) Fix `_data` to check user *only* once after `_load ()`
 #    ««revision-date»»···
 #--
 
@@ -170,21 +171,21 @@ class Session (TFL.Meta.Object) :
         result = self._data_dict
         if result is None :
             result = self._data_dict = loaded = self._load ()
-        user   = result.get ("user")
-        if user is None :
-            user = result ["user"] = User ()
-        expired = \
-            (  (user.hash != self._hasher (user.name))
-            or self._expired (user.expiry)
-            )
-        if expired :
-            self._change_user (user, None)
-        elif loaded :
-            for id in list (user.sessions) :
-                try :
-                    self.edit_session (id)
-                except LookupError :
-                    pass
+            user   = result.get ("user")
+            if user is None :
+                user = result ["user"] = User ()
+            expired = \
+                (  (user.hash != self._hasher (user.name))
+                or self._expired (user.expiry)
+                )
+            if expired :
+                self._change_user (user, None)
+            elif loaded :
+                for id in list (user.sessions) :
+                    try :
+                        self.edit_session (id)
+                    except LookupError :
+                        pass
         return result
     # end def _data
 
