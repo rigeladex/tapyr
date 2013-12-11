@@ -264,8 +264,9 @@ class _TOP_Base_ (_Ancestor) :
                 csrf_token = request.csrf_token
                 if not csrf_token :
                     if self.DEBUG :
-                        error  = "\n\n".join \
+                        error  = "\n".join \
                             ( ( repr (csrf_token)
+                              , "Token value: %s" % (token.value, )
                               , "Session sid: %s" % (request.session.sid, )
                               )
                             )

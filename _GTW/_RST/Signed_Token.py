@@ -58,10 +58,12 @@ import time
 class _Base_ (TFL.Meta.Object) :
     """Signed token as used for secure cookies or CSRF tokens"""
 
+    cargo                      = ""
     data                       = None
     encoding                   = "utf-8"
     secret_x                   = None
     sig_sep                    = b":::"
+    timestamp                  = ""
     val_sep                    = b"|"
 
     _invalid                   = False
@@ -91,8 +93,11 @@ class _Base_ (TFL.Meta.Object) :
         result.request = request
         parts  = value.split (cls.val_sep, 2)
         if len (parts) != 3 :
-            result._invalid = \
-                _T ("Malformed %s value '%s'") % (cls.__name__, value)
+            if value :
+                fmt = _ ("Malformed %s value '%s'")
+            else :
+                fmt = _ ("Missing %s%s")
+            result._invalid = _T (fmt) % (cls.__name__, value)
             return result
         (result.cargo, result.timestamp, result.x_signature) = parts
         enc = result.encoding
