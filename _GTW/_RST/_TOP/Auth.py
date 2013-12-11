@@ -51,13 +51,14 @@
 #     6-May-2013 (CT) Try to `commit` before sending emails/notifications
 #     4-Dec-2013 (CT) Add `href_request_reset_password`
 #                     fix some stylos
-#     5-Dec-2013 (CT) Fix `_Make_Cert__POST_._response_body` (missing `SPKAC`)
+#     5-Dec-2013 (CT) Fix `_Make_Cert_.POST._response_body` (missing `SPKAC`)
 #     5-Dec-2013 (CT) `send_error_email` if `SPKAC` is missing from `request`
 #     5-Dec-2013 (CT) Improve error message for missing `SPKAC`
 #     9-Dec-2013 (CT) Add call to `resource.csrf_check` to `POST._response_body`
 #    10-Dec-2013 (CT) Add `_Cmd_Method_Mixin_` to redefine `_skip_render` to
 #                     check `request.is_secure`
-#    11-Dec-2013 (CT) DRY `.csrf_check`: move to `_Form_Cmd__POST_._skip_render`
+#    11-Dec-2013 (CT) DRY `.csrf_check`: move to `_Form_Cmd_.POST._skip_render`
+#    11-Dec-2013 (CT) Use `sane_referrer` in `Login.GET._render_context`
 #    ««revision-date»»···
 #--
 
@@ -398,7 +399,7 @@ class _Login_ (_Ancestor) :
         _real_name             = "GET"
 
         def _render_context (self, resource, request, response, ** kw) :
-            kw.setdefault ("next", request.referrer or "/")
+            kw.setdefault ("next", resource.sane_referrer (request))
             return self.__super._render_context \
                 (resource, request, response, ** kw)
         # end def _render_context

@@ -106,6 +106,7 @@
 #     5-Dec-2013 (CT) Make `tbi` optional argument of `send_error_email`
 #     9-Dec-2013 (CT) Add `request.environ` to `send_error_email`
 #    10-Dec-2013 (CT) Add `s_domain` and `secure_url`
+#    11-Dec-2013 (CT) Add `sane_referrer`
 #    ««revision-date»»···
 #--
 
@@ -124,7 +125,8 @@ from   _TFL.Decorator           import getattr_safe
 from   _TFL.Filename            import Filename
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import callable, first, uniq
-from   _TFL.Regexp              import Re_Replacer, Multi_Re_Replacer, re
+from   _TFL.Regexp              import \
+    Regexp, Re_Replacer, Multi_Re_Replacer, re
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -227,6 +229,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     _w_permission              = None             ### write permission
     _page_template             = None
     _postconditions            = ()
+    _scheme_pat                = TFL.Regexp ("^https?://")
     _template_names            = set ()
 
     DELETE                     = None             ### redefine if necessary
@@ -619,6 +622,12 @@ class _RST_Base_ (TFL.Meta.Object) :
                 injected = self.injected_templates
             return self.Templateer.get_template (template_name, injected)
     # end def get_template
+
+    def sane_referrer (self, request) :
+        result = self._scheme_pat.sub \
+            (request.scheme + "://", request.referrer or "/", 1)
+        return result
+    # end def sane_referrer
 
     def send_error_email (self, request, exc, tbi = None, xtra = None) :
         from _TFL.Formatter import formatted
