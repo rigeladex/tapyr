@@ -38,6 +38,7 @@
 #    15-Jan-2013 (CT) Add `cc_domain`
 #     2-May-2013 (CT) Add argument `resource` to `_http_response_finish`...
 #    10-Dec-2013 (CT) Add `href_login`; add `s_domain` to `login_url`
+#    11-Dec-2013 (CT) Add default for `csrf_check_p`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     cert_auth_path             = None
     copyright_start            = None
     copyright_url              = None
+    csrf_check_p               = True
     owner                      = None
     q_prefix                   = "q"
     qx_prefix                  = "qx"

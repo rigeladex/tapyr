@@ -224,12 +224,12 @@ class GTW_Command (MOM.Command) :
         start = self.now
         exe   = "%s fcgi" % sos.path.abspath (self.app_path)
         if cmd.log_level :
-            logging.warning ("[%s] Starting %s" % (start, exe))
+            logging.info ("[%s] Starting %s" % (start, exe))
         try :
             return WSGIServer (self._handle_wsgi (cmd)).run ()
         finally :
             if cmd.log_level :
-                logging.warning \
+                logging.info \
                     ("[%s <-- %s] Finished %s" % (self.now, start, exe))
     # end def _handle_fcgi
 

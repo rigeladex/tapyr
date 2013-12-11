@@ -34,13 +34,15 @@
 #    26-May-2013 (CT) Add `_test_migration`
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    10-Dec-2013 (CT) Add `-TEST` to avoid CRSF checks
+#    11-Dec-2013 (CT) Factor `-TEST` to `Auth_Test_Command._defaults`
+#    11-Dec-2013 (CT) Add `CSRF_check = "no"` to `_defaults`
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
 _login_logout = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> print (root.top.Templateer.env.globals ["html_version"])
     html/5.jnj
@@ -124,7 +126,7 @@ _login_logout = r"""
 """
 
 _activate        = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -190,7 +192,7 @@ _activate        = r"""
 """
 
 _register        = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -280,7 +282,7 @@ _register        = r"""
 """
 
 _change_email    = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -372,7 +374,7 @@ _change_email    = r"""
 """
 
 _change_password = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"])
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"])
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> a2     = Auth.Account.query (name = "a2@foo.bar").one ()
@@ -439,7 +441,7 @@ _change_password = r"""
 """
 
 _password_reset  = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -483,7 +485,7 @@ _password_reset  = r"""
 
 _test_migration     = r"""
 
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
     >>> g1     = Auth.Group ("g1")
@@ -548,7 +550,7 @@ _test_migration     = r"""
 """
 
 _test_query_attr    = r"""
-    >>> root   = Scaffold (["wsgi", "-TEST", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
+    >>> root   = Scaffold (["wsgi", "-db_url=sqlite:///auth.sqlite", "-create"]) # doctest:+ELLIPSIS
     ...
     >>> scope  = root.scope
     >>> Auth   = scope.Auth
@@ -570,23 +572,31 @@ else :
     ### reduce CPU time necessary
     Bcrypt.default_rounds = 6
 
-def fixtures (self, scope) :
-    Auth  = scope.Auth
-    a1    = Auth.Account.create_new_account_x \
-        ("a1@foo.bar", "p1", enabled = True,  suspended = False, superuser = True)
-    a2    = Auth.Account.create_new_account_x \
-        ("a2@foo.bar", "p2", enabled = True,  suspended = False, superuser = False)
-    a3    = Auth.Account.create_new_account_x \
-        ("a3@foo.bar", "p3", enabled = True,  suspended = True,  superuser = False)
-    a3    = Auth.Account.create_new_account_x \
-        ("a4@foo.bar", "p4", enabled = False, suspended = True , superuser = False)
-    scope.commit ()
-# end def fixtures
-
 user_config.time_zone                 = "Europe/Vienna"
 
-Scaffold = GTW_Test_Command ()
-Scaffold.__class__.fixtures = fixtures
+class Auth_Test_Command (GTW_Test_Command) :
+
+    _defaults             = dict \
+        ( CSRF_check      = "no"
+        , TEST            = "yes"
+        )
+
+    def fixtures (self, scope) :
+        Auth  = scope.Auth
+        a1    = Auth.Account.create_new_account_x \
+            ("a1@foo.bar", "p1", enabled = True,  suspended = False, superuser = True)
+        a2    = Auth.Account.create_new_account_x \
+            ("a2@foo.bar", "p2", enabled = True,  suspended = False, superuser = False)
+        a3    = Auth.Account.create_new_account_x \
+            ("a3@foo.bar", "p3", enabled = True,  suspended = True,  superuser = False)
+        a3    = Auth.Account.create_new_account_x \
+            ("a4@foo.bar", "p4", enabled = False, suspended = True , superuser = False)
+        scope.commit ()
+    # end def fixtures
+
+# end class Auth_Test_Command
+
+Scaffold = Auth_Test_Command ()
 
 def login (Scaffold, account, password) :
     data   = dict \

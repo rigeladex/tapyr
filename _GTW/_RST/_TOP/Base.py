@@ -45,6 +45,7 @@
 #     3-May-2013 (CT) Factor `auth_required` and `allow_method` to
 #                     `GTW.RST.Base`
 #     9-Dec-2013 (CT) Add `csrf_check`
+#    11-Dec-2013 (CT) Improve error message from `csrf_check`
 #    ««revision-date»»···
 #--
 
@@ -61,9 +62,8 @@ import _GTW._RST._TOP
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import uniq
-
-import _TFL.I18N
 
 from   posixpath                import join as pp_join
 
@@ -253,11 +253,28 @@ class _TOP_Base_ (_Ancestor) :
     # end def q_href
 
     def csrf_check (self, request, response) :
-        x = self.TEST or request.csrf_safe
-        if not x :
-            exc = self.top.Status.See_Other (self.abs_href)
-            self.send_error_email (request, repr (x))
-            raise exc
+        if self.csrf_check_p :
+            error = None
+            if not request.same_origin :
+                error = \
+                    ( _T ("Incorrect origin `%s` for request, expected `%r`")
+                    % (request.origin_host, request.server_name)
+                    )
+            else :
+                csrf_token = request.csrf_token
+                if not csrf_token :
+                    if self.DEBUG :
+                        error  = "\n\n".join \
+                            ( ( repr (csrf_token)
+                              , "Session sid: %s" % (request.session.sid, )
+                              )
+                            )
+                    else :
+                        error  = csrf_token._invalid
+            if error :
+                exc = self.top.Status.See_Other (self.abs_href)
+                self.send_error_email (request, "CSRF", xtra = error)
+                raise exc
     # end def csrf_check
 
     def etype_manager (self, obj) :

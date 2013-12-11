@@ -57,6 +57,7 @@
 #     9-Dec-2013 (CT) Add call to `resource.csrf_check` to `POST._response_body`
 #    10-Dec-2013 (CT) Add `_Cmd_Method_Mixin_` to redefine `_skip_render` to
 #                     check `request.is_secure`
+#    11-Dec-2013 (CT) DRY `.csrf_check`: move to `_Form_Cmd__POST_._skip_render`
 #    ««revision-date»»···
 #--
 
@@ -147,6 +148,13 @@ class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
             ) :
 
         _real_name              = "POST"
+
+        def _skip_render (self, resource, request, response) :
+            result = self.__super._skip_render (resource, request, response)
+            if not result :
+                resource.csrf_check (request, response)
+            return result
+        # end def _skip_render
 
     POST = _Form_Cmd__POST_ # end class
 
@@ -245,7 +253,6 @@ class _Activate_ (_Ancestor) :
         _real_name              = "POST"
 
         def _response_body (self, resource, request, response) :
-            resource.csrf_check (request, response)
             debug        = getattr (resource.top, "DEBUG", False)
             req_data     = request.req_data
             top          = resource.top
@@ -306,7 +313,6 @@ class _Change_Email_ (_Ancestor) :
         # end def get_email
 
         def _response_body (self, resource, request, response) :
-            resource.csrf_check (request, response)
             debug       = getattr (resource.top, "DEBUG", False)
             req_data    = request.req_data
             top         = resource.top
@@ -404,7 +410,6 @@ class _Login_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            resource.csrf_check (request, response)
             req_data = request.req_data
             if req_data.get ("Reset") :
                 resetter = resource.parent._get_child ("request_reset_password")
@@ -458,7 +463,6 @@ class _Logout_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            resource.csrf_check (request, response)
             top       = resource.top
             next      = request.req_data.get ("next", request.referrer or "/")
             next_page = top.resource_from_href (urlparse.urlsplit (next).path)
@@ -594,7 +598,6 @@ class _Register_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            resource.csrf_check (request, response)
             req_data      = request.req_data
             top           = resource.top
             self.errors   = Errors ()
@@ -661,7 +664,6 @@ class _Request_Reset_Password_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            resource.csrf_check (request, response)
             req_data    = request.req_data
             top         = resource.top
             self.errors = Errors ()

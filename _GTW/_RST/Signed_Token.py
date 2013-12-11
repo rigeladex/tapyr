@@ -40,6 +40,7 @@ from   _TFL.pyk                 import pyk
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Formatter           import formatted_1
+from   _TFL.I18N                import _, _T, _Tn
 
 import _GTW._RST
 
@@ -89,17 +90,19 @@ class _Base_ (TFL.Meta.Object) :
         result.request = request
         parts  = value.split (cls.val_sep, 2)
         if len (parts) != 3 :
-            result._invalid = "Malformed %s value '%s'" % (cls.__name__, value)
+            result._invalid = \
+                _T ("Malformed %s value '%s'") % (cls.__name__, value)
             return result
         (result.cargo, result.timestamp, result.x_signature) = parts
         enc = result.encoding
         try:
             result.data = data = base64.b64decode (result.cargo).decode (enc)
-        except Exception :
+        except Exception as exc :
+            result._invalid = str (exc)
             return result
         if not root.HTTP.safe_str_cmp (result.x_signature, result.signature) :
             result._invalid = msg = \
-                "Invalid %s signature for '%s'" % (cls.__name__, data)
+                _T ("Invalid %s signature for '%s'") % (cls.__name__, data)
             logging.warning (msg)
         try :
             timestamp = base64.b64decode (result.timestamp).decode (enc)
@@ -115,7 +118,7 @@ class _Base_ (TFL.Meta.Object) :
             ttl = ttl_s if ttl_s is not None else request.resource.session_ttl_s
             if then < (now - ttl) :
                 result._invalid = msg = \
-                    ( "Expired %s '%s' older then %s seconds"
+                    ( _T ("Expired %s '%s' older then %s seconds")
                     % (cls.__name__, data, ttl)
                     )
                 logging.warning (msg)
@@ -123,7 +126,7 @@ class _Base_ (TFL.Meta.Object) :
                 ### don't accept tokens with a timestamp more than 2 minutes in
                 ### the future
                 result._invalid = msg = \
-                    ( "Time-travelling %s '%s' [%s seconds ahead]"
+                    ( _T ("Time-travelling %s '%s' [%s seconds ahead]")
                     % (cls.__name__, data, then - now)
                     )
                 logging.warning (msg)

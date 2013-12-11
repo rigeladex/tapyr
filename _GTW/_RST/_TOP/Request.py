@@ -40,6 +40,7 @@
 #    26-Nov-2013 (CT) Take `user_locale_codes` from cookie `language`,
 #                     not from session; remove `use_language`
 #     9-Dec-2013 (CT) Add `allow_login`, `csrf_safe`
+#    11-Dec-2013 (CT) Factor `csrf_token`
 #    ««revision-date»»···
 #--
 
@@ -74,10 +75,15 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
 
     @Once_Property
     def csrf_safe (self) :
-        value      = self.req_data.get ("F_ACT", "")
-        csrf_token = GTW.RST.Signed_Token.Anti_CSRF.recover (self, value)
-        return self.same_origin and csrf_token
+        return self.same_origin and self.csrf_token
     # end def csrf_safe
+
+    @Once_Property
+    def csrf_token (self) :
+        value = self.req_data.get ("F_ACT", "")
+        csrf_token = GTW.RST.Signed_Token.Anti_CSRF.recover (self, value)
+        return csrf_token
+    # end def csrf_token
 
     @Once_Property
     def locale_codes (self) :
@@ -141,7 +147,9 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     # end def _session_hash
 
     def _session_hasher (self, username) :
-        return self._session_hash (self._session_sig (username))
+        sig    = self._session_sig  (username)
+        result = self._session_hash (sig)
+        return result
     # end def _session_hash
 
     def _session_sig (self, user) :

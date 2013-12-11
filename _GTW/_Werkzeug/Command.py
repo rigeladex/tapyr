@@ -75,8 +75,9 @@
 #    15-Jan-2013 (CT) Add `-cc_domain`
 #     3-Dec-2013 (CT) Change `_load_I18N` to log warnings about exceptions
 #    10-Dec-2013 (CT) Add `-s_domain`
-#    11-Dec-2013 (CT) Add `-Cache` to `run_server`,
+#    11-Dec-2013 (CT) Add `-Setup_Cache` to `_GT2W_Server_Base_._opts`,
 #                     remove `DEBUG` from `init_app_cache`
+#    11-Dec-2013 (CT) Add `-CSRF_check`
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
     _create_cache_p         = False
     _defaults               = dict \
-        ( host              = "localhost"
+        ( CSRF_check        = "yes"
+        , host              = "localhost"
         , load_I18N         = "yes"
         , log_level         = 1
         , port              = 8090
@@ -184,6 +186,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 "?Domain used for authorization with client certificates"
             , "-cert_auth_path:P"
                 "?Path of certification authority .crt and .key files"
+            , "-CSRF_check:B?Perform checks to protect against CSRF"
             , "-external_media_path:P"
                 "?Path where the /media/X url should be bound to"
             , "-host:S?Host name or IP-Address the server should be bound to"
@@ -191,6 +194,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 "?Load the translation files during startup"
             , "-log_level:I?Verbosity of logging"
             , "-port:I?Port the server should use"
+            , "-Setup_Cache:B?Setup the cache of the application"
             , "-s_domain:S?Domain configured for HTTPS"
             , "-watch_media_files:B"
                 "?Add the .media files to list files watched by "
@@ -210,10 +214,7 @@ class GT2W_Command (GTW.OMP.Command) :
 
     class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
 
-        _opts                   = \
-            ( "-Cache:B?Create app cache"
-            ,
-            )
+        pass
 
     _Run_Server_ = _GT2W_Run_Server_ # end class
 
@@ -332,6 +333,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , cert_auth_path      = cmd.cert_auth_path
                 , cookie_salt         = cookie_salt
                 , copyright_start     = cmd.copyright_start
+                , csrf_check_p        = cmd.CSRF_check
                 , default_locale_code = cmd.locale_code
                 , edit_session_ttl    = cmd.edit_session_ttl.date_time_delta
                 , email_from          = cmd.email_from or None
@@ -383,7 +385,6 @@ class GT2W_Command (GTW.OMP.Command) :
 
     def _handle_run_server (self, cmd) :
         import werkzeug.serving
-        self._create_cache_p = cmd.Cache
         app = self._wsgi_app (cmd)
         kw  = dict \
             ( application  = app
@@ -438,6 +439,7 @@ class GT2W_Command (GTW.OMP.Command) :
     def _wsgi_app (self, cmd) :
         if cmd.media_domain :
             GTW.Media_Base.Domain = cmd.media_domain
+        self._create_cache_p = cmd.Setup_Cache
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N (cmd)
         sf_app = self._static_file_app (cmd)

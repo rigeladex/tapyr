@@ -93,7 +93,7 @@ class App_Cache (TFL.Meta.Object) :
         context = TFL.Context.time_block
         kw      = self.kw
         path    = self.cache_path
-        fmt     = "*** Cache %s rebuilt in %%ss" % (path)
+        fmt     = "Cache %s rebuilt in %%ss" % (path)
         with context (fmt) :
             self._stored_p = True
             for cp in self._gen_cachers ("Pickling") :

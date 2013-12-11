@@ -44,7 +44,7 @@ from   __future__  import unicode_literals
 
 _test_nav = """
     >>> nav_root = create_app () # doctest:+ELLIPSIS
-    Loaded ...
+    Cache ...
 
     >>> TTT = nav_root.Templateer.Template_Type
 
@@ -206,7 +206,7 @@ _test_nav = """
 
 _test_qr = """
     >>> nav_root = create_app () # doctest:+ELLIPSIS
-    Loaded ...
+    Cache ...
 
     >>> crad = nav_root.ET_Map ["PAP.Company_R"].admin
     >>> crad
@@ -968,7 +968,7 @@ _test_qr = """
 
 _test_esf = """
     >>> nav_root = create_app () # doctest:+ELLIPSIS
-    Loaded ...
+    Cache ...
 
     >>> nav_root
     <Root : />
@@ -1667,10 +1667,10 @@ __test__ = Scaffold.create_test_dict \
 def create_app () :
     return Scaffold \
         ( [ "wsgi"
-          , "-db_url",    "hps://"
-          , "-db_name",   "test"
-          , "-debug",     "yes"
-          , "-load_I18N", "no"
+          , "-db_url",      "hps://"
+          , "-db_name",     "test"
+          , "-load_I18N",   "no"
+          , "-Setup_Cache", "yes"
           ]
         )
 # end def create_app
