@@ -223,7 +223,11 @@ class GT2W_Command (GTW.OMP.Command) :
     _FCGI_ = _GT2W_FCGI_ # end class
 
     class _GT2W_Setup_Cache_ (_GT2W_Server_Base_, GTW.OMP.Command._Setup_Cache_) :
-        pass
+
+        _defaults               = dict \
+            ( Setup_Cache       = True
+            )
+
     _Setup_Cache_ = _GT2W_Setup_Cache_ # end class
 
     class _GT2W_Shell_ (_GT2W_Server_Base_, GTW.OMP.Command._Shell_) :
@@ -439,7 +443,7 @@ class GT2W_Command (GTW.OMP.Command) :
     def _wsgi_app (self, cmd) :
         if cmd.media_domain :
             GTW.Media_Base.Domain = cmd.media_domain
-        self._create_cache_p = cmd.Setup_Cache
+        self._create_cache_p = self._create_cache_p or cmd.Setup_Cache
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N (cmd)
         sf_app = self._static_file_app (cmd)
