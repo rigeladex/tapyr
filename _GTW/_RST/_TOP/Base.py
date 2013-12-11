@@ -266,7 +266,7 @@ class _TOP_Base_ (_Ancestor) :
                     if self.DEBUG :
                         error  = "\n".join \
                             ( ( repr (csrf_token)
-                              , "Token value: %s" % (token.value, )
+                              , "Token value: %s" % (csrf_token.value, )
                               , "Session sid: %s" % (request.session.sid, )
                               )
                             )
