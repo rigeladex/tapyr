@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Dec-2013 (CT) Creation
+#    11-Dec-2013 (CT) Use `request.host`, not `.host_url`, for `Anti_CSRF`
 #    ««revision-date»»···
 #--
 
@@ -217,7 +218,7 @@ class Anti_CSRF (_Base_) :
         request = self.request
         return self.__super.secrets + \
             ( request.session.sid
-            , request.host_url
+            , request.host
             )
     # end def secrets
 
@@ -271,7 +272,8 @@ __doc__ = r"""
     >>> req = Record \
     ...     ( cookie_salt  = "<some-salt>"
     ...     , current_time = 1234.56789
-    ...     , host_url     = "http://localhost:/"
+    ...     , host         = "localhost"
+    ...     , host_url     = "http://localhost/"
     ...     , remote_addr  = "111.222.333.444"
     ...     , root         = Record
     ...         ( HTTP     = Werkzeug
@@ -290,45 +292,45 @@ __doc__ = r"""
 
     >>> cookie = Cookie (req, "<session-id-value>")
     >>> print (cookie.value)
-    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|d1b91e33d71315ad45e2441bc1139182596ba4643556c5d9f3c9b3ef
+    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|d86a6ebf40fcb2884b60c0c0674de840231f17addc909d697417feba
 
     >>> cr = Cookie.recover (req, cookie.value, ttl_s = 3600)
     >>> cr
-    Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost:/')
+    Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost/')
     >>> print (cr.value)
-    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|d1b91e33d71315ad45e2441bc1139182596ba4643556c5d9f3c9b3ef
+    PHNlc3Npb24taWQtdmFsdWU+|MTIzNA==|d86a6ebf40fcb2884b60c0c0674de840231f17addc909d697417feba
 
     >>> cookie == cr
     True
 
     >>> cf = Cookie.recover (req_f, cookie.value, ttl_s = 3600)
     >>> cf
-    Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost:/')
+    Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost/')
         Expired Cookie '<session-id-value>' older then 3600 seconds
     >>> bool (cf)
     False
 
     >>> cp = Cookie.recover (req_p, cookie.value, ttl_s = 3600)
     >>> cp
-    Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost:/')
+    Cookie: '<session-id-value>', ('<some-salt>', 'http://localhost/')
         Time-travelling Cookie '<session-id-value>' [7199.43211 seconds ahead]
     >>> bool (cp)
     False
 
     >>> cs = Cookie.recover (req_s, cookie.value, ttl_s = 3600)
     >>> cs
-    Cookie: '<session-id-value>', ('<some-other-salt>', 'http://localhost:/')
+    Cookie: '<session-id-value>', ('<some-other-salt>', 'http://localhost/')
         Invalid Cookie signature for '<session-id-value>'
     >>> bool (cs)
     False
 
     >>> act = Anti_CSRF (req, "<form-id?>")
     >>> print (act.value)
-    PGZvcm0taWQ/Pg==|MTIzNA==|9e2ee576d19839e652e198c03c1f37996fe48a046728e82c4ae5b61d
+    PGZvcm0taWQ/Pg==|MTIzNA==|0462529fc8a3cea02e9053552c2f8e8badba5cf11910d4151198642d
 
     >>> ar = Anti_CSRF.recover (req, act.value, ttl_s = 3600)
     >>> ar
-    Anti_CSRF: '<form-id?>', ('<some-salt>', 4711, 'http://localhost:/')
+    Anti_CSRF: '<form-id?>', ('<some-salt>', 4711, 'localhost')
 
     >>> act == ar
     True
