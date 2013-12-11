@@ -75,6 +75,8 @@
 #    15-Jan-2013 (CT) Add `-cc_domain`
 #     3-Dec-2013 (CT) Change `_load_I18N` to log warnings about exceptions
 #    10-Dec-2013 (CT) Add `-s_domain`
+#    11-Dec-2013 (CT) Add `-Cache` to `run_server`,
+#                     remove `DEBUG` from `init_app_cache`
 #    ««revision-date»»···
 #--
 
@@ -207,7 +209,12 @@ class GT2W_Command (GTW.OMP.Command) :
     # end class _GT2W_Server_Base_
 
     class _GT2W_Run_Server_ (_GT2W_Server_Base_, GTW.OMP.Command._Run_Server_) :
-        pass
+
+        _opts                   = \
+            ( "-Cache:B?Create app cache"
+            ,
+            )
+
     _Run_Server_ = _GT2W_Run_Server_ # end class
 
     class _GT2W_FCGI_ (_GT2W_Server_Base_, GTW.OMP.Command._FCGI_) :
@@ -251,7 +258,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 self.cacher.load ()
             except IOError :
                 pass
-        if self._create_cache_p or self.cacher.DEBUG :
+        if self._create_cache_p :
             try :
                 self.cacher.store ()
             except EnvironmentError as exc :
@@ -376,6 +383,7 @@ class GT2W_Command (GTW.OMP.Command) :
 
     def _handle_run_server (self, cmd) :
         import werkzeug.serving
+        self._create_cache_p = cmd.Cache
         app = self._wsgi_app (cmd)
         kw  = dict \
             ( application  = app

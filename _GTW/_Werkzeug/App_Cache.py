@@ -30,6 +30,7 @@
 #    26-Jul-2012 (CT) Add and use `_stored_p`
 #    26-Jul-2012 (CT) Fix typo
 #    10-Aug-2012 (CT) Add `verbose`
+#    11-Dec-2013 (CT) Use `time_block` unconditionally
 #    ««revision-date»»···
 #--
 
@@ -89,7 +90,7 @@ class App_Cache (TFL.Meta.Object) :
         if self._stored_p or not self.cachers :
             return
         cargo   = dict ()
-        context = TFL.Context.time_block if self.DEBUG else TFL.Context.relaxed
+        context = TFL.Context.time_block
         kw      = self.kw
         path    = self.cache_path
         fmt     = "*** Cache %s rebuilt in %%ss" % (path)
