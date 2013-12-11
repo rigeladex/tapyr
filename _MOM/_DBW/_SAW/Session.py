@@ -56,6 +56,7 @@
 #    29-Aug-2013 (CT) Pass `force=True` to `seq.reserve` (`Session_PC.consume`)
 #    27-Nov-2013 (MG) `Session_PC.consume` used getattr for `max_surrs` for
 #                     scopes which have an old meta data structure
+#    11-Dec-2013 (CT) Change `load_info` to preserve `dbid`
 #    ««revision-date»»···
 #--
 
@@ -354,6 +355,7 @@ class _Session_ (TFL.Meta.Object) :
         if meta_readonly != row.readonly :
             self.change_readonly (meta_readonly)
         self.db_meta_data = DB_Meta_Data.COPY (meta_data, scope.app_type, scope)
+        self.db_meta_data.dbid = meta_data.dbid
     # end def load_info
 
     def Q_Result (self, Type, strict = False) :
