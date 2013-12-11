@@ -65,6 +65,7 @@ class _Base_ (TFL.Meta.Object) :
     sig_sep                    = b":::"
     timestamp                  = ""
     val_sep                    = b"|"
+    x_value                    = ""
 
     _invalid                   = False
     _value                     = None
@@ -91,6 +92,7 @@ class _Base_ (TFL.Meta.Object) :
         root   = request.root
         result = cls.__new__ (cls)
         result.request = request
+        result.x_value = value
         parts  = value.split (cls.val_sep, 2)
         if len (parts) != 3 :
             if value :
