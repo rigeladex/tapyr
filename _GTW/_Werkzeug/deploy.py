@@ -38,6 +38,7 @@
 #     3-Jun-2012 (CT) Use `self.lib_dir`, not `P.lib_dir`, in
 #                     `_handle_fcgi_script`
 #     5-Jun-2012 (CT) Add `exec` to output of `_handle_fcgi_script`
+#    12-Dec-2013 (CT) Add `-script_path`, execute `chmod +x` on `fcgi_script`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,11 @@ class GT2W_Command (_Ancestor) :
     class _GT2W_FCGI_Script_ (_FCGI_) :
         """Create script for running the application as a FastCGI server."""
 
+        _opts                   = \
+            ( "-script_path:P?Path of script created (default: stdout)"
+            ,
+            )
+
     _FCGI_Script_ = _GT2W_FCGI_Script_ # end class
 
     class _GT2W_Setup_Cache_ (_Sub_Command_) :
@@ -114,9 +120,20 @@ class GT2W_Command (_Ancestor) :
         config = self.App_Config.auto_split.join (cmd.app_config)
         args   = ("fcgi", "-config", config) + tuple (cmd.argv)
         app    = self._app_cmd (cmd, P, args = args)
-        print  ("#!/bin/sh")
-        print  ("export PYTHONPATH=%s" % self.lib_dir)
-        print  ("exec", app)
+        s_path = cmd.script_path
+        def write (f, app, lib_dir) :
+            f.write ("#!/bin/sh\n")
+            f.write ("export PYTHONPATH=%s\n" % (lib_dir, ))
+            f.write ("exec %s\n" % (app, ))
+        if s_path and s_path not in ("-", "stdout") :
+            with open (s_path, "w") as f :
+                write (f, app, self.lib_dir)
+            self.pbl ["chmod"] ("+x", s_path)
+            if cmd.verbose :
+                print ("Created fcgi script", s_path)
+        else :
+            import sys
+            write (sys.stdout, app, self.lib_dir)
     # end def _handle_fcgi_script
 
     def _handle_setup_cache (self, cmd) :
