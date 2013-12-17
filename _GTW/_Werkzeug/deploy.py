@@ -42,6 +42,7 @@
 #    16-Dec-2013 (CT) Add sub-command `create_config`,
 #                     factor `_create_fcgi_script`
 #    17-Dec-2013 (CT) Remove `lstrip_blocks` to allow jinja 2.6
+#    17-Dec-2013 (CT) Add `verbose` to `_handle_create_config`
 #    ««revision-date»»···
 #--
 
@@ -129,7 +130,7 @@ class GT2W_Command (_Ancestor) :
             , "-server_name:S?Fully qualified domain name of virtual host"
             , "-ssl_key_name:S?Name of SSL key to use for HTTPS"
             , "-template_dirs:P?Directories containing templates for config"
-            , TFL.CAO.Opt.Input_Encoding ()
+            , "-verbose:B=yes"
             )
 
         def dynamic_defaults (self, defaults) :
@@ -215,6 +216,8 @@ class GT2W_Command (_Ancestor) :
         if c_path and c_path not in ("-", "stdout") :
             with open (c_path, "w") as f :
                 write (f, config)
+            if cmd.verbose :
+                print ("Created config file", c_path)
         else :
             write (sys.stdout, config)
     # end def _handle_create_config

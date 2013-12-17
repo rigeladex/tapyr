@@ -124,6 +124,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         , "-root_path:P?Root path of application versioning"
         , "-verbose:B"
         , "-vcs:S?Name of version control system used"
+        , TFL.CAO.Opt.Input_Encoding ()
         , TFL.CAO.Opt.Output_Encoding
             ( description   = "Default encoding for generated files"
             )
