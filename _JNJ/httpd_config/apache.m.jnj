@@ -184,7 +184,7 @@
 {% endmacro -%} {#- use_client_cert -#}
 
 {%- macro use_fcgi
-        ( script
+        ( root, script
         , ext         = ".fcgi"
         , process_min = 0
         , process_max = 1
@@ -206,7 +206,7 @@
         )
 -%}
   SSLEngine on
-  SSLCertificateFile    /etc/ssl/certs/  {{- ssl_key_name -}}.pem
+  SSLCertificateFile    /etc/ssl/certs/{{- ssl_key_name -}}.pem
   SSLCertificateKeyFile /etc/ssl/private/{{- ssl_key_name -}}.key
   SSLProtocol           {{ ssl_protocol }}
   SSLHonorCipherOrder   On
