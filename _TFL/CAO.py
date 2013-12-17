@@ -111,6 +111,9 @@
 #    16-Jun-2013 (CT) Add `CAO.HELP`
 #    29-Aug-2013 (CT) Add `Rel_Path.__init__` to allow `base_dirs` without "_",
 #                     add call of `.expanded_path` to `Rel_Path.base_dirs`
+#    16-Dec-2013 (CT) Add `CAO._spec` and `Config.pathes`
+#    17-Dec-2013 (CT) Factor `_Spec_Base_`, `_help_items`;
+#                     redefine `Rel_Path._help_items` to add `base_dirs`
 #    ««revision-date»»···
 #--
 
@@ -209,15 +212,27 @@ class Opt (Arg) :
 
 # end class Opt
 
-class _Spec_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
+class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
+
+    auto_split    = None
+    needs_value   = True
+
+    def _help_items (self) :
+        if self.description :
+            yield self.description
+        if self.choices :
+            yield "Possible values: %s" % (", ".join (sorted (self.choices)))
+    # end def _help_items
+
+# end class _Spec_Base_
+
+class _Spec_ (_Spec_Base_) :
     """Base class for argument and option types"""
 
     alias         = None
-    auto_split    = None
     choices       = None
     implied_value = None
     kind          = "argument"
-    needs_value   = True
 
     prefix        = ""
 
@@ -499,15 +514,13 @@ class Binary (Bool) :
 
 # end class Binary
 
-class Cmd_Choice (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
+class Cmd_Choice (_Spec_Base_) :
     """Argument that selects a sub-command"""
 
-    auto_split    = None
     default       = None
     hide          = False
     kind          = "sub-command"
     max_number    = 1
-    needs_value   = False
     raw_default   = None
 
     def __init__ (self, name, * cmds, ** kw) :
@@ -692,11 +705,8 @@ class Help (_Spec_O_) :
             ( "%s%s%-*s  : %s"
             % (head, prefix, max_l, name, ao.__class__.__name__)
             )
-        if ao.description :
-            pyk.fprint (head, ao.description, sep = "    ")
-        if ao.choices :
-            choices = "Possible values: %s" % (", ".join (sorted (ao.choices)))
-            pyk.fprint (head, choices, sep = "    ")
+        for hi in ao._help_items () :
+            pyk.fprint (head, hi, sep = "    ")
     # end def _help_ao
 
     def _help_args (self, cao, indent = 0, heading = False) :
@@ -825,7 +835,7 @@ class Help (_Spec_O_) :
             ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
         if pyk.text_type (cooked) != pyk.text_type (raw) :
             if isinstance (cooked, (list, dict)) :
-                from _TFL.Formatter import formatted_1, formatted
+                from _TFL.Formatter import formatted
                 pyk.fprint \
                     (formatted (cooked, level = (len (head) // 4 + 1) * 2))
             else :
@@ -1007,6 +1017,7 @@ class Rel_Path (Path) :
     single_match  = False
     _base_dir     = None
     _base_dirs    = ()
+    _help_dn      = "Base"
 
     def __init__ (self, * args, ** kw) :
         self.pop_to_self (kw, "base_dir", "base_dirs", prefix = "_")
@@ -1024,6 +1035,14 @@ class Rel_Path (Path) :
                     yield xbd
         return tuple (_gen (self._base_dirs or (self._base_dir, )))
     # end def base_dirs
+
+    def _help_items (self) :
+        for i in self.__super._help_items () :
+            yield i
+        if self.base_dirs :
+            yield "%s directories: %s" % \
+                (self._help_dn, ", ".join (repr (bd) for bd in self.base_dirs))
+    # end def _help_items
 
     def _resolve_range_1 (self, value, cao) :
         base_dirs = self.base_dirs
@@ -1054,12 +1073,19 @@ class Config (_Config_, Rel_Path) :
     """Option specifying a config-file"""
 
     type_abbr     = "C"
+    _help_dn      = "Config"
+
+    def __init__ (self, * args, ** kw) :
+        self.pathes = []
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
 
     def cook (self, value, cao = None) :
         from _TFL.load_config_file import load_config_file
         path   = self.__super.cook (value, cao)
         result = {}
         if path :
+            self.pathes.append (path)
             context = dict (C = cao._cmd if cao else None)
             load_config_file (path, context, result)
         return result
@@ -1405,6 +1431,7 @@ class CAO (TFL.Meta.Object) :
         self._max_name_length = cmd._max_name_length
         self._map             = TFL.defaultdict (lambda : self._pending)
         self._raw             = TFL.defaultdict (list)
+        self._spec            = {}
         self._key_values      = dict ()
     # end def __init__
 
@@ -1596,6 +1623,7 @@ class CAO (TFL.Meta.Object) :
             if spec.name :
                 self._map [spec.name] = self._pending
                 self._raw [spec.name].append (value)
+            self._spec [spec.name] = spec
     # end def _set_arg
 
     def _set_keys (self, kw) :
@@ -1610,6 +1638,7 @@ class CAO (TFL.Meta.Object) :
             self._map [spec.name] = self._pending
         else :
             self._map [spec.name] = spec.cooked (value, self)
+        self._spec [spec.name] = spec
     # end def _set_opt
 
     def _use_args (self, _kw) :

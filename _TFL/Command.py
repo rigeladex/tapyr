@@ -43,6 +43,12 @@
 #     3-Jun-2012 (CT) Add `Root_Command`
 #     4-Jun-2012 (CT) Change `app_path` to use `root`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#    16-Dec-2013 (CT) Factor `Rel_Path_Option._gen_base_dirs`
+#    16-Dec-2013 (CT) Redefine `Config_Dirs_Option.base_dirs` to use
+#                     `_defaults`, not `_base_dirs`
+#    17-Dec-2013 (CT) Set `Config_Dirs_Option.type` to `False`
+#    17-Dec-2013 (CT) Remove redefinition of `Config_Option.default`
+#                     (resulted in double application of `base_dirs`)
 #    ««revision-date»»···
 #--
 
@@ -61,6 +67,8 @@ import _TFL.CAO
 import _TFL._Meta.M_Auto_Combine
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+
+from   itertools              import chain as ichain
 
 class _Meta_Base_ (TFL.Meta.M_Auto_Combine) :
 
@@ -119,8 +127,9 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
     _lists_to_combine = ("_defaults", )
 
     def __init__ (self, cmd) :
-        assert self.type, "%s::%s must define `type`" % \
-            (cmd, self.__class__.__name__)
+        if self.type is None :
+            raise TypeError \
+                ("%s::%s must define `type`" % (cmd, self.__class__.__name__))
         type = self.type
         if isinstance (type, basestring) :
             try :
@@ -151,7 +160,7 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
                 result = self.auto_split.join (self._defaults)
             else :
                 raise TypeError \
-                    ( "%s::%s hs multiple defaults %s, but no `auto_split`"
+                    ( "%s::%s has multiple defaults %s, but no `auto_split`"
                     % (cmd, self.__class__.__name__, self._defaults)
                     )
         return result
@@ -190,13 +199,9 @@ class TFL_Rel_Path_Option (Option) :
 
     @TFL.Meta.Once_Property
     def base_dirs (self) :
-        def _gen (self, bds) :
-            for bd in bds :
-                if isinstance (bd, basestring) and bd.startswith ("$") :
-                    bd = getattr (self.cmd, bd [1:])
-                if bd is not None :
-                    yield bd
-        return tuple (_gen (self, self._base_dirs or (self._base_dir, )))
+        result = tuple \
+            (self._gen_base_dirs (self._base_dirs or (self._base_dir, )))
+        return result
     # end def base_dirs
 
     @TFL.Meta.Once_Property
@@ -208,12 +213,29 @@ class TFL_Rel_Path_Option (Option) :
         return result
     # end def kw
 
+    def _gen_base_dirs (self, bds) :
+        for bd in bds :
+            cwd = sos.getcwd ()
+            if isinstance (bd, basestring) and bd.startswith ("$") :
+                bd = getattr (self.cmd, bd [1:])
+                if bd == "" :
+                    bd = cwd
+            if bd is not None :
+                yield bd
+    # end def _gen_base_dirs
+
 Rel_Path_Option = TFL_Rel_Path_Option # end class
 
 class TFL_Config_Dirs_Option (Rel_Path_Option) :
     """Directories(s) considered for option files"""
 
     rank                    = -100
+    type                    = False
+
+    @TFL.Meta.Once_Property
+    def base_dirs (self) :
+        return tuple (self._gen_base_dirs (self._defaults or (self._default, )))
+    # end def base_dirs
 
 Config_Dirs_Option = TFL_Config_Dirs_Option # end class
 
@@ -235,33 +257,6 @@ class TFL_Config_Option (Rel_Path_Option) :
             result = cdo.base_dirs + result
         return tuple (uniq (result))
     # end def base_dirs
-
-    @TFL.Meta.Once_Property
-    def default (self) :
-        as_join      = self.auto_split.join
-        cdo          = self.cmd._opt_map.get (self._config_dirs_name)
-        cdo_defaults = None
-        if cdo and cdo.default :
-            cdo_defaults = tuple \
-                ( cdo.default.split (cdo.auto_split)
-                    if cdo.auto_split else (cdo.default, )
-                )
-        result = self._default
-        if result is not None :
-            if cdo_defaults :
-                result = as_join \
-                    (sos.path.join (d, result) for d in cdo_defaults)
-        elif self._defaults :
-            _defaults = self._defaults
-            if cdo_defaults :
-                _defaults = \
-                    (   sos.path.join (d, c)
-                    for c in _defaults
-                        for d in cdo_defaults
-                    )
-            result = as_join (_defaults)
-        return result
-    # end def default
 
 Config_Option = TFL_Config_Option # end class
 
@@ -411,7 +406,8 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
                     ) :
                 o = oc (self)
                 map [o.name] = o
-                yield o ()
+                if o.type :
+                    yield o ()
         result = list (_gen (self))
         result.extend (self._opts)
         return tuple  (result)
