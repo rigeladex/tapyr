@@ -55,8 +55,11 @@ import _GTW._OMP.deploy
 
 from   _TFL                   import sos
 from   _TFL.predicate         import uniq
+from   _TFL.Regexp            import Re_Replacer, re
 
 import sys
+
+strip_empty_lines = Re_Replacer ("^( *\n)( *\n)+", r"\1", re.MULTILINE)
 
 class _GT2W_Sub_Command_ (GTW.OMP.deploy._Sub_Command_) :
 
@@ -209,17 +212,18 @@ class GT2W_Command (_Ancestor) :
             , aliases        = cmd.server_aliases
             , cmd            = cmd
             )
-        c_path = cmd.config_path
+        config_s = strip_empty_lines (config).strip ()
+        c_path   = cmd.config_path
         def write (f, config) :
             f.write (config)
             f.write ("\n")
         if c_path and c_path not in ("-", "stdout") :
             with open (c_path, "w") as f :
-                write (f, config)
+                write (f, config_s)
             if cmd.verbose :
                 print ("Created config file", c_path)
         else :
-            write (sys.stdout, config)
+            write (sys.stdout, config_s)
     # end def _handle_create_config
 
     def _handle_fcgi (self, cmd) :
