@@ -49,6 +49,7 @@
 #    17-Dec-2013 (CT) Set `Config_Dirs_Option.type` to `False`
 #    17-Dec-2013 (CT) Remove redefinition of `Config_Option.default`
 #                     (resulted in double application of `base_dirs`)
+#    17-Dec-2013 (CT) Improve $-expansion for `Rel_Path_Option.base_dirs`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ from   _TFL.pyk               import pyk
 from   _TFL                   import sos
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.object_globals    import object_module
-from   _TFL.predicate         import first, uniq
+from   _TFL.predicate         import first, split_hst, uniq
 
 import _TFL.Accessor
 import _TFL.CAO
@@ -217,9 +218,11 @@ class TFL_Rel_Path_Option (Option) :
         for bd in bds :
             cwd = sos.getcwd ()
             if isinstance (bd, basestring) and bd.startswith ("$") :
-                bd = getattr (self.cmd, bd [1:])
-                if bd == "" :
-                    bd = cwd
+                h, _, t = split_hst (bd, "/")
+                h       = getattr (self.cmd, h [1:])
+                if h == "" :
+                    h   = cwd
+                bd = "/".join ((h, t)) if t else h
             if bd is not None :
                 yield bd
     # end def _gen_base_dirs
