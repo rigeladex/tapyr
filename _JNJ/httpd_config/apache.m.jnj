@@ -1,0 +1,261 @@
+{#- jinja template: apache.m.jnj -#}
+{#
+## Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is licensed under the terms of either the
+## MIT License or the GNU Affero General Public License (AGPL) Version 3.
+## http://www.c-tanzer.at/license/mit_or_agpl.html
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    apache.m.jnj
+##
+## Purpose
+##    Template macros for apache config
+##
+## Revision Dates
+##    13-Dec-2013 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro dir_expires_default (path, duration = 1, unit = "year") -%}
+  <Directory {{ path }}>
+    ExpiresActive On
+    ExpiresDefault "access plus {{ duration }} {{ unit }}"
+  </Directory>
+{%- endmacro -%} {#- dir_expires_default -#}
+
+{%- macro dir_expires_match (path, fm_pat, duration = 1, unit = "year") -%}
+  <Directory {{ path }}>
+    {{ file_match_expires (fm_pat, duration, unit) }}
+  </Directory>
+{%- endmacro -%} {#- dir_expires_match -#}
+
+{%- macro file_match_expires (pat, duration = 1, unit = "year") -%}
+  ExpiresActive On
+  <FilesMatch "\.({{- pat -}})$">
+    ExpiresDefault "access plus {{ duration }} {{ unit }}"
+  </FilesMatch>
+{%- endmacro -%} {#- file_match_expires -#}
+
+{%- macro force_ssl () -%}
+  Header add Strict-Transport-Security "max-age=15768000"
+{%- endmacro -%} {#- force_ssl -#}
+
+{%- macro gtw_aliases (root) -%}
+  Alias /media/GTW/ {{ root -}}/lib/_GTW/media/
+  Alias /media/v/   {{ root -}}/www/app/media/v/
+  Alias /media/     {{ root -}}/www/media/
+{%- endmacro -%} {#- gtw_aliases -#}
+
+{%- macro gtw_expires (root) -%}
+{#- #}
+  {{ file_match_expires  ("\.(gif|jpe?g|png)$",             1, "year") }}
+{#- #}
+  {{ dir_expires_default ("{{ root -}}/lib/_GTW/media/js",  1, "week") }}
+{#- #}
+  {{ dir_expires_default ("{{ root -}}/lib/_GTW/media/css", 1, "week") }}
+{#- #}
+  {{ dir_expires_default ("{{ root -}}/www/media/v",        1, "year") }}
+{#- #}  {{ dir_expires_default ("{{ root -}}/www/media",          1, "day" ) }}
+{%- endmacro -%} {#- gtw_expires -#}
+
+{%- macro gtw_host
+        ( server_name, script, admin, root
+        , addr_port = "*:80"
+        , aliases   = ()
+        )
+-%}
+  {%- set _caller = kwargs.pop ("caller", None) -%}
+  {% call virtual_host
+      ( server_name = server_name
+      , addr_port   = addr_port
+      , admin       = admin
+      , root        = root
+      , aliases     = aliases
+      , ** kwargs
+      )
+  -%}
+  {%- if _caller %}{{ _caller () }}{% endif %}
+
+  {{ gtw_aliases     (root) }}
+  {{ gtw_permissions (root) }}
+  {{ gtw_expires     (root) }}
+  {{ use_fcgi        (root, script) }}
+  {% endcall %} {# AT.virtual_host #}
+{%- endmacro -%} {#- gtw_host -#}
+
+{%- macro gtw_host_ssl
+        ( server_name, script, ssl_key_name, admin, root
+        , addr_port = "*:443"
+        , aliases   = ()
+        )
+-%}
+  {%- set _caller = kwargs.pop ("caller", None) -%}
+  {% call gtw_host
+      ( server_name = server_name
+      , script      = script
+      , addr_port   = addr_port
+      , admin       = admin
+      , root        = root
+      , aliases     = aliases
+      , ** kwargs
+      )
+  -%}
+    {%- if _caller %}{{ _caller () }}{% endif -%}
+
+    {{ use_ssl (ssl_key_name, ** kwargs) }}
+  {% endcall %} {# gtw_host #}
+{%- endmacro -%} {#- gtw_host_ssl -#}
+
+{%- macro gtw_host_ssl_cc
+        ( server_name, script, ssl_key_name, admin, root, ca_path
+        , ca_key_name = "CA_crt"
+        , addr_port   = "*:443"
+        , aliases     = ()
+        )
+-%}
+  {%- set _caller = kwargs.pop ("caller", None) -%}
+  {% call gtw_host_ssl
+      ( server_name  = server_name
+      , script       = script
+      , ssl_key_name = ssl_key_name
+      , addr_port    = addr_port
+      , admin        = admin
+      , root         = root
+      , aliases      = aliases
+      , ** kwargs
+      )
+  -%}
+    {%- if _caller %}{{ _caller () }}{% endif -%}
+
+    {{ use_client_cert (ca_path, ca_key_name, ** kwargs) }}
+
+  {% endcall %} {# gtw_host_ssl #}
+{%- endmacro -%} {#- gtw_host_ssl_cc -#}
+
+{%- macro gtw_permissions (root) -%}
+  <Directory {{ root -}}/lib/_GTW/media>
+    Order    deny,allow
+    Allow    from all
+    FileETag all
+  </Directory>
+
+  <Directory {{ root -}}/www/app/media/v>
+    Order    deny,allow
+    Allow    from all
+  </Directory>
+
+  <Directory {{ root -}}/www/app>
+    Order    deny,allow
+    Deny     from all
+  </Directory>
+
+  <Directory {{ root -}}/www/media>
+    Order    deny,allow
+    Allow    from all
+    FileETag all
+  </Directory>
+
+  <Directory {{ root -}}/www>
+    DirectoryIndex index.html
+  </Directory>
+{%- endmacro -%} {#- gtw_permissions -#}
+
+{%- macro logfiles (fqdn, fmt = "combined", level = "warn") -%}
+  CustomLog ${APACHE_LOG_DIR}/{{- fqdn -}}/access.log {{ fmt }}
+  ErrorLog  ${APACHE_LOG_DIR}/{{- fqdn -}}/error.log
+  LogLevel  {{ level }}
+{%- endmacro -%} {#- logfiles -#}
+
+{%- macro redirect_to_https () -%}
+  RewriteEngine On
+  RewriteRule   ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R=permanent]
+{%- endmacro -%} {#- redirect_to_https -#}
+
+{%- macro use_client_cert (ca_path, ca_key_name, verify_depth = 1) -%}
+  SSLCACertificatePath  {{ ca_path }}
+  SSLCACertificateFile  {{ ca_path -}}/{{- ca_key_name -}}.crt
+  SSLVerifyClient       require
+  SSLVerifyDepth        {{ verify_depth }}
+  SSLOptions            +StdEnvVars
+{%- endmacro -%} {#- use_client_cert -#}
+
+{%- macro use_fcgi
+        ( script
+        , ext         = ".fcgi"
+        , process_min = 0
+        , process_max = 1
+        )
+-%}
+  AddHandler fcgid-script {{ ext }}
+  Options    +ExecCGI
+
+  DefaultMaxClassProcessCount {{ process_max }}
+  DefaultMinClassProcessCount {{ process_min }}
+
+  ScriptAliasMatch .* {{ script }}
+{%- endmacro -%} {#- use_fcgi -#}
+
+{%- macro use_ssl
+        ( ssl_key_name
+        , ssl_protocol = "all -SSLv2 -SSLv3"
+        , ssl_ciphers  = "EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA"
+        )
+-%}
+  SSLEngine on
+  SSLCertificateFile    /etc/ssl/certs/  {{- ssl_key_name -}}.pem
+  SSLCertificateKeyFile /etc/ssl/private/{{- ssl_key_name -}}.key
+  SSLProtocol           {{ ssl_protocol }}
+  SSLHonorCipherOrder   On
+  SSLCompression        off
+  SSLCipherSuite        '{{- ssl_ciphers -}}'
+{%- endmacro -%} {#- use_ssl -#}
+
+{%- macro virtual_host
+        ( server_name, addr_port
+        , admin    = None
+        , root     = None
+        , doc_root = None
+        , aliases  = ()
+        )
+-%}
+  {%- if root and doc_root == None %}
+    {%- set doc_root = root + "/www" %}
+  {%- endif %}
+
+{#- #}
+<VirtualHost {{ addr_port-}}>
+  ServerName {{ server_name }}
+  {% for a in aliases %}
+    ServerAlias {{ a }}
+  {% endfor %}
+  {%- if admin %}
+    ServerAdmin {{ admin }}
+  {% endif %}
+  {%- if doc_root %}
+    DocumentRoot {{ doc_root }}
+  {% endif %}
+
+  AddDefaultCharset     utf-8
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
+
+    {{ caller () }}
+
+    {{ logfiles
+        ( fqdn  = server_name
+        , fmt   = kwargs.get ("logfile_fmt",   "combined")
+        , level = kwargs.get ("logfile_level", "warn")
+        )
+    }}
+
+  UseCanonicalName On
+</VirtualHost>
+{%- endmacro -%} {#- virtual_host -#}
+
+{#- __END__ jinja template: apache.m.jnj -#}

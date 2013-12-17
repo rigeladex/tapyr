@@ -39,6 +39,8 @@
 #                     `_handle_fcgi_script`
 #     5-Jun-2012 (CT) Add `exec` to output of `_handle_fcgi_script`
 #    12-Dec-2013 (CT) Add `-script_path`, execute `chmod +x` on `fcgi_script`
+#    16-Dec-2013 (CT) Add sub-command `create_config`,
+#                     factor `_create_fcgi_script`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +50,11 @@ from   _GTW                   import GTW
 from   _TFL                   import TFL
 
 import _GTW._OMP.deploy
+
+from   _TFL                   import sos
+from   _TFL.predicate         import uniq
+
+import sys
 
 class _GT2W_Sub_Command_ (GTW.OMP.deploy._Sub_Command_) :
 
@@ -62,9 +69,17 @@ class GT2W_Command (_Ancestor) :
 
     _rn_prefix              = "GT2W"
 
+    class _GT2W_HTTP_Config_ (TFL.Command.Root_Command.Config) :
+        """Config file for HTTP-config specific options"""
+
+        rank                    = -80
+        _name                   = "HTTP_Config"
+
+    HTTP_Config = _GT2W_HTTP_Config_ # end class
+
     class _GT2W_Babel_ (_Sub_Command_, _Ancestor._Babel_) :
 
-        _package_dirs       = [ "_JNJ", "_ReST"]
+        _package_dirs           = [ "_JNJ", "_ReST"]
 
     _Babel_ = _GT2W_Babel_ # end class
 
@@ -81,11 +96,51 @@ class GT2W_Command (_Ancestor) :
         """Create script for running the application as a FastCGI server."""
 
         _opts                   = \
-            ( "-script_path:P?Path of script created (default: stdout)"
+            ( "-script_path:Q?Path of script created"
             ,
             )
 
     _FCGI_Script_ = _GT2W_FCGI_Script_ # end class
+
+    class _GT2W_Create_Config_ (_FCGI_Script_) :
+        """Create config file and fcgi-script for http-server"""
+
+        _defaults               = dict \
+            ( addr_port         = "*:80"
+            , ca_key_name       = "CA_crt"
+            , ca_path           = "~/CA"
+            , host_macro        = "gtw_host"
+            , macro_module      = "httpd_config/apache.m.jnj"
+            , root_dir          = "~/active"
+            )
+
+        _opts                   = \
+            ( "-addr_port:S?Address and port for virtual host"
+            , "-ca_key_name:S?Name of CA key file"
+            , "-ca_path:Q?Path for server-specific CA for client certificates"
+            , "-config_path:Q?Path for config file"
+            , "-host_macro:S?Name of macro to create virtual host"
+            , "-macro_module:S"
+                "?Name of jinja module providing config-generation macros"
+            , "-root_dir:Q?Root path of web app"
+            , "-server_admin:S?Email address of server admin of virtual host"
+            , "-server_aliases:T#8?Alias names for virtual host"
+            , "-server_name:S?Fully qualified domain name of virtual host"
+            , "-ssl_key_name:S?Name of SSL key to use for HTTPS"
+            , "-template_dirs:P?Directories containing templates for config"
+            , TFL.CAO.Opt.Input_Encoding ()
+            )
+
+        def dynamic_defaults (self, defaults) :
+            import _JNJ
+            result = self.__super.dynamic_defaults (defaults)
+            tdirs  = list (result.get ("template_dirs", ()))
+            tdirs.extend  ([self.app_dir, sos.path.dirname (_JNJ.__file__)])
+            result ["template_dirs"] = tuple (uniq (tdirs))
+            return result
+        # end def dynamic_defaults
+
+    _Create_Config_ = _GT2W_Create_Config_ # end class
 
     class _GT2W_Setup_Cache_ (_Sub_Command_) :
         """Setup the cache of the application."""
@@ -108,19 +163,14 @@ class GT2W_Command (_Ancestor) :
 
     _UBYCMS_ = _GT2W_UBYCMS_ # end class
 
-    def _handle_fcgi (self, cmd) :
-        P     = self._P (cmd)
-        app   = self._app_cmd (cmd, P)
-        args  = ("fcgi", ) + tuple (cmd.argv)
-        self._app_call (cmd, P, app, args)
-    # end def _handle_fcgi
-
-    def _handle_fcgi_script (self, cmd) :
+    def _create_fcgi_script (self, cmd, argv = (), script_path = None) :
         P      = self._P (cmd)
-        config = self.App_Config.auto_split.join (cmd.app_config)
-        args   = ("fcgi", "-config", config) + tuple (cmd.argv)
+        a_conf = cmd.app_config
+        h_conf = cmd._spec ["HTTP_Config"].pathes
+        config = self.App_Config.auto_split.join (a_conf + h_conf)
+        args   = ("fcgi", "-config", config) + tuple (argv)
         app    = self._app_cmd (cmd, P, args = args)
-        s_path = cmd.script_path
+        s_path = script_path or cmd.script_path
         def write (f, app, lib_dir) :
             f.write ("#!/bin/sh\n")
             f.write ("export PYTHONPATH=%s\n" % (lib_dir, ))
@@ -132,8 +182,52 @@ class GT2W_Command (_Ancestor) :
             if cmd.verbose :
                 print ("Created fcgi script", s_path)
         else :
-            import sys
             write (sys.stdout, app, self.lib_dir)
+    # end def _create_fcgi_script
+
+    def _handle_create_config (self, cmd) :
+        self._create_fcgi_script (cmd, cmd.argv, cmd.script_path)
+        from   _JNJ import JNJ
+        import _JNJ.Templateer
+        templateer           = JNJ.Templateer \
+            ( encoding       = cmd.input_encoding
+            , globals        = dict ()
+            , load_path      = cmd.template_dirs
+            , lstrip_blocks  = True
+            , trim_blocks    = True
+            )
+        config               = templateer.call_macro \
+            ( macro_name     = cmd.host_macro
+            , templ_name     = cmd.macro_module
+            , server_name    = cmd.server_name
+            , script         = cmd.script_path
+            , ssl_key_name   = cmd.ssl_key_name
+            , addr_port      = cmd.addr_port
+            , admin          = cmd.server_admin
+            , root           = cmd.root_dir
+            , aliases        = cmd.server_aliases
+            , cmd            = cmd
+            )
+        c_path = cmd.config_path
+        def write (f, config) :
+            f.write (config)
+            f.write ("\n")
+        if c_path and c_path not in ("-", "stdout") :
+            with open (c_path, "w") as f :
+                write (f, config)
+        else :
+            write (sys.stdout, config)
+    # end def _handle_create_config
+
+    def _handle_fcgi (self, cmd) :
+        P     = self._P (cmd)
+        app   = self._app_cmd (cmd, P)
+        args  = ("fcgi", ) + tuple (cmd.argv)
+        self._app_call (cmd, P, app, args)
+    # end def _handle_fcgi
+
+    def _handle_fcgi_script (self, cmd) :
+        self._create_fcgi_script (cmd, cmd.argv, cmd.script_path)
     # end def _handle_fcgi_script
 
     def _handle_setup_cache (self, cmd) :
