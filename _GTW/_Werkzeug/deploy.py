@@ -41,6 +41,7 @@
 #    12-Dec-2013 (CT) Add `-script_path`, execute `chmod +x` on `fcgi_script`
 #    16-Dec-2013 (CT) Add sub-command `create_config`,
 #                     factor `_create_fcgi_script`
+#    17-Dec-2013 (CT) Remove `lstrip_blocks` to allow jinja 2.6
 #    ««revision-date»»···
 #--
 
@@ -193,7 +194,6 @@ class GT2W_Command (_Ancestor) :
             ( encoding       = cmd.input_encoding
             , globals        = dict ()
             , load_path      = cmd.template_dirs
-            , lstrip_blocks  = True
             , trim_blocks    = True
             )
         config               = templateer.call_macro \
