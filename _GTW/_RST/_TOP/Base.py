@@ -46,6 +46,7 @@
 #                     `GTW.RST.Base`
 #     9-Dec-2013 (CT) Add `csrf_check`
 #    11-Dec-2013 (CT) Improve error message from `csrf_check`
+#    18-Dec-2013 (CT) Add `x_signature` to error message from `csrf_check`
 #    ««revision-date»»···
 #--
 
@@ -266,6 +267,7 @@ class _TOP_Base_ (_Ancestor) :
                     if self.DEBUG :
                         error  = "\n".join \
                             ( ( repr (csrf_token)
+                              , "Client sig  : %s" % (csrf_token.x_signature, )
                               , "Client value: %s" % (csrf_token.x_value, )
                               , "Server value: %s" % (csrf_token.value, )
                               , "Session sid : %s" % (request.session.sid, )
