@@ -114,6 +114,7 @@
 #    16-Dec-2013 (CT) Add `CAO._spec` and `Config.pathes`
 #    17-Dec-2013 (CT) Factor `_Spec_Base_`, `_help_items`;
 #                     redefine `Rel_Path._help_items` to add `base_dirs`
+#    18-Dec-2013 (CT) Factor `Rel_Path.resolved_pathes` from `._resolve_range_1`
 #    ««revision-date»»···
 #--
 
@@ -1024,6 +1025,33 @@ class Rel_Path (Path) :
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
+    @classmethod
+    def resolved_pathes \
+            (cls, base_dirs, path, single_match = False, skip_missing = True) :
+        """Generate all occurrences of `path`, relative to `base_dirs`."""
+        exists = sos.path.exists
+        if base_dirs :
+            if not sos.path.isabs (path) :
+                def _gen (path, base_dirs, single_match) :
+                    missing = None
+                    for bd in base_dirs :
+                        v = sos.path.join (bd, path)
+                        if exists (v) :
+                            missing = False
+                            yield v
+                            if single_match :
+                                break
+                        elif missing is None :
+                            missing = v
+                    if missing and not skip_missing :
+                        yield missing
+                for p in _gen (path, base_dirs, single_match) :
+                    yield sos.path.abspath (p)
+        else :
+            if exists (path) or not skip_missing :
+                yield sos.path.abspath (path)
+    # end def resolved_pathes
+
     @TFL.Meta.Once_Property
     def base_dirs (self) :
         def _gen (bds) :
@@ -1045,26 +1073,7 @@ class Rel_Path (Path) :
     # end def _help_items
 
     def _resolve_range_1 (self, value, cao) :
-        base_dirs = self.base_dirs
-        if base_dirs :
-            if not sos.path.isabs (value) :
-                def _gen (value, base_dirs, single_match) :
-                    not_existing = None
-                    for bd in base_dirs :
-                        v = sos.path.join (bd, value)
-                        if sos.path.exists (v) :
-                            not_existing = False
-                            yield v
-                            if single_match :
-                                break
-                        elif not_existing is None :
-                            not_existing = v
-                    if not_existing :
-                        yield not_existing
-                for v in _gen (value, base_dirs, self.single_match) :
-                    yield sos.path.abspath (v)
-                return
-        yield sos.path.abspath (value)
+        return self.resolved_pathes (self.base_dirs, value, self.single_match)
     # end def _resolve_range_1
 
 # end class Rel_Path
@@ -1351,7 +1360,7 @@ class Cmd (TFL.Meta.Object) :
         self._opt_conf  = oc = []
         for i, o in enumerate (opts) :
             if isinstance (o, pyk.string_types) :
-                o = Arg.from_string (o.lstrip ("-"))
+                o = Opt.from_string (o.lstrip ("-"))
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
             self._setup_opt (o, od, al, i, defaults.get (o.name))
@@ -1932,7 +1941,7 @@ values passed to it::
         Arguments  : ['adam', 'bert']
         -Pdb_on_Exception : False
         -help      : []
-       -verbose    : False
+        -verbose   : False
         -year      : [2000, 1999]
         adam       : /tmp/tmp
         bert       : 42
