@@ -20,6 +20,7 @@
 ## Revision Dates
 ##    13-Dec-2013 (CT) Creation
 ##    17-Dec-2013 (CT) Fix whitespace
+##    18-Dec-2013 (CT) Add `gtw_host_80_redirect`
 ##    ««revision-date»»···
 ##--
 #}
@@ -78,7 +79,7 @@
       , ** kwargs
       )
   -%}
-  {%- if _caller %}{{ _caller () }}{% endif %}
+  {% if _caller %}{{ _caller () }}{% endif %}
 
   {{ gtw_aliases     (root) }}
   {{ gtw_permissions (root) }}
@@ -86,6 +87,26 @@
   {{ use_fcgi        (root, script) }}
   {% endcall %} {# AT.virtual_host #}
 {% endmacro -%} {#- gtw_host -#}
+
+{%- macro gtw_host_80_redirect
+        ( server_name, admin
+        , addr_port = "*:80"
+        , aliases   = ()
+        )
+-%}
+  {%- set _caller = kwargs.pop ("caller", None) -%}
+<VirtualHost {{ addr_port-}}>
+  ServerName {{ server_name }}
+  {% for a in aliases -%}
+    ServerAlias {{ a }}
+  {% endfor -%}
+  {% if admin -%}
+    ServerAdmin {{ admin }}
+  {% endif -%}
+  {{ redirect_to_https () }}
+  {% if _caller %}{{ _caller () }}{% endif %}
+</VirtualHost>
+{%- endmacro -%} {#- gtw_host_80_redirect -#}
 
 {%- macro gtw_host_ssl
         ( server_name, script, ssl_key_name, admin, root
@@ -104,9 +125,8 @@
       , ** kwargs
       )
   -%}
-    {%- if _caller %}{{ _caller () }}{% endif -%}
-
     {{ use_ssl (ssl_key_name, ** kwargs) }}
+    {% if _caller %}{{ _caller () }}{% endif -%}
   {% endcall %} {# gtw_host #}
 {% endmacro -%} {#- gtw_host_ssl -#}
 
@@ -129,10 +149,8 @@
       , ** kwargs
       )
   -%}
-    {%- if _caller %}{{ _caller () }}{% endif -%}
-
     {{ use_client_cert (ca_path, ca_key_name, ** kwargs) }}
-
+    {% if _caller %}{{ _caller () }}{% endif -%}
   {% endcall %} {# gtw_host_ssl #}
 {% endmacro -%} {#- gtw_host_ssl_cc -#}
 

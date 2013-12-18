@@ -43,6 +43,7 @@
 #                     factor `_create_fcgi_script`
 #    17-Dec-2013 (CT) Remove `lstrip_blocks` to allow jinja 2.6
 #    17-Dec-2013 (CT) Add `verbose` to `_handle_create_config`
+#    18-Dec-2013 (CT) Add `ca_path`, `ca_key_name` to `_handle_create_config`
 #    ««revision-date»»···
 #--
 
@@ -205,6 +206,8 @@ class GT2W_Command (_Ancestor) :
             , templ_name     = cmd.macro_module
             , server_name    = cmd.server_name
             , script         = cmd.script_path
+            , ca_path        = cmd.ca_path
+            , ca_key_name    = cmd.ca_key_name
             , ssl_key_name   = cmd.ssl_key_name
             , addr_port      = cmd.addr_port
             , admin          = cmd.server_admin

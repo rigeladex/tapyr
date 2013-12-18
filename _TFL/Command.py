@@ -50,6 +50,7 @@
 #    17-Dec-2013 (CT) Remove redefinition of `Config_Option.default`
 #                     (resulted in double application of `base_dirs`)
 #    17-Dec-2013 (CT) Improve $-expansion for `Rel_Path_Option.base_dirs`
+#    18-Dec-2013 (CT) Add `abspath` to `app_dir`
 #    ««revision-date»»···
 #--
 
@@ -342,7 +343,7 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
 
     @TFL.Meta.Once_Property
     def app_dir (self) :
-        return sos.path.dirname (self.app_path)
+        return sos.path.abspath (sos.path.dirname (self.app_path))
     # end def app_dir
 
     @TFL.Meta.Once_Property
