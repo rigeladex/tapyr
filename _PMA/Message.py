@@ -168,6 +168,7 @@
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #     8-Sep-2013 (CT) Change `decoded_header` to allow `unknown`
 #                     (shame on: Oracle Communications Messaging Server)
+#    18-Dec-2013 (CT) Add options `-msg_base_dirs` and `-Print`
 #    ««revision-date»»···
 #--
 
@@ -1010,13 +1011,45 @@ def message_from_string (msg, parser = None) :
 def _main (cmd) :
     parser = Lib.Parser ()
     if cmd.encoding :
-        PMA.default_encoding = cmd.encoding
-    for m in cmd.argv :
-        msg = PMA.message_from_file (m, parser)
-        print \
-            ( u"\n".join
-                (msg.formatted ()).encode (PMA.default_encoding, "replace")
-            )
+        encoding = PMA.default_encoding = cmd.encoding
+    elif cmd.Print :
+        encoding = "iso8859-1"
+    bdirs = cmd.msg_base_dirs
+    for arg in cmd.argv :
+        matches = tuple \
+            (TFL.CAO.Rel_Path.resolved_pathes (bdirs, arg, skip_missing = True))
+        if not matches and sos.path.exists (arg) :
+            matches = [arg]
+        if len (matches) > 1 :
+            print \
+                ( "Multiple matches for %r: choose one of\n    %s"
+                % (arg, "\n    ".join (matches))
+                )
+        elif matches :
+            msg = PMA.message_from_file (matches [0], parser)
+            txt = u"\n".join (msg.formatted ()).encode (encoding, "replace")
+            if cmd.Print :
+                from plumbum  import local as pbl
+                from _TFL.FCM import open_tempfile
+                subject = msg.scope.subject.encode (encoding, "replace")
+                pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
+                with open_tempfile () as (file, temp_name) :
+                    file.write (txt)
+                    file.close ()
+                    a2ps = pbl ["a2ps"] \
+                        [ "-s", "-8", "-nL", "-nu", "-nS"
+                        , "-H%s" % (subject, )
+                        , "-P%s" % (cmd.printer_name, )
+                        , temp_name
+                        ]
+                    if cmd.verbose :
+                        print (a2ps)
+                    a2ps ()
+            else :
+                print (txt)
+        else :
+            tail = ("in\n    %s" % "\n    ".join (bdirs)) if bdirs else ""
+            print ("No match found for %r%s" % (arg, tail))
 # end def _main
 
 _Command = TFL.CAO.Cmd \
@@ -1026,8 +1059,11 @@ _Command = TFL.CAO.Cmd \
         ,
         )
     , opts          =
-        ( "encoding:S?Encoding to use for output"
-        ,
+        ( "-msg_base_dirs:Q:?Base directories for searching `message`"
+        , "-encoding:S?Encoding to use for output"
+        , "-Print:B?Print the message(s)"
+        , "-printer_name:S=lp?Name of printer to print to"
+        , "-verbose:B"
         )
     , description   = "Print mail messages"
     )
