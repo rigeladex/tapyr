@@ -193,8 +193,7 @@ class TTP_Command (TFL.Command.Root_Command) :
             , "-columns:I=1"
             , "-Font:S=Courier"
             , "-font_size:F=8.0?Font size in points"
-            , "-Header_Font:S=Courier"
-            , "-Header_Font_Size:F=14.0?Header font size in points"
+            , "-Header_Font:S=Courier-Bold@14"
             , "-landscape:B?Use landscape instead of portrait orientation"
             , "-margins:I:#4?Define margins for LEFT:RIGHT:TOP:BOTTOM"
             ,
