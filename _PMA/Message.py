@@ -1065,7 +1065,7 @@ _Command = TFL.CAO.Cmd \
         , "-printer_name:S=lp?Name of printer to print to"
         , "-verbose:B"
         )
-    , description   = "Print mail messages"
+    , description   = "Format mail messages for viewing and printing"
     )
 
 if __name__ != "__main__" :
