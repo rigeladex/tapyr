@@ -50,6 +50,7 @@
 #     4-Jun-2012 (CT) Rewrite `_handle_update` to use `_handle_vc`
 #    11-Sep-2012 (CT) Fix `_handle_babel_extract` (assign `P`)
 #    27-Jul-2013 (CT) Remove old `.pyc` and `.pyo` files in `_handle_pycompile`
+#    20-Dec-2013 (CT) Fix `_P` to handle non-standard `apply_to_version`
 #    ««revision-date»»···
 #--
 
@@ -428,6 +429,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         passive = sos.path.realpath     (cmd.passive_name)
         root    = sos.path.realpath     (cmd.root_path)
         prefix  = sos.path.commonprefix ([active, passive, root])
+        atv     = cmd.apply_to_version
         if prefix :
             active     = active  [len (prefix):].lstrip ("/")
             passive    = passive [len (prefix):].lstrip ("/")
@@ -439,7 +441,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
                 [tuple (o for o in cmd.py_options if o)]
             , root     = pbl.path (root)
             )
-        result.selected = getattr (result, cmd.apply_to_version)
+        result.selected = getattr (result, atv, atv)
         result.app_dir  = sos.path.abspath \
             (pjoin (result.selected, cmd.app_dir))
         result.lib_dir  = pbl.env ["PYTHONPATH"] = sos.path.abspath \
