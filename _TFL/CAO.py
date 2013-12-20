@@ -115,6 +115,7 @@
 #    17-Dec-2013 (CT) Factor `_Spec_Base_`, `_help_items`;
 #                     redefine `Rel_Path._help_items` to add `base_dirs`
 #    18-Dec-2013 (CT) Factor `Rel_Path.resolved_pathes` from `._resolve_range_1`
+#    20-Dec-2013 (CT) Fix `Rel_Path.resolved_pathes` for absolute values
 #    ««revision-date»»···
 #--
 
@@ -1030,23 +1031,22 @@ class Rel_Path (Path) :
             (cls, base_dirs, path, single_match = False, skip_missing = True) :
         """Generate all occurrences of `path`, relative to `base_dirs`."""
         exists = sos.path.exists
-        if base_dirs :
-            if not sos.path.isabs (path) :
-                def _gen (path, base_dirs, single_match) :
-                    missing = None
-                    for bd in base_dirs :
-                        v = sos.path.join (bd, path)
-                        if exists (v) :
-                            missing = False
-                            yield v
-                            if single_match :
-                                break
-                        elif missing is None :
-                            missing = v
-                    if missing and not skip_missing :
-                        yield missing
-                for p in _gen (path, base_dirs, single_match) :
-                    yield sos.path.abspath (p)
+        if base_dirs and not sos.path.isabs (path) :
+            def _gen (path, base_dirs, single_match) :
+                missing = None
+                for bd in base_dirs :
+                    v = sos.path.join (bd, path)
+                    if exists (v) :
+                        missing = False
+                        yield v
+                        if single_match :
+                            break
+                    elif missing is None :
+                        missing = v
+                if missing and not skip_missing :
+                    yield missing
+            for p in _gen (path, base_dirs, single_match) :
+                yield sos.path.abspath (p)
         else :
             if exists (path) or not skip_missing :
                 yield sos.path.abspath (path)
