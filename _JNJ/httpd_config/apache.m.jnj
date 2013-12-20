@@ -21,6 +21,7 @@
 ##    13-Dec-2013 (CT) Creation
 ##    17-Dec-2013 (CT) Fix whitespace
 ##    18-Dec-2013 (CT) Add `gtw_host_80_redirect`
+##    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
 ##    ««revision-date»»···
 ##--
 #}
@@ -65,14 +66,16 @@
 
 {%- macro gtw_host
         ( server_name, script, admin, root
-        , addr_port = "*:80"
+        , address   = "*"
+        , port      = "80"
         , aliases   = ()
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
   {% call virtual_host
       ( server_name = server_name
-      , addr_port   = addr_port
+      , address     = address
+      , port        = port
       , admin       = admin
       , root        = root
       , aliases     = aliases
@@ -90,12 +93,13 @@
 
 {%- macro gtw_host_80_redirect
         ( server_name, admin
-        , addr_port = "*:80"
+        , address   = "*"
+        , port      = "80"
         , aliases   = ()
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
-<VirtualHost {{ addr_port-}}>
+<VirtualHost {{ address -}}:{{- port -}}>
   ServerName {{ server_name }}
   {% for a in aliases -%}
     ServerAlias {{ a }}
@@ -110,7 +114,8 @@
 
 {%- macro gtw_host_ssl
         ( server_name, script, ssl_key_name, admin, root
-        , addr_port = "*:443"
+        , address   = "*"
+        , port      = "443"
         , aliases   = ()
         )
 -%}
@@ -118,7 +123,8 @@
   {% call gtw_host
       ( server_name = server_name
       , script      = script
-      , addr_port   = addr_port
+      , address     = address
+      , port        = port
       , admin       = admin
       , root        = root
       , aliases     = aliases
@@ -133,7 +139,8 @@
 {%- macro gtw_host_ssl_cc
         ( server_name, script, ssl_key_name, admin, root, ca_path
         , ca_key_name = "CA_crt"
-        , addr_port   = "*:443"
+        , address   = "*"
+        , port      = "443"
         , aliases     = ()
         )
 -%}
@@ -142,7 +149,8 @@
       ( server_name  = server_name
       , script       = script
       , ssl_key_name = ssl_key_name
-      , addr_port    = addr_port
+      , address      = address
+      , port         = port
       , admin        = admin
       , root         = root
       , aliases      = aliases
@@ -182,9 +190,9 @@
   </Directory>
 {% endmacro -%} {#- gtw_permissions -#}
 
-{%- macro logfiles (fqdn, fmt = "combined", level = "warn") -%}
-  CustomLog ${APACHE_LOG_DIR}/{{- fqdn -}}/access.log {{ fmt }}
-  ErrorLog  ${APACHE_LOG_DIR}/{{- fqdn -}}/error.log
+{%- macro logfiles (fqdn, port, fmt = "combined", level = "warn") -%}
+  CustomLog ${APACHE_LOG_DIR}/{{- fqdn -}}/{{- port -}}/access.log {{ fmt }}
+  ErrorLog  ${APACHE_LOG_DIR}/{{- fqdn -}}/{{- port -}}/error.log
   LogLevel  {{ level }}
 {% endmacro -%} {#- logfiles -#}
 
@@ -233,11 +241,13 @@
 {% endmacro -%} {#- use_ssl -#}
 
 {%- macro virtual_host
-        ( server_name, addr_port
-        , admin    = None
-        , root     = None
-        , doc_root = None
-        , aliases  = ()
+        ( server_name
+        , address   = "*"
+        , port      = "80"
+        , admin     = None
+        , root      = None
+        , doc_root  = None
+        , aliases   = ()
         )
 -%}
   {%- if root and doc_root == None %}
@@ -245,7 +255,7 @@
   {%- endif %}
 
 {#- #}
-<VirtualHost {{ addr_port-}}>
+<VirtualHost {{ address -}}:{{- port -}}>
   ServerName {{ server_name }}
   {% for a in aliases -%}
     ServerAlias {{ a }}
@@ -264,6 +274,7 @@
 
     {{- logfiles
         ( fqdn  = server_name
+        , port  = port
         , fmt   = kwargs.get ("logfile_fmt",   "combined")
         , level = kwargs.get ("logfile_level", "warn")
         )

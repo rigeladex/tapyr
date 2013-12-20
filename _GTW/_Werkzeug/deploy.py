@@ -44,6 +44,7 @@
 #    17-Dec-2013 (CT) Remove `lstrip_blocks` to allow jinja 2.6
 #    17-Dec-2013 (CT) Add `verbose` to `_handle_create_config`
 #    18-Dec-2013 (CT) Add `ca_path`, `ca_key_name` to `_handle_create_config`
+#    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
 #    ««revision-date»»···
 #--
 
@@ -112,7 +113,8 @@ class GT2W_Command (_Ancestor) :
         """Create config file and fcgi-script for http-server"""
 
         _defaults               = dict \
-            ( addr_port         = "*:80"
+            ( address           = "*"
+            , port              = "80"
             , ca_key_name       = "CA_crt"
             , ca_path           = "~/CA"
             , host_macro        = "gtw_host"
@@ -121,13 +123,14 @@ class GT2W_Command (_Ancestor) :
             )
 
         _opts                   = \
-            ( "-addr_port:S?Address and port for virtual host"
+            ( "-address:S?Address of virtual host"
             , "-ca_key_name:S?Name of CA key file"
             , "-ca_path:Q?Path for server-specific CA for client certificates"
             , "-config_path:Q?Path for config file"
             , "-host_macro:S?Name of macro to create virtual host"
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
+            , "-port:S?Port for virtual host"
             , "-root_dir:Q?Root path of web app"
             , "-server_admin:S?Email address of server admin of virtual host"
             , "-server_aliases:T#8?Alias names for virtual host"
@@ -204,16 +207,17 @@ class GT2W_Command (_Ancestor) :
         config               = templateer.call_macro \
             ( macro_name     = cmd.host_macro
             , templ_name     = cmd.macro_module
-            , server_name    = cmd.server_name
-            , script         = cmd.script_path
-            , ca_path        = cmd.ca_path
-            , ca_key_name    = cmd.ca_key_name
-            , ssl_key_name   = cmd.ssl_key_name
-            , addr_port      = cmd.addr_port
+            , address        = cmd.address
             , admin          = cmd.server_admin
-            , root           = cmd.root_dir
             , aliases        = cmd.server_aliases
+            , ca_key_name    = cmd.ca_key_name
+            , ca_path        = cmd.ca_path
             , cmd            = cmd
+            , port           = cmd.port
+            , root           = cmd.root_dir
+            , script         = cmd.script_path
+            , server_name    = cmd.server_name
+            , ssl_key_name   = cmd.ssl_key_name
             )
         config_s = strip_empty_lines (config).strip ()
         c_path   = cmd.config_path
