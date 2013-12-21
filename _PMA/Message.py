@@ -169,6 +169,8 @@
 #     8-Sep-2013 (CT) Change `decoded_header` to allow `unknown`
 #                     (shame on: Oracle Communications Messaging Server)
 #    18-Dec-2013 (CT) Add options `-msg_base_dirs` and `-Print`
+#    21-Dec-2013 (CT) Fix assignment of `encoding`
+#    21-Dec-2013 (CT) Add option `-body_only`
 #    ««revision-date»»···
 #--
 
@@ -194,7 +196,7 @@ import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 
-from   _TFL.predicate          import callable
+from   _TFL.predicate          import callable, split_hst
 from   _TFL.Regexp             import *
 from   _TFL                    import sos
 import textwrap
@@ -1012,8 +1014,8 @@ def _main (cmd) :
     parser = Lib.Parser ()
     if cmd.encoding :
         encoding = PMA.default_encoding = cmd.encoding
-    elif cmd.Print :
-        encoding = "iso8859-1"
+    else :
+        encoding = "iso8859-1" if cmd.Print else "utf-8"
     bdirs = cmd.msg_base_dirs
     for arg in cmd.argv :
         matches = tuple \
@@ -1026,8 +1028,13 @@ def _main (cmd) :
                 % (arg, "\n    ".join (matches))
                 )
         elif matches :
-            msg = PMA.message_from_file (matches [0], parser)
-            txt = u"\n".join (msg.formatted ()).encode (encoding, "replace")
+            msg     = PMA.message_from_file (matches [0], parser)
+            fmt_msg = u"\n".join (msg.formatted ())
+            if cmd.body_only :
+                h, _, t = split_hst (fmt_msg, "\n\n")   ### split off headers
+                b, _, s = split_hst (t,       "\n--\n") ### split off signature
+                fmt_msg = "\n" + b.lstrip ("-").strip () + "\n"
+            txt = fmt_msg.encode (encoding, "replace")
             if cmd.Print :
                 from plumbum  import local as pbl
                 from _TFL.FCM import open_tempfile
@@ -1059,7 +1066,8 @@ _Command = TFL.CAO.Cmd \
         ,
         )
     , opts          =
-        ( "-msg_base_dirs:Q:?Base directories for searching `message`"
+        ( "-body_only:B?Restrict output to body of message"
+        , "-msg_base_dirs:Q:?Base directories for searching `message`"
         , "-encoding:S?Encoding to use for output"
         , "-Print:B?Print the message(s)"
         , "-printer_name:S=lp?Name of printer to print to"
