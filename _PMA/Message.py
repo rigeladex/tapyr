@@ -171,6 +171,7 @@
 #    18-Dec-2013 (CT) Add options `-msg_base_dirs` and `-Print`
 #    21-Dec-2013 (CT) Fix assignment of `encoding`
 #    21-Dec-2013 (CT) Add option `-body_only`
+#    23-Dec-2013 (CT) Factor `messages_from_args` and `formatted`
 #    ««revision-date»»···
 #--
 
@@ -1010,53 +1011,62 @@ def message_from_string (msg, parser = None) :
     return PMA.Message (email)
 # end def message_from_string
 
-def _main (cmd) :
+def messages_from_args (args, base_dirs) :
     parser = Lib.Parser ()
-    if cmd.encoding :
-        encoding = PMA.default_encoding = cmd.encoding
-    else :
-        encoding = "iso8859-1" if cmd.Print else "utf-8"
-    bdirs = cmd.msg_base_dirs
-    for arg in cmd.argv :
+    for arg in args :
         matches = tuple \
-            (TFL.CAO.Rel_Path.resolved_pathes (bdirs, arg, skip_missing = True))
+            ( TFL.CAO.Rel_Path.resolved_pathes
+                (base_dirs, arg, skip_missing = True)
+            )
         if not matches and sos.path.exists (arg) :
             matches = [arg]
-        if len (matches) > 1 :
+        if len (matches) == 1 :
+            yield PMA.message_from_file (matches [0], parser)
+        elif matches :
             print \
                 ( "Multiple matches for %r: choose one of\n    %s"
                 % (arg, "\n    ".join (matches))
                 )
-        elif matches :
-            msg     = PMA.message_from_file (matches [0], parser)
-            fmt_msg = u"\n".join (msg.formatted ())
-            if cmd.body_only :
-                h, _, t = split_hst (fmt_msg, "\n\n")   ### split off headers
-                b, _, s = split_hst (t,       "\n--\n") ### split off signature
-                fmt_msg = "\n" + b.lstrip ("-").strip () + "\n"
-            txt = fmt_msg.encode (encoding, "replace")
-            if cmd.Print :
-                from plumbum  import local as pbl
-                from _TFL.FCM import open_tempfile
-                subject = msg.scope.subject.encode (encoding, "replace")
-                pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
-                with open_tempfile () as (file, temp_name) :
-                    file.write (txt)
-                    file.close ()
-                    a2ps = pbl ["a2ps"] \
-                        [ "-s", "-8", "-nL", "-nu", "-nS"
-                        , "-H%s" % (subject, )
-                        , "-P%s" % (cmd.printer_name, )
-                        , temp_name
-                        ]
-                    if cmd.verbose :
-                        print (a2ps)
-                    a2ps ()
-            else :
-                print (txt)
         else :
             tail = ("in\n    %s" % "\n    ".join (bdirs)) if bdirs else ""
             print ("No match found for %r%s" % (arg, tail))
+# end def messages_from_args
+
+def formatted (msg, encoding = "utf-8", body_only = False) :
+    fmt_msg = u"\n".join (msg.formatted ())
+    if body_only :
+        h, _, t = split_hst (fmt_msg, "\n\n")   ### split off headers
+        b, _, s = split_hst (t,       "\n--\n") ### split off signature
+        fmt_msg = "\n" + b.lstrip ("-").strip () + "\n"
+    return fmt_msg.encode (encoding, "replace")
+# end def formatted
+
+def _main (cmd) :
+    if cmd.encoding :
+        encoding = PMA.default_encoding = cmd.encoding
+    else :
+        encoding = "iso8859-1" if cmd.Print else "utf-8"
+    for msg in messages_from_args (cmd.argv, cmd.msg_base_dirs) :
+        txt = formatted (msg)
+        if cmd.Print :
+            from plumbum  import local as pbl
+            from _TFL.FCM import open_tempfile
+            subject = msg.scope.subject.encode (encoding, "replace")
+            pbl.env ["LC_ALL"] = "en_US.%s" % encoding.replace ("-", "")
+            with open_tempfile () as (file, temp_name) :
+                file.write (txt)
+                file.close ()
+                a2ps = pbl ["a2ps"] \
+                    [ "-s", "-8", "-nL", "-nu", "-nS"
+                    , "-H%s" % (subject, )
+                    , "-P%s" % (cmd.printer_name, )
+                    , temp_name
+                    ]
+                if cmd.verbose :
+                    print (a2ps)
+                a2ps ()
+        else :
+            print (txt)
 # end def _main
 
 _Command = TFL.CAO.Cmd \
