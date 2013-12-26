@@ -65,6 +65,7 @@ class _Base_ (TFL.Meta.Object) :
     sig_sep                    = b":::"
     timestamp                  = ""
     val_sep                    = b"|"
+    x_signature                = ""
     x_value                    = ""
 
     _invalid                   = False
