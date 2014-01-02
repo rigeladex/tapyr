@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -161,6 +161,7 @@
 #     4-Jun-2012 (MG) `_ATAX_Command_._add_files` support for glob patterns
 #                     added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#     2-Jan-2014 (CT) Add and use `_normalized`
 #    ««revision-date»»···
 #--
 
@@ -445,6 +446,7 @@ class Account :
             line                      = ws_head_pat.sub ("", line, count = 1)
             line                      = ws_tail_pat.sub ("", line, count = 1)
             if not line               : continue
+            line                      = self._normalized (line)
             if code_pat.match  (line) :
                 self.eval_line (line)
             else :
@@ -489,6 +491,16 @@ class Account :
             print "Exception `%s' encountered during execution of line\n   `%s'"\
                 % (exc, line)
     # end def eval_line
+
+    def _normalized (self, line) :
+        try :
+            result = line.decode ("utf-8")
+        except Exception as exc :
+            result = line
+        else :
+            result = result.encode ("iso-8859-1")
+        return result
+    # end def _normalized
 
 # end class Account
 
