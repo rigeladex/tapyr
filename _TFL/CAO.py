@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -116,10 +116,12 @@
 #                     redefine `Rel_Path._help_items` to add `base_dirs`
 #    18-Dec-2013 (CT) Factor `Rel_Path.resolved_pathes` from `._resolve_range_1`
 #    20-Dec-2013 (CT) Fix `Rel_Path.resolved_pathes` for absolute values
+#     3-Jan-2014 (CT) Factor `user_config`, add `Unicode`,
+#                     use `pyk.encoded` for `help`
 #    ««revision-date»»···
 #--
 
-from   __future__       import print_function
+from   __future__         import print_function
 
 from   _TFL               import TFL
 from   _TFL.pyk           import pyk
@@ -218,6 +220,12 @@ class _Spec_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = Arg)) :
 
     auto_split    = None
     needs_value   = True
+
+    @TFL.Meta.Once_Property
+    def user_config (self) :
+        from _TFL.User_Config import user_config
+        return user_config
+    # end def user_config
 
     def _help_items (self) :
         if self.description :
@@ -419,8 +427,8 @@ class _User_Config_Entry_ (_Spec_O_) :
     def cook_o (self, value, cao = None) :
         result = self.__super.cook_o (value, cao)
         if result :
-            from _TFL.User_Config import user_config
-            result = user_config.set_default (self.name_in_user_config, result)
+            result = self.user_config.set_default \
+                (self.name_in_user_config, result)
         return result
     # end def cook_o
 
@@ -650,6 +658,14 @@ class Help (_Spec_O_) :
         return self.__super.cook (value, cao)
     # end def cook
 
+    def _encoded (self, v) :
+        if pyk.text_type != str :
+            v = pyk.encoded (v)
+        else :
+            v = str (v)
+        return v
+    # end def _encoded
+
     def _handler (self, cao, indent = 0) :
         cmd = cao._cmd
         if cmd._helper :
@@ -815,7 +831,7 @@ class Help (_Spec_O_) :
     def _help_value (self, ao, cao, head, max_l, prefix = "") :
         if ao.hide :
             return
-        name = ao.name
+        name = self._encoded (ao.name)
         raw_default = pyk.text_type (ao.raw_default)
         try :
             raw = cao ["%s:raw" % name]
@@ -823,19 +839,21 @@ class Help (_Spec_O_) :
             raw = None
         if raw is None or raw == []:
             raw = raw_default
+        raw = self._encoded (raw)
         if raw == "" :
             raw = None
         try :
-            cooked = cao [name]
+            cooked = cao [ao.name]
         except KeyError :
             cooked = None
         if cooked is None or (isinstance (cooked, list) and cooked == []) :
             cooked = ao.default
         if ao.max_number == 1 and isinstance (cooked, list) :
             cooked = cooked [0]
+        e_cooked = self._encoded (cooked)
         pyk.fprint \
             ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
-        if pyk.text_type (cooked) != pyk.text_type (raw) :
+        if e_cooked != raw :
             if isinstance (cooked, (list, dict)) :
                 from _TFL.Formatter import formatted
                 pyk.fprint \
@@ -1135,6 +1153,18 @@ class Str_AS (_Spec_) :
     type_abbr     = "T"
 
 # end class Str
+
+class Unicode (_Spec_) :
+    """Argument or option with a string value"""
+
+    type_abbr     = "U"
+
+    def cook (self, value, cao = None) :
+        result = unicode (value, self.user_config.input_encoding)
+        return result
+    # end def cook
+
+# end class Unicode
 
 class Time_Zone (_User_Config_Entry_) :
     """Time zone to use."""

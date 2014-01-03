@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -38,6 +38,7 @@
 #    26-May-2013 (CT) Convert to class/instance to allow lazy imports
 #     9-Oct-2013 (CT) Add `izip`
 #    27-Nov-2013 (CT) Add `number_types`
+#     3-Jan-2014 (CT) Factor `encoded`, `user_config`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,17 @@ class _Pyk_ (object) :
     # end def Classic_Class_Type
 
     @staticmethod
+    def encoded (v, encoding = None) :
+        if encoding is None :
+            encoding = pyk.user_config.output_encoding
+        if not isinstance (v, basestring) :
+            v = unicode (v)
+        if isinstance (v, unicode) :
+            v = v.encode (encoding, "replace")
+        return v
+    # end def encoded
+
+    @staticmethod
     def fprint (* values, ** kw) :
         """print(value, ..., sep=' ', end='\\n', file=sys.stdout)
 
@@ -109,20 +121,14 @@ class _Pyk_ (object) :
            sep:  string inserted between values, default a space.
            end:  string appended after the last value, default a newline.
         """
-        from   _TFL.User_Config import user_config
-        def _convert (v, encoding) :
-            if not isinstance (v, basestring) :
-                v = unicode (v)
-            if isinstance (v, unicode) :
-                v = v.encode (encoding, "replace")
-            return v
         file = kw.pop ("file", None)
         if file is None :
             file = sys.stdout
-        enc  = user_config.output_encoding
-        sep  = _convert (kw.pop ("sep",  " "),  enc)
-        end  = _convert (kw.pop ("end",  "\n"), enc)
-        txt  = sep.join (_convert (v, enc) for v in values)
+        enc      = pyk.user_config.output_encoding
+        convert  = pyk.encoded
+        sep      = convert (kw.pop ("sep",  " "),  enc)
+        end      = convert (kw.pop ("end",  "\n"), enc)
+        txt      = sep.join (convert (v, enc) for v in values)
         file.write (txt + end)
     # end def fprint
 
@@ -175,6 +181,13 @@ class _Pyk_ (object) :
     string_types = (str, unicode)
     text_type    = unicode
     unichr       = unichr
+
+    @lazy_property
+    def user_config (self) :
+        from   _TFL.User_Config import user_config
+        return user_config
+    # end def user_config
+
     xrange       = staticmethod (xrange)
     zip          = staticmethod (zip)
 

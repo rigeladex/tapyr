@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -38,6 +38,7 @@
 #    28-May-2013 (CT) Fix `new_instancemethod`
 #     9-Oct-2013 (CT) Fix `zip`, `izip`
 #    27-Nov-2013 (CT) Add `number_types`
+#     3-Jan-2014 (CT) Add `encoded`, `user_config`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,18 @@ class _Pyk_ (object) :
     # end def adapt__str__
 
     Classic_Class_Type = None
+
+    @staticmethod
+    def encoded (v, encoding = None) :
+        if encoding is None :
+            encoding = pyk.user_config.output_encoding
+        if not isinstance (v, (str, bytes)) :
+            v = str (v)
+        if isinstance (v, str) :
+            v = v.encode (encoding, "replace")
+        return v
+    # end def encoded
+
     fprint             = staticmethod (print)
     int_types          = (int, )
 
@@ -131,6 +144,12 @@ class _Pyk_ (object) :
     string_types       = (str, )
     text_type          = str
     unichr             = chr
+
+    @lazy_property
+    def user_config (self) :
+        from   _TFL.User_Config import user_config
+        return user_config
+    # end def user_config
 
     def zip (self, * args) :
         return list (self.izip (* args))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
 #
 # Revision Dates
 #    19-Dec-2013 (CT) Creation
+#     3-Jan-2014 (CT) Change `-header` to `U`, use `pyk.encoded` for `options`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _TFL.FCM                import open_tempfile
 from   _TFL.Filename           import Filename
 from   _TFL.predicate          import split_hst
 from   _TFL.pyk                import pyk
+from   _TFL.User_Config        import user_config
 
 import _TFL.Accessor
 import _TFL.Ascii
@@ -105,7 +107,7 @@ class TTP_Command (TFL.Command.Root_Command) :
               "?Display postscript output with program by -display_program"
         , "-display_program:S=gv"
         , "-dry_run:B?Don't actually run the command"
-        , "-header:S?Header to use for each page"
+        , "-header:U?Header to use for each page"
         , "-medium:S=A4?Medium used for output"
         , "-Print:B?Print the file(s)"
         , "-printer_name:S=%s?Name of printer to print to"
@@ -271,7 +273,8 @@ class TTP_Command (TFL.Command.Root_Command) :
             with open (arg, "rb") as fi :
                 txt = fi.read ().decode (i_enc)
             txt_out = txt.encode (o_enc, "replace")
-            options = tuple (sub.options (cmd, fn, ft))
+            options = tuple \
+                (pyk.encoded (o) for o in sub.options (cmd, fn, ft))
             pbl_cmd = sub.pbl_cmd.__getitem__ (options)
             with open_tempfile () as (fo, no) :
                 fo.write (txt_out)
