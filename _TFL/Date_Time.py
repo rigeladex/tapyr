@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -74,6 +74,7 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
 #    16-Jun-2013 (CT) Improve 3-compatibility
+#     3-Jan-2014 (CT) Check `pyk.string_types`, not `str`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,9 @@ from   __future__  import print_function
 ### Note: this module is obsolete and shouldn't be used for new code
 
 from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 from   _TFL.Regexp import *
+
 from   time        import *
 
 import _TFL.CAO
@@ -317,7 +320,7 @@ class Date :
         if date is None :
             date = d
         else :
-            if isinstance (date, str) :
+            if isinstance (date, pyk.string_types) :
                 date  = day_to_time_tuple (date)
             if isinstance (date, Time_Tuple) :
                 date  = mktime (date.body)

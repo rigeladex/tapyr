@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -52,17 +52,21 @@
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #     7-Feb-2011 (CT) `cat` and `total_per_cat` added
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
+#     3-Jan-2014 (CT) Add `output_encoding`; use `pyk.fprint`, not `print`
 #    ««revision-date»»···
 #--
 
+from   __future__ import division, print_function
+from   __future__ import absolute_import, unicode_literals
+
 from   _ATAX.accounting import *
-from   _ATAX.accounting import _Entry_
+from   _ATAX.accounting import _Base_, _Entry_
 from   _TFL.Regexp      import *
 
 import _TFL.CAO
 import _TFL.r_eval
 
-class _Base_ (TFL.Meta.Object) :
+class _Mixin_ (TFL.Meta.Object) :
 
     def _setup_dates (self, target_year) :
         self.head_date       = "1.1.%s"   % (target_year, )
@@ -74,7 +78,7 @@ class _Base_ (TFL.Meta.Object) :
         self.target_year     = int  (target_year)
     # end def _setup_dates
 
-# end class _Base_
+# end class _Mixin_
 
 class _IFB_ (TFL.Meta.Object) :
     """Base class for FBiG and IFB."""
@@ -124,7 +128,7 @@ class IFB (_IFB_) :
 
 # end class IFB
 
-class Anlagen_Entry (_Base_, _Entry_) :
+class Anlagen_Entry (_Mixin_, _Entry_) :
 
     cat            = "Normal"
     rate_pattern   = r"(?P<rate> [-+*/().0-9\s]+)"
@@ -142,7 +146,7 @@ class Anlagen_Entry (_Base_, _Entry_) :
             , self.death_date
             )                = split_pat.split     (line, 8)
         except ValueError, exc :
-            print line
+            print (line)
             raise
         final                = "31.12.2037"
         self.p_konto         = self._get_p_konto (self.flags)
@@ -272,7 +276,7 @@ class Anlagen_Entry (_Base_, _Entry_) :
 
 # end class Anlagen_Entry
 
-class Anlagenverzeichnis (_Base_) :
+class Anlagenverzeichnis (_Mixin_, _Base_) :
 
     assignment_pat = Regexp \
         ( r"^\$ "
@@ -321,6 +325,7 @@ class Anlagenverzeichnis (_Base_) :
         assignment_pat = self.assignment_pat
         file           = open (file_name)
         for line in file.readlines () :
+            line                      = self._decoded (line)
             if ignor_pat.match (line) : continue
             line                      = ws_head_pat.sub ("", line, count = 1)
             line                      = ws_tail_pat.sub ("", line, count = 1)
@@ -366,81 +371,91 @@ class Anlagenverzeichnis (_Base_) :
     # end def evaluate
 
     def write (self) :
-        print ( self.header_format
-              % ( "", "", "Anschaff/", "Buchwert", " Afa ", "Afa", "Buchwert")
+        pyk.fprint \
+            ( self.header_format
+            % ( "", "", "Anschaff/", "Buchwert", " Afa ", "Afa", "Buchwert")
+            )
+        pyk.fprint \
+            ( self.header_format
+            % ( "Text", "Datum", "Teil-Wert", "1.1.", "  %  "
+              , "IFB/Abgang", "31.12."
               )
-        print ( self.header_format
-              % ( "Text", "Datum", "Teil-Wert", "1.1.", "  %  "
-                , "IFB/Abgang", "31.12."
-                )
-              )
-        print "\n%s\n" % ("=" * 116, )
+            )
+        pyk.fprint ("\n%s\n" % ("=" * 116, ))
         for e in self.entries :
             if e.active :
                 self._write_entry (e)
-        print "\n%s\n" % ("=" * 116, )
-        print ( self.footer_format
-              % ( "Summe", ""
-                , self.total_birth_value
-                , self.total_head_value
-                , "Afa"
-                , self.total_depreciation
-                , self.total_tail_value
-                )
+        pyk.fprint ("\n%s\n" % ("=" * 116, ))
+        pyk.fprint \
+            ( self.footer_format
+            % ( "Summe", ""
+              , self.total_birth_value
+              , self.total_head_value
+              , "Afa"
+              , self.total_depreciation
+              , self.total_tail_value
               )
+            )
         if len (self.total_per_cat) > 1 :
             for k, v in sorted (self.total_per_cat.iteritems ()) :
-                print (self.out_format % ("", "", "", "", k, v))
-        print self.new_format % ("Neuzugänge", "", "", self.total_new_value)
-        print ( self.out_format
-              % ( "Abgänge", "", "", "", "", self.total_out_value)
-              )
+                pyk.fprint ((self.out_format % ("", "", "", "", k, v)))
+        pyk.fprint \
+            (self.new_format % ("Neuzugänge", "", "", self.total_new_value))
+        pyk.fprint \
+            ( self.out_format
+            % ("Abgänge", "", "", "", "", self.total_out_value)
+            )
         if self.total_ifb_value :
-            print ( self.out_format
-                  % ( self.ifb_type.name, "", "", "", self.ifb_type.abbr
-                    , self.total_ifb_value
-                    )
+            pyk.fprint \
+                ( self.out_format
+                % ( self.ifb_type.name, "", "", "", self.ifb_type.abbr
+                  , self.total_ifb_value
                   )
+                )
     # end def write
 
     def _write_entry (self, e) :
         ifb_indicator = ""
         if e.ifb :
             ifb_indicator = e.ifb.abbr
-        print ( self.entry1_format
-              % ( e.desc
-                , ifb_indicator
-                , e.birth_time.formatted ("%d.%m.%y")
-                , e.birth_value
-                , e.head_value
-                , e.base_rate
-                , e.current_depreciation
-                , e.tail_value
-                )
+        pyk.fprint \
+            ( self.entry1_format
+            % ( e.desc
+              , ifb_indicator
+              , e.birth_time.formatted ("%d.%m.%y")
+              , e.birth_value
+              , e.head_value
+              , e.base_rate
+              , e.current_depreciation
+              , e.tail_value
               )
+            )
         if e.alive :
             if e.ifb and e.ifb.is_new :
-                print ( self.newifb_format
-                      % ( e.supplier, "", "", "", e.ifb.abbr, e.ifb.value, "")
-                      )
-            elif e.ifb :
-                print "  %-36s%10.2f" % (e.supplier, e.ifb.value)
-            else :
-                print ( self.alive_format
-                      % (e.supplier, "", "", "", ("", "ewig") ["=" in e.flags])
-                      )
-        else :
-            print ( self.dying_format
-                  % ( e.supplier
-                    , "Abgang"
-                    , e.death_time.formatted ("%d.%m.%y")
-                    , ifb_indicator
-                    , ("", e.ifb.value.as_string_s ()) [bool (e.ifb)]
-                    , ("", "ewig") ["=" in e.flags]
-                    , e.out_value
-                    , ""
+                pyk.fprint \
+                    ( self.newifb_format
+                    % ( e.supplier, "", "", "", e.ifb.abbr, e.ifb.value, "")
                     )
+            elif e.ifb :
+                pyk.fprint ("  %-36s%10.2f" % (e.supplier, e.ifb.value))
+            else :
+                pyk.fprint \
+                    ( self.alive_format
+                    % (e.supplier, "", "", "", ("", "ewig") ["=" in e.flags])
+                    )
+        else :
+            pyk.fprint \
+                ( self.dying_format
+                % ( e.supplier
+                  , "Abgang"
+                  , e.death_time.formatted ("%d.%m.%y")
+                  , ifb_indicator
+                  , ("", e.ifb.value.as_string_s ()) [bool (e.ifb)]
+                  , ("", "ewig") ["=" in e.flags]
+                  , e.out_value
+                  , ""
                   )
+                )
     # end def _write_entry
 
     def update_accounts (self) :
@@ -461,27 +476,35 @@ class Anlagenverzeichnis (_Base_) :
             cat = "%sP[%s]" % (cat, e.p_konto)
         eoy = Date (day_to_time_tuple  ("31.12."))
         if e.active and e.current_depreciation :
-            file.write \
-                ( self.account_format
+            self._write \
+                ( file
+                , self.account_format
                 % ( eoy.formatted ("%d.%m.")
                   , e.current_depreciation, 7800, cat, "Afa",      e.desc
                   )
                 )
         if e.ifb and e.ifb.is_new and e.ifb.account :
-            file.write \
-                ( self.account_format
+            self._write \
+                ( file
+                , self.account_format
                 % (eoy.formatted ("%d.%m.")
-                  , e.ifb.value,   e.ifb.account, cat, e.ifb.abbr, e.desc
+                  , e.ifb.value, e.ifb.account, cat, e.ifb.abbr, e.desc
                   )
                 )
         if not e.alive :
-            file.write \
-                ( self.account_format
+            self._write \
+                ( file
+                , self.account_format
                 % ( e.death_time.formatted ("%d.%m.")
-                  , e.out_value,            7801, cat, "Abgang",   e.desc
+                  , e.out_value, 7801, cat, "Abgang",   e.desc
                   )
                 )
     # end def _update_account_entry
+
+    def _write (self, file, s) :
+        file.write (pyk.encoded (s))
+    # end def _write
+
 
 # end class Anlagenverzeichnis
 
@@ -514,6 +537,7 @@ _Command = TFL.CAO.Cmd \
         , "-update_accounts:B?Add depreciation entries to account file"
         , TFL.CAO.Arg.EUC_Source ()
         , TFL.CAO.Arg.EUC_Target ()
+        , TFL.CAO.Opt.Output_Encoding (default = "utf-8")
         )
     , description = "Calculate depreciations for `year`"
     )

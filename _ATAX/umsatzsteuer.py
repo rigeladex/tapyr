@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -50,7 +50,7 @@ from _ATAX.accounting import *
 
 sep_1000 = { "." : ",", "," : "."}
 
-class Command (Command) :
+class Ust_Command (Command) :
 
     def _add_files (self, cmd, account, categories, source_currency) :
         self.__super._add_files (cmd, account, categories, source_currency)
@@ -87,8 +87,8 @@ class Command (Command) :
             )
     # end def _opt_spec
 
-# end class Command
+Command = Ust_Command # end class Ust_Command
 
 if __name__ == "__main__":
-    Command ()
+    Ust_Command ()
 ### __END__ ATAX.umsatzsteuer
