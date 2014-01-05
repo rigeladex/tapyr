@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -132,7 +132,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
         result = cls (user)
         add    = result.add
         last   = None
-        with open (file_name) as file :
+        with open (file_name, "rb") as file :
             for line in result._read_lines (file) :
                 try :
                     d, km, priv, desc = [f.strip () for f in line.split ("&", 4)]
@@ -228,7 +228,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
     # end def _new_entry
 
     def _read_lines (self, file) :
-        for line in file.readlines () :
+        for line in file :
             line = line.strip ()
             if line and not ignor_pat.match (line) :
                 yield line

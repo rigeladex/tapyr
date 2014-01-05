@@ -323,8 +323,8 @@ class Anlagenverzeichnis (_Mixin_, _Base_) :
 
     def add_file (self, file_name) :
         assignment_pat = self.assignment_pat
-        file           = open (file_name)
-        for line in file.readlines () :
+        file           = open (file_name, "rb")
+        for line in file :
             line                      = self._decoded (line)
             if ignor_pat.match (line) : continue
             line                      = ws_head_pat.sub ("", line, count = 1)

@@ -450,7 +450,7 @@ class Account (_Base_):
     account_vars = set (("vst_korrektur", "firma", "gewerbe_anteil"))
 
     def add_file (self, file_name, categ_interest, source_currency) :
-        file = open (file_name, "r")
+        file = open (file_name, "rb")
         try :
             self.add_lines (file, categ_interest, source_currency)
         finally :
@@ -1472,13 +1472,13 @@ class Konto_Desc (_Base_, UserDict) :
         k_d = self.data
         d_k = self.reverse = {}
         if isinstance (file, str) :
-            file = open (file, "r")
+            file = open (file, "rb")
         pat   = Regexp (r"^[0-9]")
         s_pat = Regexp (r"\s*:\s*")
         for line in file :
+            line           = self._decoded (line)
             if not pat.match (line) :
                 continue
-            line           = self._decoded (line)
             (konto, desc)  = s_pat.split   (line)
             konto          = konto.replace ("_", "0").strip ()
             desc           = desc.replace  ('"', "" ).strip ()
