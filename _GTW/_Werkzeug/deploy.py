@@ -46,6 +46,7 @@
 #    18-Dec-2013 (CT) Add `ca_path`, `ca_key_name` to `_handle_create_config`
 #    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
 #     7-Jan-2014 (CT) Use `-quiet`, not `-verbose`, for `create_config`
+#     7-Jan-2014 (CT) Move `-quiet` to `_FCGI_Script_`
 #    ««revision-date»»···
 #--
 
@@ -104,8 +105,8 @@ class GT2W_Command (_Ancestor) :
         """Create script for running the application as a FastCGI server."""
 
         _opts                   = \
-            ( "-script_path:Q?Path of script created"
-            ,
+            ( "-quiet:B?Don't write information about files created"
+            , "-script_path:Q?Path of script created"
             )
 
     _FCGI_Script_ = _GT2W_FCGI_Script_ # end class
@@ -132,7 +133,6 @@ class GT2W_Command (_Ancestor) :
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
             , "-port:S?Port for virtual host"
-            , "-quiet:B?Don't write information about files created"
             , "-root_dir:Q?Root path of web app"
             , "-server_admin:S?Email address of server admin of virtual host"
             , "-server_aliases:T#8?Alias names for virtual host"
@@ -189,7 +189,7 @@ class GT2W_Command (_Ancestor) :
             with open (s_path, "w") as f :
                 write (f, app, self.lib_dir)
             self.pbl ["chmod"] ("+x", s_path)
-            if cmd.verbose :
+            if not cmd.quiet :
                 print ("Created fcgi script", s_path)
         else :
             write (sys.stdout, app, self.lib_dir)
