@@ -479,7 +479,7 @@ class _Logout_ (_Ancestor) :
             next_page  = top.resource_from_href (p)
             if not h :
                 h      = urlparse.urlsplit (request.host_url).netloc
-            if h == top.cc_domain :
+            if h == top.cc_domain or next_page == resource :
                 ### need to redirect to non-cc domain
                 domain = resource.s_domain or resource.domain
             if domain :
