@@ -60,6 +60,8 @@
 #    11-Dec-2013 (CT) DRY `.csrf_check`: move to `_Form_Cmd_.POST._skip_render`
 #    11-Dec-2013 (CT) Use `sane_referrer` in `Login.GET._render_context`
 #     7-Jan-2014 (CT) Change `Logout.POST` to redirect to non-cc domain
+#     7-Jan-2014 (CT) Fix ancestor of `_Logout_.POST`
+#                     (use `_Cmd_`, not `_Form_Cmd_`)
 #    ««revision-date»»···
 #--
 
@@ -460,7 +462,7 @@ class _Logout_ (_Ancestor) :
     GET                 = None
     _auth_required      = True
 
-    class _Logout__POST_ (_Form_Cmd_.POST) :
+    class _Logout__POST_ (_Ancestor.POST) :
 
         _real_name             = "POST"
 
