@@ -485,7 +485,7 @@ class _Logout_ (_Ancestor) :
                 ### need to redirect to non-cc domain
                 domain = resource.s_domain or resource.domain
             if domain :
-                result = domain + "/"
+                result = "//" + domain + "/"
             elif getattr (next_page, "auth_required", False) :
                 result = "/"
             return result
