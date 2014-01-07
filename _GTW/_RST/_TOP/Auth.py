@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -59,6 +59,7 @@
 #                     check `request.is_secure`
 #    11-Dec-2013 (CT) DRY `.csrf_check`: move to `_Form_Cmd_.POST._skip_render`
 #    11-Dec-2013 (CT) Use `sane_referrer` in `Login.GET._render_context`
+#     7-Jan-2014 (CT) Change `Logout.POST` to redirect to non-cc domain
 #    ««revision-date»»···
 #--
 
@@ -435,12 +436,12 @@ class _Login_ (_Ancestor) :
                         (resource, request, response)
                     return result
                 else :
-                    next = req_data.get ("next", "/")
                     if self.account.password_change_required :
                         ### a password change is required -> redirect to
                         ### that page
                         next = resource.href_change_pass (self.account)
                     else :
+                        next = req_data.get ("next", "/")
                         username          = req_data ["username"]
                         response.username = username
                         response.add_notification \
@@ -464,15 +465,30 @@ class _Logout_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            top       = resource.top
-            next      = request.req_data.get ("next", request.referrer or "/")
-            next_page = top.resource_from_href (urlparse.urlsplit (next).path)
-            if getattr (next_page, "auth_required", False) :
-                next = "/"
+            next = self._response_get_next (resource, request, response)
             response.username = None
             response.add_notification (_T ("Logout successful."))
-            raise top.Status.See_Other (next)
+            raise resource.top.Status.See_Other (next)
         # end def _response_body
+
+        def _response_get_next (self, resource, request, response) :
+            top        = resource.top
+            result     = request.req_data.get ("next", request.referrer or "/")
+            s, h, p    = urlparse.urlsplit (result) [:3]
+            next_page  = top.resource_from_href (p)
+            domain     = None
+            if not h :
+                h      = urlparse.urlsplit (request._request.host_url).netloc
+            if h == top.cc_domain :
+                ### need to redirect to non-cc domain
+                domain = self.s_domain or self.domain or self.site_url
+            if domain :
+                result = domain + "/"
+            elif getattr (next_page, "auth_required", False) :
+                result = "/"
+            return result
+        # end def _response_get_next
+
 
     POST = _Logout__POST_ # end class
 
