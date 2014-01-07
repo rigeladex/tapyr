@@ -1,6 +1,6 @@
 {#- jinja template: html/navigation.jnj -#}
 {#
-## Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -52,6 +52,7 @@
 ##     3-May-2012 (CT) Add guard, default for `lang` to macro `language_section`
 ##     9-Oct-2012 (CT) Add guard for `short_title` to macro `entry`
 ##     6-Oct-2013 (CT) Add `with context` to imports
+##     7-Jan-2014 (CT) Pass `link_only = True` to `login_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -180,7 +181,7 @@
         <h1>
           {{- GTW._T ("Login") -}}
         </h1>
-        {{ Form.login_inline (page, request, allow_register = allow_register) }}
+        {{ Form.login_inline (page, request, allow_register = allow_register, link_only = True) }}
       {% endif -%}
   {% endcall %} {#  #}
 {%- endmacro -%} {#- login_section -#}

@@ -1,6 +1,6 @@
 {#- jinja template: form.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -88,6 +88,7 @@
 ##    16-Jan-2013 (CT) Remove `class` from `<a>` for `cc_href`
 ##     9-Dec-2013 (CT) Add `anti_csrf_token` to macro `form`
 ##    10-Dec-2013 (CT) Add `request.is_secure` to `login_section`
+##     7-Jan-2014 (CT) Add `link_only` to `login_inline`
 ##    ««revision-date»»···
 ##--
 #}
@@ -304,7 +305,7 @@
       {% endfor -%}
 {%- endmacro -%} {#- display_errors -#}
 
-{%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
+{%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False, link_only = False) -%}
   {%- set Auth     = page.SC.Auth -%}
   {%- set cc_href  = page.cc_href %}
   {%- set l_caller = kwargs.pop ("caller",   None) -%}
@@ -327,7 +328,7 @@
           </a>
         </li>
       {% endif -%}
-      {%- if not (page.TEST or request.is_secure) %}
+      {%- if link_only or not (page.TEST or request.is_secure) %}
         <li title="{{- GTW._T ("Log into %s") % page.s_domain -}}">
           <a href="{{ page.login_url }}" class="button">
             {{- GTW._T ("Login") -}}
