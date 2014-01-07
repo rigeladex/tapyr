@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -45,6 +45,7 @@
 #    17-Dec-2013 (CT) Add `verbose` to `_handle_create_config`
 #    18-Dec-2013 (CT) Add `ca_path`, `ca_key_name` to `_handle_create_config`
 #    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
+#     7-Jan-2014 (CT) Use `-quiet`, not `-verbose`, for `create_config`
 #    ««revision-date»»···
 #--
 
@@ -131,13 +132,13 @@ class GT2W_Command (_Ancestor) :
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
             , "-port:S?Port for virtual host"
+            , "-quiet:B?Don't write information about files created"
             , "-root_dir:Q?Root path of web app"
             , "-server_admin:S?Email address of server admin of virtual host"
             , "-server_aliases:T#8?Alias names for virtual host"
             , "-server_name:S?Fully qualified domain name of virtual host"
             , "-ssl_key_name:S?Name of SSL key to use for HTTPS"
             , "-template_dirs:P?Directories containing templates for config"
-            , "-verbose:B=yes"
             )
 
         def dynamic_defaults (self, defaults) :
@@ -227,7 +228,9 @@ class GT2W_Command (_Ancestor) :
         if c_path and c_path not in ("-", "stdout") :
             with open (c_path, "w") as f :
                 write (f, config_s)
-            if cmd.verbose :
+            if not cmd.quiet :
+                ### Can't use `cmd.verbose` here because that would be
+                ### included in the fcgi script
                 print ("Created config file", c_path)
         else :
             write (sys.stdout, config_s)
