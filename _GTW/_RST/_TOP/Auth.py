@@ -462,7 +462,7 @@ class _Logout_ (_Ancestor) :
     GET                 = None
     _auth_required      = True
 
-    class _Logout__POST_ (_Ancestor.POST) :
+    class _Logout__POST_ (_Cmd_._Cmd_Method_Mixin_, GTW.RST.Auth_Mixin.POST) :
 
         _real_name             = "POST"
 
