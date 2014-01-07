@@ -481,7 +481,8 @@ class _Logout_ (_Ancestor) :
                 h      = urlparse.urlsplit (request._request.host_url).netloc
             if h == top.cc_domain :
                 ### need to redirect to non-cc domain
-                domain = self.s_domain or self.domain or self.site_url
+                domain = \
+                    resource.s_domain or resource.domain or resource.site_url
             if domain :
                 result = domain + "/"
             elif getattr (next_page, "auth_required", False) :
