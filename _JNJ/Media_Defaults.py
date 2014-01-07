@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -48,6 +48,7 @@
 #     7-Mar-2013 (CT) Add `border_added` and `border_deleted`
 #     3-Apr-2013 (CT) Add `Rule`, `Rule.clearfix`
 #     8-Apr-2013 (CT) Add lots of rules to `Rule`, e.g., `disabled`, `focus`...
+#     7-Jan-2014 (CT) Add some more muted colors
 #    ««revision-date»»···
 #--
 
@@ -65,13 +66,22 @@ class Media_Defaults (Definition) :
     class color (Definition) :
 
         ### muted colors
+        m_aqua                 = RGB_X     ("#7FDBFF")
         m_black                = RGB_X     ("#111111")
         m_blue                 = RGB_X     ("#0088DD")
+        m_grey                 = RGB_X     ("#AAAAAA")
+        m_fuchsia              = RGB_X     ("#F012BE")
         m_green                = RGB_X     ("#00AA00")
+        m_lime                 = RGB_X     ("#01FF70")
+        m_maroon               = RGB_X     ("#85144B")
+        m_navy                 = RGB_X     ("#001F3F")
         m_red                  = RGB_X     ("#CC3333")
+        m_olive                = RGB_X     ("#3D9970")
         m_orange               = RGB_X     ("#FFA022")
         m_pink                 = RGB_X     ("#DD4499")
         m_purple               = RGB_X     ("#AA33BB")
+        m_silver               = RGB_X     ("#DDDDDD")
+        m_teal                 = RGB_X     ("#33CCCC")
         m_white                = RGB_X     ("#EEEEEE")
         m_yellow               = RGB_X     ("#FFF00F")
 
