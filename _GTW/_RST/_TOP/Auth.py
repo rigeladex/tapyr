@@ -465,24 +465,23 @@ class _Logout_ (_Ancestor) :
         _real_name             = "POST"
 
         def _response_body (self, resource, request, response) :
-            next = self._response_get_next (resource, request, response)
             response.username = None
             response.add_notification (_T ("Logout successful."))
+            next = self._response_get_next (resource, request, response)
             raise resource.top.Status.See_Other (next)
         # end def _response_body
 
         def _response_get_next (self, resource, request, response) :
+            domain     = None
             top        = resource.top
             result     = request.req_data.get ("next", request.referrer or "/")
             s, h, p    = urlparse.urlsplit (result) [:3]
             next_page  = top.resource_from_href (p)
-            domain     = None
             if not h :
-                h      = urlparse.urlsplit (request._request.host_url).netloc
+                h      = urlparse.urlsplit (request.host_url).netloc
             if h == top.cc_domain :
                 ### need to redirect to non-cc domain
-                domain = \
-                    resource.s_domain or resource.domain or resource.site_url
+                domain = resource.s_domain or resource.domain
             if domain :
                 result = domain + "/"
             elif getattr (next_page, "auth_required", False) :
