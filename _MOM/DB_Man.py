@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -35,6 +35,7 @@
 #     7-Jun-2013 (CT) Pass `src.db_meta_data` to `consume`
 #     2-Aug-2013 (CT) Add `entity_type` to increase compatibility with `Scope`
 #    25-Aug-2013 (CT) Add `reserve_surrogates`
+#     8-Jan-2014 (CT) Adapt to change of `Legacy_Lifter`, make it optional
 #    ««revision-date»»···
 #--
 
@@ -110,13 +111,14 @@ class DB_Man (TFL.Meta.Object) :
     # end def destroy
 
     def _migrate (self, chunk_size, legacy_lifter) :
-        ll = MOM.Legacy_Lifter (legacy_lifter)
-        self.ems.pcm.consume \
-            ( ll.entity_iter (self, self.src.ems.pcm.produce_entities ())
-            , ll.change_iter (self, self.src.ems.pcm.produce_changes  ())
-            , chunk_size
-            , self.src.db_meta_data
-            )
+        src    = self.src
+        e_iter = src.ems.pcm.produce_entities ()
+        c_iter = src.ems.pcm.produce_changes  ()
+        if legacy_lifter :
+            ll     = MOM.Legacy_Lifter_Wrapper (self, legacy_lifter)
+            e_iter = ll.entity_iter (e_iter)
+            c_iter = ll.change_iter (c_iter)
+        self.ems.pcm.consume (e_iter, c_iter, chunk_size, src.db_meta_data)
     # end def _migrate
 
     def __str__ (self) :
