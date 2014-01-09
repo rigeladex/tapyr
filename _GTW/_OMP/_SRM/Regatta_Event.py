@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -38,6 +38,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Correct `club.description`
 #    30-May-2012 (CT) Add attribute `is_cancelled`
+##     9-Jan-2014 (CT) Use `–`, not `--`
 ##    ««revision-date»»···
 #--
 
@@ -169,7 +170,7 @@ class Regatta_Event (_Ancestor_Essence) :
                     result.append (start.strftime  (date_format))
                 if finish is not None :
                     result.append (finish.strftime (date_format))
-                return "--".join (result)
+                return "–".join (result)
             # end def computed
 
         # end class ui_date
