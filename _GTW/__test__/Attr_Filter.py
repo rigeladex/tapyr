@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -55,7 +55,6 @@ _test_code = """
     <middle_name.AQ [Attr.Type.Querier String]>
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.AQ [Attr.Type.Querier Composite]>
-    <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
@@ -69,7 +68,6 @@ _test_code = """
     <middle_name.AQ [Attr.Type.Querier String]>
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.AQ [Attr.Type.Querier Composite]>
-    <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
@@ -85,7 +83,6 @@ _test_code = """
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
-    <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
@@ -100,7 +97,6 @@ _test_code = """
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
-    <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
@@ -115,7 +111,6 @@ _test_code = """
     <left.lifetime.start.AQ [Attr.Type.Querier Date]>
     <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
-    <left.salutation.AQ [Attr.Type.Querier String]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
     <left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <left.pid.AQ [Attr.Type.Querier Ckd]>
@@ -142,7 +137,6 @@ _test_code = """
     <left.lifetime.start.AQ [Attr.Type.Querier Date]>
     <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
-    <left.salutation.AQ [Attr.Type.Querier String]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
     <left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <left.pid.AQ [Attr.Type.Querier Ckd]>
@@ -156,7 +150,6 @@ _test_code = """
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
-    <salutation.AQ [Attr.Type.Querier String]>
     <sex.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
@@ -168,7 +161,7 @@ _test_code = """
     >>> lifetime_attrs = MOM.Attr.Selector.ui_attr (ET_lifetime)
 
     >>> person_attrs.names
-    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex', 'last_cid', 'pid', 'type_name')
+    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'sex', 'last_cid', 'pid', 'type_name')
     >>> php_attrs.names
     ('left', 'right', 'extension', 'desc', 'last_cid', 'pid', 'type_name')
     >>> lifetime_attrs.names
@@ -181,7 +174,6 @@ _test_code = """
     String <middle_name.AQ [Attr.Type.Querier String]>
     String <title.AQ [Attr.Type.Querier String]>
     Date_Interval <lifetime.AQ [Attr.Type.Querier Composite]>
-    String <salutation.AQ [Attr.Type.Querier String]>
     Sex <sex.AQ [Attr.Type.Querier Ckd]>
     Int <last_cid.AQ [Attr.Type.Querier Ckd]>
     Surrogate <pid.AQ [Attr.Type.Querier Ckd]>
@@ -194,7 +186,6 @@ _test_code = """
     String <Attr.Auto_Complete_S middle_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_S title.STARTSWITH [auto-complete]>
     Date_Interval <Attr.Composite_Auto_Complete lifetime.EQ [auto-complete]>
-    String <Attr.Auto_Complete_S salutation.STARTSWITH [auto-complete]>
     Sex <Attr.Auto_Complete sex.EQ [auto-complete]>
     Int <Attr.Auto_Complete last_cid.EQ [auto-complete]>
     Surrogate <Attr.Auto_Complete pid.EQ [auto-complete]>
@@ -207,7 +198,6 @@ _test_code = """
     String <Attr.Greater_Equal middle_name.GE [>=]>
     String <Attr.Greater_Equal title.GE [>=]>
     Date_Interval <Attr.Composite_Greater_Equal lifetime.GE [>=]>
-    String <Attr.Greater_Equal salutation.GE [>=]>
     Sex <Attr.Greater_Equal sex.GE [>=]>
     Int <Attr.Greater_Equal last_cid.GE [>=]>
     Surrogate <Attr.Greater_Equal pid.GE [>=]>
@@ -220,7 +210,6 @@ _test_code = """
     String <Attr.Contains middle_name.CONTAINS [contains]>
     String <Attr.Contains title.CONTAINS [contains]>
     Date_Interval ** CONTAINS undefined **
-    String <Attr.Contains salutation.CONTAINS [contains]>
     Sex ** CONTAINS undefined **
     Int ** CONTAINS undefined **
     Surrogate ** CONTAINS undefined **
@@ -251,7 +240,6 @@ _test_code = """
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     Date_Interval <Attr.Type.Querier Composite ()>
-    String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Surrogate <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
@@ -304,7 +292,6 @@ _test_code = """
         start               0
         finish              0
         alive               1
-      salutation          3
       sex                 0
       last_cid            0
       pid                 0
@@ -384,7 +371,6 @@ _test_code = """
           start               0
           finish              0
           alive               1
-        salutation          3
         sex                 0
         last_cid            0
         pid                 0
@@ -499,7 +485,6 @@ _test_code = """
         Date `start` skipper.left.lifetime.start
         Date `finish` skipper.left.lifetime.finish
         Boolean `alive` skipper.left.lifetime.alive
-        String `salutation` skipper.left.salutation
         Sex `sex` skipper.left.sex
         Int `last_cid` skipper.left.last_cid
         Surrogate `pid` skipper.left.pid

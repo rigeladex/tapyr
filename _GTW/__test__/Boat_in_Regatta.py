@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -263,7 +263,6 @@ _test_code = r"""
     (<skipper.left.lifetime.start.AQ [Attr.Type.Querier Date]>, u'-----')
     (<skipper.left.lifetime.finish.AQ [Attr.Type.Querier Date]>, u'-----')
     (<skipper.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
-    (<skipper.left.salutation.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.left.sex.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
@@ -344,7 +343,6 @@ _test_code = r"""
     skipper__left__lifetime__start
     skipper__left__lifetime__finish
     skipper__left__lifetime__alive
-    skipper__left__salutation
     skipper__left__sex
     skipper__left__last_cid
     skipper__left__pid

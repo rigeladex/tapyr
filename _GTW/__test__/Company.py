@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -155,7 +155,6 @@ _test_code = """
     <owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
     <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
-    <owner.left.salutation.AQ [Attr.Type.Querier String]> -----
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
@@ -181,7 +180,6 @@ _test_code = """
     <affiliate.owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
     <affiliate.owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
-    <affiliate.owner.left.salutation.AQ [Attr.Type.Querier String]> -----
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
@@ -216,7 +214,6 @@ _test_code = """
     <owner.left.lifetime.start.AQ [Attr.Type.Querier Date]>
     <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
-    <owner.left.salutation.AQ [Attr.Type.Querier String]>
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]>
     <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <owner.left.pid.AQ [Attr.Type.Querier Ckd]>
@@ -237,7 +234,6 @@ _test_code = """
     <affiliate.owner.left.lifetime.start.AQ [Attr.Type.Querier Date]>
     <affiliate.owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
-    <affiliate.owner.left.salutation.AQ [Attr.Type.Querier String]>
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]>
     <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
     <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]>
@@ -320,10 +316,6 @@ _test_code = """
                           ]
                       , 'name' : 'lifetime'
                       , 'ui_name' : 'Lifetime'
-                      }
-                    , { 'name' : 'salutation'
-                      , 'sig_key' : 3
-                      , 'ui_name' : 'Salutation'
                       }
                     , { 'name' : 'sex'
                       , 'sig_key' : 0
@@ -430,10 +422,6 @@ _test_code = """
                                 ]
                             , 'name' : 'lifetime'
                             , 'ui_name' : 'Lifetime'
-                            }
-                          , { 'name' : 'salutation'
-                            , 'sig_key' : 3
-                            , 'ui_name' : 'Salutation'
                             }
                           , { 'name' : 'sex'
                             , 'sig_key' : 0
@@ -705,14 +693,6 @@ _test_code = """
                   , ui_name = 'Owner/Man/Lifetime'
                   )
                 , Record
-                  ( attr = String `salutation`
-                  , full_name = 'owner.left.salutation'
-                  , id = 'owner__left__salutation'
-                  , name = 'salutation'
-                  , sig_key = 3
-                  , ui_name = 'Owner/Man/Salutation'
-                  )
-                , Record
                   ( attr = Sex `sex`
                   , choices =
                       [
@@ -931,14 +911,6 @@ _test_code = """
                         , id = 'affiliate__owner__left__lifetime'
                         , name = 'lifetime'
                         , ui_name = 'Affiliate/Owner/Man/Lifetime'
-                        )
-                      , Record
-                        ( attr = String `salutation`
-                        , full_name = 'affiliate.owner.left.salutation'
-                        , id = 'affiliate__owner__left__salutation'
-                        , name = 'salutation'
-                        , sig_key = 3
-                        , ui_name = 'Affiliate/Owner/Man/Salutation'
                         )
                       , Record
                         ( attr = Sex `sex`
@@ -2075,7 +2047,6 @@ _test_saw = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is free software: you can redistribute it and/or modify
@@ -62,7 +62,6 @@ _test_code = """
       <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
        <Field None 'start'>
        <Field None 'finish'>
-      <Field None 'salutation'>
 
     >>> SL = Spec.Entity (include_links = ("addresses", "emails", "phones"))
     >>> xl = SL (scope.PAP.Person.E_Type)
@@ -79,7 +78,6 @@ _test_code = """
       <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
        <Field None 'start'>
        <Field None 'finish'>
-      <Field None 'salutation'>
      <Entity_List None 'Person_has_Address' <Entity_Link None 'Person_has_Address' 'PAP.Person_has_Address'>>
       <Entity_Link None 'Person_has_Address' 'PAP.Person_has_Address'>
        <Field_Role_Hidden None 'left' 'PAP.Person'>
@@ -126,7 +124,6 @@ _test_code = """
     Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_fc_horizo
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
-    Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
     Entity_List Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
     Entity_Link Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
     Field_Role_Hidden left Person u'Person linked to Address' afs_div_seq
@@ -291,7 +288,6 @@ _test_code = """
        <Field_Composite X-0:2:0 'lifetime' 'MOM.Date_Interval'>
         <Field X-0:2:0.0 'start'>
         <Field X-0:2:0.1 'finish'>
-       <Field X-0:2:1 'salutation'>
      <Entity X-1 'Page' 'SWP.Page'>
       <Fieldset X-1:0 'primary'>
        <Field X-1:0:0 'perma_name'>
@@ -1352,7 +1348,7 @@ _person_test = """
     >>> for i in fip.transitive_iter () :
     ...     print i.elem, formatted_1 ((i.value or {}))
     <Form FP> {'sid' : 0}
-    <Entity FP-0 'Person' 'PAP.Person'> {'init' : {'cid' : 3, 'pid' : 3}, 'sid' : 'wNiC50py6OkmZ5hytWmsg24JTOK-MQQIWGTnTA'}
+    <Entity FP-0 'Person' 'PAP.Person'> {'init' : {'cid' : 3, 'pid' : 3}, 'sid' : 'ODRae894MqBP2qeuIYUsAz3jwne3XUmL-t:dHA'}
     <Fieldset FP-0:0 'primary'> {}
     <Field FP-0:0:0 'last_name'> {'init' : 'Tanzer'}
     <Field FP-0:0:1 'first_name'> {'init' : 'Laurens'}
@@ -1364,7 +1360,6 @@ _person_test = """
     <Field_Composite FP-0:2:0 'lifetime' 'MOM.Date_Interval'> {}
     <Field FP-0:2:0.0 'start'> {}
     <Field FP-0:2:0.1 'finish'> {}
-    <Field FP-0:2:1 'salutation'> {}
     <Entity_List FP-0:3 'Person_has_Address' <Entity_Link FP-0:3::p 'Person_has_Address' 'PAP.Person_has_Address'>> {}
     <Entity_List FP-0:4 'Person_has_Email' <Entity_Link FP-0:4::p 'Person_has_Email' 'PAP.Person_has_Email'>> {}
     <Entity_Link FP-0:4::0 'Person_has_Email' 'PAP.Person_has_Email'> {'init' : {'cid' : 9, 'pid' : 9}, 'sid' : 'xTiSJZqsC15bC8kav1a6jfjUWvO1Bm-v6EWVkQ'}
@@ -1392,7 +1387,6 @@ _person_test = """
     Field_Composite lifetime Lifetime u'Date of birth [`start`] (and death [`finish`])' afs_fc_horizo
     Field start Start u'Start date of interval' None
     Field finish Finish u'Finish date of interval' None
-    Field salutation Salutation u'Salutation to be used when communicating with person (e.g., in a letter or email).' None
     Entity_List Person_has_Address Person_has_Address u'Link a person to a address' afs_div_seq
     Entity_List Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
     Entity_Link Person_has_Email Person_has_Email u'Link a person to a email' afs_div_seq
@@ -2294,7 +2288,6 @@ _entity_links_group = """
       <Field_Composite None 'lifetime' 'MOM.Date_Interval'>
        <Field None 'start'>
        <Field None 'finish'>
-      <Field None 'salutation'>
      <Group None>
       <Entity_List None 'Person_has_Address' <Entity_Link None 'Person_has_Address' 'PAP.Person_has_Address'>>
        <Entity_Link None 'Person_has_Address' 'PAP.Person_has_Address'>
@@ -2321,7 +2314,6 @@ _entity_links_group = """
        <Field_Composite ELG-0:2:0 'lifetime' 'MOM.Date_Interval'>
         <Field ELG-0:2:0.0 'start'>
         <Field ELG-0:2:0.1 'finish'>
-       <Field ELG-0:2:1 'salutation'>
       <Group ELG-0:3>
        <Entity_List ELG-0:3:0 'Person_has_Address' <Entity_Link ELG-0:3:0::p 'Person_has_Address' 'PAP.Person_has_Address'>>
         <Entity_Link ELG-0:3:0::p 'Person_has_Address' 'PAP.Person_has_Address'>

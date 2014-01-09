@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -65,7 +65,7 @@ _test_code = """
     1
 
     >>> p.edit_attr
-    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
+    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, Sex `sex`)
     >>> for a in p.edit_attr :
     ...     a.name, a.P_Type.__name__, a.get_value (p), a.get_raw (p)
     ('last_name', 'unicode', u'tanzer', u'Tanzer')
@@ -73,7 +73,6 @@ _test_code = """
     ('middle_name', 'unicode', u'', u'')
     ('title', 'unicode', u'', u'')
     ('lifetime', 'Date_Interval', MOM.Date_Interval (), u'')
-    ('salutation', 'unicode', u'', u'')
     ('sex', 'unicode', None, u'')
 
     >>> _ = PAP.Person ("Tanzer", "Egon")
@@ -100,18 +99,18 @@ _test_code = """
     >>> S.necessary (PAP.Person).names
     ('sex',)
     >>> S.optional (PAP.Person).names
-    ('lifetime', 'salutation')
+    ('lifetime',)
     >>> S.required (PAP.Person).names
     ()
     >>> S.user (PAP.Person).names
-    ('lifetime', 'salutation', 'sex')
+    ('lifetime', 'sex')
     >>> pu = S.List (S.primary, S.user)
     >>> pu (PAP.Person).names
-    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'salutation', 'sex')
+    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'sex')
     >>> S.Combo (pu, exclude = S.P_optional) (PAP.Person).names
     ('last_name', 'first_name')
     >>> S.Combo (pu, exclude = S.P_required) (PAP.Person).names
-    ('middle_name', 'title', 'lifetime', 'salutation', 'sex')
+    ('middle_name', 'title', 'lifetime', 'sex')
 
     >>> S.Primary_Followers ("last_name") (PAP.Person).names
     ('first_name', 'middle_name', 'title')
@@ -131,9 +130,6 @@ _test_code = """
     >>> tnc = PAP.Person.title.completer
     >>> print tnc.name, tnc.names, tnc.treshold
     title ('title',) 1
-    >>> snc = PAP.Person.salutation.completer
-    >>> print snc.name, snc.names, snc.treshold
-    salutation ('salutation',) 1
 
     >>> show_ac (lnc, scope, dict (last_name = "Ta"))
     Tanzer, Christian, '', ''

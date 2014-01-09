@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -959,7 +959,6 @@ _test_pickled_types = """
     sail_area            Float           float             None    22    22
     sail_number          Int             int               None     7     7
     sail_number_x        String          unicode              8     9     8
-    salutation           String          unicode             80    81    80
     sex                  Sex             unicode              1     2     1
     short_name           String          unicode             12    13    12
     short_title          String          unicode             64    65    64

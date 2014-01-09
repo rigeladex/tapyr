@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -1109,8 +1109,6 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Link_Ref_List `sailors`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Wrapper : String `salutation`
-          Optional, _User_, _DB_Attr_
       Kind_Wrapper : Sex `sex`
           Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `title`
@@ -1698,8 +1696,6 @@ _test_attr_wrappers = """
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       sailors              -> SRM.Sailor
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      salutation
-        Optional, _User_, _DB_Attr_
       sex
         Necessary, _User_, _DB_Attr_
       title
@@ -2611,7 +2607,6 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Link_Ref_List `property_links`>
       <SAW : Link_Ref_List `sailors`>
-      <SAW : String `salutation` [pap_person.salutation]>
       <SAW : Sex `sex` [pap_person.sex]>
       <SAW : String `title` [pap_person.title, pap_person.__raw_title]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
@@ -3915,7 +3910,6 @@ _test_q_able = """
       pid                           : pid
       property_links                : property_links
       sailors                       : sailors
-      salutation                    : salutation
       sex                           : sex
       title                         : title
       type_name                     : type_name
@@ -5263,7 +5257,6 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         property_links            : <SAW : Link_Ref_List `property_links`>
         sailors                   : <SAW : Link_Ref_List `sailors`>
-        salutation                : pap_person.salutation
         sex                       : pap_person.sex
         title                     : pap_person.title
         type_name                 : mom_id_entity.type_name
@@ -6051,7 +6044,6 @@ _test_q_result = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity
@@ -6075,36 +6067,11 @@ _test_q_result = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
           WHERE pap_person.__raw_last_name = :__raw_last_name_1
-
-    >>> print (qrt.filter (Q.RAW.salutation == "Dear Christian")) ### PAP.Person
-    SQL: SELECT
-           mom_id_entity.electric AS mom_id_entity_electric,
-           mom_id_entity.last_cid AS mom_id_entity_last_cid,
-           mom_id_entity.pid AS mom_id_entity_pid,
-           mom_id_entity.type_name AS mom_id_entity_type_name,
-           mom_id_entity.x_locked AS mom_id_entity_x_locked,
-           pap_person.__raw_first_name AS pap_person___raw_first_name,
-           pap_person.__raw_last_name AS pap_person___raw_last_name,
-           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
-           pap_person.__raw_title AS pap_person___raw_title,
-           pap_person.first_name AS pap_person_first_name,
-           pap_person.last_name AS pap_person_last_name,
-           pap_person.lifetime__finish AS pap_person_lifetime__finish,
-           pap_person.lifetime__start AS pap_person_lifetime__start,
-           pap_person.middle_name AS pap_person_middle_name,
-           pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
-           pap_person.sex AS pap_person_sex,
-           pap_person.title AS pap_person_title
-         FROM mom_id_entity
-           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-         WHERE pap_person.salutation = :salutation_1
 
     >>> ET = apt ["PAP.Subject"]
     >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = True)
@@ -6144,7 +6111,6 @@ _test_q_result = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity
@@ -6179,7 +6145,6 @@ _test_q_result = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity
@@ -7570,7 +7535,6 @@ _test_q_result = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity
@@ -7980,7 +7944,6 @@ _test_select = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title,
                pap_person_has_account."left" AS pap_person_has_account_left,
@@ -8835,7 +8798,6 @@ _test_select = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title,
                pap_phone."desc" AS pap_phone_desc,
@@ -9841,7 +9803,6 @@ _test_select = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title,
                pap_person_has_account."left" AS pap_person_has_account_left,
@@ -9946,7 +9907,6 @@ _test_select = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title,
                pap_phone."desc" AS pap_phone_desc,
@@ -10054,7 +10014,6 @@ _test_select = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title
         FROM mom_id_entity
@@ -10138,7 +10097,6 @@ _test_select = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title
         FROM mom_id_entity
@@ -11392,7 +11350,6 @@ _test_select = """
                      pap_person.lifetime__start AS pap_person_lifetime__start,
                      pap_person.middle_name AS pap_person_middle_name,
                      pap_person.pid AS pap_person_pid,
-                     pap_person.salutation AS pap_person_salutation,
                      pap_person.sex AS pap_person_sex,
                      pap_person.title AS pap_person_title
               FROM mom_id_entity
@@ -11426,7 +11383,6 @@ _test_select = """
                      pap_person.lifetime__start AS pap_person_lifetime__start,
                      pap_person.middle_name AS pap_person_middle_name,
                      pap_person.pid AS pap_person_pid,
-                     pap_person.salutation AS pap_person_salutation,
                      pap_person.sex AS pap_person_sex,
                      pap_person.title AS pap_person_title
               FROM mom_id_entity
@@ -11905,7 +11861,6 @@ _test_select_strict = """
                pap_person.lifetime__start AS pap_person_lifetime__start,
                pap_person.middle_name AS pap_person_middle_name,
                pap_person.pid AS pap_person_pid,
-               pap_person.salutation AS pap_person_salutation,
                pap_person.sex AS pap_person_sex,
                pap_person.title AS pap_person_title
         FROM mom_id_entity
@@ -12863,7 +12818,6 @@ _test_tables = """
         Column lifetime__start           : Date                 Necessary__Nested Date start
         Column middle_name               : Varchar(32)          Primary_Optional__Raw_Value String middle_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
-        Column salutation                : Varchar(80)          Optional String salutation
         Column sex                       : Varchar(1)           Necessary Sex sex
         Column title                     : Varchar(20)          Primary_Optional__Raw_Value String title
     PAP.Url (MOM.Id_Entity) <Table pap_url>

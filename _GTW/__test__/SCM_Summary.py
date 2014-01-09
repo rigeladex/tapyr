@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -78,7 +78,7 @@ _basic = r"""
     >>>
     >>> _     = rev.date.set (start = "2010/05/13", finish = "2010/05/13")
     >>> _     = bc.set (loa = 2.43)
-    >>> _     = p.set_raw (title = "Mr.", salutation = "Dear L.")
+    >>> _     = p.set_raw (title = "Mr.", middle_name = "William")
     >>> _     = r1.set (discarded = True)
     >>> _     = rev.date.set (finish = "2010/05/14")
 
@@ -131,7 +131,7 @@ _basic = r"""
     <Create EVT.Event_occurs (((u'event-1-text', 'SWP.Page'), (('start', u'2010/08/18'),), u'', u'', 'EVT.Event'), u'2010/09/12', u'', 'EVT.Event_occurs'), new-values = {'last_cid' : '<n>'}>
     <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'last_cid' : '<n>'}, new-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '<n>'}>
     <Modify SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), old-values = {'last_cid' : '<n>', 'loa' : u''}, new-values = {'last_cid' : '<n>', 'loa' : u'2.43'}>
-    <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '<n>', 'salutation' : u'', 'title' : u''}, new-values = {'last_cid' : '<n>', 'salutation' : u'Dear L.', 'title' : u'Mr.'}>
+    <Modify PAP.Person (u'Tanzer', u'Laurens', u'William', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '<n>', 'middle_name' : u'', 'title' : u''}, new-values = {'last_cid' : '<n>', 'middle_name' : u'William', 'title' : u'Mr.'}>
     <Modify SRM.Race_Result ((((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'1', 'SRM.Race_Result'), old-values = {'discarded' : u'no', 'last_cid' : '<n>'}, new-values = {'discarded' : u'yes', 'last_cid' : '<n>'}>
     <Modify SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'SRM.Regatta_Event'), old-values = {'date' : (('finish', u'2010/05/13'), ('start', u'2010/05/13')), 'last_cid' : '<n>'}, new-values = {'date' : (('finish', u'2010/05/14'), ('start', u'2010/05/13')), 'last_cid' : '<n>'}>
     <Destroy SRM.Boat_Class (u'Seascape 18', 'SRM.Boat_Class'), old-values = {'last_cid' : '<n>', 'max_crew' : u'4'}>
@@ -189,7 +189,7 @@ _basic = r"""
           <Create SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'1134', u'AUT', u'', 'SRM.Boat'), new-values = {'last_cid' : '<n>'}>
     <Change Summary for pid 8: newborn, 1 change>
         <Create PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '<n>'}>
-        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '<n>', 'salutation' : u'', 'title' : u''}, new-values = {'last_cid' : '<n>', 'salutation' : u'Dear L.', 'title' : u'Mr.'}>
+        <Modify PAP.Person (u'Tanzer', u'Laurens', u'William', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '<n>', 'middle_name' : u'', 'title' : u''}, new-values = {'last_cid' : '<n>', 'middle_name' : u'William', 'title' : u'Mr.'}>
     <Change Summary for pid 9: newborn>
         <Create SRM.Sailor ((u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), new-values = {'last_cid' : '<n>'}>
     <Change Summary for pid 10: newborn, 3 changes>
@@ -288,7 +288,7 @@ _basic = r"""
     5 [('last_cid', (old = None, new = '5'))]
     6 [('last_cid', (old = None, new = '6'))]
     7 [('last_cid', (old = None, new = '8'))]
-    8 [('last_cid', (old = None, new = '32')), ('salutation', (old = u'', new = u'Dear L.')), ('title', (old = u'', new = u'Mr.'))]
+    8 [('last_cid', (old = None, new = '32')), ('middle_name', (old = u'', new = u'William')), ('title', (old = u'', new = u'Mr.'))]
     9 [('last_cid', (old = None, new = '10'))]
     10 [('date', (old = (('finish', u'2008/05/01'), ('start', u'2008/05/01')), new = (('finish', u'2010/05/13'), ('start', u'2010/05/13')))), ('last_cid', (old = None, new = '36')), ('perma_name', (old = None, new = u'himmelfahrt'))]
     11 [('is_cancelled', (old = None, new = u'no')), ('last_cid', (old = None, new = '12')), ('perma_name', (old = None, new = u'optimist'))]
@@ -318,7 +318,7 @@ _basic = r"""
     5 ['last_cid']
     6 ['last_cid']
     7 ['last_cid']
-    8 ['last_cid', 'salutation', 'title']
+    8 ['last_cid', 'middle_name', 'title']
     9 ['last_cid']
     10 ['date', 'last_cid']
     11 ['last_cid']
@@ -515,8 +515,8 @@ _basic = r"""
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 7
     ...     print csp
     <Change Summary for pid 8: 2 changes>
-        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '32', 'start' : u''}, new-values = {'last_cid' : '115', 'start' : u'1997/11/16'}>
-        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'', u'Mr.', 'PAP.Person'), old-values = {'finish' : u'', 'last_cid' : '115'}, new-values = {'finish' : u'2077/11/30', 'last_cid' : '116'}>
+        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'William', u'Mr.', 'PAP.Person'), old-values = {'last_cid' : '32', 'start' : u''}, new-values = {'last_cid' : '115', 'start' : u'1997/11/16'}>
+        <Modify/C PAP.Person.lifetime (u'Tanzer', u'Laurens', u'William', u'Mr.', 'PAP.Person'), old-values = {'finish' : u'', 'last_cid' : '115'}, new-values = {'finish' : u'2077/11/30', 'last_cid' : '116'}>
 
     >>> for pid, csp in sorted (ucc.by_pid.iteritems ()) : ### 8
     ...     print csp.pid, clean_change (sorted (csp.attribute_changes.iteritems ()))
@@ -581,26 +581,26 @@ _more = dict \
     Loading scope MOMT__...
 
     >>> p1  = scope_1.PAP.Person.instance (u"Tanzer", u"Laurens")
-    >>> _   = p1.set (salutation = u"Dear Laurens")
+    >>> _   = p1.set (middle_name = u"William")
     >>> cs1 = scope_1.uncommitted_changes
     >>> len (cs1) ### 1
     1
     >>> for pid, csp in sorted (cs1.by_pid.iteritems ()) :
     ...     print csp
     <Change Summary for pid 1: 1 change>
-        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), old-values = {'last_cid' : '1', 'salutation' : u''}, new-values = {'last_cid' : '2', 'salutation' : u'Dear Laurens'}>
+        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), old-values = {'last_cid' : '1', 'middle_name' : u''}, new-values = {'last_cid' : '2', 'middle_name' : u'William'}>
 
     >>> p2 = scope_2.PAP.Person.instance (* p1.epk)
-    >>> p2.salutation
+    >>> p2.middle_name
     u''
-    >>> _ = p2.set (salutation = u"Lieber Laurens")
+    >>> _ = p2.set (middle_name = u"W.")
     >>> cs2 = scope_2.uncommitted_changes
     >>> len (cs2) ### 1
     1
     >>> for pid, csp in sorted (cs2.by_pid.iteritems ()) :
     ...     print csp
     <Change Summary for pid 1: 1 change>
-        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), old-values = {'last_cid' : '1', 'salutation' : u''}, new-values = {'last_cid' : '3', 'salutation' : u'Lieber Laurens'}>
+        <Modify PAP.Person (u'Tanzer', u'Laurens', u'', u'', 'PAP.Person'), old-values = {'last_cid' : '1', 'middle_name' : u''}, new-values = {'last_cid' : '3', 'middle_name' : u'W.'}>
 
     >>> scope_1.commit              ()
     >>> scope_1.ems.session.expunge ()
@@ -610,12 +610,12 @@ _more = dict \
     Commit_Conflict
 
     >>> p2 = scope_2.PAP.Person.instance (* p1.epk)
-    >>> p2.salutation
-    u'Dear Laurens'
+    >>> p2.middle_name
+    u'W.'
 
     >>> p1 = scope_1.PAP.Person.instance (* p1.epk)
-    >>> p1.salutation
-    u'Dear Laurens'
+    >>> p1.middle_name
+    u'William'
 
     >>> scope_2.commit ()
     >>> scope_1.commit ()

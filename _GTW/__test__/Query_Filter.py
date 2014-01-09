@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -299,7 +299,6 @@ _sub_query_sql = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity
@@ -323,7 +322,6 @@ _sub_query_sql = """
            pap_person.lifetime__start AS pap_person_lifetime__start,
            pap_person.middle_name AS pap_person_middle_name,
            pap_person.pid AS pap_person_pid,
-           pap_person.salutation AS pap_person_salutation,
            pap_person.sex AS pap_person_sex,
            pap_person.title AS pap_person_title
          FROM mom_id_entity

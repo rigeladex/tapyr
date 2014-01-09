@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -50,6 +50,7 @@
 #                     `MOM.Attr.Filter`
 #     6-Mar-2012 (CT) Factor `Subject`
 #    22-Mar-2013 (CT) Set `Subject.default_child` to `Person`
+#     9-Jan-2014 (CT) Remove attribute `salutation`
 #    ««revision-date»»···
 #--
 
@@ -163,18 +164,6 @@ class _PAP_Person_ (_Ancestor_Essence) :
         # end class title
 
         ### Non-primary attributes
-
-        class salutation (A_String) :
-            """Salutation to be used when communicating with person (e.g., in
-               a letter or email).
-            """
-
-            kind               = Attr.Optional
-            max_length         = 80
-
-            completer          = Attr.Completer_Spec (1)
-
-        # end class salutation
 
         class sex (A_Sex) :
 

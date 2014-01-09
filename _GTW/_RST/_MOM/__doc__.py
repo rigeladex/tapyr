@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -180,7 +180,6 @@ Use the HTTP method ``GET`` to retrieve the list of instances of the ``e-type``.
         , 'title'
         , 'lifetime.start'
         , 'lifetime.finish'
-        , 'salutation'
         , 'sex'
         ]
     , 'entries' :

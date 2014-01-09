@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -388,7 +388,7 @@ _test_cqf = r"""
     PAP-Link1    (Left `left`,)
     PAP-Link2    (Left `left`, Right `right`)
     PAP-Object    ()
-    PAP-Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, String `salutation`, Sex `sex`)
+    PAP-Person    (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, Sex `sex`)
     PAP-Person_has_Account    (Person `left`, Account `right`)
     PAP-Person_has_Address    (Person `left`, Address `right`, String `desc`)
     PAP-Person_has_Email    (Person `left`, Email `right`, String `desc`)
@@ -2010,7 +2010,6 @@ _test_get = r"""
             , 'title'
             , 'lifetime.start'
             , 'lifetime.finish'
-            , 'salutation'
             , 'sex'
             ]
         , 'entries' :
@@ -2055,10 +2054,10 @@ _test_get = r"""
 
     >>> _ = show (R.get ("/v1/PAP-Person.csv?verbose&raw"))
     { 'content' :
-        [ 'last_name,first_name,middle_name,title,lifetime.start,lifetime.finish,salutation,sex'
-        , 'Tanzer,Christian,,,,,,'
-        , 'Tanzer,Laurens,William,,,,,'
-        , 'Tanzer,Clarissa,Anna,,,,,'
+        [ 'last_name,first_name,middle_name,title,lifetime.start,lifetime.finish,sex'
+        , 'Tanzer,Christian,,,,,'
+        , 'Tanzer,Laurens,William,,,,'
+        , 'Tanzer,Clarissa,Anna,,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person.csv?verbose&raw'
@@ -4056,9 +4055,9 @@ _test_query = r"""
 
     >>> r = show (R.get ("/v1/PAP-Person.csv?AQ=middle_name,CONTAINS,a&verbose&raw"))
     { 'content' :
-        [ 'last_name,first_name,middle_name,title,lifetime.start,lifetime.finish,salutation,sex'
-        , 'Tanzer,Laurens,William,,,,,'
-        , 'Tanzer,Clarissa,Anna,,,,,'
+        [ 'last_name,first_name,middle_name,title,lifetime.start,lifetime.finish,sex'
+        , 'Tanzer,Laurens,William,,,,'
+        , 'Tanzer,Clarissa,Anna,,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person.csv?AQ=middle_name,CONTAINS,a&verbose&raw'
@@ -4066,8 +4065,8 @@ _test_query = r"""
 
     >>> r = show (R.get ("/v1/PAP-Person.csv?AQ=middle_name,EQ,&verbose&raw"))
     { 'content' :
-        [ 'last_name,first_name,middle_name,title,lifetime.start,lifetime.finish,salutation,sex'
-        , 'Tanzer,Christian,,,,,,'
+        [ 'last_name,first_name,middle_name,title,lifetime.start,lifetime.finish,sex'
+        , 'Tanzer,Christian,,,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person.csv?AQ=middle_name,EQ,&verbose&raw'
