@@ -825,7 +825,7 @@ class Auth (_Ancestor) :
                 (self.abs_href, "make_cert", p = str (obj.pid))
     # end def href_make_cert
 
-    def href_reset_password (self) :
+    def href_reset_password (self, obj) :
         return self._href_q (self.abs_href, "reset_password", p = str (obj.pid))
     # end def href_reset_password
 

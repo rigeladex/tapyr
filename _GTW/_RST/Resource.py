@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -107,6 +107,7 @@
 #     9-Dec-2013 (CT) Add `request.environ` to `send_error_email`
 #    10-Dec-2013 (CT) Add `s_domain` and `secure_url`
 #    11-Dec-2013 (CT) Add `sane_referrer`
+#    10-Jan-2014 (CT) Change `send_email` to encode arguments to `logging`
 #    ««revision-date»»···
 #--
 
@@ -688,11 +689,14 @@ class _RST_Base_ (TFL.Meta.Object) :
             smtp (text)
         except Exception as exc :
             logging.error \
-                ( "Exception: %s"
-                  "\n  When trying to send email from %s to %s"
-                  "\n  %s"
-                , exc
-                , email_from, context.get ("email_to", "<Unkown>")
+                ( ( "Exception: %s"
+                    "\n  When trying to send email from %s to %s"
+                    "\n  %s"
+                  ).encode (self.encoding, "replace")
+                , str (exc)
+                , email_from.encode (self.encoding, "replace")
+                , context.get ("email_to", "<Unkown>")
+                      .encode (self.encoding, "replace")
                 , text
                 )
             try :
