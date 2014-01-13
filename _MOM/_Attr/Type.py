@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -325,6 +325,7 @@
 #    12-Jul-2013 (CT) Add support for `sqx_filter` to `_A_Rev_Ref_`
 #     1-Aug-2013 (CT) Factor `_A_SPK_Entity_`, add `_A_MD_Change_`
 #    21-Aug-2013 (CT) Add `_A_Rev_Ref_.finished_query_first`, `.sort_key`
+#    13-Jan-2014 (CT) Add `A_Confirmation`; factor `_A_Boolean_`
 #    ««revision-date»»···
 #--
 
@@ -1950,14 +1951,42 @@ class A_Blob (A_Attr_Type) :
 
 # end class A_Blob
 
-class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
+class _A_Boolean_ (Atomic_Json_Mixin, _A_Named_Value_) :
+    """Boolean attribute."""
+
+    Q_Ckd_Type        = MOM.Attr.Querier.Boolean
+    P_Type            = bool
+    ui_length         = 5
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, pyk.string_types) :
+            try :
+                return soc.Table_X [value.lower ()]
+            except KeyError :
+                raise soc._key_error (value)
+        else :
+            return soc.P_Type (value)
+    # end def cooked
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _from_string (soc, s, obj, glob, locl) :
+        return soc.cooked (s)
+    # end def _from_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _key_error (soc, value) :
+        msg = "%s not in %s" % (value, sorted (soc.Table))
+        return MOM.Error.Attribute_Syntax (None, soc, value, msg)
+    # end def _key_error
+
+# end class _A_Boolean_
+
+class A_Boolean (_A_Boolean_) :
     """Boolean attribute."""
 
     example           = "no"
     typ               = _ ("Boolean")
-    Q_Ckd_Type        = MOM.Attr.Querier.Boolean
-    P_Type            = bool
-    ui_length         = 5
 
     Table             = dict \
         ( no          = False
@@ -1971,23 +2000,6 @@ class A_Boolean (Atomic_Json_Mixin, _A_Named_Value_) :
         , false       = False
         , true        = True
         )
-
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        if isinstance (value, pyk.string_types) :
-            try :
-                return soc.Table_X [value.lower ()]
-            except KeyError :
-                msg = "%s not in %s" % (value, sorted (soc.Table))
-                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
-        else :
-            return soc.P_Type (value)
-    # end def cooked
-
-    @TFL.Meta.Class_and_Instance_Method
-    def _from_string (soc, s, obj, glob, locl) :
-        return soc.cooked (s)
-    # end def _from_string
 
 # end class A_Boolean
 
@@ -2039,6 +2051,32 @@ class A_Char (_A_String_) :
     max_length     = 1
 
 # end class A_Char
+
+class A_Confirmation (_A_Boolean_) :
+    """Boolean attribute used to require confirmation from the user."""
+
+    example           = "yes"
+    typ               = _ ("Confirmation")
+
+    Table             = dict \
+        ( yes         = True
+        )
+
+    ### allow additional raw values without changing `eligible_raw_values`
+    ### (want only canonical values in UI and documentation)
+    Table_X           = dict \
+        ( Table
+        , true        = True
+        )
+
+    syntax            = _ ("You must confirm this attribute")
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _key_error (soc, value) :
+        return ValueError ()
+    # end def _key_error
+
+# end class A_Confirmation
 
 class A_Date (_A_Date_) :
     """Date value."""

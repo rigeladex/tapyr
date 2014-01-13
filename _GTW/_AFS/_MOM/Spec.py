@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -81,6 +81,7 @@
 #     7-May-2013 (CT) Add `Entity.add_links`
 #    15-May-2013 (CT) Adapt `Entity_Link._get_assoc` to `MOM.Attr._A_Rev_Ref`
 #     3-Jun-2013 (CT) Use `.attr_prop`, not `getattr`, to get attributes
+#    13-Jan-2014 (CT) Add `A_Confirmation.input_widget`
 #    ««revision-date»»···
 #--
 
@@ -106,6 +107,7 @@ import _TFL.multimap
 MAT                                  = MOM.Attr
 MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
 ###MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
+MAT.A_Confirmation.input_widget      = WS ("html/AFS/input.jnj,  boolean")
 MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
 MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
 MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")

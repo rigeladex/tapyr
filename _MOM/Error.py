@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -86,6 +86,7 @@
 #     6-May-2013 (CT) Change `Error.as_unicode` to use `__doc__`, unless `.args`
 #    11-Jun-2013 (CT) Add guard to `Attribute.bindings`
 #    21-Aug-2013 (CT) Guard `is_required` in `Attribute_Syntax.__init__`
+#    14-Jan-2014 (CT) Robustify `Attribute.__init__` and `.bindings`
 #    ««revision-date»»···
 #--
 
@@ -384,12 +385,18 @@ class Attribute (Error) :
         )
 
     def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
-        msg = \
-            ( _T ("Can't set %s attribute %s.%s to `%r`")
-            % (kind, entity.type_base_name, name, val)
-            )
+        if entity :
+            msg = \
+                ( _T ("Can't set %s attribute %s.%s to `%r`")
+                % (_T (kind), entity.type_base_name, name, val)
+                )
+        else :
+            msg = \
+                ( _T ("Can't set %s attribute %s to %r")
+                % (_T (kind), name, val)
+                )
         if exc :
-            msg = "%s\n    %s" % (msg, exc)
+            msg = "%s.\n    %s" % (msg, exc)
         self.args       = (msg, )
         self.entity     = entity
         self.kind       = kind
@@ -403,7 +410,12 @@ class Attribute (Error) :
         if self.entity :
             FO    = self.entity.FO
             name  = self.attribute
-            value = str (FO (name, self.value))
+            try :
+                fov   = FO (name, self.value)
+            except Exception :
+                value = str (self.value)
+            else :
+                value = str (fov)
             return ((name, value), )
     # end def bindings
 
