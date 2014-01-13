@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #     2-Feb-2009 (CT) Documentation added
 #     3-Feb-2009 (CT) Documentation added..
 #     4-Feb-2009 (CT) Documentation added...
+#    14-Oct-2013 (CT) Add `Single_Dispatch`
 #    ««revision-date»»···
 #--
 
@@ -106,6 +107,12 @@ Module `Mixin_NS`
 ====================
 
 .. automodule:: _TFL._Meta.Mixin_NS
+   :members:
+
+Module `Single_Dispatch`
+=========================
+
+.. automodule:: _TFL._Meta.Single_Dispatch
    :members:
 
 Module `totally_ordered`
