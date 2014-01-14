@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -124,6 +124,7 @@
 //     7-May-2013 (CT) Remove `:readonly` fields from `focusables`
 //     7-May-2013 (CT) Don't call `_setup_efs_selector` for `readonly` fields
 //    23-May-2013 (CT) Disable `Reset` for `Entity` (removes `prefill` values)
+//    14-Jan-2014 (CT) Consider required checkboxes in `field_change_cb`
 //    ««revision-date»»···
 //--
 
@@ -1056,11 +1057,13 @@
             var b$ = $("b.Status", l$);
             var afs_field = $AFS_E.get (id);
             var status = true;
-            var ini_value, new_value, old_value, anchor;
+            var ini_value, new_value, old_value, anchor, req;
             if (afs_field !== undefined) {
                 ini_value = afs_field.value.init;
+                req       = f$.attr ("required");
                 if (f$.attr ("type") == "checkbox") {
-                    new_value = f$.attr ("checked") ? "yes" : "no";
+                    new_value = f$.attr ("checked")
+                        ? "yes" : (req ? null : "no");
                 } else {
                     new_value = f$.val ();
                 };
@@ -1074,7 +1077,7 @@
                 b$.toggleClass ("bad",  !  status)
                   .toggleClass ("good", !! status);
                 f$.toggleClass ("bad",  !  status);
-                if (f$.attr ("required")) {
+                if (req) {
                     b$.toggleClass ("missing", !  (new_value))
                       .toggleClass ("good",    !! (new_value && status));
                     f$.toggleClass ("missing", !  (new_value));

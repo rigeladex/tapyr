@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -52,6 +52,7 @@
 #    26-Jan-2012 (CT) Add `form_kw` and `show_defaults` to `pop_to_self`
 #    26-Jan-2012 (CT) Replace `Base.uid` by `Instance.ui_display`
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
+#    14-Jan-2014 (CT) Add `ui_description` to `pop_to_self`
 #    ««revision-date»»···
 #--
 
@@ -192,8 +193,8 @@ class Instance (_Base_) :
             ( kw
             , "allow_new", "children", "collapsed", "cooked", "copy"
             , "entity", "form_kw", "max_length", "max_value", "min_value"
-            , "outer_entity", "role_entity", "show_defaults", "value"
-            , "_display", "_session_secret", "_sid"
+            , "outer_entity", "role_entity", "show_defaults"
+            , "ui_description", "value", "_display", "_session_secret", "_sid"
             )
         self.elem = elem
         self.kw   = kw

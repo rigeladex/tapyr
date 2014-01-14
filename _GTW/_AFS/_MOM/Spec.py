@@ -82,6 +82,7 @@
 #    15-May-2013 (CT) Adapt `Entity_Link._get_assoc` to `MOM.Attr._A_Rev_Ref`
 #     3-Jun-2013 (CT) Use `.attr_prop`, not `getattr`, to get attributes
 #    13-Jan-2014 (CT) Add `A_Confirmation.input_widget`
+#    14-Jan-2014 (CT) Add `.afs_widget`, set it for `MAT.A_Confirmation`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,8 @@ import _TFL.Decorator
 import _TFL.multimap
 
 MAT                                  = MOM.Attr
+MAT.A_Attr_Type.afs_widget           = None
+MAT.A_Confirmation.afs_widget        = "Field__Confirmation"
 MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
 ###MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
 MAT.A_Confirmation.input_widget      = WS ("html/AFS/input.jnj,  boolean")
@@ -219,18 +222,20 @@ class _Field_ (_Base_) :
         at      = attr.attr
         ui_name = attr.ui_name or attr.name
         result  = dict \
-            ( changeable  = attr.is_changeable
-            , description = attr.description or ""
-            , kind        = attr.kind
-            , label       = ui_name
-            , required    = attr.is_required
-            , ui_name     = ui_name
+            ( changeable     = attr.is_changeable
+            , description    = attr.description or ""
+            , kind           = attr.kind
+            , label          = ui_name
+            , required       = attr.is_required
+            , ui_name        = ui_name
             )
         if at.Choices :
             result ["choices"] = at.Choices
         cssc = " ".join (c for c in self._css_classes (attr) if c)
         if cssc :
             result ["css_class"] = cssc
+        if attr.afs_widget :
+            result ["widget"] = attr.afs_widget
         if attr.input_widget :
             result ["input_widget"] = attr.input_widget
         if attr.explanation :

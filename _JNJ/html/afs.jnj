@@ -1,6 +1,6 @@
 {#- jinja template: afs.jnj -#}
 {#
-## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -47,6 +47,7 @@
 ##    30-Apr-2013 (CT) Add optional argument `het_h` to `do_head`
 ##     1-May-2013 (CT) Add `caller` to `do_label`
 ##     6-Oct-2013 (CT) Add `with context` to import
+##    14-Jan-2014 (CT) Change `do_description` to consider `ui_description`
 ##    ««revision-date»»···
 ##--
 #}
@@ -67,7 +68,7 @@
 {%- endmacro -%} {#- do_children -#}
 
 {%- macro do_description (elem) -%}
-  {%- set desc = GTW._T (elem.description)|safe %}
+  {%- set desc = GTW._T (elem.ui_description or elem.description)|safe %}
   {%- if desc -%}
     {%- set expl = GTW._T (elem.explanation)|safe %}
     <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>

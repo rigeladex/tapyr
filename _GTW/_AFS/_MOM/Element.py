@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -119,6 +119,7 @@
 #    28-Mar-2013 (CT) Add `polymorphic_epk` to `Field_Entity.__call__`
 #    11-Jun-2013 (CT) Improve message logged by `_create_instance`
 #    13-Aug-2013 (CT) Change `_create_instance` to check `Required_Missing`
+#    14-Jan-2014 (CT) Add `ui_description` to `Field._instance_kw`
 #    ««revision-date»»···
 #--
 
@@ -427,7 +428,7 @@ class _MOM_Field_ (_MOM_Field_MI_, AE.Field) :
         if not kw.get ("copy", False) :
             if (not self.changeable) and cooked != attr.default :
                 result ["readonly"] = True
-        for k in "max_length", "max_value", "min_value" :
+        for k in "max_length", "max_value", "min_value", "ui_description" :
             v = getattr (attr, k, None)
             if v is not None :
                 result [k] = v

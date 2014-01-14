@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -48,6 +48,7 @@
 #    19-Apr-2012 (CT) Add rules for `.bad`, `.entity-errors` and `.focusable`
 #     7-May-2012 (CT) Add rule for `.no-js` to hide form if no javascript
 #     5-Aug-2012 (MG) Add rules for media button/url
+#    14-Jan-2014 (CT) Add rules for `.Confirmation`; add `clear` to `.Field`
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( ".Field"
+                , clear         = "both"
                 , padding       = Px (5)
                 , children      =
                     [ Rule
@@ -172,6 +174,27 @@ style_sheet = Style_Sheet \
                     , Rule
                         ( "textarea"
                         , font_size     = Percent (95)
+                        )
+                    , Rule
+                        ( ".Confirmation"
+                        , clear         = "both"
+                        , children      =
+                            [ Rule
+                                ( "input[type=checkbox]"
+                                , display       = "block"
+                                , float         = "left"
+                                , margin_left   = 0
+                                , margin_top    = Em (0.25)
+                                )
+                            , Rule
+                                ( ".Desc"
+                                , color         = P.color_selected
+                                , float         = "left"
+                                , font_size     = Percent (115)
+                                , margin_left   = Em      (0.25)
+                                , width         = Percent (85)
+                                )
+                            ]
                         )
                     , Rule
                         ( ".missing"

@@ -1,6 +1,6 @@
 {#- jinja template: div_seq.jnj -#}
 {#
-## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -49,6 +49,7 @@
 ##                     `not elem.children`
 ##    17-Jul-2012 (MG) `Hidden` added
 ##     1-May-2013 (CT) Change `Field_Entity` to use hidden/display input-pair
+##    14-Jan-2014 (CT) Add `Field__Confirmation`
 ##    ««revision-date»»···
 ##--
 #}
@@ -98,7 +99,9 @@
 {%- macro Field (form, elem, renderer) -%}
   {% call GTW.call_macro
       ( "do_element"
-      , form, elem, renderer, "FC-", class = "Field"
+      , form, elem, renderer, "FC-"
+      , class      = "Field"
+      , show_desc  = not elem.ui_description
       , templ_name = renderer
       )
   -%}
@@ -107,6 +110,23 @@
     {{ GTW.call_macro (elem.input_widget, elem) }}
   {% endcall %} {# do_element #}
 {%- endmacro -%} {#- Field -#}
+
+{%- macro Field__Confirmation (form, elem, renderer) -%}
+  {% call GTW.call_macro
+      ( "do_element"
+      , form, elem, renderer, "FC-"
+      , class      = "Field Confirmation"
+      , show_desc  = False
+      , templ_name = renderer
+      )
+  -%}
+    {{ GTW.call_macro ("do_label",        elem, templ_name = renderer) }}
+    <div class="Confirmation">
+      {{ GTW.call_macro (elem.input_widget, elem) }}
+      {{ GTW.call_macro ("do_description", elem, templ_name = renderer) }}
+    </div>
+  {% endcall %} {# do_element #}
+{%- endmacro -%} {#- Field__Confirmation -#}
 
 {%- macro Hidden (form, elem, renderer) -%}
   {{ GTW.call_macro ("hidden", elem, templ_name = "html/AFS/input.jnj") }}
