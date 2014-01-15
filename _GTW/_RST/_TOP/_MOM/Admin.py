@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -63,6 +63,7 @@
 #     7-May-2013 (CT) Fix `Expander.rendered` for `An_Entity` elements
 #     7-May-2013 (CT) Set `Deleter.argn` to `None`, not `1`
 #    30-Oct-2013 (CT) Change `Group._pns_entries` to set `name` of E_Type_Alias
+#    15-Jan-2014 (CT) Factor `_call_submit_callback`
 #    ««revision-date»»···
 #--
 
@@ -452,6 +453,17 @@ class _Changer_ (_HTML_Action_) :
         return self.__super.rendered (context, template)
     # end def rendered
 
+    def _call_submit_callback (self, cb, request, response, scope, fv, result) :
+        if TFL.callable (cb) :
+            try :
+                cb (request, response, scope, fv, result)
+            except Exception as exc :
+                logging.exception \
+                    ( "%s._rendered_post: %s -> %s"
+                    , self.__class__, request.json ["cargo"], result
+                    )
+    # end def _call_submit_callback
+
     def _rendered_post (self, request, response) :
         json   = request.json
         scope  = self.top.scope
@@ -496,25 +508,15 @@ class _Changer_ (_HTML_Action_) :
                             , json = fi.as_json_cargo
                             )
                         rids.append (e.id)
-                if TFL.callable (self.submit_callback) :
-                    try :
-                        self.submit_callback \
-                            (request, response, scope, fv, result)
-                    except Exception as exc :
-                        logging.exception \
-                            ( "%s._rendered_post: %s -> %s"
-                            , self.__call__, json ["cargo"], result
-                            )
+                self._call_submit_callback \
+                    ( self.submit_callback
+                    , request, response, scope, fv, result
+                    )
             if fv.errors :
-                if TFL.callable (self.submit_error_callback) :
-                    try :
-                        self.submit_error_callback \
-                            (request, response, scope, fv, result)
-                    except Exception as exc :
-                        logging.exception \
-                            ( "%s._rendered_post: %s -> %s"
-                            , self.__call__, json ["cargo"], result
-                            )
+                self._call_submit_callback \
+                    ( self.submit_error_callback
+                    , request, response, scope, fv, result
+                    )
                 scope.rollback ()
         return result
     # end def _rendered_post
