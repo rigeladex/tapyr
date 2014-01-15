@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.
@@ -51,6 +51,7 @@
 #    11-Sep-2012 (CT) Fix `_handle_babel_extract` (assign `P`)
 #    27-Jul-2013 (CT) Remove old `.pyc` and `.pyo` files in `_handle_pycompile`
 #    20-Dec-2013 (CT) Fix `_P` to handle non-standard `apply_to_version`
+#    15-Jan-2014 (CT) Change `_P` to set `.python` after `env ["PYTHONPATH"]`
 #    ««revision-date»»···
 #--
 
@@ -437,8 +438,6 @@ class GTWD_Command (TFL.Command.Root_Command) :
             ( active   = active
             , passive  = passive
             , prefix   = prefix
-            , python   = pbl [cmd.py_path]
-                [tuple (o for o in cmd.py_options if o)]
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, atv, atv)
@@ -446,6 +445,8 @@ class GTWD_Command (TFL.Command.Root_Command) :
             (pjoin (result.selected, cmd.app_dir))
         result.lib_dir  = pbl.env ["PYTHONPATH"] = sos.path.abspath \
             (pjoin (result.selected, cmd.lib_dir))
+        result.python   = pbl [cmd.py_path] \
+            [tuple (o for o in cmd.py_options if o)]
         return result
     # end def _P
 
