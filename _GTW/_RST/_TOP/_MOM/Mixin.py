@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -35,6 +35,7 @@
 #     7-Aug-2012 (CT) Fix typo (`.admin`, not `._admin`)
 #     9-Nov-2012 (CT) Redefine `E_Type_Mixin._get_child_page`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
+#    15-Jan-2014 (CT) Factor `E_Type_Mixin._add_other_entries`
 #    ««revision-date»»···
 #--
 
@@ -194,10 +195,8 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
             self._entry_map = {}
             self._entries   = []
             entries         = tuple (self._new_entry (o) for o in objects)
-            self.add_entries (* entries)
-            admin = self.admin
-            if admin and admin is not self :
-                self.add_entries (admin)
+            self.add_entries        (* entries)
+            self._add_other_entries ()
             if objects :
                 self._old_objects = objects
         return self._entries
@@ -238,6 +237,12 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
             for t in self.admin.template_iter () :
                 yield t
     # end def template_iter
+
+    def _add_other_entries (self) :
+        admin = self.admin
+        if admin and admin is not self :
+            self.add_entries (admin)
+    # end def _add_other_entries
 
     def _get_child_page (self, obj) :
         return self.page_from_obj (obj)
