@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -49,6 +49,7 @@
 #    28-Feb-2013 (CT) Add `margin_bottom` for `ol li`
 #     7-Mar-2013 (CT) Add rule for `.added`
 #     8-Apr-2013 (CT) Factor `P.Rule.hover`
+#    15-Jan-2014 (CT) Add rule for `.full-width`
 #    ««revision-date»»···
 #--
 
@@ -210,6 +211,10 @@ style_sheet = Style_Sheet \
         , border             = P.border_deleted
         , opacity            = 0.8
         , text_decoration    = "line-through"
+        )
+    , Rule
+        ( ".full-width"
+        , width              = Percent (99)
         )
     , Rule (".hbox",          ** P.hbox_spec)
     , Rule
