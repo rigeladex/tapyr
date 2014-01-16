@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -219,6 +219,7 @@
 #    31-Aug-2013 (CT) Change `_Composite_Mixin_._check_sanity` to forbid
 #                     attributes that refer to other entities
 #    30-Sep-2013 (CT) Add `is_partial` to `Kind` and `_Query_`
+#    16-Jan-2014 (CT) Add `_Required_Mixin_.has_substance`
 #    ««revision-date»»···
 #--
 
@@ -689,6 +690,10 @@ class _Required_Mixin_ (Kind) :
         for c in self.__super._checkers (e_type) :
             yield c
     # end def _checkers
+
+    def has_substance (self, obj) :
+        return self.get_substance (obj)
+    # end def has_substance
 
 # end class _Required_Mixin_
 
