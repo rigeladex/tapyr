@@ -108,6 +108,7 @@
 #    10-Dec-2013 (CT) Add `s_domain` and `secure_url`
 #    11-Dec-2013 (CT) Add `sane_referrer`
 #    10-Jan-2014 (CT) Change `send_email` to encode arguments to `logging`
+#    16-Jan-2014 (CT) Fix `Alias.SUPPORTED_METHODS`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,7 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        cls.SUPPORTED_METHODS = sms = {}
+        cls._SUPPORTED_METHODS = sms = {}
         for k in GTW.RST.HTTP_Method.Table :
             v = getattr (cls, k, None)
             if callable (v) :
@@ -520,6 +521,12 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @property
     @getattr_safe
+    def SUPPORTED_METHODS (self) :
+        return self._SUPPORTED_METHODS
+    # end def SUPPORTED_METHODS
+
+    @property
+    @getattr_safe
     def Type (self) :
         return self.__class__.__name__
     # end def Type
@@ -832,6 +839,17 @@ class RST_Alias (_Ancestor) :
         self.target = kw.pop  ("target")
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @property
+    @getattr_safe
+    def SUPPORTED_METHODS (self) :
+        target = self.target
+        if target :
+            result = target.SUPPORTED_METHODS
+        else :
+            result = self.__super.SUPPORTED_METHODS
+        return result
+    # end def SUPPORTED_METHODS
 
     @property
     @getattr_safe
