@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -272,6 +272,7 @@
 #    18-Sep-2013 (CT) Add change-guard for `new_epk` to `_set_ckd`, `_set_raw`
 #     4-Oct-2013 (CT) Remove guard for `pid` from `attr_prop`
 #     9-Oct-2013 (CT) Fix `created_by.computed`
+#    16-Jan-2014 (CT) Factor class/instance property `ui_name_T`
 #    ««revision-date»»···
 #--
 
@@ -497,9 +498,17 @@ class Entity (TFL.Meta.Object) :
         return self.__class__.m_recordable_attrs
     # end def recordable_attrs
 
+    @TFL.Meta.Class_Property
+    @TFL.Meta.Class_and_Instance_Method
+    def ui_name_T (soc) :
+        """Localized `ui_name`."""
+        ### Must not be a `Once_Property`, because `language` can change
+        return _T (soc.ui_name)
+    # end def ui_name_T
+
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
-            raise MOM.Error.Partial_Type (_T (cls.ui_name))
+            raise MOM.Error.Partial_Type (cls.ui_name_T)
         result = super (Entity, cls).__new__ (cls)
         result._home_scope = kw.get ("scope")
         result._init_meta_attrs ()
@@ -859,7 +868,7 @@ class Entity (TFL.Meta.Object) :
         try :
             return TFL.I18N.encode_o (self._repr (self.type_name))
         except AttributeError :
-            return "<%s Incomplete>" % (_T (self.ui_name), )
+            return "<%s Incomplete>" % (self.ui_name_T, )
     # end def __repr__
 
     def __str__ (self) :
@@ -1470,7 +1479,7 @@ class Id_Entity (Entity) :
             else :
                 raise TypeError \
                     ( _T ("%s needs the arguments %s, got %s instead")
-                    % (_T (cls.ui_name), needed, epk)
+                    % (cls.ui_name_T, needed, epk)
                     )
     # end def epkified
 
