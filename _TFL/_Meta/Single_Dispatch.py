@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.Meta.
@@ -34,6 +34,8 @@
 #    12-Sep-2013 (CT) Return `func`, not `self`, from
 #                     `Single_Dispatch_Method.add_type` (decorator chaining)
 #    12-Sep-2013 (CT) Allow more than one type arg for `add_type`
+#    16-Jan-2014 (CT) Add `Single_Dispatch.__new__` to allow arguments
+#                     when used as decorator
 #    ««revision-date»»···
 #--
 
@@ -54,6 +56,15 @@ class Single_Dispatch (TFL.Meta.Object) :
     """Dispatch based on the type of a single argument."""
 
     dispatch_on = 0
+
+    def __new__ (sd_cls, func = None, T = object, dispatch_on = None) :
+        if func is None :
+            return \
+                ( lambda func, T = T, dispatch_on = dispatch_on
+                    : sd_cls (func, T = T, dispatch_on = dispatch_on)
+                )
+        return super (Single_Dispatch, sd_cls).__new__ (sd_cls)
+    # end def __new__
 
     def __init__ (self, func, T = object, dispatch_on = None) :
         self.top_func = func
