@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -34,6 +34,8 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     8-Aug-2012 (CT) Add `example`
 #    12-Sep-2012 (CT) Derive from `Property`
+#    16-Jan-2014 (CT) Remove explicit definition of `address.ui_name`
+#                     (use default `Address`, not `Email address`, for it)
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,6 @@ class _PAP_Email_ (_Ancestor_Essence) :
             ignore_case    = True
             max_length     = 80
             rank           = 1
-            ui_name        = _("Email address")
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 

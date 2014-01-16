@@ -64,6 +64,7 @@
 #     7-May-2013 (CT) Set `Deleter.argn` to `None`, not `1`
 #    30-Oct-2013 (CT) Change `Group._pns_entries` to set `name` of E_Type_Alias
 #    15-Jan-2014 (CT) Factor `_call_submit_callback`
+#    16-Jan-2014 (CT) Add `_formatted_submit_entities`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,8 @@ import _GTW.FO
 import _GTW.jQuery
 
 from   _MOM.import_MOM          import MOM, Q
+
+import _MOM.formatted
 
 import _TFL._Meta.Object
 
@@ -456,13 +459,22 @@ class _Changer_ (_HTML_Action_) :
     def _call_submit_callback (self, cb, request, response, scope, fv, result) :
         if TFL.callable (cb) :
             try :
-                cb (request, response, scope, fv, result)
+                cb (self, request, response, scope, fv, result)
             except Exception as exc :
                 logging.exception \
                     ( "%s._rendered_post: %s -> %s"
                     , self.__class__, request.json ["cargo"], result
                     )
     # end def _call_submit_callback
+
+    def _formatted_submit_entities (self, scope, fv, skip_attrs = {}) :
+        result = []
+        for c in fv.entities () :
+            e = c.entity
+            if e is not None :
+                result.append (MOM.formatted (e, skip_attrs = skip_attrs))
+        return "\n\n".join (result)
+    # end def _formatted_submit_entities
 
     def _rendered_post (self, request, response) :
         json   = request.json

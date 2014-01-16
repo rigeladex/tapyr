@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -1372,7 +1372,7 @@ Non-primary attributes can be changed by direct assignment or by calling
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...
-    Attribute_Value: Can't set necessary attribute Mouse.weight to `u'one ton'`
+    Attribute_Value: Can't set necessary attribute Mouse.weight to `u'one ton'`.
         `Syntax error` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`

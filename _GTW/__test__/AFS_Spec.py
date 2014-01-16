@@ -140,7 +140,7 @@ _test_code = """
     Field_Role_Hidden left Person u'Person linked to Email' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field_Entity right Email u'Email of person' afs_div_seq
-    Field address Email address u'Email address (including domain)' None
+    Field address Address u'Email address (including domain)' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None
     Entity_List Person_has_Phone Person_has_Phone u'Link a person to a phone number' afs_div_seq
@@ -1393,7 +1393,7 @@ _person_test = """
     Field_Role_Hidden left Person u'Person linked to Email' afs_div_seq
     Fieldset primary  u'' afs_div_seq
     Field_Entity right Email u'Email of person' afs_div_seq
-    Field address Email address u'Email address (including domain)' None
+    Field address Address u'Email address (including domain)' None
     Fieldset optional  u'' afs_div_seq
     Field desc Description u'Short description of the link' None
     Entity_List Person_has_Phone Person_has_Phone u'Link a person to a phone number' afs_div_seq

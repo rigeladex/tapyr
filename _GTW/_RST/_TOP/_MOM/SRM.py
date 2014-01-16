@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -47,6 +47,8 @@
 #                     `_register_submit_error_callback`
 #    14-Jun-2013 (CT) Add CSV-rendering for `Regatta.Registration`
 #    15-Jun-2013 (CT) Add guard to CSV-rendering against empty `boats`
+#    16-Jan-2014 (CT) Use `MOM.formatted`, not home-grown code, for
+#                     registration email
 #    ««revision-date»»···
 #--
 
@@ -54,6 +56,7 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _GTW._RST._TOP._MOM.Mixin
 import _GTW._RST._TOP.Dir
@@ -342,43 +345,48 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
         return "\n\n".join (_gen (scope, fv))
     # end def _regatta_registration_changed_msg
 
-    def _regatta_registration_objects_msg (self, scope, fv) :
-        def _ents (scope, fv) :
-            for ev in fv.entity_values :
-                try :
-                    e = ev.entity
-                except AttributeError :
-                    pass
-                else :
-                    if e is not None :
-                        yield e
-        def _gen (scope, entities) :
-            from _MOM._Attr import Selector as S
-            AQ = S.editable
-            for x in sorted (uniq (entities), key = TFL.Getter.type_name) :
-                yield x.type_name, tuple \
-                    ( "%s = '%s'" % (a.name, getattr (x.FO, a.name))
-                    for a in AQ (x)
-                    if  a.has_substance (x)
+    def _regatta_registration_formatted (self, resource, scope, fv) :
+        skip   = dict \
+            ( { "SRM.Boat"          : dict
+                  ( left            = dict
+                      ( max_crew    = True
+                      )
+                  )
+              , "SRM.Regatta"       : dict
+                  ( boat_class      = True
+                  , is_cancelled    = True
+                  , kind            = True
+                  , left            = dict
+                      ( club        = True
+                      , desc        = True
+                      )
+                  , result          = True
+                  )
+              }
+            , skipper               = dict
+                ( left              = dict
+                    ( lifetime      = True
+                    , sex           = True
                     )
-        result = "\n".join \
-            (   "%s (%s)" % (t, ", ".join (a))
-            for t, a in _gen (scope, _ents (scope, fv))
+                , club              = dict
+                    ( long_name     = True
+                    )
+                )
             )
-        return result
-    # end def _regatta_registration_objects_msg
+        return resource._formatted_submit_entities (scope, fv, skip)
+    # end def _regatta_registration_formatted
 
-    def _register_submit_callback (self, request, response, scope, fv, result) :
-        message = self._regatta_registration_objects_msg (scope, fv)
+    def _register_submit_callback (self, resource, request, response, scope, fv, result) :
+        message = self._regatta_registration_formatted (resource, scope, fv)
         self._send_registration_email \
-            (request, response, scope, fv, result, message)
+            (resource, request, response, scope, fv, result, message)
     # end def _register_submit_callback
 
-    def _register_submit_error_callback (self, request, response, scope, fv, result) :
+    def _register_submit_error_callback (self, resource, request, response, scope, fv, result) :
         from _TFL.Formatter import Formatter
         formatted = Formatter (width = 1024)
         message = "\n\n-----------------\n\n".join \
-            (( self._regatta_registration_objects_msg (scope, fv)
+            (( self._regatta_registration_formatted (resource, scope, fv)
              , "\n\n".join
                  ( "%s\n    %s"
                    % (id, "\n    ".join (formatted (e, 2) for e in errors))
@@ -387,11 +395,13 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
              , self._regatta_registration_changed_msg (scope, fv)
             ))
         self._send_registration_email \
-            (request, response, scope, fv, result, message, "*** failed ***")
+            ( resource, request, response, scope, fv, result, message
+            , "*** failed ***"
+            )
     # end def _register_submit_error_callback
 
     def _send_registration_email \
-            ( self, request, response, scope, fv, result, message
+            ( self, resource, request, response, scope, fv, result, message
             , subject_tail = ""
             ):
         try :
