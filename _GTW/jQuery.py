@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -61,6 +61,7 @@
 #     4-Dec-2012 (CT) Add `//` to `JS_On_Ready` of `GTW_Externalize`
 #    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `GTW_jq_util`
 #     1-May-2013 (CT) Add `GTW_hd_input`
+#    17-Jan-2014 (CT) Add `GTW_Form_Externalize`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,12 @@ GTW.JS_On_Ready \
     ( """$("a[href^='http://'], a[href^='https://', a[href^='//']").gtw_externalize ();"""
     , name = "GTW_Externalize"
     )
+
+GTW.JS_On_Ready \
+    ( """$("form a").gtw_externalize ();"""
+    , name = "GTW_Form_Externalize"
+    )
+
 GTW.JS_On_Ready ("$GTW.fix_a_nospam ($);",          name = "de_obfuscate_a")
 
 GTW.Script \
