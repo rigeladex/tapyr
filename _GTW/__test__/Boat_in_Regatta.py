@@ -236,15 +236,16 @@ _test_code = r"""
     (<right.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.left.year.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.boat_class.AQ [Attr.Type.Querier Id_Entity]>, 'SRM._Boat_Class_')
     (<right.boat_class.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.boat_class.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.boat_class.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.boat_class.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<right.kind.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.races.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<right.result.AQ [Attr.Type.Querier Composite]>, 'SRM.Regatta_Result')
     (<right.result.date.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.result.software.AQ [Attr.Type.Querier String]>, u'-----')
@@ -253,6 +254,8 @@ _test_code = r"""
     (<right.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<right.races_counted.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<right.year.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Sailor')
     (<skipper.left.AQ [Attr.Type.Querier Id_Entity]>, 'PAP.Person')
     (<skipper.left.last_name.AQ [Attr.Type.Querier String_FL]>, u'-----')
@@ -321,14 +324,15 @@ _test_code = r"""
     right__left__pid
     right__left__type_name
     right__left__perma_name
+    right__left__year
     right__boat_class__name
     right__boat_class__last_cid
     right__boat_class__pid
     right__boat_class__type_name
     right__discards
-    right__is_cancelled
     right__kind
     right__races
+    right__is_cancelled
     right__result__date
     right__result__software
     right__result__status
@@ -336,6 +340,8 @@ _test_code = r"""
     right__pid
     right__type_name
     right__perma_name
+    right__races_counted
+    right__year
     skipper__left__last_name
     skipper__left__first_name
     skipper__left__middle_name
@@ -397,7 +403,7 @@ _test_code = r"""
     <MOM.Attr.Selector.Pred <MOM.Attr.Selector.Kind q_able> if Q.show_in_ui>
 
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
-    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.club.last_cid, Q.right.left.club.pid, Q.right.left.club.type_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.last_cid, Q.right.left.pid, Q.right.left.type_name, Q.right.left.perma_name, Q.right.boat_class.__raw_name, Q.right.boat_class.last_cid, Q.right.boat_class.pid, Q.right.boat_class.type_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.last_cid, Q.right.pid, Q.right.type_name, Q.right.perma_name)
+    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.club.last_cid, Q.right.left.club.pid, Q.right.left.club.type_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.last_cid, Q.right.left.pid, Q.right.left.type_name, Q.right.left.perma_name, Q.right.left.year, Q.right.boat_class.__raw_name, Q.right.boat_class.last_cid, Q.right.boat_class.pid, Q.right.boat_class.type_name, Q.right.discards, Q.right.kind, Q.right.races, Q.right.is_cancelled, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.last_cid, Q.right.pid, Q.right.type_name, Q.right.perma_name, Q.right.races_counted, Q.right.year)
 
     >>> scope.query_changes (type_name = "SRM.Regatta").order_by (Q.cid).first ()
     >>> scope.query_changes (type_name = "SRM.Regatta_C").order_by (Q.cid).first ()

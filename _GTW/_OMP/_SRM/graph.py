@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SRM.
@@ -79,6 +79,7 @@ def graph (app_type) :
                 ( Role.left
                     ( ET.SRM.Regatta_C
                         ( IS_A.SRM.Regatta
+                        , Skip.left
                         , offset = CD.E
                         )
                     , offset = CD.S

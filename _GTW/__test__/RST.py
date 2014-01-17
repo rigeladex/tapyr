@@ -332,6 +332,8 @@ _test_cqf = r"""
         (Q.type_name.in_ (['SRM.Boat_Class', 'SRM.Handicap'],),)
     SRM-_MOM_Link_n_
         (Q.type_name.in_ (['SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
+    SRM-_Regatta_
+        (Q.type_name.in_ (['SRM.Regatta_C', 'SRM.Regatta_H'],),)
     SWP-Clip_O
         (Q.type_name == SWP.Clip_O,)
     SWP-Clip_X
@@ -417,15 +419,16 @@ _test_cqf = r"""
     SRM-Object    ()
     SRM-Page    (Date-Slug `perma_name`, Entity `event`, Text `text`, Date_Interval `date`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, String `desc`)
     SRM-Race_Result    (Boat_in_Regatta `left`, Int `race`, Int `points`, String `status`, Boolean `discarded`)
-    SRM-Regatta    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`)
-    SRM-Regatta_C    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`, Boolean `is_team_race`)
+    SRM-Regatta    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, String `kind`, Int `races`, Boolean `is_cancelled`, Regatta_Result `result`)
+    SRM-Regatta_C    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, String `kind`, Int `races`, Boolean `is_cancelled`, Regatta_Result `result`, Boolean `is_team_race`)
     SRM-Regatta_Event    (String `name`, Date_Interval `date`, Entity `club`, String `desc`, Boolean `is_cancelled`)
-    SRM-Regatta_H    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`)
+    SRM-Regatta_H    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, String `kind`, Int `races`, Boolean `is_cancelled`, Regatta_Result `result`)
     SRM-Sailor    (Person `left`, Nation `nation`, Int `mna_number`, Entity `club`)
     SRM-Team    (Regatta_C `left`, String `name`, Entity `club`, String `desc`, Entity `leader`, Int `place`)
     SRM-Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
     SRM-_Boat_Class_    (String `name`,)
     SRM-_MOM_Link_n_    (Left `left`, Right `right`)
+    SRM-_Regatta_    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, String `kind`, Int `races`)
     SWP-Clip_O    (Object_PN `left`, Date_Interval `date_x`, Text `abstract`, Int `prio`)
     SWP-Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`, Url `link_to`, String `title`)
     SWP-Gallery    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`, Directory `directory`)
@@ -439,7 +442,7 @@ _test_cqf = r"""
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
+    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_Regatta\_|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -714,6 +717,7 @@ _test_doc = r"""
             , 'SRM-Team_has_Boat_in_Regatta'
             , 'SRM-_Boat_Class_'
             , 'SRM-_MOM_Link_n_'
+            , 'SRM-_Regatta_'
             , 'SWP-Clip_O'
             , 'SWP-Clip_X'
             , 'SWP-Gallery'
@@ -876,19 +880,6 @@ _test_doc = r"""
               , 'ui_name' : 'Discards'
               }
             , { 'default_value' : ''
-              , 'description' : 'Indicates that the regatta is cancelled'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_cancelled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is cancelled'
-              }
-            , { 'default_value' : ''
               , 'description' : 'Kind of regatta.'
               , 'example' : 'One race, one beer'
               , 'is_changeable' : True
@@ -912,6 +903,19 @@ _test_doc = r"""
               , 'p_type' : 'int'
               , 'type' : 'Int'
               , 'ui_name' : 'Races'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Indicates that the regatta is cancelled'
+              , 'example' : 'no'
+              , 'is_changeable' : True
+              , 'is_required' : False
+              , 'is_settable' : True
+              , 'kind' : 'optional'
+              , 'name' : 'is_cancelled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is cancelled'
               }
             , { 'attributes' :
                   [ { 'default_value' : ''
@@ -984,8 +988,8 @@ _test_doc = r"""
         , 'description' : 'Sailing regatta for one class or handicap.'
         , 'is_partial' : True
         , 'parents' :
-            [ { 'type_name' : 'SRM.Link1'
-              , 'url' : '/Doc/SRM-Link1'
+            [ { 'type_name' : 'SRM._Regatta_'
+              , 'url' : '/Doc/SRM-_Regatta_'
               }
             ]
         , 'type_name' : 'SRM.Regatta'
@@ -1039,19 +1043,6 @@ _test_doc = r"""
               , 'ui_name' : 'Discards'
               }
             , { 'default_value' : ''
-              , 'description' : 'Indicates that the regatta is cancelled'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_cancelled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is cancelled'
-              }
-            , { 'default_value' : ''
               , 'description' : 'Kind of regatta.'
               , 'example' : 'One race, one beer'
               , 'is_changeable' : True
@@ -1075,6 +1066,19 @@ _test_doc = r"""
               , 'p_type' : 'int'
               , 'type' : 'Int'
               , 'ui_name' : 'Races'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Indicates that the regatta is cancelled'
+              , 'example' : 'no'
+              , 'is_changeable' : True
+              , 'is_required' : False
+              , 'is_settable' : True
+              , 'kind' : 'optional'
+              , 'name' : 'is_cancelled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is cancelled'
               }
             , { 'attributes' :
                   [ { 'default_value' : ''
@@ -1216,19 +1220,6 @@ _test_doc = r"""
               , 'ui_name' : 'Discards'
               }
             , { 'default_value' : ''
-              , 'description' : 'Indicates that the regatta is cancelled'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_cancelled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is cancelled'
-              }
-            , { 'default_value' : ''
               , 'description' : 'Kind of regatta.'
               , 'example' : 'One race, one beer'
               , 'is_changeable' : True
@@ -1252,6 +1243,19 @@ _test_doc = r"""
               , 'p_type' : 'int'
               , 'type' : 'Int'
               , 'ui_name' : 'Races'
+              }
+            , { 'default_value' : ''
+              , 'description' : 'Indicates that the regatta is cancelled'
+              , 'example' : 'no'
+              , 'is_changeable' : True
+              , 'is_required' : False
+              , 'is_settable' : True
+              , 'kind' : 'optional'
+              , 'name' : 'is_cancelled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Is cancelled'
               }
             , { 'attributes' :
                   [ { 'default_value' : ''
@@ -1882,6 +1886,7 @@ _test_get = r"""
             , 'SRM-Team_has_Boat_in_Regatta'
             , 'SRM-_Boat_Class_'
             , 'SRM-_MOM_Link_n_'
+            , 'SRM-_Regatta_'
             , 'SWP-Clip_O'
             , 'SWP-Clip_X'
             , 'SWP-Gallery'
@@ -1972,6 +1977,7 @@ _test_get = r"""
             , '/v1/SRM-Team_has_Boat_in_Regatta'
             , '/v1/SRM-_Boat_Class_'
             , '/v1/SRM-_MOM_Link_n_'
+            , '/v1/SRM-_Regatta_'
             , '/v1/SWP-Clip_O'
             , '/v1/SWP-Clip_X'
             , '/v1/SWP-Gallery'
@@ -2277,9 +2283,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2373,9 +2379,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2469,9 +2475,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2533,10 +2539,10 @@ _test_get = r"""
 
     >>> _ = show (R.get ("/v1/SRM-Regatta.csv?verbose&raw&brief"))
     { 'content' :
-        [ 'left,boat_class,discards,is_cancelled,kind,races,result.date,result.software,result.status'
-        , '10,7,,no,,,,,'
-        , '10,9,,no,,,,,'
-        , '13,7,,no,,,,,'
+        [ 'left,boat_class,discards,kind,races,is_cancelled,result.date,result.software,result.status'
+        , '10,7,,,,no,,,'
+        , '10,9,,,,no,,,'
+        , '13,7,,,,no,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose&raw&brief'
@@ -2544,10 +2550,10 @@ _test_get = r"""
 
     >>> _ = show (R.get ("/v1/SRM-Regatta.csv?verbose&raw"))
     { 'content' :
-        [ 'left.pid,left.url,boat_class.pid,boat_class.url,discards,is_cancelled,kind,races,result.date,result.software,result.status'
-        , '10,/v1/SRM-Regatta_Event/10,7,/v1/SRM-Boat_Class/7,,no,,,,,'
-        , '10,/v1/SRM-Regatta_Event/10,9,/v1/SRM-Handicap/9,,no,,,,,'
-        , '13,/v1/SRM-Regatta_Event/13,7,/v1/SRM-Boat_Class/7,,no,,,,,'
+        [ 'left.pid,left.url,boat_class.pid,boat_class.url,discards,kind,races,is_cancelled,result.date,result.software,result.status'
+        , '10,/v1/SRM-Regatta_Event/10,7,/v1/SRM-Boat_Class/7,,,,no,,,'
+        , '10,/v1/SRM-Regatta_Event/10,9,/v1/SRM-Handicap/9,,,,no,,,'
+        , '13,/v1/SRM-Regatta_Event/13,7,/v1/SRM-Boat_Class/7,,,,no,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose&raw'
@@ -2570,9 +2576,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2666,9 +2672,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2715,9 +2721,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2791,9 +2797,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2842,9 +2848,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'
@@ -2892,9 +2898,9 @@ _test_get = r"""
             [ 'left'
             , 'boat_class'
             , 'discards'
-            , 'is_cancelled'
             , 'kind'
             , 'races'
+            , 'is_cancelled'
             , 'result.date'
             , 'result.software'
             , 'result.status'

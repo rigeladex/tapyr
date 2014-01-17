@@ -344,15 +344,16 @@ _test_code = """
         pid                 0
         type_name           3
         perma_name          3
+        year                0
       boat_class          2
         name                3
         last_cid            0
         pid                 0
         type_name           3
       discards            0
-      is_cancelled        1
       kind                3
       races               0
+      is_cancelled        1
       result              None
         date                0
         software            3
@@ -361,6 +362,8 @@ _test_code = """
       pid                 0
       type_name           3
       perma_name          3
+      races_counted       0
+      year                0
     skipper             2
       left                2
         last_name           3
@@ -446,14 +449,15 @@ _test_code = """
         Surrogate `pid` right.left.pid
         String `type_name` right.left.type_name
         String `perma_name` right.left.perma_name
+        Int `year` right.left.year
         String `name` right.boat_class.name
         Int `last_cid` right.boat_class.last_cid
         Surrogate `pid` right.boat_class.pid
         String `type_name` right.boat_class.type_name
         Int `discards` right.discards
-        Boolean `is_cancelled` right.is_cancelled
         String `kind` right.kind
         Int `races` right.races
+        Boolean `is_cancelled` right.is_cancelled
         Date-Time `date` right.result.date
         String `software` right.result.software
         String `status` right.result.status
@@ -461,15 +465,17 @@ _test_code = """
         Surrogate `pid` right.pid
         String `type_name` right.type_name
         String `perma_name` right.perma_name
+        Int `races_counted` right.races_counted
+        Int `year` right.year
     Regatta `right` unwrapped
         String `name` left.name
         Date `start` left.date.start
         Date `finish` left.date.finish
         String `name` boat_class.name
         Int `discards` discards
-        Boolean `is_cancelled` is_cancelled
         String `kind` kind
         Int `races` races
+        Boolean `is_cancelled` is_cancelled
         Date-Time `date` result.date
         String `software` result.software
         String `status` result.status
@@ -477,6 +483,8 @@ _test_code = """
         Surrogate `pid` pid
         String `type_name` type_name
         String `perma_name` perma_name
+        Int `races_counted` races_counted
+        Int `year` year
     Entity `skipper`
         String `last_name` skipper.left.last_name
         String `first_name` skipper.left.first_name

@@ -231,6 +231,7 @@ _test_roles = """
     SRM.Boat Boat_Class `left` SRM.Boat_Class
     SWP.Clip_O Object_PN `left` SWP.Object_PN
     SWP.Picture Gallery `left` SWP.Gallery
+    SRM._Regatta_ Regatta_Event `left` SRM.Regatta_Event
     SRM.Regatta Regatta_Event `left` SRM.Regatta_Event
     SRM.Regatta_C Regatta_Event `left` SRM.Regatta_Event
     SRM.Regatta_H Regatta_Event `left` SRM.Regatta_Event

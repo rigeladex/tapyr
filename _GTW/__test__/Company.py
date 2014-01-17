@@ -1322,14 +1322,15 @@ _test_entity_attr = """
         left                                primary    PAP.Person                PAP.Biz_Man
         owns                                query      PAP.Company_P             PAP.Company_P
     ...SRM.Link1
-    ....SRM.Regatta
+    ....SRM._Regatta_
         boat_class                          primary    SRM._Boat_Class_
+        left                                primary    SRM.Regatta_Event         SRM._Regatta_
+    .....SRM.Regatta
         boats                               query      SRM.Boat_in_Regatta       SRM.Boat_in_Regatta
-        left                                primary    SRM.Regatta_Event         SRM.Regatta
-    .....SRM.Regatta_C
+    ......SRM.Regatta_C
         boat_class                          primary    SRM.Boat_Class
         teams                               query      SRM.Team                  SRM.Team
-    .....SRM.Regatta_H
+    ......SRM.Regatta_H
         boat_class                          primary    SRM.Handicap
     ....SRM.Boat
         left                                primary    SRM.Boat_Class            SRM.Boat
@@ -1487,7 +1488,7 @@ _test_entity_attr = """
     ....SRM.Boat_Class
         boats                               query      SRM.Boat                  SRM.Boat
     ...SRM.Regatta_Event
-        regattas                            query      SRM.Regatta               SRM.Regatta
+        regattas                            query      SRM._Regatta_             SRM._Regatta_
     .Auth.Id_Entity
     .EVT.Id_Entity
     .SWP.Id_Entity
@@ -1968,6 +1969,7 @@ _test_entity_attr = """
     SRM.Team_has_Boat_in_Regatta             True
     SRM._Boat_Class_                         True
     SRM._MOM_Link_n_                         True
+    SRM._Regatta_                            True
     SWP.Clip_O                               True
     SWP.Clip_X                               True
     SWP.Gallery                              True

@@ -70,8 +70,9 @@ _test_DET = """
     ...         for kind, ET in sorted (xs, key = lambda x : x [1].i_rank) :
     ...             flag = "*" if not ET.is_partial else ""
     ...             print ("    %%-30s%%-2s %%s" %% (ET.type_name, flag, kind.e_type.type_name))
-    boat_class [SRM.Regatta]
-        SRM.Regatta                      SRM.Regatta
+    boat_class [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
         SRM.Regatta_C                 *  SRM.Regatta_C
         SRM.Regatta_H                 *  SRM.Regatta_H
     contents [SWP.Page_Mixin]
@@ -106,10 +107,11 @@ _test_DET = """
         PAP.Person_has_Email          *  PAP.Subject_has_Property
         PAP.Company_has_Address       *  PAP.Subject_has_Property
         PAP.Person_has_Address        *  PAP.Subject_has_Property
-    discards [SRM.Regatta]
-        SRM.Regatta                      SRM.Regatta
-        SRM.Regatta_C                 *  SRM.Regatta
-        SRM.Regatta_H                 *  SRM.Regatta
+    discards [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
     extension [PAP.Subject_has_Phone]
         PAP.Subject_has_Phone            PAP.Subject_has_Phone
         PAP.Company_has_Phone         *  PAP.Subject_has_Phone
@@ -133,10 +135,11 @@ _test_DET = """
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
-    kind [SRM.Regatta]
-        SRM.Regatta                      SRM.Regatta
-        SRM.Regatta_C                 *  SRM.Regatta
-        SRM.Regatta_H                 *  SRM.Regatta
+    kind [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
     last_cid [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
@@ -194,6 +197,7 @@ _test_DET = """
         SRM.Club                      *  MOM.Id_Entity
         SRM.Regatta_Event             *  MOM.Id_Entity
         SRM.Page                      *  MOM.Id_Entity
+        SRM._Regatta_                    MOM.Id_Entity
         SRM.Regatta                      MOM.Id_Entity
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
@@ -243,9 +247,10 @@ _test_DET = """
         SRM.Link                         MOM.Link
         SRM.Link1                        MOM.Link
         SRM.Boat                      *  SRM.Boat
-        SRM.Regatta                      SRM.Regatta
-        SRM.Regatta_C                 *  SRM.Regatta
-        SRM.Regatta_H                 *  SRM.Regatta
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
         SRM.Sailor                    *  SRM.Sailor
         SRM._MOM_Link_n_                 MOM.Link
         SRM.Link2                        MOM.Link
@@ -278,10 +283,11 @@ _test_DET = """
         SRM._Boat_Class_                 SRM._Boat_Class_
         SRM.Boat_Class                *  SRM.Boat_Class
         SRM.Handicap                  *  SRM.Handicap
-    perma_name [SRM.Regatta]
-        SRM.Regatta                      SRM.Regatta
-        SRM.Regatta_C                 *  SRM.Regatta
-        SRM.Regatta_H                 *  SRM.Regatta
+    perma_name [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
     perma_name [SWP.Object_PN]
         SWP.Object_PN                    SWP.Object_PN
         SWP.Page                      *  SWP.Object_PN
@@ -346,6 +352,7 @@ _test_DET = """
         SRM.Club                      *  MOM.Id_Entity
         SRM.Regatta_Event             *  MOM.Id_Entity
         SRM.Page                      *  MOM.Id_Entity
+        SRM._Regatta_                    MOM.Id_Entity
         SRM.Regatta                      MOM.Id_Entity
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
@@ -374,10 +381,16 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Page_Mixin
         SWP.Clip_X                    *  SWP.Page_Mixin
         SRM.Page                      *  SWP.Page_Mixin
-    races [SRM.Regatta]
-        SRM.Regatta                      SRM.Regatta
-        SRM.Regatta_C                 *  SRM.Regatta
-        SRM.Regatta_H                 *  SRM.Regatta
+    races [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
+    races_counted [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
     result [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
@@ -483,6 +496,7 @@ _test_DET = """
         SRM.Club                      *  MOM.Id_Entity
         SRM.Regatta_Event             *  MOM.Id_Entity
         SRM.Page                      *  MOM.Id_Entity
+        SRM._Regatta_                    MOM.Id_Entity
         SRM.Regatta                      MOM.Id_Entity
         SRM.Regatta_C                 *  MOM.Id_Entity
         SRM.Regatta_H                 *  MOM.Id_Entity
@@ -506,6 +520,11 @@ _test_DET = """
         PAP.Person_has_Email          *  MOM.Id_Entity
         PAP.Company_has_Address       *  MOM.Id_Entity
         PAP.Person_has_Address        *  MOM.Id_Entity
+    year [SRM._Regatta_]
+        SRM._Regatta_                    SRM._Regatta_
+        SRM.Regatta                      SRM._Regatta_
+        SRM.Regatta_C                 *  SRM._Regatta_
+        SRM.Regatta_H                 *  SRM._Regatta_
 
 
     >>> name, DT = ("left", "MOM.Link")
@@ -537,9 +556,10 @@ _test_DET = """
     SRM.Link                       MOM.Link                       None
     SRM.Link1                      MOM.Link                       None
     SRM.Boat                       SRM.Boat                       MOM.Link1
-    SRM.Regatta                    SRM.Regatta                    MOM.Link1
-    SRM.Regatta_C                  SRM.Regatta                    MOM.Link1
-    SRM.Regatta_H                  SRM.Regatta                    MOM.Link1
+    SRM._Regatta_                  SRM._Regatta_                  MOM.Link1
+    SRM.Regatta                    SRM._Regatta_                  MOM.Link1
+    SRM.Regatta_C                  SRM._Regatta_                  MOM.Link1
+    SRM.Regatta_H                  SRM._Regatta_                  MOM.Link1
     SRM.Sailor                     SRM.Sailor                     MOM.Link1
     SRM._MOM_Link_n_               MOM.Link                       None
     SRM.Link2                      MOM.Link                       None
@@ -651,6 +671,7 @@ _test_DET = """
     SRM.Link                         None
     SRM.Link1                        None
     SRM.Boat                      *  SRM.Boat_Class
+    SRM._Regatta_                    SRM.Regatta_Event
     SRM.Regatta                      SRM.Regatta_Event
     SRM.Regatta_C                 *  SRM.Regatta_Event
     SRM.Regatta_H                 *  SRM.Regatta_Event
@@ -1054,9 +1075,10 @@ _test_types = """
             SWP.Picture
           SRM.Link1
             SRM.Boat
-            SRM.Regatta
-              SRM.Regatta_C
-              SRM.Regatta_H
+            SRM._Regatta_
+              SRM.Regatta
+                SRM.Regatta_C
+                SRM.Regatta_H
             SRM.Sailor
             SRM.Race_Result
             SRM.Team

@@ -386,6 +386,7 @@ _test_ancestors = """
     MOM._Thumb_
     SWP.Picture                          < MOM.Id_Entity
     SRM.Page                             < SWP.Page         < MOM.Id_Entity
+    SRM._Regatta_                        < MOM.Id_Entity
     SRM.Regatta                          < MOM.Id_Entity
     SRM.Regatta_C                        < SRM.Regatta      < MOM.Id_Entity
     SRM.Regatta_H                        < SRM.Regatta      < MOM.Id_Entity
@@ -501,6 +502,7 @@ _test_ancestors = """
     MOM._Thumb_                          None
     SWP.Picture                          mom_id_entity
     SRM.Page                             mom_id_entity
+    SRM._Regatta_                        mom_id_entity
     SRM.Regatta                          mom_id_entity
     SRM.Regatta_C                        mom_id_entity
     SRM.Regatta_H                        mom_id_entity
@@ -1239,6 +1241,8 @@ _test_attr_wrappers = """
           Computed_Set_Mixin, Computed_Mixin, _Auto_Update_Lazy_Mixin_, _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper_R : Link_Ref_List `regattas`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_Q : Int `year`
+          Query, _Cached_, _Volatile_, _System_
     SWP.Link
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -1351,6 +1355,23 @@ _test_attr_wrappers = """
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       Kind_Wrapper_S : Entity `event`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+    SRM._Regatta_
+      Kind_Wrapper_P : Entity `boat_class`
+          _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_P : Int `discards`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : String `kind`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : Regatta_Event `left`
+          Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_P : String `perma_name`
+          Computed_Set_Mixin, Computed_Mixin, _Auto_Update_Lazy_Mixin_, _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+      Kind_Wrapper_P : Int `races`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper_Q : Int `races_counted`
+          Query, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_Q : Int `year`
+          Query, _Cached_, _Volatile_, _System_
     SRM.Regatta
       Kind_Wrapper_S : Entity `boat_class`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -1368,6 +1389,8 @@ _test_attr_wrappers = """
           Computed_Set_Mixin, Computed_Mixin, _Auto_Update_Lazy_Mixin_, _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper : Int `races`
           Optional, _User_, _DB_Attr_
+      Kind_Wrapper_Q : Int `races_counted`
+          Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Regatta_Result `result`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         SRM.Regatta_Result
@@ -1377,11 +1400,16 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
           Kind_Wrapper : String `status`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_Q : Int `year`
+          Query, _Cached_, _Volatile_, _System_
     SRM.Regatta_C
       Kind_Wrapper : Boolean `is_team_race`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `teams`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+    SRM.Regatta_H
+      Kind_Wrapper_Q : Blob `handicap`
+          Query, _Cached_, _Volatile_, _System_
     SRM.Sailor
       Kind_Wrapper_R : Link_Ref_List `boat_in_regatta_links`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -2807,6 +2835,7 @@ _test_q_able = """
       <SAW : Link_Ref_List `regattas`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int `year`>
     <SAW : SWP.Link [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
@@ -2929,6 +2958,22 @@ _test_q_able = """
       <SAW : String `title` [swp_page.title]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM._Regatta_ [mom_id_entity]>
+      <SAW : Entity `boat_class` (SRM.Regatta)>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Int `discards` (SRM.Regatta)>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : String `kind` (SRM.Regatta)>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Regatta_Event `left` (SRM.Regatta)>
+      <SAW : String `perma_name` (SRM.Regatta)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Int `races` (SRM.Regatta)>
+      <SAW : Int `races_counted`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int `year`>
     <SAW : SRM.Regatta [srm_regatta : mom_id_entity]>
       <SAW : Entity `boat_class` [srm_regatta.boat_class]>
       <SAW : Link_Ref_List `boats`>
@@ -2943,9 +2988,11 @@ _test_q_able = """
       <SAW : String `perma_name` [srm_regatta.perma_name]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
+      <SAW : Int `races_counted`>
       <SAW : Regatta_Result `result` [srm_regatta.result__date, srm_regatta.result__software, srm_regatta.result__status]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int `year`>
     <SAW : SRM.Regatta_C [srm_regatta_c : srm_regatta : mom_id_entity]>
       <SAW : Entity `boat_class` [srm_regatta.boat_class]>
       <SAW : Link_Ref_List `boats`>
@@ -2961,16 +3008,19 @@ _test_q_able = """
       <SAW : String `perma_name` [srm_regatta.perma_name]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
+      <SAW : Int `races_counted`>
       <SAW : Regatta_Result `result` [srm_regatta.result__date, srm_regatta.result__software, srm_regatta.result__status]>
       <SAW : Link_Ref_List `teams`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int `year`>
     <SAW : SRM.Regatta_H [srm_regatta_h : srm_regatta : mom_id_entity]>
       <SAW : Entity `boat_class` [srm_regatta.boat_class]>
       <SAW : Link_Ref_List `boats`>
       <SAW : Rev_Ref `creation`>
       <SAW : Int `discards` [srm_regatta.discards]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Blob `handicap`>
       <SAW : Boolean `is_cancelled` [srm_regatta.is_cancelled]>
       <SAW : String `kind` [srm_regatta.kind]>
       <SAW : Rev_Ref `last_change`>
@@ -2979,9 +3029,11 @@ _test_q_able = """
       <SAW : String `perma_name` [srm_regatta.perma_name]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
+      <SAW : Int `races_counted`>
       <SAW : Regatta_Result `result` [srm_regatta.result__date, srm_regatta.result__software, srm_regatta.result__status]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int `year`>
     <SAW : SRM.Sailor [srm_sailor : mom_id_entity]>
       <SAW : Link_Ref_List `boat_in_regatta_links`>
       <SAW : Entity `club` [srm_sailor.club]>
@@ -4115,6 +4167,7 @@ _test_q_able = """
       regattas                      : regattas
       type_name                     : type_name
       x_locked                      : x_locked
+      year                          : year
     <SAW : SWP.Link [mom_id_entity]>
       creation                      : creation
       electric                      : electric
@@ -4253,6 +4306,22 @@ _test_q_able = """
       title                         : title
       type_name                     : type_name
       x_locked                      : x_locked
+    <SAW : SRM._Regatta_ [mom_id_entity]>
+      boat_class                    : boat_class
+      creation                      : creation
+      discards                      : discards
+      electric                      : electric
+      kind                          : kind
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : event, left
+      perma_name                    : perma_name
+      pid                           : pid
+      races                         : races
+      races_counted                 : races_counted
+      type_name                     : type_name
+      x_locked                      : x_locked
+      year                          : year
     <SAW : SRM.Regatta [srm_regatta : mom_id_entity]>
       boat_class                    : boat_class
       boats                         : boats
@@ -4267,12 +4336,14 @@ _test_q_able = """
       perma_name                    : perma_name
       pid                           : pid
       races                         : races
+      races_counted                 : races_counted
       result                        : result
           date                          : result.date
           software                      : result.software
           status                        : result.status
       type_name                     : type_name
       x_locked                      : x_locked
+      year                          : year
     <SAW : SRM.Regatta_C [srm_regatta_c : srm_regatta : mom_id_entity]>
       boat_class                    : boat_class
       boats                         : boats
@@ -4288,6 +4359,7 @@ _test_q_able = """
       perma_name                    : perma_name
       pid                           : pid
       races                         : races
+      races_counted                 : races_counted
       result                        : result
           date                          : result.date
           software                      : result.software
@@ -4295,12 +4367,14 @@ _test_q_able = """
       teams                         : teams
       type_name                     : type_name
       x_locked                      : x_locked
+      year                          : year
     <SAW : SRM.Regatta_H [srm_regatta_h : srm_regatta : mom_id_entity]>
       boat_class                    : boat_class
       boats                         : boats
       creation                      : creation
       discards                      : discards
       electric                      : electric
+      handicap                      : handicap
       is_cancelled                  : is_cancelled
       kind                          : kind
       last_change                   : last_change
@@ -4309,12 +4383,14 @@ _test_q_able = """
       perma_name                    : perma_name
       pid                           : pid
       races                         : races
+      races_counted                 : races_counted
       result                        : result
           date                          : result.date
           software                      : result.software
           status                        : result.status
       type_name                     : type_name
       x_locked                      : x_locked
+      year                          : year
     <SAW : SRM.Sailor [srm_sailor : mom_id_entity]>
       boat_in_regatta_links         : boat_in_regatta_links
       club                          : club
@@ -5481,6 +5557,7 @@ _test_qc_map = """
         regattas                  : <SAW : Link_Ref_List `regattas`>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+        year                      : <SAW : Int `year`>
     <SAW : SWP.Link [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
@@ -5632,6 +5709,23 @@ _test_qc_map = """
         title                     : swp_page.title
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM._Regatta_ [mom_id_entity]>
+        boat_class                : <SAW : Entity `boat_class` (SRM.Regatta)>
+        creation                  : <SAW : Rev_Ref `creation`>
+        discards                  : <SAW : Int `discards` (SRM.Regatta)>
+        electric                  : mom_id_entity.electric
+        event                     : <SAW : Regatta_Event `left` (SRM.Regatta)>
+        kind                      : <SAW : String `kind` (SRM.Regatta)>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Regatta_Event `left` (SRM.Regatta)>
+        perma_name                : <SAW : String `perma_name` (SRM.Regatta)>
+        pid                       : mom_id_entity.pid
+        races                     : <SAW : Int `races` (SRM.Regatta)>
+        races_counted             : <SAW : Int `races_counted`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+        year                      : <SAW : Int `year`>
     <SAW : SRM.Regatta [srm_regatta : mom_id_entity]>
         boat_class                : srm_regatta.boat_class
         boats                     : <SAW : Link_Ref_List `boats`>
@@ -5647,6 +5741,7 @@ _test_qc_map = """
         perma_name                : srm_regatta.perma_name
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races
+        races_counted             : <SAW : Int `races_counted`>
         result                    : <Col-Mapper for SRM.Regatta_Result>
             date                  : srm_regatta.result__date
             software              : srm_regatta.result__software
@@ -5656,6 +5751,7 @@ _test_qc_map = """
         result.status             : srm_regatta.result__status
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+        year                      : <SAW : Int `year`>
     <SAW : SRM.Regatta_C [srm_regatta_c : srm_regatta : mom_id_entity]>
         boat_class                : srm_regatta.boat_class
         boats                     : <SAW : Link_Ref_List `boats`>
@@ -5672,6 +5768,7 @@ _test_qc_map = """
         perma_name                : srm_regatta.perma_name
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races
+        races_counted             : <SAW : Int `races_counted`>
         result                    : <Col-Mapper for SRM.Regatta_Result>
             date                  : srm_regatta.result__date
             software              : srm_regatta.result__software
@@ -5682,6 +5779,7 @@ _test_qc_map = """
         teams                     : <SAW : Link_Ref_List `teams`>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+        year                      : <SAW : Int `year`>
     <SAW : SRM.Regatta_H [srm_regatta_h : srm_regatta : mom_id_entity]>
         boat_class                : srm_regatta.boat_class
         boats                     : <SAW : Link_Ref_List `boats`>
@@ -5689,6 +5787,7 @@ _test_qc_map = """
         discards                  : srm_regatta.discards
         electric                  : mom_id_entity.electric
         event                     : srm_regatta.left
+        handicap                  : <SAW : Blob `handicap`>
         is_cancelled              : srm_regatta.is_cancelled
         kind                      : srm_regatta.kind
         last_change               : <SAW : Rev_Ref `last_change`>
@@ -5697,6 +5796,7 @@ _test_qc_map = """
         perma_name                : srm_regatta.perma_name
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races
+        races_counted             : <SAW : Int `races_counted`>
         result                    : <Col-Mapper for SRM.Regatta_Result>
             date                  : srm_regatta.result__date
             software              : srm_regatta.result__software
@@ -5706,6 +5806,7 @@ _test_qc_map = """
         result.status             : srm_regatta.result__status
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+        year                      : <SAW : Int `year`>
     <SAW : SRM.Sailor [srm_sailor : mom_id_entity]>
         __raw_mna_number          : srm_sailor.__raw_mna_number
         boat_in_regatta_links     : <SAW : Link_Ref_List `boat_in_regatta_links`>
@@ -10947,6 +11048,30 @@ _test_select = """
         FROM mom_id_entity
            JOIN swp_page ON mom_id_entity.pid = swp_page.pid
            JOIN srm_page ON swp_page.pid = srm_page.pid
+    SRM._Regatta_
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               srm_regatta."left" AS srm_regatta_left,
+               srm_regatta.boat_class AS srm_regatta_boat_class,
+               srm_regatta.discards AS srm_regatta_discards,
+               srm_regatta.is_cancelled AS srm_regatta_is_cancelled,
+               srm_regatta.kind AS srm_regatta_kind,
+               srm_regatta.perma_name AS srm_regatta_perma_name,
+               srm_regatta.pid AS srm_regatta_pid,
+               srm_regatta.races AS srm_regatta_races,
+               srm_regatta.result__date AS srm_regatta_result__date,
+               srm_regatta.result__software AS srm_regatta_result__software,
+               srm_regatta.result__status AS srm_regatta_result__status,
+               srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
+               srm_regatta_c.pid AS srm_regatta_c_pid
+        FROM mom_id_entity
+           LEFT OUTER JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
+           LEFT OUTER JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
+        WHERE mom_id_entity.pid = srm_regatta.pid
+            OR mom_id_entity.pid = srm_regatta_c.pid
     SRM.Regatta
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -12136,6 +12261,10 @@ _test_select_strict = """
            JOIN swp_page ON mom_id_entity.pid = swp_page.pid
            JOIN srm_page ON swp_page.pid = srm_page.pid
         WHERE mom_id_entity.type_name = :type_name_1
+    SRM._Regatta_
+        SELECT mom_id_entity.pid
+        FROM mom_id_entity
+        WHERE false
     SRM.Regatta
         SELECT srm_regatta.pid
         FROM srm_regatta
@@ -12576,7 +12705,7 @@ _test_tables = """
     MOM.Link1                                : None
     MOM.Link2                                : None
     MOM.Link3                                : None
-    MOM.MD_Change                     : mom_md_change
+    MOM.MD_Change                            : mom_md_change
     MOM.Object                               : None
     MOM.Position                             : None
     MOM.Time_Interval                        : None
@@ -12636,6 +12765,7 @@ _test_tables = """
     SRM.Team_has_Boat_in_Regatta             : srm_team_has_boat_in_regatta
     SRM._Boat_Class_                         : srm__boat_class_
     SRM._MOM_Link_n_                         : None
+    SRM._Regatta_                            : None
     SWP.Clip_O                               : swp_clip_o
     SWP.Clip_X                               : swp_clip_x
     SWP.Gallery                              : swp_gallery

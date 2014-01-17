@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -112,7 +112,7 @@ _test_code = """
 
     >>> crs = SRM.Regatta_Event.regattas
     >>> print crs, ":", crs.Ref_Type.type_name
-    Link_Ref_List `regattas` : SRM.Regatta
+    Link_Ref_List `regattas` : SRM._Regatta_
 
     >>> sorted (rev.regattas)
     [SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'yardstick', ))]

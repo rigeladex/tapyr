@@ -39,6 +39,7 @@
 #    24-Jan-2012 (CT) Correct `club.description`
 #    30-May-2012 (CT) Add attribute `is_cancelled`
 ##     9-Jan-2014 (CT) Use `–`, not `--`
+##    17-Jan-2014 (CT) Change attribute `year` to `Attr.Query`
 ##    ««revision-date»»···
 #--
 
@@ -178,14 +179,8 @@ class Regatta_Event (_Ancestor_Essence) :
         class year (A_Int) :
             """Year in which the regatta happens."""
 
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("date", )
-
-            def computed (self, obj) :
-                if obj.date and obj.date.start :
-                    return obj.date.start.year
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.date.start.year
 
         # end class year
 

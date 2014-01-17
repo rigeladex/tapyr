@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -52,6 +52,8 @@
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    25-Jun-2013 (CT) Add `max_value`, `example`, to integer attributes
+#    17-Jan-2014 (CT) Factor `_Regatta_`
+#    17-Jan-2014 (CT) Change attributes `year`, `handicap` to `Attr.Query`
 #    ««revision-date»»···
 #--
 
@@ -68,11 +70,9 @@ import _TFL.Decorator
 
 _Ancestor_Essence = GTW.OMP.SRM.Link1
 
-class Regatta (_Ancestor_Essence) :
-    """Sailing regatta for one class or handicap."""
+class _Regatta_ (_Ancestor_Essence) :
 
     is_partial  = True
-    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -109,18 +109,6 @@ class Regatta (_Ancestor_Essence) :
             min_value          = 0
 
         # end class discards
-
-        class is_cancelled (A_Boolean) :
-            """Indicates that the regatta is cancelled"""
-
-            kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-
-            def computed (self, obj) :
-                return obj.event.is_cancelled
-            # end def computed
-
-        # end class is_cancelled
 
         class kind (A_String) :
             """Kind of regatta."""
@@ -167,12 +155,13 @@ class Regatta (_Ancestor_Essence) :
 
         # end class races
 
-        class result (A_Regatta_Result) :
-            """Information about result."""
+        class races_counted (A_Int) :
+            """Number of races counted for result of regatta."""
 
-            kind               = Attr.Optional
+            kind               = Attr.Query
+            query              = Q.races - Q.discards
 
-        # end class result
+        # end class races_counted
 
         class short_title (A_String) :
 
@@ -200,15 +189,47 @@ class Regatta (_Ancestor_Essence) :
 
         class year (A_Int) :
 
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("left", )
-
-            def computed (self, obj) :
-                return obj.left.year
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.left.year
 
         # end class year
+
+    # end class _Attributes
+
+# end class _Regatta_
+
+_Ancestor_Essence = _Regatta_
+
+class Regatta (_Ancestor_Essence) :
+    """Sailing regatta for one class or handicap."""
+
+    is_partial  = True
+    is_relevant = True
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        ### Non-primary attributes
+
+        class is_cancelled (A_Boolean) :
+            """Indicates that the regatta is cancelled"""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                return obj.event.is_cancelled
+            # end def computed
+
+        # end class is_cancelled
+
+        class result (A_Regatta_Result) :
+            """Information about result."""
+
+            kind               = Attr.Optional
+
+        # end class result
 
     # end class _Attributes
 
@@ -267,13 +288,8 @@ class Regatta_H (_Ancestor_Essence) :
 
         class handicap (A_Blob) :
 
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("boat_class",)
-
-            def computed (self, obj) :
-                return obj.boat_class
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.boat_class
 
         # end class handicap
 

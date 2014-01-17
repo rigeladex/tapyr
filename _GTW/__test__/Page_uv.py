@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -211,6 +211,7 @@ _test_code = r"""
     PAP.Link2                                      False  True   True
     PAP.Subject_has_Property                       True   True   True
     PAP.Person_has_Account                         True   False  False
+    SRM._Regatta_                                  False  False  False
     SRM.Regatta_Result                             False  False  False
     SRM.Entity                                     False  True   True
     SRM.Id_Entity                                  False  True   True
@@ -335,6 +336,7 @@ _test_code = r"""
     SWP.Gallery                                    SWP.Gallery 0
     SWP.Picture                                    SWP.Picture 0
     SRM.Page                                       SWP.Page 0
+    SRM._Regatta_                                  ['SRM.Regatta']
     SRM.Regatta                                    SRM.Regatta 0
     SRM.Regatta_C                                  SRM.Regatta 0
     SRM.Regatta_H                                  SRM.Regatta 0

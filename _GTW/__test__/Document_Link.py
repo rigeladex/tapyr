@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -284,6 +284,8 @@ test_code = r"""
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
+    SRM._Regatta_
+        ('MOM.Document', ['left'])
     SRM.Regatta
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
