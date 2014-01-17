@@ -211,7 +211,6 @@ _test_code = r"""
     PAP.Link2                                      False  True   True
     PAP.Subject_has_Property                       True   True   True
     PAP.Person_has_Account                         True   False  False
-    SRM._Regatta_                                  False  False  False
     SRM.Regatta_Result                             False  False  False
     SRM.Entity                                     False  True   True
     SRM.Id_Entity                                  False  True   True
@@ -231,6 +230,7 @@ _test_code = r"""
     SWP.Gallery                                    True   False  False
     SWP.Picture                                    True   False  False
     SRM.Page                                       True   False  False
+    SRM._Regatta_                                  False  False  False
     SRM.Regatta                                    True   False  False
     SRM.Regatta_C                                  True   False  False
     SRM.Regatta_H                                  True   False  False
