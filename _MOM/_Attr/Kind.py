@@ -220,6 +220,8 @@
 #                     attributes that refer to other entities
 #    30-Sep-2013 (CT) Add `is_partial` to `Kind` and `_Query_`
 #    16-Jan-2014 (CT) Add `_Required_Mixin_.has_substance`
+#    17-Jan-2014 (CT) Add `_EPK_Mixin_._check_sanity` to enforce `P_Type`;
+#                     remove `Id_Entity_Reference_Mixin._check_sanity`
 #    ««revision-date»»···
 #--
 
@@ -652,6 +654,13 @@ class _EPK_Mixin_ (_SPK_Mixin_) :
         v = self.get_value (obj)
         return v.__class__.sort_key_pm () (v)
     # end def sort_key_pm
+
+    def _check_sanity (self, attr_type, e_type) :
+        P_Type = attr_type.P_Type
+        if not (e_type.is_partial or P_Type) :
+            raise TypeError ("%s needs to define `P_Type`" % attr_type)
+        self.__super._check_sanity (attr_type, e_type)
+    # end def _check_sanity
 
     def _entity_from_spk (self, scope, ETM, spk) :
         return ETM.pid_query (spk)
@@ -1558,14 +1567,6 @@ class _Id_Entity_Reference_Mixin_ (_EPK_Mixin_) :
 
 class Id_Entity_Reference_Mixin (_Id_Entity_Reference_Mixin_) :
     """Kind mixin for handling object references correctly."""
-
-    def _check_sanity (self, attr_type, e_type) :
-        if __debug__ :
-            if not attr_type.P_Type :
-                raise TypeError \
-                    ("%s needs to define `P_Type`" % attr_type)
-        self.__super._check_sanity (attr_type, e_type)
-    # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42, old_value = None) :
         attr          = self.attr
