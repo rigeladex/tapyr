@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -39,6 +39,8 @@
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //     1-May-2013 (CT) Change `gtw_e_type_selector_afs` to
 //                     `gtw_e_type_selector_hd_afs`
+//    20-Jan-2014 (CT) Change `apply_cb` and`clear_cb` to pass cleared
+//                     `response` to `_apply_cb_inner`
 //    ««revision-date»»···
 //--
 
@@ -144,9 +146,12 @@
         , apply_cb              : function apply_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
               var response = self.widget.data ("gtw_ets_completed_response");
-              if (response ["value"] && response ["display"]) {
-                  self._apply_cb_inner (ev, response);
+              if (! response) {
+                  // no repsonse from `completed_cb`
+                  //     --> clear `display`, `value`
+                  response = { display : "", value : null };
               };
+              self._apply_cb_inner (ev, response);
               self.close ();
               if ("esf_focusee" in self.options) {
                   self.options.esf_focusee.focus ();
@@ -161,15 +166,20 @@
               };
           }
         , clear_cb              : function clear_cb (ev) {
-              var self = (ev && "data" in ev) ? ev.data || this : this;
-              var S    = self.options.selectors;
+              var self     = (ev && "data" in ev) ? ev.data || this : this;
+              var S        = self.options.selectors;
+              var ab$      = self.a_form$.find (S.apply_button);
+              // clear all input fields
               self.a_form$.find (":input").not ("button, .hidden").each
                   ( function () {
                       $(this).val ("");
                     }
                   );
-              self.a_form$.find (S.apply_button)
-                  .button ("option", "disabled", true);
+              // enable `apply` but reset `gtw_ets_completed_response`, if any
+              // if the user clicks to `apply` button, the associated input
+              // will be cleared
+              ab$.button        ("option", "disabled", false);
+              self.widget.data  ("gtw_ets_completed_response", null);
           }
         , close                 : function close (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
