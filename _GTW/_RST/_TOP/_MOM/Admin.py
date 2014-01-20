@@ -65,6 +65,7 @@
 #    30-Oct-2013 (CT) Change `Group._pns_entries` to set `name` of E_Type_Alias
 #    15-Jan-2014 (CT) Factor `_call_submit_callback`
 #    16-Jan-2014 (CT) Add `_formatted_submit_entities`
+#    20-Jan-2014 (CT) Redefine `_Changer_.head_line`
 #    ««revision-date»»···
 #--
 
@@ -417,6 +418,12 @@ class _JSON_Action_PO_ (_JSON_Action_) :
 class _Changer_ (_HTML_Action_) :
 
     page_template_name   = "e_type_afs"
+
+    @property
+    @getattr_safe
+    def head_line (self) :
+        return _T (self.ETM.E_Type.ui_name)
+    # end def head_line
 
     @property
     @getattr_safe
