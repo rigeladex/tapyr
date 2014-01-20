@@ -62,6 +62,7 @@
 #    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `GTW_jq_util`
 #     1-May-2013 (CT) Add `GTW_hd_input`
 #    17-Jan-2014 (CT) Add `GTW_Form_Externalize`
+#    20-Jan-2014 (CT) Fix `GTW_Form_Externalize` to not break buttons
 #    ««revision-date»»···
 #--
 
@@ -175,7 +176,7 @@ GTW.JS_On_Ready \
     )
 
 GTW.JS_On_Ready \
-    ( """$("form a").gtw_externalize ();"""
+    ( """$("form a").not ("a.ui-icon, a.button").gtw_externalize ();"""
     , name = "GTW_Form_Externalize"
     )
 
