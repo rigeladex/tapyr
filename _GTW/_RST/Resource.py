@@ -109,6 +109,7 @@
 #    11-Dec-2013 (CT) Add `sane_referrer`
 #    10-Jan-2014 (CT) Change `send_email` to encode arguments to `logging`
 #    16-Jan-2014 (CT) Fix `Alias.SUPPORTED_METHODS`
+#    20-Jan-2014 (CT) Show `url_x`, not `url`, in `time_block`
 #    ««revision-date»»···
 #--
 
@@ -1570,7 +1571,7 @@ class RST_Root (_Ancestor) :
                                 ( "%d-%b-%Y %H:%M:%S"
                                 , time.localtime (time.time ())
                                 )
-                            , method.name, request.url.replace ("%", "%%")
+                            , method.name, request.url_x.replace ("%", "%%")
                             )
                     else :
                         context = TFL.Context.relaxed

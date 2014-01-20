@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -31,6 +31,7 @@
 #     2-Jul-2012 (CT) Add `has_option`
 #     3-Jul-2012 (CT) Redefine `values` to conditionally return `json`
 #    31-Jul-2012 (CT) Add `HTTP_Exception`
+#    20-Jan-2014 (CT) Add `url_x`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,15 @@ class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
         result.files = self.files
         return result
     # end def req_data_list
+
+    @Once_Property
+    def url_x (self) :
+        query  = self.query_string
+        result = self.url
+        if query :
+            result = "%s?%s" % (result, query)
+        return result
+    # end def url_x
 
     @Once_Property
     def values (self) :
