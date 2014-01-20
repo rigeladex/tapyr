@@ -125,6 +125,9 @@
 //     7-May-2013 (CT) Don't call `_setup_efs_selector` for `readonly` fields
 //    23-May-2013 (CT) Disable `Reset` for `Entity` (removes `prefill` values)
 //    14-Jan-2014 (CT) Consider required checkboxes in `field_change_cb`
+//    20-Jan-2014 (CT) Remove `Clear` and `Reset` from `cmd_menu.Field_Entity`
+//                     (currently broken: they trigger a `GET` request, not
+//                     the JS callback they should)
 //    ««revision-date»»···
 //--
 
@@ -1042,10 +1045,15 @@
             , Field_Entity : function Field_Entity (elem) {
                   var names = [];
                   if (elem.collapsed) {
-                      names.push (elem.allow_new ? "Edit" : "Clear");
+                      if (elem.allow_new) {
+                          names.push ("Edit");
+                      };
                   } else {
                       // XXX Add "Done" once it is implemented
-                      names.push ("Reset", "Cancel");
+                      // names.push ("Done");
+                      // XXX Add "Reset" once it works properly
+                      // names.push ("Reset");
+                      names.push ("Cancel");
                   };
                   return _cmds.apply (null, names);
               }
