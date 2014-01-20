@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -18,6 +18,7 @@
 //     9-Mar-2011 (CT) `copy` added
 //    31-May-2011 (MG) Mssing `var` added
 //    29-Apr-2013 (CT) Add `show1`
+//    20-Jan-2014 (CT) Add missing `lev` to `show1`
 //    ««revision-date»»···
 //--
 
@@ -123,7 +124,8 @@
           }
         , show1  : function show1 (value, filter, level, top_filter) {
               var result;
-              var rs = [];
+              var rs  = [];
+              var lev = level || 0;
               switch (typeof value) {
                   case "function" :
                       result = value.toString ();

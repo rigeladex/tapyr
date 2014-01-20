@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -17,6 +17,8 @@
 //    27-Jul-2011 (CT) Creation
 //    18-Apr-2013 (CT) Add `alert` to `options.error`
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` in here
+//    20-Jan-2014 (CT) Pass `xhr_instance.responseText` to `show_message`;
+//                     remove call of `alert` from `options.error`
 //    ««revision-date»»···
 //--
 
@@ -28,9 +30,10 @@
             ( { async       : false                  // defaults settings
               , error       : function (xhr_instance, status, exc) {
                     var msg = (name || "Ajax request") + " failed: ";
-                    alert
-                        (msg + ": " + exc + "\n\n" + xhr_instance.esponseText);
-                    $GTW.show_message (msg, status, exc, opts.data);
+                    $GTW.show_message
+                        ( msg, status, exc
+                        , "\n\nResponse:", xhr_instance.responseText
+                        );
                 }
               , timeout     : 30000
               }

@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -23,6 +23,7 @@
 //    19-Apr-2012 (CT) If `"hidden_selector" in options` --> set `display` of
 //                     `this` to `"inherit"` to placate Chrome
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
+//    20-Jan-2014 (CT) Use `$GTW.show_message`, not `alert`
 //    ««revision-date»»···
 //--
 
@@ -65,7 +66,10 @@
                 ( { url         : url
                   , data        : ""
                   , error       : function (xhr_instance, status, exc) {
-                        alert ("Post to " + url + " failed: " + status);
+                        $GTW.show_message
+                            ( "Post to", url, "failed:", status, exc
+                            , "\n\nResponse:", xhr_instance.responseText
+                            );
                     }
                   , success     : success
                   }
