@@ -48,6 +48,7 @@
 ##     1-May-2013 (CT) Add `caller` to `do_label`
 ##     6-Oct-2013 (CT) Add `with context` to import
 ##    14-Jan-2014 (CT) Change `do_description` to consider `ui_description`
+##    21-Jan-2014 (CT) Change `do_description` to elide redundant description
 ##    ««revision-date»»···
 ##--
 #}
@@ -70,10 +71,13 @@
 {%- macro do_description (elem) -%}
   {%- set desc = GTW._T (elem.ui_description or elem.description)|safe %}
   {%- if desc -%}
-    {%- set expl = GTW._T (elem.explanation)|safe %}
-    <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
-      {{- desc -}}
-    </div>
+    {%- set labl = elem.label and GTW._T (elem.label)|safe %}
+    {%- if desc != labl %}
+      {%- set expl = GTW._T (elem.explanation)|safe %}
+      <div class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
+        {{- desc -}}
+      </div>
+    {% endif -%}
   {%- endif -%}
 {%- endmacro -%} {#- do_description -#}
 

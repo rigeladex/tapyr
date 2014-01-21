@@ -1,6 +1,6 @@
 {#- jinja template: html/base.jnj -#}
 {#
-## Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -47,6 +47,7 @@
 ##    14-Dec-2011 (CT) Move `js_on_ready` to `body_tail_scripts`
 ##     5-Jan-2012 (CT) s/page.P_Media/template/
 ##     5-Jan-2012 (CT) Remove use of `page.Media`
+##    21-Jan-2014 (CT) Add `pg_nav_jump`
 ##    ««revision-date»»···
 ##--
 #}
@@ -61,6 +62,7 @@
   {%- call X.head () -%}
     {%- block head_elements -%}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
+      <meta name="viewport" content="initial-scale=1.0">
       {%- if page.exclude_robots %}
         <meta name="robots" content="NOINDEX, NOFOLLOW">
       {% endif -%}
@@ -99,6 +101,11 @@
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
     <div id="main" class="pg_main">
+      <p class="pg_nav_jump">
+        <a href="#navigate">
+          {{- GTW._T ("Jump to Navigation") -}}
+        </a>
+      </p>
       <div id="document" class="pg_body">
         {%- block notifications -%}
           {%- if notifications %}
@@ -113,7 +120,7 @@
           {% endif -%}
         {%- endblock body_headline %}
         {% block document %}{% endblock -%}
-      </div> {# #document .body #}
+      </div> {# #document .pg_body #}
       {%- block nav_block -%}
         {% call X.nav (id = "navigate", class="pg_nav") -%}
           {%- block navigate -%}
@@ -121,7 +128,7 @@
           {%- endblock -%}
         {%- endcall %} {# X.nav #}
       {%- endblock nav_block -%}
-    </div> {# #main .main #}
+    </div> {# #main .pg_main #}
     {% call X.footer (id = "footer", class="pg_foot") -%}
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}

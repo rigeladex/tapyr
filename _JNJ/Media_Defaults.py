@@ -49,6 +49,7 @@
 #     3-Apr-2013 (CT) Add `Rule`, `Rule.clearfix`
 #     8-Apr-2013 (CT) Add lots of rules to `Rule`, e.g., `disabled`, `focus`...
 #     7-Jan-2014 (CT) Add some more muted colors
+#    21-Jan-2014 (CT) Add `breakpoint`
 #    ««revision-date»»···
 #--
 
@@ -209,6 +210,21 @@ class Media_Defaults (Definition) :
         status_size            = Px (12)
 
     # end class afs
+
+    class breakpoint (Definition) :
+        """Breakpoints for responsive rules"""
+
+        narrow                 = P_dict \
+            ( max_width        = Px (680)
+            )
+        small_device           = P_dict \
+            ( max_device_width = Px (767)
+            )
+        wide                   = P_dict \
+            ( min_width        = Px (1600)
+            )
+
+    # end class breakpoint
 
     class nav_col (Definition) :
 

@@ -117,7 +117,7 @@ _test_code = """
     Field last_name Last name u'Last name of person' None
     Field first_name First name u'First name of person' None
     Field middle_name Middle name u'Middle name of person' None
-    Field title Academic title u'Academic title.' None
+    Field title Academic title u'Academic title' None
     Fieldset necessary None u'' afs_div_seq
     Field sex Sex u'Sex of a person.' None
     Fieldset optional None u'' afs_div_seq
@@ -1380,7 +1380,7 @@ _person_test = """
     Field last_name Last name u'Last name of person' None
     Field first_name First name u'First name of person' None
     Field middle_name Middle name u'Middle name of person' None
-    Field title Academic title u'Academic title.' None
+    Field title Academic title u'Academic title' None
     Fieldset necessary  u'' afs_div_seq
     Field sex Sex u'Sex of a person.' None
     Fieldset optional  u'' afs_div_seq

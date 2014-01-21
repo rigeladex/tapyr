@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -29,6 +29,7 @@
 #
 # Revision Dates
 #    30-Dec-2010 (CT) Creation
+#    21-Jan-2014 (CT) Support `exprs` of type `dict` in `Query._setup_exprs`
 #    ««revision-date»»···
 #--
 
@@ -141,11 +142,15 @@ class Query (_Media_) :
         self.exprs = []
         add        = self.exprs.append
         for x in exprs :
-            if isinstance (x, basestring) :
-                x = (x, )
-            if not isinstance (x, Expression) :
-                x = Expression (* x)
-            add (x)
+            if isinstance (x, dict) :
+                for f, e in sorted (x.iteritems ()) :
+                    add (Expression (f, e))
+            else :
+                if isinstance (x, basestring) :
+                    x = (x, )
+                if not isinstance (x, Expression) :
+                    x = Expression (* x)
+                add (x)
         for f, e in sorted (kw.iteritems ()) :
             add (Expression (f, e))
     # end def _setup_exprs

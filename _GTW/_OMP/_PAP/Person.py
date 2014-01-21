@@ -150,7 +150,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
         # end class middle_name
 
         class title (A_String) :
-            """Academic title."""
+            """Academic title"""
 
             kind           = Attr.Primary_Optional
             ignore_case    = True

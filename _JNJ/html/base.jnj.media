@@ -50,6 +50,7 @@
 #     7-Mar-2013 (CT) Add rule for `.added`
 #     8-Apr-2013 (CT) Factor `P.Rule.hover`
 #    15-Jan-2014 (CT) Add rule for `.full-width`
+#    21-Jan-2014 (CT) Add scmall screen rules for `.pg_main`, `.pg_nav_jump`
 #    ««revision-date»»···
 #--
 
@@ -155,6 +156,11 @@ style_sheet = Style_Sheet \
                 , right            = P.nav_col.width + 3 * P.col_padding
                 , width            = P.nav_col.width
                 )
+            , Rule
+                ( ".pg_nav_jump"
+                , display        = "none"
+                , visibility       = "hidden"
+                )
             ]
         )
     , Rule
@@ -162,7 +168,6 @@ style_sheet = Style_Sheet \
         , width          = "100%"
         , children       =
             [ Rule ("p", max_width = P.pg_main_max_width)
-            # XXX ??? ".login div", "form.login"
             ]
         )
     , Rule
@@ -174,6 +179,54 @@ style_sheet = Style_Sheet \
         , padding        = TRBL0 (Em (1./4))
         , vertical_align = "bottom"
         , width          = Percent (98)
+        )
+    , Media.Rule
+        ( Media.Query ("screen", P.breakpoint.narrow)
+        , Media.Query ("screen", P.breakpoint.small_device)
+        , rules               =
+            [ Rule
+                ( ".pg_main"
+                , padding_left     = 0
+                , children         =
+                    [ Rule_Child
+                        ( "div", "nav"
+                        , float        = "none"
+                        )
+                    , Rule_Child
+                        ( "nav"
+                        , background_color = P.nav_col.background_color
+                        , font_size        = "normal"
+                        , line_height      = 1.35
+                        , margin           = TRBL0 (Em (0.5))
+                        , overflow         = "hidden"
+                        , padding          = TRBL (Em (1./4), 0, 0)
+                        , right            = 0
+                        , width            = Percent (95)
+                        )
+                    , Rule
+                        ( ".pg_nav_jump"
+                        , display          = "block"
+                        , visibility       = "visible"
+                        , children         =
+                            [ Rule
+                                ( "a"
+                                , P.nav_col.button_spec
+                                , background_color = P.nav_col.background_color
+                                , color            = P.color_selected
+                                , font_weight      = "bold"
+                                , display          = "block"
+                                , overflow         = "hidden"
+                                , padding          = TRBL (Em (0.50))
+                                , width            = Percent (95)
+                                , children         = [P.Rule.hover]
+                                , ** Border (radius = Px (10))
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ,
+            ]
         )
     ### Various classes
     , Rule
