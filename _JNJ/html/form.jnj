@@ -337,7 +337,7 @@
       {%- else %}
         <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
         <li>
-          {{ X.input.text
+          {{ X.input.email
               ( id            = "F_username"
               , name          = "username"
               , maxlength     = "30"
