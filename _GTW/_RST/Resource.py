@@ -111,6 +111,8 @@
 #    16-Jan-2014 (CT) Fix `Alias.SUPPORTED_METHODS`
 #    20-Jan-2014 (CT) Show `url_x`, not `url`, in `time_block`
 #    22-Jan-2014 (CT) Add `empty_template` to gracefully support empty `Dir`
+#    22-Jan-2014 (CT) Change `Root._http_response_context` to set
+#                     `scope.user` to `.person`, if any
 #    ««revision-date»»···
 #--
 
@@ -1606,6 +1608,8 @@ class RST_Root (_Ancestor) :
         scope = self.scope
         with self.LET (request = request, user = user) : ### XXX language ?
             if scope and getattr (scope, "LET", None) :
+                if user and getattr (user, "person", None) :
+                    user = user.person
                 with scope.LET (user = user) :
                     yield
             else :
