@@ -110,6 +110,7 @@
 #    10-Jan-2014 (CT) Change `send_email` to encode arguments to `logging`
 #    16-Jan-2014 (CT) Fix `Alias.SUPPORTED_METHODS`
 #    20-Jan-2014 (CT) Show `url_x`, not `url`, in `time_block`
+#    22-Jan-2014 (CT) Add `empty_template` to gracefully support empty `Dir`
 #    ««revision-date»»···
 #--
 
@@ -914,6 +915,8 @@ class _RST_Dir_Base_ (_Ancestor) :
     _entries                   = ()
     _href_pat_frag             = None
 
+    empty_template_name        = "empty_dir"
+
     template                   = Alias_Property ("dir_template")
     template_name              = Alias_Property ("dir_template_name")
 
@@ -982,6 +985,14 @@ class _RST_Dir_Base_ (_Ancestor) :
             self.dir_template_name = value.name
             self._dir_template     = value
     # end def dir_template
+
+    @Once_Property
+    @getattr_safe
+    def empty_template (self) :
+        t_name = getattr (self, "empty_template_name", None)
+        if t_name :
+            return self.get_template (t_name)
+    # end def empty_template
 
     @property
     @getattr_safe
@@ -1078,7 +1089,12 @@ class _RST_Dir_ (_Ancestor) :
     @getattr_safe
     def template (self) :
         eff = self._effective
-        result = self.dir_template if eff is self else eff.template
+        if eff is self :
+            result = self.dir_template
+            if result is None :
+                result = self.empty_template
+        else :
+            result = eff.template
         return result
     # end def template
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -79,6 +79,7 @@
 #     9-Oct-2012 (CT) Remove `account_activate`
 #    11-Dec-2012 (CT) Add `error_410`
 #     8-Jan-2013 (CT) Add `account_make_cert`
+#    22-Jan-2014 (CT) Add `empty_dir`
 #    ««revision-date»»···
 #--
 
@@ -559,6 +560,7 @@ Template ("calendar_week",                "html/cal_week.jnj")
 Template ("console",                      "html/console.jnj")
 Template ("default",                      "html/error.jnj")
 Template ("dynamic_form",                 "html/dynamic_form.jnj")
+Template ("empty_dir",                    "html/empty_dir.jnj")
 Template ("error_email",                  "email/error.jnj")
 Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")

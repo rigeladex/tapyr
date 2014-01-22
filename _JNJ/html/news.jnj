@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: news.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -33,6 +33,7 @@
 ##    17-Mar-2010 (CT) `permalink` added
 ##    13-Sep-2010 (CT) Use `e.date.start` before `e.date`
 ##     8-Apr-2013 (CT) Use `e.created_by`, not `e.creator`
+##    22-Jan-2014 (CT) Factor variable `changer`
 ##    ««revision-date»»···
 ##--
 #}
@@ -54,9 +55,10 @@
       </div>
     </div>
     {{ e.contents|safe }}
-    {%- if e.changer and NAV.allow (e.changer, request.user) %}
+    {%- set changer = e.changer %}
+    {%- if changer and NAV.allow (changer, request.user) %}
       <p>{#--#}
-        <a href="{{ e.changer.abs_href }}"{#--#}
+        <a href="{{ changer.abs_href }}"{#--#}
            title="{{ GTW._T ('Edit this entry') }}"{#--#}
            class="button"{#--#}
         >{#--#}
@@ -71,4 +73,4 @@
   {{- entry (page) -}}
 {%- endblock document -%}
 
-{#- __END__ jinja template: news.jnj -#}
+{#- __END__ jinja template: html/news.jnj -#}

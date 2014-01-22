@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -35,6 +35,7 @@
 #     7-Dec-2012 (CT) Consider `dont_et_map`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
+#    22-Jan-2014 (CT) Add `E_Type.creator`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,14 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     _real_name      = "_E_Type_"
 
     Entity          = Entity
+
+    @property
+    @getattr_safe
+    def creator (self) :
+        admin = self.admin
+        if admin :
+            return admin._get_child ("create")
+    # end def creator
 
 _E_Type_ = _TOP_MOM_E_Type_ # end class
 

@@ -1,0 +1,53 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: empty_dir.jnj -#}
+{#
+## Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/empty_dir.jnj
+##
+## Purpose
+##    Template for empty directory
+##
+## Revision Dates
+##    22-Jan-2014 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- block document -%}
+  <h1>
+    {{ page.abs_href }} {{ GTW._T ("currently doesn't contain any entries") }}
+  </h1>
+
+  {%- set creator = page.creator %}
+  {%- if creator %}
+    {%- if creator and NAV.allow (creator, request.user) %}
+      <p class="Create">{#--#}
+        <a href="{{ creator.abs_href }}" class="button">{#--#}
+          {{ GTW._T ("Create a new entry") }}{#--#}
+        </a>{#--#}
+      </p>
+    {% endif -%}
+  {% endif -%}
+{%- endblock document -%}
+
+{#- __END__ jinja template: html/empty_dir.jnj -#}
