@@ -83,6 +83,7 @@
 #     3-Jun-2013 (CT) Use `.attr_prop`, not `getattr`, to get attributes
 #    13-Jan-2014 (CT) Add `A_Confirmation.input_widget`
 #    14-Jan-2014 (CT) Add `.afs_widget`, set it for `MAT.A_Confirmation`
+#    22-Jan-2014 (CT) Add `A_Numeric_String.input_widget`
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,7 @@ MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
 MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
 MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")
 MAT.A_Enum.input_widget              = WS ("html/AFS/input.jnj,  named_object")
+MAT.A_Numeric_String.input_widget    = WS ("html/AFS/input.jnj,  number")
 MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj,  text")
 MAT._A_Id_Entity_.input_widget       = WS ("html/AFS/input.jnj,  id_entity")
 MAT._A_Named_Object_.input_widget    = WS ("html/AFS/input.jnj,  named_object")
