@@ -1,6 +1,6 @@
 {#- jinja template: input.jnj -#}
 {#
-## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -38,6 +38,7 @@
 ##     5-Aug-2012 (MG) Add `media_browser`
 ##    17-Aug-2012 (MG) Move `media_browser` into seperate file
 ##    17-Aug-2012 (MG) Rename `_field` to `field`
+##    22-Jan-2014 (CT) Add `url`
 ##    ««revision-date»»···
 ##--
 #}
@@ -143,6 +144,10 @@
 {%- macro time (elem) -%}
   {{ field (X.input.time, elem, ** kwargs) }}
 {%- endmacro -%} {#- time -#}
+
+{%- macro url (elem) -%}
+  {{ field (X.input.url, elem, ** kwargs) }}
+{%- endmacro -%} {#- url -#}
 
 {%- macro field (typ, elem) -%}
   {%- set id = elem.id -%}
