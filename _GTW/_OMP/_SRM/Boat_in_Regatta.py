@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -45,6 +45,7 @@
 #                     `unique_regatta_skipper`
 #    12-May-2013 (CT) Repace `auto_cache` by `link_ref_attr_name`
 #    13-May-2013 (CT) Use `query`, not `r_query`
+#    22-Jan-2014 (CT) Change `right.role_type` to `_Regatta_`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,8 @@ class Boat_in_Regatta (_Ancestor_Essence) :
         class right (_Ancestor.right) :
             """Regatta a boat races in."""
 
-            role_type          = GTW.OMP.SRM.Regatta
+            role_type          = GTW.OMP.SRM._Regatta_
+            role_name          = "regatta"
             link_ref_attr_name = "boats"
             link_ref_suffix    = None
 

@@ -54,6 +54,7 @@
 #    25-Jun-2013 (CT) Add `max_value`, `example`, to integer attributes
 #    17-Jan-2014 (CT) Factor `_Regatta_`
 #    17-Jan-2014 (CT) Change attributes `year`, `handicap` to `Attr.Query`
+#    22-Jan-2014 (CT) Export `_Regatta_`
 #    ««revision-date»»···
 #--
 
@@ -71,8 +72,10 @@ import _TFL.Decorator
 _Ancestor_Essence = GTW.OMP.SRM.Link1
 
 class _Regatta_ (_Ancestor_Essence) :
+    """Sailing regatta for one class or handicap."""
 
     is_partial  = True
+    ui_name     = "Regatta"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -86,6 +89,7 @@ class _Regatta_ (_Ancestor_Essence) :
             role_type          = GTW.OMP.SRM.Regatta_Event
             role_name          = "event"
             link_ref_attr_name = "regatta"
+            ui_allow_new       = True
 
         # end class left
 
@@ -298,5 +302,5 @@ class Regatta_H (_Ancestor_Essence) :
 # end class Regatta_H
 
 if __name__ != "__main__" :
-    GTW.OMP.SRM._Export ("*")
+    GTW.OMP.SRM._Export ("*", "_Regatta_")
 ### __END__ GTW.OMP.SRM.Regatta
