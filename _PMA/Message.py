@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -172,6 +172,7 @@
 #    21-Dec-2013 (CT) Fix assignment of `encoding`
 #    21-Dec-2013 (CT) Add option `-body_only`
 #    23-Dec-2013 (CT) Factor `messages_from_args` and `formatted`
+#    23-Jan-2014 (CT) Set `PMA.default_encoding` in all cases in `_main`
 #    ««revision-date»»···
 #--
 
@@ -1043,9 +1044,10 @@ def formatted (msg, encoding = "utf-8", body_only = False) :
 
 def _main (cmd) :
     if cmd.encoding :
-        encoding = PMA.default_encoding = cmd.encoding
+        encoding = cmd.encoding
     else :
         encoding = "iso8859-1" if cmd.Print else "utf-8"
+    PMA.default_encoding = encoding
     for msg in messages_from_args (cmd.argv, cmd.msg_base_dirs) :
         txt = formatted (msg)
         if cmd.Print :
