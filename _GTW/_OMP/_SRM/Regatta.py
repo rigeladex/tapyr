@@ -52,9 +52,8 @@
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #    25-Jun-2013 (CT) Add `max_value`, `example`, to integer attributes
-#    17-Jan-2014 (CT) Factor `_Regatta_`
 #    17-Jan-2014 (CT) Change attributes `year`, `handicap` to `Attr.Query`
-#    22-Jan-2014 (CT) Export `_Regatta_`
+#    17-Jan-2014 (CT) Add query attribute `races_counted`
 #    ««revision-date»»···
 #--
 
@@ -71,11 +70,11 @@ import _TFL.Decorator
 
 _Ancestor_Essence = GTW.OMP.SRM.Link1
 
-class _Regatta_ (_Ancestor_Essence) :
+class Regatta (_Ancestor_Essence) :
     """Sailing regatta for one class or handicap."""
 
     is_partial  = True
-    ui_name     = "Regatta"
+    is_relevant = True
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -113,6 +112,18 @@ class _Regatta_ (_Ancestor_Essence) :
             min_value          = 0
 
         # end class discards
+
+        class is_cancelled (A_Boolean) :
+            """Indicates that the regatta is cancelled"""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+
+            def computed (self, obj) :
+                return obj.event.is_cancelled
+            # end def computed
+
+        # end class is_cancelled
 
         class kind (A_String) :
             """Kind of regatta."""
@@ -167,6 +178,13 @@ class _Regatta_ (_Ancestor_Essence) :
 
         # end class races_counted
 
+        class result (A_Regatta_Result) :
+            """Information about result."""
+
+            kind               = Attr.Optional
+
+        # end class result
+
         class short_title (A_String) :
 
             kind               = Attr.Cached
@@ -197,43 +215,6 @@ class _Regatta_ (_Ancestor_Essence) :
             query              = Q.left.year
 
         # end class year
-
-    # end class _Attributes
-
-# end class _Regatta_
-
-_Ancestor_Essence = _Regatta_
-
-class Regatta (_Ancestor_Essence) :
-    """Sailing regatta for one class or handicap."""
-
-    is_partial  = True
-    is_relevant = True
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        ### Non-primary attributes
-
-        class is_cancelled (A_Boolean) :
-            """Indicates that the regatta is cancelled"""
-
-            kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-
-            def computed (self, obj) :
-                return obj.event.is_cancelled
-            # end def computed
-
-        # end class is_cancelled
-
-        class result (A_Regatta_Result) :
-            """Information about result."""
-
-            kind               = Attr.Optional
-
-        # end class result
 
     # end class _Attributes
 
@@ -302,5 +283,5 @@ class Regatta_H (_Ancestor_Essence) :
 # end class Regatta_H
 
 if __name__ != "__main__" :
-    GTW.OMP.SRM._Export ("*", "_Regatta_")
+    GTW.OMP.SRM._Export ("*")
 ### __END__ GTW.OMP.SRM.Regatta

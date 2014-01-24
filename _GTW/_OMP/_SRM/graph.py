@@ -78,8 +78,7 @@ def graph (app_type) :
             , ET.SRM.Team_has_Boat_in_Regatta
                 ( Role.left
                     ( ET.SRM.Regatta_C
-                        ( IS_A.SRM._Regatta_
-                        , Skip.left
+                        ( IS_A.SRM.Regatta
                         , offset = CD.E
                         )
                     , offset = CD.S

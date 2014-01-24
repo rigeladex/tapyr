@@ -417,7 +417,7 @@ _test_code = """
     FB-0:0:0             Boat_Class           Field_Entity         True
     FB-0:2::p-0          Boat                 Field_Role_Hidden    False
     FB-0:2::p-1:0        Regatta              Field_Entity         False
-    FB-0:2::p-1:0:0      Regatta_Event        Field_Entity         False
+    FB-0:2::p-1:0:0      Regatta_Event        Field_Entity         True
     FB-0:2::p-1:0:1      _Boat_Class_         Field_Entity         True
     FB-0:2::p-2:0        Sailor               Field_Entity         True
     FB-0:2::p-2:0:0      Person               Field_Entity         True
@@ -1494,7 +1494,7 @@ _prefilled_test = """
     FBR-0:0:0            Boat                 Field_Entity         True
     FBR-0:0:0:0          Boat_Class           Field_Entity         True
     FBR-0:0:1            Regatta              Field_Entity         False
-    FBR-0:0:1:0          Regatta_Event        Field_Entity         False
+    FBR-0:0:1:0          Regatta_Event        Field_Entity         True
     FBR-0:0:1:1          _Boat_Class_         Field_Entity         True
     FBR-0:1:0            Sailor               Field_Entity         True
     FBR-0:1:0:0          Person               Field_Entity         True

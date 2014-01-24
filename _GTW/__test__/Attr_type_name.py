@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -126,7 +126,6 @@ _test_hierarchy = """
     SRM.Team_has_Boat_in_Regatta   Internal__Type_Name Type_Name_Type SRM.Team_has_Boat_in_Regatta
     SRM._Boat_Class_               Internal__Type_Name Type_Name_Type SRM._Boat_Class_
     SRM._MOM_Link_n_               Internal__Type_Name Type_Name_Type SRM._MOM_Link_n_
-    SRM._Regatta_                  Internal__Type_Name Type_Name_Type SRM._Regatta_
     SWP.Clip_O                     Internal__Type_Name Type_Name_Type SWP.Clip_O
     SWP.Clip_X                     Internal__Type_Name Type_Name_Type SWP.Clip_X
     SWP.Gallery                    Internal__Type_Name Type_Name_Type SWP.Gallery

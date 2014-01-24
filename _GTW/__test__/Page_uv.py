@@ -230,7 +230,6 @@ _test_code = r"""
     SWP.Gallery                                    True   False  False
     SWP.Picture                                    True   False  False
     SRM.Page                                       True   False  False
-    SRM._Regatta_                                  False  False  False
     SRM.Regatta                                    True   False  False
     SRM.Regatta_C                                  True   False  False
     SRM.Regatta_H                                  True   False  False
@@ -336,7 +335,6 @@ _test_code = r"""
     SWP.Gallery                                    SWP.Gallery 0
     SWP.Picture                                    SWP.Picture 0
     SRM.Page                                       SWP.Page 0
-    SRM._Regatta_                                  ['SRM.Regatta']
     SRM.Regatta                                    SRM.Regatta 0
     SRM.Regatta_C                                  SRM.Regatta 0
     SRM.Regatta_H                                  SRM.Regatta 0
