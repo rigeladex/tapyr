@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -181,6 +181,7 @@
 #    24-May-2013 (CT) Add `auth_required`, `cutoff_date`; consider in `hidden`
 #     8-Oct-2013 (CT) Robustify `date_dt`
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    24-Jan-2014 (CT) Add `A_Link`
 #    ««revision-date»»···
 #--
 
@@ -578,6 +579,26 @@ class Alias (Page) :
     # end def __getattr__
 
 # end class Alias
+
+class A_Link (Page) :
+    """A link to another URL"""
+
+    def __init__ (self, * args, ** kw) :
+        self.target_url = kw.pop ("target_url")
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    @Once_Property
+    def abs_href (self) :
+        return self.target_url
+    # end def abs_href
+
+    @Once_Property
+    def href (self) :
+        return self.target_url
+    # end def href
+
+# end class A_Link
 
 class _Dir_ (_Site_Entity_) :
     """Model one directory of a web site."""
