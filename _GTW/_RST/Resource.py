@@ -114,6 +114,7 @@
 #    22-Jan-2014 (CT) Change `Root._http_response_context` to set
 #                     `scope.user` to `.person`, if any
 #    24-Jan-2014 (CT) Add `a_attr_dict`
+#    24-Jan-2014 (CT) Add `A_Link`
 #    ««revision-date»»···
 #--
 
@@ -915,6 +916,39 @@ class RST_Alias (_Ancestor) :
     # end def __getattr__
 
 Alias = RST_Alias # end class
+
+_Ancestor = Leaf
+
+class RST_A_Link (_Ancestor) :
+    """A link to another URL"""
+
+    _real_name = "A_Link"
+
+    download   = False
+
+    def __init__ (self, ** kw) :
+        self.target_url = kw.pop ("target_url")
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    @property
+    @getattr_safe
+    def a_attr_dict (self) :
+        result = self.__super.a_attr_dict
+        result.update (href = self.target_url)
+        download = self.download
+        if download :
+            dl_target = download \
+                if isinstance (download, basestring) else self.name
+            result.update (download = dl_target)
+        return result
+    # end def a_attr_dict
+
+    def _handle_method (self, method, request, response) :
+        raise self.top.Status.See_Other (self.target_url)
+    # end def _handle_method
+
+A_Link = RST_A_Link # end class
 
 _Ancestor = _Base_
 

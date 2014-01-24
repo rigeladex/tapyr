@@ -48,6 +48,7 @@
 #    11-Dec-2013 (CT) Improve error message from `csrf_check`
 #    18-Dec-2013 (CT) Add `x_signature` to error message from `csrf_check`
 #    24-Jan-2014 (CT) Add `a_attr_dict`
+#    24-Jan-2014 (CT) Factor `_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -118,10 +119,10 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
 
 _Ancestor = GTW.RST._Base_
 
-class _TOP_Base_ (_Ancestor) :
-    """Base class for TOP."""
+class _TOP_Mixin_ (_Ancestor) :
+    """Mixin class for TOP classes."""
 
-    _real_name                 = "_Base_"
+    _real_name                 = "_Mixin_"
 
     session_ttl_name           = "user_session_ttl"
     short_title                = ""
@@ -136,6 +137,48 @@ class _TOP_Base_ (_Ancestor) :
         _real_name             = "GET"
 
     GET = _TOP_Base_GET_ # end class
+
+    @property
+    @getattr_safe
+    def a_attr_dict (self) :
+        result = self.__super.a_attr_dict
+        title  = self.title
+        if title :
+            result.update (title = title)
+        return result
+    # end def a_attr_dict
+
+    @property
+    @getattr_safe
+    def has_children (self) :
+        return bool (getattr (self, "entries", []))
+    # end def has_children
+
+    @Once_Property
+    @getattr_safe
+    def permalink (self) :
+        return self.abs_href
+    # end def permalink
+
+    def is_current_dir (self, page) :
+        return False
+    # end def is_current_dir
+
+    def is_current_page (self, page) :
+        return \
+            (  (self.permalink == page.permalink)
+            or (self.href      == page.href)
+            )
+    # end def is_current_page
+
+_Mixin_ = _TOP_Mixin_ # end class
+
+_Ancestor = _Mixin_
+
+class _TOP_Base_ (_Ancestor) :
+    """Base class for TOP."""
+
+    _real_name                 = "_Base_"
 
     class Index (TFL.Meta.Object) :
 
@@ -183,16 +226,6 @@ class _TOP_Base_ (_Ancestor) :
 
     @property
     @getattr_safe
-    def a_attr_dict (self) :
-        result = self.__super.a_attr_dict
-        title  = self.title
-        if title :
-            result.update (title = title)
-        return result
-    # end def a_attr_dict
-
-    @property
-    @getattr_safe
     def cc_href (self) :
         if self.cc_domain :
             return "https://" + pp_join (self.cc_domain, self.href)
@@ -210,12 +243,6 @@ class _TOP_Base_ (_Ancestor) :
             , year   = yr
             )
     # end def copyright
-
-    @property
-    @getattr_safe
-    def has_children (self) :
-        return bool (getattr (self, "entries", []))
-    # end def has_children
 
     @property
     @getattr_safe
@@ -243,12 +270,6 @@ class _TOP_Base_ (_Ancestor) :
         if index is not None :
             return index.next (self)
     # end def next
-
-    @Once_Property
-    @getattr_safe
-    def permalink (self) :
-        return self.abs_href
-    # end def permalink
 
     @property
     @getattr_safe
@@ -302,17 +323,6 @@ class _TOP_Base_ (_Ancestor) :
         kvs = ("%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
         return "<%s %s\n    %s\n  >" % (self.Type, self.name, sep.join (kvs))
     # end def formatted
-
-    def is_current_dir (self, page) :
-        return False
-    # end def is_current_dir
-
-    def is_current_page (self, page) :
-        return \
-            (  (self.permalink == page.permalink)
-            or (self.href      == page.href)
-            )
-    # end def is_current_page
 
     def obj_href (self, obj) :
         man = self.etype_manager (obj)
@@ -388,5 +398,5 @@ class _TOP_Base_ (_Ancestor) :
 _Base_ = _TOP_Base_ # end class
 
 if __name__ != "__main__" :
-    GTW.RST.TOP._Export ("*", "_Base_")
+    GTW.RST.TOP._Export ("*", "_Base_", "_Mixin_")
 ### __END__ GTW.RST.TOP.Base

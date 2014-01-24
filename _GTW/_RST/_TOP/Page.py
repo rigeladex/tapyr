@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -32,6 +32,8 @@
 #     8-Aug-2012 (MG) Fix `Alias.is_current_page`
 #    26-Sep-2012 (CT) Redefine `show_in_nav`
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
+#    24-Jan-2014 (CT) Add `_Mixin_` to bases of `Alias`
+#    24-Jan-2014 (CT) Add `A_Link`
 #    ««revision-date»»···
 #--
 
@@ -116,7 +118,7 @@ class Page_P (_Page_O_) :
 
 # end class Page_P
 
-class TOP_Alias (GTW.RST.Alias) :
+class TOP_Alias (GTW.RST.TOP._Mixin_, GTW.RST.Alias) :
     """Alias page delegating to a target page."""
 
     _real_name                 = "Alias"
@@ -135,6 +137,13 @@ class TOP_Alias (GTW.RST.Alias) :
     # end def is_current_page
 
 Alias = TOP_Alias # end class
+
+class TOP_A_Link (GTW.RST.TOP._Mixin_, GTW.RST.A_Link) :
+    """A link to another URL"""
+
+    _real_name = "A_Link"
+
+A_Link = TOP_A_Link # end class
 
 if __name__ != "__main__" :
     GTW.RST.TOP._Export ("*")
