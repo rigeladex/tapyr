@@ -53,6 +53,7 @@
 ##     9-Oct-2012 (CT) Add guard for `short_title` to macro `entry`
 ##     6-Oct-2013 (CT) Add `with context` to imports
 ##     7-Jan-2014 (CT) Pass `link_only = True` to `login_inline`
+##    24-Jan-2014 (CT) Use `link.a_attr_dict`, if any, for <a> in `entry`
 ##    ««revision-date»»···
 ##--
 #}
@@ -83,12 +84,18 @@
     {% if NAV.permissive or NAV.allow (link, request.user) %}
       {%- set href = link.abs_href or link.href %}
       {%- set isc  = link.is_current_page and link.is_current_page (nav_page) %}
+      {%- if link.a_attr_dict %}
+        {%- set a_kw = link.a_attr_dict %}
+      {%- else %}
+        {%- set a_kw = { "href" : href } %}
+        {%- if link.title %}
+          {%- do a_kw.update (title = link.title) %}
+        {% endif -%}
+      {% endif -%}
       {%- if link.is_current_dir and link.is_current_dir (nav_page) %}
         <li>
-          <a href="{{ href }}"
-                 {%- if link.title %} title="{{ link.title }}"{% endif %}
-                 class="current-section{%- if isc %} current-link{% endif -%}"
-              ><i></i>{{ entry_body (link) }}</a>
+          <a class="current-section {{ a_kw.pop ('class', '') }}{%- if isc %} current-link{% endif -%}"
+             {{- a_kw|xmlattr }}><i></i>{{ entry_body (link) }}</a>
           {{ entries (link.own_links, level + 1) }}
         </li>
       {%- else -%}
@@ -99,9 +106,7 @@
         {%- else -%}
           {%- if href -%}
             <li class="nav-link">
-              <a href="{{ href }}"
-                 {%- if link.title %} title="{{ link.title }}"{% endif -%}
-              >{{ entry_body (link) }}</a>
+              <a {{ a_kw|xmlattr }}>{{ entry_body (link) }}</a>
             </li>
           {%- else -%}
             <li><b class="no-link">{{ entry_body (link) }}</b></li>

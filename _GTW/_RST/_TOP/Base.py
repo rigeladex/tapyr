@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -47,6 +47,7 @@
 #     9-Dec-2013 (CT) Add `csrf_check`
 #    11-Dec-2013 (CT) Improve error message from `csrf_check`
 #    18-Dec-2013 (CT) Add `x_signature` to error message from `csrf_check`
+#    24-Jan-2014 (CT) Add `a_attr_dict`
 #    ««revision-date»»···
 #--
 
@@ -179,6 +180,16 @@ class _TOP_Base_ (_Ancestor) :
         self.pop_to_self (kw, "Media", prefix = "_")
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @property
+    @getattr_safe
+    def a_attr_dict (self) :
+        result = self.__super.a_attr_dict
+        title  = self.title
+        if title :
+            result.update (title = title)
+        return result
+    # end def a_attr_dict
 
     @property
     @getattr_safe

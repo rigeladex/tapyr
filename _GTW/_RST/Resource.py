@@ -113,6 +113,7 @@
 #    22-Jan-2014 (CT) Add `empty_template` to gracefully support empty `Dir`
 #    22-Jan-2014 (CT) Change `Root._http_response_context` to set
 #                     `scope.user` to `.person`, if any
+#    24-Jan-2014 (CT) Add `a_attr_dict`
 #    ««revision-date»»···
 #--
 
@@ -311,6 +312,15 @@ class _RST_Base_ (TFL.Meta.Object) :
         """Called by metaclass's __init__: redefine as necessary."""
         pass
     # end def _m_after__init__
+
+    @property
+    @getattr_safe
+    def a_attr_dict (self) :
+        """Dictionary with attributes applicable to an `<a>` element
+           referring to this resource.
+        """
+        return dict (href = self.abs_href)
+    # end def a_attr_dict
 
     @Once_Property
     @getattr_safe
