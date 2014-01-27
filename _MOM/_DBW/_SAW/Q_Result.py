@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -61,6 +61,7 @@
 #     9-Oct-2013 (CT) Add `slice`
 #    10-Oct-2013 (CT) Improve `_Base_.__repr__` (`_fix_by`, `_select_sep`)
 #    10-Oct-2013 (CT) Normalize `long` values in `_col_value_from_row`
+#    27-Jan-2014 (CT) Add `formatted`
 #    ««revision-date»»···
 #--
 
@@ -218,6 +219,19 @@ class _Base_ (TFL.Meta.Object) :
         except IndexError :
             return None
     # end def first
+
+    def formatted (self) :
+        result = [repr (self)]
+        sq     = self.sa_query
+        cq     = sq.compile ()
+        if cq.params :
+            result.append ("Parameters:")
+            result.extend \
+                (   ("     %-20s : %r" % (k, v))
+                for k, v in sorted (pyk.iteritems (cq.params))
+                )
+        return "\n".join (result)
+    # end def formatted
 
     def group_by (self, * columns) :
         result           = self._clone ()

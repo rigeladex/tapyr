@@ -120,6 +120,7 @@
 #    11-Jun-2013 (CT) Improve message logged by `_create_instance`
 #    13-Aug-2013 (CT) Change `_create_instance` to check `Required_Missing`
 #    14-Jan-2014 (CT) Add `ui_description` to `Field._instance_kw`
+#    27-Jan-2014 (CT) Use `ETM.query`, not `.query_s`, in `_create_instance`
 #    ««revision-date»»···
 #--
 
@@ -221,24 +222,24 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
         error = None
         try :
             try :
-                rqas    = ETM.raw_query_attrs (akw, akw)
-                matches = ETM.query_s (* rqas)
+                rqas      = ETM.raw_query_attrs (akw, akw)
+                matches   = ETM.query (* rqas)
             except Exception as exc :
                 logging.exception \
                     ( "Exception from "
-                      "`ETM.query_s (* ETM.raw_query_attrs (akw, akw))` "
+                      "`ETM.query (* ETM.raw_query_attrs (akw, akw))` "
                       "for akw = %s"
                     % (sorted (akw.iteritems ()), )
                     )
                 raise
             else :
-                count   = matches.count ()
+                count     = matches.count ()
             if not count :
-                result = ETM (raw = 1, on_error = on_error, ** akw)
+                result    = ETM (raw = 1, on_error = on_error, ** akw)
             else :
-                error = None
+                error     = None
                 try :
-                    epks = ETM.E_Type.epkified (** akw)
+                    epks  = ETM.E_Type.epkified (** akw)
                 except MOM.Error.Required_Missing as exc :
                     error = exc
                 except Exception :

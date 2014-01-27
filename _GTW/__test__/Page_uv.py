@@ -47,8 +47,10 @@ _test_code = r"""
     Creating new scope MOMT__...
     >>> SWP = scope.SWP
 
-    >>> SWP.Page_U ("foo", text = "U")
+    >>> SWP.Page_U ("foo", text = "U", format = SWP.Format.ReST)
     SWP.Page_U (u'foo')
+    >>> scope.commit ()
+
     >>> SWP.Page_U.query_s (perma_name = "foo").all ()
     [SWP.Page_U (u'foo')]
     >>> SWP.Page_V.query_s (perma_name = "foo").all ()
@@ -71,14 +73,24 @@ _test_code = r"""
     >>> SWP.Page.query_s (perma_name = "foo").all ()
     [SWP.Page_U (u'foo')]
 
-    >>> SWP.Page_V ("bar", text = "V")
+    >>> SWP.Page_V ("bar", text = "V", format = "Markdown", raw = True)
     SWP.Page_V (u'bar')
+    >>> scope.commit ()
+
     >>> SWP.Page_U.query_s ().all ()
     [SWP.Page_U (u'foo')]
     >>> SWP.Page_V.query_s ().all ()
     [SWP.Page_V (u'bar')]
     >>> SWP.Page.query_s ().all ()
     [SWP.Page_V (u'bar'), SWP.Page_U (u'foo')]
+
+    >>> akw = dict (format = "Markdown")
+    >>> SWP.Page.query_s (* SWP.Page.raw_query_attrs (akw, akw)).all ()
+    [SWP.Page_V (u'bar')]
+
+    >>> akw = dict (format = "ReST")
+    >>> SWP.Page.query_s (* SWP.Page.raw_query_attrs (akw, akw)).all ()
+    [SWP.Page_U (u'foo')]
 
     >>> fmt = "%%(type_name)-45s  %%(polymorphic_epk)-5s  %%(epk_sig)s"
     >>> rets = list (et for et in scope.app_type._T_Extension if et.PNS != MOM and et.is_relevant)

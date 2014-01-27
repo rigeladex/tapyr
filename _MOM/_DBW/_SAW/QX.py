@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -43,6 +43,8 @@
 #    10-Oct-2013 (CT) Add `Q` to `_Q_SUM_Proxy_`
 #    11-Oct-2013 (CT) Generalize `_SUM_` to `_Aggr_`,
 #                     `_Q_SUM_Proxy_` to `_Q_Aggr_Proxy_`
+#    27-Jan-2014 (CT) Change `_Base_._xs_filter_rhs` to call `pickler.as_cargo`,
+#                     if any
 #    ««revision-date»»···
 #--
 
@@ -429,7 +431,8 @@ class _Base_ (TFL.Meta.Object) :
         result = rhs
         qxa    = self._qx_attr
         if qxa is not None :
-            attr = qxa._attr
+            attr    = qxa._attr
+            pickler = attr.Pickler
             if qxa._is_raw :
                 if not attr.needs_raw_value :
                     result = attr.from_string (result)
@@ -438,6 +441,8 @@ class _Base_ (TFL.Meta.Object) :
                     result = attr.cooked (result)
             if isinstance (result, (MOM.Id_Entity, MOM.MD_Change)) :
                 result = result.spk
+            elif pickler and not qxa._field :
+                result = pickler.as_cargo (attr.kind, attr, result)
         return result
     # end def _xs_filter_rhs
 

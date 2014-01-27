@@ -326,6 +326,7 @@
 #     1-Aug-2013 (CT) Factor `_A_SPK_Entity_`, add `_A_MD_Change_`
 #    21-Aug-2013 (CT) Add `_A_Rev_Ref_.finished_query_first`, `.sort_key`
 #    13-Jan-2014 (CT) Add `A_Confirmation`; factor `_A_Boolean_`
+#    27-Jan-2014 (CT) Redefine `_A_Named_Object_.cooked`
 #    ««revision-date»»···
 #--
 
@@ -1711,6 +1712,18 @@ class _A_Named_Object_ (_A_Named_Value_) :
             , key = TFL.Getter [1]
             )
     # end def Choices
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, pyk.string_types) :
+            try :
+                return soc.Table [value]
+            except KeyError :
+                msg = "%s not in %s" % (value, sorted (soc.Table))
+                return MOM.Error.Attribute_Syntax (None, soc, value, msg)
+        else :
+            return value
+    # end def cooked
 
 # end class _A_Named_Object_
 

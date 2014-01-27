@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package _GTW.__test__.
@@ -29,6 +29,7 @@
 #    14-Aug-2013 (CT) Creation
 #    26-Aug-2013 (CT) Add `show_key_o_p`, `show_sequence`
 #    18-Sep-2013 (CT) Add `show_query` (uses `compile` to show `params`)
+#    27-Jan-2014 (CT) Factor `formatted` to `MOM.DBW.SAW.Q_Result`
 #    ««revision-date»»···
 #--
 
@@ -266,13 +267,7 @@ def show_qc_map (apt, pred = pred) :
 # end def show_qc_map
 
 def show_query (qr) :
-    sq = qr.sa_query
-    cq = sq.compile ()
-    print (qr)
-    if cq.params :
-        print ("Parameters:")
-        for k, v in sorted (pyk.iteritems (cq.params)) :
-            print ("     %-20s : %r" % (k, v))
+    print (qr.formatted ())
 # end def show_query
 
 def show_root_table (apt, pred = pred) :
