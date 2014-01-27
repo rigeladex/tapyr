@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.
@@ -307,6 +307,7 @@
 #    20-Jun-2012 (CT) Restrain `__repr__`, remove `__str__`, add `formatted`
 #     6-Jul-2012 (CT) Use `SMTP_Logger`, not `print`
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    27-Jan-2014 (CT) Add `A_Link`
 #    ««revision-date»»···
 #--
 
@@ -1011,6 +1012,18 @@ class Alias (Page) :
     # end def __getattr__
 
 # end class Alias
+
+class A_Link (Page) :
+    """A link to another URL"""
+
+    download   = True
+
+    def __init__ (self, ** kw) :
+        self.target_url = kw.pop ("target_url")
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+# end class A_Link
 
 class _Dir_ (_Site_Entity_) :
     """Model one directory of a web site."""
