@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.OMP.SWP.Formatter
+#    GTW.OMP.SWP.Format
 #
 # Purpose
 #    Provide formatter objects for different markup types
@@ -143,4 +143,4 @@ class A_Format (MOM.Attr._A_Named_Object_) :
 
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export_Module ()
-### __END__ GTW.OMP.SWP.Formatter
+### __END__ GTW.OMP.SWP.Format
