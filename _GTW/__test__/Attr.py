@@ -124,11 +124,13 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Page_Mixin
         SWP.Clip_X                    *  SWP.Page_Mixin
         SRM.Page                      *  SWP.Page_Mixin
-    hidden [SWP.Page_Mixin]
-        SWP.Page                      *  SWP.Page_Mixin
-        SWP.Page_Y                    *  SWP.Page_Mixin
-        SWP.Clip_X                    *  SWP.Page_Mixin
-        SRM.Page                      *  SWP.Page_Mixin
+    hidden [SWP.Object_PN]
+        SWP.Object_PN                    SWP.Object_PN
+        SWP.Page                      *  SWP.Object_PN
+        SWP.Page_Y                    *  SWP.Object_PN
+        SWP.Clip_X                    *  SWP.Object_PN
+        SWP.Gallery                   *  SWP.Object_PN
+        SRM.Page                      *  SWP.Object_PN
     is_cancelled [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
@@ -369,11 +371,13 @@ _test_DET = """
         PAP.Person_has_Email          *  MOM.Id_Entity
         PAP.Company_has_Address       *  MOM.Id_Entity
         PAP.Person_has_Address        *  MOM.Id_Entity
-    prio [SWP.Page_Mixin]
-        SWP.Page                      *  SWP.Page_Mixin
-        SWP.Page_Y                    *  SWP.Page_Mixin
-        SWP.Clip_X                    *  SWP.Page_Mixin
-        SRM.Page                      *  SWP.Page_Mixin
+    prio [SWP.Object_PN]
+        SWP.Object_PN                    SWP.Object_PN
+        SWP.Page                      *  SWP.Object_PN
+        SWP.Page_Y                    *  SWP.Object_PN
+        SWP.Clip_X                    *  SWP.Object_PN
+        SWP.Gallery                   *  SWP.Object_PN
+        SRM.Page                      *  SWP.Object_PN
     races [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta

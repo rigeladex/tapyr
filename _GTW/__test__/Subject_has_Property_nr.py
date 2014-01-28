@@ -784,8 +784,12 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_P : Date_Interval `date`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : Boolean `hidden`
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper_P : Date-Slug `perma_name`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_P : Int `prio`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper_P : String `short_title`
           Necessary, _User_, _DB_Attr_
       Kind_Wrapper_P : String `title`
@@ -797,10 +801,6 @@ _test_attr_wrappers = """
           Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `head_line`
           Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Boolean `hidden`
-          Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Int `prio`
-          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : Text `text`
           Required, _Required_Mixin_, _User_, _DB_Attr_
     SWP.Page
@@ -1291,10 +1291,14 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : Directory `directory`
           Necessary, _User_, _DB_Attr_
+      Kind_Wrapper : Boolean `hidden`
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper : Date-Slug `perma_name`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `pictures`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Int `prio`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper : String `short_title`
           Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `title`
@@ -2323,10 +2327,12 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page)>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Date-Slug `perma_name` (SWP.Gallery | SWP.Page)>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Int `prio` (SWP.Gallery | SWP.Page)>
       <SAW : String `short_title` (SWP.Gallery | SWP.Page)>
       <SAW : String `title` (SWP.Gallery | SWP.Page)>
       <SAW : String `type_name` [mom_id_entity.type_name]>
@@ -2335,8 +2341,6 @@ _test_q_able = """
       <SAW : Text `contents` [contents]>
       <SAW : Format `format` [format]>
       <SAW : String `head_line` [head_line]>
-      <SAW : Boolean `hidden` [hidden]>
-      <SAW : Int `prio` [prio]>
       <SAW : Text `text` [text]>
     <SAW : SWP.Page [swp_page : mom_id_entity]>
       <SAW : Link_Ref_List `clips`>
@@ -2880,11 +2884,13 @@ _test_q_able = """
       <SAW : Boolean `date.alive`>
       <SAW : Directory `directory` [swp_gallery.directory]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Boolean `hidden` [swp_gallery.hidden]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Date-Slug `perma_name` [swp_gallery.perma_name]>
       <SAW : Link_Ref_List `pictures`>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Int `prio` [swp_gallery.prio]>
       <SAW : String `short_title` [swp_gallery.short_title]>
       <SAW : String `title` [swp_gallery.title]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
@@ -3620,10 +3626,12 @@ _test_q_able = """
       creation                      : creation
       date                          : date
       electric                      : electric
+      hidden                        : hidden
       last_change                   : last_change
       last_cid                      : last_cid
       perma_name                    : perma_name
       pid                           : pid
+      prio                          : prio
       short_title                   : short_title
       title                         : title
       type_name                     : type_name
@@ -3632,8 +3640,6 @@ _test_q_able = """
       contents                      : contents
       format                        : format
       head_line                     : head_line
-      hidden                        : hidden
-      prio                          : prio
       text                          : text
     <SAW : SWP.Page [swp_page : mom_id_entity]>
       clips                         : clips
@@ -4204,11 +4210,13 @@ _test_q_able = """
           start                         : date.start
       directory                     : directory
       electric                      : electric
+      hidden                        : hidden
       last_change                   : last_change
       last_cid                      : last_cid
       perma_name                    : perma_name
       pictures                      : pictures
       pid                           : pid
+      prio                          : prio
       short_title                   : short_title
       title                         : title
       type_name                     : type_name
@@ -4950,10 +4958,12 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page)>
         electric                  : mom_id_entity.electric
+        hidden                    : <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page)>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         perma_name                : <SAW : Date-Slug `perma_name` (SWP.Gallery | SWP.Page)>
         pid                       : mom_id_entity.pid
+        prio                      : <SAW : Int `prio` (SWP.Gallery | SWP.Page)>
         short_title               : <SAW : String `short_title` (SWP.Gallery | SWP.Page)>
         title                     : <SAW : String `title` (SWP.Gallery | SWP.Page)>
         type_name                 : mom_id_entity.type_name
@@ -5591,11 +5601,13 @@ _test_qc_map = """
         date.start                : swp_gallery.date__start
         directory                 : swp_gallery.directory
         electric                  : mom_id_entity.electric
+        hidden                    : swp_gallery.hidden
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         perma_name                : swp_gallery.perma_name
         pictures                  : <SAW : Link_Ref_List `pictures`>
         pid                       : mom_id_entity.pid
+        prio                      : swp_gallery.prio
         short_title               : swp_gallery.short_title
         title                     : swp_gallery.title
         type_name                 : mom_id_entity.type_name
@@ -8103,8 +8115,10 @@ _test_select = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title,
                swp_page.contents AS swp_page_contents,
@@ -8870,8 +8884,10 @@ _test_select = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title,
                swp_page.contents AS swp_page_contents,
@@ -9492,8 +9508,10 @@ _test_select = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title,
                swp_page.contents AS swp_page_contents,
@@ -9549,8 +9567,10 @@ _test_select = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title,
                swp_page.contents AS swp_page_contents,
@@ -9592,8 +9612,10 @@ _test_select = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title,
                swp_page.contents AS swp_page_contents,
@@ -10932,8 +10954,10 @@ _test_select = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title
         FROM mom_id_entity
@@ -12118,8 +12142,10 @@ _test_select_strict = """
                swp_gallery.date__finish AS swp_gallery_date__finish,
                swp_gallery.date__start AS swp_gallery_date__start,
                swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
                swp_gallery.perma_name AS swp_gallery_perma_name,
                swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
                swp_gallery.short_title AS swp_gallery_short_title,
                swp_gallery.title AS swp_gallery_title
         FROM mom_id_entity
@@ -12922,8 +12948,10 @@ _test_tables = """
         Column date__finish              : Date                 Optional__Nested Date finish
         Column date__start               : Date                 Necessary__Sticky__Nested Date start
         Column directory                 : Text                 Necessary Directory directory
+        Column hidden                    : Boolean              Optional Boolean hidden
         Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column prio                      : Integer              Optional__Sticky Int prio
         Column short_title               : Varchar(30)          Necessary String short_title
         Column title                     : Varchar(120)         Necessary String title
     SWP.Picture (MOM.Id_Entity) <Table swp_picture>

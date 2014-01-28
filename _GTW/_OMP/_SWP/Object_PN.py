@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SWP.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Jun-2013 (CT) Creation (recovered from late `_SWP.Entity` module)
+#    28-Jan-2014 (CT) Add `hidden` and `prio` (move from `SWP.Page_Mixin`)
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,25 @@ class Object_PN (_Ancestor_Essence) :
               """
 
         # end class date
+
+        class hidden (A_Boolean) :
+            """Don't show page in navigation."""
+
+            kind               = Attr.Optional
+            default            = False
+            rank               = 1
+
+        # end class hidden
+
+        class prio (A_Int) :
+            """Higher prio sorts before lower prio."""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+            default            = 0
+            rank               = 1
+
+        # end class prio
 
         class short_title (A_String) :
             """Short title (used in navigation)."""
