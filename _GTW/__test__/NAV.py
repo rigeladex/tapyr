@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -158,6 +158,7 @@ _test_nav = """
     Admin/Webseitenverwaltung/Gallery e_type_admin
     Admin/Webseitenverwaltung/Page e_type_admin
     Admin/Webseitenverwaltung/Picture e_type_admin
+    Admin/Webseitenverwaltung/Referral e_type_admin
 
     >>> php = nav_root.resource_from_href ("Admin/Personenverwaltung/Person_has_Phone/create")
     >>> print php.href, php.template.name

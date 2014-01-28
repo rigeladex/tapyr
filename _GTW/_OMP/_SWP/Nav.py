@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -37,6 +37,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
 #                     i.e., stuff related to non-AFS forms
+#    28-Jan-2014 (CT) Add `Referral`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,14 @@ class Admin (object) :
         ( ETM            = "GTW.OMP.SWP.Picture"
         , sort_key       = TFL.Sorted_By \
             ("-left.date.start", "left.perma_name", "number")
+        )
+
+    Referral             = dict \
+        ( ETM            = "GTW.OMP.SWP.Referral"
+        , list_display   = \
+            ("date", "parent_url", "perma_name", "short_title")
+        , sort_key       = TFL.Sorted_By \
+            ("-date.start", "parent_url", "perma_name")
         )
 
 # end class Admin

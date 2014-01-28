@@ -49,7 +49,6 @@
 from   __future__            import unicode_literals
 
 from   _MOM.import_MOM          import *
-from   _MOM._Attr.Date_Interval import *
 
 from   _GTW                     import GTW
 
@@ -59,8 +58,6 @@ import _GTW._OMP._SWP.Object_PN
 from   _TFL.I18N                import _, _T, _Tn
 
 import _TFL.Decorator
-
-import datetime
 
 _Ancestor_Essence = GTW.OMP.SWP.Entity
 

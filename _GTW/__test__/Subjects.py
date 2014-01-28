@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -286,6 +286,7 @@ _test_code = """
               SWP.Clip_X . . . . . . . . . . . . . . .    True
               SRM.Page . . . . . . . . . . . . . . . .    True                 True
             SWP.Gallery  . . . . . . . . . . . . . . .    True
+            SWP.Referral . . . . . . . . . . . . . . .    True
         PAP.Object . . . . . . . . . . . . . . . . . .           True   True
           PAP.Property . . . . . . . . . . . . . . . .           True   True
             PAP.Address  . . . . . . . . . . . . . . .    True

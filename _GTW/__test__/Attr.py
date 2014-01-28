@@ -85,6 +85,7 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Object_PN
         SWP.Clip_X                    *  SWP.Object_PN
         SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
         SRM.Page                      *  SWP.Object_PN
     desc [PAP.Property]
         PAP.Property                     PAP.Property
@@ -130,6 +131,7 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Object_PN
         SWP.Clip_X                    *  SWP.Object_PN
         SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
         SRM.Page                      *  SWP.Object_PN
     is_cancelled [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
@@ -185,6 +187,7 @@ _test_DET = """
         SWP.Clip_X                    *  MOM.Id_Entity
         SWP.Gallery                   *  MOM.Id_Entity
         SWP.Picture                   *  MOM.Id_Entity
+        SWP.Referral                  *  MOM.Id_Entity
         SRM.Id_Entity                    MOM.Id_Entity
         SRM.Object                       MOM.Id_Entity
         SRM._Boat_Class_                 MOM.Id_Entity
@@ -290,6 +293,7 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Object_PN
         SWP.Clip_X                    *  SWP.Object_PN
         SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
         SRM.Page                      *  SWP.Object_PN
     pid [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
@@ -337,6 +341,7 @@ _test_DET = """
         SWP.Clip_X                    *  MOM.Id_Entity
         SWP.Gallery                   *  MOM.Id_Entity
         SWP.Picture                   *  MOM.Id_Entity
+        SWP.Referral                  *  MOM.Id_Entity
         SRM.Id_Entity                    MOM.Id_Entity
         SRM.Object                       MOM.Id_Entity
         SRM._Boat_Class_                 MOM.Id_Entity
@@ -377,6 +382,7 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Object_PN
         SWP.Clip_X                    *  SWP.Object_PN
         SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
         SRM.Page                      *  SWP.Object_PN
     races [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
@@ -423,6 +429,7 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Object_PN
         SWP.Clip_X                    *  SWP.Object_PN
         SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
     text [SWP.Page_Mixin]
         SWP.Page                      *  SWP.Page_Mixin
         SWP.Page_Y                    *  SWP.Page_Mixin
@@ -434,6 +441,7 @@ _test_DET = """
         SWP.Page_Y                    *  SWP.Object_PN
         SWP.Clip_X                    *  SWP.Clip_X
         SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
     type_name [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
@@ -480,6 +488,7 @@ _test_DET = """
         SWP.Clip_X                    *  MOM.Id_Entity
         SWP.Gallery                   *  MOM.Id_Entity
         SWP.Picture                   *  MOM.Id_Entity
+        SWP.Referral                  *  MOM.Id_Entity
         SRM.Id_Entity                    MOM.Id_Entity
         SRM.Object                       MOM.Id_Entity
         SRM._Boat_Class_                 MOM.Id_Entity
@@ -911,6 +920,7 @@ _test_pickled_types = """
     directory            Directory       str                  0   120     0
     discarded            Boolean         bool              None     5     5
     discards             Int             int               None     3     3
+    download             Boolean         bool              None     5     5
     easter_offset        Int_List        str                  0    20     0
     event                Entity          Regatta_Event     None    20    20
     extension            Numeric_String  unicode              5     6     5
@@ -948,6 +958,7 @@ _test_pickled_types = """
     nation               Nation          unicode              3    20     3
     number               Numeric_String  unicode             14    15    14
     number               Int             int               None    20    20
+    parent_url           Url             unicode            160   161   160
     period               Int             int               None     1     1
     perma_name           String          unicode             64    65    64
     perma_name           String          unicode             64    65    64
@@ -979,6 +990,7 @@ _test_pickled_types = """
     start                Date            date              None    12    12
     status               String          unicode              8     9     8
     street               String          unicode             60    61    60
+    target_url           Url             unicode            160   161   160
     text                 Text            unicode              0   120     0
     title                String          unicode             20    21    20
     title                String          unicode            120   121   120
@@ -1130,6 +1142,7 @@ _test_types = """
               SWP.Clip_X
               SRM.Page
             SWP.Gallery
+            SWP.Referral
         SRM.Object
           SRM._Boat_Class_
             SRM.Boat_Class

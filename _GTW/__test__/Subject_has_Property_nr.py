@@ -385,6 +385,7 @@ _test_ancestors = """
     MOM._Pic_
     MOM._Thumb_
     SWP.Picture                          < MOM.Id_Entity
+    SWP.Referral                         < MOM.Id_Entity
     SRM.Page                             < SWP.Page         < MOM.Id_Entity
     SRM.Regatta                          < MOM.Id_Entity
     SRM.Regatta_C                        < SRM.Regatta      < MOM.Id_Entity
@@ -500,6 +501,7 @@ _test_ancestors = """
     MOM._Pic_                            None
     MOM._Thumb_                          None
     SWP.Picture                          mom_id_entity
+    SWP.Referral                         mom_id_entity
     SRM.Page                             mom_id_entity
     SRM.Regatta                          mom_id_entity
     SRM.Regatta_C                        mom_id_entity
@@ -1352,6 +1354,34 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
           Kind_Wrapper : X `width`
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
+    SWP.Referral
+      Kind_Wrapper_R : Link_Ref_List `clips`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_C : Date_Interval `date`
+          _Composite_Mixin_, Optional, _User_, _DB_Attr_
+        MOM.Date_Interval_N
+          Kind_Wrapper_Q : Boolean `alive`
+              _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Date : Date `finish`
+              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          Kind_Wrapper_Date : Date `start`
+              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+      Kind_Wrapper : Boolean `download`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Boolean `hidden`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Url `parent_url`
+          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper : Date-Slug `perma_name`
+          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper : Int `prio`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper : String `short_title`
+          Necessary, _User_, _DB_Attr_
+      Kind_Wrapper : Url `target_url`
+          Required, _Required_Mixin_, _User_, _DB_Attr_
+      Kind_Wrapper : String `title`
+          Necessary, _User_, _DB_Attr_
     SRM.Page
       Kind_Wrapper : String `desc`
           Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
@@ -2325,16 +2355,16 @@ _test_q_able = """
     <SAW : SWP.Object_PN [mom_id_entity]>
       <SAW : Link_Ref_List `clips`>
       <SAW : Rev_Ref `creation`>
-      <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page)>
+      <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page | SWP.Referral)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page)>
+      <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page | SWP.Referral)>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Date-Slug `perma_name` (SWP.Gallery | SWP.Page)>
+      <SAW : Date-Slug `perma_name` (SWP.Gallery | SWP.Page | SWP.Referral)>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Int `prio` (SWP.Gallery | SWP.Page)>
-      <SAW : String `short_title` (SWP.Gallery | SWP.Page)>
-      <SAW : String `title` (SWP.Gallery | SWP.Page)>
+      <SAW : Int `prio` (SWP.Gallery | SWP.Page | SWP.Referral)>
+      <SAW : String `short_title` (SWP.Gallery | SWP.Page | SWP.Referral)>
+      <SAW : String `title` (SWP.Gallery | SWP.Page | SWP.Referral)>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SWP.Page_Mixin []>
@@ -2920,6 +2950,25 @@ _test_q_able = """
       <SAW : Picture `photo` [swp_picture.photo__extension, swp_picture.photo__height, swp_picture.photo__width]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Thumbnail `thumb` [swp_picture.thumb__extension, swp_picture.thumb__height, swp_picture.thumb__width]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SWP.Referral [swp_referral : mom_id_entity]>
+      <SAW : Link_Ref_List `clips`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Date_Interval `date` [swp_referral.date__finish, swp_referral.date__start]>
+      <SAW : Boolean `date.alive`>
+      <SAW : Boolean `download` [swp_referral.download]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Boolean `hidden` [swp_referral.hidden]>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Url `parent_url` [swp_referral.parent_url]>
+      <SAW : Date-Slug `perma_name` [swp_referral.perma_name]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Int `prio` [swp_referral.prio]>
+      <SAW : String `short_title` [swp_referral.short_title]>
+      <SAW : Url `target_url` [swp_referral.target_url]>
+      <SAW : String `title` [swp_referral.title]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
     <SAW : SRM.Page [srm_page : swp_page : mom_id_entity]>
@@ -4254,6 +4303,27 @@ _test_q_able = """
           width                         : thumb.width
       type_name                     : type_name
       x_locked                      : x_locked
+    <SAW : SWP.Referral [swp_referral : mom_id_entity]>
+      clips                         : clips
+      creation                      : creation
+      date                          : date
+          alive                         : date.alive
+          finish                        : date.finish
+          start                         : date.start
+      download                      : download
+      electric                      : electric
+      hidden                        : hidden
+      last_change                   : last_change
+      last_cid                      : last_cid
+      parent_url                    : parent_url
+      perma_name                    : perma_name
+      pid                           : pid
+      prio                          : prio
+      short_title                   : short_title
+      target_url                    : target_url
+      title                         : title
+      type_name                     : type_name
+      x_locked                      : x_locked
     <SAW : SRM.Page [srm_page : swp_page : mom_id_entity]>
       clips                         : clips
       contents                      : contents
@@ -4956,16 +5026,16 @@ _test_qc_map = """
     <SAW : SWP.Object_PN [mom_id_entity]>
         clips                     : <SAW : Link_Ref_List `clips`>
         creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page)>
+        date                      : <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page | SWP.Referral)>
         electric                  : mom_id_entity.electric
-        hidden                    : <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page)>
+        hidden                    : <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page | SWP.Referral)>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
-        perma_name                : <SAW : Date-Slug `perma_name` (SWP.Gallery | SWP.Page)>
+        perma_name                : <SAW : Date-Slug `perma_name` (SWP.Gallery | SWP.Page | SWP.Referral)>
         pid                       : mom_id_entity.pid
-        prio                      : <SAW : Int `prio` (SWP.Gallery | SWP.Page)>
-        short_title               : <SAW : String `short_title` (SWP.Gallery | SWP.Page)>
-        title                     : <SAW : String `title` (SWP.Gallery | SWP.Page)>
+        prio                      : <SAW : Int `prio` (SWP.Gallery | SWP.Page | SWP.Referral)>
+        short_title               : <SAW : String `short_title` (SWP.Gallery | SWP.Page | SWP.Referral)>
+        title                     : <SAW : String `title` (SWP.Gallery | SWP.Page | SWP.Referral)>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SWP.Page [swp_page : mom_id_entity]>
@@ -5640,6 +5710,30 @@ _test_qc_map = """
         thumb.extension           : swp_picture.thumb__extension
         thumb.height              : swp_picture.thumb__height
         thumb.width               : swp_picture.thumb__width
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SWP.Referral [swp_referral : mom_id_entity]>
+        clips                     : <SAW : Link_Ref_List `clips`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        date                      : <Col-Mapper for MOM.Date_Interval_N>
+            alive                 : <SAW : Boolean `date.alive`>
+            finish                : swp_referral.date__finish
+            start                 : swp_referral.date__start
+        date.alive                : <SAW : Boolean `date.alive`>
+        date.finish               : swp_referral.date__finish
+        date.start                : swp_referral.date__start
+        download                  : swp_referral.download
+        electric                  : mom_id_entity.electric
+        hidden                    : swp_referral.hidden
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        parent_url                : swp_referral.parent_url
+        perma_name                : swp_referral.perma_name
+        pid                       : mom_id_entity.pid
+        prio                      : swp_referral.prio
+        short_title               : swp_referral.short_title
+        target_url                : swp_referral.target_url
+        title                     : swp_referral.title
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
     <SAW : SRM.Page [srm_page : swp_page : mom_id_entity]>
@@ -8144,7 +8238,18 @@ _test_select = """
                swp_picture.pid AS swp_picture_pid,
                swp_picture.thumb__extension AS swp_picture_thumb__extension,
                swp_picture.thumb__height AS swp_picture_thumb__height,
-               swp_picture.thumb__width AS swp_picture_thumb__width
+               swp_picture.thumb__width AS swp_picture_thumb__width,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
         FROM mom_id_entity
            LEFT OUTER JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
@@ -8180,6 +8285,7 @@ _test_select = """
            LEFT OUTER JOIN swp_clip_o ON mom_id_entity.pid = swp_clip_o.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
            LEFT OUTER JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
            LEFT OUTER JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            LEFT OUTER JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
            LEFT OUTER JOIN srm_sailor ON mom_id_entity.pid = srm_sailor.pid
@@ -8903,7 +9009,18 @@ _test_select = """
                swp_page.text AS swp_page_text,
                swp_page.title AS swp_page_title,
                swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year
+               swp_page_y.year AS swp_page_y_year,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
         FROM mom_id_entity
            LEFT OUTER JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            LEFT OUTER JOIN auth_account ON auth__account_.pid = auth_account.pid
@@ -8925,6 +9042,7 @@ _test_select = """
            LEFT OUTER JOIN srm_club ON mom_id_entity.pid = srm_club.pid
            LEFT OUTER JOIN srm_regatta_event ON mom_id_entity.pid = srm_regatta_event.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
         WHERE mom_id_entity.pid = auth__account_.pid
             OR mom_id_entity.pid = auth_account.pid
             OR mom_id_entity.pid = auth_certificate.pid
@@ -8945,6 +9063,7 @@ _test_select = """
             OR mom_id_entity.pid = srm_club.pid
             OR mom_id_entity.pid = srm_regatta_event.pid
             OR mom_id_entity.pid = swp_gallery.pid
+            OR mom_id_entity.pid = swp_referral.pid
     Auth.Id_Entity
         SELECT auth__account_.enabled AS auth__account__enabled,
                auth__account_.name AS auth__account__name,
@@ -9537,7 +9656,18 @@ _test_select = """
                swp_picture.pid AS swp_picture_pid,
                swp_picture.thumb__extension AS swp_picture_thumb__extension,
                swp_picture.thumb__height AS swp_picture_thumb__height,
-               swp_picture.thumb__width AS swp_picture_thumb__width
+               swp_picture.thumb__width AS swp_picture_thumb__width,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
         FROM mom_id_entity
            LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
            LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
@@ -9546,6 +9676,7 @@ _test_select = """
            LEFT OUTER JOIN swp_clip_o ON mom_id_entity.pid = swp_clip_o.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
            LEFT OUTER JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
         WHERE mom_id_entity.pid = swp_page.pid
             OR mom_id_entity.pid = swp_page_y.pid
             OR mom_id_entity.pid = swp_clip_x.pid
@@ -9553,6 +9684,7 @@ _test_select = """
             OR mom_id_entity.pid = swp_clip_o.pid
             OR mom_id_entity.pid = swp_gallery.pid
             OR mom_id_entity.pid = swp_picture.pid
+            OR mom_id_entity.pid = swp_referral.pid
     SWP.Object
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -9586,18 +9718,31 @@ _test_select = """
                swp_page.text AS swp_page_text,
                swp_page.title AS swp_page_title,
                swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year
+               swp_page_y.year AS swp_page_y_year,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
         FROM mom_id_entity
            LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
            LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
            LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
            LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
         WHERE mom_id_entity.pid = swp_page.pid
             OR mom_id_entity.pid = swp_page_y.pid
             OR mom_id_entity.pid = swp_clip_x.pid
             OR mom_id_entity.pid = srm_page.pid
             OR mom_id_entity.pid = swp_gallery.pid
+            OR mom_id_entity.pid = swp_referral.pid
     SWP.Object_PN
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -9631,18 +9776,31 @@ _test_select = """
                swp_page.text AS swp_page_text,
                swp_page.title AS swp_page_title,
                swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year
+               swp_page_y.year AS swp_page_y_year,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
         FROM mom_id_entity
            LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
            LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
            LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
            LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
         WHERE mom_id_entity.pid = swp_page.pid
             OR mom_id_entity.pid = swp_page_y.pid
             OR mom_id_entity.pid = swp_clip_x.pid
             OR mom_id_entity.pid = srm_page.pid
             OR mom_id_entity.pid = swp_gallery.pid
+            OR mom_id_entity.pid = swp_referral.pid
     SWP.Page
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -10980,6 +11138,25 @@ _test_select = """
                swp_picture.thumb__width AS swp_picture_thumb__width
         FROM mom_id_entity
            JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
+    SWP.Referral
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
+        FROM mom_id_entity
+           JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
     SRM.Page SWP.Page
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -12170,6 +12347,26 @@ _test_select_strict = """
         FROM mom_id_entity
            JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
         WHERE mom_id_entity.type_name = :type_name_1
+    SWP.Referral
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download AS swp_referral_download,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
+        FROM mom_id_entity
+           JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
+        WHERE mom_id_entity.type_name = :type_name_1
     SRM.Page SWP.Page
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -12474,7 +12671,7 @@ _test_sequences = """
 
     >>> show_sequences (apt)
     MOM.Id_Entity                            : mom_id_entity_pid_seq
-    MOM.MD_Change                     : mom_md_change_cid_seq
+    MOM.MD_Change                            : mom_md_change_cid_seq
     Auth._Account_                           : mom_id_entity_pid_seq
     Auth.Account_Anonymous                   : mom_id_entity_pid_seq
     Auth.Account                             : mom_id_entity_pid_seq
@@ -12510,6 +12707,7 @@ _test_sequences = """
     SWP.Clip_X                               : mom_id_entity_pid_seq
     SWP.Gallery                              : mom_id_entity_pid_seq
     SWP.Picture                              : mom_id_entity_pid_seq
+    SWP.Referral                             : mom_id_entity_pid_seq
     SRM.Page                                 : mom_id_entity_pid_seq
     SRM.Regatta                              : mom_id_entity_pid_seq
     SRM.Regatta_C                            : mom_id_entity_pid_seq
@@ -12573,6 +12771,7 @@ _test_tables = """
     SWP.Clip_X
     SWP.Gallery
     SWP.Picture
+    SWP.Referral
     SRM.Page
     SRM.Regatta
     SRM.Regatta_C
@@ -12635,7 +12834,7 @@ _test_tables = """
     MOM.Link1                                : None
     MOM.Link2                                : None
     MOM.Link3                                : None
-    MOM.MD_Change                     : mom_md_change
+    MOM.MD_Change                            : mom_md_change
     MOM.Object                               : None
     MOM.Position                             : None
     MOM.Time_Interval                        : None
@@ -12707,6 +12906,7 @@ _test_tables = """
     SWP.Page_Mixin                           : None
     SWP.Page_Y                               : swp_page_y
     SWP.Picture                              : swp_picture
+    SWP.Referral                             : swp_referral
 
 
     >>> show_tables (apt)
@@ -12965,6 +13165,18 @@ _test_tables = """
         Column thumb__extension          : Varchar(10)          Optional__Init_Only__Nested String extension
         Column thumb__height             : Smallint             Necessary__Nested Y height
         Column thumb__width              : Smallint             Necessary__Nested X width
+    SWP.Referral (MOM.Id_Entity) <Table swp_referral>
+        Column date__finish              : Date                 Optional__Nested Date finish
+        Column date__start               : Date                 Necessary__Sticky__Nested Date start
+        Column download                  : Boolean              Optional Boolean download
+        Column hidden                    : Boolean              Optional Boolean hidden
+        Column parent_url                : Varchar(160)         Primary Url parent_url
+        Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column prio                      : Integer              Optional__Sticky Int prio
+        Column short_title               : Varchar(30)          Necessary String short_title
+        Column target_url                : Varchar(160)         Required Url target_url
+        Column title                     : Varchar(120)         Necessary String title
     SRM.Page (SWP.Page) SWP.Page <Table srm_page>
         Column desc                      : Varchar(30)          Optional__Computed_Set String desc
         Column event                     : Integer              Primary__Id_Entity_Reference Entity event Id_Entity()
@@ -13135,6 +13347,7 @@ _test_unique = """
     SWP.Clip_X                     perma_name =
     SWP.Gallery                    perma_name
     SWP.Picture                    left, number
+    SWP.Referral                   parent_url, perma_name
     SRM.Page                       perma_name + event
     SRM.Regatta                    boat_class, left
     SRM.Regatta_C                  boat_class, left =
@@ -13266,6 +13479,9 @@ _test_unique = """
     SWP.Picture
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'number')
+    SWP.Referral
+        EMS
+        DBW Uniqueness predicate: unique_epk ('parent_url', 'perma_name')
     SRM.Page
         EMS Uniqueness predicate: unique_epk ('perma_name', 'event')
         DBW

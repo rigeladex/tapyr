@@ -225,7 +225,7 @@ _test_cqf = r"""
     MOM-Link2
         (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     MOM-Object
-        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page'],),)
+        (Q.type_name.in_ (['Auth.Account', 'Auth.Account_Anonymous', 'Auth.Certificate', 'Auth.Group', 'PAP.Address', 'PAP.Company', 'PAP.Email', 'PAP.Person', 'PAP.Phone', 'PAP.Url', 'SRM.Boat_Class', 'SRM.Club', 'SRM.Handicap', 'SRM.Page', 'SRM.Regatta_Event', 'SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
     MOM-_MOM_Link_n_
         (Q.type_name.in_ (['Auth.Account_in_Group', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'SRM.Boat_in_Regatta', 'SRM.Crew_Member', 'SRM.Team_has_Boat_in_Regatta'],),)
     PAP-Address
@@ -339,21 +339,23 @@ _test_cqf = r"""
     SWP-Gallery
         (Q.type_name == SWP.Gallery,)
     SWP-Id_Entity
-        (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture'],),)
+        (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture', 'SWP.Referral'],),)
     SWP-Link
         (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Picture'],),)
     SWP-Link1
         (Q.type_name.in_ (['SWP.Clip_O', 'SWP.Picture'],),)
     SWP-Object
-        (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page'],),)
+        (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
     SWP-Object_PN
-        (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page'],),)
+        (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
     SWP-Page
         (Q.type_name == SWP.Page,)
     SWP-Page_Y
         (Q.type_name == SWP.Page_Y,)
     SWP-Picture
         (Q.type_name == SWP.Picture,)
+    SWP-Referral
+        (Q.type_name == SWP.Referral,)
 
     >>> for e in v1.entries :
     ...     print ("%%s    %%s" %% (e.name, e.attributes))
@@ -437,9 +439,10 @@ _test_cqf = r"""
     SWP-Page    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`)
     SWP-Page_Y    (Date-Slug `perma_name`, Int `year`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Boolean `hidden`, Int `prio`)
     SWP-Picture    (Gallery `left`, Int `number`, String `name`, Picture `photo`, Thumbnail `thumb`)
+    SWP-Referral    (Url `parent_url`, Date-Slug `perma_name`, Url `target_url`, Date_Interval `date`, String `short_title`, String `title`, Boolean `download`, Boolean `hidden`, Int `prio`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
+    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -725,6 +728,7 @@ _test_doc = r"""
             , 'SWP-Page'
             , 'SWP-Page_Y'
             , 'SWP-Picture'
+            , 'SWP-Referral'
             ]
         , 'url_template' : '/Doc/{entry}'
         }
@@ -1460,6 +1464,7 @@ _test_example_1 = r"""
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+    SWP.Referral : (u'/bar', u'20101010_000042_137', 'SWP.Referral')
 
     >>> print ("Count after loop:", scope.MOM.Id_Entity.count)
     Count after loop: 16
@@ -1517,6 +1522,7 @@ _test_example_2 = r"""
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+    SWP.Referral : (u'/bar', u'20101010_000042_137', 'SWP.Referral')
 
 
 """
@@ -1529,6 +1535,7 @@ _test_example_3 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    SWP.Referral : (u'/bar', u'20101010_000042_137', 'SWP.Referral')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
@@ -1629,6 +1636,7 @@ _test_example_4 = r"""
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+    SWP.Referral : (u'/bar', u'20101010_000042_137', 'SWP.Referral')
 
     >>> scope.destroy ()
 
@@ -1682,6 +1690,7 @@ _test_example_4 = r"""
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
+    SWP.Referral : (u'/bar', u'20101010_000042_137', 'SWP.Referral')
 
     >>> scope.destroy ()
 
@@ -1692,6 +1701,7 @@ _test_example_4 = r"""
     ...     ETM = scope [tn]
     ...     exa = ETM.example ()
     ...     print (tn, ":", exa.epk_raw if exa is not None else "------")
+    SWP.Referral : (u'/bar', u'20101010_000042_137', 'SWP.Referral')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
@@ -1893,6 +1903,7 @@ _test_get = r"""
             , 'SWP-Page'
             , 'SWP-Page_Y'
             , 'SWP-Picture'
+            , 'SWP-Referral'
             ]
         , 'url_template' : '/v1/{entry}'
         }
@@ -1983,6 +1994,7 @@ _test_get = r"""
             , '/v1/SWP-Page'
             , '/v1/SWP-Page_Y'
             , '/v1/SWP-Picture'
+            , '/v1/SWP-Referral'
             ]
         }
     , 'status' : 200

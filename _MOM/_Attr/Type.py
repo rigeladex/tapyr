@@ -328,6 +328,7 @@
 #    13-Jan-2014 (CT) Add `A_Confirmation`; factor `_A_Boolean_`
 #    27-Jan-2014 (CT) Redefine `_A_Named_Object_.cooked`
 #    28-Jan-2014 (CT) Change `_A_Named_Object_.cooked` to accept `Elbat` values
+#    28-Jan-2014 (CT) Add `A_Url_L`
 #    ««revision-date»»···
 #--
 
@@ -2741,6 +2742,13 @@ class A_Url (_A_String_) :
     typ            = _ ("Url")
     max_length     = 160
     check          = ("""value.startswith (("/", "http://", "https://"))""", )
+
+# end class A_Url
+
+class A_Url_L (A_Url) :
+    """Local URL (excluding domain)."""
+
+    check          = ("""value.startswith (("/", ))""", )
 
 # end class A_Url
 

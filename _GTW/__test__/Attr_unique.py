@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -156,6 +156,9 @@ _test_unique = """
     SWP.Picture
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'number')
+    SWP.Referral
+        EMS
+        DBW Uniqueness predicate: unique_epk ('parent_url', 'perma_name')
     SRM.Page
         EMS Uniqueness predicate: unique_epk ('perma_name', 'event')
         DBW

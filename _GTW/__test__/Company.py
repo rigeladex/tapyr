@@ -1589,6 +1589,8 @@ _test_entity_attr = """
     SWP.Page_Y
         events
         clips
+    SWP.Referral
+        clips
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
     ...     if T.rev_ref_attr and not T.is_partial :
@@ -1871,6 +1873,10 @@ _test_entity_attr = """
     SWP.Picture
         creation
         last_change
+    SWP.Referral
+        creation
+        last_change
+        clips
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
     ...     print ("%%-40s %%s" %% (T.type_name, T.show_in_ui))
@@ -1979,6 +1985,7 @@ _test_entity_attr = """
     SWP.Page                                 True
     SWP.Page_Y                               True
     SWP.Picture                              True
+    SWP.Referral                             True
 
 """
 
