@@ -327,6 +327,7 @@
 #    21-Aug-2013 (CT) Add `_A_Rev_Ref_.finished_query_first`, `.sort_key`
 #    13-Jan-2014 (CT) Add `A_Confirmation`; factor `_A_Boolean_`
 #    27-Jan-2014 (CT) Redefine `_A_Named_Object_.cooked`
+#    28-Jan-2014 (CT) Change `_A_Named_Object_.cooked` to accept `Elbat` values
 #    ««revision-date»»···
 #--
 
@@ -1719,8 +1720,12 @@ class _A_Named_Object_ (_A_Named_Value_) :
             try :
                 return soc.Table [value]
             except KeyError :
-                msg = "%s not in %s" % (value, sorted (soc.Table))
-                return MOM.Error.Attribute_Syntax (None, soc, value, msg)
+                Elbat = soc._cls_attr ("Elbat")
+                if Elbat and value in Elbat :
+                    return value
+                else :
+                    msg = "%s not in %s" % (value, sorted (soc.Table))
+                    raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
         else :
             return value
     # end def cooked
