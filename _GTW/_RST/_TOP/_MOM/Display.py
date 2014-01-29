@@ -151,7 +151,7 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     def _new_referral_entry (self, ref) :
         return GTW.RST.TOP.A_Link \
-            ( download    = ref.download
+            ( download    = ref.download_name
             , name        = ref.perma_name
             , parent      = self
             , short_title = ref.short_title

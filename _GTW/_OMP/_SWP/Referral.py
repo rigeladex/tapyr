@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jan-2014 (CT) Creation
+#    29-Jan-2014 (CT) Change `download` to `download_name`
 #    ««revision-date»»···
 #--
 
@@ -64,13 +65,12 @@ class Referral (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
-        class download (A_Boolean) :
-            """Mark `target_url` as download URL."""
+        class download_name (A_String) :
+            """Mark `target_url` as downloadable URL with specified filename."""
 
             kind               = Attr.Optional
-            raw_default        = "no"
 
-        # end class download
+        # end class download_name
 
         class target_url (A_Url) :
             """URL of target resource."""
