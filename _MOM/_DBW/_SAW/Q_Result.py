@@ -62,6 +62,7 @@
 #    10-Oct-2013 (CT) Improve `_Base_.__repr__` (`_fix_by`, `_select_sep`)
 #    10-Oct-2013 (CT) Normalize `long` values in `_col_value_from_row`
 #    27-Jan-2014 (CT) Add `formatted`
+#    29-Jan-2014 (CT) Fix `count` to support `bindings`; factor `_execute`
 #    ««revision-date»»···
 #--
 
@@ -185,8 +186,7 @@ class _Base_ (TFL.Meta.Object) :
         if q_result is not None :
             return len (q_result)
         else :
-            cq     = self.sa_query_count
-            qr     = self.session.connection.execute (cq)
+            qr     = self._execute  (self.session, self.sa_query_count)
             result = int (qr.scalar ())
             return result
     # end def count
@@ -277,8 +277,7 @@ class _Base_ (TFL.Meta.Object) :
     # end def order_by
 
     def row_iter (self, session, ** kw) :
-        qkw    = dict (self.bvar_man.bindings, ** kw)
-        result = session.connection.execute (self.sa_query, ** qkw)
+        result = self._execute (session, self.sa_query, ** kw)
         try :
             for row in result :
                 yield row
@@ -307,6 +306,11 @@ class _Base_ (TFL.Meta.Object) :
             )
         return result
     # end def _clone
+
+    def _execute (self, session, q, ** kw) :
+        qkw = dict (self.bvar_man.bindings, ** kw)
+        return session.connection.execute (q, ** qkw)
+    # end def _execute
 
     def _extend_join (self, join, joined, jxs) :
         for a_join in jxs :
