@@ -36,6 +36,7 @@
 #     9-Nov-2012 (CT) Redefine `E_Type_Mixin._get_child_page`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    15-Jan-2014 (CT) Factor `E_Type_Mixin._add_other_entries`
+#    29-Jan-2014 (CT) Add super-call to `_add_other_entries`
 #    ««revision-date»»···
 #--
 
@@ -242,6 +243,7 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
         admin = self.admin
         if admin and admin is not self :
             self.add_entries (admin)
+        self.__super._add_other_entries ()
     # end def _add_other_entries
 
     def _get_child_page (self, obj) :

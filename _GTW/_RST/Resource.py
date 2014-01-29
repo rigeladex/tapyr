@@ -115,6 +115,7 @@
 #                     `scope.user` to `.person`, if any
 #    24-Jan-2014 (CT) Add `a_attr_dict`
 #    24-Jan-2014 (CT) Add `A_Link`
+#    29-Jan-2014 (CT) Add stub for `_add_other_entries`
 #    ««revision-date»»···
 #--
 
@@ -748,6 +749,10 @@ class _RST_Base_ (TFL.Meta.Object) :
         if t :
             yield t
     # end def template_iter
+
+    def _add_other_entries (self) :
+        pass ### just as grounding for __super calls
+    # end def _add_other_entries
 
     def _get_method (self, name) :
         return getattr (self, name)

@@ -37,6 +37,8 @@
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
 #    22-Jan-2014 (CT) Add `E_Type.creator`
 #    29-Jan-2014 (CT) Locally cache `year` in `_E_Type_Archive_.entries`
+#    29-Jan-2014 (CT) Add support for `Referral` to `_E_Type_`
+#    29-Jan-2014 (CT) Redefine `_effective` to check `count`
 #    ««revision-date»»···
 #--
 
@@ -110,6 +112,53 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         if admin :
             return admin._get_child ("create")
     # end def creator
+
+    @Once_Property
+    def referral_query_unbound (self) :
+        sk = TFL.Sorted_By ("perma_name")
+        return self.scope.SWP.Referral.query \
+            (Q.parent_url ==  Q.BVAR.parent_url, sort_key = sk)
+    # end def referral_query_unbound
+
+    @property
+    def referral_query (self) :
+        return self.referral_query_unbound.bind (parent_url = self.abs_href)
+    # end def referral_query
+
+    def _add_other_entries (self) :
+        refs = tuple \
+            (self._new_referral_entry (ref) for ref in self._get_referrals ())
+        if refs :
+            self.add_entries (* refs)
+        self.__super._add_other_entries ()
+    # end def _add_other_entries
+
+    @property
+    @getattr_safe
+    def _effective (self) :
+        if self.count :
+            return self.__super._effective
+        else :
+            ### support referrals even if not objects are available
+            return self
+    # end def _effective
+
+    def _get_referrals (self) :
+        q      = self.referral_query
+        result = q.all ()
+        return result
+    # end def _get_referrals
+
+    def _new_referral_entry (self, ref) :
+        return GTW.RST.TOP.A_Link \
+            ( download    = ref.download
+            , name        = ref.perma_name
+            , parent      = self
+            , short_title = ref.short_title
+            , target_url  = ref.target_url
+            , title       = ref.title
+            )
+    # end def _new_referral_entry
 
 _E_Type_ = _TOP_MOM_E_Type_ # end class
 
@@ -190,7 +239,7 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
                         , parent    = self
                         , year      = y
                         )
-                    if yp.count :
+                    if yp.count or yp.referral_query.count () :
                         yield yp
             self.add_entries (* tuple (_years (self, year)))
             if self._entries :
