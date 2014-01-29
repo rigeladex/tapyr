@@ -36,6 +36,7 @@
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
 #    17-Dec-2012 (CT) Redefine `et_map_name`, remove init-code for `ET_Map`
 #    22-Jan-2014 (CT) Add `E_Type.creator`
+#    29-Jan-2014 (CT) Locally cache `year` in `_E_Type_Archive_.entries`
 #    ««revision-date»»···
 #--
 
@@ -176,27 +177,27 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
     @property
     @getattr_safe
     def entries (self) :
-        cid = self._changed_cid ()
-        if self._old_year != self.year or cid is not None :
+        cid  = self._changed_cid ()
+        year = self.year
+        if self._old_year != year or cid is not None :
             self._entry_map = {}
             self._entries   = []
-            def _years (self) :
-                for y in xrange \
-                        (self.year + 1, self.top.copyright_start - 1, -1) :
-                    year = self.Year\
-                        ( name       = str (y)
-                        , page_args  = self.page_args
-                        , parent     = self
-                        , year       = y
+            def _years (self, year) :
+                for y in xrange (year + 1, self.top.copyright_start - 1, -1) :
+                    yp  = self.Year \
+                        ( name      = str (y)
+                        , page_args = self.page_args
+                        , parent    = self
+                        , year      = y
                         )
-                    if year.count :
-                        yield year
-            self.add_entries (* tuple (_years (self)))
+                    if yp.count :
+                        yield yp
+            self.add_entries (* tuple (_years (self, year)))
             if self._entries :
                 if self._admin :
                     self.add_entries (self._admin)
                 self._old_cid  = cid
-                self._old_year = self.year
+                self._old_year = year
         return self._entries
     # end def entries
 
