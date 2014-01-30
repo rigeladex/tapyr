@@ -1366,7 +1366,7 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
           Kind_Wrapper_Date : Date `start`
               _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
-      Kind_Wrapper : Boolean `download`
+      Kind_Wrapper : String `download_name`
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Boolean `hidden`
           Optional, _User_, _DB_Attr_
@@ -2957,7 +2957,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` [swp_referral.date__finish, swp_referral.date__start]>
       <SAW : Boolean `date.alive`>
-      <SAW : Boolean `download` [swp_referral.download]>
+      <SAW : String `download_name` [swp_referral.download_name]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
       <SAW : Boolean `hidden` [swp_referral.hidden]>
       <SAW : Rev_Ref `last_change`>
@@ -4310,7 +4310,7 @@ _test_q_able = """
           alive                         : date.alive
           finish                        : date.finish
           start                         : date.start
-      download                      : download
+      download_name                 : download_name
       electric                      : electric
       hidden                        : hidden
       last_change                   : last_change
@@ -5722,7 +5722,7 @@ _test_qc_map = """
         date.alive                : <SAW : Boolean `date.alive`>
         date.finish               : swp_referral.date__finish
         date.start                : swp_referral.date__start
-        download                  : swp_referral.download
+        download_name             : swp_referral.download_name
         electric                  : mom_id_entity.electric
         hidden                    : swp_referral.hidden
         last_change               : <SAW : Rev_Ref `last_change`>
@@ -8241,7 +8241,7 @@ _test_select = """
                swp_picture.thumb__width AS swp_picture_thumb__width,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -9012,7 +9012,7 @@ _test_select = """
                swp_page_y.year AS swp_page_y_year,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -9659,7 +9659,7 @@ _test_select = """
                swp_picture.thumb__width AS swp_picture_thumb__width,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -9721,7 +9721,7 @@ _test_select = """
                swp_page_y.year AS swp_page_y_year,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -9779,7 +9779,7 @@ _test_select = """
                swp_page_y.year AS swp_page_y_year,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -11146,7 +11146,7 @@ _test_select = """
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -12355,7 +12355,7 @@ _test_select_strict = """
                mom_id_entity.x_locked AS mom_id_entity_x_locked,
                swp_referral.date__finish AS swp_referral_date__finish,
                swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download AS swp_referral_download,
+               swp_referral.download_name AS swp_referral_download_name,
                swp_referral.hidden AS swp_referral_hidden,
                swp_referral.parent_url AS swp_referral_parent_url,
                swp_referral.perma_name AS swp_referral_perma_name,
@@ -13168,7 +13168,7 @@ _test_tables = """
     SWP.Referral (MOM.Id_Entity) <Table swp_referral>
         Column date__finish              : Date                 Optional__Nested Date finish
         Column date__start               : Date                 Necessary__Sticky__Nested Date start
-        Column download                  : Boolean              Optional Boolean download
+        Column download_name             : Varchar(64)          Optional String download_name
         Column hidden                    : Boolean              Optional Boolean hidden
         Column parent_url                : Varchar(160)         Primary Url parent_url
         Column perma_name                : Varchar(80)          Primary Date-Slug perma_name

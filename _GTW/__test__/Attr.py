@@ -920,7 +920,7 @@ _test_pickled_types = """
     directory            Directory       str                  0   120     0
     discarded            Boolean         bool              None     5     5
     discards             Int             int               None     3     3
-    download             Boolean         bool              None     5     5
+    download_name        String          unicode             64    65    64
     easter_offset        Int_List        str                  0    20     0
     event                Entity          Regatta_Event     None    20    20
     extension            Numeric_String  unicode              5     6     5
