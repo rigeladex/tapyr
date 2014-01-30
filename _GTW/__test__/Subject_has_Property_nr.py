@@ -1406,6 +1406,8 @@ _test_attr_wrappers = """
           Optional, _User_, _DB_Attr_
       Kind_Wrapper_Q : Int `races_counted`
           Query, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Float `ranking_list_factor`
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper_C : Regatta_Result `result`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
         SRM.Regatta_Result
@@ -1415,6 +1417,8 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
           Kind_Wrapper : String `status`
               _Nested_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Int `starters_rl`
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper_Q : Int `year`
           Query, _Cached_, _Volatile_, _System_
     SRM.Regatta_C
@@ -1459,6 +1463,8 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Int `rank`
           Internal, _DB_System_, _DB_Attr_, _System_
+      Kind_Wrapper_Q : Float `ranking_list_points_lp`
+          Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Date : Date `registration_date`
           Init_Only_Mixin, Just_Once_Mixin, Internal, _DB_System_, _DB_Attr_, _System_
       Kind_Wrapper_S : Regatta `right`
@@ -3009,7 +3015,9 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
       <SAW : Int `races_counted`>
+      <SAW : Float `ranking_list_factor` [srm_regatta.ranking_list_factor]>
       <SAW : Regatta_Result `result` [srm_regatta.result__date, srm_regatta.result__software, srm_regatta.result__status]>
+      <SAW : Int `starters_rl` [srm_regatta.starters_rl]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
       <SAW : Int `year`>
@@ -3029,7 +3037,9 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
       <SAW : Int `races_counted`>
+      <SAW : Float `ranking_list_factor` [srm_regatta.ranking_list_factor]>
       <SAW : Regatta_Result `result` [srm_regatta.result__date, srm_regatta.result__software, srm_regatta.result__status]>
+      <SAW : Int `starters_rl` [srm_regatta.starters_rl]>
       <SAW : Link_Ref_List `teams`>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
@@ -3050,7 +3060,9 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
       <SAW : Int `races_counted`>
+      <SAW : Float `ranking_list_factor` [srm_regatta.ranking_list_factor]>
       <SAW : Regatta_Result `result` [srm_regatta.result__date, srm_regatta.result__software, srm_regatta.result__status]>
+      <SAW : Int `starters_rl` [srm_regatta.starters_rl]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
       <SAW : Int `year`>
@@ -3099,6 +3111,7 @@ _test_q_able = """
       <SAW : Int `points` [srm_boat_in_regatta.points]>
       <SAW : Link_Ref_List `race_results`>
       <SAW : Int `rank` [srm_boat_in_regatta.rank]>
+      <SAW : Float `ranking_list_points_lp`>
       <SAW : Date `registration_date` [srm_boat_in_regatta.registration_date]>
       <SAW : Regatta `right` [srm_boat_in_regatta.right]>
       <SAW : Link_Ref_List `sailor_links`>
@@ -4364,10 +4377,12 @@ _test_q_able = """
       pid                           : pid
       races                         : races
       races_counted                 : races_counted
+      ranking_list_factor           : ranking_list_factor
       result                        : result
           date                          : result.date
           software                      : result.software
           status                        : result.status
+      starters_rl                   : starters_rl
       type_name                     : type_name
       x_locked                      : x_locked
       year                          : year
@@ -4387,10 +4402,12 @@ _test_q_able = """
       pid                           : pid
       races                         : races
       races_counted                 : races_counted
+      ranking_list_factor           : ranking_list_factor
       result                        : result
           date                          : result.date
           software                      : result.software
           status                        : result.status
+      starters_rl                   : starters_rl
       teams                         : teams
       type_name                     : type_name
       x_locked                      : x_locked
@@ -4411,10 +4428,12 @@ _test_q_able = """
       pid                           : pid
       races                         : races
       races_counted                 : races_counted
+      ranking_list_factor           : ranking_list_factor
       result                        : result
           date                          : result.date
           software                      : result.software
           status                        : result.status
+      starters_rl                   : starters_rl
       type_name                     : type_name
       x_locked                      : x_locked
       year                          : year
@@ -4463,6 +4482,7 @@ _test_q_able = """
       points                        : points
       race_results                  : race_results
       rank                          : rank
+      ranking_list_points_lp        : ranking_list_points_lp
       registration_date             : registration_date
       right                         : regatta, right
       sailor_links                  : sailor_links
@@ -5780,6 +5800,7 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races
         races_counted             : <SAW : Int `races_counted`>
+        ranking_list_factor       : srm_regatta.ranking_list_factor
         result                    : <Col-Mapper for SRM.Regatta_Result>
             date                  : srm_regatta.result__date
             software              : srm_regatta.result__software
@@ -5787,6 +5808,7 @@ _test_qc_map = """
         result.date               : srm_regatta.result__date
         result.software           : srm_regatta.result__software
         result.status             : srm_regatta.result__status
+        starters_rl               : srm_regatta.starters_rl
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
         year                      : <SAW : Int `year`>
@@ -5807,6 +5829,7 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races
         races_counted             : <SAW : Int `races_counted`>
+        ranking_list_factor       : srm_regatta.ranking_list_factor
         result                    : <Col-Mapper for SRM.Regatta_Result>
             date                  : srm_regatta.result__date
             software              : srm_regatta.result__software
@@ -5814,6 +5837,7 @@ _test_qc_map = """
         result.date               : srm_regatta.result__date
         result.software           : srm_regatta.result__software
         result.status             : srm_regatta.result__status
+        starters_rl               : srm_regatta.starters_rl
         teams                     : <SAW : Link_Ref_List `teams`>
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
@@ -5835,6 +5859,7 @@ _test_qc_map = """
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races
         races_counted             : <SAW : Int `races_counted`>
+        ranking_list_factor       : srm_regatta.ranking_list_factor
         result                    : <Col-Mapper for SRM.Regatta_Result>
             date                  : srm_regatta.result__date
             software              : srm_regatta.result__software
@@ -5842,6 +5867,7 @@ _test_qc_map = """
         result.date               : srm_regatta.result__date
         result.software           : srm_regatta.result__software
         result.status             : srm_regatta.result__status
+        starters_rl               : srm_regatta.starters_rl
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
         year                      : <SAW : Int `year`>
@@ -5893,6 +5919,7 @@ _test_qc_map = """
         points                    : srm_boat_in_regatta.points
         race_results              : <SAW : Link_Ref_List `race_results`>
         rank                      : srm_boat_in_regatta.rank
+        ranking_list_points_lp    : <SAW : Float `ranking_list_points_lp`>
         regatta                   : srm_boat_in_regatta.right
         registration_date         : srm_boat_in_regatta.registration_date
         right                     : srm_boat_in_regatta.right
@@ -6350,9 +6377,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_h.pid AS srm_regatta_h_pid
          FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
@@ -6385,9 +6414,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6409,9 +6440,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6442,9 +6475,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6467,9 +6502,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6491,9 +6528,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6516,9 +6555,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6540,9 +6581,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6564,9 +6607,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6589,9 +6634,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6615,9 +6662,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6640,9 +6689,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6665,9 +6716,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6690,9 +6743,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6717,9 +6772,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6744,9 +6801,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6771,9 +6830,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6803,9 +6864,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6828,9 +6891,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6853,9 +6918,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6878,9 +6945,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6904,9 +6973,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -6930,9 +7001,11 @@ _test_q_result = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -8163,9 +8236,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_regatta_event."desc" AS srm_regatta_event_desc,
@@ -8450,9 +8525,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -8636,9 +8713,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -10672,9 +10751,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_regatta_event."desc" AS srm_regatta_event_desc,
@@ -10855,9 +10936,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -10925,9 +11008,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -11195,9 +11280,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid
         FROM mom_id_entity
@@ -11217,9 +11304,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid
         FROM mom_id_entity
@@ -11239,9 +11328,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_h.pid AS srm_regatta_h_pid
         FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
@@ -12410,9 +12501,11 @@ _test_select_strict = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid
         FROM mom_id_entity
@@ -12433,9 +12526,11 @@ _test_select_strict = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_h.pid AS srm_regatta_h_pid
         FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
@@ -13190,9 +13285,11 @@ _test_tables = """
         Column perma_name                : Varchar(64)          Internal__Auto_Update_Lazy__Computed_Set String perma_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
         Column races                     : Integer              Optional Int races
+        Column ranking_list_factor       : Float                Optional Float ranking_list_factor
         Column result__date              : Datetime             Necessary__Nested Date-Time date
         Column result__software          : Varchar(64)          Optional__Nested String software
         Column result__status            : Varchar(64)          Optional__Nested String status
+        Column starters_rl               : Integer              Optional Int starters_rl
     SRM.Regatta_C (SRM.Regatta) SRM.Regatta <Table srm_regatta_c>
         Column is_team_race              : Boolean              Optional Boolean is_team_race
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'srm_regatta.pid')
@@ -13560,9 +13657,11 @@ _test_date_extraction_pg = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity
@@ -13594,9 +13693,11 @@ _test_date_extraction_sq = """
            srm_regatta.perma_name AS srm_regatta_perma_name,
            srm_regatta.pid AS srm_regatta_pid,
            srm_regatta.races AS srm_regatta_races,
+           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
            srm_regatta.result__date AS srm_regatta_result__date,
            srm_regatta.result__software AS srm_regatta_result__software,
            srm_regatta.result__status AS srm_regatta_result__status,
+           srm_regatta.starters_rl AS srm_regatta_starters_rl,
            srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
            srm_regatta_c.pid AS srm_regatta_c_pid
          FROM mom_id_entity

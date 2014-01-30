@@ -54,6 +54,7 @@
 #    25-Jun-2013 (CT) Add `max_value`, `example`, to integer attributes
 #    17-Jan-2014 (CT) Change attributes `year`, `handicap` to `Attr.Query`
 #    17-Jan-2014 (CT) Add query attribute `races_counted`
+#    30-Jan-2014 (CT) Add attributes `ranking_list_factor`, `starters`
 #    ««revision-date»»···
 #--
 
@@ -135,6 +136,17 @@ class Regatta (_Ancestor_Essence) :
 
         # end class kind
 
+        class ranking_list_factor (A_Float) :
+            """Weight of this regatta in compuation of laser-points."""
+
+            kind               = Attr.Optional
+            raw_default        = "1.0"
+            format             = "%6.2f"
+            min_value          = 0.40
+            max_value          = 2.00
+
+        # end class ranking_list_factor
+
         class name (A_String) :
 
             kind               = Attr.Cached
@@ -196,6 +208,20 @@ class Regatta (_Ancestor_Essence) :
             # end def computed
 
         # end class short_title
+
+        class starters_rl (A_Int) :
+            """Number of boats participating in the regatta as relevant for
+               for low-point based formula for ranking list points.
+            """
+
+            kind               = Attr.Optional
+            explanation        = """
+                This is the number of boats that actually participated in the
+                regatta. If the regatta field was split into the group, is
+                the maximum number of starters of any group.
+            """
+
+        # end class starters_rl
 
         class title (A_String) :
 

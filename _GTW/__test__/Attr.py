@@ -392,6 +392,10 @@ _test_DET = """
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
+    ranking_list_factor [SRM.Regatta]
+        SRM.Regatta                      SRM.Regatta
+        SRM.Regatta_C                 *  SRM.Regatta
+        SRM.Regatta_H                 *  SRM.Regatta
     result [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
@@ -430,6 +434,10 @@ _test_DET = """
         SWP.Clip_X                    *  SWP.Object_PN
         SWP.Gallery                   *  SWP.Object_PN
         SWP.Referral                  *  SWP.Object_PN
+    starters_rl [SRM.Regatta]
+        SRM.Regatta                      SRM.Regatta
+        SRM.Regatta_C                 *  SRM.Regatta
+        SRM.Regatta_H                 *  SRM.Regatta
     text [SWP.Page_Mixin]
         SWP.Page                      *  SWP.Page_Mixin
         SWP.Page_Y                    *  SWP.Page_Mixin
@@ -973,6 +981,7 @@ _test_pickled_types = """
     race                 Int             int               None     3     3
     races                Int             int               None     3     3
     rank                 Int             int               None    20    20
+    ranking_list_factor  Float           float             None    22    22
     region               String          unicode             20    21    20
     registered_in        String          unicode             64    65    64
     registration_date    Date            date              None    12    12
@@ -988,6 +997,7 @@ _test_pickled_types = """
     short_title          String          unicode             30    31    30
     skipper              Entity          Sailor            None    20    20
     start                Date            date              None    12    12
+    starters_rl          Int             int               None    20    20
     status               String          unicode              8     9     8
     street               String          unicode             60    61    60
     target_url           Url             unicode            160   161   160
