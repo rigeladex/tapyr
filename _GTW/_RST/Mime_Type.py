@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -37,6 +37,7 @@
 #    14-Jan-2013 (CT) Add `User_Cert`
 #    14-Jun-2013 (CT) Add default implementation for `CSV.rendered`
 #    15-Jun-2013 (CT) Guard `CSV.rendered` against empty `body`
+#    30-Jan-2014 (CT) Add exception information to `CSV.rendered`
 #    ««revision-date»»···
 #--
 
@@ -197,7 +198,15 @@ class RST_CSV (_Base_) :
                 f   = StringIO       ()
                 dw  = csv.DictWriter (f, names)
                 dw.writerow          (nm)
-                dw.writerows         (rs)
+                try :
+                    dw.writerows (rs)
+                except Exception as exc :
+                    msg = "%s\n    Names: %s\n    Rows:\n        %s" % \
+                        ( exc, names
+                        , "\n        ".join
+                            (str (sorted (r.items ())) for r in rs)
+                        )
+                    raise exc.__class__ (msg)
                 return f.getvalue    ()
     # end def rendered
 

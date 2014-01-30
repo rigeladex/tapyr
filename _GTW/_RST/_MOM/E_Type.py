@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -51,6 +51,8 @@
 #    20-May-2013 (CT) Fix `_rbl_entry_type_map`
 #                     (use E_Type.GTW.rst_mom_rbl_spec, not LET.GTW.rst_...)
 #    14-Jun-2013 (CT) Factor `GTW.RST.Mime_Type.CSV.rendered`
+#    30-Jan-2014 (CT) Change `E_Type.GET._response_entry` to always restrict
+#                     `attributes` for `CSV`
 #    ««revision-date»»···
 #--
 
@@ -154,8 +156,11 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         def _response_entry (self, resource, request, response, entry) :
             if request.verbose :
                 ### Restrict `attributes` only for identical types
-                kw = dict (attributes = self.attributes) \
-                    if entry.type_name == resource.E_Type.type_name else {}
+                ### **unless** renderer is CSV
+                kw = {}
+                render_csv = response.renderer.name == "CSV"
+                if entry.type_name == resource.E_Type.type_name or render_csv :
+                    kw = dict (attributes = self.attributes)
                 e = resource._new_entry (entry, ** kw)
                 result = e.GET ()._response_body \
                     (e, request, response, show_rels = None)
