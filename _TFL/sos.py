@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -62,6 +62,7 @@
 #     1-Jul-2010 (CT) `expanded_glob` changed to return `[pathname]` over `[]`
 #    24-May-2013 (CT) Improve Python-3.3 compatibility
 #    24-May-2013 (CT) Don't inclode magic `os` properties
+#    31-Jan-2014 (CT) Add `python_options`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,36 @@ from    _TFL import TFL
 import _TFL.Decorator
 
 import os as _os
+
+### taken from
+###     http://docs.python.org/2/library/sys.html#sys.flags
+###     http://docs.python.org/3/library/sys.html#sys.flags
+_sys_flag_map             = \
+    { 1 : dict
+        ( bytes_warning       = "-b"
+        , debug               = "-d"
+        , division_new        = "-Qnew"
+        , division_warning    = "-Qwarn"
+        , dont_write_bytecode = "-B"
+        , hash_randomization  = "-R"
+        , ignore_environment  = "-E"
+        , inspect             = "-i"
+        , interactive         = "-i"
+        , no_site             = "-S"
+        , no_user_site        = "-s"
+        , optimize            = "-O"
+        , py3k_warning        = "-3"
+        , quiet               = "-q"
+        , tabcheck            = "-t"
+        , unicode             = "-U"
+        , verbose             = "-v"
+        )
+    , 2 : dict
+        ( division_warning    = "-Qwarnall"
+        , optimize            = "-OO"
+        , tabcheck            = "-tt"
+        )
+    }
 
 ### `from os import *` fails in Python 3.3 due to a quite restricted `__all__`
 ### --> update `globals` with `os.__dict__` instead
@@ -218,6 +249,24 @@ def listdir_exts (in_dir, * extensions) :
     else :
         return [f for f in listdir_full (in_dir) if not path.isdir (f)]
 # end def listdir_exts
+
+def python_options () :
+    """Return the list of options corresponding to the settings in sys.flags.
+
+       This can be used to spawn another python interpreter to run with the
+       same command line options as the currently running one.
+    """
+    from sys import flags
+    result = []
+    div_s  = 0
+    for k in sorted (_sys_flag_map [1]) :
+        c = getattr (flags, k, 0)
+        div_p = k.startswith ("division")
+        if c and not (div_p and div_s) :
+            result.append (_sys_flag_map [c] [k])
+            div_s += div_p
+    return result
+# end def python_options
 
 def rmdir (dir, deletefiles = 0) :
     """ Extension to the standard rmdir function. It takes an additional

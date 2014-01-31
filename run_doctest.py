@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -63,6 +63,7 @@
 #     6-Aug-2013 (CT) Add number of test-cases to output
 #     9-Dec-2013 (CT) Add call to `logging.disable`
 #     9-Dec-2013 (CT) Use `utf-8`, not `latin-1`
+#    31-Jan-2014 (CT) Use `sos.python_options` for spawned python interpreter
 #    ««revision-date»»···
 #--
 
@@ -203,11 +204,8 @@ def _main (cmd) :
                 et = " in %7.5fs" % (exec_time, )
             print (replacer (format % TFL.Caller.Scope ()), file = sys.stderr)
     else :
-        head_pieces = \
-            [ sys.executable
-            , "-%s" % ("O" * sys.flags.optimize, )
-                if sys.flags.optimize else ""
-            , sos.path.join
+        head_pieces = [sys.executable] + sos.python_options () + \
+            [ sos.path.join
                 (Environment.script_path (), Environment.script_name ())
             , "-path %r" % (",".join (cmd_path), ) if cmd_path else ""
             ]
