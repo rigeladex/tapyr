@@ -45,6 +45,7 @@
 #                     `_Q_SUM_Proxy_` to `_Q_Aggr_Proxy_`
 #    27-Jan-2014 (CT) Change `_Base_._xs_filter_rhs` to call `pickler.as_cargo`,
 #                     if any
+#    31-Jan-2014 (CT) Add support for `__{true,floor}div__` to `Bin.apply`
 #    ««revision-date»»···
 #--
 
@@ -755,7 +756,16 @@ class Bin (_Op_) :
         reverse = (not self.reverse) if reversed else self.reverse
         if reverse :
             lhs, rhs = rhs, lhs
-        return self.op (lhs, rhs)
+        op = self.op
+        if op is operator.__truediv__ :
+            typ = SA.types.Float ### XXX use SA.types.Decimal if necessary
+            lhs = SA.expression.cast (lhs, typ)
+            rhs = SA.expression.cast (rhs, typ)
+        elif op is operator.__floordiv__ :
+            ### avoid TypeError:
+            ###     unsupported operand type(s) for //: 'Column' and 'Column'
+            op = operator.__div__
+        return op (lhs, rhs)
     # end def apply
 
     @TFL.Meta.Once_Property

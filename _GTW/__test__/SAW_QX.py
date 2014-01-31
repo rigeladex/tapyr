@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Aug-2013 (CT) Creation
+#    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_expr`
 #    ««revision-date»»···
 #--
 
@@ -907,6 +908,28 @@ _test_expr = """
               <SRM.Boat_in_Regatta | QX.Kind_EPK for
                   RAW <SAW : Boat `left` [srm_boat_in_regatta.left]>>
           AUT
+
+    >>> show (qxb (Q.points / Q.left.left.max_crew))
+    Bin:__truediv__:
+      <SRM.Boat_in_Regatta | QX.Kind for
+           <SAW : Int `points` [srm_boat_in_regatta.points]>>
+      <SRM.Boat_Class | QX.Kind for
+           <SAW : Int `max_crew` [srm_boat_class__1.max_crew]>>
+          <SRM.Boat | QX.Kind_EPK for
+               <SAW : Boat_Class `left` [srm_boat__1.left]>>
+              <SRM.Boat_in_Regatta | QX.Kind_EPK for
+                   <SAW : Boat `left` [srm_boat_in_regatta.left]>>
+
+    >>> show (qxb (Q.points // Q.left.left.max_crew))
+    Bin:__floordiv__:
+      <SRM.Boat_in_Regatta | QX.Kind for
+           <SAW : Int `points` [srm_boat_in_regatta.points]>>
+      <SRM.Boat_Class | QX.Kind for
+           <SAW : Int `max_crew` [srm_boat_class__1.max_crew]>>
+          <SRM.Boat | QX.Kind_EPK for
+               <SAW : Boat_Class `left` [srm_boat__1.left]>>
+              <SRM.Boat_in_Regatta | QX.Kind_EPK for
+                   <SAW : Boat `left` [srm_boat_in_regatta.left]>>
 
     >>> ET  = apt ["SRM.Regatta_C"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)

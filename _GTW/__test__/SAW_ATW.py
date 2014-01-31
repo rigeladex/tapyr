@@ -45,6 +45,7 @@
 #    26-Aug-2013 (CT) Add `test_key_o_p`; call of `show_sequence`
 #    29-Aug-2013 (CT) Add test case for
 #                     `Q.person.lifetime == ("2013/07/15", "2013/07/21")`
+#    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_q_result`
 #    ««revision-date»»···
 #--
 
@@ -6591,6 +6592,48 @@ _test_q_result = """
     Parameters:
          param_1              : 0
 
+    >>> print (qrt.filter (Q.points / Q.left.left.max_crew > 4)) ### SRM.Boat_in_Regatta
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           srm_boat_in_regatta."left" AS srm_boat_in_regatta_left,
+           srm_boat_in_regatta."right" AS srm_boat_in_regatta_right,
+           srm_boat_in_regatta.pid AS srm_boat_in_regatta_pid,
+           srm_boat_in_regatta.place AS srm_boat_in_regatta_place,
+           srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
+           srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
+           srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+           JOIN srm_boat AS srm_boat__1 ON srm_boat__1.pid = srm_boat_in_regatta."left"
+           JOIN srm_boat_class AS srm_boat_class__2 ON srm_boat_class__2.pid = srm_boat__1."left"
+         WHERE CAST(srm_boat_in_regatta.points AS FLOAT) / CAST(srm_boat_class__2.max_crew AS FLOAT) > :param_1
+
+    >>> print (qrt.filter (Q.points // Q.left.left.max_crew > 4)) ### SRM.Boat_in_Regatta
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           srm_boat_in_regatta."left" AS srm_boat_in_regatta_left,
+           srm_boat_in_regatta."right" AS srm_boat_in_regatta_right,
+           srm_boat_in_regatta.pid AS srm_boat_in_regatta_pid,
+           srm_boat_in_regatta.place AS srm_boat_in_regatta_place,
+           srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
+           srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
+           srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+           JOIN srm_boat AS srm_boat__1 ON srm_boat__1.pid = srm_boat_in_regatta."left"
+           JOIN srm_boat_class AS srm_boat_class__2 ON srm_boat_class__2.pid = srm_boat__1."left"
+         WHERE srm_boat_in_regatta.points / srm_boat_class__2.max_crew > :param_1
+
 """
 
 _test_q_result_x = """
@@ -6599,8 +6642,6 @@ _test_q_result_x = """
     >>> ET = apt ["SRM.Regatta_C"]
     >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = True)
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
-
-    ### XXX fix this: nested Q-expressions should work
 
     >>> print (qrt.filter (Q.races %% 2 == 1)) ### SRM.Regatta_C
     SQL: SELECT

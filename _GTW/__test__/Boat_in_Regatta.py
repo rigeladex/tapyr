@@ -615,6 +615,11 @@ _test_qr_grouped_by = """
 
     >>> for x in sorted (q.attrs (Q.left, Q.SUM (Q.points), Q.SUM (Q.points) / Q.SUM (1)).group_by (Q.left), key = TFL.Getter [1]) :
     ...     print (x [1:])
+    (6, 2.0)
+    (9, 3.0)
+
+    >>> for x in sorted (q.attrs (Q.left, Q.SUM (Q.points), Q.SUM (Q.points) // Q.SUM (1)).group_by (Q.left), key = TFL.Getter [1]) :
+    ...     print (x [1:])
     (6, 2)
     (9, 3)
 
