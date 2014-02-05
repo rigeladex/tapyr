@@ -39,6 +39,7 @@
 #    29-Jan-2014 (CT) Locally cache `year` in `_E_Type_Archive_.entries`
 #    29-Jan-2014 (CT) Add support for `Referral` to `_E_Type_`
 #    29-Jan-2014 (CT) Redefine `_effective` to check `count`
+#     5-Feb-2014 (CT) Call `_add_other_entries` in `_E_Type_Archive_.entries`
 #    ««revision-date»»···
 #--
 
@@ -241,10 +242,9 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
                         )
                     if yp.count or yp.referral_query.count () :
                         yield yp
-            self.add_entries (* tuple (_years (self, year)))
+            self.add_entries        (* tuple (_years (self, year)))
+            self._add_other_entries ()
             if self._entries :
-                if self._admin :
-                    self.add_entries (self._admin)
                 self._old_cid  = cid
                 self._old_year = year
         return self._entries
