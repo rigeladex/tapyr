@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package  GTW.OMP.SRM.
@@ -81,6 +81,10 @@ class Admin (object) :
         , sort_key     = TFL.Sorted_By ("-date.start", "perma_name")
         , list_display =
             ( "ui_display", "created_by", "date", "format", "last_changed")
+        )
+
+    Person_owns_Boat   = dict \
+        ( ETM          = "GTW.OMP.SRM.Person_owns_Boat"
         )
 
     Regatta_C          = dict \
