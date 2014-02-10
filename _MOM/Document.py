@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -27,12 +27,15 @@
 #
 # Revision Dates
 #     6-Mar-2012 (CT) Creation
+#    10-Feb-2014 (CT) Improve attribute docstrings
 #    ««revision-date»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
 from   _MOM.import_MOM        import *
+
+from   _TFL.I18N              import _
 
 _Ancestor_Essence = MOM.Link1
 
@@ -46,7 +49,7 @@ class Document (_Ancestor_Essence) :
         ### Primary attributes
 
         class left (_Ancestor.left) :
-            """Entity the document applies to."""
+            """Entity the %(ui_name.lower ())s applies to."""
 
             role_type          = MOM.Id_Entity
             role_name          = "entity"
@@ -54,7 +57,7 @@ class Document (_Ancestor_Essence) :
         # end class left
 
         class url (A_Url) :
-            """Location of document."""
+            """Location of %(ui_name.lower ())s."""
 
             kind               = Attr.Primary
             completer          = Attr.Completer_Spec  (4, Attr.Selector.primary)
@@ -62,7 +65,7 @@ class Document (_Ancestor_Essence) :
         # end class url
 
         class type (A_String) :
-            """Type of document (e.g., picture, user manual)."""
+            """Type of %(ui_name.lower ())s (e.g., picture, user manual)."""
 
             kind               = Attr.Primary_Optional
             max_length         = 24
@@ -74,11 +77,13 @@ class Document (_Ancestor_Essence) :
         ### Non-primary attributes
 
         class desc (A_String) :
-            """Description of document."""
+            """Description of %(ui_name.lower ())s."""
 
             kind               = Attr.Optional
             max_length         = 160
-            ui_name            = "Description"
+            ui_name            = _("Description")
+
+            completer          = Attr.Completer_Spec  (1)
 
         # end class description
 
