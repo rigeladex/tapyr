@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: 401.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -31,6 +31,7 @@
 ##    15-Jan-2010 (CT) Creation
 ##    16-Jan-2013 (CT) Add `class = "Login"`
 ##     6-Oct-2013 (CT) Add `with context` to import
+##    11-Feb-2014 (CT) Add `Auth` to `class`; pass `allow_new_password = False`
 ##    ««revision-date»»···
 ##--
 #}
@@ -51,7 +52,12 @@
       }}
     </h1>
   {% endif %}
-  {{ login_inline (page, request, class = "Login") }}
+  {{ login_inline
+      ( page, request
+      , allow_new_password = False
+      , class              = "Auth Login"
+      )
+  }}
 {% endblock document -%}
 
 {#- __END__ jinja template: 401.jnj -#}

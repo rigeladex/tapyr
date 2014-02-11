@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -42,6 +42,7 @@
 #     6-May-2013 (CT) Set `request.Error` to `unicode (.message)`
 #     3-Dec-2013 (CT) Add support for `cache_control`;
 #                     set `no_cache` for `See_Other`, `Temporary_Redirect`
+#    11-Feb-2014 (CT) Add `response`, `template` to `Templateer.Context`
 #    ««revision-date»»···
 #--
 
@@ -174,6 +175,8 @@ class Status (StandardError, TFL.Meta.Object) :
                     , nav_page        = resource
                     , NAV             = root
                     , request         = request
+                    , response        = response
+                    , template        = template
                     )
                 with Templateer.GTW.LET (blackboard = dict ()) :
                     body = template.render (context)
