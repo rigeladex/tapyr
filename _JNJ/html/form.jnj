@@ -89,6 +89,7 @@
 ##     9-Dec-2013 (CT) Add `anti_csrf_token` to macro `form`
 ##    10-Dec-2013 (CT) Add `request.is_secure` to `login_section`
 ##     7-Jan-2014 (CT) Add `link_only` to `login_inline`
+##    11-Feb-2014 (CT) Skip `anti_csrf_token` for `link_only` form
 ##    ««revision-date»»···
 ##--
 #}
@@ -154,6 +155,7 @@
         , next_form_kw  = {}
         , reset_kw      = {}
         , submit_kws    = []
+        , include_ACT   = True
         )
 -%}
   <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
@@ -161,7 +163,9 @@
     {%- if next_form_kw %}
       {{ X.input.hidden (** next_form_kw) }}
     {% endif -%}
-    {%- set anti_csrf_token = response and response.anti_csrf_token %}
+    {%- set anti_csrf_token =
+          include_ACT and response and response.anti_csrf_token
+    %}
     {%- if anti_csrf_token %}
       {{ X.input.hidden (name = "F_ACT", value = anti_csrf_token) }}
     {% endif -%}
@@ -313,11 +317,16 @@
   {%- set next     = kwargs.pop ("next",     request.path_x or request.path) -%}
   {%- set errors   = kwargs.pop ("errors",   {}) -%}
   {%- set username = kwargs.pop ("username", None) -%}
-  {%- set allow_new_pass = kwargs.pop ("allow_new_password", True) -%}
+  {%- set allow_new_pass   = kwargs.pop ("allow_new_password", True) -%}
+  {%- set really_link_only =
+        link_only or not (page.TEST or request.is_secure)
+  %}
   {%- if (not next) or next.split ("?") [0].endswith (Auth.href_login) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
-  {% call form (action = action, ** kwargs) -%}
+  {% call form
+      (action = action, include_ACT = not really_link_only, ** kwargs)
+  -%}
     {%- if l_caller -%}{{- l_caller () -}}{%- endif -%}
     <ul>
       {{- display_errors (errors, None) -}}
@@ -328,7 +337,7 @@
           </a>
         </li>
       {% endif -%}
-      {%- if link_only or not (page.TEST or request.is_secure) %}
+      {%- if really_link_only %}
         <li title="{{- GTW._T ("Log into %s") % page.s_domain -}}">
           <a href="{{ page.login_url }}" class="button">
             {{- GTW._T ("Login") -}}
