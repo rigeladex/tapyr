@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -41,6 +41,7 @@
 #                     not from session; remove `use_language`
 #     9-Dec-2013 (CT) Add `allow_login`, `csrf_safe`
 #    11-Dec-2013 (CT) Factor `csrf_token`
+#    11-Feb-2014 (CT) Remove `username.setter` (redundant to `Response...`)
 #    ««revision-date»»···
 #--
 
@@ -116,17 +117,6 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
             ### cannot cache by defining as `Once_Property`
             result = self.session.username
         return result
-    # end def username
-
-    @username.setter
-    def username (self, value) :
-        sau = self.ssl_authorized_user
-        if sau :
-            raise TypeError \
-                ( "Can't set username of ssl-authorized session from %s to %s"
-                % (sau, value)
-                )
-        self.session.username = value
     # end def username
 
     def get_user_locale_codes (self) :

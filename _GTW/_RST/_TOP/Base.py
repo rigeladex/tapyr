@@ -49,6 +49,7 @@
 #    18-Dec-2013 (CT) Add `x_signature` to error message from `csrf_check`
 #    24-Jan-2014 (CT) Add `a_attr_dict`
 #    24-Jan-2014 (CT) Factor `_Mixin_`
+#    11-Feb-2014 (CT) Use `response`, not `request`, in `_new_edit_session`
 #    ««revision-date»»···
 #--
 
@@ -384,14 +385,14 @@ class _TOP_Base_ (_Ancestor) :
         return self.__super._handle_method (method, request, response)
     # end def _handle_method
 
-    def _new_edit_session (self, request, ttl = None) :
+    def _new_edit_session (self, response, ttl = None) :
         dbmd = self.top.scope.db_meta_data
-        user = request.user
+        user = response.user
         if user is None :
-            u_hash = request.username = uuid.uuid1 ().hex
+            u_hash = response.username = uuid.uuid1 ().hex
         else :
             u_hash = user.password
-        return request.session.new_edit_session \
+        return response.session.new_edit_session \
             ((u_hash, dbmd.dbv_hash, dbmd.dbid, sos.getpid ()), ttl)
     # end def _new_edit_session
 

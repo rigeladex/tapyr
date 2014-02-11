@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -39,6 +39,7 @@
 #     9-Dec-2013 (CT) Change signature of `set_secure_cookie`
 #                     (to that of `set_cookie`)
 #     9-Dec-2013 (CT) Add `anti_csrf_token`
+#    11-Feb-2014 (CT) Add `user`
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,11 @@ class _RST_Response_ (TFL.Meta.Object) :
     def resource (self) :
         return self._request.resource
     # end def resource
+
+    @property
+    def user (self) :
+        return self._request.user
+    # end def user
 
     def add_link (self, rel, value, ** kw) :
         self._links [rel] = value, kw

@@ -66,6 +66,7 @@
 #    15-Jan-2014 (CT) Factor `_call_submit_callback`
 #    16-Jan-2014 (CT) Add `_formatted_submit_entities`
 #    20-Jan-2014 (CT) Redefine `_Changer_.head_line`
+#    11-Feb-2014 (CT) Pass `response`, not `request`, to `_new_edit_session`
 #    ««revision-date»»···
 #--
 
@@ -435,6 +436,7 @@ class _Changer_ (_HTML_Action_) :
         Status   = self.top.Status
         obj      = context ["instance"] = None
         request  = context ["request"]
+        response = context ["response"]
         req_data = request.req_data
         pid      = req_data.get ("pid") or \
             (self.args [0] if self.args else None)
@@ -444,7 +446,7 @@ class _Changer_ (_HTML_Action_) :
             pid = None
         if pid is not None :
             obj = context ["instance"] = self.pid_query_request (pid)
-        sid, session_secret = self._new_edit_session (request)
+        sid, session_secret = self._new_edit_session (response)
         form = self.form \
             ( obj
             , referrer        = "%s%s" %
