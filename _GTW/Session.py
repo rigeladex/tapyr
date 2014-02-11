@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -51,6 +51,7 @@
 #                     use `settings ["hash_fct"]`, if any
 #     5-May-2013 (CT) Add change guard to `username.setter`
 #    11-Dec-2013 (CT) Fix `_data` to check user *only* once after `_load ()`
+#    11-Feb-2014 (CT) Force `sid` to `str`
 #    ««revision-date»»···
 #--
 
@@ -145,7 +146,7 @@ class Session (TFL.Meta.Object) :
             self._data    = dict (user = User ())
             self.username = None
         else :
-            self._sid     = sid
+            self._sid     = str (sid)
     # end def __init__
 
     @property
@@ -250,7 +251,7 @@ class Session (TFL.Meta.Object) :
                 % ( randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
                 ).hexdigest ()
             if check is None or not check (id) :
-                return id
+                return str (id)
     # end def New_ID
 
     def pop (self, name, default = None) :
@@ -269,7 +270,7 @@ class Session (TFL.Meta.Object) :
     def renew_session_id (self, n_sid = None) :
         n_sid     = n_sid or self._new_sid (self._settings.get ("cookie_salt"))
         o_sid     = self._sid
-        self._sid = n_sid
+        self._sid = str (n_sid)
         try :
             with self.LET (_sid = o_sid) :
                 self.remove ()
