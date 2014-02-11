@@ -26,6 +26,7 @@
 # Revision Dates
 #    19-Dec-2013 (CT) Creation
 #     3-Jan-2014 (CT) Change `-header` to `U`, use `pyk.encoded` for `options`
+#    11-Feb-2014 (CT) Add support for STDIN
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,7 @@ import _TFL.FCM
 
 from   plumbum                 import local as pbl
 
+import sys
 import time
 
 class _TTP_Sub_Command_ (TFL.Command.Sub_Command) :
@@ -267,12 +269,18 @@ class TTP_Command (TFL.Command.Root_Command) :
         o_enc              = cmd.output_encoding
         pbl.env ["LC_ALL"] = "en_US.%s" % o_enc.replace ("-", "")
         for arg in cmd.argv :
-            ft = time.strftime \
-                (time_format, time.localtime (sos.path.getmtime (arg)))
-            fn = Filename (arg).relative_to ("~/")
-            with open (arg, "rb") as fi :
-                txt = fi.read ().decode (i_enc)
-            txt_out = txt.encode (o_enc, "replace")
+            if arg in ("-", "STDIN") :
+                file_time = time.localtime ()
+                fn        = "STDIN"
+                txt_in    = sys.stdin.read ()
+            else :
+                file_time = time.localtime (sos.path.getmtime (arg))
+                fn        = Filename (arg).relative_to ("~/")
+                with open (arg, "rb") as fi :
+                    txt_in = fi.read ()
+            txt     = txt_in.decode  (i_enc)
+            ft      = time.strftime  (time_format, file_time)
+            txt_out = txt.encode     (o_enc, "replace")
             options = tuple \
                 (pyk.encoded (o) for o in sub.options (cmd, fn, ft))
             pbl_cmd = sub.pbl_cmd.__getitem__ (options)
