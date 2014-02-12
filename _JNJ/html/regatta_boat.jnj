@@ -1,0 +1,305 @@
+{#- jinja template: regatta_boat.scams.at:jnj:html:regatta_boat.jnj -#}
+{#
+## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    regatta_boat.jnj
+##
+## Purpose
+##    Macros for displaying information about a boat in a regatta
+##
+## Revision Dates
+##    21-Sep-2010 (CT) Creation
+##    22-Sep-2010 (CT) Use `ul` for `Crew`, `Club`, and `MNA-Number`
+##    13-Oct-2010 (CT) Adapted to change of `Crew_Member`
+##     1-Dec-2010 (CT) Don't sort `crew`
+##     2-May-2011 (CT) `sail_number_x` added
+##     9-Nov-2011 (CT) Use `FO`
+##     9-Nov-2011 (CT) Use `sail_number_head` and `_tail` instead of `_x`
+##     2-Feb-2012 (CT) Add `register_button`
+##    27-Apr-2012 (CT) Add `register_buttons` (factored from regatta_page.jnj)
+##     9-May-2012 (CT) Use `.skipper.FO.mna_number`, not `.skipper.mna_number`
+##    14-Sep-2012 (CT) Add `td_reg_date`, `th_reg_date`
+##    14-Sep-2012 (CT) Change `th_crew` to consider `max_crew`
+##     5-Dec-2012 (CT) Use `page.regattas` instead of home-grown code
+##    17-Jun-2013 (CT) Use `&nbsp;` for undefined `club` or `mna_number`
+##    25-Aug-2013 (CT) Factor `td_li_sailor`; elide `middle_name` and `title`
+##    30-Aug-2013 (CT) Add `middle_name` to `td_li_sailor`
+##    12-Feb-2014 (CT) Factor from SCAMS
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro register_button (page) -%}
+  {%- set href_register = page.href_register () %}
+  {%- if href_register %}
+    <p>
+      <a href="{{ href_register }}"{#--#}
+         title="{{ GTW._T ('Register for regatta %s') % page.obj.ui_display }}"{#--#}
+         class="button"{#--#}
+      >{{ page.obj.name }} {{ GTW._T ("register") }}</a>
+    </p>
+  {% endif -%}
+{%- endmacro -%} {#- register_button -#}
+
+{%- macro register_buttons (page) -%}
+  {%- set regattas = page.regattas %}
+  {%- if regattas %}
+    <div class="Registration">{#--#}
+      {%- for p in regattas %}
+        {{ register_button (p) }}
+      {% endfor -%}
+    </div>
+  {% endif -%}
+{%- endmacro -%} {#- register_buttons -#}
+
+{%- macro registered_boats (regatta, boats) -%}
+  {%- for b in boats %}
+    <tr>
+      {{ td_index       (regatta, b, loop.index) }}
+      {{ td_class       (regatta, b) }}
+      {{ td_sail_number (regatta, b) }}
+      {{ td_crew        (regatta, b) }}
+      {{ td_club        (regatta, b) }}
+      {{ td_mna_number  (regatta, b) }}
+      {{ td_reg_date    (regatta, b) }}
+    </tr>
+  {% endfor %}
+{%- endmacro -%} {#- registered_boats -#}
+
+{%- macro td_class (regatta, boat) -%}
+  {% if regatta.handicap -%}
+    <td class="Boat-Class">{{ boat.boat.FO.b_class }}</td>
+  {%- endif %}
+{%- endmacro -%} {#- td_class -#}
+
+{%- macro td_club (regatta, boat) -%}
+  <td class="Club">
+    <ul>
+      <li>{{- boat.skipper.FO.club -}}</li>
+      {% for c in boat.crew -%}
+        <li>{{ c.FO.club or "&nbsp;" }}</li>
+      {%- endfor -%}
+    </ul>
+  </td>
+{%- endmacro -%} {#- td_club -#}
+
+{%- macro td_crew (regatta, boat) -%}
+  <td class="Crew">
+    <ul>
+      {{ td_li_sailor (boat.skipper) }}
+      {% for c in boat.crew -%}
+        {{ td_li_sailor (c) }}
+      {%- endfor -%}
+    </ul>
+  </td>
+{%- endmacro -%} {#- td_crew -#}
+
+{%- macro td_index (regatta, boat, index) -%}
+  <th class="Index" scope="row">{{ index }}</th>
+{%- endmacro -%} {#- td_index -#}
+
+{%- macro td_li_sailor (s) -%}
+  <li>
+    {{- s.FO.person.last_name }} {{ s.FO.person.first_name -}}
+    {%- if s.person.middle_name %}
+      {{ s.FO.person.middle_name -}}
+    {% endif -%}
+  </li>
+{%- endmacro -%} {#- td_li_sailor -#}
+
+{%- macro td_mna_number (regatta, boat) -%}
+  <td class="MNA-Number">
+    <ul>
+      <li>{{- boat.skipper.FO.mna_number|default ("") -}}</li>
+      {% for c in boat.crew -%}
+        <li>{{ c.FO.mna_number or "&nbsp;" -}}</li>
+      {%- endfor -%}
+    </ul>
+  </td>
+{%- endmacro -%} {#- td_mna_number -#}
+
+{%- macro td_place (regatta, boat) -%}
+  <th class="Place" scope="row">{{ boat.FO.place }}</th>
+{%- endmacro -%} {#- td_place -#}
+
+{%- macro td_points (regatta, boat) -%}
+  <td class="Points">{{ boat.FO.points }}</td>
+{%- endmacro -%} {#- td_points -#}
+
+{%- macro td_race_results (regatta, boat) -%}
+  {% for r in GTW.sorted (boat.race_results, key = GTW.Getter.race) -%}
+    <td class="Race-Result{{ " discarded" if r.discarded }}">
+      {{- r.FO.points -}}
+      {%- if r.status %}<br />{{ r.FO.status }}{% endif -%}
+    </td>
+  {%- endfor %}
+{%- endmacro -%} {#- td_race_results -#}
+
+{%- macro td_rl_points (regatta, boat) -%}
+  <td class="RLP Points" title="{{ GTW._T ("Ranking list points")}}">
+    {{- boat.FO.ranking_list_points_lp -}}
+  </td>
+{%- endmacro -%} {#- td_rl_points -#}
+
+{%- macro td_reg_date (regatta, boat) -%}
+  {%- if not regatta.is_team_race %}
+    <td class="Date">{{ boat.FO.registration_date }}</td>
+  {% endif -%}
+{%- endmacro -%} {#- td_reg_date -#}
+
+{%- macro td_sail_number (regatta, boat, default_value = "") -%}
+  {%- set b = boat.boat.FO %}
+  {%- set nation = b.nation %}
+  {%- if nation %}
+    <td class="Nation">{{ nation|safe }}</td>{#- -#}
+    <td class="Sail-Number">
+      {{- b.sail_number|default (default_value) -}}
+    </td>
+  {%- else %}
+    <td class="Nation">
+      {{- b.sail_number_head|default (default_value) -}}
+    </td>{#- -#}
+    <td class="Sail-Number">
+      {{- b.sail_number_tail|default (default_value) -}}
+    </td>
+  {% endif -%}
+{%- endmacro -%} {#- td_sail_number -#}
+
+{%- macro th_class (regatta, value = None) -%}
+  {%- if regatta.handicap %}
+    <th class="Boat-Class" scope="col">
+      {%- if value is none -%}
+        {{ GTW._T ("Class") }}
+      {%- else -%}
+        {{ value }}
+      {%- endif -%}
+    </th>
+  {%- endif %}
+{%- endmacro -%} {#- th_class -#}
+
+{%- macro th_club (regatta, value = None) -%}
+  <th class="Club" scope="col">
+    {%- if value is none -%}
+      {{ GTW._T ("Club") }}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_club -#}
+
+{%- macro th_crew (regatta, value = None) -%}
+  {%- if regatta.handicap %}
+    {%- set max_crew = 0 %}
+  {%- else %}
+    {%- set max_crew = (regatta.boat_class and regatta.boat_class.max_crew) or 0 %}
+  {% endif -%}
+  <th class="Crew" scope="col">
+    {%- if value is none -%}
+      {%- if max_crew != 1 -%}
+        {{ GTW._T ("Crew") }}
+      {%- else -%}
+        {{ GTW._T ("Sailor") }}
+      {%- endif -%}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_crew -#}
+
+{%- macro th_index (regatta, value = None) -%}
+  <th class="Index" scope="col">
+    {%- if value is none -%}#{%- else -%}{{ value }}{%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_index -#}
+
+{%- macro th_mna_number (regatta, value = None) -%}
+  <th class="MNA-Number" scope="col">
+    {%- if value is none -%}
+      {{ GTW._T ("MNA-Number") }}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_mna_number -#}
+
+{%- macro th_place (regatta, value = None) -%}
+  <th class="Place" scope="col">
+    {%- if value is none -%}
+      {{ GTW._T ("Place") }}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_place -#}
+
+{%- macro th_points (regatta, value = None) -%}
+  <th class="Points" scope="col">
+    {%- if value is none -%}
+      {{ GTW._T ("Points") }}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_points -#}
+
+{%- macro th_race_results (regatta, value = None) -%}
+  {%- if value is none %}
+    {% for r in range (regatta.races) -%}
+      <th class="Race-Result" scope="col">{{ loop.index }}</th>
+    {%- endfor %}
+  {%- else %}
+    <th class="Race-Result" colspan="{{ regatta.races }}" scope="col">
+      {{- value -}}
+    </th>
+  {% endif -%}
+{%- endmacro -%} {#- th_race_results -#}
+
+{%- macro th_rl_points (regatta, value = None) -%}
+  <th class="RLP Points" scope="col"
+    title="{{ GTW._T ("Ranking list points")}}">
+    {%- if value is none -%}
+      {{ GTW._T ("RLP") }}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_rl_points -#}
+
+{%- macro th_reg_date (regatta, value = None) -%}
+  {%- if not regatta.is_team_race %}
+    <th class="Date">
+      {{ GTW._T ("Meldung") }}
+    </th>
+  {% endif -%}
+{%- endmacro -%} {#- th_reg_date -#}
+
+{%- macro th_sail_number (regatta, value = None) -%}
+  <th class="Sail-Number" colspan="2" scope="col">
+    {%- if value is none -%}
+      {{ GTW._T ("Sail-No.") }}
+    {%- else -%}
+      {{ value }}
+    {%- endif -%}
+  </th>
+{%- endmacro -%} {#- th_sail_number -#}
+
+{#- __END__ jinja template: regatta_boat.scams.at:jnj:html:regatta_boat.jnj -#}
