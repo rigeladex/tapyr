@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -60,6 +60,7 @@
 #     6-Aug-2012 (MG) Add `update_blackboard`
 #     8-Aug-2012 (MG) Remove debug code
 #     9-Aug-2012 (MG) Use `** kw` notation for `update_blackboard`
+#    12-Feb-2014 (CT) Add `enumerate`
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,8 @@ class GTW (TFL.Meta.Object) :
             text = email_text
         return self.uri (scheme = "mailto", uri = email, text = text, ** kw)
     # end def email_uri
+
+    enumerate = staticmethod (enumerate)
 
     def eval_sorted_by (self, key = None) :
         """Returns a function that can be passed to `Sorted_By` to evaluate
