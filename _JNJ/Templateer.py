@@ -80,6 +80,7 @@
 #    11-Dec-2012 (CT) Add `error_410`
 #     8-Jan-2013 (CT) Add `account_make_cert`
 #    22-Jan-2014 (CT) Add `empty_dir`
+#    12-Feb-2014 (CT) Add `regatta_ranking`
 #    ««revision-date»»···
 #--
 
@@ -574,6 +575,7 @@ Template ("photo",                        "html/photo.jnj")
 Template ("pns_e_type_doc",               "html/pns_e_type_doc.jnj")
 Template ("regatta_calendar",             "html/regatta_calendar.jnj")
 Template ("regatta_page",                 "html/regatta_page.jnj")
+Template ("regatta_ranking",              "html/regatta_ranking.jnj")
 Template ("regatta_register_email",       "email/regatta_register.jnj")
 Template ("regatta_registration",         "html/regatta_registration.jnj")
 Template ("regatta_result",               "html/regatta_result.jnj")
