@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -412,7 +412,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
 
     def _check_pid_gone (self, pid, E_Type, scope) :
         lc = scope.query_changes \
-            (pid = pid).order_by (TFL.Sorted_By ("-cid")).first ()
+            (pid = pid).order_by (self._sort_key_cid_reverse).first ()
         if lc is not None :
             user = _T ("anonymous")
             if lc.user :
