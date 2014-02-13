@@ -37,6 +37,7 @@
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_d`
 #    15-Jan-2014 (CT) Factor `E_Type_Mixin._add_other_entries`
 #    29-Jan-2014 (CT) Add super-call to `_add_other_entries`
+#    13-Feb-2014 (CT) Add `object_entries`
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,12 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
                 self._old_objects = objects
         return self._entries
     # end def entries
+
+    @property
+    @getattr_safe
+    def object_entries (self) :
+        return self.entries [:len (self.objects)]
+    # end def object_entries
 
     @property
     @getattr_safe

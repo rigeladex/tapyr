@@ -63,7 +63,6 @@ class Person_owns_Boat (_Ancestor_Essence) :
             """Boat owned by a person"""
 
             role_type          = GTW.OMP.SRM.Boat
-            role_name          = "boat"
             auto_rev_ref       = True
             max_links          = 1
 

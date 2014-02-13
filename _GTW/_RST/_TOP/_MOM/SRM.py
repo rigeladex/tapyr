@@ -49,6 +49,7 @@
 #    15-Jun-2013 (CT) Add guard to CSV-rendering against empty `boats`
 #    16-Jan-2014 (CT) Use `MOM.formatted`, not home-grown code, for
 #                     registration email
+#    13-Feb-2014 (CT) Use `object_entries` for `Archive.Year.regattas`
 #    ««revision-date»»···
 #--
 
@@ -507,6 +508,8 @@ class Regatta_Event \
     @property
     @getattr_safe
     def regattas (self) :
+        ### Cannot use `object_entries` here because some non-Regatta entries
+        ### are at the front of `entries`
         return [e for e in self.entries if isinstance (e, Regatta)]
     # end def regattas
 
@@ -539,17 +542,9 @@ class Archive (_Ancestor) :
 
         dir_template_name   = "regatta_calendar"
         Entity              = Regatta_Event
+        regattas            = Alias_Property ("object_entries")
         skip_etag           = True
         sort_key            = TFL.Sorted_By ("date.start", "perma_name")
-
-        @property
-        @getattr_safe
-        def regattas (self) :
-            result = self.entries
-            if result and result [-1] is self._admin :
-                result = result [:-1]
-            return result
-        # end def regattas
 
     Year = _SRM_Year_ # end class
 
