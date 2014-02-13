@@ -51,6 +51,7 @@
 #     8-Apr-2013 (CT) Factor `P.Rule.hover`
 #    15-Jan-2014 (CT) Add rule for `.full-width`
 #    21-Jan-2014 (CT) Add scmall screen rules for `.pg_main`, `.pg_nav_jump`
+#    13-Feb-2014 (CT) Add rule for `.grid-table tbody th`
 #    ««revision-date»»···
 #--
 
@@ -445,6 +446,11 @@ style_sheet = Style_Sheet \
                 , font_weight      = "bold"
                 , text_align       = "center"
                 , ** P.color_spec_heading
+                )
+            , Rule
+                ( "tbody th"
+                , color            = P.color_dark_grey
+                , font_weight      = "bold"
                 )
             , Rule
                 ( "td", "th"
