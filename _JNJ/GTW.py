@@ -61,17 +61,21 @@
 #     8-Aug-2012 (MG) Remove debug code
 #     9-Aug-2012 (MG) Use `** kw` notation for `update_blackboard`
 #    12-Feb-2014 (CT) Add `enumerate`
+#    13-Feb-2014 (CT) Add `Dingbats` and `unichr`
 #    ««revision-date»»···
 #--
 
-from   _JNJ               import JNJ
-from   _TFL               import TFL
+from   _JNJ                     import JNJ
+from   _TFL                     import TFL
 
-from   _GTW               import HTML
+from   _GTW                     import HTML
 
-from   _TFL               import sos
-from   _TFL.I18N          import _, _T, _Tn
-from   _TFL.predicate     import filtered_join
+from   _TFL.pyk                 import pyk
+from   _TFL                     import sos
+from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import filtered_join
+
+from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -87,6 +91,12 @@ class GTW (TFL.Meta.Object) :
         self.env               = env
         self.render_mode_stack = []
     # end def __init__
+
+    @Once_Property
+    def Dingbats (self) :
+        from _TFL import Dingbats
+        return Dingbats
+    # end def Dingbats
 
     def attr_join (self, sep, objects, attr_name) :
         """Join the values of attribute `attr_name` of `objects` by `sep`."""
@@ -225,7 +235,7 @@ class GTW (TFL.Meta.Object) :
                 self.render_mode_stack.pop ()
     # end def render_fofi_widget
 
-    @TFL.Meta.Once_Property
+    @Once_Property
     def render_mode (self) :
         return self.render_mode_stack and self.render_mode_stack [-1]
     # end def render_mode
@@ -247,6 +257,8 @@ class GTW (TFL.Meta.Object) :
         self.blackboard.update (kw)
         return ""
     # end def update_blackboard
+
+    unichr = staticmethod (pyk.unichr)
 
     def uri (self, scheme, uri, text = None, ** kw) :
         obfuscate = kw.pop ("obfuscate", False)
