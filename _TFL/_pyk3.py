@@ -39,6 +39,7 @@
 #     9-Oct-2013 (CT) Fix `zip`, `izip`
 #    27-Nov-2013 (CT) Add `number_types`
 #     3-Jan-2014 (CT) Add `encoded`, `user_config`
+#    17-Feb-2014 (CT) Add `decoded`
 #    ««revision-date»»···
 #--
 
@@ -85,13 +86,24 @@ class _Pyk_ (object) :
     Classic_Class_Type = None
 
     @staticmethod
+    def decoded (v, encoding = None) :
+        if encoding is None :
+            encoding = pyk.user_config.input_encoding
+        if isinstance (v, bytes) :
+            v = v.decode (encoding, "replace")
+        elif not isinstance (v, str) :
+            v = str (v)
+        return v
+    # end def decoded
+
+    @staticmethod
     def encoded (v, encoding = None) :
         if encoding is None :
             encoding = pyk.user_config.output_encoding
-        if not isinstance (v, (str, bytes)) :
-            v = str (v)
         if isinstance (v, str) :
             v = v.encode (encoding, "replace")
+        elif not isinstance (v, str) :
+            v = str (v)
         return v
     # end def encoded
 
