@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -36,6 +36,7 @@
 #    19-Jun-2012 (CT) Add `header` and apply it in `send_message`
 #     6-Jul-2012 (CT) Add `SMTP_Logger`
 #    18-Nov-2013 (CT) Change default `charset` to `utf-8`
+#    17-Feb-2014 (CT) Change `SMTP_Logger.send` to use `pyk.encoded`
 #    ««revision-date»»···
 #--
 
@@ -221,7 +222,9 @@ class SMTP_Logger (SMTP) :
         self._log \
             ( "[%s] Email via %s from %s to %s\n    %s"
             , datetime.datetime.now ().replace (microsecond = 0)
-            , self.mail_host, from_addr, to_addrs
+            , pyk.encoded (self.mail_host)
+            , pyk.encoded (from_addr)
+            , list (pyk.encoded (t) for t in to_addrs)
             , "\n    ".join (msg.split ("\n"))
             )
     # end def send
