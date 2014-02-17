@@ -125,6 +125,7 @@
 //     7-May-2013 (CT) Don't call `_setup_efs_selector` for `readonly` fields
 //    23-May-2013 (CT) Disable `Reset` for `Entity` (removes `prefill` values)
 //    14-Jan-2014 (CT) Consider required checkboxes in `field_change_cb`
+//    17-Feb-2014 (CT) Add `feedback` to `submit_cb`
 //    ««revision-date»»···
 //--
 
@@ -1095,7 +1096,7 @@
             var target$      = $(ev.target);
             var name         = target$.attr ("name");
             var pvs          = $AFS_E.root.packed_values ();
-            var json_data    = { cargo : pvs };
+            var json_data    = { cargo : pvs , next : options.url.next };
             json_data [name] = true;
             if (ev && "preventDefault" in ev) {
                 ev.preventDefault ();
@@ -1113,6 +1114,11 @@
                             } else if (answer ["expired"]) {
                                 // XXX display re-authorization form
                                 $GTW.show_message ("Expired: " + answer.expired);
+                            } else if (answer ["feedback"]) {
+                                $(":input, button, .cmd-button a", options.form$)
+                                    .addClass ("ui-state-disabled")
+                                    .prop     ("disabled", true);
+                                options.form$.before (answer.feedback);
                             } else {
                                 // Need timeout here for IE
                                 setTimeout
