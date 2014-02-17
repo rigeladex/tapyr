@@ -117,6 +117,8 @@
 #    24-Jan-2014 (CT) Add `A_Link`
 #    29-Jan-2014 (CT) Add stub for `_add_other_entries`
 #    17-Feb-2014 (CT) Add exception handler to `send_error_email`
+#    17-Feb-2014 (CT) Use `pyk.decoded` in `send_error_email`
+#    17-Feb-2014 (CT) Use `pyk.encoded` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -124,6 +126,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _GTW._RST.import_RST
 import _GTW._RST.R_Map
@@ -658,6 +661,7 @@ class _RST_Base_ (TFL.Meta.Object) :
         from _TFL.Formatter import formatted
         try :
             email     = self.email_from
+            enc       = self.encoding
             headers   = request.headers
             message   = \
                 ( "HTTP method: %s"
@@ -673,9 +677,11 @@ class _RST_Base_ (TFL.Meta.Object) :
                     )
                 )
             if tbi :
-                message = "\n\n=====\n\n".join ((message, tbi))
+                message = "\n\n=====\n\n".join \
+                    ((message, pyk.decoded (tbi, enc)))
             if xtra :
-                message = "\n\n#####\n\n".join ((message, xtra))
+                message = "\n\n#####\n\n".join \
+                    ((message, pyk.decoded (xtra, enc)))
             message = _error_email_cleaner (message)
             if not self.Templateer :
                 print ("Exception:", exc)
@@ -700,8 +706,11 @@ class _RST_Base_ (TFL.Meta.Object) :
                     , request       = request
                     , ** kw
                     )
-        except Exception as exc :
-            logging.exception ("Exception during `send_error_email`")
+        except Exception as xxx :
+            logging.exception \
+                ( "Exception `%r` during `send_error_email`"
+                , pyk.decoded (xxx, enc)
+                )
     # end def send_error_email
 
     def send_email (self, template, ** context) :
@@ -709,21 +718,21 @@ class _RST_Base_ (TFL.Meta.Object) :
         if not email_from :
             context ["email_from"] = email_from = self.email_from
         smtp = context.pop ("smtp", self.smtp)
-        smtp.charset = self.encoding
-        text = self.top.Templateer.render (template, context).encode \
-            (self.encoding, "replace")
+        smtp.charset = enc = self.encoding
+        text = pyk.encoded (self.top.Templateer.render (template, context), enc)
         try :
             smtp (text)
         except Exception as exc :
             logging.error \
-                ( ( "Exception: %s"
-                    "\n  When trying to send email from %s to %s"
-                    "\n  %s"
-                  ).encode (self.encoding, "replace")
-                , str (exc)
-                , email_from.encode (self.encoding, "replace")
-                , context.get ("email_to", "<Unkown>")
-                      .encode (self.encoding, "replace")
+                ( pyk.encoded
+                    ( "Exception: %s"
+                      "\n  When trying to send email from %s to %s"
+                      "\n  %s"
+                    , enc
+                    )
+                , pyk.encoded (exc, enc)
+                , pyk.encoded (email_from, enc)
+                , pyk.encoded (context.get ("email_to", "<Unkown>"), enc)
                 , text
                 )
             try :
