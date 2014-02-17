@@ -116,6 +116,7 @@
 #    24-Jan-2014 (CT) Add `a_attr_dict`
 #    24-Jan-2014 (CT) Add `A_Link`
 #    29-Jan-2014 (CT) Add stub for `_add_other_entries`
+#    17-Feb-2014 (CT) Add exception handler to `send_error_email`
 #    ««revision-date»»···
 #--
 
@@ -655,49 +656,52 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     def send_error_email (self, request, exc, tbi = None, xtra = None) :
         from _TFL.Formatter import formatted
-        email     = self.email_from
-        headers   = request.headers
-        message   = \
-            ( "HTTP method: %s"
-              "\n\nHeaders:\n%s"
-              "\n\nBody:\n  %s"
-              "\n\nRequest data:\n%s"
-              "\n\nRequest environment:\n%s"
-            %   ( request.method
-                , formatted (dict (headers.items ()), 1)
-                , formatted (request.body,            1)
-                , formatted (request.req_data.data,   1)
-                , formatted (request.environ,         1)
+        try :
+            email     = self.email_from
+            headers   = request.headers
+            message   = \
+                ( "HTTP method: %s"
+                  "\n\nHeaders:\n%s"
+                  "\n\nBody:\n  %s"
+                  "\n\nRequest data:\n%s"
+                  "\n\nRequest environment:\n%s"
+                %   ( request.method
+                    , formatted (dict (headers.items ()), 1)
+                    , formatted (request.body,            1)
+                    , formatted (request.req_data.data,   1)
+                    , formatted (request.environ,         1)
+                    )
                 )
-            )
-        if tbi :
-            message = "\n\n=====\n\n".join ((message, tbi))
-        if xtra :
-            message = "\n\n#####\n\n".join ((message, xtra))
-        message = _error_email_cleaner (message)
-        if not self.Templateer :
-            print ("Exception:", exc)
-            print ("Request path", request.path)
-            print ("Email", email)
-            print (message)
-            print (request.data)
-            print (request.environ)
-        else :
-            kw = {}
-            if self.DEBUG :
-                from _TFL.SMTP import SMTP_Logger
-                kw = dict (smtp = SMTP_Logger ())
-            self.send_email \
-                ( self.error_email_template
-                , email_from    = email
-                , email_to      = email
-                , email_subject = ("Error: %s") % (exc, )
-                , message       = message
-                , NAV           = self.top
-                , page          = self
-                , request       = request
-                , ** kw
-                )
+            if tbi :
+                message = "\n\n=====\n\n".join ((message, tbi))
+            if xtra :
+                message = "\n\n#####\n\n".join ((message, xtra))
+            message = _error_email_cleaner (message)
+            if not self.Templateer :
+                print ("Exception:", exc)
+                print ("Request path", request.path)
+                print ("Email", email)
+                print (message)
+                print (request.data)
+                print (request.environ)
+            else :
+                kw = {}
+                if self.DEBUG :
+                    from _TFL.SMTP import SMTP_Logger
+                    kw = dict (smtp = SMTP_Logger ())
+                self.send_email \
+                    ( self.error_email_template
+                    , email_from    = email
+                    , email_to      = email
+                    , email_subject = ("Error: %s") % (exc, )
+                    , message       = message
+                    , NAV           = self.top
+                    , page          = self
+                    , request       = request
+                    , ** kw
+                    )
+        except Exception as exc :
+            logging.exception ("Exception during `send_error_email`")
     # end def send_error_email
 
     def send_email (self, template, ** context) :
