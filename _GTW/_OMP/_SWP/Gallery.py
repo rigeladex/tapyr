@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SWP.
@@ -28,10 +28,11 @@
 # Revision Dates
 #    22-Mar-2010 (CT) Creation
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    17-Feb-2014 (CT) Set `Gallery.directory.do_check` to `False`
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__               import unicode_literals
 
 from   _MOM.import_MOM          import *
 from   _GTW                     import GTW
@@ -53,6 +54,10 @@ class Gallery (_Ancestor_Essence) :
             """Directory where pictures of gallery are stored."""
 
             kind               = Attr.Necessary
+
+            ### `directory` is relative to the apache root
+            ### existence check in filesystem would fail
+            do_check           = False
 
         # end class directory
 

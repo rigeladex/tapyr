@@ -87,6 +87,7 @@
 #    11-Jun-2013 (CT) Add guard to `Attribute.bindings`
 #    21-Aug-2013 (CT) Guard `is_required` in `Attribute_Syntax.__init__`
 #    14-Jan-2014 (CT) Robustify `Attribute.__init__` and `.bindings`
+#    17-Feb-2014 (CT) Improve `No_Such_Directory`, `No_Such_File`
 #    ««revision-date»»···
 #--
 
@@ -746,6 +747,11 @@ class Name_Clash (Error) :
 
 class No_Such_Directory (Error) :
     """Raised for a file specification containing a non-existent directory."""
+
+    def __init__ (self, d) :
+        self.__super.__init__ (_T ("Directory `%s` not found") % (d, ))
+    # end def __init__
+
 # end class No_Such_Directory
 
 class No_Such_Entity (Error) :
@@ -754,6 +760,11 @@ class No_Such_Entity (Error) :
 
 class No_Such_File (Error) :
     """Raised for a file specification of a non-existing file."""
+
+    def __init__ (self, d) :
+        self.__super.__init__ (_T ("File `%s` not found") % (d, ))
+    # end def __init__
+
 # end class No_Such_File
 
 class Not_Unique (_Invariant_) :
