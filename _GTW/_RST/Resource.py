@@ -390,6 +390,12 @@ class _RST_Base_ (TFL.Meta.Object) :
 
     @property
     @getattr_safe
+    def entries_a_link (self) :
+        return tuple (e for e in self.entries if isinstance (e, A_Link))
+    # end def entries_a_link
+
+    @property
+    @getattr_safe
     def entries_transitive (self) :
         return ()
     # end def entries_transitive
