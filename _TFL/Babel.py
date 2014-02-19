@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -309,7 +309,7 @@ def compile (cmd) :
         d, p = os.path.split    (cmd.import_file)
         f, e = os.path.splitext (p)
         with TFL.Context.list_push (sys.path, d) :
-            __import__ (f)
+            m = __import__ (f)
         lang_coll = Language_File_Collection.from_sys_modules \
             (cmd.languages, cmd.file_suffix)
     else :

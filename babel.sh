@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This script is part of the Christian Tanzer's python package set.
@@ -30,6 +30,7 @@
 #    28-Feb-2012 (CT) Add `ReST`, turn `dirs` into an optional argument
 #    11-May-2012 (CT) Rename to babel.sh, add `compile` command
 #    23-May-2012 (CT) Use `python`, not `/usr/bin/python` in `compile`
+#    19-Feb-2014 (CT) Use `python -m` to run `_TFL.Babel`
 #    ««revision-date»»···
 #--
 
@@ -39,10 +40,12 @@ default_langs="en,de"
 default_dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _JNJ _ReST"
 lib=$(dirname $(python -c 'from _TFL import sos; print sos.path.dirname (sos.__file__)'))
 
+### `python -m _TFL.Babel` won't add `.../_TFL` to `sys.path`
+
 case "$cmd" in
     "extract" )
         dirs=${1:-${default_dirs}}; shift
-        python ${lib}/_TFL/Babel.py extract                              \
+        python -m _TFL.Babel extract                                     \
             -bugs_address        "tanzer@swing.co.at,martin@mangari.org" \
             -charset             iso-8859-15                             \
             -copyright_holder    "Mag. Christian Tanzer, Martin Glueck"  \
@@ -54,7 +57,7 @@ case "$cmd" in
     "language" )
         langs=${1:-${default_langs}}; shift
         dirs=${1:-${default_dirs}}; shift
-        python ${lib}/_TFL/Babel.py language -languages "${langs}" -sort $dirs
+        python -m _TFL.Babel language -languages "${langs}" -sort $dirs
         ;;
     "compile" )
         model=${1:-./model.py}; shift
@@ -62,7 +65,7 @@ case "$cmd" in
         for lang in $(IFS=, ; echo ${langs})
         do
             mkdir -p "./locale/${lang}/LC_MESSAGES"
-            python "${lib}/_TFL/Babel.py" compile \
+            python -m _TFL.Babel compile \
                -use_fuzzy \
                -languages "${lang}" -combine -import_file "${model}" \
                -output_file "./locale/${lang}/LC_MESSAGES/messages.mo"
