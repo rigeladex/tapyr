@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Jul-2012 (CT) Creation
+#    19-Feb-2014 (CT) Add `extra_excludes`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ class Robot_Excluder (_Ancestor) :
     """Page providing a /robots.txt file."""
 
     exclude_robots             = False
+    extra_excludes             = ["/media"]
     hidden                     = True
     ignore_picky_accept        = True
     implicit                   = False
@@ -69,13 +71,16 @@ class Robot_Excluder (_Ancestor) :
 
     @Once_Property
     def contents (self) :
+        dis_fmt = "Disallow: %s"
         exclude = list \
-            (   "Disallow: %s" % (r.abs_href, )
+            (   dis_fmt % (r.abs_href, )
             for r in self.top.own_links if r.exclude_robots
             )
+        extra  = list (dis_fmt % x for x in self.extra_excludes)
         result = ""
         if exclude :
-            result = "\n".join (iter_chain (["User-agent: *"], exclude))
+            result = "\n".join \
+                (iter_chain (["User-agent: *"], exclude, extra))
         return result
     # end def contents
 
