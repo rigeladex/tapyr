@@ -137,7 +137,7 @@ class Regatta (_Ancestor_Essence) :
         # end class kind
 
         class ranking_list_factor (A_Float) :
-            """Weight of this regatta in compuation of laser-points."""
+            """Weight of this regatta in computation of ranking list points."""
 
             kind               = Attr.Optional
             raw_default        = "1.0"

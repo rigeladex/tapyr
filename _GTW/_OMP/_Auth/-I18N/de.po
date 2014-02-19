@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2013 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2014 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-12-04 12:50+0100\n"
+"POT-Creation-Date: 2014-02-19 17:57+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -119,10 +119,6 @@ msgstr "Anonymes Benutzerkonto, für nicht angemeldete Besucher."
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Desc"
-msgstr "Beschreibung"
-
-#: _GTW/_OMP/_Auth/Certificate.py:82 _GTW._OMP._Auth.Certificate:0
-msgid "Description"
 msgstr "Beschreibung"
 
 #: _GTW._OMP._Auth.Group:0
@@ -242,3 +238,4 @@ msgstr "Gültigkeitsintervall"
 #: _GTW._OMP._Auth.Certificate:0
 msgid "valid_revocation_date"
 msgstr ""
+

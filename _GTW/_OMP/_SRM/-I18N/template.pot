@@ -1,15 +1,15 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2013 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2014 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-12-04 12:50+0100\n"
+"POT-Creation-Date: 2014-02-19 17:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -387,6 +387,12 @@ msgid "Norway"
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
+msgid ""
+"Number of boats participating in the regatta as relevant for\n"
+"for low-point based formula for ranking list points."
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
 msgid "Number of discardable races in regatta"
 msgstr ""
 
@@ -450,6 +456,10 @@ msgstr[1] ""
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Races"
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Ranking list factor"
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_in_Regatta:0
@@ -619,6 +629,10 @@ msgstr ""
 msgid "Spain"
 msgstr ""
 
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Starters rl"
+msgstr ""
+
 #: _GTW._OMP._SRM.Attr_Type:0 _GTW._OMP._SRM.Race_Result:0
 msgid "Status"
 msgstr ""
@@ -681,6 +695,10 @@ msgstr ""
 
 #: _GTW._OMP._SRM.Page:0
 msgid "Web page with information about a sailing regatta."
+msgstr ""
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Weight of this regatta in computation of ranking list points."
 msgstr ""
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0

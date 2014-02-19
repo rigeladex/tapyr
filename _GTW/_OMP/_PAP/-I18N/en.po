@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-12-04 12:50+0100\n"
+"POT-Creation-Date: 2014-02-19 17:57+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -18,16 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: _GTW/_OMP/_PAP/Person.py:159 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Person.py:160 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr ""
 
-#: _GTW._OMP._PAP.Person:0
-msgid "Academic title."
-msgstr ""
-
-#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Address_Position:0
-#: _GTW._OMP._PAP.Subject_has_Property:0
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Email:0
+#: _GTW._OMP._PAP.Address_Position:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
@@ -121,10 +117,6 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Subject:0
 msgid "Date of birth [`start`] (and death [`finish`])"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Email.py:66 _GTW._OMP._PAP.Email:0
-msgid "Email address"
 msgstr ""
 
 #: _GTW._OMP._PAP.Email:0
@@ -423,16 +415,6 @@ msgid "Registered in"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
-msgid "Salutation"
-msgstr ""
-
-#: _GTW._OMP._PAP.Person:0
-msgid ""
-"Salutation to be used when communicating with person (e.g., in\n"
-"a letter or email)."
-msgstr ""
-
-#: _GTW._OMP._PAP.Person:0
 msgid "Sex"
 msgstr ""
 
@@ -578,5 +560,17 @@ msgid "Zip code of address"
 msgstr ""
 
 #~ msgid "Place where this (type_base_name.lower ())s is registered."
+#~ msgstr ""
+
+#~ msgid "Academic title."
+#~ msgstr ""
+
+#~ msgid "Email address"
+#~ msgstr ""
+
+#~ msgid "Salutation"
+#~ msgstr ""
+
+#~ msgid ""
 #~ msgstr ""
 

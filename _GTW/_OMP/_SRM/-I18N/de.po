@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2013 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2014 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-12-04 12:50+0100\n"
+"POT-Creation-Date: 2014-02-19 17:57+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -97,7 +97,7 @@ msgstr[1] ""
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Boolean attribute."
-msgstr ""
+msgstr "Ja/Nein Attribut"
 
 #: _GTW/_OMP/_SRM/Attr_Type.py:71
 msgid "Canada"
@@ -387,6 +387,12 @@ msgid "Norway"
 msgstr "Norwegen"
 
 #: _GTW._OMP._SRM.Regatta:0
+msgid ""
+"Number of boats participating in the regatta as relevant for\n"
+"for low-point based formula for ranking list points."
+msgstr "Anzahl der an der Regatta teilenhmenden Boote"
+
+#: _GTW._OMP._SRM.Regatta:0
 msgid "Number of discardable races in regatta"
 msgstr "Anzahl der Streicher in der Regatta"
 
@@ -451,6 +457,10 @@ msgstr[1] "Wettfahrtergebnisse"
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Races"
 msgstr "Wettfahrten"
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Ranking list factor"
+msgstr "Ranglistenfaktor"
 
 #: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_in_Regatta:0
 #: _GTW._OMP._SRM.Team:0
@@ -621,6 +631,10 @@ msgstr "Südafrika"
 msgid "Spain"
 msgstr "Spanien"
 
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Starters rl"
+msgstr ""
+
 #: _GTW._OMP._SRM.Attr_Type:0 _GTW._OMP._SRM.Race_Result:0
 msgid "Status"
 msgstr "Bemerkung"
@@ -688,6 +702,10 @@ msgstr "Vereinigte Staaten von Amerika"
 #: _GTW._OMP._SRM.Page:0
 msgid "Web page with information about a sailing regatta."
 msgstr "Webseite mit Informationen zu einer Segelregatta."
+
+#: _GTW._OMP._SRM.Regatta:0
+msgid "Weight of this regatta in computation of ranking list points."
+msgstr "Gewicht der Regatta bei der Berechnung der Ranglistenpunkte."
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "`Boat_in_Regatta` sailing for `Team`"

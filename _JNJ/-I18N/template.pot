@@ -1,15 +1,15 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2013 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2014 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-12-04 12:50+0100\n"
+"POT-Creation-Date: 2014-02-19 17:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,15 +84,15 @@ msgstr ""
 
 #: _JNJ/html/e_type.m.jnj:102 _JNJ/html/e_type.m.jnj:166
 #: _JNJ/html/e_type.m.jnj:349 _JNJ/html/e_type_afs.jnj:78
-#: _JNJ/html/form.jnj:176 _JNJ/html/rform.jnj:260 _JNJ/html/rform.jnj:458
+#: _JNJ/html/form.jnj:187 _JNJ/html/rform.jnj:260 _JNJ/html/rform.jnj:458
 msgid "Cancel"
 msgstr ""
 
-#: _JNJ/html/AFS/input.jnj:163
+#: _JNJ/html/AFS/input.jnj:168
 msgid "Cannot be changed"
 msgstr ""
 
-#: _JNJ/html/form.jnj:321
+#: _JNJ/html/form.jnj:336
 msgid "Certificate login"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgstr ""
 msgid "Change attributes of this object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:401
+#: _JNJ/html/form.jnj:425
 msgid "Change email"
 msgstr ""
 
@@ -108,7 +108,7 @@ msgstr ""
 msgid "Change email for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:400
+#: _JNJ/html/form.jnj:424
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -117,13 +117,17 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:408
+#: _JNJ/html/form.jnj:432
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:407
+#: _JNJ/html/form.jnj:431
 #, python-format
 msgid "Change password of account %s"
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:191
+msgid "Class"
 msgstr ""
 
 #: _JNJ/html/console.jnj:42 _JNJ/html/e_type.m.jnj:107
@@ -140,6 +144,10 @@ msgstr ""
 msgid "Click to jump to the next error"
 msgstr ""
 
+#: _JNJ/html/regatta_boat.jnj:202
+msgid "Club"
+msgstr ""
+
 #: _JNJ/html/e_type.m.jnj:279
 msgid "Config"
 msgstr ""
@@ -150,6 +158,10 @@ msgstr ""
 
 #: _JNJ/html/e_type_afs.jnj:80
 msgid "Copy"
+msgstr ""
+
+#: _JNJ/html/empty_dir.jnj:63
+msgid "Create a new entry"
 msgstr ""
 
 #: _JNJ/html/make_client_cert.jnj:73
@@ -170,7 +182,11 @@ msgstr ""
 msgid "Create new object"
 msgstr ""
 
-#: _JNJ/html/change_email.jnj:61 _JNJ/html/form.jnj:438
+#: _JNJ/html/regatta_boat.jnj:218
+msgid "Crew"
+msgstr ""
+
+#: _JNJ/html/change_email.jnj:61 _JNJ/html/form.jnj:462
 msgid "Current Password"
 msgstr ""
 
@@ -178,7 +194,7 @@ msgstr ""
 msgid "Currently selected day"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:151
+#: _JNJ/html/navigation.jnj:157
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
@@ -199,19 +215,15 @@ msgstr ""
 msgid "Delta"
 msgstr ""
 
-#: _JNJ/html/make_client_cert.jnj:58
-msgid "Description"
-msgstr ""
-
 #: _JNJ/html/e_type_admin.jnj:75
 msgid "Disable"
 msgstr ""
 
-#: _JNJ/html/form.jnj:478 _JNJ/html/rform.jnj:432
+#: _JNJ/html/form.jnj:502 _JNJ/html/rform.jnj:432
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:175 _JNJ/html/form.jnj:469 _JNJ/html/rform.jnj:259
+#: _JNJ/html/form.jnj:186 _JNJ/html/form.jnj:493 _JNJ/html/rform.jnj:259
 #: _JNJ/html/rform.jnj:423
 msgid "Discard all changes and leave form"
 msgstr ""
@@ -280,7 +292,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: _JNJ/html/news.jnj:60
+#: _JNJ/html/news.jnj:62
 msgid "Edit this entry"
 msgstr ""
 
@@ -310,7 +322,7 @@ msgstr ""
 msgid "Gallery"
 msgstr ""
 
-#: _JNJ/html/form.jnj:356
+#: _JNJ/html/form.jnj:379
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -327,15 +339,19 @@ msgstr ""
 msgid "Javascript is needed to use this page"
 msgstr ""
 
+#: _JNJ/html/base.jnj:106
+msgid "Jump to Navigation"
+msgstr ""
+
 #: _JNJ/html/make_client_cert.jnj:51
 msgid "Keysize"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:147
+#: _JNJ/html/navigation.jnj:153
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:146
+#: _JNJ/html/navigation.jnj:152
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -365,20 +381,25 @@ msgstr ""
 msgid "Limit number of entities displayed"
 msgstr ""
 
-#: _JNJ/html/form.jnj:346
+#: _JNJ/html/form.jnj:341
+#, python-format
+msgid "Log into %s"
+msgstr ""
+
+#: _JNJ/html/form.jnj:369
 msgid "Log into website or go to account page"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:176
+#: _JNJ/html/navigation.jnj:182
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:175
+#: _JNJ/html/navigation.jnj:181
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:347 _JNJ/html/navigation.jnj:181
+#: _JNJ/html/form.jnj:343 _JNJ/html/form.jnj:370 _JNJ/html/navigation.jnj:187
 msgid "Login"
 msgstr ""
 
@@ -386,20 +407,24 @@ msgstr ""
 msgid "Login for"
 msgstr ""
 
-#: _JNJ/html/error_401.jnj:40
+#: _JNJ/html/error_401.jnj:41
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:320
+#: _JNJ/html/form.jnj:334
 msgid "Login with a previously created client certificate"
 msgstr ""
 
-#: _JNJ/html/form.jnj:390 _JNJ/html/form.jnj:391
+#: _JNJ/html/form.jnj:414 _JNJ/html/form.jnj:415
 #, python-format
 msgid "Logout %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:414
+#: _JNJ/html/regatta_boat.jnj:237
+msgid "MNA-Number"
+msgstr ""
+
+#: _JNJ/html/form.jnj:438
 #, python-format
 msgid "Make a client certificate for account %s"
 msgstr ""
@@ -408,8 +433,12 @@ msgstr ""
 msgid "Make a copy of this object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:416
+#: _JNJ/html/form.jnj:440
 msgid "Make client certificate"
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:290
+msgid "Meldung"
 msgstr ""
 
 #: _JNJ/html/error_405.jnj:38
@@ -420,7 +449,7 @@ msgstr ""
 msgid "Month (for last day of week)"
 msgstr ""
 
-#: _JNJ/html/clip_aggregator.jnj:58
+#: _JNJ/html/clip_aggregator.jnj:61
 msgid "More"
 msgstr ""
 
@@ -432,7 +461,7 @@ msgstr ""
 msgid "New Email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:442 _JNJ/html/register.jnj:59
+#: _JNJ/html/form.jnj:466 _JNJ/html/register.jnj:59
 msgid "New Password"
 msgstr ""
 
@@ -485,8 +514,12 @@ msgstr ""
 msgid "Password of %s reset"
 msgstr ""
 
-#: _JNJ/html/news.jnj:48
+#: _JNJ/html/news.jnj:49
 msgid "Permanent link"
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:247
+msgid "Place"
 msgstr ""
 
 #: _JNJ/html/gallery.jnj:53
@@ -507,6 +540,10 @@ msgstr ""
 msgid "Please try again later. "
 msgstr ""
 
+#: _JNJ/html/regatta_boat.jnj:257
+msgid "Points"
+msgstr ""
+
 #: _JNJ/html/e_type.m.jnj:236 _JNJ/html/gallery.jnj:52
 msgid "Prev"
 msgstr ""
@@ -519,7 +556,15 @@ msgstr ""
 msgid "Processing the request triggered a server error. "
 msgstr ""
 
-#: _JNJ/html/clip_aggregator.jnj:56
+#: _JNJ/html/regatta_boat.jnj:280
+msgid "RLP"
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:158 _JNJ/html/regatta_boat.jnj:278
+msgid "Ranking list points"
+msgstr ""
+
+#: _JNJ/html/clip_aggregator.jnj:59
 msgid "Read the full article at"
 msgstr ""
 
@@ -527,16 +572,21 @@ msgstr ""
 msgid "Reenable"
 msgstr ""
 
-#: _JNJ/html/form.jnj:367
+#: _JNJ/html/form.jnj:390
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:366
+#: _JNJ/html/form.jnj:389
 msgid "Register a new account"
 msgstr ""
 
 #: _JNJ/html/register.jnj:41
 msgid "Register a new account for "
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:56
+#, python-format
+msgid "Register for regatta %s"
 msgstr ""
 
 #: _JNJ/html/e_type_afs.jnj:93
@@ -547,7 +597,7 @@ msgstr ""
 msgid "Repeat Email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:446 _JNJ/html/register.jnj:63
+#: _JNJ/html/form.jnj:470 _JNJ/html/register.jnj:63
 msgid "Repeat Password"
 msgstr ""
 
@@ -577,6 +627,14 @@ msgstr ""
 
 #: _JNJ/html/reset_password.jnj:44
 msgid "Reset password"
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:298
+msgid "Sail-No."
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:220
+msgid "Sailor"
 msgstr ""
 
 #: _JNJ/html/e_type_afs.jnj:85 _JNJ/html/rform.jnj:452
@@ -611,7 +669,7 @@ msgstr ""
 msgid "Select attributes"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:158
+#: _JNJ/html/navigation.jnj:164
 #, python-format
 msgid "Select language %s"
 msgstr ""
@@ -628,7 +686,7 @@ msgstr ""
 msgid "Selected picture"
 msgstr ""
 
-#: _JNJ/html/afs.jnj:167 _JNJ/html/form.jnj:483 _JNJ/html/rform.jnj:437
+#: _JNJ/html/afs.jnj:172 _JNJ/html/form.jnj:507 _JNJ/html/rform.jnj:437
 msgid "Send form data to server and leave form"
 msgstr ""
 
@@ -648,7 +706,7 @@ msgstr ""
 msgid "Slide show"
 msgstr ""
 
-#: _JNJ/html/afs.jnj:168 _JNJ/html/form.jnj:484 _JNJ/html/rform.jnj:438
+#: _JNJ/html/afs.jnj:173 _JNJ/html/form.jnj:508 _JNJ/html/rform.jnj:438
 msgid "Submit"
 msgstr ""
 
@@ -693,7 +751,7 @@ msgstr ""
 msgid "Update Email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:452 _JNJ/html/form.jnj:453
+#: _JNJ/html/form.jnj:476 _JNJ/html/form.jnj:477
 msgid "Update password"
 msgstr ""
 
@@ -751,7 +809,7 @@ msgstr ""
 msgid "You are not authorized to access this page"
 msgstr ""
 
-#: _JNJ/html/error_401.jnj:49
+#: _JNJ/html/error_401.jnj:50
 #, python-format
 msgid "You need to be logged in to access the page %s"
 msgstr ""
@@ -768,6 +826,10 @@ msgstr ""
 msgid "Your password was reset to the temporary value"
 msgstr ""
 
+#: _JNJ/html/empty_dir.jnj:54
+msgid "currently doesn't contain any entries"
+msgstr ""
+
 #: _JNJ/html/cal/wr.jnj:166
 msgid "day"
 msgstr ""
@@ -779,6 +841,10 @@ msgstr ""
 
 #: _JNJ/html/cal/wr.jnj:168
 msgid "month"
+msgstr ""
+
+#: _JNJ/html/regatta_boat.jnj:58
+msgid "register"
 msgstr ""
 
 #: _JNJ/html/error_404.jnj:56

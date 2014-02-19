@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2013 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2014 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2013-12-04 12:50+0100\n"
+"POT-Creation-Date: 2014-02-19 17:57+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
+
+#: _GTW._OMP._SWP.Referral:0
+msgid "A resource referring to another resource."
+msgstr "Eine auf eine andere Ressource bezugnehmende Ressource."
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "A string."
@@ -54,9 +58,13 @@ msgstr[1] ""
 msgid "Directory where pictures of gallery are stored."
 msgstr "Verzeichnis, wo die Bilder der Gallerie gespeichert sind."
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Object_PN:0
 msgid "Don't show page in navigation."
 msgstr "Seite soll nicht ni Navigation aufscheinen."
+
+#: _GTW._OMP._SWP.Referral:0
+msgid "Download name"
+msgstr ""
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Extension of file holding picture."
@@ -111,17 +119,21 @@ msgstr "Kopfzeile der Webseite"
 msgid "Height of picture."
 msgstr "Höhe des Bildes."
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Object_PN:0
 msgid "Hidden"
 msgstr "Verborgen"
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Object_PN:0 _GTW._OMP._SWP.Clip:0
 msgid "Higher prio sorts before lower prio."
 msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Link to"
 msgstr "Verknüpfung zu"
+
+#: _GTW._OMP._SWP.Referral:0
+msgid "Mark `target_url` as downloadable URL with specified filename."
+msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Markup format used for `text`"
@@ -203,6 +215,10 @@ msgid_plural "Page_Ys"
 msgstr[0] "Seite/J"
 msgstr[1] "Seiten/J"
 
+#: _GTW._OMP._SWP.Referral:0
+msgid "Parent url"
+msgstr ""
+
 #: _GTW._OMP._SWP.Picture:0
 msgid "Photo"
 msgstr "Photo"
@@ -217,7 +233,7 @@ msgstr[1] "Bilder"
 msgid "Picture."
 msgstr "Bild."
 
-#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+#: _GTW._OMP._SWP.Object_PN:0 _GTW._OMP._SWP.Clip:0
 msgid "Prio"
 msgstr "Priorität"
 
@@ -232,6 +248,12 @@ msgid ""
 "belongs to."
 msgstr "Publikations- und Verfallsdatum"
 
+#: _GTW._OMP._SWP.Referral:0
+msgid "Referral"
+msgid_plural "Referrals"
+msgstr[0] ""
+msgstr[1] ""
+
 #: _GTW/_OMP/_SWP/graph.py:66
 msgid "SWP graph"
 msgstr ""
@@ -243,6 +265,10 @@ msgstr "Kurztitel"
 #: _GTW._OMP._SWP.Object_PN:0
 msgid "Short title (used in navigation)."
 msgstr "Kurztitel (wird in Navigation verwendet)."
+
+#: _GTW._OMP._SWP.Referral:0
+msgid "Target url"
+msgstr "Ziel URL"
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Text for news clip in markup specified by `format`."
@@ -275,6 +301,14 @@ msgstr "Titel des Neuigkeitsschnipsels."
 #: _GTW._OMP._SWP.Object_PN:0
 msgid "Title of the web page"
 msgstr "Titel der Webseite"
+
+#: _GTW._OMP._SWP.Referral:0
+msgid "URL of parent resource."
+msgstr ""
+
+#: _GTW._OMP._SWP.Referral:0
+msgid "URL of target resource."
+msgstr ""
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Url of external web page providing information about this clip"

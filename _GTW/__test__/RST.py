@@ -906,7 +906,7 @@ _test_doc = r"""
               , 'ui_name' : 'Kind'
               }
             , { 'default_value' : '1.0'
-              , 'description' : 'Weight of this regatta in compuation of laser-points.'
+              , 'description' : 'Weight of this regatta in computation of ranking list points.'
               , 'example' : '  1.20'
               , 'is_changeable' : True
               , 'is_required' : False
@@ -1094,7 +1094,7 @@ _test_doc = r"""
               , 'ui_name' : 'Kind'
               }
             , { 'default_value' : '1.0'
-              , 'description' : 'Weight of this regatta in compuation of laser-points.'
+              , 'description' : 'Weight of this regatta in computation of ranking list points.'
               , 'example' : '  1.20'
               , 'is_changeable' : True
               , 'is_required' : False
@@ -1296,7 +1296,7 @@ _test_doc = r"""
               , 'ui_name' : 'Kind'
               }
             , { 'default_value' : '1.0'
-              , 'description' : 'Weight of this regatta in compuation of laser-points.'
+              , 'description' : 'Weight of this regatta in computation of ranking list points.'
               , 'example' : '  1.20'
               , 'is_changeable' : True
               , 'is_required' : False
