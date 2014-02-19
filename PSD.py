@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,6 +41,7 @@
 #    15-Feb-2011 (CT) Changed to use `LNX.Bat_Charge` (multiple batteries,
 #                     again)
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#    19-Feb-2014 (CT) Relax `_ac_pattern` to afford change of `acpitool`
 #    ««revision-date»»···
 #--
 
@@ -169,7 +170,7 @@ class ACPI_Updater (TFL.Meta.Object) :
             )
         )
     _ac_pattern   = Regexp \
-        ( r"AC \s+ adapter   \s+ : \s+ (?P<ac_status> on|off)-line \s*"
+        ( r"AC \s+ adapter   \s+ : \s+ (?P<ac_status> on|off)-?line \s*"
         , re.VERBOSE | re.IGNORECASE | re.MULTILINE
         )
     _th_pattern   = Regexp \
