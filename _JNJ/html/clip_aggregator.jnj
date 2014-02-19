@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: clip_aggregator.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -30,6 +30,7 @@
 ## Revision Dates
 ##    12-Apr-2010 (CT) Creation
 ##     6-Oct-2013 (CT) Add `with context` to import
+##    19-Feb-2014 (CT) Move `-sep` from `clip` to `aggregator`
 ##    ««revision-date»»···
 ##--
 #}
@@ -41,13 +42,15 @@
     {{- C.week_roller_body (calendar, weeks = calendar.weeks [1:n]) -}}
   {% endif %}
   {% for c in clips %}
+    {%- if calendar or not loop.first %}
+      <div class="{{ page.css_class }}-sep">&nbsp;</div>
+    {% endif -%}
     {{ clip (page, c) }}
   {% endfor -%}
 {%- endmacro -%} {#- aggregator -#}
 
 {%- macro clip (page, c) -%}
   {%- set link = c.link_to %}
-  <div class="{{ page.css_class }}-sep">&nbsp;</div>
   <div class="{{ page.css_class }}">
     {{ c.contents | safe }}
     {%- if link %}
