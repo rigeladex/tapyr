@@ -67,6 +67,7 @@
 #    16-Jan-2014 (CT) Add `_formatted_submit_entities`
 #    20-Jan-2014 (CT) Redefine `_Changer_.head_line`
 #    11-Feb-2014 (CT) Pass `response`, not `request`, to `_new_edit_session`
+#    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
 #    ««revision-date»»···
 #--
 
@@ -231,6 +232,7 @@ _Ancestor = _Action_
 class _HTML_Action_ (_Ancestor) :
 
     argn                 = None
+    nav_off_canvas       = False
 
     class _HTML_Action_POST_ (_Ancestor.POST) :
 
@@ -943,6 +945,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         )
     dir_template_name     = "e_type_admin"
     max_completions       = 20
+    nav_off_canvas        = True
     skip_etag             = True
     submit_callback       = None
     submit_error_callback = None
