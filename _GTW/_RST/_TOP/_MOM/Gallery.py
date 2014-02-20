@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -109,6 +109,7 @@ class Gallery \
     Entity              = Picture
 
     dir_template_name   = "gallery"
+    nav_off_canvas      = True
     page_template_name  = "photo"
     sort_key            = TFL.Sorted_By  ("number")
 

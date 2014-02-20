@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -69,6 +69,7 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
 
     document_class             = "E-Type-Doc"
     et_map_name                = "doc"
+    nav_off_canvas             = False
     page_template_name         = "e_type_doc"
 
     class _RST_TOP_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
@@ -113,6 +114,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     dir_template_name          = "pns_e_type_doc"
     E_Type                     = E_Type
+    nav_off_canvas             = True
 
     class Grapher (GTW.RST.TOP.Page) :
 

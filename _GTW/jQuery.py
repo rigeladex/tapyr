@@ -63,6 +63,7 @@
 #     1-May-2013 (CT) Add `GTW_hd_input`
 #    17-Jan-2014 (CT) Add `GTW_Form_Externalize`
 #    20-Jan-2014 (CT) Fix `GTW_Form_Externalize` to not break buttons
+#    20-Feb-2014 (CT) Add `GTW_nav_off_canvas`
 #    ««revision-date»»···
 #--
 
@@ -198,6 +199,12 @@ GTW.Script \
 GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/hd_input.js"
     , name     = "GTW_hd_input"
+    , requires = (GTW.Script._.jQuery, )
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/jQ/nav_off_canvas.js"
+    , name     = "GTW_nav_off_canvas"
     , requires = (GTW.Script._.jQuery, )
     )
 

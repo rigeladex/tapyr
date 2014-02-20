@@ -90,6 +90,7 @@
 ##    10-Dec-2013 (CT) Add `request.is_secure` to `login_section`
 ##     7-Jan-2014 (CT) Add `link_only` to `login_inline`
 ##    11-Feb-2014 (CT) Skip `anti_csrf_token` for `link_only` form
+##    20-Feb-2014 (CT) Remove `level-0`
 ##    ««revision-date»»···
 ##--
 #}
@@ -384,7 +385,7 @@
           </li>
         {% endif -%}
         {%- if allow_register %}
-          <li class="nav-link level-0">
+          <li class="nav-link">
             <a href="{{ Auth.href_register }}" class="button"
               title="{{ GTW._T ("Register a new account") }}"
             >{{ GTW._T ("Register") }}</a>

@@ -50,8 +50,10 @@
 #     7-Mar-2013 (CT) Add rule for `.added`
 #     8-Apr-2013 (CT) Factor `P.Rule.hover`
 #    15-Jan-2014 (CT) Add rule for `.full-width`
-#    21-Jan-2014 (CT) Add scmall screen rules for `.pg_main`, `.pg_nav_jump`
+#    21-Jan-2014 (CT) Add small screen rules for `.pg_main`, `.pg_nav_show`
 #    13-Feb-2014 (CT) Add rule for `.grid-table tbody th`
+#    20-Feb-2014 (CT) Add rules/script for `.nav-off-canvas`, `.nav-on-canvas`;
+#                     factor `P.Rule.pg_nav_show`
 #    ««revision-date»»···
 #--
 
@@ -143,8 +145,8 @@ style_sheet = Style_Sheet \
         , children      =
             [ Rule_Child
                 ( "div", "nav"
-                , float        = "left"
-                , position     = "relative"
+                , float            = "left"
+                , position         = "relative"
                 )
             , Rule_Child
                 ( "nav"
@@ -158,9 +160,29 @@ style_sheet = Style_Sheet \
                 , width            = P.nav_col.width
                 )
             , Rule
-                ( ".pg_nav_jump"
-                , display        = "none"
+                ( ".pg_nav_show"
+                , display          = "none"
                 , visibility       = "hidden"
+                )
+            ]
+        )
+    , Rule
+        ( ".js .pg_main"
+        , children      =
+            [ Rule_Class
+                ( "nav-off-canvas"
+                , margin_left      = - P.nav_col.full_width - P.col_padding
+                , children         = [P.Rule.pg_nav_show]
+                )
+            , Rule_Class
+                ( "nav-on-canvas"
+                , children         =
+                    [ P.Rule.pg_nav_show
+                    , Rule
+                        ( ".pg_nav_show"
+                        , margin_left      = - P.nav_col.full_width - P.col_padding
+                        )
+                    ]
                 )
             ]
         )
@@ -187,46 +209,27 @@ style_sheet = Style_Sheet \
         , rules               =
             [ Rule
                 ( ".pg_main"
+                , children         = [P.Rule.pg_nav_show]
+                )
+            , Rule
+                ( ".no-js .pg_main"
                 , padding_left     = 0
                 , children         =
                     [ Rule_Child
                         ( "div", "nav"
-                        , float        = "none"
+                        , float            = "none"
                         )
                     , Rule_Child
                         ( "nav"
-                        , background_color = P.nav_col.background_color
                         , font_size        = "normal"
-                        , line_height      = 1.35
+                        , line_height      = 1.50
                         , margin           = TRBL0 (Em (0.5))
-                        , overflow         = "hidden"
                         , padding          = TRBL (Em (1./4), 0, 0)
                         , right            = 0
                         , width            = Percent (95)
                         )
-                    , Rule
-                        ( ".pg_nav_jump"
-                        , display          = "block"
-                        , visibility       = "visible"
-                        , children         =
-                            [ Rule
-                                ( "a"
-                                , P.nav_col.button_spec
-                                , background_color = P.nav_col.background_color
-                                , color            = P.color_selected
-                                , font_weight      = "bold"
-                                , display          = "block"
-                                , overflow         = "hidden"
-                                , padding          = TRBL (Em (0.50))
-                                , width            = Percent (95)
-                                , children         = [P.Rule.hover]
-                                , ** Border (radius = Px (10))
-                                )
-                            ]
-                        )
                     ]
                 )
-            ,
             ]
         )
     ### Various classes
@@ -470,6 +473,8 @@ Script (GTW.Script._.Modernizr)
 Script (GTW.Script._.jQuery_UI)
 Script (GTW.Script._.jQuery_Gritter)
 
+Script (GTW.Script._.GTW_nav_off_canvas)
+
 CSS_Link (GTW.CSS_Link._.jQuery_UI)
 CSS_Link (GTW.CSS_Link._.jQuery_Gritter)
 CSS_Link \
@@ -479,5 +484,6 @@ CSS_Link \
     )
 
 JS_On_Ready ('$.gritter.Convert_Patagraphs_to_Gitter ("notifications");')
+JS_On_Ready ("""$(".pg_nav_show").gtw_nav_off_canvas ();""");
 
 ### __END__ html/base.jnj.media

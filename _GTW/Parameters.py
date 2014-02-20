@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -36,6 +36,7 @@
 #     8-Apr-2013 (CT) Add `Rule` and its children, `Rule_Definition`,
 #                     factor `_Parameter_`
 #    19-Sep-2013 (CT) Pass `AttributeError` to `TFL.Attr_Query`
+#    20-Feb-2014 (CT) Add `Rule._resolved_children`
 #    ««revision-date»»···
 #--
 
@@ -103,11 +104,23 @@ class Rule (_Parameter_) :
 
     def __call__ (self, P) :
         from _GTW._CSS import Rule as CSS_Rule
-        RT   = getattr (CSS_Rule, self.__class__.__name__)
-        args = tuple (self._resolved_args (P, self.args))
-        kw   = dict  (self._resolved_kw   (P, self.kw))
-        return RT (* args, ** kw)
+        RT       = getattr (CSS_Rule, self.__class__.__name__)
+        args     = tuple (self._resolved_args (P, self.args))
+        children = list  \
+            (self._resolved_children (P, self.kw.pop ("children", [])))
+        kw       = dict  (self._resolved_kw   (P, self.kw))
+        return RT (* args, children = children, ** kw)
     # end def __call__
+
+    def _resolved_children (self, P, children) :
+        Q_Root = TFL.Q_Exp.Q_Root
+        for c in children :
+            if isinstance (c, Q_Root) :
+                c = c (P)
+            if isinstance (c, Rule) :
+                c = c (P)
+            yield c
+    # end def _resolved_children
 
 # end class Rule
 

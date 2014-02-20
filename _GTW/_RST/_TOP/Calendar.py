@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -79,6 +79,7 @@ class _Cal_Page_ (_Ancestor) :
 
     args               = (None, )
     implicit           = True
+    nav_off_canvas     = False
     skip_etag          = True
 
     _exclude_robots    = True
@@ -193,6 +194,8 @@ _Ancestor = GTW.RST.TOP.Dir_V
 class _Year_ (_Cal_Page_) :
     """Page displaying calendar for a specific year."""
 
+    nav_off_canvas      = True
+
     @property
     @getattr_safe
     def anchor (self) :
@@ -212,6 +215,7 @@ class Calendar (_Mixin_, _Ancestor) :
 
     dir_template_name  = "calendar"
     event_manager_name = "GTW.OMP.EVT.Event_occurs"
+    nav_off_canvas     = True
     page_template_name = "calendar"
     pid                = "Cal"
     skip_etag          = True

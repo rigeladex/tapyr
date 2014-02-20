@@ -80,6 +80,7 @@ import itertools
 
 class _Regatta_Page_ (GTW.RST.TOP.MOM.Entity_Mixin_Base, GTW.RST.TOP.Page) :
 
+    nav_off_canvas      = True
     skip_etag           = True
 
 # end class _Regatta_Page_

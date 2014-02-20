@@ -346,7 +346,7 @@ msgid "Javascript is needed to use this page"
 msgstr "Für diese Seite wird Javascript benötigt."
 
 #: _JNJ/html/base.jnj:106
-msgid "Jump to Navigation"
+msgid "Show navigation"
 msgstr "Zeige Navigation"
 
 #: _JNJ/html/make_client_cert.jnj:51
@@ -884,4 +884,3 @@ msgstr "Jahr"
 
 #~ msgid "Description"
 #~ msgstr "Erläuterung"
-

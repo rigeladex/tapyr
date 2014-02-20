@@ -50,6 +50,7 @@
 #     8-Apr-2013 (CT) Add lots of rules to `Rule`, e.g., `disabled`, `focus`...
 #     7-Jan-2014 (CT) Add some more muted colors
 #    21-Jan-2014 (CT) Add `breakpoint`
+#    20-Feb-2014 (CT) Add `Rule.pg_nav_show`, `.pg_nav_show_a`
 #    ««revision-date»»···
 #--
 
@@ -217,9 +218,11 @@ class Media_Defaults (Definition) :
         narrow                 = P_dict \
             ( max_width        = Px (680)
             )
+
         small_device           = P_dict \
             ( max_device_width = Px (767)
             )
+
         wide                   = P_dict \
             ( min_width        = Px (1600)
             )
@@ -360,6 +363,27 @@ class Media_Defaults (Definition) :
         link               = Rule_Pseudo \
             ( "link"
             , color = P.R.link_color
+            )
+
+        pg_nav_show        = Rule \
+            ( ".pg_nav_show"
+            , font_size        = Percent (200)
+            , display          = "block"
+            , visibility       = "visible"
+            , children         = [P.R.Rule.pg_nav_show_a]
+            )
+
+        pg_nav_show_a      = Rule \
+            ( "a"
+            , background_color = P.R.nav_col.background_color
+            , color            = P.R.color_selected
+            , font_weight      = "bold"
+            , display          = "block"
+            , overflow         = "hidden"
+            , padding          = TRBL (Em (0.25), Em (0.50))
+            , width            = Percent (95)
+            , children         = [P.R.Rule.hover]
+            , ** Border (radius = Px (10))
             )
 
         row_even           = Rule_Pseudo \

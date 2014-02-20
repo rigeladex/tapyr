@@ -47,7 +47,8 @@
 ##    14-Dec-2011 (CT) Move `js_on_ready` to `body_tail_scripts`
 ##     5-Jan-2012 (CT) s/page.P_Media/template/
 ##     5-Jan-2012 (CT) Remove use of `page.Media`
-##    21-Jan-2014 (CT) Add `pg_nav_jump`
+##    21-Jan-2014 (CT) Add `pg_nav_show`
+##    20-Feb-2014 (CT) Add `nav_off_canvas`
 ##    ««revision-date»»···
 ##--
 #}
@@ -100,10 +101,10 @@
     {% call X.header (id = "header", class = "pg_head") -%}
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
-    <div id="main" class="pg_main">
-      <p class="pg_nav_jump">
-        <a href="#navigate">
-          {{- GTW._T ("Jump to Navigation") -}}
+    <div id="main" class="pg_main{%- if page.nav_off_canvas %} nav-off-canvas{%- endif -%}">
+      <p class="pg_nav_show">
+        <a href="#navigate" title="{{- GTW._T ("Show navigation") -}}">
+          {{- GTW.Dingbats.trigram_for_heaven -}}
         </a>
       </p>
       <div id="document" class="pg_body">
