@@ -51,6 +51,7 @@
 #     7-Jan-2014 (CT) Add some more muted colors
 #    21-Jan-2014 (CT) Add `breakpoint`
 #    20-Feb-2014 (CT) Add `Rule.pg_nav_show`, `.pg_nav_show_a`
+#    20-Feb-2014 (CT) Add `breakpoint.broad` and `.very_narrow`
 #    ««revision-date»»···
 #--
 
@@ -215,12 +216,20 @@ class Media_Defaults (Definition) :
     class breakpoint (Definition) :
         """Breakpoints for responsive rules"""
 
+        very_narrow            = P_dict \
+            ( max_width        = Px (420)
+            )
+
         narrow                 = P_dict \
             ( max_width        = Px (680)
             )
 
         small_device           = P_dict \
             ( max_device_width = Px (767)
+            )
+
+        broad                  = P_dict \
+            ( min_width        = Px (1280)
             )
 
         wide                   = P_dict \

@@ -54,6 +54,7 @@
 #    13-Feb-2014 (CT) Add rule for `.grid-table tbody th`
 #    20-Feb-2014 (CT) Add rules/script for `.nav-off-canvas`, `.nav-on-canvas`;
 #                     factor `P.Rule.pg_nav_show`
+#    20-Feb-2014 (CT) Add media query for `breakpoint.broad`
 #    ««revision-date»»···
 #--
 
@@ -227,6 +228,22 @@ style_sheet = Style_Sheet \
                         , padding          = TRBL (Em (1./4), 0, 0)
                         , right            = 0
                         , width            = Percent (95)
+                        )
+                    ]
+                )
+            ]
+        )
+    , Media.Rule
+        ( Media.Query ("screen", P.breakpoint.broad)
+        , rules               =
+            [ Rule
+                ( ".js .pg_main.nav-off-canvas"
+                , margin_left      = 0
+                , children         =
+                    [ Rule
+                        ( ".pg_nav_show"
+                        , display          = "none"
+                        , visibility       = "hidden"
                         )
                     ]
                 )
