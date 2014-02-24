@@ -28,6 +28,7 @@
 # Revision Dates
 #     6-Dec-2013 (CT) Creation
 #    11-Dec-2013 (CT) Use `request.host`, not `.host_url`, for `Anti_CSRF`
+#    24-Feb-2014 (CT) Change `__repr__` to use `pyk.encoded`
 #    ««revision-date»»···
 #--
 
@@ -198,7 +199,7 @@ class _Base_ (TFL.Meta.Object) :
             )
         if self._invalid :
             result = "%s\n    %s" % (result, self._invalid)
-        return result
+        return pyk.encoded (result)
     # end def __repr__
 
     def __str__ (self) :

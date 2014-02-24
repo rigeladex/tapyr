@@ -50,6 +50,7 @@
 #    24-Jan-2014 (CT) Add `a_attr_dict`
 #    24-Jan-2014 (CT) Factor `_Mixin_`
 #    11-Feb-2014 (CT) Use `response`, not `request`, in `_new_edit_session`
+#    24-Feb-2014 (CT) Apply `pyk.decoded` to `repr (csrf_token)` in `csrf_check`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _GTW.Media
 import _GTW._RST.Mime_Type
@@ -299,7 +301,7 @@ class _TOP_Base_ (_Ancestor) :
                 if not csrf_token :
                     if self.DEBUG :
                         error  = "\n".join \
-                            ( ( repr (csrf_token)
+                            ( ( pyk.decoded (repr (csrf_token))
                               , "Client sig  : %s" % (csrf_token.x_signature, )
                               , "Client value: %s" % (csrf_token.x_value, )
                               , "Server value: %s" % (csrf_token.value, )
