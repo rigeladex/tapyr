@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -59,6 +59,7 @@ _test_map = """
     Surrogate `cert_id`
     None `pem`
     Boolean `alive`
+    Link_Ref_List `events`
 
     >>> sorted ((k, t.type_name) for k, t in pyk.iteritems (scope.app_type.surrogate_t_map))
     [(1, 'MOM.Id_Entity'), (2, 'MOM.MD_Change'), (3, 'Auth.Certificate')]

@@ -193,13 +193,6 @@ _test_code = r"""
     EVT.Calendar                                   True   False  False
     EVT.Link                                       False  True   True
     EVT.Link1                                      False  True   True
-    SWP.Entity                                     False  True   True
-    SWP.Id_Entity                                  False  True   True
-    SWP.Object                                     False  True   True
-    SWP.Object_PN                                  False  True   True
-    SWP.Page_Mixin                                 False  True   True
-    SWP.Page                                       True   True   True
-    SWP.Page_Y                                     True   False  False
     EVT.Event                                      True   False  True
     EVT.Event_occurs                               True   False  True
     EVT._Recurrence_Mixin_                         False  True   True
@@ -236,6 +229,13 @@ _test_code = r"""
     SRM.Boat                                       True   False  False
     SRM.Club                                       True   False  False
     SRM.Regatta_Event                              True   False  False
+    SWP.Entity                                     False  True   True
+    SWP.Id_Entity                                  False  True   True
+    SWP.Object                                     False  True   True
+    SWP.Object_PN                                  False  True   True
+    SWP.Page_Mixin                                 False  True   True
+    SWP.Page                                       True   True   True
+    SWP.Page_Y                                     True   False  False
     SWP.Link                                       False  True   True
     SWP.Link1                                      False  True   True
     SWP.Clip_O                                     True   False  True
@@ -304,11 +304,6 @@ _test_code = r"""
     EVT.Calendar                                   EVT.Calendar 0
     EVT.Link                                       ['EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
     EVT.Link1                                      ['EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
-    SWP.Id_Entity                                  ['SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture', 'SWP.Referral']
-    SWP.Object                                     ['SWP.Gallery', 'SWP.Page', 'SWP.Referral']
-    SWP.Object_PN                                  ['SWP.Gallery', 'SWP.Page', 'SWP.Referral']
-    SWP.Page                                       SWP.Page 0
-    SWP.Page_Y                                     SWP.Page 0
     EVT.Event                                      EVT.Event 0
     EVT.Event_occurs                               EVT.Event_occurs 0
     EVT._Recurrence_Mixin_                         ['EVT.Recurrence_Rule', 'EVT.Recurrence_Spec']
@@ -342,6 +337,11 @@ _test_code = r"""
     SRM.Boat                                       SRM.Boat 0
     SRM.Club                                       SRM.Club 0
     SRM.Regatta_Event                              SRM.Regatta_Event 0
+    SWP.Id_Entity                                  ['SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture', 'SWP.Referral']
+    SWP.Object                                     ['SWP.Gallery', 'SWP.Page', 'SWP.Referral']
+    SWP.Object_PN                                  ['SWP.Gallery', 'SWP.Page', 'SWP.Referral']
+    SWP.Page                                       SWP.Page 0
+    SWP.Page_Y                                     SWP.Page 0
     SWP.Link                                       ['SWP.Clip_O', 'SWP.Picture']
     SWP.Link1                                      ['SWP.Clip_O', 'SWP.Picture']
     SWP.Clip_O                                     SWP.Clip_O 0

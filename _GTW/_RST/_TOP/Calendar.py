@@ -36,14 +36,15 @@
 #                     `Calendar.is_current_page`
 #    22-Jan-2013 (CT) Remove spurious `handler.`
 #     6-Apr-2013 (CT) Fix typo
+#    24-Feb-2014 (CT) Add `_Event_Wrapper_`
 #    ««revision-date»»···
 #--
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from   _CAL                     import CAL
-from   _GTW                     import GTW
-from   _TFL                     import TFL
+from   _CAL                       import CAL
+from   _GTW                       import GTW
+from   _TFL                       import TFL
 
 import _CAL.Calendar
 import _CAL.Delta
@@ -52,14 +53,88 @@ import _GTW._RST.HTTP_Method
 import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
 
-from   _TFL.defaultdict         import defaultdict_kd
-from   _TFL.Decorator           import getattr_safe
-from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.Regexp              import Regexp, re
-from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.defaultdict           import defaultdict_kd
+from   _TFL.Decorator             import getattr_safe
+from   _TFL.I18N                  import _, _T, _Tn
+from   _TFL.Regexp                import Regexp, re
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 
 import datetime
-from   posixpath                import join  as pp_join
+from   posixpath                  import join  as pp_join
+
+@Single_Dispatch
+def event_short_title (ev_obj) :
+    return getattr (ev_obj, "short_title", ev_obj.ui_display)
+# end def event_short_title
+
+@Single_Dispatch
+def event_title (ev_obj) :
+    return getattr (ev_obj, "title", "")
+# end def event_title
+
+class _Event_Wrapper_ (TFL.Meta.Object) :
+    """Wrapper around `EVT.Event_occurs` instance"""
+
+    def __init__ (self, cal, event_occurs) :
+        self._cal      = cal
+        self._instance = event_occurs
+    # end def __init__
+
+    @Once_Property
+    def date (self) :
+        return self._instance.FO.date
+    # end def date
+
+    @Once_Property
+    def detail (self) :
+        result = self._instance.detail
+        return result
+    # end def detail
+
+    @property
+    def FO (self) :
+        return self
+    # end def FO
+
+    @Once_Property
+    def short_title (self) :
+        result = self._instance.short_title
+        if not result :
+            result = event_short_title (self.essence)
+        return result
+    # end def short_title
+
+    @Once_Property
+    def target_href (self) :
+        target_resource = self.target_resource
+        if target_resource is not None :
+            return target_resource.abs_href
+    # end def target_href
+
+    @Once_Property
+    def target_resource (self) :
+        return self._cal.page_from_obj (self.essence)
+    # end def target_resource
+
+    @Once_Property
+    def time (self) :
+        return self._instance.FO.time
+    # end def time
+
+    @Once_Property
+    def title (self) :
+        result = event_title (self.essence)
+        return result
+    # end def title
+
+    def __getattr__ (self, name) :
+        result = getattr (self._instance, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
+
+# end class _Event_Wrapper_
 
 class _Mixin_ (GTW.RST.TOP._Base_) :
 
@@ -338,7 +413,10 @@ class Calendar (_Mixin_, _Ancestor) :
 
     def _get_events (self, date) :
         evm = self.event_manager
-        return evm.query_s (date = date).all ()
+        return sorted \
+            ( (_Event_Wrapper_ (self, ev) for ev in evm.query (date = date))
+            , key = TFL.Sorted_By ("time", "short_title")
+            )
     # end def _get_events
 
 # end class Calendar

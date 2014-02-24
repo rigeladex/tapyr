@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -61,12 +61,6 @@ _composite = r"""
     ...     print e
     ((u'event-1-text', ), (u'2010/02/01', ), (), u'')
     ((u'event-2-text', ), (u'2010/01/01', ), (), u'')
-
-    >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By (Q.left.perma_name)) :
-    ...     print e
-    ((u'event-1-text', ), (u'2010/02/01', ), (), u'')
-    ((u'event-2-text', ), (u'2010/01/01', ), (), u'')
-
 
 """
 

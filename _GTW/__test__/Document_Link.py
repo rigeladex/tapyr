@@ -86,28 +86,40 @@ test_code = r"""
 
     >>> show_ref_maps (scope, "Ref_Req_Map")
     MOM.Id_Entity
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Link
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Link1
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM._MOM_Link_n_
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Link2
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Link3
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Object
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     MOM.Document
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Id_Entity
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Object
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth._Account_
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account_Anonymous
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account
         ('Auth.Account_Activation', ['left'])
@@ -115,50 +127,200 @@ test_code = r"""
         ('Auth.Account_Password_Change_Required', ['left'])
         ('Auth.Account_Password_Reset', ['left'])
         ('Auth.Account_in_Group', ['left'])
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('PAP.Person_has_Account', ['right'])
     Auth.Certificate
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Group
         ('Auth.Account_in_Group', ['right'])
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Link
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth._MOM_Link_n_
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Link2
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account_in_Group
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Link1
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth._Account_Action_
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account_Activation
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account_Password_Change_Required
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth._Account_Token_Action_
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account_EMail_Verification
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     Auth.Account_Password_Reset
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     EVT.Id_Entity
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     EVT.Object
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     EVT.Calendar
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     EVT.Link
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     EVT.Link1
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
+    EVT.Event
+        ('EVT.Event', ['left'])
+        ('EVT.Event_occurs', ['left'])
+        ('EVT.Recurrence_Spec', ['left'])
+        ('MOM.Document', ['left'])
+    EVT.Event_occurs
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    EVT._Recurrence_Mixin_
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    EVT.Recurrence_Spec
+        ('EVT.Event', ['left'])
+        ('EVT.Recurrence_Rule', ['left'])
+        ('MOM.Document', ['left'])
+    EVT.Recurrence_Rule
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Id_Entity
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Object
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Property
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Address
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('PAP.Address_Position', ['left'])
+        ('PAP.Company_has_Address', ['right'])
+        ('PAP.Person_has_Address', ['right'])
+    PAP.Subject
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Legal_Entity
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Company
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('PAP.Company_has_Address', ['left'])
+        ('PAP.Company_has_Email', ['left'])
+        ('PAP.Company_has_Phone', ['left'])
+        ('PAP.Company_has_Url', ['left'])
+    PAP.Email
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('PAP.Company_has_Email', ['right'])
+        ('PAP.Person_has_Email', ['right'])
+    PAP.Phone
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('PAP.Company_has_Phone', ['right'])
+        ('PAP.Person_has_Phone', ['right'])
+    PAP.Person
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('PAP.Person_has_Account', ['left'])
+        ('PAP.Person_has_Address', ['left'])
+        ('PAP.Person_has_Email', ['left'])
+        ('PAP.Person_has_Phone', ['left'])
+        ('PAP.Person_has_Url', ['left'])
+        ('SRM.Sailor', ['left'])
+    PAP.Url
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('PAP.Company_has_Url', ['right'])
+        ('PAP.Person_has_Url', ['right'])
+    PAP.Link
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Link1
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Address_Position
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP._MOM_Link_n_
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Link2
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Subject_has_Property
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Person_has_Account
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM.Id_Entity
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM.Object
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM._Boat_Class_
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM.Boat_Class
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('SRM.Boat', ['left'])
+        ('SRM.Regatta_C', ['boat_class'])
+    SRM.Handicap
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('SRM.Regatta_H', ['boat_class'])
+    SRM.Link
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM.Link1
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM.Boat
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('SRM.Boat_in_Regatta', ['left'])
+    SRM.Club
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    SRM.Regatta_Event
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+        ('SRM.Page', ['event'])
+        ('SRM.Regatta_C', ['left'])
+        ('SRM.Regatta_H', ['left'])
     SWP.Id_Entity
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SWP.Object
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SWP.Object_PN
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SWP.Page
@@ -169,118 +331,29 @@ test_code = r"""
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
-    EVT.Event
-        ('EVT.Event_occurs', ['left'])
-        ('EVT.Recurrence_Spec', ['left'])
-        ('MOM.Document', ['left'])
-    EVT.Event_occurs
-        ('MOM.Document', ['left'])
-    EVT._Recurrence_Mixin_
-        ('MOM.Document', ['left'])
-    EVT.Recurrence_Spec
-        ('EVT.Recurrence_Rule', ['left'])
-        ('MOM.Document', ['left'])
-    EVT.Recurrence_Rule
-        ('MOM.Document', ['left'])
-    PAP.Id_Entity
-        ('MOM.Document', ['left'])
-    PAP.Object
-        ('MOM.Document', ['left'])
-    PAP.Property
-        ('MOM.Document', ['left'])
-    PAP.Address
-        ('MOM.Document', ['left'])
-        ('PAP.Address_Position', ['left'])
-        ('PAP.Company_has_Address', ['right'])
-        ('PAP.Person_has_Address', ['right'])
-    PAP.Subject
-        ('MOM.Document', ['left'])
-    PAP.Legal_Entity
-        ('MOM.Document', ['left'])
-    PAP.Company
-        ('MOM.Document', ['left'])
-        ('PAP.Company_has_Address', ['left'])
-        ('PAP.Company_has_Email', ['left'])
-        ('PAP.Company_has_Phone', ['left'])
-        ('PAP.Company_has_Url', ['left'])
-    PAP.Email
-        ('MOM.Document', ['left'])
-        ('PAP.Company_has_Email', ['right'])
-        ('PAP.Person_has_Email', ['right'])
-    PAP.Phone
-        ('MOM.Document', ['left'])
-        ('PAP.Company_has_Phone', ['right'])
-        ('PAP.Person_has_Phone', ['right'])
-    PAP.Person
-        ('MOM.Document', ['left'])
-        ('PAP.Person_has_Account', ['left'])
-        ('PAP.Person_has_Address', ['left'])
-        ('PAP.Person_has_Email', ['left'])
-        ('PAP.Person_has_Phone', ['left'])
-        ('PAP.Person_has_Url', ['left'])
-        ('SRM.Sailor', ['left'])
-    PAP.Url
-        ('MOM.Document', ['left'])
-        ('PAP.Company_has_Url', ['right'])
-        ('PAP.Person_has_Url', ['right'])
-    PAP.Link
-        ('MOM.Document', ['left'])
-    PAP.Link1
-        ('MOM.Document', ['left'])
-    PAP.Address_Position
-        ('MOM.Document', ['left'])
-    PAP._MOM_Link_n_
-        ('MOM.Document', ['left'])
-    PAP.Link2
-        ('MOM.Document', ['left'])
-    PAP.Subject_has_Property
-        ('MOM.Document', ['left'])
-    PAP.Person_has_Account
-        ('MOM.Document', ['left'])
-    SRM.Id_Entity
-        ('MOM.Document', ['left'])
-    SRM.Object
-        ('MOM.Document', ['left'])
-    SRM._Boat_Class_
-        ('MOM.Document', ['left'])
-    SRM.Boat_Class
-        ('MOM.Document', ['left'])
-        ('SRM.Boat', ['left'])
-        ('SRM.Regatta_C', ['boat_class'])
-    SRM.Handicap
-        ('MOM.Document', ['left'])
-        ('SRM.Regatta_H', ['boat_class'])
-    SRM.Link
-        ('MOM.Document', ['left'])
-    SRM.Link1
-        ('MOM.Document', ['left'])
-    SRM.Boat
-        ('MOM.Document', ['left'])
-        ('SRM.Boat_in_Regatta', ['left'])
-    SRM.Club
-        ('MOM.Document', ['left'])
-    SRM.Regatta_Event
-        ('MOM.Document', ['left'])
-        ('SRM.Page', ['event'])
-        ('SRM.Regatta_C', ['left'])
-        ('SRM.Regatta_H', ['left'])
     SWP.Link
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SWP.Link1
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SWP.Clip_O
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SWP.Clip_X
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SWP.Gallery
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
         ('SWP.Picture', ['left'])
     SWP.Picture
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SWP.Referral
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SRM.Page
@@ -288,61 +361,85 @@ test_code = r"""
         ('MOM.Document', ['left'])
         ('SWP.Clip_O', ['left'])
     SRM.Regatta
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
     SRM.Regatta_C
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
         ('SRM.Team', ['left'])
     SRM.Regatta_H
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['right'])
     SRM.Sailor
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SRM.Boat_in_Regatta', ['skipper'])
         ('SRM.Crew_Member', ['right'])
     SRM._MOM_Link_n_
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SRM.Link2
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SRM.Boat_in_Regatta
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SRM.Crew_Member', ['left'])
         ('SRM.Race_Result', ['left'])
         ('SRM.Team_has_Boat_in_Regatta', ['right'])
     SRM.Race_Result
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SRM.Team
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
         ('SRM.Team_has_Boat_in_Regatta', ['left'])
     SRM.Crew_Member
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     SRM.Team_has_Boat_in_Regatta
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Subject_has_Address
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Subject_has_Email
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Subject_has_Phone
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Subject_has_Url
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Company_has_Url
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Person_has_Url
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Company_has_Phone
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Person_has_Phone
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Company_has_Email
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Person_has_Email
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Company_has_Address
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Person_has_Address
+        ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
+
 
     >>> show_ref_maps (scope, "Ref_Opt_Map")
     EVT.Calendar

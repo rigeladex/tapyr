@@ -177,7 +177,7 @@ _test_code = """
       <Field None 'prio'>
      <Entity_List None 'Event' <Entity_Link None 'Event' 'EVT.Event'>>
       <Entity_Link None 'Event' 'EVT.Event'>
-       <Field_Role_Hidden None 'left' 'SWP.Page'>
+       <Field_Role_Hidden None 'left' 'MOM.Id_Entity'>
        <Fieldset None 'primary'>
         <Field_Composite None 'date' 'MOM.Date_Interval'>
          <Field None 'start'>
@@ -235,7 +235,7 @@ _test_code = """
        <Field F-0:3:4 'prio'>
       <Entity_List F-0:4 'Event' <Entity_Link F-0:4::p 'Event' 'EVT.Event'>>
        <Entity_Link F-0:4::p 'Event' 'EVT.Event'>
-        <Field_Role_Hidden F-0:4::p-0 'left' 'SWP.Page'>
+        <Field_Role_Hidden F-0:4::p-0 'left' 'MOM.Id_Entity'>
         <Fieldset F-0:4::p-1 'primary'>
          <Field_Composite F-0:4::p-1:0 'date' 'MOM.Date_Interval'>
           <Field F-0:4::p-1:0.0 'start'>
@@ -306,7 +306,7 @@ _test_code = """
        <Field X-1:3:4 'prio'>
       <Entity_List X-1:4 'Event' <Entity_Link X-1:4::p 'Event' 'EVT.Event'>>
        <Entity_Link X-1:4::p 'Event' 'EVT.Event'>
-        <Field_Role_Hidden X-1:4::p-0 'left' 'SWP.Page'>
+        <Field_Role_Hidden X-1:4::p-0 'left' 'MOM.Id_Entity'>
         <Fieldset X-1:4::p-1 'primary'>
          <Field_Composite X-1:4::p-1:0 'date' 'MOM.Date_Interval'>
           <Field X-1:4::p-1:0.0 'start'>

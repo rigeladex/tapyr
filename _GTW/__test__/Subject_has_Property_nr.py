@@ -334,12 +334,6 @@ _test_ancestors = """
     MOM.Time_Interval
     EVT.Link                             < MOM.Id_Entity
     EVT.Link1                            < MOM.Id_Entity
-    SWP.Id_Entity                        < MOM.Id_Entity
-    SWP.Object                           < MOM.Id_Entity
-    SWP.Object_PN                        < MOM.Id_Entity
-    SWP.Page_Mixin
-    SWP.Page                             < MOM.Id_Entity
-    SWP.Page_Y                           < SWP.Page         < MOM.Id_Entity
     EVT.Event                            < MOM.Id_Entity
     EVT.Event_occurs                     < MOM.Id_Entity
     EVT._Recurrence_Mixin_               < MOM.Id_Entity
@@ -375,6 +369,12 @@ _test_ancestors = """
     SRM.Boat                             < MOM.Id_Entity
     SRM.Club                             < MOM.Id_Entity
     SRM.Regatta_Event                    < MOM.Id_Entity
+    SWP.Id_Entity                        < MOM.Id_Entity
+    SWP.Object                           < MOM.Id_Entity
+    SWP.Object_PN                        < MOM.Id_Entity
+    SWP.Page_Mixin
+    SWP.Page                             < MOM.Id_Entity
+    SWP.Page_Y                           < SWP.Page         < MOM.Id_Entity
     SWP.Link                             < MOM.Id_Entity
     SWP.Link1                            < MOM.Id_Entity
     SWP.Clip_O                           < MOM.Id_Entity
@@ -450,12 +450,6 @@ _test_ancestors = """
     MOM.Time_Interval                    None
     EVT.Link                             mom_id_entity
     EVT.Link1                            mom_id_entity
-    SWP.Id_Entity                        mom_id_entity
-    SWP.Object                           mom_id_entity
-    SWP.Object_PN                        mom_id_entity
-    SWP.Page_Mixin                       None
-    SWP.Page                             mom_id_entity
-    SWP.Page_Y                           mom_id_entity
     EVT.Event                            mom_id_entity
     EVT.Event_occurs                     mom_id_entity
     EVT._Recurrence_Mixin_               mom_id_entity
@@ -491,6 +485,12 @@ _test_ancestors = """
     SRM.Boat                             mom_id_entity
     SRM.Club                             mom_id_entity
     SRM.Regatta_Event                    mom_id_entity
+    SWP.Id_Entity                        mom_id_entity
+    SWP.Object                           mom_id_entity
+    SWP.Object_PN                        mom_id_entity
+    SWP.Page_Mixin                       None
+    SWP.Page                             mom_id_entity
+    SWP.Page_Y                           mom_id_entity
     SWP.Link                             mom_id_entity
     SWP.Link1                            mom_id_entity
     SWP.Clip_O                           mom_id_entity
@@ -539,6 +539,8 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Boolean `electric`
           Internal, _DB_System_, _DB_Attr_, _System_
+      Kind_Wrapper_R : Link_Ref_List `events`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Rev_Ref `last_change`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : Int `last_cid`
@@ -781,65 +783,6 @@ _test_attr_wrappers = """
     EVT.Link1
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-    SWP.Object_PN
-      Kind_Wrapper_R : Link_Ref_List `clips`
-          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Wrapper_P : Date_Interval `date`
-          _Composite_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Wrapper_P : Boolean `hidden`
-          Optional, _User_, _DB_Attr_
-      Kind_Wrapper_P : Date-Slug `perma_name`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Wrapper_P : Int `prio`
-          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Wrapper_P : String `short_title`
-          Necessary, _User_, _DB_Attr_
-      Kind_Wrapper_P : String `title`
-          Necessary, _User_, _DB_Attr_
-    SWP.Page_Mixin
-      Kind_Wrapper : Text `contents`
-          _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_Wrapper : Format `format`
-          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Wrapper : String `head_line`
-          Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Text `text`
-          Required, _Required_Mixin_, _User_, _DB_Attr_
-    SWP.Page
-      Kind_Wrapper_R : Link_Ref_List `clips`
-          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Wrapper : Text `contents`
-          _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
-      Kind_Wrapper_C : Date_Interval `date`
-          _Composite_Mixin_, Optional, _User_, _DB_Attr_
-        MOM.Date_Interval_N
-          Kind_Wrapper_Q : Boolean `alive`
-              _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
-          Kind_Wrapper_Date : Date `finish`
-              _Nested_Mixin_, Optional, _User_, _DB_Attr_
-          Kind_Wrapper_Date : Date `start`
-              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
-      Kind_Wrapper_R : Link_Ref_List `events`
-          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
-      Kind_Wrapper : Format `format`
-          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Wrapper : String `head_line`
-          Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Boolean `hidden`
-          Optional, _User_, _DB_Attr_
-      Kind_Wrapper : Date-Slug `perma_name`
-          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      Kind_Wrapper : Int `prio`
-          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
-      Kind_Wrapper : String `short_title`
-          Necessary, _User_, _DB_Attr_
-      Kind_Wrapper : Text `text`
-          Required, _Required_Mixin_, _User_, _DB_Attr_
-      Kind_Wrapper : String `title`
-          Necessary, _User_, _DB_Attr_
-    SWP.Page_Y
-      Kind_Wrapper : Int `year`
-          Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
     EVT.Event
       Kind_Wrapper_S : Entity `calendar`
           _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
@@ -854,14 +797,14 @@ _test_attr_wrappers = """
               _Nested_Mixin_, Necessary, _User_, _DB_Attr_
       Kind_Wrapper : String `detail`
           Optional, _User_, _DB_Attr_
-      Kind_Wrapper_S : Page `left`
+      Kind_Wrapper_S : Id_Entity `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_R : Link_Ref_List `occurs`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Link_Ref `recurrence`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper : String `short_title`
-          Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
+          Optional, _User_, _DB_Attr_
       Kind_Wrapper_C : Time_Interval `time`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Time_Interval
@@ -872,8 +815,14 @@ _test_attr_wrappers = """
     EVT.Event_occurs
       Kind_Wrapper_Date : Date `date`
           Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_Q : String `detail`
+          Query, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_Q : None `essence`
+          Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_S : Event `left`
           Init_Only_Mixin, Just_Once_Mixin, Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_Q : String `short_title`
+          Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Time_Interval `time`
           _Composite_Mixin_, Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
         MOM.Time_Interval
@@ -1243,6 +1192,63 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_Q : Int `year`
           Query, _Cached_, _Volatile_, _System_
+    SWP.Object_PN
+      Kind_Wrapper_R : Link_Ref_List `clips`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_P : Date_Interval `date`
+          _Composite_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : Boolean `hidden`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : Date-Slug `perma_name`
+          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_P : Int `prio`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : String `short_title`
+          Necessary, _User_, _DB_Attr_
+      Kind_Wrapper_P : String `title`
+          Necessary, _User_, _DB_Attr_
+    SWP.Page_Mixin
+      Kind_Wrapper : Text `contents`
+          _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+      Kind_Wrapper : Format `format`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper : String `head_line`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Text `text`
+          Required, _Required_Mixin_, _User_, _DB_Attr_
+    SWP.Page
+      Kind_Wrapper_R : Link_Ref_List `clips`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper : Text `contents`
+          _Auto_Update_Mixin_, Internal, _DB_System_, _DB_Attr_, _System_
+      Kind_Wrapper_C : Date_Interval `date`
+          _Composite_Mixin_, Optional, _User_, _DB_Attr_
+        MOM.Date_Interval_N
+          Kind_Wrapper_Q : Boolean `alive`
+              _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
+          Kind_Wrapper_Date : Date `finish`
+              _Nested_Mixin_, Optional, _User_, _DB_Attr_
+          Kind_Wrapper_Date : Date `start`
+              _Nested_Mixin_, Sticky_Mixin, _Sticky_Mixin_, Necessary, _User_, _DB_Attr_
+      Kind_Wrapper : Format `format`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper : String `head_line`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Boolean `hidden`
+          Optional, _User_, _DB_Attr_
+      Kind_Wrapper : Date-Slug `perma_name`
+          Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper : Int `prio`
+          Sticky_Mixin, _Sticky_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper : String `short_title`
+          Necessary, _User_, _DB_Attr_
+      Kind_Wrapper : Text `text`
+          Required, _Required_Mixin_, _User_, _DB_Attr_
+      Kind_Wrapper : String `title`
+          Necessary, _User_, _DB_Attr_
+    SWP.Page_Y
+      Kind_Wrapper : Int `year`
+          Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
     SWP.Link
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -1630,7 +1636,7 @@ _test_attr_wrappers = """
         _Auto_Update_Mixin_, Query, _Cached_, _Volatile_, _System_
       created_by           -> MOM.Id_Entity
         _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Computed, _Cached_, _Volatile_, _System_
-      creation      -> MOM.MD_Change
+      creation             -> MOM.MD_Change
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       creation_date
         Computed, _Cached_, _Volatile_, _System_
@@ -1638,6 +1644,8 @@ _test_attr_wrappers = """
         Internal, _DB_System_, _DB_Attr_, _System_
       enabled
         Optional, _User_, _DB_Attr_
+      events               -> EVT.Event
+        Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       group_links          -> Auth.Account_in_Group
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       groups               -> Auth.Group
@@ -1695,7 +1703,7 @@ _test_attr_wrappers = """
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       created_by           -> MOM.Id_Entity
         _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Computed, _Cached_, _Volatile_, _System_
-      creation      -> MOM.MD_Change
+      creation             -> MOM.MD_Change
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       creation_date
         Computed, _Cached_, _Volatile_, _System_
@@ -1704,6 +1712,8 @@ _test_attr_wrappers = """
       email_links          -> PAP.Person_has_Email
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       emails               -> PAP.Email
+        Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      events               -> EVT.Event
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       first_name
         _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -1766,7 +1776,7 @@ _test_attr_wrappers = """
     PAP.Person_has_Phone
       created_by           -> MOM.Id_Entity
         _Id_Entity_Reference_Mixin_, _EPK_Mixin_, _SPK_Mixin_, Computed, _Cached_, _Volatile_, _System_
-      creation      -> MOM.MD_Change
+      creation             -> MOM.MD_Change
         Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       creation_date
         Computed, _Cached_, _Volatile_, _System_
@@ -1774,6 +1784,8 @@ _test_attr_wrappers = """
         Computed_Set_Mixin, Computed_Mixin, Optional, _User_, _DB_Attr_
       electric
         Internal, _DB_System_, _DB_Attr_, _System_
+      events               -> EVT.Event
+        Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       extension
         Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
       is_used
@@ -1827,7 +1839,7 @@ _test_fk_cols = """
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
     EVT.Event
         Column calendar                  : Integer              Primary_Optional__Id_Entity_Reference Entity calendar Id_Entity()
-        Column left                      : Integer              Link_Role__Init_Only Page left Id_Entity()
+        Column left                      : Integer              Link_Role__Init_Only Id_Entity left Id_Entity()
     EVT.Event_occurs
         Column left                      : Integer              Link_Role__Init_Only Event left Id_Entity()
     EVT.Recurrence_Spec
@@ -1989,6 +2001,7 @@ _test_q_able = """
     <SAW : MOM.Id_Entity [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2009,6 +2022,7 @@ _test_q_able = """
     <SAW : MOM.Link [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset | Auth.Account_in_Group | EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Recurrence_Spec | PAP.Address_Position | PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url | SRM.Boat | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team | SRM.Team_has_Boat_in_Regatta | SWP.Clip_O | SWP.Picture)>
@@ -2018,6 +2032,7 @@ _test_q_able = """
     <SAW : MOM.Link1 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset | EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Recurrence_Spec | PAP.Address_Position | SRM.Boat | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team | SWP.Clip_O | SWP.Picture)>
@@ -2027,6 +2042,7 @@ _test_q_able = """
     <SAW : MOM._MOM_Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_in_Group | PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Team_has_Boat_in_Regatta)>
@@ -2037,6 +2053,7 @@ _test_q_able = """
     <SAW : MOM.Link2 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_in_Group | PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Team_has_Boat_in_Regatta)>
@@ -2047,6 +2064,7 @@ _test_q_able = """
     <SAW : MOM.Link3 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` ()>
@@ -2058,6 +2076,7 @@ _test_q_able = """
     <SAW : MOM.Object [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2066,6 +2085,7 @@ _test_q_able = """
     <SAW : Auth.Id_Entity [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2074,6 +2094,7 @@ _test_q_able = """
     <SAW : Auth.Object [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2084,6 +2105,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
       <SAW : Boolean `enabled` [auth__account_.enabled]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Email `name` [auth__account_.name]>
@@ -2097,6 +2119,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
       <SAW : Boolean `enabled` [auth__account_.enabled]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Email `name` [auth__account_.name]>
@@ -2116,6 +2139,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
       <SAW : Boolean `enabled` [auth__account_.enabled]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Link_Ref_List `group_links`>
       <SAW : Role_Ref_Set `groups`>
       <SAW : Rev_Ref `last_change`>
@@ -2152,6 +2176,7 @@ _test_q_able = """
       <SAW : String `desc` [auth_certificate.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
       <SAW : Email `email` [auth_certificate.email]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : None `pem` [auth_certificate.pem]>
@@ -2167,6 +2192,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [auth_group.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : String `name` [auth_group.name]>
@@ -2176,6 +2202,7 @@ _test_q_able = """
     <SAW : Auth.Link [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset | Auth.Account_in_Group)>
@@ -2185,6 +2212,7 @@ _test_q_able = """
     <SAW : Auth._MOM_Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_in_Group)>
@@ -2195,6 +2223,7 @@ _test_q_able = """
     <SAW : Auth.Link2 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_in_Group)>
@@ -2205,6 +2234,7 @@ _test_q_able = """
     <SAW : Auth.Account_in_Group [auth_account_in_group : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Account `left` [auth_account_in_group.left]>
@@ -2215,6 +2245,7 @@ _test_q_able = """
     <SAW : Auth.Link1 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset)>
@@ -2224,6 +2255,7 @@ _test_q_able = """
     <SAW : Auth._Account_Action_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Account `left` (Auth.Account_Activation | Auth.Account_EMail_Verification | Auth.Account_Password_Change_Required | Auth.Account_Password_Reset)>
@@ -2233,6 +2265,7 @@ _test_q_able = """
     <SAW : Auth.Account_Activation [auth_account_activation : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Account `left` [auth_account_activation.left]>
@@ -2242,6 +2275,7 @@ _test_q_able = """
     <SAW : Auth.Account_Password_Change_Required [auth_account_password_change_required : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Account `left` [auth_account_password_change_required.left]>
@@ -2251,6 +2285,7 @@ _test_q_able = """
     <SAW : Auth._Account_Token_Action_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Date-Time `expires` (Auth.Account_EMail_Verification | Auth.Account_Password_Reset)>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -2262,6 +2297,7 @@ _test_q_able = """
     <SAW : Auth.Account_EMail_Verification [auth_account_email_verification : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Date-Time `expires` [auth_account_email_verification.expires]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -2274,6 +2310,7 @@ _test_q_able = """
     <SAW : Auth.Account_Password_Reset [auth_account_password_reset : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Date-Time `expires` [auth_account_password_reset.expires]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -2286,6 +2323,7 @@ _test_q_able = """
     <SAW : EVT.Id_Entity [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2294,6 +2332,7 @@ _test_q_able = """
     <SAW : EVT.Object [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2303,6 +2342,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [evt_calendar.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Name `name` [evt_calendar.name]>
@@ -2327,6 +2367,7 @@ _test_q_able = """
     <SAW : EVT.Link [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Recurrence_Spec)>
@@ -2336,15 +2377,489 @@ _test_q_able = """
     <SAW : EVT.Link1 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Recurrence_Spec)>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : EVT.Event [evt_event : mom_id_entity]>
+      <SAW : Entity `calendar` [evt_event.calendar]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Date_Interval `date` [evt_event.date__finish, evt_event.date__start]>
+      <SAW : Boolean `date.alive`>
+      <SAW : String `detail` [evt_event.detail]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Id_Entity `left` [evt_event.left]>
+      <SAW : Link_Ref_List `occurs`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref `recurrence`>
+      <SAW : String `short_title` [evt_event.short_title]>
+      <SAW : Time_Interval `time` [evt_event.time__finish, evt_event.time__start]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Date `date` [evt_event_occurs.date]>
+      <SAW : String `detail`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : None `essence`>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Event `left` [evt_event_occurs.left]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `short_title`>
+      <SAW : Time_Interval `time` [evt_event_occurs.time__finish, evt_event_occurs.time__start]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (EVT.Recurrence_Rule | EVT.Recurrence_Spec)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : EVT.Recurrence_Spec [evt_recurrence_spec : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Date_List `date_exceptions` [evt_recurrence_spec.date_exceptions]>
+      <SAW : Date_List `dates` [evt_recurrence_spec.dates]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Event `left` [evt_recurrence_spec.left]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `rules`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : EVT.Recurrence_Rule [evt_recurrence_rule : mom_id_entity]>
+      <SAW : Int `count` [evt_recurrence_rule.count]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` [evt_recurrence_rule.desc]>
+      <SAW : Int_List `easter_offset` [evt_recurrence_rule.easter_offset]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Date `finish` [evt_recurrence_rule.finish]>
+      <SAW : Boolean `is_exception` [evt_recurrence_rule.is_exception]>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Recurrence_Spec `left` [evt_recurrence_rule.left]>
+      <SAW : Int_List `month` [evt_recurrence_rule.month]>
+      <SAW : Int_List `month_day` [evt_recurrence_rule.month_day]>
+      <SAW : Int `period` [evt_recurrence_rule.period]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Int_List `restrict_pos` [evt_recurrence_rule.restrict_pos]>
+      <SAW : Date `start` [evt_recurrence_rule.start]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Unit `unit` [evt_recurrence_rule.unit]>
+      <SAW : Int_List `week` [evt_recurrence_rule.week]>
+      <SAW : Weekday_RR_List `week_day` [evt_recurrence_rule.week_day]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int_List `year_day` [evt_recurrence_rule.year_day]>
+    <SAW : MOM.Position []>
+      <SAW : Float `height` [height]>
+      <SAW : Angle `lat` [lat, __raw_lat]>
+      <SAW : Angle `lon` [lon, __raw_lon]>
+    <SAW : PAP.Id_Entity [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Object [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Property [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` (PAP.Address | PAP.Email | PAP.Phone | PAP.Url)>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `subject_links`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Address [pap_address : mom_id_entity]>
+      <SAW : String `city` [pap_address.city, pap_address.__raw_city]>
+      <SAW : Role_Ref_Set `companies`>
+      <SAW : Link_Ref_List `company_links`>
+      <SAW : String `country` [pap_address.country, pap_address.__raw_country]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` [pap_address.desc]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Link_Ref `gps`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Link_Ref_List `person_links`>
+      <SAW : Role_Ref_Set `persons`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `region` [pap_address.region, pap_address.__raw_region]>
+      <SAW : String `street` [pap_address.street, pap_address.__raw_street]>
+      <SAW : Link_Ref_List `subject_links`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : String `zip` [pap_address.zip, pap_address.__raw_zip]>
+    <SAW : PAP.Subject [mom_id_entity]>
+      <SAW : Link_Ref_List `address_links`>
+      <SAW : Role_Ref_Set `addresses`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `email_links`>
+      <SAW : Role_Ref_Set `emails`>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>
+      <SAW : Link_Ref_List `phone_links`>
+      <SAW : Role_Ref_Set `phones`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `property_links`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Link_Ref_List `url_links`>
+      <SAW : Role_Ref_Set `urls`>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Legal_Entity [mom_id_entity]>
+      <SAW : Link_Ref_List `address_links`>
+      <SAW : Role_Ref_Set `addresses`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `email_links`>
+      <SAW : Role_Ref_Set `emails`>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Date_Interval `lifetime` (PAP.Company)>
+      <SAW : String `name` (PAP.Company)>
+      <SAW : Link_Ref_List `phone_links`>
+      <SAW : Role_Ref_Set `phones`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `property_links`>
+      <SAW : String `short_name` (PAP.Company)>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Link_Ref_List `url_links`>
+      <SAW : Role_Ref_Set `urls`>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Company [pap_company : mom_id_entity]>
+      <SAW : Link_Ref_List `address_links`>
+      <SAW : Role_Ref_Set `addresses`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `email_links`>
+      <SAW : Role_Ref_Set `emails`>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>
+      <SAW : Boolean `lifetime.alive`>
+      <SAW : String `name` [pap_company.name, pap_company.__raw_name]>
+      <SAW : Link_Ref_List `phone_links`>
+      <SAW : Role_Ref_Set `phones`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `property_links`>
+      <SAW : String `registered_in` [pap_company.registered_in, pap_company.__raw_registered_in]>
+      <SAW : String `short_name` [pap_company.short_name, pap_company.__raw_short_name]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Link_Ref_List `url_links`>
+      <SAW : Role_Ref_Set `urls`>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Email [pap_email : mom_id_entity]>
+      <SAW : Email `address` [pap_email.address, pap_email.__raw_address]>
+      <SAW : Role_Ref_Set `companies`>
+      <SAW : Link_Ref_List `company_links`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` [pap_email.desc]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Link_Ref_List `person_links`>
+      <SAW : Role_Ref_Set `persons`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `subject_links`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Phone [pap_phone : mom_id_entity]>
+      <SAW : Numeric_String `area_code` [pap_phone.area_code]>
+      <SAW : Role_Ref_Set `companies`>
+      <SAW : Link_Ref_List `company_links`>
+      <SAW : Numeric_String `country_code` [pap_phone.country_code]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` [pap_phone.desc]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Numeric_String `number` [pap_phone.number]>
+      <SAW : Link_Ref_List `person_links`>
+      <SAW : Role_Ref_Set `persons`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `subject_links`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Person [pap_person : mom_id_entity]>
+      <SAW : Link_Ref_List `account_links`>
+      <SAW : Role_Ref_Set `accounts`>
+      <SAW : Link_Ref_List `address_links`>
+      <SAW : Role_Ref_Set `addresses`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `email_links`>
+      <SAW : Role_Ref_Set `emails`>
+      <SAW : Link_Ref_List `events`>
+      <SAW : String `first_name` [pap_person.first_name, pap_person.__raw_first_name]>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : String `last_name` [pap_person.last_name, pap_person.__raw_last_name]>
+      <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>
+      <SAW : Boolean `lifetime.alive`>
+      <SAW : String `middle_name` [pap_person.middle_name, pap_person.__raw_middle_name]>
+      <SAW : Link_Ref_List `phone_links`>
+      <SAW : Role_Ref_Set `phones`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `property_links`>
+      <SAW : Link_Ref_List `sailors`>
+      <SAW : Sex `sex` [pap_person.sex]>
+      <SAW : String `title` [pap_person.title, pap_person.__raw_title]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Link_Ref_List `url_links`>
+      <SAW : Role_Ref_Set `urls`>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Url [pap_url : mom_id_entity]>
+      <SAW : Role_Ref_Set `companies`>
+      <SAW : Link_Ref_List `company_links`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` [pap_url.desc]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Link_Ref_List `person_links`>
+      <SAW : Role_Ref_Set `persons`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `subject_links`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Url `value` [pap_url.value]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Link [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (PAP.Address_Position | PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Link1 [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (PAP.Address_Position)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Address_Position [pap_address_position : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Address `left` [pap_address_position.left]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Position `position` [pap_address_position.position__height, pap_address_position.position__lat, pap_address_position.position____raw_lat, pap_address_position.position__lon, pap_address_position.position____raw_lon]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Link2 [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Subject_has_Property [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : String `desc` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Subject `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Property `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : PAP.Person_has_Account [pap_person_has_account : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Person `left` [pap_person_has_account.left]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Account `right` [pap_person_has_account.right]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Regatta_Result []>
+      <SAW : Date-Time `date` [date]>
+      <SAW : String `software` [software]>
+      <SAW : String `status` [status]>
+    <SAW : SRM.Id_Entity [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Object [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM._Boat_Class_ [srm__boat_class_ : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : String `name` [srm__boat_class_.name, srm__boat_class_.__raw_name]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Boat_Class [srm_boat_class : srm__boat_class_ : mom_id_entity]>
+      <SAW : Float `beam` [srm_boat_class.beam]>
+      <SAW : Link_Ref_List `boats`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Float `loa` [srm_boat_class.loa]>
+      <SAW : Int `max_crew` [srm_boat_class.max_crew]>
+      <SAW : String `name` [srm__boat_class_.name, srm__boat_class_.__raw_name]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Float `sail_area` [srm_boat_class.sail_area]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Handicap [srm_handicap : srm__boat_class_ : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : String `name` [srm__boat_class_.name, srm__boat_class_.__raw_name]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Link [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (SRM.Boat | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team | SRM.Team_has_Boat_in_Regatta)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Link1 [mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Left `left` (SRM.Boat | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team)>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Boat [srm_boat : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Boat_Class `left` [srm_boat.left]>
+      <SAW : String `name` [srm_boat.name]>
+      <SAW : Nation `nation` [srm_boat.nation]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `regatta_links`>
+      <SAW : Int `sail_number` [srm_boat.sail_number, srm_boat.__raw_sail_number]>
+      <SAW : String `sail_number_x` [srm_boat.sail_number_x, srm_boat.__raw_sail_number_x]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Club [srm_club : mom_id_entity]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : String `long_name` [srm_club.long_name]>
+      <SAW : String `name` [srm_club.name, srm_club.__raw_name]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+    <SAW : SRM.Regatta_Event [srm_regatta_event : mom_id_entity]>
+      <SAW : Entity `club` [srm_regatta_event.club]>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Date_Interval `date` [srm_regatta_event.date__finish, srm_regatta_event.date__start]>
+      <SAW : Boolean `date.alive`>
+      <SAW : String `desc` [srm_regatta_event.desc]>
+      <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Boolean `is_cancelled` [srm_regatta_event.is_cancelled]>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : String `name` [srm_regatta_event.name, srm_regatta_event.__raw_name]>
+      <SAW : String `perma_name` [srm_regatta_event.perma_name]>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : Link_Ref_List `regattas`>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
+      <SAW : Int `year`>
     <SAW : SWP.Id_Entity [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2353,6 +2868,7 @@ _test_q_able = """
     <SAW : SWP.Object [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
@@ -2363,6 +2879,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page | SWP.Referral)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page | SWP.Referral)>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -2421,445 +2938,10 @@ _test_q_able = """
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
       <SAW : Int `year` [swp_page_y.year]>
-    <SAW : EVT.Event [evt_event : mom_id_entity]>
-      <SAW : Entity `calendar` [evt_event.calendar]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Date_Interval `date` [evt_event.date__finish, evt_event.date__start]>
-      <SAW : Boolean `date.alive`>
-      <SAW : String `detail` [evt_event.detail]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Page `left` [evt_event.left]>
-      <SAW : Link_Ref_List `occurs`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref `recurrence`>
-      <SAW : String `short_title` [evt_event.short_title]>
-      <SAW : Time_Interval `time` [evt_event.time__finish, evt_event.time__start]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Date `date` [evt_event_occurs.date]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Event `left` [evt_event_occurs.left]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Time_Interval `time` [evt_event_occurs.time__finish, evt_event_occurs.time__start]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (EVT.Recurrence_Rule | EVT.Recurrence_Spec)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : EVT.Recurrence_Spec [evt_recurrence_spec : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Date_List `date_exceptions` [evt_recurrence_spec.date_exceptions]>
-      <SAW : Date_List `dates` [evt_recurrence_spec.dates]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Event `left` [evt_recurrence_spec.left]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `rules`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : EVT.Recurrence_Rule [evt_recurrence_rule : mom_id_entity]>
-      <SAW : Int `count` [evt_recurrence_rule.count]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` [evt_recurrence_rule.desc]>
-      <SAW : Int_List `easter_offset` [evt_recurrence_rule.easter_offset]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Date `finish` [evt_recurrence_rule.finish]>
-      <SAW : Boolean `is_exception` [evt_recurrence_rule.is_exception]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Recurrence_Spec `left` [evt_recurrence_rule.left]>
-      <SAW : Int_List `month` [evt_recurrence_rule.month]>
-      <SAW : Int_List `month_day` [evt_recurrence_rule.month_day]>
-      <SAW : Int `period` [evt_recurrence_rule.period]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Int_List `restrict_pos` [evt_recurrence_rule.restrict_pos]>
-      <SAW : Date `start` [evt_recurrence_rule.start]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Unit `unit` [evt_recurrence_rule.unit]>
-      <SAW : Int_List `week` [evt_recurrence_rule.week]>
-      <SAW : Weekday_RR_List `week_day` [evt_recurrence_rule.week_day]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-      <SAW : Int_List `year_day` [evt_recurrence_rule.year_day]>
-    <SAW : MOM.Position []>
-      <SAW : Float `height` [height]>
-      <SAW : Angle `lat` [lat, __raw_lat]>
-      <SAW : Angle `lon` [lon, __raw_lon]>
-    <SAW : PAP.Id_Entity [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Object [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Property [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` (PAP.Address | PAP.Email | PAP.Phone | PAP.Url)>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `subject_links`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Address [pap_address : mom_id_entity]>
-      <SAW : String `city` [pap_address.city, pap_address.__raw_city]>
-      <SAW : Role_Ref_Set `companies`>
-      <SAW : Link_Ref_List `company_links`>
-      <SAW : String `country` [pap_address.country, pap_address.__raw_country]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` [pap_address.desc]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Link_Ref `gps`>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Link_Ref_List `person_links`>
-      <SAW : Role_Ref_Set `persons`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `region` [pap_address.region, pap_address.__raw_region]>
-      <SAW : String `street` [pap_address.street, pap_address.__raw_street]>
-      <SAW : Link_Ref_List `subject_links`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-      <SAW : String `zip` [pap_address.zip, pap_address.__raw_zip]>
-    <SAW : PAP.Subject [mom_id_entity]>
-      <SAW : Link_Ref_List `address_links`>
-      <SAW : Role_Ref_Set `addresses`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Link_Ref_List `email_links`>
-      <SAW : Role_Ref_Set `emails`>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>
-      <SAW : Link_Ref_List `phone_links`>
-      <SAW : Role_Ref_Set `phones`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `property_links`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Link_Ref_List `url_links`>
-      <SAW : Role_Ref_Set `urls`>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Legal_Entity [mom_id_entity]>
-      <SAW : Link_Ref_List `address_links`>
-      <SAW : Role_Ref_Set `addresses`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Link_Ref_List `email_links`>
-      <SAW : Role_Ref_Set `emails`>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Date_Interval `lifetime` (PAP.Company)>
-      <SAW : String `name` (PAP.Company)>
-      <SAW : Link_Ref_List `phone_links`>
-      <SAW : Role_Ref_Set `phones`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `property_links`>
-      <SAW : String `short_name` (PAP.Company)>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Link_Ref_List `url_links`>
-      <SAW : Role_Ref_Set `urls`>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Company [pap_company : mom_id_entity]>
-      <SAW : Link_Ref_List `address_links`>
-      <SAW : Role_Ref_Set `addresses`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Link_Ref_List `email_links`>
-      <SAW : Role_Ref_Set `emails`>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>
-      <SAW : Boolean `lifetime.alive`>
-      <SAW : String `name` [pap_company.name, pap_company.__raw_name]>
-      <SAW : Link_Ref_List `phone_links`>
-      <SAW : Role_Ref_Set `phones`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `property_links`>
-      <SAW : String `registered_in` [pap_company.registered_in, pap_company.__raw_registered_in]>
-      <SAW : String `short_name` [pap_company.short_name, pap_company.__raw_short_name]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Link_Ref_List `url_links`>
-      <SAW : Role_Ref_Set `urls`>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Email [pap_email : mom_id_entity]>
-      <SAW : Email `address` [pap_email.address, pap_email.__raw_address]>
-      <SAW : Role_Ref_Set `companies`>
-      <SAW : Link_Ref_List `company_links`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` [pap_email.desc]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Link_Ref_List `person_links`>
-      <SAW : Role_Ref_Set `persons`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `subject_links`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Phone [pap_phone : mom_id_entity]>
-      <SAW : Numeric_String `area_code` [pap_phone.area_code]>
-      <SAW : Role_Ref_Set `companies`>
-      <SAW : Link_Ref_List `company_links`>
-      <SAW : Numeric_String `country_code` [pap_phone.country_code]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` [pap_phone.desc]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Numeric_String `number` [pap_phone.number]>
-      <SAW : Link_Ref_List `person_links`>
-      <SAW : Role_Ref_Set `persons`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `subject_links`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Person [pap_person : mom_id_entity]>
-      <SAW : Link_Ref_List `account_links`>
-      <SAW : Role_Ref_Set `accounts`>
-      <SAW : Link_Ref_List `address_links`>
-      <SAW : Role_Ref_Set `addresses`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Link_Ref_List `email_links`>
-      <SAW : Role_Ref_Set `emails`>
-      <SAW : String `first_name` [pap_person.first_name, pap_person.__raw_first_name]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : String `last_name` [pap_person.last_name, pap_person.__raw_last_name]>
-      <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>
-      <SAW : Boolean `lifetime.alive`>
-      <SAW : String `middle_name` [pap_person.middle_name, pap_person.__raw_middle_name]>
-      <SAW : Link_Ref_List `phone_links`>
-      <SAW : Role_Ref_Set `phones`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `property_links`>
-      <SAW : Link_Ref_List `sailors`>
-      <SAW : Sex `sex` [pap_person.sex]>
-      <SAW : String `title` [pap_person.title, pap_person.__raw_title]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Link_Ref_List `url_links`>
-      <SAW : Role_Ref_Set `urls`>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Url [pap_url : mom_id_entity]>
-      <SAW : Role_Ref_Set `companies`>
-      <SAW : Link_Ref_List `company_links`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` [pap_url.desc]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Link_Ref_List `person_links`>
-      <SAW : Role_Ref_Set `persons`>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `subject_links`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Url `value` [pap_url.value]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Link [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (PAP.Address_Position | PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Link1 [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (PAP.Address_Position)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Address_Position [pap_address_position : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Address `left` [pap_address_position.left]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Position `position` [pap_address_position.position__height, pap_address_position.position__lat, pap_address_position.position____raw_lat, pap_address_position.position__lon, pap_address_position.position____raw_lon]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Link2 [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Account | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Subject_has_Property [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : String `desc` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Subject `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Property `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Company_has_Phone | PAP.Company_has_Url | PAP.Person_has_Address | PAP.Person_has_Email | PAP.Person_has_Phone | PAP.Person_has_Url)>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : PAP.Person_has_Account [pap_person_has_account : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Person `left` [pap_person_has_account.left]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Account `right` [pap_person_has_account.right]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Regatta_Result []>
-      <SAW : Date-Time `date` [date]>
-      <SAW : String `software` [software]>
-      <SAW : String `status` [status]>
-    <SAW : SRM.Id_Entity [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Object [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM._Boat_Class_ [srm__boat_class_ : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : String `name` [srm__boat_class_.name, srm__boat_class_.__raw_name]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Boat_Class [srm_boat_class : srm__boat_class_ : mom_id_entity]>
-      <SAW : Float `beam` [srm_boat_class.beam]>
-      <SAW : Link_Ref_List `boats`>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Float `loa` [srm_boat_class.loa]>
-      <SAW : Int `max_crew` [srm_boat_class.max_crew]>
-      <SAW : String `name` [srm__boat_class_.name, srm__boat_class_.__raw_name]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Float `sail_area` [srm_boat_class.sail_area]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Handicap [srm_handicap : srm__boat_class_ : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : String `name` [srm__boat_class_.name, srm__boat_class_.__raw_name]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Link [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (SRM.Boat | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team | SRM.Team_has_Boat_in_Regatta)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Link1 [mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Left `left` (SRM.Boat | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.Team)>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Boat [srm_boat : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : Boat_Class `left` [srm_boat.left]>
-      <SAW : String `name` [srm_boat.name]>
-      <SAW : Nation `nation` [srm_boat.nation]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `regatta_links`>
-      <SAW : Int `sail_number` [srm_boat.sail_number, srm_boat.__raw_sail_number]>
-      <SAW : String `sail_number_x` [srm_boat.sail_number_x, srm_boat.__raw_sail_number_x]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Club [srm_club : mom_id_entity]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : String `long_name` [srm_club.long_name]>
-      <SAW : String `name` [srm_club.name, srm_club.__raw_name]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-    <SAW : SRM.Regatta_Event [srm_regatta_event : mom_id_entity]>
-      <SAW : Entity `club` [srm_regatta_event.club]>
-      <SAW : Rev_Ref `creation`>
-      <SAW : Date_Interval `date` [srm_regatta_event.date__finish, srm_regatta_event.date__start]>
-      <SAW : Boolean `date.alive`>
-      <SAW : String `desc` [srm_regatta_event.desc]>
-      <SAW : Boolean `electric` [mom_id_entity.electric]>
-      <SAW : Boolean `is_cancelled` [srm_regatta_event.is_cancelled]>
-      <SAW : Rev_Ref `last_change`>
-      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
-      <SAW : String `name` [srm_regatta_event.name, srm_regatta_event.__raw_name]>
-      <SAW : String `perma_name` [srm_regatta_event.perma_name]>
-      <SAW : Surrogate `pid` [mom_id_entity.pid]>
-      <SAW : Link_Ref_List `regattas`>
-      <SAW : String `type_name` [mom_id_entity.type_name]>
-      <SAW : Boolean `x_locked` [mom_id_entity.x_locked]>
-      <SAW : Int `year`>
     <SAW : SWP.Link [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (SWP.Clip_O | SWP.Picture)>
@@ -2869,6 +2951,7 @@ _test_q_able = """
     <SAW : SWP.Link1 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (SWP.Clip_O | SWP.Picture)>
@@ -2884,6 +2967,7 @@ _test_q_able = """
       <SAW : Date_Interval `date_x` [swp_clip_o.date_x__finish, swp_clip_o.date_x__start]>
       <SAW : Boolean `date_x.alive`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Object_PN `left` [swp_clip_o.left]>
@@ -2920,6 +3004,7 @@ _test_q_able = """
       <SAW : Boolean `date.alive`>
       <SAW : Directory `directory` [swp_gallery.directory]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Boolean `hidden` [swp_gallery.hidden]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -2948,6 +3033,7 @@ _test_q_able = """
     <SAW : SWP.Picture [swp_picture : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Gallery `left` [swp_picture.left]>
@@ -2965,6 +3051,7 @@ _test_q_able = """
       <SAW : Boolean `date.alive`>
       <SAW : String `download_name` [swp_referral.download_name]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Boolean `hidden` [swp_referral.hidden]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -3006,6 +3093,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Int `discards` [srm_regatta.discards]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Boolean `is_cancelled` [srm_regatta.is_cancelled]>
       <SAW : String `kind` [srm_regatta.kind]>
       <SAW : Rev_Ref `last_change`>
@@ -3027,6 +3115,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Int `discards` [srm_regatta.discards]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Boolean `is_cancelled` [srm_regatta.is_cancelled]>
       <SAW : Boolean `is_team_race` [srm_regatta_c.is_team_race]>
       <SAW : String `kind` [srm_regatta.kind]>
@@ -3050,6 +3139,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Int `discards` [srm_regatta.discards]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Blob `handicap`>
       <SAW : Boolean `is_cancelled` [srm_regatta.is_cancelled]>
       <SAW : String `kind` [srm_regatta.kind]>
@@ -3071,6 +3161,7 @@ _test_q_able = """
       <SAW : Entity `club` [srm_sailor.club]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Person `left` [srm_sailor.left]>
@@ -3082,6 +3173,7 @@ _test_q_able = """
     <SAW : SRM._MOM_Link_n_ [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Team_has_Boat_in_Regatta)>
@@ -3092,6 +3184,7 @@ _test_q_able = """
     <SAW : SRM.Link2 [mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Left `left` (SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Team_has_Boat_in_Regatta)>
@@ -3103,6 +3196,7 @@ _test_q_able = """
       <SAW : Role_Ref_Set `_crew`>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Boat `left` [srm_boat_in_regatta.left]>
@@ -3124,6 +3218,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `discarded` [srm_race_result.discarded]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Boat_in_Regatta `left` [srm_race_result.left]>
@@ -3140,6 +3235,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [srm_team.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Entity `leader` [srm_team.leader]>
@@ -3153,6 +3249,7 @@ _test_q_able = """
     <SAW : SRM.Crew_Member [srm_crew_member : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Int `key` [srm_crew_member.key]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -3165,6 +3262,7 @@ _test_q_able = """
     <SAW : SRM.Team_has_Boat_in_Regatta [srm_team_has_boat_in_regatta : mom_id_entity]>
       <SAW : Rev_Ref `creation`>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Team `left` [srm_team_has_boat_in_regatta.left]>
@@ -3176,6 +3274,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` (PAP.Company_has_Address | PAP.Person_has_Address)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Subject `left` (PAP.Company_has_Address | PAP.Person_has_Address)>
@@ -3187,6 +3286,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` (PAP.Company_has_Email | PAP.Person_has_Email)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Subject `left` (PAP.Company_has_Email | PAP.Person_has_Email)>
@@ -3198,6 +3298,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` (PAP.Company_has_Phone | PAP.Person_has_Phone)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Numeric_String `extension` (PAP.Company_has_Phone | PAP.Person_has_Phone)>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -3210,6 +3311,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` (PAP.Company_has_Url | PAP.Person_has_Url)>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Subject `left` (PAP.Company_has_Url | PAP.Person_has_Url)>
@@ -3221,6 +3323,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_company_has_url.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Company `left` [pap_company_has_url.left]>
@@ -3232,6 +3335,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_person_has_url.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Person `left` [pap_person_has_url.left]>
@@ -3243,6 +3347,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_company_has_phone.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Numeric_String `extension` [pap_company_has_phone.extension]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -3255,6 +3360,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_person_has_phone.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Numeric_String `extension` [pap_person_has_phone.extension]>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
@@ -3267,6 +3373,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_company_has_email.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Company `left` [pap_company_has_email.left]>
@@ -3278,6 +3385,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_person_has_email.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Person `left` [pap_person_has_email.left]>
@@ -3289,6 +3397,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_company_has_address.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Company `left` [pap_company_has_address.left]>
@@ -3300,6 +3409,7 @@ _test_q_able = """
       <SAW : Rev_Ref `creation`>
       <SAW : String `desc` [pap_person_has_address.desc]>
       <SAW : Boolean `electric` [mom_id_entity.electric]>
+      <SAW : Link_Ref_List `events`>
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Person `left` [pap_person_has_address.left]>
@@ -3312,6 +3422,7 @@ _test_q_able = """
     <SAW : MOM.Id_Entity [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3332,6 +3443,7 @@ _test_q_able = """
     <SAW : MOM.Link [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3341,6 +3453,7 @@ _test_q_able = """
     <SAW : MOM.Link1 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3350,6 +3463,7 @@ _test_q_able = """
     <SAW : MOM._MOM_Link_n_ [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3360,6 +3474,7 @@ _test_q_able = """
     <SAW : MOM.Link2 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3370,6 +3485,7 @@ _test_q_able = """
     <SAW : MOM.Link3 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3381,6 +3497,7 @@ _test_q_able = """
     <SAW : MOM.Object [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3389,6 +3506,7 @@ _test_q_able = """
     <SAW : Auth.Id_Entity [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3397,6 +3515,7 @@ _test_q_able = """
     <SAW : Auth.Object [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3407,6 +3526,7 @@ _test_q_able = """
       creation                      : creation
       electric                      : electric
       enabled                       : enabled
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       name                          : name
@@ -3420,6 +3540,7 @@ _test_q_able = """
       creation                      : creation
       electric                      : electric
       enabled                       : enabled
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       name                          : name
@@ -3439,6 +3560,7 @@ _test_q_able = """
       creation                      : creation
       electric                      : electric
       enabled                       : enabled
+      events                        : events
       group_links                   : group_links
       groups                        : groups
       last_change                   : last_change
@@ -3475,6 +3597,7 @@ _test_q_able = """
       desc                          : desc
       electric                      : electric
       email                         : email
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pem                           : pem
@@ -3492,6 +3615,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       name                          : name
@@ -3501,6 +3625,7 @@ _test_q_able = """
     <SAW : Auth.Link [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3510,6 +3635,7 @@ _test_q_able = """
     <SAW : Auth._MOM_Link_n_ [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3520,6 +3646,7 @@ _test_q_able = """
     <SAW : Auth.Link2 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3530,6 +3657,7 @@ _test_q_able = """
     <SAW : Auth.Account_in_Group [auth_account_in_group : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : account, left
@@ -3540,6 +3668,7 @@ _test_q_able = """
     <SAW : Auth.Link1 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3549,6 +3678,7 @@ _test_q_able = """
     <SAW : Auth._Account_Action_ [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : account, left
@@ -3558,6 +3688,7 @@ _test_q_able = """
     <SAW : Auth.Account_Activation [auth_account_activation : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : account, left
@@ -3567,6 +3698,7 @@ _test_q_able = """
     <SAW : Auth.Account_Password_Change_Required [auth_account_password_change_required : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : account, left
@@ -3576,6 +3708,7 @@ _test_q_able = """
     <SAW : Auth._Account_Token_Action_ [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       expires                       : expires
       last_change                   : last_change
       last_cid                      : last_cid
@@ -3587,6 +3720,7 @@ _test_q_able = """
     <SAW : Auth.Account_EMail_Verification [auth_account_email_verification : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       expires                       : expires
       last_change                   : last_change
       last_cid                      : last_cid
@@ -3599,6 +3733,7 @@ _test_q_able = """
     <SAW : Auth.Account_Password_Reset [auth_account_password_reset : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       expires                       : expires
       last_change                   : last_change
       last_cid                      : last_cid
@@ -3611,6 +3746,7 @@ _test_q_able = """
     <SAW : EVT.Id_Entity [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3619,6 +3755,7 @@ _test_q_able = """
     <SAW : EVT.Object [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3628,6 +3765,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       name                          : name
@@ -3652,6 +3790,7 @@ _test_q_able = """
     <SAW : EVT.Link [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -3661,15 +3800,504 @@ _test_q_able = """
     <SAW : EVT.Link1 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
       pid                           : pid
       type_name                     : type_name
       x_locked                      : x_locked
+    <SAW : EVT.Event [evt_event : mom_id_entity]>
+      calendar                      : calendar
+      creation                      : creation
+      date                          : date
+          alive                         : date.alive
+          finish                        : date.finish
+          start                         : date.start
+      detail                        : detail
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left, object
+      occurs                        : occurs
+      pid                           : pid
+      recurrence                    : recurrence
+      short_title                   : short_title
+      time                          : time
+          finish                        : time.finish
+          start                         : time.start
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
+      creation                      : creation
+      date                          : date
+      detail                        : detail
+      electric                      : electric
+      essence                       : essence
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : event, left
+      pid                           : pid
+      short_title                   : short_title
+      time                          : time
+          finish                        : time.finish
+          start                         : time.start
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : EVT.Recurrence_Spec [evt_recurrence_spec : mom_id_entity]>
+      creation                      : creation
+      date_exceptions               : date_exceptions
+      dates                         : dates
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : event, left
+      pid                           : pid
+      rules                         : rules
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : EVT.Recurrence_Rule [evt_recurrence_rule : mom_id_entity]>
+      count                         : count
+      creation                      : creation
+      desc                          : desc
+      easter_offset                 : easter_offset
+      electric                      : electric
+      events                        : events
+      finish                        : finish
+      is_exception                  : is_exception
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left, recurrence_spec
+      month                         : month
+      month_day                     : month_day
+      period                        : period
+      pid                           : pid
+      restrict_pos                  : restrict_pos
+      start                         : start
+      type_name                     : type_name
+      unit                          : unit
+      week                          : week
+      week_day                      : week_day
+      x_locked                      : x_locked
+      year_day                      : year_day
+    <SAW : MOM.Position []>
+      height                        : height
+      lat                           : lat
+      lon                           : lon
+    <SAW : PAP.Id_Entity [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Object [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Property [mom_id_entity]>
+      creation                      : creation
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      pid                           : pid
+      subject_links                 : subject_links
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Address [pap_address : mom_id_entity]>
+      city                          : city
+      companies                     : companies
+      company_links                 : company_links
+      country                       : country
+      creation                      : creation
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      gps                           : gps
+      last_change                   : last_change
+      last_cid                      : last_cid
+      person_links                  : person_links
+      persons                       : persons
+      pid                           : pid
+      region                        : region
+      street                        : street
+      subject_links                 : subject_links
+      type_name                     : type_name
+      x_locked                      : x_locked
+      zip                           : zip
+    <SAW : PAP.Subject [mom_id_entity]>
+      address_links                 : address_links
+      addresses                     : addresses
+      creation                      : creation
+      electric                      : electric
+      email_links                   : email_links
+      emails                        : emails
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      lifetime                      : lifetime
+      phone_links                   : phone_links
+      phones                        : phones
+      pid                           : pid
+      property_links                : property_links
+      type_name                     : type_name
+      url_links                     : url_links
+      urls                          : urls
+      x_locked                      : x_locked
+    <SAW : PAP.Legal_Entity [mom_id_entity]>
+      address_links                 : address_links
+      addresses                     : addresses
+      creation                      : creation
+      electric                      : electric
+      email_links                   : email_links
+      emails                        : emails
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      lifetime                      : lifetime
+      name                          : name
+      phone_links                   : phone_links
+      phones                        : phones
+      pid                           : pid
+      property_links                : property_links
+      short_name                    : short_name
+      type_name                     : type_name
+      url_links                     : url_links
+      urls                          : urls
+      x_locked                      : x_locked
+    <SAW : PAP.Company [pap_company : mom_id_entity]>
+      address_links                 : address_links
+      addresses                     : addresses
+      creation                      : creation
+      electric                      : electric
+      email_links                   : email_links
+      emails                        : emails
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      lifetime                      : lifetime
+          alive                         : lifetime.alive
+          finish                        : lifetime.finish
+          start                         : lifetime.start
+      name                          : name
+      phone_links                   : phone_links
+      phones                        : phones
+      pid                           : pid
+      property_links                : property_links
+      registered_in                 : registered_in
+      short_name                    : short_name
+      type_name                     : type_name
+      url_links                     : url_links
+      urls                          : urls
+      x_locked                      : x_locked
+    <SAW : PAP.Email [pap_email : mom_id_entity]>
+      address                       : address
+      companies                     : companies
+      company_links                 : company_links
+      creation                      : creation
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      person_links                  : person_links
+      persons                       : persons
+      pid                           : pid
+      subject_links                 : subject_links
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Phone [pap_phone : mom_id_entity]>
+      area_code                     : area_code
+      companies                     : companies
+      company_links                 : company_links
+      country_code                  : country_code
+      creation                      : creation
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      number                        : number
+      person_links                  : person_links
+      persons                       : persons
+      pid                           : pid
+      subject_links                 : subject_links
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Person [pap_person : mom_id_entity]>
+      account_links                 : account_links
+      accounts                      : accounts
+      address_links                 : address_links
+      addresses                     : addresses
+      creation                      : creation
+      electric                      : electric
+      email_links                   : email_links
+      emails                        : emails
+      events                        : events
+      first_name                    : first_name
+      last_change                   : last_change
+      last_cid                      : last_cid
+      last_name                     : last_name
+      lifetime                      : lifetime
+          alive                         : lifetime.alive
+          finish                        : lifetime.finish
+          start                         : lifetime.start
+      middle_name                   : middle_name
+      phone_links                   : phone_links
+      phones                        : phones
+      pid                           : pid
+      property_links                : property_links
+      sailors                       : sailors
+      sex                           : sex
+      title                         : title
+      type_name                     : type_name
+      url_links                     : url_links
+      urls                          : urls
+      x_locked                      : x_locked
+    <SAW : PAP.Url [pap_url : mom_id_entity]>
+      companies                     : companies
+      company_links                 : company_links
+      creation                      : creation
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      person_links                  : person_links
+      persons                       : persons
+      pid                           : pid
+      subject_links                 : subject_links
+      type_name                     : type_name
+      value                         : value
+      x_locked                      : x_locked
+    <SAW : PAP.Link [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Link1 [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Address_Position [pap_address_position : mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : address, left
+      pid                           : pid
+      position                      : position
+          height                        : position.height
+          lat                           : position.lat
+          lon                           : position.lon
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      right                         : right
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Link2 [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      right                         : right
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Subject_has_Property [mom_id_entity]>
+      creation                      : creation
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left, subject
+      pid                           : pid
+      right                         : property, right
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : PAP.Person_has_Account [pap_person_has_account : mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left, person
+      pid                           : pid
+      right                         : account, right
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Regatta_Result []>
+      date                          : date
+      software                      : software
+      status                        : status
+    <SAW : SRM.Id_Entity [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Object [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM._Boat_Class_ [srm__boat_class_ : mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      name                          : name
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Boat_Class [srm_boat_class : srm__boat_class_ : mom_id_entity]>
+      beam                          : beam
+      boats                         : boats
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      loa                           : loa
+      max_crew                      : max_crew
+      name                          : name
+      pid                           : pid
+      sail_area                     : sail_area
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Handicap [srm_handicap : srm__boat_class_ : mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      name                          : name
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Link [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Link1 [mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : left
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Boat [srm_boat : mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      left                          : b_class, left
+      name                          : name
+      nation                        : nation
+      pid                           : pid
+      regatta_links                 : regatta_links
+      sail_number                   : sail_number
+      sail_number_x                 : sail_number_x
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Club [srm_club : mom_id_entity]>
+      creation                      : creation
+      electric                      : electric
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      long_name                     : long_name
+      name                          : name
+      pid                           : pid
+      type_name                     : type_name
+      x_locked                      : x_locked
+    <SAW : SRM.Regatta_Event [srm_regatta_event : mom_id_entity]>
+      club                          : club
+      creation                      : creation
+      date                          : date
+          alive                         : date.alive
+          finish                        : date.finish
+          start                         : date.start
+      desc                          : desc
+      electric                      : electric
+      events                        : events
+      is_cancelled                  : is_cancelled
+      last_change                   : last_change
+      last_cid                      : last_cid
+      name                          : name
+      perma_name                    : perma_name
+      pid                           : pid
+      regattas                      : regattas
+      type_name                     : type_name
+      x_locked                      : x_locked
+      year                          : year
     <SAW : SWP.Id_Entity [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3678,6 +4306,7 @@ _test_q_able = """
     <SAW : SWP.Object [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       pid                           : pid
@@ -3688,6 +4317,7 @@ _test_q_able = """
       creation                      : creation
       date                          : date
       electric                      : electric
+      events                        : events
       hidden                        : hidden
       last_change                   : last_change
       last_cid                      : last_cid
@@ -3750,460 +4380,10 @@ _test_q_able = """
       type_name                     : type_name
       x_locked                      : x_locked
       year                          : year
-    <SAW : EVT.Event [evt_event : mom_id_entity]>
-      calendar                      : calendar
-      creation                      : creation
-      date                          : date
-          alive                         : date.alive
-          finish                        : date.finish
-          start                         : date.start
-      detail                        : detail
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left, object
-      occurs                        : occurs
-      pid                           : pid
-      recurrence                    : recurrence
-      short_title                   : short_title
-      time                          : time
-          finish                        : time.finish
-          start                         : time.start
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
-      creation                      : creation
-      date                          : date
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : event, left
-      pid                           : pid
-      time                          : time
-          finish                        : time.finish
-          start                         : time.start
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : EVT.Recurrence_Spec [evt_recurrence_spec : mom_id_entity]>
-      creation                      : creation
-      date_exceptions               : date_exceptions
-      dates                         : dates
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : event, left
-      pid                           : pid
-      rules                         : rules
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : EVT.Recurrence_Rule [evt_recurrence_rule : mom_id_entity]>
-      count                         : count
-      creation                      : creation
-      desc                          : desc
-      easter_offset                 : easter_offset
-      electric                      : electric
-      finish                        : finish
-      is_exception                  : is_exception
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left, recurrence_spec
-      month                         : month
-      month_day                     : month_day
-      period                        : period
-      pid                           : pid
-      restrict_pos                  : restrict_pos
-      start                         : start
-      type_name                     : type_name
-      unit                          : unit
-      week                          : week
-      week_day                      : week_day
-      x_locked                      : x_locked
-      year_day                      : year_day
-    <SAW : MOM.Position []>
-      height                        : height
-      lat                           : lat
-      lon                           : lon
-    <SAW : PAP.Id_Entity [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Object [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Property [mom_id_entity]>
-      creation                      : creation
-      desc                          : desc
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      pid                           : pid
-      subject_links                 : subject_links
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Address [pap_address : mom_id_entity]>
-      city                          : city
-      companies                     : companies
-      company_links                 : company_links
-      country                       : country
-      creation                      : creation
-      desc                          : desc
-      electric                      : electric
-      gps                           : gps
-      last_change                   : last_change
-      last_cid                      : last_cid
-      person_links                  : person_links
-      persons                       : persons
-      pid                           : pid
-      region                        : region
-      street                        : street
-      subject_links                 : subject_links
-      type_name                     : type_name
-      x_locked                      : x_locked
-      zip                           : zip
-    <SAW : PAP.Subject [mom_id_entity]>
-      address_links                 : address_links
-      addresses                     : addresses
-      creation                      : creation
-      electric                      : electric
-      email_links                   : email_links
-      emails                        : emails
-      last_change                   : last_change
-      last_cid                      : last_cid
-      lifetime                      : lifetime
-      phone_links                   : phone_links
-      phones                        : phones
-      pid                           : pid
-      property_links                : property_links
-      type_name                     : type_name
-      url_links                     : url_links
-      urls                          : urls
-      x_locked                      : x_locked
-    <SAW : PAP.Legal_Entity [mom_id_entity]>
-      address_links                 : address_links
-      addresses                     : addresses
-      creation                      : creation
-      electric                      : electric
-      email_links                   : email_links
-      emails                        : emails
-      last_change                   : last_change
-      last_cid                      : last_cid
-      lifetime                      : lifetime
-      name                          : name
-      phone_links                   : phone_links
-      phones                        : phones
-      pid                           : pid
-      property_links                : property_links
-      short_name                    : short_name
-      type_name                     : type_name
-      url_links                     : url_links
-      urls                          : urls
-      x_locked                      : x_locked
-    <SAW : PAP.Company [pap_company : mom_id_entity]>
-      address_links                 : address_links
-      addresses                     : addresses
-      creation                      : creation
-      electric                      : electric
-      email_links                   : email_links
-      emails                        : emails
-      last_change                   : last_change
-      last_cid                      : last_cid
-      lifetime                      : lifetime
-          alive                         : lifetime.alive
-          finish                        : lifetime.finish
-          start                         : lifetime.start
-      name                          : name
-      phone_links                   : phone_links
-      phones                        : phones
-      pid                           : pid
-      property_links                : property_links
-      registered_in                 : registered_in
-      short_name                    : short_name
-      type_name                     : type_name
-      url_links                     : url_links
-      urls                          : urls
-      x_locked                      : x_locked
-    <SAW : PAP.Email [pap_email : mom_id_entity]>
-      address                       : address
-      companies                     : companies
-      company_links                 : company_links
-      creation                      : creation
-      desc                          : desc
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      person_links                  : person_links
-      persons                       : persons
-      pid                           : pid
-      subject_links                 : subject_links
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Phone [pap_phone : mom_id_entity]>
-      area_code                     : area_code
-      companies                     : companies
-      company_links                 : company_links
-      country_code                  : country_code
-      creation                      : creation
-      desc                          : desc
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      number                        : number
-      person_links                  : person_links
-      persons                       : persons
-      pid                           : pid
-      subject_links                 : subject_links
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Person [pap_person : mom_id_entity]>
-      account_links                 : account_links
-      accounts                      : accounts
-      address_links                 : address_links
-      addresses                     : addresses
-      creation                      : creation
-      electric                      : electric
-      email_links                   : email_links
-      emails                        : emails
-      first_name                    : first_name
-      last_change                   : last_change
-      last_cid                      : last_cid
-      last_name                     : last_name
-      lifetime                      : lifetime
-          alive                         : lifetime.alive
-          finish                        : lifetime.finish
-          start                         : lifetime.start
-      middle_name                   : middle_name
-      phone_links                   : phone_links
-      phones                        : phones
-      pid                           : pid
-      property_links                : property_links
-      sailors                       : sailors
-      sex                           : sex
-      title                         : title
-      type_name                     : type_name
-      url_links                     : url_links
-      urls                          : urls
-      x_locked                      : x_locked
-    <SAW : PAP.Url [pap_url : mom_id_entity]>
-      companies                     : companies
-      company_links                 : company_links
-      creation                      : creation
-      desc                          : desc
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      person_links                  : person_links
-      persons                       : persons
-      pid                           : pid
-      subject_links                 : subject_links
-      type_name                     : type_name
-      value                         : value
-      x_locked                      : x_locked
-    <SAW : PAP.Link [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Link1 [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Address_Position [pap_address_position : mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : address, left
-      pid                           : pid
-      position                      : position
-          height                        : position.height
-          lat                           : position.lat
-          lon                           : position.lon
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      right                         : right
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Link2 [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      right                         : right
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Subject_has_Property [mom_id_entity]>
-      creation                      : creation
-      desc                          : desc
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left, subject
-      pid                           : pid
-      right                         : property, right
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : PAP.Person_has_Account [pap_person_has_account : mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left, person
-      pid                           : pid
-      right                         : account, right
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Regatta_Result []>
-      date                          : date
-      software                      : software
-      status                        : status
-    <SAW : SRM.Id_Entity [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Object [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM._Boat_Class_ [srm__boat_class_ : mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      name                          : name
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Boat_Class [srm_boat_class : srm__boat_class_ : mom_id_entity]>
-      beam                          : beam
-      boats                         : boats
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      loa                           : loa
-      max_crew                      : max_crew
-      name                          : name
-      pid                           : pid
-      sail_area                     : sail_area
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Handicap [srm_handicap : srm__boat_class_ : mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      name                          : name
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Link [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Link1 [mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : left
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Boat [srm_boat : mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      left                          : b_class, left
-      name                          : name
-      nation                        : nation
-      pid                           : pid
-      regatta_links                 : regatta_links
-      sail_number                   : sail_number
-      sail_number_x                 : sail_number_x
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Club [srm_club : mom_id_entity]>
-      creation                      : creation
-      electric                      : electric
-      last_change                   : last_change
-      last_cid                      : last_cid
-      long_name                     : long_name
-      name                          : name
-      pid                           : pid
-      type_name                     : type_name
-      x_locked                      : x_locked
-    <SAW : SRM.Regatta_Event [srm_regatta_event : mom_id_entity]>
-      club                          : club
-      creation                      : creation
-      date                          : date
-          alive                         : date.alive
-          finish                        : date.finish
-          start                         : date.start
-      desc                          : desc
-      electric                      : electric
-      is_cancelled                  : is_cancelled
-      last_change                   : last_change
-      last_cid                      : last_cid
-      name                          : name
-      perma_name                    : perma_name
-      pid                           : pid
-      regattas                      : regattas
-      type_name                     : type_name
-      x_locked                      : x_locked
-      year                          : year
     <SAW : SWP.Link [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -4213,6 +4393,7 @@ _test_q_able = """
     <SAW : SWP.Link1 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -4232,6 +4413,7 @@ _test_q_able = """
           finish                        : date_x.finish
           start                         : date_x.start
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, object
@@ -4272,6 +4454,7 @@ _test_q_able = """
           start                         : date.start
       directory                     : directory
       electric                      : electric
+      events                        : events
       hidden                        : hidden
       last_change                   : last_change
       last_cid                      : last_cid
@@ -4300,6 +4483,7 @@ _test_q_able = """
     <SAW : SWP.Picture [swp_picture : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : gallery, left
@@ -4325,6 +4509,7 @@ _test_q_able = """
           start                         : date.start
       download_name                 : download_name
       electric                      : electric
+      events                        : events
       hidden                        : hidden
       last_change                   : last_change
       last_cid                      : last_cid
@@ -4368,6 +4553,7 @@ _test_q_able = """
       creation                      : creation
       discards                      : discards
       electric                      : electric
+      events                        : events
       is_cancelled                  : is_cancelled
       kind                          : kind
       last_change                   : last_change
@@ -4392,6 +4578,7 @@ _test_q_able = """
       creation                      : creation
       discards                      : discards
       electric                      : electric
+      events                        : events
       is_cancelled                  : is_cancelled
       is_team_race                  : is_team_race
       kind                          : kind
@@ -4418,6 +4605,7 @@ _test_q_able = """
       creation                      : creation
       discards                      : discards
       electric                      : electric
+      events                        : events
       handicap                      : handicap
       is_cancelled                  : is_cancelled
       kind                          : kind
@@ -4442,6 +4630,7 @@ _test_q_able = """
       club                          : club
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, person
@@ -4453,6 +4642,7 @@ _test_q_able = """
     <SAW : SRM._MOM_Link_n_ [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -4463,6 +4653,7 @@ _test_q_able = """
     <SAW : SRM.Link2 [mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left
@@ -4474,6 +4665,7 @@ _test_q_able = """
       _crew                         : _crew
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : boat, left
@@ -4495,6 +4687,7 @@ _test_q_able = """
       creation                      : creation
       discarded                     : discarded
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : boat_in_regatta, left
@@ -4511,6 +4704,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       leader                        : leader
@@ -4524,6 +4718,7 @@ _test_q_able = """
     <SAW : SRM.Crew_Member [srm_crew_member : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       key                           : key
       last_change                   : last_change
       last_cid                      : last_cid
@@ -4536,6 +4731,7 @@ _test_q_able = """
     <SAW : SRM.Team_has_Boat_in_Regatta [srm_team_has_boat_in_regatta : mom_id_entity]>
       creation                      : creation
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, team
@@ -4547,6 +4743,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, subject
@@ -4558,6 +4755,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, subject
@@ -4569,6 +4767,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       extension                     : extension
       last_change                   : last_change
       last_cid                      : last_cid
@@ -4581,6 +4780,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, subject
@@ -4592,6 +4792,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : company, left, subject
@@ -4603,6 +4804,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, person, subject
@@ -4614,6 +4816,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       extension                     : extension
       last_change                   : last_change
       last_cid                      : last_cid
@@ -4626,6 +4829,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       extension                     : extension
       last_change                   : last_change
       last_cid                      : last_cid
@@ -4638,6 +4842,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : company, left, subject
@@ -4649,6 +4854,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, person, subject
@@ -4660,6 +4866,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : company, left, subject
@@ -4671,6 +4878,7 @@ _test_q_able = """
       creation                      : creation
       desc                          : desc
       electric                      : electric
+      events                        : events
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : left, person, subject
@@ -4688,6 +4896,7 @@ _test_qc_map = """
     <SAW : MOM.Id_Entity [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -4708,6 +4917,7 @@ _test_qc_map = """
     <SAW : MOM.Link [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification |
@@ -4717,6 +4927,7 @@ _test_qc_map = """
     <SAW : MOM.Link1 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification |
@@ -4726,6 +4937,7 @@ _test_qc_map = """
     <SAW : MOM._MOM_Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_in_Group | PAP.Company_has_Address | PAP.Compan
@@ -4736,6 +4948,7 @@ _test_qc_map = """
     <SAW : MOM.Link2 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_in_Group | PAP.Company_has_Address | PAP.Compan
@@ -4746,6 +4959,7 @@ _test_qc_map = """
     <SAW : MOM.Link3 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` ()>
@@ -4757,6 +4971,7 @@ _test_qc_map = """
     <SAW : MOM.Object [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -4765,6 +4980,7 @@ _test_qc_map = """
     <SAW : Auth.Id_Entity [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -4773,6 +4989,7 @@ _test_qc_map = """
     <SAW : Auth.Object [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -4783,6 +5000,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         enabled                   : auth__account_.enabled
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         name                      : auth__account_.name
@@ -4796,6 +5014,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         enabled                   : auth__account_.enabled
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         name                      : auth__account_.name
@@ -4815,6 +5034,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
         enabled                   : auth__account_.enabled
+        events                    : <SAW : Link_Ref_List `events`>
         group_links               : <SAW : Link_Ref_List `group_links`>
         groups                    : <SAW : Role_Ref_Set `groups`>
         last_change               : <SAW : Rev_Ref `last_change`>
@@ -4839,6 +5059,7 @@ _test_qc_map = """
         desc                      : auth_certificate.desc
         electric                  : mom_id_entity.electric
         email                     : auth_certificate.email
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pem                       : auth_certificate.pem
@@ -4859,6 +5080,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : auth_group.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         name                      : auth_group.name
@@ -4868,6 +5090,7 @@ _test_qc_map = """
     <SAW : Auth.Link [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification |
@@ -4877,6 +5100,7 @@ _test_qc_map = """
     <SAW : Auth._MOM_Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_in_Group)>
@@ -4887,6 +5111,7 @@ _test_qc_map = """
     <SAW : Auth.Link2 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_in_Group)>
@@ -4898,6 +5123,7 @@ _test_qc_map = """
         account                   : auth_account_in_group.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         group                     : auth_account_in_group.right
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -4909,6 +5135,7 @@ _test_qc_map = """
     <SAW : Auth.Link1 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (Auth.Account_Activation | Auth.Account_EMail_Verification |
@@ -4919,6 +5146,7 @@ _test_qc_map = """
         account                   : <SAW : Account `left` (Auth.Account_Activation | Auth.Account_EMail_Verification
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Account `left` (Auth.Account_Activation | Auth.Account_EMail_Verification
@@ -4929,6 +5157,7 @@ _test_qc_map = """
         account                   : auth_account_activation.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : auth_account_activation.left
@@ -4939,6 +5168,7 @@ _test_qc_map = """
         account                   : auth_account_password_change_required.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : auth_account_password_change_required.left
@@ -4949,6 +5179,7 @@ _test_qc_map = """
         account                   : <SAW : Account `left` (Auth.Account_EMail_Verification | Auth.Account_Password_R
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         expires                   : <SAW : Date-Time `expires` (Auth.Account_EMail_Verification | Auth.Account_Passw
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -4961,6 +5192,7 @@ _test_qc_map = """
         account                   : auth_account_email_verification.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         expires                   : auth_account_email_verification.expires
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -4974,6 +5206,7 @@ _test_qc_map = """
         account                   : auth_account_password_reset.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         expires                   : auth_account_password_reset.expires
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -4986,6 +5219,7 @@ _test_qc_map = """
     <SAW : EVT.Id_Entity [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -4994,6 +5228,7 @@ _test_qc_map = """
     <SAW : EVT.Object [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -5003,6 +5238,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : evt_calendar.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         name                      : evt_calendar.name
@@ -5012,6 +5248,7 @@ _test_qc_map = """
     <SAW : EVT.Link [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Rec
@@ -5021,15 +5258,549 @@ _test_qc_map = """
     <SAW : EVT.Link1 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (EVT.Event | EVT.Event_occurs | EVT.Recurrence_Rule | EVT.Rec
         pid                       : mom_id_entity.pid
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
+    <SAW : EVT.Event [evt_event : mom_id_entity]>
+        calendar                  : evt_event.calendar
+        creation                  : <SAW : Rev_Ref `creation`>
+        date                      : <Col-Mapper for MOM.Date_Interval>
+            alive                 : <SAW : Boolean `date.alive`>
+            finish                : evt_event.date__finish
+            start                 : evt_event.date__start
+        date.alive                : <SAW : Boolean `date.alive`>
+        date.finish               : evt_event.date__finish
+        date.start                : evt_event.date__start
+        detail                    : evt_event.detail
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : evt_event.left
+        object                    : evt_event.left
+        occurs                    : <SAW : Link_Ref_List `occurs`>
+        pid                       : mom_id_entity.pid
+        recurrence                : <SAW : Link_Ref `recurrence`>
+        short_title               : evt_event.short_title
+        time                      : <Col-Mapper for MOM.Time_Interval>
+            finish                : evt_event.time__finish
+            start                 : evt_event.time__start
+        time.finish               : evt_event.time__finish
+        time.start                : evt_event.time__start
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        date                      : evt_event_occurs.date
+        detail                    : <SAW : String `detail`>
+        electric                  : mom_id_entity.electric
+        essence                   : <SAW : None `essence`>
+        event                     : evt_event_occurs.left
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : evt_event_occurs.left
+        pid                       : mom_id_entity.pid
+        short_title               : <SAW : String `short_title`>
+        time                      : <Col-Mapper for MOM.Time_Interval>
+            finish                : evt_event_occurs.time__finish
+            start                 : evt_event_occurs.time__start
+        time.finish               : evt_event_occurs.time__finish
+        time.start                : evt_event_occurs.time__start
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (EVT.Recurrence_Rule | EVT.Recurrence_Spec)>
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : EVT.Recurrence_Spec [evt_recurrence_spec : mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        date_exceptions           : evt_recurrence_spec.date_exceptions
+        dates                     : evt_recurrence_spec.dates
+        electric                  : mom_id_entity.electric
+        event                     : evt_recurrence_spec.left
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : evt_recurrence_spec.left
+        pid                       : mom_id_entity.pid
+        rules                     : <SAW : Link_Ref_List `rules`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : EVT.Recurrence_Rule [evt_recurrence_rule : mom_id_entity]>
+        count                     : evt_recurrence_rule.count
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : evt_recurrence_rule.desc
+        easter_offset             : evt_recurrence_rule.easter_offset
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        finish                    : evt_recurrence_rule.finish
+        is_exception              : evt_recurrence_rule.is_exception
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : evt_recurrence_rule.left
+        month                     : evt_recurrence_rule.month
+        month_day                 : evt_recurrence_rule.month_day
+        period                    : evt_recurrence_rule.period
+        pid                       : mom_id_entity.pid
+        recurrence_spec           : evt_recurrence_rule.left
+        restrict_pos              : evt_recurrence_rule.restrict_pos
+        start                     : evt_recurrence_rule.start
+        type_name                 : mom_id_entity.type_name
+        unit                      : evt_recurrence_rule.unit
+        week                      : evt_recurrence_rule.week
+        week_day                  : evt_recurrence_rule.week_day
+        x_locked                  : mom_id_entity.x_locked
+        year_day                  : evt_recurrence_rule.year_day
+    <SAW : PAP.Id_Entity [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Object [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Property [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : <SAW : String `desc` (PAP.Address | PAP.Email | PAP.Phone | PAP.Url)>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        pid                       : mom_id_entity.pid
+        subject_links             : <SAW : Link_Ref_List `subject_links`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Address [pap_address : mom_id_entity]>
+        __raw_city                : pap_address.__raw_city
+        __raw_country             : pap_address.__raw_country
+        __raw_region              : pap_address.__raw_region
+        __raw_street              : pap_address.__raw_street
+        __raw_zip                 : pap_address.__raw_zip
+        city                      : pap_address.city
+        companies                 : <SAW : Role_Ref_Set `companies`>
+        company_links             : <SAW : Link_Ref_List `company_links`>
+        country                   : pap_address.country
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : pap_address.desc
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        gps                       : <SAW : Link_Ref `gps`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        person_links              : <SAW : Link_Ref_List `person_links`>
+        persons                   : <SAW : Role_Ref_Set `persons`>
+        pid                       : mom_id_entity.pid
+        region                    : pap_address.region
+        street                    : pap_address.street
+        subject_links             : <SAW : Link_Ref_List `subject_links`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+        zip                       : pap_address.zip
+    <SAW : PAP.Subject [mom_id_entity]>
+        address_links             : <SAW : Link_Ref_List `address_links`>
+        addresses                 : <SAW : Role_Ref_Set `addresses`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        email_links               : <SAW : Link_Ref_List `email_links`>
+        emails                    : <SAW : Role_Ref_Set `emails`>
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>
+        phone_links               : <SAW : Link_Ref_List `phone_links`>
+        phones                    : <SAW : Role_Ref_Set `phones`>
+        pid                       : mom_id_entity.pid
+        property_links            : <SAW : Link_Ref_List `property_links`>
+        type_name                 : mom_id_entity.type_name
+        url_links                 : <SAW : Link_Ref_List `url_links`>
+        urls                      : <SAW : Role_Ref_Set `urls`>
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Legal_Entity [mom_id_entity]>
+        address_links             : <SAW : Link_Ref_List `address_links`>
+        addresses                 : <SAW : Role_Ref_Set `addresses`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        email_links               : <SAW : Link_Ref_List `email_links`>
+        emails                    : <SAW : Role_Ref_Set `emails`>
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
+        name                      : <SAW : String `name` (PAP.Company)>
+        phone_links               : <SAW : Link_Ref_List `phone_links`>
+        phones                    : <SAW : Role_Ref_Set `phones`>
+        pid                       : mom_id_entity.pid
+        property_links            : <SAW : Link_Ref_List `property_links`>
+        short_name                : <SAW : String `short_name` (PAP.Company)>
+        type_name                 : mom_id_entity.type_name
+        url_links                 : <SAW : Link_Ref_List `url_links`>
+        urls                      : <SAW : Role_Ref_Set `urls`>
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Company [pap_company : mom_id_entity]>
+        __raw_name                : pap_company.__raw_name
+        __raw_registered_in       : pap_company.__raw_registered_in
+        __raw_short_name          : pap_company.__raw_short_name
+        address_links             : <SAW : Link_Ref_List `address_links`>
+        addresses                 : <SAW : Role_Ref_Set `addresses`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        email_links               : <SAW : Link_Ref_List `email_links`>
+        emails                    : <SAW : Role_Ref_Set `emails`>
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        lifetime                  : <Col-Mapper for MOM.Date_Interval>
+            alive                 : <SAW : Boolean `lifetime.alive`>
+            finish                : pap_company.lifetime__finish
+            start                 : pap_company.lifetime__start
+        lifetime.alive            : <SAW : Boolean `lifetime.alive`>
+        lifetime.finish           : pap_company.lifetime__finish
+        lifetime.start            : pap_company.lifetime__start
+        name                      : pap_company.name
+        phone_links               : <SAW : Link_Ref_List `phone_links`>
+        phones                    : <SAW : Role_Ref_Set `phones`>
+        pid                       : mom_id_entity.pid
+        property_links            : <SAW : Link_Ref_List `property_links`>
+        registered_in             : pap_company.registered_in
+        short_name                : pap_company.short_name
+        type_name                 : mom_id_entity.type_name
+        url_links                 : <SAW : Link_Ref_List `url_links`>
+        urls                      : <SAW : Role_Ref_Set `urls`>
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Email [pap_email : mom_id_entity]>
+        __raw_address             : pap_email.__raw_address
+        address                   : pap_email.address
+        companies                 : <SAW : Role_Ref_Set `companies`>
+        company_links             : <SAW : Link_Ref_List `company_links`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : pap_email.desc
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        person_links              : <SAW : Link_Ref_List `person_links`>
+        persons                   : <SAW : Role_Ref_Set `persons`>
+        pid                       : mom_id_entity.pid
+        subject_links             : <SAW : Link_Ref_List `subject_links`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Phone [pap_phone : mom_id_entity]>
+        area_code                 : pap_phone.area_code
+        companies                 : <SAW : Role_Ref_Set `companies`>
+        company_links             : <SAW : Link_Ref_List `company_links`>
+        country_code              : pap_phone.country_code
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : pap_phone.desc
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        number                    : pap_phone.number
+        person_links              : <SAW : Link_Ref_List `person_links`>
+        persons                   : <SAW : Role_Ref_Set `persons`>
+        pid                       : mom_id_entity.pid
+        subject_links             : <SAW : Link_Ref_List `subject_links`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Person [pap_person : mom_id_entity]>
+        __raw_first_name          : pap_person.__raw_first_name
+        __raw_last_name           : pap_person.__raw_last_name
+        __raw_middle_name         : pap_person.__raw_middle_name
+        __raw_title               : pap_person.__raw_title
+        account_links             : <SAW : Link_Ref_List `account_links`>
+        accounts                  : <SAW : Role_Ref_Set `accounts`>
+        address_links             : <SAW : Link_Ref_List `address_links`>
+        addresses                 : <SAW : Role_Ref_Set `addresses`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        email_links               : <SAW : Link_Ref_List `email_links`>
+        emails                    : <SAW : Role_Ref_Set `emails`>
+        events                    : <SAW : Link_Ref_List `events`>
+        first_name                : pap_person.first_name
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        last_name                 : pap_person.last_name
+        lifetime                  : <Col-Mapper for MOM.Date_Interval>
+            alive                 : <SAW : Boolean `lifetime.alive`>
+            finish                : pap_person.lifetime__finish
+            start                 : pap_person.lifetime__start
+        lifetime.alive            : <SAW : Boolean `lifetime.alive`>
+        lifetime.finish           : pap_person.lifetime__finish
+        lifetime.start            : pap_person.lifetime__start
+        middle_name               : pap_person.middle_name
+        phone_links               : <SAW : Link_Ref_List `phone_links`>
+        phones                    : <SAW : Role_Ref_Set `phones`>
+        pid                       : mom_id_entity.pid
+        property_links            : <SAW : Link_Ref_List `property_links`>
+        sailors                   : <SAW : Link_Ref_List `sailors`>
+        sex                       : pap_person.sex
+        title                     : pap_person.title
+        type_name                 : mom_id_entity.type_name
+        url_links                 : <SAW : Link_Ref_List `url_links`>
+        urls                      : <SAW : Role_Ref_Set `urls`>
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Url [pap_url : mom_id_entity]>
+        companies                 : <SAW : Role_Ref_Set `companies`>
+        company_links             : <SAW : Link_Ref_List `company_links`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : pap_url.desc
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        person_links              : <SAW : Link_Ref_List `person_links`>
+        persons                   : <SAW : Role_Ref_Set `persons`>
+        pid                       : mom_id_entity.pid
+        subject_links             : <SAW : Link_Ref_List `subject_links`>
+        type_name                 : mom_id_entity.type_name
+        value                     : pap_url.value
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Link [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (PAP.Address_Position | PAP.Company_has_Address | PAP.Company
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Link1 [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (PAP.Address_Position)>
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Address_Position [pap_address_position : mom_id_entity]>
+        address                   : pap_address_position.left
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : pap_address_position.left
+        pid                       : mom_id_entity.pid
+        position                  : <Col-Mapper for MOM.Position>
+            ___raw_lat            : pap_address_position.position____raw_lat
+            ___raw_lon            : pap_address_position.position____raw_lon
+            height                : pap_address_position.position__height
+            lat                   : pap_address_position.position__lat
+            lon                   : pap_address_position.position__lon
+        position.height           : pap_address_position.position__height
+        position.lat              : pap_address_position.position__lat
+        position.lon              : pap_address_position.position__lon
+        position____raw_lat       : pap_address_position.position____raw_lat
+        position____raw_lon       : pap_address_position.position____raw_lon
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Compan
+        pid                       : mom_id_entity.pid
+        right                     : <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Comp
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Link2 [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Compan
+        pid                       : mom_id_entity.pid
+        right                     : <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Comp
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Subject_has_Property [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        desc                      : <SAW : String `desc` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Comp
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Subject `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Com
+        pid                       : mom_id_entity.pid
+        property                  : <SAW : Property `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.C
+        right                     : <SAW : Property `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.C
+        subject                   : <SAW : Subject `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Com
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Person_has_Account [pap_person_has_account : mom_id_entity]>
+        account                   : pap_person_has_account.right
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : pap_person_has_account.left
+        person                    : pap_person_has_account.left
+        pid                       : mom_id_entity.pid
+        right                     : pap_person_has_account.right
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Id_Entity [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Object [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM._Boat_Class_ [srm__boat_class_ : mom_id_entity]>
+        __raw_name                : srm__boat_class_.__raw_name
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        name                      : srm__boat_class_.name
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Boat_Class [srm_boat_class : srm__boat_class_ : mom_id_entity]>
+        __raw_name                : srm__boat_class_.__raw_name
+        beam                      : srm_boat_class.beam
+        boats                     : <SAW : Link_Ref_List `boats`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        loa                       : srm_boat_class.loa
+        max_crew                  : srm_boat_class.max_crew
+        name                      : srm__boat_class_.name
+        pid                       : mom_id_entity.pid
+        sail_area                 : srm_boat_class.sail_area
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Handicap [srm_handicap : srm__boat_class_ : mom_id_entity]>
+        __raw_name                : srm__boat_class_.__raw_name
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        name                      : srm__boat_class_.name
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Link [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (SRM.Boat | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Race_
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Link1 [mom_id_entity]>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : <SAW : Left `left` (SRM.Boat | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Boat [srm_boat : mom_id_entity]>
+        __raw_sail_number         : srm_boat.__raw_sail_number
+        __raw_sail_number_x       : srm_boat.__raw_sail_number_x
+        b_class                   : srm_boat.left
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        left                      : srm_boat.left
+        name                      : srm_boat.name
+        nation                    : srm_boat.nation
+        pid                       : mom_id_entity.pid
+        regatta_links             : <SAW : Link_Ref_List `regatta_links`>
+        sail_number               : srm_boat.sail_number
+        sail_number_x             : srm_boat.sail_number_x
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Club [srm_club : mom_id_entity]>
+        __raw_name                : srm_club.__raw_name
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        long_name                 : srm_club.long_name
+        name                      : srm_club.name
+        pid                       : mom_id_entity.pid
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+    <SAW : SRM.Regatta_Event [srm_regatta_event : mom_id_entity]>
+        __raw_name                : srm_regatta_event.__raw_name
+        club                      : srm_regatta_event.club
+        creation                  : <SAW : Rev_Ref `creation`>
+        date                      : <Col-Mapper for MOM.Date_Interval_C>
+            alive                 : <SAW : Boolean `date.alive`>
+            finish                : srm_regatta_event.date__finish
+            start                 : srm_regatta_event.date__start
+        date.alive                : <SAW : Boolean `date.alive`>
+        date.finish               : srm_regatta_event.date__finish
+        date.start                : srm_regatta_event.date__start
+        desc                      : srm_regatta_event.desc
+        electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
+        is_cancelled              : srm_regatta_event.is_cancelled
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        name                      : srm_regatta_event.name
+        perma_name                : srm_regatta_event.perma_name
+        pid                       : mom_id_entity.pid
+        regattas                  : <SAW : Link_Ref_List `regattas`>
+        type_name                 : mom_id_entity.type_name
+        x_locked                  : mom_id_entity.x_locked
+        year                      : <SAW : Int `year`>
     <SAW : SWP.Id_Entity [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -5038,6 +5809,7 @@ _test_qc_map = """
     <SAW : SWP.Object [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         pid                       : mom_id_entity.pid
@@ -5048,6 +5820,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         date                      : <SAW : Date_Interval `date` (SWP.Gallery | SWP.Page | SWP.Referral)>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         hidden                    : <SAW : Boolean `hidden` (SWP.Gallery | SWP.Page | SWP.Referral)>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -5111,505 +5884,10 @@ _test_qc_map = """
         type_name                 : mom_id_entity.type_name
         x_locked                  : mom_id_entity.x_locked
         year                      : swp_page_y.year
-    <SAW : EVT.Event [evt_event : mom_id_entity]>
-        calendar                  : evt_event.calendar
-        creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval>
-            alive                 : <SAW : Boolean `date.alive`>
-            finish                : evt_event.date__finish
-            start                 : evt_event.date__start
-        date.alive                : <SAW : Boolean `date.alive`>
-        date.finish               : evt_event.date__finish
-        date.start                : evt_event.date__start
-        detail                    : evt_event.detail
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : evt_event.left
-        object                    : evt_event.left
-        occurs                    : <SAW : Link_Ref_List `occurs`>
-        pid                       : mom_id_entity.pid
-        recurrence                : <SAW : Link_Ref `recurrence`>
-        short_title               : evt_event.short_title
-        time                      : <Col-Mapper for MOM.Time_Interval>
-            finish                : evt_event.time__finish
-            start                 : evt_event.time__start
-        time.finish               : evt_event.time__finish
-        time.start                : evt_event.time__start
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : EVT.Event_occurs [evt_event_occurs : mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        date                      : evt_event_occurs.date
-        electric                  : mom_id_entity.electric
-        event                     : evt_event_occurs.left
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : evt_event_occurs.left
-        pid                       : mom_id_entity.pid
-        time                      : <Col-Mapper for MOM.Time_Interval>
-            finish                : evt_event_occurs.time__finish
-            start                 : evt_event_occurs.time__start
-        time.finish               : evt_event_occurs.time__finish
-        time.start                : evt_event_occurs.time__start
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : EVT._Recurrence_Mixin_ [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (EVT.Recurrence_Rule | EVT.Recurrence_Spec)>
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : EVT.Recurrence_Spec [evt_recurrence_spec : mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        date_exceptions           : evt_recurrence_spec.date_exceptions
-        dates                     : evt_recurrence_spec.dates
-        electric                  : mom_id_entity.electric
-        event                     : evt_recurrence_spec.left
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : evt_recurrence_spec.left
-        pid                       : mom_id_entity.pid
-        rules                     : <SAW : Link_Ref_List `rules`>
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : EVT.Recurrence_Rule [evt_recurrence_rule : mom_id_entity]>
-        count                     : evt_recurrence_rule.count
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : evt_recurrence_rule.desc
-        easter_offset             : evt_recurrence_rule.easter_offset
-        electric                  : mom_id_entity.electric
-        finish                    : evt_recurrence_rule.finish
-        is_exception              : evt_recurrence_rule.is_exception
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : evt_recurrence_rule.left
-        month                     : evt_recurrence_rule.month
-        month_day                 : evt_recurrence_rule.month_day
-        period                    : evt_recurrence_rule.period
-        pid                       : mom_id_entity.pid
-        recurrence_spec           : evt_recurrence_rule.left
-        restrict_pos              : evt_recurrence_rule.restrict_pos
-        start                     : evt_recurrence_rule.start
-        type_name                 : mom_id_entity.type_name
-        unit                      : evt_recurrence_rule.unit
-        week                      : evt_recurrence_rule.week
-        week_day                  : evt_recurrence_rule.week_day
-        x_locked                  : mom_id_entity.x_locked
-        year_day                  : evt_recurrence_rule.year_day
-    <SAW : PAP.Id_Entity [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Object [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Property [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : <SAW : String `desc` (PAP.Address | PAP.Email | PAP.Phone | PAP.Url)>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        pid                       : mom_id_entity.pid
-        subject_links             : <SAW : Link_Ref_List `subject_links`>
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Address [pap_address : mom_id_entity]>
-        __raw_city                : pap_address.__raw_city
-        __raw_country             : pap_address.__raw_country
-        __raw_region              : pap_address.__raw_region
-        __raw_street              : pap_address.__raw_street
-        __raw_zip                 : pap_address.__raw_zip
-        city                      : pap_address.city
-        companies                 : <SAW : Role_Ref_Set `companies`>
-        company_links             : <SAW : Link_Ref_List `company_links`>
-        country                   : pap_address.country
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : pap_address.desc
-        electric                  : mom_id_entity.electric
-        gps                       : <SAW : Link_Ref `gps`>
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        person_links              : <SAW : Link_Ref_List `person_links`>
-        persons                   : <SAW : Role_Ref_Set `persons`>
-        pid                       : mom_id_entity.pid
-        region                    : pap_address.region
-        street                    : pap_address.street
-        subject_links             : <SAW : Link_Ref_List `subject_links`>
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-        zip                       : pap_address.zip
-    <SAW : PAP.Subject [mom_id_entity]>
-        address_links             : <SAW : Link_Ref_List `address_links`>
-        addresses                 : <SAW : Role_Ref_Set `addresses`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        email_links               : <SAW : Link_Ref_List `email_links`>
-        emails                    : <SAW : Role_Ref_Set `emails`>
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>
-        phone_links               : <SAW : Link_Ref_List `phone_links`>
-        phones                    : <SAW : Role_Ref_Set `phones`>
-        pid                       : mom_id_entity.pid
-        property_links            : <SAW : Link_Ref_List `property_links`>
-        type_name                 : mom_id_entity.type_name
-        url_links                 : <SAW : Link_Ref_List `url_links`>
-        urls                      : <SAW : Role_Ref_Set `urls`>
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Legal_Entity [mom_id_entity]>
-        address_links             : <SAW : Link_Ref_List `address_links`>
-        addresses                 : <SAW : Role_Ref_Set `addresses`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        email_links               : <SAW : Link_Ref_List `email_links`>
-        emails                    : <SAW : Role_Ref_Set `emails`>
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
-        name                      : <SAW : String `name` (PAP.Company)>
-        phone_links               : <SAW : Link_Ref_List `phone_links`>
-        phones                    : <SAW : Role_Ref_Set `phones`>
-        pid                       : mom_id_entity.pid
-        property_links            : <SAW : Link_Ref_List `property_links`>
-        short_name                : <SAW : String `short_name` (PAP.Company)>
-        type_name                 : mom_id_entity.type_name
-        url_links                 : <SAW : Link_Ref_List `url_links`>
-        urls                      : <SAW : Role_Ref_Set `urls`>
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Company [pap_company : mom_id_entity]>
-        __raw_name                : pap_company.__raw_name
-        __raw_registered_in       : pap_company.__raw_registered_in
-        __raw_short_name          : pap_company.__raw_short_name
-        address_links             : <SAW : Link_Ref_List `address_links`>
-        addresses                 : <SAW : Role_Ref_Set `addresses`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        email_links               : <SAW : Link_Ref_List `email_links`>
-        emails                    : <SAW : Role_Ref_Set `emails`>
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        lifetime                  : <Col-Mapper for MOM.Date_Interval>
-            alive                 : <SAW : Boolean `lifetime.alive`>
-            finish                : pap_company.lifetime__finish
-            start                 : pap_company.lifetime__start
-        lifetime.alive            : <SAW : Boolean `lifetime.alive`>
-        lifetime.finish           : pap_company.lifetime__finish
-        lifetime.start            : pap_company.lifetime__start
-        name                      : pap_company.name
-        phone_links               : <SAW : Link_Ref_List `phone_links`>
-        phones                    : <SAW : Role_Ref_Set `phones`>
-        pid                       : mom_id_entity.pid
-        property_links            : <SAW : Link_Ref_List `property_links`>
-        registered_in             : pap_company.registered_in
-        short_name                : pap_company.short_name
-        type_name                 : mom_id_entity.type_name
-        url_links                 : <SAW : Link_Ref_List `url_links`>
-        urls                      : <SAW : Role_Ref_Set `urls`>
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Email [pap_email : mom_id_entity]>
-        __raw_address             : pap_email.__raw_address
-        address                   : pap_email.address
-        companies                 : <SAW : Role_Ref_Set `companies`>
-        company_links             : <SAW : Link_Ref_List `company_links`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : pap_email.desc
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        person_links              : <SAW : Link_Ref_List `person_links`>
-        persons                   : <SAW : Role_Ref_Set `persons`>
-        pid                       : mom_id_entity.pid
-        subject_links             : <SAW : Link_Ref_List `subject_links`>
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Phone [pap_phone : mom_id_entity]>
-        area_code                 : pap_phone.area_code
-        companies                 : <SAW : Role_Ref_Set `companies`>
-        company_links             : <SAW : Link_Ref_List `company_links`>
-        country_code              : pap_phone.country_code
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : pap_phone.desc
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        number                    : pap_phone.number
-        person_links              : <SAW : Link_Ref_List `person_links`>
-        persons                   : <SAW : Role_Ref_Set `persons`>
-        pid                       : mom_id_entity.pid
-        subject_links             : <SAW : Link_Ref_List `subject_links`>
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Person [pap_person : mom_id_entity]>
-        __raw_first_name          : pap_person.__raw_first_name
-        __raw_last_name           : pap_person.__raw_last_name
-        __raw_middle_name         : pap_person.__raw_middle_name
-        __raw_title               : pap_person.__raw_title
-        account_links             : <SAW : Link_Ref_List `account_links`>
-        accounts                  : <SAW : Role_Ref_Set `accounts`>
-        address_links             : <SAW : Link_Ref_List `address_links`>
-        addresses                 : <SAW : Role_Ref_Set `addresses`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        email_links               : <SAW : Link_Ref_List `email_links`>
-        emails                    : <SAW : Role_Ref_Set `emails`>
-        first_name                : pap_person.first_name
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        last_name                 : pap_person.last_name
-        lifetime                  : <Col-Mapper for MOM.Date_Interval>
-            alive                 : <SAW : Boolean `lifetime.alive`>
-            finish                : pap_person.lifetime__finish
-            start                 : pap_person.lifetime__start
-        lifetime.alive            : <SAW : Boolean `lifetime.alive`>
-        lifetime.finish           : pap_person.lifetime__finish
-        lifetime.start            : pap_person.lifetime__start
-        middle_name               : pap_person.middle_name
-        phone_links               : <SAW : Link_Ref_List `phone_links`>
-        phones                    : <SAW : Role_Ref_Set `phones`>
-        pid                       : mom_id_entity.pid
-        property_links            : <SAW : Link_Ref_List `property_links`>
-        sailors                   : <SAW : Link_Ref_List `sailors`>
-        sex                       : pap_person.sex
-        title                     : pap_person.title
-        type_name                 : mom_id_entity.type_name
-        url_links                 : <SAW : Link_Ref_List `url_links`>
-        urls                      : <SAW : Role_Ref_Set `urls`>
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Url [pap_url : mom_id_entity]>
-        companies                 : <SAW : Role_Ref_Set `companies`>
-        company_links             : <SAW : Link_Ref_List `company_links`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : pap_url.desc
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        person_links              : <SAW : Link_Ref_List `person_links`>
-        persons                   : <SAW : Role_Ref_Set `persons`>
-        pid                       : mom_id_entity.pid
-        subject_links             : <SAW : Link_Ref_List `subject_links`>
-        type_name                 : mom_id_entity.type_name
-        value                     : pap_url.value
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Link [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (PAP.Address_Position | PAP.Company_has_Address | PAP.Company
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Link1 [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (PAP.Address_Position)>
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Address_Position [pap_address_position : mom_id_entity]>
-        address                   : pap_address_position.left
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : pap_address_position.left
-        pid                       : mom_id_entity.pid
-        position                  : <Col-Mapper for MOM.Position>
-            ___raw_lat            : pap_address_position.position____raw_lat
-            ___raw_lon            : pap_address_position.position____raw_lon
-            height                : pap_address_position.position__height
-            lat                   : pap_address_position.position__lat
-            lon                   : pap_address_position.position__lon
-        position.height           : pap_address_position.position__height
-        position.lat              : pap_address_position.position__lat
-        position.lon              : pap_address_position.position__lon
-        position____raw_lat       : pap_address_position.position____raw_lat
-        position____raw_lon       : pap_address_position.position____raw_lon
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP._MOM_Link_n_ [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Compan
-        pid                       : mom_id_entity.pid
-        right                     : <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Comp
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Link2 [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Compan
-        pid                       : mom_id_entity.pid
-        right                     : <SAW : Right `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Comp
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Subject_has_Property [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        desc                      : <SAW : String `desc` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Comp
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Subject `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Com
-        pid                       : mom_id_entity.pid
-        property                  : <SAW : Property `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.C
-        right                     : <SAW : Property `right` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.C
-        subject                   : <SAW : Subject `left` (PAP.Company_has_Address | PAP.Company_has_Email | PAP.Com
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : PAP.Person_has_Account [pap_person_has_account : mom_id_entity]>
-        account                   : pap_person_has_account.right
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : pap_person_has_account.left
-        person                    : pap_person_has_account.left
-        pid                       : mom_id_entity.pid
-        right                     : pap_person_has_account.right
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Id_Entity [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Object [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM._Boat_Class_ [srm__boat_class_ : mom_id_entity]>
-        __raw_name                : srm__boat_class_.__raw_name
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        name                      : srm__boat_class_.name
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Boat_Class [srm_boat_class : srm__boat_class_ : mom_id_entity]>
-        __raw_name                : srm__boat_class_.__raw_name
-        beam                      : srm_boat_class.beam
-        boats                     : <SAW : Link_Ref_List `boats`>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        loa                       : srm_boat_class.loa
-        max_crew                  : srm_boat_class.max_crew
-        name                      : srm__boat_class_.name
-        pid                       : mom_id_entity.pid
-        sail_area                 : srm_boat_class.sail_area
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Handicap [srm_handicap : srm__boat_class_ : mom_id_entity]>
-        __raw_name                : srm__boat_class_.__raw_name
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        name                      : srm__boat_class_.name
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Link [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (SRM.Boat | SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Race_
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Link1 [mom_id_entity]>
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : <SAW : Left `left` (SRM.Boat | SRM.Race_Result | SRM.Regatta | SRM.Sailor | SRM.
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Boat [srm_boat : mom_id_entity]>
-        __raw_sail_number         : srm_boat.__raw_sail_number
-        __raw_sail_number_x       : srm_boat.__raw_sail_number_x
-        b_class                   : srm_boat.left
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        left                      : srm_boat.left
-        name                      : srm_boat.name
-        nation                    : srm_boat.nation
-        pid                       : mom_id_entity.pid
-        regatta_links             : <SAW : Link_Ref_List `regatta_links`>
-        sail_number               : srm_boat.sail_number
-        sail_number_x             : srm_boat.sail_number_x
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Club [srm_club : mom_id_entity]>
-        __raw_name                : srm_club.__raw_name
-        creation                  : <SAW : Rev_Ref `creation`>
-        electric                  : mom_id_entity.electric
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        long_name                 : srm_club.long_name
-        name                      : srm_club.name
-        pid                       : mom_id_entity.pid
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-    <SAW : SRM.Regatta_Event [srm_regatta_event : mom_id_entity]>
-        __raw_name                : srm_regatta_event.__raw_name
-        club                      : srm_regatta_event.club
-        creation                  : <SAW : Rev_Ref `creation`>
-        date                      : <Col-Mapper for MOM.Date_Interval_C>
-            alive                 : <SAW : Boolean `date.alive`>
-            finish                : srm_regatta_event.date__finish
-            start                 : srm_regatta_event.date__start
-        date.alive                : <SAW : Boolean `date.alive`>
-        date.finish               : srm_regatta_event.date__finish
-        date.start                : srm_regatta_event.date__start
-        desc                      : srm_regatta_event.desc
-        electric                  : mom_id_entity.electric
-        is_cancelled              : srm_regatta_event.is_cancelled
-        last_change               : <SAW : Rev_Ref `last_change`>
-        last_cid                  : mom_id_entity.last_cid
-        name                      : srm_regatta_event.name
-        perma_name                : srm_regatta_event.perma_name
-        pid                       : mom_id_entity.pid
-        regattas                  : <SAW : Link_Ref_List `regattas`>
-        type_name                 : mom_id_entity.type_name
-        x_locked                  : mom_id_entity.x_locked
-        year                      : <SAW : Int `year`>
     <SAW : SWP.Link [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (SWP.Clip_O | SWP.Picture)>
@@ -5619,6 +5897,7 @@ _test_qc_map = """
     <SAW : SWP.Link1 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (SWP.Clip_O | SWP.Picture)>
@@ -5644,6 +5923,7 @@ _test_qc_map = """
         date_x.finish             : swp_clip_o.date_x__finish
         date_x.start              : swp_clip_o.date_x__start
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : swp_clip_o.left
@@ -5691,6 +5971,7 @@ _test_qc_map = """
         date.start                : swp_gallery.date__start
         directory                 : swp_gallery.directory
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         hidden                    : swp_gallery.hidden
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -5705,6 +5986,7 @@ _test_qc_map = """
     <SAW : SWP.Picture [swp_picture : mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         gallery                   : swp_picture.left
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -5744,6 +6026,7 @@ _test_qc_map = """
         date.start                : swp_referral.date__start
         download_name             : swp_referral.download_name
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         hidden                    : swp_referral.hidden
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -5791,6 +6074,7 @@ _test_qc_map = """
         discards                  : srm_regatta.discards
         electric                  : mom_id_entity.electric
         event                     : srm_regatta.left
+        events                    : <SAW : Link_Ref_List `events`>
         is_cancelled              : srm_regatta.is_cancelled
         kind                      : srm_regatta.kind
         last_change               : <SAW : Rev_Ref `last_change`>
@@ -5819,6 +6103,7 @@ _test_qc_map = """
         discards                  : srm_regatta.discards
         electric                  : mom_id_entity.electric
         event                     : srm_regatta.left
+        events                    : <SAW : Link_Ref_List `events`>
         is_cancelled              : srm_regatta.is_cancelled
         is_team_race              : srm_regatta_c.is_team_race
         kind                      : srm_regatta.kind
@@ -5849,6 +6134,7 @@ _test_qc_map = """
         discards                  : srm_regatta.discards
         electric                  : mom_id_entity.electric
         event                     : srm_regatta.left
+        events                    : <SAW : Link_Ref_List `events`>
         handicap                  : <SAW : Blob `handicap`>
         is_cancelled              : srm_regatta.is_cancelled
         kind                      : srm_regatta.kind
@@ -5877,6 +6163,7 @@ _test_qc_map = """
         club                      : srm_sailor.club
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : srm_sailor.left
@@ -5889,6 +6176,7 @@ _test_qc_map = """
     <SAW : SRM._MOM_Link_n_ [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Team_has_Boat_in
@@ -5899,6 +6187,7 @@ _test_qc_map = """
     <SAW : SRM.Link2 [mom_id_entity]>
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Left `left` (SRM.Boat_in_Regatta | SRM.Crew_Member | SRM.Team_has_Boat_in
@@ -5911,6 +6200,7 @@ _test_qc_map = """
         boat                      : srm_boat_in_regatta.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : srm_boat_in_regatta.left
@@ -5934,6 +6224,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         discarded                 : srm_race_result.discarded
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : srm_race_result.left
@@ -5951,6 +6242,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : srm_team.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         leader                    : srm_team.leader
@@ -5966,6 +6258,7 @@ _test_qc_map = """
         boat_in_regatta           : srm_crew_member.left
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         key                       : srm_crew_member.key
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -5980,6 +6273,7 @@ _test_qc_map = """
         boat                      : srm_team_has_boat_in_regatta.right
         creation                  : <SAW : Rev_Ref `creation`>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : srm_team_has_boat_in_regatta.left
@@ -5993,6 +6287,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : <SAW : String `desc` (PAP.Company_has_Address | PAP.Person_has_Address)>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Subject `left` (PAP.Company_has_Address | PAP.Person_has_Address)>
@@ -6007,6 +6302,7 @@ _test_qc_map = """
         desc                      : <SAW : String `desc` (PAP.Company_has_Email | PAP.Person_has_Email)>
         electric                  : mom_id_entity.electric
         email                     : <SAW : Email `right` (PAP.Company_has_Email | PAP.Person_has_Email)>
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Subject `left` (PAP.Company_has_Email | PAP.Person_has_Email)>
@@ -6020,6 +6316,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : <SAW : String `desc` (PAP.Company_has_Phone | PAP.Person_has_Phone)>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         extension                 : <SAW : Numeric_String `extension` (PAP.Company_has_Phone | PAP.Person_has_Phone)
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -6035,6 +6332,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : <SAW : String `desc` (PAP.Company_has_Url | PAP.Person_has_Url)>
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : <SAW : Subject `left` (PAP.Company_has_Url | PAP.Person_has_Url)>
@@ -6050,6 +6348,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_company_has_url.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_company_has_url.left
@@ -6064,6 +6363,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_person_has_url.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_person_has_url.left
@@ -6080,6 +6380,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_company_has_phone.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         extension                 : pap_company_has_phone.extension
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -6095,6 +6396,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_person_has_phone.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         extension                 : pap_person_has_phone.extension
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
@@ -6113,6 +6415,7 @@ _test_qc_map = """
         desc                      : pap_company_has_email.desc
         electric                  : mom_id_entity.electric
         email                     : pap_company_has_email.right
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_company_has_email.left
@@ -6127,6 +6430,7 @@ _test_qc_map = """
         desc                      : pap_person_has_email.desc
         electric                  : mom_id_entity.electric
         email                     : pap_person_has_email.right
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_person_has_email.left
@@ -6143,6 +6447,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_company_has_address.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_company_has_address.left
@@ -6157,6 +6462,7 @@ _test_qc_map = """
         creation                  : <SAW : Rev_Ref `creation`>
         desc                      : pap_person_has_address.desc
         electric                  : mom_id_entity.electric
+        events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_person_has_address.left
@@ -8236,11 +8542,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_regatta_event."desc" AS srm_regatta_event_desc,
@@ -8336,10 +8642,6 @@ _test_select = """
            LEFT OUTER JOIN auth_account_email_verification ON mom_id_entity.pid = auth_account_email_verification.pid
            LEFT OUTER JOIN auth_account_password_reset ON mom_id_entity.pid = auth_account_password_reset.pid
            LEFT OUTER JOIN evt_calendar ON mom_id_entity.pid = evt_calendar.pid
-           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
-           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN evt_event ON mom_id_entity.pid = evt_event.pid
            LEFT OUTER JOIN evt_event_occurs ON mom_id_entity.pid = evt_event_occurs.pid
            LEFT OUTER JOIN evt_recurrence_spec ON mom_id_entity.pid = evt_recurrence_spec.pid
@@ -8357,6 +8659,10 @@ _test_select = """
            LEFT OUTER JOIN srm_boat ON mom_id_entity.pid = srm_boat.pid
            LEFT OUTER JOIN srm_club ON mom_id_entity.pid = srm_club.pid
            LEFT OUTER JOIN srm_regatta_event ON mom_id_entity.pid = srm_regatta_event.pid
+           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
+           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN swp_clip_o ON mom_id_entity.pid = swp_clip_o.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
            LEFT OUTER JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
@@ -8525,11 +8831,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -8713,11 +9019,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -9106,10 +9412,6 @@ _test_select = """
            LEFT OUTER JOIN auth_certificate ON mom_id_entity.pid = auth_certificate.pid
            LEFT OUTER JOIN auth_group ON mom_id_entity.pid = auth_group.pid
            LEFT OUTER JOIN evt_calendar ON mom_id_entity.pid = evt_calendar.pid
-           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
-           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN pap_address ON mom_id_entity.pid = pap_address.pid
            LEFT OUTER JOIN pap_company ON mom_id_entity.pid = pap_company.pid
            LEFT OUTER JOIN pap_email ON mom_id_entity.pid = pap_email.pid
@@ -9120,6 +9422,10 @@ _test_select = """
            LEFT OUTER JOIN srm_boat_class ON srm__boat_class_.pid = srm_boat_class.pid
            LEFT OUTER JOIN srm_club ON mom_id_entity.pid = srm_club.pid
            LEFT OUTER JOIN srm_regatta_event ON mom_id_entity.pid = srm_regatta_event.pid
+           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
+           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
            LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
            LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
         WHERE mom_id_entity.pid = auth__account_.pid
@@ -9127,10 +9433,6 @@ _test_select = """
             OR mom_id_entity.pid = auth_certificate.pid
             OR mom_id_entity.pid = auth_group.pid
             OR mom_id_entity.pid = evt_calendar.pid
-            OR mom_id_entity.pid = swp_page.pid
-            OR mom_id_entity.pid = swp_page_y.pid
-            OR mom_id_entity.pid = swp_clip_x.pid
-            OR mom_id_entity.pid = srm_page.pid
             OR mom_id_entity.pid = pap_address.pid
             OR mom_id_entity.pid = pap_company.pid
             OR mom_id_entity.pid = pap_email.pid
@@ -9141,6 +9443,10 @@ _test_select = """
             OR mom_id_entity.pid = srm_boat_class.pid
             OR mom_id_entity.pid = srm_club.pid
             OR mom_id_entity.pid = srm_regatta_event.pid
+            OR mom_id_entity.pid = swp_page.pid
+            OR mom_id_entity.pid = swp_page_y.pid
+            OR mom_id_entity.pid = swp_clip_x.pid
+            OR mom_id_entity.pid = srm_page.pid
             OR mom_id_entity.pid = swp_gallery.pid
             OR mom_id_entity.pid = swp_referral.pid
     Auth.Id_Entity
@@ -9683,256 +9989,6 @@ _test_select = """
             OR mom_id_entity.pid = evt_event_occurs.pid
             OR mom_id_entity.pid = evt_recurrence_spec.pid
             OR mom_id_entity.pid = evt_recurrence_rule.pid
-    SWP.Id_Entity
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               srm_page."desc" AS srm_page_desc,
-               srm_page.event AS srm_page_event,
-               srm_page.pid AS srm_page_pid,
-               swp_clip_o."left" AS swp_clip_o_left,
-               swp_clip_o.abstract AS swp_clip_o_abstract,
-               swp_clip_o.contents AS swp_clip_o_contents,
-               swp_clip_o.date__finish AS swp_clip_o_date__finish,
-               swp_clip_o.date__start AS swp_clip_o_date__start,
-               swp_clip_o.date_x__finish AS swp_clip_o_date_x__finish,
-               swp_clip_o.date_x__start AS swp_clip_o_date_x__start,
-               swp_clip_o.pid AS swp_clip_o_pid,
-               swp_clip_o.prio AS swp_clip_o_prio,
-               swp_clip_x.link_to AS swp_clip_x_link_to,
-               swp_clip_x.pid AS swp_clip_x_pid,
-               swp_gallery.date__finish AS swp_gallery_date__finish,
-               swp_gallery.date__start AS swp_gallery_date__start,
-               swp_gallery.directory AS swp_gallery_directory,
-               swp_gallery.hidden AS swp_gallery_hidden,
-               swp_gallery.perma_name AS swp_gallery_perma_name,
-               swp_gallery.pid AS swp_gallery_pid,
-               swp_gallery.prio AS swp_gallery_prio,
-               swp_gallery.short_title AS swp_gallery_short_title,
-               swp_gallery.title AS swp_gallery_title,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title,
-               swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year,
-               swp_picture."left" AS swp_picture_left,
-               swp_picture.name AS swp_picture_name,
-               swp_picture.number AS swp_picture_number,
-               swp_picture.photo__extension AS swp_picture_photo__extension,
-               swp_picture.photo__height AS swp_picture_photo__height,
-               swp_picture.photo__width AS swp_picture_photo__width,
-               swp_picture.pid AS swp_picture_pid,
-               swp_picture.thumb__extension AS swp_picture_thumb__extension,
-               swp_picture.thumb__height AS swp_picture_thumb__height,
-               swp_picture.thumb__width AS swp_picture_thumb__width,
-               swp_referral.date__finish AS swp_referral_date__finish,
-               swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download_name AS swp_referral_download_name,
-               swp_referral.hidden AS swp_referral_hidden,
-               swp_referral.parent_url AS swp_referral_parent_url,
-               swp_referral.perma_name AS swp_referral_perma_name,
-               swp_referral.pid AS swp_referral_pid,
-               swp_referral.prio AS swp_referral_prio,
-               swp_referral.short_title AS swp_referral_short_title,
-               swp_referral.target_url AS swp_referral_target_url,
-               swp_referral.title AS swp_referral_title
-        FROM mom_id_entity
-           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
-           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
-           LEFT OUTER JOIN swp_clip_o ON mom_id_entity.pid = swp_clip_o.pid
-           LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
-           LEFT OUTER JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
-           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
-        WHERE mom_id_entity.pid = swp_page.pid
-            OR mom_id_entity.pid = swp_page_y.pid
-            OR mom_id_entity.pid = swp_clip_x.pid
-            OR mom_id_entity.pid = srm_page.pid
-            OR mom_id_entity.pid = swp_clip_o.pid
-            OR mom_id_entity.pid = swp_gallery.pid
-            OR mom_id_entity.pid = swp_picture.pid
-            OR mom_id_entity.pid = swp_referral.pid
-    SWP.Object
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               srm_page."desc" AS srm_page_desc,
-               srm_page.event AS srm_page_event,
-               srm_page.pid AS srm_page_pid,
-               swp_clip_x.link_to AS swp_clip_x_link_to,
-               swp_clip_x.pid AS swp_clip_x_pid,
-               swp_gallery.date__finish AS swp_gallery_date__finish,
-               swp_gallery.date__start AS swp_gallery_date__start,
-               swp_gallery.directory AS swp_gallery_directory,
-               swp_gallery.hidden AS swp_gallery_hidden,
-               swp_gallery.perma_name AS swp_gallery_perma_name,
-               swp_gallery.pid AS swp_gallery_pid,
-               swp_gallery.prio AS swp_gallery_prio,
-               swp_gallery.short_title AS swp_gallery_short_title,
-               swp_gallery.title AS swp_gallery_title,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title,
-               swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year,
-               swp_referral.date__finish AS swp_referral_date__finish,
-               swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download_name AS swp_referral_download_name,
-               swp_referral.hidden AS swp_referral_hidden,
-               swp_referral.parent_url AS swp_referral_parent_url,
-               swp_referral.perma_name AS swp_referral_perma_name,
-               swp_referral.pid AS swp_referral_pid,
-               swp_referral.prio AS swp_referral_prio,
-               swp_referral.short_title AS swp_referral_short_title,
-               swp_referral.target_url AS swp_referral_target_url,
-               swp_referral.title AS swp_referral_title
-        FROM mom_id_entity
-           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
-           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
-           LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
-           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
-        WHERE mom_id_entity.pid = swp_page.pid
-            OR mom_id_entity.pid = swp_page_y.pid
-            OR mom_id_entity.pid = swp_clip_x.pid
-            OR mom_id_entity.pid = srm_page.pid
-            OR mom_id_entity.pid = swp_gallery.pid
-            OR mom_id_entity.pid = swp_referral.pid
-    SWP.Object_PN
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               srm_page."desc" AS srm_page_desc,
-               srm_page.event AS srm_page_event,
-               srm_page.pid AS srm_page_pid,
-               swp_clip_x.link_to AS swp_clip_x_link_to,
-               swp_clip_x.pid AS swp_clip_x_pid,
-               swp_gallery.date__finish AS swp_gallery_date__finish,
-               swp_gallery.date__start AS swp_gallery_date__start,
-               swp_gallery.directory AS swp_gallery_directory,
-               swp_gallery.hidden AS swp_gallery_hidden,
-               swp_gallery.perma_name AS swp_gallery_perma_name,
-               swp_gallery.pid AS swp_gallery_pid,
-               swp_gallery.prio AS swp_gallery_prio,
-               swp_gallery.short_title AS swp_gallery_short_title,
-               swp_gallery.title AS swp_gallery_title,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title,
-               swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year,
-               swp_referral.date__finish AS swp_referral_date__finish,
-               swp_referral.date__start AS swp_referral_date__start,
-               swp_referral.download_name AS swp_referral_download_name,
-               swp_referral.hidden AS swp_referral_hidden,
-               swp_referral.parent_url AS swp_referral_parent_url,
-               swp_referral.perma_name AS swp_referral_perma_name,
-               swp_referral.pid AS swp_referral_pid,
-               swp_referral.prio AS swp_referral_prio,
-               swp_referral.short_title AS swp_referral_short_title,
-               swp_referral.target_url AS swp_referral_target_url,
-               swp_referral.title AS swp_referral_title
-        FROM mom_id_entity
-           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
-           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
-           LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
-           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
-        WHERE mom_id_entity.pid = swp_page.pid
-            OR mom_id_entity.pid = swp_page_y.pid
-            OR mom_id_entity.pid = swp_clip_x.pid
-            OR mom_id_entity.pid = srm_page.pid
-            OR mom_id_entity.pid = swp_gallery.pid
-            OR mom_id_entity.pid = swp_referral.pid
-    SWP.Page
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               srm_page."desc" AS srm_page_desc,
-               srm_page.event AS srm_page_event,
-               srm_page.pid AS srm_page_pid,
-               swp_clip_x.link_to AS swp_clip_x_link_to,
-               swp_clip_x.pid AS swp_clip_x_pid,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title,
-               swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year
-        FROM mom_id_entity
-           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
-           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
-    SWP.Page_Y SWP.Page
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title,
-               swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year
-        FROM mom_id_entity
-           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
     EVT.Event
         SELECT evt_event."left" AS evt_event_left,
                evt_event.calendar AS evt_event_calendar,
@@ -10751,11 +10807,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_regatta_event."desc" AS srm_regatta_event_desc,
@@ -10936,11 +10992,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -11008,11 +11064,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid,
                srm_sailor."left" AS srm_sailor_left,
@@ -11088,6 +11144,256 @@ _test_select = """
                srm_regatta_event.pid AS srm_regatta_event_pid
         FROM mom_id_entity
            JOIN srm_regatta_event ON mom_id_entity.pid = srm_regatta_event.pid
+    SWP.Id_Entity
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               srm_page."desc" AS srm_page_desc,
+               srm_page.event AS srm_page_event,
+               srm_page.pid AS srm_page_pid,
+               swp_clip_o."left" AS swp_clip_o_left,
+               swp_clip_o.abstract AS swp_clip_o_abstract,
+               swp_clip_o.contents AS swp_clip_o_contents,
+               swp_clip_o.date__finish AS swp_clip_o_date__finish,
+               swp_clip_o.date__start AS swp_clip_o_date__start,
+               swp_clip_o.date_x__finish AS swp_clip_o_date_x__finish,
+               swp_clip_o.date_x__start AS swp_clip_o_date_x__start,
+               swp_clip_o.pid AS swp_clip_o_pid,
+               swp_clip_o.prio AS swp_clip_o_prio,
+               swp_clip_x.link_to AS swp_clip_x_link_to,
+               swp_clip_x.pid AS swp_clip_x_pid,
+               swp_gallery.date__finish AS swp_gallery_date__finish,
+               swp_gallery.date__start AS swp_gallery_date__start,
+               swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
+               swp_gallery.perma_name AS swp_gallery_perma_name,
+               swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
+               swp_gallery.short_title AS swp_gallery_short_title,
+               swp_gallery.title AS swp_gallery_title,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title,
+               swp_page_y.pid AS swp_page_y_pid,
+               swp_page_y.year AS swp_page_y_year,
+               swp_picture."left" AS swp_picture_left,
+               swp_picture.name AS swp_picture_name,
+               swp_picture.number AS swp_picture_number,
+               swp_picture.photo__extension AS swp_picture_photo__extension,
+               swp_picture.photo__height AS swp_picture_photo__height,
+               swp_picture.photo__width AS swp_picture_photo__width,
+               swp_picture.pid AS swp_picture_pid,
+               swp_picture.thumb__extension AS swp_picture_thumb__extension,
+               swp_picture.thumb__height AS swp_picture_thumb__height,
+               swp_picture.thumb__width AS swp_picture_thumb__width,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download_name AS swp_referral_download_name,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
+        FROM mom_id_entity
+           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
+           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
+           LEFT OUTER JOIN swp_clip_o ON mom_id_entity.pid = swp_clip_o.pid
+           LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
+           LEFT OUTER JOIN swp_picture ON mom_id_entity.pid = swp_picture.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
+        WHERE mom_id_entity.pid = swp_page.pid
+            OR mom_id_entity.pid = swp_page_y.pid
+            OR mom_id_entity.pid = swp_clip_x.pid
+            OR mom_id_entity.pid = srm_page.pid
+            OR mom_id_entity.pid = swp_clip_o.pid
+            OR mom_id_entity.pid = swp_gallery.pid
+            OR mom_id_entity.pid = swp_picture.pid
+            OR mom_id_entity.pid = swp_referral.pid
+    SWP.Object
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               srm_page."desc" AS srm_page_desc,
+               srm_page.event AS srm_page_event,
+               srm_page.pid AS srm_page_pid,
+               swp_clip_x.link_to AS swp_clip_x_link_to,
+               swp_clip_x.pid AS swp_clip_x_pid,
+               swp_gallery.date__finish AS swp_gallery_date__finish,
+               swp_gallery.date__start AS swp_gallery_date__start,
+               swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
+               swp_gallery.perma_name AS swp_gallery_perma_name,
+               swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
+               swp_gallery.short_title AS swp_gallery_short_title,
+               swp_gallery.title AS swp_gallery_title,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title,
+               swp_page_y.pid AS swp_page_y_pid,
+               swp_page_y.year AS swp_page_y_year,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download_name AS swp_referral_download_name,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
+        FROM mom_id_entity
+           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
+           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
+           LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
+        WHERE mom_id_entity.pid = swp_page.pid
+            OR mom_id_entity.pid = swp_page_y.pid
+            OR mom_id_entity.pid = swp_clip_x.pid
+            OR mom_id_entity.pid = srm_page.pid
+            OR mom_id_entity.pid = swp_gallery.pid
+            OR mom_id_entity.pid = swp_referral.pid
+    SWP.Object_PN
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               srm_page."desc" AS srm_page_desc,
+               srm_page.event AS srm_page_event,
+               srm_page.pid AS srm_page_pid,
+               swp_clip_x.link_to AS swp_clip_x_link_to,
+               swp_clip_x.pid AS swp_clip_x_pid,
+               swp_gallery.date__finish AS swp_gallery_date__finish,
+               swp_gallery.date__start AS swp_gallery_date__start,
+               swp_gallery.directory AS swp_gallery_directory,
+               swp_gallery.hidden AS swp_gallery_hidden,
+               swp_gallery.perma_name AS swp_gallery_perma_name,
+               swp_gallery.pid AS swp_gallery_pid,
+               swp_gallery.prio AS swp_gallery_prio,
+               swp_gallery.short_title AS swp_gallery_short_title,
+               swp_gallery.title AS swp_gallery_title,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title,
+               swp_page_y.pid AS swp_page_y_pid,
+               swp_page_y.year AS swp_page_y_year,
+               swp_referral.date__finish AS swp_referral_date__finish,
+               swp_referral.date__start AS swp_referral_date__start,
+               swp_referral.download_name AS swp_referral_download_name,
+               swp_referral.hidden AS swp_referral_hidden,
+               swp_referral.parent_url AS swp_referral_parent_url,
+               swp_referral.perma_name AS swp_referral_perma_name,
+               swp_referral.pid AS swp_referral_pid,
+               swp_referral.prio AS swp_referral_prio,
+               swp_referral.short_title AS swp_referral_short_title,
+               swp_referral.target_url AS swp_referral_target_url,
+               swp_referral.title AS swp_referral_title
+        FROM mom_id_entity
+           LEFT OUTER JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
+           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
+           LEFT OUTER JOIN swp_gallery ON mom_id_entity.pid = swp_gallery.pid
+           LEFT OUTER JOIN swp_referral ON mom_id_entity.pid = swp_referral.pid
+        WHERE mom_id_entity.pid = swp_page.pid
+            OR mom_id_entity.pid = swp_page_y.pid
+            OR mom_id_entity.pid = swp_clip_x.pid
+            OR mom_id_entity.pid = srm_page.pid
+            OR mom_id_entity.pid = swp_gallery.pid
+            OR mom_id_entity.pid = swp_referral.pid
+    SWP.Page
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               srm_page."desc" AS srm_page_desc,
+               srm_page.event AS srm_page_event,
+               srm_page.pid AS srm_page_pid,
+               swp_clip_x.link_to AS swp_clip_x_link_to,
+               swp_clip_x.pid AS swp_clip_x_pid,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title,
+               swp_page_y.pid AS swp_page_y_pid,
+               swp_page_y.year AS swp_page_y_year
+        FROM mom_id_entity
+           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           LEFT OUTER JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+           LEFT OUTER JOIN swp_clip_x ON swp_page.pid = swp_clip_x.pid
+           LEFT OUTER JOIN srm_page ON swp_page.pid = srm_page.pid
+    SWP.Page_Y SWP.Page
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title,
+               swp_page_y.pid AS swp_page_y_pid,
+               swp_page_y.year AS swp_page_y_year
+        FROM mom_id_entity
+           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
     SWP.Link
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -11280,11 +11586,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid
         FROM mom_id_entity
@@ -11304,11 +11610,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid
         FROM mom_id_entity
@@ -11328,11 +11634,11 @@ _test_select = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_h.pid AS srm_regatta_h_pid
         FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
@@ -11953,63 +12259,6 @@ _test_select_strict = """
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
-    SWP.Id_Entity
-        SELECT mom_id_entity.pid
-        FROM mom_id_entity
-        WHERE false
-    SWP.Object
-        SELECT mom_id_entity.pid
-        FROM mom_id_entity
-        WHERE false
-    SWP.Object_PN
-        SELECT mom_id_entity.pid
-        FROM mom_id_entity
-        WHERE false
-    SWP.Page
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title
-        FROM mom_id_entity
-           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-        WHERE mom_id_entity.type_name = :type_name_1
-    SWP.Page_Y SWP.Page
-        SELECT mom_id_entity.electric AS mom_id_entity_electric,
-               mom_id_entity.last_cid AS mom_id_entity_last_cid,
-               mom_id_entity.pid AS mom_id_entity_pid,
-               mom_id_entity.type_name AS mom_id_entity_type_name,
-               mom_id_entity.x_locked AS mom_id_entity_x_locked,
-               swp_page.contents AS swp_page_contents,
-               swp_page.date__finish AS swp_page_date__finish,
-               swp_page.date__start AS swp_page_date__start,
-               swp_page.format AS swp_page_format,
-               swp_page.head_line AS swp_page_head_line,
-               swp_page.hidden AS swp_page_hidden,
-               swp_page.perma_name AS swp_page_perma_name,
-               swp_page.pid AS swp_page_pid,
-               swp_page.prio AS swp_page_prio,
-               swp_page.short_title AS swp_page_short_title,
-               swp_page.text AS swp_page_text,
-               swp_page.title AS swp_page_title,
-               swp_page_y.pid AS swp_page_y_pid,
-               swp_page_y.year AS swp_page_y_year
-        FROM mom_id_entity
-           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
-           JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
-        WHERE mom_id_entity.type_name = :type_name_1
     EVT.Event
         SELECT evt_event."left" AS evt_event_left,
                evt_event.calendar AS evt_event_calendar,
@@ -12351,6 +12600,63 @@ _test_select_strict = """
         FROM mom_id_entity
            JOIN srm_regatta_event ON mom_id_entity.pid = srm_regatta_event.pid
         WHERE mom_id_entity.type_name = :type_name_1
+    SWP.Id_Entity
+        SELECT mom_id_entity.pid
+        FROM mom_id_entity
+        WHERE false
+    SWP.Object
+        SELECT mom_id_entity.pid
+        FROM mom_id_entity
+        WHERE false
+    SWP.Object_PN
+        SELECT mom_id_entity.pid
+        FROM mom_id_entity
+        WHERE false
+    SWP.Page
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title
+        FROM mom_id_entity
+           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+        WHERE mom_id_entity.type_name = :type_name_1
+    SWP.Page_Y SWP.Page
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               swp_page.contents AS swp_page_contents,
+               swp_page.date__finish AS swp_page_date__finish,
+               swp_page.date__start AS swp_page_date__start,
+               swp_page.format AS swp_page_format,
+               swp_page.head_line AS swp_page_head_line,
+               swp_page.hidden AS swp_page_hidden,
+               swp_page.perma_name AS swp_page_perma_name,
+               swp_page.pid AS swp_page_pid,
+               swp_page.prio AS swp_page_prio,
+               swp_page.short_title AS swp_page_short_title,
+               swp_page.text AS swp_page_text,
+               swp_page.title AS swp_page_title,
+               swp_page_y.pid AS swp_page_y_pid,
+               swp_page_y.year AS swp_page_y_year
+        FROM mom_id_entity
+           JOIN swp_page ON mom_id_entity.pid = swp_page.pid
+           JOIN swp_page_y ON swp_page.pid = swp_page_y.pid
+        WHERE mom_id_entity.type_name = :type_name_1
     SWP.Link
         SELECT mom_id_entity.pid
         FROM mom_id_entity
@@ -12501,11 +12807,11 @@ _test_select_strict = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_c.is_team_race AS srm_regatta_c_is_team_race,
                srm_regatta_c.pid AS srm_regatta_c_pid
         FROM mom_id_entity
@@ -12526,11 +12832,11 @@ _test_select_strict = """
                srm_regatta.perma_name AS srm_regatta_perma_name,
                srm_regatta.pid AS srm_regatta_pid,
                srm_regatta.races AS srm_regatta_races,
-           srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
+               srm_regatta.ranking_list_factor AS srm_regatta_ranking_list_factor,
                srm_regatta.result__date AS srm_regatta_result__date,
                srm_regatta.result__software AS srm_regatta_result__software,
                srm_regatta.result__status AS srm_regatta_result__status,
-           srm_regatta.starters_rl AS srm_regatta_starters_rl,
+               srm_regatta.starters_rl AS srm_regatta_starters_rl,
                srm_regatta_h.pid AS srm_regatta_h_pid
         FROM mom_id_entity
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
@@ -12778,8 +13084,6 @@ _test_sequences = """
     Auth.Account_EMail_Verification          : mom_id_entity_pid_seq
     Auth.Account_Password_Reset              : mom_id_entity_pid_seq
     EVT.Calendar                             : mom_id_entity_pid_seq
-    SWP.Page                                 : mom_id_entity_pid_seq
-    SWP.Page_Y                               : mom_id_entity_pid_seq
     EVT.Event                                : mom_id_entity_pid_seq
     EVT.Event_occurs                         : mom_id_entity_pid_seq
     EVT.Recurrence_Spec                      : mom_id_entity_pid_seq
@@ -12798,6 +13102,8 @@ _test_sequences = """
     SRM.Boat                                 : mom_id_entity_pid_seq
     SRM.Club                                 : mom_id_entity_pid_seq
     SRM.Regatta_Event                        : mom_id_entity_pid_seq
+    SWP.Page                                 : mom_id_entity_pid_seq
+    SWP.Page_Y                               : mom_id_entity_pid_seq
     SWP.Clip_O                               : mom_id_entity_pid_seq
     SWP.Clip_X                               : mom_id_entity_pid_seq
     SWP.Gallery                              : mom_id_entity_pid_seq
@@ -12842,8 +13148,6 @@ _test_tables = """
     Auth.Account_EMail_Verification
     Auth.Account_Password_Reset
     EVT.Calendar
-    SWP.Page
-    SWP.Page_Y
     EVT.Event
     EVT.Event_occurs
     EVT.Recurrence_Spec
@@ -12862,6 +13166,8 @@ _test_tables = """
     SRM.Boat
     SRM.Club
     SRM.Regatta_Event
+    SWP.Page
+    SWP.Page_Y
     SWP.Clip_O
     SWP.Clip_X
     SWP.Gallery
@@ -13073,30 +13379,14 @@ _test_tables = """
         Column desc                      : Varchar(80)          Optional String desc
         Column name                      : Varchar(32)          Primary Name name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
-    SWP.Page (MOM.Id_Entity) <Table swp_page>
-        Column contents                  : Text                 Internal__Auto_Update Text contents
-        Column date__finish              : Date                 Optional__Nested Date finish
-        Column date__start               : Date                 Necessary__Sticky__Nested Date start
-        Column format                    : Varchar(8)           Optional__Sticky Format format
-        Column head_line                 : Varchar(256)         Optional String head_line
-        Column hidden                    : Boolean              Optional Boolean hidden
-        Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
-        Column prio                      : Integer              Optional__Sticky Int prio
-        Column short_title               : Varchar(30)          Necessary String short_title
-        Column text                      : Text                 Required Text text
-        Column title                     : Varchar(120)         Necessary String title
-    SWP.Page_Y (SWP.Page) SWP.Page <Table swp_page_y>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'swp_page.pid')
-        Column year                      : Integer              Primary_Optional Int year
     EVT.Event (MOM.Id_Entity) <Table evt_event>
         Column calendar                  : Integer              Primary_Optional__Id_Entity_Reference Entity calendar Id_Entity()
         Column date__finish              : Date                 Optional__Nested Date finish
         Column date__start               : Date                 Necessary__Nested Date start
         Column detail                    : Varchar(160)         Optional String detail
-        Column left                      : Integer              Link_Role__Init_Only Page left Id_Entity()
+        Column left                      : Integer              Link_Role__Init_Only Id_Entity left Id_Entity()
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
-        Column short_title               : Varchar(64)          Optional__Computed_Set String short_title
+        Column short_title               : Varchar(30)          Optional String short_title
         Column time__finish              : Time                 Optional__Nested Time finish
         Column time__start               : Time                 Necessary__Nested Time start
     EVT.Event_occurs (MOM.Id_Entity) <Table evt_event_occurs>
@@ -13226,6 +13516,22 @@ _test_tables = """
         Column name                      : Varchar(64)          Primary__Raw_Value String name
         Column perma_name                : Varchar(64)          Internal__Auto_Update_Lazy__Computed_Set String perma_name
         Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+    SWP.Page (MOM.Id_Entity) <Table swp_page>
+        Column contents                  : Text                 Internal__Auto_Update Text contents
+        Column date__finish              : Date                 Optional__Nested Date finish
+        Column date__start               : Date                 Necessary__Sticky__Nested Date start
+        Column format                    : Varchar(8)           Optional__Sticky Format format
+        Column head_line                 : Varchar(256)         Optional String head_line
+        Column hidden                    : Boolean              Optional Boolean hidden
+        Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column prio                      : Integer              Optional__Sticky Int prio
+        Column short_title               : Varchar(30)          Necessary String short_title
+        Column text                      : Text                 Required Text text
+        Column title                     : Varchar(120)         Necessary String title
+    SWP.Page_Y (SWP.Page) SWP.Page <Table swp_page_y>
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'swp_page.pid')
+        Column year                      : Integer              Primary_Optional Int year
     SWP.Clip_O (MOM.Id_Entity) <Table swp_clip_o>
         Column abstract                  : Text                 Required Text abstract
         Column contents                  : Text                 Internal__Auto_Update Text contents
@@ -13420,8 +13726,6 @@ _test_unique = """
     Auth.Group                     name
     Auth.Account_in_Group          left, right
     EVT.Calendar                   name
-    SWP.Page                       perma_name
-    SWP.Page_Y                     perma_name + year
     EVT.Event                      calendar, date__finish, date__start, left, time__finish, time__start
     EVT.Event_occurs               date, left, time__finish, time__start
     EVT.Recurrence_Spec            left
@@ -13440,6 +13744,8 @@ _test_unique = """
     SRM.Boat                       left, nation, sail_number, sail_number_x
     SRM.Club                       name
     SRM.Regatta_Event              date__finish, date__start, name
+    SWP.Page                       perma_name
+    SWP.Page_Y                     perma_name + year
     SWP.Clip_O                     date_x__finish, date_x__start, left
     SWP.Clip_X                     perma_name =
     SWP.Gallery                    perma_name
@@ -13504,12 +13810,6 @@ _test_unique = """
     EVT.Calendar
         EMS
         DBW Uniqueness predicate: unique_epk ('name',)
-    SWP.Page
-        EMS Uniqueness predicate: unique_epk ('perma_name',)
-        DBW
-    SWP.Page_Y
-        EMS Uniqueness predicate: unique_epk ('perma_name', 'year')
-        DBW
     EVT.Event
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'date', 'time', 'calendar')
@@ -13564,6 +13864,12 @@ _test_unique = """
     SRM.Regatta_Event
         EMS
         DBW Uniqueness predicate: unique_epk ('name', 'date')
+    SWP.Page
+        EMS Uniqueness predicate: unique_epk ('perma_name',)
+        DBW
+    SWP.Page_Y
+        EMS Uniqueness predicate: unique_epk ('perma_name', 'year')
+        DBW
     SWP.Clip_O
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'date_x')

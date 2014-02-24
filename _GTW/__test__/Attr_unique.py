@@ -81,12 +81,6 @@ _test_unique = """
     EVT.Calendar
         EMS
         DBW Uniqueness predicate: unique_epk ('name',)
-    SWP.Page
-        EMS Uniqueness predicate: unique_epk ('perma_name',)
-        DBW
-    SWP.Page_Y
-        EMS Uniqueness predicate: unique_epk ('perma_name', 'year')
-        DBW
     EVT.Event
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'date', 'time', 'calendar')
@@ -144,6 +138,12 @@ _test_unique = """
     SRM.Regatta_Event
         EMS
         DBW Uniqueness predicate: unique_epk ('name', 'date')
+    SWP.Page
+        EMS Uniqueness predicate: unique_epk ('perma_name',)
+        DBW
+    SWP.Page_Y
+        EMS Uniqueness predicate: unique_epk ('perma_name', 'year')
+        DBW
     SWP.Clip_O
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'date_x')

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -50,6 +50,8 @@
 #    17-Apr-2013 (CT) Use `Computed_Set_Mixin`, not `Computed_Mixin`
 #    10-May-2013 (CT) Replace `auto_cache` by `link_ref_attr_name`
 #     3-Aug-2013 (CT) Add guard to `Event._change_callback`
+#    24-Feb-2014 (CT) Change `Event.left.role_type` to `MOM.Id_Entity`
+#    24-Feb-2014 (CT) Change `Event_occurs` `Computed` attributes to `Query`
 #    ««revision-date»»···
 #--
 
@@ -81,9 +83,7 @@ class Event (_Ancestor_Essence) :
         class left (_Ancestor.left) :
             """Object which this event is bound to."""
 
-            ### XXX
-            import _GTW._OMP._SWP.Page
-            role_type          = GTW.OMP.SWP.Page
+            role_type          = MOM.Id_Entity
             role_name          = "object"
             link_ref_attr_name = "event"
 
@@ -151,25 +151,9 @@ class Event (_Ancestor_Essence) :
             """Short title (used in navigation)."""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-
-            def computed (self, obj) :
-                if obj :
-                    return obj.detail or (obj.object and obj.object.short_title)
-            # end def computed
+            max_length         = 30
 
         # end class short_title
-
-        class title (A_String) :
-
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                if obj :
-                    return obj.object.title
-            # end def computed
-
-        # end class title
 
     # end class _Attributes
 
@@ -240,12 +224,8 @@ class Event_occurs (_Ancestor_Essence) :
 
         class detail (A_String) :
 
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                if obj and obj.event :
-                    return obj.event.detail
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.event.detail
 
         # end class detail
 
@@ -258,36 +238,17 @@ class Event_occurs (_Ancestor_Essence) :
 
         class essence (_A_Id_Entity_) :
 
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                if obj and obj.event :
-                    return obj.event.object
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.event.object
 
         # end class essence
 
         class short_title (A_String) :
 
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                if obj and obj.event :
-                    return obj.event.short_title
-            # end def computed
+            kind               = Attr.Query
+            query              = Q.event.short_title
 
         # end class short_title
-
-        class title (A_String) :
-
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                if obj and obj.event :
-                    return obj.event.title
-            # end def computed
-
-        # end class title
 
     # end class _Attributes
 

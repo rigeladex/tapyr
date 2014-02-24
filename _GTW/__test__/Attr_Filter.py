@@ -587,6 +587,7 @@ _test_code = """
     Format <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Gallery <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Group <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
+    Id_Entity <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Int <Attr.Type.Querier Raw ('CONTAINS', 'ENDSWITH', 'EQ', 'EQS', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'NES', 'STARTSWITH')> 4
     Int_List <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
@@ -594,7 +595,6 @@ _test_code = """
     Nation <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')> 3
     Object_PN <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
-    Page <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Person <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Picture <Attr.Type.Querier Composite ()> None

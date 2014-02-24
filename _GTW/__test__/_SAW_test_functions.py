@@ -210,8 +210,9 @@ def show_key_o_p (apt) :
     for ETW in apt._SAW.e_types_t :
         if ETW.key_o or ETW.key_p :
             print \
-                ( "%-40s : %-15s %-15s"
-                % (ETW.type_name, _show (ETW.key_o), _show (ETW.key_p))
+                ( ( "%-40s : %-15s %-15s"
+                  % (ETW.type_name, _show (ETW.key_o), _show (ETW.key_p))
+                  ).rstrip ()
                 )
 # end def show_key_o_p
 

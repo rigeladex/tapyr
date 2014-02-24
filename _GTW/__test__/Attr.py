@@ -171,16 +171,16 @@ _test_DET = """
         EVT.Calendar                  *  MOM.Id_Entity
         EVT.Link                         MOM.Id_Entity
         EVT.Link1                        MOM.Id_Entity
-        SWP.Id_Entity                    MOM.Id_Entity
-        SWP.Object                       MOM.Id_Entity
-        SWP.Object_PN                    MOM.Id_Entity
-        SWP.Page                      *  MOM.Id_Entity
-        SWP.Page_Y                    *  MOM.Id_Entity
         EVT.Event                     *  MOM.Id_Entity
         EVT.Event_occurs              *  MOM.Id_Entity
         EVT._Recurrence_Mixin_           MOM.Id_Entity
         EVT.Recurrence_Spec           *  MOM.Id_Entity
         EVT.Recurrence_Rule           *  MOM.Id_Entity
+        SWP.Id_Entity                    MOM.Id_Entity
+        SWP.Object                       MOM.Id_Entity
+        SWP.Object_PN                    MOM.Id_Entity
+        SWP.Page                      *  MOM.Id_Entity
+        SWP.Page_Y                    *  MOM.Id_Entity
         SWP.Link                         MOM.Id_Entity
         SWP.Link1                        MOM.Id_Entity
         SWP.Clip_O                    *  MOM.Id_Entity
@@ -325,16 +325,16 @@ _test_DET = """
         EVT.Calendar                  *  MOM.Id_Entity
         EVT.Link                         MOM.Id_Entity
         EVT.Link1                        MOM.Id_Entity
-        SWP.Id_Entity                    MOM.Id_Entity
-        SWP.Object                       MOM.Id_Entity
-        SWP.Object_PN                    MOM.Id_Entity
-        SWP.Page                      *  MOM.Id_Entity
-        SWP.Page_Y                    *  MOM.Id_Entity
         EVT.Event                     *  MOM.Id_Entity
         EVT.Event_occurs              *  MOM.Id_Entity
         EVT._Recurrence_Mixin_           MOM.Id_Entity
         EVT.Recurrence_Spec           *  MOM.Id_Entity
         EVT.Recurrence_Rule           *  MOM.Id_Entity
+        SWP.Id_Entity                    MOM.Id_Entity
+        SWP.Object                       MOM.Id_Entity
+        SWP.Object_PN                    MOM.Id_Entity
+        SWP.Page                      *  MOM.Id_Entity
+        SWP.Page_Y                    *  MOM.Id_Entity
         SWP.Link                         MOM.Id_Entity
         SWP.Link1                        MOM.Id_Entity
         SWP.Clip_O                    *  MOM.Id_Entity
@@ -480,16 +480,16 @@ _test_DET = """
         EVT.Calendar                  *  MOM.Id_Entity
         EVT.Link                         MOM.Id_Entity
         EVT.Link1                        MOM.Id_Entity
-        SWP.Id_Entity                    MOM.Id_Entity
-        SWP.Object                       MOM.Id_Entity
-        SWP.Object_PN                    MOM.Id_Entity
-        SWP.Page                      *  MOM.Id_Entity
-        SWP.Page_Y                    *  MOM.Id_Entity
         EVT.Event                     *  MOM.Id_Entity
         EVT.Event_occurs              *  MOM.Id_Entity
         EVT._Recurrence_Mixin_           MOM.Id_Entity
         EVT.Recurrence_Spec           *  MOM.Id_Entity
         EVT.Recurrence_Rule           *  MOM.Id_Entity
+        SWP.Id_Entity                    MOM.Id_Entity
+        SWP.Object                       MOM.Id_Entity
+        SWP.Object_PN                    MOM.Id_Entity
+        SWP.Page                      *  MOM.Id_Entity
+        SWP.Page_Y                    *  MOM.Id_Entity
         SWP.Link                         MOM.Id_Entity
         SWP.Link1                        MOM.Id_Entity
         SWP.Clip_O                    *  MOM.Id_Entity
@@ -668,7 +668,7 @@ _test_DET = """
     PAP.Person_has_Account        *  PAP.Person
     EVT.Link                         None
     EVT.Link1                        None
-    EVT.Event                     *  SWP.Page
+    EVT.Event                     *  MOM.Id_Entity
     EVT.Event_occurs              *  EVT.Event
     EVT._Recurrence_Mixin_           None
     EVT.Recurrence_Spec           *  EVT.Event
@@ -993,7 +993,7 @@ _test_pickled_types = """
     sail_number_x        String          unicode              8     9     8
     sex                  Sex             unicode              1     2     1
     short_name           String          unicode             12    13    12
-    short_title          String          unicode             64    65    64
+    short_title          String          unicode             30    31    30
     short_title          String          unicode             30    31    30
     skipper              Entity          Sailor            None    20    20
     start                Date            date              None    12    12

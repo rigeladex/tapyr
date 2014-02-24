@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -34,6 +34,7 @@
 #    24-Jan-2012 (CT) Remove `Form_args`,
 #                     i.e., stuff related to non-AFS forms
 #    24-Feb-2012 (CT) Remove `Event_occurs` (too electric by far)
+#    24-Feb-2014 (CT) Change `Event.list_display` (add `short_title`; order)
 #    ««revision-date»»···
 #--
 
@@ -52,9 +53,9 @@ class Admin (object) :
         )
     Event               = dict \
         ( ETM           = "GTW.OMP.EVT.Event"
-        , list_display  = ("left", "date", "time", "calendar")
+        , list_display  = ("date", "time", "short_title", "left", "calendar")
         , sort_key      = TFL.Sorted_By
-            ("-date.start", "-time.start", "left")
+            ("-date.start", "-time.start", "short_title", "left")
         )
 
 # end class Admin

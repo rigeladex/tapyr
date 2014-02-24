@@ -1217,6 +1217,7 @@ _test_entity_attr = """
         created_by      computed   MOM.Id_Entity
         email_links     query      PAP.Subject_has_Email     PAP.Subject_has_Email
         emails          query      PAP.Email                 PAP.Subject_has_Email
+        events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
         phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
         phones          query      PAP.Phone                 PAP.Subject_has_Phone
@@ -1229,6 +1230,7 @@ _test_entity_attr = """
         created_by      computed   MOM.Id_Entity
         email_links     query      PAP.Subject_has_Email     PAP.Subject_has_Email
         emails          query      PAP.Email                 PAP.Subject_has_Email
+        events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
         phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
         phones          query      PAP.Phone                 PAP.Subject_has_Phone
@@ -1241,6 +1243,7 @@ _test_entity_attr = """
         created_by      computed   MOM.Id_Entity
         email_links     query      PAP.Company_has_Email     PAP.Company_has_Email
         emails          query      PAP.Email                 PAP.Company_has_Email
+        events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
         phone_links     query      PAP.Company_has_Phone     PAP.Company_has_Phone
         phones          query      PAP.Phone                 PAP.Company_has_Phone
@@ -1254,6 +1257,7 @@ _test_entity_attr = """
         created_by      computed   MOM.Id_Entity
         email_links     query      PAP.Company_has_Email     PAP.Company_has_Email
         emails          query      PAP.Email                 PAP.Company_has_Email
+        events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
         owner           primary    PAP.Biz_Man
         phone_links     query      PAP.Company_has_Phone     PAP.Company_has_Phone
@@ -1267,6 +1271,7 @@ _test_entity_attr = """
         created_by      computed   MOM.Id_Entity
         email_links     query      PAP.Association_has_Email PAP.Association_has_Email
         emails          query      PAP.Email                 PAP.Association_has_Email
+        events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
         phone_links     query      PAP.Association_has_Phone PAP.Association_has_Phone
         phones          query      PAP.Phone                 PAP.Association_has_Phone
@@ -1282,6 +1287,7 @@ _test_entity_attr = """
         created_by      computed   MOM.Id_Entity
         email_links     query      PAP.Person_has_Email      PAP.Person_has_Email
         emails          query      PAP.Email                 PAP.Person_has_Email
+        events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
         phone_links     query      PAP.Person_has_Phone      PAP.Person_has_Phone
         phones          query      PAP.Phone                 PAP.Person_has_Phone
@@ -1294,6 +1300,7 @@ _test_entity_attr = """
     >>> show_T_attrs (MOM.Id_Entity, "%%s%%-35s %%-10s %%-25.25s %%s", set (), sk)
     MOM.Id_Entity
         created_by                          computed   MOM.Id_Entity
+        events                              query      EVT.Event                 EVT.Event
         last_changed_by                     computed   MOM.Id_Entity
     .MOM.Link
     ..MOM.Link1
@@ -1310,11 +1317,11 @@ _test_entity_attr = """
         left                                primary    EVT.Recurrence_Spec       EVT.Recurrence_Rule
     ....EVT.Event
         calendar                            primary    EVT.Calendar
-        left                                primary    SWP.Page                  EVT.Event
+        left                                primary    MOM.Id_Entity             EVT.Event
         occurs                              query      EVT.Event_occurs          EVT.Event_occurs
         recurrence                          query      EVT.Recurrence_Spec       EVT.Recurrence_Spec
     ....EVT.Event_occurs
-        essence                             computed   MOM.Id_Entity
+        essence                             query      MOM.Id_Entity
     ...PAP.Link1
     ....PAP.Address_Position
         left                                primary    PAP.Address               PAP.Address_Position
@@ -1414,15 +1421,6 @@ _test_entity_attr = """
         account_links                       query      Auth.Account_in_Group     Auth.Account_in_Group
         accounts                            query      Auth.Account              Auth.Account_in_Group
     ..EVT.Object
-    ..SWP.Object
-    ...SWP.Object_PN
-        clips                               query      SWP.Clip_O                SWP.Clip_O
-    ....SWP.Page
-        events                              query      EVT.Event                 EVT.Event
-    .....SRM.Page
-        event                               primary    SRM.Regatta_Event
-    ....SWP.Gallery
-        pictures                            query      SWP.Picture               SWP.Picture
     ..PAP.Object
     ...PAP.Property
         subject_links                       query      PAP.Subject_has_Property  PAP.Subject_has_Property
@@ -1488,11 +1486,19 @@ _test_entity_attr = """
         boats                               query      SRM.Boat                  SRM.Boat
     ...SRM.Regatta_Event
         regattas                            query      SRM.Regatta               SRM.Regatta
+    ...SRM.Page
+        clips                               query      SWP.Clip_O                SWP.Clip_O
+        event                               primary    SRM.Regatta_Event
+    ..SWP.Object
+    ...SWP.Object_PN
+    ....SWP.Page
+    ....SWP.Gallery
+        pictures                            query      SWP.Picture               SWP.Picture
     .Auth.Id_Entity
     .EVT.Id_Entity
-    .SWP.Id_Entity
     .PAP.Id_Entity
     .SRM.Id_Entity
+    .SWP.Id_Entity
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
     ...     if T.link_ref_attr and not T.is_partial :
@@ -1502,42 +1508,92 @@ _test_entity_attr = """
     ...                  print (" " * 3, a.name)
     Auth.Account
         group_links
+        events
         person_links
+    Auth.Account_Activation
+        events
+    Auth.Account_Anonymous
+        events
+    Auth.Account_EMail_Verification
+        events
+    Auth.Account_Password_Change_Required
+        events
+    Auth.Account_Password_Reset
+        events
+    Auth.Account_in_Group
+        events
+    Auth.Certificate
+        events
     Auth.Group
         account_links
+        events
+    EVT.Calendar
+        events
     EVT.Event
+        events
         occurs
+    EVT.Event_occurs
+        events
+    EVT.Recurrence_Rule
+        events
     EVT.Recurrence_Spec
+        events
         rules
     PAP.Address
+        events
         subject_links
         company_links
         person_links
         association_links
+    PAP.Address_Position
+        events
     PAP.Association
+        events
         property_links
         url_links
         phone_links
         email_links
         address_links
+    PAP.Association_has_Address
+        events
+    PAP.Association_has_Email
+        events
+    PAP.Association_has_Phone
+        events
+    PAP.Association_has_Url
+        events
+    PAP.Biz_Man
+        events
     PAP.Company
+        events
         property_links
         url_links
         phone_links
         email_links
         address_links
     PAP.Company_P
+        events
         property_links
         url_links
         phone_links
         email_links
         address_links
+    PAP.Company_has_Address
+        events
+    PAP.Company_has_Email
+        events
+    PAP.Company_has_Phone
+        events
+    PAP.Company_has_Url
+        events
     PAP.Email
+        events
         subject_links
         company_links
         person_links
         association_links
     PAP.Person
+        events
         property_links
         account_links
         sailors
@@ -1545,42 +1601,75 @@ _test_entity_attr = """
         phone_links
         email_links
         address_links
+    PAP.Person_has_Account
+        events
+    PAP.Person_has_Address
+        events
+    PAP.Person_has_Email
+        events
+    PAP.Person_has_Phone
+        events
+    PAP.Person_has_Url
+        events
     PAP.Phone
+        events
         subject_links
         company_links
         person_links
         association_links
     PAP.Url
+        events
         subject_links
         company_links
         person_links
         association_links
     SRM.Boat
+        events
         regatta_links
     SRM.Boat_Class
+        events
         boats
     SRM.Boat_in_Regatta
+        events
         race_results
         sailor_links
         team_links
+    SRM.Club
+        events
+    SRM.Crew_Member
+        events
+    SRM.Handicap
+        events
     SRM.Page
         events
         clips
+    SRM.Race_Result
+        events
     SRM.Regatta_C
+        events
         boats
         teams
     SRM.Regatta_Event
+        events
         regattas
     SRM.Regatta_H
+        events
         boats
     SRM.Sailor
+        events
         boat_in_regatta_links
     SRM.Team
+        events
         boat_links
+    SRM.Team_has_Boat_in_Regatta
+        events
+    SWP.Clip_O
+        events
     SWP.Clip_X
         events
         clips
     SWP.Gallery
+        events
         clips
         pictures
     SWP.Page
@@ -1589,7 +1678,10 @@ _test_entity_attr = """
     SWP.Page_Y
         events
         clips
+    SWP.Picture
+        events
     SWP.Referral
+        events
         clips
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):
@@ -1603,56 +1695,71 @@ _test_entity_attr = """
         last_change
         group_links
         groups
+        events
         person
         person_links
         person_link
     Auth.Account_Activation
         creation
         last_change
+        events
     Auth.Account_Anonymous
         creation
         last_change
+        events
     Auth.Account_EMail_Verification
         creation
         last_change
+        events
     Auth.Account_Password_Change_Required
         creation
         last_change
+        events
     Auth.Account_Password_Reset
         creation
         last_change
+        events
     Auth.Account_in_Group
         creation
         last_change
+        events
     Auth.Certificate
         creation
         last_change
+        events
     Auth.Group
         creation
         last_change
         accounts
         account_links
+        events
     EVT.Calendar
         creation
         last_change
+        events
     EVT.Event
         creation
         last_change
+        events
         occurs
         recurrence
     EVT.Event_occurs
         creation
         last_change
+        events
     EVT.Recurrence_Rule
         creation
         last_change
+        events
     EVT.Recurrence_Spec
         creation
         last_change
+        events
         rules
     PAP.Address
         creation
         last_change
+        events
         gps
         subject_links
         companies
@@ -1664,9 +1771,11 @@ _test_entity_attr = """
     PAP.Address_Position
         creation
         last_change
+        events
     PAP.Association
         creation
         last_change
+        events
         property_links
         url_links
         urls
@@ -1679,22 +1788,28 @@ _test_entity_attr = """
     PAP.Association_has_Address
         creation
         last_change
+        events
     PAP.Association_has_Email
         creation
         last_change
+        events
     PAP.Association_has_Phone
         creation
         last_change
+        events
     PAP.Association_has_Url
         creation
         last_change
+        events
     PAP.Biz_Man
         creation
         last_change
+        events
         owns
     PAP.Company
         creation
         last_change
+        events
         property_links
         url_links
         urls
@@ -1707,6 +1822,7 @@ _test_entity_attr = """
     PAP.Company_P
         creation
         last_change
+        events
         property_links
         url_links
         urls
@@ -1719,18 +1835,23 @@ _test_entity_attr = """
     PAP.Company_has_Address
         creation
         last_change
+        events
     PAP.Company_has_Email
         creation
         last_change
+        events
     PAP.Company_has_Phone
         creation
         last_change
+        events
     PAP.Company_has_Url
         creation
         last_change
+        events
     PAP.Email
         creation
         last_change
+        events
         subject_links
         companies
         company_links
@@ -1741,6 +1862,7 @@ _test_entity_attr = """
     PAP.Person
         creation
         last_change
+        events
         property_links
         account_links
         accounts
@@ -1757,21 +1879,27 @@ _test_entity_attr = """
     PAP.Person_has_Account
         creation
         last_change
+        events
     PAP.Person_has_Address
         creation
         last_change
+        events
     PAP.Person_has_Email
         creation
         last_change
+        events
     PAP.Person_has_Phone
         creation
         last_change
+        events
     PAP.Person_has_Url
         creation
         last_change
+        events
     PAP.Phone
         creation
         last_change
+        events
         subject_links
         companies
         company_links
@@ -1782,6 +1910,7 @@ _test_entity_attr = """
     PAP.Url
         creation
         last_change
+        events
         subject_links
         companies
         company_links
@@ -1792,14 +1921,17 @@ _test_entity_attr = """
     SRM.Boat
         creation
         last_change
+        events
         regatta_links
     SRM.Boat_Class
         creation
         last_change
+        events
         boats
     SRM.Boat_in_Regatta
         creation
         last_change
+        events
         race_results
         sailor_links
         _crew
@@ -1808,12 +1940,15 @@ _test_entity_attr = """
     SRM.Club
         creation
         last_change
+        events
     SRM.Crew_Member
         creation
         last_change
+        events
     SRM.Handicap
         creation
         last_change
+        events
     SRM.Page
         creation
         last_change
@@ -1822,34 +1957,42 @@ _test_entity_attr = """
     SRM.Race_Result
         creation
         last_change
+        events
     SRM.Regatta_C
         creation
         last_change
+        events
         boats
         teams
     SRM.Regatta_Event
         creation
         last_change
+        events
         regattas
     SRM.Regatta_H
         creation
         last_change
+        events
         boats
     SRM.Sailor
         creation
         last_change
+        events
         boat_in_regatta_links
     SRM.Team
         creation
         last_change
+        events
         boat_links
         boats
     SRM.Team_has_Boat_in_Regatta
         creation
         last_change
+        events
     SWP.Clip_O
         creation
         last_change
+        events
     SWP.Clip_X
         creation
         last_change
@@ -1858,6 +2001,7 @@ _test_entity_attr = """
     SWP.Gallery
         creation
         last_change
+        events
         clips
         pictures
     SWP.Page
@@ -1873,9 +2017,11 @@ _test_entity_attr = """
     SWP.Picture
         creation
         last_change
+        events
     SWP.Referral
         creation
         last_change
+        events
         clips
 
     >>> for T, l in sorted (children_trans_iter (MOM.Id_Entity), key = TFL.Getter [0].type_name):

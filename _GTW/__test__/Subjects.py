@@ -279,14 +279,6 @@ _test_code = """
           Auth.Group . . . . . . . . . . . . . . . . .    True
         EVT.Object . . . . . . . . . . . . . . . . . .           True   True
           EVT.Calendar . . . . . . . . . . . . . . . .    True
-        SWP.Object . . . . . . . . . . . . . . . . . .           True   True
-          SWP.Object_PN  . . . . . . . . . . . . . . .           True   True
-            SWP.Page . . . . . . . . . . . . . . . . .    True   True   True   True
-              SWP.Page_Y . . . . . . . . . . . . . . .    True                 True
-              SWP.Clip_X . . . . . . . . . . . . . . .    True
-              SRM.Page . . . . . . . . . . . . . . . .    True                 True
-            SWP.Gallery  . . . . . . . . . . . . . . .    True
-            SWP.Referral . . . . . . . . . . . . . . .    True
         PAP.Object . . . . . . . . . . . . . . . . . .           True   True
           PAP.Property . . . . . . . . . . . . . . . .           True   True
             PAP.Address  . . . . . . . . . . . . . . .    True
@@ -306,12 +298,19 @@ _test_code = """
             SRM.Handicap . . . . . . . . . . . . . . .    True
           SRM.Club . . . . . . . . . . . . . . . . . .    True
           SRM.Regatta_Event  . . . . . . . . . . . . .    True
+          SRM.Page . . . . . . . . . . . . . . . . . .    True                 True
+        SWP.Object . . . . . . . . . . . . . . . . . .           True   True
+          SWP.Object_PN  . . . . . . . . . . . . . . .           True   True
+            SWP.Page . . . . . . . . . . . . . . . . .    True   True   True   True
+              SWP.Page_Y . . . . . . . . . . . . . . .    True                 True
+              SWP.Clip_X . . . . . . . . . . . . . . .    True
+            SWP.Gallery  . . . . . . . . . . . . . . .    True
+            SWP.Referral . . . . . . . . . . . . . . .    True
       Auth.Id_Entity . . . . . . . . . . . . . . . . .           True   True
       EVT.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
-      SWP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
       PAP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
       SRM.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
-
+      SWP.Id_Entity  . . . . . . . . . . . . . . . . .           True   True
 
 """
 
