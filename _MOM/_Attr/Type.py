@@ -331,6 +331,7 @@
 #    28-Jan-2014 (CT) Add `A_Url_L`
 #    26-Feb-2014 (CT) Change `A_Date_Time.as_rest_cargo_ckd` to use ISO format
 #                     (including timezone)
+#    26-Feb-2014 (CT) Add `:` to timezone of `A_Date_Time.as_rest_cargo_ckd`
 #    ««revision-date»»···
 #--
 
@@ -2196,8 +2197,9 @@ class A_Date_Time (_A_Date_) :
                 oh, os = divmod (offset.total_seconds (), 3600)
                 om     = os // 60
                 v      = value + offset
+                ### Date format according to ISO 8601, RFC 3339
                 return v.strftime \
-                    ("%Y-%m-%dT%H:%M:%S" + ("%+03d%02d" % (oh, om)))
+                    ("%Y-%m-%dT%H:%M:%S" + ("%+03d:%02d" % (oh, om)))
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
