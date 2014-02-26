@@ -329,6 +329,8 @@
 #    27-Jan-2014 (CT) Redefine `_A_Named_Object_.cooked`
 #    28-Jan-2014 (CT) Change `_A_Named_Object_.cooked` to accept `Elbat` values
 #    28-Jan-2014 (CT) Add `A_Url_L`
+#    26-Feb-2014 (CT) Change `A_Date_Time.as_rest_cargo_ckd` to use ISO format
+#                     (including timezone)
 #    ««revision-date»»···
 #--
 
@@ -2190,8 +2192,12 @@ class A_Date_Time (_A_Date_) :
             if not value.time () :
                 return unicode (value.strftime ("%Y-%m-%d"))
             else :
-                v = value + TFL.user_config.time_zone.utcoffset (value)
-                return v.strftime ("%Y-%m-%d %H:%M")
+                offset = TFL.user_config.time_zone.utcoffset (value)
+                oh, os = divmod (offset.total_seconds (), 3600)
+                om     = os // 60
+                v      = value + offset
+                return v.strftime \
+                    ("%Y-%m-%dT%H:%M:%S" + ("%+03d%02d" % (oh, om)))
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method

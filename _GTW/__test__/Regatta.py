@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -51,7 +51,7 @@ _test_code = """
     SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))
     >>> SRM.Regatta_Event.instance (* rev.epk)
     SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01'))
-    >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, raw = True)
+    >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, result = ("2008/05/01 17:21", ), raw = True)
     >>> reg.epk_raw
     ((u'Himmelfahrt', (('finish', u'2008/05/01'), ('start', u'2008/05/01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
@@ -65,6 +65,27 @@ _test_code = """
     SRM.Regatta_H ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'yardstick', ))
     >>> SRM.Regatta_H.instance (* reh.epk)
     SRM.Regatta_H ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'yardstick', ))
+
+    >>> reg.result
+    SRM.Regatta_Result ('2008/05/01 17:21:00')
+
+    >>> TFL.user_config.time_zone = None
+    >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
+    '2008-05-01T17:21:00+0000'
+    >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
+    '2008/05/01 17:21:00'
+
+    >>> TFL.user_config.time_zone = "Europe/Vienna"
+    >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
+    '2008-05-01T19:21:00+0200'
+    >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
+    '2008/05/01 19:21:00'
+
+    >>> TFL.user_config.time_zone = "America/New_York"
+    >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
+    '2008-05-01T13:21:00-0400'
+    >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
+    '2008/05/01 13:21:00'
 
     >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008/05/01").all ()
     [SRM.Regatta_C ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'yardstick', ))]
@@ -121,6 +142,8 @@ _test_code = """
 
 from _GTW.__test__.model import *
 NL = chr (10)
+
+import _TFL.User_Config
 
 __test__ = Scaffold.create_test_dict (_test_code)
 
