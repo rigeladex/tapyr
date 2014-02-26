@@ -71,19 +71,19 @@ _test_code = """
 
     >>> TFL.user_config.time_zone = None
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
-    '2008-05-01T17:21:00+0000'
+    '2008-05-01T17:21:00+00:00'
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
     '2008/05/01 17:21:00'
 
     >>> TFL.user_config.time_zone = "Europe/Vienna"
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
-    '2008-05-01T19:21:00+0200'
+    '2008-05-01T19:21:00+02:00'
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
     '2008/05/01 19:21:00'
 
     >>> TFL.user_config.time_zone = "America/New_York"
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_ckd (reg.result)
-    '2008-05-01T13:21:00-0400'
+    '2008-05-01T13:21:00-04:00'
     >>> reg.__class__.result.E_Type.date.as_rest_cargo_raw (reg.result)
     '2008/05/01 13:21:00'
 
