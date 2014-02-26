@@ -37,6 +37,7 @@
 #    22-Jan-2013 (CT) Remove spurious `handler.`
 #     6-Apr-2013 (CT) Fix typo
 #    24-Feb-2014 (CT) Add `_Event_Wrapper_`
+#    26-Feb-2014 (CT) Remove `nav_off_canvas`
 #    ««revision-date»»···
 #--
 
@@ -290,7 +291,6 @@ class Calendar (_Mixin_, _Ancestor) :
 
     dir_template_name  = "calendar"
     event_manager_name = "GTW.OMP.EVT.Event_occurs"
-    nav_off_canvas     = True
     page_template_name = "calendar"
     pid                = "Cal"
     skip_etag          = True
