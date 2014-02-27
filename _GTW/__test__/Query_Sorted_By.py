@@ -49,18 +49,18 @@ _composite = r"""
     >>> e2 = EVT.Event (p2.epk_raw, ("1.1.2010", ), raw = True)
     >>> q = EVT.Event.query ().order_by (TFL.Sorted_By (Q.date.start))
     >>> for e in q.all () : print e
-    ((u'event-2-text', ), (u'2010/01/01', ), (), u'')
-    ((u'event-1-text', ), (u'2010/02/01', ), (), u'')
+    ((u'event-2-text', ), (u'2010-01-01', ), (), u'')
+    ((u'event-1-text', ), (u'2010-02-01', ), (), u'')
 
     >>> for e in EVT.Event.query (sort_key = EVT.Event.sorted_by) :
     ...     print e
-    ((u'event-2-text', ), (u'2010/01/01', ), (), u'')
-    ((u'event-1-text', ), (u'2010/02/01', ), (), u'')
+    ((u'event-2-text', ), (u'2010-01-01', ), (), u'')
+    ((u'event-1-text', ), (u'2010-02-01', ), (), u'')
 
     >>> for e in EVT.Event.query (sort_key = TFL.Sorted_By ("-date.start")) :
     ...     print e
-    ((u'event-1-text', ), (u'2010/02/01', ), (), u'')
-    ((u'event-2-text', ), (u'2010/01/01', ), (), u'')
+    ((u'event-1-text', ), (u'2010-02-01', ), (), u'')
+    ((u'event-2-text', ), (u'2010-01-01', ), (), u'')
 
 """
 
@@ -75,12 +75,12 @@ _link1_role = r"""
     >>> e2 = EVT.Event (p2.epk_raw, ("1.1.2010", ), raw = True)
     >>> q = EVT.Event_occurs.query_s ()
     >>> for e in q.all () : print e ### default sort order
-    (((u'event-2-text', ), (u'2010/01/01', ), (), u''), u'2010/01/01', ())
-    (((u'event-1-text', ), (u'2010/02/01', ), (), u''), u'2010/02/01', ())
+    (((u'event-2-text', ), (u'2010-01-01', ), (), u''), u'2010-01-01', ())
+    (((u'event-1-text', ), (u'2010-02-01', ), (), u''), u'2010-02-01', ())
     >>> q = EVT.Event_occurs.query ().order_by (TFL.Sorted_By ("-event.date.start"))
     >>> for e in q.all () : print e ### sorted by descending date
-    (((u'event-1-text', ), (u'2010/02/01', ), (), u''), u'2010/02/01', ())
-    (((u'event-2-text', ), (u'2010/01/01', ), (), u''), u'2010/01/01', ())
+    (((u'event-1-text', ), (u'2010-02-01', ), (), u''), u'2010-02-01', ())
+    (((u'event-2-text', ), (u'2010-01-01', ), (), u''), u'2010-01-01', ())
 
 
 """
@@ -108,14 +108,14 @@ _link2_link1 = r"""
 
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (Q.right.left.date.start) : print r
-    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
-    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
-    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009-05-21', u'2009-05-21')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010-05-13', u'2010-05-13')), (u'optimist', )))
     >>> q = scope.SRM.Boat_in_Regatta.query ()
     >>> for r in q.order_by (TFL.Sorted_By ("-right.left.date.start")) : print r
-    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', )))
-    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', )))
-    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2010-05-13', u'2010-05-13')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2009-05-21', u'2009-05-21')), (u'optimist', )))
+    (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))
 
     Unfortunately, we cannot use `.attrs (* qa)` because
     * `HPS` doesn't currently support expressions for `attrs`
@@ -124,9 +124,9 @@ _link2_link1 = r"""
     >>> qa = (Q.right.left, qd, Q.right.left.date.start.year)
     >>> for x in q.order_by (qd) :
     ...     print tuple (q (x) for q in qa)
-    (SRM.Regatta_Event (u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), -4, 2008)
-    (SRM.Regatta_Event (u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), 8, 2010)
-    (SRM.Regatta_Event (u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), 16, 2009)
+    (SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), -4, 2008)
+    (SRM.Regatta_Event (u'himmelfahrt', (u'2010-05-13', u'2010-05-13')), 8, 2010)
+    (SRM.Regatta_Event (u'himmelfahrt', (u'2009-05-21', u'2009-05-21')), 16, 2009)
 
 """
 
@@ -153,13 +153,13 @@ _query_attr = r"""
 
     >>> q = SRM.Regatta_C.query ()
     >>> for r in q.order_by (Q.event.date.start) : print r.year, r
-    2008 ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
-    2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
-    2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
+    2008 ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ))
+    2009 ((u'himmelfahrt', (u'2009-05-21', u'2009-05-21')), (u'optimist', ))
+    2010 ((u'himmelfahrt', (u'2010-05-13', u'2010-05-13')), (u'optimist', ))
     >>> for r in q.order_by (TFL.Sorted_By ("-event.date.start")) : print r.year, r
-    2010 ((u'himmelfahrt', (u'2010/05/13', u'2010/05/13')), (u'optimist', ))
-    2009 ((u'himmelfahrt', (u'2009/05/21', u'2009/05/21')), (u'optimist', ))
-    2008 ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', ))
+    2010 ((u'himmelfahrt', (u'2010-05-13', u'2010-05-13')), (u'optimist', ))
+    2009 ((u'himmelfahrt', (u'2009-05-21', u'2009-05-21')), (u'optimist', ))
+    2008 ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ))
 
 
 """

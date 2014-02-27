@@ -44,7 +44,7 @@
 #    25-Aug-2013 (CT) Add `test_q_result_x`
 #    26-Aug-2013 (CT) Add `test_key_o_p`; call of `show_sequence`
 #    29-Aug-2013 (CT) Add test case for
-#                     `Q.person.lifetime == ("2013/07/15", "2013/07/21")`
+#                     `Q.person.lifetime == ("2013-07-15", "2013-07-21")`
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_q_result`
 #    ««revision-date»»···
 #--
@@ -4997,7 +4997,7 @@ _test_q_result = """
            JOIN srm_regatta ON mom_id_entity.pid = srm_regatta.pid
            LEFT OUTER JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
 
-    >>> print (qrt.filter (Q.RAW.left.date.start == "2008/05/01")) ### SRM.Regatta
+    >>> print (qrt.filter (Q.RAW.left.date.start == "2008-05-01")) ### SRM.Regatta
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5112,7 +5112,7 @@ _test_q_result = """
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
          LIMIT :param_1 OFFSET :param_2
 
-    >>> show_query (qrt.filter (Q.event.date.start >= "2010/01/01", Q.event.date.start <= "2010/12/31")) ### SRM.Regatta_C
+    >>> show_query (qrt.filter (Q.event.date.start >= "2010-01-01", Q.event.date.start <= "2010-12-31")) ### SRM.Regatta_C
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5657,7 +5657,7 @@ _test_q_result = """
     >>> ET = apt ["SRM.Boat_in_Regatta"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.regatta.event.date.start > "2009/05/21")) ### SRM.Boat_in_Regatta
+    >>> print (qrt.filter (Q.regatta.event.date.start > "2009-05-21")) ### SRM.Boat_in_Regatta
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5678,7 +5678,7 @@ _test_q_result = """
            JOIN srm_regatta_event AS srm_regatta_event__2 ON srm_regatta_event__2.pid = srm_regatta__1."left"
          WHERE srm_regatta_event__2.date__start > :date__start_1
 
-    >>> print (qrt.filter (Q.right.left.date.start > "2009/05/21")) ### SRM.Boat_in_Regatta
+    >>> print (qrt.filter (Q.right.left.date.start > "2009-05-21")) ### SRM.Boat_in_Regatta
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5750,7 +5750,7 @@ _test_q_result = """
            JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_subject_has_property."right"
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_subject_has_property."left"
 
-    >>> print (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### PAP.Person_has_Phone
+    >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### PAP.Person_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5815,7 +5815,7 @@ _test_q_result = """
          WHERE mom_id_entity.pid = pap_company_has_email.pid
             OR mom_id_entity.pid = pap_person_has_email.pid
 
-    >>> print (qrt.filter (Q.left.lifetime.start > "2000/01/01")) ### PAP.Subject_has_Email
+    >>> print (qrt.filter (Q.left.lifetime.start > "2000-01-01")) ### PAP.Subject_has_Email
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -6060,7 +6060,7 @@ _test_q_result = """
            JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person_has_account__1."left" IS NOT NULL
 
-    >>> print (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### Auth.Account
+    >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### Auth.Account
     SQL: SELECT
            auth__account_.enabled AS auth__account__enabled,
            auth__account_.name AS auth__account__name,
@@ -6082,7 +6082,7 @@ _test_q_result = """
            JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.lifetime__start = :lifetime__start_1
 
-    >>> print (qrt.filter (Q.person.lifetime == ("2013/07/15", "2013/07/21"))) ### Auth.Account
+    >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", "2013-07-21"))) ### Auth.Account
     SQL: SELECT
            auth__account_.enabled AS auth__account__enabled,
            auth__account_.name AS auth__account__name,
@@ -6105,7 +6105,7 @@ _test_q_result = """
          WHERE pap_person__3.lifetime__start = :lifetime__start_1
             AND pap_person__3.lifetime__finish = :lifetime__finish_1
 
-    >>> str (qrt.filter (Q.RAW.person.lifetime == ("2013/07/15", ))) == str (qrt.filter (Q.person.lifetime == ("2013/07/15", ))) ### Auth.Account
+    >>> str (qrt.filter (Q.RAW.person.lifetime == ("2013-07-15", ))) == str (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### Auth.Account
     True
 
     >>> print (qrt.filter (Q.RAW.person.last_name == "Tanzer")) ### Auth.Account # doctest:+ELLIPSIS

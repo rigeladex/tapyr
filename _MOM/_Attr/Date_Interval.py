@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -103,7 +103,7 @@ class Date_Interval (_Ancestor_Essence) :
             """Finish date of interval"""
 
             kind               = Attr.Optional
-            example            = "2038/01/19"
+            example            = "2038-01-19"
             rank               = 2
 
         # end class finish
@@ -112,7 +112,7 @@ class Date_Interval (_Ancestor_Essence) :
             """Start date of interval"""
 
             kind               = Attr.Necessary
-            example            = "1970/01/01"
+            example            = "1970-01-01"
             rank               = 1
 
         # end class start

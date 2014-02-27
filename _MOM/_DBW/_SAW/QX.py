@@ -1873,7 +1873,7 @@ query expressions as arguments.
 
 A generic query expression looks like ::
 
-    Q.lifetime.start > "2012/07/01"
+    Q.lifetime.start > "2012-07-01"
 
 where `Q` is a query generator provided by `MOM` --- it is an instance
 of the :class:`TFL.Attr_Query<_TFL.Filter.Attr_Query>`. `Q`
@@ -1895,7 +1895,7 @@ all persons born after the turn of the last century by using the
 query ::
 
     s.PAP.Person.query \\
-        (Q.lifetime.start >= "2000/01/01").order_by (Q.lifetime)
+        (Q.lifetime.start >= "2000-01-01").order_by (Q.lifetime)
 
 In general, a Q expression is a tree of Q instances. The leafs of such
 a tree are either literal values or references to attributes of

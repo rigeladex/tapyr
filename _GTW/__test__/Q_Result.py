@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -46,9 +46,9 @@ _q_result = r"""
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> DI  = lambda s : scope.MOM.Date_Interval (s, raw = True)
-    >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> _   = PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
     >>> _   = PAP.Person  ("LN 2", "FN 2", title = "Dr.")
-    >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/03/01"))
+    >>> p   = PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-03-01"))
     >>> _   = PAP.Person  ("LN 4", "FN 4", title = "DI")
     >>> _   = PAP.Person  ("LN 5", "FN 5", title = "DI")
     >>> a   = PAP.Address ("S", "C", "Z", "C")
@@ -80,22 +80,22 @@ _q_result = r"""
 
     >>> p = PAP.Person.query (pid = 1).one ()
     >>> p.lifetime # 1
-    MOM.Date_Interval (u'2010/01/01')
+    MOM.Date_Interval (u'2010-01-01')
 
     >>> p.lifetime.finish = datetime.date (2010, 12, 31)
 
     >>> p.lifetime # 2
-    MOM.Date_Interval (u'2010/01/01', u'2010/12/31')
+    MOM.Date_Interval (u'2010-01-01', u'2010-12-31')
     >>> first (PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
     (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
     >>> first (PAP.Person.query (pid = 1).attr (Q.lifetime))
-    MOM.Date_Interval (u'2010/01/01', u'2010/12/31')
+    MOM.Date_Interval (u'2010-01-01', u'2010-12-31')
 
     >>> sorted (PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime))
-    [(u'fn 1', MOM.Date_Interval (u'2010/01/01', u'2010/12/31'))]
+    [(u'fn 1', MOM.Date_Interval (u'2010-01-01', u'2010-12-31'))]
 
     >>> sorted (PAP.Person.query (pid = 1).attrs (Q.RAW.first_name, Q.lifetime))
-    [(u'FN 1', MOM.Date_Interval (u'2010/01/01', u'2010/12/31'))]
+    [(u'FN 1', MOM.Date_Interval (u'2010-01-01', u'2010-12-31'))]
 
     >>> scope.rollback ()
 
@@ -217,11 +217,11 @@ _attrs_query = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
-    >>> _   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = DI ("2010/01/10"), title = "Dr.")
-    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
-    >>> _   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2010/01/16"), title = "DI")
-    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", lifetime = DI ("2010/02/01"), title = "DI")
+    >>> _   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
+    >>> _   = scope.PAP.Person  ("LN 2", "FN 2", lifetime = DI ("2010-01-10"), title = "Dr.")
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-01-03"))
+    >>> _   = scope.PAP.Person  ("LN 4", "FN 4", lifetime = DI ("2010-01-16"), title = "DI")
+    >>> _   = scope.PAP.Person  ("LN 5", "FN 5", lifetime = DI ("2010-02-01"), title = "DI")
 
     >>> scope.commit ()
 
@@ -245,9 +245,9 @@ _raw_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> DI  = lambda s : scope.MOM.Date_Interval (start = s, raw = True)
-    >>> p1   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010/01/01"))
+    >>> p1   = scope.PAP.Person  ("LN 1", "FN 1", lifetime = DI ("2010-01-01"))
     >>> p  = scope.PAP.Person  ("LN 2", "FN 2")
-    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010/01/03"))
+    >>> p   = scope.PAP.Person  ("LN 3", "FN 3", lifetime = DI ("2010-01-03"))
     >>> p   = scope.PAP.Person  ("Lname 4", "Fn 3")
     >>> a   = scope.PAP.Address ("S", "C", "Z", "C")
     >>> pha = scope.PAP.Person_has_Address (p, a)
@@ -261,7 +261,7 @@ _raw_query = """
     [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
     >>> scope.PAP.Person.query (Q.RAW.last_name == "LN 1").all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
-    >>> scope.PAP.Person.query (Q.RAW.lifetime.start == "2010/01/01").all ()
+    >>> scope.PAP.Person.query (Q.RAW.lifetime.start == "2010-01-01").all ()
     [PAP.Person (u'ln 1', u'fn 1', u'', u'')]
 
     >>> scope.PAP.Person.query (Q.RAW.last_name.STARTSWITH ("LN")).order_by (Q.last_name).all ()

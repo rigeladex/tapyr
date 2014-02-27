@@ -465,19 +465,19 @@ _test_cqf = r"""
         (Q.pid.in_ ((8, 7),),)
     SRM.Handicap u'Yardstick'
         (Q.pid == 9,)
-    SRM.Regatta_Event u'Himmelfahrt 2008/05/01'
+    SRM.Regatta_Event u'Himmelfahrt 2008-05-01'
         (Q.pid == 10,)
-    SRM.Regatta_C u'Himmelfahrt 2008/05/01, Optimist'
+    SRM.Regatta_C u'Himmelfahrt 2008-05-01, Optimist'
         (Q.pid.in_ ((11, 10, 7),),)
-    SRM.Regatta_H u'Himmelfahrt 2008/05/01, Yardstick'
+    SRM.Regatta_H u'Himmelfahrt 2008-05-01, Yardstick'
         (Q.pid.in_ ((12, 10, 9),),)
-    SRM.Regatta_Event u'Guggenberger 2008/06/20 - 2008/06/21'
+    SRM.Regatta_Event u'Guggenberger 2008-06-20 - 2008-06-21'
         (Q.pid == 13,)
-    SRM.Regatta_C u'Guggenberger 2008/06/20 - 2008/06/21, Optimist'
+    SRM.Regatta_C u'Guggenberger 2008-06-20 - 2008-06-21, Optimist'
         (Q.pid.in_ ((14, 13, 7),),)
-    SRM.Boat_in_Regatta u'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist'
+    SRM.Boat_in_Regatta u'Optimist, AUT 1107, Himmelfahrt 2008-05-01, Optimist'
         (Q.pid.in_ ((15, 8, 11, 5),),)
-    SRM.Boat_in_Regatta u'Optimist, AUT 1107, Guggenberger 2008/06/20 - 2008/06/21, Optimist'
+    SRM.Boat_in_Regatta u'Optimist, AUT 1107, Guggenberger 2008-06-20 - 2008-06-21, Optimist'
         (Q.pid.in_ ((16, 8, 14, 5),),)
 
 """
@@ -932,7 +932,7 @@ _test_doc = r"""
             , { 'attributes' :
                   [ { 'default_value' : ''
                     , 'description' : 'Date of regatta result.'
-                    , 'example' : '1979/08/18'
+                    , 'example' : '1979-08-18'
                     , 'is_changeable' : True
                     , 'is_required' : False
                     , 'is_settable' : True
@@ -1120,7 +1120,7 @@ _test_doc = r"""
             , { 'attributes' :
                   [ { 'default_value' : ''
                     , 'description' : 'Date of regatta result.'
-                    , 'example' : '1979/08/18'
+                    , 'example' : '1979-08-18'
                     , 'is_changeable' : True
                     , 'is_required' : False
                     , 'is_settable' : True
@@ -1322,7 +1322,7 @@ _test_doc = r"""
             , { 'attributes' :
                   [ { 'default_value' : ''
                     , 'description' : 'Date of regatta result.'
-                    , 'example' : '1979/08/18'
+                    , 'example' : '1979-08-18'
                     , 'is_changeable' : True
                     , 'is_required' : False
                     , 'is_settable' : True
@@ -1503,7 +1503,7 @@ _test_example_1 = r"""
     Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
     Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
-    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1523,19 +1523,19 @@ _test_example_1 = r"""
     PAP.Url : (u'http://xkcd.com/327/', 'PAP.Url')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
+    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
-    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
-    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
-    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
     SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
-    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
-    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1561,7 +1561,7 @@ _test_example_2 = r"""
     Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
     Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
-    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1581,19 +1581,19 @@ _test_example_2 = r"""
     PAP.Url : (u'http://xkcd.com/327/', 'PAP.Url')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
+    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
-    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
-    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
-    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
     SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
-    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
-    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1614,19 +1614,19 @@ _test_example_3 = r"""
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
-    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
-    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SWP.Clip_O')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
     SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
-    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
-    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
-    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
-    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), 'SRM.Page')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
-    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
+    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat')
     PAP.Url : (u'http://xkcd.com/327/', 'PAP.Url')
@@ -1646,7 +1646,7 @@ _test_example_3 = r"""
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     Auth.Group : (u'foo', 'Auth.Group')
-    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), u'foo', 'Auth.Certificate')
     Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
     Auth.Account_Password_Reset : ------
     Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
@@ -1675,7 +1675,7 @@ _test_example_4 = r"""
     Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
     Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
-    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1695,19 +1695,19 @@ _test_example_4 = r"""
     PAP.Url : (u'http://xkcd.com/327/', 'PAP.Url')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
+    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
-    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
-    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
-    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
     SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
-    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
-    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1729,7 +1729,7 @@ _test_example_4 = r"""
     Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
     Auth.Account_Password_Reset : ------
     Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
-    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), u'foo', 'Auth.Certificate')
     Auth.Group : (u'foo', 'Auth.Group')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
@@ -1749,19 +1749,19 @@ _test_example_4 = r"""
     PAP.Url : (u'http://xkcd.com/327/', 'PAP.Url')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
-    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
+    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
-    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
-    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
-    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
-    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
     SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
-    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
-    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SWP.Clip_O')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
@@ -1780,19 +1780,19 @@ _test_example_4 = r"""
     SWP.Picture : ((u'20101010_000042_137', 'SWP.Gallery'), u'42', 'SWP.Picture')
     SWP.Page : (u'20101010_000042_137', 'SWP.Page')
     SWP.Gallery : (u'20101010_000042_137', 'SWP.Gallery')
-    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SWP.Clip_O')
-    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
-    SRM.Team : (((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
+    SWP.Clip_O : ((u'20101010_000042_137', 'SWP.Page'), (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SWP.Clip_O')
+    SRM.Team_has_Boat_in_Regatta : ((((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team'), (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), 'SRM.Team_has_Boat_in_Regatta')
+    SRM.Team : (((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), u'foo', 'SRM.Team')
     SRM.Sailor : ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor')
-    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
-    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event')
-    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
-    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
-    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), 'SRM.Page')
+    SRM.Regatta_H : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'IRC', 'SRM.Handicap'), 'SRM.Regatta_H')
+    SRM.Regatta_Event : (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event')
+    SRM.Regatta_C : ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    SRM.Race_Result : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), u'5', 'SRM.Race_Result')
+    SRM.Page : (u'20101010_000042_137', (u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), 'SRM.Page')
     SRM.Handicap : (u'IRC', 'SRM.Handicap')
-    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
+    SRM.Crew_Member : ((((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), ((u'Doe', u'John', u'F.', u'Dr.', 'PAP.Person'), u'AUT', u'499999', (u'RORC', 'SRM.Club'), 'SRM.Sailor'), 'SRM.Crew_Member')
     SRM.Club : (u'RORC', 'SRM.Club')
-    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038/01/19'), ('start', u'1970/01/01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
+    SRM.Boat_in_Regatta : (((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat'), ((u'Fastnet Race', (('finish', u'2038-01-19'), ('start', u'1970-01-01')), 'SRM.Regatta_Event'), (u'Laser', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta')
     SRM.Boat_Class : (u'Laser', 'SRM.Boat_Class')
     SRM.Boat : ((u'Laser', 'SRM.Boat_Class'), u'2827', u'AUT', u'X', 'SRM.Boat')
     PAP.Url : (u'http://xkcd.com/327/', 'PAP.Url')
@@ -1812,7 +1812,7 @@ _test_example_4 = r"""
     PAP.Address_Position : ((u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address'), (('height', u'1764.0'), ('lat', u'42'), ('lon', u'137')), 'PAP.Address_Position')
     PAP.Address : (u'Mystery Lane 42', u'9876', u'Middletown', u'Land of the Brave', 'PAP.Address')
     Auth.Group : (u'foo', 'Auth.Group')
-    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038/01/19'), ('start', '1970/01/01')), u'foo', 'Auth.Certificate')
+    Auth.Certificate : (u'foo@bar.baz', (('finish', '2038-01-19'), ('start', '1970-01-01')), u'foo', 'Auth.Certificate')
     Auth.Account_in_Group : ((u'foo@bar.baz', 'Auth.Account'), (u'foo', 'Auth.Group'), 'Auth.Account_in_Group')
     Auth.Account_Password_Reset : ------
     Auth.Account_Password_Change_Required : ((u'foo@bar.baz', 'Auth.Account'), 'Auth.Account_Password_Change_Required')
@@ -2490,8 +2490,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -2537,8 +2537,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/06/21'
-                              , 'start' : '2008/06/20'
+                              { 'finish' : '2008-06-21'
+                              , 'start' : '2008-06-20'
                               }
                           , 'name' : 'Guggenberger'
                           }
@@ -2780,8 +2780,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -2827,8 +2827,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/06/21'
-                              , 'start' : '2008/06/20'
+                              { 'finish' : '2008-06-21'
+                              , 'start' : '2008-06-20'
                               }
                           , 'name' : 'Guggenberger'
                           }
@@ -2879,8 +2879,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -2933,8 +2933,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -2959,8 +2959,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/06/21'
-                              , 'start' : '2008/06/20'
+                              { 'finish' : '2008-06-21'
+                              , 'start' : '2008-06-20'
                               }
                           , 'name' : 'Guggenberger'
                           }
@@ -3013,8 +3013,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/06/21'
-                              , 'start' : '2008/06/20'
+                              { 'finish' : '2008-06-21'
+                              , 'start' : '2008-06-20'
                               }
                           , 'name' : 'Guggenberger'
                           }
@@ -3067,8 +3067,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -3120,8 +3120,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -3241,8 +3241,8 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'date' :
-                      { 'finish' : '2008/05/01'
-                      , 'start' : '2008/05/01'
+                      { 'finish' : '2008-05-01'
+                      , 'start' : '2008-05-01'
                       }
                   , 'name' : 'Himmelfahrt'
                   }
@@ -3253,8 +3253,8 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'date' :
-                      { 'finish' : '2008/06/21'
-                      , 'start' : '2008/06/20'
+                      { 'finish' : '2008-06-21'
+                      , 'start' : '2008-06-20'
                       }
                   , 'name' : 'Guggenberger'
                   }
@@ -3525,8 +3525,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/05/01'
-                              , 'start' : '2008/05/01'
+                              { 'finish' : '2008-05-01'
+                              , 'start' : '2008-05-01'
                               }
                           , 'name' : 'Himmelfahrt'
                           }
@@ -3572,8 +3572,8 @@ _test_get = r"""
                   , 'left' :
                       { 'attributes_raw' :
                           { 'date' :
-                              { 'finish' : '2008/06/21'
-                              , 'start' : '2008/06/20'
+                              { 'finish' : '2008-06-21'
+                              , 'start' : '2008-06-20'
                               }
                           , 'name' : 'Guggenberger'
                           }
@@ -3762,7 +3762,7 @@ _test_post = r"""
             { 'first_name' : 'Snoopy'
             , 'last_name' : 'Dog'
             , 'lifetime' :
-                { 'start' : '2000/11/22' }
+                { 'start' : '2000-11-22' }
             , 'middle_name' : 'the'
             , 'title' : ''
             }
@@ -3826,8 +3826,8 @@ _test_post = r"""
                     , 'left' :
                         { 'attributes_raw' :
                             { 'date' :
-                                { 'finish' : '2008/05/01'
-                                , 'start' : '2008/05/01'
+                                { 'finish' : '2008-05-01'
+                                , 'start' : '2008-05-01'
                                 }
                             , 'name' : 'Himmelfahrt'
                             }
@@ -3908,7 +3908,7 @@ _test_post = r"""
             { 'first_name' : 'Rin'
             , 'last_name' : 'Tin'
             , 'lifetime' :
-                { 'start' : '2000/11/22' }
+                { 'start' : '2000-11-22' }
             , 'middle_name' : 'Tin'
             , 'title' : ''
             }
@@ -4405,23 +4405,23 @@ _test_qr_local = """
     Q.left == 8
 
     >>> SRM.Boat_in_Regatta.query_s ().all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008-06-20', u'2008-06-21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))]
 
     >>> b7 = SRM.Boat.query (sail_number = 1107).one ()
     >>> print (b7.pid, b7)
     8 ((u'optimist', ), 1107, u'AUT', u'')
 
     >>> SRM.Boat_in_Regatta.query_s (boat = b7).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008-06-20', u'2008-06-21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))]
     >>> SRM.Boat_in_Regatta.query_s (boat = 8).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008-06-20', u'2008-06-21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))]
     >>> SRM.Boat_in_Regatta.query_s (boat = "8").all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008-06-20', u'2008-06-21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))]
 
     >>> SRM.Boat_in_Regatta.query_s (SRM.Boat_in_Regatta.AQ.boat.EQ (8)).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008-06-20', u'2008-06-21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))]
     >>> SRM.Boat_in_Regatta.query_s (SRM.Boat_in_Regatta.AQ.boat.EQ ("8")).all ()
-    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008/06/20', u'2008/06/21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008/05/01', u'2008/05/01')), (u'optimist', )))]
+    [SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'guggenberger', (u'2008-06-20', u'2008-06-21')), (u'optimist', ))), SRM.Boat_in_Regatta (((u'optimist', ), 1107, u'AUT', u''), ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )))]
 
     >>> SRM.Boat_in_Regatta.query_s (boat = b4).all ()
     []

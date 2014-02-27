@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test.
@@ -46,8 +46,8 @@ _test_code = """
     >>> p1 = SWP.Page ("event-1-text", text = "Text for the 1. event")
     >>> p2 = SWP.Page ("event-2-text", text = "Text for the 2. event")
 
-    >>> e1 = EVT.Event (p1.epk, dict (start = "2010/08/18", raw = True))
-    >>> rs1 = RS (e1, date_exceptions = ["2010/08/15"])
+    >>> e1 = EVT.Event (p1.epk, dict (start = "2010-08-18", raw = True))
+    >>> rs1 = RS (e1, date_exceptions = ["2010-08-15"])
     >>> rr1 = RR (rs1.epk_raw, start = "20100801", count = 7, unit = "Weekly", raw = True)
     >>> rr1.ui_display
     u'20100801, 20100808, 20100815, 20100822, 20100829, 20100905, 20100912'
@@ -55,9 +55,9 @@ _test_code = """
     u'20100801, 20100808, 20100822, 20100829, 20100905, 20100912'
 
     >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
-    (u'2010/08/01', u'2010/08/08', u'2010/08/22', u'2010/08/29', u'2010/09/05', u'2010/09/12')
+    (u'2010-08-01', u'2010-08-08', u'2010-08-22', u'2010-08-29', u'2010-09-05', u'2010-09-12')
 
-    >>> x = e1.date.set_raw (finish = "2010/08/31")
+    >>> x = e1.date.set_raw (finish = "2010-08-31")
 
     Now, `rs1` takes a default value for `until` from `e1.date.finish`
     >>> rs1.ui_display
@@ -65,22 +65,22 @@ _test_code = """
     >>> e1.dates
     [datetime.datetime(2010, 8, 1, 0, 0), datetime.datetime(2010, 8, 8, 0, 0), datetime.datetime(2010, 8, 22, 0, 0), datetime.datetime(2010, 8, 29, 0, 0)]
     >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
-    (u'2010/08/01', u'2010/08/08', u'2010/08/22', u'2010/08/29')
+    (u'2010-08-01', u'2010-08-08', u'2010-08-22', u'2010-08-29')
 
-    >>> _ = rs1.set_raw (dates = ["2010/08/07", "2010/08/09"])
+    >>> _ = rs1.set_raw (dates = ["2010-08-07", "2010-08-09"])
     >>> tuple (evo.FO.date for evo in EVT.Event_occurs.query_s ())
-    (u'2010/08/01', u'2010/08/07', u'2010/08/08', u'2010/08/09', u'2010/08/22', u'2010/08/29')
+    (u'2010-08-01', u'2010-08-07', u'2010-08-08', u'2010-08-09', u'2010-08-22', u'2010-08-29')
 
     >>> e2 = EVT.Event (p2)
     >>> e2.dates
     []
-    >>> _ = e2.date.set (start = "2010/09/08")
+    >>> _ = e2.date.set (start = "2010-09-08")
     >>> e2.dates
     [datetime.datetime(2010, 9, 8, 0, 0)]
-    >>> _ = e2.date.set (finish = "2010/09/09")
+    >>> _ = e2.date.set (finish = "2010-09-09")
     >>> e2.dates
     [datetime.datetime(2010, 9, 8, 0, 0), datetime.datetime(2010, 9, 9, 0, 0)]
-    >>> _ = e2.date.set (finish = "2010/09/12")
+    >>> _ = e2.date.set (finish = "2010-09-12")
     >>> e2.dates
     [datetime.datetime(2010, 9, 8, 0, 0), datetime.datetime(2010, 9, 9, 0, 0), datetime.datetime(2010, 9, 10, 0, 0), datetime.datetime(2010, 9, 11, 0, 0), datetime.datetime(2010, 9, 12, 0, 0)]
 

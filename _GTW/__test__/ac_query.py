@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Martin Glueck All rights reserved
+# Copyright (C) 2011-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -47,7 +47,7 @@ _attr_ac_query = """
     >>> p1 = PAP.Person ("Glueck",          "Martin")
     >>> p2 = PAP.Person ("Tanzer",          "Christian", "", "Mag.", lifetime = dict (start = u"26.9.1959", raw = True))
     >>> p3 = PAP.Person ("Franz-Ferdinand", "Karl")
-    >>> p4 = PAP.Person ("Tanzer", "Egon", lifetime = dict (start = u"1907/03/08", finish = "1994/08/04", raw = True))
+    >>> p4 = PAP.Person ("Tanzer", "Egon", lifetime = dict (start = u"1907-03-08", finish = "1994-08-04", raw = True))
     >>> s2 = SRM.Sailor (p2)
     >>> for value in "Ma", "martin", "CHRi" :
     ...    q = PAP.Person.AQ.first_name.AC (value)
@@ -77,13 +77,13 @@ _attr_ac_query = """
     Ferdinand tanzer False
     Ferdinand franz-ferdinand True
 
-    >>> q1  = PAP.Person.AQ.lifetime.AC (dict (start = "1959/09/26"))
-    >>> q2  = PAP.Person.AQ.lifetime.AC (dict (start = "1907/03/08", finish = "1994/08/04"))
-    >>> q3  = PAP.Person.AQ.lifetime.AC (dict (finish = "1994/08/04"))
+    >>> q1  = PAP.Person.AQ.lifetime.AC (dict (start = "1959-09-26"))
+    >>> q2  = PAP.Person.AQ.lifetime.AC (dict (start = "1907-03-08", finish = "1994-08-04"))
+    >>> q3  = PAP.Person.AQ.lifetime.AC (dict (finish = "1994-08-04"))
     >>> q4  = PAP.Person.lifetime.AQ.EQ (dict (start = "1907", finish = "1994"))
     >>> q5  = PAP.Person.first_name.AQ.CONTAINS ("ti")
     >>> q6  = PAP.Person.AQ.lifetime.AC (dict (start = "1959"))
-    >>> q7 = PAP.Person.AQ.lifetime.start.AC ("1959/09/26")
+    >>> q7 = PAP.Person.AQ.lifetime.start.AC ("1959-09-26")
 
     >>> print q1
     Q.lifetime.start == 1959-09-26

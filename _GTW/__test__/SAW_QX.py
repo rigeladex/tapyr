@@ -1004,13 +1004,13 @@ _test_joins = """
       JOIN  pap_person_has_account__1.right = auth_account.pid
       JOIN  pap_person__3.pid = pap_person_has_account__1.left
 
-    >>> show_joins (apt, "Auth.Account", Q.person.lifetime == ("2013/07/15", ))
-    Auth.Account  :  Q.person.lifetime == (u'2013/07/15',)
+    >>> show_joins (apt, "Auth.Account", Q.person.lifetime == ("2013-07-15", ))
+    Auth.Account  :  Q.person.lifetime == (u'2013-07-15',)
       JOIN  pap_person_has_account__1.right = auth_account.pid
       JOIN  pap_person__3.pid = pap_person_has_account__1.left
 
-    >>> show_joins (apt, "Auth.Account", Q.person.lifetime.start == "2013/07/15")
-    Auth.Account  :  Q.person.lifetime.start == 2013/07/15
+    >>> show_joins (apt, "Auth.Account", Q.person.lifetime.start == "2013-07-15")
+    Auth.Account  :  Q.person.lifetime.start == 2013-07-15
       JOIN  pap_person_has_account__1.right = auth_account.pid
       JOIN  pap_person__3.pid = pap_person_has_account__1.left
 
@@ -1055,40 +1055,40 @@ _test_xs_filter = """
     PAP.Subject_has_Phone  :  Q.subject.pid == 42
         pap_subject_has_property."left" = :left_1
 
-    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime == ("2000/01/02", "2000/07/23"))
-    PAP.Subject_has_Phone  :  Q.subject.lifetime == (u'2000/01/02', u'2000/07/23')
+    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime == ("2000-01-02", "2000-07-23"))
+    PAP.Subject_has_Phone  :  Q.subject.lifetime == (u'2000-01-02', u'2000-07-23')
         pap_company__1.lifetime__start = :lifetime__start_1 AND pap_company__1.lifetime__finish = :lifetime__finish_1 OR pap_person__3.lifetime__start = :lifetime__start_2 AND pap_person__3.lifetime__finish = :lifetime__finish_2
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime == Q.creation.time)
     PAP.Subject_has_Phone  :  Q.subject.lifetime == Q.creation.time
         mom_md_change__1.kind = :kind_1 AND pap_company__1.lifetime__start = :lifetime__start_1 OR mom_md_change__1.kind = :kind_1 AND pap_person__3.lifetime__start = :lifetime__start_2
 
-    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime.start == "2000/01/02")
-    PAP.Subject_has_Phone  :  Q.subject.lifetime.start == 2000/01/02
+    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime.start == "2000-01-02")
+    PAP.Subject_has_Phone  :  Q.subject.lifetime.start == 2000-01-02
         pap_company__1.lifetime__start = :lifetime__start_1 OR pap_person__3.lifetime__start = :lifetime__start_2
 
-    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.creation.time == "2013/09/11")
-    PAP.Subject_has_Phone  :  Q.creation.time == 2013/09/11
+    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.creation.time == "2013-09-11")
+    PAP.Subject_has_Phone  :  Q.creation.time == 2013-09-11
         mom_md_change__1.kind = :kind_1 AND mom_md_change__1.time = :time_1
 
-    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.phone_links.phone.creation.time == "2013/09/11")
-    PAP.Subject_has_Phone  :  Q.subject.phone_links.phone.creation.time == 2013/09/11
+    >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.phone_links.phone.creation.time == "2013-09-11")
+    PAP.Subject_has_Phone  :  Q.subject.phone_links.phone.creation.time == 2013-09-11
         mom_md_change__2.kind = :kind_1 AND mom_md_change__2.time = :time_1
 
     >>> show_xs_filter (apt, "PAP.Subject", Q.creation.user == 42)
     PAP.Subject  :  Q.creation.user == 42
         mom_md_change__1.kind = :kind_1 AND mom_md_change__1."user" = :user_1
 
-    >>> show_xs_filter (apt, "PAP.Subject", Q.phone_links.phone.creation.time == "2013/09/11")
-    PAP.Subject  :  Q.phone_links.phone.creation.time == 2013/09/11
+    >>> show_xs_filter (apt, "PAP.Subject", Q.phone_links.phone.creation.time == "2013-09-11")
+    PAP.Subject  :  Q.phone_links.phone.creation.time == 2013-09-11
         mom_md_change__3.kind = :kind_1 AND mom_md_change__3.time = :time_1
 
-    >>> show_xs_filter (apt, "PAP.Person", Q.phone_links.phone.creation.time == "2013/09/11")
-    PAP.Person  :  Q.phone_links.phone.creation.time == 2013/09/11
+    >>> show_xs_filter (apt, "PAP.Person", Q.phone_links.phone.creation.time == "2013-09-11")
+    PAP.Person  :  Q.phone_links.phone.creation.time == 2013-09-11
         mom_md_change__4.kind = :kind_1 AND mom_md_change__4.time = :time_1
 
-    >>> show_xs_filter (apt, "PAP.Person", Q.RAW.lifetime.start == "2010/01/01")
-    PAP.Person  :  Q.RAW.lifetime.start == 2010/01/01
+    >>> show_xs_filter (apt, "PAP.Person", Q.RAW.lifetime.start == "2010-01-01")
+    PAP.Person  :  Q.RAW.lifetime.start == 2010-01-01
         pap_person.lifetime__start = :lifetime__start_1
 
     >>> ET  = apt ["SRM.Regatta"]

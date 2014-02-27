@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -139,7 +139,7 @@ class Regatta_Result (_Ancestor_Essence) :
             """Date of regatta result."""
 
             kind               = Attr.Necessary
-            example            = "1979/08/18"
+            example            = "1979-08-18"
 
         # end class date
 

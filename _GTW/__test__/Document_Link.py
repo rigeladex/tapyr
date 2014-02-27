@@ -45,7 +45,7 @@ test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
-    >>> date = (("start", "2012/06/10"), )
+    >>> date = (("start", "2012-06-10"), )
     >>> MOM  = scope.MOM
     >>> PAP  = scope.PAP
     >>> SWP  = scope.SWP
@@ -77,9 +77,9 @@ test_code = r"""
     >>> q = scope.query_changes (type_name = "SWP.Page").order_by (Q.cid)
     >>> for c in q.all () :
     ...     print c
-    <Create SWP.Page (u'title_1', 'SWP.Page'), new-values = {'contents' : u'<p>text 1</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '2', 'text' : u'text 1'}>
-    <Create SWP.Page (u'title_2', 'SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '3', 'text' : u'text 2'}>
-    <Create SWP.Page (u'title_3', 'SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012/06/10'),), 'last_cid' : '4', 'text' : u'text 3'}>
+    <Create SWP.Page (u'title_1', 'SWP.Page'), new-values = {'contents' : u'<p>text 1</p>\n', 'date' : (('start', u'2012-06-10'),), 'last_cid' : '2', 'text' : u'text 1'}>
+    <Create SWP.Page (u'title_2', 'SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012-06-10'),), 'last_cid' : '3', 'text' : u'text 2'}>
+    <Create SWP.Page (u'title_3', 'SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012-06-10'),), 'last_cid' : '4', 'text' : u'text 3'}>
 
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("type_name", "pid").all ()
     [('PAP.Person', 1), ('SWP.Page', 2), ('SWP.Page', 3), ('SWP.Page', 4), ('MOM.Document', 5), ('MOM.Document', 6), ('MOM.Document', 7)]

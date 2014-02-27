@@ -1119,9 +1119,9 @@ _test_code = """
     ...     print "%-72s %r" % (i.elem, i.ui_display)
     <Entity FB-0 'Boat' 'SRM.Boat'>                                  u'Optimist, AUT 1107'
     <Field_Entity FB-0:0:0 'left' 'SRM.Boat_Class'>                  u'Optimist'
-    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'SRM.Boat_in_Regatta'>  u'Optimist, AUT 1107, Himmelfahrt 2008/05/01, Optimist'
+    <Entity_Link FB-0:2::0 'Boat_in_Regatta' 'SRM.Boat_in_Regatta'>  u'Optimist, AUT 1107, Himmelfahrt 2008-05-01, Optimist'
     <Field_Role_Hidden FB-0:2::0-0 'left' 'SRM.Boat'>                u'Optimist, AUT 1107'
-    <Field_Entity FB-0:2::0-1:0 'right' 'SRM.Regatta'>               u'Himmelfahrt 2008/05/01, Optimist'
+    <Field_Entity FB-0:2::0-1:0 'right' 'SRM.Regatta'>               u'Himmelfahrt 2008-05-01, Optimist'
     <Field_Entity FB-0:2::0-2:0 'skipper' 'SRM.Sailor'>              u'Tanzer Laurens, AUT, 29676'
     <Field_Entity FB-0:2::0-2:0:0 'left' 'PAP.Person'>               u'Tanzer Laurens'
     <Field_Entity FB-0:2::0-2:0:3 'club' 'SRM.Club'>                 u''

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -56,12 +56,12 @@ _test_create = """
 
     >>> all_cs = Auth.Certificate.query_s ().all ()
     >>> all_cs
-    [Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), Auth.Certificate (u'foo@baz', ('2013/01/31', ), u'')]
+    [Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), Auth.Certificate (u'foo@baz', ('2013-01-31', ), u'')]
 
     >>> for c in all_cs :
     ...     print (c.as_code (), c.validity.start)
-    Auth.Certificate (u'foo@bar', ('2013/01/16', ), u'', ) 2013-01-16 00:00:00
-    Auth.Certificate (u'foo@baz', ('2013/01/31', ), u'', ) 2013-01-31 00:00:00
+    Auth.Certificate (u'foo@bar', ('2013-01-16', ), u'', ) 2013-01-16 00:00:00
+    Auth.Certificate (u'foo@baz', ('2013-01-31', ), u'', ) 2013-01-31 00:00:00
 
     >>> c3 = Auth.Certificate (email = "foo@baz", validity = ("20150131", ), raw = True)
 
@@ -69,15 +69,15 @@ _test_create = """
 
     >>> all_cs = Auth.Certificate.query_s ().all ()
     >>> all_cs
-    [Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), Auth.Certificate (u'foo@baz', ('2013/01/31', ), u''), Auth.Certificate (u'foo@baz', ('2015/01/31', ), u'')]
+    [Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), Auth.Certificate (u'foo@baz', ('2013-01-31', ), u''), Auth.Certificate (u'foo@baz', ('2015-01-31', ), u'')]
 
     >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
+    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), False)
 
     >>> c1.pem = b"fake value to fool `alive`"
 
     >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), True)
+    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), True)
 
     >>> rdf = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = +1)
     >>> rdp = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = -1)
@@ -90,11 +90,11 @@ _test_create = """
 
     >>> _ = c1.set (revocation_date = rdp)
     >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
+    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), False)
 
     >>> scope.commit ()
     >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013/01/16', ), u''), False)
+    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), False)
 
     >>> c4 = Auth.Certificate (email = "foo@foo", validity = (), raw = True)
 
@@ -103,16 +103,16 @@ _test_create = """
 
     >>> c4.validity.start = "20130225"
     >>> (c4, c4.alive)
-    (Auth.Certificate (u'foo@foo', ('2013/02/25', ), u''), False)
+    (Auth.Certificate (u'foo@foo', ('2013-02-25', ), u''), False)
 
     >>> c4.pem = b"fake value to fool `alive`"
     >>> (c4, c4.alive)
-    (Auth.Certificate (u'foo@foo', ('2013/02/25', ), u''), True)
+    (Auth.Certificate (u'foo@foo', ('2013-02-25', ), u''), True)
 
     >>> c5 = Auth.Certificate (email = "bar@foo", validity = ("20130225", ), raw = True)
 
     >>> (c5, c5.alive)
-    (Auth.Certificate (u'bar@foo', ('2013/02/25', ), u''), False)
+    (Auth.Certificate (u'bar@foo', ('2013-02-25', ), u''), False)
 
     >>> for c in Auth.Certificate.query ().order_by (Q.cert_id) :
     ...     (int (c.pid), int (c.cert_id or 0) or None)

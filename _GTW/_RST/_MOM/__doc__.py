@@ -385,7 +385,7 @@ For instance::
         , 'lifetime' :
             [
               [ 'start'
-              , '2000/11/22'
+              , '2000-11-22'
               ]
             ]
         , 'middle_name' : 'the'

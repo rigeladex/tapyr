@@ -1452,12 +1452,12 @@ An unary link is a link with only one object::
     >>> sr = scope.BMT.Mouse ("Sick_Rodent")
     >>> osm = Ris (sr, scope.MOM.Date_Interval ("20100218", raw = True))
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ), )"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-02-18', ), )"
     >>> osm.fever = 42
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ), fever = 42.0)"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-02-18', ), fever = 42.0)"
     >>> sorted (sr.sickness)
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-02-18', ))]
 
 Changing a composite primary attribute
 --------------------------------------
@@ -1467,21 +1467,21 @@ and attribute type::
 
     >>> old_epk = osm.epk
     >>> old_epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010/02/18'), 'BMT.Rodent_is_sick')
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010-02-18'), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* old_epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/02/18', ))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-02-18', ))
 
     >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
     [(26, (datetime.date(2010, 2, 18), None))]
 
-    >>> osm.sick_leave.set_raw (start = "2010/03/01")
+    >>> osm.sick_leave.set_raw (start = "2010-03-01")
     1
     >>> print Ris.instance (* old_epk)
     None
     >>> osm.epk
-    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010/03/01'), 'BMT.Rodent_is_sick')
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (u'2010-03-01'), 'BMT.Rodent_is_sick')
     >>> Ris.instance (* osm.epk)
-    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', ))
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-03-01', ))
 
     >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
     [(26, (datetime.date(2010, 3, 1), None))]
@@ -1534,7 +1534,7 @@ Q-expressions::
     >>> Ris.query_s (Q.sick_leave.start.D.MONTH (4, 2010)).count ()
     0
     >>> Ris.query_s (Q.sick_leave.start != None).all ()
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', ))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-03-01', ))]
 
 Renaming objects and links
 --------------------------
@@ -1564,7 +1564,7 @@ Deleting objects and links
 Deleting an object removes all links in which that object participates::
 
     >>> scope.MOM.Link.query_s ().all () ### 2
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-03-01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'mighty_mouse', ), (u'x', 1)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> m.object_referring_attributes
     defaultdict(<type 'list'>, {})
@@ -1601,7 +1601,7 @@ Deleting an object removes all links in which that object participates::
     >>> scope.MOM.Link.query_s ().count () ### 3
     10
     >>> scope.MOM.Link.r_query_s ().all ()
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-03-01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 1)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 1), (-16.268799, 48.189956)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> t1.destroy ()
 
@@ -1611,11 +1611,11 @@ Deleting an object removes all links in which that object participates::
     [((u'luke', u'lucky', u''), (u'x', 2)), ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), ((u'betty', ), (u'x', 2))]
 
     >>> scope.MOM.Link.query_s ().all () ### 4
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-03-01', )), BMT.Rodent_in_Trap ((u'betty', ), (u'x', 2)), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_owns_Trap ((u'luke', u'lucky', u''), (u'x', 2)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'x', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> t2.destroy ()
     >>> scope.MOM.Link.query_s ().all () ### 5
-    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010/03/01', )), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
+    [BMT.Rodent_is_sick ((u'Sick_Rodent', ), (u'2010-03-01', )), BMT.Person_owns_Trap ((u'dog', u'snoopy', u''), (u'y', 1)), BMT.Person_sets_Trap ((u'luke', u'lucky', u''), (u'y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'rutty_rat', ), (u'y', 1)), BMT.Person_owns_Trap ((u'tin', u'tin', u''), (u'y', 2))]
 
     >>> show (scope.ems.all_links (t2_id))
     []
@@ -1695,9 +1695,9 @@ be committed (or rollbacked):
     <Modify BMT.Trap (u'x', u'1', 'BMT.Trap'), old-values = {'last_cid' : '9', 'max_weight' : u''}, new-values = {'last_cid' : '33', 'max_weight' : u'20.0'}>
     <Modify BMT.Person_owns_Trap ((u'luke', u'lucky', u'', 'BMT.Person'), (u'x', u'1', 'BMT.Trap'), 'BMT.Person_owns_Trap'), old-values = {'last_cid' : '17', 'price' : u'42.0'}, new-values = {'last_cid' : '34', 'price' : u'1.2'}>
     <Create BMT.Mouse (u'Sick_Rodent', 'BMT.Mouse'), new-values = {'last_cid' : '35'}>
-    <Create BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010/02/18'),), 'BMT.Rodent_is_sick'), new-values = {'last_cid' : '36'}>
-    <Modify BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010/02/18'),), 'BMT.Rodent_is_sick'), old-values = {'fever' : u'', 'last_cid' : '36'}, new-values = {'fever' : u'42.0', 'last_cid' : '37'}>
-    <Modify BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010/03/01'),), 'BMT.Rodent_is_sick'), old-values = {'last_cid' : '37', 'sick_leave' : (('start', u'2010/02/18'),)}, new-values = {'last_cid' : '38', 'sick_leave' : (('start', u'2010/03/01'),)}>
+    <Create BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010-02-18'),), 'BMT.Rodent_is_sick'), new-values = {'last_cid' : '36'}>
+    <Modify BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010-02-18'),), 'BMT.Rodent_is_sick'), old-values = {'fever' : u'', 'last_cid' : '36'}, new-values = {'fever' : u'42.0', 'last_cid' : '37'}>
+    <Modify BMT.Rodent_is_sick ((u'Sick_Rodent', 'BMT.Mouse'), (('start', u'2010-03-01'),), 'BMT.Rodent_is_sick'), old-values = {'last_cid' : '37', 'sick_leave' : (('start', u'2010-02-18'),)}, new-values = {'last_cid' : '38', 'sick_leave' : (('start', u'2010-03-01'),)}>
     <Modify BMT.Rodent_in_Trap ((u'toothy_beaver', 'BMT.Beaver'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '14', 'left' : 5}, new-values = {'last_cid' : '39', 'left' : 6}>
     <Modify BMT.Rodent_in_Trap ((u'mighty_mouse', 'BMT.Mouse'), (u'x', u'1', 'BMT.Trap'), 'BMT.Rodent_in_Trap'), old-values = {'last_cid' : '39', 'left' : 6}, new-values = {'last_cid' : '40', 'left' : 5}>
     <Destroy BMT.Mouse (u'mighty_mouse', 'BMT.Mouse'), old-values = {'color' : u'yellow', 'last_cid' : '29', 'weight' : u'42.0'}>

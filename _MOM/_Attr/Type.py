@@ -332,6 +332,7 @@
 #    26-Feb-2014 (CT) Change `A_Date_Time.as_rest_cargo_ckd` to use ISO format
 #                     (including timezone)
 #    26-Feb-2014 (CT) Add `:` to timezone of `A_Date_Time.as_rest_cargo_ckd`
+#    27-Feb-2014 (CT) Use "%Y-%m-%d" for `A_Date.output_format` (not "%Y/%m/%d")
 #    ««revision-date»»···
 #--
 
@@ -2103,14 +2104,14 @@ class A_Confirmation (_A_Boolean_) :
 class A_Date (_A_Date_) :
     """Date value."""
 
-    example        = "2010/10/10"
+    example        = "2010-10-10"
     completer      = MOM.Attr.Completer_Spec  (4)
     typ            = _ ("Date")
     P_Type         = datetime.date
     Q_Ckd_Type     = MOM.Attr.Querier.Date
     ui_length      = 12
     input_formats  = \
-        ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
+        ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
 
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
@@ -2174,7 +2175,7 @@ class A_Date_Slug (_A_String_) :
 class A_Date_Time (_A_Date_) :
     """Date-time value."""
 
-    example        = "2010/10/10 06:42"
+    example        = "2010-10-10 06:42"
     typ            = _ ("Date-Time")
     P_Type         = datetime.datetime
     ui_length      = 22
