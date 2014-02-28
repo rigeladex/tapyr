@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -64,8 +64,11 @@
 #    15-Feb-2008 (CT) `Date_Opt` corrected (up-call to `__init__`)
 #     8-May-2008 (CT) `Date_Opt` changed to use `__super`
 #     4-Jan-2010 (CT) `_Date_Arg_` based on `TFL.CAO` added, `Date_Opt` removed
+#    28-Feb-2014 (CT) Use future `print_function`
 #    ««revision-date»»···
 #--
+
+from   __future__               import print_function
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
@@ -87,7 +90,7 @@ class Date (CAL._DTW_) :
 
        >>> from _CAL.Delta import Date_Delta as Delta
        >>> d = Date (2004, 10, 14)
-       >>> print d
+       >>> print (d)
        2004-10-14
        >>> d.year, d.month, d.day, d.date, d.week, d.weekday, d.ordinal
        (2004, 10, 14, datetime.date(2004, 10, 14), 42, 3, 731868)
@@ -98,64 +101,64 @@ class Date (CAL._DTW_) :
        >>> d.year, d.month, d.day, d.date, d.week, d.weekday, d.ordinal
        (2004, 10, 10, datetime.date(2004, 10, 10), 41, 6, 731864)
        >>> from _CAL.Delta import Month_Delta
-       >>> print d, d + Month_Delta (1)
+       >>> print (d, d + Month_Delta (1))
        2004-10-10 2004-11-10
-       >>> print d, d + Month_Delta (3)
+       >>> print (d, d + Month_Delta (3))
        2004-10-10 2005-01-10
-       >>> print d, d + Month_Delta (12)
+       >>> print (d, d + Month_Delta (12))
        2004-10-10 2005-10-10
-       >>> print d, d + Month_Delta (-1)
+       >>> print (d, d + Month_Delta (-1))
        2004-10-10 2004-09-10
-       >>> print d, d + Month_Delta (-12)
+       >>> print (d, d + Month_Delta (-12))
        2004-10-10 2003-10-10
        >>> MD = Month_Delta
        >>> for x in (d, d + MD (3), d + MD (6), d + MD (9)):
-       ...    print str (x), ":", x.quarter
+       ...    print (str (x), ":", x.quarter)
        2004-10-10 : 4
        2005-01-10 : 1
        2005-04-10 : 2
        2005-07-10 : 3
        >>> d = Date (day = 1, month = 1, year = 2004)
-       >>> print d, d + Month_Delta (11)
+       >>> print (d, d + Month_Delta (11))
        2004-01-01 2004-12-01
        >>> d1 = Date (2004, 10, 14)
        >>> d2 = Date (2004, 10, 16)
-       >>> print d1 - d2
+       >>> print (d1 - d2)
        -2 days, 0:00:00
        >>> d = Date (day = -1, month = 1, year = 2004)
-       >>> print d, d + Month_Delta (1)
+       >>> print (d, d + Month_Delta (1))
        2004-01-31 2004-02-29
-       >>> print d, d + Month_Delta (2)
+       >>> print (d, d + Month_Delta (2))
        2004-01-31 2004-03-31
-       >>> print d, d + Month_Delta (3)
+       >>> print (d, d + Month_Delta (3))
        2004-01-31 2004-04-30
-       >>> print d, d + Month_Delta (11)
+       >>> print (d, d + Month_Delta (11))
        2004-01-31 2004-12-31
-       >>> print d, d + Month_Delta (12)
+       >>> print (d, d + Month_Delta (12))
        2004-01-31 2005-01-31
-       >>> print d, d + Month_Delta (13)
+       >>> print (d, d + Month_Delta (13))
        2004-01-31 2005-02-28
-       >>> print d, d + Month_Delta (-1)
+       >>> print (d, d + Month_Delta (-1))
        2004-01-31 2003-12-31
-       >>> print d, d + Month_Delta (-2)
+       >>> print (d, d + Month_Delta (-2))
        2004-01-31 2003-11-30
-       >>> print d, d + Month_Delta (-3)
+       >>> print (d, d + Month_Delta (-3))
        2004-01-31 2003-10-31
-       >>> print d, d + Month_Delta (-11)
+       >>> print (d, d + Month_Delta (-11))
        2004-01-31 2003-02-28
-       >>> print Date.from_string ("20041102")
+       >>> print (Date.from_string ("20041102"))
        2004-11-02
-       >>> print Date.from_string ("2004/11/02")
+       >>> print (Date.from_string ("2004/11/02"))
        2004-11-02
-       >>> print Date.from_string ("20041102")
+       >>> print (Date.from_string ("20041102"))
        2004-11-02
-       >>> print Date.from_string ("31.10.2004")
+       >>> print (Date.from_string ("31.10.2004"))
        2004-10-31
-       >>> print Date.from_string ("31/10/2004")
+       >>> print (Date.from_string ("31/10/2004"))
        2004-10-31
-       >>> print Date.from_string ("31.Oct.2004")
+       >>> print (Date.from_string ("31.Oct.2004"))
        2004-10-31
-       >>> print Date.from_string ("Oct 5, 2004")
+       >>> print (Date.from_string ("Oct 5, 2004"))
        2004-10-05
 
        >>> mjd_epoch = Date (1858, 11, 17)
@@ -471,10 +474,10 @@ class Date_M (CAL._Mutable_DTW_) :
     """Mutable date object
 
        >>> d1 = d2 = Date_M (2004, 10, 14)
-       >>> print d1, d2
+       >>> print (d1, d2)
        2004-10-14 2004-10-14
        >>> d1 += 1
-       >>> print d1, d2
+       >>> print (d1, d2)
        2004-10-15 2004-10-15
     """
 
@@ -509,8 +512,11 @@ def _main (cmd) :
             match_dict = regexp.groupdict ()
         else :
             import sys
-            print >> sys.stderr, "`%s` doesn't match for `%s`" % \
-                (cmd.regexp, cmd.base_date)
+            print \
+                ( "`%s` doesn't match for `%s`"
+                % (cmd.regexp, cmd.base_date)
+                , file = sys.stderr
+                )
             sys.exit (9)
     else :
         base_date   = cmd.base_date
@@ -519,10 +525,10 @@ def _main (cmd) :
     if cmd.offset :
         base_date += cmd.offset
     if cmd.delta_to :
-        print (base_date - cmd.delta_to).days
+        print ((base_date - cmd.delta_to).days)
     else :
         date = base_date.formatted (cmd.format)
-        print cmd.xformat % Scope (globs = match_dict, locls = vars ())
+        print (cmd.xformat % Scope (globs = match_dict, locls = vars ()))
 # end def _main
 
 _Command = TFL.CAO.Cmd \

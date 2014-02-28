@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -70,8 +70,11 @@
 #    15-Jun-2010 (CT) Use `CAO` instead of `Command_Line`
 #    16-Jun-2010 (CT) Encode holiday names with `TFL.I18N.Config.encoding`
 #    17-Jun-2010 (CT) Use `TFL.I18N.encode_o` instead of home-grown code
+#    28-Feb-2014 (CT) Use future `print_function`
 #    ««revision-date»»···
 #--
+
+from   __future__               import print_function
 
 from   _CAL              import CAL
 from   _TFL              import TFL
@@ -316,7 +319,7 @@ class Year (TFL.Meta.Object) :
     """Model a single year in a calendar.
 
        >>> for d in Year (2004).weeks [0].days :
-       ...   print d, d.year == 2004
+       ...   print (d, d.year == 2004)
        ...
        2003/12/29 False
        2003/12/30 False
@@ -326,7 +329,7 @@ class Year (TFL.Meta.Object) :
        2004/01/03 True
        2004/01/04 True
        >>> for d in Year (2004).weeks [-1].days :
-       ...   print d, d.year == 2004
+       ...   print (d, d.year == 2004)
        ...
        2004/12/27 True
        2004/12/28 True
@@ -338,7 +341,7 @@ class Year (TFL.Meta.Object) :
        >>> for y in range (2003, 2006) :
        ...   Y  = Year (y)
        ...   w0, w1 = Y.weeks [0], Y.weeks [-1]
-       ...   print "%4.4d: %r %s, %r %s" % (y, w0, bool (w0), w1, bool (w1))
+       ...   print ("%4.4d: %r %s, %r %s" % (y, w0, bool (w0), w1, bool (w1)))
        ...
        2003: week 01 <2002/12/30 to 2003/01/05> True, week 53 <2003/12/29 to 2004/01/04> False
        2004: week 01 <2003/12/29 to 2004/01/04> True, week 53 <2004/12/27 to 2005/01/02> True
@@ -467,7 +470,7 @@ def create_diary (Y, path) :
 
 def write_year (Yf, file_name, force = 0) :
     if sos.path.isfile (file_name) and not force:
-        print "%s already exists, not overwritten" %(file_name, )
+        print ("%s already exists, not overwritten" %(file_name, ))
     else :
         f = open (file_name, "w")
         f.write  (Yf ())

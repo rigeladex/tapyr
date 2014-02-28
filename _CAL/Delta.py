@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,16 +45,24 @@
 #                     `Date_Time_Delta`, and `Time_Delta`
 #    15-Apr-2012 (CT) Fix `_from_string_match_kw` (use `+=` instead of `=` in
 #                     `else` of `k.startswith ("sub")`)
+#    28-Feb-2014 (CT) Use future `print_function`
+#    28-Feb-2014 (CT) Add support for negative values to `from_string`
+#    28-Feb-2014 (CT) Add `from_string`, `week`, `days` to `Month_Delta`
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 from   _CAL                     import CAL
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _CAL._DTW_
+
 import _TFL.Accessor
 import _TFL.CAO
 import _TFL.defaultdict
+import _TFL.Math_Func
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Regexp              import *
@@ -81,8 +89,9 @@ class _Delta_ (CAL._DTW_) :
         for k, v in match.groupdict ().iteritems () :
             if v :
                 if k.startswith ("sub") :
-                    n = k [3:]
-                    f = float ("0.%s" % v)
+                    n    = k [3:]
+                    neg  = "-" in match.group (n)
+                    f    = float ("%s0.%s" % (("-" if neg else ""), v))
                     if n == "days" :
                         h, m   = divmod (f * 24 * 60, 60)
                         m, s   = divmod (m * 60,      60)
@@ -109,6 +118,16 @@ class _Delta_ (CAL._DTW_) :
                         kw ["hours"]        += int (h)
                         kw ["minutes"]      += int (m)
                         kw ["seconds"]      += int (s)
+                    elif n == "years" :
+                        m = f * 12
+                        d = abs (m - round (m))
+                        if d > 0.05 :
+                            raise ValueError \
+                                ( "Fractional months are not allowed for "
+                                  "%s: %s --> delta %s"
+                                % (cls.__name__, s, d)
+                                )
+                        kw ["months"]       += int (round (m))
                 else :
                     kw [k] += int (v)
         return kw
@@ -181,7 +200,7 @@ class Time_Delta (_DT_Delta_) :
     """Model a time delta
 
     >>> t = Time_Delta (3)
-    >>> print t
+    >>> print (t)
     3:00:00
     >>> t.h, t.m, t.s, t.seconds
     (3, 0, 0, 10800)
@@ -195,12 +214,12 @@ class Time_Delta (_DT_Delta_) :
     >>> abs (t) == - t
     True
     >>> hms = Time_Delta (2, 15, 42)
-    >>> print hms
+    >>> print (hms)
     2:15:42
     >>> hms.h, hms.m, hms.s, hms.seconds
     (2, 15, 42, 8142)
     >>> md = Time_Delta (minutes = 42)
-    >>> print md
+    >>> print (md)
     0:42:00
 
     >>> Time_Delta.from_string("7")
@@ -245,11 +264,11 @@ class Time_Delta (_DT_Delta_) :
           r")?"
           r"$"
         , r"^"
-          r"(?: (?P<hours> \d+) (?: \. (?P<subhours> \d+) )? \s* h(?:ours?)?)?"
+          r"(?:(?P<hours>   [-+]?\d+) (?: \. (?P<subhours> \d+) )?\s* h(?:ours?)?)?"
           r",?\s*"
-          r"(?: (?P<minutes> \d+) (?: \. (?P<subminutes> \d+) )? \s* m(?:inutes?)?)?"
+          r"(?:(?P<minutes> [-+]?\d+) (?: \. (?P<subminutes> \d+) )?\s* m(?:inutes?)?)?"
           r",?\s*"
-          r"(?: (?P<seconds> \d+) (?: \. (?P<subseconds> \d+) )? \s* s(?:econds?)?)?"
+          r"(?:(?P<seconds> [-+]?\d+) (?: \. (?P<subseconds> \d+) )?\s* s(?:econds?)?)?"
           r"$"
         , flags = re.VERBOSE | re.IGNORECASE
         )
@@ -278,31 +297,43 @@ class Date_Delta (_DT_Delta_) :
     """Model a date delta
 
     >>> d = Date_Delta (42)
-    >>> print d
+    >>> print (d)
     42 days, 0:00:00
     >>> d.days, d.weeks
     (42, 6)
     >>> d2 = Date_Delta (5)
     >>> x = d - d2
-    >>> print x
+    >>> print (x)
     37 days, 0:00:00
     >>> x.__class__
     <class 'Delta.Date_Delta'>
     >>> t = Time_Delta (3)
     >>> s = d + t
-    >>> print s
+    >>> print (s)
     42 days, 3:00:00
-    >>> print s.__class__
+    >>> print (s.__class__)
     <class 'Delta.Date_Time_Delta'>
     >>> s.days, s.h, s.m, s.s
     (42, 3, 0, 0)
     >>> d3 = Date_Delta (weeks = 2, days = 5)
-    >>> print d3
+    >>> print (d3)
     19 days, 0:00:00
-    >>> print d3.days, d3.weeks
+    >>> print (d3.days, d3.weeks)
     19 2
     >>> Date_Delta.from_string ("2.5 weeks")
     Date_Delta (3, 2)
+    >>> Date_Delta.from_string ("-2.5 weeks")
+    Date_Delta (-4, -2)
+    >>> print (Date_Delta.from_string ("-2.5 weeks"))
+    -18 days, 0:00:00
+
+    >>> print (Date_Delta.from_string ("2 weeks -3 days"))
+    11 days, 0:00:00
+    >>> print (Date_Delta.from_string ("-2 weeks -3 days"))
+    -17 days, 0:00:00
+    >>> print (Date_Delta.from_string ("-2 weeks +3 days"))
+    -11 days, 0:00:00
+
     """
 
     days             = property (TFL.Getter._body.days)
@@ -313,12 +344,12 @@ class Date_Delta (_DT_Delta_) :
 
     delta_pattern    = Multi_Regexp \
         ( r"^"
-          r"(?P<days> \d+) (?: \. (?P<subdays>  \d+) )?"
+          r"(?P<days> [-+]? \d+) (?: \. (?P<subdays>  \d+) )?"
           r"$"
         , r"^"
-          r"(?: (?P<weeks> \d+) (?: \. (?P<subweeks> \d+) )? \s* w(?:eeks?)?)?"
+          r"(?:(?P<weeks> [-+]? \d+) (?: \. (?P<subweeks> \d+) )?\s* w(?:eeks?)?)?"
           r",?\s*"
-          r"(?: (?P<days>  \d+) (?: \. (?P<subdays>  \d+) )? \s* d(?:ays?)?)?"
+          r"(?:(?P<days>  [-+]? \d+) (?: \. (?P<subdays>  \d+) )?\s* d(?:ays?)?)?"
           r"$"
         , flags = re.VERBOSE | re.IGNORECASE
         )
@@ -340,28 +371,35 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     """Model a date_time delta
 
     >>> d = Date_Time_Delta (5, 8, 3, 33)
-    >>> print d
+    >>> print (d)
     5 days, 8:03:33
     >>> d.days, d.h, d.m, d.s
     (5, 8, 3, 33)
     >>> d2 = Date_Time_Delta (days = 2, hours = 12)
-    >>> print d2
+    >>> print (d2)
     2 days, 12:00:00
-    >>> print d2.days, d2.seconds
+    >>> print (d2.days, d2.seconds)
     2 43200
-    >>> print d2.weeks
+    >>> print (d2.weeks)
     0
 
     >>> Date_Time_Delta.from_string ("2")
     Date_Time_Delta (2, 0, 0, 0, 0, 0, 0)
     >>> Date_Time_Delta.from_string ("2.5 weeks")
     Date_Time_Delta (3, 12, 0, 0, 0, 0, 2)
-    >>> print Date_Time_Delta.from_string ("2.5 weeks")
+    >>> print (Date_Time_Delta.from_string ("2.5 weeks"))
     17 days, 12:00:00
-    >>> print Date_Time_Delta.from_string ("2.5 d")
+    >>> print (Date_Time_Delta.from_string ("2.5 d"))
     2 days, 12:00:00
-    >>> print Date_Time_Delta.from_string ("2.5 d 15.25m")
+    >>> print (Date_Time_Delta.from_string ("2.5 d 15.25m"))
     2 days, 12:15:15
+    >>> print (Date_Time_Delta.from_string ("2.5 d -5h -15.25m"))
+    2 days, 6:44:45
+    >>> print (Date_Time_Delta.from_string ("2.5 d -5h 15.25m"))
+    2 days, 7:15:15
+    >>> print (Date_Time_Delta.from_string ("2.5 d 5h -15.25m"))
+    2 days, 16:44:45
+
     """
 
     _init_arg_names = ("days", ) + Time_Delta._init_arg_names + ("weeks", )
@@ -383,15 +421,15 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
           r")?"
           r"$"
         , r"^"
-          r"(?: (?P<weeks> \d+) (?: \. (?P<subweeks> \d+) )? \s* w(?:eeks?)?)?"
+          r"(?:(?P<weeks>   [-+]?\d+) (?:\.(?P<subweeks>   \d+) )?\s* w(?:eeks?)?)?"
           r",?\s*"
-          r"(?: (?P<days>  \d+) (?: \. (?P<subdays>  \d+) )? \s* d(?:ays?)?)?"
+          r"(?:(?P<days>    [-+]?\d+) (?:\.(?P<subdays>    \d+) )?\s* d(?:ays?)?)?"
           r",?\s*"
-          r"(?: (?P<hours> \d+) (?: \. (?P<subhours> \d+) )? \s* h(?:ours?)?)?"
+          r"(?:(?P<hours>   [-+]?\d+) (?:\.(?P<subhours>   \d+) )?\s* h(?:ours?)?)?"
           r",?\s*"
-          r"(?: (?P<minutes> \d+) (?: \. (?P<subminutes> \d+) )? \s* m(?:inutes?)?)?"
+          r"(?:(?P<minutes> [-+]?\d+) (?:\.(?P<subminutes> \d+) )?\s* m(?:inutes?)?)?"
           r",?\s*"
-          r"(?: (?P<seconds> \d+) (?: \. (?P<subseconds> \d+) )? \s* s(?:econds?)?)?"
+          r"(?:(?P<seconds> [-+]?\d+) (?:\.(?P<subseconds> \d+) )?\s* s(?:econds?)?)?"
           r"$"
         , flags = re.VERBOSE | re.IGNORECASE
         )
@@ -402,41 +440,77 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
 class Month_Delta (_Delta_) :
     """Model month-stepping delta
 
-       >>> print Month_Delta (1)
-       +1 month
-       >>> print Month_Delta (2)
-       +2 months
-       >>> print Month_Delta (-3)
-       -3 months
-       >>> print Month_Delta (years = 1)
-       +1 year
-       >>> print Month_Delta (years = 5)
-       +5 years
-       >>> print Month_Delta (3, 1)
-       +3 months, +1 year
-       >>> print Month_Delta (1, 2)
-       +1 month, +2 years
-       >>> md = Month_Delta (13)
-       >>> print md
-       +1 month, +1 year
-       >>> print md + 1
-       +2 months, +1 year
-       >>> md = Month_Delta (1)
-       >>> abs (md) is md
-       True
-       >>> print abs (md)
-       +1 month
-       >>> md = Month_Delta (-1)
-       >>> abs (md) is md
-       False
-       >>> abs (md) == -md
-       True
-       >>> print md, abs (md)
-       -1 months +1 month
+    >>> print (Month_Delta (1))
+    +1 month
+    >>> print (Month_Delta (2))
+    +2 months
+    >>> print (Month_Delta (-3))
+    -3 months
+    >>> print (Month_Delta (years = 1))
+    +1 year
+    >>> print (Month_Delta (years = 5))
+    +5 years
+    >>> print (Month_Delta (3, 1))
+    +1 year, +3 months
+    >>> print (Month_Delta (1, 2))
+    +2 years, +1 month
+    >>> print (Month_Delta (-1, 2))
+    +1 year, +11 months
+    >>> md = Month_Delta (13)
+    >>> print (md)
+    +1 year, +1 month
+    >>> print (md + 1)
+    +1 year, +2 months
+    >>> md = Month_Delta (1)
+    >>> abs (md) is md
+    True
+    >>> print (abs (md))
+    +1 month
+    >>> md = Month_Delta (-1)
+    >>> abs (md) is md
+    False
+    >>> abs (md) == -md
+    True
+    >>> print (md, abs (md))
+    -1 months +1 month
+
+    >>> print (Month_Delta.from_string("1y3m"))
+    +1 year, +3 months
+    >>> print (Month_Delta.from_string("1y3d"))
+    +1 year, +3 days
+    >>> print (Month_Delta.from_string("1y5w3d"))
+    +1 year, +38 days
+    >>> print (Month_Delta.from_string("-1y5w3d"))
+    -1 years, +38 days
+    >>> print (Month_Delta.from_string("-1y5w-3d"))
+    -1 years, +32 days
     """
 
-    def __init__ (self, months = 0, years = 0) :
+    delta_pattern    = Multi_Regexp \
+        ( r"^"
+          r"(?P<months> [-+]? \d+)"
+          r"$"
+        , r"^"
+          r"(?:(?P<years> [-+]? \d+) (?: \. (?P<subyears> \d+) )?\s* y(?:ears?)?)?"
+          r",?\s*"
+          r"(?:(?P<months>[-+]? \d+) \s* m(?:onths?)? )?"
+          r",?\s*"
+          r"(?:(?P<weeks> [-+]? \d+) \s* w(?:eeks?)?  )?"
+          r",?\s*"
+          r"(?:(?P<days>  [-+]? \d+) \s* d(?:ays?)?   )?"
+          r"$"
+        , flags = re.VERBOSE | re.IGNORECASE
+        )
+
+    _date_delta      = None
+    _init_arg_names  = ("months", "years") + Date_Delta._init_arg_names
+
+    def __init__ (self, months = 0, years = 0, days = 0, weeks = 0) :
+        self._setup_init_kw \
+            (months = months, years = years, days = days, weeks = weeks)
         self.months = months + years * 12
+        if days or weeks :
+            self._date_delta = dd = Date_Delta (days = days, weeks = weeks)
     # end def __init__
 
     def dt_op (self, date, op) :
@@ -448,8 +522,15 @@ class Month_Delta (_Delta_) :
             yd, m = -1, 12
         elif not (1 <= m <= 12) :
             yd, m = divmod (m, 12)
-        return date.replace (month = m, year = date.year + yd)
+        result = date.replace (month = m, year = date.year + yd)
+        if self._date_delta :
+            result += self._date_delta
+        return result
     # end def dt_op
+
+    def _setup_init_kw (self, ** kw) :
+        self._init_kw = dict ((k, v) for k, v in pyk.iteritems (kw) if v)
+    # end def _setup_init_kw
 
     def __abs__ (self) :
         if self.months < 0 :
@@ -477,16 +558,29 @@ class Month_Delta (_Delta_) :
         return self.__class__ (months = - self.months)
     # end def __neg__
 
+    def __repr__ (self) :
+        return "%s (%s)" % \
+            ( self.__class__.__name__
+            , ", ".join
+                ( repr (self._init_arg (a))
+                for a in self._init_arg_names if a in self._init_kw
+                )
+            )
+    # end def __repr__
+
     def __str__ (self) :
         result = []
-        sign   = cmp (self.months, 0)
+        sign   = TFL.sign (self.months)
         years, months = divmod (abs (self.months), 12)
-        if months :
-            months *= sign
-            result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
         if years :
             years  *= sign
             result.append ("%+d year%s"  % (years,  ("", "s") [years  != 1]))
+        if months :
+            months *= sign
+            result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
+        if self._date_delta :
+            days = self._date_delta.days
+            result.append ("%+d day%s"   % (days,   ("", "s") [days   != 1]))
         return ", ".join (result)
     # end def __str__
 

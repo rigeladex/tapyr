@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,8 +38,11 @@
 #    14-Nov-2007 (CT) `hh_mm` added
 #     4-Aug-2008 (MG) `from_string` added
 #    29-Mar-2012 (CT) Add support for `tzinfo`, factor `_from_string_match_kw`
+#    28-Feb-2014 (CT) Use future `print_function`
 #    ««revision-date»»···
 #--
+
+from   __future__               import print_function
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
@@ -54,32 +57,32 @@ class Time (CAL._DTW_) :
     """Model a time object.
 
        >>> t1 = Time (21, 35, 12)
-       >>> print t1
+       >>> print (t1)
        21:35:12
        >>> t1.hour, t1.minute, t1.second, t1.time, t1.seconds
        (21, 35, 12, datetime.time(21, 35, 12), 77712)
        >>> t2 = Time (22, 47, 13)
-       >>> print t2, t2.seconds
+       >>> print (t2, t2.seconds)
        22:47:13 82033
        >>> t1 = Time (14, 30, 0)
        >>> t2 = Time (16, 30, 0)
        >>> d  = t2 - t1
-       >>> print d
+       >>> print (d)
        2:00:00
-       >>> print t2 + d
+       >>> print (t2 + d)
        18:30:00
        >>> from _CAL.Delta import Time_Delta as Delta
        >>> try :
        ...     t1 + Delta (hours = 10)
        ... except OverflowError, exc :
-       ...     print exc
+       ...     print (exc)
        ...
        1 day, 0:30:00
        >>> t3 = Time (0, 0, 0)
-       >>> print t3, t3.seconds
+       >>> print (t3, t3.seconds)
        00:00:00 0
        >>> t4 = Time (23, 59, 59)
-       >>> print t4, t4.seconds
+       >>> print (t4, t4.seconds)
        23:59:59 86399
 
        >>> Time (0, 0, 0, 0).as_degrees
