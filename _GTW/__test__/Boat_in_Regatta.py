@@ -207,16 +207,10 @@ _test_code = r"""
     (<left.left.beam.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<left.left.loa.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<left.left.sail_area.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<left.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<left.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<left.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<left.sail_number.AQ [Attr.Type.Querier Raw]>, u'-----')
     (<left.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<left.sail_number_x.AQ [Attr.Type.Querier String]>, u'-----')
     (<left.name.AQ [Attr.Type.Querier String]>, u'-----')
-    (<left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta')
     (<right.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta_Event')
     (<right.left.name.AQ [Attr.Type.Querier String]>, u'-----')
@@ -227,21 +221,12 @@ _test_code = r"""
     (<right.left.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<right.left.club.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
-    (<right.left.club.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.left.club.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.left.club.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.desc.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
-    (<right.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.left.year.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.boat_class.AQ [Attr.Type.Querier Id_Entity]>, 'SRM._Boat_Class_')
     (<right.boat_class.name.AQ [Attr.Type.Querier String]>, u'-----')
-    (<right.boat_class.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.boat_class.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.boat_class.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<right.kind.AQ [Attr.Type.Querier String]>, u'-----')
@@ -252,9 +237,6 @@ _test_code = r"""
     (<right.result.software.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.result.status.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.starters_rl.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<right.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<right.races_counted.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.year.AQ [Attr.Type.Querier Ckd]>, u'-----')
@@ -269,28 +251,107 @@ _test_code = r"""
     (<skipper.left.lifetime.finish.AQ [Attr.Type.Querier Date]>, u'-----')
     (<skipper.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<skipper.left.sex.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.left.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.left.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.left.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
     (<skipper.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<skipper.club.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
-    (<skipper.club.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.club.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.club.type_name.AQ [Attr.Type.Querier String]>, u'-----')
-    (<skipper.last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<place.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<points.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<creation.AQ [Attr.Type.Querier Rev_Ref]>, 'MOM.MD_Change')
+    (<creation.c_time.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<creation.c_user.AQ [Attr.Type.Querier Id_Entity]>, 'MOM.Id_Entity')
+    (<creation.kind.AQ [Attr.Type.Querier String]>, u'-----')
+    (<creation.time.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<creation.user.AQ [Attr.Type.Querier Id_Entity]>, 'MOM.Id_Entity')
+    (<last_change.AQ [Attr.Type.Querier Rev_Ref]>, 'MOM.MD_Change')
+    (<last_change.c_time.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<last_change.c_user.AQ [Attr.Type.Querier Id_Entity]>, 'MOM.Id_Entity')
+    (<last_change.kind.AQ [Attr.Type.Querier String]>, u'-----')
+    (<last_change.time.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<last_change.user.AQ [Attr.Type.Querier Id_Entity]>, 'MOM.Id_Entity')
     (<last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<type_name.AQ [Attr.Type.Querier String]>, u'-----')
     (<ranking_list_points_lp.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<rank.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<registration_date.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<events.AQ [Attr.Type.Querier Rev_Ref]>, 'EVT.Event')
+    (<events.date.AQ [Attr.Type.Querier Composite]>, 'MOM.Date_Interval')
+    (<events.date.start.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<events.date.finish.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<events.date.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<events.time.AQ [Attr.Type.Querier Composite]>, 'MOM.Time_Interval')
+    (<events.time.start.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<events.time.finish.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<events.calendar.AQ [Attr.Type.Querier Id_Entity]>, 'EVT.Calendar')
+    (<events.calendar.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<events.calendar.desc.AQ [Attr.Type.Querier String]>, u'-----')
+    (<events.detail.AQ [Attr.Type.Querier String]>, u'-----')
+    (<events.short_title.AQ [Attr.Type.Querier String]>, u'-----')
+    (<race_results.AQ [Attr.Type.Querier Rev_Ref]>, 'SRM.Race_Result')
+    (<race_results.race.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<race_results.points.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<race_results.status.AQ [Attr.Type.Querier String]>, u'-----')
+    (<race_results.discarded.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<_crew.AQ [Attr.Type.Querier Rev_Ref]>, 'SRM.Sailor')
+    (<_crew.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<_crew.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
+    (<_crew.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
+    (<_crew.club.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<_crew.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.AQ [Attr.Type.Querier Rev_Ref]>, 'SRM.Team')
+    (<teams.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta_C')
+    (<teams.left.left.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Regatta_Event')
+    (<teams.left.left.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.left.date.AQ [Attr.Type.Querier Composite]>, 'MOM.Date_Interval_C')
+    (<teams.left.left.date.start.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<teams.left.left.date.finish.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<teams.left.left.date.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<teams.left.left.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
+    (<teams.left.left.club.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.left.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.left.desc.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<teams.left.left.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.left.year.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.boat_class.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Boat_Class')
+    (<teams.left.boat_class.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.boat_class.max_crew.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.boat_class.beam.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.boat_class.loa.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.boat_class.sail_area.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<teams.left.kind.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.ranking_list_factor.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.races.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.result.AQ [Attr.Type.Querier Composite]>, 'SRM.Regatta_Result')
+    (<teams.left.result.date.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.result.software.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.result.status.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.starters_rl.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.is_team_race.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<teams.left.perma_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.left.races_counted.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.left.year.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
+    (<teams.club.name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.desc.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.leader.AQ [Attr.Type.Querier Id_Entity]>, 'PAP.Person')
+    (<teams.leader.last_name.AQ [Attr.Type.Querier String_FL]>, u'-----')
+    (<teams.leader.first_name.AQ [Attr.Type.Querier String_FL]>, u'-----')
+    (<teams.leader.middle_name.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.leader.title.AQ [Attr.Type.Querier String]>, u'-----')
+    (<teams.leader.lifetime.AQ [Attr.Type.Querier Composite]>, 'MOM.Date_Interval')
+    (<teams.leader.lifetime.start.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<teams.leader.lifetime.finish.AQ [Attr.Type.Querier Date]>, u'-----')
+    (<teams.leader.lifetime.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
+    (<teams.leader.sex.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.place.AQ [Attr.Type.Querier Ckd]>, u'-----')
+    (<teams.registration_date.AQ [Attr.Type.Querier Date]>, u'-----')
 
     >>> BiR.AQ
     <Attr.Type.Querier.E_Type for SRM.Boat_in_Regatta>
@@ -302,36 +363,21 @@ _test_code = r"""
     left__left__beam
     left__left__loa
     left__left__sail_area
-    left__left__last_cid
-    left__left__pid
-    left__left__type_name
     left__sail_number
     left__nation
     left__sail_number_x
     left__name
-    left__last_cid
-    left__pid
-    left__type_name
     right__left__name
     right__left__date__start
     right__left__date__finish
     right__left__date__alive
     right__left__club__name
     right__left__club__long_name
-    right__left__club__last_cid
-    right__left__club__pid
-    right__left__club__type_name
     right__left__desc
     right__left__is_cancelled
-    right__left__last_cid
-    right__left__pid
-    right__left__type_name
     right__left__perma_name
     right__left__year
     right__boat_class__name
-    right__boat_class__last_cid
-    right__boat_class__pid
-    right__boat_class__type_name
     right__discards
     right__is_cancelled
     right__kind
@@ -341,9 +387,6 @@ _test_code = r"""
     right__result__software
     right__result__status
     right__starters_rl
-    right__last_cid
-    right__pid
-    right__type_name
     right__perma_name
     right__races_counted
     right__year
@@ -355,27 +398,83 @@ _test_code = r"""
     skipper__left__lifetime__finish
     skipper__left__lifetime__alive
     skipper__left__sex
-    skipper__left__last_cid
-    skipper__left__pid
-    skipper__left__type_name
     skipper__nation
     skipper__mna_number
     skipper__club__name
     skipper__club__long_name
-    skipper__club__last_cid
-    skipper__club__pid
-    skipper__club__type_name
-    skipper__last_cid
-    skipper__pid
-    skipper__type_name
     place
     points
+    creation__c_time
+    creation__kind
+    creation__time
+    last_change__c_time
+    last_change__kind
+    last_change__time
     last_cid
     pid
     type_name
     ranking_list_points_lp
     rank
     registration_date
+    events__date__start
+    events__date__finish
+    events__date__alive
+    events__time__start
+    events__time__finish
+    events__calendar__name
+    events__calendar__desc
+    events__detail
+    events__short_title
+    race_results__race
+    race_results__points
+    race_results__status
+    race_results__discarded
+    _crew__nation
+    _crew__mna_number
+    _crew__club__name
+    _crew__club__long_name
+    teams__left__left__name
+    teams__left__left__date__start
+    teams__left__left__date__finish
+    teams__left__left__date__alive
+    teams__left__left__club__name
+    teams__left__left__club__long_name
+    teams__left__left__desc
+    teams__left__left__is_cancelled
+    teams__left__left__perma_name
+    teams__left__left__year
+    teams__left__boat_class__name
+    teams__left__boat_class__max_crew
+    teams__left__boat_class__beam
+    teams__left__boat_class__loa
+    teams__left__boat_class__sail_area
+    teams__left__discards
+    teams__left__is_cancelled
+    teams__left__kind
+    teams__left__ranking_list_factor
+    teams__left__races
+    teams__left__result__date
+    teams__left__result__software
+    teams__left__result__status
+    teams__left__starters_rl
+    teams__left__is_team_race
+    teams__left__perma_name
+    teams__left__races_counted
+    teams__left__year
+    teams__name
+    teams__club__name
+    teams__club__long_name
+    teams__desc
+    teams__leader__last_name
+    teams__leader__first_name
+    teams__leader__middle_name
+    teams__leader__title
+    teams__leader__lifetime__start
+    teams__leader__lifetime__finish
+    teams__leader__lifetime__alive
+    teams__leader__sex
+    teams__place
+    teams__registration_date
 
     >>> fs
     (Q.left.__raw_name, Q.left.date.start, Q.left.date.finish, Q.boat_class.__raw_name)
@@ -409,7 +508,7 @@ _test_code = r"""
     <MOM.Attr.Selector.Pred <MOM.Attr.Selector.Kind q_able> if Q.show_in_ui>
 
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
-    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.club.last_cid, Q.right.left.club.pid, Q.right.left.club.type_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.last_cid, Q.right.left.pid, Q.right.left.type_name, Q.right.left.perma_name, Q.right.left.year, Q.right.boat_class.__raw_name, Q.right.boat_class.last_cid, Q.right.boat_class.pid, Q.right.boat_class.type_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.ranking_list_factor, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.starters_rl, Q.right.last_cid, Q.right.pid, Q.right.type_name, Q.right.perma_name, Q.right.races_counted, Q.right.year)
+    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.perma_name, Q.right.left.year, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.ranking_list_factor, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.starters_rl, Q.right.perma_name, Q.right.races_counted, Q.right.year)
 
     >>> scope.query_changes (type_name = "SRM.Regatta").order_by (Q.cid).first ()
     >>> scope.query_changes (type_name = "SRM.Regatta_C").order_by (Q.cid).first ()

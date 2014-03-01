@@ -70,15 +70,107 @@ _test_DET = """
     ...         for kind, ET in sorted (xs, key = lambda x : x [1].i_rank) :
     ...             flag = "*" if not ET.is_partial else ""
     ...             print ("    %%-30s%%-2s %%s" %% (ET.type_name, flag, kind.e_type.type_name))
+    addresses [PAP.Subject]
+        PAP.Subject                      PAP.Subject
+        PAP.Legal_Entity                 PAP.Subject
     boat_class [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta_C
         SRM.Regatta_H                 *  SRM.Regatta_H
+    clips [SWP.Object_PN]
+        SWP.Object_PN                    SWP.Object_PN
+        SWP.Page                      *  SWP.Object_PN
+        SWP.Page_Y                    *  SWP.Object_PN
+        SWP.Clip_X                    *  SWP.Object_PN
+        SWP.Gallery                   *  SWP.Object_PN
+        SWP.Referral                  *  SWP.Object_PN
+        SRM.Page                      *  SWP.Object_PN
     contents [SWP.Page_Mixin]
         SWP.Page                      *  SWP.Page_Mixin
         SWP.Page_Y                    *  SWP.Page_Mixin
         SWP.Clip_X                    *  SWP.Page_Mixin
         SRM.Page                      *  SWP.Page_Mixin
+    creation [MOM.Id_Entity]
+        MOM.Id_Entity                    MOM.Id_Entity
+        MOM.Link                         MOM.Id_Entity
+        MOM.Link1                        MOM.Id_Entity
+        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM.Link2                        MOM.Id_Entity
+        MOM.Object                       MOM.Id_Entity
+        PAP.Id_Entity                    MOM.Id_Entity
+        PAP.Object                       MOM.Id_Entity
+        PAP.Property                     MOM.Id_Entity
+        PAP.Address                   *  MOM.Id_Entity
+        PAP.Subject                      MOM.Id_Entity
+        PAP.Legal_Entity                 MOM.Id_Entity
+        PAP.Company                   *  MOM.Id_Entity
+        PAP.Email                     *  MOM.Id_Entity
+        PAP.Phone                     *  MOM.Id_Entity
+        PAP.Person                    *  MOM.Id_Entity
+        PAP.Url                       *  MOM.Id_Entity
+        PAP.Link                         MOM.Id_Entity
+        PAP.Link1                        MOM.Id_Entity
+        PAP.Address_Position          *  MOM.Id_Entity
+        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP.Link2                        MOM.Id_Entity
+        PAP.Subject_has_Property         MOM.Id_Entity
+        PAP.Person_has_Account        *  MOM.Id_Entity
+        EVT.Id_Entity                    MOM.Id_Entity
+        EVT.Object                       MOM.Id_Entity
+        EVT.Calendar                  *  MOM.Id_Entity
+        EVT.Link                         MOM.Id_Entity
+        EVT.Link1                        MOM.Id_Entity
+        EVT.Event                     *  MOM.Id_Entity
+        EVT.Event_occurs              *  MOM.Id_Entity
+        EVT._Recurrence_Mixin_           MOM.Id_Entity
+        EVT.Recurrence_Spec           *  MOM.Id_Entity
+        EVT.Recurrence_Rule           *  MOM.Id_Entity
+        SWP.Id_Entity                    MOM.Id_Entity
+        SWP.Object                       MOM.Id_Entity
+        SWP.Object_PN                    MOM.Id_Entity
+        SWP.Page                      *  MOM.Id_Entity
+        SWP.Page_Y                    *  MOM.Id_Entity
+        SWP.Link                         MOM.Id_Entity
+        SWP.Link1                        MOM.Id_Entity
+        SWP.Clip_O                    *  MOM.Id_Entity
+        SWP.Clip_X                    *  MOM.Id_Entity
+        SWP.Gallery                   *  MOM.Id_Entity
+        SWP.Picture                   *  MOM.Id_Entity
+        SWP.Referral                  *  MOM.Id_Entity
+        SRM.Id_Entity                    MOM.Id_Entity
+        SRM.Object                       MOM.Id_Entity
+        SRM._Boat_Class_                 MOM.Id_Entity
+        SRM.Boat_Class                *  MOM.Id_Entity
+        SRM.Handicap                  *  MOM.Id_Entity
+        SRM.Link                         MOM.Id_Entity
+        SRM.Link1                        MOM.Id_Entity
+        SRM.Boat                      *  MOM.Id_Entity
+        SRM.Club                      *  MOM.Id_Entity
+        SRM.Regatta_Event             *  MOM.Id_Entity
+        SRM.Page                      *  MOM.Id_Entity
+        SRM.Regatta                      MOM.Id_Entity
+        SRM.Regatta_C                 *  MOM.Id_Entity
+        SRM.Regatta_H                 *  MOM.Id_Entity
+        SRM.Sailor                    *  MOM.Id_Entity
+        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM.Link2                        MOM.Id_Entity
+        SRM.Boat_in_Regatta           *  MOM.Id_Entity
+        SRM.Race_Result               *  MOM.Id_Entity
+        SRM.Team                      *  MOM.Id_Entity
+        SRM.Crew_Member               *  MOM.Id_Entity
+        SRM.Team_has_Boat_in_Regatta  *  MOM.Id_Entity
+        PAP.Subject_has_Address          MOM.Id_Entity
+        PAP.Subject_has_Email            MOM.Id_Entity
+        PAP.Subject_has_Phone            MOM.Id_Entity
+        PAP.Subject_has_Url              MOM.Id_Entity
+        PAP.Company_has_Url           *  MOM.Id_Entity
+        PAP.Person_has_Url            *  MOM.Id_Entity
+        PAP.Company_has_Phone         *  MOM.Id_Entity
+        PAP.Person_has_Phone          *  MOM.Id_Entity
+        PAP.Company_has_Email         *  MOM.Id_Entity
+        PAP.Person_has_Email          *  MOM.Id_Entity
+        PAP.Company_has_Address       *  MOM.Id_Entity
+        PAP.Person_has_Address        *  MOM.Id_Entity
     date [SWP.Object_PN]
         SWP.Object_PN                    SWP.Object_PN
         SWP.Page                      *  SWP.Object_PN
@@ -111,6 +203,90 @@ _test_DET = """
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
+    emails [PAP.Subject]
+        PAP.Subject                      PAP.Subject
+        PAP.Legal_Entity                 PAP.Subject
+    events [MOM.Id_Entity]
+        MOM.Id_Entity                    MOM.Id_Entity
+        MOM.Link                         MOM.Id_Entity
+        MOM.Link1                        MOM.Id_Entity
+        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM.Link2                        MOM.Id_Entity
+        MOM.Object                       MOM.Id_Entity
+        PAP.Id_Entity                    MOM.Id_Entity
+        PAP.Object                       MOM.Id_Entity
+        PAP.Property                     MOM.Id_Entity
+        PAP.Address                   *  MOM.Id_Entity
+        PAP.Subject                      MOM.Id_Entity
+        PAP.Legal_Entity                 MOM.Id_Entity
+        PAP.Company                   *  MOM.Id_Entity
+        PAP.Email                     *  MOM.Id_Entity
+        PAP.Phone                     *  MOM.Id_Entity
+        PAP.Person                    *  MOM.Id_Entity
+        PAP.Url                       *  MOM.Id_Entity
+        PAP.Link                         MOM.Id_Entity
+        PAP.Link1                        MOM.Id_Entity
+        PAP.Address_Position          *  MOM.Id_Entity
+        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP.Link2                        MOM.Id_Entity
+        PAP.Subject_has_Property         MOM.Id_Entity
+        PAP.Person_has_Account        *  MOM.Id_Entity
+        EVT.Id_Entity                    MOM.Id_Entity
+        EVT.Object                       MOM.Id_Entity
+        EVT.Calendar                  *  MOM.Id_Entity
+        EVT.Link                         MOM.Id_Entity
+        EVT.Link1                        MOM.Id_Entity
+        EVT.Event                     *  MOM.Id_Entity
+        EVT.Event_occurs              *  MOM.Id_Entity
+        EVT._Recurrence_Mixin_           MOM.Id_Entity
+        EVT.Recurrence_Spec           *  MOM.Id_Entity
+        EVT.Recurrence_Rule           *  MOM.Id_Entity
+        SWP.Id_Entity                    MOM.Id_Entity
+        SWP.Object                       MOM.Id_Entity
+        SWP.Object_PN                    MOM.Id_Entity
+        SWP.Page                      *  MOM.Id_Entity
+        SWP.Page_Y                    *  MOM.Id_Entity
+        SWP.Link                         MOM.Id_Entity
+        SWP.Link1                        MOM.Id_Entity
+        SWP.Clip_O                    *  MOM.Id_Entity
+        SWP.Clip_X                    *  MOM.Id_Entity
+        SWP.Gallery                   *  MOM.Id_Entity
+        SWP.Picture                   *  MOM.Id_Entity
+        SWP.Referral                  *  MOM.Id_Entity
+        SRM.Id_Entity                    MOM.Id_Entity
+        SRM.Object                       MOM.Id_Entity
+        SRM._Boat_Class_                 MOM.Id_Entity
+        SRM.Boat_Class                *  MOM.Id_Entity
+        SRM.Handicap                  *  MOM.Id_Entity
+        SRM.Link                         MOM.Id_Entity
+        SRM.Link1                        MOM.Id_Entity
+        SRM.Boat                      *  MOM.Id_Entity
+        SRM.Club                      *  MOM.Id_Entity
+        SRM.Regatta_Event             *  MOM.Id_Entity
+        SRM.Page                      *  MOM.Id_Entity
+        SRM.Regatta                      MOM.Id_Entity
+        SRM.Regatta_C                 *  MOM.Id_Entity
+        SRM.Regatta_H                 *  MOM.Id_Entity
+        SRM.Sailor                    *  MOM.Id_Entity
+        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM.Link2                        MOM.Id_Entity
+        SRM.Boat_in_Regatta           *  MOM.Id_Entity
+        SRM.Race_Result               *  MOM.Id_Entity
+        SRM.Team                      *  MOM.Id_Entity
+        SRM.Crew_Member               *  MOM.Id_Entity
+        SRM.Team_has_Boat_in_Regatta  *  MOM.Id_Entity
+        PAP.Subject_has_Address          MOM.Id_Entity
+        PAP.Subject_has_Email            MOM.Id_Entity
+        PAP.Subject_has_Phone            MOM.Id_Entity
+        PAP.Subject_has_Url              MOM.Id_Entity
+        PAP.Company_has_Url           *  MOM.Id_Entity
+        PAP.Person_has_Url            *  MOM.Id_Entity
+        PAP.Company_has_Phone         *  MOM.Id_Entity
+        PAP.Person_has_Phone          *  MOM.Id_Entity
+        PAP.Company_has_Email         *  MOM.Id_Entity
+        PAP.Person_has_Email          *  MOM.Id_Entity
+        PAP.Company_has_Address       *  MOM.Id_Entity
+        PAP.Person_has_Address        *  MOM.Id_Entity
     extension [PAP.Subject_has_Phone]
         PAP.Subject_has_Phone            PAP.Subject_has_Phone
         PAP.Company_has_Phone         *  PAP.Subject_has_Phone
@@ -141,6 +317,87 @@ _test_DET = """
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
+    last_change [MOM.Id_Entity]
+        MOM.Id_Entity                    MOM.Id_Entity
+        MOM.Link                         MOM.Id_Entity
+        MOM.Link1                        MOM.Id_Entity
+        MOM._MOM_Link_n_                 MOM.Id_Entity
+        MOM.Link2                        MOM.Id_Entity
+        MOM.Object                       MOM.Id_Entity
+        PAP.Id_Entity                    MOM.Id_Entity
+        PAP.Object                       MOM.Id_Entity
+        PAP.Property                     MOM.Id_Entity
+        PAP.Address                   *  MOM.Id_Entity
+        PAP.Subject                      MOM.Id_Entity
+        PAP.Legal_Entity                 MOM.Id_Entity
+        PAP.Company                   *  MOM.Id_Entity
+        PAP.Email                     *  MOM.Id_Entity
+        PAP.Phone                     *  MOM.Id_Entity
+        PAP.Person                    *  MOM.Id_Entity
+        PAP.Url                       *  MOM.Id_Entity
+        PAP.Link                         MOM.Id_Entity
+        PAP.Link1                        MOM.Id_Entity
+        PAP.Address_Position          *  MOM.Id_Entity
+        PAP._MOM_Link_n_                 MOM.Id_Entity
+        PAP.Link2                        MOM.Id_Entity
+        PAP.Subject_has_Property         MOM.Id_Entity
+        PAP.Person_has_Account        *  MOM.Id_Entity
+        EVT.Id_Entity                    MOM.Id_Entity
+        EVT.Object                       MOM.Id_Entity
+        EVT.Calendar                  *  MOM.Id_Entity
+        EVT.Link                         MOM.Id_Entity
+        EVT.Link1                        MOM.Id_Entity
+        EVT.Event                     *  MOM.Id_Entity
+        EVT.Event_occurs              *  MOM.Id_Entity
+        EVT._Recurrence_Mixin_           MOM.Id_Entity
+        EVT.Recurrence_Spec           *  MOM.Id_Entity
+        EVT.Recurrence_Rule           *  MOM.Id_Entity
+        SWP.Id_Entity                    MOM.Id_Entity
+        SWP.Object                       MOM.Id_Entity
+        SWP.Object_PN                    MOM.Id_Entity
+        SWP.Page                      *  MOM.Id_Entity
+        SWP.Page_Y                    *  MOM.Id_Entity
+        SWP.Link                         MOM.Id_Entity
+        SWP.Link1                        MOM.Id_Entity
+        SWP.Clip_O                    *  MOM.Id_Entity
+        SWP.Clip_X                    *  MOM.Id_Entity
+        SWP.Gallery                   *  MOM.Id_Entity
+        SWP.Picture                   *  MOM.Id_Entity
+        SWP.Referral                  *  MOM.Id_Entity
+        SRM.Id_Entity                    MOM.Id_Entity
+        SRM.Object                       MOM.Id_Entity
+        SRM._Boat_Class_                 MOM.Id_Entity
+        SRM.Boat_Class                *  MOM.Id_Entity
+        SRM.Handicap                  *  MOM.Id_Entity
+        SRM.Link                         MOM.Id_Entity
+        SRM.Link1                        MOM.Id_Entity
+        SRM.Boat                      *  MOM.Id_Entity
+        SRM.Club                      *  MOM.Id_Entity
+        SRM.Regatta_Event             *  MOM.Id_Entity
+        SRM.Page                      *  MOM.Id_Entity
+        SRM.Regatta                      MOM.Id_Entity
+        SRM.Regatta_C                 *  MOM.Id_Entity
+        SRM.Regatta_H                 *  MOM.Id_Entity
+        SRM.Sailor                    *  MOM.Id_Entity
+        SRM._MOM_Link_n_                 MOM.Id_Entity
+        SRM.Link2                        MOM.Id_Entity
+        SRM.Boat_in_Regatta           *  MOM.Id_Entity
+        SRM.Race_Result               *  MOM.Id_Entity
+        SRM.Team                      *  MOM.Id_Entity
+        SRM.Crew_Member               *  MOM.Id_Entity
+        SRM.Team_has_Boat_in_Regatta  *  MOM.Id_Entity
+        PAP.Subject_has_Address          MOM.Id_Entity
+        PAP.Subject_has_Email            MOM.Id_Entity
+        PAP.Subject_has_Phone            MOM.Id_Entity
+        PAP.Subject_has_Url              MOM.Id_Entity
+        PAP.Company_has_Url           *  MOM.Id_Entity
+        PAP.Person_has_Url            *  MOM.Id_Entity
+        PAP.Company_has_Phone         *  MOM.Id_Entity
+        PAP.Person_has_Phone          *  MOM.Id_Entity
+        PAP.Company_has_Email         *  MOM.Id_Entity
+        PAP.Person_has_Email          *  MOM.Id_Entity
+        PAP.Company_has_Address       *  MOM.Id_Entity
+        PAP.Person_has_Address        *  MOM.Id_Entity
     last_cid [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
@@ -295,6 +552,9 @@ _test_DET = """
         SWP.Gallery                   *  SWP.Object_PN
         SWP.Referral                  *  SWP.Object_PN
         SRM.Page                      *  SWP.Object_PN
+    phones [PAP.Subject]
+        PAP.Subject                      PAP.Subject
+        PAP.Legal_Entity                 PAP.Subject
     pid [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
         MOM.Link                         MOM.Id_Entity
@@ -531,6 +791,9 @@ _test_DET = """
         PAP.Person_has_Email          *  MOM.Id_Entity
         PAP.Company_has_Address       *  MOM.Id_Entity
         PAP.Person_has_Address        *  MOM.Id_Entity
+    urls [PAP.Subject]
+        PAP.Subject                      PAP.Subject
+        PAP.Legal_Entity                 PAP.Subject
     year [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta

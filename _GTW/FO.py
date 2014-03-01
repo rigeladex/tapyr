@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -30,11 +30,15 @@
 #    10-Feb-2010 (CT) `MOM.Entity.FO` factored
 #     5-Aug-2010 (CT) `_get_nested` added to support `composite.field`
 #    10-Dec-2012 (CT) Change `_get_nested` to delegate to `obj.FO`
+#     3-Mar-2014 (CT) Factor `_get_attr`; add support for `tuple, list`
 #    ««revision-date»»···
 #--
 
+from   __future__               import unicode_literals
+
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 
@@ -48,11 +52,23 @@ class FO (TFL.Meta.Object) :
         self.__cache  = {}
     # end def __init__
 
+    def _get_attr (self, name) :
+        result = getattr (self.__fo, name)
+        if result is None :
+            result = ""
+        elif isinstance (result, (tuple, list)) :
+            result = "<br>".join \
+                (   pyk.decoded (r if r is not None else "", self.__enc)
+                for r in result
+                )
+        return pyk.decoded (result, self.__enc)
+    # end def _get_attr
+
     def _get_nested (self, name) :
         try :
             result = self.__cache [name]
         except KeyError :
-            self.__cache [name] = result = unicode (getattr (self.__fo, name))
+            self.__cache [name] = result = self._get_attr (name)
         return result
     # end def _get_nested
 
@@ -60,9 +76,7 @@ class FO (TFL.Meta.Object) :
         if "." in name :
             result = self._get_nested (name)
         else :
-            result = getattr (self.__fo, name)
-            if self.__enc and isinstance (result, str) :
-                result = unicode (result, self.__enc, "replace")
+            result = self._get_attr   (name)
         setattr (self, name, result)
         return result
     # end def __getattr__

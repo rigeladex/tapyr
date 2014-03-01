@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -215,6 +215,8 @@
 #    21-Aug-2013 (CT) Add `M_E_Type_Md.relevant_roots`
 #    22-Aug-2013 (CT) Replace `tn_pid` by `type_name, pid` as default sort-key
 #    25-Aug-2013 (CT) Change `M_Entity.__init__` to set `E_Spec`
+#     1-Mar-2014 (CT) Redefine `M_E_Type_MD._m_setup_attributes`
+#     2-Mar-2014 (CT) Add `ref.only_e_types` to `M_Id_Entity._m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -926,8 +928,8 @@ class M_Id_Entity (M_Entity) :
                 if a is not None and issubclass (a, MOM.Attr.A_Id_Entity) :
                     yield a
         for ref in _gen_refs (cls) :
-            cls._m_fix_type_set (ref.allow_e_types)
-            cls._m_fix_type_set (ref.refuse_e_types)
+            for ts in (ref.allow_e_types, ref.only_e_types, ref.refuse_e_types):
+                cls._m_fix_type_set (ts)
             rev_name = ref.rev_ref_attr_name
             if rev_name :
                 r_type = ref.E_Type
@@ -1431,6 +1433,12 @@ class M_E_Type_MD (M_E_Type) :
     Manager        = MOM.E_Type_Manager.MD_Entity
 
     relevant_roots = {}
+
+    def _m_setup_attributes (cls) :
+        cls.__m_super._m_setup_attributes ()
+        cls.sig_attr = tuple \
+            (cls._Attributes._attr_dict [k] for k in cls._sig_attr_names)
+    # end def _m_setup_attributes
 
 # end class M_E_Type_MD
 

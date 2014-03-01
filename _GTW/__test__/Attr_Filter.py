@@ -56,9 +56,18 @@ _test_code = """
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <sex.AQ [Attr.Type.Querier Ckd]>
+    <creation.AQ [Attr.Type.Querier Rev_Ref]>
+    <last_change.AQ [Attr.Type.Querier Rev_Ref]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.AQ [Attr.Type.Querier Rev_Ref]>
+    <accounts.AQ [Attr.Type.Querier Rev_Ref]>
+    <sailors.AQ [Attr.Type.Querier Rev_Ref]>
+    <urls.AQ [Attr.Type.Querier Rev_Ref]>
+    <phones.AQ [Attr.Type.Querier Rev_Ref]>
+    <emails.AQ [Attr.Type.Querier Rev_Ref]>
+    <addresses.AQ [Attr.Type.Querier Rev_Ref]>
 
     >>> paq = MOM.Attr.Querier.E_Type (PAP.Person.E_Type, MOM.Attr.Selector.ui_attr)
     >>> for aq in paq.Attrs :
@@ -69,9 +78,18 @@ _test_code = """
     <title.AQ [Attr.Type.Querier String]>
     <lifetime.AQ [Attr.Type.Querier Composite]>
     <sex.AQ [Attr.Type.Querier Ckd]>
+    <creation.AQ [Attr.Type.Querier Rev_Ref]>
+    <last_change.AQ [Attr.Type.Querier Rev_Ref]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.AQ [Attr.Type.Querier Rev_Ref]>
+    <accounts.AQ [Attr.Type.Querier Rev_Ref]>
+    <sailors.AQ [Attr.Type.Querier Rev_Ref]>
+    <urls.AQ [Attr.Type.Querier Rev_Ref]>
+    <phones.AQ [Attr.Type.Querier Rev_Ref]>
+    <emails.AQ [Attr.Type.Querier Rev_Ref]>
+    <addresses.AQ [Attr.Type.Querier Rev_Ref]>
 
     >>> for aq in paq.Attrs_Transitive :
     ...     print aq
@@ -84,9 +102,64 @@ _test_code = """
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <sex.AQ [Attr.Type.Querier Ckd]>
+    <creation.AQ [Attr.Type.Querier Rev_Ref]>
+    <creation.c_time.AQ [Attr.Type.Querier Ckd]>
+    <creation.c_user.AQ [Attr.Type.Querier Id_Entity]>
+    <creation.kind.AQ [Attr.Type.Querier String]>
+    <creation.time.AQ [Attr.Type.Querier Ckd]>
+    <creation.user.AQ [Attr.Type.Querier Id_Entity]>
+    <last_change.AQ [Attr.Type.Querier Rev_Ref]>
+    <last_change.c_time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.c_user.AQ [Attr.Type.Querier Id_Entity]>
+    <last_change.kind.AQ [Attr.Type.Querier String]>
+    <last_change.time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.user.AQ [Attr.Type.Querier Id_Entity]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.AQ [Attr.Type.Querier Rev_Ref]>
+    <events.date.AQ [Attr.Type.Querier Composite]>
+    <events.date.start.AQ [Attr.Type.Querier Date]>
+    <events.date.finish.AQ [Attr.Type.Querier Date]>
+    <events.date.alive.AQ [Attr.Type.Querier Boolean]>
+    <events.time.AQ [Attr.Type.Querier Composite]>
+    <events.time.start.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.calendar.AQ [Attr.Type.Querier Id_Entity]>
+    <events.calendar.name.AQ [Attr.Type.Querier String]>
+    <events.calendar.desc.AQ [Attr.Type.Querier String]>
+    <events.detail.AQ [Attr.Type.Querier String]>
+    <events.short_title.AQ [Attr.Type.Querier String]>
+    <accounts.AQ [Attr.Type.Querier Rev_Ref]>
+    <accounts.name.AQ [Attr.Type.Querier String]>
+    <accounts.enabled.AQ [Attr.Type.Querier Boolean]>
+    <accounts.superuser.AQ [Attr.Type.Querier Boolean]>
+    <accounts.active.AQ [Attr.Type.Querier Boolean]>
+    <accounts.suspended.AQ [Attr.Type.Querier Boolean]>
+    <sailors.AQ [Attr.Type.Querier Rev_Ref]>
+    <sailors.nation.AQ [Attr.Type.Querier Ckd]>
+    <sailors.mna_number.AQ [Attr.Type.Querier Raw]>
+    <sailors.club.AQ [Attr.Type.Querier Id_Entity]>
+    <sailors.club.name.AQ [Attr.Type.Querier String]>
+    <sailors.club.long_name.AQ [Attr.Type.Querier String]>
+    <urls.AQ [Attr.Type.Querier Rev_Ref]>
+    <urls.value.AQ [Attr.Type.Querier String]>
+    <urls.desc.AQ [Attr.Type.Querier String]>
+    <phones.AQ [Attr.Type.Querier Rev_Ref]>
+    <phones.country_code.AQ [Attr.Type.Querier String]>
+    <phones.area_code.AQ [Attr.Type.Querier String]>
+    <phones.number.AQ [Attr.Type.Querier String]>
+    <phones.desc.AQ [Attr.Type.Querier String]>
+    <emails.AQ [Attr.Type.Querier Rev_Ref]>
+    <emails.address.AQ [Attr.Type.Querier String]>
+    <emails.desc.AQ [Attr.Type.Querier String]>
+    <addresses.AQ [Attr.Type.Querier Rev_Ref]>
+    <addresses.street.AQ [Attr.Type.Querier String]>
+    <addresses.zip.AQ [Attr.Type.Querier String]>
+    <addresses.city.AQ [Attr.Type.Querier String]>
+    <addresses.country.AQ [Attr.Type.Querier String]>
+    <addresses.desc.AQ [Attr.Type.Querier String]>
+    <addresses.region.AQ [Attr.Type.Querier String]>
 
     >>> for aq in paq.Atoms :
     ...     print aq
@@ -98,9 +171,47 @@ _test_code = """
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <sex.AQ [Attr.Type.Querier Ckd]>
+    <creation.c_time.AQ [Attr.Type.Querier Ckd]>
+    <creation.kind.AQ [Attr.Type.Querier String]>
+    <creation.time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.c_time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.kind.AQ [Attr.Type.Querier String]>
+    <last_change.time.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.date.start.AQ [Attr.Type.Querier Date]>
+    <events.date.finish.AQ [Attr.Type.Querier Date]>
+    <events.date.alive.AQ [Attr.Type.Querier Boolean]>
+    <events.time.start.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.calendar.name.AQ [Attr.Type.Querier String]>
+    <events.calendar.desc.AQ [Attr.Type.Querier String]>
+    <events.detail.AQ [Attr.Type.Querier String]>
+    <events.short_title.AQ [Attr.Type.Querier String]>
+    <accounts.name.AQ [Attr.Type.Querier String]>
+    <accounts.enabled.AQ [Attr.Type.Querier Boolean]>
+    <accounts.superuser.AQ [Attr.Type.Querier Boolean]>
+    <accounts.active.AQ [Attr.Type.Querier Boolean]>
+    <accounts.suspended.AQ [Attr.Type.Querier Boolean]>
+    <sailors.nation.AQ [Attr.Type.Querier Ckd]>
+    <sailors.mna_number.AQ [Attr.Type.Querier Raw]>
+    <sailors.club.name.AQ [Attr.Type.Querier String]>
+    <sailors.club.long_name.AQ [Attr.Type.Querier String]>
+    <urls.value.AQ [Attr.Type.Querier String]>
+    <urls.desc.AQ [Attr.Type.Querier String]>
+    <phones.country_code.AQ [Attr.Type.Querier String]>
+    <phones.area_code.AQ [Attr.Type.Querier String]>
+    <phones.number.AQ [Attr.Type.Querier String]>
+    <phones.desc.AQ [Attr.Type.Querier String]>
+    <emails.address.AQ [Attr.Type.Querier String]>
+    <emails.desc.AQ [Attr.Type.Querier String]>
+    <addresses.street.AQ [Attr.Type.Querier String]>
+    <addresses.zip.AQ [Attr.Type.Querier String]>
+    <addresses.city.AQ [Attr.Type.Querier String]>
+    <addresses.country.AQ [Attr.Type.Querier String]>
+    <addresses.desc.AQ [Attr.Type.Querier String]>
+    <addresses.region.AQ [Attr.Type.Querier String]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.Atoms :
     ...     print aq
@@ -112,21 +223,30 @@ _test_code = """
     <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
-    <left.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <left.pid.AQ [Attr.Type.Querier Ckd]>
-    <left.type_name.AQ [Attr.Type.Querier String]>
     <right.country_code.AQ [Attr.Type.Querier String]>
     <right.area_code.AQ [Attr.Type.Querier String]>
     <right.number.AQ [Attr.Type.Querier String]>
     <right.desc.AQ [Attr.Type.Querier String]>
-    <right.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <right.pid.AQ [Attr.Type.Querier Ckd]>
-    <right.type_name.AQ [Attr.Type.Querier String]>
     <extension.AQ [Attr.Type.Querier String]>
     <desc.AQ [Attr.Type.Querier String]>
+    <creation.c_time.AQ [Attr.Type.Querier Ckd]>
+    <creation.kind.AQ [Attr.Type.Querier String]>
+    <creation.time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.c_time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.kind.AQ [Attr.Type.Querier String]>
+    <last_change.time.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.date.start.AQ [Attr.Type.Querier Date]>
+    <events.date.finish.AQ [Attr.Type.Querier Date]>
+    <events.date.alive.AQ [Attr.Type.Querier Boolean]>
+    <events.time.start.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.calendar.name.AQ [Attr.Type.Querier String]>
+    <events.calendar.desc.AQ [Attr.Type.Querier String]>
+    <events.detail.AQ [Attr.Type.Querier String]>
+    <events.short_title.AQ [Attr.Type.Querier String]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Atoms :
     ...     print aq
@@ -138,9 +258,6 @@ _test_code = """
     <left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <left.sex.AQ [Attr.Type.Querier Ckd]>
-    <left.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <left.pid.AQ [Attr.Type.Querier Ckd]>
-    <left.type_name.AQ [Attr.Type.Querier String]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Unwrapped_Atoms :
     ...     print aq
@@ -151,9 +268,6 @@ _test_code = """
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
     <sex.AQ [Attr.Type.Querier Ckd]>
-    <last_cid.AQ [Attr.Type.Querier Ckd]>
-    <pid.AQ [Attr.Type.Querier Ckd]>
-    <type_name.AQ [Attr.Type.Querier String]>
 
     >>> ET_lifetime    = PAP.Person.E_Type.attributes ["lifetime"]
     >>> person_attrs   = MOM.Attr.Selector.ui_attr (PAP.Person.E_Type)
@@ -161,9 +275,9 @@ _test_code = """
     >>> lifetime_attrs = MOM.Attr.Selector.ui_attr (ET_lifetime)
 
     >>> person_attrs.names
-    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'sex', 'last_cid', 'pid', 'type_name')
+    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'sex', 'creation', 'last_change', 'last_cid', 'pid', 'type_name', u'events', u'accounts', u'sailors', u'urls', u'phones', u'emails', u'addresses')
     >>> php_attrs.names
-    ('left', 'right', 'extension', 'desc', 'last_cid', 'pid', 'type_name')
+    ('left', 'right', 'extension', 'desc', 'creation', 'last_change', 'last_cid', 'pid', 'type_name', u'events')
     >>> lifetime_attrs.names
     ('start', 'finish', 'alive')
 
@@ -175,9 +289,18 @@ _test_code = """
     String <title.AQ [Attr.Type.Querier String]>
     Date_Interval <lifetime.AQ [Attr.Type.Querier Composite]>
     Sex <sex.AQ [Attr.Type.Querier Ckd]>
+    Rev_Ref <creation.AQ [Attr.Type.Querier Rev_Ref]>
+    Rev_Ref <last_change.AQ [Attr.Type.Querier Rev_Ref]>
     Int <last_cid.AQ [Attr.Type.Querier Ckd]>
     Surrogate <pid.AQ [Attr.Type.Querier Ckd]>
     String <type_name.AQ [Attr.Type.Querier String]>
+    Link_Ref_List <events.AQ [Attr.Type.Querier Rev_Ref]>
+    Role_Ref_Set <accounts.AQ [Attr.Type.Querier Rev_Ref]>
+    Link_Ref_List <sailors.AQ [Attr.Type.Querier Rev_Ref]>
+    Role_Ref_Set <urls.AQ [Attr.Type.Querier Rev_Ref]>
+    Role_Ref_Set <phones.AQ [Attr.Type.Querier Rev_Ref]>
+    Role_Ref_Set <emails.AQ [Attr.Type.Querier Rev_Ref]>
+    Role_Ref_Set <addresses.AQ [Attr.Type.Querier Rev_Ref]>
 
     >>> for attr in person_attrs :
     ...     print attr.typ, attr.AQ.AC
@@ -187,9 +310,18 @@ _test_code = """
     String <Attr.Auto_Complete_S title.STARTSWITH [auto-complete]>
     Date_Interval <Attr.Composite_Auto_Complete lifetime.EQ [auto-complete]>
     Sex <Attr.Auto_Complete sex.EQ [auto-complete]>
+    Rev_Ref <Attr.Id_Entity_Auto_Complete creation.EQ [auto-complete]>
+    Rev_Ref <Attr.Id_Entity_Auto_Complete last_change.EQ [auto-complete]>
     Int <Attr.Auto_Complete last_cid.EQ [auto-complete]>
     Surrogate <Attr.Auto_Complete pid.EQ [auto-complete]>
     String <Attr.Auto_Complete_S type_name.STARTSWITH [auto-complete]>
+    Link_Ref_List <Attr.Id_Entity_Auto_Complete events.EQ [auto-complete]>
+    Role_Ref_Set <Attr.Id_Entity_Auto_Complete accounts.EQ [auto-complete]>
+    Link_Ref_List <Attr.Id_Entity_Auto_Complete sailors.EQ [auto-complete]>
+    Role_Ref_Set <Attr.Id_Entity_Auto_Complete urls.EQ [auto-complete]>
+    Role_Ref_Set <Attr.Id_Entity_Auto_Complete phones.EQ [auto-complete]>
+    Role_Ref_Set <Attr.Id_Entity_Auto_Complete emails.EQ [auto-complete]>
+    Role_Ref_Set <Attr.Id_Entity_Auto_Complete addresses.EQ [auto-complete]>
 
     >>> for attr in person_attrs :
     ...     print attr.typ, getattr (attr.AQ, "GE", "** GE undefined **")
@@ -199,9 +331,18 @@ _test_code = """
     String <Attr.Greater_Equal title.GE [>=]>
     Date_Interval <Attr.Composite_Greater_Equal lifetime.GE [>=]>
     Sex <Attr.Greater_Equal sex.GE [>=]>
+    Rev_Ref <Attr.Id_Entity_Greater_Equal creation.GE [>=]>
+    Rev_Ref <Attr.Id_Entity_Greater_Equal last_change.GE [>=]>
     Int <Attr.Greater_Equal last_cid.GE [>=]>
     Surrogate <Attr.Greater_Equal pid.GE [>=]>
     String <Attr.Greater_Equal type_name.GE [>=]>
+    Link_Ref_List <Attr.Id_Entity_Greater_Equal events.GE [>=]>
+    Role_Ref_Set <Attr.Id_Entity_Greater_Equal accounts.GE [>=]>
+    Link_Ref_List <Attr.Id_Entity_Greater_Equal sailors.GE [>=]>
+    Role_Ref_Set <Attr.Id_Entity_Greater_Equal urls.GE [>=]>
+    Role_Ref_Set <Attr.Id_Entity_Greater_Equal phones.GE [>=]>
+    Role_Ref_Set <Attr.Id_Entity_Greater_Equal emails.GE [>=]>
+    Role_Ref_Set <Attr.Id_Entity_Greater_Equal addresses.GE [>=]>
 
     >>> for attr in person_attrs :
     ...     print attr.typ, getattr (attr.AQ, "CONTAINS", "** CONTAINS undefined **")
@@ -211,9 +352,18 @@ _test_code = """
     String <Attr.Contains title.CONTAINS [contains]>
     Date_Interval ** CONTAINS undefined **
     Sex ** CONTAINS undefined **
+    Rev_Ref ** CONTAINS undefined **
+    Rev_Ref ** CONTAINS undefined **
     Int ** CONTAINS undefined **
     Surrogate ** CONTAINS undefined **
     String <Attr.Contains type_name.CONTAINS [contains]>
+    Link_Ref_List ** CONTAINS undefined **
+    Role_Ref_Set ** CONTAINS undefined **
+    Link_Ref_List ** CONTAINS undefined **
+    Role_Ref_Set ** CONTAINS undefined **
+    Role_Ref_Set ** CONTAINS undefined **
+    Role_Ref_Set ** CONTAINS undefined **
+    Role_Ref_Set ** CONTAINS undefined **
 
     >>> for attr in lifetime_attrs :
     ...     print attr.typ, attr.AQ
@@ -241,9 +391,18 @@ _test_code = """
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     Date_Interval <Attr.Type.Querier Composite ()>
     Sex <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
+    Rev_Ref <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Rev_Ref <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Surrogate <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    Link_Ref_List <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Role_Ref_Set <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Link_Ref_List <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Role_Ref_Set <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Role_Ref_Set <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Role_Ref_Set <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Role_Ref_Set <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
 
     >>> for attr in php_attrs :
     ...     print attr.typ, attr.AQ.__class__
@@ -251,9 +410,12 @@ _test_code = """
     Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    Rev_Ref <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
+    Rev_Ref <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
     Int <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Surrogate <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
+    Link_Ref_List <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
 
     >>> for attr in lifetime_attrs :
     ...     print attr.typ, attr.AQ.__class__
@@ -293,17 +455,11 @@ _test_code = """
         finish              0
         alive               1
       sex                 0
-      last_cid            0
-      pid                 0
-      type_name           3
     right               2
       country_code        3
       area_code           3
       number              3
       desc                3
-      last_cid            0
-      pid                 0
-      type_name           3
     extension           3
 
     >>> for pka in scope.SRM.Boat_in_Regatta.E_Type.AQ.Attrs :
@@ -315,16 +471,10 @@ _test_code = """
         beam                0
         loa                 0
         sail_area           0
-        last_cid            0
-        pid                 0
-        type_name           3
       sail_number         4
       nation              0
       sail_number_x       3
       name                3
-      last_cid            0
-      pid                 0
-      type_name           3
     right               2
       left                2
         name                3
@@ -335,21 +485,12 @@ _test_code = """
         club                2
           name                3
           long_name           3
-          last_cid            0
-          pid                 0
-          type_name           3
         desc                3
         is_cancelled        1
-        last_cid            0
-        pid                 0
-        type_name           3
         perma_name          3
         year                0
       boat_class          2
         name                3
-        last_cid            0
-        pid                 0
-        type_name           3
       discards            0
       is_cancelled        1
       kind                3
@@ -360,9 +501,6 @@ _test_code = """
         software            3
         status              3
       starters_rl         0
-      last_cid            0
-      pid                 0
-      type_name           3
       perma_name          3
       races_counted       0
       year                0
@@ -377,28 +515,107 @@ _test_code = """
           finish              0
           alive               1
         sex                 0
-        last_cid            0
-        pid                 0
-        type_name           3
       nation              0
       mna_number          4
       club                2
         name                3
         long_name           3
-        last_cid            0
-        pid                 0
-        type_name           3
-      last_cid            0
-      pid                 0
-      type_name           3
     place               0
     points              0
+    creation            2
+      c_time              0
+      c_user              2
+      kind                3
+      time                0
+      user                2
+    last_change         2
+      c_time              0
+      c_user              2
+      kind                3
+      time                0
+      user                2
     last_cid            0
     pid                 0
     type_name           3
     ranking_list_points_lp0
     rank                0
     registration_date   0
+    events              2
+      date                None
+        start               0
+        finish              0
+        alive               1
+      time                None
+        start               0
+        finish              0
+      calendar            2
+        name                3
+        desc                3
+      detail              3
+      short_title         3
+    race_results        2
+      race                0
+      points              0
+      status              3
+      discarded           1
+    _crew               2
+      nation              0
+      mna_number          4
+      club                2
+        name                3
+        long_name           3
+    teams               2
+      left                2
+        left                2
+          name                3
+          date                None
+            start               0
+            finish              0
+            alive               1
+          club                2
+            name                3
+            long_name           3
+          desc                3
+          is_cancelled        1
+          perma_name          3
+          year                0
+        boat_class          2
+          name                3
+          max_crew            0
+          beam                0
+          loa                 0
+          sail_area           0
+        discards            0
+        is_cancelled        1
+        kind                3
+        ranking_list_factor 0
+        races               0
+        result              None
+          date                0
+          software            3
+          status              3
+        starters_rl         0
+        is_team_race        1
+        perma_name          3
+        races_counted       0
+        year                0
+      name                3
+      club                2
+        name                3
+        long_name           3
+      desc                3
+      leader              2
+        last_name           3
+        first_name          3
+        middle_name         3
+        title               3
+        lifetime            None
+          start               0
+          finish              0
+          alive               1
+        sex                 0
+      place               0
+      registration_date   0
 
     >>> def show_QA (a) :
     ...     print repr (a._attr)
@@ -417,25 +634,16 @@ _test_code = """
         Float `beam` left.left.beam
         Float `loa` left.left.loa
         Float `sail_area` left.left.sail_area
-        Int `last_cid` left.left.last_cid
-        Surrogate `pid` left.left.pid
-        String `type_name` left.left.type_name
         Int `sail_number` left.sail_number
         Nation `nation` left.nation
         String `sail_number_x` left.sail_number_x
         String `name` left.name
-        Int `last_cid` left.last_cid
-        Surrogate `pid` left.pid
-        String `type_name` left.type_name
     Boat `left` unwrapped
         String `name` left.name
         Int `sail_number` sail_number
         Nation `nation` nation
         String `sail_number_x` sail_number_x
         String `name` name
-        Int `last_cid` last_cid
-        Surrogate `pid` pid
-        String `type_name` type_name
     Regatta `right`
         String `name` right.left.name
         Date `start` right.left.date.start
@@ -443,20 +651,11 @@ _test_code = """
         Boolean `alive` right.left.date.alive
         String `name` right.left.club.name
         String `long_name` right.left.club.long_name
-        Int `last_cid` right.left.club.last_cid
-        Surrogate `pid` right.left.club.pid
-        String `type_name` right.left.club.type_name
         String `desc` right.left.desc
         Boolean `is_cancelled` right.left.is_cancelled
-        Int `last_cid` right.left.last_cid
-        Surrogate `pid` right.left.pid
-        String `type_name` right.left.type_name
         String `perma_name` right.left.perma_name
         Int `year` right.left.year
         String `name` right.boat_class.name
-        Int `last_cid` right.boat_class.last_cid
-        Surrogate `pid` right.boat_class.pid
-        String `type_name` right.boat_class.type_name
         Int `discards` right.discards
         Boolean `is_cancelled` right.is_cancelled
         String `kind` right.kind
@@ -466,9 +665,6 @@ _test_code = """
         String `software` right.result.software
         String `status` right.result.status
         Int `starters_rl` right.starters_rl
-        Int `last_cid` right.last_cid
-        Surrogate `pid` right.pid
-        String `type_name` right.type_name
         String `perma_name` right.perma_name
         Int `races_counted` right.races_counted
         Int `year` right.year
@@ -486,9 +682,6 @@ _test_code = """
         String `software` result.software
         String `status` result.status
         Int `starters_rl` starters_rl
-        Int `last_cid` last_cid
-        Surrogate `pid` pid
-        String `type_name` type_name
         String `perma_name` perma_name
         Int `races_counted` races_counted
         Int `year` year
@@ -501,19 +694,10 @@ _test_code = """
         Date `finish` skipper.left.lifetime.finish
         Boolean `alive` skipper.left.lifetime.alive
         Sex `sex` skipper.left.sex
-        Int `last_cid` skipper.left.last_cid
-        Surrogate `pid` skipper.left.pid
-        String `type_name` skipper.left.type_name
         Nation `nation` skipper.nation
         Int `mna_number` skipper.mna_number
         String `name` skipper.club.name
         String `long_name` skipper.club.long_name
-        Int `last_cid` skipper.club.last_cid
-        Surrogate `pid` skipper.club.pid
-        String `type_name` skipper.club.type_name
-        Int `last_cid` skipper.last_cid
-        Surrogate `pid` skipper.pid
-        String `type_name` skipper.type_name
     Entity `skipper` unwrapped
         String `last_name` left.last_name
         String `first_name` left.first_name
@@ -522,9 +706,6 @@ _test_code = """
         Nation `nation` nation
         Int `mna_number` mna_number
         String `name` club.name
-        Int `last_cid` last_cid
-        Surrogate `pid` pid
-        String `type_name` type_name
     Int `place`
         Int `place` place
     Int `place` unwrapped
@@ -533,6 +714,22 @@ _test_code = """
         Int `points` points
     Int `points` unwrapped
         Int `points` points
+    Rev_Ref `creation`
+        Date-Time `c_time` creation.c_time
+        String `kind` creation.kind
+        Date-Time `time` creation.time
+    Rev_Ref `creation` unwrapped
+        Date-Time `c_time` c_time
+        String `kind` kind
+        Date-Time `time` time
+    Rev_Ref `last_change`
+        Date-Time `c_time` last_change.c_time
+        String `kind` last_change.kind
+        Date-Time `time` last_change.time
+    Rev_Ref `last_change` unwrapped
+        Date-Time `c_time` c_time
+        String `kind` kind
+        Date-Time `time` time
     Int `last_cid`
         Int `last_cid` last_cid
     Int `last_cid` unwrapped
@@ -556,6 +753,100 @@ _test_code = """
     Date `registration_date`
         Date `registration_date` registration_date
     Date `registration_date` unwrapped
+        Date `registration_date` registration_date
+    Link_Ref_List `events`
+        Date `start` events.date.start
+        Date `finish` events.date.finish
+        Boolean `alive` events.date.alive
+        Time `start` events.time.start
+        Time `finish` events.time.finish
+        Name `name` events.calendar.name
+        String `desc` events.calendar.desc
+        String `detail` events.detail
+        String `short_title` events.short_title
+    Link_Ref_List `events` unwrapped
+        Date `start` date.start
+        Date `finish` date.finish
+        Time `start` time.start
+        Time `finish` time.finish
+        Name `name` calendar.name
+        String `detail` detail
+        String `short_title` short_title
+    Link_Ref_List `race_results`
+        Int `race` race_results.race
+        Int `points` race_results.points
+        String `status` race_results.status
+        Boolean `discarded` race_results.discarded
+    Link_Ref_List `race_results` unwrapped
+        Int `race` race
+        Int `points` points
+        String `status` status
+        Boolean `discarded` discarded
+    Role_Ref_Set `_crew`
+        Nation `nation` _crew.nation
+        Int `mna_number` _crew.mna_number
+        String `name` _crew.club.name
+        String `long_name` _crew.club.long_name
+    Role_Ref_Set `_crew` unwrapped
+        Nation `nation` nation
+        Int `mna_number` mna_number
+        String `name` club.name
+    Role_Ref_Set `teams`
+        String `name` teams.left.left.name
+        Date `start` teams.left.left.date.start
+        Date `finish` teams.left.left.date.finish
+        Boolean `alive` teams.left.left.date.alive
+        String `name` teams.left.left.club.name
+        String `long_name` teams.left.left.club.long_name
+        String `desc` teams.left.left.desc
+        Boolean `is_cancelled` teams.left.left.is_cancelled
+        String `perma_name` teams.left.left.perma_name
+        Int `year` teams.left.left.year
+        String `name` teams.left.boat_class.name
+        Int `max_crew` teams.left.boat_class.max_crew
+        Float `beam` teams.left.boat_class.beam
+        Float `loa` teams.left.boat_class.loa
+        Float `sail_area` teams.left.boat_class.sail_area
+        Int `discards` teams.left.discards
+        Boolean `is_cancelled` teams.left.is_cancelled
+        String `kind` teams.left.kind
+        Float `ranking_list_factor` teams.left.ranking_list_factor
+        Int `races` teams.left.races
+        Date-Time `date` teams.left.result.date
+        String `software` teams.left.result.software
+        String `status` teams.left.result.status
+        Int `starters_rl` teams.left.starters_rl
+        Boolean `is_team_race` teams.left.is_team_race
+        String `perma_name` teams.left.perma_name
+        Int `races_counted` teams.left.races_counted
+        Int `year` teams.left.year
+        String `name` teams.name
+        String `name` teams.club.name
+        String `long_name` teams.club.long_name
+        String `desc` teams.desc
+        String `last_name` teams.leader.last_name
+        String `first_name` teams.leader.first_name
+        String `middle_name` teams.leader.middle_name
+        String `title` teams.leader.title
+        Date `start` teams.leader.lifetime.start
+        Date `finish` teams.leader.lifetime.finish
+        Boolean `alive` teams.leader.lifetime.alive
+        Sex `sex` teams.leader.sex
+        Int `place` teams.place
+        Date `registration_date` teams.registration_date
+    Role_Ref_Set `teams` unwrapped
+        String `name` left.left.name
+        Date `start` left.left.date.start
+        Date `finish` left.left.date.finish
+        String `name` left.boat_class.name
+        String `name` name
+        String `name` club.name
+        String `desc` desc
+        String `last_name` leader.last_name
+        String `first_name` leader.first_name
+        String `middle_name` leader.middle_name
+        String `title` leader.title
+        Int `place` place
         Date `registration_date` registration_date
 
     >>> seen = set ()

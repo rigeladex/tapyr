@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -52,6 +52,7 @@
 //                     fix `attr_select.prefill` call of `toggle` (`af.label`)
 //    11-Apr-2013 (CT) Add polymorphic attributes to attribute filter menu
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
+//     2-Mar-2014 (CT) Protect recursion in `attr_filters.add`
 //    ««revision-date»»···
 //--
 
@@ -155,7 +156,7 @@
                         af_map [f.label]  = f;
                         af_map [f.q_name] = f;
                         result.push (f);
-                        if ("attrs" in f) {
+                        if ("attrs" in f && f.attrs) {
                             add (f.attrs, f.key, f.label);
                         } else if ("children_np" in f) {
                             for ( var j = 0, lj = f.children_np.length, c
@@ -163,15 +164,19 @@
                                 ; j++
                                 ) {
                                 c = f.children_np [j];
-                                add ( c.attrs
-                                    , f.key   + "[" + c.type_name    + "]"
-                                    , f.label + "[" + c.ui_type_name + "]"
-                                    );
+                                if ("attrs" in c && c.attrs) {
+                                    add ( c.attrs
+                                        , f.key   + "[" + c.type_name    + "]"
+                                        , f.label + "[" + c.ui_type_name + "]"
+                                        );
+                                };
                             };
                         };
                     };
                 };
-                add (qrs.filters);
+                if (qrs.filters) {
+                    add (qrs.filters);
+                };
                 return result;
               } ()
             );

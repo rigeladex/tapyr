@@ -222,6 +222,8 @@
 #    16-Jan-2014 (CT) Add `_Required_Mixin_.has_substance`
 #    17-Jan-2014 (CT) Add `_EPK_Mixin_._check_sanity` to enforce `P_Type`;
 #                     remove `Id_Entity_Reference_Mixin._check_sanity`
+#     1-Mar-2014 (CT) Remove `_Rev_Query_._show_in_ui = False`
+#     2-Mar-2014 (CT) Add `q_able_transitive`
 #    ««revision-date»»···
 #--
 
@@ -264,6 +266,7 @@ class Kind (MOM.Prop.Kind) :
     is_settable           = True
     needs_raw_value       = False
     prop                  = TFL.Meta.Alias_Property ("attr")
+    q_able_transitive     = True
     record_changes        = False
     save_to_db            = False
     sync                  = None
@@ -1237,7 +1240,7 @@ class Optional (_User_) :
 class Internal (_DB_System_) :
     """Internal attribute: value is defined by some component of the tool."""
 
-    kind = _ ("internal")
+    kind        = _ ("internal")
 
 # end class Internal
 
@@ -1451,7 +1454,7 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
 class _Rev_Query_ (_Query_) :
     """Query for reverse reference"""
 
-    _show_in_ui           = False
+    q_able_transitive     = False
 
 # end class _Rev_Query_
 

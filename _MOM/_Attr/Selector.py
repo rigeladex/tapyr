@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -44,6 +44,7 @@
 #     5-Jun-2013 (CT) Add `q_able`, rename `all` to `ui_attr`, define
 #                     `ui_attr` as synonym for `q_able`
 #    10-Jul-2013 (CT) Define `ui_attr` as `Pred (Q.show_in_ui, q_able)`
+#     2-Mar-2014 (CT) Add `ui_attr_transitive`
 #    ««revision-date»»···
 #--
 
@@ -361,20 +362,21 @@ class Primary_Followers (_Selector_) :
 
 # end class Primary_Followers
 
-necessary   = Kind     ("necessary")
-optional    = Kind     ("optional")
-primary     = Kind     ("primary")
-query       = Kind     ("query")
-q_able      = Kind     ("q_able")
-required    = Kind     ("required")
-sig         = Kind     ("sig_attr")
-user        = Kind     ("user_attr")
+necessary          = Kind     ("necessary")
+optional           = Kind     ("optional")
+primary            = Kind     ("primary")
+query              = Kind     ("query")
+q_able             = Kind     ("q_able")
+required           = Kind     ("required")
+sig                = Kind     ("sig_attr")
+user               = Kind     ("user_attr")
 
-ui_attr     = Pred     (Q.show_in_ui, q_able)
-editable    = List     (primary, user)
+ui_attr            = Pred     (Q.show_in_ui,        q_able)
+ui_attr_transitive = Pred     (Q.q_able_transitive, ui_attr)
+editable           = List     (primary,             user)
 
-P_optional  = Not_Pred (Q.is_required, user)
-P_required  = Pred     (Q.is_required, user)
+P_optional         = Not_Pred (Q.is_required,       user)
+P_required         = Pred     (Q.is_required,       user)
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()

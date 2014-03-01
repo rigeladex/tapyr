@@ -68,6 +68,8 @@
 #    20-Jan-2014 (CT) Redefine `_Changer_.head_line`
 #    11-Feb-2014 (CT) Pass `response`, not `request`, to `_new_edit_session`
 #    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
+#     3-Mar-2014 (CT) Change `Field.ui_name` to use `.aq._ui_name_T`
+#                     and to add `zero-width-space`
 #    ««revision-date»»···
 #--
 
@@ -1037,7 +1039,8 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         @property ### depends on currently selected language (I18N/L10N)
         @getattr_safe
         def ui_name (self) :
-            return self.attr.ui_name_T
+            ### put `zero-width-space` before `/`
+            return self.aq._ui_name_T.replace ("/", "\u200b/")
         # end def ui_name
 
         def value (self, o) :

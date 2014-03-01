@@ -273,6 +273,13 @@
 #     4-Oct-2013 (CT) Remove guard for `pid` from `attr_prop`
 #     9-Oct-2013 (CT) Fix `created_by.computed`
 #    16-Jan-2014 (CT) Factor class/instance property `ui_name_T`
+#     1-Mar-2014 (CT) Change `ui_repr.computed` to use `sig_attr`, not `epk_raw`
+#     1-Mar-2014 (CT) Factor `ui_display_format` to `Entity`
+#     1-Mar-2014 (CT) Add `MD_Entity.has_identity`, `._sig_attr_names`
+#     1-Mar-2014 (CT) Redefine `MD_Change.ui_display_format`
+#     2-Mar-2014 (CT) Set `MD_Change.user.only_e_types`
+#     2-Mar-2014 (CT) Add `hidden_nested` to various attributes
+#     3-Mar-2014 (CT) Factor `FO_nested`
 #    ««revision-date»»···
 #--
 
@@ -378,7 +385,10 @@ class Entity (TFL.Meta.Object) :
             max_length         = 0
 
             def computed (self, obj) :
-                return "%s %s" % (obj.type_name, obj.epk_raw [:-1])
+                return "%s %s" % \
+                    ( obj.type_name
+                    , tuple (a.get_raw (self) for a in self.sig_attr)
+                    )
             # end def computed
 
         # end class ui_repr
@@ -402,12 +412,11 @@ class Entity (TFL.Meta.Object) :
             getter   = getattr (TFL.Getter, name)
             obj      = self.__obj
             try :
-                if "." in name :
-                    obj, attr = self._get_nested_attr (obj, name)
-                else :
-                    attr = obj.attributes [name]
-            except LookupError :
-                result = repr (getter (obj))
+                names = name.split (".")
+                attr  = obj.attributes [names [0]]
+                obj, attr, value = attr.FO_nested (obj, names [1:], value)
+            except (AttributeError, LookupError) :
+                result = self._get_repr (name, getter)
             else :
                 if isinstance (attr, MOM.Attr.Kind) :
                     if value is self.undefined :
@@ -433,23 +442,21 @@ class Entity (TFL.Meta.Object) :
                             result = get_raw ()
                 else :
                     if value is self.undefined :
-                        ### Nested attributes need `self.__obj` here
-                        result = repr (getter (self.__obj))
+                        result = self._get_repr (name, getter)
                     else :
                         result = value
             return result
         # end def __call__
 
-        def _get_nested_attr (self, obj, name) :
-            names = name.split (".")
-            p     = names [0]
-            attr  = obj.attributes [p]
-            for n in names [1:] :
-                obj  = getattr (obj, p)
-                attr = obj.attributes [n]
-                p    = n
-            return obj, attr
-        # end def _get_nested_attr
+        def _get_repr (self, name, getter) :
+            try :
+                result = repr (getter (self.__obj))
+            except (AttributeError, LookupError) :
+                if "." in name :
+                    result = ""
+                else :
+                    raise
+        # end def _get_repr
 
         def __getattr__ (self, name) :
             result = self (name)
@@ -497,6 +504,14 @@ class Entity (TFL.Meta.Object) :
     def recordable_attrs (self) :
         return self.__class__.m_recordable_attrs
     # end def recordable_attrs
+
+    @property
+    def ui_display_format (self) :
+        return self.ui_display_sep.join \
+            ( "%%(%s)s" % a.name for a in self.sig_attr
+            if a.has_substance (self)
+            )
+    # end def ui_display_format
 
     @TFL.Meta.Class_Property
     @TFL.Meta.Class_and_Instance_Method
@@ -889,14 +904,6 @@ class An_Entity (Entity) :
     attr_name             = None
 
     @property
-    def ui_display_format (self) :
-        return self.ui_display_sep.join \
-            ( "%%(%s)s" % a.name for a in self.sig_attr
-            if a.has_substance (self)
-            )
-    # end def ui_display_format
-
-    @property
     def hash_key (self) :
         return tuple (a.get_hash (self) for a in self.hash_sig)
     # end def hash_key
@@ -1026,9 +1033,11 @@ class An_Entity (Entity) :
 
 # end class An_Entity
 
+_Ancestor_Essence = Entity
+
 @TFL.Add_To_Class ("P_Type",   _A_Id_Entity_)
 @TFL.Add_To_Class ("P_Type_S", _A_Id_Entity_)
-class Id_Entity (Entity) :
+class Id_Entity (_Ancestor_Essence) :
     """Root class for MOM entities with identity, i.e.,
        objects and links.
     """
@@ -1054,7 +1063,9 @@ class Id_Entity (Entity) :
 
     _sets_to_combine      = ("refuse_links", )
 
-    class _Attributes (Entity._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
 
         class _A_Change_ (A_Rev_Ref) :
             """Creation change of the object"""
@@ -1063,6 +1074,7 @@ class Id_Entity (Entity) :
             Ref_Type           = P_Type
             ref_name           = "pid"
             hidden             = False
+            hidden_nested      = 1
             q_able             = True
 
         # end class _A_Change_
@@ -1170,6 +1182,7 @@ class Id_Entity (Entity) :
 
             kind               = Attr.Internal
             default            = 0
+            hidden_nested      = 1
             record_changes     = False
 
         # end class last_cid
@@ -1185,6 +1198,8 @@ class Id_Entity (Entity) :
                 The `pid` remains unchanged during database migrations.
             """
 
+            hidden_nested      = 1
+
         # end class pid
 
         class type_name (A_String) :
@@ -1192,8 +1207,17 @@ class Id_Entity (Entity) :
 
             kind               = Attr.Internal
             Kind_Mixins        = (Attr._Type_Name_Mixin_, )
+            hidden_nested      = 1
 
         # end class type_name
+
+        class ui_repr (_Ancestor.ui_repr) :
+
+            def computed (self, obj) :
+                return "%s %s" % (obj.type_name, obj.epk_raw [:-1])
+            # end def computed
+
+        # end class ui_repr
 
         class x_locked (A_Boolean) :
             """Specifies if object can be changed by user"""
@@ -1207,7 +1231,7 @@ class Id_Entity (Entity) :
 
     # end class _Attributes
 
-    class _Predicates (Entity._Predicates) :
+    class _Predicates (_Ancestor_Essence._Predicates) :
 
         class completely_defined (Pred.Condition) :
             """All necessary attributes must be defined."""
@@ -1851,11 +1875,13 @@ class MD_Entity (Entity) :
 
     __metaclass__         = MOM.Meta.M_MD_Entity
 
+    has_identity          = True
     is_locked             = True
     is_partial            = True
     record_changes        = False
     sorted_by             = TFL.Sorted_By ()
     x_locked              = True
+    _sig_attr_names       = ()
 
     def _main__init__ (self, * args, ** kw) :
         pass
@@ -1876,6 +1902,7 @@ class MD_Change (_Ancestor_Essence) :
     sorted_by             = TFL.Sorted_By ("-cid")
     spk                   = TFL.Meta.Alias_Property ("cid")
     spk_attr_name         = "cid" ### Name of `surrogate primary key` attribute
+    _sig_attr_names       = ("kind", "time", "user")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1898,6 +1925,7 @@ class MD_Change (_Ancestor_Essence) :
 
             kind               = Attr.Internal
             Kind_Mixins        = (_Sync_Change_, Attr._Computed_Mixin_)
+            hidden_nested      = 2
             record_changes     = False
 
             def computed (self, obj) :
@@ -1914,6 +1942,8 @@ class MD_Change (_Ancestor_Essence) :
         class cid (_Derived_Attr_, A_Surrogate) :
             """Change id."""
 
+            hidden_nested      = 1
+
         # end class cid
 
         class c_time (_Derived_Attr_, A_Date_Time) :
@@ -1924,19 +1954,23 @@ class MD_Change (_Ancestor_Essence) :
         class c_user (_Derived_Attr_, A_Id_Entity) :
             """User that triggered the creation change, if known."""
 
-            P_Type             = Id_Entity
+            P_Type             = "MOM.Id_Entity"
+            only_e_types       = ("Auth.Account", "PAP.Person")
 
         # end class c_user
 
         class parent (A_Int) :
 
             kind               = Attr.Query
+            hidden_nested      = 1
             query              = Q.parent_cid
 
         # end class parent
 
         class parent_cid (_Derived_Attr_, A_Int) :
             """Cid of parent change, if any."""
+
+            hidden_nested      = 1
 
             def computed (self, obj) :
                 parent = obj.scm_change.parent
@@ -1955,6 +1989,8 @@ class MD_Change (_Ancestor_Essence) :
 
         class pid (_Derived_Attr_, A_Int) :
             """Permanent id of the entity that was changed, if any."""
+
+            hidden_nested      = 1
 
         # end class pid
 
@@ -1992,12 +2028,15 @@ class MD_Change (_Ancestor_Essence) :
         class type_name (_Derived_Attr_, A_String) :
             """Name of type of the entity that was changed, if any."""
 
+            hidden_nested      = 1
+
         # end class type_name
 
         class user (_Derived_Attr_, A_Id_Entity) :
             """User that triggered the change, if known."""
 
-            P_Type             = Id_Entity
+            P_Type             = "MOM.Id_Entity"
+            only_e_types       = ("Auth.Account", "PAP.Person")
 
         # end class user
 
@@ -2005,8 +2044,16 @@ class MD_Change (_Ancestor_Essence) :
 
     def __init__ (self, scm_change) :
         self.__super.__init__ ()
-        self.scm_change           = scm_change
+        self.scm_change = scm_change
     # end def __init__
+
+    @property
+    def ui_display_format (self) :
+        return self.ui_display_sep.join \
+            ( "%%(%s)s" % a.name for a in self.sig_attr
+            if a.get_value (self) not in (None, "")
+            )
+    # end def ui_display_format
 
     def _repr (self, type_name) :
         return u"%s [%s]: %s, %s, %s" % \

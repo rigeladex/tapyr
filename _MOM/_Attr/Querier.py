@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -77,6 +77,9 @@
 #                     `selectable_e_types_unique_epk`, not `children_np`
 #     3-Jun-2013 (CT) Get attribute descriptors from `E_Type.attributes`
 #     5-Jun-2013 (CT) Use `Selector.ui_attr`, not `.all`
+#     2-Mar-2014 (CT) Factor `_attr_selector`, add `_attr_selector_default`
+#     2-Mar-2014 (CT) Add `Rev_Ref`
+#     2-Mar-2014 (CT) Add `_nesting_level` and compare to `hidden_nested`
 #    ««revision-date»»···
 #--
 
@@ -103,6 +106,7 @@ ui_sep = "/"
 
 class _Base_ (TFL.Meta.Object) :
 
+    _nesting_level   = 0
     _recursion_limit = 2
 
     @property    ### depends on currently selected language (I18N/L10N)
@@ -153,6 +157,18 @@ class _Base_ (TFL.Meta.Object) :
         result = dict (self._as_template_elem_inv, ui_name = self._ui_name_T)
         return TFL.Record (** result)
     # end def _as_template_elem
+
+    @property
+    @getattr_safe
+    def _attr_selector (self) :
+        return getattr (self, "__attr_selector")
+    # end def _attr_selector
+
+    @_attr_selector.setter
+    @getattr_safe
+    def _attr_selector (self, value) :
+        setattr (self, "__attr_selector", value or self._attr_selector_default)
+    # end def _attr_selector
 
     def _sig_map_transitive (self, seen_etypes) :
         return {}
@@ -301,8 +317,9 @@ class _Type_ (_Base_) :
         )
 
     def __init__ (self, attr, outer = None) :
-        self._attr  = attr
-        self._outer = outer
+        self._attr          = attr
+        self._outer         = outer
+        self._nesting_level = (outer._nesting_level + 1) if outer else 0
         self._attr_selector = outer and outer._attr_selector
     # end def __init__
 
@@ -384,19 +401,27 @@ class _Type_ (_Base_) :
     @property
     @getattr_safe
     def _attr_selector (self) :
-        return getattr (self, "__attr_selector", None) or MOM.Attr.Selector.sig
+        return getattr (self, "__attr_selector")
     # end def _attr_selector
 
     @_attr_selector.setter
     @getattr_safe
     def _attr_selector (self, value) :
+        default = self._attr_selector_default
         if value is None :
-            value = MOM.Attr.Selector.sig
+            value = default
         elif not (  value is MOM.Attr.Selector.ui_attr
+                 or value is MOM.Attr.Selector.ui_attr_transitive
                  or isinstance (value, MOM.Attr.Selector.Kind)
                  ) :
-            value = MOM.Attr.Selector.sig
+            value = default
         setattr (self, "__attr_selector", value)
+    # end def _attr_selector
+
+    @property
+    @getattr_safe
+    def _attr_selector_default (self) :
+        return MOM.Attr.Selector.sig
     # end def _attr_selector
 
     @TFL.Meta.Once_Property
@@ -579,6 +604,8 @@ class Id_Entity (_Composite_) :
         , LT                 = Filter.Id_Entity_Less_Than
         )
 
+    _ref_name = None
+
     @TFL.Meta.Once_Property
     @getattr_safe
     def E_Types_AQ (self) :
@@ -593,21 +620,22 @@ class Id_Entity (_Composite_) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def E_Types_CNP (self) :
-        ET  = self.E_Type
-        apt = ET.app_type
-        cnp = self._attr.selectable_e_types_unique_epk
-        if ET.polymorphic_epk and cnp :
-            return dict ((str (c), apt.entity_type (c)) for c in cnp)
+        ET = self.E_Type
+        if ET and ET.polymorphic_epk :
+            apt = ET.app_type
+            cnp = self._attr.selectable_e_types_unique_epk
+            if cnp :
+                return dict ((str (c), apt.entity_type (c)) for c in cnp)
     # end def E_Types_CNP
 
     @TFL.Meta.Once_Property
     @getattr_safe
     def _as_json_cargo_inv (self) :
         result = self.__super._as_json_cargo_inv
-        ET     = self.E_Type
         if self.E_Types_CNP :
-            if ET.default_child :
-                result ["default_child"] = ET.default_child
+            dc = self.E_Type.default_child
+            if dc :
+                result ["default_child"] = dc
         return result
     # end def _as_json_cargo_inv
 
@@ -641,6 +669,16 @@ class Id_Entity (_Composite_) :
                 )
         return result
     # end def _as_template_elem
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def _attrs (self) :
+        for a in self.__super._attrs :
+            if (   self._nesting_level < a.hidden_nested
+               and a.name != self._ref_name
+               ) :
+                yield a
+    # end def _attrs
 
     def _sig_map_transitive (self, seen_etypes) :
         result     = self.__super._sig_map_transitive (seen_etypes)
@@ -706,6 +744,28 @@ class _Id_Entity_NP_ (Id_Entity) :
     # end def _as_json_cargo
 
 # end class _Id_Entity_NP_
+
+class Rev_Ref (Id_Entity) :
+
+    def __init__ (self, attr, outer = None) :
+        self.__super.__init__ (attr, outer = outer)
+        self._attr_selector = self._attr_selector_default
+        self._ref_name      = attr.ref_name
+    # end def __init__
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def E_Types_CNP (self) :
+        pass
+    # end def E_Types_CNP
+
+    @property
+    @getattr_safe
+    def _attr_selector_default (self) :
+        return MOM.Attr.Selector.ui_attr_transitive
+    # end def _attr_selector
+
+# end class Rev
 
 class String (_Type_) :
 
@@ -829,13 +889,9 @@ class E_Type (_Container_) :
     # end def Sig_Map
 
     @property
-    def _attr_selector (self) :
-        return getattr (self, "__attr_selector")
-    # end def _attr_selector
-
-    @_attr_selector.setter
-    def _attr_selector (self, value) :
-        setattr (self, "__attr_selector", value or MOM.Attr.Selector.ui_attr)
+    @getattr_safe
+    def _attr_selector_default (self) :
+        return MOM.Attr.Selector.ui_attr
     # end def _attr_selector
 
     def __getattr__ (self, name) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -32,6 +32,7 @@
 #    30-Jul-2012 (CT) Change to test `GTW.RST.TOP.MOM` instead of `GTW.NAV`
 #    25-Mar-2013 (CT) Add `test_pepk`
 #    27-Mar-2013 (CT) Add `test_request_get` and real query to `test_pepk`
+#     2-Mar-2014 (CT) Add test for `qrs.As_Json_Cargo` of `PAP.Person`
 #    ««revision-date»»···
 #--
 
@@ -229,7 +230,7 @@ _test_code = """
     >>> fns = AS.List (AS.primary, AS.Name ("points", "place")) (BiR).names
     >>> qrs = QRS (BiR, fns)
 
-    >>> print formatted (qrs.As_Json_Cargo)
+    >>> print formatted (qrs.As_Json_Cargo) ### SRM.Boat_in_Regatta
     { 'filters' :
         [ { 'Class' : 'Entity'
           , 'attrs' :
@@ -767,6 +768,588 @@ _test_code = """
       , ui_name = 'Place'
       )
     ]
+
+    >>> AS  = MOM.Attr.Selector
+    >>> fns = AS.ui_attr (PAP.Person.E_Type).names
+    >>> qrs = QRS (PAP.Person.E_Type, fns)
+
+    >>> print formatted (qrs.As_Json_Cargo) ### PAP.Person
+    { 'filters' :
+        [ { 'name' : 'last_name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Last name'
+          }
+        , { 'name' : 'first_name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'First name'
+          }
+        , { 'name' : 'middle_name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Middle name'
+          }
+        , { 'name' : 'title'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Academic title'
+          }
+        , { 'attrs' :
+              [ { 'name' : 'start'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Start'
+                }
+              , { 'name' : 'finish'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Finish'
+                }
+              ]
+          , 'name' : 'lifetime'
+          , 'ui_name' : 'Lifetime'
+          }
+        , { 'name' : 'sex'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Sex'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'c_time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'C time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'c_user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'C user'
+                }
+              , { 'name' : 'kind'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Kind'
+                }
+              , { 'name' : 'time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'User'
+                }
+              ]
+          , 'name' : 'creation'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Creation'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'c_time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'C time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'c_user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'C user'
+                }
+              , { 'name' : 'kind'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Kind'
+                }
+              , { 'name' : 'time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'User'
+                }
+              ]
+          , 'name' : 'last_change'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Last change'
+          }
+        , { 'name' : 'last_cid'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Last cid'
+          }
+        , { 'name' : 'pid'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Pid'
+          }
+        , { 'name' : 'type_name'
+          , 'sig_key' : 3
+          , 'ui_name' : 'Type name'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'attrs' :
+                    [ { 'name' : 'start'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Start'
+                      }
+                    , { 'name' : 'finish'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Finish'
+                      }
+                    , { 'name' : 'alive'
+                      , 'sig_key' : 1
+                      , 'ui_name' : 'Alive'
+                      }
+                    ]
+                , 'name' : 'date'
+                , 'ui_name' : 'Date'
+                }
+              , { 'attrs' :
+                    [ { 'name' : 'start'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Start'
+                      }
+                    , { 'name' : 'finish'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Finish'
+                      }
+                    ]
+                , 'name' : 'time'
+                , 'ui_name' : 'Time'
+                }
+              , { 'Class' : 'Entity'
+                , 'attrs' :
+                    [ { 'name' : 'name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Name'
+                      }
+                    , { 'name' : 'desc'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Description'
+                      }
+                    ]
+                , 'name' : 'calendar'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Calendar'
+                }
+              , { 'name' : 'detail'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Detail'
+                }
+              , { 'name' : 'short_title'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Short title'
+                }
+              ]
+          , 'name' : 'events'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Events'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'name'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Name'
+                }
+              , { 'name' : 'enabled'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Enabled'
+                }
+              , { 'name' : 'superuser'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Superuser'
+                }
+              , { 'name' : 'active'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Active'
+                }
+              , { 'name' : 'suspended'
+                , 'sig_key' : 1
+                , 'ui_name' : 'Suspended'
+                }
+              ]
+          , 'name' : 'accounts'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Accounts'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'nation'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Nation'
+                }
+              , { 'name' : 'mna_number'
+                , 'sig_key' : 4
+                , 'ui_name' : 'Mna number'
+                }
+              , { 'Class' : 'Entity'
+                , 'attrs' :
+                    [ { 'name' : 'name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Name'
+                      }
+                    , { 'name' : 'long_name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Long name'
+                      }
+                    ]
+                , 'name' : 'club'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Club'
+                }
+              ]
+          , 'name' : 'sailors'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Sailors'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'value'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Value'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              ]
+          , 'name' : 'urls'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Urls'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'country_code'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Country code'
+                }
+              , { 'name' : 'area_code'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Area code'
+                }
+              , { 'name' : 'number'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Number'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              ]
+          , 'name' : 'phones'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Phones'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'address'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Address'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              ]
+          , 'name' : 'emails'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Emails'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'street'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Street'
+                }
+              , { 'name' : 'zip'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Zip code'
+                }
+              , { 'name' : 'city'
+                , 'sig_key' : 3
+                , 'ui_name' : 'City'
+                }
+              , { 'name' : 'country'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Country'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              , { 'name' : 'region'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Region'
+                }
+              ]
+          , 'name' : 'addresses'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Addresses'
+          }
+        ]
+    , 'name_sep' : '__'
+    , 'op_map' :
+        { 'CONTAINS' :
+            { 'desc' : 'Select entities where the attribute contains the specified value'
+            , 'label' : 'contains'
+            , 'sym' : 'contains'
+            }
+        , 'ENDSWITH' :
+            { 'desc' : 'Select entities where the attribute value ends with the specified value'
+            , 'label' : 'ends-with'
+            , 'sym' : 'ends-with'
+            }
+        , 'EQ' :
+            { 'desc' : 'Select entities where the attribute is equal to the specified value'
+            , 'label' : '&equiv;'
+            , 'sym' : '=='
+            }
+        , 'EQS' :
+            { 'desc' : 'Select entities where the attribute is equal to the specified string value'
+            , 'label' : 'EQS'
+            , 'sym' : 'EQS'
+            }
+        , 'GE' :
+            { 'desc' : 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , 'label' : '&ge;'
+            , 'sym' : '>='
+            }
+        , 'GT' :
+            { 'desc' : 'Select entities where the attribute is greater than the specified value'
+            , 'label' : '&gt;'
+            , 'sym' : '>'
+            }
+        , 'IN' :
+            { 'desc' : 'Select entities where the attribute is a member of the specified list of values'
+            , 'label' : 'in'
+            , 'sym' : 'in'
+            }
+        , 'LE' :
+            { 'desc' : 'Select entities where the attribute is less than, or equal to, the specified value'
+            , 'label' : '&le;'
+            , 'sym' : '<='
+            }
+        , 'LT' :
+            { 'desc' : 'Select entities where the attribute is less than the specified value'
+            , 'label' : '&lt;'
+            , 'sym' : '<'
+            }
+        , 'NE' :
+            { 'desc' : 'Select entities where the attribute is not equal to the specified value'
+            , 'label' : '&ne;'
+            , 'sym' : '!='
+            }
+        , 'NES' :
+            { 'desc' : 'Select entities where the attribute is not equal to the specified string value'
+            , 'label' : 'NES'
+            , 'sym' : 'NES'
+            }
+        , 'STARTSWITH' :
+            { 'desc' : 'Select entities where the attribute value starts with the specified value'
+            , 'label' : 'starts-with'
+            , 'sym' : 'starts-with'
+            }
+        }
+    , 'op_sep' : '___'
+    , 'sig_map' :
+        { 0 :
+            ( 'EQ'
+            , 'GE'
+            , 'GT'
+            , 'IN'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            )
+        , 1 :
+    ( 'EQ' ,)
+        , 2 :
+            ( 'EQ'
+            , 'IN'
+            , 'NE'
+            )
+        , 3 :
+            ( 'CONTAINS'
+            , 'ENDSWITH'
+            , 'EQ'
+            , 'GE'
+            , 'GT'
+            , 'IN'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            , 'STARTSWITH'
+            )
+        , 4 :
+            ( 'CONTAINS'
+            , 'ENDSWITH'
+            , 'EQ'
+            , 'EQS'
+            , 'GE'
+            , 'GT'
+            , 'IN'
+            , 'LE'
+            , 'LT'
+            , 'NE'
+            , 'NES'
+            , 'STARTSWITH'
+            )
+        }
+    , 'ui_sep' : '/'
+    }
 
 """
 

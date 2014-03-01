@@ -333,6 +333,10 @@
 #                     (including timezone)
 #    26-Feb-2014 (CT) Add `:` to timezone of `A_Date_Time.as_rest_cargo_ckd`
 #    27-Feb-2014 (CT) Use "%Y-%m-%d" for `A_Date.output_format` (not "%Y/%m/%d")
+#     1-Mar-2014 (CT) Add `A_Role_Ref_.hidden = False`
+#     2-Mar-2014 (CT) Add support for `only_e_types` to `_A_Id_Entity_`
+#     2-Mar-2014 (CT) Add `hidden_nested`
+#     3-Mar-2014 (CT) Add `FO_nested` (factored from `MOM.Entity._FO_`)
 #    ««revision-date»»···
 #--
 
@@ -467,6 +471,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     format              = "%s"
     group               = ""
     hidden              = False
+    hidden_nested       = 10
     kind                = None
     Kind_Mixins         = ()
     needs_raw_value     = False
@@ -662,6 +667,15 @@ class A_Attr_Type (MOM.Prop.Type) :
     def epk_def_set_raw (self) :
         pass
     # end def epk_def_set_raw
+
+    def FO_nested (self, obj, names, value) :
+        if names :
+            inner = getattr (obj, self.name)
+            attr  = inner.attributes [names [0]]
+            return attr.FO_nested (inner, names [1:], value)
+        else :
+            return obj, self.kind, value
+    # end def FO_nested
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         try :
@@ -1345,13 +1359,16 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     """Attribute referring to an entity."""
 
     _sets_to_combine    = \
-        _A_Entity_._sets_to_combine + ("allow_e_types", "refuse_e_types")
+        ( _A_Entity_._sets_to_combine
+        + ("allow_e_types", "only_e_types", "refuse_e_types")
+        )
 
     Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
 
     is_link_role        = False
 
     allow_e_types       = set ()
+    only_e_types        = set ()
     refuse_e_types      = set ()
 
     ### allow creation of new entity for this attribute
@@ -1361,6 +1378,7 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
         self.__super.__init__ (kind, e_type)
         ### copy from class to instance
         self.allow_e_types  = set (self.allow_e_types)
+        self.only_e_types   = set (self.only_e_types)
         self.refuse_e_types = set (self.refuse_e_types)
     # end def __init__
 
@@ -1372,10 +1390,13 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     @TFL.Meta.Once_Property
     def eligible_e_types (self) :
         """Set of eligible e_types that this attribute can refer to"""
-        return \
-            ( set (self.E_Type.children_np_transitive)
-            - self.refuse_e_types_transitive
-            )
+        result = self.only_e_types
+        if not result :
+            result = \
+                ( set (self.E_Type.children_np_transitive)
+                - self.refuse_e_types_transitive
+                )
+        return result
     # end def eligible_e_types
 
     @property
@@ -1409,15 +1430,19 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
 
     @TFL.Meta.Once_Property
     def selectable_e_types_unique_epk (self) :
-        """Set of eligible partial or non-partial e-types with unique epk"""
-        def _gen (ET) :
-            if ET.polymorphic_epk :
-                for c in ET.children.itervalues () :
-                    for x in _gen (c) :
-                        yield x
-            else :
-                yield ET.type_name
-        return set (_gen (self.E_Type)) - self.refuse_e_types_transitive
+        """Set of eligible non-partial e-types with unique epk"""
+        result = set (self.only_e_types)
+        if not result :
+            def _gen (ET) :
+                if ET.polymorphic_epk :
+                    for c in ET.children.itervalues () :
+                        for x in _gen (c) :
+                            yield x
+                else :
+                    if ET.show_in_ui and not ET.is_partial :
+                        yield ET.type_name
+            result = set (_gen (self.E_Type)) - self.refuse_e_types_transitive
+        return result
     # end def selectable_e_types_unique_epk
 
     @TFL.Meta.Class_and_Instance_Once_Property
@@ -1491,6 +1516,8 @@ class _A_Rev_Ref_ (A_Attr_Type) :
     ### need to recompute each time value is accessed ### ???
     kind                = MOM.Attr._Rev_Query_
     Kind_Mixins         = (MOM.Attr.Computed, )
+
+    Q_Ckd_Type          = MOM.Attr.Querier.Rev_Ref
 
     ### set by meta machinery
     P_Type              = None
@@ -1833,6 +1860,28 @@ class _A_Id_Entity_Collection_ (_A_Typed_Collection_) :
         sk = MOM.Scope.active.MOM.Id_Entity.sort_key
         return self.__super._C_as_string (sorted (value, key = sk))
     # end def _C_as_string
+
+    def FO_nested (self, obj, names, default) :
+        values = getattr (obj, self.name)
+        if names :
+            def _gen (values, names, default) :
+                k = ".".join (names)
+                for v in values :
+                    if isinstance (v, MOM.Entity) :
+                        v = getattr (v.FO, k)
+                    else :
+                        raise AttributeError \
+                            ("Can't FO-access `.%s` of %r" % (k, v))
+                    yield v
+            return None, None, tuple (_gen (values, names, default))
+        else :
+            def _gen (values, default) :
+                for v in values :
+                    if isinstance (v, MOM.Entity) :
+                        v = unicode (v.FO)
+                    yield v
+            return None, None, tuple (_gen (values, default))
+    # end def FO_nested
 
 # end class _A_Id_Entity_Collection_
 
@@ -2631,6 +2680,8 @@ class A_Rev_Ref_Set (_A_Rev_Ref_, _A_Id_Entity_Set_) :
 
 class _A_Role_Ref_ (_A_Rev_Ref_) :
 
+    hidden              = False
+    hidden_nested       = 1
     role_filter         = TFL.Meta.Alias_Property ("ref_filter")
     role_name           = TFL.Meta.Alias_Property ("ref_name")
 

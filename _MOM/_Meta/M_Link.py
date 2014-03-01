@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -102,6 +102,8 @@
 #     3-Jun-2013 (CT) Add `role_name` to aliases of `attributes` dictionary
 #    12-Jun-2013 (CT) Add `None` guard to `_m_init_prop_specs`
 #    12-Jun-2013 (CT) Add argument `app_type` to `m_setup_names`
+#     1-Mar-2014 (CT) Change `_m_create_link_ref_attr` to set `hidden`
+#     2-Mar-2014 (CT) Change `_m_create_link_ref_attr` to set `hidden_nested`
 #    ««revision-date»»···
 #--
 
@@ -165,11 +167,14 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         Attr_Type = MOM.Attr.A_Link_Ref_List if plural else MOM.Attr.A_Link_Ref
         return cls._m_create_rev_ref_attr \
             ( Attr_Type, name, role, role_type, cls
-            , assoc        = cls ### XXX remove after auto_cache_roles are removed
-            , description  =
+            , assoc         = cls ### XXX remove after auto_cache_roles are removed
+            , description   =
                 ( _Tn ( "`%s` link", "`%s` links", 7 if plural else 1)
                 % (_T (cls.ui_name), )
                 )
+            , hidden        =
+                cls.rev_ref_attr_hidden or (plural and role.max_links == 1)
+            , hidden_nested = 1
             )
     # end def _m_create_link_ref_attr
 
@@ -352,6 +357,7 @@ class M_Link1 (M_Link) :
     """Meta class of unary link-types of MOM meta object model."""
 
     link_ref_attr_name_s = ""
+    rev_ref_attr_hidden  = False
 
     def link_ref_attr_name_p (cls, role) :
         return cls.type_base_name.lower ()
@@ -370,6 +376,7 @@ class M_Link_n (M_Link) :
     """Meta class of link-types with more than 1 role."""
 
     link_ref_attr_name_s = "_link"
+    rev_ref_attr_hidden  = True
 
     def link_ref_attr_name_p (cls, role) :
         return "__".join \

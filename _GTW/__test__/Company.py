@@ -156,12 +156,6 @@ _test_code = """
     <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
-    <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
-    <owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
-    <owner.left.type_name.AQ [Attr.Type.Querier String]> -----
-    <owner.last_cid.AQ [Attr.Type.Querier Ckd]> -----
-    <owner.pid.AQ [Attr.Type.Querier Ckd]> -----
-    <owner.type_name.AQ [Attr.Type.Querier String]> -----
     <registered_in.AQ [Attr.Type.Querier String]> -----
     <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
     <lifetime.start.AQ [Attr.Type.Querier Date]> -----
@@ -181,12 +175,6 @@ _test_code = """
     <affiliate.owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.owner.left.type_name.AQ [Attr.Type.Querier String]> -----
-    <affiliate.owner.last_cid.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.owner.pid.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.owner.type_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.registered_in.AQ [Attr.Type.Querier String]> -----
     <affiliate.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
     <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]> -----
@@ -194,12 +182,52 @@ _test_code = """
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.short_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.affiliate.AQ [Attr.Type.Querier Id_Entity]> PAP.Company_P
-    <affiliate.last_cid.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.pid.AQ [Attr.Type.Querier Ckd]> -----
-    <affiliate.type_name.AQ [Attr.Type.Querier String]> -----
+    <creation.AQ [Attr.Type.Querier Rev_Ref]> MOM.MD_Change
+    <creation.c_time.AQ [Attr.Type.Querier Ckd]> -----
+    <creation.c_user.AQ [Attr.Type.Querier Id_Entity]> MOM.Id_Entity
+    <creation.kind.AQ [Attr.Type.Querier String]> -----
+    <creation.time.AQ [Attr.Type.Querier Ckd]> -----
+    <creation.user.AQ [Attr.Type.Querier Id_Entity]> MOM.Id_Entity
+    <last_change.AQ [Attr.Type.Querier Rev_Ref]> MOM.MD_Change
+    <last_change.c_time.AQ [Attr.Type.Querier Ckd]> -----
+    <last_change.c_user.AQ [Attr.Type.Querier Id_Entity]> MOM.Id_Entity
+    <last_change.kind.AQ [Attr.Type.Querier String]> -----
+    <last_change.time.AQ [Attr.Type.Querier Ckd]> -----
+    <last_change.user.AQ [Attr.Type.Querier Id_Entity]> MOM.Id_Entity
     <last_cid.AQ [Attr.Type.Querier Ckd]> -----
     <pid.AQ [Attr.Type.Querier Ckd]> -----
     <type_name.AQ [Attr.Type.Querier String]> -----
+    <events.AQ [Attr.Type.Querier Rev_Ref]> EVT.Event
+    <events.date.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <events.date.start.AQ [Attr.Type.Querier Date]> -----
+    <events.date.finish.AQ [Attr.Type.Querier Date]> -----
+    <events.date.alive.AQ [Attr.Type.Querier Boolean]> -----
+    <events.time.AQ [Attr.Type.Querier Composite]> MOM.Time_Interval
+    <events.time.start.AQ [Attr.Type.Querier Ckd]> -----
+    <events.time.finish.AQ [Attr.Type.Querier Ckd]> -----
+    <events.calendar.AQ [Attr.Type.Querier Id_Entity]> EVT.Calendar
+    <events.calendar.name.AQ [Attr.Type.Querier String]> -----
+    <events.calendar.desc.AQ [Attr.Type.Querier String]> -----
+    <events.detail.AQ [Attr.Type.Querier String]> -----
+    <events.short_title.AQ [Attr.Type.Querier String]> -----
+    <urls.AQ [Attr.Type.Querier Rev_Ref]> PAP.Url
+    <urls.value.AQ [Attr.Type.Querier String]> -----
+    <urls.desc.AQ [Attr.Type.Querier String]> -----
+    <phones.AQ [Attr.Type.Querier Rev_Ref]> PAP.Phone
+    <phones.country_code.AQ [Attr.Type.Querier String]> -----
+    <phones.area_code.AQ [Attr.Type.Querier String]> -----
+    <phones.number.AQ [Attr.Type.Querier String]> -----
+    <phones.desc.AQ [Attr.Type.Querier String]> -----
+    <emails.AQ [Attr.Type.Querier Rev_Ref]> PAP.Email
+    <emails.address.AQ [Attr.Type.Querier String]> -----
+    <emails.desc.AQ [Attr.Type.Querier String]> -----
+    <addresses.AQ [Attr.Type.Querier Rev_Ref]> PAP.Address
+    <addresses.street.AQ [Attr.Type.Querier String]> -----
+    <addresses.zip.AQ [Attr.Type.Querier String]> -----
+    <addresses.city.AQ [Attr.Type.Querier String]> -----
+    <addresses.country.AQ [Attr.Type.Querier String]> -----
+    <addresses.desc.AQ [Attr.Type.Querier String]> -----
+    <addresses.region.AQ [Attr.Type.Querier String]> -----
 
     >>> AQ
     <Attr.Type.Querier.E_Type for PAP.Company_P>
@@ -215,12 +243,6 @@ _test_code = """
     <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]>
-    <owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <owner.left.pid.AQ [Attr.Type.Querier Ckd]>
-    <owner.left.type_name.AQ [Attr.Type.Querier String]>
-    <owner.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <owner.pid.AQ [Attr.Type.Querier Ckd]>
-    <owner.type_name.AQ [Attr.Type.Querier String]>
     <registered_in.AQ [Attr.Type.Querier String]>
     <lifetime.start.AQ [Attr.Type.Querier Date]>
     <lifetime.finish.AQ [Attr.Type.Querier Date]>
@@ -235,23 +257,43 @@ _test_code = """
     <affiliate.owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.owner.left.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.owner.left.pid.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.owner.left.type_name.AQ [Attr.Type.Querier String]>
-    <affiliate.owner.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.owner.pid.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.owner.type_name.AQ [Attr.Type.Querier String]>
     <affiliate.registered_in.AQ [Attr.Type.Querier String]>
     <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]>
     <affiliate.lifetime.finish.AQ [Attr.Type.Querier Date]>
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]>
     <affiliate.short_name.AQ [Attr.Type.Querier String]>
-    <affiliate.last_cid.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.pid.AQ [Attr.Type.Querier Ckd]>
-    <affiliate.type_name.AQ [Attr.Type.Querier String]>
+    <creation.c_time.AQ [Attr.Type.Querier Ckd]>
+    <creation.kind.AQ [Attr.Type.Querier String]>
+    <creation.time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.c_time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.kind.AQ [Attr.Type.Querier String]>
+    <last_change.time.AQ [Attr.Type.Querier Ckd]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.date.start.AQ [Attr.Type.Querier Date]>
+    <events.date.finish.AQ [Attr.Type.Querier Date]>
+    <events.date.alive.AQ [Attr.Type.Querier Boolean]>
+    <events.time.start.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.calendar.name.AQ [Attr.Type.Querier String]>
+    <events.calendar.desc.AQ [Attr.Type.Querier String]>
+    <events.detail.AQ [Attr.Type.Querier String]>
+    <events.short_title.AQ [Attr.Type.Querier String]>
+    <urls.value.AQ [Attr.Type.Querier String]>
+    <urls.desc.AQ [Attr.Type.Querier String]>
+    <phones.country_code.AQ [Attr.Type.Querier String]>
+    <phones.area_code.AQ [Attr.Type.Querier String]>
+    <phones.number.AQ [Attr.Type.Querier String]>
+    <phones.desc.AQ [Attr.Type.Querier String]>
+    <emails.address.AQ [Attr.Type.Querier String]>
+    <emails.desc.AQ [Attr.Type.Querier String]>
+    <addresses.street.AQ [Attr.Type.Querier String]>
+    <addresses.zip.AQ [Attr.Type.Querier String]>
+    <addresses.city.AQ [Attr.Type.Querier String]>
+    <addresses.country.AQ [Attr.Type.Querier String]>
+    <addresses.desc.AQ [Attr.Type.Querier String]>
+    <addresses.region.AQ [Attr.Type.Querier String]>
 
     >>> for aq in AQ.Unwrapped_Atoms :
     ...     print (aq)
@@ -270,9 +312,61 @@ _test_code = """
     <affiliate.owner.left.middle_name.AQ [Attr.Type.Querier String]>
     <affiliate.owner.left.title.AQ [Attr.Type.Querier String]>
     <affiliate.registered_in.AQ [Attr.Type.Querier String]>
+    <creation.cid.AQ [Attr.Type.Querier Ckd]>
+    <creation.c_time.AQ [Attr.Type.Querier Ckd]>
+    <creation.parent.AQ [Attr.Type.Querier Ckd]>
+    <creation.parent_cid.AQ [Attr.Type.Querier Ckd]>
+    <creation.kind.AQ [Attr.Type.Querier String]>
+    <creation.time.AQ [Attr.Type.Querier Ckd]>
+    <creation.type_name.AQ [Attr.Type.Querier String]>
+    <last_change.cid.AQ [Attr.Type.Querier Ckd]>
+    <last_change.c_time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.parent.AQ [Attr.Type.Querier Ckd]>
+    <last_change.parent_cid.AQ [Attr.Type.Querier Ckd]>
+    <last_change.kind.AQ [Attr.Type.Querier String]>
+    <last_change.time.AQ [Attr.Type.Querier Ckd]>
+    <last_change.type_name.AQ [Attr.Type.Querier String]>
     <last_cid.AQ [Attr.Type.Querier Ckd]>
     <pid.AQ [Attr.Type.Querier Ckd]>
     <type_name.AQ [Attr.Type.Querier String]>
+    <events.date.start.AQ [Attr.Type.Querier Date]>
+    <events.date.finish.AQ [Attr.Type.Querier Date]>
+    <events.date.alive.AQ [Attr.Type.Querier Boolean]>
+    <events.time.start.AQ [Attr.Type.Querier Ckd]>
+    <events.time.finish.AQ [Attr.Type.Querier Ckd]>
+    <events.calendar.name.AQ [Attr.Type.Querier String]>
+    <events.calendar.desc.AQ [Attr.Type.Querier String]>
+    <events.detail.AQ [Attr.Type.Querier String]>
+    <events.short_title.AQ [Attr.Type.Querier String]>
+    <events.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <events.pid.AQ [Attr.Type.Querier Ckd]>
+    <events.type_name.AQ [Attr.Type.Querier String]>
+    <urls.value.AQ [Attr.Type.Querier String]>
+    <urls.desc.AQ [Attr.Type.Querier String]>
+    <urls.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <urls.pid.AQ [Attr.Type.Querier Ckd]>
+    <urls.type_name.AQ [Attr.Type.Querier String]>
+    <phones.country_code.AQ [Attr.Type.Querier String]>
+    <phones.area_code.AQ [Attr.Type.Querier String]>
+    <phones.number.AQ [Attr.Type.Querier String]>
+    <phones.desc.AQ [Attr.Type.Querier String]>
+    <phones.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <phones.pid.AQ [Attr.Type.Querier Ckd]>
+    <phones.type_name.AQ [Attr.Type.Querier String]>
+    <emails.address.AQ [Attr.Type.Querier String]>
+    <emails.desc.AQ [Attr.Type.Querier String]>
+    <emails.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <emails.pid.AQ [Attr.Type.Querier Ckd]>
+    <emails.type_name.AQ [Attr.Type.Querier String]>
+    <addresses.street.AQ [Attr.Type.Querier String]>
+    <addresses.zip.AQ [Attr.Type.Querier String]>
+    <addresses.city.AQ [Attr.Type.Querier String]>
+    <addresses.country.AQ [Attr.Type.Querier String]>
+    <addresses.desc.AQ [Attr.Type.Querier String]>
+    <addresses.region.AQ [Attr.Type.Querier String]>
+    <addresses.last_cid.AQ [Attr.Type.Querier Ckd]>
+    <addresses.pid.AQ [Attr.Type.Querier Ckd]>
+    <addresses.type_name.AQ [Attr.Type.Querier String]>
 
     >>> print (formatted (AQ.As_Json_Cargo))
     { 'filters' :
@@ -321,34 +415,10 @@ _test_code = """
                       , 'sig_key' : 0
                       , 'ui_name' : 'Sex'
                       }
-                    , { 'name' : 'last_cid'
-                      , 'sig_key' : 0
-                      , 'ui_name' : 'Last cid'
-                      }
-                    , { 'name' : 'pid'
-                      , 'sig_key' : 0
-                      , 'ui_name' : 'Pid'
-                      }
-                    , { 'name' : 'type_name'
-                      , 'sig_key' : 3
-                      , 'ui_name' : 'Type name'
-                      }
                     ]
                 , 'name' : 'left'
                 , 'sig_key' : 2
                 , 'ui_name' : 'Man'
-                }
-              , { 'name' : 'last_cid'
-                , 'sig_key' : 0
-                , 'ui_name' : 'Last cid'
-                }
-              , { 'name' : 'pid'
-                , 'sig_key' : 0
-                , 'ui_name' : 'Pid'
-                }
-              , { 'name' : 'type_name'
-                , 'sig_key' : 3
-                , 'ui_name' : 'Type name'
                 }
               ]
           , 'name' : 'owner'
@@ -427,34 +497,10 @@ _test_code = """
                             , 'sig_key' : 0
                             , 'ui_name' : 'Sex'
                             }
-                          , { 'name' : 'last_cid'
-                            , 'sig_key' : 0
-                            , 'ui_name' : 'Last cid'
-                            }
-                          , { 'name' : 'pid'
-                            , 'sig_key' : 0
-                            , 'ui_name' : 'Pid'
-                            }
-                          , { 'name' : 'type_name'
-                            , 'sig_key' : 3
-                            , 'ui_name' : 'Type name'
-                            }
                           ]
                       , 'name' : 'left'
                       , 'sig_key' : 2
                       , 'ui_name' : 'Man'
-                      }
-                    , { 'name' : 'last_cid'
-                      , 'sig_key' : 0
-                      , 'ui_name' : 'Last cid'
-                      }
-                    , { 'name' : 'pid'
-                      , 'sig_key' : 0
-                      , 'ui_name' : 'Pid'
-                      }
-                    , { 'name' : 'type_name'
-                      , 'sig_key' : 3
-                      , 'ui_name' : 'Type name'
                       }
                     ]
                 , 'name' : 'owner'
@@ -491,22 +537,228 @@ _test_code = """
                 , 'sig_key' : 2
                 , 'ui_name' : 'Affiliate'
                 }
-              , { 'name' : 'last_cid'
-                , 'sig_key' : 0
-                , 'ui_name' : 'Last cid'
-                }
-              , { 'name' : 'pid'
-                , 'sig_key' : 0
-                , 'ui_name' : 'Pid'
-                }
-              , { 'name' : 'type_name'
-                , 'sig_key' : 3
-                , 'ui_name' : 'Type name'
-                }
               ]
           , 'name' : 'affiliate'
           , 'sig_key' : 2
           , 'ui_name' : 'Affiliate'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'c_time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'C time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'c_user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'C user'
+                }
+              , { 'name' : 'kind'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Kind'
+                }
+              , { 'name' : 'time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'User'
+                }
+              ]
+          , 'name' : 'creation'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Creation'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'c_time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'C time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'c_user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'C user'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'c_user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'C user'
+                }
+              , { 'name' : 'kind'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Kind'
+                }
+              , { 'name' : 'time'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Time'
+                }
+              , { 'Class' : 'Entity'
+                , 'children_np' :
+                    [ { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Name'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'Auth.Account'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Account'
+                      }
+                    , { 'Class' : 'Entity'
+                      , 'attrs' :
+                          [ { 'name' : 'last_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Last name'
+                            }
+                          , { 'name' : 'first_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'First name'
+                            }
+                          , { 'name' : 'middle_name'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Middle name'
+                            }
+                          , { 'name' : 'title'
+                            , 'sig_key' : 3
+                            , 'ui_name' : 'Academic title'
+                            }
+                          ]
+                      , 'name' : 'user'
+                      , 'sig_key' : 2
+                      , 'type_name' : 'PAP.Person'
+                      , 'ui_name' : 'User'
+                      , 'ui_type_name' : 'Person'
+                      }
+                    ]
+                , 'name' : 'user'
+                , 'sig_key' : 2
+                , 'ui_name' : 'User'
+                }
+              ]
+          , 'name' : 'last_change'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Last change'
           }
         , { 'name' : 'last_cid'
           , 'sig_key' : 0
@@ -519,6 +771,150 @@ _test_code = """
         , { 'name' : 'type_name'
           , 'sig_key' : 3
           , 'ui_name' : 'Type name'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'attrs' :
+                    [ { 'name' : 'start'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Start'
+                      }
+                    , { 'name' : 'finish'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Finish'
+                      }
+                    , { 'name' : 'alive'
+                      , 'sig_key' : 1
+                      , 'ui_name' : 'Alive'
+                      }
+                    ]
+                , 'name' : 'date'
+                , 'ui_name' : 'Date'
+                }
+              , { 'attrs' :
+                    [ { 'name' : 'start'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Start'
+                      }
+                    , { 'name' : 'finish'
+                      , 'sig_key' : 0
+                      , 'ui_name' : 'Finish'
+                      }
+                    ]
+                , 'name' : 'time'
+                , 'ui_name' : 'Time'
+                }
+              , { 'Class' : 'Entity'
+                , 'attrs' :
+                    [ { 'name' : 'name'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Name'
+                      }
+                    , { 'name' : 'desc'
+                      , 'sig_key' : 3
+                      , 'ui_name' : 'Description'
+                      }
+                    ]
+                , 'name' : 'calendar'
+                , 'sig_key' : 2
+                , 'ui_name' : 'Calendar'
+                }
+              , { 'name' : 'detail'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Detail'
+                }
+              , { 'name' : 'short_title'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Short title'
+                }
+              ]
+          , 'name' : 'events'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Events'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'value'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Value'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              ]
+          , 'name' : 'urls'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Urls'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'country_code'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Country code'
+                }
+              , { 'name' : 'area_code'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Area code'
+                }
+              , { 'name' : 'number'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Number'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              ]
+          , 'name' : 'phones'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Phones'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'address'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Address'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              ]
+          , 'name' : 'emails'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Emails'
+          }
+        , { 'Class' : 'Entity'
+          , 'attrs' :
+              [ { 'name' : 'street'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Street'
+                }
+              , { 'name' : 'zip'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Zip code'
+                }
+              , { 'name' : 'city'
+                , 'sig_key' : 3
+                , 'ui_name' : 'City'
+                }
+              , { 'name' : 'country'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Country'
+                }
+              , { 'name' : 'desc'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Description'
+                }
+              , { 'name' : 'region'
+                , 'sig_key' : 3
+                , 'ui_name' : 'Region'
+                }
+              ]
+          , 'name' : 'addresses'
+          , 'sig_key' : 2
+          , 'ui_name' : 'Addresses'
           }
         ]
     , 'name_sep' : '__'
@@ -710,30 +1106,6 @@ _test_code = """
                   , sig_key = 0
                   , ui_name = 'Owner/Man/Sex'
                   )
-                , Record
-                  ( attr = Int `last_cid`
-                  , full_name = 'owner.left.last_cid'
-                  , id = 'owner__left__last_cid'
-                  , name = 'last_cid'
-                  , sig_key = 0
-                  , ui_name = 'Owner/Man/Last cid'
-                  )
-                , Record
-                  ( attr = Surrogate `pid`
-                  , full_name = 'owner.left.pid'
-                  , id = 'owner__left__pid'
-                  , name = 'pid'
-                  , sig_key = 0
-                  , ui_name = 'Owner/Man/Pid'
-                  )
-                , Record
-                  ( attr = String `type_name`
-                  , full_name = 'owner.left.type_name'
-                  , id = 'owner__left__type_name'
-                  , name = 'type_name'
-                  , sig_key = 3
-                  , ui_name = 'Owner/Man/Type name'
-                  )
                 ]
             , full_name = 'owner.left'
             , id = 'owner__left'
@@ -742,30 +1114,6 @@ _test_code = """
             , type_name = 'PAP.Person'
             , ui_name = 'Owner/Man'
             , ui_type_name = 'Person'
-            )
-          , Record
-            ( attr = Int `last_cid`
-            , full_name = 'owner.last_cid'
-            , id = 'owner__last_cid'
-            , name = 'last_cid'
-            , sig_key = 0
-            , ui_name = 'Owner/Last cid'
-            )
-          , Record
-            ( attr = Surrogate `pid`
-            , full_name = 'owner.pid'
-            , id = 'owner__pid'
-            , name = 'pid'
-            , sig_key = 0
-            , ui_name = 'Owner/Pid'
-            )
-          , Record
-            ( attr = String `type_name`
-            , full_name = 'owner.type_name'
-            , id = 'owner__type_name'
-            , name = 'type_name'
-            , sig_key = 3
-            , ui_name = 'Owner/Type name'
             )
           ]
       , full_name = 'owner'
@@ -921,30 +1269,6 @@ _test_code = """
                         , sig_key = 0
                         , ui_name = 'Affiliate/Owner/Man/Sex'
                         )
-                      , Record
-                        ( attr = Int `last_cid`
-                        , full_name = 'affiliate.owner.left.last_cid'
-                        , id = 'affiliate__owner__left__last_cid'
-                        , name = 'last_cid'
-                        , sig_key = 0
-                        , ui_name = 'Affiliate/Owner/Man/Last cid'
-                        )
-                      , Record
-                        ( attr = Surrogate `pid`
-                        , full_name = 'affiliate.owner.left.pid'
-                        , id = 'affiliate__owner__left__pid'
-                        , name = 'pid'
-                        , sig_key = 0
-                        , ui_name = 'Affiliate/Owner/Man/Pid'
-                        )
-                      , Record
-                        ( attr = String `type_name`
-                        , full_name = 'affiliate.owner.left.type_name'
-                        , id = 'affiliate__owner__left__type_name'
-                        , name = 'type_name'
-                        , sig_key = 3
-                        , ui_name = 'Affiliate/Owner/Man/Type name'
-                        )
                       ]
                   , full_name = 'affiliate.owner.left'
                   , id = 'affiliate__owner__left'
@@ -953,30 +1277,6 @@ _test_code = """
                   , type_name = 'PAP.Person'
                   , ui_name = 'Affiliate/Owner/Man'
                   , ui_type_name = 'Person'
-                  )
-                , Record
-                  ( attr = Int `last_cid`
-                  , full_name = 'affiliate.owner.last_cid'
-                  , id = 'affiliate__owner__last_cid'
-                  , name = 'last_cid'
-                  , sig_key = 0
-                  , ui_name = 'Affiliate/Owner/Last cid'
-                  )
-                , Record
-                  ( attr = Surrogate `pid`
-                  , full_name = 'affiliate.owner.pid'
-                  , id = 'affiliate__owner__pid'
-                  , name = 'pid'
-                  , sig_key = 0
-                  , ui_name = 'Affiliate/Owner/Pid'
-                  )
-                , Record
-                  ( attr = String `type_name`
-                  , full_name = 'affiliate.owner.type_name'
-                  , id = 'affiliate__owner__type_name'
-                  , name = 'type_name'
-                  , sig_key = 3
-                  , ui_name = 'Affiliate/Owner/Type name'
                   )
                 ]
             , full_name = 'affiliate.owner'
@@ -1048,30 +1348,6 @@ _test_code = """
             , ui_name = 'Affiliate/Affiliate'
             , ui_type_name = 'Company_P'
             )
-          , Record
-            ( attr = Int `last_cid`
-            , full_name = 'affiliate.last_cid'
-            , id = 'affiliate__last_cid'
-            , name = 'last_cid'
-            , sig_key = 0
-            , ui_name = 'Affiliate/Last cid'
-            )
-          , Record
-            ( attr = Surrogate `pid`
-            , full_name = 'affiliate.pid'
-            , id = 'affiliate__pid'
-            , name = 'pid'
-            , sig_key = 0
-            , ui_name = 'Affiliate/Pid'
-            )
-          , Record
-            ( attr = String `type_name`
-            , full_name = 'affiliate.type_name'
-            , id = 'affiliate__type_name'
-            , name = 'type_name'
-            , sig_key = 3
-            , ui_name = 'Affiliate/Type name'
-            )
           ]
       , full_name = 'affiliate'
       , id = 'affiliate'
@@ -1080,6 +1356,396 @@ _test_code = """
       , type_name = 'PAP.Company_P'
       , ui_name = 'Affiliate'
       , ui_type_name = 'Company_P'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Rev_Ref `creation`
+      , attrs =
+          [ Record
+            ( attr = Date-Time `c_time`
+            , full_name = 'creation.c_time'
+            , id = 'creation__c_time'
+            , name = 'c_time'
+            , sig_key = 0
+            , ui_name = 'Creation/C time'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `c_user`
+            , children_np =
+                [ Record
+                  ( Class = 'Entity'
+                  , attr = Entity `c_user`
+                  , attrs =
+                      [ Record
+                        ( attr = Email `name`
+                        , full_name = 'c_user.name'
+                        , id = 'c_user__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Account]/Name'
+                        )
+                      ]
+                  , full_name = 'c_user'
+                  , id = 'c_user'
+                  , name = 'c_user'
+                  , sig_key = 2
+                  , type_name = 'Auth.Account'
+                  , ui_name = 'C user[Account]'
+                  , ui_type_name = 'Account'
+                  )
+                , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `c_user`
+                  , attrs =
+                      [ Record
+                        ( attr = String `last_name`
+                        , full_name = 'c_user.last_name'
+                        , id = 'c_user__last_name'
+                        , name = 'last_name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/Last name'
+                        )
+                      , Record
+                        ( attr = String `first_name`
+                        , full_name = 'c_user.first_name'
+                        , id = 'c_user__first_name'
+                        , name = 'first_name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/First name'
+                        )
+                      , Record
+                        ( attr = String `middle_name`
+                        , full_name = 'c_user.middle_name'
+                        , id = 'c_user__middle_name'
+                        , name = 'middle_name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/Middle name'
+                        )
+                      , Record
+                        ( attr = String `title`
+                        , full_name = 'c_user.title'
+                        , id = 'c_user__title'
+                        , name = 'title'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/Academic title'
+                        )
+                      ]
+                  , full_name = 'c_user'
+                  , id = 'c_user'
+                  , name = 'c_user'
+                  , sig_key = 2
+                  , type_name = 'PAP.Person'
+                  , ui_name = 'C user[Person]'
+                  , ui_type_name = 'Person'
+                  )
+                ]
+            , full_name = 'creation.c_user'
+            , id = 'creation__c_user'
+            , name = 'c_user'
+            , sig_key = 2
+            , type_name = 'MOM.Id_Entity'
+            , ui_name = 'Creation/C user'
+            , ui_type_name = 'Id_Entity'
+            )
+          , Record
+            ( attr = String `kind`
+            , full_name = 'creation.kind'
+            , id = 'creation__kind'
+            , name = 'kind'
+            , sig_key = 3
+            , ui_name = 'Creation/Kind'
+            )
+          , Record
+            ( attr = Date-Time `time`
+            , full_name = 'creation.time'
+            , id = 'creation__time'
+            , name = 'time'
+            , sig_key = 0
+            , ui_name = 'Creation/Time'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `user`
+            , children_np =
+                [ Record
+                  ( Class = 'Entity'
+                  , attr = Entity `user`
+                  , attrs =
+                      [ Record
+                        ( attr = Email `name`
+                        , full_name = 'user.name'
+                        , id = 'user__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'User[Account]/Name'
+                        )
+                      ]
+                  , full_name = 'user'
+                  , id = 'user'
+                  , name = 'user'
+                  , sig_key = 2
+                  , type_name = 'Auth.Account'
+                  , ui_name = 'User[Account]'
+                  , ui_type_name = 'Account'
+                  )
+                , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `user`
+                  , attrs =
+                      [ Record
+                        ( attr = String `last_name`
+                        , full_name = 'user.last_name'
+                        , id = 'user__last_name'
+                        , name = 'last_name'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/Last name'
+                        )
+                      , Record
+                        ( attr = String `first_name`
+                        , full_name = 'user.first_name'
+                        , id = 'user__first_name'
+                        , name = 'first_name'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/First name'
+                        )
+                      , Record
+                        ( attr = String `middle_name`
+                        , full_name = 'user.middle_name'
+                        , id = 'user__middle_name'
+                        , name = 'middle_name'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/Middle name'
+                        )
+                      , Record
+                        ( attr = String `title`
+                        , full_name = 'user.title'
+                        , id = 'user__title'
+                        , name = 'title'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/Academic title'
+                        )
+                      ]
+                  , full_name = 'user'
+                  , id = 'user'
+                  , name = 'user'
+                  , sig_key = 2
+                  , type_name = 'PAP.Person'
+                  , ui_name = 'User[Person]'
+                  , ui_type_name = 'Person'
+                  )
+                ]
+            , full_name = 'creation.user'
+            , id = 'creation__user'
+            , name = 'user'
+            , sig_key = 2
+            , type_name = 'MOM.Id_Entity'
+            , ui_name = 'Creation/User'
+            , ui_type_name = 'Id_Entity'
+            )
+          ]
+      , full_name = 'creation'
+      , id = 'creation'
+      , name = 'creation'
+      , sig_key = 2
+      , type_name = 'MOM.MD_Change'
+      , ui_name = 'Creation'
+      , ui_type_name = 'MD_Change'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Rev_Ref `last_change`
+      , attrs =
+          [ Record
+            ( attr = Date-Time `c_time`
+            , full_name = 'last_change.c_time'
+            , id = 'last_change__c_time'
+            , name = 'c_time'
+            , sig_key = 0
+            , ui_name = 'Last change/C time'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `c_user`
+            , children_np =
+                [ Record
+                  ( Class = 'Entity'
+                  , attr = Entity `c_user`
+                  , attrs =
+                      [ Record
+                        ( attr = Email `name`
+                        , full_name = 'c_user.name'
+                        , id = 'c_user__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Account]/Name'
+                        )
+                      ]
+                  , full_name = 'c_user'
+                  , id = 'c_user'
+                  , name = 'c_user'
+                  , sig_key = 2
+                  , type_name = 'Auth.Account'
+                  , ui_name = 'C user[Account]'
+                  , ui_type_name = 'Account'
+                  )
+                , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `c_user`
+                  , attrs =
+                      [ Record
+                        ( attr = String `last_name`
+                        , full_name = 'c_user.last_name'
+                        , id = 'c_user__last_name'
+                        , name = 'last_name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/Last name'
+                        )
+                      , Record
+                        ( attr = String `first_name`
+                        , full_name = 'c_user.first_name'
+                        , id = 'c_user__first_name'
+                        , name = 'first_name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/First name'
+                        )
+                      , Record
+                        ( attr = String `middle_name`
+                        , full_name = 'c_user.middle_name'
+                        , id = 'c_user__middle_name'
+                        , name = 'middle_name'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/Middle name'
+                        )
+                      , Record
+                        ( attr = String `title`
+                        , full_name = 'c_user.title'
+                        , id = 'c_user__title'
+                        , name = 'title'
+                        , sig_key = 3
+                        , ui_name = 'C user[Person]/Academic title'
+                        )
+                      ]
+                  , full_name = 'c_user'
+                  , id = 'c_user'
+                  , name = 'c_user'
+                  , sig_key = 2
+                  , type_name = 'PAP.Person'
+                  , ui_name = 'C user[Person]'
+                  , ui_type_name = 'Person'
+                  )
+                ]
+            , full_name = 'last_change.c_user'
+            , id = 'last_change__c_user'
+            , name = 'c_user'
+            , sig_key = 2
+            , type_name = 'MOM.Id_Entity'
+            , ui_name = 'Last change/C user'
+            , ui_type_name = 'Id_Entity'
+            )
+          , Record
+            ( attr = String `kind`
+            , full_name = 'last_change.kind'
+            , id = 'last_change__kind'
+            , name = 'kind'
+            , sig_key = 3
+            , ui_name = 'Last change/Kind'
+            )
+          , Record
+            ( attr = Date-Time `time`
+            , full_name = 'last_change.time'
+            , id = 'last_change__time'
+            , name = 'time'
+            , sig_key = 0
+            , ui_name = 'Last change/Time'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `user`
+            , children_np =
+                [ Record
+                  ( Class = 'Entity'
+                  , attr = Entity `user`
+                  , attrs =
+                      [ Record
+                        ( attr = Email `name`
+                        , full_name = 'user.name'
+                        , id = 'user__name'
+                        , name = 'name'
+                        , sig_key = 3
+                        , ui_name = 'User[Account]/Name'
+                        )
+                      ]
+                  , full_name = 'user'
+                  , id = 'user'
+                  , name = 'user'
+                  , sig_key = 2
+                  , type_name = 'Auth.Account'
+                  , ui_name = 'User[Account]'
+                  , ui_type_name = 'Account'
+                  )
+                , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `user`
+                  , attrs =
+                      [ Record
+                        ( attr = String `last_name`
+                        , full_name = 'user.last_name'
+                        , id = 'user__last_name'
+                        , name = 'last_name'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/Last name'
+                        )
+                      , Record
+                        ( attr = String `first_name`
+                        , full_name = 'user.first_name'
+                        , id = 'user__first_name'
+                        , name = 'first_name'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/First name'
+                        )
+                      , Record
+                        ( attr = String `middle_name`
+                        , full_name = 'user.middle_name'
+                        , id = 'user__middle_name'
+                        , name = 'middle_name'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/Middle name'
+                        )
+                      , Record
+                        ( attr = String `title`
+                        , full_name = 'user.title'
+                        , id = 'user__title'
+                        , name = 'title'
+                        , sig_key = 3
+                        , ui_name = 'User[Person]/Academic title'
+                        )
+                      ]
+                  , full_name = 'user'
+                  , id = 'user'
+                  , name = 'user'
+                  , sig_key = 2
+                  , type_name = 'PAP.Person'
+                  , ui_name = 'User[Person]'
+                  , ui_type_name = 'Person'
+                  )
+                ]
+            , full_name = 'last_change.user'
+            , id = 'last_change__user'
+            , name = 'user'
+            , sig_key = 2
+            , type_name = 'MOM.Id_Entity'
+            , ui_name = 'Last change/User'
+            , ui_type_name = 'Id_Entity'
+            )
+          ]
+      , full_name = 'last_change'
+      , id = 'last_change'
+      , name = 'last_change'
+      , sig_key = 2
+      , type_name = 'MOM.MD_Change'
+      , ui_name = 'Last change'
+      , ui_type_name = 'MD_Change'
       )
     , Record
       ( attr = Int `last_cid`
@@ -1104,6 +1770,287 @@ _test_code = """
       , name = 'type_name'
       , sig_key = 3
       , ui_name = 'Type name'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Link_Ref_List `events`
+      , attrs =
+          [ Record
+            ( attr = Date_Interval `date`
+            , attrs =
+                [ Record
+                  ( attr = Date `start`
+                  , full_name = 'events.date.start'
+                  , id = 'events__date__start'
+                  , name = 'start'
+                  , sig_key = 0
+                  , ui_name = 'Events/Date/Start'
+                  )
+                , Record
+                  ( attr = Date `finish`
+                  , full_name = 'events.date.finish'
+                  , id = 'events__date__finish'
+                  , name = 'finish'
+                  , sig_key = 0
+                  , ui_name = 'Events/Date/Finish'
+                  )
+                , Record
+                  ( attr = Boolean `alive`
+                  , choices = <Recursion on list...>
+                  , full_name = 'events.date.alive'
+                  , id = 'events__date__alive'
+                  , name = 'alive'
+                  , sig_key = 1
+                  , ui_name = 'Events/Date/Alive'
+                  )
+                ]
+            , full_name = 'events.date'
+            , id = 'events__date'
+            , name = 'date'
+            , ui_name = 'Events/Date'
+            )
+          , Record
+            ( attr = Time_Interval `time`
+            , attrs =
+                [ Record
+                  ( attr = Time `start`
+                  , full_name = 'events.time.start'
+                  , id = 'events__time__start'
+                  , name = 'start'
+                  , sig_key = 0
+                  , ui_name = 'Events/Time/Start'
+                  )
+                , Record
+                  ( attr = Time `finish`
+                  , full_name = 'events.time.finish'
+                  , id = 'events__time__finish'
+                  , name = 'finish'
+                  , sig_key = 0
+                  , ui_name = 'Events/Time/Finish'
+                  )
+                ]
+            , full_name = 'events.time'
+            , id = 'events__time'
+            , name = 'time'
+            , ui_name = 'Events/Time'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `calendar`
+            , attrs =
+                [ Record
+                  ( attr = Name `name`
+                  , full_name = 'events.calendar.name'
+                  , id = 'events__calendar__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Events/Calendar/Name'
+                  )
+                , Record
+                  ( attr = String `desc`
+                  , full_name = 'events.calendar.desc'
+                  , id = 'events__calendar__desc'
+                  , name = 'desc'
+                  , sig_key = 3
+                  , ui_name = 'Events/Calendar/Description'
+                  )
+                ]
+            , full_name = 'events.calendar'
+            , id = 'events__calendar'
+            , name = 'calendar'
+            , sig_key = 2
+            , type_name = 'EVT.Calendar'
+            , ui_name = 'Events/Calendar'
+            , ui_type_name = 'Calendar'
+            )
+          , Record
+            ( attr = String `detail`
+            , full_name = 'events.detail'
+            , id = 'events__detail'
+            , name = 'detail'
+            , sig_key = 3
+            , ui_name = 'Events/Detail'
+            )
+          , Record
+            ( attr = String `short_title`
+            , full_name = 'events.short_title'
+            , id = 'events__short_title'
+            , name = 'short_title'
+            , sig_key = 3
+            , ui_name = 'Events/Short title'
+            )
+          ]
+      , full_name = 'events'
+      , id = 'events'
+      , name = 'events'
+      , sig_key = 2
+      , type_name = 'EVT.Event'
+      , ui_name = 'Events'
+      , ui_type_name = 'Event'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Role_Ref_Set `urls`
+      , attrs =
+          [ Record
+            ( attr = Url `value`
+            , full_name = 'urls.value'
+            , id = 'urls__value'
+            , name = 'value'
+            , sig_key = 3
+            , ui_name = 'Urls/Value'
+            )
+          , Record
+            ( attr = String `desc`
+            , full_name = 'urls.desc'
+            , id = 'urls__desc'
+            , name = 'desc'
+            , sig_key = 3
+            , ui_name = 'Urls/Description'
+            )
+          ]
+      , full_name = 'urls'
+      , id = 'urls'
+      , name = 'urls'
+      , sig_key = 2
+      , type_name = 'PAP.Url'
+      , ui_name = 'Urls'
+      , ui_type_name = 'Url'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Role_Ref_Set `phones`
+      , attrs =
+          [ Record
+            ( attr = Numeric_String `country_code`
+            , full_name = 'phones.country_code'
+            , id = 'phones__country_code'
+            , name = 'country_code'
+            , sig_key = 3
+            , ui_name = 'Phones/Country code'
+            )
+          , Record
+            ( attr = Numeric_String `area_code`
+            , full_name = 'phones.area_code'
+            , id = 'phones__area_code'
+            , name = 'area_code'
+            , sig_key = 3
+            , ui_name = 'Phones/Area code'
+            )
+          , Record
+            ( attr = Numeric_String `number`
+            , full_name = 'phones.number'
+            , id = 'phones__number'
+            , name = 'number'
+            , sig_key = 3
+            , ui_name = 'Phones/Number'
+            )
+          , Record
+            ( attr = String `desc`
+            , full_name = 'phones.desc'
+            , id = 'phones__desc'
+            , name = 'desc'
+            , sig_key = 3
+            , ui_name = 'Phones/Description'
+            )
+          ]
+      , full_name = 'phones'
+      , id = 'phones'
+      , name = 'phones'
+      , sig_key = 2
+      , type_name = 'PAP.Phone'
+      , ui_name = 'Phones'
+      , ui_type_name = 'Phone'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Role_Ref_Set `emails`
+      , attrs =
+          [ Record
+            ( attr = Email `address`
+            , full_name = 'emails.address'
+            , id = 'emails__address'
+            , name = 'address'
+            , sig_key = 3
+            , ui_name = 'Emails/Address'
+            )
+          , Record
+            ( attr = String `desc`
+            , full_name = 'emails.desc'
+            , id = 'emails__desc'
+            , name = 'desc'
+            , sig_key = 3
+            , ui_name = 'Emails/Description'
+            )
+          ]
+      , full_name = 'emails'
+      , id = 'emails'
+      , name = 'emails'
+      , sig_key = 2
+      , type_name = 'PAP.Email'
+      , ui_name = 'Emails'
+      , ui_type_name = 'Email'
+      )
+    , Record
+      ( Class = 'Entity'
+      , attr = Role_Ref_Set `addresses`
+      , attrs =
+          [ Record
+            ( attr = String `street`
+            , full_name = 'addresses.street'
+            , id = 'addresses__street'
+            , name = 'street'
+            , sig_key = 3
+            , ui_name = 'Addresses/Street'
+            )
+          , Record
+            ( attr = String `zip`
+            , full_name = 'addresses.zip'
+            , id = 'addresses__zip'
+            , name = 'zip'
+            , sig_key = 3
+            , ui_name = 'Addresses/Zip code'
+            )
+          , Record
+            ( attr = String `city`
+            , full_name = 'addresses.city'
+            , id = 'addresses__city'
+            , name = 'city'
+            , sig_key = 3
+            , ui_name = 'Addresses/City'
+            )
+          , Record
+            ( attr = String `country`
+            , full_name = 'addresses.country'
+            , id = 'addresses__country'
+            , name = 'country'
+            , sig_key = 3
+            , ui_name = 'Addresses/Country'
+            )
+          , Record
+            ( attr = String `desc`
+            , full_name = 'addresses.desc'
+            , id = 'addresses__desc'
+            , name = 'desc'
+            , sig_key = 3
+            , ui_name = 'Addresses/Description'
+            )
+          , Record
+            ( attr = String `region`
+            , full_name = 'addresses.region'
+            , id = 'addresses__region'
+            , name = 'region'
+            , sig_key = 3
+            , ui_name = 'Addresses/Region'
+            )
+          ]
+      , full_name = 'addresses'
+      , id = 'addresses'
+      , name = 'addresses'
+      , sig_key = 2
+      , type_name = 'PAP.Address'
+      , ui_name = 'Addresses'
+      , ui_type_name = 'Address'
       )
     ]
 
