@@ -48,6 +48,11 @@
 #    28-Feb-2014 (CT) Use future `print_function`
 #    28-Feb-2014 (CT) Add support for negative values to `from_string`
 #    28-Feb-2014 (CT) Add `from_string`, `week`, `days` to `Month_Delta`
+#     4-Mar-2014 (CT) Make `str (Month_Delta)` unique and sortable
+#     4-Mar-2014 (CT) Fix `Month_Delta.dt_op` to support subtraction
+#     4-Mar-2014 (CT) Change `_DT_Delta_.dt_op` to support `datetime` instances
+#     4-Mar-2014 (CT) Change `Month_Delta.__add__` and `.__sub__` to support
+#                     `datetime` instances; add `__radd__`, `__rsub__`
 #    ««revision-date»»···
 #--
 
@@ -133,6 +138,14 @@ class _Delta_ (CAL._DTW_) :
         return kw
     # end def _from_string_match_kw
 
+    def __radd__ (self, rhs) :
+        return self + rhs
+    # end def __radd__
+
+    def __rsub__ (self, rhs) :
+        return self - rhs
+    # end def __rsub__
+
 # end class _Delta_
 
 class _DT_Delta_ (_Delta_) :
@@ -154,8 +167,12 @@ class _DT_Delta_ (_Delta_) :
         """Return result of `op` applied to date/time value `dot` and delta
            `self`
         """
-        result = op (dot._body, self._body)
-        return dot.__class__ (** {dot._kind : result})
+        if isinstance (dot, CAL._DTW_) :
+            result = op (dot._body, self._body)
+            return dot.__class__ (** {dot._kind : result})
+        else :
+            ### assume it is an of a `datetime` class
+            return op (dot, self._body)
     # end def dt_op
 
     def __abs__ (self) :
@@ -334,6 +351,16 @@ class Date_Delta (_DT_Delta_) :
     >>> print (Date_Delta.from_string ("-2 weeks +3 days"))
     -11 days, 0:00:00
 
+    >>> print (Date_Delta.from_string ("42 days") + datetime.date (2014, 03, 04))
+    2014-04-15
+    >>> print (Date_Delta.from_string ("-28 days") + datetime.date (2014, 03, 04))
+    2014-02-04
+
+    >>> print (datetime.date (2014, 03, 04) + Date_Delta.from_string ("42 days"))
+    2014-04-15
+    >>> print (datetime.date (2014, 03, 04) + Date_Delta.from_string ("-28 days"))
+    2014-02-04
+
     """
 
     days             = property (TFL.Getter._body.days)
@@ -447,20 +474,20 @@ class Month_Delta (_Delta_) :
     >>> print (Month_Delta (-3))
     -3 months
     >>> print (Month_Delta (years = 1))
-    +1 year
+    +12 months
     >>> print (Month_Delta (years = 5))
-    +5 years
+    +60 months
     >>> print (Month_Delta (3, 1))
-    +1 year, +3 months
+    +15 months
     >>> print (Month_Delta (1, 2))
-    +2 years, +1 month
+    +25 months
     >>> print (Month_Delta (-1, 2))
-    +1 year, +11 months
+    +23 months
     >>> md = Month_Delta (13)
     >>> print (md)
-    +1 year, +1 month
+    +13 months
     >>> print (md + 1)
-    +1 year, +2 months
+    +14 months
     >>> md = Month_Delta (1)
     >>> abs (md) is md
     True
@@ -474,16 +501,57 @@ class Month_Delta (_Delta_) :
     >>> print (md, abs (md))
     -1 months +1 month
 
-    >>> print (Month_Delta.from_string("1y3m"))
-    +1 year, +3 months
-    >>> print (Month_Delta.from_string("1y3d"))
-    +1 year, +3 days
-    >>> print (Month_Delta.from_string("1y5w3d"))
-    +1 year, +38 days
-    >>> print (Month_Delta.from_string("-1y5w3d"))
-    -1 years, +38 days
-    >>> print (Month_Delta.from_string("-1y5w-3d"))
-    -1 years, +32 days
+    >>> print (Month_Delta.from_string ("1y3m"))
+    +15 months
+    >>> print (Month_Delta.from_string ("1y3d"))
+    +12 months, +3 days
+    >>> print (Month_Delta.from_string ("1y3w3d"))
+    +12 months, +24 days
+    >>> print (Month_Delta.from_string ("-1y3w3d"))
+    -12 months, +24 days
+    >>> print (Month_Delta.from_string ("-1y3w-3d"))
+    -12 months, +18 days
+
+    >>> print (Month_Delta.from_string ("+2 years 3 months, 2 weeks -3 days"))
+    +27 months, +11 days
+
+    >>> md1 = Month_Delta.from_string ("+2 years 3 months, 2 weeks -3 days")
+    >>> md2 = Month_Delta.from_string (str (md1))
+
+    >>> print (md2) ### "+2 years 3 months, 2 weeks -3 days"
+    +27 months, +11 days
+    >>> md1 == md2
+    True
+    >>> str (md1) == str (md2)
+    True
+
+    >>> print (Month_Delta (days = 42))
+    +0 months, +42 days
+    >>> print (Month_Delta (1, days = 23))
+    +1 month, +23 days
+    >>> print (Month_Delta (2, days = 23))
+    +2 months, +23 days
+
+    >>> print (Month_Delta (3, days = 42))
+    Traceback (most recent call last):
+      ...
+    ValueError: Can't specify `months` and `days > 28` simultaneously: Month_Delta (months = 3, days = 42) --> +3 months, +42 days
+
+    >>> import datetime
+    >>> d = datetime.date (2014, 03, 04)
+    >>> print (d, "+ +5", d + Month_Delta (5))
+    2014-03-04 + +5 2014-08-04
+    >>> print (d, "+ -5", d + Month_Delta (-5))
+    2014-03-04 + -5 2013-10-04
+    >>> print (d, "+5 +", Month_Delta (5) + d)
+    2014-03-04 +5 + 2014-08-04
+    >>> print (d, "+5 -", Month_Delta (5) - d)
+    2014-03-04 +5 - 2013-10-04
+    >>> print (d, "- -5", d - Month_Delta(-5))
+    2014-03-04 - -5 2014-08-04
+    >>> print (d, "- +5", d - Month_Delta(5))
+    2014-03-04 - +5 2013-10-04
+
     """
 
     delta_pattern    = Multi_Regexp \
@@ -508,23 +576,31 @@ class Month_Delta (_Delta_) :
     def __init__ (self, months = 0, years = 0, days = 0, weeks = 0) :
         self._setup_init_kw \
             (months = months, years = years, days = days, weeks = weeks)
-        self.months = months + years * 12
+        self.months = md = months + years * 12
         if days or weeks :
             self._date_delta = dd = Date_Delta (days = days, weeks = weeks)
+            if md and dd.days > 28 :
+                raise ValueError \
+                    ( "Can't specify `months` and `days > 28` simultaneously: "
+                      "%r --> %s" % (self, self)
+                    )
     # end def __init__
 
     def dt_op (self, date, op) :
         """Return result of `op` applied to date(_time) value `date` and delta
            `self`
         """
-        yd, m = 0, date.month + self.months
-        if m == 0 :
-            yd, m = -1, 12
-        elif not (1 <= m <= 12) :
-            yd, m = divmod (m, 12)
-        result = date.replace (month = m, year = date.year + yd)
+        sign  = TFL.sign (self.months)
+        yd, m = 0, op (date.month, self.months)
+        if sign :
+            if m == 0 :
+                yd, m = -1, 12
+            elif not (1 <= m <= 12) :
+                yd, m = divmod (m, 12)
+                yd    = op (0, yd) ### for subtraction, need to change sign
+        result = date.replace (month = m, year = op (date.year, yd))
         if self._date_delta :
-            result += self._date_delta
+            result = result + self._date_delta
         return result
     # end def dt_op
 
@@ -539,7 +615,10 @@ class Month_Delta (_Delta_) :
     # end def __abs__
 
     def __add__ (self, rhs) :
-        return self.__class__ (self.months + rhs)
+        if isinstance (rhs, (datetime.date, datetime.datetime)) :
+            return self.dt_op (rhs, operator.add)
+        else :
+            return self.__class__ (self.months + rhs)
     # end def __add__
 
     def __cmp__ (self, rhs) :
@@ -562,7 +641,7 @@ class Month_Delta (_Delta_) :
         return "%s (%s)" % \
             ( self.__class__.__name__
             , ", ".join
-                ( repr (self._init_arg (a))
+                ( "%s = %s" %(a, self._init_arg (a))
                 for a in self._init_arg_names if a in self._init_kw
                 )
             )
@@ -570,14 +649,8 @@ class Month_Delta (_Delta_) :
 
     def __str__ (self) :
         result = []
-        sign   = TFL.sign (self.months)
-        years, months = divmod (abs (self.months), 12)
-        if years :
-            years  *= sign
-            result.append ("%+d year%s"  % (years,  ("", "s") [years  != 1]))
-        if months :
-            months *= sign
-            result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
+        months = self.months
+        result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
         if self._date_delta :
             days = self._date_delta.days
             result.append ("%+d day%s"   % (days,   ("", "s") [days   != 1]))
@@ -585,7 +658,10 @@ class Month_Delta (_Delta_) :
     # end def __str__
 
     def __sub__ (self, rhs) :
-        return self.__class__ (self.months - rhs)
+        if isinstance (rhs, (datetime.date, datetime.datetime)) :
+            return self.dt_op (rhs, operator.sub)
+        else :
+            return self.__class__ (self.months - rhs)
     # end def __sub__
 
 # end class Month_Delta

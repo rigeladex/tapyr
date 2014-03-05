@@ -65,6 +65,7 @@
 #     8-May-2008 (CT) `Date_Opt` changed to use `__super`
 #     4-Jan-2010 (CT) `_Date_Arg_` based on `TFL.CAO` added, `Date_Opt` removed
 #    28-Feb-2014 (CT) Use future `print_function`
+#     4-Mar-2014 (CT) Add subtraction test cases for `Month_Delta`
 #    ««revision-date»»···
 #--
 
@@ -101,23 +102,32 @@ class Date (CAL._DTW_) :
        >>> d.year, d.month, d.day, d.date, d.week, d.weekday, d.ordinal
        (2004, 10, 10, datetime.date(2004, 10, 10), 41, 6, 731864)
        >>> from _CAL.Delta import Month_Delta
-       >>> print (d, d + Month_Delta (1))
-       2004-10-10 2004-11-10
-       >>> print (d, d + Month_Delta (3))
-       2004-10-10 2005-01-10
-       >>> print (d, d + Month_Delta (12))
-       2004-10-10 2005-10-10
-       >>> print (d, d + Month_Delta (-1))
-       2004-10-10 2004-09-10
-       >>> print (d, d + Month_Delta (-12))
-       2004-10-10 2003-10-10
+       >>> print (d, d + Month_Delta (1), d - Month_Delta (1))
+       2004-10-10 2004-11-10 2004-09-10
+       >>> print (d, d + Month_Delta (3), d - Month_Delta (3))
+       2004-10-10 2005-01-10 2004-07-10
+       >>> print (d, d + Month_Delta (12), d - Month_Delta (12))
+       2004-10-10 2005-10-10 2003-10-10
+       >>> print (d, d + Month_Delta (15), d - Month_Delta (15))
+       2004-10-10 2006-01-10 2003-07-10
+       >>> print (d, d + Month_Delta (24), d - Month_Delta (24))
+       2004-10-10 2006-10-10 2002-10-10
+       >>> print (d, d + Month_Delta (-1), d - Month_Delta (-1))
+       2004-10-10 2004-09-10 2004-11-10
+       >>> print (d, d + Month_Delta (-12), d - Month_Delta (-12))
+       2004-10-10 2003-10-10 2005-10-10
        >>> MD = Month_Delta
-       >>> for x in (d, d + MD (3), d + MD (6), d + MD (9)):
-       ...    print (str (x), ":", x.quarter)
+       >>> for x in (d + MD (m) for m in range (-12, 13, 3)):
+       ...     print (str (x), ":", x.quarter)
+       2003-10-10 : 4
+       2004-01-10 : 1
+       2004-04-10 : 2
+       2004-07-10 : 3
        2004-10-10 : 4
        2005-01-10 : 1
        2005-04-10 : 2
        2005-07-10 : 3
+       2005-10-10 : 4
        >>> d = Date (day = 1, month = 1, year = 2004)
        >>> print (d, d + Month_Delta (11))
        2004-01-01 2004-12-01
