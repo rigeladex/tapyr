@@ -46,6 +46,9 @@
 #    27-Jan-2014 (CT) Change `_Base_._xs_filter_rhs` to call `pickler.as_cargo`,
 #                     if any
 #    31-Jan-2014 (CT) Add support for `__{true,floor}div__` to `Bin.apply`
+#     6-Mar-2014 (CT) Change `Kind_Composite._xs_filter_bin` to
+#                     delegate `to lqx._xs_filter_bin`
+#     6-Mar-2014 (CT) Add cache for `Kind_Composite._get_attr` results
 #    ««revision-date»»···
 #--
 
@@ -1089,6 +1092,11 @@ class Kind_Composite (_Attr_) :
 
     XS_ORDER_BY      = TFL.Meta.Alias_Property ("_columns_ob")
 
+    def __init__ (self, * args, ** kw) :
+        self._attr_map = {}
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
     @TFL.Meta.Once_Property
     def XS_ATTR (self) :
         return [self._akw]
@@ -1122,21 +1130,25 @@ class Kind_Composite (_Attr_) :
     # end def _columns_ob
 
     def _get_attr (self, name) :
-        outer = self._outer
-        if  (   outer is not None
-            and isinstance (outer, Kind_EPK)
-            and outer._akw.attr.E_Type.is_partial
-            ) :
-            ### need to add join, using the right join alias
-            ETW, pj = self.ETW.attr_join_etw_alias \
-                (outer._akw, self.ETW.e_type, outer._akw.ETW)
-            akw     = ETW.QC [".".join ((self._akw.name, name))].MOM_Wrapper
-            result  = self._inner (akw, ETW = ETW)
-            self._add_join_parent (pj, polymorphic = True)
-            self._add_joins_inner (result, outer._head_col, polymorphic = True)
-        else :
-            akw    = self._akw.q_able_attrs [name]
-            result = self._inner (akw)
+        amap   = self._attr_map
+        result = amap.get (name)
+        if result is None :
+            outer = self._outer
+            if  (   outer is not None
+                and isinstance (outer, Kind_EPK)
+                and outer._akw.attr.E_Type.is_partial
+                ) :
+                ### need to add join, using the right join alias
+                ETW, pj = self.ETW.attr_join_etw_alias \
+                    (outer._akw, self.ETW.e_type, outer._akw.ETW)
+                akw     = ETW.QC [".".join ((self._akw.name, name))].MOM_Wrapper
+                result  = self._inner (akw, ETW = ETW)
+                self._add_join_parent (pj, polymorphic = True)
+                self._add_joins_inner (result, outer._head_col, polymorphic = 1)
+            else :
+                akw    = self._akw.q_able_attrs [name]
+                result = self._inner (akw)
+            amap [name] = result
         return result
     # end def _get_attr
 
@@ -1162,7 +1174,18 @@ class Kind_Composite (_Attr_) :
         else :
             lhs = lhs [:1]
             rhs = [rhs]
-        result = tuple (op.apply (l, r, reversed) for l, r in zip (lhs, rhs))
+        def _gen (self, lhs, rhs, op) :
+            for l, r in zip (lhs, rhs) :
+                try :
+                    lqx = self._get_attr (l.MOM_Wrapper.attr.name)
+                    v   = lqx._xs_filter_bin (r, op, reversed)
+                except Exception as exc :
+                    import logging
+                    logging.exception \
+                        ("%s: %s %s %s; %s %r" % (self, lhs, op, rhs, l, r))
+                    v   = op.apply (l, r, reversed)
+                yield v
+        result = tuple (_gen (self, lhs, rhs, op))
         return SA.expression.and_ (* result)
     # end def _xs_filter_bin
 

@@ -137,17 +137,17 @@ class Date_Delta_Interval (_Ancestor_Essence) :
             syntax             = _ \
                 ( "A leading `+` indicates a length value; otherwise a date "
                   "is assumed."
-                  "\n"
+                  "<br>"
                   "A length value can contain delta values for `years`, "
                   "`month`, `weeks`, and `days`. All units are optional, "
                   "but must occur in that sequence."
-                  "\n"
+                  "<br>"
                   "Examples for valid length values:"
-                  "\n"
+                  "<br>"
                   "    +2 years 3 months, 2 weeks -3 days"
-                  "\n"
+                  "<br>"
                   "    +1 month, 15 days"
-                  "\n"
+                  "<br>"
                   "    +2w3d"
                 )
 

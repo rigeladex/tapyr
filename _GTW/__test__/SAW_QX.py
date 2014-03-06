@@ -1061,7 +1061,7 @@ _test_xs_filter = """
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime == Q.creation.time)
     PAP.Subject_has_Phone  :  Q.subject.lifetime == Q.creation.time
-        mom_md_change__1.kind = :kind_1 AND pap_company__1.lifetime__start = :lifetime__start_1 OR mom_md_change__1.kind = :kind_1 AND pap_person__3.lifetime__start = :lifetime__start_2
+        mom_md_change__1.kind = :kind_1 AND pap_company__1.lifetime__start = mom_md_change__1.time OR mom_md_change__1.kind = :kind_1 AND pap_person__3.lifetime__start = mom_md_change__1.time
 
     >>> show_xs_filter (apt, "PAP.Subject_has_Phone", Q.subject.lifetime.start == "2000-01-02")
     PAP.Subject_has_Phone  :  Q.subject.lifetime.start == 2000-01-02
