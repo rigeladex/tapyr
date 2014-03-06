@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -106,6 +106,8 @@
 #    20-Sep-2013 (CT) Remove `q_exp_*` methods (superseded by SAW.QX)
 #    30-Sep-2013 (CT) Return `Kind_Wrapper_P` if `self.is_partial` from
 #                     `_saw_kind_wrapper_pq`
+#     6-Mar-2014 (CT) Fix `parent` of nested attributes in
+#                     `Kind_Wrapper_C._setup_attrs` and `._setup_alias_attrs`
 #    ««revision-date»»···
 #--
 
@@ -506,13 +508,18 @@ class Kind_Wrapper_C (_Kind_Wrapper_) :
 
     def _setup_alias_attrs (self, ETW_alias, result) :
         parent = result.eff
+        parent_attrs = parent.db_attrs if parent is not result else {}
         result.db_attrs_o = result.db_attrs = dict \
-            (  (k, v.alias (ETW_alias, outer = result, parent = parent))
+            ( ( k, v.alias
+                    (ETW_alias, outer = result, parent = parent_attrs.get (k))
+              )
             for k, v in pyk.iteritems (self.db_attrs)
             )
         result.q_able_attrs_o = result.q_able_attrs = dict (result.db_attrs)
         result.q_able_attrs.update \
-            (  (k, v.alias (ETW_alias, outer = result, parent = parent))
+            ( ( k, v.alias
+                    (ETW_alias, outer = result, parent = parent_attrs.get (k))
+              )
             for k, v in pyk.iteritems (self.q_able_attrs)
             if  k not in result.db_attrs
             )
@@ -524,22 +531,26 @@ class Kind_Wrapper_C (_Kind_Wrapper_) :
     # end def _setup_alias_columns
 
     def _setup_attrs (self, ETW, parent) :
-        PNS      = self.PNS
-        e_type   = self.attr.P_Type
-        PTW      = ETW.ATW [e_type]
+        e_type = self.attr.P_Type
+        PTW    = ETW.ATW [e_type]
+        parent_attrs = parent.db_attrs if parent else {}
         self.db_attrs_o = self.db_attrs = dict \
-            (   ( a.name
-                , a._saw_kind_wrapper
-                    (PTW.DBW, PTW, outer = self, parent = parent)
-                )
+            ( ( a.name
+              , a._saw_kind_wrapper
+                  ( PTW.DBW, PTW
+                  , outer = self, parent = parent_attrs.get (a.name)
+                  )
+              )
             for a in e_type.db_attr
             )
         self.q_able_attrs_o = self.q_able_attrs = dict (self.db_attrs)
         self.q_able_attrs.update \
-            (   ( a.name
-                , a._saw_kind_wrapper_pq
-                    (PTW.DBW, PTW, outer = self, parent = parent)
-                )
+            ( ( a.name
+              , a._saw_kind_wrapper_pq
+                  ( PTW.DBW, PTW
+                  , outer = self, parent = parent_attrs.get (a.name)
+                  )
+              )
             for a in e_type.q_able
             if  a.name not in self.db_attrs
             )
