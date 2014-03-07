@@ -53,6 +53,7 @@
 #     4-Mar-2014 (CT) Change `_DT_Delta_.dt_op` to support `datetime` instances
 #     4-Mar-2014 (CT) Change `Month_Delta.__add__` and `.__sub__` to support
 #                     `datetime` instances; add `__radd__`, `__rsub__`
+#     7-Mar-2014 (CT) Change `Month_Delta` operators to include `days`
 #    ««revision-date»»···
 #--
 
@@ -552,6 +553,19 @@ class Month_Delta (_Delta_) :
     >>> print (d, "- +5", d - Month_Delta(5))
     2014-03-04 - +5 2013-10-04
 
+    >>> md1 = Month_Delta (days = 90)
+    >>> md2 = Month_Delta (weeks = 4)
+
+    >>> md1 == md2
+    False
+    >>> md1 != md2
+    True
+
+    >>> md1 > md2
+    True
+    >>> md1 < md2
+    False
+
     """
 
     delta_pattern    = Multi_Regexp \
@@ -586,6 +600,13 @@ class Month_Delta (_Delta_) :
                     )
     # end def __init__
 
+    @property
+    def days (self) :
+        dd     = self._date_delta
+        result = dd.days if dd is not None else 0
+        return result
+    # end def days
+
     def dt_op (self, date, op) :
         """Return result of `op` applied to date(_time) value `date` and delta
            `self`
@@ -610,7 +631,7 @@ class Month_Delta (_Delta_) :
 
     def __abs__ (self) :
         if self.months < 0 :
-            return self.__class__ (abs (self.months))
+            return self.__class__ (abs (self.months), days = abs (self.days))
         return self
     # end def __abs__
 
@@ -618,23 +639,23 @@ class Month_Delta (_Delta_) :
         if isinstance (rhs, (datetime.date, datetime.datetime)) :
             return self.dt_op (rhs, operator.add)
         else :
-            return self.__class__ (self.months + rhs)
+            return self.__class__ (self.months + rhs, days = abs (self.days))
     # end def __add__
 
     def __cmp__ (self, rhs) :
         try :
-            rhs = rhs.months
+            rhs = rhs.months, rhs.days
         except AttributeError :
             pass
-        return cmp (self.months, rhs)
+        return cmp ((self.months, self.days), rhs)
     # end def __cmp__
 
     def __hash__ (self) :
-        return hash (self.months)
+        return hash ((self.months, self.days))
     # end def __hash__
 
     def __neg__ (self) :
-        return self.__class__ (months = - self.months)
+        return self.__class__ (months = - self.months, days = - self.days)
     # end def __neg__
 
     def __repr__ (self) :
@@ -650,9 +671,9 @@ class Month_Delta (_Delta_) :
     def __str__ (self) :
         result = []
         months = self.months
-        result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
-        if self._date_delta :
-            days = self._date_delta.days
+        days   = self.days
+        result.append     ("%+d month%s" % (months, ("", "s") [months != 1]))
+        if days :
             result.append ("%+d day%s"   % (days,   ("", "s") [days   != 1]))
         return ", ".join (result)
     # end def __str__
@@ -661,7 +682,7 @@ class Month_Delta (_Delta_) :
         if isinstance (rhs, (datetime.date, datetime.datetime)) :
             return self.dt_op (rhs, operator.sub)
         else :
-            return self.__class__ (self.months - rhs)
+            return self.__class__ (self.months - rhs, days = abs (self.days))
     # end def __sub__
 
 # end class Month_Delta
