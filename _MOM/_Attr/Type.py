@@ -337,6 +337,7 @@
 #     2-Mar-2014 (CT) Add support for `only_e_types` to `_A_Id_Entity_`
 #     2-Mar-2014 (CT) Add `hidden_nested`
 #     3-Mar-2014 (CT) Add `FO_nested` (factored from `MOM.Entity._FO_`)
+#     7-Mar-2014 (CT) Add `ui_rank`
 #    ««revision-date»»···
 #--
 
@@ -490,9 +491,10 @@ class A_Attr_Type (MOM.Prop.Type) :
     sort_skip           = False ### don't include in sorted_by_epk if True
     store_default       = False
     typ                 = None
+    ui_length           = 20
     ui_name             = TFL.Meta.Class_and_Instance_Once_Property \
         (lambda s : s.name.capitalize ().replace ("_", " "))
-    ui_length           = 20
+    ui_rank             = 0
 
     _t_rank             = 0
 
@@ -2965,10 +2967,7 @@ Class `MOM.Attr.A_Attr_Type`
 
 """
 
-__all__  = tuple \
-    (  k for (k, v) in globals ().iteritems ()
-    if is_attr_type (v)
-    )
+__all__  = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
 
 __all__ += \
     ( "decimal"

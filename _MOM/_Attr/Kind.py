@@ -224,6 +224,7 @@
 #                     remove `Id_Entity_Reference_Mixin._check_sanity`
 #     1-Mar-2014 (CT) Remove `_Rev_Query_._show_in_ui = False`
 #     2-Mar-2014 (CT) Add `q_able_transitive`
+#     7-Mar-2014 (CT) Add `ui_rank`
 #    ««revision-date»»···
 #--
 
@@ -271,6 +272,8 @@ class Kind (MOM.Prop.Kind) :
     save_to_db            = False
     sync                  = None
     Table                 = dict ()
+    ui_rank               = TFL.Meta.Once_Property \
+        (lambda s : (s.attr.ui_rank, s.rank, s.name))
     void_values           = property (lambda s : (None, ""))
     void_raw_values       = property (lambda s : ("", s.attr.raw_default))
 

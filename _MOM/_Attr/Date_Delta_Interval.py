@@ -205,7 +205,7 @@ class Date_Delta_Interval_N (_Ancestor_Essence) :
 
     # end class _Attributes
 
-# end class Date_Interval_N
+# end class Date_Delta_Interval_N
 
 class A_Date_Delta_Interval (_A_Composite_) :
     """Models an attribute holding a date interval (start, delta-or-finish)"""

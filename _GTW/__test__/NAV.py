@@ -1456,12 +1456,12 @@ _test_qr = """
       , attr = Role_Ref_Set `phones`
       , attrs =
           [ Record
-            ( attr = Numeric_String `country_code`
-            , full_name = 'phones.country_code'
-            , id = 'phones__country_code'
-            , name = 'country_code'
+            ( attr = Numeric_String `number`
+            , full_name = 'phones.number'
+            , id = 'phones__number'
+            , name = 'number'
             , sig_key = 3
-            , ui_name = 'Phones/Country code'
+            , ui_name = 'Phones/Number'
             )
           , Record
             ( attr = Numeric_String `area_code`
@@ -1472,12 +1472,12 @@ _test_qr = """
             , ui_name = 'Phones/Area code'
             )
           , Record
-            ( attr = Numeric_String `number`
-            , full_name = 'phones.number'
-            , id = 'phones__number'
-            , name = 'number'
+            ( attr = Numeric_String `country_code`
+            , full_name = 'phones.country_code'
+            , id = 'phones__country_code'
+            , name = 'country_code'
             , sig_key = 3
-            , ui_name = 'Phones/Number'
+            , ui_name = 'Phones/Country code'
             )
           , Record
             ( attr = String `desc`

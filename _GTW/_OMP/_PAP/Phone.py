@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -36,6 +36,8 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     7-Aug-2012 (CT) Add `example`
 #    12-Sep-2012 (CT) Derive from `Property`
+#     7-Mar-2014 (CT) Add `ui_rank` in reverse order of `rank`
+#                     (to improve completion)
 #    ««revision-date»»···
 #--
 
@@ -66,6 +68,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             check          = ("value != '0'", )
             example        = "43"
             rank           = 1
+            ui_rank        = -1
 
             completer      = Attr.Completer_Spec  (1)
 
@@ -79,6 +82,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             check          = ("value != '0'", )
             example        = "1"
             rank           = 2
+            ui_rank        = -2
 
             completer      = Attr.Completer_Spec  \
                 (1, Attr.Selector.Name ("country_code"))
@@ -93,6 +97,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             check          = ("value != '0'", )
             example        = "234567"
             rank           = 3
+            ui_rank        = -3
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 

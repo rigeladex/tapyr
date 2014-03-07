@@ -102,9 +102,9 @@ _test_code = """
        <Field_Role_Hidden None 'left' 'PAP.Person'>
        <Fieldset None 'primary'>
         <Field_Entity None 'right' 'PAP.Phone'>
-         <Field None 'country_code'>
-         <Field None 'area_code'>
          <Field None 'number'>
+         <Field None 'area_code'>
+         <Field None 'country_code'>
         <Field None 'extension'>
        <Fieldset None 'optional'>
         <Field None 'desc'>
@@ -148,9 +148,9 @@ _test_code = """
     Field_Role_Hidden left Person u'Person linked to Phone' afs_div_seq
     Fieldset primary None u'' afs_div_seq
     Field_Entity right Phone u'Phone number of person' afs_div_seq
-    Field country_code Country code u'International country code of phone number (without prefix)' None
-    Field area_code Area code u'National area code of phone number (without prefix)' None
     Field number Number u'Phone number proper (without country code, area code, extension)' None
+    Field area_code Area code u'National area code of phone number (without prefix)' None
+    Field country_code Country code u'International country code of phone number (without prefix)' None
     Field extension Extension u'Extension number used in PBX' None
     Fieldset optional None u'' afs_div_seq
     Field desc Description u'Short description of the link' None

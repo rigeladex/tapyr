@@ -214,9 +214,9 @@ _test_code = """
     <urls.value.AQ [Attr.Type.Querier String]> -----
     <urls.desc.AQ [Attr.Type.Querier String]> -----
     <phones.AQ [Attr.Type.Querier Rev_Ref]> PAP.Phone
-    <phones.country_code.AQ [Attr.Type.Querier String]> -----
-    <phones.area_code.AQ [Attr.Type.Querier String]> -----
     <phones.number.AQ [Attr.Type.Querier String]> -----
+    <phones.area_code.AQ [Attr.Type.Querier String]> -----
+    <phones.country_code.AQ [Attr.Type.Querier String]> -----
     <phones.desc.AQ [Attr.Type.Querier String]> -----
     <emails.AQ [Attr.Type.Querier Rev_Ref]> PAP.Email
     <emails.address.AQ [Attr.Type.Querier String]> -----
@@ -282,9 +282,9 @@ _test_code = """
     <events.short_title.AQ [Attr.Type.Querier String]>
     <urls.value.AQ [Attr.Type.Querier String]>
     <urls.desc.AQ [Attr.Type.Querier String]>
-    <phones.country_code.AQ [Attr.Type.Querier String]>
-    <phones.area_code.AQ [Attr.Type.Querier String]>
     <phones.number.AQ [Attr.Type.Querier String]>
+    <phones.area_code.AQ [Attr.Type.Querier String]>
+    <phones.country_code.AQ [Attr.Type.Querier String]>
     <phones.desc.AQ [Attr.Type.Querier String]>
     <emails.address.AQ [Attr.Type.Querier String]>
     <emails.desc.AQ [Attr.Type.Querier String]>
@@ -346,9 +346,9 @@ _test_code = """
     <urls.last_cid.AQ [Attr.Type.Querier Ckd]>
     <urls.pid.AQ [Attr.Type.Querier Ckd]>
     <urls.type_name.AQ [Attr.Type.Querier String]>
-    <phones.country_code.AQ [Attr.Type.Querier String]>
-    <phones.area_code.AQ [Attr.Type.Querier String]>
     <phones.number.AQ [Attr.Type.Querier String]>
+    <phones.area_code.AQ [Attr.Type.Querier String]>
+    <phones.country_code.AQ [Attr.Type.Querier String]>
     <phones.desc.AQ [Attr.Type.Querier String]>
     <phones.last_cid.AQ [Attr.Type.Querier Ckd]>
     <phones.pid.AQ [Attr.Type.Querier Ckd]>
@@ -849,17 +849,17 @@ _test_code = """
           }
         , { 'Class' : 'Entity'
           , 'attrs' :
-              [ { 'name' : 'country_code'
+              [ { 'name' : 'number'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Country code'
+                , 'ui_name' : 'Number'
                 }
               , { 'name' : 'area_code'
                 , 'sig_key' : 3
                 , 'ui_name' : 'Area code'
                 }
-              , { 'name' : 'number'
+              , { 'name' : 'country_code'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Number'
+                , 'ui_name' : 'Country code'
                 }
               , { 'name' : 'desc'
                 , 'sig_key' : 3
@@ -1922,12 +1922,12 @@ _test_code = """
       , attr = Role_Ref_Set `phones`
       , attrs =
           [ Record
-            ( attr = Numeric_String `country_code`
-            , full_name = 'phones.country_code'
-            , id = 'phones__country_code'
-            , name = 'country_code'
+            ( attr = Numeric_String `number`
+            , full_name = 'phones.number'
+            , id = 'phones__number'
+            , name = 'number'
             , sig_key = 3
-            , ui_name = 'Phones/Country code'
+            , ui_name = 'Phones/Number'
             )
           , Record
             ( attr = Numeric_String `area_code`
@@ -1938,12 +1938,12 @@ _test_code = """
             , ui_name = 'Phones/Area code'
             )
           , Record
-            ( attr = Numeric_String `number`
-            , full_name = 'phones.number'
-            , id = 'phones__number'
-            , name = 'number'
+            ( attr = Numeric_String `country_code`
+            , full_name = 'phones.country_code'
+            , id = 'phones__country_code'
+            , name = 'country_code'
             , sig_key = 3
-            , ui_name = 'Phones/Number'
+            , ui_name = 'Phones/Country code'
             )
           , Record
             ( attr = String `desc`

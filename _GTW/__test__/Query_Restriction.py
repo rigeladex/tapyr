@@ -304,13 +304,13 @@ _test_code = """
           , 'sig_key' : 2
           , 'ui_name' : 'Regatta'
           }
-        , { 'name' : 'points'
-          , 'sig_key' : 0
-          , 'ui_name' : 'Points'
-          }
         , { 'name' : 'place'
           , 'sig_key' : 0
           , 'ui_name' : 'Place'
+          }
+        , { 'name' : 'points'
+          , 'sig_key' : 0
+          , 'ui_name' : 'Points'
           }
         ]
     , 'name_sep' : '__'
@@ -443,8 +443,8 @@ _test_code = """
                 <right.left.date.finish.AQ [Attr.Type.Querier Date]> <right.left.date.AQ [Attr.Type.Querier Composite]>
         <right.boat_class.AQ [Attr.Type.Querier Id_Entity]> <right.AQ [Attr.Type.Querier Id_Entity]>
             <right.boat_class.name.AQ [Attr.Type.Querier String]> <right.boat_class.AQ [Attr.Type.Querier Id_Entity]>
-    <points.AQ [Attr.Type.Querier Ckd]> <SRM.Boat_in_Regatta.AQ>
     <place.AQ [Attr.Type.Querier Ckd]> <SRM.Boat_in_Regatta.AQ>
+    <points.AQ [Attr.Type.Querier Ckd]> <SRM.Boat_in_Regatta.AQ>
 
     >>> print formatted (list (f.As_Template_Elem for f in qrs.Attrs))
     [ Record
@@ -752,20 +752,20 @@ _test_code = """
       , ui_type_name = 'Regatta'
       )
     , Record
-      ( attr = Int `points`
-      , full_name = 'points'
-      , id = 'points'
-      , name = 'points'
-      , sig_key = 0
-      , ui_name = 'Points'
-      )
-    , Record
       ( attr = Int `place`
       , full_name = 'place'
       , id = 'place'
       , name = 'place'
       , sig_key = 0
       , ui_name = 'Place'
+      )
+    , Record
+      ( attr = Int `points`
+      , full_name = 'points'
+      , id = 'points'
+      , name = 'points'
+      , sig_key = 0
+      , ui_name = 'Points'
       )
     ]
 
@@ -1172,17 +1172,17 @@ _test_code = """
           }
         , { 'Class' : 'Entity'
           , 'attrs' :
-              [ { 'name' : 'country_code'
+              [ { 'name' : 'number'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Country code'
+                , 'ui_name' : 'Number'
                 }
               , { 'name' : 'area_code'
                 , 'sig_key' : 3
                 , 'ui_name' : 'Area code'
                 }
-              , { 'name' : 'number'
+              , { 'name' : 'country_code'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Number'
+                , 'ui_name' : 'Country code'
                 }
               , { 'name' : 'desc'
                 , 'sig_key' : 3

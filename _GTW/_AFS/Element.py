@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -114,6 +114,7 @@
 #                     the same output as the former `__repr__`
 #     5-Aug-2012 (CT) Change `Form.__init__` to set `names`
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
+#     7-Mar-2014 (CT) Add `rank` to `_pop_to_self`
 #    ««revision-date»»···
 #--
 
@@ -179,7 +180,7 @@ class _Element_ (TFL.Meta.Object) :
     _pop_in_call    = ("collapsed", )
     _pop_to_self    = \
         ( "completer", "css_class", "description", "explanation"
-        , "id", "id_sep", "needs_value", "prefilled", "readonly"
+        , "id", "id_sep", "needs_value", "prefilled", "rank", "readonly"
         , "renderer", "required", "ui_name", "widget"
         )
     _lists_to_combine   = ("_pop_to_self", "_pop_in_call", "_pass_form_kw")

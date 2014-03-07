@@ -84,6 +84,7 @@
 #    13-Jan-2014 (CT) Add `A_Confirmation.input_widget`
 #    14-Jan-2014 (CT) Add `.afs_widget`, set it for `MAT.A_Confirmation`
 #    22-Jan-2014 (CT) Add `A_Numeric_String.input_widget`, `A_Url.input_widget`
+#     7-Mar-2014 (CT) Set `rank` of `Field` to `attr.ui_rank`
 #    ««revision-date»»···
 #--
 
@@ -371,7 +372,7 @@ class Field (_Field_) :
 
     def __call__ (self, E_Type, spec, seen, ** kw) :
         attr = E_Type.attr_prop (self.name)
-        ekw  = dict      (self.defaults, ** kw)
+        ekw  = dict      (self.defaults, rank = attr.ui_rank, ** kw)
         return self.Type (** self._field_kw (attr, E_Type, ** ekw))
     # end def __call__
 
@@ -467,7 +468,7 @@ class Field_Group (_Base_) :
             name = attr.name
             if name not in seen :
                 seen.add   (name)
-                akw = dict (attr_spec [name], name = name)
+                akw = dict (attr_spec [name], name = name, rank = attr.ui_rank)
                 if akw.get ("show_in_ui", True) :
                     yield attr.AFS_Spec (** akw)
     # end def fields

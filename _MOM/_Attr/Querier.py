@@ -80,6 +80,7 @@
 #     2-Mar-2014 (CT) Factor `_attr_selector`, add `_attr_selector_default`
 #     2-Mar-2014 (CT) Add `Rev_Ref`
 #     2-Mar-2014 (CT) Add `_nesting_level` and compare to `hidden_nested`
+#     7-Mar-2014 (CT) Sort `Attrs` by `ui_rank`
 #    ««revision-date»»···
 #--
 
@@ -181,7 +182,12 @@ class _Container_ (_Base_) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def Attrs (self) :
-        return tuple (getattr (self, c.name) for c in self._attrs)
+        return tuple \
+            ( sorted
+                ( (getattr (self, c.name) for c in self._attrs)
+                , key = TFL.Getter._attr.kind.ui_rank
+                )
+            )
     # end def Attrs
 
     @TFL.Meta.Once_Property
