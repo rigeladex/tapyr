@@ -119,6 +119,8 @@
 #    17-Feb-2014 (CT) Add exception handler to `send_error_email`
 #    17-Feb-2014 (CT) Use `pyk.decoded` in `send_error_email`
 #    17-Feb-2014 (CT) Use `pyk.encoded` instead of home-grown code
+#     7-Mar-2014 (CT) Change `Root._http_response_context` to NOT set
+#                     `scope.user` to `.person`, i.e., set it to `account`
 #    ««revision-date»»···
 #--
 
@@ -1676,8 +1678,6 @@ class RST_Root (_Ancestor) :
         scope = self.scope
         with self.LET (request = request, user = user) : ### XXX language ?
             if scope and getattr (scope, "LET", None) :
-                if user and getattr (user, "person", None) :
-                    user = user.person
                 with scope.LET (user = user) :
                     yield
             else :
