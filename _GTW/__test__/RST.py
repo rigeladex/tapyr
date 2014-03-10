@@ -429,7 +429,7 @@ _test_cqf = r"""
     SRM-_Boat_Class_    (String `name`,)
     SRM-_MOM_Link_n_    (Left `left`, Right `right`)
     SWP-Clip_O    (Object_PN `left`, Date_Interval `date_x`, Text `abstract`, Int `prio`)
-    SWP-Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, Format `format`, String `head_line`, Url `link_to`, String `title`, Boolean `hidden`, Int `prio`)
+    SWP-Clip_X    (Date-Slug `perma_name`, Text `text`, Date_Interval `date`, String `short_title`, String `title`, Format `format`, String `head_line`, Url `link_to`, Boolean `hidden`, Int `prio`)
     SWP-Gallery    (Date-Slug `perma_name`, Date_Interval `date`, String `short_title`, String `title`, Directory `directory`, Boolean `hidden`, Int `prio`)
     SWP-Id_Entity    ()
     SWP-Link    (Left `left`,)

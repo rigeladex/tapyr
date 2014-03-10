@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,8 @@
 #    14-Jun-2013 (CT) Change `dyn_doc_p` to dict
 #    14-Jun-2013 (CT) Use `_doc_properties` in `__init__`, not literal in
 #                     `__new__`  to normalize indent, update `dyn_doc_p`
+#    10-Mar-2014 (CT) Improve grep-ability of `dyn_doc_p` update
+#    10-Mar-2014 (CT) Factor `_i_rank` in here
 #    ««revision-date»»···
 #--
 
@@ -46,6 +48,8 @@ import _TFL.normalized_indent
 class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
     """Root of metaclasses for MOM.Attr.Type and MOM.Pred.Type"""
 
+    count = 0
+
     def __new__ (meta, name, bases, dct) :
         doc = dct.get ("__doc__")
         if not doc :
@@ -58,15 +62,17 @@ class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
     # end def __new__
 
     def __init__ (cls, name, bases, dct) :
+        M_Prop_Type.count += 1
+        cls._i_rank        = M_Prop_Type.count
         cls.__m_super.__init__ (name, bases, dct)
-        cls.dyn_doc_p = ddp = dict (getattr (cls, "dyn_doc_p", {}))
+        cls.dyn_doc_p = dyn_doc_p = dict (getattr (cls, "dyn_doc_p", {}))
         for n in cls._doc_properties :
             v = dct.get (n)
             if v :
                 v = TFL.normalized_indent (v)
                 setattr (cls, n, v)
                 if "%(" in v :
-                    ddp [n] = v
+                    dyn_doc_p [n] = v
         if not cls.__doc__ :
             cls.__doc__ = cls.description
     # end def __init__

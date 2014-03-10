@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -73,6 +73,7 @@
 #    12-Jun-2013 (CT) Add and use `is_partial_p`
 #    25-Jun-2013 (CT) Set `_max_ui_length` to None
 #    26-Jun-2013 (CT) Pass `postfix` to `_A_String_.New`
+#    10-Mar-2014 (CT) Factor `_d_rank` to `M_Prop_Type`
 #    ««revision-date»»···
 #--
 
@@ -87,8 +88,6 @@ import _TFL._Meta.Once_Property
 class Root (MOM.Meta.M_Prop_Type) :
     """Meta class for MOM.Attr.Type classes."""
 
-    count = 0
-
     def __new__ (meta, name, bases, dct) :
         dct.setdefault \
             ( "is_partial_p"
@@ -101,8 +100,6 @@ class Root (MOM.Meta.M_Prop_Type) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        Root.count        += 1
-        cls._d_rank        = Root.count
         cls._max_ui_length = None
         if not cls.is_partial_p :
             cls.ckd_name   = "__%s" % (cls.name, )

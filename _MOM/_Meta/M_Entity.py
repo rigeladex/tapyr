@@ -217,6 +217,7 @@
 #    25-Aug-2013 (CT) Change `M_Entity.__init__` to set `E_Spec`
 #     1-Mar-2014 (CT) Redefine `M_E_Type_MD._m_setup_attributes`
 #     2-Mar-2014 (CT) Add `ref.only_e_types` to `M_Id_Entity._m_setup_roles`
+#    10-Mar-2014 (CT) Set `i_rank`, `g_rank` as first thing in `__init__`
 #    ««revision-date»»···
 #--
 
@@ -608,13 +609,13 @@ class M_Entity (M_E_Mixin) :
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__  (name, bases, dict)
-        cls._m_init_prop_specs  (name, bases, dict)
-        cls._S_Extension.append (cls)
         cls.E_Spec = cls
         cls.i_rank = len (cls._S_Extension) - 1
         cls.g_rank = 1 + max \
             ([getattr (b, "g_rank", -1) for b in bases] + [-1])
+        cls.__m_super.__init__  (name, bases, dict)
+        cls._m_init_prop_specs  (name, bases, dict)
+        cls._S_Extension.append (cls)
     # end def __init__
 
     def add_attribute (cls, attr, verbose = True, override = False) :

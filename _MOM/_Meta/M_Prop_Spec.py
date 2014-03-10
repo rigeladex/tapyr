@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -34,6 +34,8 @@
 #    12-Jun-2013 (CT) Use `is_partial_p`
 #    12-Jun-2013 (CT) Add argument `app_type` to `m_setup_names`
 #    12-Jun-2013 (CT) Set `DET`, `DET_Base`, and `DET_Root` in `m_setup_names`
+#    10-Mar-2014 (CT) Add new entries in `.auto_up_depends` to `_own_names`
+#    10-Mar-2014 (CT) Set `_d_rank` in `m_setup_names`
 #    ««revision-date»»···
 #--
 
@@ -59,12 +61,16 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
             (  (n, v)
             for n, v in _names.iteritems () if v and v.dyn_doc_p
             )
+        auto_up_depends = set ()
         for n, v in dct.iteritems () :
             if getattr (v, "is_partial_p", True) :
                 continue
             if v is None :
                 _names [n] = _own_names [n] = None
             elif isinstance (v, MOM.Meta.M_Prop_Type) :
+                auto_up_depends.update (getattr (v, "auto_up_depends", ()))
+                if getattr (v, "_d_rank",  None) is None :
+                    v._d_rank = v._i_rank
                 if app_type :
                     if v.DET_Root is None :
                         v.DET_Root = e_type.type_name
@@ -72,15 +78,23 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
                         v.DET_Base = v.DET
                     v.DET = e_type.type_name
                 _names [n] = _own_names [n] = v
-                if v is not None :
-                    for bn in v.renameds :
-                        try :
-                            del _names [bn]
-                        except KeyError :
-                            print cls, v, n, bn
-                            raise
+                for bn in v.renameds :
+                    try :
+                        del _names [bn]
+                    except KeyError :
+                        print cls, v, n, bn
+                        raise
             elif n in _names :
                 raise cls._m_inconsistent_prop (n, v, _names, dct)
+        if auto_up_depends :
+            ### new or redefined attributes reference inherited attributes
+            ### --> include the inherited attributes in `_own_names`
+            ###     * otherwise, `dependent_attrs` of the inherited
+            ###       attributes points to redefined attributes
+            _own_names.update \
+                (   (n, _names [n])
+                for n in auto_up_depends if n not in _own_names
+                )
     # end def m_setup_names
 
     def _m_add_prop (cls, e_type, name, prop_type) :
