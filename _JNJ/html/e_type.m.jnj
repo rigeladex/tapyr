@@ -1,6 +1,6 @@
 {#- jinja template: _e_type.jnj -#}
 {#
-## Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -51,6 +51,7 @@
 ##                     into two: "__esf_for_attr__"  and "__esf_for_type__"
 ##     3-Apr-2013 (CT) Add `entity_selector_form_p`
 ##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
+##    11-Mar-2014 (CT) Add guard `skip_qr_attr_select` to `qr_control`
 ##    ««revision-date»»···
 ##--
 #}
@@ -274,13 +275,15 @@
     {{ qr_button_next  (page, qr) }}
     {{ qr_button_prev  (page, qr) }}
     {{ qr_button_first (page, qr) }}
-    {{ qr_button
-        ( page
-        , GTW._  ("Config")
-        , GTW._T ("Select the attributes to be displayed for each object")
-        , GTW._T ("Select attributes")
-        )
-    }}
+    {%- if not page.skip_qr_attr_select %}
+      {{ qr_button
+          ( page
+          , GTW._  ("Config")
+          , GTW._T ("Select the attributes to be displayed for each object")
+          , GTW._T ("Select attributes")
+          )
+      }}
+    {% endif -%}
     {{ qr_button
         ( page
         , GTW._  ("Add")
@@ -366,7 +369,7 @@
 
 {%- macro vip_button (page, cls ="") -%}
   {%- if page.vip_button_p %}
-    {%- set text = GTW._T ("Create new %s") % page.E_Type.ui_name.lower () %}
+    {%- set text = GTW._T ("Add new entry for %s") % page.E_Type.ui_name_T %}
     <p>
       <a href="{{ page.href_create () }}"{#--#}
          title="{{ text }}"{#--#}
