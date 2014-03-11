@@ -74,6 +74,7 @@
 #    25-Jun-2013 (CT) Set `_max_ui_length` to None
 #    26-Jun-2013 (CT) Pass `postfix` to `_A_String_.New`
 #    10-Mar-2014 (CT) Factor `_d_rank` to `M_Prop_Type`
+#    11-Mar-2014 (CT) Add `Composite` to simplify attribute redefinition
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,43 @@ class Root (MOM.Meta.M_Prop_Type) :
     # end def __init__
 
 # end class Root
+
+class Composite (Root) :
+    """Meta class for MOM.Attr._A_Composite_ classes."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls._do_overrides      (name, bases, dct)
+        cls.__m_super.__init__ (name, bases, dct)
+    # end def __init__
+
+    def _do_overrides (cls, name, bases, dct) :
+        _Attributes   = dct.get ("_Attributes")
+        _Predicates   = dct.get ("_Predicates")
+        P_Type_parent = cls.P_Type
+        if _Attributes or _Predicates :
+            if P_Type_parent is None :
+                raise MOM.Error.Inconsistent_Attribute \
+                    ( "%s: Attribute %s specifies `_Attributes` or "
+                      "`_Predicates` but no `P_Type`"
+                    % (dct ["__module__"], name)
+                    )
+            dn = name [2:] if name.startswith (("A_", "_A_")) \
+                   else P_Type_parent.__name__
+            kw = dict (__module__  = cls.__module__)
+            if _Attributes :
+                kw ["_Attributes"] = P_Type_parent._Attributes.__class__ \
+                    ( "_Attributes", (P_Type_parent._Attributes, )
+                    , _Attributes.__dict__
+                    )
+            if _Predicates :
+                kw ["_Predicates"] = P_Type_parent._Predicates.__class__ \
+                    ( "_Predicates", (P_Type_parent._Predicates, )
+                    , _Predicates.__dict__
+                    )
+            cls.P_Type = P_Type_parent.__class__ (dn, (P_Type_parent, ), kw)
+    # end def _do_overrides
+
+# end class Composite
 
 class Decimal (Root) :
     """Meta class for MOM.Attr.A_Decimal classes."""

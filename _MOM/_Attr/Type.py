@@ -338,6 +338,7 @@
 #     2-Mar-2014 (CT) Add `hidden_nested`
 #     3-Mar-2014 (CT) Add `FO_nested` (factored from `MOM.Entity._FO_`)
 #     7-Mar-2014 (CT) Add `ui_rank`
+#    11-Mar-2014 (CT) Set `_A_Composite_.__metaclass__`
 #    ««revision-date»»···
 #--
 
@@ -883,6 +884,8 @@ class _A_Entity_ (A_Attr_Type) :
 
 class _A_Composite_ (_A_Entity_) :
     """Common base class for composite attributes of an object."""
+
+    __metaclass__       = MOM.Meta.M_Attr_Type.Composite
 
     Kind_Mixins         = (MOM.Attr._Composite_Mixin_, )
 

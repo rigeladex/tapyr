@@ -136,50 +136,8 @@ class Date_Time_Interval (_Ancestor_Essence) :
 
 # end class Date_Time_Interval
 
-_Ancestor_Essence = Date_Time_Interval
-
-class Date_Time_Interval_C (_Ancestor_Essence) :
-    """Model a date_interval (start, finish [default: `start`])."""
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class finish (_Ancestor.finish) :
-
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-
-            def computed (self, obj) :
-                if obj and obj.start :
-                    return obj.start
-            # end def computed
-
-        # end class finish
-
-    # end class _Attributes
-
-# end class Date_Time_Interval_C
-
-class Date_Time_Interval_N (_Ancestor_Essence) :
-    """Model a date_interval (start [default: now], finish)."""
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class start (_Ancestor.start) :
-
-            Kind_Mixins        = (Attr.Sticky_Mixin, )
-            computed_default   = A_Date_Time.now
-
-        # end class start
-
-    # end class _Attributes
-
-# end class Date_Time_Interval_N
-
 class A_Date_Time_Interval (_A_Composite_) :
-    """Models an attribute holding a date interval (start, finish)"""
+    """Date-time interval (start, finish)."""
 
     P_Type         = Date_Time_Interval
     typ            = "Date_Time_Interval"
@@ -187,14 +145,39 @@ class A_Date_Time_Interval (_A_Composite_) :
 # end class A_Date_Time_Interval
 
 class A_Date_Time_Interval_C (A_Date_Time_Interval) :
+    """Date-time interval (start, finish [default: `start`])."""
 
-    P_Type         = Date_Time_Interval_C
+    class _Attributes :
+
+        def computed__finish (self, obj) :
+            if obj and obj.start :
+                return obj.start
+        # end def computed__finish
+
+        _Overrides = dict \
+            ( finish = dict
+                ( Kind_Mixins = (Attr.Computed_Set_Mixin, )
+                , computed    = computed__finish
+                )
+            )
+
+    # end class _Attributes
 
 # end class A_Date_Time_Interval_C
 
 class A_Date_Time_Interval_N (A_Date_Time_Interval) :
+    """Date-time interval (start [default: now], finish)."""
 
-    P_Type         = Date_Time_Interval_N
+    class _Attributes :
+
+        _Overrides = dict \
+            ( start  = dict
+                ( Kind_Mixins      = (Attr.Sticky_Mixin, )
+                , computed_default = A_Date_Time.now
+                )
+            )
+
+    # end class _Attributes
 
 # end class A_Date_Time_Interval_N
 

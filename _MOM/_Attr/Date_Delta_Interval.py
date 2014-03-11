@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #     3-Mar-2014 (CT) Creation
+#    11-Mar-2014 (CT) Use `_Overrides`
 #    ««revision-date»»···
 #--
 
@@ -119,14 +120,31 @@ class A_Date_or_Delta (A_Attr_Type) :
 
 # end class A_Date_or_Delta
 
-_Ancestor_Essence = MOM.Attr.Date_Interval
+class A_Date_Delta_Interval (A_Date_Interval) :
+    """Date-or-delta interval (start, delta-or-finish)"""
 
-class Date_Delta_Interval (_Ancestor_Essence) :
-    """Date interval specified as (start, delta-or-finish)."""
+    typ            = "Date_Delta_Interval"
 
-    class _Attributes (_Ancestor_Essence._Attributes) :
+    class _Attributes :
 
-        _Ancestor = _Ancestor_Essence._Attributes
+        def computed__finish (self, obj) :
+            fod = obj.delta_or_finish
+            if fod :
+                if isinstance (fod, datetime.date) :
+                    result = fod
+                elif obj.start :
+                    result = obj.start + fod
+                return result
+        # end def computed__finish
+
+        _Overrides = dict \
+            ( finish = dict
+                ( kind             = Attr.Internal
+                , Kind_Mixins      = (Attr.Computed_Set_Mixin, )
+                , computed         = computed__finish
+                , auto_up_depends  = ("delta_or_finish", "start")
+                )
+            )
 
         class delta_or_finish (A_Date_or_Delta) :
             """Length of interval or finish date."""
@@ -153,72 +171,31 @@ class Date_Delta_Interval (_Ancestor_Essence) :
 
         # end class delta_or_finish
 
-        class finish (_Ancestor.finish) :
-
-            kind               = Attr.Internal
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("delta_or_finish", "start")
-
-            def computed (self, obj) :
-                fod = obj.delta_or_finish
-                if fod :
-                    if isinstance (fod, datetime.date) :
-                        result = fod
-                    elif obj.start :
-                        result = obj.start + fod
-                    return result
-            # end def computed
-
-        # end class finish
-
     # end class _Attributes
 
-    class _Predicates (_Ancestor_Essence._Predicates) :
+    class _Predicates :
 
-        _Ancestor = _Ancestor_Essence._Predicates
-
-        class finish_after_start (_Ancestor.finish_after_start) :
-
-            kind               = Pred.Region
-
-        # end class finish_after_start
+        _Overrides = dict \
+            ( finish_after_start = dict (kind = Pred.Region)
+            )
 
     # end class _Predicates
-
-# end class Date_Delta_Interval
-
-_Ancestor_Essence = Date_Delta_Interval
-
-class Date_Delta_Interval_N (_Ancestor_Essence) :
-    """Model a date_interval (start [default: now], delta-or-finish)."""
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class start (_Ancestor.start) :
-
-            Kind_Mixins        = (Attr.Sticky_Mixin, )
-            computed_default   = A_Date.now
-
-        # end class start
-
-    # end class _Attributes
-
-# end class Date_Delta_Interval_N
-
-class A_Date_Delta_Interval (_A_Composite_) :
-    """Models an attribute holding a date interval (start, delta-or-finish)"""
-
-    P_Type         = Date_Delta_Interval
-    typ            = "Date_Delta_Interval"
 
 # end class A_Date_Interval
 
 class A_Date_Delta_Interval_N (A_Date_Delta_Interval) :
-    """Models an attribute holding a date interval (start, delta-or-finish)"""
+    """Date-or-delta interval (start [default: now], delta-or-finish)"""
 
-    P_Type         = Date_Delta_Interval_N
+    class _Attributes :
+
+        _Overrides = dict \
+            ( start  = dict
+                ( Kind_Mixins      = (Attr.Sticky_Mixin, )
+                , computed_default = A_Date.now
+                )
+            )
+
+    # end class _Attributes
 
 # end class A_Date_Interval
 

@@ -36,6 +36,7 @@
 #    12-Jun-2013 (CT) Set `DET`, `DET_Base`, and `DET_Root` in `m_setup_names`
 #    10-Mar-2014 (CT) Add new entries in `.auto_up_depends` to `_own_names`
 #    10-Mar-2014 (CT) Set `_d_rank` in `m_setup_names`
+#    11-Mar-2014 (CT) Add support for `_Overrides`
 #    ««revision-date»»···
 #--
 
@@ -49,8 +50,10 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
     """Root meta class for for attribute-spec and predicate-spec metaclasses.
     """
 
+    _Overridden = set ()
+
     def m_setup_names (cls, e_type, app_type = None) :
-        dct        = cls.__dict__
+        dct        = dict (cls.__dict__)
         _names     = {}
         _own_names = {}
         setattr (cls, "_names",     _names)
@@ -61,9 +64,24 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
             (  (n, v)
             for n, v in _names.iteritems () if v and v.dyn_doc_p
             )
+        Overrides = dct.get ("_Overrides")
+        if Overrides and cls not in cls._Overridden :
+            cls._Overridden.add (cls)
+            for k, o in Overrides.iteritems () :
+                try :
+                    p = getattr (cls, k)
+                except KeyError :
+                    raise MOM.Error.Inconsistent_Attribute \
+                        ( "%s %s: Attribute `%s = %r` has no parent"
+                        % (dct ["__module__"], e_type, k, o)
+                        )
+                if isinstance (p, MOM.Meta.M_Prop_Type) :
+                    d = dct [k] = p.__class__ \
+                        ( k, (p, ), dict (o, __module__ = cls.__module__))
+                    setattr (cls, k, d)
         auto_up_depends = set ()
         for n, v in dct.iteritems () :
-            if getattr (v, "is_partial_p", True) :
+            if getattr (v, "is_partial_p", True) or n == "_Overrides" :
                 continue
             if v is None :
                 _names [n] = _own_names [n] = None
