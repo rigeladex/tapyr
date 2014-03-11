@@ -81,6 +81,7 @@
 #     8-Jan-2013 (CT) Add `account_make_cert`
 #    22-Jan-2014 (CT) Add `empty_dir`
 #    12-Feb-2014 (CT) Add `regatta_ranking`
+#    11-Mar-2014 (CT) Add `e_type_display`
 #    ««revision-date»»···
 #--
 
@@ -566,6 +567,7 @@ Template ("error_email",                  "email/error.jnj")
 Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
 Template ("e_type_afs",                   "html/e_type_afs.jnj")
+Template ("e_type_display",               "html/e_type_display.jnj")
 Template ("e_type_doc",                   "html/e_type_doc.jnj")
 Template ("e_type_doc_bare",              "html/e_type_doc_bare.jnj")
 Template ("e_type_change",                "html/e_type_change.jnj")

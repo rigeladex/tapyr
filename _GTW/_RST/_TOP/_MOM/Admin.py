@@ -70,6 +70,9 @@
 #    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
 #     3-Mar-2014 (CT) Change `Field.ui_name` to use `.aq._ui_name_T`
 #                     and to add `zero-width-space`
+#    11-Mar-2014 (CT) Redefine `_HTML_Action_.head_line`
+#    11-Mar-2014 (CT) Add `Displayer`, modify `href_display`
+#    11-Mar-2014 (CT) Factor `css_class` (from jinja); add `Field.as_html`
 #    ««revision-date»»···
 #--
 
@@ -243,6 +246,13 @@ class _HTML_Action_ (_Ancestor) :
             _Ancestor.GET._renderers + (GTW.RST.Mime_Type.JSON, )
 
     POST = _HTML_Action_POST_ # end class
+
+    @property
+    @getattr_safe
+    def head_line (self) :
+        return "%s %s" % \
+            (_T (self.__class__.name.capitalize ()), self.E_Type.ui_name_T)
+    # end def head_line
 
     def form (self, obj = None, ** kw) :
         if obj is None :
@@ -718,6 +728,42 @@ class Deleter (_JSON_Action_PO_) :
 
 # end class Deleter
 
+class Displayer (GTW.RST.TOP.MOM.Entity_Mixin, GTW.RST.TOP.Page) :
+
+    argn               = 1
+    name               = "display"
+    page_template_name = "e_type_display"
+
+    def __init__ (self, ** kw) :
+        ETM = self.parent.ETM
+        kw ["obj"] = ETM.pid_query (kw ["args"] [0])
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    @Once_Property
+    @getattr_safe
+    def admin (self) :
+        return self.parent
+    # end def admin
+
+    @Once_Property
+    @getattr_safe
+    def fields (self) :
+        admin  = self.admin
+        names  = tuple (a.name for a in self.E_Type.edit_attr)
+        FO     = GTW.FO (self.obj, admin.top.encoding)
+        result = tuple ((f, f.value (FO)) for f in admin._fields (names))
+        return result
+    # end def fields
+
+    @property
+    @getattr_safe
+    def head_line (self) :
+        return self.E_Type.ui_name_T
+    # end def head_line
+
+# end class Displayer
+
 class Expander (_JSON_Action_) :
     """Expand a sub-form (e.g., Entity_Link)"""
 
@@ -932,6 +978,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     Changer               = Changer
     Deleter               = Deleter
+    Displayer             = Displayer
 
     button_types          = dict \
         ( ADD             = "button"
@@ -954,7 +1001,8 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     _entry_type_map       = dict \
         ((c.name, c) for c in
-            ( Changer, Completed, Completer, Creator, Deleter, Expander
+            ( Changer, Completed, Completer, Creator, Deleter, Displayer
+            , Expander
             , _QX_Dispatcher_
             )
         )
@@ -999,7 +1047,11 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
         def href_delete (self) :
             return self.admin.href_delete (self.obj)
-        # end def href
+        # end def href_delete
+
+        def href_display (self) :
+            return self.admin.href_display (self.obj)
+        # end def href_display
 
         def __getattr__ (self, name) :
             return getattr (self.obj, name)
@@ -1024,6 +1076,15 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             return self.aq._attr
         # end def attr
 
+        @Once_Property
+        @getattr_safe
+        def css_class (self) :
+            attr = self.attr
+            if attr.css_align :
+                return "-".join (("align", attr.css_align))
+            return ""
+        # end def css_class
+
         @property ### depends on currently selected language (I18N/L10N)
         @getattr_safe
         def description (self) :
@@ -1042,6 +1103,10 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             ### put `zero-width-space` before `/`
             return self.aq._ui_name_T.replace ("/", "\u200b/")
         # end def ui_name
+
+        def as_html (self, o, v) :
+            return v
+        # end def as_thml
 
         def value (self, o) :
             return getattr (o, self.name)
@@ -1217,10 +1282,12 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         return result
     # end def href_delete
 
-    def href_display (self, obj) :
+    def href_display (self, obj = None) :
         man = self.manager
         if man :
             return man.href_display (obj)
+        elif obj is not None :
+            return pp_join (self.abs_href, "display", str (obj.pid))
     # end def href_display
 
     def href_expand (self) :

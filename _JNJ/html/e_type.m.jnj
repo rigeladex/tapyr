@@ -52,6 +52,8 @@
 ##     3-Apr-2013 (CT) Add `entity_selector_form_p`
 ##     6-Oct-2013 (CT) Add `with context` to import of `form.jnj`
 ##    11-Mar-2014 (CT) Add guard `skip_qr_attr_select` to `qr_control`
+##    11-Mar-2014 (CT) Add guard for `href_change`, `href_delete` to
+##                     `admin_table`; add `href_display`
 ##    ««revision-date»»···
 ##--
 #}
@@ -143,7 +145,7 @@
 {%- endmacro -%} {#- obj_button -#}
 
 {%- macro obj_create_button (page, E_Type, tag) -%}
-  {{ obj_button (page, E_Type, tag, page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "plus", "add") }}
+  {{ obj_button (page, E_Type, tag, page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "circle-plus", "add") }}
 {%- endmacro -%} {#- obj_create_button -#}
 
 {%- macro order_by_form () -%}
@@ -393,16 +395,28 @@
     </thead>
     <tbody>
       {% for o in objects %}
+        {%- set href_change  = o.href_change  () %}
+        {%- set href_delete  = o.href_delete  () %}
+        {%- set href_display = o.href_display () %}
         <tr id="pk-{{ o.pid }}">
-          {{ obj_button (page, E_Type, "td", o.href_change (), o.pid, GTW._T ("Change object"), "pencil", "change") }}
+          {%- if href_change %}
+            {{ obj_button (page, E_Type, "td", href_change, o.pid, GTW._T ("Change object"), "pencil", "change") }}
+          {%- elif href_display %}
+            {{ obj_button (page, E_Type, "td", href_display, o.pid, GTW._T ("Display object"), "circle-zoomin", "display") }}
+          {%- else %}
+            <td></td>
+          {% endif -%}
           {% for f, v in o.fields %}
-            {%- set align =
-                   (" class=\"align-%s\"" % (f.attr.css_align, ))
-                if f.attr.css_align else ""
+            {%- set css_class =
+                   (" class=\"%s\"" % (f.css_class, )) if f.css_class else ""
             -%}
-            <td{{ align }}>{{ v }}</td>
+            <td{{ css_class }}>{{ f.as_html (o, v) }}</td>
           {% endfor %}
-          {{ obj_button (page, E_Type, "td", o.href_delete (), o.pid, GTW._T ("Delete object"), "trash", "delete", "delete") }}
+          {%- if href_delete %}
+            {{ obj_button (page, E_Type, "td", href_delete, o.pid, GTW._T ("Delete object"), "trash", "delete", "delete") }}
+          {%- else %}
+            <td></td>
+          {% endif -%}
         </tr>
       {% endfor %}
     </tbody>

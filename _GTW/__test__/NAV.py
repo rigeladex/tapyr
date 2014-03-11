@@ -76,6 +76,7 @@ _test_nav = """
     e_type_afs|afs_div_seq|afs_fc_horizo
     e_type_aggregator
     e_type_delete
+    e_type_display
     gallery
     html/static.jnj
     login
@@ -110,6 +111,7 @@ _test_nav = """
     e_type_afs
     e_type_afs|afs_div_seq
     e_type_afs|afs_div_seq|afs_fc_horizo
+    e_type_display
     gallery
     html/static.jnj
     login
@@ -198,6 +200,7 @@ _test_nav = """
       , 'e_type_afs|afs_div_seq'
       , 'e_type_afs|afs_div_seq|afs_fc_horizo'
       ]
+    , [ 'e_type_display' ]
     , [ 'gallery' ]
     , [ 'photo' ]
     , [ 'site_admin' ]
