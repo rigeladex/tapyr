@@ -34,6 +34,7 @@
 #     3-May-2013 (CT) Rename `login_required` to `auth_required`
 #    24-Jan-2014 (CT) Add `_Mixin_` to bases of `Alias`
 #    24-Jan-2014 (CT) Add `A_Link`
+#    12-Mar-2014 (CT) Add `Alias.independent_permissions_p`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,10 @@ class TOP_Alias (GTW.RST.TOP._Mixin_, GTW.RST.Alias) :
     @Once_Property
     @getattr_safe
     def auth_required (self) :
-        return (not self.target) or self.target.auth_required
+        if self.independent_permissions_p :
+            return self.__super.auth_required
+        else :
+            return (not self.target) or self.target.auth_required
     # end def auth_required
 
     def is_current_page (self, page) :

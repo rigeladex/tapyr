@@ -121,6 +121,7 @@
 #    17-Feb-2014 (CT) Use `pyk.encoded` instead of home-grown code
 #     7-Mar-2014 (CT) Change `Root._http_response_context` to NOT set
 #                     `scope.user` to `.person`, i.e., set it to `account`
+#    12-Mar-2014 (CT) Add `Alias.independent_permissions_p`
 #    ««revision-date»»···
 #--
 
@@ -867,6 +868,8 @@ class RST_Alias (_Ancestor) :
     _target_page               = None
     _parent_attr               = set (("prefix", "top"))
 
+    independent_permissions_p  = False
+
     page_template_name         = property \
         ( lambda s    : s.target.page_template_name
         , lambda s, v : setattr (s.target, "page_template_name", v)
@@ -917,7 +920,10 @@ class RST_Alias (_Ancestor) :
     # end def target
 
     def allow_method (self, method, user) :
-        return (not self.target) or self.target.allow_method (method, user)
+        if self.independent_permissions_p :
+            return self.__super.allow_method (method, user)
+        else :
+            return (not self.target) or self.target.allow_method (method, user)
     # end def allow_method
 
     def _get_method (self, name) :
