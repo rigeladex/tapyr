@@ -34,9 +34,12 @@
 ##    13-Sep-2010 (CT) Use `e.date.start` before `e.date`
 ##     8-Apr-2013 (CT) Use `e.created_by`, not `e.creator`
 ##    22-Jan-2014 (CT) Factor variable `changer`
+##    14-Mar-2014 (CT) Add `rel_nav_buttons`
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- import "STD::html/navigation.jnj" as NT with context %}
 
 {%- macro entry (e) -%}
   <div class="news-entry">
@@ -70,7 +73,8 @@
 {%- endmacro -%} {#- entry -#}
 
 {%- block document -%}
-  {{- entry (page) -}}
+  {{- entry (page) }}
+  {{ NT.rel_nav_buttons (page) -}}
 {%- endblock document -%}
 
 {#- __END__ jinja template: html/news.jnj -#}

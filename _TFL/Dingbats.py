@@ -29,6 +29,7 @@
 #    13-Feb-2014 (CT) Creation
 #    20-Feb-2014 (CT) Sort dingbats by by name
 #    20-Feb-2014 (CT) Add `trigram_for_heaven`
+#    13-Mar-2014 (CT) Add some symbols for triangles and blocks
 #    ««revision-date»»···
 #--
 
@@ -232,7 +233,25 @@ white_question_mark_ornament                                        = "\u2754"
 white_scissors                                                      = "\u2704"
 writing_hand                                                        = "\u270d"
 
-### technically not a dingbat
+### technically not dingbats
+
+### http://www.alanwood.net/unicode/geometric_shapes.html
+black_circle                                                        = "\u25CF"
+black_down_pointing_triangle                                        = "\u25BC"
+black_left_pointing_triangle                                        = "\u25C0"
+black_lower_left_triangle                                           = "\u25E3"
+black_lower_right_triangle                                          = "\u25E2"
+black_right_pointing_triangle                                       = "\u25B6"
+black_up_pointing_triangle                                          = "\u25B2"
+black_upper_left_triangle                                           = "\u25E4"
+black_upper_right_triangle                                          = "\u25E5"
+
+### http://www.alanwood.net/unicode/block_elements.html
+left_one_eighth_block                                               = "\u258F"
+left_one_quarter_block                                              = "\u258E"
+right_one_eighth_block                                              = "\u2595"
+
+### http://www.alanwood.net/unicode/miscellaneous_symbols.html
 trigram_for_heaven                                                  = "\u2630"
 
 if __name__ != "__main__" :

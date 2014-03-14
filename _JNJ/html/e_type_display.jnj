@@ -29,13 +29,17 @@
 ##
 ## Revision Dates
 ##    11-Mar-2014 (CT) Creation
+##    14-Mar-2014 (CT) Add `nav_buttons`
 ##    ««revision-date»»···
 ##--
 #}
 
+{%- import "html/e_type.m.jnj" as e_type with context %}
+
 {%- block document -%}
   {%- set obj = page.obj %}
   <table class="Object-Display">
+    {{ e_type.nav_buttons (page, page.fields, objects) }}
     <tbody>
       {%- for f, v in page.fields %}
         {%- set css_class = GTW.filtered_join

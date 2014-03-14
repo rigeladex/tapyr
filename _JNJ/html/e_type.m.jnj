@@ -54,12 +54,14 @@
 ##    11-Mar-2014 (CT) Add guard `skip_qr_attr_select` to `qr_control`
 ##    11-Mar-2014 (CT) Add guard for `href_change`, `href_delete` to
 ##                     `admin_table`; add `href_display`
+##    14-Mar-2014 (CT) Add and use `nav_buttons`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
 {%- import "html/form.jnj" as Form with context %}
+{%- import "STD::html/navigation.jnj" as NT with context %}
 
 {%- macro attr_filter_table (filters, need_op = True) -%}
   <table class="{{ kwargs.get ("class", "attrs") }}">
@@ -133,6 +135,15 @@
     </div>
   </div>
 {%- endmacro -%} {#- entity_selector_form_p -#}
+
+{%- macro nav_buttons (page, fields, objects) -%}
+  {%- set nof = GTW.len (fields)  %}
+  {%- set start_tag = '<tfoot class="rel-nav"><tr><td colspan="%s">'
+      % (nof + 2, )
+  %}
+  {%- set end_tag = "</td></tr></tfoot>" %}
+  {{ NT.rel_nav_buttons (page, start_tag, end_tag) }}
+{%- endmacro -%} {#- nav_buttons -#}
 
 {%- macro obj_button (page, E_Type, tag, href, name, desc, icon, kind, a_class=None) -%}
   <{{ tag }} class="cmd-button {{ kind }}">
@@ -393,6 +404,7 @@
         {{ obj_create_button (page, E_Type, "th") }}
       </tr>
     </thead>
+    {{ nav_buttons (page, fields, objects) }}
     <tbody>
       {% for o in objects %}
         {%- set href_change  = o.href_change  () %}
@@ -423,11 +435,11 @@
   </table>
 {%- endmacro -%} {#- admin_table -#}
 
-{%- macro admin (page, fields, objects) -%}
-  {{ vip_button (page, "top") }}
+{%- macro admin  (page, fields, objects) -%}
+  {{ vip_button  (page, "top") }}
   {{ qr_control  (page, fields, page.query_restriction) }}
   {{ admin_table (page, fields, objects) }}
-  {{ vip_button (page, "bot") }}
+  {{ vip_button  (page, "bot") }}
 {%- endmacro -%} {#- admin -#}
 
 {#- __END__ jinja template: html/e_type.m.jnj -#}

@@ -122,6 +122,12 @@
 #     7-Mar-2014 (CT) Change `Root._http_response_context` to NOT set
 #                     `scope.user` to `.person`, i.e., set it to `account`
 #    12-Mar-2014 (CT) Add `Alias.independent_permissions_p`
+#    13-Mar-2014 (CT) Show `url`, not `url_x`, in `time_block`
+#    13-Mar-2014 (CT) Call `_handle_method_context` in `_http_response`,
+#                     not in `_handle_method`;
+#                     redefine `Alias._handle_method_context` to delegate
+#    14-Mar-2014 (CT) Add alias property `proper_entries`
+#    14-Mar-2014 (CT) Add `response` to `_http_response_context`
 #    ««revision-date»»···
 #--
 
@@ -815,9 +821,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     # end def _get_user
 
     def _handle_method (self, method, request, response) :
-        with self._handle_method_context (method, request, response) :
-            result = method (self, request, response)
-            return result
+        return method (self, request, response)
     # end def _handle_method
 
     @TFL.Contextmanager
@@ -939,6 +943,17 @@ class RST_Alias (_Ancestor) :
             return target._handle_method (method, request, response)
     # end def _handle_method
 
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request, response) :
+        target = self.target
+        if target :
+            hmc = target._handle_method_context
+        else :
+            hmc = self.__super._handle_method_context
+        with hmc (method, request, response) :
+            yield
+    # end def _handle_method_context
+
     def __getattr__ (self, name) :
         if name not in self._parent_attr :
             target = self.target
@@ -994,6 +1009,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     _href_pat_frag             = None
 
     empty_template_name        = "empty_dir"
+    proper_entries             = Alias_Property ("entries")
 
     template                   = Alias_Property ("dir_template")
     template_name              = Alias_Property ("dir_template_name")
@@ -1665,14 +1681,16 @@ class RST_Root (_Ancestor) :
                                 ( "%d-%b-%Y %H:%M:%S"
                                 , time.localtime (time.time ())
                                 )
-                            , method.name, request.url_x.replace ("%", "%%")
+                            , method.name, request.url.replace ("%", "%%")
                             )
                     else :
                         context = TFL.Context.relaxed
                         fmt     = None
                     with context (fmt, sys.stderr) :
-                        return resource._handle_method \
-                            (method, request, response)
+                        with resource._handle_method_context \
+                                (method, request, response) :
+                            return resource._handle_method \
+                                (method, request, response)
                 else :
                     self._http_response_need_auth \
                         (resource, request, response, auth)
@@ -1680,9 +1698,12 @@ class RST_Root (_Ancestor) :
 
     @TFL.Contextmanager
     def _http_response_context (self, resource, request, response) :
-        user = request.user
-        scope = self.scope
-        with self.LET (request = request, user = user) : ### XXX language ?
+        user      = request.user
+        scope     = self.scope
+        r_context = dict \
+            (request = request, response = response, user = user)
+            ### XXX language ?
+        with self.LET (** r_context) :
             if scope and getattr (scope, "LET", None) :
                 with scope.LET (user = user) :
                     yield

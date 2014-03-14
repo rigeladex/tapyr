@@ -1,0 +1,83 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package JNJ.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    html/rel_nav.media
+#
+# Purpose
+#    Media fragment for relative navigation
+#
+# Revision Dates
+#    14-Mar-2014 (CT) Creation
+#    ««revision-date»»···
+#--
+
+style_sheet = Style_Sheet \
+    ( Rule
+        ( ".rel-nav"
+        , children             =
+            [ Rule
+                ( "a", "b"
+                , display          = "inline-block"
+                , height           = Em (2.0)
+                , padding          = TRBL0 (t = Em (0.125))
+                , text_align       = "center"
+                , vertical_align   = "middle"
+                , width            = Em (2.0)
+                , children         =
+                    [ Rule_Pseudo
+                        ( "not(:first-child)"
+                        , margin   = TRBL0 (l = Em (0.5))
+                        )
+                    ]
+                )
+            , Rule
+                ( "a"
+                , background_color = P.color_heading
+                , border           = P.border_button
+                , color            = P.color_selected
+                , position         = "relative"
+                , children         =
+                    [ P.Rule.hover_rev
+                    , Rule
+                        ( ".first"
+                        , left     = Em (-0.05)
+                        , position = "absolute"
+                        )
+                    , Rule
+                        ( ".last"
+                        , left     = Em (0.65)
+                        , position = "absolute"
+                        )
+                    ]
+                , ** Border (radius = Px (10))
+                )
+            , Rule
+                ( "b"
+                , background_color = P.background_color
+                , border_color     = P.background_color
+                , border_style     = "solid"
+                )
+            ]
+        )
+    )
+
+### __END__ html/rel_nav.media

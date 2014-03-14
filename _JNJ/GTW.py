@@ -62,6 +62,7 @@
 #     9-Aug-2012 (MG) Use `** kw` notation for `update_blackboard`
 #    12-Feb-2014 (CT) Add `enumerate`
 #    13-Feb-2014 (CT) Add `Dingbats` and `unichr`
+#    14-Mar-2014 (CT) Add `any` and `all`
 #    ««revision-date»»···
 #--
 
@@ -91,6 +92,9 @@ class GTW (TFL.Meta.Object) :
         self.env               = env
         self.render_mode_stack = []
     # end def __init__
+
+    all  = staticmethod (all)
+    any  = staticmethod (any)
 
     @Once_Property
     def Dingbats (self) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -41,6 +41,8 @@
 #    11-Apr-2013 (CT) Factor `_pepk_filter` from `Filter` and fix
 #     7-May-2013 (CT) Add exception handler to `_setup_attr`
 #     7-May-2013 (CT) Add guard against `A_Cached_Role` to `_setup_attr`
+#    13-Mar-2014 (CT) Add `offset_next`, `offset_prev`; factor `_offset_f`
+#    14-Mar-2014 (CT) Add `request_args`, `request_args_abs`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +63,7 @@ import _TFL.Record
 
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first, uniq
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
@@ -68,25 +71,27 @@ from   itertools                import chain as ichain
 class RST_Query_Restriction (TFL.Meta.Object) :
     """Query restriction for RESTful MOM resources."""
 
-    _real_name  = "Query_Restriction"
+    _real_name    = "Query_Restriction"
 
-    attributes  = ()
-    filters     = ()
-    filters_q   = ()
-    limit       = 0
-    offset      = 0
-    order_by    = ()
-    order_by_q  = ()
-    query_b     = None
-    query_f     = None
+    attributes    = ()
+    filters       = ()
+    filters_q     = ()
+    limit         = 0
+    offset        = 0
+    order_by      = ()
+    order_by_q    = ()
+    query_b       = None
+    query_f       = None
+    relative_args = set (("FIRST", "LAST", "NEXT", "PREV"))
+    request_args  = None
 
-    _id_sep     = MOM.Attr.Querier.id_sep
-    _op_sep     = MOM.Attr.Querier.op_sep
-    _ui_sep     = MOM.Attr.Querier.ui_sep
+    _id_sep       = MOM.Attr.Querier.id_sep
+    _op_sep       = MOM.Attr.Querier.op_sep
+    _ui_sep       = MOM.Attr.Querier.ui_sep
 
-    _name_1_p   = r"[a-zA-Z0-9]+ (?: _[a-zA-Z0-9]+)*"
-    _type_p     = r"[A-Za-z0-9_.]+"
-    _name_1q_p  = " ".join \
+    _name_1_p     = r"[a-zA-Z0-9]+ (?: _[a-zA-Z0-9]+)*"
+    _type_p       = r"[A-Za-z0-9_.]+"
+    _name_1q_p    = " ".join \
         ( ( _name_1_p                             ### leading name
           ,   r"(?: "
           ,     r"\[", _type_p, r"\]"             ### type_name
@@ -95,7 +100,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
           ,   r")?"
           )
         )
-    _name_p     = " ".join \
+    _name_p       = " ".join \
         ( ( r"(?P<name>"
           ,   _name_1q_p                          ### leading name
           ,   r"(?: "
@@ -105,18 +110,18 @@ class RST_Query_Restriction (TFL.Meta.Object) :
           , r")"
           )
         )
-    _op_p       = r"(?P<op> [A-Z]+)"
+    _op_p         = r"(?P<op> [A-Z]+)"
 
-    _a_pat      = Regexp \
+    _a_pat        = Regexp \
         ( "".join ((_name_p, _op_sep, _op_p, r"$"))
         , re.VERBOSE
         )
 
-    _a_pat_opt  = Regexp \
+    _a_pat_opt    = Regexp \
         ( "".join ((_name_p, r"(?:", _op_sep, _op_p, r")?", r"$"))
         , re.VERBOSE
         )
-    _t_pat      = Regexp \
+    _t_pat        = Regexp \
         ( "".join
             ((r"\[", r"(?P<type>", _type_p, r")", r"\](?: \.|", _id_sep, r")?"))
         , re.VERBOSE
@@ -155,6 +160,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         result = cls \
             ( limit          = data.pop ("limit",  0)
             , offset         = data.pop ("offset", 0)
+            , request_args   = getattr (request, "args", None)
             )
         limit  = result.limit
         if limit :
@@ -220,16 +226,28 @@ class RST_Query_Restriction (TFL.Meta.Object) :
 
     @Once_Property
     def offset_f (self) :
-        result  = self.offset
-        total_f = self.total_f
-        limit   = self.limit
-        if result < - total_f :
-            result = self.offset = 0
-        elif result < 0 :
-            result = total_f + result
-        result = max (min (result, total_f - limit), 0)
+        result = self._offset_f (self.offset)
+        if result == 0:
+            self.offset = 0
         return result
     # end def offset_f
+
+    @Once_Property
+    def offset_next (self) :
+        limit = self.limit
+        if limit :
+            return self._offset_f (self.offset + limit)
+    # end def offset_next
+
+    @Once_Property
+    def offset_prev (self) :
+        limit = self.limit
+        if limit :
+            result = self.offset - limit
+            if result < 0 :
+                result = 0
+            return result
+    # end def offset_prev
 
     @Once_Property
     def order_by_names (self) :
@@ -247,6 +265,17 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     def prev_p (self) :
         return self.offset_f > 0
     # end def prev_p
+
+    @Once_Property
+    def request_args_abs (self) :
+        request_args  = self.request_args
+        relative_args = self.relative_args
+        result = dict \
+            ( (k, v) for k, v in pyk.iteritems (request_args)
+            if k not in relative_args
+            )
+        return result
+    # end def request_args_abs
 
     @Once_Property
     def total_f (self) :
@@ -336,6 +365,18 @@ class RST_Query_Restriction (TFL.Meta.Object) :
             filters_q.append (fq)
         return tuple (filters), tuple (filters_q)
     # end def attr_filters
+
+    def _offset_f (self, offset) :
+        result  = offset
+        total_f = self.total_f
+        limit   = self.limit
+        if result < - total_f :
+            result = 0
+        elif result < 0 :
+            result = total_f + result
+        result = max (min (result, total_f - limit), 0)
+        return result
+    # end def _offset_f
 
     @classmethod
     def _pepk_filter (cls, E_Type, key, name, typ, tail, value, default_op) :

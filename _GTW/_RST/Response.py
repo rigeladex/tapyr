@@ -40,6 +40,7 @@
 #                     (to that of `set_cookie`)
 #     9-Dec-2013 (CT) Add `anti_csrf_token`
 #    11-Feb-2014 (CT) Add `user`
+#    13-Mar-2014 (CT) Add `add_rel_links`, `rel_{first,last,next,parent,prev}`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _GTW                      import GTW
 from   _TFL                      import TFL
+from   _TFL.pyk                  import pyk
 
 import _GTW._RST
 
@@ -55,6 +57,10 @@ from   _TFL._Meta.Once_Property  import Once_Property
 import _TFL._Meta.M_Auto_Combine_Sets
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
+
+from   posixpath                 import join as pp_join
+
+import urllib
 
 class _M_Response_ (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
     """Meta class for Response"""
@@ -98,6 +104,41 @@ class _RST_Response_ (TFL.Meta.Object) :
         return _response.__call__ (* args, ** kw)
     # end def __call__
 
+    @Once_Property
+    def rel_first (self) :
+        return self._get_rel ("first")
+    # end def rel_first
+
+    @Once_Property
+    def rel_first_child (self) :
+        return self._get_rel ("first_child")
+    # end def rel_first_child
+
+    @Once_Property
+    def rel_last (self) :
+        return self._get_rel ("last")
+    # end def rel_last
+
+    @Once_Property
+    def rel_last_child (self) :
+        return self._get_rel ("last_child")
+    # end def rel_last_child
+
+    @Once_Property
+    def rel_next (self) :
+        return self._get_rel ("next")
+    # end def rel_next
+
+    @Once_Property
+    def rel_parent (self) :
+        return self._get_rel ("parent")
+    # end def rel_parent
+
+    @Once_Property
+    def rel_prev (self) :
+        return self._get_rel ("prev")
+    # end def rel_prev
+
     @property
     def resource (self) :
         return self._request.resource
@@ -111,6 +152,15 @@ class _RST_Response_ (TFL.Meta.Object) :
     def add_link (self, rel, value, ** kw) :
         self._links [rel] = value, kw
     # end def add_link
+
+    def add_rel_links (self, * names) :
+        if not names :
+            names = ("next", "prev", "parent", "first_child")
+        for name in names :
+            value = getattr (self, "rel_" + name)
+            if value is not None :
+                self.add_link (name, value)
+    # end def add_rel_links
 
     def clear_cookie (self, name, ** kw) :
         ### Don't use werkzeug's `delete_cookie`: sends `max_age = 0`
@@ -133,6 +183,21 @@ class _RST_Response_ (TFL.Meta.Object) :
         self.set_cookie (name, value, ** kw)
         return value
     # end def set_secure_cookie
+
+    def _get_rel (self, name) :
+        try :
+            result = getattr (self.resource._effective, name)
+        except AttributeError :
+            pass
+        else :
+            if isinstance (result, dict) :
+                ### use `result` as query parameters (url relative to resource)
+               return self._response.encoded_url (** result)
+            elif isinstance (result, pyk.string_types) :
+                return result
+            elif result is not None :
+                return result.abs_href
+    # end def _get_rel
 
     def __getattr__ (self, name) :
         if name not in self._own_vars :

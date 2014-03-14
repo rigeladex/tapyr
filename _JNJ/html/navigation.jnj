@@ -54,6 +54,8 @@
 ##     6-Oct-2013 (CT) Add `with context` to imports
 ##     7-Jan-2014 (CT) Pass `link_only = True` to `login_inline`
 ##    24-Jan-2014 (CT) Use `link.a_attr_dict`, if any, for <a> in `entry`
+##    14-Mar-2014 (CT) Add macros for related links: `rel_link`,
+##                     `rel_nav_buttons`, `rel_first`...
 ##    ««revision-date»»···
 ##--
 #}
@@ -207,6 +209,97 @@
       </a>
   {%- endonion %}
 {%- endmacro -%} {#- neighbor -#}
+
+{%- macro rel_first (page, href, title = None) -%}
+  {%- if not title %}
+    {%- set title = GTW._T ("Goto first page") %}
+  {% endif -%}
+  {{ rel_link
+      ( page, href, title
+      , GTW.Dingbats.right_one_eighth_block
+      + GTW.Dingbats.black_left_pointing_triangle
+      , "first"
+      )
+  }}
+{%- endmacro -%} {#- rel_first -#}
+
+{%- macro rel_first_child (page, href, title = None) -%}
+  {%- if not title %}
+    {%- set title = GTW._T ("Goto first entry") %}
+  {% endif -%}
+  {{ rel_link
+      ( page, href, title, GTW.Dingbats.black_down_pointing_triangle
+      , "first_child"
+      )
+  }}
+{%- endmacro -%} {#- rel_last -#}
+
+{%- macro rel_last (page, href, title = None) -%}
+  {%- if not title %}
+    {%- set title = GTW._T ("Goto last page") %}
+  {% endif -%}
+  {{ rel_link
+      ( page, href, title
+      , GTW.Dingbats.black_right_pointing_triangle
+      + GTW.Dingbats.left_one_eighth_block
+      , "last"
+      )
+  }}
+{%- endmacro -%} {#- rel_last -#}
+
+{%- macro rel_link (page, href, title, contents, clss = None) -%}
+  {%- if href and href != page.abs_href %}
+    <a href="{{ href }}" title="{{ title }}">
+      <i{%- if clss %} class="{{ clss }}"{% endif -%}>
+        {{- contents -}}
+      </i>
+    </a>
+  {%- else %}
+    <b></b>
+  {% endif -%}
+{%- endmacro -%} {#- rel_link -#}
+
+{%- macro rel_nav_buttons (page, start_tag = '<p class="rel-nav">', end_tag="</p>") -%}
+  {%- set head = page.response.rel_first       %}
+  {%- set next = page.response.rel_next        %}
+  {%- set prev = page.response.rel_prev        %}
+  {%- set tail = page.response.rel_last        %}
+  {%- if GTW.any ((head, next, prev, tail))    %}
+    {{- start_tag }}
+      {{ rel_first (page, head) }}
+      {{ rel_prev  (page, prev) }}
+      {{ rel_next  (page, next) }}
+      {{ rel_last  (page, tail) }}
+    {{ end_tag -}}
+  {% endif -%}
+{%- endmacro -%} {#- rel_nav_buttons -#}
+
+{%- macro rel_next (page, href, title = None) -%}
+  {%- if not title %}
+    {%- set title = GTW._T ("Goto next page") %}
+  {% endif -%}
+  {{ rel_link
+      (page, href, title, GTW.Dingbats.black_right_pointing_triangle, "next")
+  }}
+{%- endmacro -%} {#- rel_next -#}
+
+{%- macro rel_parent (page, href, title = None) -%}
+  {%- if not title %}
+    {%- set title = GTW._T ("Goto parent page") %}
+  {% endif -%}
+  {{ rel_link
+      (page, href, title, GTW.Dingbats.black_up_pointing_triangle, "parent")
+  }}
+{%- endmacro -%} {#- rel_parent -#}
+
+{%- macro rel_prev (page, href, title = None) -%}
+  {%- if not title %}
+    {%- set title = GTW._T ("Goto previous page") %}
+  {% endif -%}
+  {{ rel_link
+      (page, href, title, GTW.Dingbats.black_left_pointing_triangle, "prev")
+  }}
+{%- endmacro -%} {#- rel_prev -#}
 
 {%- macro section (link_list, name = None) -%}
   {%- if link_list %}

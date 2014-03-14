@@ -32,6 +32,7 @@
 #     3-Jul-2012 (CT) Redefine `values` to conditionally return `json`
 #    31-Jul-2012 (CT) Add `HTTP_Exception`
 #    20-Jan-2014 (CT) Add `url_x`
+#    13-Mar-2014 (CT) Remove `url_x`
 #    ««revision-date»»···
 #--
 
@@ -101,15 +102,6 @@ class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
         result.files = self.files
         return result
     # end def req_data_list
-
-    @Once_Property
-    def url_x (self) :
-        query  = self.query_string
-        result = self.url
-        if query :
-            result = "%s?%s" % (result, query)
-        return result
-    # end def url_x
 
     @Once_Property
     def values (self) :

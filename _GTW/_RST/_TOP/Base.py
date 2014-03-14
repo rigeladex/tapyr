@@ -51,6 +51,10 @@
 #    24-Jan-2014 (CT) Factor `_Mixin_`
 #    11-Feb-2014 (CT) Use `response`, not `request`, in `_new_edit_session`
 #    24-Feb-2014 (CT) Apply `pyk.decoded` to `repr (csrf_token)` in `csrf_check`
+#    13-Mar-2014 (CT) Factor `response.add_rel_links` from `_handle_method`
+#    14-Mar-2014 (CT) Add properties `first`, `last`,
+#                     `first_child`, `last_child`
+#    14-Mar-2014 (CT) Use `proper_entries` for relative links
 #    ««revision-date»»···
 #--
 
@@ -193,7 +197,7 @@ class _TOP_Base_ (_Ancestor) :
 
         def next (self, resource) :
             i = self.number + 1
-            entries = resource.parent.entries
+            entries = resource.parent.proper_entries
             if i >= len (entries) and self.wrap :
                 i = 0
             try :
@@ -204,7 +208,7 @@ class _TOP_Base_ (_Ancestor) :
 
         def prev (self, resource) :
             i = self.number - 1
-            entries = resource.parent.entries
+            entries = resource.parent.proper_entries
             if i >= 0 or self.wrap :
                 try :
                     return entries [i]
@@ -249,6 +253,22 @@ class _TOP_Base_ (_Ancestor) :
 
     @property
     @getattr_safe
+    def first (self) :
+        if self.parent :
+            return self.parent.first_child
+    # end def first
+
+    @property
+    @getattr_safe
+    def first_child (self) :
+        try :
+            return self.proper_entries [0]
+        except (AttributeError, LookupError) :
+            pass
+    # end def first_child
+
+    @property
+    @getattr_safe
     def h_title (self) :
         name = self.short_title or self.name or self.href
         if self.parent :
@@ -259,6 +279,22 @@ class _TOP_Base_ (_Ancestor) :
             else :
                 return "%s [%s]" % (name, self.top.h_title)
     # end def h_title
+
+    @property
+    @getattr_safe
+    def last (self) :
+        if self.parent :
+            return self.parent.last_child
+    # end def last
+
+    @property
+    @getattr_safe
+    def last_child (self) :
+        try :
+            return self.proper_entries [-1]
+        except (AttributeError, LookupError) :
+            pass
+    # end def last_child
 
     @Once_Property
     @getattr_safe
@@ -375,16 +411,9 @@ class _TOP_Base_ (_Ancestor) :
     # end def _get_media
 
     def _handle_method (self, method, request, response) :
-        for name in ("next", "prev") :
-            try :
-                nb = getattr (self, name)
-            except AttributeError :
-                pass
-            else :
-                if nb is not None :
-                    response.add_link (name, nb.abs_href)
-        prev = self.prev
-        return self.__super._handle_method (method, request, response)
+        result = self.__super._handle_method (method, request, response)
+        response.add_rel_links ()
+        return result
     # end def _handle_method
 
     def _new_edit_session (self, response, ttl = None) :

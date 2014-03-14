@@ -73,6 +73,8 @@
 #    11-Mar-2014 (CT) Redefine `_HTML_Action_.head_line`
 #    11-Mar-2014 (CT) Add `Displayer`, modify `href_display`
 #    11-Mar-2014 (CT) Factor `css_class` (from jinja); add `Field.as_html`
+#    13-Mar-2014 (CT) Add `E_Type.first`, `.last`, `.next`, `.prev`
+#    13-Mar-2014 (CT) Factor `_handle_method_context` from `rendered`
 #    ««revision-date»»···
 #--
 
@@ -1148,6 +1150,17 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             return "admin"
     # end def et_map_name
 
+    @property
+    @getattr_safe
+    def first (self) :
+        qr = getattr (self, "query_restriction", None)
+        if qr is None :
+            return self.__super.first_child
+        else :
+            if qr.prev_p and qr.request_args :
+                return dict (qr.request_args_abs, offset = 0)
+    # end def first
+
     @Once_Property
     @getattr_safe
     def Form (self) :
@@ -1234,6 +1247,39 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     def manager (self) :
         return self.etype_manager (self.E_Type)
     # end def manager
+
+    @property
+    @getattr_safe
+    def last (self) :
+        qr = getattr (self, "query_restriction", None)
+        if qr is None :
+            return self.__super.first_child
+        else :
+            if qr.next_p and qr.request_args :
+                return dict (qr.request_args_abs, offset = - qr.limit)
+    # end def last
+
+    @property
+    @getattr_safe
+    def next (self) :
+        qr = getattr (self, "query_restriction", None)
+        if qr is None :
+            return self.__super.next
+        else :
+            if qr.next_p and qr.request_args :
+                return dict (qr.request_args_abs, offset = qr.offset_next)
+    # end def next
+
+    @property
+    @getattr_safe
+    def prev (self) :
+        qr = getattr (self, "query_restriction", None)
+        if qr is None :
+            return self.__super.prev
+        else :
+            if qr.prev_p and qr.request_args :
+                return dict (qr.request_args_abs, offset = qr.offset_prev)
+    # end def prev
 
     @Once_Property
     @getattr_safe
@@ -1328,53 +1374,49 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     def rendered (self, context, template = None) :
         request  = context ["request"]
         response = context ["response"]
-        qr = QR.from_request \
-            (self.top.scope, self.ETM.E_Type, request, ** self.default_qr_kw)
-        self._fix_filters (qr.filters)
-        fields = self._fields (qr.attributes or self.list_display)
-        with self.LET (fields = fields, query_restriction = qr) :
-            Entity  = self.Entity
-            objects = tuple \
-                (Entity (obj = o, parent = self) for o in self.objects)
-            next_p  = qr.next_p
-            prev_p  = qr.prev_p
-            button_types = dict \
-                ( self.button_types
-                , FIRST  = "submit" if prev_p else "button"
-                , LAST   = "submit" if next_p else "button"
-                , NEXT   = "submit" if next_p else "button"
-                , PREV   = "submit" if prev_p else "button"
+        qr       = self.query_restriction
+        fields   = self.fields
+        Entity   = self.Entity
+        objects  = tuple (Entity (obj = o, parent = self) for o in self.objects)
+        next_p   = qr.next_p
+        prev_p   = qr.prev_p
+        button_types = dict \
+            ( self.button_types
+            , FIRST  = "submit" if prev_p else "button"
+            , LAST   = "submit" if next_p else "button"
+            , NEXT   = "submit" if next_p else "button"
+            , PREV   = "submit" if prev_p else "button"
+            )
+        with self.LET \
+                 ( query_size   = len (objects)
+                 , button_types = button_types
+                 ) :
+            context.update \
+                ( fields            = fields
+                , objects           = objects
+                , query_restriction = self.query_restriction
                 )
-            with self.LET \
-                     ( query_size   = len (objects)
-                     , button_types = button_types
-                     ) :
-                context.update \
-                    ( fields            = fields
-                    , objects           = objects
-                    , query_restriction = self.query_restriction
+            if response.renderer and response.renderer.name == "JSON" :
+                template   = self.top.Templateer.get_template ("e_type")
+                call_macro = template.call_macro
+                buttons    = dict \
+                    ( FIRST = call_macro ("qr_button_first", self, qr)
+                    , LAST  = call_macro ("qr_button_last",  self, qr)
+                    , NEXT  = call_macro ("qr_button_next",  self, qr)
+                    , PREV  = call_macro ("qr_button_prev",  self, qr)
                     )
-                if response.renderer and response.renderer.name == "JSON" :
-                    template   = self.top.Templateer.get_template ("e_type")
-                    call_macro = template.call_macro
-                    buttons    = dict \
-                        ( FIRST = call_macro ("qr_button_first", self, qr)
-                        , LAST  = call_macro ("qr_button_last",  self, qr)
-                        , NEXT  = call_macro ("qr_button_next",  self, qr)
-                        , PREV  = call_macro ("qr_button_prev",  self, qr)
-                        )
-                    result = dict \
-                        ( buttons          = buttons
-                        , callbacks        = ["setup_obj_list"]
-                        , head_line        = self.head_line
-                        , limit            = qr.limit
-                        , object_container = call_macro
-                            ("admin_table", self, fields, objects)
-                        , offset           = qr.offset
-                        )
-                else :
-                    result = self.__super.rendered (context, template)
-            return result
+                result = dict \
+                    ( buttons          = buttons
+                    , callbacks        = ["setup_obj_list"]
+                    , head_line        = self.head_line
+                    , limit            = qr.limit
+                    , object_container = call_macro
+                        ("admin_table", self, fields, objects)
+                    , offset           = qr.offset
+                    )
+            else :
+                result = self.__super.rendered (context, template)
+        return result
     # end def rendered
 
     def template_iter (self) :
@@ -1409,6 +1451,19 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                 else :
                     f.ui_display = o.ui_display
     # end def _fix_filters
+
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request, response) :
+        with self.__super._handle_method_context (method, request, response) :
+            qr = QR.from_request \
+                ( self.top.scope, self.ETM.E_Type, request
+                , ** self.default_qr_kw
+                )
+            self._fix_filters (qr.filters)
+            fields = self._fields (qr.attributes or self.list_display)
+            with self.LET (fields = fields, query_restriction = qr):
+                yield
+    # end def _handle_method_context
 
     def _new_child (self, T, child, grandchildren) :
         if child == self.qx_prefix and grandchildren :

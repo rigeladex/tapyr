@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -31,6 +31,7 @@
 #    14-Dec-2012 (CT) Add rule for `.button.vip`
 #     3-Apr-2013 (CT) Add `Rule.clearfix` to rule for `.QR`
 #     9-Apr-2013 (CT) Include "html/ui_dialog.media"
+#    14-Mar-2014 (CT) Add rule for `.rel-nav`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +70,22 @@ style_sheet = Style_Sheet \
             , Rule_Class
                 ( "top"
                 , margin       = TRBL (Em (0.5), "auto", Em (2.0))
+                )
+            ]
+        )
+    , Rule
+        ( ".rel-nav"
+        , children             =
+            [ Rule
+                ( "td+td", "th+th"
+                , border_left   = 0
+                )
+            , Rule
+                ( "td"
+                , border_width     = 0
+                , font_size        = Percent (125)
+                , text_align       = "left"
+                , vertical_align   = "middle"
                 )
             ]
         )

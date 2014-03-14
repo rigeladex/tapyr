@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #    17-Jul-2012 (CT) Augment `AttributeError` info in `attr_let`
 #    28-Sep-2012 (CT) Add `try` for `fmt % delta` to `time_block`
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
+#    14-Mar-2014 (CT) Add `dict_let`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,27 @@ def attr_let (obj, ** kw) :
                 except AttributeError as exc :
                     raise AttributeError ("%s: [%s = %r]" % (exc, k, v))
 # end def attr_let
+
+@TFL.Contextmanager
+def dict_let (dct, ** kw) :
+    """Provide context with elements of dictionary `dct` temporary bound to
+       values in `kw`.
+    """
+    store = {}
+    undef = TFL.Undef ()
+    for k, v in kw.iteritems () :
+        store [k] = dct.get (k, undef)
+    try :
+        for k, v in kw.iteritems () :
+            dct [k] = v
+        yield
+    finally :
+        for k, v in store.iteritems () :
+            if v is undef :
+                del dct [k]
+            else :
+                dct [k] = v
+# end def dict_let
 
 @TFL.Contextmanager
 def list_push (list, item) :

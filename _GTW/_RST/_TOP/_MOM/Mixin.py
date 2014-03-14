@@ -38,6 +38,8 @@
 #    15-Jan-2014 (CT) Factor `E_Type_Mixin._add_other_entries`
 #    29-Jan-2014 (CT) Add super-call to `_add_other_entries`
 #    13-Feb-2014 (CT) Add `object_entries`
+#    14-Mar-2014 (CT) Redefine alias property `proper_entries`
+#                     to `object_entries`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +54,7 @@ import _GTW._RST._TOP._MOM.Query_Restriction
 from   _MOM.import_MOM          import Q
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 
@@ -180,6 +183,7 @@ class TOP_MOM_E_Type_Mixin (E_Type_Mixin_Base) :
     _real_name      = "E_Type_Mixin"
 
     disp_filter     = None
+    proper_entries  = Alias_Property ("object_entries")
 
     _old_objects    = None
 

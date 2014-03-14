@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-Jun-2012 (CT) Creation
 #     2-Mar-2013 (CT) Add `add_header` and `set_header` (both encode `key`)
+#    14-Mar-2014 (CT) Add `encoded_url`
 #    ««revision-date»»···
 #--
 
@@ -42,8 +43,9 @@ from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL._Meta.M_Class
 
-from    werkzeug.wrappers             import Response
-from    werkzeug.contrib.wrappers     import DynamicCharsetResponseMixin
+from   werkzeug.wrappers             import Response
+from   werkzeug.contrib.wrappers     import DynamicCharsetResponseMixin
+from   werkzeug.urls                 import Href
 
 class _WZG_Response_ (DynamicCharsetResponseMixin, Response) :
     """Extend werkzeug's Response class."""
@@ -64,6 +66,15 @@ class _WZG_Response_ (DynamicCharsetResponseMixin, Response) :
         self.response = []
         self.status   = self.default_status
     # end def clear
+
+    def encoded_url (self, * args, ** kw) :
+        if args :
+            result = Href (args [0])
+            return result (* args [1:], ** kw)
+        else :
+            result = Href ()
+            return result (** kw) [2:]
+    # end def encoded_url
 
     def write (self, data) :
         self.response.append (data)

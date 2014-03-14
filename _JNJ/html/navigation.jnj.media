@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -32,6 +32,7 @@
 #     7-Jan-2011 (CT) `level-<i>` removed
 #     7-Jan-2011 (CT) Rules for `current-link` and `current-section` changed
 #    21-Feb-2011 (CT) Use `Border`
+#    14-Mar-2014 (CT) Include `rel_nav`
 #    ««revision-date»»···
 #--
 
@@ -280,5 +281,7 @@ style_sheet = Style_Sheet \
             ]
         )
     )
+
+Include ("html/rel_nav.media")
 
 ### __END__ html/navigation.jnj.media
