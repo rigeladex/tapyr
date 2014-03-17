@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #    17-Aug-2005 (CT) Creation (factored from `~tanzer/PMA/.config.py`)
 #    27-Mar-2013 (CT) Add `%(receiver)s`, `%(subject)s`, `formatted_replacers`
+#    17-Mar-2014 (CT) Add `addressee` to `forward_format`, `resend_format`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ PMA.Composer.compose_format   = "\n".join \
 
 PMA.Composer.forward_format   = "\n".join \
     ( ( """From:        %(email_address)s"""
-      , """To:          %(receiver)s"""
+      , """To:          %(addressee)s"""
       , """Subject:     FW: %(subject)s"""
       , """Bcc:         %(email_address)s"""
       , """X-mailer:    PMA %(version)s"""
@@ -115,7 +116,7 @@ PMA.Composer.reply_all_format = "\n".join \
 
 PMA.Composer.resend_format    = "\n".join \
     ( ( """From:        %(email_address)s"""
-      , """To:          %(receiver)s"""
+      , """To:          %(addressee)s"""
       , """««mail-cc»»"""
       , """««mail-bcc»»"""
       )

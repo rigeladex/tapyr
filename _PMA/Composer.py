@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,6 +57,7 @@
 #    27-Aug-2013 (CT) Change `_as_message` to include `plain` with `html`
 #    27-Aug-2013 (CT) Add `addressee` to `forward_format`, `resend_format`,
 #                     `defaults`
+#    17-Mar-2014 (CT) Add option `-msg_base_dirs`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ import _TFL._Meta.Object
 import _TFL.CAO
 import _TFL.Environment
 import _TFL.FCM
-from   _TFL.predicate          import callable
+from   _TFL.predicate          import callable, first
 from   _TFL.Regexp             import *
 import _TFL.sos
 
@@ -470,14 +471,19 @@ def _main (cmd) :
         , receiver = cmd.To
         , subject  = cmd.subject
         )
+    def message_from_arg (cmd, arg) :
+        try :
+            return first (PMA.messages_from_args ([arg], cmd.msg_base_dirs))
+        except LookupError :
+            raise SystemExit (1)
     if cmd.forward :
-        comp.forward    (PMA.message_from_file (cmd.forward))
+        comp.forward    (message_from_arg (cmd, cmd.forward))
     elif cmd.reply :
-        comp.reply      (PMA.message_from_file (cmd.reply))
+        comp.reply      (message_from_arg (cmd, cmd.reply))
     elif cmd.Reply_all :
-        comp.reply_all  (PMA.message_from_file (cmd.Reply_all))
+        comp.reply_all  (message_from_arg (cmd, cmd.Reply_all))
     elif cmd.bounce :
-        comp.resend     (PMA.message_from_file (cmd.bounce))
+        comp.resend     (message_from_arg (cmd, cmd.bounce))
     else :
         comp.compose    ()
 # end def _main
@@ -497,6 +503,7 @@ _Command = TFL.CAO.Cmd \
         , "-mail_port:I=25?Number of port of SMTP server to use"
         , "-mail_user:S?User name for login into SMTP server"
         , "-mail_word:S?Password for login into SMTP server"
+        , "-msg_base_dirs:Q:?Base directories for searching `message`"
         , "-reply:S?Message to reply to"
         , "-Reply_all:S?Message to reply to"
         , "-subject:S?Subject of email"

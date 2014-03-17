@@ -173,6 +173,7 @@
 #    21-Dec-2013 (CT) Add option `-body_only`
 #    23-Dec-2013 (CT) Factor `messages_from_args` and `formatted`
 #    23-Jan-2014 (CT) Set `PMA.default_encoding` in all cases in `_main`
+#    17-Mar-2014 (CT) Fix error message `tail` in `messages_from_args`
 #    ««revision-date»»···
 #--
 
@@ -1029,7 +1030,8 @@ def messages_from_args (args, base_dirs) :
                 % (arg, "\n    ".join (matches))
                 )
         else :
-            tail = ("in\n    %s" % "\n    ".join (bdirs)) if bdirs else ""
+            tail = ("in\n    %s" % "\n    ".join (base_dirs)) \
+                if base_dirs else ""
             print ("No match found for %r%s" % (arg, tail))
 # end def messages_from_args
 
