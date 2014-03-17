@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -61,6 +61,7 @@
 #    20-Mar-2013 (CT)  Add support for `__name__` to `New`
 #    23-May-2013 (CT)  Add and use `BaM` for Python-3 compatibility
 #    25-Jun-2013 (CT)  Use `__mro__`, not `mro ()`
+#    17-Mar-2014 (CT)  Add warning about `with_metaclass` to docstring of `BaM`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,25 @@ def BaM (* bases, ** kw) :
        but defined BaM's signature to be compatible with the inheritance
        signature of class statements in Python 3.
 
-       .. [*] http://lucumr.pocoo.org/2013/5/21/porting-to-python-3-redux/
+       Beware: it's tempting to define a class decorator `with_metaclass` [**]_ to
+       assign a metaclass in syntax compatible to Python 2 & 3. The syntax
+       would look like this::
+
+           @with_metaclass (A_Metaclass)
+           class A_Class (A_Base_1, A_Base_2) :
+               pass
+
+       This looks much nicer than the syntax using `BaM` but leads to
+       problems when `A_Metaclass` is derived from the metaclass of one of
+       the bases, which is then run twice: once before the decorator runs and
+       once when `A_Metaclass` chains up to it. `six.add_metaclass` [***]_
+       contains special code to work around `__slots__`, but this would need
+       to be extended to whatever another parent metaclass does which mustn't
+       be done twice.
+
+       .. [*]   http://lucumr.pocoo.org/2013/5/21/porting-to-python-3-redux/
+       .. [**]  http://www.zopatista.com/python/2014/03/14/cross-python-metaclasses/
+       .. [***] http://pythonhosted.org/six/#six.add_metaclass
 
     >>> class M (type) :
     ...    pass
