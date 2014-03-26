@@ -85,6 +85,8 @@
 #    14-Jan-2014 (CT) Add `.afs_widget`, set it for `MAT.A_Confirmation`
 #    22-Jan-2014 (CT) Add `A_Numeric_String.input_widget`, `A_Url.input_widget`
 #     7-Mar-2014 (CT) Set `rank` of `Field` to `attr.ui_rank`
+#    26-Mar-2014 (CT) Move `css_class_len` here;
+#                     remove `import _GTW._Form._MOM.Field`
 #    ««revision-date»»···
 #--
 
@@ -96,7 +98,6 @@ from   _TFL                     import TFL
 
 from   _GTW._AFS._MOM           import Element
 from   _GTW._Form.Widget_Spec   import Widget_Spec as WS
-import _GTW._Form._MOM.Field ### XXX remove after migration of `css_class`
 
 import _MOM._Attr.Selector
 import _MOM._Attr.Type
@@ -105,13 +106,14 @@ from   _TFL.predicate           import uniq
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
+import _TFL.Ival_Map
 import _TFL.multimap
 
 MAT                                  = MOM.Attr
 MAT.A_Attr_Type.afs_widget           = None
 MAT.A_Confirmation.afs_widget        = "Field__Confirmation"
 MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
-###MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
+MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
 MAT.A_Confirmation.input_widget      = WS ("html/AFS/input.jnj,  boolean")
 MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
 MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
@@ -133,6 +135,25 @@ MAT._A_Number_.css_align             = "right"
 MAT.A_Date.css_align                 = "right"
 MAT.A_Numeric_String.css_align       = "right"
 MAT.A_Time.css_align                 = "right"
+
+_css_len_classes = TFL.Ival_Map \
+    ( (    7, "Short")
+    , (   13, "Moderate-Len")
+    , (   21, "Medium-Len")
+    , (   61, "")
+    , (   81, "Long")
+    , (2**31, "Very-Long")
+    )
+
+@TFL.Add_Method (MAT.A_Attr_Type, decorator = property)
+def css_class_len (self) :
+    return _css_len_classes [self.ui_length]
+# end def css_class_len
+
+@TFL.Add_Method (MAT._A_Named_Value_, decorator = property)
+def css_class_len (self) :
+    return ""
+# end def css_class_len
 
 class _Base_ (TFL.Meta.Object) :
     """Base class for spec classes"""
