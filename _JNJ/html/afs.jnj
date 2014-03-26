@@ -49,6 +49,7 @@
 ##     6-Oct-2013 (CT) Add `with context` to import
 ##    14-Jan-2014 (CT) Change `do_description` to consider `ui_description`
 ##    21-Jan-2014 (CT) Change `do_description` to elide redundant description
+##    26-Mar-2014 (CT) Improve handling of `desc` in `do_element`
 ##    ««revision-date»»···
 ##--
 #}
@@ -89,10 +90,10 @@
         ).strip ()
   %}
   {%- set het_c = kwargs.pop ("het_c", elem.het_c) %}
-  {%- set desc = GTW._T (elem.description)|safe %}
+  {%- set desc = GTW._T (elem.description)|safe if show_desc else None %}
   <{{ het_c }} id="{{ id_fix }}{{ elem.id }}"
       {%- if cssc %} class="{{ cssc }}"{% endif -%}
-      {%- if show_desc and desc %} title="{{ desc }}"{% endif -%}
+      {%- if desc %} title="{{ desc }}"{% endif -%}
   >
     {{ elem_caller () -}}
   </{{ het_c }}>
