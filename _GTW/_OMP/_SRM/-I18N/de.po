@@ -560,9 +560,9 @@ msgid "Sail number of boat (without nation!)"
 msgstr "Segelnummer des Boots (OHNE das Nationenkürzel)"
 
 #: _GTW._OMP._SRM.Boat:0
-msgid "Sail number prefix of boat (e.g., \"X\", not the nation code!)."
+msgid "Sail number prefix of boat (e.g., 'X', not the nation code!)."
 msgstr ""
-"Segelnummerprefix des Boots (z.B. \"X\" für eine Konstruktionsklasse, "
+"Segelnummerprefix des Boots (z.B. 'X' für eine Konstruktionsklasse, "
 "NICHT das Nationenkürzel)."
 
 #: _GTW._OMP._SRM.Boat:0
@@ -754,4 +754,3 @@ msgstr "Gültiger Segelnummerprefix"
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
-

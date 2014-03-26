@@ -35,6 +35,7 @@
 #                     `__new__`  to normalize indent, update `dyn_doc_p`
 #    10-Mar-2014 (CT) Improve grep-ability of `dyn_doc_p` update
 #    10-Mar-2014 (CT) Factor `_i_rank` in here
+#    26-Mar-2014 (CT) Add guard against double quotes in `_doc_properties`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,14 @@ class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
                 setattr (cls, n, v)
                 if "%(" in v :
                     dyn_doc_p [n] = v
+                if '"' in v :
+                    ### Double quotes in _doc_properties break generated HTML
+                    ### like::
+                    ###     """<input title="%s" ···>""" % (v, )
+                    raise TypeError \
+                        ( "Property `%s` of %s must not contain double quotes"
+                        % (n, cls)
+                        )
         if not cls.__doc__ :
             cls.__doc__ = cls.description
     # end def __init__

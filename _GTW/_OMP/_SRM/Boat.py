@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -52,6 +52,7 @@
 #    11-Sep-2012 (CT) Fix typo introduced in last change
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    13-Aug-2013 (CT) Change `sail_number` from `Primary_Optional` to `Primary`
+#    26-Mar-2014 (CT) Remove double quotes from `sail_number_x.description`
 #    ««revision-date»»···
 #--
 
@@ -112,7 +113,7 @@ class Boat (_Ancestor_Essence) :
         # end class sail_number
 
         class sail_number_x (A_String) :
-            """Sail number prefix of boat (e.g., "X", not the nation code!)."""
+            """Sail number prefix of boat (e.g., 'X', not the nation code!)."""
 
             kind               = Attr.Primary_Optional
             example            = "X"
