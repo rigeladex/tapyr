@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -54,6 +54,7 @@
 #     4-Dec-2013 (CT) Change `safe_eval` to not add coding cookie;
 #                     `eval` fails for `unicode` value containing coding cookie
 #     9-Dec-2013 (CT) Fix 3-compatibility
+#    26-Mar-2014 (CT) Change `ungettext` to use `ugettext` for `n == 1`
 #    ««revision-date»»···
 #--
 
@@ -238,12 +239,15 @@ def ugettext (text, trans = None) :
 # end def ugettext
 
 def ungettext (singular, plural = None, n = 99, trans = None) :
-    """Return the localized translation of `text` for the plural form
+    """Return the localized translation of `singular/plural` for the plural form
        appropriate for `n` (as unicode).
     """
-    if plural is None :
-        plural = singular + "s"
-    return (trans or Config.current).ungettext (singular, plural, n)
+    if n == 1 :
+        return ugettext (singular, trans)
+    else :
+        if plural is None :
+            plural = singular + "s"
+        return (trans or Config.current).ungettext (singular, plural, n)
 # end def ungettext
 
 def use (* lang) :
