@@ -38,6 +38,7 @@
 #     3-Dec-2012 (CT) Add guard against unknown E_Type
 #    17-Dec-2012 (CT) s/map_name/et_map_name/
 #    28-Mar-2013 (CT) Hide associations with more than one role
+#    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class _RST_TOP_MOM_Doc_E_Type_ (_Ancestor, GTW.RST.MOM.Doc.E_Type) :
 
     document_class             = "E-Type-Doc"
     et_map_name                = "doc"
-    nav_off_canvas             = False
+    nav_off_canvas             = True
     page_template_name         = "e_type_doc"
 
     class _RST_TOP_MOM_Doc_E_Type_GET_ (_Ancestor.GET) :
