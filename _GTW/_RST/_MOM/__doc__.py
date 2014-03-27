@@ -32,6 +32,7 @@
 #    16-Apr-2013 (CT) Add more documentation about AQ expressions
 #     3-May-2013 (CT) Add `META`
 #     4-Oct-2013 (CT) Add `fields` and `add_fields`
+#    27-Mar-2014 (CT) Document `E_Type.OPTIONS`
 #    ««revision-date»»···
 #--
 
@@ -355,6 +356,13 @@ returned or to search for specific instances. Possible query parameters are:
   ``last_change``; both of these objects have a ``date`` field, and if known
   a ``user`` field.
 
+
+``OPTIONS``
+~~~~~~~~~~~
+
+In addition to the list of supported HTTP methods, the ``OPTIONS`` method of
+``E-Type`` resources returns the documentation for the ``e-type`` represented
+as JSON.
 
 ``POST``
 ~~~~~~~~~
