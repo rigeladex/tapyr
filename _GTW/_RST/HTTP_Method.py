@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -46,6 +46,9 @@
 #     2-Mar-2013 (CT) Use `response.set_header`, not `.headers [] = `
 #    31-May-2013 (CT) Fix `_Meta_.__init__`: use
 #                     `not name.startswith ("HTTP_Method")`, not `name !=...`
+#    27-Mar-2014 (CT) Set `last_modified` only if not `etag`
+#    27-Mar-2014 (CT) Change `OPTIONS.__call__` to chain up to `__super`
+#                     (and derive `OPTIONS` from factored `_HTTP_Method_R_NB_`)
 #    ««revision-date»»···
 #--
 
@@ -126,7 +129,7 @@ class HTTP_Method (TFL.Meta.Object) :
         result = False
         if not resource.skip_etag :
             etag   = resource.get_etag           (request)
-            last   = resource.get_last_modified  (request)
+            last   = resource.get_last_modified  (request) if not etag else None
             r_etag = self._request_etag_attr     (request)
             r_last = self._request_modified_attr (request)
             if last :
@@ -148,7 +151,7 @@ class HTTP_Method (TFL.Meta.Object) :
 # end class HTTP_Method
 
 class _HTTP_Method_R_ (HTTP_Method) :
-    """Base class for HTTP methods that don't change the resource.."""
+    """Base class for HTTP methods that don't change the resource."""
 
     mode                       = "r"
 
@@ -177,6 +180,17 @@ class _HTTP_Method_R_ (HTTP_Method) :
     # end def _skip_render
 
 # end class _HTTP_Method_R_
+
+class _HTTP_Method_R_NB_ (_HTTP_Method_R_) :
+    """Base class for _HTTP_Method_R_ methods that don't need a body."""
+
+    needs_body                 = False
+
+    def _response_body (self, resource, request, response) :
+        return None
+    # end def _response_body
+
+# end class _HTTP_Method_R_NB_
 
 class _HTTP_Method_W_ (HTTP_Method) :
     """Base class for HTTP methods that change the resource."""
@@ -211,15 +225,10 @@ class _HTTP_DELETE_ (_HTTP_Method_W_) :
 
 DELETE = _HTTP_DELETE_ # end class
 
-class _HTTP_HEAD_ (_HTTP_Method_R_) :
+class _HTTP_HEAD_ (_HTTP_Method_R_NB_) :
     """Implement HTTP method HEAD."""
 
     _real_name                 = "HEAD"
-    needs_body                 = False
-
-    def _response_body (self, resource, request, response) :
-        return None
-    # end def _response_body
 
 HEAD = _HTTP_HEAD_ # end class
 
@@ -230,20 +239,18 @@ class _HTTP_GET_ (_HTTP_Method_R_) :
 
 GET = _HTTP_GET_ # end class
 
-class _HTTP_OPTIONS_ (_HTTP_Method_R_) :
+class _HTTP_OPTIONS_ (_HTTP_Method_R_NB_) :
     """Implement HTTP method OPTIONS."""
 
     _real_name                 = "OPTIONS"
 
-    needs_body                 = False
-
     def __call__ (self, resource, request, response) :
-        methods  = sorted \
+        methods = self.methods = sorted \
             (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
             if resource.allow_method (m, request.user)
             )
         response.set_header ("Allow", ", ".join (methods))
-        return response
+        return self.__super.__call__ (resource, request, response)
     # end def __call__
 
 OPTIONS = _HTTP_OPTIONS_ # end class

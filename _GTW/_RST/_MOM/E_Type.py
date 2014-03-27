@@ -53,6 +53,7 @@
 #    14-Jun-2013 (CT) Factor `GTW.RST.Mime_Type.CSV.rendered`
 #    30-Jan-2014 (CT) Change `E_Type.GET._response_entry` to always restrict
 #                     `attributes` for `CSV`
+#    27-Mar-2014 (CT) Redefine `E_Type.OPTIONS` to add doc to `_response_body`
 #    ««revision-date»»···
 #--
 
@@ -177,6 +178,27 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         # end def _resource_entries
 
     GET = _RST_MOM_E_Type_GET_ # end class
+
+    class _RST_MOM_E_Type_OPTIONS_ (_Ancestor.OPTIONS) :
+
+        _real_name             = "OPTIONS"
+
+        def _response_body (self, resource, request, response) :
+            top    = resource.top
+            etd    = top.ET_Map.get (resource.type_name)
+            result = {}
+            doc    = \
+                (  getattr (etd, "rest_doc", None)
+                or getattr (etd, "doc", None)
+                )
+            if doc is not None :
+                result = doc.GET ().rest_doc_response_body \
+                    (doc, request, response)
+            result ["METHODS"] = self.methods
+            return result
+        # end def _response_body
+
+    OPTIONS = _RST_MOM_E_Type_OPTIONS_ # end class
 
     class _RST_MOM_E_Type_POST_ (GTW.RST.MOM._POST_Mixin_, GTW.RST.POST) :
 

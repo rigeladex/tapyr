@@ -1829,9 +1829,11 @@ _test_get = r"""
     >>> r = showf (R.options (""))
     { 'headers' :
         { 'allow' : 'GET, HEAD, OPTIONS'
+        , 'cache-control' : 'no-cache'
         , 'content-length' : '0'
         , 'content-type' : 'text/plain; charset=utf-8'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
         , 'server' : '<server>'
         }
     , 'status' : 200
@@ -2247,7 +2249,6 @@ _test_get = r"""
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'last-modified' : '<datetime instance>'
         , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
@@ -2282,7 +2283,6 @@ _test_get = r"""
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'last-modified' : '<datetime instance>'
         , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
@@ -2317,21 +2317,7 @@ _test_get = r"""
     , 'url' : 'http://localhost:9999/v1/PAP-Person/1?RELS'
     }
 
-    >>> last_modified = r.headers ["last-modified"]
-    >>> last_etag     = r.headers ["etag"]
-    >>> r = showf (R.get ("/v1/PAP-Person/1", headers = { "If-Modified-Since" : last_modified }))
-    { 'headers' :
-        { 'cache-control' : 'no-cache'
-        , 'date' : '<datetime instance>'
-        , 'etag' : 'ETag value'
-        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
-        , 'server' : '<server>'
-        , 'x-last-cid' : '1'
-        }
-    , 'status' : 304
-    , 'url' : 'http://localhost:9999/v1/PAP-Person/1'
-    }
-
+    >>> last_etag = r.headers ["etag"]
     >>> r = showf (R.get ("/v1/PAP-Person/1", headers = { "If-None-Match" : last_etag }))
     { 'headers' :
         { 'cache-control' : 'no-cache'
@@ -3752,7 +3738,6 @@ _test_post = r"""
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'last-modified' : '<datetime instance>'
         , 'link' : '/Doc/PAP-Person; rel=doc'
         , 'location' : 'http://localhost:9999/v1/PAP-Person/17'
         , 'server' : '<server>'
@@ -4476,11 +4461,87 @@ _test_rat = r"""
     >>> showf (rvo)
     { 'headers' :
         { 'allow' : 'GET, HEAD, OPTIONS, POST'
-        , 'content-length' : '0'
-        , 'content-type' : 'text/plain; charset=utf-8'
+        , 'cache-control' : 'no-cache'
+        , 'content-length' : '<length>'
+        , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
+        , 'etag' : 'ETag value'
         , 'link' : '/Doc/Auth-Account; rel=doc'
         , 'server' : '<server>'
+        , 'x-last-cid' : '17'
+        }
+    , 'json' :
+        { 'METHODS' :
+            [ 'GET'
+            , 'HEAD'
+            , 'OPTIONS'
+            , 'POST'
+            ]
+        , 'attributes' :
+            [ { 'default_value' : ''
+              , 'description' : 'Email that serves as user name for this account'
+              , 'example' : 'foo@bar.baz'
+              , 'is_changeable' : True
+              , 'is_required' : True
+              , 'is_settable' : True
+              , 'kind' : 'primary'
+              , 'max_length' : 80
+              , 'name' : 'name'
+              , 'p_type' : 'unicode'
+              , 'type' : 'Email'
+              , 'ui_name' : 'Name'
+              }
+            , { 'default_value' : 'no'
+              , 'description' : 'Specifies if this account is currently enabled\n(the user can login).'
+              , 'example' : 'no'
+              , 'is_changeable' : True
+              , 'is_required' : False
+              , 'is_settable' : True
+              , 'kind' : 'optional'
+              , 'name' : 'enabled'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Enabled'
+              }
+            , { 'default_value' : 'no'
+              , 'description' : 'Specifies if this account has super-user permissions.'
+              , 'example' : 'no'
+              , 'is_changeable' : True
+              , 'is_required' : False
+              , 'is_settable' : True
+              , 'kind' : 'optional'
+              , 'name' : 'superuser'
+              , 'p_type' : 'bool'
+              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+              , 'type' : 'Boolean'
+              , 'ui_name' : 'Superuser'
+              }
+            ]
+        , 'cross_references' :
+            [ { 'attributes' : [ 'left' ]
+              , 'type_name' : 'Auth.Account_in_Group'
+              , 'url' : '/Doc/Auth-Account_in_Group'
+              }
+            , { 'attributes' : [ 'right' ]
+              , 'type_name' : 'PAP.Person_has_Account'
+              , 'url' : '/Doc/PAP-Person_has_Account'
+              }
+            ]
+        , 'description' : 'An acount which uses passwords for authorization.'
+        , 'is_partial' : False
+        , 'parents' :
+            [ { 'type_name' : 'Auth._Account_'
+              , 'url' : '/Doc/Auth-_Account_'
+              }
+            ]
+        , 'relevant_root' :
+            { 'type_name' : 'Auth._Account_'
+            , 'url' : '/Doc/Auth-_Account_'
+            }
+        , 'type_name' : 'Auth.Account'
+        , 'ui_name' : 'Auth.Account'
+        , 'url' : '/Doc/Auth-Account'
         }
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/Auth-Account'

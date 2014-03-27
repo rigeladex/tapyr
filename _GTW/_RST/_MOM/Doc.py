@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -40,6 +40,7 @@
 #    28-Mar-2013 (CT) Always include `is_changeable` in `_response_attr`;
 #                     display `E_Type.ui_attr`, not `.edit_attr`
 #    15-May-2013 (CT) Add `show_in_ui` to `e_type_filter`
+#    27-Mar-2014 (CT) Add alias `rest_doc_response_body` to `E_Type.GET`
 #    ««revision-date»»···
 #--
 
@@ -214,6 +215,8 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 logging.exception ("Rollback error: %s", exc)
             return result
         # end def _response_body
+
+        rest_doc_response_body = _response_body
 
         def _response_children (self, resource, request, response, children) :
             return list \
