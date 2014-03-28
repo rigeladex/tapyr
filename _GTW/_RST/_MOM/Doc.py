@@ -41,6 +41,7 @@
 #                     display `E_Type.ui_attr`, not `.edit_attr`
 #    15-May-2013 (CT) Add `show_in_ui` to `e_type_filter`
 #    27-Mar-2014 (CT) Add alias `rest_doc_response_body` to `E_Type.GET`
+#    28-Mar-2014 (CT) Add `queryable` attributes to `E_Type.GET._response_body`
 #    ««revision-date»»···
 #--
 
@@ -144,8 +145,8 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
             result = dict \
                 ( default_value = attr.raw_default
                 , description   = _T (attr.description)
-                , is_required   = attr.is_required
                 , is_changeable = attr.is_changeable
+                , is_required   = attr.is_required
                 , is_settable   = attr.is_settable
                 , kind          = _T (attr.kind)
                 , name          = attr.name
@@ -175,6 +176,7 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
         def _response_body (self, resource, request, response) :
             E_Type   = resource.E_Type
             attrs    = resource.attributes
+            q_attrs  = resource.q_able_attributes
             children = E_Type.children
             parents  = E_Type.parents
             ref_map  = E_Type.Ref_Map
@@ -186,11 +188,15 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 , ui_name     = _T (E_Type.type_name)
                 , url         = resource.abs_href
                 )
-            if attrs :
-                result ["attributes"] = list \
-                    (   self._response_attr (resource, request, response, a)
-                    for a in attrs
-                    )
+            if attrs or q_attrs :
+                result ["attributes"] = rats = {}
+                _response_attr = self._response_attr
+                for k, vs in (("editable", attrs), ("queryable", q_attrs)) :
+                    if vs :
+                        rats [k] = list \
+                            (   _response_attr (resource, request, response, a)
+                            for a in vs
+                            )
             if children :
                 v = self._response_children \
                     (resource, request, response, children)

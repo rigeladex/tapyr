@@ -79,6 +79,7 @@
 #     4-Oct-2013 (CT) Factor `Base_Mixin._gen_attr_kinds`
 #     4-Oct-2013 (CT) Add `add_fields` to `E_Type_Mixin._handle_method_context`
 #     4-Oct-2013 (CT) Fix `E_Type_Mixin._handle_method_context` (use tuple)
+#    28-Mar-2014 (CT) Add `Base_Mixin.q_able_attributes`
 #    ««revision-date»»···
 #--
 
@@ -258,6 +259,16 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     def attributes (self) :
         self._attributes = None
     # end def attributes
+
+    @Once_Property
+    @getattr_safe
+    def q_able_attributes (self) :
+        result = tuple \
+            ( a for a in MOM.Attr.Selector.ui_attr (self.E_Type)
+              if a.electric
+            )
+        return result
+    # end def q_able_attributes
 
     @Once_Property
     @getattr_safe

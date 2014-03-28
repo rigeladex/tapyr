@@ -739,72 +739,218 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc/SRM-Boat_in_Regatta"))
     { 'json' :
         { 'attributes' :
-            [ { 'default_value' : ''
-              , 'description' : 'Boat racing in a regatta.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'left'
-              , 'p_type' : 'Boat'
-              , 'role_name' : 'boat'
-              , 'type' : 'Boat'
-              , 'type_name' : 'SRM.Boat'
-              , 'ui_name' : 'Boat'
-              , 'url' : '/Doc/SRM-Boat'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Regatta a boat races in.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'right'
-              , 'p_type' : 'Regatta'
-              , 'role_name' : 'regatta'
-              , 'type' : 'Regatta'
-              , 'type_name' : 'SRM.Regatta'
-              , 'ui_name' : 'Regatta'
-              , 'url' : '/Doc/SRM-Regatta'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Skipper of boat.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'required'
-              , 'name' : 'skipper'
-              , 'p_type' : 'Sailor'
-              , 'type' : 'Entity'
-              , 'type_name' : 'SRM.Sailor'
-              , 'ui_name' : 'Skipper'
-              , 'url' : '/Doc/SRM-Sailor'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Place of boat in this regatta.'
-              , 'example' : 2
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'place'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Place'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Total points of boat in this regatta.'
-              , 'example' : 25
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'points'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Points'
-              }
-            ]
+            { 'editable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Boat racing in a regatta.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'left'
+                  , 'p_type' : 'Boat'
+                  , 'role_name' : 'boat'
+                  , 'type' : 'Boat'
+                  , 'type_name' : 'SRM.Boat'
+                  , 'ui_name' : 'Boat'
+                  , 'url' : '/Doc/SRM-Boat'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Regatta a boat races in.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'right'
+                  , 'p_type' : 'Regatta'
+                  , 'role_name' : 'regatta'
+                  , 'type' : 'Regatta'
+                  , 'type_name' : 'SRM.Regatta'
+                  , 'ui_name' : 'Regatta'
+                  , 'url' : '/Doc/SRM-Regatta'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Skipper of boat.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'required'
+                  , 'name' : 'skipper'
+                  , 'p_type' : 'Sailor'
+                  , 'type' : 'Entity'
+                  , 'type_name' : 'SRM.Sailor'
+                  , 'ui_name' : 'Skipper'
+                  , 'url' : '/Doc/SRM-Sailor'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Place of boat in this regatta.'
+                  , 'example' : 2
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'place'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Place'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Total points of boat in this regatta.'
+                  , 'example' : 25
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'points'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Points'
+                  }
+                ]
+            , 'queryable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Creation change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'creation'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Creation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Last change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'last_change'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Last change'
+                  , 'url' : None
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Change id of last change for this entity.'
+                  , 'example' : '42'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'last_cid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Last cid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Permanent id of the instance.'
+                  , 'example' : '42'
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'pid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Surrogate'
+                  , 'ui_name' : 'Pid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of type of this entity.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'type_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Type name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Points for ranking list based on low points vs. number of starters.'
+                  , 'example' : ' 42.00'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'ranking_list_points_lp'
+                  , 'p_type' : 'float'
+                  , 'type' : 'Float'
+                  , 'ui_name' : 'Ranking list points lp'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Rank of registration of boat in regatta.'
+                  , 'example' : 13
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'rank'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Rank'
+                  }
+                , { 'default_value' : '2014-03-28'
+                  , 'description' : 'Date of registration.'
+                  , 'example' : '2010-10-10'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'registration_date'
+                  , 'p_type' : 'date'
+                  , 'type' : 'Date'
+                  , 'ui_name' : 'Registration date'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Race_Result` links'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'race_results'
+                  , 'p_type' : 'Race_Result'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref_List'
+                  , 'type_name' : 'SRM.Race_Result'
+                  , 'ui_name' : 'Race results'
+                  , 'url' : '/Doc/SRM-Race_Result'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Sailor` linked to `Boat_in_Regatta`'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : '_crew'
+                  , 'p_type' : 'Sailor'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Role_Ref_Set'
+                  , 'type_name' : 'SRM.Sailor'
+                  , 'ui_name' : ' crew'
+                  , 'url' : '/Doc/SRM-Sailor'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Team` linked to `Boat_in_Regatta`'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'teams'
+                  , 'p_type' : 'Team'
+                  , 'role_name' : 'right'
+                  , 'type' : 'Role_Ref_Set'
+                  , 'type_name' : 'SRM.Team'
+                  , 'ui_name' : 'Teams'
+                  , 'url' : '/Doc/SRM-Team'
+                  }
+                ]
+            }
         , 'cross_references' :
             [ { 'attributes' :
     [ 'left' ]
@@ -840,161 +986,266 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc/SRM-Regatta"))
     { 'json' :
         { 'attributes' :
-            [ { 'default_value' : ''
-              , 'description' : 'Regatta event to which this regatta belongs.'
-              , 'is_changeable' : False
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'left'
-              , 'p_type' : 'Regatta_Event'
-              , 'role_name' : 'event'
-              , 'type' : 'Regatta_Event'
-              , 'type_name' : 'SRM.Regatta_Event'
-              , 'ui_name' : 'Event'
-              , 'url' : '/Doc/SRM-Regatta_Event'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Class of boats sailing in this regatta.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'boat_class'
-              , 'p_type' : '_Boat_Class_'
-              , 'type' : 'Entity'
-              , 'type_name' : 'SRM._Boat_Class_'
-              , 'ui_name' : 'Boat class'
-              , 'url' : '/Doc/SRM-_Boat_Class_'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'Number of discardable races in regatta'
-              , 'example' : '1'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'discards'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Discards'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Indicates that the regatta is cancelled'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_cancelled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is cancelled'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Kind of regatta.'
-              , 'example' : 'One race, one beer'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'max_length' : 32
-              , 'name' : 'kind'
-              , 'p_type' : 'unicode'
-              , 'type' : 'String'
-              , 'ui_name' : 'Kind'
-              }
-            , { 'default_value' : '1.0'
-              , 'description' : 'Weight of this regatta in computation of ranking list points.'
-              , 'example' : '  1.20'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'ranking_list_factor'
-              , 'p_type' : 'float'
-              , 'type' : 'Float'
-              , 'ui_name' : 'Ranking list factor'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'Number of races sailed in regatta'
-              , 'example' : '7'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'races'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Races'
-              }
-            , { 'attributes' :
-                  [ { 'default_value' : ''
-                    , 'description' : 'Date of regatta result.'
-                    , 'example' : '1979-08-18'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'necessary'
-                    , 'name' : 'date'
-                    , 'p_type' : 'datetime'
-                    , 'type' : 'Date-Time'
-                    , 'ui_name' : 'Date'
-                    }
-                  , { 'default_value' : ''
-                    , 'description' : 'Name of software used for managing the regatta.'
-                    , 'example' : 'Blowing Bits Inc.'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'optional'
-                    , 'max_length' : 64
-                    , 'name' : 'software'
-                    , 'p_type' : 'unicode'
-                    , 'type' : 'String'
-                    , 'ui_name' : 'Software'
-                    }
-                  , { 'default_value' : ''
-                    , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
-                    , 'example' : 'Final'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'optional'
-                    , 'max_length' : 64
-                    , 'name' : 'status'
-                    , 'p_type' : 'unicode'
-                    , 'type' : 'String'
-                    , 'ui_name' : 'Status'
-                    }
-                  ]
-              , 'default_value' : ''
-              , 'description' : 'Information about result.'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'result'
-              , 'p_type' : 'Regatta_Result'
-              , 'type' : 'Regatta_Result'
-              , 'type_name' : 'SRM.Regatta_Result'
-              , 'ui_name' : 'Result'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
-              , 'example' : '42'
-              , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'starters_rl'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Starters rl'
-              }
-            ]
+            { 'editable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Regatta event to which this regatta belongs.'
+                  , 'is_changeable' : False
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'left'
+                  , 'p_type' : 'Regatta_Event'
+                  , 'role_name' : 'event'
+                  , 'type' : 'Regatta_Event'
+                  , 'type_name' : 'SRM.Regatta_Event'
+                  , 'ui_name' : 'Event'
+                  , 'url' : '/Doc/SRM-Regatta_Event'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Class of boats sailing in this regatta.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'boat_class'
+                  , 'p_type' : '_Boat_Class_'
+                  , 'type' : 'Entity'
+                  , 'type_name' : 'SRM._Boat_Class_'
+                  , 'ui_name' : 'Boat class'
+                  , 'url' : '/Doc/SRM-_Boat_Class_'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Number of discardable races in regatta'
+                  , 'example' : '1'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'discards'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Discards'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Indicates that the regatta is cancelled'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'is_cancelled'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Is cancelled'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Kind of regatta.'
+                  , 'example' : 'One race, one beer'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'max_length' : 32
+                  , 'name' : 'kind'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Kind'
+                  }
+                , { 'default_value' : '1.0'
+                  , 'description' : 'Weight of this regatta in computation of ranking list points.'
+                  , 'example' : '  1.20'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'ranking_list_factor'
+                  , 'p_type' : 'float'
+                  , 'type' : 'Float'
+                  , 'ui_name' : 'Ranking list factor'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Number of races sailed in regatta'
+                  , 'example' : '7'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'races'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Races'
+                  }
+                , { 'attributes' :
+                      [ { 'default_value' : ''
+                        , 'description' : 'Date of regatta result.'
+                        , 'example' : '1979-08-18'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'necessary'
+                        , 'name' : 'date'
+                        , 'p_type' : 'datetime'
+                        , 'type' : 'Date-Time'
+                        , 'ui_name' : 'Date'
+                        }
+                      , { 'default_value' : ''
+                        , 'description' : 'Name of software used for managing the regatta.'
+                        , 'example' : 'Blowing Bits Inc.'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'optional'
+                        , 'max_length' : 64
+                        , 'name' : 'software'
+                        , 'p_type' : 'unicode'
+                        , 'type' : 'String'
+                        , 'ui_name' : 'Software'
+                        }
+                      , { 'default_value' : ''
+                        , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
+                        , 'example' : 'Final'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'optional'
+                        , 'max_length' : 64
+                        , 'name' : 'status'
+                        , 'p_type' : 'unicode'
+                        , 'type' : 'String'
+                        , 'ui_name' : 'Status'
+                        }
+                      ]
+                  , 'default_value' : ''
+                  , 'description' : 'Information about result.'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'result'
+                  , 'p_type' : 'Regatta_Result'
+                  , 'type' : 'Regatta_Result'
+                  , 'type_name' : 'SRM.Regatta_Result'
+                  , 'ui_name' : 'Result'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
+                  , 'example' : '42'
+                  , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'starters_rl'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Starters rl'
+                  }
+                ]
+            , 'queryable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Creation change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'creation'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Creation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Last change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'last_change'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Last change'
+                  , 'url' : None
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Change id of last change for this entity.'
+                  , 'example' : '42'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'last_cid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Last cid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Permanent id of the instance.'
+                  , 'example' : '42'
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'pid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Surrogate'
+                  , 'ui_name' : 'Pid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of type of this entity.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'type_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Type name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'A string.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'perma_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Perma name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Number of races counted for result of regatta.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'races_counted'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Races counted'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Integer attribute.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'year'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Year'
+                  }
+                ]
+            }
         , 'children' :
             [ { 'type_name' : 'SRM.Regatta_C'
               , 'url' : '/Doc/SRM-Regatta_C'
@@ -1028,174 +1279,293 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc/SRM-Regatta_C"))
     { 'json' :
         { 'attributes' :
-            [ { 'default_value' : ''
-              , 'description' : 'Regatta event to which this regatta belongs.'
-              , 'is_changeable' : False
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'left'
-              , 'p_type' : 'Regatta_Event'
-              , 'role_name' : 'event'
-              , 'type' : 'Regatta_Event'
-              , 'type_name' : 'SRM.Regatta_Event'
-              , 'ui_name' : 'Event'
-              , 'url' : '/Doc/SRM-Regatta_Event'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Class of boats sailing in this regatta.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'boat_class'
-              , 'p_type' : 'Boat_Class'
-              , 'type' : 'Entity'
-              , 'type_name' : 'SRM.Boat_Class'
-              , 'ui_name' : 'Boat class'
-              , 'url' : '/Doc/SRM-Boat_Class'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'Number of discardable races in regatta'
-              , 'example' : '1'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'discards'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Discards'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Indicates that the regatta is cancelled'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_cancelled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is cancelled'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Kind of regatta.'
-              , 'example' : 'One race, one beer'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'max_length' : 32
-              , 'name' : 'kind'
-              , 'p_type' : 'unicode'
-              , 'type' : 'String'
-              , 'ui_name' : 'Kind'
-              }
-            , { 'default_value' : '1.0'
-              , 'description' : 'Weight of this regatta in computation of ranking list points.'
-              , 'example' : '  1.20'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'ranking_list_factor'
-              , 'p_type' : 'float'
-              , 'type' : 'Float'
-              , 'ui_name' : 'Ranking list factor'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'Number of races sailed in regatta'
-              , 'example' : '7'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'races'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Races'
-              }
-            , { 'attributes' :
-                  [ { 'default_value' : ''
-                    , 'description' : 'Date of regatta result.'
-                    , 'example' : '1979-08-18'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'necessary'
-                    , 'name' : 'date'
-                    , 'p_type' : 'datetime'
-                    , 'type' : 'Date-Time'
-                    , 'ui_name' : 'Date'
-                    }
-                  , { 'default_value' : ''
-                    , 'description' : 'Name of software used for managing the regatta.'
-                    , 'example' : 'Blowing Bits Inc.'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'optional'
-                    , 'max_length' : 64
-                    , 'name' : 'software'
-                    , 'p_type' : 'unicode'
-                    , 'type' : 'String'
-                    , 'ui_name' : 'Software'
-                    }
-                  , { 'default_value' : ''
-                    , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
-                    , 'example' : 'Final'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'optional'
-                    , 'max_length' : 64
-                    , 'name' : 'status'
-                    , 'p_type' : 'unicode'
-                    , 'type' : 'String'
-                    , 'ui_name' : 'Status'
-                    }
-                  ]
-              , 'default_value' : ''
-              , 'description' : 'Information about result.'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'result'
-              , 'p_type' : 'Regatta_Result'
-              , 'type' : 'Regatta_Result'
-              , 'type_name' : 'SRM.Regatta_Result'
-              , 'ui_name' : 'Result'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
-              , 'example' : '42'
-              , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'starters_rl'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Starters rl'
-              }
-            , { 'default_value' : 'no'
-              , 'description' : 'Boolean attribute.'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_team_race'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is team race'
-              }
-            ]
+            { 'editable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Regatta event to which this regatta belongs.'
+                  , 'is_changeable' : False
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'left'
+                  , 'p_type' : 'Regatta_Event'
+                  , 'role_name' : 'event'
+                  , 'type' : 'Regatta_Event'
+                  , 'type_name' : 'SRM.Regatta_Event'
+                  , 'ui_name' : 'Event'
+                  , 'url' : '/Doc/SRM-Regatta_Event'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Class of boats sailing in this regatta.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'boat_class'
+                  , 'p_type' : 'Boat_Class'
+                  , 'type' : 'Entity'
+                  , 'type_name' : 'SRM.Boat_Class'
+                  , 'ui_name' : 'Boat class'
+                  , 'url' : '/Doc/SRM-Boat_Class'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Number of discardable races in regatta'
+                  , 'example' : '1'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'discards'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Discards'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Indicates that the regatta is cancelled'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'is_cancelled'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Is cancelled'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Kind of regatta.'
+                  , 'example' : 'One race, one beer'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'max_length' : 32
+                  , 'name' : 'kind'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Kind'
+                  }
+                , { 'default_value' : '1.0'
+                  , 'description' : 'Weight of this regatta in computation of ranking list points.'
+                  , 'example' : '  1.20'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'ranking_list_factor'
+                  , 'p_type' : 'float'
+                  , 'type' : 'Float'
+                  , 'ui_name' : 'Ranking list factor'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Number of races sailed in regatta'
+                  , 'example' : '7'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'races'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Races'
+                  }
+                , { 'attributes' :
+                      [ { 'default_value' : ''
+                        , 'description' : 'Date of regatta result.'
+                        , 'example' : '1979-08-18'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'necessary'
+                        , 'name' : 'date'
+                        , 'p_type' : 'datetime'
+                        , 'type' : 'Date-Time'
+                        , 'ui_name' : 'Date'
+                        }
+                      , { 'default_value' : ''
+                        , 'description' : 'Name of software used for managing the regatta.'
+                        , 'example' : 'Blowing Bits Inc.'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'optional'
+                        , 'max_length' : 64
+                        , 'name' : 'software'
+                        , 'p_type' : 'unicode'
+                        , 'type' : 'String'
+                        , 'ui_name' : 'Software'
+                        }
+                      , { 'default_value' : ''
+                        , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
+                        , 'example' : 'Final'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'optional'
+                        , 'max_length' : 64
+                        , 'name' : 'status'
+                        , 'p_type' : 'unicode'
+                        , 'type' : 'String'
+                        , 'ui_name' : 'Status'
+                        }
+                      ]
+                  , 'default_value' : ''
+                  , 'description' : 'Information about result.'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'result'
+                  , 'p_type' : 'Regatta_Result'
+                  , 'type' : 'Regatta_Result'
+                  , 'type_name' : 'SRM.Regatta_Result'
+                  , 'ui_name' : 'Result'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
+                  , 'example' : '42'
+                  , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'starters_rl'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Starters rl'
+                  }
+                , { 'default_value' : 'no'
+                  , 'description' : 'Boolean attribute.'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'is_team_race'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Is team race'
+                  }
+                ]
+            , 'queryable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Creation change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'creation'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Creation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Last change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'last_change'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Last change'
+                  , 'url' : None
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Change id of last change for this entity.'
+                  , 'example' : '42'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'last_cid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Last cid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Permanent id of the instance.'
+                  , 'example' : '42'
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'pid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Surrogate'
+                  , 'ui_name' : 'Pid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of type of this entity.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'type_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Type name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'A string.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'perma_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Perma name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Number of races counted for result of regatta.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'races_counted'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Races counted'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Integer attribute.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'year'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Year'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Team` links'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'teams'
+                  , 'p_type' : 'Team'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref_List'
+                  , 'type_name' : 'SRM.Team'
+                  , 'ui_name' : 'Teams'
+                  , 'url' : '/Doc/SRM-Team'
+                  }
+                ]
+            }
         , 'cross_references' :
             [ { 'attributes' :
     [ 'right' ]
@@ -1230,161 +1600,266 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc/SRM-Regatta_H"))
     { 'json' :
         { 'attributes' :
-            [ { 'default_value' : ''
-              , 'description' : 'Regatta event to which this regatta belongs.'
-              , 'is_changeable' : False
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'left'
-              , 'p_type' : 'Regatta_Event'
-              , 'role_name' : 'event'
-              , 'type' : 'Regatta_Event'
-              , 'type_name' : 'SRM.Regatta_Event'
-              , 'ui_name' : 'Event'
-              , 'url' : '/Doc/SRM-Regatta_Event'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Name of handicap system used for this regatta.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'boat_class'
-              , 'p_type' : 'Handicap'
-              , 'type' : 'Entity'
-              , 'type_name' : 'SRM.Handicap'
-              , 'ui_name' : 'Handicap'
-              , 'url' : '/Doc/SRM-Handicap'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'Number of discardable races in regatta'
-              , 'example' : '1'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'discards'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Discards'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Indicates that the regatta is cancelled'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'is_cancelled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Is cancelled'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Kind of regatta.'
-              , 'example' : 'One race, one beer'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'max_length' : 32
-              , 'name' : 'kind'
-              , 'p_type' : 'unicode'
-              , 'type' : 'String'
-              , 'ui_name' : 'Kind'
-              }
-            , { 'default_value' : '1.0'
-              , 'description' : 'Weight of this regatta in computation of ranking list points.'
-              , 'example' : '  1.20'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'ranking_list_factor'
-              , 'p_type' : 'float'
-              , 'type' : 'Float'
-              , 'ui_name' : 'Ranking list factor'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'Number of races sailed in regatta'
-              , 'example' : '7'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'races'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Races'
-              }
-            , { 'attributes' :
-                  [ { 'default_value' : ''
-                    , 'description' : 'Date of regatta result.'
-                    , 'example' : '1979-08-18'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'necessary'
-                    , 'name' : 'date'
-                    , 'p_type' : 'datetime'
-                    , 'type' : 'Date-Time'
-                    , 'ui_name' : 'Date'
-                    }
-                  , { 'default_value' : ''
-                    , 'description' : 'Name of software used for managing the regatta.'
-                    , 'example' : 'Blowing Bits Inc.'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'optional'
-                    , 'max_length' : 64
-                    , 'name' : 'software'
-                    , 'p_type' : 'unicode'
-                    , 'type' : 'String'
-                    , 'ui_name' : 'Software'
-                    }
-                  , { 'default_value' : ''
-                    , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
-                    , 'example' : 'Final'
-                    , 'is_changeable' : True
-                    , 'is_required' : False
-                    , 'is_settable' : True
-                    , 'kind' : 'optional'
-                    , 'max_length' : 64
-                    , 'name' : 'status'
-                    , 'p_type' : 'unicode'
-                    , 'type' : 'String'
-                    , 'ui_name' : 'Status'
-                    }
-                  ]
-              , 'default_value' : ''
-              , 'description' : 'Information about result.'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'result'
-              , 'p_type' : 'Regatta_Result'
-              , 'type' : 'Regatta_Result'
-              , 'type_name' : 'SRM.Regatta_Result'
-              , 'ui_name' : 'Result'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
-              , 'example' : '42'
-              , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'starters_rl'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Starters rl'
-              }
-            ]
+            { 'editable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Regatta event to which this regatta belongs.'
+                  , 'is_changeable' : False
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'left'
+                  , 'p_type' : 'Regatta_Event'
+                  , 'role_name' : 'event'
+                  , 'type' : 'Regatta_Event'
+                  , 'type_name' : 'SRM.Regatta_Event'
+                  , 'ui_name' : 'Event'
+                  , 'url' : '/Doc/SRM-Regatta_Event'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of handicap system used for this regatta.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'boat_class'
+                  , 'p_type' : 'Handicap'
+                  , 'type' : 'Entity'
+                  , 'type_name' : 'SRM.Handicap'
+                  , 'ui_name' : 'Handicap'
+                  , 'url' : '/Doc/SRM-Handicap'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Number of discardable races in regatta'
+                  , 'example' : '1'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'discards'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Discards'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Indicates that the regatta is cancelled'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'is_cancelled'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Is cancelled'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Kind of regatta.'
+                  , 'example' : 'One race, one beer'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'max_length' : 32
+                  , 'name' : 'kind'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Kind'
+                  }
+                , { 'default_value' : '1.0'
+                  , 'description' : 'Weight of this regatta in computation of ranking list points.'
+                  , 'example' : '  1.20'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'ranking_list_factor'
+                  , 'p_type' : 'float'
+                  , 'type' : 'Float'
+                  , 'ui_name' : 'Ranking list factor'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Number of races sailed in regatta'
+                  , 'example' : '7'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'races'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Races'
+                  }
+                , { 'attributes' :
+                      [ { 'default_value' : ''
+                        , 'description' : 'Date of regatta result.'
+                        , 'example' : '1979-08-18'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'necessary'
+                        , 'name' : 'date'
+                        , 'p_type' : 'datetime'
+                        , 'type' : 'Date-Time'
+                        , 'ui_name' : 'Date'
+                        }
+                      , { 'default_value' : ''
+                        , 'description' : 'Name of software used for managing the regatta.'
+                        , 'example' : 'Blowing Bits Inc.'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'optional'
+                        , 'max_length' : 64
+                        , 'name' : 'software'
+                        , 'p_type' : 'unicode'
+                        , 'type' : 'String'
+                        , 'ui_name' : 'Software'
+                        }
+                      , { 'default_value' : ''
+                        , 'description' : 'Status of result (e.g., `preliminary` or `final`).'
+                        , 'example' : 'Final'
+                        , 'is_changeable' : True
+                        , 'is_required' : False
+                        , 'is_settable' : True
+                        , 'kind' : 'optional'
+                        , 'max_length' : 64
+                        , 'name' : 'status'
+                        , 'p_type' : 'unicode'
+                        , 'type' : 'String'
+                        , 'ui_name' : 'Status'
+                        }
+                      ]
+                  , 'default_value' : ''
+                  , 'description' : 'Information about result.'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'result'
+                  , 'p_type' : 'Regatta_Result'
+                  , 'type' : 'Regatta_Result'
+                  , 'type_name' : 'SRM.Regatta_Result'
+                  , 'ui_name' : 'Result'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
+                  , 'example' : '42'
+                  , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'starters_rl'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Starters rl'
+                  }
+                ]
+            , 'queryable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Creation change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'creation'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Creation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Last change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'last_change'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Last change'
+                  , 'url' : None
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Change id of last change for this entity.'
+                  , 'example' : '42'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'last_cid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Last cid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Permanent id of the instance.'
+                  , 'example' : '42'
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'pid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Surrogate'
+                  , 'ui_name' : 'Pid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of type of this entity.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'type_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Type name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'A string.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'perma_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Perma name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Number of races counted for result of regatta.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'races_counted'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Races counted'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Integer attribute.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'year'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Year'
+                  }
+                ]
+            }
         , 'cross_references' :
             [ { 'attributes' :
     [ 'right' ]
@@ -1414,60 +1889,128 @@ _test_doc = r"""
     >>> _ = show (R.get ("/Doc/SRM-Crew_Member"))
     { 'json' :
         { 'attributes' :
-            [ { 'default_value' : ''
-              , 'description' : '`Boat_in_Regatta` the crew member sails on.'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'left'
-              , 'p_type' : 'Boat_in_Regatta'
-              , 'role_name' : 'boat_in_regatta'
-              , 'type' : 'Boat_in_Regatta'
-              , 'type_name' : 'SRM.Boat_in_Regatta'
-              , 'ui_name' : 'Boat in regatta'
-              , 'url' : '/Doc/SRM-Boat_in_Regatta'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Person which sails as crew member on `boat_in_regatta`'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'name' : 'right'
-              , 'p_type' : 'Sailor'
-              , 'role_name' : 'sailor'
-              , 'type' : 'Sailor'
-              , 'type_name' : 'SRM.Sailor'
-              , 'ui_name' : 'Sailor'
-              , 'url' : '/Doc/SRM-Sailor'
-              }
-            , { 'default_value' : '0'
-              , 'description' : 'The crew members of a boat will be sorted by `key`, if\ndefined, by order of creation otherwise.'
-              , 'example' : 7
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'key'
-              , 'p_type' : 'int'
-              , 'type' : 'Int'
-              , 'ui_name' : 'Key'
-              }
-            , { 'default_value' : ''
-              , 'description' : 'Role of crew member.'
-              , 'example' : 'trimmer'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'max_length' : 32
-              , 'name' : 'role'
-              , 'p_type' : 'unicode'
-              , 'type' : 'String'
-              , 'ui_name' : 'Role'
-              }
-            ]
+            { 'editable' :
+                [ { 'default_value' : ''
+                  , 'description' : '`Boat_in_Regatta` the crew member sails on.'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'left'
+                  , 'p_type' : 'Boat_in_Regatta'
+                  , 'role_name' : 'boat_in_regatta'
+                  , 'type' : 'Boat_in_Regatta'
+                  , 'type_name' : 'SRM.Boat_in_Regatta'
+                  , 'ui_name' : 'Boat in regatta'
+                  , 'url' : '/Doc/SRM-Boat_in_Regatta'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Person which sails as crew member on `boat_in_regatta`'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'name' : 'right'
+                  , 'p_type' : 'Sailor'
+                  , 'role_name' : 'sailor'
+                  , 'type' : 'Sailor'
+                  , 'type_name' : 'SRM.Sailor'
+                  , 'ui_name' : 'Sailor'
+                  , 'url' : '/Doc/SRM-Sailor'
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'The crew members of a boat will be sorted by `key`, if\ndefined, by order of creation otherwise.'
+                  , 'example' : 7
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'key'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Key'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Role of crew member.'
+                  , 'example' : 'trimmer'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'max_length' : 32
+                  , 'name' : 'role'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Role'
+                  }
+                ]
+            , 'queryable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Creation change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'creation'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Creation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Last change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'last_change'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Last change'
+                  , 'url' : None
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Change id of last change for this entity.'
+                  , 'example' : '42'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'last_cid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Last cid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Permanent id of the instance.'
+                  , 'example' : '42'
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'pid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Surrogate'
+                  , 'ui_name' : 'Pid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of type of this entity.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'type_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Type name'
+                  }
+                ]
+            }
         , 'description' : 'Crew member of a `Boat_in_Regatta`.'
         , 'is_partial' : False
         , 'parents' :
@@ -4478,46 +5021,252 @@ _test_rat = r"""
             , 'POST'
             ]
         , 'attributes' :
-            [ { 'default_value' : ''
-              , 'description' : 'Email that serves as user name for this account'
-              , 'example' : 'foo@bar.baz'
-              , 'is_changeable' : True
-              , 'is_required' : True
-              , 'is_settable' : True
-              , 'kind' : 'primary'
-              , 'max_length' : 80
-              , 'name' : 'name'
-              , 'p_type' : 'unicode'
-              , 'type' : 'Email'
-              , 'ui_name' : 'Name'
-              }
-            , { 'default_value' : 'no'
-              , 'description' : 'Specifies if this account is currently enabled\n(the user can login).'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'enabled'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Enabled'
-              }
-            , { 'default_value' : 'no'
-              , 'description' : 'Specifies if this account has super-user permissions.'
-              , 'example' : 'no'
-              , 'is_changeable' : True
-              , 'is_required' : False
-              , 'is_settable' : True
-              , 'kind' : 'optional'
-              , 'name' : 'superuser'
-              , 'p_type' : 'bool'
-              , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
-              , 'type' : 'Boolean'
-              , 'ui_name' : 'Superuser'
-              }
-            ]
+            { 'editable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Email that serves as user name for this account'
+                  , 'example' : 'foo@bar.baz'
+                  , 'is_changeable' : True
+                  , 'is_required' : True
+                  , 'is_settable' : True
+                  , 'kind' : 'primary'
+                  , 'max_length' : 80
+                  , 'name' : 'name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'Email'
+                  , 'ui_name' : 'Name'
+                  }
+                , { 'default_value' : 'no'
+                  , 'description' : 'Specifies if this account is currently enabled\n(the user can login).'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'enabled'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Enabled'
+                  }
+                , { 'default_value' : 'no'
+                  , 'description' : 'Specifies if this account has super-user permissions.'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'optional'
+                  , 'name' : 'superuser'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Superuser'
+                  }
+                ]
+            , 'queryable' :
+                [ { 'default_value' : ''
+                  , 'description' : 'Creation change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'creation'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Creation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Last change of the object'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'last_change'
+                  , 'p_type' : 'MD_Change'
+                  , 'type' : 'Rev_Ref'
+                  , 'type_name' : 'MOM.MD_Change'
+                  , 'ui_name' : 'Last change'
+                  , 'url' : None
+                  }
+                , { 'default_value' : '0'
+                  , 'description' : 'Change id of last change for this entity.'
+                  , 'example' : '42'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'last_cid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Last cid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Permanent id of the instance.'
+                  , 'example' : '42'
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'pid'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Surrogate'
+                  , 'ui_name' : 'Pid'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Name of type of this entity.'
+                  , 'example' : 'foo'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'internal'
+                  , 'max_length' : 64
+                  , 'name' : 'type_name'
+                  , 'p_type' : 'unicode'
+                  , 'type' : 'String'
+                  , 'ui_name' : 'Type name'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Specifies if this account is currently active.'
+                  , 'example' : 'no'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'active'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Active'
+                  }
+                , { 'default_value' : 'yes'
+                  , 'description' : 'Specifies if this account is currently suspended\n(due to a pending action).'
+                  , 'example' : 'no'
+                  , 'is_changeable' : True
+                  , 'is_required' : False
+                  , 'is_settable' : True
+                  , 'kind' : 'internal'
+                  , 'name' : 'suspended'
+                  , 'p_type' : 'bool'
+                  , 'syntax' : 'The following string values are accepted as valid Boolean values: no, yes'
+                  , 'type' : 'Boolean'
+                  , 'ui_name' : 'Suspended'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Group` linked to `Account`'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'groups'
+                  , 'p_type' : 'Group'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Role_Ref_Set'
+                  , 'type_name' : 'Auth.Group'
+                  , 'ui_name' : 'Groups'
+                  , 'url' : '/Doc/Auth-Group'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`_Account_Action_` links'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : '_account_action_s'
+                  , 'p_type' : '_Account_Action_'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref_List'
+                  , 'type_name' : 'Auth._Account_Action_'
+                  , 'ui_name' : ' account action s'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Account_Activation` link'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'activation'
+                  , 'p_type' : 'Account_Activation'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref'
+                  , 'type_name' : 'Auth.Account_Activation'
+                  , 'ui_name' : 'Activation'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Account_Password_Change_Required` link'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'password_change_required'
+                  , 'p_type' : 'Account_Password_Change_Required'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref'
+                  , 'type_name' : 'Auth.Account_Password_Change_Required'
+                  , 'ui_name' : 'Password change required'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`_Account_Token_Action_` links'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : '_account_token_action_s'
+                  , 'p_type' : '_Account_Token_Action_'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref_List'
+                  , 'type_name' : 'Auth._Account_Token_Action_'
+                  , 'ui_name' : ' account token action s'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Account_EMail_Verification` links'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'account_email_verifications'
+                  , 'p_type' : 'Account_EMail_Verification'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref_List'
+                  , 'type_name' : 'Auth.Account_EMail_Verification'
+                  , 'ui_name' : 'Account email verifications'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Account_Password_Reset` links'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'account_password_resets'
+                  , 'p_type' : 'Account_Password_Reset'
+                  , 'role_name' : 'left'
+                  , 'type' : 'Link_Ref_List'
+                  , 'type_name' : 'Auth.Account_Password_Reset'
+                  , 'ui_name' : 'Account password resets'
+                  , 'url' : None
+                  }
+                , { 'default_value' : ''
+                  , 'description' : '`Person` linked to `Account`'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'person'
+                  , 'p_type' : 'Person'
+                  , 'role_name' : 'right'
+                  , 'type' : 'Role_Ref'
+                  , 'type_name' : 'PAP.Person'
+                  , 'ui_name' : 'Person'
+                  , 'url' : '/Doc/PAP-Person'
+                  }
+                ]
+            }
         , 'cross_references' :
             [ { 'attributes' : [ 'left' ]
               , 'type_name' : 'Auth.Account_in_Group'
