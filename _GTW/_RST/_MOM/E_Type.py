@@ -54,6 +54,7 @@
 #    30-Jan-2014 (CT) Change `E_Type.GET._response_entry` to always restrict
 #                     `attributes` for `CSV`
 #    27-Mar-2014 (CT) Redefine `E_Type.OPTIONS` to add doc to `_response_body`
+#    28-Mar-2014 (CT) Remove partial links from `_rbl_entry_type_map`
 #    ««revision-date»»···
 #--
 
@@ -221,7 +222,7 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
         for lra in E_Type.link_ref_attr :
             LET  = lra.E_Type
             name = lra.name
-            if LET.show_in_ui :
+            if LET.show_in_ui and not LET.is_partial :
                 rbl_spec = E_Type.GTW.rst_mom_rbl_spec or {}
                 result [name] = rbl_spec.get \
                     (name, GTW.RST.MOM.Role_Bound_Links)

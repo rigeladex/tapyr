@@ -42,6 +42,7 @@
 #    15-May-2013 (CT) Add `show_in_ui` to `e_type_filter`
 #    27-Mar-2014 (CT) Add alias `rest_doc_response_body` to `E_Type.GET`
 #    28-Mar-2014 (CT) Add `queryable` attributes to `E_Type.GET._response_body`
+#    28-Mar-2014 (CT) Add link-ref-attribute to `cross_references`
 #    ««revision-date»»···
 #--
 
@@ -244,6 +245,9 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
         def _response_ref_e_type (self, resource, e_type, ** kw) :
             url = resource.e_type_href (e_type)
             if url :
+                lra = resource.E_Type.link_ref_map.get (e_type)
+                if lra is not None :
+                    kw ["lra"] = lra.name
                 return dict \
                     ( type_name = e_type.type_name
                     , url       = url
@@ -253,11 +257,12 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
 
         def _response_ref_map (self, resource, ref_map) :
             for et in sorted (ref_map, key = TFL.Getter.type_name) :
-                eias = ref_map [et]
-                ref = self._response_ref_e_type \
-                    (resource, et, attributes = sorted (eias))
-                if ref :
-                    yield ref
+                if et.show_in_ui :
+                    eias = ref_map [et]
+                    ref = self._response_ref_e_type \
+                        (resource, et, attributes = sorted (eias))
+                    if ref :
+                        yield ref
         # end def _response_ref_map
 
     GET = _RST_MOM_Doc_E_Type_GET_ # end class

@@ -74,6 +74,7 @@
 #    12-Jul-2013 (CT) Change `rev_ref_attr` to select all `_A_Rev_Ref_` types
 #    28-Mar-2014 (CT) Redefine `_create_properties` to exclude rev-refs to
 #                     `refuse_links`
+#    28-Mar-2014 (CT) Add `e_type.link_ref_map`
 #    ««revision-date»»···
 #--
 
@@ -140,12 +141,13 @@ class Spec (MOM.Prop.Spec) :
             (  a for a in e_type.edit_attr
             if isinstance (a, MOM.Attr._EPK_Mixin_)
             )
-        e_type.link_ref_attr    = tuple \
+        e_type.link_ref_attr    = lra = tuple \
             ( sorted
                 ( MOM.Attr.Selector.A_Type (MOM.Attr.A_Link_Ref_List) (e_type)
                 , key = sk
                 )
             )
+        e_type.link_ref_map     = dict ((a.E_Type, a) for a in lra)
         e_type.surrogate_attr   = tuple \
             (   a for a in e_type.db_attr
             if  isinstance (a.attr, MOM.Attr.A_Surrogate)

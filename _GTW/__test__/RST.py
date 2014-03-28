@@ -954,16 +954,19 @@ _test_doc = r"""
         , 'cross_references' :
             [ { 'attributes' :
     [ 'left' ]
+              , 'lra' : 'sailor_links'
               , 'type_name' : 'SRM.Crew_Member'
               , 'url' : '/Doc/SRM-Crew_Member'
               }
             , { 'attributes' :
     [ 'left' ]
+              , 'lra' : 'race_results'
               , 'type_name' : 'SRM.Race_Result'
               , 'url' : '/Doc/SRM-Race_Result'
               }
             , { 'attributes' :
     [ 'right' ]
+              , 'lra' : 'team_links'
               , 'type_name' : 'SRM.Team_has_Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Team_has_Boat_in_Regatta'
               }
@@ -1257,6 +1260,7 @@ _test_doc = r"""
         , 'cross_references' :
             [ { 'attributes' :
     [ 'right' ]
+              , 'lra' : 'boats'
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
               }
@@ -1569,11 +1573,13 @@ _test_doc = r"""
         , 'cross_references' :
             [ { 'attributes' :
     [ 'right' ]
+              , 'lra' : 'boats'
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
               }
             , { 'attributes' :
     [ 'left' ]
+              , 'lra' : 'teams'
               , 'type_name' : 'SRM.Team'
               , 'url' : '/Doc/SRM-Team'
               }
@@ -1863,6 +1869,7 @@ _test_doc = r"""
         , 'cross_references' :
             [ { 'attributes' :
     [ 'right' ]
+              , 'lra' : 'boats'
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
               }
@@ -2719,7 +2726,6 @@ _test_get = r"""
             , '/v1/PAP-Person/1/address_links'
             , '/v1/PAP-Person/1/email_links'
             , '/v1/PAP-Person/1/phone_links'
-            , '/v1/PAP-Person/1/property_links'
             , '/v1/PAP-Person/1/sailors'
             , '/v1/PAP-Person/1/url_links'
             ]
@@ -2744,7 +2750,6 @@ _test_get = r"""
             , '/v1/PAP-Person/2/address_links'
             , '/v1/PAP-Person/2/email_links'
             , '/v1/PAP-Person/2/phone_links'
-            , '/v1/PAP-Person/2/property_links'
             , '/v1/PAP-Person/2/sailors'
             , '/v1/PAP-Person/2/url_links'
             ]
@@ -2769,7 +2774,6 @@ _test_get = r"""
             , '/v1/PAP-Person/3/address_links'
             , '/v1/PAP-Person/3/email_links'
             , '/v1/PAP-Person/3/phone_links'
-            , '/v1/PAP-Person/3/property_links'
             , '/v1/PAP-Person/3/sailors'
             , '/v1/PAP-Person/3/url_links'
             ]
@@ -2808,7 +2812,6 @@ _test_get = r"""
             , '/v1/PAP-Person/1/address_links'
             , '/v1/PAP-Person/1/email_links'
             , '/v1/PAP-Person/1/phone_links'
-            , '/v1/PAP-Person/1/property_links'
             , '/v1/PAP-Person/1/sailors'
             , '/v1/PAP-Person/1/url_links'
             ]
@@ -4653,7 +4656,6 @@ _test_put = r"""
             , '/v1/PAP-Person/1/address_links'
             , '/v1/PAP-Person/1/email_links'
             , '/v1/PAP-Person/1/phone_links'
-            , '/v1/PAP-Person/1/property_links'
             , '/v1/PAP-Person/1/sailors'
             , '/v1/PAP-Person/1/url_links'
             ]
@@ -5269,10 +5271,12 @@ _test_rat = r"""
             }
         , 'cross_references' :
             [ { 'attributes' : [ 'left' ]
+              , 'lra' : 'group_links'
               , 'type_name' : 'Auth.Account_in_Group'
               , 'url' : '/Doc/Auth-Account_in_Group'
               }
             , { 'attributes' : [ 'right' ]
+              , 'lra' : 'person_links'
               , 'type_name' : 'PAP.Person_has_Account'
               , 'url' : '/Doc/PAP-Person_has_Account'
               }

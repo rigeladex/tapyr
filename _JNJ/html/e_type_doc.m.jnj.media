@@ -45,11 +45,7 @@ style_sheet = Style_Sheet \
                 )
             , Rule
                 ( "a .attr-name", "a .role-name"
-                , padding          = TRBL
-                    (Em (0.1), Em (2.5), Em (0.2), Em (0.5))
-                , children             =
-                    [ P.Rule.hover
-                    ]
+                , children             = [P.Rule.hover]
                 )
             , Rule
                 ( ".Attr-Table"

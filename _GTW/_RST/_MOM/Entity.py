@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -51,6 +51,8 @@
 #     4-Oct-2013 (CT) Add `add_attributes` to `_response_obj_attrs`
 #     4-Oct-2013 (CT) Use `attr_prop` for `add_attributes` in
 #                     `_response_obj_attrs`
+#    28-Mar-2014 (CT) Add guard for `show_in_ui` and `not is_partial` to
+#                     `_entry_type_links`
 #    ««revision-date»»···
 #--
 
@@ -301,7 +303,12 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
     def _entry_type_links (self) :
         def _gen (href, ET) :
             for lra in ET.link_ref_attr :
-                yield (pp_join (href, lra.name), lra.__doc__.replace ("`", ""))
+                LET = lra.E_Type
+                if LET.show_in_ui and not LET.is_partial :
+                    yield \
+                        ( pp_join (href, lra.name)
+                        , lra.__doc__.replace ("`", "")
+                        )
         return tuple (sorted (_gen (self.abs_href, self.E_Type)))
     # end def _entry_type_links
 

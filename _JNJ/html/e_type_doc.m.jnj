@@ -34,14 +34,15 @@
 ##    28-Mar-2013 (CT) Don't show false `is_required` if not `is_changeable`
 ##    28-Mar-2013 (CT) Add `max_length`
 ##    28-Mar-2014 (CT) Add support for `queryable` attributes
+##    28-Mar-2014 (CT) Add link-ref-attributes to `e_type_cross_refs`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X %}
 
-{%- macro attr_name (name, css_class = "attr-name") -%}
-  <b class="{{ css_class }}">{{ name }}</b>
+{%- macro attr_name (name, css_class = "attr-name", sep = "") -%}
+  <b class="{{ css_class }}">{{ name }}{{ sep }}</b>
 {%- endmacro -%} {#- attr_name -#}
 
 {%- macro attr_table (resource, attrs) -%}
@@ -187,18 +188,25 @@
   {% call(cr) e_type_refs (cross_refs) -%}
     {{ e_type_ref (cr) -}}:
     {%- for a in cr.attributes %}
-      <a href="{{ cr.url }}#attr-s-{{ a }}">{{ attr_name (a) }}</a>
+      {%- set sep = "" if loop.last else ", " %}
+      <a href="{{ cr.url }}#attr-s-{{ a }}">{{- attr_name (a, sep = sep) -}}</a>
     {% endfor -%}
+    {%- if cr.lra -%}
+      [<b>{{ cr.lra }}</b>]
+    {%- endif -%}
   {% endcall %} {# e_type_refs #}
 {%- endmacro -%} {#- e_type_cross_refs -#}
 
 {%- macro e_type_ref (et) -%}
   {%- if et -%}
-    {%- if et.url %}
-      <a href={{ et.url }}>{{ et.type_name }}</a>
-    {%- else %}
-      {{ et.type_name }}
-    {% endif -%}
+    {%- onion et.url %}
+      {%- head -%}
+        <a href="{{ et.url }}">
+      {%- body -%}
+        {{ et.type_name }}
+      {%- tail -%}
+        </a>
+    {%- endonion %}
   {%- endif -%}
 {%- endmacro -%} {#- e_type_ref -#}
 
