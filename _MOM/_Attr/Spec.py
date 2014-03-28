@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -72,6 +72,8 @@
 #     7-Jun-2013 (CT) Change `own_surrogate`, update `surrogate_map`
 #    17-Jun-2013 (CT) Sort `rev_ref_attr` and `link_ref_attr`
 #    12-Jul-2013 (CT) Change `rev_ref_attr` to select all `_A_Rev_Ref_` types
+#    28-Mar-2014 (CT) Redefine `_create_properties` to exclude rev-refs to
+#                     `refuse_links`
 #    ««revision-date»»···
 #--
 
@@ -193,6 +195,24 @@ class Spec (MOM.Prop.Spec) :
                     self._setup_alias (e_type, alias, name)
         return prop
     # end def _add_prop
+
+    def _create_properties (self, e_type) :
+        _names       = self._names
+        _own_names   = self._own_names
+        refuse_links = getattr (e_type, "refuse_links", None)
+        if refuse_links :
+            for n, atc in _names.iteritems () :
+                if  (   atc is not None
+                    and n not in _own_names
+                    and issubclass (atc, MOM.Attr._A_Rev_Ref_)
+                    ) :
+                    ak = getattr (e_type, n, None)
+                    if ak is not None :
+                        if ak.attr.Ref_Type.type_name in refuse_links :
+                            _names [n] = _own_names [n] = None
+                            setattr (e_type, n, None)
+        return self.__super._create_properties (e_type)
+    # end def _create_properties
 
     def _effective_prop_kind_mixins (self, name, kind, prop_type, e_type) :
         result = self.__super._effective_prop_kind_mixins \

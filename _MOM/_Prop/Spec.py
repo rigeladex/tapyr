@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -46,6 +46,8 @@
 #     3-Jun-2013 (CT) Assign `_prop_dict` to attribute named by `_prop_map_name`
 #     3-Jun-2013 (CT) Change argument of `fix_doc` from `e_type` to `et_scope`
 #     6-Jun-2013 (CT) Use `prop.assign`, not `setattr`, to assign to `e_type`
+#    28-Mar-2014 (CT) Change `_create_properties` to use `_own_names`, not
+#                     `_prop_dict`, to check for redefinition
 #    ««revision-date»»···
 #--
 
@@ -95,7 +97,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         if kind is not None :
             prop = self._new_prop (name, kind, prop_type, e_type)
             self._setup_prop      (e_type, name, kind.kind, prop)
-        prop.assign (e_type, name)
+            prop.assign           (e_type, name)
         return prop
     # end def _add_prop
 
@@ -115,7 +117,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
             bps = getattr (b, self._prop_map_name, {})
             base_props.update (bps)
         for n, prop_type in self._names.iteritems () :
-            if n not in self._prop_dict :
+            if n not in self._own_names :
                 ### Inherited property: include in `_prop_dict` and `_prop_kind`
                 prop = base_props.get (n)
                 if prop is not None :
