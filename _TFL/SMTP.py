@@ -37,6 +37,7 @@
 #     6-Jul-2012 (CT) Add `SMTP_Logger`
 #    18-Nov-2013 (CT) Change default `charset` to `utf-8`
 #    17-Feb-2014 (CT) Change `SMTP_Logger.send` to use `pyk.encoded`
+#    31-Mar-2014 (CT) Simplify, and fix, `header` for Python-3
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,7 @@ import datetime
 import logging
 import smtplib
 import socket
+import sys
 
 class SMTP (TFL.Meta.Object) :
     """Send emails via SMTP"""
@@ -129,31 +131,36 @@ class SMTP (TFL.Meta.Object) :
 
            Wrapping is done only if `s` contains non-ASCII characters;
            applying `Header` to pure ASCII strings adds stupid line noise to
-           email addresses!
+           email addresses! For Python 3, `email.header.Header` does the
+           right thing; only Python 2 needs the convoluted gymnastics.
 
-        >>> from email.header import Header
-        >>> print (Header ("christian.tanzer@swing.co.at", charset = "utf-8"))
-        =?utf-8?q?christian=2Etanzer=40swing=2Eco=2Eat?=
+        >>> smtp = SMTP ()
+        >>> print (smtp.header ("christian.tanzer@swing.co.at"))
+        christian.tanzer@swing.co.at
+
         """
-        if charset is None :
-            charset = self.charset
-        result = s
-        if isinstance (result, str) :
-            decoded = decode_header (result)
-            if any (c for ds, c in decoded) :
-                result = make_header \
-                    (list ((ds, c or charset) for ds, c in decoded), ** kw)
-        if not isinstance (result, Header) :
+        if sys.version_info < (3,) :
+            if charset is None :
+                charset = self.charset
+            result = s
             if isinstance (result, str) :
+                decoded = decode_header (result)
+                if any (c for ds, c in decoded) :
+                    result = make_header \
+                        (list ((ds, c or charset) for ds, c in decoded), ** kw)
+            if not isinstance (result, Header) :
+                if isinstance (result, str) :
+                    try :
+                        result  = result.decode (charset)
+                    except UnicodeError :
+                        charset = "utf-8"
+                        result  = result.decode (charset)
                 try :
-                    result  = result.decode (charset)
+                    result.encode ("ascii")
                 except UnicodeError :
-                    charset = "utf-8"
-                    result  = result.decode (charset)
-            try :
-                result.encode ("ascii")
-            except UnicodeError :
-                result = Header (s, charset = charset, ** kw)
+                    result = Header (s, charset = charset, ** kw)
+        else :
+            result = Header (s, charset = charset, ** kw)
         return result
     # end def header
 
