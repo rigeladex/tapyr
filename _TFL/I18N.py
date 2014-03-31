@@ -55,6 +55,9 @@
 #                     `eval` fails for `unicode` value containing coding cookie
 #     9-Dec-2013 (CT) Fix 3-compatibility
 #    26-Mar-2014 (CT) Change `ungettext` to use `ugettext` for `n == 1`
+#    31-Mar-2014 (CT) Add guard for `AttributeError` to `ugettext`, `ungettext`
+#                     (3-compatibility for `gettext.NullTranslations`)
+#    31-Mar-2014 (CT) Use `print` in doctest of `context` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -139,18 +142,18 @@ def context (* lang) :
     >>> Config.Languages ["l2"] = l2 = Translations ()
     >>> l1._catalog = dict (text1 = u"L1: Text 1", text2 = u"L1: Text 2")
     >>> l2._catalog = dict (text1 = u"L2: Text 1", text2 = u"L2: Text 2")
-    >>> _T ("text1")
-    u'text1'
+    >>> print (_T ("text1"))
+    text1
     >>> with context ("l1") :
-    ...     _T ("text1")
-    ...     _T ("text2")
-    u'L1: Text 1'
-    u'L1: Text 2'
+    ...     print (_T ("text1"))
+    ...     print (_T ("text2"))
+    L1: Text 1
+    L1: Text 2
     >>> with context ("l2") :
-    ...     _T ("text1")
-    ...     _T ("text2")
-    u'L2: Text 1'
-    u'L2: Text 2'
+    ...     print (_T ("text1"))
+    ...     print (_T ("text2"))
+    L2: Text 1
+    L2: Text 2
     """
     old = Config.current, Config.choice
     try :
@@ -235,7 +238,12 @@ def safe_eval (value, encoding = None) :
 
 def ugettext (text, trans = None) :
     """Return the localized translation of `text` (as unicode)."""
-    return (trans or Config.current).ugettext (text)
+    try :
+        translator = (trans or Config.current).ugettext
+    except AttributeError :
+        return text
+    else :
+        return translator (text)
 # end def ugettext
 
 def ungettext (singular, plural = None, n = 99, trans = None) :
@@ -247,7 +255,12 @@ def ungettext (singular, plural = None, n = 99, trans = None) :
     else :
         if plural is None :
             plural = singular + "s"
-        return (trans or Config.current).ungettext (singular, plural, n)
+        try :
+            translator = (trans or Config.current).ungettext
+        except AttributeError :
+            return text
+        else :
+            return translator (singular, plural, n)
 # end def ungettext
 
 def use (* lang) :
