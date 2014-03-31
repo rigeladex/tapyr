@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -72,6 +72,7 @@
 #    10-Oct-2013 (CT) Factor `_derive_expr_class`
 #    10-Oct-2013 (CT) Call `_derive_expr_class` for `_Call_` and `_Sum_`, too
 #    11-Oct-2013 (CT) Factor `_Aggr_`, `_derive_aggr_class`, add `_Avg_`...
+#    31-Mar-2014 (CT) Add `M_Q_Root`, `normalized_op_name` (3.4-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -100,16 +101,16 @@ This module implements a query expression language::
     -42
 
     >>> q1 = Q.foo == Q.bar
-    >>> q1, q1.lhs, q1.rhs, q1.op.__name__
-    (Q.foo == Q.bar, Q.foo, Q.bar, '__eq__')
+    >>> q1, q1.lhs, q1.rhs, normalized_op_name (q1.op.__name__)
+    (Q.foo == Q.bar, Q.foo, Q.bar, 'eq')
     >>> q1.lhs._name, q1.rhs._name
     ('foo', 'bar')
     >>> q1.predicate (r1)
     False
 
     >>> q2 = Q.foo + Q.bar
-    >>> q2, q2.lhs, q2.rhs, q2.op.__name__
-    (Q.foo + Q.bar, Q.foo, Q.bar, '__add__')
+    >>> q2, q2.lhs, q2.rhs, normalized_op_name (q2.op.__name__)
+    (Q.foo + Q.bar, Q.foo, Q.bar, 'add')
     >>> q2.predicate (r1)
     179
 
@@ -130,7 +131,7 @@ This module implements a query expression language::
     42
 
     >>> q5 = Q.foo.BETWEEN (10, 100)
-    >>> q5, q5.lhs, q5.args, q5.op.__name__
+    >>> q5, q5.lhs, q5.args, normalized_op_name (q5.op.__name__)
     (Q.foo.between (10, 100), Q.foo, (10, 100), 'between')
     >>> q5.predicate (r1)
     True
@@ -184,7 +185,7 @@ This module implements a query expression language::
     -1 * Q.foo
 
     >>> qm = Q.foo.D.MONTH (2, 2010)
-    >>> qm, qm.lhs, qm.op.__name__
+    >>> qm, qm.lhs, normalized_op_name (qm.op.__name__)
     (Q.foo.between (datetime.date(2010, 2, 1), datetime.date(2010, 2, 28)), \
         Q.foo, 'between')
 
@@ -261,8 +262,8 @@ cannot be used with any operators except `==` and `!=`::
     Q.a < Q.b
     >>> q.rhs
     Q.a % 2
-    >>> q.op
-    <built-in function __eq__>
+    >>> display (q)
+    'eq (lt (Q.a, Q.b), mod (Q.a, 2))'
 
 But explicit parenthesis are necessary in some cases::
 
@@ -306,33 +307,33 @@ Q.SUM needs documenting::
 q-expressions::
 
     >>> display (Q.foo < 42)
-    '__lt__ (Q.foo, 42)'
+    'lt (Q.foo, 42)'
     >>> display (42 <= Q.foo)
-    '__ge__ (Q.foo, 42)'
+    'ge (Q.foo, 42)'
 
     >>> display (Q.foo * 42)
-    '__mul__ (Q.foo, 42)'
+    'mul (Q.foo, 42)'
     >>> display (Q.foo / 42)
-    '__truediv__ (Q.foo, 42)'
+    'truediv (Q.foo, 42)'
     >>> display (Q.foo // 42)
-    '__floordiv__ (Q.foo, 42)'
+    'floordiv (Q.foo, 42)'
 
     >>> display (42 / Q.foo)
-    '__truediv__/r (Q.foo, 42)'
+    'truediv/r (Q.foo, 42)'
     >>> display (42 * Q.foo)
-    '__mul__/r (Q.foo, 42)'
+    'mul/r (Q.foo, 42)'
 
     >>> Q.DISPLAY (Q.foo % 2 == 0)
-    '__eq__ (__mod__ (Q.foo, 2), 0)'
+    'eq (mod (Q.foo, 2), 0)'
     >>> Q.DISPLAY (Q.foo % 2 == Q.bar * 3)
-    '__eq__ (__mod__ (Q.foo, 2), __mul__ (Q.bar, 3))'
+    'eq (mod (Q.foo, 2), mul (Q.bar, 3))'
     >>> Q.DISPLAY (Q.foo % 2 == -Q.bar * 3)
-    '__eq__ (__mod__ (Q.foo, 2), __mul__ (__neg__ (Q.bar), 3))'
+    'eq (mod (Q.foo, 2), mul (neg (Q.bar), 3))'
     >>> Q.DISPLAY (- (Q.foo % 2 * -Q.bar / 3))
-    '__neg__ (__truediv__ (__mul__ (__mod__ (Q.foo, 2), __neg__ (Q.bar)), 3))'
+    'neg (truediv (mul (mod (Q.foo, 2), neg (Q.bar)), 3))'
 
     >>> Q.DISPLAY (~ (Q.foo % 2 * -Q.bar / 3))
-    '__not__ (__truediv__ (__mul__ (__mod__ (Q.foo, 2), __neg__ (Q.bar)), 3))'
+    'not (truediv (mul (mod (Q.foo, 2), neg (Q.bar)), 3))'
 
     >>> Q.DISPLAY (Q.baz.STARTSWITH ("qux"))
     'Call:startswith: (Q.baz, qux)'
@@ -341,7 +342,7 @@ q-expressions::
     'Call:between: (Q.foo, 2013-01-01, 2013-12-31)'
 
     >>> Q.DISPLAY (Q.foo.IN ((1, 2, 3)))
-    'Call:in_: (Q.foo, (1, 2, 3))'
+    'Call:in: (Q.foo, (1, 2, 3))'
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
@@ -361,6 +362,10 @@ from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 from   _TFL.predicate             import callable
 
 import operator
+
+def normalized_op_name (name) :
+    return name.strip ("_")
+# end def normalized_op_name
 
 @pyk.adapt__bool__
 class Base (TFL.Meta.Object) :
@@ -403,7 +408,20 @@ class Base (TFL.Meta.Object) :
 
 Q = Base ()
 
-class Q_Root (TFL.Meta.Object) :
+class M_Q_Root (TFL.Meta.Object.__class__) :
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        for map_name in "op_map", "rop_map" :
+            map = getattr (cls, map_name, None)
+            if map :
+                for k, v in list (pyk.iteritems (map)) :
+                    map.setdefault (normalized_op_name (k), v)
+    # end def __init__
+
+# end class M_Q_Root
+
+class Q_Root (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Q_Root)) :
     """Base class for all classes modelling queries"""
 
     def __call__ (self, obj) :
@@ -1164,7 +1182,6 @@ _derive_aggr_class ("_Sum_",   "Query function building the sum")
 
 ###############################################################################
 ### Generic functions to display Q expressions
-
 @TFL.Add_To_Class ("DISPLAY", Base)
 @Single_Dispatch
 def display (q) :
@@ -1175,19 +1192,22 @@ def display (q) :
 def _display_bin_ (q) :
     rs = "/r" if q.reverse else ""
     lhs, rhs = q.lhs, q.rhs
-    return "%s%s (%s, %s)" % (q.op.__name__, rs, display (lhs), display (rhs))
+    return "%s%s (%s, %s)" % \
+        (normalized_op_name (q.op.__name__), rs, display (lhs), display (rhs))
 # end def _display_bin_
 
 @display.add_type (_Una_)
 def _display_una_ (q) :
-    return "%s (%s)" % (q.op.__name__, display (q.lhs))
+    return "%s (%s)" % (normalized_op_name (q.op.__name__), display (q.lhs))
 # end def _display_una_
 
 @display.add_type (_Call_)
 def _display_call_ (q) :
     args = (q.lhs, ) + q.args
     return "Call:%s: (%s)" % \
-        (q.op.__name__, ", ".join (display (a) for a in args))
+        ( normalized_op_name (q.op.__name__)
+        , ", ".join (display (a) for a in args)
+        )
 # end def _display_call_
 
 if __name__ != "__main__" :
