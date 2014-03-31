@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -40,6 +40,7 @@
 #                     add `normalize_json` to `show`; add `** kw` to `traverse`
 #     3-May-2013 (CT) Add `date_cleaner`
 #     4-May-2013 (CT) Add `set-copy` to`skip_headers`
+#    31-Mar-2014 (CT) Add `default_value` for `<date instance>` to `date_cleaner`
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,7 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _GTW.__test__.Test_Command import *
 
-from   _TFL.Regexp                import Re_Replacer, re
+from   _TFL.Regexp                import Multi_Re_Replacer, Re_Replacer, re
 
 from   posixpath import join as pp_join
 
@@ -59,9 +60,15 @@ import time
 
 skip_headers = set (["connection", "set-cookie", "x-frame-options"])
 
-date_cleaner = Re_Replacer \
-    ( r"'date' : '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'"
-    , r"'date' : <datetime>"
+date_cleaner = Multi_Re_Replacer \
+    ( Re_Replacer
+        ( r"'date' : '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'"
+        , r"'date' : <datetime>"
+        )
+    , Re_Replacer
+        ( r"'default_value' : '\d{4}-\d{2}-\d{2}'"
+        , r"'date' : <date instance>"
+        )
     )
 
 def req_json (r) :

@@ -56,6 +56,7 @@
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
 #    29-Jul-2013 (CT) Add `test_put`
 #     4-Oct-2013 (CT) Add test for query argument `fields`
+#    31-Mar-2014 (CT) Apply `date_cleaner` to `R.get("/Doc/SRM-Boat_in_Regatta")`
 #    ««revision-date»»···
 #--
 
@@ -736,7 +737,7 @@ _test_doc = r"""
     , 'url' : 'http://localhost:9999/Doc?brief'
     }
 
-    >>> _ = show (R.get ("/Doc/SRM-Boat_in_Regatta"))
+    >>> _ = show (R.get ("/Doc/SRM-Boat_in_Regatta"), cleaner = date_cleaner)
     { 'json' :
         { 'attributes' :
             { 'editable' :
@@ -895,7 +896,7 @@ _test_doc = r"""
                   , 'type' : 'Int'
                   , 'ui_name' : 'Rank'
                   }
-                , { 'default_value' : '2014-03-28'
+                , { 'date' : <date instance>
                   , 'description' : 'Date of registration.'
                   , 'example' : '2010-10-10'
                   , 'is_changeable' : False
