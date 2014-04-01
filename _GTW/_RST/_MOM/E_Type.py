@@ -55,6 +55,7 @@
 #                     `attributes` for `CSV`
 #    27-Mar-2014 (CT) Redefine `E_Type.OPTIONS` to add doc to `_response_body`
 #    28-Mar-2014 (CT) Remove partial links from `_rbl_entry_type_map`
+#     1-Apr-2014 (CT) Change `E_Type.OPTIONS` to only consider `rest_doc`
 #    ««revision-date»»···
 #--
 
@@ -188,10 +189,7 @@ class _RST_MOM_E_Type_ (GTW.RST.MOM.E_Type_Mixin, _Ancestor) :
             top    = resource.top
             etd    = top.ET_Map.get (resource.type_name)
             result = {}
-            doc    = \
-                (  getattr (etd, "rest_doc", None)
-                or getattr (etd, "doc", None)
-                )
+            doc    = getattr (etd, "rest_doc", None)
             if doc is not None :
                 result = doc.GET ().rest_doc_response_body \
                     (doc, request, response)

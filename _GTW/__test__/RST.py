@@ -789,6 +789,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'min_value' : 1
                   , 'name' : 'place'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -801,6 +802,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'min_value' : 1
                   , 'name' : 'points'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -1025,6 +1027,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 32
                   , 'name' : 'discards'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -1063,6 +1066,8 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 2.0
+                  , 'min_value' : 0.4
                   , 'name' : 'ranking_list_factor'
                   , 'p_type' : 'float'
                   , 'type' : 'Float'
@@ -1075,6 +1080,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 32
                   , 'name' : 'races'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -1319,6 +1325,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 32
                   , 'name' : 'discards'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -1357,6 +1364,8 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 2.0
+                  , 'min_value' : 0.4
                   , 'name' : 'ranking_list_factor'
                   , 'p_type' : 'float'
                   , 'type' : 'Float'
@@ -1369,6 +1378,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 32
                   , 'name' : 'races'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -1642,6 +1652,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 32
                   , 'name' : 'discards'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
@@ -1680,6 +1691,8 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 2.0
+                  , 'min_value' : 0.4
                   , 'name' : 'ranking_list_factor'
                   , 'p_type' : 'float'
                   , 'type' : 'Float'
@@ -1692,6 +1705,7 @@ _test_doc = r"""
                   , 'is_required' : False
                   , 'is_settable' : True
                   , 'kind' : 'optional'
+                  , 'max_value' : 32
                   , 'name' : 'races'
                   , 'p_type' : 'int'
                   , 'type' : 'Int'

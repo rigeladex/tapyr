@@ -53,6 +53,7 @@
 #                     `_response_obj_attrs`
 #    28-Mar-2014 (CT) Add guard for `show_in_ui` and `not is_partial` to
 #                     `_entry_type_links`
+#     1-Apr-2014 (CT) Redefine `Entity.OPTIONS` to add doc to `_response_body`
 #    ««revision-date»»···
 #--
 
@@ -249,6 +250,24 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         # end def _response_obj_attrs
 
     GET = _RST_MOM_Entity_GET_ # end class
+
+    class _RST_MOM_E_Type_OPTIONS_ (_Ancestor.OPTIONS) :
+
+        _real_name             = "OPTIONS"
+
+        def _response_body (self, resource, request, response) :
+            top    = resource.top
+            etd    = top.ET_Map.get (resource.type_name)
+            result = {}
+            doc    = getattr (etd, "rest_doc", None)
+            if doc is not None :
+                result = doc.GET ().rest_doc_response_body \
+                    (doc, request, response)
+            result ["METHODS"] = self.methods
+            return result
+        # end def _response_body
+
+    OPTIONS = _RST_MOM_E_Type_OPTIONS_ # end class
 
     class _RST_MOM_Entity_PUT_ (GTW.RST.MOM._PUT_POST_Mixin_, GTW.RST.PUT) :
 

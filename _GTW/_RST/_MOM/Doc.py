@@ -43,6 +43,8 @@
 #    27-Mar-2014 (CT) Add alias `rest_doc_response_body` to `E_Type.GET`
 #    28-Mar-2014 (CT) Add `queryable` attributes to `E_Type.GET._response_body`
 #    28-Mar-2014 (CT) Add link-ref-attribute to `cross_references`
+#     1-Apr-2014 (CT) Add `max_value` and `min_value` to
+#                     `E_Type.GET._response_attr`
 #    ««revision-date»»···
 #--
 
@@ -154,7 +156,10 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
                 , type          = _T (attr.typ)
                 )
             self._add_attr_props \
-                (attr, ("group", "max_length", "role_name"), result)
+                ( attr
+                , ("group", "max_length", "max_value", "min_value", "role_name")
+                , result
+                )
             self._add_attr_props (attr, ("explanation", "syntax"), result, _T)
             if attr.ui_name_T != attr.name :
                 result ["ui_name"] = attr.ui_name_T

@@ -35,6 +35,7 @@
 ##    28-Mar-2013 (CT) Add `max_length`
 ##    28-Mar-2014 (CT) Add support for `queryable` attributes
 ##    28-Mar-2014 (CT) Add link-ref-attributes to `e_type_cross_refs`
+##     1-Apr-2014 (CT) Add `max_value`, `min_value` to `attributes`
 ##    ««revision-date»»···
 ##--
 #}
@@ -116,7 +117,13 @@
             {% endif -%}
           {%- tail %}
             </a>
-          {%- endonion %}
+        {%- endonion %}
+        {%- if a.min_value %}
+          <p><strong>{{ GTW._T ("Minimum value") }}</strong>: {{ a.min_value }}</p>
+        {% endif -%}
+        {%- if a.max_value %}
+          <p><strong>{{ GTW._T ("Maximum value") }}</strong>: {{ a.max_value }}</p>
+        {% endif -%}
       </dd>
       <dt>Kind</dt>
       <dd>
