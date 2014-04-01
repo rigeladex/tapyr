@@ -731,7 +731,7 @@ msgstr "Objekt-korrekt"
 
 #: _MOM/_Attr/Kind.py:1232
 msgid "optional"
-msgstr "optionell"
+msgstr "optional"
 
 #: _MOM/_Attr/Kind.py:1108
 msgid "primary"
@@ -752,4 +752,3 @@ msgstr "erforderlich"
 
 #~ msgid "Unique name of the object."
 #~ msgstr ""
-
