@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -30,6 +30,7 @@
 #     3-May-2013 (CT) Use `request.rat_secret`, not home-grown code
 #     6-May-2013 (CT) Add `send_error_email` to `RAT.POST._response_body`
 #     9-Dec-2013 (CT) Factor `Signed_Token`
+#     1-Apr-2014 (CT) Set `secure` to `request.is_secure`
 #    ««revision-date»»···
 #--
 
@@ -103,11 +104,12 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
                 token   = GTW.RST.Signed_Token.REST_Auth \
                     ( request, account = account, data = data)
                 rat     = result [cn] = token.value
-                response.set_secure_cookie \
-                    ( cn, rat
+                kw      = dict \
+                    ( resource.cookie_kw
                     , max_age = resource.session_ttl
-                    , ** resource.cookie_kw
+                    , secure  = request.is_secure
                     )
+                response.set_secure_cookie (cn, rat, ** kw)
             return result
         # end def _response_body
 
