@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Aug-2013 (CT) Creation
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_expr`
+#     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #    ««revision-date»»···
 #--
 
@@ -1043,9 +1044,13 @@ _test_xs_filter = """
     Auth.Account  :  Q.person_links.person.account_links.account.name == foo
         auth__account___1.name = :name_1
 
+    >>> show_xs_filter (apt, "Auth.Account", Q.person_links.person.account_links.account.name)
+    Auth.Account  :  Q.person_links.person.account_links.account.name
+        auth__account___1.name != :name_1
+
     >>> show_xs_filter (apt, "Auth.Account", ~ Q.person_links.person.account_links.account.name)
     Auth.Account  :  ~ Q.person_links.person.account_links.account.name
-        NOT auth__account___1.name
+        auth__account___1.name = :name_1
 
     >>> show_xs_filter (apt, "Auth.Account", Q.RAW.person.last_name == "Tanzer")
     Auth.Account  :  Q.RAW.person.last_name == Tanzer

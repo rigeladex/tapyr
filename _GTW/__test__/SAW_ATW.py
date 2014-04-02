@@ -46,6 +46,7 @@
 #    29-Aug-2013 (CT) Add test case for
 #                     `Q.person.lifetime == ("2013-07-15", "2013-07-21")`
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_q_result`
+#     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #    ««revision-date»»···
 #--
 
@@ -5948,6 +5949,24 @@ _test_q_result = """
            LEFT OUTER JOIN mom_id_entity AS mom_id_entity__13 ON mom_id_entity__13.pid = pap_subject_has_property."left"
          WHERE mom_id_entity__14.electric != mom_id_entity__13.electric
 
+    >>> print (qrt.filter (Q.electric)) ### PAP.Subject_has_Phone
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+         WHERE mom_id_entity.electric = true
+
     >>> print (qrt.filter (~ Q.electric)) ### PAP.Subject_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
@@ -5964,7 +5983,43 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-         WHERE NOT mom_id_entity.electric
+         WHERE mom_id_entity.electric != true
+
+    >>> print (qrt.filter (Q.NOT (Q.electric))) ### PAP.Subject_has_Phone
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+         WHERE mom_id_entity.electric != true
+
+    >>> print (qrt.filter (Q.NOT (~ Q.electric))) ### PAP.Subject_has_Phone
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+         WHERE mom_id_entity.electric = true
 
     >>> print (qrt.filter (Q.x_locked)) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -6841,6 +6896,50 @@ _test_q_result = """
            JOIN srm_boat AS srm_boat__1 ON srm_boat__1.pid = srm_boat_in_regatta."left"
            JOIN srm_boat_class AS srm_boat_class__2 ON srm_boat_class__2.pid = srm_boat__1."left"
          WHERE srm_boat_in_regatta.points / srm_boat_class__2.max_crew > :param_1
+
+    >>> show_query (qrt.filter (Q.points))
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           srm_boat_in_regatta."left" AS srm_boat_in_regatta_left,
+           srm_boat_in_regatta."right" AS srm_boat_in_regatta_right,
+           srm_boat_in_regatta.pid AS srm_boat_in_regatta_pid,
+           srm_boat_in_regatta.place AS srm_boat_in_regatta_place,
+           srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
+           srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
+           srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+         WHERE srm_boat_in_regatta.points IS NOT NULL
+            AND srm_boat_in_regatta.points != :points_1
+    Parameters:
+         points_1             : 0
+
+    >>> show_query (qrt.filter (~ Q.points))
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           srm_boat_in_regatta."left" AS srm_boat_in_regatta_left,
+           srm_boat_in_regatta."right" AS srm_boat_in_regatta_right,
+           srm_boat_in_regatta.pid AS srm_boat_in_regatta_pid,
+           srm_boat_in_regatta.place AS srm_boat_in_regatta_place,
+           srm_boat_in_regatta.points AS srm_boat_in_regatta_points,
+           srm_boat_in_regatta.rank AS srm_boat_in_regatta_rank,
+           srm_boat_in_regatta.registration_date AS srm_boat_in_regatta_registration_date,
+           srm_boat_in_regatta.skipper AS srm_boat_in_regatta_skipper
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+         WHERE NOT (srm_boat_in_regatta.points IS NOT NULL
+            AND srm_boat_in_regatta.points != :points_1)
+    Parameters:
+         points_1             : 0
 
 """
 

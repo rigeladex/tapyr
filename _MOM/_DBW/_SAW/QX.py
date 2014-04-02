@@ -49,6 +49,11 @@
 #     6-Mar-2014 (CT) Change `Kind_Composite._xs_filter_bin` to
 #                     delegate `to lqx._xs_filter_bin`
 #     6-Mar-2014 (CT) Add cache for `Kind_Composite._get_attr` results
+#     2-Apr-2014 (CT) Fix `_xs_filter_una` to use `op._xs_filter_una_delegate`,
+#                     not `self._xs_filter_una_delegate`
+#     2-Apr-2014 (CT) Redefine `Una._xs_filter_una_delegate` to return
+#                     `XS_FILTER` for `NOT`, `_XS_FILTER` for all other
+#                     unary operators
 #    ««revision-date»»···
 #--
 
@@ -464,7 +469,7 @@ class _Base_ (TFL.Meta.Object) :
         if isinstance (lhs, SAW.Q_Result._Base_) :
             lhs = lhs.sa_query
         else :
-            lhs = getattr (lhs, self._xs_filter_una_delegate, lhs)
+            lhs = getattr (lhs, op._xs_filter_una_delegate, lhs)
         return op.apply (lhs)
     # end def _xs_filter_una
 
@@ -834,7 +839,7 @@ class Func (_Op_) :
 # end class Func
 
 class Not (_Q_Exp_Proxy_, _Op_) :
-    """Map a NOT expression to the corresponding SQL expression ."""
+    """Map a Q.NOT expression to the corresponding SQL expression ."""
 
     _xs_filter_una_delegate = "XS_FILTER"
 
@@ -863,6 +868,11 @@ class Una (_Op_) :
             result = [self.XS_FILTER]
         return result
     # end def XS_ORDER_BY
+
+    @TFL.Meta.Once_Property
+    def _xs_filter_una_delegate (self) :
+        return "XS_FILTER" if self.op == operator.__invert__ else "_XS_FILTER"
+    # end def _xs_filter_una_delegate
 
 # end class Una
 
@@ -1374,7 +1384,7 @@ class Kind_Partial (_Attr_) :
     # end def _get_attr
 
     def _xs_filter_una (self, lhs, op) :
-        name = self._xs_filter_una_delegate
+        name = op._xs_filter_una_delegate
         xs   = tuple (getattr (c, name) for c in self._children)
         return SA.expression.or_ (* tuple (op.apply (x) for x in xs))
     # end def _xs_filter_una

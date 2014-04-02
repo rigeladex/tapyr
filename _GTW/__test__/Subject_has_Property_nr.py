@@ -41,6 +41,7 @@
 #    19-Jul-2013 (CT) Add tests for `Q.RAW`
 #     4-Aug-2013 (CT) Add `test_date_extraction` for `pg` and `sq`
 #    19-Sep-2013 (CT) Add `test_qx`
+#     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #    ««revision-date»»···
 #--
 
@@ -7499,6 +7500,30 @@ _test_q_result = """
     >>> ET = apt ["PAP.Subject_has_Phone"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
+    >>> print (qrt.filter (Q.NOT (Q.electric))) ### PAP.Subject_has_Phone
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_company_has_phone."desc" AS pap_company_has_phone_desc,
+           pap_company_has_phone."left" AS pap_company_has_phone_left,
+           pap_company_has_phone."right" AS pap_company_has_phone_right,
+           pap_company_has_phone.extension AS pap_company_has_phone_extension,
+           pap_company_has_phone.pid AS pap_company_has_phone_pid,
+           pap_person_has_phone."desc" AS pap_person_has_phone_desc,
+           pap_person_has_phone."left" AS pap_person_has_phone_left,
+           pap_person_has_phone."right" AS pap_person_has_phone_right,
+           pap_person_has_phone.extension AS pap_person_has_phone_extension,
+           pap_person_has_phone.pid AS pap_person_has_phone_pid
+         FROM mom_id_entity
+           LEFT OUTER JOIN pap_company_has_phone ON mom_id_entity.pid = pap_company_has_phone.pid
+           LEFT OUTER JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
+         WHERE (mom_id_entity.pid = pap_company_has_phone.pid
+            OR mom_id_entity.pid = pap_person_has_phone.pid)
+            AND mom_id_entity.electric != true
+
     >>> print (qrt.filter (~ Q.electric)) ### PAP.Subject_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
@@ -7521,7 +7546,7 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
          WHERE (mom_id_entity.pid = pap_company_has_phone.pid
             OR mom_id_entity.pid = pap_person_has_phone.pid)
-            AND NOT mom_id_entity.electric
+            AND mom_id_entity.electric != true
 
     >>> print (qrt.filter (Q.x_locked)) ### PAP.Subject_has_Phone
     SQL: SELECT
