@@ -218,6 +218,8 @@
 #     1-Mar-2014 (CT) Redefine `M_E_Type_MD._m_setup_attributes`
 #     2-Mar-2014 (CT) Add `ref.only_e_types` to `M_Id_Entity._m_setup_roles`
 #    10-Mar-2014 (CT) Set `i_rank`, `g_rank` as first thing in `__init__`
+#     2-Apr-2014 (CT) Change `M_Id_Entity._m_setup_roles` to resolve
+#                     attributes referring to the type itself
 #    ««revision-date»»···
 #--
 
@@ -925,7 +927,7 @@ class M_Id_Entity (M_Entity) :
         cls._m_fix_type_set (cls.refuse_links)
         cls.__m_super._m_setup_roles ()
         def _gen_refs (cls) :
-            for a in cls._Attributes._names.itervalues () :
+            for a in list (cls._Attributes._names.itervalues ()) :
                 if a is not None and issubclass (a, MOM.Attr.A_Id_Entity) :
                     yield a
         for ref in _gen_refs (cls) :
@@ -934,9 +936,12 @@ class M_Id_Entity (M_Entity) :
             rev_name = ref.rev_ref_attr_name
             if rev_name :
                 r_type = ref.E_Type
-                if r_type and not isinstance (r_type, basestring) :
-                    cls._m_create_rev_ref_attr \
-                        (MOM.Attr.A_Rev_Ref_Set, rev_name, ref, r_type, cls)
+                if r_type :
+                    if r_type == cls.type_name :
+                        r_type = cls
+                    if not isinstance (r_type, basestring) :
+                        cls._m_create_rev_ref_attr \
+                            (MOM.Attr.A_Rev_Ref_Set, rev_name, ref, r_type, cls)
     # end def _m_setup_roles
 
 # end class M_Id_Entity
