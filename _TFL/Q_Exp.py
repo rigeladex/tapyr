@@ -73,6 +73,7 @@
 #    10-Oct-2013 (CT) Call `_derive_expr_class` for `_Call_` and `_Sum_`, too
 #    11-Oct-2013 (CT) Factor `_Aggr_`, `_derive_aggr_class`, add `_Avg_`...
 #    31-Mar-2014 (CT) Add `M_Q_Root`, `normalized_op_name` (3.4-compatibility)
+#     3-Apr-2014 (CT) Remove `None` from `undefs` for `__not__`
 #    ««revision-date»»···
 #--
 
@@ -685,7 +686,7 @@ def _type_error (op) :
 def __unary (op_fct, Class) :
     name   = op_fct.__name__
     op     = getattr (operator, _Una_.op_patch [Class].get (name, name))
-    undefs = (None, Q.undef)
+    undefs = (Q.undef, ) if op is operator.__not__ else (None, Q.undef)
     def _ (self) :
         return getattr (self.Q, Class) (self, op, undefs)
     _.__doc__    = op.__doc__
