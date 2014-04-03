@@ -6897,7 +6897,7 @@ _test_q_result = """
            JOIN srm_boat_class AS srm_boat_class__2 ON srm_boat_class__2.pid = srm_boat__1."left"
          WHERE srm_boat_in_regatta.points / srm_boat_class__2.max_crew > :param_1
 
-    >>> show_query (qrt.filter (Q.points))
+    >>> show_query (qrt.filter (Q.points)) ### SRM.Boat_in_Regatta
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -6919,7 +6919,7 @@ _test_q_result = """
     Parameters:
          points_1             : 0
 
-    >>> show_query (qrt.filter (~ Q.points))
+    >>> show_query (qrt.filter (~ Q.points)) ### SRM.Boat_in_Regatta
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -6940,6 +6940,87 @@ _test_q_result = """
             AND srm_boat_in_regatta.points != :points_1)
     Parameters:
          points_1             : 0
+
+    >>> ET = apt ["PAP.Person"]
+    >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+
+    >>> show_query (qrt.order_by (~ Q.account_links.account.active)) ### PAP.Person
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
+           JOIN auth_account AS auth_account__2 ON auth_account__2.pid = pap_person_has_account__4."right"
+           JOIN auth__account_ AS auth__account___2 ON auth__account___2.pid = pap_person_has_account__4."right"
+         ORDER BY NOT (auth__account___2.suspended != true AND auth__account___2.enabled = true)
+
+    >>> show_query (qrt.order_by (~ Q.account_links.account.active).distinct ()) ### PAP.Person
+    SQL: SELECT DISTINCT
+           NOT (auth__account___2.suspended != true AND auth__account___2.enabled = true),
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
+           JOIN auth_account AS auth_account__2 ON auth_account__2.pid = pap_person_has_account__4."right"
+           JOIN auth__account_ AS auth__account___2 ON auth__account___2.pid = pap_person_has_account__4."right"
+         ORDER BY NOT (auth__account___2.suspended != true AND auth__account___2.enabled = true)
+
+    >>> show_query (qrt.order_by (~ Q.account_links).distinct ()) ### PAP.Person
+    SQL: SELECT DISTINCT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_person.__raw_first_name AS pap_person___raw_first_name,
+           pap_person.__raw_last_name AS pap_person___raw_last_name,
+           pap_person.__raw_middle_name AS pap_person___raw_middle_name,
+           pap_person.__raw_title AS pap_person___raw_title,
+           pap_person.first_name AS pap_person_first_name,
+           pap_person.last_name AS pap_person_last_name,
+           pap_person.lifetime__finish AS pap_person_lifetime__finish,
+           pap_person.lifetime__start AS pap_person_lifetime__start,
+           pap_person.middle_name AS pap_person_middle_name,
+           pap_person.pid AS pap_person_pid,
+           pap_person.sex AS pap_person_sex,
+           pap_person.title AS pap_person_title,
+           pap_person_has_account__4."left" IS NULL AS anon_1
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
+         ORDER BY pap_person_has_account__4."left" IS NULL
 
 """
 

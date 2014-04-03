@@ -55,6 +55,7 @@
 #                     `XS_FILTER` for `NOT`, `_XS_FILTER` for all other
 #                     unary operators
 #     3-Apr-2014 (CT) Use `LEFT OUTER` joins for `Kind_Rev_Query`
+#     3-Apr-2014 (CT) Save `_SAW_ORIGINAL` in `Una.XS_ORDER_BY`
 #    ««revision-date»»···
 #--
 
@@ -864,7 +865,15 @@ class Una (_Op_) :
     @TFL.Meta.Once_Property
     def XS_ORDER_BY (self) :
         if self.op == operator.__neg__ :
-            result = list (c.desc () for c in self.lhs.XS_ORDER_BY)
+            def _gen (cs) :
+                ### save original query expression (without `DESC`) to
+                ### allow later insertion into `select` list
+                ### (needed for `SELECT DISTINCT`)
+                for c in cs :
+                    cd = c.desc ()
+                    cd._SAW_ORIGINAL = getattr (c, "_SAW_ORIGINAL", c)
+                    yield cd
+            result = list (_gen (self.lhs.XS_ORDER_BY))
         else :
             result = [self.XS_FILTER]
         return result

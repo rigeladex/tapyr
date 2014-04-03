@@ -63,6 +63,7 @@
 #    10-Oct-2013 (CT) Normalize `long` values in `_col_value_from_row`
 #    27-Jan-2014 (CT) Add `formatted`
 #    29-Jan-2014 (CT) Fix `count` to support `bindings`; factor `_execute`
+#     3-Apr-2014 (CT) For `distinct`, add `order_by` criteria to `select` clause
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,7 @@ import operator
 class _Base_ (TFL.Meta.Object) :
     """Base class for SAW Q_Result classes"""
 
+    _distinct            = False
     _order_by_cached     = None
     _sa_query_ob         = None
 
@@ -118,6 +120,15 @@ class _Base_ (TFL.Meta.Object) :
             obs    = self._order_by
             if obs :
                 result = result.order_by (* obs)
+                if self._distinct :
+                    ### For `SELECT DISTINCT`, PostgreSQL requires ORDER BY
+                    ### expressions to appear in select list
+                    ###
+                    ### `_SAW_ORIGINAL` is the expression **without** `DESC`,
+                    ### if any
+                    for ob in obs :
+                        cx = getattr (ob, "_SAW_ORIGINAL", ob)
+                        result.append_column (cx)
             self._sa_query_ob = result
         return result
     # end def sa_query
@@ -192,8 +203,9 @@ class _Base_ (TFL.Meta.Object) :
     # end def count
 
     def distinct (self) :
-        result = self._clone ()
+        result           = self._clone ()
         result._sa_query = result._sa_query.distinct ()
+        result._distinct = True
         return result
     # end def distinct
 
@@ -269,7 +281,7 @@ class _Base_ (TFL.Meta.Object) :
         obs, join = result._get_order_by  (criteria, sa_query)
         if join is not None :
             result._sa_query = sa_query.select_from (join)
-        ### `obs` is a list; use `append` here to be apple to later reverse
+        ### `obs` is a list; use `append` here to be able to later reverse
         ### `_order_bys` while keeping the sequence of items in `obs`
         ### this allows later `order_by` calls to dominate earlier ones
         result._order_bys.append (obs)
