@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Pred.
@@ -57,6 +57,7 @@
 #                     from `val_dict`, not `obj`
 #    11-Mar-2013 (CT) Derive `_Condition_` from `MOM.Prop.Type`, not `object`
 #     3-Jun-2013 (CT) Print exception info to stderr, not stdout
+#     3-Apr-2014 (CT) Change `set_c_attr_value` to use `obj.FO`, not `r0.FO`
 #    ««revision-date»»···
 #--
 
@@ -170,7 +171,7 @@ class _Condition_ (MOM.Prop.Type):
 
     def set_c_attr_value (self, obj, dict, c_attr, val_dict) :
         attr, tail  = c_attr.split (".", 1)
-        result = r0 = self.set_s_attr_value (obj, dict, attr, val_dict)
+        result      = self.set_s_attr_value (obj, dict, attr, val_dict)
         for a in tail.split (".") :
             if result is None :
                 return None
@@ -184,7 +185,7 @@ class _Condition_ (MOM.Prop.Type):
                     )
         if result is not None :
             if tail :
-                self.val_disp [c_attr] = r0.FO (tail, result)
+                self.val_disp [c_attr] = obj.FO (c_attr, result)
         return result
     # end def set_c_attr_value
 
