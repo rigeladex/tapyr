@@ -54,6 +54,7 @@
 #     2-Apr-2014 (CT) Redefine `Una._xs_filter_una_delegate` to return
 #                     `XS_FILTER` for `NOT`, `_XS_FILTER` for all other
 #                     unary operators
+#     3-Apr-2014 (CT) Use `LEFT OUTER` joins for `Kind_Rev_Query`
 #    ««revision-date»»···
 #--
 
@@ -1534,6 +1535,9 @@ class Kind_Rev_Query (_Attr_) :
 
     @TFL.Meta.Once_Property
     def _ref_etw_col (self) :
+        ### Pass `polymorphic = True` to `_add_joins_col` to allow
+        ### queries like `~ Q.rev_ref` (i.e., select all entities who
+        ### don't are not referenced)
         akw         = self._akw
         attr        = akw.attr
         ref_etw, pj = self.ETW.attr_join_etw_alias (akw, attr.Ref_Type)
@@ -1541,7 +1545,7 @@ class Kind_Rev_Query (_Attr_) :
         rev_sq      = self._rev_sq
         head_col    = ref_col
         self._add_join_parent (pj)
-        self._add_joins_col   (akw.ETW.spk_col, ref_col)
+        self._add_joins_col   (akw.ETW.spk_col, ref_col, polymorphic = True)
         if rev_sq._attr :
             ### `A_Role_Ref` and `A_Role_Ref_Set` need this
             ref_col     = ref_etw.QC [rev_sq._attr]
@@ -1551,7 +1555,7 @@ class Kind_Rev_Query (_Attr_) :
                 , ref_wrapper.attr.E_Type
                 )
             self._add_join_parent (pj)
-            self._add_joins_col   (ref_col, ref_etw.spk_col)
+            self._add_joins_col   (ref_col, ref_etw.spk_col, polymorphic = True)
         return ref_etw, ref_col, head_col
     # end def _ref_etw_col
 

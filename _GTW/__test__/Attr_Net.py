@@ -834,7 +834,7 @@ _test_qx_pg = """
            JOIN gtw_omp_net_test_ip4_network ON mom_id_entity.pid = gtw_omp_net_test_ip4_network.pid
          WHERE gtw_omp_net_test_ip4_network.address != :address_1
     Parameters:
-         address_1            : 192.168.1.0/28
+         address_1            : '192.168.1.0/28'
 
 """
 

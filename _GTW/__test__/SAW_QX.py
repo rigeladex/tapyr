@@ -1002,32 +1002,32 @@ _test_joins = """
 
     >>> show_joins (apt, "Auth.Account", Q.person)
     Auth.Account  :  Q.person
-      JOIN  pap_person_has_account__1.right = auth_account.pid
-      JOIN  pap_person__3.pid = pap_person_has_account__1.left
+      OUTER pap_person_has_account__1.right = auth_account.pid
+      OUTER pap_person__3.pid = pap_person_has_account__1.left
 
     >>> show_joins (apt, "Auth.Account", Q.person.lifetime == ("2013-07-15", ))
     Auth.Account  :  Q.person.lifetime == (u'2013-07-15',)
-      JOIN  pap_person_has_account__1.right = auth_account.pid
-      JOIN  pap_person__3.pid = pap_person_has_account__1.left
+      OUTER pap_person_has_account__1.right = auth_account.pid
+      OUTER pap_person__3.pid = pap_person_has_account__1.left
 
     >>> show_joins (apt, "Auth.Account", Q.person.lifetime.start == "2013-07-15")
     Auth.Account  :  Q.person.lifetime.start == 2013-07-15
-      JOIN  pap_person_has_account__1.right = auth_account.pid
-      JOIN  pap_person__3.pid = pap_person_has_account__1.left
+      OUTER pap_person_has_account__1.right = auth_account.pid
+      OUTER pap_person__3.pid = pap_person_has_account__1.left
 
     >>> show_joins (apt, "Auth.Account", Q.person.account_links.account.name)
     Auth.Account  :  Q.person.account_links.account.name
-      JOIN  pap_person_has_account__1.right = auth_account.pid
-      JOIN  pap_person__3.pid = pap_person_has_account__1.left
-      JOIN  pap_person_has_account__2.left = pap_person__3.pid
+      OUTER pap_person_has_account__1.right = auth_account.pid
+      OUTER pap_person__3.pid = pap_person_has_account__1.left
+      OUTER pap_person_has_account__2.left = pap_person__3.pid
       JOIN  auth_account__1.pid = pap_person_has_account__2.right
       JOIN  auth__account___1.pid = pap_person_has_account__2.right
 
     >>> show_joins (apt, "Auth.Account", Q.person_links.person.account_links.account.name)
     Auth.Account  :  Q.person_links.person.account_links.account.name
-      JOIN  pap_person_has_account__3.right = auth_account.pid
+      OUTER pap_person_has_account__3.right = auth_account.pid
       JOIN  pap_person__4.pid = pap_person_has_account__3.left
-      JOIN  pap_person_has_account__4.left = pap_person__4.pid
+      OUTER pap_person_has_account__4.left = pap_person__4.pid
       JOIN  auth_account__2.pid = pap_person_has_account__4.right
       JOIN  auth__account___2.pid = pap_person_has_account__4.right
 

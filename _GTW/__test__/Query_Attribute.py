@@ -179,10 +179,10 @@ _test_saw = """
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
            JOIN auth_account_t ON auth_account.pid = auth_account_t.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_account__1."left"
-           JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__1 ON pap_person_has_wrzlbrmft__1."left" = pap_person__1.pid
-           JOIN pap_wrzlbrmft AS pap_wrzlbrmft__1 ON pap_wrzlbrmft__1.pid = pap_person_has_wrzlbrmft__1."right"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__1 ON pap_person_has_wrzlbrmft__1."left" = pap_person__1.pid
+           LEFT OUTER JOIN pap_wrzlbrmft AS pap_wrzlbrmft__1 ON pap_wrzlbrmft__1.pid = pap_person_has_wrzlbrmft__1."right"
          WHERE pap_wrzlbrmft__1.wolp = :wolp_1
 
     >>> qfh = Q.owner.wrzlbrmft.my_wolp == 17
@@ -218,8 +218,8 @@ _test_saw = """
            JOIN pap_person_has_account ON mom_id_entity.pid = pap_person_has_account.pid
            JOIN pap_person_has_account_test ON pap_person_has_account.pid = pap_person_has_account_test.pid
            JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account."left"
-           JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__2 ON pap_person_has_wrzlbrmft__2."left" = pap_person__2.pid
-           JOIN pap_wrzlbrmft AS pap_wrzlbrmft__2 ON pap_wrzlbrmft__2.pid = pap_person_has_wrzlbrmft__2."right"
+           LEFT OUTER JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__2 ON pap_person_has_wrzlbrmft__2."left" = pap_person__2.pid
+           LEFT OUTER JOIN pap_wrzlbrmft AS pap_wrzlbrmft__2 ON pap_wrzlbrmft__2.pid = pap_person_has_wrzlbrmft__2."right"
          WHERE pap_wrzlbrmft__2.wolp = :wolp_1
 
     >>> qfp = Q.wrzlbrmft.wolp == 23
@@ -255,8 +255,8 @@ _test_saw = """
            pap_person.title AS pap_person_title
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-           JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__3 ON pap_person_has_wrzlbrmft__3."left" = pap_person.pid
-           JOIN pap_wrzlbrmft AS pap_wrzlbrmft__3 ON pap_wrzlbrmft__3.pid = pap_person_has_wrzlbrmft__3."right"
+           LEFT OUTER JOIN pap_person_has_wrzlbrmft AS pap_person_has_wrzlbrmft__3 ON pap_person_has_wrzlbrmft__3."left" = pap_person.pid
+           LEFT OUTER JOIN pap_wrzlbrmft AS pap_wrzlbrmft__3 ON pap_wrzlbrmft__3.pid = pap_person_has_wrzlbrmft__3."right"
          WHERE pap_wrzlbrmft__3.wolp = :wolp_1
 
 

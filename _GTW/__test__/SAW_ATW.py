@@ -4926,7 +4926,7 @@ _test_q_result = """
            mom_md_change.type_name AS mom_md_change_type_name
          FROM mom_md_change
            JOIN mom_id_entity AS mom_id_entity__1 ON mom_id_entity__1.pid = mom_md_change."user"
-           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__1.pid
+           LEFT OUTER JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__1.pid
          WHERE mom_md_change__2.kind = :kind_1
             AND mom_md_change__2."user" = mom_md_change."user"
             AND mom_md_change.parent_cid = :parent_cid_1
@@ -6069,8 +6069,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
 
     >>> print (apt.DBW.PNS.Q_Result.E_Type_Reload (ET)) ### Auth.Account
     SQL: SELECT
@@ -6111,8 +6111,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person_has_account__1."left" IS NOT NULL
 
     >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### Auth.Account
@@ -6133,8 +6133,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.lifetime__start = :lifetime__start_1
 
     >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", "2013-07-21"))) ### Auth.Account
@@ -6155,8 +6155,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.lifetime__start = :lifetime__start_1
             AND pap_person__3.lifetime__finish = :lifetime__finish_1
 
@@ -6181,8 +6181,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.__raw_last_name = :__raw_last_name_1
 
     >>> print (qrt.filter (Q.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
@@ -6203,8 +6203,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.last_name = :last_name_1
 
     >>> print (qrt.filter (Q.person.last_name.STARTSWITH ("tan"))) ### Auth.Account # doctest:+ELLIPSIS
@@ -6225,8 +6225,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE pap_person__3.last_name LIKE :last_name_1 || '%%%%'
 
     >>> print (qrt.order_by (- Q.superuser).order_by (Q.name)) ### Auth.Account
@@ -6287,8 +6287,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name, pap_person__3.first_name, pap_person__3.middle_name, pap_person__3.title
 
     >>> print (qrt.order_by (- Q.person)) ### Auth.Account
@@ -6309,8 +6309,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name DESC, pap_person__3.first_name DESC, pap_person__3.middle_name DESC, pap_person__3.title DESC
 
     >>> print (qrt.order_by (Q.person.lifetime)) ### Auth.Account
@@ -6331,8 +6331,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.lifetime__start, pap_person__3.lifetime__finish
 
     >>> print (qrt.order_by (- Q.person.lifetime)) ### Auth.Account
@@ -6353,8 +6353,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.lifetime__start DESC, pap_person__3.lifetime__finish DESC
 
     >>> print (qrt.order_by ("person.last_name", "-name")) ### Auth.Account
@@ -6375,8 +6375,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name, auth__account_.name DESC
 
     >>> print (qrt.order_by ("person.last_name")) ### Auth.Account
@@ -6397,8 +6397,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name
 
     >>> print (qrt.order_by (Q.person.last_name)) ### Auth.Account
@@ -6419,8 +6419,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name
 
     >>> print (qrt.order_by (- Q.person.last_name)) ### Auth.Account
@@ -6441,8 +6441,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          ORDER BY pap_person__3.last_name DESC
 
     >>> print (qrt.filter (Q.person.last_name.STARTSWITH ("tan") | Q.person.last_name.ENDSWITH ("beck"))) ### Auth.Account # doctest:+ELLIPSIS
@@ -6463,8 +6463,8 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
-           JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
          WHERE (pap_person__3.last_name LIKE :last_name_1 || '%%%%')
             OR (pap_person__3.last_name LIKE '%%%%' || :last_name_2)
 
@@ -6486,7 +6486,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
          WHERE pap_person_has_account__2."right" IS NOT NULL
 
     >>> print (qrt.filter (Q.person_links.person)) ### Auth.Account # doctest:+ELLIPSIS
@@ -6507,7 +6507,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
          WHERE pap_person_has_account__2."left" IS NOT NULL
 
     >>> print (qrt.filter (Q.person_links.person == 42)) ### Auth.Account # doctest:+ELLIPSIS
@@ -6528,7 +6528,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
          WHERE pap_person_has_account__2."left" = :left_1
 
     >>> print (qrt.filter (Q.person_links.person.last_name == "tanzer")) ### Auth.Account # doctest:+ELLIPSIS
@@ -6549,7 +6549,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
            JOIN pap_person AS pap_person__4 ON pap_person__4.pid = pap_person_has_account__2."left"
          WHERE pap_person__4.last_name = :last_name_1
 
@@ -6571,9 +6571,9 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN auth__account_ ON mom_id_entity.pid = auth__account_.pid
            JOIN auth_account ON auth__account_.pid = auth_account.pid
-           JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__2 ON pap_person_has_account__2."right" = auth_account.pid
            JOIN pap_person AS pap_person__4 ON pap_person__4.pid = pap_person_has_account__2."left"
-           JOIN pap_person_has_account AS pap_person_has_account__3 ON pap_person_has_account__3."left" = pap_person__4.pid
+           LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__3 ON pap_person_has_account__3."left" = pap_person__4.pid
            JOIN auth_account AS auth_account__1 ON auth_account__1.pid = pap_person_has_account__3."right"
            JOIN auth__account_ AS auth__account___1 ON auth__account___1.pid = pap_person_has_account__3."right"
          WHERE auth__account___1.name = :name_1
@@ -6850,7 +6850,7 @@ _test_q_result = """
            srm_boat_in_regatta.points AS srm_boat_in_regatta_points
          FROM mom_id_entity
            JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
-           JOIN srm_race_result AS srm_race_result__1 ON srm_race_result__1."left" = srm_boat_in_regatta.pid
+           LEFT OUTER JOIN srm_race_result AS srm_race_result__1 ON srm_race_result__1."left" = srm_boat_in_regatta.pid
          GROUP BY srm_boat_in_regatta."left"
     Parameters:
          param_1              : 0
