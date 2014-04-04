@@ -74,6 +74,8 @@
 #    11-Oct-2013 (CT) Factor `_Aggr_`, `_derive_aggr_class`, add `_Avg_`...
 #    31-Mar-2014 (CT) Add `M_Q_Root`, `normalized_op_name` (3.4-compatibility)
 #     3-Apr-2014 (CT) Remove `None` from `undefs` for `__not__`
+#     4-Apr-2014 (CT) Add `AND`, `NOT`, `OR` to `Base`;
+#                     add `__and__`, `__invert__`, `__or__` to `Root`
 #    ««revision-date»»···
 #--
 
@@ -357,6 +359,7 @@ from   _TFL.pyk                   import pyk
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
+import _TFL.Filter
 import _TFL.Undef
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
@@ -370,9 +373,76 @@ def normalized_op_name (name) :
 
 @pyk.adapt__bool__
 class Base (TFL.Meta.Object) :
-    """Query generator"""
+    """Query generator
+
+    >>> from _TFL.Record import Record as R
+    >>> r1 = R (foo = 42, bar = 137, baz = 11)
+    >>> q0 = Q.foo
+    >>> q0
+    Q.foo
+    >>> q0._name
+    'foo'
+    >>> q0.predicate (r1)
+    42
+
+    >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
+    True
+    >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
+    False
+    >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
+    True
+    >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
+    False
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
+    False
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
+    True
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
+    True
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
+    True
+    >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
+    False
+    >>> (Q.fool == "barfly") (R (fool = "barfly"))
+    True
+    >>> (Q.fool != "barfly") (R (fool = "barfly"))
+    False
+    >>> (Q.fool != "barflyz") (R (fool = "barfly"))
+    True
+    >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
+    True
+    >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
+    False
+    >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
+    True
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
+    False
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
+    True
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
+    False
+    >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
+    True
+    >>> (Q.fool % 2) (R (fool = 20))
+    0
+
+    >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
+    >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
+    False
+
+    >>> Q.DISPLAY (Q.NOT (Q.foo % 2 * -Q.bar / 3))
+    '<Filter_Not NOT Q.foo % 2 * - Q.bar / 3>'
+
+    >>> Q.foo & Q.bar
+    <Filter_And [Q.foo, Q.bar]>
+
+    """
 
     class Ignore_Exception (Exception) : pass
+
+    AND              = TFL.Filter_And
+    NOT              = TFL.Filter_Not
+    OR               = TFL.Filter_Or
 
     expr_class_names = []
     undef            = TFL.Undef ("value")
@@ -425,9 +495,27 @@ class M_Q_Root (TFL.Meta.Object.__class__) :
 class Q_Root (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Q_Root)) :
     """Base class for all classes modelling queries"""
 
+    op_map               = dict \
+        ( __and__        = "&"
+        , __not__        = "~"
+        , __or__         = "|"
+        )
+
+    def __and__ (self, rhs) :
+        return self.Q.AND (self, rhs)
+    # end def __add__
+
     def __call__ (self, obj) :
         return self.predicate (obj)
     # end def __call__
+
+    def __invert__ (self) :
+        return self.Q.NOT (self)
+    # end def __invert__
+
+    def __or__ (self, rhs) :
+        return self.Q.OR (self, rhs)
+    # end def __or__
 
 # end class Q_Root
 

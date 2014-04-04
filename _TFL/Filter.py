@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,6 +53,7 @@
 #    19-Sep-2013 (CT) Remove `Ignore_Exception` from `Attr_Query`
 #    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
 #    10-Oct-2013 (CT) Factor `_Filter_S_._add_derived_classes`
+#     4-Apr-2014 (CT) Remove `Attr_Query` to `Q_Exp`
 #    ««revision-date»»···
 #--
 
@@ -189,7 +190,6 @@ from   _TFL                     import TFL
 from   _TFL.predicate           import first, all_true, any_true
 
 import _TFL._Meta.Object
-import _TFL.Q_Exp
 
 import operator
 
@@ -234,23 +234,6 @@ class _Filter_ (TFL.Meta.Object) :
 
 class _Filter_S_ (_Filter_) :
     """Base class for simple predicate filters."""
-
-    @classmethod
-    def _add_derived_classes (cls, new_class) :
-        """Add derived classes with `cls` as first base to `new_class`"""
-        for name in TFL.Q_Exp.Base.expr_class_names :
-            base = getattr (TFL.Q_Exp.Base, name)
-            derived  = base.__class__ \
-                ( "%s_Filter_" % name
-                , (cls, base)
-                , dict
-                    ( __doc__    = base.__doc__
-                    , _real_name = name
-                    )
-                )
-            setattr (new_class, name, derived)
-        return new_class
-    # end def _add_derived_classes
 
 # end class _Filter_S_
 
@@ -361,79 +344,6 @@ class Filter_Or (_Filter_Q_) :
     # end def __invert__
 
 # end class Filter_Or
-
-@_Filter_S_._add_derived_classes
-class Attr_Query (TFL.Q_Exp.Base) :
-    """Syntactic sugar for creating Filter objects based on attribute queries.
-
-       ::
-
-           >>> from _TFL.Record import Record as R
-           >>> Q  = Attr_Query ()
-           >>> r1 = R (foo = 42, bar = 137, baz = 11)
-           >>> q0 = Q.foo
-           >>> q0
-           Q.foo
-           >>> q0._name
-           'foo'
-           >>> q0.predicate (r1)
-           42
-
-           >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
-           True
-           >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
-           False
-           >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
-           True
-           >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
-           False
-           >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
-           False
-           >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
-           True
-           >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
-           True
-           >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
-           True
-           >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
-           False
-           >>> (Q.fool == "barfly") (R (fool = "barfly"))
-           True
-           >>> (Q.fool != "barfly") (R (fool = "barfly"))
-           False
-           >>> (Q.fool != "barflyz") (R (fool = "barfly"))
-           True
-           >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
-           True
-           >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
-           False
-           >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
-           True
-           >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
-           False
-           >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
-           True
-           >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
-           False
-           >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
-           True
-           >>> (Q.fool % 2) (R (fool = 20))
-           0
-
-           >>> r3 = R (foo = 42, bar = "AbCd", baz = "ABCD", qux = "abcd")
-           >>> ((Q.bar == Q.baz) & (Q.baz == Q.qux)) (r3)
-           False
-
-            >>> Q.DISPLAY (Q.NOT (Q.foo % 2 * -Q.bar / 3))
-            '<Filter_Not NOT Q.foo % 2 * - Q.bar / 3>'
-
-    """
-
-    AND              = Filter_And
-    NOT              = Filter_Not
-    OR               = Filter_Or
-
-# end class Attr_Query
 
 if __name__ != "__main__" :
     TFL._Export ("*", "_Filter_", "_Filter_Q_")

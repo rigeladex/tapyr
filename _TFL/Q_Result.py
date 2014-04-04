@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -66,6 +66,7 @@
 #    17-Sep-2013 (CT) Change signature of `order_by` to allow multiple arguments
 #     3-Oct-2013 (CT) Add `allow_duplicates` to `attr`, `attrs` (default False)
 #     9-Oct-2013 (CT) Use `adapt__bool__` (3-compatibility)
+#     4-Apr-2014 (CT) Use `TFL.Q`, not `TFL.Attr_Query ()`
 #    ««revision-date»»···
 #--
 
@@ -176,7 +177,7 @@ from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.Object
 import _TFL.Decorator
-import _TFL.Filter
+import _TFL.Q_Exp
 import _TFL.Sorted_By
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
@@ -333,7 +334,7 @@ class _Q_Filter_Distinct_ (TFL.Meta.Object) :
 @pyk.adapt__bool__
 class _Q_Result_ (TFL.Meta.Object) :
 
-    Q             = TFL.Attr_Query ()
+    Q             = TFL.Q
 
     _Attr_        = _Attr_
     _Attrs_Tuple_ = _Attrs_Tuple_

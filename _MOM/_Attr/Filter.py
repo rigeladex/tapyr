@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -66,6 +66,7 @@
 #    19-Mar-2013 (CT) Add support for empty string to `_Id_Entity_.__call__`
 #    21-Mar-2013 (CT) Add `value` guard to `_Composite_.__call__._gen`
 #     7-Oct-2013 (CT) Set `Q.Ignore_Exception` to `AttributeError`
+#     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #    ««revision-date»»···
 #--
 
@@ -81,9 +82,9 @@ from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
-import _TFL.Filter
+import _TFL.Q_Exp
 
-Q = TFL.Attr_Query (Ignore_Exception = AttributeError)
+Q = TFL.Q_Exp.Base (Ignore_Exception = AttributeError)
 
 class _M_Filter_ (TFL.Meta.Object.__class__) :
     """Meta class for Filter classes."""

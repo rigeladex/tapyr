@@ -37,6 +37,7 @@
 #                     factor `_Parameter_`
 #    19-Sep-2013 (CT) Pass `AttributeError` to `TFL.Attr_Query`
 #    20-Feb-2014 (CT) Add `Rule._resolved_children`
+#     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #    ««revision-date»»···
 #--
 
@@ -50,10 +51,9 @@ from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL._Meta.Object
 import _TFL.Caller
-import _TFL.Filter
 import _TFL.Q_Exp
 
-P = TFL.Attr_Query (Ignore_Exception = AttributeError)
+P = TFL.Q_Exp.Base (Ignore_Exception = AttributeError)
 
 def ddict (* ds) :
     result = {}

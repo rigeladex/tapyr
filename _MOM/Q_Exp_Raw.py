@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -34,6 +34,7 @@
 #                     set `Q_Exp.Base.RAW` to `Raw_Attr_Query ()`;
 #                     remove `_RAW_` and `_RAW_DESC_` (nice simplification)
 #    30-Aug-2013 (CT) Remove `SET`
+#     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _MOM.Entity
 import _TFL.Q_Exp
 
-class Raw_Attr_Query (TFL.Attr_Query) :
+class Raw_Attr_Query (TFL.Q_Exp.Base) :
     """Syntactic sugar for creating Filter objects based on raw attribute
        queries.
     """

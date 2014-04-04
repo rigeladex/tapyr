@@ -1922,7 +1922,7 @@ A generic query expression looks like ::
     Q.lifetime.start > "2012-07-01"
 
 where `Q` is a query generator provided by `MOM` --- it is an instance
-of the :class:`TFL.Attr_Query<_TFL.Filter.Attr_Query>`. `Q`
+of the :class:`TFL.Q_Exp.Base<_TFL.Q_Exp.Base>`. `Q`
 expressions represent symbolic expressions. Calling a `Q` expression
 instance triggers the evaluation of the symbolic expression as applied
 to the single argument passed.
