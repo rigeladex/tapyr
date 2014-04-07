@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -48,6 +48,7 @@
 #     9-Dec-2013 (CT) Factor `Signed_Token`; add `cookie_salt`, `is_secure`
 #     9-Dec-2013 (CT) Add properties `origin`, `origin_host`, `same_origin`,
 #                     `server_name`, and `server_port`
+#     7-Apr-2014 (CT) Change `rat_authorized_user` to look at `req_data ["RAT"]`
 #    ««revision-date»»···
 #--
 
@@ -181,7 +182,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     def rat_authorized_user (self) :
         rat = getattr (self.root.SC, "RAT", None)
         if rat is not None :
-            cookie = self.cookies.get ("RAT")
+            cookie = self.cookies.get ("RAT") or self.req_data.get ("RAT", "")
             if cookie :
                 token  = GTW.RST.Signed_Token.REST_Auth.recover \
                     (self, cookie, ttl_s = rat.session_ttl_s)
