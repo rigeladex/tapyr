@@ -128,6 +128,7 @@
 #                     redefine `Alias._handle_method_context` to delegate
 #    14-Mar-2014 (CT) Add alias property `proper_entries`
 #    14-Mar-2014 (CT) Add `response` to `_http_response_context`
+#     7-Apr-2014 (CT) Add support for `Access-Control-Allow-Origin`
 #    ««revision-date»»···
 #--
 
@@ -1370,6 +1371,7 @@ class RST_Root (_Ancestor) :
     Cacher = RST_Root_Cacher # end class
 
     Create_Scope               = None
+    ACAO                       = None
     DEBUG = TEST               = False
     Templateer                 = None
 
@@ -1674,6 +1676,9 @@ class RST_Root (_Ancestor) :
             if Method is not None :
                 method = Method ()
                 if resource.allow_method (method, user) :
+                    if resource.ACAO :
+                        response.add_header \
+                            ("Access-Control-Allow-Origin", resource.ACAO)
                     if resource.DEBUG :
                         context = TFL.Context.time_block
                         fmt     = "[%s] %s %s: execution time = %%s" % \

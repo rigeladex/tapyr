@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -78,6 +78,7 @@
 #    11-Dec-2013 (CT) Add `-Setup_Cache` to `_GT2W_Server_Base_._opts`,
 #                     remove `DEBUG` from `init_app_cache`
 #    11-Dec-2013 (CT) Add `-CSRF_check`
+#     7-Apr-2014 (CT) Add `-ACAO`
 #    ««revision-date»»···
 #--
 
@@ -182,7 +183,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
         is_partial              = True
         _opts                   = \
-            ( "-cc_domain:S"
+            ( "-ACAO:S?Add option value as Access-Control-Allow-Origin header"
+            , "-cc_domain:S"
                 "?Domain used for authorization with client certificates"
             , "-cert_auth_path:P"
                 "?Path of certification authority .crt and .key files"
@@ -325,6 +327,7 @@ class GT2W_Command (GTW.OMP.Command) :
             cachers = UTP.cachers (self, cmd)
             result  = self.root = UTP.create \
                 ( self, cmd
+                , ACAO                = cmd.ACAO
                 , App_Type            = apt
                 , Create_Scope        = self._load_scope
                 , DB_Url              = url
