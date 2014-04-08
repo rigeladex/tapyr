@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -23,6 +23,7 @@
 //    20-Jan-2011 (CT) Rename function `GTW_Gallery` to `gtw_gallery`
 //    26-Jan-2011 (CT) Style change
 //    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
+//     8-Apr-2014 (CT) Remove `css` rule to hide `overflow` to `th_div$`
 //    ««revision-date»»···
 //--
 
@@ -114,7 +115,6 @@
         options.th_div$     = this;
         options.th_box$     = $(".box", this);
         options.thumbnails$ = $("img",  this);
-        options.th_div$.css ("overflow", "hidden");
         options.thumbnails$
             .each ( function (n) { $(this).data ("GTW-gallery-index", n); })
             .click
