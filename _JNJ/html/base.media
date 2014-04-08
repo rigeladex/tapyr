@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Oct-2011 (CT) Creation (factored from `base.jnj.media`)
+#     8-Apr-2014 (CT) Add `resize`, `overflow` for `textarea`
 #    ««revision-date»»···
 #--
 
@@ -117,7 +118,12 @@ base_sheet = Style_Sheet \
     , Rule ("p",        margin_bottom = Em (0.5))
     , Rule ("pre",      ** P.font_spec_pre)
     , Rule ("strong",   font_weight = "bold")
-    , Rule ("textarea", ** P.font_spec_pre)
+    , Rule
+        ( "textarea"
+        , overflow                 = "auto"
+        , resize                   = "both"
+        , ** P.font_spec_pre
+        )
     , Rule
         ( "ul"
         , list_style               = "disc outside"

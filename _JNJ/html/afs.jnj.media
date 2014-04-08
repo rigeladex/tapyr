@@ -52,6 +52,7 @@
 #    17-Jan-2014 (CT) Add `GTW_Form_Externalize`
 #    21-Jan-2014 (CT) Add responsive rule for `P.breakpoint.narrow`
 #    17-Feb-2014 (CT) Add rule for `.Feedback`
+#     8-Apr-2014 (CT) Use `Percent (50)`, not home-grown code, for `.radius`
 #    ««revision-date»»···
 #--
 
@@ -211,7 +212,7 @@ style_sheet = Style_Sheet \
                         )
                     , Rule
                         ( ".Status"
-                        , Border (radius = P.afs.status_size // 2)
+                        , Border (radius = Percent (50))
                         , display           = "inline-block"
                         , height            = P.afs.status_size
                         , margin_right      = P.afs.status_size

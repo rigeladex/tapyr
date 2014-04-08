@@ -52,6 +52,7 @@
 #    21-Jan-2014 (CT) Add `breakpoint`
 #    20-Feb-2014 (CT) Add `Rule.pg_nav_show`, `.pg_nav_show_a`
 #    20-Feb-2014 (CT) Add `breakpoint.broad` and `.very_narrow`
+#     8-Apr-2014 (CT) Improve `clearfix`
 #    ««revision-date»»···
 #--
 
@@ -337,10 +338,8 @@ class Media_Defaults (Definition) :
             ( "after"
             , clear        = "both"
             , content      = "' '"
-            , display      = "block"
-            , font_size    = 0
-            , height       = 0
-            , visibility   = "hidden"
+            , display      = "table"
+            # http://nicolasgallagher.com/micro-clearfix-hack/
             )
 
         disabled           = Rule_Class \

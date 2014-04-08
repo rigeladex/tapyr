@@ -57,6 +57,7 @@
 #    20-Feb-2014 (CT) Add media query for `breakpoint.broad`
 #    27-Mar-2014 (CT) Add rule for `max_width` of `.pg_body dd`
 #     8-Apr-2014 (CT) Add rule for `max_width` of `img`
+#     8-Apr-2014 (CT) Add rules for `.invisible`, `.clearfix`
 #    ««revision-date»»···
 #--
 
@@ -303,6 +304,10 @@ style_sheet = Style_Sheet \
         , display        = "none"
         , visibility     = "hidden"
         )
+    , Rule
+        ( ".invisible"
+        , visibility     = "hidden"
+        )
     , Rule (".just-c",        text_align     = "center")
     , Rule (".just-l",        text_align     = "left")
     , Rule (".just-r",        text_align     = "right")
@@ -427,6 +432,10 @@ style_sheet = Style_Sheet \
     , Rule
         ( ".align-right"
         , text_align     = "right"
+        )
+    , Rule
+        ( ".clearfix"
+        , P.Rule.clearfix
         )
     , Rule
         ( "img.align-center"
