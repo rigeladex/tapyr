@@ -38,6 +38,7 @@
 #    19-Sep-2013 (CT) Pass `AttributeError` to `TFL.Attr_Query`
 #    20-Feb-2014 (CT) Add `Rule._resolved_children`
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
+#     9-Apr-2014 (CT) Pass `static_handler` to `GTW.CSS.Style_File`
 #    ««revision-date»»···
 #--
 
@@ -222,18 +223,20 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     class _MOB_ (TFL.Meta.Object) :
         """Wrapper for media object class"""
 
-        def __init__ (self, cls, ext = None) :
+        def __init__ (self, cls, ext = None, ** kw) :
             self._cls = cls
             self._    = self
             self._ext = ext if ext is not None else []
+            self._kw  = kw
         # end def __init__
 
         def __call__ (self, * args, ** kw) :
             cls = self._cls
-            if len (args) == 1 and (isinstance (args [0], cls)) and not kw :
+            ckw = dict (self._kw, ** kw)
+            if len (args) == 1 and (isinstance (args [0], cls)) and not ckw :
                 result = args [0]
             else :
-                result = cls (* args, ** kw)
+                result = cls (* args, ** ckw)
             self._ext.append (result)
             return result
         # end def __call__
@@ -261,7 +264,10 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
         self.Script           = self._MOB_ (Script)
         self.Script_File      = self._MOB_ (import_CSS.Style_File)
         self.Style_Sheet = SS = self._MOB_ (import_CSS.Style_Sheet)
-        self.Style_File       = self._MOB_ (import_CSS.Style_File, SS._ext)
+        self.Style_File       = self._MOB_ \
+            ( import_CSS.Style_File, SS._ext
+            , static_handler = env.static_handler
+            )
         self.env              = env
         self.__super.__init__ \
             ( object = import_CSS

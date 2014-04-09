@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -35,6 +35,7 @@
 #    14-Jan-2011 (CT) `Parameter_Scope` moved to `GTW.Parameters.Scope`
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
 #    13-Sep-2011 (CT) `Style_File` added
+#     9-Apr-2014 (CT) Add `static_handler` to `Style_File`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,8 @@ from   _GTW                       import GTW
 from   _TFL                       import TFL
 
 import _GTW._CSS.Media
+
+from   _TFL                       import sos
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -112,6 +115,8 @@ class Style_Sheet (_Style_Sheet_) :
 class Style_File (_Style_Sheet_) :
     """Model a style file containing plain old CSS."""
 
+    static_handler = None
+
     def __init__ (self, file_name, ** kw) :
         self.__super.__init__ \
             ( file_name = file_name
@@ -122,7 +127,10 @@ class Style_File (_Style_Sheet_) :
 
     @TFL.Meta.Once_Property
     def body (self) :
-        with open (self.file_name, "rb") as f :
+        fn = self.file_name
+        if self.static_handler and not sos.path.isfile (fn) :
+            fn = self.static_handler.get_path (fn)
+        with open (fn, "rb") as f :
             return f.read ().strip ()
     # end def body
 
