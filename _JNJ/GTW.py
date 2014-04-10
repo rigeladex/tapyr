@@ -63,6 +63,7 @@
 #    12-Feb-2014 (CT) Add `enumerate`
 #    13-Feb-2014 (CT) Add `Dingbats` and `unichr`
 #    14-Mar-2014 (CT) Add `any` and `all`
+#    10-Apr-2014 (CT) Add `first`
 #    ««revision-date»»···
 #--
 
@@ -158,6 +159,7 @@ class GTW (TFL.Meta.Object) :
     # end def eval_sorted_by
 
     filtered_join = staticmethod (filtered_join)
+    first         = staticmethod (TFL.first)
 
     def firstof (self, * args) :
         if len (args) == 1 and isinstance (args [0], (tuple, list)) :
