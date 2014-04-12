@@ -53,6 +53,7 @@
 #    20-Feb-2014 (CT) Add `Rule.pg_nav_show`, `.pg_nav_show_a`
 #    20-Feb-2014 (CT) Add `breakpoint.broad` and `.very_narrow`
 #     8-Apr-2014 (CT) Improve `clearfix`
+#    12-Apr-2014 (CT) Use `Border.P`, not `P_Border`
 #    ««revision-date»»···
 #--
 
@@ -159,17 +160,17 @@ class Media_Defaults (Definition) :
 
         block_margin_bottom    = Em (0.1)
 
-        border_spec_input      = P_Border \
+        border_spec_input      = Border.P \
             ( color            = P.R.color_dark_grey
             , style            = "solid"
             , width            = Px (1)
             )
-        border_spec_readonly   = P_Border \
+        border_spec_readonly   = Border.P \
             ( color            = P.R.color_medium_grey
             , style            = "solid"
             , width            = Px (2)
             )
-        border_spec_section    = P_Border \
+        border_spec_section    = Border.P \
             ( color            = P.R.color_darker_grey
             , style            = "solid"
             , width            = TRBL0 (l = Px (2), default = Px (1))

@@ -58,6 +58,7 @@
 #    27-Mar-2014 (CT) Add rule for `max_width` of `.pg_body dd`
 #     8-Apr-2014 (CT) Add rule for `max_width` of `img`
 #     8-Apr-2014 (CT) Add rules for `.invisible`, `.clearfix`
+#    12-Apr-2014 (CT) Add rule for `.module`
 #    ««revision-date»»···
 #--
 
@@ -312,6 +313,8 @@ style_sheet = Style_Sheet \
     , Rule (".just-l",        text_align     = "left")
     , Rule (".just-r",        text_align     = "right")
     , Rule (".large",         font_size      = Percent (120))
+    , Rule (".module",        overflow       = "auto")
+           ### http://learnlayout.com/clearfix.html
     , Rule (".normal",        ** P.color_spec_normal)
     , Rule ("a.nospam",       color          = P.link_color)
     , Rule ("p.nospam",       display        = "inline")
