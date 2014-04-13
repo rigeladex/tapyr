@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -33,6 +33,7 @@
 #                     positionally
 #     3-Apr-2013 (CT) Add `__call__`, add argument `proto` to `__init__`
 #     8-Apr-2013 (CT) Remove `R` and other abbreviations
+#    13-Apr-2014 (CT) Allow list-values in `Rule._formatted_decl`; factor `_gen`
 #    ««revision-date»»···
 #--
 
@@ -161,8 +162,14 @@ class Rule (TFL.Meta.Object) :
     # end def selectors
 
     def _formatted_decl (self, declarations, sep) :
-        pvs    = sorted \
-            ((p.replace ("_", "-"), v) for (p, v) in declarations.iteritems ())
+        def _gen (declarations) :
+            for (p, v) in declarations.iteritems () :
+                k = p.replace ("_", "-")
+                if not isinstance (v, (tuple, list)) :
+                    v = (v, )
+                for w in v :
+                    yield (k, w)
+        pvs    = sorted (_gen (declarations))
         format = "%%s %%-%ds : %%s" % max (len (p) for p in declarations)
         yield format % (("{", ) + pvs [0])
         for p, v in pvs [1:] :
