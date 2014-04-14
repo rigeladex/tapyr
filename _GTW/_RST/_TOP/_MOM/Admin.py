@@ -75,6 +75,7 @@
 #    11-Mar-2014 (CT) Factor `css_class` (from jinja); add `Field.as_html`
 #    13-Mar-2014 (CT) Add `E_Type.first`, `.last`, `.next`, `.prev`
 #    13-Mar-2014 (CT) Factor `_handle_method_context` from `rendered`
+#    14-Apr-2014 (CT) Set `Site.pid` to `Admin`
 #    ««revision-date»»···
 #--
 
@@ -1579,6 +1580,8 @@ class Group (_Ancestor) :
 
 class Site (Group) :
     """Directory displaying admin Groups."""
+
+    pid                  = "Admin"
 
     _exclude_robots      = True
     _auth_required       = True

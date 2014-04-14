@@ -39,6 +39,7 @@
 #    17-Dec-2012 (CT) s/map_name/et_map_name/
 #    28-Mar-2013 (CT) Hide associations with more than one role
 #    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
+#    14-Apr-2014 (CT) Set `App_Type.pid` to `ET_Doc`
 #    ««revision-date»»···
 #--
 
@@ -253,6 +254,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     _real_name                 = "App_Type"
 
+    pid                        = "ET_Doc"
     PNS                        = PNS
 
     class _RST_TOP_MOM_Doc_App_Type_GET (_Ancestor.GET) :
