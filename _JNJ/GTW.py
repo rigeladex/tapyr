@@ -64,6 +64,7 @@
 #    13-Feb-2014 (CT) Add `Dingbats` and `unichr`
 #    14-Mar-2014 (CT) Add `any` and `all`
 #    10-Apr-2014 (CT) Add `first`
+#    14-Apr-2014 (CT) Add `ichain`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,8 @@ from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Sorted_By
+
+import itertools
 
 class GTW (TFL.Meta.Object) :
     """Provide additional global functions for Jinja templates."""
@@ -197,6 +200,7 @@ class GTW (TFL.Meta.Object) :
     getattr    = staticmethod (getattr)
     Getter     = TFL.Getter
 
+    ichain     = staticmethod (itertools.chain)
     len        = staticmethod (len)
     list       = staticmethod (list)
 
