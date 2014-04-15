@@ -19,34 +19,38 @@
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` in here
 //    20-Jan-2014 (CT) Pass `xhr_instance.responseText` to `show_message`;
 //                     remove call of `alert` from `options.error`
+//    15-Apr-2014 (CT) Put request info into `options.error` of `gtw_ajax_2json`
 //    ««revision-date»»···
 //--
 
-"use strict";
 
 ( function ($) {
+    "use strict";
     $.gtw_ajax_2json = function (opts, name) {
         var options  = $.extend
             ( { async       : false                  // defaults settings
-              , error       : function (xhr_instance, status, exc) {
-                    var msg = (name || "Ajax request") + " failed: ";
-                    $GTW.show_message
-                        ( msg, status, exc
-                        , "\n\nResponse:", xhr_instance.responseText
-                        );
-                }
               , timeout     : 30000
+              , type        : "POST"
               }
             , opts                                   // arguments
             , { contentType : "application/json"     // mandatory settings
               , dataType    : "json"
               , processData : false
-              , type        : "POST"
               }
             );
         var data = options.data;
         if (typeof data !== "string") {
             options.data = $GTW.jsonify (data);
+        };
+        if (! ("error" in options)) {
+            options.error = function (xhr_instance, status, exc) {
+                var msg = (name || "Ajax request") + " failed: ";
+                $GTW.show_message
+                    ( msg, status, exc
+                    , "\n\nRequest:", options.type, options.url
+                    , "\n\nResponse:", xhr_instance.responseText
+                    );
+            };
         };
         $.ajax (options);
     };
