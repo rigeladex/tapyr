@@ -21,9 +21,8 @@
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
     var L = $GTW.L;
     $.fn.gtw_e_type_admin_postify = function gtw_e_type_admin_postify (opts) {
         var options  = $.extend

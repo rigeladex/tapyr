@@ -27,9 +27,8 @@
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
     $.fn.gtw_gallery = function (opts) {
         var controls = $.extend
             ( { head        : "button.first"

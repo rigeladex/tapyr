@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -36,6 +36,7 @@
 #    17-Aug-2012 (MG) Set `etag`during cache creation
 #     2-May-2013 (CT) Use `root.hash_fct` and `root.b64_encoded`
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    15-Apr-2014 (CT) Always create `js` cache to include `Script_File`
 #    ««revision-date»»···
 #--
 
@@ -85,15 +86,13 @@ class Template_Media_Cache (TFL.Meta.Object) :
         TT      = root.Templateer.Template_Type
         for t in TFL.uniq (root.template_iter ()) :
             t_set.update (t.templates)
-            css_href = self._add_to_map (root, t, "CSS", css_map)
-            js_href  = None if TEST else self._add_to_map \
-                (root, t, "js", js_map)
+            css_href = self._add_to_map (root, t, "CSS",   css_map)
+            js_href  = self._add_to_map (root, t, "js", js_map)
             TT.Media_Map [t.name] = t.get_cached_media (css_href, js_href)
             if self.cache_filenames :
                 self._add_filenames (t)
         self._create_cache ("CSS", css_map, None if TEST else GTW.minified_css)
-        if not TEST :
-            self._create_cache ("js", js_map, GTW.minified_js)
+        self._create_cache ("js",  js_map,  None if TEST else GTW.minified_js)
         TT.etag = self._get_etag (root, css_map, js_map, t_set)
         return dict \
             ( css_href_map = TT.css_href_map

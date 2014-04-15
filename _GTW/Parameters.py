@@ -39,6 +39,7 @@
 #    20-Feb-2014 (CT) Add `Rule._resolved_children`
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #     9-Apr-2014 (CT) Pass `static_handler` to `GTW.CSS.Style_File`
+#    15-Apr-2014 (CT) Fix `Script_File`, `script_files`
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,7 @@ from   _TFL                       import TFL
 
 from   _TFL._Meta.Property        import Lazy_Property
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL                       import sos
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -247,11 +249,39 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     # end class _MOB_
 
+    class _Script_File_ (TFL.Meta.Object) :
+        """Wrapper for a javascript `Script_File` referenced in a media fragment."""
+
+        cache_p       = True
+        requires      = ()
+        may_cache     = True
+
+        def __init__ (self, file_name, body = None, rank = 0) :
+            self.file_name = file_name
+            self._body     = body
+            self.rank      = 0
+        # end def __init__
+
+        @property
+        def body (self) :
+            result = self._body
+            if result is None :
+                fn = self.file_name
+                with open (fn, "rb") as f :
+                    result = self._body = f.read ().strip ()
+            return result
+        # end def body
+
+        def __str__ (self) :
+            return self.body
+        # end def __str__
+
+    # end class _Script_File_
+
     css_links            = property (lambda s : s._Media.css_links)
     js_on_ready          = property (lambda s : s._Media.js_on_ready)
     rel_links            = property (lambda s : s._Media.rel_links)
     scripts              = property (lambda s : s._Media.scripts)
-    script_files         = property (lambda s : s.Script_File._ext)
     style_sheets         = property (lambda s : s.Style_Sheet._ext)
 
     def __init__ (self, parameters, env = None) :
@@ -262,13 +292,13 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
         self.JS_On_Ready      = self._MOB_ (JS_On_Ready)
         self.Rel_Link         = self._MOB_ (Rel_Link)
         self.Script           = self._MOB_ (Script)
-        self.Script_File      = self._MOB_ (import_CSS.Style_File)
         self.Style_Sheet = SS = self._MOB_ (import_CSS.Style_Sheet)
         self.Style_File       = self._MOB_ \
             ( import_CSS.Style_File, SS._ext
             , static_handler = env.static_handler
             )
         self.env              = env
+        self.script_files     = []
         self.__super.__init__ \
             ( object = import_CSS
             , locls  = dict (Include = self.Include)
@@ -293,8 +323,22 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
             if not fn.endswith (".media") :
                 fn = "%s.media" % (fn, )
             source, path, _ = get_source (env, fn)
-            self._eval_file              (path)
+            self._eval_file (path)
     # end def Include
+
+    def Script_File (self, src, ** kw) :
+        env  = self.env
+        body = None
+        if sos.path.isfile (src) :
+            fn      = src
+        else :
+            handler = env.static_handler
+            fn      = handler.get_path (src) if handler else None
+            if fn is None :
+                body, fn, _ = env.loader.get_source (env, src)
+        sf   = self._Script_File_ (fn, body, ** kw)
+        self.script_files.append  (sf)
+    # end def Script_File
 
     def _eval_file (self, filename) :
         with open (filename, "rt") as file :

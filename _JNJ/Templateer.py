@@ -82,6 +82,7 @@
 #    22-Jan-2014 (CT) Add `empty_dir`
 #    12-Feb-2014 (CT) Add `regatta_ranking`
 #    11-Mar-2014 (CT) Add `e_type_display`
+#    15-Apr-2014 (CT) Add `media.script_files` to `Template_E.js`
 #    ««revision-date»»···
 #--
 
@@ -260,7 +261,7 @@ class Template_E (_Template_) :
 
     @Once_Property
     def js (self) :
-        """Combined Javascript code required by media fragments that can
+        """Combined Javascript code required by media fragments that can be
            loaded from a single file or included inline in a html <script>
            element.
         """
@@ -268,14 +269,16 @@ class Template_E (_Template_) :
         handler  = self.env.static_handler
         media    = self._Media_R
         if handler and media :
-            def _gen (handler, encoding, scripts) :
+            def _gen (handler, encoding, scripts, media) :
                 for s in sorted (scripts, key = TFL.Getter.rank) :
                     p = handler.get_path (s.src)
                     if p :
                         with open (p, "rb") as file :
                             yield file.read ().decode (encoding)
+                for s in sorted (media.script_files, key = TFL.Getter.rank) :
+                    yield s.body.decode (encoding)
             result = "\n\n".join \
-                (TFL.uniq (_gen (handler, encoding, self.scripts_c)))
+                (TFL.uniq (_gen (handler, encoding, self.scripts_c, media)))
             return result
     # end def js
 
