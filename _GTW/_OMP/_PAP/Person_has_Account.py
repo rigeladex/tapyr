@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -28,6 +28,7 @@
 # Revision Dates
 #     6-Dec-2012 (CT) Creation
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
+#    16-Apr-2014 (CT) Add query attribute `my_person`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,18 @@ class Person_has_Account (_Ancestor_Essence) :
             max_links          = 1
 
         # end class right
+
+        ### Non-primary attributes
+
+        class my_person (A_Id_Entity) :
+            """Person this %(right.role_name)s is attached to."""
+
+            kind                = Attr.Query
+            P_Type              = "PAP.Person"
+            query               = Q.left
+            hidden              = True
+
+        # end class my_person
 
     # end class _Attributes
 

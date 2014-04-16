@@ -167,7 +167,7 @@ def show_attr_mro (ET) :
         in0 = "  " * (level)
         in1 = "  " * (level + 1)
         for name, kind in sorted (pyk.iteritems (ET.attributes)) :
-            if isinstance (kind, MOM.Attr.Auto_Cached) :
+            if isinstance (kind, MOM.Attr.Auto_Cached) or not kind.show_in_ui :
                 continue
             amro  = ", ".join (_kind_mro (kind))
             tail  = ("-> %s" % (kind.E_Type.type_name, )) if kind.E_Type else ""
@@ -188,6 +188,7 @@ def show_attr_wrappers (apt, pred = pred) :
             in2 = in1 + "    "
             print ("%s%s" % (in0, W.type_name))
             for name, aw in sorted (pyk.iteritems (qas)) :
+                if not getattr (aw.kind, "show_in_ui", True) : continue
                 amro = ", ".join (_kind_mro (aw.kind))
                 print \
                     ( "%s%s : %s\n%s%s"
@@ -219,11 +220,13 @@ def show_key_o_p (apt) :
 def show_q_able (apt, pred = pred) :
     def _gen (ETW) :
         for k, q in sorted (pyk.iteritems (ETW.q_able_attrs)) :
+            if not q.kind.show_in_ui : continue
             if k == q.attr.name :
                 ### filter attribute-aliases
                 yield str (q)
                 if q.q_able_attrs :
                     for k, q in sorted (pyk.iteritems (q.q_able_attrs)) :
+                        if not q.kind.show_in_ui : continue
                         if not q.columns :
                             yield str (q)
     sk = lambda x : (x.e_type.i_rank, )
@@ -237,6 +240,7 @@ def show_q_able (apt, pred = pred) :
 def show_q_able_names (apt, pred = pred) :
     def _gen (q_able_attrs, level = 0) :
         for k, q in sorted (pyk.iteritems (q_able_attrs)) :
+            if not q.kind.show_in_ui : continue
             if k == q.attr.name :
                 ### filter attribute-aliases
                 yield "%s%-30s: %s" % ("    " * level, k, ", ".join (q.q_able_names))

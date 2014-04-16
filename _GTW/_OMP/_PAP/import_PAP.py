@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -34,6 +34,7 @@
 #    11-Oct-2012 (CT) Add `Address_Position`, `Url`
 #     6-Dec-2012 (CT) Add `Person_has_Account` (conditional import)
 #     6-Dec-2012 (CT) Remove `Entity_created_by_Person`
+#    16-Apr-2014 (CT) Add `Person_has_Property`
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ import _GTW._OMP._PAP.Url
 import _GTW._OMP._PAP.Address_Position
 import _GTW._OMP._PAP.Subject_has_Property
 import _GTW._OMP._PAP.Subject_has_Phone
+import _GTW._OMP._PAP.Person_has_Property
 
 GTW.OMP.PAP.Subject_has_Property.m_create_role_children ("right")
 

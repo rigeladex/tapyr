@@ -104,6 +104,8 @@
 #    12-Jun-2013 (CT) Add argument `app_type` to `m_setup_names`
 #     1-Mar-2014 (CT) Change `_m_create_link_ref_attr` to set `hidden`
 #     2-Mar-2014 (CT) Change `_m_create_link_ref_attr` to set `hidden_nested`
+#    16-Apr-2014 (CT) Add role-specific `auto_derive_np_kw` and support for
+#                     `_update_auto_kw` to `_m_create_role_child`
 #    ««revision-date»»···
 #--
 
@@ -208,6 +210,13 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 auto_kw = cls.auto_derive_np_kw [tn]
             else :
                 auto_kw = cls.auto_derive_np_kw [tbn]
+            auto_kw = auto_kw.__class__ (auto_kw)
+            for role, etype in rets :
+                for rtn in (etype.type_name, etype.type_base_name) :
+                    ra_kw = cls.auto_derive_np_kw [rtn, role.name]
+                    auto_kw.update (ra_kw)
+            for auto_kw_updater in auto_kw ["_update_auto_kw"].itervalues () :
+                auto_kw_updater (auto_kw)
             for role, etype in rets :
                 r_rkw = dict \
                     ( auto_kw [role.name]

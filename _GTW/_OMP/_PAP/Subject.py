@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
@@ -63,6 +63,25 @@ class _PAP_Subject_ (_Ancestor_Essence) :
             kind           = Attr.Optional
 
         # end class lifetime
+
+        class my_person (A_Id_Entity) :
+            """Just an alias to be allow polymorphic queries using `my_person`.
+
+               For instance, if a E_Type has an attribute `owner` with P_Type
+               `PAP.Subject`, a query like::
+
+                   Q.owner == p
+
+               where `p` is an instance of `PAP.Person` will work, but would
+               fail without the `my_person` defined here as `Q.NIL`.
+            """
+
+            kind               = Attr.Query
+            P_Type             = "PAP.Person"
+            query              = Q.NIL
+            hidden             = True
+
+        # end class my_person
 
     # end class _Attributes
 
