@@ -56,6 +56,8 @@
 #                     unary operators
 #     3-Apr-2014 (CT) Use `LEFT OUTER` joins for `Kind_Rev_Query`
 #     3-Apr-2014 (CT) Save `_SAW_ORIGINAL` in `Una.XS_ORDER_BY`
+#    16-Apr-2014 (CT) Add `And_Distributive` and `Or_Distributive`
+#    16-Apr-2014 (CT) Add `Q.NIL`
 #    ««revision-date»»···
 #--
 
@@ -316,6 +318,17 @@ class _Q_Call_Proxy_ (_Q_Exp_Proxy_) :
 
 # end class _Q_Call_Proxy_
 
+class _Q_NIL_Proxy_ (Q._NIL_) :
+    """Proxy for a Q.NIL expression"""
+
+    def predicate (self, obj) :
+        if isinstance (obj, Mapper) :
+            return _NIL_ (obj)
+        return None
+    # end def predicate
+
+# end class _Q_NIL_Proxy_
+
 class _Q_Self_Proxy_ (Q._Self_) :
     """Proxy for a Q.SELF expression"""
 
@@ -428,6 +441,8 @@ class _Base_ (TFL.Meta.Object) :
 
     def _xs_filter_bin (self, rhs, op, reversed = False) :
         rhs = self._xs_filter_rhs (rhs)
+        if isinstance (rhs, SA.expression.Null) :
+            return None
         return op.apply (self._XS_FILTER, rhs, reversed)
     # end def _xs_filter_bin
 
@@ -604,21 +619,50 @@ class _Bool_ (_Q_Exp_Proxy_, _Base_) :
 
 # end class _Bool_
 
+class _Bool_Distributive_ (_Bool_) :
+    """A Boolean operator that distributes a binary operation to its
+       operands.
+    """
+
+    def _op_bin (self, rhs, name, op, reverse) :
+        result = self._Ancestor \
+            ([p._op_bin (rhs, name, op, reverse) for p in self.predicates])
+        return result
+    # end def _op_bin
+
+# end class _Bool_Distributive_
+
 class And (_Bool_) :
-    """Map an AND expression to the corresponding SQLAlchemy expression."""
+    """Map a Filter_And expression to the corresponding SQLAlchemy expression.
+    """
 
     name = "AND"
     op   = staticmethod (SA.expression.and_)
 
 # end class And
 
+class And_Distributive (And, _Bool_Distributive_) :
+    """Map a Q.AND expression to the corresponding SQLAlchemy expression."""
+
+    _Ancestor = And
+
+# end class And_Distributive
+
 class Or (_Bool_) :
-    """Map an OR expression to the corresponding SQLAlchemy expression."""
+    """Map a Filter_Or expression to the corresponding SQLAlchemy expression.
+    """
 
     name = "OR"
     op   = staticmethod (SA.expression.or_)
 
 # end class Or
+
+class Or_Distributive (Or, _Bool_Distributive_) :
+    """Map a Q.OR expression to the corresponding SQLAlchemy expression."""
+
+    _Ancestor = Or
+
+# end class Or_Distributive
 
 class _Op_ (_Base_) :
 
@@ -1677,6 +1721,25 @@ class _Self_ (_Attr_) :
 
 # end class _Self_
 
+class _NIL_ (_Self_) :
+    """Map a Q.NIL query attribute to  SQLAlchemy"""
+
+    XS_ATTR          = \
+    XS_GROUP_BY      = \
+    XS_ORDER_BY      = TFL.Meta.Alias_Property ("XS_FILTER")
+
+    @TFL.Meta.Once_Property
+    def XS_FILTER (self) :
+        return False
+    # end def XS_FILTER
+
+    def __repr__ (self) :
+        return "<%s | QX.%s for NIL>" % \
+            (self.E_Type.type_name, self.__class__.__name__)
+    # end def __repr__
+
+# end class _NIL_
+
 ###############################################################################
 ### Generic functions to display a tree of QX instances
 @Single_Dispatch
@@ -1827,6 +1890,11 @@ def _fixed_q_exp_get_raw_ (x) :
     return x.__class__ (Q, x._postfix, x._prefix)
 # end def _fixed_q_exp_get_raw_
 
+@fixed_q_exp.add_type (Q._NIL_)
+def _fixed_q_exp_nil_ (x) :
+    return _Q_NIL_Proxy_ (x.Q)
+# end def _fixed_q_exp_nil_
+
 @fixed_q_exp.add_type (Q._Self_)
 def _fixed_q_exp_self_ (x) :
     return _Q_Self_Proxy_ (x.Q)
@@ -1844,10 +1912,16 @@ def _fixed_q_exp_una_ (x) :
     return x.__class__ (fixed_q_exp (x.lhs), op, x.undefs)
 # end def _fixed_q_exp_una_
 
-@fixed_q_exp.add_type (Q.AND)
-def _fixed_q_exp_and_ (x) :
+@fixed_q_exp.add_type (TFL.Filter_And)
+def _fixed_filter_and_ (x) :
     ps = tuple (fixed_q_exp (p) for p in x.predicates)
     return And (ps)
+# end def _fixed_filter_and_
+
+@fixed_q_exp.add_type (Q._AND_)
+def _fixed_q_exp_and_ (x) :
+    ps = tuple (fixed_q_exp (p) for p in x.predicates)
+    return And_Distributive (ps)
 # end def _fixed_q_exp_and_
 
 @fixed_q_exp.add_type (Q.BVAR.BVAR)
@@ -1861,10 +1935,16 @@ def _fixed_q_exp_not_ (x) :
     return Not (p)
 # end def _fixed_q_exp_not_
 
-@fixed_q_exp.add_type (Q.OR)
-def _fixed_q_exp_or_ (x) :
+@fixed_q_exp.add_type (TFL.Filter_Or)
+def _fixed_filter_or_ (x) :
     ps = tuple (fixed_q_exp (p) for p in x.predicates)
     return Or (ps)
+# end def _fixed_filter_or_
+
+@fixed_q_exp.add_type (Q._OR_)
+def _fixed_q_exp_or_ (x) :
+    ps = tuple (fixed_q_exp (p) for p in x.predicates)
+    return Or_Distributive (ps)
 # end def _fixed_q_exp_or_
 
 ###############################################################################

@@ -76,6 +76,8 @@
 #     3-Apr-2014 (CT) Remove `None` from `undefs` for `__not__`
 #     4-Apr-2014 (CT) Add `AND`, `NOT`, `OR` to `Base`;
 #                     add `__and__`, `__invert__`, `__or__` to `Root`
+#    16-Apr-2014 (CT) Change `AND` and `OR` to distribute binary operations
+#    16-Apr-2014 (CT) Add `NIL`
 #    ««revision-date»»···
 #--
 
@@ -434,15 +436,34 @@ class Base (TFL.Meta.Object) :
     '<Filter_Not NOT Q.foo % 2 * - Q.bar / 3>'
 
     >>> Q.foo & Q.bar
-    <Filter_And [Q.foo, Q.bar]>
+    <_AND_ [Q.foo, Q.bar]>
+
+    >>> (Q.foo | Q.bar) > 0
+    <Filter_Or [Q.foo > 0, Q.bar > 0]>
+
+    >>> print (Q.OR (Q.foo, Q.bar, Q.baz) == 42)
+    <Filter_Or [Q.foo == 42, Q.bar == 42, Q.baz == 42]>
+
+    >>> r1
+    Record (bar = 137, baz = 11, foo = 42)
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 42) (r1)
+    True
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 137) (r1)
+    True
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 11) (r1)
+    True
+
+    >>> (Q.OR (Q.foo, Q.bar, Q.baz) == 23) (r1)
+    False
 
     """
 
     class Ignore_Exception (Exception) : pass
 
-    AND              = TFL.Filter_And
     NOT              = TFL.Filter_Not
-    OR               = TFL.Filter_Or
 
     expr_class_names = []
     undef            = TFL.Undef ("value")
@@ -453,9 +474,22 @@ class Base (TFL.Meta.Object) :
     # end def __init__
 
     @property
+    def NIL (self) :
+        return self._NIL_ (self)
+    # end def NIL
+
+    @property
     def SELF (self) :
         return self._Self_ (self)
     # end def SELF
+
+    def AND (self, * args) :
+        return self._AND_ (self, * args)
+    # end def AND
+
+    def OR (self, * args) :
+        return self._OR_  (self, * args)
+    # end def OR
 
     def __getattr__ (self, name) :
         if "." in name :
@@ -593,6 +627,15 @@ class _Bin_ (Q_Root) :
 
     Table                = {}
 
+    def __new__ (cls, lhs, op, rhs, undefs, reverse = False) :
+        if isinstance (lhs, _Bool_Bin_Op_) :
+            return lhs.__class__ \
+                (lhs.Q, * tuple (op (p, rhs) for p in lhs.predicates))
+        else :
+            return super (_Bin_, cls).__new__ \
+                (cls, lhs, op, rhs, undefs, reverse)
+    # end def __new__
+
     def __init__ (self, lhs, op, rhs, undefs, reverse = False) :
         self.Q       = lhs.Q
         self.lhs     = lhs
@@ -727,6 +770,8 @@ def __binary (op_fct, Class) :
         ### Ignore `None` for all other operators
         undefs = (None, Q.undef)
     def _ (self, rhs) :
+        if isinstance (self, Q._NIL_) :
+            rhs, self = self, rhs
         return getattr (self.Q, Class) (self, op, rhs, undefs, reverse)
     _.__doc__    = op.__doc__
     _.__name__   = name
@@ -1064,6 +1109,41 @@ class _Exp_B_ (_Exp_Base_) :
 
 # end class _Exp_B_
 
+class _Bool_Bin_Op_ (_Exp_) :
+    """Base class for boolean binary operations `AND` and `OR`"""
+
+    def __new__ (cls, Q, * qs) :
+        ### We only want to distribute binary operators if all `qs` are
+        ### getters
+        if all (isinstance (a, (Q._Get_, BVAR)) for a in qs) :
+            return super (_Bool_Bin_Op_, cls).__new__ (cls, Q, * qs)
+        else :
+            return cls._Ancestor (* qs)
+    # end def __new__
+
+    def __init__ (self, Q, * qs) :
+        self.Q = Q
+        self.__super.__init__ (* qs)
+    # end def __init__
+
+# end class _Bool_Bin_Op_
+
+@TFL.Add_New_Method (Base)
+class _AND_ (_Bool_Bin_Op_, TFL.Filter_And) :
+    """Boolean AND operator"""
+
+    _Ancestor = TFL.Filter_And
+
+# end class _AND_
+
+@TFL.Add_New_Method (Base)
+class _OR_ (_Bool_Bin_Op_, TFL.Filter_Or) :
+    """Boolean OR operator"""
+
+    _Ancestor = TFL.Filter_Or
+
+# end class _OR_
+
 @TFL.Add_New_Method (Base)
 class _Get_ (_Exp_) :
     """Query getter"""
@@ -1096,6 +1176,22 @@ class _Get_ (_Exp_) :
     # end def __repr__
 
 # end class _Get_
+
+@TFL.Add_New_Method (Base)
+class _NIL_ (_Get_) :
+    """Query expression that always evaluates to None."""
+
+    _name      = "NIL"
+
+    def __init__ (self, Q) :
+        self.Q = Q
+    # end def __init__
+
+    def predicate (self, obj) :
+        return None
+    # end def predicate
+
+# end class _NIL_
 
 @TFL.Add_New_Method (Base)
 class _Self_ (_Get_) :
