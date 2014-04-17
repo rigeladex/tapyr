@@ -129,6 +129,7 @@
 #    14-Mar-2014 (CT) Add alias property `proper_entries`
 #    14-Mar-2014 (CT) Add `response` to `_http_response_context`
 #     7-Apr-2014 (CT) Add support for `Access-Control-Allow-Origin`
+#    17-Apr-2014 (CT) Add `entry_map`
 #    ««revision-date»»···
 #--
 
@@ -1091,6 +1092,13 @@ class _RST_Dir_Base_ (_Ancestor) :
 
     @property
     @getattr_safe
+    def entry_map (self) :
+        self.entries ### trigger recomputation/load-from-db, if necessary
+        return self._entry_map
+    # end def entry_map
+
+    @property
+    @getattr_safe
     def href_pat_frag (self) :
         result = self._href_pat_frag
         if result is None :
@@ -1126,9 +1134,8 @@ class _RST_Dir_Base_ (_Ancestor) :
     # end def template_iter
 
     def _get_child (self, child, * grandchildren) :
-        self.entries ### trigger recomputation/load-from-db, if necessary
         try :
-            result = self._entry_map [child]
+            result = self.entry_map [child]
         except KeyError :
             pass
         else :
