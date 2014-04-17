@@ -76,6 +76,8 @@
 #    13-Mar-2014 (CT) Add `E_Type.first`, `.last`, `.next`, `.prev`
 #    13-Mar-2014 (CT) Factor `_handle_method_context` from `rendered`
 #    14-Apr-2014 (CT) Set `Site.pid` to `Admin`
+#    17-Apr-2014 (CT) Add `_field_type_map`
+#    17-Apr-2014 (CT) Change `Field.value` to handle `MOM.Id_Entity` instances
 #    ««revision-date»»···
 #--
 
@@ -1002,6 +1004,7 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     submit_callback       = None
     submit_error_callback = None
 
+    _auth_required        = True
     _entry_type_map       = dict \
         ((c.name, c) for c in
             ( Changer, Completed, Completer, Creator, Deleter, Displayer
@@ -1009,13 +1012,12 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             , _QX_Dispatcher_
             )
         )
-
     _exclude_robots       = True
-    _greet_entry          = None
+    _field_type_map       = {}
     _form_id              = None
     _form_parameters      = {}
+    _greet_entry          = None
     _list_display         = None
-    _auth_required        = True
     _sort_key             = None
 
     class _E_Type_GET_ (_Ancestor.GET) :
@@ -1112,7 +1114,10 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         # end def as_thml
 
         def value (self, o) :
-            return getattr (o, self.name)
+            if isinstance (o, MOM.Id_Entity) :
+                o = o.FO
+            result = getattr (o, self.name)
+            return result
         # end def value
 
         def __getattr__ (self, name) :
@@ -1430,13 +1435,16 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     def _fields (self, names) :
         def _gen (E_Type, names, map) :
-            AQ    = E_Type.AQ
-            Field = self.Field
+            AQ     = E_Type.AQ
+            Field  = self.Field
+            ft_map = self._field_type_map
             for n in names :
                 try :
                     f = map [n]
                 except KeyError :
-                    f = map [n] = Field (getattr (AQ, n))
+                    FT = ft_map.get (n, Field)
+                    aq = getattr (AQ, n)
+                    f  = map [n] = FT (aq)
                 yield f
         return tuple (_gen (self.E_Type, names, self._field_map))
     # end def _fields
