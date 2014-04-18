@@ -65,6 +65,7 @@
 #    14-Mar-2014 (CT) Add `any` and `all`
 #    10-Apr-2014 (CT) Add `first`
 #    14-Apr-2014 (CT) Add `ichain`
+#    18-Apr-2014 (CT) Add `bool`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ class GTW (TFL.Meta.Object) :
 
     all  = staticmethod (all)
     any  = staticmethod (any)
+    bool = staticmethod (bool)
 
     @Once_Property
     def Dingbats (self) :
