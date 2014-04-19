@@ -130,6 +130,8 @@
 #    14-Mar-2014 (CT) Add `response` to `_http_response_context`
 #     7-Apr-2014 (CT) Add support for `Access-Control-Allow-Origin`
 #    17-Apr-2014 (CT) Add `entry_map`
+#    19-Apr-2014 (CT) Catch `Not_Found` in `resource_from_href`
+#                     (factor `_resource_from_href`)
 #    ««revision-date»»···
 #--
 
@@ -1558,60 +1560,10 @@ class RST_Root (_Ancestor) :
     # end def Response
 
     def resource_from_href (self, req_href, request = None) :
-        Table        = self.Table
-        req_href     = self._request_href (req_href, request)
-        href, ext    = pp_splitext (req_href)
-        match        = None
-        redirects    = self.redirects
-        result       = None
-        if redirects :
-            try :
-                redirect = redirects [href]
-            except KeyError :
-                pass
-            else :
-                if isinstance (redirect, tuple) :
-                    status, result = redirect
-                else :
-                    status, result = 302, redirect
-                raise self.Status.Status [status] (result)
-        if result is None :
-            result = Table.get (href)
-        if result is None :
-            href_pat = self.href_pat
-            if href_pat :
-                match = href_pat.match (href)
-                if match :
-                    head     = match.group (0).rstrip ("/")
-                    resource = Table.get (head)
-                    if resource :
-                        tail = href [len (head):].strip ("/")
-                        if tail :
-                            tail   = tail.split ("/")
-                            result = resource._get_child (* tail)
-                        else :
-                            result = resource
-        if result is None :
-            head = href
-            tail = []
-            while head :
-                head, _ = pp_split (head)
-                if head or not tail : ### `not tail` covers root's entries
-                    tail.append (_)
-                    try :
-                        d = Table [head]
-                    except KeyError :
-                        pass
-                    else :
-                        if self.DEBUG :
-                            print \
-                                ( "*" * 3, href, d
-                                , "not in `Table`, not matched by `href_pat`"
-                                )
-                        result = d._get_child (* reversed (tail))
-                if result :
-                    break
-        return result
+        try :
+            return self._resource_from_href (req_href, request)
+        except self.Status.Not_Found :
+            return None
     # end def resource_from_href
 
     def template_iter (self) :
@@ -1746,6 +1698,63 @@ class RST_Root (_Ancestor) :
                 request.use_language (langs or request.locale_codes or ())
         return result
     # end def _request_href
+
+    def _resource_from_href (self, req_href, request = None) :
+        Table        = self.Table
+        req_href     = self._request_href (req_href, request)
+        href, ext    = pp_splitext (req_href)
+        match        = None
+        redirects    = self.redirects
+        result       = None
+        if redirects :
+            try :
+                redirect = redirects [href]
+            except KeyError :
+                pass
+            else :
+                if isinstance (redirect, tuple) :
+                    status, result = redirect
+                else :
+                    status, result = 302, redirect
+                raise self.Status.Status [status] (result)
+        if result is None :
+            result = Table.get (href)
+        if result is None :
+            href_pat = self.href_pat
+            if href_pat :
+                match = href_pat.match (href)
+                if match :
+                    head     = match.group (0).rstrip ("/")
+                    resource = Table.get (head)
+                    if resource :
+                        tail = href [len (head):].strip ("/")
+                        if tail :
+                            tail   = tail.split ("/")
+                            result = resource._get_child (* tail)
+                        else :
+                            result = resource
+        if result is None :
+            head = href
+            tail = []
+            while head :
+                head, _ = pp_split (head)
+                if head or not tail : ### `not tail` covers root's entries
+                    tail.append (_)
+                    try :
+                        d = Table [head]
+                    except KeyError :
+                        pass
+                    else :
+                        if self.DEBUG :
+                            print \
+                                ( "*" * 3, href, d
+                                , "not in `Table`, not matched by `href_pat`"
+                                )
+                        result = d._get_child (* reversed (tail))
+                if result :
+                    break
+        return result
+    # end def _resource_from_href
 
 Root = RST_Root # end class
 
