@@ -174,6 +174,7 @@
 #    23-Dec-2013 (CT) Factor `messages_from_args` and `formatted`
 #    23-Jan-2014 (CT) Set `PMA.default_encoding` in all cases in `_main`
 #    17-Mar-2014 (CT) Fix error message `tail` in `messages_from_args`
+#    22-Apr-2014 (CT) Change `_main` to pass `encoding` to `formatted`
 #    ««revision-date»»···
 #--
 
@@ -1051,7 +1052,7 @@ def _main (cmd) :
         encoding = "iso8859-1" if cmd.Print else "utf-8"
     PMA.default_encoding = encoding
     for msg in messages_from_args (cmd.argv, cmd.msg_base_dirs) :
-        txt = formatted (msg)
+        txt = formatted (msg, encoding = encoding)
         if cmd.Print :
             from plumbum  import local as pbl
             from _TFL.FCM import open_tempfile
