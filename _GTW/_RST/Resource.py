@@ -1215,7 +1215,7 @@ class _RST_Dir_ (_Ancestor) :
             (self, head, getter = TFL.Getter.href_pat_frag) :
         result  = head
         entries = sorted \
-            (self.entries, key = lambda x : x.name, reverse = True)
+            (self.entries or (), key = lambda x : x.name, reverse = True)
         e_hpfs = tuple (x for x in (getter (e) for e in entries) if x)
         if e_hpfs :
             e_result   = "|".join (e_hpfs)
