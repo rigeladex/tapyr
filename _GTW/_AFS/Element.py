@@ -115,6 +115,7 @@
 #     5-Aug-2012 (CT) Change `Form.__init__` to set `names`
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #     7-Mar-2014 (CT) Add `rank` to `_pop_to_self`
+#    24-Apr-2014 (CT) Don't use `GTW.Form.Widget_Spec`
 #    ««revision-date»»···
 #--
 
@@ -124,7 +125,6 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._AFS.Instance
-import _GTW._Form.Widget_Spec
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Lists
@@ -632,7 +632,7 @@ class _Field_ (_Element_) :
 
     needs_value   = True
 
-    input_widget  = GTW.Form.Widget_Spec ("html/AFS/input.jnj, string")
+    input_widget  = "afs_input, string"
     _pop_to_self  = ("changeable", "choices", "input_widget")
 
     def __init__ (self, name, ** kw) :

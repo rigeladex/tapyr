@@ -83,6 +83,8 @@
 #    12-Feb-2014 (CT) Add `regatta_ranking`
 #    11-Mar-2014 (CT) Add `e_type_display`
 #    15-Apr-2014 (CT) Add `media.script_files` to `Template_E.js`
+#    24-Apr-2014 (CT) Add `afs_input`
+#    24-Apr-2014 (CT) Add `mf3`, `mf3_input`, `mf3_v_seq`, `mf3_h_cols`
 #    ««revision-date»»···
 #--
 
@@ -554,8 +556,14 @@ Template ("account_verify_new_email",     "email/verify_new_email.jnj")
 Template ("account_verify_email",         "email/verify_new_email.jnj")
 
 Template ("afs",           "html/afs.jnj")
+Template ("afs_input",     "html/AFS/input.jnj")
 Template ("afs_div_seq",   "html/AFS/div_seq.jnj", parent_name = "afs")
 Template ("afs_fc_horizo", "html/AFS/field_composite_horizo.jnj", parent_name = "afs_div_seq")
+
+Template ("mf3",           "html/mf3.jnj")
+Template ("mf3_input",     "html/MF3/input.jnj")
+Template ("mf3_v_seq",     "html/MF3/v_seq.jnj",  parent_name = "mf3")
+Template ("mf3_h_cols",    "html/MF3/h_cols.jnj", parent_name = "mf3_v_seq")
 
 Template ("calendar",                     "html/calendar.jnj")
 Template ("calendar_qx",                  "html/cal/wr.jnj")

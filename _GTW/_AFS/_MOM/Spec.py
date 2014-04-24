@@ -87,6 +87,7 @@
 #     7-Mar-2014 (CT) Set `rank` of `Field` to `attr.ui_rank`
 #    26-Mar-2014 (CT) Move `css_class_len` here;
 #                     remove `import _GTW._Form._MOM.Field`
+#    24-Apr-2014 (CT) Don't use `GTW.Form.Widget_Spec`
 #    ««revision-date»»···
 #--
 
@@ -97,7 +98,6 @@ from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 from   _GTW._AFS._MOM           import Element
-from   _GTW._Form.Widget_Spec   import Widget_Spec as WS
 
 import _MOM._Attr.Selector
 import _MOM._Attr.Type
@@ -112,20 +112,20 @@ import _TFL.multimap
 MAT                                  = MOM.Attr
 MAT.A_Attr_Type.afs_widget           = None
 MAT.A_Confirmation.afs_widget        = "Field__Confirmation"
-MAT.A_Attr_Type.input_widget         = WS ("html/AFS/input.jnj,  string")
-MAT.A_Boolean.input_widget           = WS ("html/AFS/input.jnj,  boolean")
-MAT.A_Confirmation.input_widget      = WS ("html/AFS/input.jnj,  boolean")
-MAT.A_Date.input_widget              = WS ("html/AFS/input.jnj,  date")
-MAT.A_Date_Time.input_widget         = WS ("html/AFS/input.jnj,  datetime")
-MAT.A_Email.input_widget             = WS ("html/AFS/input.jnj,  email")
-MAT.A_Enum.input_widget              = WS ("html/AFS/input.jnj,  named_object")
-MAT.A_Numeric_String.input_widget    = WS ("html/AFS/input.jnj,  number")
-MAT.A_Text.input_widget              = WS ("html/AFS/input.jnj,  text")
-MAT.A_Url.input_widget               = WS ("html/AFS/input.jnj,  url")
-MAT._A_Id_Entity_.input_widget       = WS ("html/AFS/input.jnj,  id_entity")
-MAT._A_Named_Object_.input_widget    = WS ("html/AFS/input.jnj,  named_object")
-MAT._A_Named_Value_.input_widget     = WS ("html/AFS/input.jnj,  named_value")
-MAT._A_Number_.input_widget          = WS ("html/AFS/input.jnj,  number")
+MAT.A_Attr_Type.input_widget         = "afs_input, string"
+MAT.A_Boolean.input_widget           = "afs_input, boolean"
+MAT.A_Confirmation.input_widget      = "afs_input, boolean"
+MAT.A_Date.input_widget              = "afs_input, date"
+MAT.A_Date_Time.input_widget         = "afs_input, datetime"
+MAT.A_Email.input_widget             = "afs_input, email"
+MAT.A_Enum.input_widget              = "afs_input, named_object"
+MAT.A_Numeric_String.input_widget    = "afs_input, number"
+MAT.A_Text.input_widget              = "afs_input, text"
+MAT.A_Url.input_widget               = "afs_input, url"
+MAT._A_Id_Entity_.input_widget       = "afs_input, id_entity"
+MAT._A_Named_Object_.input_widget    = "afs_input, named_object"
+MAT._A_Named_Value_.input_widget     = "afs_input, named_value"
+MAT._A_Number_.input_widget          = "afs_input, number"
 
 MAT.Kind.css_class                   = ""
 MAT.A_Attr_Type.css_class            = ""
