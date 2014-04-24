@@ -277,9 +277,9 @@ class M_Base (BaM (type, metaclass = M_M_Class)) :
            `Some_Class` with a class attribute `foo` with value `42`.
         """
         name = kw.pop ("__name__", cls.__name__)
+        new_dict = dict (__module__ = cls.__module__, _real_name = name)
         if name_postfix :
             name = "_".join ((name, name_postfix))
-        new_dict = dict (__module__ = cls.__module__)
         for attr_name, value in pyk.iteritems (mangled_attributes) :
             new_dict [_m_mangled_attr_name (attr_name, name)] = value
         head_mixins = kw.pop ("head_mixins", ())
