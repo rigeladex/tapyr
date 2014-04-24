@@ -49,6 +49,7 @@
 #    27-Mar-2014 (CT) Set `last_modified` only if not `etag`
 #    27-Mar-2014 (CT) Change `OPTIONS.__call__` to chain up to `__super`
 #                     (and derive `OPTIONS` from factored `_HTTP_Method_R_NB_`)
+#    30-Apr-2014 (CT) Set `no_cache` if `skip_etag`
 #    ««revision-date»»···
 #--
 
@@ -127,7 +128,9 @@ class HTTP_Method (TFL.Meta.Object) :
 
     def _skip_render (self, resource, request, response) :
         result = False
-        if not resource.skip_etag :
+        if resource.skip_etag :
+            response.cache_control.no_cache = True
+        else :
             etag   = resource.get_etag           (request)
             last   = resource.get_last_modified  (request) if not etag else None
             r_etag = self._request_etag_attr     (request)

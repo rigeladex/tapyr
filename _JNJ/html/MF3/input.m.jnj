@@ -1,0 +1,185 @@
+{#- jinja template: html/MF3/input.m.jnj -#}
+{#
+## Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/MF3/input.m.jnj
+##
+## Purpose
+##    Jinja macros for input elements of GTW.MF3 forms
+##
+## Revision Dates
+##    26-Apr-2014 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import (html_version or "html/5.jnj") as X -%}
+
+{%- macro boolean (elem) -%}
+  {%- set kw = {} if not elem.cooked else dict (checked = "checked") %}
+  {{ field (X.input.checkbox, elem, ** kw) }}
+{%- endmacro -%} {#- boolean -#}
+
+{%- macro date (elem) -%}
+  {{ field (X.input.date, elem, ** kwargs) }}
+{%- endmacro -%} {#- date -#}
+
+{%- macro datetime (elem) -%}
+  {{ field (X.input.datetime, elem, ** kwargs) }}
+{%- endmacro -%} {#- datetime -#}
+
+{%- macro email (elem) -%}
+  {{ field (X.input.email, elem, ** kwargs) }}
+{%- endmacro -%} {#- email -#}
+
+{%- macro hidden (elem) -%}
+  {{ field (X.input.hidden, elem, ** kwargs) }}
+{%- endmacro -%} {#- hidden -#}
+
+{%- macro id_entity (elem) -%}
+  {%- set class = kwargs.pop ("class", None)  %}
+  {%- if elem.readonly %}
+    {{ field
+        ( X.input.text, elem
+        , class     = GTW.filtered_join (" ", (class, ))
+        , name      = None
+        , readonly  = "readonly"
+        , title     = elem.ui_display
+        , value     = elem.ui_display
+        )
+    }}
+  {%- else %}
+    {{ X.input.text
+        ( class     = GTW.filtered_join (" ", (class, "hidden"))
+        , name      = elem.r_name
+        , readonly  = "readonly"
+        , value     = elem.edit
+        )
+    }}
+    {{ field
+        ( X.input.text, elem
+        , class     = GTW.filtered_join (" ", (class, "display"))
+        , name      = None
+        , readonly  = "readonly"
+        , title     = elem.ui_display
+        , value     = elem.ui_display
+        )
+    }}
+  {% endif -%}
+{%- endmacro -%} {#- id_entity -#}
+
+{%- macro named_value (elem) -%}
+  {%- set kw = GTW.dict
+      ( choices  = elem.choices
+      , id       = elem.id
+      , name     = elem.r_name
+      , selected = elem.edit
+      )
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ X.input.select (** kw) }}
+{%- endmacro -%} {#- named_value -#}
+
+{%- macro named_object (elem) -%}
+  {%- set kw = GTW.dict
+      ( choices  = elem.choices
+      , id       = elem.id
+      , name     = elem.r_name
+      , selected = elem.edit
+      )
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ X.input.select_v (** kw) }}
+{%- endmacro -%} {#- named_object -#}
+
+{%- macro number (elem) -%}
+  {%- set kw = GTW.dict
+      ( max           = elem.max_value
+      , min           = elem.min_value
+      )
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ field (X.input.number, elem, ** kw) }}
+{%- endmacro -%} {#- number -#}
+
+{%- macro password (elem) -%}
+  {{ field (X.input.password, elem, ** kwargs) }}
+{%- endmacro -%} {#- password -#}
+
+{%- macro string (elem) -%}
+  {%- set kw = GTW.dict (max_length = elem.max_length) -%}
+  {%- do kw.update (kwargs) %}
+  {{ field (X.input.text, elem, ** kw) }}
+{%- endmacro -%} {#- string -#}
+
+{%- macro text (elem) -%}
+  {%- set kw = GTW.dict
+      ( cols          = elem.cols or 80
+      , max_length    = elem.max_length
+      , rows          = elem.rows or 32
+      )
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ field (X.input.textarea, elem, ** kw)
+  }}
+{%- endmacro -%} {#- text -#}
+
+{%- macro time (elem) -%}
+  {{ field (X.input.time, elem, ** kwargs) }}
+{%- endmacro -%} {#- time -#}
+
+{%- macro url (elem) -%}
+  {{ field (X.input.url, elem, ** kwargs) }}
+{%- endmacro -%} {#- url -#}
+
+{%- macro field (typ, elem) -%}
+  {%- set id = elem.id -%}
+  {%- set kw = GTW.dict
+      ( id            = id
+      , name          = elem.r_name
+      , value         = elem.edit
+      )
+  -%}
+  {%- do kw.update (kwargs) -%}
+  {%- do kw.update
+      ( class = GTW.filtered_join
+          ( " "
+          , ( kw.get ("class", "")
+            , elem.css_class
+            , "completer" if elem.completer else ""
+            , "prefilled" if elem.prefilled else ""
+            )
+          )
+      )
+  %}
+  {%- if elem.readonly -%}
+    {%- do kw.setdefault ("readonly", "readonly") -%}
+    {%- do kw.setdefault ("title", GTW._T ("Cannot be changed")) -%}
+  {%- endif -%}
+  {%- if elem.required %}
+    {%- do kw.update (required = True) %}
+  {% endif -%}
+  {{ typ (** kw) }}
+{%- endmacro -%} {#- field -#}
+
+
+{#- __END__ jinja template: html/MF3/input.m.jnj -#}

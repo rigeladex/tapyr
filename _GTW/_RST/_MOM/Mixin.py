@@ -80,6 +80,7 @@
 #     4-Oct-2013 (CT) Add `add_fields` to `E_Type_Mixin._handle_method_context`
 #     4-Oct-2013 (CT) Fix `E_Type_Mixin._handle_method_context` (use tuple)
 #    28-Mar-2014 (CT) Add `Base_Mixin.q_able_attributes`
+#    29-Apr-2014 (CT) Make `_old_cid` dependent on `_change_info_key`
 #    ««revision-date»»···
 #--
 
@@ -301,7 +302,6 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
 
     _exclude_robots            = True
     _objects                   = []
-    _old_cid                   = -1
     _sort_key_cid_reverse      = TFL.Sorted_By ("-cid")
 
     show_rels                  = None
@@ -367,6 +367,17 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
         return self.href
     # end def _change_info_key
 
+    @property
+    @getattr_safe
+    def _old_cid (self) :
+        return self.top._old_cids.get (self._change_info_key, -1)
+    # end def _old_cid
+
+    @_old_cid.setter
+    def _old_cid (self, value) :
+        self.top._old_cids [self._change_info_key] = value
+    # end def _old_cid
+
     def add_doc_link_header (self, response) :
         top = self.top
         etd = top.ET_Map.get (self.type_name)
@@ -416,7 +427,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
 
     def _changed_cid (self) :
         change_info = self.change_info
-        cid         = change_info and change_info.cid
+        cid         = change_info.cid if change_info else None
         if self._old_cid != cid :
             return cid
     # end def _changed_cid

@@ -64,6 +64,7 @@
 #    17-Jan-2014 (CT) Add `GTW_Form_Externalize`
 #    20-Jan-2014 (CT) Fix `GTW_Form_Externalize` to not break buttons
 #    20-Feb-2014 (CT) Add `GTW_nav_off_canvas`
+#    29-Apr-2014 (CT) Add `GTW_jq_mf3`
 #    ««revision-date»»···
 #--
 
@@ -268,6 +269,17 @@ GTW.Script \
         ( GTW.Script._.GTW_afs_elements
         , GTW.Script._.GTW_autocomplete
         , GTW.Script._.GTW_buttonify
+        , GTW.Script._.GTW_e_type_selector
+        , GTW.Script._.GTW_UI_Icon_Map
+        , GTW.Script._.GTW_util
+        )
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/GTW/jQ/mf3.js"
+    , name     = "GTW_jq_mf3"
+    , requires =
+        ( GTW.Script._.GTW_autocomplete
         , GTW.Script._.GTW_e_type_selector
         , GTW.Script._.GTW_UI_Icon_Map
         , GTW.Script._.GTW_util

@@ -16,15 +16,16 @@
 // Revision Dates
 //    28-Jan-2011 (CT) Creation
 //     9-Mar-2011 (CT) `copy` added
-//    31-May-2011 (MG) Mssing `var` added
+//    31-May-2011 (MG) Missing `var` added
 //    29-Apr-2013 (CT) Add `show1`
 //    20-Jan-2014 (CT) Add missing `lev` to `show1`
+//     1-May-2014 (CT) Change `show` to just return strings
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function () {
+    "use strict";
+
     var inspect;
     var blanks =
     "                                                                         ";
@@ -93,7 +94,11 @@
               var result = [];
               var lev    = level || 0;
               var indent = blanks.slice (0, 4 * lev);
-              var names  = inspect.keys (obj, top_filter || filter).sort (inspect.key_cmp);
+              var names;
+              if (typeof obj == "string") {
+                  return obj;
+              };
+              names = inspect.keys (obj, top_filter || filter).sort (inspect.key_cmp);
               for (i = 0, l = names.length; i < l; i += 1) {
                   name  = names [i];
                   value = obj   [name];

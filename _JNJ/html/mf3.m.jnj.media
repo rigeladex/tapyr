@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ««license»»
+#
+#++
+# Name
+#    html/mf3.jnj.media
+#
+# Purpose
+#    Media fragment for template  html/mf3.jnj.media
+#
+# Revision Dates
+#    28-Apr-2014 (CT) Creation
+#    ««revision-date»»···
+#--
+
+CSS_Link (GTW.CSS_Link._.jQuery_UI)
+
+Include ("html/autocomplete.media")
+Include ("html/ui_dialog.media")
+
+Script  (GTW.Script._.GTW_hd_input)
+Script  (GTW.Script._.GTW_jq_mf3)
+
+### XXX remove when mf3.js is finished
+Script  (GTW.Script._.GTW_inspect)
+
+JS_On_Ready (GTW.JS_On_Ready._.GTW_Form_Externalize)
+
+### __END__ html/mf3.jnj.media

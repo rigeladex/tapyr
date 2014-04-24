@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -26,12 +26,13 @@
 //    22-Feb-2012 (CT) Change `fix_a_nospam` to take data from `next` `b.nospam`
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `jQ/util.js`
 //    29-Apr-2013 (CT) Add `show_message`
+//     1-May-2014 (CT) Change `show_message` to use `inspect.show` if available
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function () {
+    "use strict";
+
     $GTW.update
         ( { as_int_array   : function (data) {
                 var list   = data.split (",");
@@ -53,7 +54,17 @@
             }
           , show_message   : function show_message () {
                 var args = [].slice.apply (arguments); // convert to real array
-                alert (args.join (" "));
+                var msg, parts = [];
+                if ("inspect" in $GTW) {
+                    for (var i = 0, li = args.length, a; i < li; i++) {
+                        a = args [i];
+                        parts.push ($GTW.inspect.show (a));
+                    };
+                    msg = parts.join ("\n");
+                } else {
+                    msg = args.join  (" ");
+                };
+                alert (msg);
             }
           }
         );

@@ -20,6 +20,7 @@
 //    20-Jan-2014 (CT) Pass `xhr_instance.responseText` to `show_message`;
 //                     remove call of `alert` from `options.error`
 //    15-Apr-2014 (CT) Put request info into `options.error` of `gtw_ajax_2json`
+//    30-Apr-2014 (CT) Don't use `jsonify` in `gtw_ajax_2json` for `GET`
 //    ««revision-date»»···
 //--
 
@@ -39,7 +40,7 @@
               }
             );
         var data = options.data;
-        if (typeof data !== "string") {
+        if ((options.type != "GET") && (typeof data !== "string")) {
             options.data = $GTW.jsonify (data);
         };
         if (! ("error" in options)) {

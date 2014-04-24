@@ -88,6 +88,7 @@
 #    21-Aug-2013 (CT) Guard `is_required` in `Attribute_Syntax.__init__`
 #    14-Jan-2014 (CT) Robustify `Attribute.__init__` and `.bindings`
 #    17-Feb-2014 (CT) Improve `No_Such_Directory`, `No_Such_File`
+#     1-May-2014 (CT) Use `pyk.encoded`, not `str`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ from   _MOM                     import MOM
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import *
+from   _TFL.pyk                 import pyk
 from   _TFL.Record              import Record
 
 import _TFL._Meta.Object
@@ -164,7 +166,7 @@ class _MOM_Error_ (StandardError) :
 
     @Once_Property
     def as_str (self) :
-        return TFL.I18N.encode_o (unicode (self))
+        return pyk.encoded (unicode (self))
     # end def as_str
 
     @Once_Property
@@ -185,15 +187,15 @@ class _MOM_Error_ (StandardError) :
     # end def str_arg
 
     def __eq__ (self, other) :
-        return self.as_str == str (other)
+        return self.as_str == pyk.encoded (other)
     # end def __eq__
 
     def __le__ (self, other) :
-        return self.as_str <= str (other)
+        return self.as_str <= pyk.encoded (other)
     # end def __le__
 
     def __lt__ (self, other) :
-        return self.as_str < str (other)
+        return self.as_str < pyk.encoded (other)
     # end def __lt__
 
     def __hash__ (self) :
@@ -281,6 +283,18 @@ class _Invariant_ (Error) :
         return ("\n" + self.indent).join (result)
     # end def assertion
 
+    def embed (self, obj, c_name, c_attr) :
+        def _fixed_val_disp (self, a_set, c_name) :
+            for k, v in pyk.iteritems (self.val_disp) :
+                yield k, v
+                if k in a_set :
+                    yield ".".join ((c_name, k)), k
+        a_set           = set (self.attributes)
+        self.attributes = tuple \
+            (".".join ((c_name, a)) for a in self.attributes)
+        self.val_disp   = dict (_fixed_val_disp (self, a_set, c_name))
+    # end def embed
+
     def _clean_this (self, s) :
         return s.replace ("this.", "").strip ()
     # end def _clean_this
@@ -346,7 +360,7 @@ class Ambiguous_Epk (_Invariant_) :
     def bindings (self) :
         FO = self.FO
         return sorted \
-            (   (k, (str (FO (k, v)) if v is not None else v))
+            (   (k, (pyk.encoded (FO (k, v)) if v is not None else v))
             for (k, v) in itertools.chain
                 ( (zip (self.e_type.epk_sig, self.epk))
                 , self.kw.iteritems ()
@@ -414,9 +428,9 @@ class Attribute (Error) :
             try :
                 fov   = FO (name, self.value)
             except Exception :
-                value = str (self.value)
+                value = pyk.encoded (self.value, "utf-8")
             else :
-                value = str (fov)
+                value = pyk.encoded (fov, "utf-8")
             return ((name, value), )
     # end def bindings
 
@@ -470,7 +484,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
 
     @Once_Property
     def bindings (self) :
-        return ((self.attribute.name, self.value), )
+        return ((self.attributes [0], self.value), )
     # end def bindings
 
     @Once_Property
@@ -645,6 +659,11 @@ class Invariants (Error) :
         return any (isinstance (e, Required_Empty) for e in self.errors)
     # end def any_required_empty
 
+    def embed (self, obj, c_name, c_attr) :
+        for e in self.errors :
+            e.embed (obj, c_name, c_attr)
+    # end def embed
+
     def _flattened (self, errors) :
         for e in errors :
             ee = getattr (e, "errors", None)
@@ -677,7 +696,7 @@ class Multiplicity (Error) :
         self.e_type       = e_type
         self.role         = role
         self.type_name    = e_type.ui_name
-        self.l_ui_display = str  (epk)
+        self.l_ui_display = pyk.encoded (epk)
         self.r_ui_display = r_obj.ui_repr
         self.extra_links  = tuple \
             ( TFL.Record
@@ -888,12 +907,14 @@ class Quant (Invariant) :
         for v, d in paired (self.violators, self.violators_attr) :
             if len (bvars) > 1 and isinstance (v, (list, tuple)) :
                 for k, v in paired (bvars, v) :
-                    yield (str (k), repr (r))
+                    yield (pyk.encoded (k), repr (r))
             elif isinstance (v, (list, tuple)) :
                 yield \
-                    (str (inv.bvar), "[%s]" % (", ".join (map (unicode, v)), ))
+                    ( pyk.encoded (inv.bvar)
+                    , "[%s]" % (", ".join (map (unicode, v)), )
+                    )
             else :
-                yield (str (inv.bvar), repr (v))
+                yield (pyk.encoded (inv.bvar), repr (v))
             if d :
                 try :
                     items = d.iteritems ()
@@ -901,7 +922,7 @@ class Quant (Invariant) :
                     val = repr (d)
                 else :
                     val = sorted \
-                        ((str (a), repr (x)) for (a, x) in items)
+                        ((pyk.encoded (a), repr (x)) for (a, x) in items)
                 yield repr (v), val
     # end def _violator_values
 

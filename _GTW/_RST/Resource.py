@@ -132,6 +132,8 @@
 #    17-Apr-2014 (CT) Add `entry_map`
 #    19-Apr-2014 (CT) Catch `Not_Found` in `resource_from_href`
 #                     (factor `_resource_from_href`)
+#    29-Apr-2014 (CT) Add `Root._old_cids`
+#    30-Apr-2014 (CT) Move `_new_child` from `Dir_V` to `_Dir_Base_`
 #    ««revision-date»»···
 #--
 
@@ -1146,6 +1148,14 @@ class _RST_Dir_Base_ (_Ancestor) :
             return result
     # end def _get_child
 
+    def _new_child (self, T, child, grandchildren) :
+        result = T (name = child, parent = self)
+        if not grandchildren :
+            return result
+        else :
+            return result._get_child (* grandchildren)
+    # end def _new_child
+
 _Dir_Base_ = _RST_Dir_Base_ # end class
 
 _Ancestor = _Dir_Base_
@@ -1301,14 +1311,6 @@ class RST_Dir_V (_Ancestor) :
         self._entry_map [entry.name] = entry
     # end def _greet_entry
 
-    def _new_child (self, T, child, grandchildren) :
-        result = T (name = child, parent = self)
-        if not grandchildren :
-            return result
-        else :
-            return result._get_child (* grandchildren)
-    # end def _new_child
-
 Dir_V = RST_Dir_V # end class
 
 _Ancestor = Leaf
@@ -1448,6 +1450,7 @@ class RST_Root (_Ancestor) :
         self.SC             = TFL.Record ()
         self.Table          = {}
         self._change_infos  = {}
+        self._old_cids      = {}
         self.top            = self
         kw.setdefault ("hash_fct", self.hash_fct)
         self.__super.__init__ (** kw)

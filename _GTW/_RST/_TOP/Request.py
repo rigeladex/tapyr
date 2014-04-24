@@ -42,6 +42,7 @@
 #     9-Dec-2013 (CT) Add `allow_login`, `csrf_safe`
 #    11-Dec-2013 (CT) Factor `csrf_token`
 #    11-Feb-2014 (CT) Remove `username.setter` (redundant to `Response...`)
+#    29-Apr-2014 (CT) Add `getattr_safe` to property `username`
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
+from   _TFL.Decorator           import getattr_safe
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _GTW.File_Session
@@ -110,6 +112,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     # end def session_cookie_name
 
     @property
+    @getattr_safe
     def username (self) :
         result = self.__super._auth_user_name
         if result is None :

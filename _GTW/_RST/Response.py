@@ -157,7 +157,7 @@ class _RST_Response_ (TFL.Meta.Object) :
         if not names :
             names = ("next", "prev", "parent", "first_child")
         for name in names :
-            value = getattr (self, "rel_" + name)
+            value = getattr (self, "rel_" + name, None)
             if value is not None :
                 self.add_link (name, value)
     # end def add_rel_links

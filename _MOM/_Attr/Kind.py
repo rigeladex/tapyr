@@ -225,6 +225,7 @@
 #     1-Mar-2014 (CT) Remove `_Rev_Query_._show_in_ui = False`
 #     2-Mar-2014 (CT) Add `q_able_transitive`
 #     7-Mar-2014 (CT) Add `ui_rank`
+#    30-Apr-2014 (CT) Add `change_forbidden`
 #    ««revision-date»»···
 #--
 
@@ -355,6 +356,10 @@ class Kind (MOM.Prop.Kind) :
     def show_in_ui (self) :
         return self.q_able and self._show_in_ui and not self.attr.hidden
     # end def show_in_ui
+
+    def change_forbidden (self, obj) :
+        return False
+    # end def change_forbidden
 
     def from_pickle_cargo (self, scope, cargo) :
         Pickler = self.attr.Pickler
@@ -1494,6 +1499,10 @@ class Just_Once_Mixin (Kind) :
         ( "Attribute `%s.%s` cannot be "
           "changed from `%s` to `%s`; it can be set only once!"
         )
+
+    def change_forbidden (self, obj) :
+        return self._change_forbidden (self.get_value (obj))
+    # end def change_forbidden
 
     def _change_forbidden (self, old_value) :
         return old_value != self.default

@@ -1,0 +1,227 @@
+{#- jinja template: html/mf3.m.jnj -#}
+{#
+## Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/mf3.m.jnj
+##
+## Purpose
+##    Template macros for rendering GTW.MF3 forms
+##
+## Revision Dates
+##    26-Apr-2014 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import (html_version or "html/5.jnj") as X -%}
+{%- import "html/form.jnj" as FM with context %}
+
+{%- macro do_description (page, form, elem, t_module) -%}
+  {%- set desc = GTW._T (elem.ui_description or elem.description)|safe %}
+  {%- if desc -%}
+    {%- set labl = elem.label and GTW._T (elem.label)|safe %}
+    {%- if desc != labl %}
+      {%- set expl = GTW._T (elem.explanation)|safe %}
+      <aside class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
+        {{- desc -}}
+      </aside>
+    {% endif -%}
+  {%- endif -%}
+{%- endmacro -%} {#- do_description -#}
+
+{%- macro do_elements (page, form, elem, t_module) -%}
+  {%- set t_module = elem.template_module or t_module %}
+  {%- for e in elem.template_elements %}
+    {%- set tm = e.template_module or t_module %}
+    {{ GTW.call_macro (e.template_macro, page, form, e, tm, templ_name = tm) }}
+  {% endfor -%}
+{%- endmacro -%} {#- do_elements -#}
+
+{%- macro do_field (page, form, elem, t_module, f_class) -%}
+  <div class="{{ f_class }} pure-control-group">
+    {{ GTW.call_macro
+        ( "do_label", page, form, elem, t_module
+        , templ_name = t_module, ** kwargs
+        )
+    }}
+    {{ GTW.call_macro (elem.input_widget, elem, ** kwargs) }}
+    {{ GTW.call_macro
+        ("do_description", page, form, elem, t_module, templ_name = t_module)
+    }}
+  </div>
+{%- endmacro -%} {#- do_field -#}
+
+{%- macro do_form (page, form, referrer) -%}
+  {%- set caller = kwargs.pop ("caller") -%}
+  <form action="{{ page.abs_href }}" {# -#}
+        class="{{ form.css_class }} pure-form pure-form-aligned" {# -#}
+        id="{{ form.id }}"
+        method="post" {# -#}
+  >
+    {{ caller () }}
+    <div class="pure-controls">
+      <button class="pure-button pure-button-primary" {# -#}
+              title="{{ GTW._T ("Send form data to server and leave form") }}" {# -#}
+              type="submit" {# -#}
+      >{# -#}
+        <i class="fa fa-check"></i> {{ GTW._T ("Save") -}}
+      </button>{# -#}
+      <button class="pure-button" {# -#}
+              name="cancel"
+              tabindex="-1" {# -#}
+              title="{{ GTW._T ("Discard all changes and leave form") }}" {# -#}
+              type="submit" {# -#}
+      >{# -#}
+        {{ GTW._T ("Cancel") -}}
+      </button>{# -#}
+    </div>
+  </form>
+{%- endmacro -%} {#- do_form -#}
+
+{%- macro do_label (page, form, elem, t_module) -%}
+  {%- set prefix = kwargs.pop ("label_prefix", "") %}
+  <label for="{{ elem.id }}">{# -#}
+    {%- if prefix %}{{ prefix }} {% endif -%}
+    {{ GTW._T (elem.label) -}}
+  </label>
+{%- endmacro -%} {#- do_label -#}
+
+{%- macro Entity (page, form, elem, t_module) -%}
+  <fieldset class="Entity">
+    <legend>{{ elem.E_Type.ui_name_T }}</legend>
+    {{ GTW.call_macro
+        ("do_elements", page, form, elem, t_module, templ_name = t_module)
+    }}
+  </fieldset>
+{%- endmacro -%} {#- Entity -#}
+
+{%- macro Entity_Form (page, form) -%}
+  {#- Render the form for an instance `form` of of `GTW.MF3.Entity` -#}
+  {%- set form_caller = kwargs.pop ("caller", None) -%}
+  {%- set referrer = form.referrer or page.referrer %}
+  {%- set t_module = form.template_module %}
+  {% call GTW.call_macro
+      ("do_form", page, form, referrer, templ_name = t_module)
+  -%}
+    {{ GTW.call_macro
+        ("Entity", page, form, form, t_module, templ_name = t_module)
+    }}
+    {%- if form_caller %}
+      {{ form_caller () }}
+    {% endif -%}
+  {% endcall %} {# FM.form #}
+{%- endmacro -%} {#- Entity_ -#}
+
+{%- macro Field (page, form, elem, t_module) -%}
+  {{ GTW.call_macro
+      ( "do_field", page, form, elem, t_module, "Field"
+      , templ_name = t_module, ** kwargs
+      )
+  -}}
+{%- endmacro -%} {#- Field -#}
+
+{%- macro Field__Confirmation (page, form, elem, t_module) -%}
+  {{ GTW.call_macro
+      ( "do_field", page, form, elem, t_module, "Field-Confirmation"
+      , templ_name = t_module, ** kwargs
+      )
+  -}}
+{%- endmacro -%} {#- Field__Confirmation -#}
+
+{%- macro Field_Composite (page, form, elem, t_module) -%}
+  {%- onion GTW.len (elem.field_elements) > 1 %}
+    {%- head %}
+      <fieldset class="Field-Composite">
+        <legend>
+          {{- GTW._T (elem.label) -}}
+        </legend>
+    {%- body %}
+      {{ GTW.call_macro
+        ("do_elements", page, form, elem, t_module, templ_name = t_module)
+      }}
+    {%- tail %}
+      </fieldset>
+    {%- endonion %}
+{%- endmacro -%} {#- Field_Composite -#}
+
+{%- macro Field_Entity (page, form, elem, t_module) -%}
+  {%- if elem.readonly %}
+    {{ GTW.call_macro
+      ( "do_field", page, form, elem, t_module, "Field"
+      , templ_name = t_module, ** kwargs
+      )
+    -}}
+  {%- elif elem.allow_new %}
+    <fieldset class="Field-Entity{%- if elem.collapsed %} {{ closed }}{% endif -%}">
+      <legend>{{ elem.label }}</legend>
+      {%- if elem.collapsed %}
+        {#- XXX needs rework ??? -#}
+        {{ GTW.call_macro
+          ( "do_field", page, form, elem, t_module, "Display Field"
+          , class = "value"
+          , templ_name = t_module, ** kwargs
+          )
+        -}}
+      {%- else %}
+        {{ GTW.call_macro
+            ("do_elements", page, form, elem, t_module, templ_name = t_module)
+        }}
+      {% endif -%}
+    </fieldset>
+  {%- else %}
+    {{ GTW.call_macro
+      ( "do_field", page, form, elem, t_module, "Selector Field"
+      , class = "value"
+      , templ_name = t_module, ** kwargs
+      )
+    }}
+  {% endif -%}
+{%- endmacro -%} {#- Field_Entity -#}
+
+{%- macro main (page, form) -%}
+  {{ GTW.call_macro
+      (form.template_macro, page, form, templ_name = form.template_module)
+  }}
+  {{ GTW.call_macro
+      ("tail_scripts", page, form, templ_name = form.template_module)
+  }}
+{%- endmacro -%} {#- main -#}
+
+{%- macro tail_scripts (page, form) -%}
+  <script>{# -#}
+    $("form[id=\"{{ form.id }}\"]").gtw_mf3_form
+      ( {{ form.as_json }}
+      , {  url : {# -#}
+            { completer : "{{ page.href_complete () }}" {# -#}
+            , completed : "{{ page.href_completed () }}" {# -#}
+            , expander : "{{ page.href_expand () }}" {# -#}
+            , next : "{{ page.referrer or page.parent.parent.abs_href }}" {# -#}
+            , qx_esf_completed : "{{ page.href_qx_esf_completed () }}" {# -#}
+            , qx_esf_completer : "{{ page.href_qx_esf_completer () }}" {# -#}
+            , qx_esf : "{{ page.href_qx_esf () }}" {# -#}
+            }
+        }
+      );{# -#}
+  </script>
+{%- endmacro -%} {#- tail_scripts -#}
+
+{#- __END__ jinja template: html/mf3.m.jnj -#}

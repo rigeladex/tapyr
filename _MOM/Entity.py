@@ -280,6 +280,9 @@
 #     2-Mar-2014 (CT) Set `MD_Change.user.only_e_types`
 #     2-Mar-2014 (CT) Add `hidden_nested` to various attributes
 #     3-Mar-2014 (CT) Factor `FO_nested`
+#     1-May-2014 (CT) Change `_kw_raw_check_predicates` to catch  `Invariants`
+#                     * up to now, Error.Invariants of nested composites were
+#                       silently ignored, doh!
 #    ««revision-date»»···
 #--
 
@@ -771,7 +774,11 @@ class Entity (TFL.Meta.Object) :
                 except MOM.Error.Attribute_Value as exc :
                     on_error (exc)
                     to_do.append ((attr, u"", None))
-                except (TypeError, ValueError) as exc :
+                except MOM.Error.Invariants as exc :
+                    exc.embed (self, name, attr)
+                    on_error (exc)
+                    to_do.append ((attr, u"", None))
+                except (TypeError, ValueError, MOM.Error.Error) as exc :
                     on_error \
                         ( MOM.Error.Attribute_Value
                             (self, name, val, attr.kind, exc)

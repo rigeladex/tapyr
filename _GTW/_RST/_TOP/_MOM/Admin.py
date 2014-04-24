@@ -78,6 +78,9 @@
 #    14-Apr-2014 (CT) Set `Site.pid` to `Admin`
 #    17-Apr-2014 (CT) Add `_field_type_map`
 #    17-Apr-2014 (CT) Change `Field.value` to handle `MOM.Id_Entity` instances
+#    29-Apr-2014 (CT) Redefine `_NC_Mixin_._m_after__init__` to setup
+#                     `_entry_type_map` based on `_v_entry_type_list`
+#    30-Apr-2014 (CT) Factor `_NC_Mixin_._child_kw`
 #    ««revision-date»»···
 #--
 
@@ -935,6 +938,34 @@ class QX_Select_Attr_Form (_JSON_Action_PO_) :
 
 class _NC_Mixin_ (TFL.Meta.Object) :
 
+    _v_entry_type_list  = ()
+
+    @classmethod
+    @getattr_safe
+    def _m_after__init__(cls, name, bases, dct) :
+        cls._entry_type_map = etm = {}
+        for vet in cls._v_entry_type_list :
+            try :
+                c = getattr (cls, vet.__name__)
+            except AttributeError :
+                c = vet
+                setattr (cls, vet.__name__, vet)
+            etm [c.name] = c
+    # end def _m_after__init__
+
+    def _child_kw (self, child, ** kw) :
+        result = dict (kw)
+        ### GTW.RST.Resource._Base_.__init__ considers
+        ###     `child_permission_map` and `child_postconditions_map`
+        ### with `kw ["name"]` but the maps refer to just `child`
+        if child in self.child_permission_map :
+            result ["permission"] = self.child_permission_map [child]
+        if child in self.child_postconditions_map :
+            result ["postconditions"] = \
+                self.child_postconditions_map [child]
+        return result
+    # end def _child_kw
+
     def _new_child_x (self, T, child, grandchildren) :
         argn = T.argn
         if argn is None or len (grandchildren) == argn :
@@ -946,14 +977,7 @@ class _NC_Mixin_ (TFL.Meta.Object) :
                 , parent = self
                 )
             if name :
-                ### GTW.RST.Resource._Base_.__init__ considers
-                ###     `child_permission_map` and `child_postconditions_map`
-                ### with `kw ["name"]` but the maps refer to just `child`
-                if child in self.child_permission_map :
-                    kw ["permission"] = self.child_permission_map [child]
-                if child in self.child_postconditions_map :
-                    kw ["postconditions"] = \
-                        self.child_postconditions_map [child]
+                kw = self._child_kw (child, ** kw)
             result = T (** kw)
             return result
     # end def _new_child_x
@@ -964,14 +988,11 @@ _Ancestor = GTW.RST.TOP.Dir_V
 
 class _QX_Dispatcher_ (_NC_Mixin_, _Ancestor) :
 
-    name                  = "qx"
+    name                    = "qx"
 
-    _entry_type_map       = dict \
-        (  (c.name, c)
-        for c in
-           ( QX_AF_Html, QX_Completed, QX_Completer
-           , QX_Entity_Selector_Form, QX_Order_By_Form, QX_Select_Attr_Form
-           )
+    _v_entry_type_list    = \
+        ( QX_AF_Html, QX_Completed, QX_Completer
+        , QX_Entity_Selector_Form, QX_Order_By_Form, QX_Select_Attr_Form
         )
 
 # end class _QX_Dispatcher_
@@ -980,10 +1001,6 @@ _Ancestor = GTW.RST.TOP.Dir_V
 
 class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     """Directory displaying the instances of one E_Type."""
-
-    Changer               = Changer
-    Deleter               = Deleter
-    Displayer             = Displayer
 
     button_types          = dict \
         ( ADD             = "button"
@@ -1005,13 +1022,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     submit_error_callback = None
 
     _auth_required        = True
-    _entry_type_map       = dict \
-        ((c.name, c) for c in
-            ( Changer, Completed, Completer, Creator, Deleter, Displayer
-            , Expander
-            , _QX_Dispatcher_
-            )
-        )
     _exclude_robots       = True
     _field_type_map       = {}
     _form_id              = None
@@ -1019,6 +1029,11 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     _greet_entry          = None
     _list_display         = None
     _sort_key             = None
+
+    _v_entry_type_list    = \
+        ( Changer, Completed, Completer, Creator, Deleter, Displayer, Expander
+        , _QX_Dispatcher_
+        )
 
     class _E_Type_GET_ (_Ancestor.GET) :
 

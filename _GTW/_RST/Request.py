@@ -49,6 +49,8 @@
 #     9-Dec-2013 (CT) Add properties `origin`, `origin_host`, `same_origin`,
 #                     `server_name`, and `server_port`
 #     7-Apr-2014 (CT) Change `rat_authorized_user` to look at `req_data ["RAT"]`
+#    26-Apr-2014 (CT) Remove stale imports
+#    29-Apr-2014 (CT) Add `getattr_safe` to several properties
 #    ««revision-date»»···
 #--
 
@@ -66,10 +68,6 @@ from   _TFL._Meta.Once_Property  import Once_Property
 
 import _TFL._Meta.Object
 
-import base64
-import datetime
-import hmac
-import logging
 import time
 
 ### XXX replace home-grown code by werkzeug supplied functions
@@ -103,6 +101,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def __getattr__
 
     @Once_Property
+    @getattr_safe
     def apache_authorized_user (self) :
         return self.environ.get ("REMOTE_USER")
     # end def apache_authorized_user
@@ -138,6 +137,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def current_time
 
     @Once_Property
+    @getattr_safe
     def http_server_authorized_user (self) :
         result = self.ssl_authorized_user
         if result is None :
@@ -151,6 +151,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def is_secure
 
     @Once_Property
+    @getattr_safe
     def locale_codes (self) :
         """The locale-code for the current session."""
         return self.get_browser_locale_codes ()
@@ -179,6 +180,7 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def origin_host
 
     @Once_Property
+    @getattr_safe
     def rat_authorized_user (self) :
         rat = getattr (self.root.SC, "RAT", None)
         if rat is not None :
@@ -237,11 +239,13 @@ class _RST_Request_ (TFL.Meta.Object) :
     # end def settings
 
     @Once_Property
+    @getattr_safe
     def ssl_authorized_user (self) :
         return self.environ.get ("SSL_CLIENT_S_DN_Email")
     # end def ssl_authorized_user
 
     @Once_Property
+    @getattr_safe
     def ssl_client_verified (self) :
         return self.environ.get ("SSL_CLIENT_VERIFY") == "SUCCESS"
     # end def ssl_client_verified

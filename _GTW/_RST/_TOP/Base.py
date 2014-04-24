@@ -55,6 +55,7 @@
 #    14-Mar-2014 (CT) Add properties `first`, `last`,
 #                     `first_child`, `last_child`
 #    14-Mar-2014 (CT) Use `proper_entries` for relative links
+#    29-Apr-2014 (CT) Robustify `first_child` and `last_child`
 #    ««revision-date»»···
 #--
 
@@ -263,7 +264,7 @@ class _TOP_Base_ (_Ancestor) :
     def first_child (self) :
         try :
             return self.proper_entries [0]
-        except (AttributeError, LookupError) :
+        except (AttributeError, LookupError, TypeError) :
             pass
     # end def first_child
 
@@ -292,7 +293,7 @@ class _TOP_Base_ (_Ancestor) :
     def last_child (self) :
         try :
             return self.proper_entries [-1]
-        except (AttributeError, LookupError) :
+        except (AttributeError, LookupError, TypeError) :
             pass
     # end def last_child
 

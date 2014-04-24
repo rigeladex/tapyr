@@ -1,0 +1,71 @@
+{#- jinja template: html/h_cols.m.jnj -#}
+{#
+## Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## #*** <License> ************************************************************#
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## #*** </License> ***********************************************************#
+##
+##++
+## Name
+##    html/h_cols.m.jnj
+##
+## Purpose
+##    Template macros for rendering fields of GTW.MF3 forms horizontally
+##
+## Revision Dates
+##     1-May-2014 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro do_field (page, form, elem, t_module, f_class) -%}
+  <div class="{{ f_class }} mf3-control-group-h">
+    {{ GTW.call_macro
+        ("do_label", page, form, elem, t_module, templ_name = t_module)
+    }}
+    {{ GTW.call_macro (elem.input_widget, elem, ** kwargs) }}
+    {{ GTW.call_macro
+        ("do_description", page, form, elem, t_module, templ_name = t_module)
+    }}
+  </div>
+{%- endmacro -%} {#- do_field -#}
+
+{%- macro Field_Composite (page, form, elem, t_module) -%}
+  {%- if GTW.len (elem.field_elements) > 1 %}
+    <div class="Field Composite-horizontal pure-control-group">
+      <label class="Field-Composite">
+        {{- GTW._T (elem.label) -}}
+      </label>
+      <div class="Fields">
+        {{ GTW.call_macro
+          ("do_elements", page, form, elem, t_module, templ_name = t_module)
+        }}
+      </div>
+    </div>
+  {%- elif elem.field_elements %}
+    {%- set e = elem.field_elements [0] %}
+    {%- set t_module = e.template_module or elem.parent.t_module %}
+    {{ GTW.call_macro
+        ( e.template_macro, page, form, e, tm
+        , templ_name = tm
+        , label_prefix = GTW._T (elem.label)
+        )
+    }}
+  {%- endif %}
+{%- endmacro -%} {#- Field_Composite -#}
+
+{#- __END__ jinja template: html/h_cols.m.jnj -#}

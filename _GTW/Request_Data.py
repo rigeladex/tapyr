@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -45,6 +45,7 @@
 #     3-Jul-2012 (CT) Redefine `Request_Data_List.get` to fix `default`
 #     5-Oct-2012 (CT) Change `Request_Data_List.get` to use `.getlist`
 #    17-May-2013 (CT) Change `has_option` to return default `False`
+#    29-Apr-2014 (CT) Add guard against `data is not None`
 #    ««revision-date»»···
 #--
 
@@ -61,7 +62,7 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     _real_name = "Request_Data"
 
     def __init__ (self, data) :
-        self.data = data
+        self.data = data if data is not None else {}
     # end def __init__
 
     def get (self, key, default = None) :
