@@ -632,8 +632,7 @@ class _Bin_ (Q_Root) :
             return lhs.__class__ \
                 (lhs.Q, * tuple (op (p, rhs) for p in lhs.predicates))
         else :
-            return super (_Bin_, cls).__new__ \
-                (cls, lhs, op, rhs, undefs, reverse)
+            return cls.__c_super.__new__ (cls, lhs, op, rhs, undefs, reverse)
     # end def __new__
 
     def __init__ (self, lhs, op, rhs, undefs, reverse = False) :
@@ -1116,7 +1115,7 @@ class _Bool_Bin_Op_ (_Exp_) :
         ### We only want to distribute binary operators if all `qs` are
         ### getters
         if all (isinstance (a, (Q._Get_, BVAR)) for a in qs) :
-            return super (_Bool_Bin_Op_, cls).__new__ (cls, Q, * qs)
+            return cls.__c_super.__new__ (cls, Q, * qs)
         else :
             return cls._Ancestor (* qs)
     # end def __new__

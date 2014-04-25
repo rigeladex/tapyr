@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,7 +52,7 @@ class Re_Filter (TFL.Filter) :
     """
 
     def __new__ (cls, * args, ** kw) :
-        return super (Re_Filter, cls).__new__ (cls, None)
+        return cls.__c_super.__new__ (cls, None)
     # end def __new__
 
     def __init__ (self, pattern, flags = 0, quote = 0) :

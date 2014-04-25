@@ -92,7 +92,7 @@ class DB_Man (TFL.Meta.Object) :
     # end def __init__
 
     def __new__ (cls, app_type, db_url) :
-        self          = super (DB_Man, cls).__new__ (cls)
+        self          = cls.__c_super.__new__ (cls)
         self.db_url   = db_url
         self.app_type = app_type
         return self

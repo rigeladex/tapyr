@@ -96,7 +96,7 @@ class Root (MOM.Meta.M_Prop_Type) :
               or (name.startswith ("_") and name.endswith ("_"))
               )
             )
-        return super (Root, meta).__new__ (meta, name, bases, dct)
+        return meta.__mc_super.__new__ (meta, name, bases, dct)
     # end def __new__
 
     def __init__ (cls, name, bases, dct) :

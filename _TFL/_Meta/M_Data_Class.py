@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -123,7 +123,7 @@ class M_Data_Class (TFL.Meta.M_Base) :
             bases = (meta._names, )
         if "__module__" not in dict :
             dict ["__module__"] = TFL.Caller.globals () ["__name__"]
-        result = super (M_Data_Class, meta).__new__ (meta, name, bases, dict)
+        result = meta.__mc_super.__new__ (meta, name, bases, dict)
         return result
     # end def __new__
 

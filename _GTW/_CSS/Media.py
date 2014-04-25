@@ -266,7 +266,7 @@ class Type (_Media_) :
         if name in cls.Table :
             result = cls.Table [name]
         else :
-            result = cls.Table [name] = super (Type, cls).__new__ (cls)
+            result = cls.Table [name] = cls.__c_super.__new__ (cls)
             result.name = name
         return result
     # end def __new__

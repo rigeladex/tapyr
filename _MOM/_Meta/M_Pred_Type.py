@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -68,7 +68,7 @@ class _Condition_ (MOM.Meta.M_Prop_Type) :
             ( "is_partial_p"
             , name.startswith ("_") and name.endswith ("_")
             )
-        return super (_Condition_, meta).__new__ (meta, name, bases, dct)
+        return meta.__mc_super.__new__ (meta, name, bases, dct)
     # end def __new__
 
 # end class _Condition_

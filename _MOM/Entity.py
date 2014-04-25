@@ -524,7 +524,7 @@ class Entity (TFL.Meta.Object) :
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
             raise MOM.Error.Partial_Type (cls.ui_name_T)
-        result = super (Entity, cls).__new__ (cls)
+        result = cls.__c_super.__new__ (cls)
         result._home_scope = kw.get ("scope")
         result._init_meta_attrs ()
         return result

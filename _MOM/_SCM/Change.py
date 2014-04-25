@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -594,8 +594,7 @@ class Attr_Composite (_Attr_) :
 
     def __new__ (cls, composite, old_attr) :
         if composite.owner :
-            return super (Attr_Composite, cls).__new__ \
-                (cls, composite, old_attr)
+            return cls.__c_super.__new__ (cls, composite, old_attr)
     # end def __new__
 
     def __init__ (self, composite, old_attr) :

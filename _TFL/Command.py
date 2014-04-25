@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -96,7 +96,7 @@ class _Meta_Base_ (TFL.Meta.M_Auto_Combine) :
                     )
             except LookupError :
                 pass
-        return super (_Meta_Base_, mcls).__new__ (mcls, name, bases, dct)
+        return mcls.__mc_super.__new__ (mcls, name, bases, dct)
     # end def __new__
 
 # end class _Meta_Base_
@@ -270,7 +270,7 @@ class _M_Command_ (_Meta_Base_) :
     def __new__ (mcls, name, bases, dct) :
         mcls._update_set (dct, _M_Command_, "_sub_commands")
         mcls._update_set (dct, _M_Option_,  "_opts_reified")
-        return super (_M_Command_, mcls).__new__ (mcls, name, bases, dct)
+        return mcls.__mc_super.__new__ (mcls, name, bases, dct)
     # end def __new__
 
     @classmethod

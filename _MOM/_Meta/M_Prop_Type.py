@@ -59,7 +59,7 @@ class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
         elif "description" not in dct :
             dct ["description"] = doc
         dct ["name"] = name
-        return super (M_Prop_Type, meta).__new__ (meta, name, bases, dct)
+        return meta.__mc_super.__new__ (meta, name, bases, dct)
     # end def __new__
 
     def __init__ (cls, name, bases, dct) :

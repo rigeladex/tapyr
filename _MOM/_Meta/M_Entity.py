@@ -606,7 +606,7 @@ class M_Entity (M_E_Mixin) :
         doc = dct.get ("__doc__")
         if doc and "%(" in doc :
             dct ["_dyn_doc"] = doc
-        result = super (M_Entity, mcls).__new__ (mcls, name, bases, dct)
+        result = mcls.__mc_super.__new__ (mcls, name, bases, dct)
         return result
     # end def __new__
 

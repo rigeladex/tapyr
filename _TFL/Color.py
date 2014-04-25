@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -90,6 +90,7 @@ class Value (TFL.Meta.Object) :
     True
     >>> Value (rgb = (0.750, 0.250, 0.750)) == Value (hsl = (300.0, 0.500, 0.500))
     True
+
     """
 
     Table_HSL = {}
@@ -127,7 +128,7 @@ class Value (TFL.Meta.Object) :
         if hsl in cls.Table_HSL :
             result = cls.Table_HSL [hsl]
         else :
-            result = cls.Table_HSL [hsl] = super (Value, cls).__new__ (cls)
+            result = cls.Table_HSL [hsl] = cls.__c_super.__new__ (cls)
             result._hsl = hsl
         return result
     # end def from_hsl
@@ -140,7 +141,7 @@ class Value (TFL.Meta.Object) :
         if rgb in cls.Table_RGB :
             result = cls.Table_RGB [rgb]
         else :
-            result = cls.Table_RGB [rgb] = super (Value, cls).__new__ (cls)
+            result = cls.Table_RGB [rgb] = cls.__c_super.__new__ (cls)
             result._rgb = rgb
         return result
     # end def from_rgb

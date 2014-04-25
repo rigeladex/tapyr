@@ -62,6 +62,9 @@
 #    23-May-2013 (CT)  Add and use `BaM` for Python-3 compatibility
 #    25-Jun-2013 (CT)  Use `__mro__`, not `mro ()`
 #    17-Mar-2014 (CT)  Add warning about `with_metaclass` to docstring of `BaM`
+#    24-Apr-2014 (CT)  Change `New` to add `_real_name`
+#    25-Apr-2014 (CT)  Add `__c_super` for use in `__new__` and classmethods
+#    25-Apr-2014 (CT)  Add `__mc_super` for use in metaclass `__new__`
 #    ««revision-date»»···
 #--
 
@@ -181,14 +184,28 @@ def _m_mangled_attr_name (name, cls_name) :
     return format % (cls_name, name)
 # end def _m_mangled_attr_name
 
+class _class_super_ (object) :
+    """Super descriptor usable by classmethods"""
+
+    def __init__ (self, cls) :
+        self.cls = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        return super (self.cls, cls)
+    # end def __get__
+
+# end class _class_super_
+
 class M_M_Class (type) :
     """Metaclass for metaclasses (i.e., a meta-meta-class).
        `M_M_Class` should be used as metaclass for *all* metaclasses.
 
-       It adds a private class variable `__m_super` containing
+       It adds private class variables `__m_super` and `__mc_super` containing
        `super (cls)`. This corresponds to `__super` (see
        :class:`~_TFL._Meta.M_Class.M_Autosuper`) but can be used
-       inside meta-classes.
+       inside meta-classes. `__mc_super` can be used in `__new__` methods of
+       metaclasses and in classmethods defined in a metaclass.
 
        This class chooses the most specific metaclass of the `bases`
        (instead of the metaclass of the first element of `bases` as
@@ -198,9 +215,11 @@ class M_M_Class (type) :
 
     def __init__ (cls, name, bases, dict) :
         super (M_M_Class, cls).__init__ (name, bases, dict)
-        _super_name  = _m_mangled_attr_name ("m_super", cls.__name__)
-        _super_value = super (cls)
-        setattr (cls, _super_name, _super_value)
+        _c_super_name  = _m_mangled_attr_name ("mc_super", cls.__name__)
+        _super_name    = _m_mangled_attr_name ("m_super", cls.__name__)
+        _super_value   = super (cls)
+        setattr (cls, _super_name,   _super_value)
+        setattr (cls, _c_super_name, _class_super_ (cls))
     # end def __init__
 
     def __call__ (meta, name, bases, dict) :
@@ -329,7 +348,7 @@ class M_Autorename (M_Base) :
             del dict ["_real_name"]
         dict ["__real_name"] = real_name
         try :
-            return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
+            return meta.__mc_super.__new__ (meta, name, bases, dict)
         except TypeError as exc :
             print ("*" * 3, meta, name)
             for b in bases :
@@ -363,7 +382,8 @@ def _super_calling_not_possible (obj) :
 
 class M_Autosuper (M_Base) :
     """`TFL.Meta.M_Autosuper` adds a class attribute `__super` that can be
-       used for cooperative method calls.
+       used for cooperative method calls. For use in `__new__` and in
+       classmethods, `M_Autosuper` adds a class variable `__c_super`.
 
        For instance, for a class `Some_Class` derived from `Object`, a
        cooperative method call can be written as::
@@ -383,12 +403,20 @@ class M_Autosuper (M_Base) :
                ...
                self.__super.foo (bar, baz)
                ...
+
+           @classmethod
+           def bar (cls, baz, qux) :
+               ...
+               self.__c_super.bar (baz, qux)
+               ...
+
     """
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
-        _super_name  = cls._m_mangled_attr_name ("super")
-        _super_value = super (cls)
+        _c_super_name  = cls._m_mangled_attr_name ("c_super")
+        _super_name    = cls._m_mangled_attr_name ("super")
+        _super_value   = super (cls)
         if __debug__ :
             from _TFL.predicate import any_true
             ancestors = cls.__mro__ [1:]
@@ -408,7 +436,8 @@ class M_Autosuper (M_Base) :
                             )
                         )
                 _super_value = _super_calling_not_possible
-        setattr (cls, _super_name, _super_value)
+        setattr (cls, _super_name,   _super_value)
+        setattr (cls, _c_super_name, _class_super_ (cls))
     # end def __init__
 
 # end class M_Autosuper

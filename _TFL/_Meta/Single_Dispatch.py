@@ -63,7 +63,7 @@ class Single_Dispatch (TFL.Meta.Object) :
                 ( lambda func, T = T, dispatch_on = dispatch_on
                     : sd_cls (func, T = T, dispatch_on = dispatch_on)
                 )
-        return super (Single_Dispatch, sd_cls).__new__ (sd_cls)
+        return sd_cls.__c_super.__new__ (sd_cls)
     # end def __new__
 
     def __init__ (self, func, T = object, dispatch_on = None) :
@@ -155,7 +155,7 @@ class Single_Dispatch_Method (TFL.Meta.Method_Descriptor) :
                     : sdm_cls
                           (method, cls = cls, T = T, dispatch_on = dispatch_on)
                 )
-        return super (Single_Dispatch_Method, sdm_cls).__new__ (sdm_cls)
+        return sdm_cls.__c_super.__new__ (sdm_cls)
     # end def __new__
 
     def __init__ (self, method, cls = None, T = object, dispatch_on = None) :

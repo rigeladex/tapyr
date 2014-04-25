@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -137,7 +137,7 @@ class Matcher (_Matcher_) :
             if result.ckw != ckw :
                 raise ValueError
         else :
-            result = super (Matcher, cls).__new__ (cls, condition, ** ckw)
+            result = cls.__c_super.__new__ (cls, condition, ** ckw)
             result._init_ (condition, ** ckw)
             cls.Table [condition] = result
         return result

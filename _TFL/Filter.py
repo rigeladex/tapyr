@@ -244,7 +244,7 @@ class Filter (_Filter_S_) :
         if isinstance (predicate, Filter) :
             return predicate
         else :
-            return super (Filter, cls).__new__ (cls, predicate, ** kw)
+            return cls.__c_super.__new__ (cls, predicate, ** kw)
     # end def __new__
 
     def __init__ (self, predicate, ** kw) :
@@ -268,7 +268,7 @@ class Filter_Not (_Filter_S_) :
         if isinstance (predicate, Filter_Not) :
             return ~ predicate
         else :
-            return super (Filter_Not, cls).__new__ (cls, predicate, ** kw)
+            return cls.__c_super.__new__ (cls, predicate, ** kw)
     # end def __new__
 
     def __init__ (self, predicate, ** kw) :
