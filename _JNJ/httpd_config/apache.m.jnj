@@ -22,6 +22,7 @@
 ##    17-Dec-2013 (CT) Fix whitespace
 ##    18-Dec-2013 (CT) Add `gtw_host_80_redirect`
 ##    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
+##    29-Apr-2014 (CT) Use `-`, not `/`, as separator for logfile names
 ##    ««revision-date»»···
 ##--
 #}
@@ -191,8 +192,8 @@
 {% endmacro -%} {#- gtw_permissions -#}
 
 {%- macro logfiles (fqdn, port, fmt = "combined", level = "warn") -%}
-  CustomLog ${APACHE_LOG_DIR}/{{- fqdn -}}/{{- port -}}/access.log {{ fmt }}
-  ErrorLog  ${APACHE_LOG_DIR}/{{- fqdn -}}/{{- port -}}/error.log
+  CustomLog ${APACHE_LOG_DIR}/{{- fqdn -}}-{{- port -}}-access.log {{ fmt }}
+  ErrorLog  ${APACHE_LOG_DIR}/{{- fqdn -}}-{{- port -}}-error.log
   LogLevel  {{ level }}
 {% endmacro -%} {#- logfiles -#}
 
