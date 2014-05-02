@@ -79,6 +79,7 @@
 #                     remove `DEBUG` from `init_app_cache`
 #    11-Dec-2013 (CT) Add `-CSRF_check`
 #     7-Apr-2014 (CT) Add `-ACAO`
+#     2-May-2014 (CT) Add option `webmaster`
 #    ««revision-date»»···
 #--
 
@@ -201,6 +202,7 @@ class GT2W_Command (GTW.OMP.Command) :
             , "-watch_media_files:B"
                 "?Add the .media files to list files watched by "
                 "automatic reloader"
+            , "-webmaster:S=christian.tanzer@gmail.com"
             , TFL.CAO.Opt.Key
                 ( name        = "UTP"
                 , dct         = dict
