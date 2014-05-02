@@ -232,7 +232,8 @@ class _Base_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def template_elements (self) :
-        return sorted (self.elements, key = Q.ui_rank)
+        return sorted \
+            ((e for e in self.elements if not e.skip), key = Q.ui_rank)
     # end def template_elements
 
     @TFL.Meta.Class_and_Instance_Method
@@ -240,8 +241,9 @@ class _Base_ (TFL.Meta.Object) :
         if not soc.skip :
             yield soc
             for e in soc.elements :
-                for et in e.elements_transitive () :
-                    yield et
+                if not e.skip :
+                    for et in e.elements_transitive () :
+                        yield et
     # end def elements_transitive
 
     def submitted_value_transitive (self) :
@@ -308,7 +310,7 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
     def field_elements (self) :
         def _gen (self) :
             for e in self.elements :
-                if isinstance (e, Field_Composite) :
+                if isinstance (e, Field_Composite) and not e.skip :
                     for f in e.field_elements :
                         yield f
                 elif isinstance (e, _Field_) :
