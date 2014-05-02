@@ -27,6 +27,10 @@
 #
 # Revision Dates
 #    24-Apr-2014 (CT) Creation
+#     2-May-2014 (CT) Remove `changeable`;
+#                     replaced by `attr.kind.change_forbidden`
+#     2-May-2014 (CT) Use `readonly`, not `prefilled`, in
+#                     `Field_Entity.__call__`
 #    ««revision-date»»···
 #--
 
@@ -459,7 +463,6 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
             )
           )
         , allow_new         = "ui_allow_new"
-        , changeable        = "is_changeable"
         , choices           = "Choices"
         , input_widget      = "mf3_input_widget"
         , label             = "ui_name"
@@ -586,8 +589,7 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
     @property
     def readonly (self) :
         return any \
-            ( (not self.settable
-              , not self.changeable
+            ( ( not self.settable
               , self.prefilled
               , self.id_essence is not None
                 and self.attr.kind.change_forbidden (self.essence)
@@ -883,7 +885,7 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
         undef    = self.undef
         value    = undef
         if my_cargo :
-            if self.prefilled :
+            if self.readonly :
                 self._submitted_value = my_cargo.get ("init", {}).get ("pid")
             else :
                 edit = my_cargo.get ("edit", {})

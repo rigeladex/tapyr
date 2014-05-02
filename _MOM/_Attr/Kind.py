@@ -226,6 +226,8 @@
 #     2-Mar-2014 (CT) Add `q_able_transitive`
 #     7-Mar-2014 (CT) Add `ui_rank`
 #    30-Apr-2014 (CT) Add `change_forbidden`
+#     2-May-2014 (CT) Fix `change_forbidden` for `Init_Only_Mixin`
+#                     (only True for existing instance!)
 #    ««revision-date»»···
 #--
 
@@ -358,7 +360,7 @@ class Kind (MOM.Prop.Kind) :
     # end def show_in_ui
 
     def change_forbidden (self, obj) :
-        return False
+        return not self.is_changeable
     # end def change_forbidden
 
     def from_pickle_cargo (self, scope, cargo) :
@@ -1501,10 +1503,10 @@ class Just_Once_Mixin (Kind) :
         )
 
     def change_forbidden (self, obj) :
-        return self._change_forbidden (self.get_value (obj))
+        return self._change_forbidden (obj, self.get_value (obj))
     # end def change_forbidden
 
-    def _change_forbidden (self, old_value) :
+    def _change_forbidden (self, obj, old_value) :
         return old_value != self.default
     # end def _change_forbidden
 
@@ -1512,7 +1514,7 @@ class Just_Once_Mixin (Kind) :
         if obj.init_finished :
             if old_value is None :
                 old_value = self.get_value (obj)
-            if value != old_value and self._change_forbidden (old_value) :
+            if value != old_value and self._change_forbidden (obj, old_value) :
                 raise AttributeError \
                     ( _T (self._x_format)
                     % (_T (obj.ui_name), self.name, old_value, value)
@@ -1530,8 +1532,8 @@ class Init_Only_Mixin (Just_Once_Mixin) :
           "changed from `%s` to `%s` after object creation"
         )
 
-    def _change_forbidden (self, old_value) :
-        return True
+    def _change_forbidden (self, obj, old_value) :
+        return obj is not None
     # end def _change_forbidden
 
 # end class Init_Only_Mixin

@@ -450,10 +450,11 @@ class _Changer_ (_HTML_Action_) :
             result.update (fv.as_json_cargo)
             result ["html"] = reh = {}
             get_template    = self.top.Templateer.get_template
-            for e in fv.entity_elements [1:] : ### XXX ???
-                tm          = e.template_module or e.parent.template_module
-                t           = get_template (tm)
-                reh [e.id]  = t.call_macro (e.template_macro, self, fv, e, tm)
+            if 0 : ### XXX ???
+                for e in fv.entity_elements [1:] :
+                    tm          = e.template_module or e.parent.template_module
+                    t           = get_template (tm)
+                    reh [e.id]  = t.call_macro (e.template_macro, self, fv, e, tm)
             if fv.errors :
                 self._call_submit_callback \
                     ( self.submit_error_callback
