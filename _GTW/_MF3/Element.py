@@ -31,6 +31,8 @@
 #                     replaced by `attr.kind.change_forbidden`
 #     2-May-2014 (CT) Use `readonly`, not `prefilled`, in
 #                     `Field_Entity.__call__`
+#     2-May-2014 (CT) Honor `skip` in `elements_transitive`,
+#                     `field_elements`, `template_elements`
 #    ««revision-date»»···
 #--
 
