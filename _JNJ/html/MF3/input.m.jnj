@@ -28,6 +28,9 @@
 ##
 ## Revision Dates
 ##    26-Apr-2014 (CT) Creation
+##     3-May-2014 (CT) Use `X.input.text` for `number` if `needs_raw_value`
+##     3-May-2014 (CT) Add `data-inner-required` to `field`
+##     3-May-2014 (CT) Add class `readonly` to readonly `id_entity`
 ##    ««revision-date»»···
 ##--
 #}
@@ -60,7 +63,7 @@
   {%- if elem.readonly %}
     {{ field
         ( X.input.text, elem
-        , class     = GTW.filtered_join (" ", (class, ))
+        , class     = GTW.filtered_join (" ", (class, "readonly"))
         , name      = None
         , readonly  = "readonly"
         , title     = elem.ui_display
@@ -117,8 +120,9 @@
       , min           = elem.min_value
       )
   -%}
+  {%- set typ = X.input.text if elem.attr.needs_raw_value else X.input.number %}
   {%- do kw.update (kwargs) %}
-  {{ field (X.input.number, elem, ** kw) }}
+  {{ field (typ, elem, ** kw) }}
 {%- endmacro -%} {#- number -#}
 
 {%- macro password (elem) -%}
@@ -177,6 +181,8 @@
   {%- endif -%}
   {%- if elem.required %}
     {%- do kw.update (required = True) %}
+  {%- elif elem.attr.is_required %}
+    {%- do kw.update ( {"data-inner-required" : 1} ) %}
   {% endif -%}
   {{ typ (** kw) }}
 {%- endmacro -%} {#- field -#}

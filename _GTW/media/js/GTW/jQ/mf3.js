@@ -15,6 +15,7 @@
 //
 // Revision Dates
 //    28-Apr-2014 (CT) Creation
+//     3-May-2014 (CT) Ignore `input` elements with class `readonly`
 //    ««revision-date»»···
 //--
 
@@ -28,9 +29,9 @@
               , entity_element           :
                   "fieldset.Entity[id], fieldset.Field-Entity[id], form[id]"
               , focusables               :
-                  ".Field :input:not(:hidden):not(.prefilled)"
+                  ".Field :input:not(:hidden):not(.prefilled):not(.readonly)"
               , input_field              :
-                  ".Field :input:not(:hidden):not(.prefilled)"
+                  ".Field :input:not(:hidden):not(.prefilled):not(.readonly)"
               , status                   : "b.Status"
               , submit                   : "[type=submit]"
               }

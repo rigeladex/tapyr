@@ -43,6 +43,7 @@
 //                     `response` to `_apply_cb_inner`
 //    28-Apr-2014 (CT) Add `ET_Selector_MF3`, `gtw_e_type_selector_hd_mf3`
 //    30-Apr-2014 (CT) Fix `ET_Selector_MF3`
+//     3-May-2014 (CT) Use `trigger_event : "click keydown"` for `_MF3`
 //    ««revision-date»»···
 //--
 
@@ -522,10 +523,25 @@
                 var self     = $(this);
                 selector.hd_input$ = self;
                 self.gtw_hd_input
-                    ( { callback     : function (ev) {
+                    ( { callback      : function (ev) {
+                            var k = ev.which;
+                                // Unicode value of key pressed
+                                //   8     backspace
+                                //   9     tab
+                                //  10     new line
+                                //  13     carriage return
+                                //  27     escape
+                                // 127     delete
+                            if (k in {9:1, 10:1, 13:1, 27:1}) {
+                                return true;
+                            };
                             selector.activate_cb (ev);
+                            if (k in {8 : 1, 127:1}) {
+                                selector.clear_cb (ev);
+                            };
                         }
-                      , closing_flag : selector.options.closing_flag
+                      , closing_flag  : selector.options.closing_flag
+                      , trigger_event : "click keydown"
                       }
                     );
                 self.data ("gtw_e_type_selector_mf3", selector);

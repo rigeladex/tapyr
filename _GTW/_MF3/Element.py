@@ -33,6 +33,7 @@
 #                     `Field_Entity.__call__`
 #     2-May-2014 (CT) Honor `skip` in `elements_transitive`,
 #                     `field_elements`, `template_elements`
+#     3-May-2014 (CT) Change `_Field_.required` to honor `parent.required`
 #    ««revision-date»»···
 #--
 
@@ -184,6 +185,7 @@ class _Base_ (TFL.Meta.Object) :
     _element_ids        = ("id", )
     _lists_to_combine   = ("_pop_to_self", "_element_ids")
     _pop_to_self        = ("parent", "template_macro", "template_module")
+    _required           = False
     _submitted_value    = undef
     _submission_errors  = ()
 
@@ -470,7 +472,7 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
         , choices           = "Choices"
         , input_widget      = "mf3_input_widget"
         , label             = "ui_name"
-        , required          = "is_required"
+        , _required         = "is_required"
         , settable          = "is_settable"
         , template_macro    = "mf3_template_macro"
         , template_module   = "mf3_template_module"
@@ -602,6 +604,16 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
     # end def readonly
 
     @property
+    def required (self) :
+        return self.parent.required and self._required
+    # end def required
+
+    @required.setter
+    def required (self, value) :
+        self._required = value
+    # end def required
+
+    @property
     def sig (self) :
         return (self.name, self.readonly)
     # end def sig
@@ -639,6 +651,7 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
 
     attr_selector       = MOM.Attr.Selector.editable
     id_sep              = ":"
+    required            = True
     sid                 = 0
     session_secret      = "some-secret"
 

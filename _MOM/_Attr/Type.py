@@ -339,6 +339,7 @@
 #     3-Mar-2014 (CT) Add `FO_nested` (factored from `MOM.Entity._FO_`)
 #     7-Mar-2014 (CT) Add `ui_rank`
 #    11-Mar-2014 (CT) Set `_A_Composite_.__metaclass__`
+#     3-May-2014 (CT) Set `_A_Unit_.needs_raw_value` to `True`
 #    ««revision-date»»···
 #--
 
@@ -1907,10 +1908,11 @@ class _A_Unit_ (A_Attr_Type) :
        units.
     """
 
-    __metaclass__  = MOM.Meta.M_Attr_Type.Unit
-    _default_unit  = None ### set by meta class
-    _unit_dict     = {}
-    _unit_pattern  = Regexp \
+    __metaclass__    = MOM.Meta.M_Attr_Type.Unit
+    _default_unit    = None ### set by meta class
+    needs_raw_value  = True
+    _unit_dict       = {}
+    _unit_pattern    = Regexp \
         ( r"(?: ^"
         + plain_number_pat
         + r"|"
