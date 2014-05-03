@@ -43,6 +43,7 @@
 #     3-Dec-2013 (CT) Add support for `cache_control`;
 #                     set `no_cache` for `See_Other`, `Temporary_Redirect`
 #    11-Feb-2014 (CT) Add `response`, `template` to `Templateer.Context`
+#     3-May-2014 (CT) Add warning to `Found._spec` (don't use it!)
 #    ««revision-date»»···
 #--
 
@@ -540,6 +541,29 @@ class Found (Redirection) :
               status codes 303 and 307 have been added for servers that wish
               to make unambiguously clear which kind of reaction is expected
               of the client.
+
+            http://insanecoding.blogspot.co.at/2014/02/http-308-incompetence-expected.html::
+
+              Since 302 was being used in two different ways, two new codes
+              were created, one for each technique, to ensure proper use in
+              the future. 302 retained its definition, but with so many
+              incorrect implementations out there, 302 should essentially
+              never be used if you want to ensure correct semantics are
+              followed, instead use 303 - See Other (processing, move on...),
+              or 307 Temporary Redirect (The real version of 302).
+
+              In all my experience working with HTTP over the past decade,
+              I've found 301, 303, and 307 to be implemented and used
+              correctly as defined in HTTP v1.1, with 302 still being used
+              incorrectly as 303 (instead of 307 semantics), generally by PHP
+              programmers. But as above, never use 302, as who knows what the
+              browser will do with it.
+
+              Since existing practice today is that 301, 303, and 307 are
+              used correctly pretty much everywhere, if someone misuses it,
+              they should be told to correct their usage or handling. 302 is
+              still so misused till this day, it's a lost cause.
+
         """
 
 # end class Found
@@ -569,6 +593,7 @@ class See_Other (Redirection) :
               status. When interoperability with such clients is a concern, the
               302 status code may be used instead, since most user agents react
               to a 302 response as described here for 303.
+
         """
 
 # end class See_Other
