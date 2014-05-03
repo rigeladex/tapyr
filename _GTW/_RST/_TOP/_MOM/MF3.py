@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Apr-2014 (CT) Creation
+#     3-May-2014 (CT) Factor `form_attr_spec_d`
 #    ««revision-date»»···
 #--
 
@@ -640,6 +641,7 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
 
     Instance              = Instance
 
+    form_attr_spec_d      = {}
     max_completions       = 20
     nav_off_canvas        = True
     skip_etag             = True
@@ -673,7 +675,11 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
     @property
     @getattr_safe
     def form_attr_spec (self) :
-        return self._form_attr_spec
+        result = self._form_attr_spec
+        xtra   = self.form_attr_spec_d
+        if xtra :
+            result = dict (result, ** xtra)
+        return result
     # end def form_attr_spec
 
     @form_attr_spec.setter
