@@ -65,6 +65,7 @@
 #    20-Jan-2014 (CT) Fix `GTW_Form_Externalize` to not break buttons
 #    20-Feb-2014 (CT) Add `GTW_nav_off_canvas`
 #    29-Apr-2014 (CT) Add `GTW_jq_mf3`
+#     3-May-2014 (CT) Add `leaflet`
 #    ««revision-date»»···
 #--
 
@@ -118,6 +119,12 @@ GTW.CSS_Link \
 GTW.JS_On_Ready \
     ( '$.gritter.Convert_Patagraphs_to_Gitter ("notifications");'
     , name = "jQuery_Gritter"
+    )
+
+GTW.Script \
+    ( src      = "/media/GTW/js/leaflet.min.js"
+    , name     = "leaflet"
+    , rank     = -90
     )
 
 GTW.Script \
