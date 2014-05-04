@@ -28,6 +28,7 @@
 # Revision Dates
 #    29-Apr-2014 (CT) Creation
 #     3-May-2014 (CT) Factor `form_attr_spec_d`
+#     4-May-2014 (CT) Factor `_commit_scope_fv`
 #    ««revision-date»»···
 #--
 
@@ -402,9 +403,10 @@ class _Changer_ (_HTML_Action_) :
             pass
         with self.LET (form = form, referrer = referrer) :
             if response.renderer.name == "JSON" :
-                t      = self.top.Templateer.get_template (form.template_module)
+                t      = self.top.Templateer.get_template \
+                    (form.template_module)
                 result = dict \
-                    ( form = t.call_macro ("main", self, form))
+                    (form = t.call_macro ("main", self, form))
             else :
                 result = self.__super.rendered (context, template)
         return result
@@ -421,6 +423,10 @@ class _Changer_ (_HTML_Action_) :
                     , self.__class__, request.json ["cargo"], result
                     )
     # end def _call_submit_callback
+
+    def _commit_scope_fv (self, scope, fv, request, response) :
+        self.commit_scope (request, response)
+    # end def _commit_scope_fv
 
     def _formatted_submit_entities (self, scope, fv, skip_attrs = {}) :
         result = []
@@ -443,7 +449,7 @@ class _Changer_ (_HTML_Action_) :
             fv = self.form_value (request, json ["cargo"])
             if not fv.submission_errors :
                 try :
-                    self.commit_scope (request, response)
+                    self._commit_scope_fv (scope, fv, request, response)
                 except Exception as exc :
                     for e in fv.entity_elements :
                         if e.essence :
