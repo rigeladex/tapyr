@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -29,6 +29,7 @@
 #     2-Jan-2011 (CT) Creation
 #     5-Jan-2011 (CT) Bug fixes
 #    27-Oct-2011 (CT) Script and JS_On_Ready for `GTW_pixpander` added
+#     5-May-2014 (CT) Add border_radius to rule for `.news-clip-more a`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,7 @@ style_sheet = Style_Sheet \
             [ Rule
                 ( "a"
                 , border          = P.border_simple
+                , border_radius   = Px (8)
                 , cursor          = "pointer"
                 , font_size       = "small"
                 , padding         = TRBL (Em (0.1), Em (0.7), Em (0.2))
