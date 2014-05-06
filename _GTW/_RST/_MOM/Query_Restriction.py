@@ -43,6 +43,7 @@
 #     7-May-2013 (CT) Add guard against `A_Cached_Role` to `_setup_attr`
 #    13-Mar-2014 (CT) Add `offset_next`, `offset_prev`; factor `_offset_f`
 #    14-Mar-2014 (CT) Add `request_args`, `request_args_abs`
+#     6-May-2014 (CT) Add optional `filter` to `Filter_Atoms`
 #    ««revision-date»»···
 #--
 
@@ -144,14 +145,16 @@ class RST_Query_Restriction (TFL.Meta.Object) :
     # end def Filter
 
     @classmethod
-    def Filter_Atoms (cls, af) :
+    def Filter_Atoms (cls, af, filter = None) :
         ET = af.attr.E_Type
         AQ = af.attr.AQ
         if ET.polymorphic_epk :
             AQ = af.AQ
             ET = AQ.E_Type
-        return tuple \
-            (cls.Filter (ET, q._id) for q in AQ.Unwrapped_Atoms)
+        result = tuple (cls.Filter (ET, q._id) for q in AQ.Unwrapped_Atoms)
+        if filter is not None :
+            result = tuple (fa for fa in result if filter (fa))
+        return result
     # end def Filter_Atoms
 
     @classmethod

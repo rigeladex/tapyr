@@ -81,6 +81,7 @@
 #     2-Mar-2014 (CT) Add `Rev_Ref`
 #     2-Mar-2014 (CT) Add `_nesting_level` and compare to `hidden_nested`
 #     7-Mar-2014 (CT) Sort `Attrs` by `ui_rank`
+#     6-May-2014 (CT) Add `Show_in_UI_Selector`
 #    ««revision-date»»···
 #--
 
@@ -352,6 +353,16 @@ class _Type_ (_Base_) :
     def QR (self, ) :
         return getattr (Filter.Q, self._q_name_raw)
     # end def QR
+
+    @TFL.Meta.Once_Property
+    @getattr_safe
+    def Show_in_UI_Selector (self) :
+        outer  = self._outer
+        result = self._attr.show_in_ui_selector
+        if outer is not None :
+            result = result and outer.Show_in_UI_Selector
+        return result
+    # end def Show_in_UI_Selector
 
     @TFL.Meta.Once_Property
     @getattr_safe
@@ -837,6 +848,8 @@ class E_Type (_Container_) :
     """Query object for `E_Type` returning an essential attribute's `AQ`"""
 
     _id = _q_name = _ui_name_T = None
+
+    Show_in_UI_Selector = property (lambda s : True)
 
     def __init__ (self, E_Type, _attr_selector = None) :
         self.E_Type = E_Type

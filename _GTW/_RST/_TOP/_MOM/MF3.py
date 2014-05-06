@@ -29,6 +29,7 @@
 #    29-Apr-2014 (CT) Creation
 #     3-May-2014 (CT) Factor `form_attr_spec_d`
 #     4-May-2014 (CT) Factor `_commit_scope_fv`
+#     6-May-2014 (CT) Use `Show_in_UI_Selector` in `_get_esf_filter`
 #    ««revision-date»»···
 #--
 
@@ -252,9 +253,10 @@ class _JSON_Action_ (_Ancestor) :
     # end def _get_attr_filter
 
     def _get_esf_filter (self, json) :
-        QR     = self.QR
-        ET     = self.E_Type
-        result = self._get_attr_filter (json)
+        QR        = self.QR
+        ET        = self.E_Type
+        result    = self._get_attr_filter (json)
+        fa_filter = Q.AQ.Show_in_UI_Selector
         result.polymorphic_epk = pepk = result.AQ.E_Type.polymorphic_epk
         if pepk :
             scope = self.scope
@@ -265,13 +267,13 @@ class _JSON_Action_ (_Ancestor) :
             sc = sc or result.default_child
             for i, cnp in enumerate (result.children_np) :
                 cf = QR.Filter (ET, "%s[%s]" % (cnp.full_name, cnp.type_name))
-                cf.filters = QR.Filter_Atoms (cf)
+                cf.filters = QR.Filter_Atoms (cf, fa_filter)
                 fnps.append (cf)
                 if cf.type_name == sc :
                     result ["selected_type"] = i
         else :
             result.selected_type = None
-            result.filters = QR.Filter_Atoms (result)
+            result.filters = QR.Filter_Atoms (result, fa_filter)
         return result
     # end def _get_esf_filter
 

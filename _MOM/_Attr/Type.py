@@ -340,6 +340,7 @@
 #     7-Mar-2014 (CT) Add `ui_rank`
 #    11-Mar-2014 (CT) Set `_A_Composite_.__metaclass__`
 #     3-May-2014 (CT) Set `_A_Unit_.needs_raw_value` to `True`
+#     6-May-2014 (CT) Add `show_in_ui_selector`
 #    ««revision-date»»···
 #--
 
@@ -489,6 +490,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     rank                = 0
     raw_default         = ""
     record_changes      = True
+    show_in_ui_selector = True  ### include attribute in E_Type selector
     sort_rank           = 0
     sort_skip           = False ### don't include in sorted_by_epk if True
     store_default       = False
