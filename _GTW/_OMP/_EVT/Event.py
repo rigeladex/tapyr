@@ -52,6 +52,7 @@
 #     3-Aug-2013 (CT) Add guard to `Event._change_callback`
 #    24-Feb-2014 (CT) Change `Event.left.role_type` to `MOM.Id_Entity`
 #    24-Feb-2014 (CT) Change `Event_occurs` `Computed` attributes to `Query`
+#     7-May-2014 (CT) Add `Event.left.allow_e_types` and `.refuse_e_types`
 #    ««revision-date»»···
 #--
 
@@ -86,6 +87,17 @@ class Event (_Ancestor_Essence) :
             role_type          = MOM.Id_Entity
             role_name          = "object"
             link_ref_attr_name = "event"
+
+            ### the eligible E_Types for this role are not related by
+            ### inheritance:
+            ### * set `refuse_e_types` to all
+            ### * explicitly list `allow_e_types`
+            allow_e_types      = \
+                ( "PAP.Subject"
+                , "SRM.Page",   "SRM.Regatta", "SRM.Regatta_Event"
+                , "SWP.Clip_O", "SWP.Gallery", "SWP.Object_PN", "SWP.Page"
+                )
+            refuse_e_types     = ("MOM.Id_Entity", )
 
             ### give `date` and `time` priority for sorting
             sort_rank          = 10

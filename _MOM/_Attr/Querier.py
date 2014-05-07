@@ -640,7 +640,7 @@ class Id_Entity (_Composite_) :
         ET = self.E_Type
         if ET and ET.polymorphic_epk :
             apt = ET.app_type
-            cnp = self._attr.selectable_e_types_unique_epk
+            cnp = self._attr.selectable_e_types
             if cnp :
                 return dict ((str (c), apt.entity_type (c)) for c in cnp)
     # end def E_Types_CNP

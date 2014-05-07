@@ -30,6 +30,7 @@
 #     3-May-2014 (CT) Factor `form_attr_spec_d`
 #     4-May-2014 (CT) Factor `_commit_scope_fv`
 #     6-May-2014 (CT) Use `Show_in_UI_Selector` in `_get_esf_filter`
+#     7-May-2014 (CT) Guard access to `default_child` in `_get_esf_filter`
 #    ««revision-date»»···
 #--
 
@@ -261,10 +262,11 @@ class _JSON_Action_ (_Ancestor) :
         if pepk :
             scope = self.scope
             result.filters_np = fnps = []
+            result.selected_type = 0
             sc = None
             if "etns" in json :
                 sc = json.etns
-            sc = sc or result.default_child
+            sc = sc or getattr (result, "default_child", "")
             for i, cnp in enumerate (result.children_np) :
                 cf = QR.Filter (ET, "%s[%s]" % (cnp.full_name, cnp.type_name))
                 cf.filters = QR.Filter_Atoms (cf, fa_filter)

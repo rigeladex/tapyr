@@ -81,6 +81,7 @@
 #    29-Apr-2014 (CT) Redefine `_NC_Mixin_._m_after__init__` to setup
 #                     `_entry_type_map` based on `_v_entry_type_list`
 #    30-Apr-2014 (CT) Factor `_NC_Mixin_._child_kw`
+#     7-May-2014 (CT) Guard access to `default_child` in `_get_esf_filter`
 #    ««revision-date»»···
 #--
 
@@ -339,10 +340,11 @@ class _JSON_Action_ (_Ancestor) :
         if pepk :
             scope = self.scope
             result.filters_np = fnps = []
+            result.selected_type = 0
             sc = None
             if "etns" in json :
                 sc = json.etns
-            sc = sc or result.default_child
+            sc = sc or getattr (result, "default_child", "")
             for i, cnp in enumerate (result.children_np) :
                 cf = QR.Filter (ET, "%s[%s]" % (cnp.full_name, cnp.type_name))
                 cf.filters = QR.Filter_Atoms (cf)

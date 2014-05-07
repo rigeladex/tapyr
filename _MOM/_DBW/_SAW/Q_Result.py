@@ -64,6 +64,7 @@
 #    27-Jan-2014 (CT) Add `formatted`
 #    29-Jan-2014 (CT) Fix `count` to support `bindings`; factor `_execute`
 #     3-Apr-2014 (CT) For `distinct`, add `order_by` criteria to `select` clause
+#     7-May-2014 (CT) Add guard against `None` to `_Base_._get_xs`
 #    ««revision-date»»···
 #--
 
@@ -375,7 +376,7 @@ class _Base_ (TFL.Meta.Object) :
         for c in criteria :
             if isinstance (c, SA.Operators) :
                 xs.append (c)
-            else :
+            elif c is not None :
                 qx   = QX.Mapper (self) (c)
                 x    = getattr (qx, xs_name)
                 join = self._extend_join (join, joined, qx.JOINS)

@@ -375,6 +375,17 @@ _test_qr = """
               , Record
                 ( Class = 'Entity'
                 , attr = Entity `owner`
+                , full_name = 'owner'
+                , id = 'owner'
+                , name = 'owner'
+                , sig_key = 2
+                , type_name = 'PAP.Company_R'
+                , ui_name = 'Owner[Company_R]'
+                , ui_type_name = 'Company_R'
+                )
+              , Record
+                ( Class = 'Entity'
+                , attr = Entity `owner`
                 , attrs =
                     [ Record
                       ( attr = String `last_name`
@@ -745,6 +756,17 @@ _test_qr = """
                 , Record
                   ( Class = 'Entity'
                   , attr = Entity `owner`
+                  , full_name = 'owner'
+                  , id = 'owner'
+                  , name = 'owner'
+                  , sig_key = 2
+                  , type_name = 'PAP.Company_R'
+                  , ui_name = 'Owner[Company_R]'
+                  , ui_type_name = 'Company_R'
+                  )
+                , Record
+                  ( Class = 'Entity'
+                  , attr = Entity `owner`
                   , attrs =
                       [ Record
                         ( attr = String `last_name`
@@ -838,6 +860,35 @@ _test_qr = """
             , type_name = 'PAP.Company'
             , ui_name = 'Owner[Company]'
             , ui_type_name = 'Company'
+            )
+          , Record
+            ( Class = 'Entity'
+            , attr = Entity `owner`
+            , attrs =
+                [ Record
+                  ( attr = String `name`
+                  , full_name = 'owner.name'
+                  , id = 'owner__name'
+                  , name = 'name'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Company_R]/Name'
+                  )
+                , Record
+                  ( attr = String `registered_in`
+                  , full_name = 'owner.registered_in'
+                  , id = 'owner__registered_in'
+                  , name = 'registered_in'
+                  , sig_key = 3
+                  , ui_name = 'Owner[Company_R]/Registered in'
+                  )
+                ]
+            , full_name = 'owner'
+            , id = 'owner'
+            , name = 'owner'
+            , sig_key = 2
+            , type_name = 'PAP.Company_R'
+            , ui_name = 'Owner[Company_R]'
+            , ui_type_name = 'Company_R'
             )
           , Record
             ( Class = 'Entity'
@@ -1721,6 +1772,17 @@ _test_esf = """
               , Record
                 ( Class = 'Entity'
                 , attr = Entity `owner`
+                , full_name = 'owner'
+                , id = 'owner'
+                , name = 'owner'
+                , sig_key = 2
+                , type_name = 'PAP.Company_R'
+                , ui_name = 'Owner[Company_R]'
+                , ui_type_name = 'Company_R'
+                )
+              , Record
+                ( Class = 'Entity'
+                , attr = Entity `owner`
                 , attrs =
                     [ Record
                       ( attr = String `last_name`
@@ -1897,6 +1959,35 @@ _test_esf = """
           , type_name = 'PAP.Company'
           , ui_name = 'Owner[Company]'
           , ui_type_name = 'Company'
+          )
+        , Record
+          ( Class = 'Entity'
+          , attr = Entity `owner`
+          , attrs =
+              [ Record
+                ( attr = String `name`
+                , full_name = 'owner.name'
+                , id = 'owner__name'
+                , name = 'name'
+                , sig_key = 3
+                , ui_name = 'Owner[Company_R]/Name'
+                )
+              , Record
+                ( attr = String `registered_in`
+                , full_name = 'owner.registered_in'
+                , id = 'owner__registered_in'
+                , name = 'registered_in'
+                , sig_key = 3
+                , ui_name = 'Owner[Company_R]/Registered in'
+                )
+              ]
+          , full_name = 'owner'
+          , id = 'owner'
+          , name = 'owner'
+          , sig_key = 2
+          , type_name = 'PAP.Company_R'
+          , ui_name = 'Owner[Company_R]'
+          , ui_type_name = 'Company_R'
           )
         , Record
           ( Class = 'Entity'

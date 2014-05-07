@@ -39,6 +39,7 @@
 ##    17-Aug-2012 (MG) Move `media_browser` into seperate file
 ##    17-Aug-2012 (MG) Rename `_field` to `field`
 ##    22-Jan-2014 (CT) Add `url`
+##     7-May-2014 (CT) Change `boolean` to use `kwargs`
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,8 +47,10 @@
 {%- import (html_version or "html/5.jnj") as X -%}
 
 {%- macro boolean (elem) -%}
-  {%- set kw = {} if not elem.cooked else dict (checked = "checked") %}
-  {{ field (X.input.checkbox, elem, ** kw) }}
+  {%- if elem.cooked %}
+    {%- do kwargs.update (checked = "checked") %}
+  {% endif -%}
+  {{ field (X.input.checkbox, elem, ** kwargs) }}
 {%- endmacro -%} {#- boolean -#}
 
 {%- macro date (elem) -%}

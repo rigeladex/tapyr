@@ -341,6 +341,9 @@
 #    11-Mar-2014 (CT) Set `_A_Composite_.__metaclass__`
 #     3-May-2014 (CT) Set `_A_Unit_.needs_raw_value` to `True`
 #     6-May-2014 (CT) Add `show_in_ui_selector`
+#     7-May-2014 (CT) Fix typo in `A_Enum.cooked` (use `value`, not `s`)
+#     7-May-2014 (CT) Change `selectable_e_types_unique_epk` to
+#                     `selectable_e_types` based on `eligible_e_types`
 #    ««revision-date»»···
 #--
 
@@ -1437,21 +1440,17 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
     # end def refuse_e_types_transitive
 
     @TFL.Meta.Once_Property
-    def selectable_e_types_unique_epk (self) :
+    def selectable_e_types (self) :
         """Set of eligible non-partial e-types with unique epk"""
-        result = set (self.only_e_types)
-        if not result :
-            def _gen (ET) :
-                if ET.polymorphic_epk :
-                    for c in ET.children.itervalues () :
-                        for x in _gen (c) :
-                            yield x
-                else :
-                    if ET.show_in_ui and not ET.is_partial :
-                        yield ET.type_name
-            result = set (_gen (self.E_Type)) - self.refuse_e_types_transitive
+        def _gen (eets) :
+            apt = self.e_type.app_type
+            for tn in eets :
+                ET = apt.etypes.get (tn)
+                if ET and ET.show_in_ui :
+                    yield tn
+        result = set (_gen (self.eligible_e_types))
         return result
-    # end def selectable_e_types_unique_epk
+    # end def selectable_e_types
 
     @TFL.Meta.Class_and_Instance_Once_Property
     def sorted_by (self) :
@@ -2407,10 +2406,10 @@ class A_Enum (A_Attr_Type) :
                     ( "Invalid value for %s, got %s %r, expected one of %s"
                     % (soc, type (value), value, sorted (Table))
                     )
-                raise MOM.Error.Attribute_Syntax (None, soc, s, msg)
+                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
             if not result in Table :
                 msg = ("%s not in %s" % (result, sorted (Table)))
-                raise MOM.Error.Attribute_Syntax (None, soc, s, msg)
+                raise MOM.Error.Attribute_Syntax (None, soc, value, msg)
         return result
     # end def cooked
 
