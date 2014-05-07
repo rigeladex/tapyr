@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -36,6 +36,7 @@
 #    23-Sep-2011 (CT) `club` changed from `A_String` to `A_Id_Entity`
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    20-Jan-2012 (CT) Change `mna_number` from `A_String` to `A_Int`
+#     7-May-2014 (CT) Add `club.completer`
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,7 @@ class Sailor (_Ancestor_Essence) :
 
             P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Primary_Optional
+            completer          = Attr.E_Completer_Spec  (Attr.Selector.primary)
 
         # end class club
 

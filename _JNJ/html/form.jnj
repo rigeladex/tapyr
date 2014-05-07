@@ -91,6 +91,7 @@
 ##     7-Jan-2014 (CT) Add `link_only` to `login_inline`
 ##    11-Feb-2014 (CT) Skip `anti_csrf_token` for `link_only` form
 ##    20-Feb-2014 (CT) Remove `level-0`
+##     7-May-2014 (CT) Don't generate empty `action` for `form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -159,7 +160,7 @@
         , include_ACT   = True
         )
 -%}
-  <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
+  <form {%- if action %} action="{{ action }}"{% endif %} method="{{ method }}"{{ kwargs|xmlattr }}>
     {{ caller () }}
     {%- if next_form_kw %}
       {{ X.input.hidden (** next_form_kw) }}

@@ -31,6 +31,8 @@
 ##     3-May-2014 (CT) Use `X.input.text` for `number` if `needs_raw_value`
 ##     3-May-2014 (CT) Add `data-inner-required` to `field`
 ##     3-May-2014 (CT) Add class `readonly` to readonly `id_entity`
+##     7-May-2014 (CT) Add `integer`
+##     7-May-2014 (CT) Use `maxlength`, not `max_length`, for HTML attribute
 ##    ««revision-date»»···
 ##--
 #}
@@ -90,6 +92,10 @@
   {% endif -%}
 {%- endmacro -%} {#- id_entity -#}
 
+{%- macro integer (elem) -%}
+  {{ number (elem, pattern = "[-+]?[0-9]*") }}
+{%- endmacro -%} {#- integer -#}
+
 {%- macro named_value (elem) -%}
   {%- set kw = GTW.dict
       ( choices  = elem.choices
@@ -120,7 +126,11 @@
       , min           = elem.min_value
       )
   -%}
-  {%- set typ = X.input.text if elem.attr.needs_raw_value else X.input.number %}
+  {%- if elem.attr.needs_raw_value %}
+    {%- set typ = X.input.text %}
+  {%- else %}
+    {%- set typ = X.input.number %}
+  {% endif -%}
   {%- do kw.update (kwargs) %}
   {{ field (typ, elem, ** kw) }}
 {%- endmacro -%} {#- number -#}
@@ -130,7 +140,7 @@
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (elem) -%}
-  {%- set kw = GTW.dict (max_length = elem.max_length) -%}
+  {%- set kw = GTW.dict (maxlength = elem.max_length) -%}
   {%- do kw.update (kwargs) %}
   {{ field (X.input.text, elem, ** kw) }}
 {%- endmacro -%} {#- string -#}
@@ -138,7 +148,7 @@
 {%- macro text (elem) -%}
   {%- set kw = GTW.dict
       ( cols          = elem.cols or 80
-      , max_length    = elem.max_length
+      , maxlength     = elem.max_length
       , rows          = elem.rows or 32
       )
   -%}

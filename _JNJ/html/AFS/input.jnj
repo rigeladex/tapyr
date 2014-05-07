@@ -40,6 +40,7 @@
 ##    17-Aug-2012 (MG) Rename `_field` to `field`
 ##    22-Jan-2014 (CT) Add `url`
 ##     7-May-2014 (CT) Change `boolean` to use `kwargs`
+##     7-May-2014 (CT) Use `maxlength`, not `max_length`, for HTML attribute
 ##    ««revision-date»»···
 ##--
 #}
@@ -127,7 +128,7 @@
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (elem) -%}
-  {%- set kw = GTW.dict (max_length = elem.max_length) -%}
+  {%- set kw = GTW.dict (maxlength = elem.max_length) -%}
   {%- do kw.update (kwargs) %}
   {{ field (X.input.text, elem, ** kw) }}
 {%- endmacro -%} {#- string -#}
@@ -135,7 +136,7 @@
 {%- macro text (elem) -%}
   {%- set kw = GTW.dict
       ( cols          = elem.cols or 80
-      , max_length    = elem.max_length
+      , maxlength     = elem.max_length
       , rows          = elem.rows or 32
       )
   -%}

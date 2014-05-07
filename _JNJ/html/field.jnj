@@ -1,6 +1,6 @@
 {#- jinja template: field.jnj -#}
 {#
-## Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -40,6 +40,7 @@
 ##    26-Feb-2010 (MG) `boolean` added
 ##    10-Mar-2010 (CT) s/named_object/named_value/
 ##    18-Mar-2011 (CT) `fi.choices` changed to property
+##     7-May-2014 (CT) Use `maxlength`, not `max_length`, for HTML attribute
 ##    ««revision-date»»···
 ##--
 #}
@@ -93,7 +94,7 @@
 {%- macro string (fo, fi) -%}
   {{ _field
       ( X.input.text, fo, fi
-      , max_length    = fi.max_length
+      , maxlength     = fi.max_length
       )
   }}
 {%- endmacro -%} {#- string -#}
@@ -102,7 +103,7 @@
   {{ _field
       ( X.input.textarea, fo, fi
       , cols          = fi.cols or 80
-      , max_length    = fi.max_length
+      , maxlength     = fi.max_length
       , rows          = fi.rows or 32
       )
   }}

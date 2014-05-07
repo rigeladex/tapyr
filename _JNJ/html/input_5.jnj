@@ -41,6 +41,8 @@
 ##    19-Apr-2012 (CT) Change `number` to use `_input_c`, not `_input`
 ##     6-Oct-2013 (CT) Add `with context` to import
 ##    22-Jan-2014 (CT) Change `number` to use `_input`, not `_input_c`
+##     7-May-2014 (CT) DRY option handling in `_input`;
+##                     add `autofocus`, `multiple`, `readonly`
 ##    ««revision-date»»···
 ##--
 #}
@@ -60,15 +62,18 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 
 {%- macro _input (typ, kw) -%}
   {%- do kw.pop ("caller", "") -%}
-  {%- set disabled = kw.pop ("disabled", None) %}
-  {%- set required = kw.pop ("required", None) %}
+  {%- set options = [] %}
+  {%- for opt in ("autofocus", "disabled", "multiple", "readonly", "required") %}
+    {%- if kw.pop (opt, None) %}
+      {%- do options.append (opt) %}
+    {% endif -%}
+  {% endfor -%}
   {% if not kw.get ("name", None) -%}
     {#- Remove empty `name` from `kw` -#}
     {%- do kw.pop ("name", None) -%}
   {%- endif -%}
   <input type="{{ typ }}"{{ kw|xmlattr }}
-    {%- if disabled %} disabled{% endif -%}
-    {%- if required %} required{% endif -%}
+    {%- if options %} {{ " ".join (options) }}{% endif -%}
   />
 {%- endmacro -%} {#- text -#}
 

@@ -34,6 +34,7 @@
 #     2-May-2014 (CT) Honor `skip` in `elements_transitive`,
 #                     `field_elements`, `template_elements`
 #     3-May-2014 (CT) Change `_Field_.required` to honor `parent.required`
+#     7-May-2014 (CT) Add `MAT.A_Int.mf3_input_widget`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,7 @@ MAT.A_Date.mf3_input_widget             = "mf3_input, date"
 MAT.A_Date_Time.mf3_input_widget        = "mf3_input, datetime"
 MAT.A_Email.mf3_input_widget            = "mf3_input, email"
 MAT.A_Enum.mf3_input_widget             = "mf3_input, named_object"
+MAT.A_Int.mf3_input_widget              = "mf3_input, integer"
 MAT.A_Numeric_String.mf3_input_widget   = "mf3_input, number"
 MAT.A_Text.mf3_input_widget             = "mf3_input, text"
 MAT.A_Url.mf3_input_widget              = "mf3_input, url"
