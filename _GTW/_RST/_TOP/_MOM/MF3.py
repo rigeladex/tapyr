@@ -31,6 +31,11 @@
 #     4-May-2014 (CT) Factor `_commit_scope_fv`
 #     6-May-2014 (CT) Use `Show_in_UI_Selector` in `_get_esf_filter`
 #     7-May-2014 (CT) Guard access to `default_child` in `_get_esf_filter`
+#     9-May-2014 (CT) Factor `form_instance` from `_HTML_Action_` to `_Action_`
+#     9-May-2014 (CT) Implement `Completer._rendered_post`,
+#                     fix `_rendered_completions`
+#    11-May-2014 (CT) Implement `Completed._rendered_post`,
+#                     factor `_get_form_field` from `Completer._rendered_post`
 #    ««revision-date»»···
 #--
 
@@ -101,6 +106,16 @@ class _Action_ (_Ancestor) :
             return ETM.pid_query (pid)
     # end def obj
 
+    def form_instance (self, obj = None, ** kw) :
+        if obj is None :
+            obj = self.obj
+        attr_spec = dict (self.form_attr_spec, ** kw.pop ("form_attr_spec", {}))
+        kw.setdefault ("_hash_fct", kw.pop ("hash_fct", self.top.hash_fct))
+        result = self.parent.Form \
+            (self.scope, obj, attr_spec = attr_spec, ** kw)
+        return result
+    # end def form_instance
+
     def session_secret (self, request, sid) :
         try :
             return request.session.edit_session (sid)
@@ -134,22 +149,6 @@ class _Action_ (_Ancestor) :
         raise self.top.Status.Forbidden (error)
     # end def _raise_403
 
-    def _ui_displayed (self, ETM, names, matches) :
-        def _gen () :
-            for n in names :
-                try :
-                    attr = ETM.get_etype_attribute (n)
-                except AttributeError :
-                    disp = lambda v : getattr (v, "ui_display", v)
-                else :
-                    disp = lambda v, attr = attr : attr.ac_ui_display (v)
-                yield disp
-        attr_displayers = list (_gen ())
-        for match in matches :
-            yield tuple \
-                (d (v) for d, v in zip (attr_displayers, match))
-    # end def _ui_displayed
-
 # end class _Action_
 
 _Ancestor = _Action_
@@ -182,21 +181,11 @@ class _HTML_Action_ (_Ancestor) :
             (_T (self.__class__.name.capitalize ()), self.E_Type.ui_name_T)
     # end def head_line
 
-    def form_instance (self, obj = None, ** kw) :
-        if obj is None :
-            obj = self.obj
-        attr_spec = dict (self.form_attr_spec, ** kw.pop ("form_attr_spec", {}))
-        kw.setdefault ("_hash_fct", kw.pop ("hash_fct", self.top.hash_fct))
-        result = self.parent.Form \
-            (self.scope, obj, attr_spec = attr_spec, ** kw)
-        return result
-    # end def form_instance
-
     def form_value (self, request, json_cargo) :
         try :
             sid    = json_cargo.get ("sid")
             secret = self.session_secret (request, sid)
-            form   = self.form_instance  (session_secret = secret)
+            form   = self.form_instance  (sid = sid, session_secret = secret)
             result = form (self.scope, json_cargo)
         except Exception as exc :
             logging.exception \
@@ -278,6 +267,18 @@ class _JSON_Action_ (_Ancestor) :
             result.filters = QR.Filter_Atoms (result, fa_filter)
         return result
     # end def _get_esf_filter
+
+    def _get_form_field (self, request, json) :
+        sid        = json.get ("sid")
+        secret     = self.session_secret (request, sid)
+        form       = self.form_instance  (sid = sid, session_secret = secret)
+        try :
+            field  = form [json ["trigger"]]
+        except KeyError :
+            raise self.Status.Bad_Request
+        form.check_sigs (json)
+        return form, field
+    # end def _get_form_field
 
     def _rendered_completions (self, ETM, query, names, entity_p, json, AQ = None) :
         if entity_p :
@@ -517,7 +518,17 @@ class Completed (_JSON_Action_PO_) :
 
     name                 = "completed"
 
-    ### XXX
+    def _rendered_post (self, request, response) :
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        result       = {}
+        scope        = self.top.scope
+        completer    = field.completer
+        if completer is not None :
+            eor    = self.eligible_object_restriction (completer.etn)
+            result = completer.choose (scope, json, eor, self.pid_query_request)
+        return result
+    # end def _rendered_post
 
 # end class Completed
 
@@ -526,7 +537,17 @@ class Completer (_JSON_Action_PO_) :
 
     name                 = "complete"
 
-    ### XXX
+    def _rendered_post (self, request, response) :
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        result       = dict (matches = [], partial = False)
+        scope        = self.top.scope
+        completer    = field.completer
+        if completer is not None :
+            eor    = self.eligible_object_restriction (completer.etn)
+            result = completer.choices (scope, json, eor, self.max_completions)
+        return result
+    # end def _rendered_post
 
 # end class Completer
 

@@ -44,6 +44,9 @@
 //    28-Apr-2014 (CT) Add `ET_Selector_MF3`, `gtw_e_type_selector_hd_mf3`
 //    30-Apr-2014 (CT) Fix `ET_Selector_MF3`
 //     3-May-2014 (CT) Use `trigger_event : "click keydown"` for `_MF3`
+//    15-May-2014 (CT) Change `gtw_e_type_selector_hd_mf3` to ignore all
+//                     control characters between `tab` and `escape`
+//                     (which includes the shift key)
 //    ««revision-date»»···
 //--
 
@@ -532,7 +535,7 @@
                                 //  13     carriage return
                                 //  27     escape
                                 // 127     delete
-                            if (k in {9:1, 10:1, 13:1, 27:1}) {
+                            if (k >= 9 && k <= 27) {
                                 return true;
                             };
                             selector.activate_cb (ev);

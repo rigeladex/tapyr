@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -40,6 +40,8 @@
 #                     `treshold == 0` without `fs`
 #    13-Dec-2012 (CT) Add arguments `ETM_R`, `AQ` to `Completer.__call__`
 #    25-Apr-2013 (CT) Add optional arg `xtra_filter` to `Completer.__call__`
+#     7-May-2014 (CT) Add `** kw` to `copy`; use in `embedded`
+#     8-May-2014 (CT) Add `_Nested_Completer_Spec_.default_selector`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +61,7 @@ class Completer (TFL.Meta.Object) :
     """Attribute completer instance for a specific E_Type."""
 
     buddies    = ()
+    kind       = "Atom"
     embedded_p = False
 
     def __init__ (self, acs, attr, E_Type) :
@@ -71,10 +74,10 @@ class Completer (TFL.Meta.Object) :
         self.entity_p = set (self.names) == set (E_Type.epk_sig)
     # end def __init__
 
-    def copy (self) :
+    def copy (self, ** kw) :
         cls    = self.__class__
         result = cls.__new__   (cls)
-        result.__dict__.update (self.__dict__)
+        result.__dict__.update (self.__dict__, ** kw)
         return result
     # end def copy
 
@@ -115,10 +118,7 @@ class Completer (TFL.Meta.Object) :
     # end def names
 
     def embedded (self, spec) :
-        result = self.copy ()
-        result.__dict__.update (spec or {})
-        result.embedded_p = True
-        return result
+        return self.copy (embedded_p = True, ** (spec or {}))
     # end def embedded
 
 # end class Completer
@@ -144,10 +144,14 @@ class _Nested_Completer_ (Completer) :
 class C_Completer (_Nested_Completer_) :
     """A_Composite completer instance for a specific E_Type."""
 
+    kind       = "Composite"
+
 # end class C_Completer
 
 class E_Completer (_Nested_Completer_) :
     """A_Id_Entity completer instance for a specific E_Type."""
+
+    kind       = "Id_Entity"
 
 # end class E_Completer
 
@@ -175,7 +179,11 @@ class Completer_Spec (TFL.Meta.Object) :
 
 class _Nested_Completer_Spec_ (Completer_Spec) :
 
+    default_selector = None
+
     def __init__ (self, buddies = None, ** kw) :
+        if buddies is None :
+            buddies = self.default_selector
         self.__super.__init__ (buddies = buddies)
         self.nested_specs = kw
     # end def __init__
@@ -185,17 +193,18 @@ class _Nested_Completer_Spec_ (Completer_Spec) :
 class C_Completer_Spec (_Nested_Completer_Spec_) :
     """Attribute completer specification for A_Composite."""
 
-    Type       = C_Completer
+    Type             = C_Completer
 
 # end class C_Completer_Spec
 
 class E_Completer_Spec (_Nested_Completer_Spec_) :
     """Attribute completer specification for A_Id_Entity."""
 
-    Type       = E_Completer
+    Type             = E_Completer
+    default_selector = MOM.Attr.Selector.primary
 
 # end class E_Completer_Spec
 
 if __name__ != "__main__" :
-    MOM.Attr._Export ("*")
+    MOM.Attr._Export ("*", "_Nested_Completer_")
 ### __END__ MOM.Attr.Completer

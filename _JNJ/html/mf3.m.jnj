@@ -28,12 +28,25 @@
 ##
 ## Revision Dates
 ##    26-Apr-2014 (CT) Creation
+##     7-May-2014 (CT) Add `completer` to `Field`
+##    14-May-2014 (CT) Use `<section>`, not `<fieldset>`
+##    14-May-2014 (CT) Add `action-button` to `Field_Entity`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
 {%- import "html/form.jnj" as FM with context %}
+
+{%- macro action_button (action, icon_name, title=None, text="", a_cls = "pure-button", i_add_cls = None) -%}
+  {%- set i_cls = "fa fa-%s" % (icon_name, ) %}
+  {%- if i_add_cls %}
+    {%- set i_cls = "%s %s" % (i_cls, i_add_cls) %}
+  {% endif -%}
+  <button class="{{ a_cls}}" data-action="{{ action }}" tabindex="-1"
+     {%- if title %} title="{{ title }}"{% endif -%}
+  ><i class="{{ i_cls }}"></i>{{ text }}</button>
+{%- endmacro -%} {#- action_button -#}
 
 {%- macro do_description (page, form, elem, t_module) -%}
   {%- set desc = GTW._T (elem.ui_description or elem.description)|safe %}
@@ -57,12 +70,17 @@
 {%- endmacro -%} {#- do_elements -#}
 
 {%- macro do_field (page, form, elem, t_module, f_class) -%}
+  {%- set caller = kwargs.pop ("caller", None) -%}
   <div class="{{ f_class }} pure-control-group">
-    {{ GTW.call_macro
-        ( "do_label", page, form, elem, t_module
-        , templ_name = t_module, ** kwargs
-        )
-    }}
+    {%- if caller %}
+      {{ caller () }}
+    {%- else %}
+      {{ GTW.call_macro
+          ( "do_label", page, form, elem, t_module
+          , templ_name = t_module, ** kwargs
+          )
+      }}
+    {% endif -%}
     {{ GTW.call_macro (elem.input_widget, elem, ** kwargs) }}
     {{ GTW.call_macro
         ("do_description", page, form, elem, t_module, templ_name = t_module)
@@ -99,19 +117,20 @@
 
 {%- macro do_label (page, form, elem, t_module) -%}
   {%- set prefix = kwargs.pop ("label_prefix", "") %}
+  {%- set label  = kwargs.pop ("label", "") %}
   <label for="{{ elem.id }}">{# -#}
     {%- if prefix %}{{ prefix }} {% endif -%}
-    {{ GTW._T (elem.label) -}}
+    {{ label or GTW._T (elem.label) -}}
   </label>
 {%- endmacro -%} {#- do_label -#}
 
 {%- macro Entity (page, form, elem, t_module) -%}
-  <fieldset class="Entity">
-    <legend>{{ elem.E_Type.ui_name_T }}</legend>
+  <section class="Entity">
+    <h1>{{ elem.E_Type.ui_name_T }}</h1>
     {{ GTW.call_macro
         ("do_elements", page, form, elem, t_module, templ_name = t_module)
     }}
-  </fieldset>
+  </section>
 {%- endmacro -%} {#- Entity -#}
 
 {%- macro Entity_Form (page, form) -%}
@@ -132,9 +151,14 @@
 {%- endmacro -%} {#- Entity_ -#}
 
 {%- macro Field (page, form, elem, t_module) -%}
+  {%- set kw = GTW.dict (kwargs) %}
+  {%- if elem.completer and not elem.readonly %}
+    {%- do kw.update ([("data-completer", elem.completer.id)]) %}
+  {% endif -%}
   {{ GTW.call_macro
       ( "do_field", page, form, elem, t_module, "Field"
-      , templ_name = t_module, ** kwargs
+      , templ_name = t_module
+      , ** kw
       )
   -}}
 {%- endmacro -%} {#- Field -#}
@@ -150,16 +174,16 @@
 {%- macro Field_Composite (page, form, elem, t_module) -%}
   {%- onion GTW.len (elem.field_elements) > 1 %}
     {%- head %}
-      <fieldset class="Field-Composite">
-        <legend>
+      <section class="Field-Composite">
+        <h1>
           {{- GTW._T (elem.label) -}}
-        </legend>
+        </h1>
     {%- body %}
       {{ GTW.call_macro
         ("do_elements", page, form, elem, t_module, templ_name = t_module)
       }}
     {%- tail %}
-      </fieldset>
+      </section>
     {%- endonion %}
 {%- endmacro -%} {#- Field_Composite -#}
 
@@ -171,22 +195,41 @@
       )
     -}}
   {%- elif elem.allow_new %}
-    <fieldset class="Field-Entity{%- if elem.collapsed %} {{ closed }}{% endif -%}">
-      <legend>{{ elem.label }}</legend>
-      {%- if elem.collapsed %}
-        {#- XXX needs rework ??? -#}
-        {{ GTW.call_macro
+    <section class="Field-Entity{%- if elem.collapsed %} closed{% endif -%}">
+      <h1>{{ elem.label }}</h1>
+      <div class="action-button">{# -#}
+        {{- action_button
+            ("close", "check", GTW._T ("Close fields of %s" % (elem.label, )))
+        -}}
+        {{- action_button
+            ("clear", "eraser", GTW._T ("Clear values of all fields"))
+        -}}
+        {{- action_button
+            ("reset", "undo", GTW._T ("Reset all fields to initial values"))
+        -}}
+      </div>
+      {% call GTW.call_macro
           ( "do_field", page, form, elem, t_module, "Display Field"
-          , class = "value"
+          , class      = "value"
           , templ_name = t_module, ** kwargs
           )
-        -}}
-      {%- else %}
+      -%}
+        <label for="{{ elem.id }}">{# -#}
+          <span class="action-button">{# -#}
+            {{- action_button
+                ( "open", "pencil"
+                , GTW._T ("Open fields of %s for editing") % (elem.label, )
+                )
+            -}}
+          </span>{# -#}
+        </label>
+      {% endcall %} {# GTW.call_macro ("do_field", ...) #}
+      <fieldset>
         {{ GTW.call_macro
             ("do_elements", page, form, elem, t_module, templ_name = t_module)
         }}
-      {% endif -%}
-    </fieldset>
+      </fieldset>
+    </section>
   {%- else %}
     {{ GTW.call_macro
       ( "do_field", page, form, elem, t_module, "Selector Field"

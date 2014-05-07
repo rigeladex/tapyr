@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -18,18 +18,25 @@
 //    31-Jan-2013 (MG) Fix changing of `_renderItem` to work with new
 //                     jQueryUI versions
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
+//     9-May-2014 (CT) Remove unused `$GTW.L`
+//    14-May-2014 (CT) Change `renderer` to handle `disabled`
 //    ««revision-date»»···
 //--
 
 "use strict";
 
 ( function ($) {
-    var L = $GTW.L;
     var renderer =
         { html          : function _ac_render_item_html (ul, item) {
-              var result = $("<li>")
+              var contents, result;
+              if ("disabled" in item) {
+                  contents = $("<i class=\"disabled\">").html (item.label);
+              } else {
+                  contents = $("<a>").html (item.label);
+              };
+              result = $("<li>")
                   .data     ("ui-autocomplete-item", item)
-                  .append   ($("<a>").html (item.label))
+                  .append   (contents)
                   .appendTo (ul);
               return result;
           }

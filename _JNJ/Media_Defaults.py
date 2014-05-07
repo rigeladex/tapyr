@@ -54,6 +54,8 @@
 #    20-Feb-2014 (CT) Add `breakpoint.broad` and `.very_narrow`
 #     8-Apr-2014 (CT) Improve `clearfix`
 #    12-Apr-2014 (CT) Use `Border.P`, not `P_Border`
+#    15-May-2014 (CT) Add `color_lightest_grey`
+#    15-May-2014 (CT) Add `breakpoint.quite_narrow`
 #    ««revision-date»»···
 #--
 
@@ -117,6 +119,7 @@ class Media_Defaults (Definition) :
     color_heading          = RGB_X     ("#34444D")
     color_heading_closed   = RGB_X     ("#56666E")
     color_heading_sub      = RGB_X     ("#78888F")
+    color_lightest_grey    = RGB_X     ("#F8F8F8")
     color_lighter_grey     = RGB_X     ("#EDEDED")
     color_light_grey       = RGB_X     ("#DEDEDE")
     color_medium_grey      = RGB_X     ("#BEBEBE")
@@ -220,6 +223,10 @@ class Media_Defaults (Definition) :
 
         very_narrow            = P_dict \
             ( max_width        = Px (420)
+            )
+
+        quite_narrow           = P_dict \
+            ( max_width        = Px (480)
             )
 
         narrow                 = P_dict \

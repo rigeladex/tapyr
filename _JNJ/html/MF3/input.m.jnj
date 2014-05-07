@@ -74,7 +74,7 @@
     }}
   {%- else %}
     {{ X.input.text
-        ( class     = GTW.filtered_join (" ", (class, "hidden"))
+        ( class     = GTW.filtered_join (" ", (class, "hidden", "id_ref"))
         , name      = elem.r_name
         , readonly  = "readonly"
         , value     = elem.edit
@@ -82,7 +82,7 @@
     }}
     {{ field
         ( X.input.text, elem
-        , class     = GTW.filtered_join (" ", (class, "display"))
+        , class     = GTW.filtered_join (" ", (class, "display", "id_ref"))
         , name      = None
         , readonly  = "readonly"
         , title     = elem.ui_display
@@ -179,7 +179,6 @@
           ( " "
           , ( kw.get ("class", "")
             , elem.css_class
-            , "completer" if elem.completer else ""
             , "prefilled" if elem.prefilled else ""
             )
           )

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -36,6 +36,8 @@
 #     8-Aug-2012 (CT) Add `example`
 #    12-Sep-2012 (CT) Derive from `Property`
 #    11-Oct-2012 (CT) Factor attribute `position` to Link1 `Address_Position`
+#    14-May-2014 (CT) Set `country.completer.treshold` to `0`
+#    15-May-2014 (CT) Reduce `street.completer.treshold` to `1`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +70,7 @@ class _PAP_Address_ (_Ancestor_Essence) :
             max_length     = 60
             rank           = 1
 
-            completer      = Attr.Completer_Spec  (3, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class street
 
@@ -111,7 +113,7 @@ class _PAP_Address_ (_Ancestor_Essence) :
             rank           = 4
 
             completer      = Attr.Completer_Spec  \
-                (1, Attr.Selector.Primary_Followers ())
+                (0, Attr.Selector.Primary_Followers ())
 
         # end class country
 

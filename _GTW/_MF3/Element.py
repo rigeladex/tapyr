@@ -35,6 +35,12 @@
 #                     `field_elements`, `template_elements`
 #     3-May-2014 (CT) Change `_Field_.required` to honor `parent.required`
 #     7-May-2014 (CT) Add `MAT.A_Int.mf3_input_widget`
+#     7-May-2014 (CT) Add and use `GTW.MF3.Completer`
+#     8-May-2014 (CT) Factor `_new_element`, `_Auto_Element`
+#     8-May-2014 (CT) Add `attr_map`, `__getitem__` to `_Field_Composite_Mixin_`
+#     8-May-2014 (CT) Add `completer_elems`
+#     9-May-2014 (CT) Factor `check_sigs`
+#    16-May-2014 (CT) Redefine `Field_Entity.collapsed`
 #    ««revision-date»»···
 #--
 
@@ -45,15 +51,15 @@ from   _GTW                     import GTW
 from   _MOM                     import MOM
 from   _TFL                     import TFL
 
+import _GTW._MF3.Completer
+
 from   _MOM.import_MOM          import Q
 
 import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
 from   _TFL._Meta.M_Class       import BaM
-from   _TFL.predicate           import split_hst, uniq
 from   _TFL.pyk                 import pyk
-from   _TFL.Regexp              import Regexp, re
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Lists
@@ -308,8 +314,7 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
         self.pop_to_self      (kw, * self._pop_to_self)
         elements      = self.__class__.elements
         self.essence  = essence
-        self.elements = list \
-            (e (self.essence, parent = self, ** kw) for e in elements)
+        self.elements = list (self._new_element (e, ** kw) for e in elements)
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -328,10 +333,19 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
     def _add_auto_attributes (cls, E_Type, ** kw) :
         kw.pop ("parent", None)
         cls.elements = tuple \
-            (   ak.MF3_Element.Auto (ak, E_Type, parent = cls, ** kw)
+            (   cls._Auto_Element (ak, E_Type, ** kw)
             for ak in cls.attr_selector (E_Type)
             )
     # end def _add_auto_attributes
+
+    @classmethod
+    def _Auto_Element (cls, ak, E_Type, ** kw) :
+        return ak.MF3_Element.Auto (ak, E_Type, parent = cls, ** kw)
+    # end def _Auto_Element
+
+    def _new_element (self, e, ** kw) :
+        return e (self.essence, parent = self, ** kw)
+    # end def _new_element
 
     @TFL.Meta.Class_and_Instance_Method
     def _new_id (soc, essence) :
@@ -460,14 +474,16 @@ class _Entity_Mixin_ (_Base_) :
 class _Field_ (BaM (_Element_, metaclass = M_Field)) :
     """Base class for MF3 field classes."""
 
+    collapsed               = False
     default                 = _Base_.undef
     prefilled               = False
     template_module         = None
 
     _attr_prop_map          = dict \
         ( ( (k, k) for k in
-            ( "completer", "css_align", "css_class", "description"
-            , "explanation", "ui_description", "ui_name", "ui_rank"
+            ( "css_align",   "css_class"
+            , "description", "explanation", "ui_description"
+            , "ui_name",     "ui_rank"
             )
           )
         , allow_new         = "ui_allow_new"
@@ -531,6 +547,13 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
             result._add_auto_attributes (E_Type, ** kw)
         return result
     # end def Auto
+
+    @TFL.Meta.Once_Property
+    def completer (self) :
+        a_completer = self.attr.completer
+        if a_completer is not None and not (self.readonly or self.skip) :
+            return a_completer.MF3 (self)
+    # end def completer
 
     @TFL.Meta.Once_Property
     def Entity (self) :
@@ -635,6 +658,14 @@ class _Field_Composite_Mixin_ (_Element_) :
         self.__super.__init__ (ref, ** kw)
     # end def __init__
 
+    @TFL.Meta.Once_Property
+    def attr_map (self) :
+        result = {}
+        for e in self.elements :
+            result [e.attr.name] = e
+        return result
+    # end def attr_map
+
     @property
     def submitted_value (self) :
         return self.submitted_value_transitive () or self.undef
@@ -645,6 +676,14 @@ class _Field_Composite_Mixin_ (_Element_) :
         result = self.essence.ui_display if self.id_essence else None
         return result
     # end def ui_display
+
+    def get (self, key, default = None) :
+        return self.attr_map.get (key, default)
+    # end def get
+
+    def __getitem__ (self, key) :
+        return self.attr_map [key]
+    # end def __getitem__
 
 # end class _Field_Composite_Mixin_
 
@@ -661,23 +700,13 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
     _pop_to_self        = ("_hash_fct", "sid", "session_secret")
 
     def __init__ (self, scope, essence = None, ** kw) :
-        self.scope = scope
+        self.completer_map = {}
+        self.scope         = scope
         self.__super.__init__ (essence, ** kw)
     # end def __init__
 
     def __call__ (self, scope, cargo) :
-        cargo_sigs = cargo.get ("sigs", {})
-        for e in self.entity_elements :
-            sh = self.sig_hash (e.sig)
-            ch = cargo_sigs.get (e.id)
-            if sh != ch :
-                ### XXX TBD ???
-                print \
-                    ( "Sig mismatch for %s:\n    expected %s,\n    got %s"
-                    % (e, sh, ch)
-                    )
-        ### XXX TDB
-        ### * check sig_hash...
+        self.check_sigs       (cargo)
         self.__super.__call__ (scope, cargo)
         return self
     # end def __call__
@@ -724,9 +753,8 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
                 )
             , checkers      = {} ### XXX
             , completers    = dict
-                (  (e.id, e.completer.as_json_cargo)
-                for e in elems
-                if  e.completer
+                (  (e.completer.id, e.completer.as_json_cargo)
+                for e in elems if e.completer
                 )
             )
         errors = self.errors
@@ -759,6 +787,23 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
         if self.essence :
             return self.essence.ui_display
     # end def ui_display
+
+    def check_sigs (self, cargo) :
+        cargo_sigs = cargo.get ("sigs", {})
+        for e in self.entity_elements :
+            sh = self.sig_hash (e.sig)
+            ch = cargo_sigs.get (e.id)
+            if sh != ch :
+                ### XXX TBD ???
+                print \
+                    ( "Sig mismatch for %s:\n    expected %s,\n    got %s"
+                    % (e, sh, ch)
+                    )
+    # end def check_sigs
+
+    def get (self, key, default = None) :
+        return self._Element_Map.get (key, default)
+    # end def get
 
     def sig_hash (self, sig) :
         dbid   = self.scope.db_meta_data.dbid
@@ -820,6 +865,11 @@ class Field (_Field_) :
                     self._submitted_value = edit
     # end def __call__
 
+    @TFL.Meta.Once_Property
+    def completer_elems (self) :
+        return (self, )
+    # end def completer_elems
+
     @property
     def cooked (self) :
         attr = self.attr
@@ -868,6 +918,11 @@ class Field_Composite (_Field_Composite_Mixin_, _Field_) :
             e (scope, cargo)
     # end def __call__
 
+    @TFL.Meta.Once_Property
+    def completer_elems (self) :
+        return self.elements
+    # end def completer_elems
+
     @property
     def cooked (self) :
         return self.essence if self.id_essence is not None else ()
@@ -895,6 +950,7 @@ class Field_Composite (_Field_Composite_Mixin_, _Field_) :
 class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
     """Field comprising an attribute referring to another essential Entity."""
 
+    _collapsed          = _Base_.undef
     _essence            = None
     _submitted_value_tp = False
 
@@ -924,6 +980,33 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
                 else :
                     self.__super.__call__ (scope, cargo)
     # end def __call__
+
+    @property
+    def collapsed (self) :
+        result = self._collapsed
+        if result is self.undef :
+            result = self.essence is not None
+        return result
+    # end def collapsed
+
+    @collapsed.setter
+    def collapsed (self, value) :
+        self._collapsed = value
+    # end def collapsed
+
+    @TFL.Meta.Once_Property
+    def completer_elems (self) :
+        if self.allow_new and self.attr.completer and not self.readonly :
+            def _gen (self) :
+                attr_map = self.attr_map
+                for a in self.E_Type.primary :
+                    e = attr_map.get (a.name)
+                    if e is not None and not e.skip :
+                        yield e
+            return tuple (_gen (self))
+        else :
+            return (self, )
+    # end def completer_elems
 
     @property
     def cooked (self) :
@@ -959,7 +1042,11 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
         if essence is None :
             value  = {}
         else :
-            value  = dict (cid = essence.last_cid, pid = essence.pid)
+            value  = dict \
+                ( cid     = essence.last_cid
+                , display = essence.ui_display
+                , pid     = essence.pid
+                )
         result = dict (init = value)
         return result
     # end def field_as_json_cargo
@@ -992,6 +1079,11 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
             result = ichain (((self.id, self.field_as_json_cargo), ), result)
         return result
     # end def fields_as_json_cargo
+
+    def _new_element (self, e, ** kw) :
+        kw ["skip"] = kw.get ("skip") or not self.allow_new
+        return self.__super._new_element (e, ** kw)
+    # end def _new_element
 
 # end class Field_Entity
 
