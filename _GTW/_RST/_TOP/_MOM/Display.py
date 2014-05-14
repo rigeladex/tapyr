@@ -40,6 +40,7 @@
 #    29-Jan-2014 (CT) Add support for `Referral` to `_E_Type_`
 #    29-Jan-2014 (CT) Redefine `_effective` to check `count`
 #     5-Feb-2014 (CT) Call `_add_other_entries` in `_E_Type_Archive_.entries`
+#    14-May-2014 (CT) Add `sort_key` to `_E_Type_Archive_.Year`
 #    ««revision-date»»···
 #--
 
@@ -212,6 +213,8 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
 
     class Year (_E_Type_) :
         """Display instances of a specific year."""
+
+        sort_key        = TFL.Sorted_By ("-date.start", "perma_name")
 
         @Once_Property
         @getattr_safe
