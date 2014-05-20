@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -29,6 +29,7 @@
 #    17-Jul-2012 (CT) Creation
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
+#    20-May-2014 (CT) Fix `query`
 #    ««revision-date»»···
 #--
 
@@ -159,15 +160,16 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
 
     def query (self) :
         qs = []
+        ql = self.query_limit
+        sk = self.sort_key
         for ETM in self.ETMS :
-            q = ETM.query (* self.query_filters, sort_key = self.sort_key)
-            if self.query_limit :
-                q = q.limit (self.query_limit)
+            q = ETM.query (* self.query_filters, sort_key = sk)
+            if ql :
+                q = q.limit (ql)
             qs.append (q)
-        result = TFL.Q_Result_Composite (qs)
-        result.order_by (self.sort_key)
-        if self.query_limit :
-            result.limit (self.query_limit)
+        result = TFL.Q_Result_Composite (qs, order_by = sk)
+        if ql :
+            result.limit (ql)
         return result
     # end def query
 
