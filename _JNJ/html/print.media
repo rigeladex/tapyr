@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Oct-2011 (CT) Creation
+#    27-May-2014 (CT) Add rule for ".js .pg_main.nav-off-canvas"
 #    ««revision-date»»···
 #--
 
@@ -35,10 +36,6 @@ print_sheet = Style_Sheet \
         ( Media.Query ("print")
         , rules                   =
             [ Rule
-                ( "html"
-                , margin          = Cm (2.5)
-                )
-            , Rule
                 ( "*"
                 , background      = "transparent !important"
                 , color           = "black !important"
@@ -67,6 +64,10 @@ print_sheet = Style_Sheet \
                 , margin          = 0
                 , padding         = 0
                 , width           = "auto"
+                )
+            , Rule
+                ( "html"
+                , margin          = Cm (2.5)
                 )
             , Rule
                 ( "body"
@@ -115,6 +116,17 @@ print_sheet = Style_Sheet \
                 ( ".pg_head .logo", ".pg_nav"
                 , display         = "none"
                 , visibility      = "collapse"
+                )
+            , Rule
+                ( ".js .pg_main.nav-off-canvas"
+                , margin_left     = 0
+                , children        =
+                    [ Rule
+                        ( ".pg_nav_show"
+                        , display         = "none"
+                        , visibility      = "collapse"
+                        )
+                    ]
                 )
             ]
         )
