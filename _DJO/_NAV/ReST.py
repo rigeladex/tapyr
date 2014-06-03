@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -158,6 +158,8 @@
 #                     for `Changer`
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
+#     3-Jun-2014 (CT) Change `markup_to_html` to use `_ReST.To_Html`, not
+#                     django.contrib.markup.templatetags.markup (gone in 1.6.5)
 #    ««revision-date»»···
 #--
 
@@ -188,11 +190,10 @@ class Page_ReST (DJO.NAV.Page) :
 
     @Once_Property
     def markup_to_html (self) :
-        from django.contrib.markup.templatetags.markup \
-            import restructuredtext
+        from   _ReST.To_Html import to_html
         import _ReST.Roles
         import _ReST.Directives
-        return restructuredtext
+        return to_html
     # end def markup_to_html
 
 # end class Page_ReST
