@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -58,6 +58,8 @@
 #    25-Jun-2013 (CT) Make `_Class_Property_Function_.__get__` Python-2.6
 #                     compatible
 #    26-Jun-2013 (CT) Add `Class_and_Instance_Lazy_Property`
+#     4-Jun-2014 (CT) Change `Alias_Meta_and_Class_Attribute` to evaluate
+#                     `property` values
 #    ««revision-date»»···
 #--
 
@@ -545,37 +547,6 @@ class Alias2_Class_and_Instance_Method (Class_Method) :
 
 # end class Alias2_Class_and_Instance_Method
 
-class Alias_Meta_and_Class_Attribute (Class_Method) :
-    """Property defining an alias name for a instance-method/class-method
-       pair with different definitions.
-
-       ::
-
-         >>> class Meta_T (TFL.Meta.M_Class) :
-         ...   foo = 42
-         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
-         ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
-         ...   foo = 137
-         ...
-         >>> T.chameleon
-         42
-         >>> T ().chameleon
-         137
-    """
-
-    def __init__ (self, aliased_name, cls = None) :
-        self.aliased_name = aliased_name
-        self.cls          = cls
-    # end def __init__
-
-    def __get__ (self, obj, cls = None) :
-        if obj is None :
-            cls = cls.__class__
-        return getattr (cls, self.aliased_name)
-    # end def __get__
-
-# end class Alias_Meta_and_Class_Attribute
-
 class Lazy_Property (object) :
     """Property caching a computed value"""
 
@@ -609,6 +580,46 @@ class Class_and_Instance_Lazy_Property (Lazy_Property) :
     # end def _class_get
 
 # end class Class_and_Instance_Lazy_Property
+
+class Alias_Meta_and_Class_Attribute (Class_Method) :
+    """Property defining an alias name for a instance-method/class-method
+       pair with different definitions.
+
+       ::
+
+         >>> class Meta_T (TFL.Meta.M_Class) :
+         ...   foo = 42
+         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
+         ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
+         ...   foo = 137
+         ...
+         >>> T.chameleon
+         42
+         >>> T ().chameleon
+         137
+    """
+
+    property_classes = \
+        ( property, _Property_, Alias_Property, Lazy_Property
+        , _Class_Property_Descriptor_, _Class_Property_Function_
+        )
+
+    def __init__ (self, aliased_name, cls = None) :
+        self.aliased_name = aliased_name
+        self.cls          = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj = cls
+            cls = cls.__class__
+        result = getattr (cls, self.aliased_name)
+        if isinstance (result, self.property_classes) :
+            result = result.__get__ (obj, cls)
+        return result
+    # end def __get__
+
+# end class Alias_Meta_and_Class_Attribute
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_Property_")
