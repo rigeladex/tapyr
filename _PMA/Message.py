@@ -175,13 +175,12 @@
 #    23-Jan-2014 (CT) Set `PMA.default_encoding` in all cases in `_main`
 #    17-Mar-2014 (CT) Fix error message `tail` in `messages_from_args`
 #    22-Apr-2014 (CT) Change `_main` to pass `encoding` to `formatted`
+#     5-Jun-2014 (CT) Use `Once_Property`, not `Lazy_Property`; use
+#                     `M_Class`, not `M_Class_SWRP`, as metaclass
 #    ««revision-date»»···
 #--
 
 from   __future__              import print_function
-
-### XXX to do
-### - still need `headers_to_show` ??? If not, remomve
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -380,20 +379,7 @@ class Msg_Scope (TFL.Caller.Scope) :
 
 # end class Msg_Scope
 
-class _Msg_Part_ (object) :
-
-    __metaclass__       = TFL.Meta.M_Class_SWRP
-
-    __properties        = \
-        ( TFL.Meta.Lazy_Property ("charset",  TFL.Method._get_charset)
-        , TFL.Meta.Lazy_Property
-            ("content_type", TFL.Method._get_content_type)
-        , TFL.Meta.Lazy_Property ("filename", TFL.Method._filename)
-        , TFL.Meta.Lazy_Property ("scope",    lambda s : Msg_Scope (s))
-        , TFL.Meta.Lazy_Property \
-            ("subject",  lambda s : decoded_header (s.email ["subject"]))
-        , TFL.Meta.Lazy_Property ("type",     TFL.Getter.content_type)
-        )
+class _Msg_Part_ (TFL.Meta.Object) :
 
     label_width         = 8
     number              = None
@@ -430,6 +416,57 @@ class _Msg_Part_ (object) :
         self._setup_body (email)
     # end def __init__
 
+    @TFL.Meta.Once_Property
+    def charset (self) :
+        result = self._charset
+        if result is None :
+            email = self.email
+            if email :
+                result = email.get_charset ()
+                if result is None :
+                    result = email.get_param ("charset", "us-ascii")
+        try :
+            "".decode (result, "replace")
+        except LookupError :
+            ### Guard against broken messages like::
+            ###   Content-Type: text/plain; charset=unknown-8bit
+            result = "us-ascii"
+        return result
+    # end def charset
+
+    @TFL.Meta.Once_Property
+    def content_type (self) :
+        return self.email.get_content_type ().lower ()
+    # end def content_type
+
+    @TFL.Meta.Once_Property
+    def filename (self) :
+        email  = self.email
+        if email :
+            result = email.get_param \
+                ("filename", header = "Content-Disposition")
+            if not result :
+                result = email.get_param ("name")
+            if isinstance (result, tuple) :
+                result = unicode (result [2], result [0] or "us-ascii")
+            return TFL.Ascii.sanitized_filename (decoded_header (result))
+    # end def filename
+
+    @TFL.Meta.Once_Property
+    def scope (self) :
+        return Msg_Scope (self)
+    # end def scope
+
+    @TFL.Meta.Once_Property
+    def subject (self) :
+        return decoded_header (self.email ["subject"])
+    # end def subject
+
+    @TFL.Meta.Once_Property
+    def type (self) :
+        return self.content_type
+    # end def type
+
     def email_summary (self, email, format = None) :
         if format is None :
             format = self.summary_format
@@ -447,18 +484,6 @@ class _Msg_Part_ (object) :
         return summary_format % self.scope
     # end def summary
 
-    def _filename (self) :
-        email  = self.email
-        if email :
-            result = email.get_param \
-                ("filename", header = "Content-Disposition")
-            if not result :
-                result = email.get_param ("name")
-            if isinstance (result, tuple) :
-                result = unicode (result [2], result [0] or "us-ascii")
-            return TFL.Ascii.sanitized_filename (decoded_header (result))
-    # end def _filename
-
     def _formatted_headers (self, headers = None) :
         email = self.email
         for n in (headers or self.headers_to_show) :
@@ -466,27 +491,6 @@ class _Msg_Part_ (object) :
                 yield n, "%-*s: %s" % \
                     (self.label_width, n, decoded_header (h))
     # end def _formatted_headers
-
-    def _get_charset (self) :
-        result = self._charset
-        if result is None :
-            email = self.email
-            if email :
-                result = email.get_charset ()
-                if result is None :
-                    result = email.get_param ("charset", "us-ascii")
-        try :
-            "".decode (result, "replace")
-        except LookupError :
-            ### Guard against broken messages like::
-            ###   Content-Type: text/plain; charset=unknown-8bit
-            result = "us-ascii"
-        return result
-    # end def _get_charset
-
-    def _get_content_type (self) :
-        return self.email.get_content_type ().lower ()
-    # end def _get_content_type
 
     def _get_header_ (self, key, index) :
         email = self.email
@@ -571,6 +575,24 @@ class Message_Body (_Msg_Part_) :
         self.__super.__init__ (email, name)
     # end def __init__
 
+    @TFL.Meta.Once_Property
+    def content_type (self) :
+        result = self.__super.content_type
+        if result == "application/octet-stream" :
+            pipe = sos.popen     ("file -i %s" % (self._temp_body (), ), "r")
+            f_result = pipe.read ()
+            pipe.close           ()
+            pat = self._file_result_pattern
+            if pat.match (f_result) :
+                result = pat.type
+                if pat.charset :
+                    self._charset = pat.charset
+        elif result == "application/python" :
+            if self.filename.endswith (".py") :
+                result = "text/x-python"
+        return result
+    # end def content_type
+
     def body_lines (self, sep_length = 79) :
         lines = self.lines
         if lines is None :
@@ -613,23 +635,6 @@ class Message_Body (_Msg_Part_) :
         save (filename, self.body)
     # end def save
 
-    def _get_content_type (self) :
-        result = self.__super._get_content_type ()
-        if result == "application/octet-stream" :
-            pipe = sos.popen     ("file -i %s" % (self._temp_body (), ), "r")
-            f_result = pipe.read ()
-            pipe.close           ()
-            pat = self._file_result_pattern
-            if pat.match (f_result) :
-                result = pat.type
-                if pat.charset :
-                    self._charset = pat.charset
-        elif result == "application/python" :
-            if self.filename.endswith (".py") :
-                result = "text/x-python"
-        return result
-    # end def _get_content_type
-
     def _separators (self, sep_length) :
         if self.name == "Body" :
             seps = ("", "-" * sep_length, "")
@@ -650,15 +655,15 @@ class Message_Body (_Msg_Part_) :
 class Part_Header (_Msg_Part_) :
     """Model the headers of a message part as pseudo-part"""
 
-    __properties     = \
-        ( TFL.Meta.Lazy_Property ("type", lambda s : "x-pma/part-headers")
-        ,
-        )
-
     def __init__ (self, email, headers_to_show) :
         self.headers_to_show = headers_to_show
         self.__super.__init__ (email, "Headers")
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def type (self) :
+        return "x-pma/part-headers"
+    # end def type
 
     def body_lines (self, sep_length = 79) :
         return self._fh
@@ -702,15 +707,15 @@ class Part_Header (_Msg_Part_) :
 class Message_Header (Part_Header) :
     """Model the headers of an email as pseudo-part"""
 
-    __properties     = \
-        ( TFL.Meta.Lazy_Property ("type", lambda s : "x-pma/headers")
-        ,
-        )
-
     def __init__ (self, email, headers_to_show, summary) :
         self.summary_line = summary
         self.__super.__init__ (email, headers_to_show)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def type (self) :
+        return "x-pma/headers"
+    # end def type
 
 # end class Message_Header
 
@@ -772,16 +777,16 @@ class _Message_ (_Msg_Part_) :
 class Message_MPA (_Message_) :
     """Model the parts of a multipart/alternative MIME message"""
 
-    __properties     = \
-        ( TFL.Meta.Lazy_Property ("type", lambda s : "x-pma/mpa")
-        ,
-        )
-
     def __init__ (self, email, name, head, * rest) :
         self.head = head
         self.rest = rest
         self.__super.__init__ (email, name)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def type (self) :
+        return "x-pma/mpa"
+    # end def type
 
     def _setup_body (self, email) :
         name       = self.name

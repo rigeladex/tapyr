@@ -65,6 +65,7 @@
 #    24-Apr-2014 (CT)  Change `New` to add `_real_name`
 #    25-Apr-2014 (CT)  Add `__c_super` for use in `__new__` and classmethods
 #    25-Apr-2014 (CT)  Add `__mc_super` for use in metaclass `__new__`
+#     5-Jun-2014 (CT) Remove `M_Autoproperty` and `M_Class_SWRP`
 #    ««revision-date»»···
 #--
 
@@ -442,49 +443,6 @@ class M_Autosuper (M_Base) :
 
 # end class M_Autosuper
 
-class M_Autoproperty (M_Base) :
-    """Metaclass adding and initializing properties defined in
-       `__properties`.
-
-       `M_Autoproperty` expects `__properties` to contain instances of
-       :class:`~_TFL._Meta.Property.Property` (or signature-compatible
-       objects). For each element `p` of `__properties`,
-
-       - `M_Autoproperty` will add a class attribute named `p.name`
-         with value `p` to the class.
-
-       - `M_Autoproperty` will add an instance attribute to all
-         instances of the class if `p` provides a callable
-         `init_instance` attribute.
-    """
-
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
-        prop_name  = cls._m_mangled_attr_name ("properties")
-        properties = {}
-        classes    = [cls] + list (bases)
-        classes.reverse ()
-        for c in classes :
-            mangled_name = getattr (c, "_m_mangled_attr_name", None)
-            if mangled_name :
-                for p in getattr (c, mangled_name ("properties"), []) :
-                    setattr (cls, p.name, p)
-                    properties [p.name] = p
-        setattr (cls, prop_name, properties.values ())
-    # end def __init__
-
-    def __call__ (cls, * args, ** kw) :
-        result = cls.__m_super.__call__ (* args, ** kw)
-        props  = cls.__dict__.get (cls._m_mangled_attr_name ("properties"), [])
-        for p in props :
-            init_instance = getattr (p, "init_instance", None)
-            if TFL.callable (init_instance) :
-                init_instance (result)
-        return result
-    # end def __call__
-
-# end class M_Autoproperty
-
 class M_Automethodwrap (M_Base) :
     """Metaclass automatically wrapping the methods specified in the
        dictionary `__autowrap`.
@@ -547,15 +505,6 @@ class M_Class (M_Autorename, M_Class_SW) :
        example of how cooperative method calls work in practice.
     """
 # end class M_Class
-
-class M_Class_SWRP (M_Autoproperty, M_Class) :
-    """Metaclass combining
-       :class:`~_TFL._Meta.M_Class.M_Autoproperty`,
-       :class:`~_TFL._Meta.M_Class.M_Autorename`,
-       :class:`~_TFL._Meta.M_Class.M_Autosuper`, and
-       :class:`~_TFL._Meta.M_Class.M_Automethodwrap`.
-    """
-# end class M_Class_SWRP
 
 import _TFL.predicate
 

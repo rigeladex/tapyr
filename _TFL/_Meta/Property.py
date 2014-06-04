@@ -60,6 +60,7 @@
 #    26-Jun-2013 (CT) Add `Class_and_Instance_Lazy_Property`
 #     4-Jun-2014 (CT) Change `Alias_Meta_and_Class_Attribute` to evaluate
 #                     `property` values
+#     4-Jun-2014 (CT) Add `Property`
 #    ««revision-date»»···
 #--
 
@@ -69,48 +70,6 @@ from   _TFL             import TFL
 import _TFL._Meta.M_Class
 
 import operator
-
-class _Property_ (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
-
-    def __init__ (self) :
-        self.__super.__init__ (self._get, self._set, self._del)
-    # end def __init__
-
-    def del_value (self, obj) :
-        return delattr (obj, self.mangled_name)
-    # end def del_value
-
-    def get_value (self, obj) :
-        return getattr (obj, self.mangled_name)
-    # end def get_value
-
-    def set_value (self, obj, value) :
-        return setattr (obj, self.mangled_name, value)
-    # end def set_value
-
-    def set_doc (self, doc) :
-        self.__doc__ = doc
-    # end def set_doc
-
-    _del       = None
-    _get       = get_value
-    _set       = None
-    _set_value = set_value
-
-# end class _Property_
-
-class Property (_Property_) :
-    """Base class for property classes."""
-
-    def __init__ (self, name, doc = None) :
-        self.name         = name
-        self.mangled_name = "__%s" % name
-        self.__super.__init__ ()
-        if doc :
-            self.set_doc (doc)
-    # end def __init__
-
-# end class Property
 
 class Data_Descriptor (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
     """Data descriptor for an attribute.
@@ -581,6 +540,145 @@ class Class_and_Instance_Lazy_Property (Lazy_Property) :
 
 # end class Class_and_Instance_Lazy_Property
 
+class Property (TFL.Meta.BaM (property, metaclass = TFL.Meta.M_Class)) :
+    """A property that can be applied to the instance and possibly to the
+       class as well.
+
+       You can define the property for the metaclass with `property`, and
+       possibly `<property>.setter`,  to do what is needed when the property
+       is accessed via the class instead of via the instance.
+
+       If the property isn't defined for the metaclass, access via the
+       class returns the property object itself (just like for a normal
+       `property`).
+
+       You can use `override_getter`, `override_setter`, and
+       `override_deleter` to override some of the property methods in
+       subclasses.
+
+       ::
+
+         >>> class Meta_T (TFL.Meta.M_Class) :
+         ...     @property
+         ...     def foo (cls) :
+         ...         return 42
+         ...     @property
+         ...     def bar (cls) :
+         ...         return getattr (cls, "_bar", "Meta_T.bar default")
+         ...     @bar.setter
+         ...     def bar (cls, value) :
+         ...         cls._bar = value
+
+         >>> class T (TFL.Meta.BaM (object, metaclass = Meta_T)) :
+         ...     @Property
+         ...     def foo (self) :
+         ...         return getattr (self, "_foo", 137)
+         ...     @Property
+         ...     def bar (self) :
+         ...         return getattr (self, "_bar", "T.bar default")
+         ...     @bar.setter
+         ...     def bar (self, value) :
+         ...         self._bar = value
+
+         >>> class U (T) :
+         ...     _ancestor_foo = T.__dict__.get ("foo")
+         ...     @_ancestor_foo.override_setter
+         ...     def foo (self, value) :
+         ...         self._foo = value
+         ...     @Property
+         ...     def baz (self) :
+         ...         return getattr (self, "_baz", "U.baz")
+
+         >>> t = T ()
+         >>> u = U ()
+         >>> T.foo
+         42
+         >>> t.foo
+         137
+         >>> u.foo
+         137
+         >>> T.foo = 23
+         Traceback (most recent call last):
+           ...
+         AttributeError: can't set attribute
+         >>> t.foo = 1764
+         Traceback (most recent call last):
+           ...
+         AttributeError: can't set attribute
+         >>> u.foo = 23 * 23
+         >>> u.foo
+         529
+
+         >>> T.bar
+         'Meta_T.bar default'
+         >>> t.bar
+         'T.bar default'
+         >>> T.bar = 1764
+         >>> t.bar = 23
+         >>> T.bar
+         1764
+         >>> t.bar
+         23
+
+         The property of the class is accessible via the metaclass:
+         >>> T.__class__.foo # doctest:+ELLIPSIS
+         <property object at ...>
+
+         The property of the instance is only accessible via the class'
+         __dict__:
+         >>> T.__dict__ ["foo"] # doctest:+ELLIPSIS
+         <Property.Property object at ...>
+
+         >>> U.baz # doctest:+ELLIPSIS
+         <Property.Property object at ...>
+         >>> u.baz
+         'U.baz'
+
+    """
+
+    def __init__ (self, fget, * args, ** kw) :
+        self._name = fget.__name__
+        self.__super.__init__ (fget, * args, ** kw)
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj    = cls
+            cls    = cls.__class__
+            result = getattr (cls, self._name, self)
+            pclass = Alias_Meta_and_Class_Attribute.property_classes
+            if result is not self and isinstance (result, pclass) :
+                result = result.__get__ (obj, cls)
+        else :
+            result = self.__super.__get__ (obj, cls)
+        return result
+    # end def __get__
+
+    def derived \
+            (self, fget = None, fset = None, fdel = None, doc = None, ** kw) :
+        return self.__class__ \
+            ( fget or self.fget
+            , fset or self.fset
+            , fdel or self.fdel
+            , doc  or (fget and fget.__doc__) or self.__doc__
+            , ** kw
+            )
+    # end def derived
+
+    def override_deleter (self, fdel) :
+        return self.derived (fdel = fdel)
+    # end def override_deleter
+
+    def override_getter (self, fget) :
+        return self.derived (fget = fget)
+    # end def override_getter
+
+    def override_setter (self, fset) :
+        return self.derived (fset = fset)
+    # end def override_setter
+
+# end class Property
+
 class Alias_Meta_and_Class_Attribute (Class_Method) :
     """Property defining an alias name for a instance-method/class-method
        pair with different definitions.
@@ -600,8 +698,9 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
     """
 
     property_classes = \
-        ( property, _Property_, Alias_Property, Lazy_Property
+        ( property, Alias_Property, Lazy_Property
         , _Class_Property_Descriptor_, _Class_Property_Function_
+        , Property
         )
 
     def __init__ (self, aliased_name, cls = None) :
@@ -622,5 +721,5 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
 # end class Alias_Meta_and_Class_Attribute
 
 if __name__ != "__main__" :
-    TFL.Meta._Export ("*", "_Property_")
+    TFL.Meta._Export ("*")
 ### __END__ TFL.Meta.Property

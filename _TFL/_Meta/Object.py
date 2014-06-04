@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #    16-Feb-2011 (CT) `pop_to_self` added
 #     8-Jun-2012 (CT) Add `opts.get ("prefix")` to `pop_to_self`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#     5-Jun-2014 (CT) Remove `__properties`
 #    ««revision-date»»···
 #--
 
@@ -150,9 +151,6 @@ class _TFL_Meta_Object_ (Meta.BaM (_Object_Root_, metaclass = Meta.M_Class)) :
          * Renaming to `_real_name` to avoid name clashes between classes in
            a class hierarchy (see :class:`~_TFL._Meta.M_Class.M_Autorename`).
 
-         * Adding of the properties listed in `__properties`
-           (see :class:`~_TFL._Meta.M_Class.M_Autoproperty`).
-
          Even if an explicit metaclass is defined for a class, it should
          still derive from `Object` to gain protection for cooperative
          `__init__` and `__new__` calls.
@@ -173,17 +171,6 @@ class _TFL_Meta_Object_ (Meta.BaM (_Object_Root_, metaclass = Meta.M_Class)) :
        up Python's name mangling. The renaming is done by `TFL.Meta.M_Class`
        (more specifically, by `TFL.Meta.M_Autorename` which is one of the
        bases of `M_Class`).
-       """
-
-    __properties  = []
-    """`TFL.Meta.M_Autoproperty` will add and initialize all elements of
-       `__properties` automatically. These should be instances of
-       `TFL.Meta.Property` or one of its descendents (or signature compatible
-       with it).
-
-       `TFL.Meta.M_Autoproperty` is *not* a metaclass of this class.
-       Descendent classes needing `M_Autoproperty` need to specify
-       `TFL.Meta.M_Class_SWRP` as metaclass.
        """
 
     def __init__ (self, * args, ** kw) :
