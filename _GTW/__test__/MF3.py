@@ -727,7 +727,7 @@ _test_element = """
     >>> f_bir   = F_BiR (scope, attr_spec = { "right" : dict (allow_new = True) })
     >>> f_bir_n = F_BiR (scope)
 
-    >>> show_elements_x (f_bir,   "id", "allow_new", filter = (Q.allow_new != None))
+    >>> show_elements_x (f_bir, "id", "allow_new", filter = (Q.allow_new != None))
     Type    id                      allow_new
     ======================================
     F_E     R-106:left              True

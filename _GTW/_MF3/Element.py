@@ -41,6 +41,8 @@
 #     8-May-2014 (CT) Add `completer_elems`
 #     9-May-2014 (CT) Factor `check_sigs`
 #    16-May-2014 (CT) Redefine `Field_Entity.collapsed`
+#     4-Jun-2014 (CT) Split `id` into `bare_id` and `index`
+#     4-Jun-2014 (CT) Add and use `_pop_to_self_`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +61,7 @@ import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
 from   _TFL._Meta.M_Class       import BaM
+from   _TFL.predicate           import filtered_join
 from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
@@ -116,6 +119,11 @@ class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
         return result
     # end def __call__
 
+    @property
+    def fq_id (cls) :
+        return cls.bare_id
+    # end def fq_id
+
     ### `m_root` cannot be a `Once_Property` because inheritance
     @property
     def m_root (cls) :
@@ -124,8 +132,8 @@ class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
     # end def m_root
 
     def __repr__ (cls) :
-        if cls.id :
-            return "<class %s %s>" % (cls.__name__, cls.id)
+        if cls.bare_id :
+            return "<class %s %s>" % (cls.__name__, cls.bare_id)
         return cls.__m_super.__repr__ ()
     # end def __repr__
 
@@ -176,9 +184,10 @@ class M_Field (_M_Element_) :
 class _Base_ (TFL.Meta.Object) :
     """Base class of element classes."""
 
+    bare_id             = None
     completer           = None
     elements            = ()
-    id                  = None
+    id                  = TFL.Meta.Alias_Meta_and_Class_Attribute ("fq_id")
     id_sep              = "."
     name                = None
     parent              = None
@@ -191,8 +200,10 @@ class _Base_ (TFL.Meta.Object) :
     _commit_errors      = ()
     _conflicts          = 0
     _element_ids        = ("id", )
-    _lists_to_combine   = ("_pop_to_self", "_element_ids")
+    _index              = None
+    _lists_to_combine   = ("_element_ids", "_pop_to_self", "_pop_to_self_")
     _pop_to_self        = ("parent", "template_macro", "template_module")
+    _pop_to_self_       = ("index", )
     _required           = False
     _submitted_value    = undef
     _submission_errors  = ()
@@ -220,6 +231,17 @@ class _Base_ (TFL.Meta.Object) :
     def errors (self) :
         return self.submission_errors + self.commit_errors
     # end def errors
+
+    @TFL.Meta.Once_Property
+    def fq_id (self) :
+        return filtered_join ("", [self.bare_id, self.index])
+    # end def fq_id
+
+    @TFL.Meta.Once_Property
+    def index (self) :
+        return filtered_join \
+            ("", [self.parent and self.parent.index, self._index])
+    # end def index
 
     @TFL.Meta.Once_Property
     def root (self) :
@@ -312,6 +334,7 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
     def __init__ (self, essence = None, ** kw) :
         self.__super.__init__ (essence = essence, ** kw)
         self.pop_to_self      (kw, * self._pop_to_self)
+        self.pop_to_self      (kw, * self._pop_to_self_, prefix = "_")
         elements      = self.__class__.elements
         self.essence  = essence
         self.elements = list (self._new_element (e, ** kw) for e in elements)
@@ -350,7 +373,7 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
     @TFL.Meta.Class_and_Instance_Method
     def _new_id (soc, essence) :
         parent = soc.parent
-        return parent.id_sep.join ((parent.id, soc._own_id (essence)))
+        return parent.id_sep.join ((parent.bare_id, soc._own_id (essence)))
     # end def _new_id
 
 # end class _Element_
@@ -500,13 +523,14 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
     _element_ids            = ("q_name", )
     _init                   = _Base_.undef
     _pop_to_self            = \
-        ( "allow_new",        "changeable",       "collapsed"
+        ( "allow_new",        "changeable"
         , "css_align",        "css_class",        "default"
         , "description",      "edit",             "explanation"
         , "init",             "input_widget",     "label"
-        , "prefilled",        "required",         "skip"
-        , "settable",         "template_module",  "template_macro"
+        , "prefilled",        "skip",             "settable"
+        , "template_module",  "template_macro"
         )
+    _pop_to_self_           = ("collapsed", "required")
     _q_name                 = None
 
     def __init__ (self, essence = None, ** kw) :
@@ -542,7 +566,7 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
             , ** akw
             )
         if parent :
-            result.id = result._new_id (E_Type)
+            result.bare_id = result._new_id (E_Type)
         if cls.attr_selector is not None :
             result._add_auto_attributes (E_Type, ** kw)
         return result
@@ -631,11 +655,6 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
     @property
     def required (self) :
         return self.parent.required and self._required
-    # end def required
-
-    @required.setter
-    def required (self, value) :
-        self._required = value
     # end def required
 
     @property
@@ -827,8 +846,8 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
             prefix = kw.pop ("id_prefix", "MF")
             id     = "%s-%s" % (prefix, postfix)
         else :
-            id     = parent.id_sep.join ((parent.id, postfix))
-        kw ["id"]  = id
+            id     = parent.id_sep.join ((parent.bare_id, postfix))
+        kw ["bare_id"] = id
     # end def _new_id
 
     def __getitem__ (self, key) :
@@ -987,11 +1006,6 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
         if result is self.undef :
             result = self.essence is not None
         return result
-    # end def collapsed
-
-    @collapsed.setter
-    def collapsed (self, value) :
-        self._collapsed = value
     # end def collapsed
 
     @TFL.Meta.Once_Property
