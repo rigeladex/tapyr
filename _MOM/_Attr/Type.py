@@ -344,6 +344,7 @@
 #     7-May-2014 (CT) Fix typo in `A_Enum.cooked` (use `value`, not `s`)
 #     7-May-2014 (CT) Change `selectable_e_types_unique_epk` to
 #                     `selectable_e_types` based on `eligible_e_types`
+#     7-Jun-2014 (CT) Add `_A_Rev_Ref_.ref_attr`
 #    ««revision-date»»···
 #--
 
@@ -1545,6 +1546,11 @@ class _A_Rev_Ref_ (A_Attr_Type) :
                 setattr (self, k, e_type.app_type.etypes [tn])
         self.__super.__init__ (kind, e_type)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def ref_attr (self) :
+        return self.Ref_Type.attr_prop (self.ref_name)
+    # end def ref_attr
 
     @TFL.Meta.Once_Property
     def ref_filter (self) :
