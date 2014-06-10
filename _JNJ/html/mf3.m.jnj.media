@@ -27,6 +27,7 @@
 #    28-Apr-2014 (CT) Creation
 #    14-May-2014 (CT) Add `style_sheet`
 #    15-May-2014 (CT) Add `Media.Rule`
+#    17-Jun-2014 (CT) Add rules for `Entity-List`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,11 @@ style_sheet = Style_Sheet \
         , font_size            = Em (0.875)
         , children             =
             [ Rule
+                ( "h6"
+                , font_size    = Rem (1.0)
+                , margin       = TRBL (0, Em (1.0))
+                )
+            , Rule
                 ( ".action-button"
                 , background_color = P.background_color
                 , border           = 0
@@ -94,7 +100,7 @@ style_sheet = Style_Sheet \
                     ]
                 )
             , Rule
-                ( "section"
+                ( "div", "section"
                 , position         = "relative"
                 , children         =
                     [ Rule_Class
@@ -111,7 +117,7 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     , Rule_Class
-                        ( "Field-Entity", "Field-Composite"
+                        ( "Entity-List", "Field-Entity", "Field-Composite"
                         , border           = "1px solid #DEDEDE"
                         , border_radius    = Em (1/2)
                         , padding          = TRBL (Rem (1.0), 0)
@@ -124,7 +130,7 @@ style_sheet = Style_Sheet \
                             , Rule
                                 ( "section"
                                 , margin           = TRBL
-                                    (0, Em (0.25), 0, Em (1.0))
+                                    (0, Em (2.0), Em (0.5), Em (1.0))
                                 )
                             , Rule_Child
                                 ( "h1"
@@ -141,15 +147,6 @@ style_sheet = Style_Sheet \
                                 , width            = "auto"
                                 )
                             , Rule_Child
-                                ( ".action-button"
-                                , margin_right     = Em (-1.0)
-                                , padding          = TRBL (Em (0.1), 0)
-                                , position         = "absolute"
-                                , right            = 0
-                                , top              = Em (1)
-                                , visibility       = "visible"
-                                )
-                            , Rule_Child
                                 ( ".Display.Field"
                                 , display              = "none"
                                 , visibility           = "hidden"
@@ -162,12 +159,54 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     , Rule_Class
-                        ( "Field-Entity.closed"
+                        ( "Field-Entity", "Field-Composite"
                         , children         =
                             [ Rule_Child
                                 ( ".action-button"
+                                , margin_right     = Em (-1.0)
+                                , padding          = TRBL (Em (0.1), 0)
+                                , position         = "absolute"
+                                , right            = 0
+                                , top              = Em (0.25)
+                                , visibility       = "visible"
+                                )
+                            ]
+                        )
+                    , Rule_Class
+                        ( "Entity-List"
+                        , padding_bottom   = Em (1.0)
+                        , children         =
+                            [ Rule_Child
+                                ( "h1"
+                                , font_weight      = "bold"
+                                )
+                            , Rule_Child
+                                ( ".action-button"
+                                , bottom           = 0
+                                , left             = Em (2)
+                                , margin_bottom    = Em (-1.3)
+                                , padding          = TRBL (0,  Em (1.1))
+                                , position         = "absolute"
+                                , width            = "auto"
+                                )
+                            , Rule_Child
+                                ( ".Field-Entity"
+                                , margin_top       = Em (1.0)
+                                )
+                            ]
+                        )
+                    , Rule_Class
+                        ( "Field-Entity.closed"
+                        , children         =
+                            [ Rule_Child
+                                ( ".action-button button"
                                 , display              = "none"
                                 , visibility           = "hidden"
+                                )
+                            , Rule_Child
+                                ( ".action-button button[data-action=remove]"
+                                , display              = "block"
+                                , visibility           = "visible"
                                 )
                             , Rule_Child
                                 ( ".Display.Field"
@@ -310,7 +349,7 @@ style_sheet = Style_Sheet \
                 ( "form"
                 , children        =
                     [ Rule
-                        ( "section"
+                        ( "section", "div"
                         , children         =
                             [ Rule_Class
                                 ( "Entity"

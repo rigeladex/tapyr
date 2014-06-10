@@ -190,11 +190,10 @@
   {%- endif -%}
   {%- if elem.required %}
     {%- do kw.update (required = True) %}
-  {%- elif elem.attr.is_required %}
+  {%- elif elem.attr and elem.attr.is_required %}
     {%- do kw.update ( {"data-inner-required" : 1} ) %}
   {% endif -%}
   {{ typ (** kw) }}
 {%- endmacro -%} {#- field -#}
-
 
 {#- __END__ jinja template: html/MF3/input.m.jnj -#}

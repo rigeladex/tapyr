@@ -20,6 +20,7 @@
 //    29-Apr-2013 (CT) Add `show1`
 //    20-Jan-2014 (CT) Add missing `lev` to `show1`
 //     1-May-2014 (CT) Change `show` to just return strings
+//    18-Jun-2014 (CT) Add `update_transitive`
 //    ««revision-date»»···
 //--
 
@@ -153,6 +154,22 @@
                       result = value;
               };
               return result;
+          }
+        , update_transitive : function update_transitive (self, other) {
+              var k, v;
+              for (k in other) {
+                  if (other.hasOwnProperty (k)) {
+                      v = other [k];
+                      if  (  (typeof v === "object")
+                          && (v.constructor !== Array)
+                          && (k in self)
+                          ) {
+                          inspect.update_transitive (self [k], v);
+                      } else {
+                          self [k] = v;
+                      };
+                  };
+              };
           }
         , values : function values (obj, filter) {
               var result = [];

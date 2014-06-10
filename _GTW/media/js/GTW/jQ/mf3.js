@@ -25,6 +25,10 @@
 //    15-May-2014 (CT) Factor `field_type` (`.checkbox`, `.id_ref`, `.normal`)
 //    16-May-2014 (CT) Add support for `.Entity-Field .Display`
 //    16-May-2014 (CT) Add `action_callback`
+//    18-Jun-2014 (CT) Add `action_callback.add_rev_ref`;
+//                     factor `setup_sub_form`
+//    19-Jun-2014 (CT) Add `action_callback.remove`; DRY `setup_sub_form`
+//    19-Jun-2014 (CT) Change `action_callback.close` to set `display` <input>
 //    ««revision-date»»···
 //--
 
@@ -42,9 +46,12 @@
             ( { closable                 : "section"
               , container                : "div.Field"
               , display_field            : ".Field.Display"
+              , display_id_ref           : ".value.display.id_ref"
+              , entity_list              : ".Entity-List"
               , form_element             : "form[id]"
               , focusables               :
                   ".Field :input[id]:not(:hidden):not(.prefilled):not(.readonly)"
+              , hidden_id_ref            : ".value.hidden.id_ref"
               , input_field              :
                   ".Field :input[id]:not(.prefilled):not(.readonly)"
               , status                   : "b.Status"
@@ -65,7 +72,43 @@
             return closest$.prop ("id");
         };
         var action_callback =
-            { clear : function clear (ev) {
+            { add_rev_ref : function add_rev_ref (ev) {
+                var S          = options.selectors;
+                var a$         = $(this);
+                var c$         = a$.closest (S.entity_list);
+                var form_spec  = options.form_spec;
+                var cargo      = form_spec.cargo;
+                var F_id       = c$.prop ("id");
+                var data       =
+                    { sid             : cargo.sid
+                    , sigs            : cargo.sigs
+                    , trigger         : F_id
+                    };
+                var success_cb = function success_cb (answer, status, xhr) {
+                    var new$;
+                    if (! answer ["error"]) {
+                        var fsu  = answer ["form_spec_update"];
+                        var html = answer ["html"];
+                        c$.append (html);
+                        $GTW.inspect.update_transitive (form_spec, fsu);
+                        new$ = c$.children ().last ();
+                        setup_sub_form (new$);
+                    } else {
+                        $GTW.show_message
+                            ("Ajax completion error: ", answer.error);
+                    };
+                };
+                var url        = options.url.add_rev_ref;
+                $.gtw_ajax_2json
+                    ( { async         : true
+                      , data          : data
+                      , success       : success_cb
+                      , url           : url
+                      }
+                    , "Add Rev_Ref"
+                    );
+              }
+            , clear : function clear (ev) {
                 var S     = options.selectors;
                 var a$    = $(this);
                 var c$    = a$.closest (S.closable);
@@ -82,6 +125,22 @@
                 var S     = options.selectors;
                 var a$    = $(this);
                 var c$    = a$.closest (S.closable);
+                var d$    = $(S.display_id_ref, c$).first ();
+                var d     = d$.attr ("value"); // want initial value here
+                var fvs   = [];
+                var acc   = function acc (n) {
+                    var f$   = $(this);
+                    var v    = f$.val ();
+                    if (v !== "") {
+                        fvs.push (v);
+                    };
+                };
+                var fs$;
+                if (d === "") {
+                    fs$ = $(":input[id]:not(.prefilled):not(.display)", c$);
+                    fs$.each (acc);
+                    d$.val   (fvs.join (", "));
+                };
                 c$.addClass ("closed");
                 return false;
               }
@@ -91,6 +150,66 @@
                 var c$    = a$.closest (S.closable);
                 c$.removeClass ("closed");
                 $(S.focusables, c$).first ().focus ();
+                return false;
+              }
+            , remove : function remove (ev) {
+                var S          = options.selectors;
+                var a$         = $(this);
+                var c$         = a$.closest (S.closable);
+                var d$         = $(S.display_id_ref, c$).first ();
+                var i$         = $(S.hidden_id_ref,  c$).first ();
+                var elem_pid   = i$.val ();
+                var form_spec  = options.form_spec;
+                var cargo      = form_spec.cargo;
+                var f_values   = cargo.field_values;
+                var sigs       = cargo.sigs;
+                var F_id       = d$.prop ("id");
+                var url        = options.url.remove;
+                var cleanup    = function cleanup (msg) {
+                    delete f_values [elem_pid];
+                    delete sigs     [elem_pid];
+                    $(":input[id]", c$).each
+                        ( function (n) {
+                            var f$   = $(this);
+                            var F_id = f$.prop ("id");
+                            delete f_values [F_id];
+                            delete sigs     [F_id];
+                          }
+                        );
+                    if (msg) {
+                        c$.html (msg);
+                    } else {
+                        c$.remove ();
+                    };
+                };
+                var data, success_cb;
+                if (elem_pid !== "") {
+                    data       =
+                        { elem_pid : elem_pid
+                        , form_pid : cargo.pid
+                        , sid      : cargo.sid
+                        , sigs     : sigs
+                        , trigger  : F_id
+                        }
+                    success_cb = function success_cb (answer, status, xhr) {
+                        if (! answer ["error"]) {
+                            cleanup (answer ["html"]);
+                        } else {
+                            $GTW.show_message
+                                ("Ajax completion error: ", answer.error);
+                        };
+                    };
+                    $.gtw_ajax_2json
+                        ( { async         : true
+                          , data          : data
+                          , success       : success_cb
+                          , url           : url
+                          }
+                        , "Remove"
+                        );
+                } else {
+                    cleanup ();
+                };
                 return false;
               }
             , reset : function reset (ev) {
@@ -545,6 +664,16 @@
                 .first     (":input")
                     .focus ();
         };
+        var setup_sub_form = function setup_sub_form (f$) {
+            var action;
+            setup_fields (f$);
+            for (action in action_callback) {
+                if (action_callback.hasOwnProperty (action)) {
+                    $("[data-action=\"" + action + "\"]", f$)
+                        .on ("click", action_callback [action]);
+                };
+            };
+        };
         var submit_cb = function submit_cb (ev) {
             var form$        = options.form$;
             var target$      = $(ev.target);
@@ -607,13 +736,9 @@
         // bind `submit_cb` to `click` of submit buttons (need button name)
         // disable `submit` event for form to avoid IE to do normal form
         // submit after running `submit_cb`
-        this.delegate (selectors.submit, "click", submit_cb);
-        this.submit   (function (ev) { return false; });
-        setup_fields  (this);
-        $("[data-action=\"clear\"]", this).on ("click", action_callback ["clear"]);
-        $("[data-action=\"close\"]", this).on ("click", action_callback ["close"]);
-        $("[data-action=\"open\"]",  this).on ("click", action_callback ["open"]);
-        $("[data-action=\"reset\"]", this).on ("click", action_callback ["reset"]);
+        this.delegate  (selectors.submit, "click", submit_cb);
+        this.submit    (function (ev) { return false; });
+        setup_sub_form (this);
         return this;
     };
   } (jQuery)

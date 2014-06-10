@@ -125,6 +125,8 @@ _test_element = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
 
+    >>> scope.db_meta_data.dbid = '2d802327-5c99-49ca-9af7-2ddc6b4c648b'
+
     >>> PAP = scope.PAP
     >>> p   = PAP.Person ("Tanzer", "Christian", lifetime = ("19590926", ), raw=True)
     >>> ph  = PAP.Phone  ("43", "1", "98765432", raw=True)
@@ -133,10 +135,16 @@ _test_element = """
     >>> p_attr_spec= { "lifetime.start" : dict (init = "2000-07-23"), "sex" : dict (init = "M")}
     >>> F_Person   = MF3_E.Entity.Auto (scope.PAP.Person, id_prefix = "X")
     >>> F_Person_s = MF3_E.Entity.Auto (scope.PAP.Person, id_prefix = "Y", attr_spec = { "lifetime.finish" : dict (skip = True)})
+    >>> F_Person_z = MF3_E.Entity.Auto (scope.PAP.Person, id_prefix = "Z", include_rev_refs = ("phones", ))
     >>> f_Person   = F_Person (scope)
     >>> f_Person_s = F_Person_s (scope, attr_spec = p_attr_spec)
+    >>> f_Person_z = F_Person_z (scope)
     >>> f_p        = F_Person (scope, p)
     >>> f_p_s      = F_Person_s (scope, p, attr_spec = p_attr_spec)
+    >>> f_p_z      = F_Person_z (scope, p)
+    >>> f_p_z2     = F_Person_z (scope, p)
+    >>> _          = f_p_z2 ["Z-25:phones"].add ()
+    >>> _          = f_p_z2 ["Z-25:phones"].add ()
 
     >>> F_Person
     <class Entity X-25>
@@ -293,6 +301,18 @@ _test_element = """
     <Field X-25:lifetime.finish> <Entity X-25>
     <Field X-25:sex> <Entity X-25>
 
+    >>> show_elements (f_Person_z, "Entity")
+    <Entity Z-25> <Entity Z-25>
+    <Field Z-25:last_name> <Entity Z-25>
+    <Field Z-25:first_name> <Entity Z-25>
+    <Field Z-25:middle_name> <Entity Z-25>
+    <Field Z-25:title> <Entity Z-25>
+    <Field_Composite Z-25:lifetime> <Entity Z-25>
+    <Field Z-25:lifetime.start> <Entity Z-25>
+    <Field Z-25:lifetime.finish> <Entity Z-25>
+    <Field Z-25:sex> <Entity Z-25>
+    <Field_Rev_Ref Z-25:phones> <Entity Z-25>
+
     >>> show_elements (f_Person, "template_macro")
     <Entity X-25> Entity_Form
     <Field X-25:last_name> Field
@@ -315,6 +335,232 @@ _test_element = """
     <Field X-25:lifetime.finish> None
     <Field X-25:sex> None
 
+    >>> show_elements (f_Person_z ["phones"].proto, "parent")
+    <class Entity_Rev_Ref Z-25:phones> <class Field_Rev_Ref Z-25:phones>
+    <class Field_Entity Z-25:phones::right> <class Entity_Rev_Ref Z-25:phones>
+    <class Field Z-25:phones::right.country_code> <class Field_Entity Z-25:phones::right>
+    <class Field Z-25:phones::right.area_code> <class Field_Entity Z-25:phones::right>
+    <class Field Z-25:phones::right.number> <class Field_Entity Z-25:phones::right>
+    <class Field Z-25:phones::extension> <class Entity_Rev_Ref Z-25:phones>
+    <class Field Z-25:phones::desc> <class Entity_Rev_Ref Z-25:phones>
+    <class Field_Ref_Hidden Z-25:phones::left> <class Entity_Rev_Ref Z-25:phones>
+    <class Field Z-25:phones::left.last_name> <class Field_Ref_Hidden Z-25:phones::left>
+    <class Field Z-25:phones::left.first_name> <class Field_Ref_Hidden Z-25:phones::left>
+    <class Field Z-25:phones::left.middle_name> <class Field_Ref_Hidden Z-25:phones::left>
+    <class Field Z-25:phones::left.title> <class Field_Ref_Hidden Z-25:phones::left>
+
+    >>> show_elements (f_p_z, "Entity")
+    <Entity Z-25> <Entity Z-25>
+    <Field Z-25:last_name> <Entity Z-25>
+    <Field Z-25:first_name> <Entity Z-25>
+    <Field Z-25:middle_name> <Entity Z-25>
+    <Field Z-25:title> <Entity Z-25>
+    <Field_Composite Z-25:lifetime> <Entity Z-25>
+    <Field Z-25:lifetime.start> <Entity Z-25>
+    <Field Z-25:lifetime.finish> <Entity Z-25>
+    <Field Z-25:sex> <Entity Z-25>
+    <Field_Rev_Ref Z-25:phones> <Entity Z-25>
+    <Entity_Rev_Ref Z-25:phones@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Entity Z-25:phones::right@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field Z-25:phones::right.country_code@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::right.area_code@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::right.number@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::extension@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field Z-25:phones::desc@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Ref_Hidden Z-25:phones::left@3> <Entity_Rev_Ref Z-25:phones@3>
+
+    >>> show_elements (f_p_z, "essence")
+    <Entity Z-25> (u'tanzer', u'christian', u'', u'')
+    <Field Z-25:last_name> (u'tanzer', u'christian', u'', u'')
+    <Field Z-25:first_name> (u'tanzer', u'christian', u'', u'')
+    <Field Z-25:middle_name> (u'tanzer', u'christian', u'', u'')
+    <Field Z-25:title> (u'tanzer', u'christian', u'', u'')
+    <Field_Composite Z-25:lifetime> (u'1959-09-26', )
+    <Field Z-25:lifetime.start> (u'1959-09-26', )
+    <Field Z-25:lifetime.finish> (u'1959-09-26', )
+    <Field Z-25:sex> (u'tanzer', u'christian', u'', u'')
+    <Field_Rev_Ref Z-25:phones> (u'tanzer', u'christian', u'', u'')
+    <Entity_Rev_Ref Z-25:phones@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
+    <Field_Entity Z-25:phones::right@3> (u'43', u'1', u'98765432')
+    <Field Z-25:phones::right.country_code@3> (u'43', u'1', u'98765432')
+    <Field Z-25:phones::right.area_code@3> (u'43', u'1', u'98765432')
+    <Field Z-25:phones::right.number@3> (u'43', u'1', u'98765432')
+    <Field Z-25:phones::extension@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
+    <Field Z-25:phones::desc@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
+    <Field_Ref_Hidden Z-25:phones::left@3> (u'tanzer', u'christian', u'', u'')
+
+    >>> f_p_z ["Z-25:phones"]
+    <Field_Rev_Ref Z-25:phones>
+
+    >>> f_p_z ["Z-25:phones@3"]
+    <Entity_Rev_Ref Z-25:phones@3>
+
+    >>> show_elements (f_p_z, "id")
+    <Entity Z-25> Z-25
+    <Field Z-25:last_name> Z-25:last_name
+    <Field Z-25:first_name> Z-25:first_name
+    <Field Z-25:middle_name> Z-25:middle_name
+    <Field Z-25:title> Z-25:title
+    <Field_Composite Z-25:lifetime> Z-25:lifetime
+    <Field Z-25:lifetime.start> Z-25:lifetime.start
+    <Field Z-25:lifetime.finish> Z-25:lifetime.finish
+    <Field Z-25:sex> Z-25:sex
+    <Field_Rev_Ref Z-25:phones> Z-25:phones
+    <Entity_Rev_Ref Z-25:phones@3> Z-25:phones@3
+    <Field_Entity Z-25:phones::right@3> Z-25:phones::right@3
+    <Field Z-25:phones::right.country_code@3> Z-25:phones::right.country_code@3
+    <Field Z-25:phones::right.area_code@3> Z-25:phones::right.area_code@3
+    <Field Z-25:phones::right.number@3> Z-25:phones::right.number@3
+    <Field Z-25:phones::extension@3> Z-25:phones::extension@3
+    <Field Z-25:phones::desc@3> Z-25:phones::desc@3
+    <Field_Ref_Hidden Z-25:phones::left@3> Z-25:phones::left@3
+
+    >>> show_elements (f_p_z, "index")
+    <Entity Z-25>
+    <Field Z-25:last_name>
+    <Field Z-25:first_name>
+    <Field Z-25:middle_name>
+    <Field Z-25:title>
+    <Field_Composite Z-25:lifetime>
+    <Field Z-25:lifetime.start>
+    <Field Z-25:lifetime.finish>
+    <Field Z-25:sex>
+    <Field_Rev_Ref Z-25:phones>
+    <Entity_Rev_Ref Z-25:phones@3> @3
+    <Field_Entity Z-25:phones::right@3> @3
+    <Field Z-25:phones::right.country_code@3> @3
+    <Field Z-25:phones::right.area_code@3> @3
+    <Field Z-25:phones::right.number@3> @3
+    <Field Z-25:phones::extension@3> @3
+    <Field Z-25:phones::desc@3> @3
+    <Field_Ref_Hidden Z-25:phones::left@3> @3
+
+    >>> show_elements (f_p_z, "parent")
+    <Entity Z-25> None
+    <Field Z-25:last_name> <Entity Z-25>
+    <Field Z-25:first_name> <Entity Z-25>
+    <Field Z-25:middle_name> <Entity Z-25>
+    <Field Z-25:title> <Entity Z-25>
+    <Field_Composite Z-25:lifetime> <Entity Z-25>
+    <Field Z-25:lifetime.start> <Field_Composite Z-25:lifetime>
+    <Field Z-25:lifetime.finish> <Field_Composite Z-25:lifetime>
+    <Field Z-25:sex> <Entity Z-25>
+    <Field_Rev_Ref Z-25:phones> <Entity Z-25>
+    <Entity_Rev_Ref Z-25:phones@3> <Field_Rev_Ref Z-25:phones>
+    <Field_Entity Z-25:phones::right@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field Z-25:phones::right.country_code@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::right.area_code@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::right.number@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::extension@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field Z-25:phones::desc@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Ref_Hidden Z-25:phones::left@3> <Entity_Rev_Ref Z-25:phones@3>
+
+    >>> show_elements (f_p_z, "q_name")
+    <Entity Z-25> None
+    <Field Z-25:last_name> last_name
+    <Field Z-25:first_name> first_name
+    <Field Z-25:middle_name> middle_name
+    <Field Z-25:title> title
+    <Field_Composite Z-25:lifetime> lifetime
+    <Field Z-25:lifetime.start> lifetime.start
+    <Field Z-25:lifetime.finish> lifetime.finish
+    <Field Z-25:sex> sex
+    <Field_Rev_Ref Z-25:phones> phones
+    <Entity_Rev_Ref Z-25:phones@3> phones
+    <Field_Entity Z-25:phones::right@3> phones.right
+    <Field Z-25:phones::right.country_code@3> phones.right.country_code
+    <Field Z-25:phones::right.area_code@3> phones.right.area_code
+    <Field Z-25:phones::right.number@3> phones.right.number
+    <Field Z-25:phones::extension@3> phones.extension
+    <Field Z-25:phones::desc@3> phones.desc
+    <Field_Ref_Hidden Z-25:phones::left@3> phones.left
+
+    >>> show_elements (f_p_z, "r_name")
+    <Entity Z-25> ---
+    <Field Z-25:last_name> last_name
+    <Field Z-25:first_name> first_name
+    <Field Z-25:middle_name> middle_name
+    <Field Z-25:title> title
+    <Field_Composite Z-25:lifetime> lifetime
+    <Field Z-25:lifetime.start> lifetime.start
+    <Field Z-25:lifetime.finish> lifetime.finish
+    <Field Z-25:sex> sex
+    <Field_Rev_Ref Z-25:phones> phones
+    <Entity_Rev_Ref Z-25:phones@3> ---
+    <Field_Entity Z-25:phones::right@3> right
+    <Field Z-25:phones::right.country_code@3> country_code
+    <Field Z-25:phones::right.area_code@3> area_code
+    <Field Z-25:phones::right.number@3> number
+    <Field Z-25:phones::extension@3> extension
+    <Field Z-25:phones::desc@3> desc
+    <Field_Ref_Hidden Z-25:phones::left@3> left
+
+    >>> for e in f_p.entity_elements :
+    ...     print (e, formatted_1 (sorted (getattr (e, "_Element_Map", []))))
+    <Entity X-25> ['X-25:first_name', 'X-25:last_name', 'X-25:lifetime', 'X-25:lifetime.finish', 'X-25:lifetime.start', 'X-25:middle_name', 'X-25:sex', 'X-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'sex', 'title']
+
+    >>> for e in f_p_z.entity_elements :
+    ...     print (e, formatted_1 (sorted (getattr (e, "_Element_Map", []))))
+    <Entity Z-25> ['Z-25:first_name', 'Z-25:last_name', 'Z-25:lifetime', 'Z-25:lifetime.finish', 'Z-25:lifetime.start', 'Z-25:middle_name', 'Z-25:phones', 'Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'Z-25:phones@3', 'Z-25:sex', 'Z-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
+    <Entity_Rev_Ref Z-25:phones@3> ['Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number']
+    <Field_Entity Z-25:phones::right@3> []
+
+    >>> print (F_Person_z ["Z-25:phones"])
+    <class Field_Rev_Ref Z-25:phones>
+
+    >>> F_Person_z ["Z-25:phones::left.first_name"]
+    <class Field Z-25:phones::left.first_name>
+
+    >>> F_Person_z ["Z-25:phones"] ["Z-25:phones::left.first_name"]
+    <class Field Z-25:phones::left.first_name>
+
+    >>> F_Person_z ["Z-25:phones::extension"]
+    <class Field Z-25:phones::extension>
+
+    >>> F_Person_z ["Z-25:phones"] ["extension"]
+    <class Field Z-25:phones::extension>
+
+    >>> proto = f_p_z ["Z-25:phones"].proto
+
+    >>> print (formatted_1 (sorted (proto._Element_Map)))
+    ['Z-25:phones::desc', 'Z-25:phones::extension', 'Z-25:phones::left', 'Z-25:phones::left.first_name', 'Z-25:phones::left.last_name', 'Z-25:phones::left.middle_name', 'Z-25:phones::left.title', 'Z-25:phones::right', 'Z-25:phones::right.area_code', 'Z-25:phones::right.country_code', 'Z-25:phones::right.number', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number']
+
+    >>> print (proto, proto.__class__, list (proto.elements_transitive ()))
+    <class Entity_Rev_Ref Z-25:phones> <class '_GTW._MF3.Element.M_Entity_Rev_Ref'> [<class Entity_Rev_Ref Z-25:phones>, <class Field_Entity Z-25:phones::right>, <class Field Z-25:phones::right.country_code>, <class Field Z-25:phones::right.area_code>, <class Field Z-25:phones::right.number>, <class Field Z-25:phones::extension>, <class Field Z-25:phones::desc>, <class Field_Ref_Hidden Z-25:phones::left>, <class Field Z-25:phones::left.last_name>, <class Field Z-25:phones::left.first_name>, <class Field Z-25:phones::left.middle_name>, <class Field Z-25:phones::left.title>]
+
+    >>> print (f_p_z ["Z-25:phones"])
+    <Field_Rev_Ref Z-25:phones>
+
+    >>> print (f_p_z ["Z-25:phones::left.first_name@3"])
+    <Field Z-25:phones::left.first_name@3>
+
+    >>> print (f_p_z ["Z-25:phones::extension@3"])
+    <Field Z-25:phones::extension@3>
+
+    >>> show_completers (f_p, "q_name", "attr.completer.kind")
+    Type   q_name           attr.completer.kind
+    ==============================
+    F      last_name        Atom
+    F      first_name       Atom
+    F      middle_name      Atom
+    F      title            Atom
+    F      lifetime.start   Atom
+    F      lifetime.finish  Atom
+
+    >>> show_completers (f_p_z, "q_name", "attr.completer.kind")
+    Type   q_name                     attr.completer.kind
+    ========================================
+    F      last_name                  Atom
+    F      first_name                 Atom
+    F      middle_name                Atom
+    F      title                      Atom
+    F      lifetime.start             Atom
+    F      lifetime.finish            Atom
+    F      phones.right.country_code  Atom
+    F      phones.right.area_code     Atom
+    F      phones.right.number        Atom
+    F      phones.desc                Atom
+
     >>> show_field_values (f_p)
     { 'X-25:first_name' :
         { 'init' : 'Christian' }
@@ -331,6 +577,382 @@ _test_element = """
     , 'X-25:title' :
         {}
     }
+
+    >>> show_field_values (f_p_z)
+    { 'Z-25:first_name' :
+        { 'init' : 'Christian' }
+    , 'Z-25:last_name' :
+        { 'init' : 'Tanzer' }
+    , 'Z-25:lifetime.finish' :
+        {}
+    , 'Z-25:lifetime.start' :
+        { 'init' : '1959-09-26' }
+    , 'Z-25:middle_name' :
+        {}
+    , 'Z-25:phones::desc@3' :
+        { 'init' : 'example' }
+    , 'Z-25:phones::extension@3' :
+        { 'init' : '42' }
+    , 'Z-25:phones::left@3' :
+        { 'init' :
+            { 'cid' : 1
+            , 'display' : 'Tanzer Christian'
+            , 'pid' : 1
+            }
+        }
+    , 'Z-25:phones::right.area_code@3' :
+        { 'init' : '1' }
+    , 'Z-25:phones::right.country_code@3' :
+        { 'init' : '43' }
+    , 'Z-25:phones::right.number@3' :
+        { 'init' : '98765432' }
+    , 'Z-25:phones::right@3' :
+        { 'init' :
+            { 'cid' : 2
+            , 'display' : '43/1/98765432'
+            , 'pid' : 2
+            }
+        }
+    , 'Z-25:phones@3' :
+        { 'init' :
+            { 'cid' : 3
+            , 'display' : 'Tanzer Christian, 43/1/98765432, 42'
+            , 'pid' : 3
+            }
+        }
+    , 'Z-25:sex' :
+        {}
+    , 'Z-25:title' :
+        {}
+    }
+
+    >>> print (formatted_1 (sorted (f_p._Element_Map)))
+    ['X-25:first_name', 'X-25:last_name', 'X-25:lifetime', 'X-25:lifetime.finish', 'X-25:lifetime.start', 'X-25:middle_name', 'X-25:sex', 'X-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'sex', 'title']
+
+    >>> print (formatted_1 (sorted (f_p_z._Element_Map)))
+    ['Z-25:first_name', 'Z-25:last_name', 'Z-25:lifetime', 'Z-25:lifetime.finish', 'Z-25:lifetime.start', 'Z-25:middle_name', 'Z-25:phones', 'Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'Z-25:phones@3', 'Z-25:sex', 'Z-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
+
+    >>> show_elements (f_p_z2, "Entity")
+    <Entity Z-25> <Entity Z-25>
+    <Field Z-25:last_name> <Entity Z-25>
+    <Field Z-25:first_name> <Entity Z-25>
+    <Field Z-25:middle_name> <Entity Z-25>
+    <Field Z-25:title> <Entity Z-25>
+    <Field_Composite Z-25:lifetime> <Entity Z-25>
+    <Field Z-25:lifetime.start> <Entity Z-25>
+    <Field Z-25:lifetime.finish> <Entity Z-25>
+    <Field Z-25:sex> <Entity Z-25>
+    <Field_Rev_Ref Z-25:phones> <Entity Z-25>
+    <Entity_Rev_Ref Z-25:phones@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Entity Z-25:phones::right@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field Z-25:phones::right.country_code@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::right.area_code@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::right.number@3> <Field_Entity Z-25:phones::right@3>
+    <Field Z-25:phones::extension@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field Z-25:phones::desc@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Ref_Hidden Z-25:phones::left@3> <Entity_Rev_Ref Z-25:phones@3>
+    <Entity_Rev_Ref Z-25:phones/1> <Entity_Rev_Ref Z-25:phones/1>
+    <Field_Entity Z-25:phones::right/1> <Entity_Rev_Ref Z-25:phones/1>
+    <Field Z-25:phones::right.country_code/1> <Field_Entity Z-25:phones::right/1>
+    <Field Z-25:phones::right.area_code/1> <Field_Entity Z-25:phones::right/1>
+    <Field Z-25:phones::right.number/1> <Field_Entity Z-25:phones::right/1>
+    <Field Z-25:phones::extension/1> <Entity_Rev_Ref Z-25:phones/1>
+    <Field Z-25:phones::desc/1> <Entity_Rev_Ref Z-25:phones/1>
+    <Field_Ref_Hidden Z-25:phones::left/1> <Entity_Rev_Ref Z-25:phones/1>
+    <Entity_Rev_Ref Z-25:phones/2> <Entity_Rev_Ref Z-25:phones/2>
+    <Field_Entity Z-25:phones::right/2> <Entity_Rev_Ref Z-25:phones/2>
+    <Field Z-25:phones::right.country_code/2> <Field_Entity Z-25:phones::right/2>
+    <Field Z-25:phones::right.area_code/2> <Field_Entity Z-25:phones::right/2>
+    <Field Z-25:phones::right.number/2> <Field_Entity Z-25:phones::right/2>
+    <Field Z-25:phones::extension/2> <Entity_Rev_Ref Z-25:phones/2>
+    <Field Z-25:phones::desc/2> <Entity_Rev_Ref Z-25:phones/2>
+    <Field_Ref_Hidden Z-25:phones::left/2> <Entity_Rev_Ref Z-25:phones/2>
+
+    >>> show_elements (f_p_z2, "index")
+    <Entity Z-25>
+    <Field Z-25:last_name>
+    <Field Z-25:first_name>
+    <Field Z-25:middle_name>
+    <Field Z-25:title>
+    <Field_Composite Z-25:lifetime>
+    <Field Z-25:lifetime.start>
+    <Field Z-25:lifetime.finish>
+    <Field Z-25:sex>
+    <Field_Rev_Ref Z-25:phones>
+    <Entity_Rev_Ref Z-25:phones@3> @3
+    <Field_Entity Z-25:phones::right@3> @3
+    <Field Z-25:phones::right.country_code@3> @3
+    <Field Z-25:phones::right.area_code@3> @3
+    <Field Z-25:phones::right.number@3> @3
+    <Field Z-25:phones::extension@3> @3
+    <Field Z-25:phones::desc@3> @3
+    <Field_Ref_Hidden Z-25:phones::left@3> @3
+    <Entity_Rev_Ref Z-25:phones/1> /1
+    <Field_Entity Z-25:phones::right/1> /1
+    <Field Z-25:phones::right.country_code/1> /1
+    <Field Z-25:phones::right.area_code/1> /1
+    <Field Z-25:phones::right.number/1> /1
+    <Field Z-25:phones::extension/1> /1
+    <Field Z-25:phones::desc/1> /1
+    <Field_Ref_Hidden Z-25:phones::left/1> /1
+    <Entity_Rev_Ref Z-25:phones/2> /2
+    <Field_Entity Z-25:phones::right/2> /2
+    <Field Z-25:phones::right.country_code/2> /2
+    <Field Z-25:phones::right.area_code/2> /2
+    <Field Z-25:phones::right.number/2> /2
+    <Field Z-25:phones::extension/2> /2
+    <Field Z-25:phones::desc/2> /2
+    <Field_Ref_Hidden Z-25:phones::left/2> /2
+
+    >>> show_elements (f_p_z2, "q_name")
+    <Entity Z-25> None
+    <Field Z-25:last_name> last_name
+    <Field Z-25:first_name> first_name
+    <Field Z-25:middle_name> middle_name
+    <Field Z-25:title> title
+    <Field_Composite Z-25:lifetime> lifetime
+    <Field Z-25:lifetime.start> lifetime.start
+    <Field Z-25:lifetime.finish> lifetime.finish
+    <Field Z-25:sex> sex
+    <Field_Rev_Ref Z-25:phones> phones
+    <Entity_Rev_Ref Z-25:phones@3> phones
+    <Field_Entity Z-25:phones::right@3> phones.right
+    <Field Z-25:phones::right.country_code@3> phones.right.country_code
+    <Field Z-25:phones::right.area_code@3> phones.right.area_code
+    <Field Z-25:phones::right.number@3> phones.right.number
+    <Field Z-25:phones::extension@3> phones.extension
+    <Field Z-25:phones::desc@3> phones.desc
+    <Field_Ref_Hidden Z-25:phones::left@3> phones.left
+    <Entity_Rev_Ref Z-25:phones/1> phones
+    <Field_Entity Z-25:phones::right/1> phones.right
+    <Field Z-25:phones::right.country_code/1> phones.right.country_code
+    <Field Z-25:phones::right.area_code/1> phones.right.area_code
+    <Field Z-25:phones::right.number/1> phones.right.number
+    <Field Z-25:phones::extension/1> phones.extension
+    <Field Z-25:phones::desc/1> phones.desc
+    <Field_Ref_Hidden Z-25:phones::left/1> phones.left
+    <Entity_Rev_Ref Z-25:phones/2> phones
+    <Field_Entity Z-25:phones::right/2> phones.right
+    <Field Z-25:phones::right.country_code/2> phones.right.country_code
+    <Field Z-25:phones::right.area_code/2> phones.right.area_code
+    <Field Z-25:phones::right.number/2> phones.right.number
+    <Field Z-25:phones::extension/2> phones.extension
+    <Field Z-25:phones::desc/2> phones.desc
+    <Field_Ref_Hidden Z-25:phones::left/2> phones.left
+
+    >>> f_p_z2 ["Z-25:phones"]
+    <Field_Rev_Ref Z-25:phones>
+
+    >>> f_p_z2 ["Z-25:phones@3"]
+    <Entity_Rev_Ref Z-25:phones@3>
+
+    >>> f_p_z2 ["Z-25:phones/1"]
+    <Entity_Rev_Ref Z-25:phones/1>
+
+    >>> f_p_z2 ["Z-25:phones/2"]
+    <Entity_Rev_Ref Z-25:phones/2>
+
+    >>> f_p_z2_cargo = f_p_z2.as_json_cargo ["cargo"]
+    >>> print (formatted (f_p_z2_cargo))
+    { 'field_values' :
+        { 'Z-25:first_name' :
+            { 'init' : 'Christian' }
+        , 'Z-25:last_name' :
+            { 'init' : 'Tanzer' }
+        , 'Z-25:lifetime.finish' :
+            {}
+        , 'Z-25:lifetime.start' :
+            { 'init' : '1959-09-26' }
+        , 'Z-25:middle_name' :
+            {}
+        , 'Z-25:phones::desc/1' :
+            {}
+        , 'Z-25:phones::desc/2' :
+            {}
+        , 'Z-25:phones::desc@3' :
+            { 'init' : 'example' }
+        , 'Z-25:phones::extension/1' :
+            {}
+        , 'Z-25:phones::extension/2' :
+            {}
+        , 'Z-25:phones::extension@3' :
+            { 'init' : '42' }
+        , 'Z-25:phones::left/1' :
+            { 'init' :
+                {}
+            }
+        , 'Z-25:phones::left/2' :
+            { 'init' :
+                {}
+            }
+        , 'Z-25:phones::left@3' :
+            { 'init' :
+                { 'cid' : 1
+                , 'display' : 'Tanzer Christian'
+                , 'pid' : 1
+                }
+            }
+        , 'Z-25:phones::right.area_code/1' :
+            {}
+        , 'Z-25:phones::right.area_code/2' :
+            {}
+        , 'Z-25:phones::right.area_code@3' :
+            { 'init' : '1' }
+        , 'Z-25:phones::right.country_code/1' :
+            { 'edit' : '43' }
+        , 'Z-25:phones::right.country_code/2' :
+            { 'edit' : '43' }
+        , 'Z-25:phones::right.country_code@3' :
+            { 'init' : '43' }
+        , 'Z-25:phones::right.number/1' :
+            {}
+        , 'Z-25:phones::right.number/2' :
+            {}
+        , 'Z-25:phones::right.number@3' :
+            { 'init' : '98765432' }
+        , 'Z-25:phones::right/1' :
+            { 'init' :
+                {}
+            }
+        , 'Z-25:phones::right/2' :
+            { 'init' :
+                {}
+            }
+        , 'Z-25:phones::right@3' :
+            { 'init' :
+                { 'cid' : 2
+                , 'display' : '43/1/98765432'
+                , 'pid' : 2
+                }
+            }
+        , 'Z-25:phones@3' :
+            { 'init' :
+                { 'cid' : 3
+                , 'display' : 'Tanzer Christian, 43/1/98765432, 42'
+                , 'pid' : 3
+                }
+            }
+        , 'Z-25:sex' :
+            {}
+        , 'Z-25:title' :
+            {}
+        }
+    , 'pid' : 1
+    , 'sid' : 0
+    , 'sigs' :
+        { 'Z-25' : '07f7e560f0bce1d1fd7805e2a5e88ecad2e35badd9808b1535178897'
+        , 'Z-25:phones/1' : '25eae488af26467b65115025010fbaa04f2b8d5abe54b5985068557b'
+        , 'Z-25:phones/2' : '2961546c014e6555a285ce1895979dc5c33f3877961f307d9c14dd63'
+        , 'Z-25:phones::right/1' : '0ffe887fe6582a65d70ff310e710100dc85a8c31acb50595f78b9e28'
+        , 'Z-25:phones::right/2' : 'b42da816565176a9ec3897944b0c60df32829fd706d25d54ac60d710'
+        , 'Z-25:phones::right@3' : '4d67f40e34b0d8de295fcd90c84a2b260d0378bd8cada88015c962d1'
+        , 'Z-25:phones@3' : '7789ce61a7fe3d9173a8310a8dda790a2607af2ba8d9f3e2929a9c11'
+        }
+    }
+
+    >>> for e in f_p_z.entity_elements :
+    ...     print (e)
+    <Entity Z-25>
+    <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Entity Z-25:phones::right@3>
+
+    >>> f_p_z.populate_new (f_p_z2_cargo)
+
+    >>> for e in f_p_z.entity_elements :
+    ...     print (e)
+    <Entity Z-25>
+    <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Entity Z-25:phones::right@3>
+    <Entity_Rev_Ref Z-25:phones/1>
+    <Field_Entity Z-25:phones::right/1>
+    <Entity_Rev_Ref Z-25:phones/2>
+    <Field_Entity Z-25:phones::right/2>
+
+    >>> show_elements (f_p_z, "template_macro")
+    <Entity Z-25> Entity_Form
+    <Field Z-25:last_name> Field
+    <Field Z-25:first_name> Field
+    <Field Z-25:middle_name> Field
+    <Field Z-25:title> Field
+    <Field_Composite Z-25:lifetime> Field_Composite
+    <Field Z-25:lifetime.start> Field
+    <Field Z-25:lifetime.finish> Field
+    <Field Z-25:sex> Field
+    <Field_Rev_Ref Z-25:phones> Field_Rev_Ref
+    <Entity_Rev_Ref Z-25:phones@3> Entity_Rev_Ref
+    <Field_Entity Z-25:phones::right@3> Field_Entity
+    <Field Z-25:phones::right.country_code@3> Field
+    <Field Z-25:phones::right.area_code@3> Field
+    <Field Z-25:phones::right.number@3> Field
+    <Field Z-25:phones::extension@3> Field
+    <Field Z-25:phones::desc@3> Field
+    <Field_Ref_Hidden Z-25:phones::left@3> Field_Ref_Hidden
+    <Entity_Rev_Ref Z-25:phones/1> Entity_Rev_Ref
+    <Field_Entity Z-25:phones::right/1> Field_Entity
+    <Field Z-25:phones::right.country_code/1> Field
+    <Field Z-25:phones::right.area_code/1> Field
+    <Field Z-25:phones::right.number/1> Field
+    <Field Z-25:phones::extension/1> Field
+    <Field Z-25:phones::desc/1> Field
+    <Field_Ref_Hidden Z-25:phones::left/1> Field_Ref_Hidden
+    <Entity_Rev_Ref Z-25:phones/2> Entity_Rev_Ref
+    <Field_Entity Z-25:phones::right/2> Field_Entity
+    <Field Z-25:phones::right.country_code/2> Field
+    <Field Z-25:phones::right.area_code/2> Field
+    <Field Z-25:phones::right.number/2> Field
+    <Field Z-25:phones::extension/2> Field
+    <Field Z-25:phones::desc/2> Field
+    <Field_Ref_Hidden Z-25:phones::left/2> Field_Ref_Hidden
+
+    >>> show_elements (f_p_z, "input_widget")
+    <Entity Z-25> ---
+    <Field Z-25:last_name> mf3_input, string
+    <Field Z-25:first_name> mf3_input, string
+    <Field Z-25:middle_name> mf3_input, string
+    <Field Z-25:title> mf3_input, string
+    <Field_Composite Z-25:lifetime> mf3_input, string
+    <Field Z-25:lifetime.start> mf3_input, date
+    <Field Z-25:lifetime.finish> mf3_input, date
+    <Field Z-25:sex> mf3_input, named_object
+    <Field_Rev_Ref Z-25:phones> mf3_input, string
+    <Entity_Rev_Ref Z-25:phones@3> mf3_input, id_entity
+    <Field_Entity Z-25:phones::right@3> mf3_input, id_entity
+    <Field Z-25:phones::right.country_code@3> mf3_input, number
+    <Field Z-25:phones::right.area_code@3> mf3_input, number
+    <Field Z-25:phones::right.number@3> mf3_input, number
+    <Field Z-25:phones::extension@3> mf3_input, number
+    <Field Z-25:phones::desc@3> mf3_input, string
+    <Field_Ref_Hidden Z-25:phones::left@3> mf3_input, hidden
+    <Entity_Rev_Ref Z-25:phones/1> mf3_input, id_entity
+    <Field_Entity Z-25:phones::right/1> mf3_input, id_entity
+    <Field Z-25:phones::right.country_code/1> mf3_input, number
+    <Field Z-25:phones::right.area_code/1> mf3_input, number
+    <Field Z-25:phones::right.number/1> mf3_input, number
+    <Field Z-25:phones::extension/1> mf3_input, number
+    <Field Z-25:phones::desc/1> mf3_input, string
+    <Field_Ref_Hidden Z-25:phones::left/1> mf3_input, hidden
+    <Entity_Rev_Ref Z-25:phones/2> mf3_input, id_entity
+    <Field_Entity Z-25:phones::right/2> mf3_input, id_entity
+    <Field Z-25:phones::right.country_code/2> mf3_input, number
+    <Field Z-25:phones::right.area_code/2> mf3_input, number
+    <Field Z-25:phones::right.number/2> mf3_input, number
+    <Field Z-25:phones::extension/2> mf3_input, number
+    <Field Z-25:phones::desc/2> mf3_input, string
+    <Field_Ref_Hidden Z-25:phones::left/2> mf3_input, hidden
+
+    >>> _ = f_p_z ["Z-25:phones"].add ()
+
+    >>> for e in f_p_z.entity_elements :
+    ...     print (e)
+    <Entity Z-25>
+    <Entity_Rev_Ref Z-25:phones@3>
+    <Field_Entity Z-25:phones::right@3>
+    <Entity_Rev_Ref Z-25:phones/1>
+    <Field_Entity Z-25:phones::right/1>
+    <Entity_Rev_Ref Z-25:phones/2>
+    <Field_Entity Z-25:phones::right/2>
+    <Entity_Rev_Ref Z-25:phones/3>
+    <Field_Entity Z-25:phones::right/3>
 
     >>> F_PhP   = MF3_E.Entity.Auto (scope.PAP.Person_has_Phone, id_prefix = "X")
     >>> f_PhP   = F_PhP (scope)

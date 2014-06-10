@@ -36,6 +36,9 @@
 #                     fix `_rendered_completions`
 #    11-May-2014 (CT) Implement `Completed._rendered_post`,
 #                     factor `_get_form_field` from `Completer._rendered_post`
+#    17-Jun-2014 (CT) Add and use `Form_attr_spec`, `Form_spec`
+#    18-Jun-2014 (CT) Add `Add_Rev_Ref` (and remove stale `Expander`)
+#    19-Jun-2014 (CT) Add `Deleter`
 #    ««revision-date»»···
 #--
 
@@ -272,6 +275,7 @@ class _JSON_Action_ (_Ancestor) :
         sid        = json.get ("sid")
         secret     = self.session_secret (request, sid)
         form       = self.form_instance  (sid = sid, session_secret = secret)
+        form.populate_new (json)
         try :
             field  = form [json ["trigger"]]
         except KeyError :
@@ -483,6 +487,28 @@ class _Changer_ (_HTML_Action_) :
 
 # end class _Changer_
 
+class Add_Rev_Ref (_JSON_Action_) :
+    """Add a sub-form for a rev-ref entity."""
+
+    name            = "add_rev_ref"
+
+    def _rendered_post (self, request, response) :
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        elem         = field.add ()
+        f_ajc        = form.as_json_cargo ### ensure proper ids for "completers"
+        t_module     = self.top.Templateer.get_template (elem.template_module)
+        html         = t_module.call_macro \
+            (elem.template_macro, self, form, elem, t_module)
+        result       = dict \
+            ( html             = html
+            , form_spec_update = elem.as_json_cargo
+            )
+        return result
+    # end def _rendered_post
+
+# end class Add_Rev_Ref
+
 class Instance (_Changer_) :
     """Page displaying form for changing a specific instance
        of a etype with an MF3 form.
@@ -561,17 +587,28 @@ class Creator (_Changer_) :
 
 # end class Creator
 
+class Deleter (_JSON_Action_PO_) :
+    """Delete a specific instance of a etype."""
 
-class Expander (_JSON_Action_) :
-    """Expand a sub-form (e.g., Entity_Link)"""
+    argn                 = 0
+    name                 = "delete"
 
-    name            = "expand"
+    def _rendered_post (self, request, response) :
+        json           = request.json
+        form_pid       = json.get ("form_pid")
+        self.args      = [form_pid]
+        form, field    = self._get_form_field (request, json)
+        obj            = field.essence
+        if obj is not None :
+            result         = dict \
+                ( html             = """<h6>%s</h6>"""
+                % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
+                )
+            obj.destroy ()
+        return result
+    # end def _rendered_post
 
-    POST            = None
-
-    ### XXX
-
-# end class Expander
+# end class Deleter
 
 class QX_Completed (_JSON_Action_PO_) :
     """Process AJAX query for accepting completion of entity auto completion"""
@@ -672,6 +709,8 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
 
     Instance              = Instance
 
+    Form_attr_spec        = {}
+    Form_spec             = {}
     form_attr_spec_d      = {}
     max_completions       = 20
     nav_off_canvas        = True
@@ -689,7 +728,7 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
     _sort_key             = None
 
     _v_entry_type_list    = \
-        (Completed, Completer, Creator, Expander, _QX_Dispatcher_)
+        (Add_Rev_Ref, Completed, Completer, Creator, Deleter, _QX_Dispatcher_)
 
     @Once_Property
     def et_map_name (self) :
@@ -700,7 +739,12 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
     @Once_Property
     @getattr_safe
     def Form (self) :
-        return MF3.Entity.Auto (self.E_Type, id_prefix = self.form_id_prefix)
+        return MF3.Entity.Auto \
+            ( self.E_Type
+            , attr_spec = self.Form_attr_spec
+            , id_prefix = self.form_id_prefix
+            , ** self.Form_spec
+            )
     # end def Form
 
     @property
@@ -765,6 +809,10 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
         return None
     # end def eligible_objects
 
+    def href_add_rev_ref (self) :
+        return pp_join (self.abs_href, "add_rev_ref")
+    # end def href_add_rev_ref
+
     def href_complete (self) :
         return pp_join (self.abs_href, "complete")
     # end def href_complete
@@ -773,8 +821,8 @@ class _MF3_E_Type_Mixin_ (_Mixin, GTW.RST.TOP._Base_) :
         return pp_join (self.abs_href, "completed")
     # end def href_completed
 
-    def href_expand (self) :
-        return pp_join (self.abs_href, "expand")
+    def href_delete (self) :
+        return pp_join (self.abs_href, "delete")
     # end def href_delete
 
     def href_qx_esf_completed (self) :

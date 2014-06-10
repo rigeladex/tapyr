@@ -43,6 +43,25 @@
 #    16-May-2014 (CT) Redefine `Field_Entity.collapsed`
 #     4-Jun-2014 (CT) Split `id` into `bare_id` and `index`
 #     4-Jun-2014 (CT) Add and use `_pop_to_self_`
+#     7-Jun-2014 (CT) Add `Field_Rev_Ref`
+#     8-Jun-2014 (CT) Add `Entity_Rev_Ref`
+#    11-Jun-2014 (CT) Factor `_Field_Base_`
+#    11-Jun-2014 (CT) Fix `id` and `__getitem__` for `Entity_Rev_Ref`,
+#                     `Field_Rev_Ref`
+#    14-Jun-2014 (CT) Add `Field_Rev_Ref.add`
+#    14-Jun-2014 (CT) Add support for `Entity_Rev_Ref` to `_Entity_.__getitem__`
+#    16-Jun-2014 (CT) Factor `_Field_Entity_Mixin_`
+#    17-Jun-2014 (CT) Add `populate_new`, `reset_once_properties`
+#    17-Jun-2014 (CT) Add `.index` to `sig`
+#    18-Jun-2014 (CT) Factor `_Entity_Mixin_.as_json_cargo`,
+#                     `.checkers_as_json_cargo`, `.completers_as_json_cargo`,
+#                     `.entity_elements`, `.sigs_as_json_cargo`,
+#                     and `.submitted_value`
+#    18-Jun-2014 (CT) Redefine `Entity_Rev_Ref.ui_display`
+#    18-Jun-2014 (CT) Redefine `Field_Ref_Hidden.__call__` and
+#                     `.submitted_value`
+#    19-Jun-2014 (CT) Factor `cooked` and `init` to `_Field_Entity_Mixin_`
+#    19-Jun-2014 (CT) Add `action_buttons`, `Entity_Rev_Ref.edit`
 #    ««revision-date»»···
 #--
 
@@ -61,8 +80,9 @@ import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
 from   _TFL._Meta.M_Class       import BaM
-from   _TFL.predicate           import filtered_join
+from   _TFL.predicate           import filtered_join, rsplit_hst
 from   _TFL.pyk                 import pyk
+from   _TFL.Regexp              import Regexp, re
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Lists
@@ -98,6 +118,10 @@ MAT.A_Confirmation.mf3_template_macro   = "Field__Confirmation"
 MAT.A_Attr_Type.mf3_template_module     = None
 MAT.A_Date_Interval.mf3_template_module = "mf3_h_cols"
 
+class Delay_Call (BaseException) :
+    """Delay call until rev-ref is defined."""
+# end class Delay_Call
+
 class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
     """Meta class for `_Element_`"""
 
@@ -109,20 +133,36 @@ class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
             if "template_macro" not in dct :
                 cls.template_macro = name
             root = cls.m_root
-            if getattr (root, "_Element_Map", None) :
+            if getattr (root, "_Element_Map_body", None) :
                 cls._update_element_map (root)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
-        result._update_element_map (result.root)
+        Entity = result.Entity
+        while Entity is not None :
+            ### update all `_Element_Map`s up to `root`
+            while getattr (Entity, "_Element_Map_body", None) is None :
+                Entity = Entity.Parent_Entity
+            result._update_element_map (Entity)
+            Entity = Entity.Parent_Entity
         return result
     # end def __call__
 
     @property
-    def fq_id (cls) :
+    def elements (self) :
+        return self._elements
+    # end def elements
+
+    @elements.setter
+    def elements (self, value) :
+        self._elements = value
+    # end def elements
+
+    @property
+    def id (cls) :
         return cls.bare_id
-    # end def fq_id
+    # end def id
 
     ### `m_root` cannot be a `Once_Property` because inheritance
     @property
@@ -144,69 +184,98 @@ class M_Entity (_M_Element_) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        if cls.parent is None :
-            ### delay construction of `cls._Element_Map` until first call
-            ### of `__getitem__`
-            ### * `id` of elements is set later by `_add_auto_attributes`
-            cls._Element_Map = None
+        ### delay construction of `cls._Element_Map` until first call
+        ### of `__getitem__`
+        ### * `id` of elements is set later by `_add_auto_attributes`
+        cls._Element_Map_body = None
     # end def __init__
 
-    def __call__ (cls, * args, ** kw) :
-        result = cls.__new__ (cls, * args, ** kw)
-        result._Element_Map = {}
-        result.__init__ (* args, ** kw)
-        return result
-    # end def __call__
+    @property
+    def _Element_Map (cls) :
+        return cls.__Element_Map
+    # end def _Element_Map
 
     @property
     def __Element_Map (cls) :
-        result = cls._Element_Map
+        result = cls._Element_Map_body
         if result is None :
-            result = cls._Element_Map = {}
-            if cls.parent is None :
-                for e in cls.elements_transitive () :
-                    if e is not cls :
-                        e._update_element_map (cls)
+            result = cls._Element_Map_body = {}
+            for e in cls.elements_transitive () :
+                if e is not cls :
+                    e._update_element_map (cls)
         return result
     # end def _Element_Map
 
     def __getitem__ (cls, key) :
-        return cls.__Element_Map [key]
+        try :
+            return cls.__Element_Map [key]
+        except KeyError :
+            head, _, tail = rsplit_hst (key, Entity_Rev_Ref.id_sep)
+            if head and tail :
+                return cls [head] [tail]
+            raise
     # end def __getitem__
 
 # end class M_Entity
+
+class M_Entity_Rev_Ref (M_Entity) :
+    """Meta class for `Entity_Rev_Ref`"""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        cls.input_widget = "mf3_input, id_entity"
+    # end def __init__
+
+# end class M_Entity_Rev_Ref
 
 class M_Field (_M_Element_) :
     """Meta class for `Field`."""
 
 # end class M_Field
 
+class M_Field_Rev_Ref (M_Field) :
+    """Meta class for `Field_Rev_Ref`."""
+
+    def __getitem__ (cls, key) :
+        if Entity_Rev_Ref.id_sep in key :
+            try :
+                return cls.m_root [key]
+            except KeyError :
+                pass
+        return cls.proto [cls.id_sep.join ((cls.name, key))]
+    # end def __getitem__
+
+# end class M_Field_Rev_Ref
+
 class _Base_ (TFL.Meta.Object) :
     """Base class of element classes."""
 
     bare_id             = None
     completer           = None
-    elements            = ()
-    id                  = TFL.Meta.Alias_Meta_and_Class_Attribute ("fq_id")
     id_sep              = "."
+    index_sep           = "/"
     name                = None
     parent              = None
+    pid_sep             = "@"
     q_name              = None
     skip                = False
     template_module     = "mf3"
-    ui_rank             = 0
     undef               = TFL.Undef ("value")
 
     _commit_errors      = ()
     _conflicts          = 0
+    _elements           = ()
     _element_ids        = ("id", )
     _index              = None
-    _lists_to_combine   = ("_element_ids", "_pop_to_self", "_pop_to_self_")
+    _lists_to_combine   = \
+        ("_element_ids", "_reset_properties", "_pop_to_self", "_pop_to_self_")
     _pop_to_self        = ("parent", "template_macro", "template_module")
     _pop_to_self_       = ("index", )
     _required           = False
+    _reset_properties   = ("template_elements", )
     _submitted_value    = undef
     _submission_errors  = ()
+    _ui_rank            = (0, )
 
     def __init__ (self, ** kw) :
         pass
@@ -227,6 +296,16 @@ class _Base_ (TFL.Meta.Object) :
         return sum ((e.conflicts for e in self.elements), self._conflicts)
     # end def conflicts
 
+    @TFL.Meta.Property
+    def elements (self) :
+        return self._elements
+    # end def elements
+
+    @elements.setter
+    def elements (self, value) :
+        self._elements = value
+    # end def elements
+
     @TFL.Meta.Once_Property
     def errors (self) :
         return self.submission_errors + self.commit_errors
@@ -237,11 +316,22 @@ class _Base_ (TFL.Meta.Object) :
         return filtered_join ("", [self.bare_id, self.index])
     # end def fq_id
 
+    @TFL.Meta.Property
+    def id (self) :
+        return self.fq_id
+    # end def id
+
     @TFL.Meta.Once_Property
     def index (self) :
         return filtered_join \
             ("", [self.parent and self.parent.index, self._index])
     # end def index
+
+    @TFL.Meta.Once_Property
+    def Parent_Entity (self) :
+        if self.parent :
+            return self.parent.Entity
+    # end def Parent_Entity
 
     @TFL.Meta.Once_Property
     def root (self) :
@@ -270,6 +360,16 @@ class _Base_ (TFL.Meta.Object) :
             ((e for e in self.elements if not e.skip), key = Q.ui_rank)
     # end def template_elements
 
+    @property
+    def ui_rank (self) :
+        return self._ui_rank
+    # end def ui_rank
+
+    @ui_rank.setter
+    def ui_rank (self, value) :
+        self._ui_rank = value
+    # end def ui_rank
+
     @TFL.Meta.Class_and_Instance_Method
     def elements_transitive (soc) :
         if not soc.skip :
@@ -280,13 +380,28 @@ class _Base_ (TFL.Meta.Object) :
                         yield et
     # end def elements_transitive
 
+    def reset_once_properties (self) :
+        for k in self._reset_properties :
+            try :
+                delattr (self, k)
+            except AttributeError :
+                pass
+    # end def reset_once_properties
+
+    def reset_once_properties_p (self) :
+        p = self
+        while p is not None :
+            p.reset_once_properties ()
+            p = p.parent
+    # end def reset_once_properties
+
     def submitted_value_transitive (self) :
         return dict (self._submitted_value_iter ())
     # end def submitted_value_transitive
 
-    @TFL.Meta.Class_and_Instance_Method
-    def template_module_iter (soc) :
-        for e in soc.elements_transitive () :
+    @classmethod
+    def template_module_iter (cls) :
+        for e in cls.elements_transitive () :
             tm = e.template_module
             if tm :
                 yield tm
@@ -302,7 +417,7 @@ class _Base_ (TFL.Meta.Object) :
             Map = root._Element_Map
             for k in soc._element_ids :
                 key = getattr (soc, k, None)
-                if key :
+                if key and not key in Map :
                     Map [key] = soc
     # end def _update_element_map
 
@@ -329,7 +444,9 @@ class _Base_ (TFL.Meta.Object) :
 class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
     """Base class for MF3 element classes."""
 
-    id_essence        = TFL.Meta.Alias_Property ("essence")
+    id_essence          = TFL.Meta.Alias_Property ("essence")
+
+    _reset_properties   = ("field_elements", )
 
     def __init__ (self, essence = None, ** kw) :
         self.__super.__init__ (essence = essence, ** kw)
@@ -357,9 +474,14 @@ class _Element_ (BaM (_Base_, metaclass = _M_Element_)) :
         kw.pop ("parent", None)
         cls.elements = tuple \
             (   cls._Auto_Element (ak, E_Type, ** kw)
-            for ak in cls.attr_selector (E_Type)
+            for ak in cls._auto_attributes (E_Type)
             )
     # end def _add_auto_attributes
+
+    @classmethod
+    def _auto_attributes (cls, E_Type) :
+        return cls.attr_selector (E_Type)
+    # end def _auto_attributes
 
     @classmethod
     def _Auto_Element (cls, ak, E_Type, ** kw) :
@@ -383,8 +505,10 @@ class _Entity_Mixin_ (_Base_) :
 
     attr_selector       = MOM.Attr.Selector.List \
         (MOM.Attr.Selector.primary, MOM.Attr.Selector.required)
+    include_rev_refs    = ()
     render_groups       = ()
-    _pop_to_self        = ("attr_selector", "render_groups")
+    _pop_to_self        = ("attr_selector", "include_rev_refs", "render_groups")
+    _reset_properties   = ("sig", )
 
     def __call__ (self, scope, cargo) :
         essence = self.essence
@@ -393,30 +517,88 @@ class _Entity_Mixin_ (_Base_) :
         handler = self._create_from_submission if essence is None \
             else  self._change_from_submission
         try :
+            to_do = []
             for e in self.elements :
-                e (scope, cargo)
-                if e.attr.kind.is_required :
-                    r_errs += len (e.submission_errors)
+                try :
+                    e (scope, cargo)
+                except Delay_Call :
+                    to_do.append (e)
+                else :
+                    if e.attr.kind.is_required :
+                        r_errs += len (e.submission_errors)
             svs = self.submitted_value
             if svs and not (self.conflicts or r_errs) :
                 handler (scope, svs)
+            for e in to_do :
+                e (scope, cargo)
         except MOM.Error.Error as exc :
             if not errors :
                 errors.append (exc)
     # end def __call__
 
+    @classmethod
+    def _auto_attributes (cls, E_Type) :
+        result = cls.__c_super._auto_attributes (E_Type)
+        if cls.include_rev_refs :
+            irrs   = MOM.Attr.Selector.Name (* cls.include_rev_refs) (E_Type)
+            result = tuple (ichain (result, irrs))
+        return result
+    # end def _auto_attributes
+
     @TFL.Meta.Once_Property
-    def entity_as_json_cargo (self) :
-        return dict \
-            ( ((f.r_name, f.field_as_json_cargo) for f in self.field_elements)
-            , ** { "$sid" : self.root.sig_hash (self.sig) }
+    def as_json_cargo (self) :
+        def _gen (self, elems) :
+            for e in elems :
+                for k, v in e.fields_as_json_cargo () :
+                    yield k, v
+        result = dict \
+            ( cargo             = dict
+                ( field_values  = dict (_gen (self, self.entity_elements))
+                , sigs          = self.sigs_as_json_cargo
+                )
+            , checkers          = self.checkers_as_json_cargo
+            , completers        = self.completers_as_json_cargo
             )
-    # end def entity_as_json_cargo
+        return result
+    # end def as_json_cargo
+
+    @TFL.Meta.Once_Property
+    def checkers_as_json_cargo (self) :
+        return {} ### XXX
+    # end def checkers_as_json_cargo
+
+    @TFL.Meta.Once_Property
+    def completers_as_json_cargo (self) :
+        return dict \
+            (  (e.completer.id, e.completer.as_json_cargo)
+            for e in self.elements_transitive () if e.completer
+            )
+    # end def completers_as_json_cargo
+
+    @TFL.Meta.Once_Property
+    def entity_elements (self) :
+        def _gen (self) :
+            for e in self.elements_transitive () :
+                if isinstance (e, _Entity_Mixin_) and e.field_elements :
+                    yield e
+        return tuple (_gen (self))
+    # end def entity_elements
 
     @TFL.Meta.Once_Property
     def sig (self) :
         return tuple (f.sig for f in self.field_elements)
     # end def sig
+
+    @TFL.Meta.Once_Property
+    def sigs_as_json_cargo (self) :
+        sig_hash = self.root.sig_hash
+        return dict ((e.id, sig_hash (e.sig)) for e in self.entity_elements)
+    # end def sigs_as_json_cargo
+
+    @property
+    def submitted_value (self) :
+        return self.submitted_value_transitive ()
+    # end def submitted_value
 
     def fields_as_json_cargo (self) :
         return ((f.id, f.field_as_json_cargo) for f in self.field_elements)
@@ -494,8 +676,69 @@ class _Entity_Mixin_ (_Base_) :
 
 # end class _Entity_Mixin_
 
-class _Field_ (BaM (_Element_, metaclass = M_Field)) :
-    """Base class for MF3 field classes."""
+class _Entity_ (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
+
+    attr_selector       = MOM.Attr.Selector.editable
+
+    def __init__ (self, essence = None, ** kw) :
+        self._Element_Map_body = {}
+        self.__super.__init__ (essence, ** kw)
+    # end def __init__
+
+    @classmethod
+    def Auto (cls, E_Type, ** kw) :
+        E_Type = E_Type.E_Type ### necessary if E_Type_Manager is passed in
+        result = cls.New \
+            ( E_Type.type_name.replace (".", "__")
+            , E_Type        = E_Type
+            , attr_selector = kw.pop ("attr_selector", cls.attr_selector)
+            , ** kw
+            )
+        kw.pop ("include_rev_refs", None)
+        result._add_auto_attributes (E_Type, ** kw)
+        return result
+    # end def Auto
+
+    @TFL.Meta.Once_Property
+    def Entity (self) :
+        return self
+    # end def Entity
+
+    @property
+    def ui_display (self) :
+        if self.essence :
+            return self.essence.ui_display
+    # end def ui_display
+
+    @TFL.Meta.Property
+    def _Element_Map (self) :
+        return self._Element_Map_body
+    # end def _Element_Map
+
+    def get (self, key, default = None) :
+        return self._Element_Map.get (key, default)
+    # end def get
+
+    def __getitem__ (self, key) :
+        try :
+            return self._Element_Map [key]
+        except KeyError :
+            head, _, index = rsplit_hst (key, self.index_sep)
+            if head and index :
+                if Entity_Rev_Ref.id_sep in head :
+                    head, _, tail  = rsplit_hst (head, Entity_Rev_Ref.id_sep)
+                else :
+                    tail  = None
+                head_elem = self [head]
+                key       = tail if tail else int (index)
+                result    = head_elem [key]
+                return result
+            raise
+    # end def __getitem__
+
+# end class _Entity_
+
+class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
 
     collapsed               = False
     default                 = _Base_.undef
@@ -506,7 +749,7 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
         ( ( (k, k) for k in
             ( "css_align",   "css_class"
             , "description", "explanation", "ui_description"
-            , "ui_name",     "ui_rank"
+            , "ui_name"
             )
           )
         , allow_new         = "ui_allow_new"
@@ -517,6 +760,7 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
         , settable          = "is_settable"
         , template_macro    = "mf3_template_macro"
         , template_module   = "mf3_template_module"
+        , _ui_rank          = "ui_rank"
         )
 
     _edit                   = _Base_.undef
@@ -535,9 +779,9 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
 
     def __init__ (self, essence = None, ** kw) :
         q_name      = self.q_name
-        attr_spec   = kw.get ("attr_spec", {}).get (q_name, {})
-        akw         = dict (attr_spec, ** kw)
-        self.__super.__init__ (essence, ** akw)
+        attr_spec   = kw.get  ("attr_spec", {}).get (q_name, {})
+        akw         = dict    (attr_spec, ** kw)
+        self.__super.__init__ (essence,   ** akw)
     # end def __init__
 
     @classmethod
@@ -659,13 +903,64 @@ class _Field_ (BaM (_Element_, metaclass = M_Field)) :
 
     @property
     def sig (self) :
-        return (self.name, self.readonly)
+        return (self.name, self.index, self.readonly)
     # end def sig
 
     @TFL.Meta.Class_and_Instance_Method
     def _own_id (soc, essence) :
         return soc.name
     # end def _own_id
+
+# end class _Field_Base_
+
+class _Field_Entity_Mixin_ (_Entity_Mixin_) :
+
+    action_buttons      = ("close", "clear", "reset")
+    _reset_properties   = ("field_as_json_cargo", )
+
+    @property
+    def cooked (self) :
+        return self.essence
+    # end def cooked
+
+    @TFL.Meta.Once_Property
+    def field_as_json_cargo (self) :
+        essence = self.essence
+        if essence is None :
+            value  = {}
+        else :
+            value  = dict \
+                ( cid     = essence.last_cid
+                , display = essence.ui_display
+                , pid     = essence.pid
+                )
+        result = dict (init = value)
+        return result
+    # end def field_as_json_cargo
+
+    @property
+    def init (self) :
+        essence = self.essence
+        result  = "" if essence is None else essence.pid
+        return result
+    # end def init
+
+    @init.setter
+    def init (self, value) :
+        self.essence = value
+    # end def init
+
+    def fields_as_json_cargo (self) :
+        result = self.__super.fields_as_json_cargo () if self.allow_new else ()
+        if self.essence is not None :
+            result = ichain (((self.id, self.field_as_json_cargo), ), result)
+        return result
+    # end def fields_as_json_cargo
+
+# end class _Field_Entity_Mixin_
+
+class _Field_ (_Field_Base_) :
+    """Base class for MF3 field classes."""
 
 # end class _Field_
 
@@ -706,10 +1001,9 @@ class _Field_Composite_Mixin_ (_Element_) :
 
 # end class _Field_Composite_Mixin_
 
-class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
+class Entity (_Entity_) :
     """Form comprising a single essential entity."""
 
-    attr_selector       = MOM.Attr.Selector.editable
     id_sep              = ":"
     required            = True
     sid                 = 0
@@ -717,6 +1011,7 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
 
     _hash_fct           = hashlib.sha224
     _pop_to_self        = ("_hash_fct", "sid", "session_secret")
+    _reset_properties   = ("as_json", "as_json_cargo", "entity_elements", )
 
     def __init__ (self, scope, essence = None, ** kw) :
         self.completer_map = {}
@@ -725,6 +1020,7 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
     # end def __init__
 
     def __call__ (self, scope, cargo) :
+        self.populate_new     (cargo)
         self.check_sigs       (cargo)
         self.__super.__call__ (scope, cargo)
         return self
@@ -732,18 +1028,11 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
 
     @classmethod
     def Auto (cls, E_Type, ** kw) :
-        E_Type = E_Type.E_Type ### necessary if E_Type_Manager is passed in
-        parent = kw.get ("parent")
         cls._set_id (E_Type, kw)
-        result = cls.New \
-            ( E_Type.type_name.replace (".", "__")
-            , E_Type        = E_Type
-            , attr_selector = kw.pop ("attr_selector", cls.attr_selector)
-            , ** kw
-            )
+        result = cls.__c_super.Auto (E_Type, ** kw)
+        parent = kw.get ("parent")
         if parent is None and "template_macro" not in kw :
             result.template_macro = "Entity_Form"
-        result._add_auto_attributes (E_Type, ** kw)
         return result
     # end def Auto
 
@@ -755,57 +1044,16 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
 
     @TFL.Meta.Once_Property
     def as_json_cargo (self) :
-        def _gen (self, elems) :
-            for e in elems :
-                for k, v in e.fields_as_json_cargo () :
-                    yield k, v
-        elems    = tuple (self.elements_transitive ())
-        sig_hash =  self.root.sig_hash
-        result   = dict \
-            ( cargo         = dict
-                ( field_values  = dict (_gen (self, self.entity_elements))
-                , sid           = self.sid
-                , sigs          = dict
-                    (  (e.id, sig_hash (e.sig))
-                    for e in self.entity_elements
-                    )
-                )
-            , checkers      = {} ### XXX
-            , completers    = dict
-                (  (e.completer.id, e.completer.as_json_cargo)
-                for e in elems if e.completer
-                )
-            )
+        result = dict (self.__super.as_json_cargo)
+        result ["cargo"] ["sid"] = self.sid
+        essence = self.essence
+        if essence is not None :
+            result ["cargo"] ["pid"] = essence.pid
         errors = self.errors
         if errors :
             result ["errors"] = MOM.Error.as_json_cargo (* errors)
         return result
     # end def as_json_cargo
-
-    @TFL.Meta.Once_Property
-    def Entity (self) :
-        return self
-    # end def Entity
-
-    @TFL.Meta.Once_Property
-    def entity_elements (self) :
-        def _gen (self) :
-            for e in self.elements_transitive () :
-                if isinstance (e, _Entity_Mixin_) and e.field_elements :
-                    yield e
-        return tuple (_gen (self))
-    # end def entity_elements
-
-    @property
-    def submitted_value (self) :
-        return self.submitted_value_transitive ()
-    # end def submitted_value
-
-    @property
-    def ui_display (self) :
-        if self.essence :
-            return self.essence.ui_display
-    # end def ui_display
 
     def check_sigs (self, cargo) :
         cargo_sigs = cargo.get ("sigs", {})
@@ -820,9 +1068,17 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
                     )
     # end def check_sigs
 
-    def get (self, key, default = None) :
-        return self._Element_Map.get (key, default)
-    # end def get
+    def populate_new (self, cargo) :
+        for e in self.elements_transitive () :
+            if e is not self :
+                try :
+                    pn = e.populate_new
+                except AttributeError :
+                    pass
+                else :
+                    pn (cargo)
+            e.reset_once_properties ()
+    # end def populate_new
 
     def sig_hash (self, sig) :
         dbid   = self.scope.db_meta_data.dbid
@@ -850,11 +1106,66 @@ class Entity (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
         kw ["bare_id"] = id
     # end def _new_id
 
-    def __getitem__ (self, key) :
-        return self._Element_Map [key]
-    # end def __getitem__
-
 # end class Entity
+
+class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_Rev_Ref)) :
+    """Subform comprising an entity with a reverse reference to the enclosing
+       entity.
+    """
+
+    action_buttons          = ("close", "clear", "reset", "remove")
+    allow_new               = True
+    id_sep                  = "::"
+    _pop_to_self            = ("allow_new", )
+
+    @property
+    def collapsed (self) :
+        return self.essence is not None
+    # end def collapsed
+
+    @property
+    def edit (self) :
+        return self.init
+    # end def edit
+
+    @property
+    def ui_display (self) :
+        return filtered_join \
+            (", ", (e.ui_display for e in self.template_elements))
+    # end def ui_display
+
+    @classmethod
+    def Auto (cls, E_Type, ** kw) :
+        parent = kw.get ("parent")
+        kw.update (bare_id = parent.bare_id)
+        result = cls.__c_super.Auto (E_Type, ** kw)
+        return result
+    # end def Auto
+
+    @classmethod
+    def _add_auto_attributes (cls, E_Type, ** kw) :
+        parent   = cls.parent
+        cls.q_name = parent.q_name
+        ref_attr = parent.attr.ref_attr
+        ref_ak   = parent.attr.Ref_Type.attributes [ref_attr.name]
+        cls.__c_super._add_auto_attributes (E_Type, ** kw)
+        kw.pop ("parent", None)
+        cls.elements += \
+            ( Field_Ref_Hidden.Auto (ref_ak, E_Type, parent = cls, ** kw)
+            ,
+            )
+    # end def _add_auto_attributes
+
+    @classmethod
+    def _auto_attributes (cls, E_Type) :
+        ref_attr = cls.parent.attr.ref_attr
+        return tuple \
+            ( a for a in cls.__c_super._auto_attributes (E_Type)
+                if  a is not ref_attr
+            )
+    # end def _auto_attributes
+
+# end class Entity_Rev_Ref
 
 @TFL.Add_To_Class ("MF3_Element", MAT.A_Attr_Type)
 class Field (_Field_) :
@@ -862,6 +1173,7 @@ class Field (_Field_) :
 
     asyn                = _Base_.undef
     attr_selector       = None
+    _reset_properties   = ("field_as_json_cargo", )
 
     def __call__ (self, scope, cargo) :
         my_cargo  = self._my_cargo (cargo)
@@ -966,7 +1278,7 @@ class Field_Composite (_Field_Composite_Mixin_, _Field_) :
 # end class Field_Composite
 
 @TFL.Add_To_Class ("MF3_Element", MAT._A_Id_Entity_)
-class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
+class Field_Entity (_Field_Composite_Mixin_, _Field_Entity_Mixin_, _Field_) :
     """Field comprising an attribute referring to another essential Entity."""
 
     _collapsed          = _Base_.undef
@@ -985,7 +1297,7 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
                 edit = my_cargo.get ("edit", {})
                 if not edit :
                     edit = my_cargo.get ("init", {})
-                pid  = edit.get ("pid")
+                pid  = edit.get ("pid") or None
                 if pid is not None :
                     if _essence is None or pid != _essence.pid :
                         value = scope.pid_query (pid)
@@ -1023,11 +1335,6 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
     # end def completer_elems
 
     @property
-    def cooked (self) :
-        return self.essence
-    # end def cooked
-
-    @property
     def essence (self) :
         result = self._essence
         if result is None :
@@ -1050,33 +1357,6 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
         self._essence = value
     # end def essence
 
-    @TFL.Meta.Once_Property
-    def field_as_json_cargo (self) :
-        essence = self.essence
-        if essence is None :
-            value  = {}
-        else :
-            value  = dict \
-                ( cid     = essence.last_cid
-                , display = essence.ui_display
-                , pid     = essence.pid
-                )
-        result = dict (init = value)
-        return result
-    # end def field_as_json_cargo
-
-    @property
-    def init (self) :
-        essence = self.essence
-        result  = "" if essence is None else essence.pid
-        return result
-    # end def init
-
-    @init.setter
-    def init (self, value) :
-        self.essence = value
-    # end def init
-
     @property
     def submitted_value (self) :
         result = self._submitted_value
@@ -1087,19 +1367,158 @@ class Field_Entity (_Field_Composite_Mixin_, _Entity_Mixin_, _Field_) :
         return result
     # end def submitted_value
 
-    def fields_as_json_cargo (self) :
-        result = self.__super.fields_as_json_cargo () if self.allow_new else ()
-        if self.essence is not None :
-            result = ichain (((self.id, self.field_as_json_cargo), ), result)
-        return result
-    # end def fields_as_json_cargo
-
     def _new_element (self, e, ** kw) :
         kw ["skip"] = kw.get ("skip") or not self.allow_new
         return self.__super._new_element (e, ** kw)
     # end def _new_element
 
 # end class Field_Entity
+
+class Field_Ref_Hidden (Field_Entity) :
+    """Hidden field for entity ref"""
+
+    _attr_prop_map          = dict \
+        (  (k, v)
+        for k, v in pyk.iteritems (Field_Entity._attr_prop_map)
+        if  k != "input_widget"
+        )
+
+    def __call__ (self, scope, cargo) :
+        pass
+    # end def __call__
+
+    @property
+    def input_widget (self) :
+        return "mf3_input, hidden"
+    # end def input_widget
+
+    @property
+    def prefilled (self) :
+        return True
+    # end def prefilled
+
+    @property
+    def submitted_value (self) :
+        ref = self.Parent_Entity.Parent_Entity
+        return ref.essence or ref._submitted_value
+    # end def submitted_value
+
+    @property
+    def ui_display (self) :
+        return None
+    # end def ui_display
+
+# end class Field_Ref_Hidden
+
+@TFL.Add_To_Class ("MF3_Element", MAT._A_Rev_Ref_)
+class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
+    """Rev_Ref field: encapsulates any number of Entity_Rev_Ref referring to
+       `parent.essence`.
+    """
+
+    attr_selector         = None
+    max_index             = 0
+    ui_rank               = (1 << 31, )
+
+    def __init__ (self, essence = None, ** kw) :
+        self.__super.__init__ (essence, ** kw)
+        kw.pop ("parent", None)
+        q_name        = self.q_name
+        attr_spec     = kw.get ("attr_spec", {}).get (q_name, {})
+        self.akw      = akw = dict (attr_spec, parent = self, ** kw)
+        self.elements = []
+        self._new_rrs = {}
+        if essence is not None :
+            proto     = self.proto
+            scope     = essence.home_scope
+            ETM       = scope [self.attr.Ref_Type.type_name]
+            rrs       = ETM.query (self.attr.ref_filter == essence.pid)
+            self.elements.extend \
+                ( proto
+                    ( rr
+                    , index   = "%s%s" % (self.pid_sep, rr.pid)
+                    , ** akw
+                    )
+                for rr in rrs
+                )
+    # end def __init__
+
+    def __call__ (self, scope, cargo) :
+        self.populate_new (cargo)
+        if self.parent.essence :
+            self._submission_errors = []
+            for e in self.elements :
+                e (scope, cargo)
+        else :
+            raise Delay_Call
+    # end def __call__
+
+    @classmethod
+    def Auto (cls, ak, E_Type, ** kw) :
+        result       = cls.__c_super.Auto (ak, E_Type, ** kw)
+        q_name       = result.q_name
+        attr_spec    = kw.get ("attr_spec", {}).get (q_name, {})
+        akw          = dict (attr_spec, ** kw)
+        akw.pop ("parent", None)
+        akw.pop ("_q_name", None)
+        result.proto = proto = Entity_Rev_Ref.Auto \
+            (ak.Ref_Type, parent = result, ** akw)
+        return result
+    # end def Auto
+
+    @classmethod
+    def template_module_iter (cls) :
+        for tm in cls.__c_super.template_module_iter () :
+            yield tm
+        for tm in cls.proto.template_module_iter () :
+            yield tm
+    # end def template_module_iter
+
+    def add (self, how_many = 1, ** kw) :
+        """Add `how_many` new `Entity_Rev_Ref` instances to `self.elements`"""
+        assert how_many > 0
+        akw       = dict (self.akw, ** kw)
+        max_index = self.max_index
+        for i in range (how_many) :
+            max_index += 1
+            result = self._new (akw, max_index)
+        self.max_index = max_index
+        self.reset_once_properties_p ()
+        return result
+    # end def add
+
+    def populate_new (self, cargo) :
+        akw  = self.akw
+        maxi = self.max_index
+        sigs = cargo.get ("sigs", {})
+        pat  = Regexp \
+            ( r"^%s%s(?P<ix>\d+)$"
+            % (re.escape (self.id), re.escape (self.index_sep))
+            )
+        for k in sorted (sigs) :
+            if pat.match (k) :
+                i    = int (pat.ix)
+                maxi = max (maxi, i)
+                self._new (akw, i)
+        self.max_index = maxi
+    # end def populate_new
+
+    def _new (self, akw, i) :
+        map = self._new_rrs
+        if i not in map :
+            index  = "%s%s" % (self.index_sep, i)
+            result = map [i] = self.proto (index = index, ** akw)
+            self.elements.append (result)
+            return result
+        else :
+            return map [i]
+    # end def _new
+
+    def __getitem__ (self, key) :
+        return self._new_rrs [key]
+    # end def __getitem__
+
+# end class Field_Rev_Ref
 
 if __name__ != "__main__" :
     GTW.MF3._Export_Module ()
