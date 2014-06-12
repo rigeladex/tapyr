@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -118,6 +118,7 @@
 #    17-Jul-2013 (CT) Remove `async_changes`, `db_cid`
 #     5-Aug-2013 (CT) Use `with ems.save_point ()` in `add` and `record_change`
 #    25-Aug-2013 (CT) Add `reserve_surrogates`
+#    12-Jun-2014 (CT) Add `_cleaned_url` and use in `Scope.__str__`
 #    ««revision-date»»···
 #--
 
@@ -133,6 +134,8 @@ import _MOM._SCM.Tracker
 
 from   _TFL.Gauge_Logger      import Gauge_Logger
 from   _TFL.predicate         import split_hst, rsplit_hst
+from   _TFL.pyk               import pyk
+from   _TFL.Regexp            import Re_Replacer
 
 import _TFL.Accessor
 import _TFL.Context
@@ -205,6 +208,7 @@ class Scope (TFL.Meta.Object) :
     init_callback          = TFL.Ordered_Set ()
     kill_callback          = TFL.Ordered_Set ()
     is_universe            = False
+    _cleaned_url           = Re_Replacer (r"(://\w+:)(\w+)@", r"\1<elided>@")
     _deprecated_type_names = {}
     _pkg_ns                = None
     __id                   = 0
@@ -850,8 +854,8 @@ class Scope (TFL.Meta.Object) :
     # end def __iter__
 
     def __str__ (self) :
-        return "%s %s<%s>" % \
-            (self.__class__.__name__, self.bname, self.db_url)
+        url = self._cleaned_url (pyk.text_type (self.db_url))
+        return "%s %s<%s>" % (self.__class__.__name__, self.bname, url)
     # end def __str__
 
 # end class Scope
