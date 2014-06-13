@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     4-Jun-2013 (CT) Creation
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,7 @@ _test_hierarchy = """
     PAP.Company_has_Phone          Internal__Type_Name Type_Name_Type PAP.Company_has_Phone
     PAP.Company_has_Url            Internal__Type_Name Type_Name_Type PAP.Company_has_Url
     PAP.Email                      Internal__Type_Name Type_Name_Type PAP.Email
+    PAP.Group                      Internal__Type_Name Type_Name_Type PAP.Group
     PAP.Id_Entity                  Internal__Type_Name Type_Name_Type PAP.Id_Entity
     PAP.Legal_Entity               Internal__Type_Name Type_Name_Type PAP.Legal_Entity
     PAP.Link                       Internal__Type_Name Type_Name_Type PAP.Link

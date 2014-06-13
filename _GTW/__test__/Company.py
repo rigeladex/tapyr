@@ -35,6 +35,7 @@
 #    11-May-2013 (CT) Add `test_entity_attr`
 #    15-May-2013 (CT) Add test for `link_ref_attr`
 #    24-Jul-2013 (CT) Add `test_saw`
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -134,10 +135,11 @@ _test_code = """
     type_name                                          relev p_epk p_epks
     ======================================================================
     PAP.Subject  . . . . . . . . . . . . . . . . . . .         True  True
-      PAP.Legal_Entity . . . . . . . . . . . . . . . .         True  True
-        PAP.Company  . . . . . . . . . . . . . . . . .   True  True  True
-          PAP.Company_P  . . . . . . . . . . . . . . .   True
-        PAP.Association  . . . . . . . . . . . . . . .   True
+      PAP.Group  . . . . . . . . . . . . . . . . . . .         True  True
+        PAP.Legal_Entity . . . . . . . . . . . . . . .         True  True
+          PAP.Company  . . . . . . . . . . . . . . . .   True  True  True
+            PAP.Company_P  . . . . . . . . . . . . . .   True
+          PAP.Association  . . . . . . . . . . . . . .   True
       PAP.Person . . . . . . . . . . . . . . . . . . .   True
 
     >>> AQ = PAP.Company_P.E_Type.AQ
@@ -2172,7 +2174,7 @@ _test_entity_attr = """
         property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
         url_links       query      PAP.Subject_has_Url       PAP.Subject_has_Url
         urls            query      PAP.Url                   PAP.Subject_has_Url
-    .PAP.Legal_Entity
+    .PAP.Group
         address_links   query      PAP.Subject_has_Address   PAP.Subject_has_Address
         addresses       query      PAP.Address               PAP.Subject_has_Address
         created_by      computed   MOM.Id_Entity
@@ -2186,7 +2188,21 @@ _test_entity_attr = """
         property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
         url_links       query      PAP.Subject_has_Url       PAP.Subject_has_Url
         urls            query      PAP.Url                   PAP.Subject_has_Url
-    ..PAP.Company
+    ..PAP.Legal_Entity
+        address_links   query      PAP.Subject_has_Address   PAP.Subject_has_Address
+        addresses       query      PAP.Address               PAP.Subject_has_Address
+        created_by      computed   MOM.Id_Entity
+        email_links     query      PAP.Subject_has_Email     PAP.Subject_has_Email
+        emails          query      PAP.Email                 PAP.Subject_has_Email
+        events          query      EVT.Event                 EVT.Event
+        last_changed_by computed   MOM.Id_Entity
+        my_person       query      PAP.Person
+        phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
+        phones          query      PAP.Phone                 PAP.Subject_has_Phone
+        property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
+        url_links       query      PAP.Subject_has_Url       PAP.Subject_has_Url
+        urls            query      PAP.Url                   PAP.Subject_has_Url
+    ...PAP.Company
         address_links   query      PAP.Company_has_Address   PAP.Company_has_Address
         addresses       query      PAP.Address               PAP.Company_has_Address
         created_by      computed   MOM.Id_Entity
@@ -2200,7 +2216,7 @@ _test_entity_attr = """
         property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
         url_links       query      PAP.Company_has_Url       PAP.Company_has_Url
         urls            query      PAP.Url                   PAP.Company_has_Url
-    ...PAP.Company_P
+    ....PAP.Company_P
         address_links   query      PAP.Company_has_Address   PAP.Company_has_Address
         addresses       query      PAP.Address               PAP.Company_has_Address
         affiliate       optional   PAP.Company_P
@@ -2216,7 +2232,7 @@ _test_entity_attr = """
         property_links  query      PAP.Subject_has_Property  PAP.Subject_has_Property
         url_links       query      PAP.Company_has_Url       PAP.Company_has_Url
         urls            query      PAP.Url                   PAP.Company_has_Url
-    ..PAP.Association
+    ...PAP.Association
         address_links   query      PAP.Association_has_Addre PAP.Association_has_Address
         addresses       query      PAP.Address               PAP.Association_has_Address
         created_by      computed   MOM.Id_Entity
@@ -2413,16 +2429,17 @@ _test_entity_attr = """
         property_links                      query      PAP.Subject_has_Property  PAP.Subject_has_Property
         url_links                           query      PAP.Subject_has_Url       PAP.Subject_has_Url
         urls                                query      PAP.Url                   PAP.Subject_has_Url
-    ....PAP.Legal_Entity
-    .....PAP.Company
+    ....PAP.Group
+    .....PAP.Legal_Entity
+    ......PAP.Company
         address_links                       query      PAP.Company_has_Address   PAP.Company_has_Address
         email_links                         query      PAP.Company_has_Email     PAP.Company_has_Email
         phone_links                         query      PAP.Company_has_Phone     PAP.Company_has_Phone
         url_links                           query      PAP.Company_has_Url       PAP.Company_has_Url
-    ......PAP.Company_P
+    .......PAP.Company_P
         affiliate                           optional   PAP.Company_P
         owner                               primary    PAP.Biz_Man
-    .....PAP.Association
+    ......PAP.Association
         address_links                       query      PAP.Association_has_Addre PAP.Association_has_Address
         email_links                         query      PAP.Association_has_Email PAP.Association_has_Email
         phone_links                         query      PAP.Association_has_Phone PAP.Association_has_Phone
@@ -3031,6 +3048,7 @@ _test_entity_attr = """
     PAP.Company_has_Phone                    True
     PAP.Company_has_Url                      True
     PAP.Email                                True
+    PAP.Group                                True
     PAP.Id_Entity                            True
     PAP.Legal_Entity                         True
     PAP.Link                                 True

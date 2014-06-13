@@ -57,6 +57,7 @@
 #    29-Jul-2013 (CT) Add `test_put`
 #     4-Oct-2013 (CT) Add test for query argument `fields`
 #    31-Mar-2014 (CT) Apply `date_cleaner` to `R.get("/Doc/SRM-Boat_in_Regatta")`
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -245,6 +246,8 @@ _test_cqf = r"""
         (Q.type_name == PAP.Company_has_Url,)
     PAP-Email
         (Q.type_name == PAP.Email,)
+    PAP-Group
+        (Q.type_name.in_ (['PAP.Company'],),)
     PAP-Id_Entity
         (Q.type_name.in_ (['PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url'],),)
     PAP-Legal_Entity
@@ -385,6 +388,7 @@ _test_cqf = r"""
     PAP-Company_has_Phone    (Company `left`, Phone `right`, Numeric_String `extension`, String `desc`)
     PAP-Company_has_Url    (Company `left`, Url `right`, String `desc`)
     PAP-Email    (Email `address`, String `desc`)
+    PAP-Group    (String `name`, Date_Interval `lifetime`, String `short_name`)
     PAP-Id_Entity    ()
     PAP-Legal_Entity    (String `name`, Date_Interval `lifetime`, String `short_name`)
     PAP-Link    (Left `left`,)
@@ -443,7 +447,7 @@ _test_cqf = r"""
     SWP-Referral    (Url `parent_url`, Date-Slug `perma_name`, Url `target_url`, Date_Interval `date`, String `short_title`, String `title`, String `download_name`, Boolean `hidden`, Int `prio`)
 
     >>> print (root.href_pat_frag)
-    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
+    v1(?:/(?:SWP\-Referral|SWP\-Picture|SWP\-Page\_Y|SWP\-Page|SWP\-Object\_PN|SWP\-Object|SWP\-Link1|SWP\-Link|SWP\-Id\_Entity|SWP\-Gallery|SWP\-Clip\_X|SWP\-Clip\_O|SRM\-\_MOM\_Link\_n\_|SRM\-\_Boat\_Class\_|SRM\-Team\_has\_Boat\_in\_Regatta|SRM\-Team|SRM\-Sailor|SRM\-Regatta\_H|SRM\-Regatta\_Event|SRM\-Regatta\_C|SRM\-Regatta|SRM\-Race\_Result|SRM\-Page|SRM\-Object|SRM\-Link2|SRM\-Link1|SRM\-Link|SRM\-Id\_Entity|SRM\-Handicap|SRM\-Crew\_Member|SRM\-Club|SRM\-Boat\_in\_Regatta|SRM\-Boat\_Class|SRM\-Boat|PAP\-\_MOM\_Link\_n\_|PAP\-Url|PAP\-Subject\_has\_Url|PAP\-Subject\_has\_Property|PAP\-Subject\_has\_Phone|PAP\-Subject\_has\_Email|PAP\-Subject\_has\_Address|PAP\-Subject|PAP\-Property|PAP\-Phone|PAP\-Person\_has\_Url|PAP\-Person\_has\_Phone|PAP\-Person\_has\_Email|PAP\-Person\_has\_Address|PAP\-Person\_has\_Account|PAP\-Person|PAP\-Object|PAP\-Link2|PAP\-Link1|PAP\-Link|PAP\-Legal\_Entity|PAP\-Id\_Entity|PAP\-Group|PAP\-Email|PAP\-Company\_has\_Url|PAP\-Company\_has\_Phone|PAP\-Company\_has\_Email|PAP\-Company\_has\_Address|PAP\-Company|PAP\-Address\_Position|PAP\-Address|MOM\-\_MOM\_Link\_n\_|MOM\-Object|MOM\-Link2|MOM\-Link1|MOM\-Link|MOM\-Id\_Entity|Auth\-\_MOM\_Link\_n\_|Auth\-\_Account\_|Auth\-Object|Auth\-Link2|Auth\-Link1|Auth\-Link|Auth\-Id\_Entity|Auth\-Group|Auth\-Certificate|Auth\-Account\_in\_Group|Auth\-Account))?|Doc
 
     >>> for o in sorted (pids.objects, key = Q.pid) :
     ...     e = pids._new_entry (o.pid)
@@ -674,6 +678,7 @@ _test_doc = r"""
             , 'PAP-Company_has_Phone'
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
+            , 'PAP-Group'
             , 'PAP-Id_Entity'
             , 'PAP-Legal_Entity'
             , 'PAP-Link'
@@ -2490,6 +2495,7 @@ _test_get = r"""
             , 'PAP-Company_has_Phone'
             , 'PAP-Company_has_Url'
             , 'PAP-Email'
+            , 'PAP-Group'
             , 'PAP-Id_Entity'
             , 'PAP-Legal_Entity'
             , 'PAP-Link'
@@ -2581,6 +2587,7 @@ _test_get = r"""
             , '/v1/PAP-Company_has_Phone'
             , '/v1/PAP-Company_has_Url'
             , '/v1/PAP-Email'
+            , '/v1/PAP-Group'
             , '/v1/PAP-Id_Entity'
             , '/v1/PAP-Legal_Entity'
             , '/v1/PAP-Link'

@@ -38,6 +38,7 @@
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #    28-Jul-2013 (CT) Replace `tn_pid` by `type_name` and `pid`
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -219,6 +220,9 @@ test_code = r"""
         ('PAP.Company_has_Address', ['right'])
         ('PAP.Person_has_Address', ['right'])
     PAP.Subject
+        ('EVT.Event', ['left'])
+        ('MOM.Document', ['left'])
+    PAP.Group
         ('EVT.Event', ['left'])
         ('MOM.Document', ['left'])
     PAP.Legal_Entity

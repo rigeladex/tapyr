@@ -35,6 +35,7 @@
 #     6-Mar-2013 (CT) Add test for `polymorphic_epk` using `children_trans_iter`
 #     8-Mar-2013 (CT) Add subclasses of `Association` to test
 #                     `polymorphic_epk` over multiple inheritance levels
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -189,6 +190,7 @@ _test_code = """
     type_name            relev p_epk p_epks epk_sig
     ===========================================================================
     PAP.Subject          False True  True   ()
+    PAP.Group            False True  True   ('name',)
     PAP.Legal_Entity     False True  True   ('name',)
     PAP.Company          True  False False  ('name', 'registered_in')
     PAP.Person           True  False False  ('last_name', 'first_name', 'middle_name', 'title')
@@ -286,11 +288,12 @@ _test_code = """
             PAP.Phone  . . . . . . . . . . . . . . . .    True
             PAP.Url  . . . . . . . . . . . . . . . . .    True
           PAP.Subject  . . . . . . . . . . . . . . . .           True   True
-            PAP.Legal_Entity . . . . . . . . . . . . .           True   True
-              PAP.Association  . . . . . . . . . . . .    True   True   True   True
-                PAP.Association_S  . . . . . . . . . .    True   True   True   True
-                  PAP.Association_T  . . . . . . . . .    True                 True
-              PAP.Company  . . . . . . . . . . . . . .    True
+            PAP.Group  . . . . . . . . . . . . . . . .           True   True
+              PAP.Legal_Entity . . . . . . . . . . . .           True   True
+                PAP.Association  . . . . . . . . . . .    True   True   True   True
+                  PAP.Association_S  . . . . . . . . .    True   True   True   True
+                    PAP.Association_T  . . . . . . . .    True                 True
+                PAP.Company  . . . . . . . . . . . . .    True
             PAP.Person . . . . . . . . . . . . . . . .    True
         SRM.Object . . . . . . . . . . . . . . . . . .           True   True
           SRM._Boat_Class_ . . . . . . . . . . . . . .    True

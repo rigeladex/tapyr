@@ -28,6 +28,7 @@
 # Revision Dates
 #    11-Jun-2013 (CT) Creation
 #    26-Jun-2013 (CT) Add `test_pickled_types`, factor `_attr_map`
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ _test_DET = """
     ...             print ("    %%-30s%%-2s %%s" %% (ET.type_name, flag, kind.e_type.type_name))
     addresses [PAP.Subject]
         PAP.Subject                      PAP.Subject
+        PAP.Group                        PAP.Subject
         PAP.Legal_Entity                 PAP.Subject
     boat_class [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
@@ -102,6 +104,7 @@ _test_DET = """
         PAP.Property                     MOM.Id_Entity
         PAP.Address                   *  MOM.Id_Entity
         PAP.Subject                      MOM.Id_Entity
+        PAP.Group                        MOM.Id_Entity
         PAP.Legal_Entity                 MOM.Id_Entity
         PAP.Company                   *  MOM.Id_Entity
         PAP.Email                     *  MOM.Id_Entity
@@ -205,6 +208,7 @@ _test_DET = """
         SRM.Regatta_H                 *  SRM.Regatta
     emails [PAP.Subject]
         PAP.Subject                      PAP.Subject
+        PAP.Group                        PAP.Subject
         PAP.Legal_Entity                 PAP.Subject
     events [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
@@ -218,6 +222,7 @@ _test_DET = """
         PAP.Property                     MOM.Id_Entity
         PAP.Address                   *  MOM.Id_Entity
         PAP.Subject                      MOM.Id_Entity
+        PAP.Group                        MOM.Id_Entity
         PAP.Legal_Entity                 MOM.Id_Entity
         PAP.Company                   *  MOM.Id_Entity
         PAP.Email                     *  MOM.Id_Entity
@@ -329,6 +334,7 @@ _test_DET = """
         PAP.Property                     MOM.Id_Entity
         PAP.Address                   *  MOM.Id_Entity
         PAP.Subject                      MOM.Id_Entity
+        PAP.Group                        MOM.Id_Entity
         PAP.Legal_Entity                 MOM.Id_Entity
         PAP.Company                   *  MOM.Id_Entity
         PAP.Email                     *  MOM.Id_Entity
@@ -410,6 +416,7 @@ _test_DET = """
         PAP.Property                     MOM.Id_Entity
         PAP.Address                   *  MOM.Id_Entity
         PAP.Subject                      MOM.Id_Entity
+        PAP.Group                        MOM.Id_Entity
         PAP.Legal_Entity                 MOM.Id_Entity
         PAP.Company                   *  MOM.Id_Entity
         PAP.Email                     *  MOM.Id_Entity
@@ -530,10 +537,12 @@ _test_DET = """
         PAP.Person_has_Address        *  PAP.Person_has_Address
     lifetime [PAP.Subject]
         PAP.Subject                      PAP.Subject
+        PAP.Group                        PAP.Subject
         PAP.Legal_Entity                 PAP.Subject
         PAP.Company                   *  PAP.Subject
         PAP.Person                    *  PAP.Subject
-    name [PAP.Legal_Entity]
+    name [PAP.Group]
+        PAP.Group                        PAP.Group
         PAP.Legal_Entity                 PAP.Legal_Entity
         PAP.Company                   *  PAP.Company
     name [SRM._Boat_Class_]
@@ -554,6 +563,7 @@ _test_DET = """
         SRM.Page                      *  SWP.Object_PN
     phones [PAP.Subject]
         PAP.Subject                      PAP.Subject
+        PAP.Group                        PAP.Subject
         PAP.Legal_Entity                 PAP.Subject
     pid [MOM.Id_Entity]
         MOM.Id_Entity                    MOM.Id_Entity
@@ -567,6 +577,7 @@ _test_DET = """
         PAP.Property                     MOM.Id_Entity
         PAP.Address                   *  MOM.Id_Entity
         PAP.Subject                      MOM.Id_Entity
+        PAP.Group                        MOM.Id_Entity
         PAP.Legal_Entity                 MOM.Id_Entity
         PAP.Company                   *  MOM.Id_Entity
         PAP.Email                     *  MOM.Id_Entity
@@ -684,7 +695,8 @@ _test_DET = """
         PAP.Person_has_Email          *  PAP.Person_has_Email
         PAP.Company_has_Address       *  PAP.Company_has_Address
         PAP.Person_has_Address        *  PAP.Person_has_Address
-    short_name [PAP.Legal_Entity]
+    short_name [PAP.Group]
+        PAP.Group                        PAP.Group
         PAP.Legal_Entity                 PAP.Legal_Entity
         PAP.Company                   *  PAP.Company
     short_title [SWP.Object_PN]
@@ -722,6 +734,7 @@ _test_DET = """
         PAP.Property                     MOM.Id_Entity
         PAP.Address                   *  MOM.Id_Entity
         PAP.Subject                      MOM.Id_Entity
+        PAP.Group                        MOM.Id_Entity
         PAP.Legal_Entity                 MOM.Id_Entity
         PAP.Company                   *  MOM.Id_Entity
         PAP.Email                     *  MOM.Id_Entity
@@ -793,6 +806,7 @@ _test_DET = """
         PAP.Person_has_Address        *  MOM.Id_Entity
     urls [PAP.Subject]
         PAP.Subject                      PAP.Subject
+        PAP.Group                        PAP.Subject
         PAP.Legal_Entity                 PAP.Subject
     year [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
@@ -1403,8 +1417,9 @@ _test_types = """
             PAP.Phone
             PAP.Url
           PAP.Subject
-            PAP.Legal_Entity
-              PAP.Company
+            PAP.Group
+              PAP.Legal_Entity
+                PAP.Company
             PAP.Person
         EVT.Object
           EVT.Calendar

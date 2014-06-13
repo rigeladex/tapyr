@@ -37,6 +37,7 @@
 #    20-Jan-2013 (CT) Add `Auth.Certificate`
 #     4-Mar-2013 (CT) Add `PAP.Legal_Entity`
 #     6-Mar-2013 (CT) Adapt to new attribute `Company.registered_in`
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -204,6 +205,7 @@ _test_code = r"""
     PAP.Property                                   False  True   True
     PAP.Address                                    True   False  False
     PAP.Subject                                    False  True   True
+    PAP.Group                                      False  True   True
     PAP.Legal_Entity                               False  True   True
     PAP.Company                                    True   False  False
     PAP.Email                                      True   False  False
@@ -314,6 +316,7 @@ _test_code = r"""
     PAP.Property                                   ['PAP.Address', 'PAP.Email', 'PAP.Phone', 'PAP.Url']
     PAP.Address                                    PAP.Address 0
     PAP.Subject                                    ['PAP.Company', 'PAP.Person']
+    PAP.Group                                      ['PAP.Company']
     PAP.Legal_Entity                               ['PAP.Company']
     PAP.Company                                    PAP.Company 0
     PAP.Email                                      PAP.Email 0

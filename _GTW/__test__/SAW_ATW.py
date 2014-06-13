@@ -47,6 +47,7 @@
 #                     `Q.person.lifetime == ("2013-07-15", "2013-07-21")`
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_q_result`
 #     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
+#    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    ««revision-date»»···
 #--
 
@@ -110,6 +111,7 @@ _test_ancestors = """
     PAP.Property                         < MOM.Id_Entity
     PAP.Address                          < MOM.Id_Entity
     PAP.Subject                          < MOM.Id_Entity
+    PAP.Group                            < MOM.Id_Entity
     PAP.Legal_Entity                     < MOM.Id_Entity
     PAP.Company                          < MOM.Id_Entity
     PAP.Email                            < MOM.Id_Entity
@@ -226,6 +228,7 @@ _test_ancestors = """
     PAP.Property                         mom_id_entity
     PAP.Address                          mom_id_entity
     PAP.Subject                          mom_id_entity
+    PAP.Group                            mom_id_entity
     PAP.Legal_Entity                     mom_id_entity
     PAP.Company                          mom_id_entity
     PAP.Email                            mom_id_entity
@@ -653,6 +656,21 @@ _test_attr_wrappers = """
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `phones`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_R : Role_Ref_Set `urls`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+    PAP.Group
+      Kind_Wrapper_R : Role_Ref_Set `addresses`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_R : Role_Ref_Set `emails`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_P : Date_Interval `lifetime`
+          _Composite_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_P : String `name`
+          _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+      Kind_Wrapper_R : Role_Ref_Set `phones`
+          Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_P : String `short_name`
+          _Raw_Value_Mixin_, Optional, _User_, _DB_Attr_
       Kind_Wrapper_R : Role_Ref_Set `urls`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
     PAP.Legal_Entity
@@ -2038,6 +2056,20 @@ _test_q_able = """
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : Role_Ref_Set `urls`>
+    <SAW : PAP.Group [mom_id_entity]>
+      <SAW : Role_Ref_Set `addresses`>
+      <SAW : Rev_Ref `creation`>
+      <SAW : Role_Ref_Set `emails`>
+      <SAW : Link_Ref_List `events`>
+      <SAW : Rev_Ref `last_change`>
+      <SAW : Int `last_cid` [mom_id_entity.last_cid]>
+      <SAW : Date_Interval `lifetime` (PAP.Company)>
+      <SAW : String `name` (PAP.Company)>
+      <SAW : Role_Ref_Set `phones`>
+      <SAW : Surrogate `pid` [mom_id_entity.pid]>
+      <SAW : String `short_name` (PAP.Company)>
+      <SAW : String `type_name` [mom_id_entity.type_name]>
+      <SAW : Role_Ref_Set `urls`>
     <SAW : PAP.Legal_Entity [mom_id_entity]>
       <SAW : Role_Ref_Set `addresses`>
       <SAW : Rev_Ref `creation`>
@@ -3210,6 +3242,20 @@ _test_q_able = """
       lifetime                      : lifetime
       phones                        : phones
       pid                           : pid
+      type_name                     : type_name
+      urls                          : urls
+    <SAW : PAP.Group [mom_id_entity]>
+      addresses                     : addresses
+      creation                      : creation
+      emails                        : emails
+      events                        : events
+      last_change                   : last_change
+      last_cid                      : last_cid
+      lifetime                      : lifetime
+      name                          : name
+      phones                        : phones
+      pid                           : pid
+      short_name                    : short_name
       type_name                     : type_name
       urls                          : urls
     <SAW : PAP.Legal_Entity [mom_id_entity]>
@@ -6988,6 +7034,28 @@ _test_qc_map = """
         url_links                 : <SAW : Link_Ref_List `url_links`>
         urls                      : <SAW : Role_Ref_Set `urls`>
         x_locked                  : mom_id_entity.x_locked
+    <SAW : PAP.Group [mom_id_entity]>
+        address_links             : <SAW : Link_Ref_List `address_links`>
+        addresses                 : <SAW : Role_Ref_Set `addresses`>
+        creation                  : <SAW : Rev_Ref `creation`>
+        electric                  : mom_id_entity.electric
+        email_links               : <SAW : Link_Ref_List `email_links`>
+        emails                    : <SAW : Role_Ref_Set `emails`>
+        events                    : <SAW : Link_Ref_List `events`>
+        last_change               : <SAW : Rev_Ref `last_change`>
+        last_cid                  : mom_id_entity.last_cid
+        lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
+        my_person                 : <SAW : Entity `my_person`>
+        name                      : <SAW : String `name` (PAP.Company)>
+        phone_links               : <SAW : Link_Ref_List `phone_links`>
+        phones                    : <SAW : Role_Ref_Set `phones`>
+        pid                       : mom_id_entity.pid
+        property_links            : <SAW : Link_Ref_List `property_links`>
+        short_name                : <SAW : String `short_name` (PAP.Company)>
+        type_name                 : mom_id_entity.type_name
+        url_links                 : <SAW : Link_Ref_List `url_links`>
+        urls                      : <SAW : Role_Ref_Set `urls`>
+        x_locked                  : mom_id_entity.x_locked
     <SAW : PAP.Legal_Entity [mom_id_entity]>
         address_links             : <SAW : Link_Ref_List `address_links`>
         addresses                 : <SAW : Role_Ref_Set `addresses`>
@@ -9891,6 +9959,24 @@ _test_select = """
            LEFT OUTER JOIN pap_person ON mom_id_entity.pid = pap_person.pid
         WHERE mom_id_entity.pid = pap_company.pid
             OR mom_id_entity.pid = pap_person.pid
+    PAP.Group
+        SELECT mom_id_entity.electric AS mom_id_entity_electric,
+               mom_id_entity.last_cid AS mom_id_entity_last_cid,
+               mom_id_entity.pid AS mom_id_entity_pid,
+               mom_id_entity.type_name AS mom_id_entity_type_name,
+               mom_id_entity.x_locked AS mom_id_entity_x_locked,
+               pap_company.__raw_name AS pap_company___raw_name,
+               pap_company.__raw_registered_in AS pap_company___raw_registered_in,
+               pap_company.__raw_short_name AS pap_company___raw_short_name,
+               pap_company.lifetime__finish AS pap_company_lifetime__finish,
+               pap_company.lifetime__start AS pap_company_lifetime__start,
+               pap_company.name AS pap_company_name,
+               pap_company.pid AS pap_company_pid,
+               pap_company.registered_in AS pap_company_registered_in,
+               pap_company.short_name AS pap_company_short_name
+        FROM mom_id_entity
+           LEFT OUTER JOIN pap_company ON mom_id_entity.pid = pap_company.pid
+        WHERE mom_id_entity.pid = pap_company.pid
     PAP.Legal_Entity
         SELECT mom_id_entity.electric AS mom_id_entity_electric,
                mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -11741,6 +11827,10 @@ _test_select_strict = """
         SELECT mom_id_entity.pid
         FROM mom_id_entity
         WHERE false
+    PAP.Group
+        SELECT mom_id_entity.pid
+        FROM mom_id_entity
+        WHERE false
     PAP.Legal_Entity
         SELECT mom_id_entity.pid
         FROM mom_id_entity
@@ -12650,6 +12740,7 @@ _test_tables = """
     PAP.Company_has_Phone                    : pap_company_has_phone
     PAP.Company_has_Url                      : pap_company_has_url
     PAP.Email                                : pap_email
+    PAP.Group                                : None
     PAP.Id_Entity                            : None
     PAP.Legal_Entity                         : None
     PAP.Link                                 : None

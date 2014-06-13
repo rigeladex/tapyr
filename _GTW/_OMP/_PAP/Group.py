@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2014 Dr. Ralf Schlatterbeck All rights reserved
+# Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
 #
@@ -20,15 +20,13 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Legal_Entity
+#    GTW.OMP.PAP.Group
 #
 # Purpose
-#    Model a legal entity that isn't a natural person
+#    Model a group of persons
 #
 # Revision Dates
-#     4-Mar-2013 (CT) Creation
-#    13-Jun-2014 (RS) `_Ancestor_Essence` is now `_PAP.Group`
-#                     remove attributes inherited from ancestor
+#    13-Jun-2014 (RS) Creation
 #    ««revision-date»»···
 #--
 
@@ -41,14 +39,14 @@ from   _GTW                        import GTW
 from   _GTW._OMP._PAP              import PAP
 from   _TFL.I18N                   import _
 
-import _GTW._OMP._PAP.Group
+import _GTW._OMP._PAP.Subject
 
-_Ancestor_Essence = PAP.Group
+_Ancestor_Essence = PAP.Subject
 
-class _PAP_Legal_Entity_ (_Ancestor_Essence) :
-    """Model a legal entity that isn't a natural person."""
+class _PAP_Group_ (_Ancestor_Essence) :
+    """Model a group of persons."""
 
-    _real_name  = "Legal_Entity"
+    _real_name  = "Group"
 
     is_partial  = True
 
@@ -56,10 +54,30 @@ class _PAP_Legal_Entity_ (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
+        class name (A_String) :
+            """Name of %(type_base_name.lower ())s."""
+
+            kind               = Attr.Primary
+            max_length         = 64
+            ignore_case        = True
+            completer          = Attr.Completer_Spec  (2, Attr.Selector.primary)
+
+        # end class name
+
+        class short_name (A_String) :
+            """Short name of %(type_base_name.lower ())s."""
+
+            kind               = Attr.Optional
+            max_length         = 12
+            ignore_case        = True
+            completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+
+        # end class short_name
+
     # end class _Attributes
 
-Legal_Entity = _PAP_Legal_Entity_ # end class
+Group = _PAP_Group_ # end class
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
-### __END__ GTW.OMP.PAP.Legal_Entity
+### __END__ GTW.OMP.PAP.Group
