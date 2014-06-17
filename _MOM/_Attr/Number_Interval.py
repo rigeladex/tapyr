@@ -35,6 +35,7 @@
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #     7-Aug-2013 (CT) Set `_Interval_.is_partial` to `True`
+#    16-Jun-2014 (RS) Add `A_Int_Interval_C`
 #    ««revision-date»»···
 #--
 
@@ -175,6 +176,28 @@ def make (bounds_type, name = None) :
 
 Float_Interval,     A_Float_Interval     = make (A_Float)
 Frequency_Interval, A_Frequency_Interval = make (A_Frequency)
+Int_Interval,       A_Int_Interval       = make (A_Int)
+
+class A_Int_Interval_C (A_Int_Interval) :
+    """Int interval (start, finish [default: `start`])."""
+
+    class _Attributes :
+
+        def computed__upper (self, obj) :
+            if obj and obj.lower :
+                return obj.lower
+        # end def computed__upper
+
+        _Overrides = dict \
+            ( upper = dict
+                ( Kind_Mixins = (Attr.Computed_Set_Mixin, )
+                , computed    = computed__upper
+                )
+            )
+
+    # end class _Attributes
+
+# end class A_Int_Interval_C
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()

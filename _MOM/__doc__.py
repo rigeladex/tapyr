@@ -72,6 +72,7 @@
 #                     * addition of A_Link_Ref and A_Link_Ref_Set attributes
 #                     * change from `auto_cache` to `auto_rev_ref`
 #     4-Oct-2013 (CT) Add `DBW` and `DBW.SAW` to `toctree` directive
+#    17-Jun-2014 (RS) Add `MOM.Int_Interval`, `MOM.Int_Interval_C`
 #    ««revision-date»»···
 #--
 
@@ -768,9 +769,9 @@ managers<_MOM.E_Type_Manager>`::
     []
 
     >>> print formatted1 (sorted (apt.etypes))
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.MD_Change', 'MOM.MD_Entity', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.MD_Change', 'MOM.MD_Entity', 'MOM.Named_Object', 'MOM.Object', 'MOM._Interval_', 'MOM._MOM_Link_n_']
     >>> print formatted1 ([t.type_name for t in apt._T_Extension])
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity', 'MOM.MD_Change', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity', 'MOM.MD_Change', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
@@ -788,6 +789,8 @@ managers<_MOM.E_Type_Manager>`::
     MOM._Interval_                      ()
     MOM.Float_Interval                  ()
     MOM.Frequency_Interval              ()
+    MOM.Int_Interval                    ()
+    MOM.Int_Interval_C                  ()
     MOM.Named_Object                    ('name',)
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
@@ -835,6 +838,10 @@ managers<_MOM.E_Type_Manager>`::
         (u'lower', u'upper')
     MOM.Frequency_Interval
         (u'lower', u'upper')
+    MOM.Int_Interval
+        (u'lower', u'upper')
+    MOM.Int_Interval_C
+        (u'lower', 'upper')
     MOM.Named_Object
         ('name',)
     BMT.Location
@@ -893,6 +900,8 @@ maps type_names to the non-partial descendents of the entity_type::
         MOM._Interval_
           MOM.Float_Interval
           MOM.Frequency_Interval
+          MOM.Int_Interval
+            MOM.Int_Interval_C
       MOM.Id_Entity
         MOM.Link
           MOM.Link1
@@ -924,10 +933,10 @@ maps type_names to the non-partial descendents of the entity_type::
     ...     print "   ", sorted (et.children_np)
     MOM.Entity
         ['MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity']
-        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.MD_Change']
+        ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap', 'MOM.Date_Interval', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Int_Interval', 'MOM.MD_Change']
     MOM.An_Entity
         ['MOM.Date_Interval', 'MOM._Interval_']
-        ['MOM.Date_Interval', 'MOM.Float_Interval', 'MOM.Frequency_Interval']
+        ['MOM.Date_Interval', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Int_Interval']
     MOM.Id_Entity
         ['MOM.Link', 'MOM.Object']
         ['BMT.Location', 'BMT.Mouse', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
