@@ -54,6 +54,8 @@
 #     4-Mar-2014 (CT) Change `Month_Delta.__add__` and `.__sub__` to support
 #                     `datetime` instances; add `__radd__`, `__rsub__`
 #     7-Mar-2014 (CT) Change `Month_Delta` operators to include `days`
+#    17-Jun-2014 (RS) Fix parsing of `Date_Time_Delta` (didn't roundtrip)
+#                     semantic change: single number, e.g., `2` is now invalid
 #    ««revision-date»»···
 #--
 
@@ -412,7 +414,10 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     0
 
     >>> Date_Time_Delta.from_string ("2")
-    Date_Time_Delta (2, 0, 0, 0, 0, 0, 0)
+    Traceback (most recent call last):
+        ...
+    ValueError: 2
+
     >>> Date_Time_Delta.from_string ("2.5 weeks")
     Date_Time_Delta (3, 12, 0, 0, 0, 0, 2)
     >>> print (Date_Time_Delta.from_string ("2.5 weeks"))
@@ -427,6 +432,30 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
     2 days, 7:15:15
     >>> print (Date_Time_Delta.from_string ("2.5 d 5h -15.25m"))
     2 days, 16:44:45
+    >>> print (Date_Time_Delta.from_string ("2 days16:4:45"))
+    2 days, 16:04:45
+    >>> print (Date_Time_Delta.from_string ("2 days, 16:44:45"))
+    2 days, 16:44:45
+    >>> print (Date_Time_Delta.from_string ("2w2 days 16:44:45"))
+    16 days, 16:44:45
+    >>> print (Date_Time_Delta.from_string ("1w 2d 16:44:45"))
+    9 days, 16:44:45
+    >>> print (Date_Time_Delta.from_string ("2d 16:44:45"))
+    2 days, 16:44:45
+    >>> print (Date_Time_Delta.from_string ("2w 16:44:45"))
+    14 days, 16:44:45
+    >>> print (Date_Time_Delta.from_string ("16:44:45"))
+    16:44:45
+    >>> print (Date_Time_Delta.from_string ("2w"))
+    14 days, 0:00:00
+    >>> print (Date_Time_Delta.from_string ("2d"))
+    2 days, 0:00:00
+    >>> print (Date_Time_Delta.from_string ("2,"))
+    2 days, 0:00:00
+    >>> print (Date_Time_Delta.from_string ("2:0"))
+    2:00:00
+    >>> print (Date_Time_Delta.from_string ("2d2:0"))
+    2 days, 2:00:00
 
     """
 
@@ -437,15 +466,16 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
 
     delta_pattern    = Multi_Regexp \
         ( r"^"
-          r"(?P<days> \d+)"
-          r"(?: (?: , \s*  | \s* d(?:ays?)?)"
+          r"(?: (?P<weeks> \d+) \s* w(?:eeks?,?)?\s*)?"
+          r"(?: (?P<days>  \d+) (?: , \s*  | \s* d(?:ays?,?)?\s*))?"
+          r"(?:"
             r"(?P<hours> \d{1,2})"
             r"(?:"
               r": (?P<minutes> \d{1,2})"
               r"(?:"
                 r": (?P<seconds> \d{1,2}) (?: \. (?P<subseconds> \d+) )?"
               r")?"
-            r")?"
+            r")"
           r")?"
           r"$"
         , r"^"
