@@ -50,6 +50,7 @@
 ##    21-Jan-2014 (CT) Add `pg_nav_show`
 ##    20-Feb-2014 (CT) Add `nav_off_canvas`
 ##     9-Apr-2014 (CT) Add `width=device-width` to `viewport`
+##    20-Jun-2014 (CT) Add blocks `body_main` and `body_document`
 ##    ««revision-date»»···
 ##--
 #}
@@ -102,35 +103,39 @@
     {% call X.header (id = "header", class = "pg_head") -%}
       {%- block body_header %}{% endblock body_header -%}
     {% endcall %} {# X.header #}
-    <div id="main" class="pg_main{%- if page.nav_off_canvas %} nav-off-canvas{%- endif -%}">
-      <p class="pg_nav_show">
-        <a href="#navigate" title="{{- GTW._T ("Show navigation") -}}">
-          {{- GTW.Dingbats.trigram_for_heaven -}}
-        </a>
-      </p>
-      <div id="document" class="pg_body">
-        {%- block notifications -%}
-          {%- if notifications %}
-            <div class="notifications">
-              {{- notifications.discarge ("<p>", "</p><p>", "</p>") -}}
-            </div>
-          {% endif -%}
-        {%- endblock notifications -%}
-        {%- block body_headline %}
-          {%- if page.head_line %}
-            <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.head_line|safe }}</h1>
-          {% endif -%}
-        {%- endblock body_headline %}
-        {% block document %}{% endblock -%}
-      </div> {# #document .pg_body #}
-      {%- block nav_block -%}
-        {% call X.nav (id = "navigate", class="pg_nav") -%}
-          {%- block navigate -%}
-            {{ NF.main (page) }}
-          {%- endblock -%}
-        {%- endcall %} {# X.nav #}
-      {%- endblock nav_block -%}
-    </div> {# #main .pg_main #}
+    {%- block body_main -%}
+      <div id="main" class="pg_main{%- if page.nav_off_canvas %} nav-off-canvas{%- endif -%}">
+        <p class="pg_nav_show">
+          <a href="#navigate" title="{{- GTW._T ("Show navigation") -}}">
+            {{- GTW.Dingbats.trigram_for_heaven -}}
+          </a>
+        </p>
+        {%- block body_document -%}
+          <div id="document" class="pg_body">
+            {%- block notifications -%}
+              {%- if notifications %}
+                <div class="notifications">
+                  {{- notifications.discarge ("<p>", "</p><p>", "</p>") -}}
+                </div>
+              {% endif -%}
+            {%- endblock notifications -%}
+            {%- block body_headline %}
+              {%- if page.head_line %}
+                <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.head_line|safe }}</h1>
+              {% endif -%}
+            {%- endblock body_headline %}
+            {% block document %}{% endblock -%}
+          </div> {# #document .pg_body #}
+        {%- endblock body_document -%}
+        {%- block nav_block -%}
+          {% call X.nav (id = "navigate", class="pg_nav") -%}
+            {%- block navigate -%}
+              {{ NF.main (page) }}
+            {%- endblock -%}
+          {%- endcall %} {# X.nav #}
+        {%- endblock nav_block -%}
+      </div> {# #main .pg_main #}
+    {%- endblock body_main -%}
     {% call X.footer (id = "footer", class="pg_foot") -%}
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
