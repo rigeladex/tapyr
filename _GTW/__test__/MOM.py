@@ -72,6 +72,7 @@
 #    25-Feb-2013 (CT) Replace `up_ex_q.auto_up_depends` by `query_preconditions`
 #                     add tests for `up_ex_q`
 #    17-Jun-2014 (RS) `Date_Time_Delta`, `Int_Interval`, `Int_Interval_C`
+#    23-Jun-2014 (RS) Add `reaction_time_range` to test `Int_Interval_C`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ from   __future__  import unicode_literals
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Date_Interval   import *
 from   _MOM._Attr.Number_Interval import A_Float_Interval
+from   _MOM._Attr.Number_Interval import A_Int_Interval_C
 from   _MOM._Attr.Date_Time_Delta import A_Date_Time_Delta
 from   _MOM.inspect               import show_children
 from   _MOM.Product_Version       import Product_Version, IV_Number
@@ -320,6 +322,13 @@ class Trap (_Ancestor_Essence) :
             ui_name  = "Serial number"
 
         # end class serial_no
+
+        class reaction_time_range (A_Int_Interval_C) :
+            """Specified time-range in ms for the trap to close."""
+
+            kind     = Attr.Optional
+
+        # end class reaction_time_range
 
         class up_ex (A_Float) :
             """Example for an attribute that depends on other
@@ -833,7 +842,7 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
-    *** MOM.Int_Interval_C *** (u'lower', 'upper')
+    *** MOM.Int_Interval_C *** (u'lower', u'upper')
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
@@ -950,17 +959,17 @@ The app-type specific entity-types are ready to be used by
     ('color', u'Color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['catch', 'max_weight', 'owner', 'owner_link', 'owner_links', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'ui_display', 'up_ex', 'up_ex_q']
+    ['catch', 'max_weight', 'owner', 'owner_link', 'owner_links', 'reaction_time_range', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'ui_display', 'up_ex', 'up_ex_q']
     >>> sorted (ET_Supertrap._Attributes._own_names)
     ['ui_display', 'weights']
     >>> sorted (ET_Trap._Attributes._names)
-    ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'reaction_time_range', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
+    ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'reaction_time_range', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'weights', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Int_Interval `reaction_time_range`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
+    [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Int_Interval `reaction_time_range`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
 
     >>> print formatted1 (sorted (ET_Id_Entity.relevant_roots))
     ['BMT.Expected_Traptime', 'BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
@@ -1055,7 +1064,7 @@ The app-type specific entity-types are ready to be used by
     MOM.Int_Interval
         (u'lower', u'upper')
     MOM.Int_Interval_C
-        (u'lower', 'upper')
+        (u'lower', u'upper')
     MOM.Position
         ('lat', 'lon', 'height')
     MOM.Named_Object

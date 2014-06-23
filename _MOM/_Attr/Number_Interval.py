@@ -36,6 +36,7 @@
 #    25-Jun-2013 (CT) Use `__mro__`, not `mro ()`
 #     7-Aug-2013 (CT) Set `_Interval_.is_partial` to `True`
 #    16-Jun-2014 (RS) Add `A_Int_Interval_C`
+#    23-Jun-2014 (RS) Document traceback in `A_Int_Interval_C`
 #    ««revision-date»»···
 #--
 
@@ -188,12 +189,13 @@ class A_Int_Interval_C (A_Int_Interval) :
                 return obj.lower
         # end def computed__upper
 
-        _Overrides = dict \
-            ( upper = dict
-                ( Kind_Mixins = (Attr.Computed_Set_Mixin, )
-                , computed    = computed__upper
-                )
-            )
+# FIXME: This throws a traceback
+#        _Overrides = dict \
+#            ( upper = dict
+#                ( Kind_Mixins = (Attr.Computed_Set_Mixin, )
+#                , computed    = computed__upper
+#                )
+#            )
 
     # end class _Attributes
 

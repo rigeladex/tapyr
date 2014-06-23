@@ -73,6 +73,7 @@
 #                     * change from `auto_cache` to `auto_rev_ref`
 #     4-Oct-2013 (CT) Add `DBW` and `DBW.SAW` to `toctree` directive
 #    17-Jun-2014 (RS) Add `MOM.Int_Interval`, `MOM.Int_Interval_C`
+#    23-Jun-2014 (RS) Fix breakage in unicode string
 #    ««revision-date»»···
 #--
 
@@ -841,7 +842,7 @@ managers<_MOM.E_Type_Manager>`::
     MOM.Int_Interval
         (u'lower', u'upper')
     MOM.Int_Interval_C
-        (u'lower', 'upper')
+        (u'lower', u'upper')
     MOM.Named_Object
         ('name',)
     BMT.Location
