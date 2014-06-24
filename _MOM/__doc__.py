@@ -836,13 +836,13 @@ managers<_MOM.E_Type_Manager>`::
     MOM._Interval_
         ('lower', 'upper')
     MOM.Float_Interval
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Frequency_Interval
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Int_Interval
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Int_Interval_C
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Named_Object
         ('name',)
     BMT.Location

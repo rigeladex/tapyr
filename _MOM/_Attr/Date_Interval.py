@@ -43,6 +43,7 @@
 #     3-Jun-2013 (CT) Simplify `ui_display_format`
 #     5-Jun-2013 (CT) Use `is_attr_type`, not home-grown code
 #    11-Mar-2014 (CT) Use `_Overrides`
+#    24-Jun-2014 (CT) Fix `A_Date_Interval_C.computed__finish`
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,7 @@ class A_Date_Interval_C (A_Date_Interval) :
     class _Attributes :
 
         def computed__finish (self, obj) :
-            if obj and obj.start :
+            if obj is not None and obj.start :
                 return obj.start
         # end def computed__finish
 

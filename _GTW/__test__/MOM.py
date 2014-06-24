@@ -830,19 +830,19 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     def signified (cls, start = undefined, finish = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
         return kw
-    *** MOM.Float_Interval *** (u'lower', u'upper')
+    *** MOM.Float_Interval *** ('lower', 'upper')
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
-    *** MOM.Frequency_Interval *** (u'lower', u'upper')
+    *** MOM.Frequency_Interval *** ('lower', 'upper')
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
-    *** MOM.Int_Interval *** (u'lower', u'upper')
+    *** MOM.Int_Interval *** ('lower', 'upper')
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
-    *** MOM.Int_Interval_C *** (u'lower', u'upper')
+    *** MOM.Int_Interval_C *** ('lower', 'upper')
     def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
         kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
         return kw
@@ -1058,13 +1058,13 @@ The app-type specific entity-types are ready to be used by
     MOM._Interval_
         ('lower', 'upper')
     MOM.Float_Interval
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Frequency_Interval
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Int_Interval
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Int_Interval_C
-        (u'lower', u'upper')
+        ('lower', 'upper')
     MOM.Position
         ('lat', 'lon', 'height')
     MOM.Named_Object

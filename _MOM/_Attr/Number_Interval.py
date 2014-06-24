@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
@@ -37,6 +37,8 @@
 #     7-Aug-2013 (CT) Set `_Interval_.is_partial` to `True`
 #    16-Jun-2014 (RS) Add `A_Int_Interval_C`
 #    23-Jun-2014 (RS) Document traceback in `A_Int_Interval_C`
+#    24-Jun-2014 (CT) Fix `A_Int_Interval_C.computed__upper`
+#    24-Jun-2014 (CT) Force attribute names to `str`
 #    ««revision-date»»···
 #--
 
@@ -146,7 +148,7 @@ def make (bounds_type, name = None) :
         ( "_Attributes"
         , (_Interval_._Attributes, )
         , dict
-            (  (n, new_attr (_Interval_._Attributes, n, module))
+            (  (str (n), new_attr (_Interval_._Attributes, str (n), module))
             for n in ("lower", "upper", "center", "length")
             )
         )
@@ -180,22 +182,21 @@ Frequency_Interval, A_Frequency_Interval = make (A_Frequency)
 Int_Interval,       A_Int_Interval       = make (A_Int)
 
 class A_Int_Interval_C (A_Int_Interval) :
-    """Int interval (start, finish [default: `start`])."""
+    """Int interval (lower, upper [default: `lower`])."""
 
     class _Attributes :
 
         def computed__upper (self, obj) :
-            if obj and obj.lower :
+            if obj is not None and obj.lower :
                 return obj.lower
         # end def computed__upper
 
-# FIXME: This throws a traceback
-#        _Overrides = dict \
-#            ( upper = dict
-#                ( Kind_Mixins = (Attr.Computed_Set_Mixin, )
-#                , computed    = computed__upper
-#                )
-#            )
+        _Overrides = dict \
+            ( upper = dict
+                ( Kind_Mixins     = (Attr.Computed_Set_Mixin, )
+                , computed        = computed__upper
+                )
+            )
 
     # end class _Attributes
 
