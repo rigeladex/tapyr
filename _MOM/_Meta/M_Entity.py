@@ -220,6 +220,7 @@
 #    10-Mar-2014 (CT) Set `i_rank`, `g_rank` as first thing in `__init__`
 #     2-Apr-2014 (CT) Change `M_Id_Entity._m_setup_roles` to resolve
 #                     attributes referring to the type itself
+#    18-Jun-2014 (CT) Add `i_rank` to `db_sig`
 #    ««revision-date»»···
 #--
 
@@ -978,7 +979,8 @@ class M_E_Type (M_E_Mixin) :
 
     @TFL.Meta.Once_Property
     def db_sig (cls) :
-        return (cls.type_name, tuple (a.db_sig for a in cls.db_attr))
+        return \
+            (cls.type_name, cls.i_rank, tuple (a.db_sig for a in cls.db_attr))
     # end def db_sig
 
     @TFL.Meta.Once_Property
