@@ -41,6 +41,7 @@
 #    29-Jan-2014 (CT) Redefine `_effective` to check `count`
 #     5-Feb-2014 (CT) Call `_add_other_entries` in `_E_Type_Archive_.entries`
 #    14-May-2014 (CT) Add `sort_key` to `_E_Type_Archive_.Year`
+#    25-Jun-2014 (CT) Factor `referral_query` and friends to `...Mixin`
 #    ««revision-date»»···
 #--
 
@@ -115,23 +116,8 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             return admin._get_child ("create")
     # end def creator
 
-    @Once_Property
-    def referral_query_unbound (self) :
-        sk = TFL.Sorted_By ("perma_name")
-        return self.scope.SWP.Referral.query \
-            (Q.parent_url ==  Q.BVAR.parent_url, sort_key = sk)
-    # end def referral_query_unbound
-
-    @property
-    def referral_query (self) :
-        return self.referral_query_unbound.bind (parent_url = self.abs_href)
-    # end def referral_query
-
     def _add_other_entries (self) :
-        refs = tuple \
-            (self._new_referral_entry (ref) for ref in self._get_referrals ())
-        if refs :
-            self.add_entries (* refs)
+        self._add_referral_entries      ()
         self.__super._add_other_entries ()
     # end def _add_other_entries
 
@@ -144,23 +130,6 @@ class _TOP_MOM_E_Type_ (GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             ### support referrals even if not objects are available
             return self
     # end def _effective
-
-    def _get_referrals (self) :
-        q      = self.referral_query
-        result = q.all ()
-        return result
-    # end def _get_referrals
-
-    def _new_referral_entry (self, ref) :
-        return GTW.RST.TOP.A_Link \
-            ( download    = ref.download_name
-            , name        = ref.perma_name
-            , parent      = self
-            , short_title = ref.short_title
-            , target_url  = ref.target_url
-            , title       = ref.title
-            )
-    # end def _new_referral_entry
 
 _E_Type_ = _TOP_MOM_E_Type_ # end class
 

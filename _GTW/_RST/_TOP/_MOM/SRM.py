@@ -50,6 +50,8 @@
 #    16-Jan-2014 (CT) Use `MOM.formatted`, not home-grown code, for
 #                     registration email
 #    13-Feb-2014 (CT) Use `object_entries` for `Archive.Year.regattas`
+#    25-Jun-2014 (CT) Redefine `_add_other_entries` to call
+#                     `_add_referral_entries`
 #    ««revision-date»»···
 #--
 
@@ -217,6 +219,11 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
                     return pp_join (self.abs_href, "admin", "create")
             ### XXX implement registration for team race, too
     # end def href_register
+
+    def _add_other_entries (self) :
+        self._add_referral_entries      ()
+        self.__super._add_other_entries ()
+    # end def _add_other_entries
 
     def _get_bir_admin (self) :
         bir = self.top.ET_Map ["SRM.Boat_in_Regatta"]
@@ -513,6 +520,11 @@ class Regatta_Event \
         ### are at the front of `entries`
         return [e for e in self.entries if isinstance (e, Regatta)]
     # end def regattas
+
+    def _add_other_entries (self) :
+        self._add_referral_entries      ()
+        self.__super._add_other_entries ()
+    # end def _add_other_entries
 
     def _add_href_pat_frag_tail \
             (self, head, getter = TFL.Getter.href_pat_frag) :

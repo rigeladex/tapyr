@@ -40,6 +40,7 @@
 #    13-Feb-2014 (CT) Add `object_entries`
 #    14-Mar-2014 (CT) Redefine alias property `proper_entries`
 #                     to `object_entries`
+#    25-Jun-2014 (CT) Add `_TOP_MOM_Mixin_Base_`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,49 @@ import _TFL.Attr_Mapper
 
 from   posixpath                import join as pp_join
 
-class TOP_MOM_Entity_Mixin_Base (GTW.RST.MOM.Entity_Mixin) :
+class _TOP_MOM_Mixin_Base_ (GTW.RST.MOM.Mixin) :
+    """Base mixin for RST.TOP classes displaying MOM instances."""
+
+    @Once_Property
+    def referral_query_unbound (self) :
+        sk = TFL.Sorted_By ("perma_name")
+        return self.scope.SWP.Referral.query \
+            (Q.parent_url ==  Q.BVAR.parent_url, sort_key = sk)
+    # end def referral_query_unbound
+
+    @property
+    def referral_query (self) :
+        return self.referral_query_unbound.bind (parent_url = self.abs_href)
+    # end def referral_query
+
+    def _add_referral_entries (self) :
+        refs = tuple \
+            (self._new_referral_entry (ref) for ref in self._get_referrals ())
+        if refs :
+            self.add_entries (* refs)
+    # end def _add_referral_entries
+
+    def _get_referrals (self) :
+        q      = self.referral_query
+        result = q.all ()
+        return result
+    # end def _get_referrals
+
+    def _new_referral_entry (self, ref) :
+        return GTW.RST.TOP.A_Link \
+            ( download    = ref.download_name
+            , name        = ref.perma_name
+            , parent      = self
+            , short_title = ref.short_title
+            , target_url  = ref.target_url
+            , title       = ref.title
+            )
+    # end def _new_referral_entry
+
+# end class _TOP_MOM_Mixin_Base_
+
+class TOP_MOM_Entity_Mixin_Base \
+          (GTW.RST.MOM.Entity_Mixin, _TOP_MOM_Mixin_Base_) :
     """Base mixin for RST.TOP classes displaying MOM instances."""
 
     _real_name      = "Entity_Mixin_Base"
@@ -136,7 +179,8 @@ class TOP_MOM_Entity_Mixin (Entity_Mixin_Base) :
 
 Entity_Mixin = TOP_MOM_Entity_Mixin # end class
 
-class TOP_MOM_E_Type_Mixin_Base (GTW.RST.MOM.E_Type_Mixin) :
+class TOP_MOM_E_Type_Mixin_Base \
+          (GTW.RST.MOM.E_Type_Mixin, _TOP_MOM_Mixin_Base_) :
 
     _real_name      = "E_Type_Mixin_Base"
 
