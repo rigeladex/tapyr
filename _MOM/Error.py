@@ -89,6 +89,11 @@
 #    14-Jan-2014 (CT) Robustify `Attribute.__init__` and `.bindings`
 #    17-Feb-2014 (CT) Improve `No_Such_Directory`, `No_Such_File`
 #     1-May-2014 (CT) Use `pyk.encoded`, not `str`
+#    30-Jun-2014 (CT) Fix `embed` (replace attribute keys in `val_disp`)
+#    30-Jun-2014 (CT) Set `Required_Missing.attributes` to `missing`,
+#                     not `needed`; set `Required_Missing.val_disp` to `kw`
+#     2-Jul-2014 (CT) Improve `Attribute_Syntax`
+#     3-Jul-2014 (CT) Redefine `Required_Empty.head`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +103,7 @@ from   _TFL                     import TFL
 from   _MOM                     import MOM
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import *
 from   _TFL.pyk                 import pyk
@@ -153,6 +159,9 @@ class _MOM_Error_ (StandardError) :
         ( as_unicode = "description"
         )
 
+    _rank_d          = 1
+    _rank_s          = 1
+
     @Once_Property
     def as_json_cargo (self) :
         json_map = self._json_map
@@ -176,6 +185,11 @@ class _MOM_Error_ (StandardError) :
             result = _T (self.__class__.__doc__)
         return result
     # end def as_unicode
+
+    @Once_Property
+    def rank (self) :
+        return (self._rank_s, self._rank_d)
+    # end def rank
 
     def str_arg (self, args) :
         for a in args :
@@ -214,6 +228,8 @@ Error = _MOM_Error_ # end class
 
 class _Invariant_ (Error) :
 
+    attr_map_eo      = {} ### map embedded to original attribute names
+    attr_map_oe      = {} ### map original to embedded attribute names
     attributes       = ()
     description      = ""
     description_plus = ""
@@ -284,15 +300,19 @@ class _Invariant_ (Error) :
     # end def assertion
 
     def embed (self, obj, c_name, c_attr) :
-        def _fixed_val_disp (self, a_set, c_name) :
-            for k, v in pyk.iteritems (self.val_disp) :
-                yield k, v
-                if k in a_set :
-                    yield ".".join ((c_name, k)), k
-        a_set           = set (self.attributes)
-        self.attributes = tuple \
-            (".".join ((c_name, a)) for a in self.attributes)
-        self.val_disp   = dict (_fixed_val_disp (self, a_set, c_name))
+        amap_eo = self.attr_map_eo
+        if amap_eo is self.__class__.attr_map_eo :
+            amap_eo = self.attr_map_eo = {}
+            amap_oe = self.attr_map_oe = {}
+        val_disp = self.val_disp
+        self.val_disp = {}
+        for a in self.attributes :
+            k = ".".join ((c_name, a))
+            amap_eo [k] = a
+            amap_oe [a] = k
+            if a in val_disp :
+                self.val_disp [k] = val_disp [a]
+        self.attributes = tuple (amap_oe [a] for a in self.attributes)
     # end def embed
 
     def _clean_this (self, s) :
@@ -448,6 +468,11 @@ class Attribute_Set (Attribute, AttributeError) :
 class Attribute_Syntax (_Invariant_, ValueError) :
     """Raised for syntax errors in attributes of MOM objects/links."""
 
+    _rank_s        = -10
+
+    _json_attributes = ("description", ) + tuple \
+        (a for a in _Invariant_._json_attributes if a != "as_unicode")
+
     class inv :
         name       = "syntax_valid"
 
@@ -478,7 +503,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
               )
             )
         if attr.syntax :
-            result = "\n".join ((result, attr.syntax))
+            result = "\n".join ((result, _T (attr.syntax)))
         return result
     # end def as_unicode
 
@@ -488,17 +513,12 @@ class Attribute_Syntax (_Invariant_, ValueError) :
     # end def bindings
 
     @Once_Property
-    def head (self) :
-        return \
-            ( _T ("Syntax error: \n  expected type `%s`\n  got value `%s`")
-            % (_T (self.attribute.typ), self.value)
-            )
-    # end def head
-
-    @Once_Property
+    @getattr_safe
     def description (self) :
         if self.attribute.syntax :
             return "%s: %s" % (_T ("Syntax"), _T (self.attribute.syntax))
+        elif self.attribute.example :
+            return "%s: %s" % (_T ("Example"), _T (self.attribute.example))
     # end def description
 
     @Once_Property
@@ -506,6 +526,16 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         if self.exc_str :
             return "%s: %s" % (_T ("Exception"), self.exc_str)
     # end def explanation
+
+    @Once_Property
+    def head (self) :
+        return \
+            ( _T( "Syntax error for %s: "
+                  "\n  expected type `%s`\n  got value `%s`"
+                )
+            % (self.attributes [0], _T (self.attribute.typ), self.value)
+            )
+    # end def head
 
 # end class Attribute_Syntax
 
@@ -610,6 +640,11 @@ class Invariant (_Invariant_) :
     def head (self) :
         return self.inv_desc or self.inv.assertion
     # end def head
+
+    @Once_Property
+    def _rank_d (self) :
+        return self.inv.rank
+    # end def _rank_d
 
     def assertion (self) :
         indent = self.indent
@@ -936,6 +971,15 @@ class Required_Empty (Invariant) :
     """Primary attribute must not be empty."""
 
     is_required    = True
+    _rank_s        = -5
+
+    @Once_Property
+    def head (self) :
+        return  \
+            (  _T ("The attribute %s needs a non-empty value")
+            % (self.attributes [0], )
+            )
+    # end def head
 
 # end class Required_Empty
 
@@ -945,6 +989,8 @@ class Required_Missing (_Invariant_) :
     arg_sep        = "; "
     is_required    = True
 
+    _rank_s        = -5
+
     class inv :
         name       = "required_not_missing"
 
@@ -953,12 +999,14 @@ class Required_Missing (_Invariant_) :
         kw  = dict   (kw)
         raw = kw.pop ("raw", False)
         self.__super.__init__ (e_type, raw)
-        self.e_type     = e_type
-        self.attributes = self.needed = needed
-        self.missing    = missing
+        self.attributes = missing
         self.epk        = tuple (repr (x) for x in epk)
-        self.kw         = kw
+        self.e_type     = e_type
         self.kind       = kind
+        self.kw         = kw
+        self.missing    = missing
+        self.needed     = needed
+        self.val_disp   = kw
         self.args       = (self.head, self.description)
     # end def __init__
 
@@ -970,18 +1018,6 @@ class Required_Missing (_Invariant_) :
             result ["missing_t"] = missing_t
         return result
     # end def as_json_cargo
-
-    @Once_Property
-    def head (self) :
-        n = len (self.needed)
-        return  \
-            (  _Tn ( "%s needs the %s attribute: %s"
-                   , "%s needs the %s attributes: %s"
-                   , n
-                   )
-            % (_T (self.e_type.ui_name), _T (self.kind), self.needed)
-            )
-    # end def head
 
     @Once_Property
     def description (self) :
@@ -1004,26 +1040,31 @@ class Required_Missing (_Invariant_) :
     # end def explanation
 
     @Once_Property
+    def head (self) :
+        n = len (self.needed)
+        return  \
+            (  _Tn ( "%s needs the attribute: %s"
+                   , "%s needs the attributes: %s"
+                   , n
+                   )
+            % (_T (self.e_type.ui_name), self.needed)
+            )
+    # end def head
+
+    @Once_Property
     def missing_t (self) :
         AQ = self.e_type.AQ
         def _gen (AQ, missing) :
             for m in missing :
-                t = list \
+                aq = getattr (AQ, m)
+                t  = list \
                     ( a._attr.name
-                    for a in getattr (AQ, m).Attrs
+                    for a in aq.Attrs
                     if  a._attr.is_required
                     )
                 if t :
                     yield m, t
         return dict (_gen (self.e_type.AQ, self.missing))
-        return tuple \
-            ( itertools.chain
-                ( a._full_name
-                for m in self.missing
-                for a in getattr (AQ, m).Attrs
-                if  a._attr.is_required
-                )
-            )
     # end def missing_t
 
 # end class Required_Missing

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -46,9 +46,9 @@ _test_code = r"""
     >>> PAP.Person (last_name = u"", first_name = u"", raw = True)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
+    Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
         first_name = ''
-      Condition `last_name_not_empty` : last_name is not None and last_name != ''
+      Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
         last_name = ''
     >>> errors
     []
@@ -64,14 +64,14 @@ _test_code = r"""
     ...
     Traceback (most recent call last):
       ...
-    Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
+    Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
         first_name = ''
     >>> errors
-    [Invariants(Required_Empty(u'Person', Condition `first_name_not_empty` : first_name is not None and first_name != ''
+    [Invariants(Required_Empty(u'Person', Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
         first_name = ''),)]
     >>> for e in errors :
     ...     print e
-    Condition `first_name_not_empty` : first_name is not None and first_name != ''
+    Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
         first_name = ''
 
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
@@ -83,7 +83,7 @@ _test_code = r"""
             , "''"
             )
           ]
-      , 'head' : "first_name is not None and first_name != ''"
+      , 'head' : 'The attribute first_name needs a non-empty value'
       , 'is_required' : True
       }
     ]
@@ -92,9 +92,9 @@ _test_code = r"""
     >>> PAP.Person (last_name = u"", first_name = u"", raw = True, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `first_name_not_empty` : first_name is not None and first_name != ''
+    Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
         first_name = ''
-      Condition `last_name_not_empty` : last_name is not None and last_name != ''
+      Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
         last_name = ''
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
@@ -105,7 +105,7 @@ _test_code = r"""
             , "''"
             )
           ]
-      , 'head' : "first_name is not None and first_name != ''"
+      , 'head' : 'The attribute first_name needs a non-empty value'
       , 'is_required' : True
       }
     , { 'attributes' :
@@ -116,7 +116,7 @@ _test_code = r"""
             , "''"
             )
           ]
-      , 'head' : "last_name is not None and last_name != ''"
+      , 'head' : 'The attribute last_name needs a non-empty value'
       , 'is_required' : True
       }
     ]

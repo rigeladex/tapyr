@@ -20,10 +20,10 @@ msgstr ""
 
 #: _MOM/Error.py:957
 #, python-format
-msgid "%s needs the %s attribute: %s"
-msgid_plural "%s needs the %s attributes: %s"
-msgstr[0] "%s benötigt das %s Attribut: %s"
-msgstr[1] "%s benötigt die %sen Attribute: %s"
+msgid "%s needs the attribute: %s"
+msgid_plural "%s needs the attributes: %s"
+msgstr[0] "%s benötigt das Attribut: %s"
+msgstr[1] "%s benötigt die Attribute: %s"
 
 #: _MOM/Entity.py:1481
 #, python-format

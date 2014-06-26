@@ -345,6 +345,8 @@
 #     7-May-2014 (CT) Change `selectable_e_types_unique_epk` to
 #                     `selectable_e_types` based on `eligible_e_types`
 #     7-Jun-2014 (CT) Add `_A_Rev_Ref_.ref_attr`
+#    30-Jun-2014 (CT) Add guard for `t` to `_A_Id_Entity_.from_string`
+#     2-Jul-2014 (CT) Add `syntax` to `A_Date`, `A_Date_Time`, and `A_Time`
 #    ««revision-date»»···
 #--
 
@@ -691,11 +693,11 @@ class A_Attr_Type (MOM.Prop.Type) :
         try :
             if s is not None :
                 return self._from_string (s, obj, glob, locl)
+        except MOM.Error.Attribute_Syntax as exc :
+            if s :
+                raise
         except StandardError as exc :
             if s :
-                if isinstance (exc, MOM.Error.Attribute_Syntax) :
-                    ### don't wrap Attribute_Syntax inside Attribute_Syntax
-                    raise
                 raise MOM.Error.Attribute_Syntax (obj, self, s, str (exc))
     # end def from_string
 
@@ -1473,7 +1475,8 @@ class _A_Id_Entity_ (_A_SPK_Entity_) :
                     t = self._call_eval (s)
                 except (NameError, SyntaxError) :
                     t = (s, )
-            return self._get_object  (obj, t, raw = True)
+            if t is not None :
+                return self._get_object  (obj, t, raw = True)
     # end def from_string
 
     def _gen_etypes_transitive (self, e_types) :
@@ -2172,6 +2175,7 @@ class A_Date (_A_Date_) :
     typ            = _ ("Date")
     P_Type         = datetime.date
     Q_Ckd_Type     = MOM.Attr.Querier.Date
+    syntax         = _ ("yyyy-mm-dd")
     ui_length      = 12
     input_formats  = \
         ( "%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%d/%m/%Y", "%d.%m.%Y")
@@ -2241,6 +2245,7 @@ class A_Date_Time (_A_Date_) :
     example        = "2010-10-10 06:42"
     typ            = _ ("Date-Time")
     P_Type         = datetime.datetime
+    syntax         = _ ("yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional")
     ui_length      = 22
     input_formats  = tuple \
         ( itertools.chain
@@ -2777,6 +2782,7 @@ class A_Time (_A_Date_) :
     example        = "06:42"
     typ            = _ ("Time")
     P_Type         = datetime.time
+    syntax         = _ ("hh:mm:ss, the seconds `ss` are optional")
     ui_length      = 8
     input_formats  = ("%H:%M:%S", "%H:%M")
     _tuple_len     = 6

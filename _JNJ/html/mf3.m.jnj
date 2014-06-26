@@ -36,6 +36,7 @@
 ##    18-Jun-2014 (CT) Factor `do_field_entity`
 ##    19-Jun-2014 (CT) Change `entity_buttons` to use `elem.action_buttons`
 ##    19-Jun-2014 (CT) Add `entity_button_remove`
+##     2-Jul-2014 (CT) Add `texts` to `tail_scripts`
 ##    ««revision-date»»···
 ##--
 #}
@@ -160,7 +161,7 @@
 {%- macro entity_button_close (page, form, elem, t_module) -%}
   {{- action_button
       ( "close", "check"
-      , GTW._T ("Hide fields of %s") % (elem.E_Type.ui_name_T, )
+      , GTW._T ("Hide fields of %s") % (elem.label, )
       )
   -}}
 {%- endmacro -%} {#- entity_button_close -#}
@@ -174,7 +175,7 @@
 {%- macro entity_button_remove (page, form, elem, t_module) -%}
   {{- action_button
       ( "remove", "trash-o"
-      , GTW._T ("Remove %s from form and database") % (elem.E_Type.ui_name_T, )
+      , GTW._T ("Remove %s from form and database") % (elem.label, )
       )
   -}}
 {%- endmacro -%} {#- entity_button_remove -#}
@@ -199,7 +200,7 @@
 
 {%- macro Entity (page, form, elem, t_module) -%}
   <section class="Entity">
-    <h1>{{ elem.E_Type.ui_name_T }}</h1>
+    <h1>{{ elem.label }}</h1>
     {{ GTW.call_macro
         ("do_elements", page, form, elem, t_module, templ_name = t_module)
     }}
@@ -211,7 +212,7 @@
       ( "do_field_entity"
       , page, form, elem, t_module
       , templ_name = t_module
-      , h1_text    = elem.E_Type.ui_name_T
+      , h1_text    = elem.label
       , ** kwargs
       )
   }}
@@ -329,7 +330,11 @@
   <script>{# -#}
     $("form[id=\"{{ form.id }}\"]").gtw_mf3_form
       ( {{ form.as_json }}
-      , {  url : {# -#}
+      , { texts : {# -#}
+            { "Correct field" : "{{ GTW._T ("Correct field") }}" {# -#}
+            , "Form errors" : "{{ GTW._T ("form errors: please correct") }}" {# -#}
+            } {#- -#}
+        , url : {# -#}
             { add_rev_ref : "{{ page.href_add_rev_ref () }}" {# -#}
             , completer : "{{ page.href_complete () }}" {# -#}
             , completed : "{{ page.href_completed () }}" {# -#}

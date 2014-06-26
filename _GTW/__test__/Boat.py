@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -237,47 +237,49 @@ _test_code = """
     >>> b.b_class.set (max_crew = None)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+    Invariants: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None
     >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = None)`
-    [('object', [Required_Empty(SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+    [('object', [Required_Empty(SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None)]), ('region', []), ('system', []), ('uniqueness', [])]
 
     >>> b.b_class.max_crew = None
     Traceback (most recent call last):
       ...
-    Required_Empty: Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+    Required_Empty: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None
 
     >>> errors = []
     >>> SRM.Boat_Class ("Seascape 18", on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Boat_Class needs the required attributes: ('name', 'max_crew')
-      Instead it got: (name = 'Seascape 18')
+    Invariants: Boat_Class needs the attributes: ('name', 'max_crew'); Instead it got: (name = 'Seascape 18')
     >>> errors
-    [Required_Missing(u"Boat_Class needs the required attributes: ('name', 'max_crew')", u"Instead it got: (name = 'Seascape 18')")]
+    [Required_Missing(u"Boat_Class needs the attributes: ('name', 'max_crew')", u"Instead it got: (name = 'Seascape 18')")]
 
     >>> errors = []
     >>> SRM.Boat_Class (max_crew = 4, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Boat_Class needs the primary attribute: ('name',)
-      Instead it got: (max_crew = 4)
+    Invariants: Boat_Class needs the attribute: ('name',); Instead it got: (max_crew = 4)
     >>> errors
-    [Required_Missing(u"Boat_Class needs the primary attribute: ('name',)", u'Instead it got: (max_crew = 4)')]
+    [Required_Missing(u"Boat_Class needs the attribute: ('name',)", u'Instead it got: (max_crew = 4)')]
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
     ( 'name' ,)
       , 'bindings' :
           [
+            ( 'max_crew'
+            , '4'
+            )
+          ,
             ( 'name'
             , None
             )
           ]
       , 'description' : 'Instead it got: (max_crew = 4)'
       , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "Boat_Class needs the primary attribute: ('name',)"
+      , 'head' : "Boat_Class needs the attribute: ('name',)"
       , 'is_required' : True
       }
     ]
@@ -286,28 +288,25 @@ _test_code = """
     >>> SRM.Boat_Class (on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Boat_Class needs the primary attribute: ('name',)
-      Instead it got: ()
-      Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
+    Invariants: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None
-      Condition `name_not_empty` : name is not None and name != ''
+      Condition `name_not_empty` : The attribute name needs a non-empty value
         name = ''
+      Boat_Class needs the attribute: ('name',); Instead it got: ()
+
     >>> errors
-    [Required_Missing(u"Boat_Class needs the primary attribute: ('name',)", u'Instead it got: ()'), Invariants(Required_Empty(u'Boat_Class', Condition `max_crew_not_empty` : max_crew is not None and max_crew != ''
-        max_crew = None), Required_Empty(u'Boat_Class', Condition `name_not_empty` : name is not None and name != ''
+    [Required_Missing(u"Boat_Class needs the attribute: ('name',)", u'Instead it got: ()'), Invariants(Required_Empty(u'Boat_Class', Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
+        max_crew = None), Required_Empty(u'Boat_Class', Condition `name_not_empty` : The attribute name needs a non-empty value
         name = ''))]
 
     >>> errors = []
     >>> SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Boat needs the primary attributes: ('left', 'sail_number')
-      Instead it got: (sail_number = 187042)
+    Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = 187042)
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
-          ( 'left'
-          , 'sail_number'
-          )
+          ( 'left' ,)
       , 'bindings' :
           [
             ( 'left'
@@ -315,12 +314,12 @@ _test_code = """
             )
           ,
             ( 'sail_number'
-            , None
+            , '187042'
             )
           ]
       , 'description' : 'Instead it got: (sail_number = 187042)'
       , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "Boat needs the primary attributes: ('left', 'sail_number')"
+      , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
       , 'missing_t' :
           { 'left' :
@@ -337,14 +336,11 @@ _test_code = """
       ...
     Invariants: Condition `AC_check_sail_number_1` : 0 <= sail_number <= 999999
         sail_number = -187042
-      Boat needs the primary attributes: ('left', 'sail_number')
-      Instead it got: (sail_number = -187042)
+      Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = -187042)
 
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
-          ( 'left'
-          , 'sail_number'
-          )
+          ( 'left' ,)
       , 'bindings' :
           [
             ( 'left'
@@ -352,12 +348,12 @@ _test_code = """
             )
           ,
             ( 'sail_number'
-            , None
+            , '-187042'
             )
           ]
       , 'description' : 'Instead it got: (sail_number = -187042)'
       , 'explanation' : 'All required attributes must be supplied'
-      , 'head' : "Boat needs the primary attributes: ('left', 'sail_number')"
+      , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
       , 'missing_t' :
           { 'left' :

@@ -33,6 +33,7 @@
 ##     3-May-2014 (CT) Add class `readonly` to readonly `id_entity`
 ##     7-May-2014 (CT) Add `integer`
 ##     7-May-2014 (CT) Use `maxlength`, not `max_length`, for HTML attribute
+##    26-Jun-2014 (CT) Change `number` to always use `X.input.text`
 ##    ««revision-date»»···
 ##--
 #}
@@ -122,17 +123,20 @@
 
 {%- macro number (elem) -%}
   {%- set kw = GTW.dict
-      ( max           = elem.max_value
-      , min           = elem.min_value
+      ( max      = elem.max_value
+      , min      = elem.min_value
       )
   -%}
-  {%- if elem.attr.needs_raw_value %}
-    {%- set typ = X.input.text %}
-  {%- else %}
-    {%- set typ = X.input.number %}
-  {% endif -%}
   {%- do kw.update (kwargs) %}
-  {{ field (typ, elem, ** kw) }}
+  {%- if elem.attr.needs_raw_value %}
+    {%- do kw.update (pattern = None) %}
+  {%- else %}
+    {%- do kw.update ({"input-mode" : "number"}) %}
+  {% endif -%}
+  {#- For `type="number"`, browsers don't trigger `change` events, nor do
+  ##  they submit such values to the server
+  -#}
+  {{ field (X.input.text, elem, ** kw) }}
 {%- endmacro -%} {#- number -#}
 
 {%- macro password (elem) -%}

@@ -912,6 +912,7 @@ _test_doc = r"""
                   , 'kind' : 'internal'
                   , 'name' : 'registration_date'
                   , 'p_type' : 'date'
+                  , 'syntax' : 'yyyy-mm-dd'
                   , 'type' : 'Date'
                   , 'ui_name' : 'Registration date'
                   }
@@ -1101,6 +1102,7 @@ _test_doc = r"""
                         , 'kind' : 'necessary'
                         , 'name' : 'date'
                         , 'p_type' : 'datetime'
+                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional'
                         , 'type' : 'Date-Time'
                         , 'ui_name' : 'Date'
                         }
@@ -1399,6 +1401,7 @@ _test_doc = r"""
                         , 'kind' : 'necessary'
                         , 'name' : 'date'
                         , 'p_type' : 'datetime'
+                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional'
                         , 'type' : 'Date-Time'
                         , 'ui_name' : 'Date'
                         }
@@ -1726,6 +1729,7 @@ _test_doc = r"""
                         , 'kind' : 'necessary'
                         , 'name' : 'date'
                         , 'p_type' : 'datetime'
+                        , 'syntax' : 'yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional'
                         , 'type' : 'Date-Time'
                         , 'ui_name' : 'Date'
                         }

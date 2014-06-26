@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -36,6 +36,8 @@
 #     8-Feb-2011 (CT) s/Mandatory/Required/
 #    15-Apr-2012 (CT) Adapted to changes of `MOM.Error`
 #    20-Apr-2012 (CT) Add `__iter__`
+#    30-Jun-2014 (CT) Fix `__iter__`: pass `[missing_required]`, not
+#                     `missing_required`, to `itertools.chain`
 #    ««revision-date»»···
 #--
 
@@ -164,7 +166,7 @@ class Manager (TFL.Meta.Object) :
     def __iter__ (self) :
         result = itertools.chain (* self.errors.itervalues ())
         if self.missing_required is not None :
-            result = itertools.chain (self.missing_required, result)
+            result = itertools.chain ([self.missing_required], result)
         return result
     # end def __iter__
 

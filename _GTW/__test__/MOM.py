@@ -1620,8 +1620,7 @@ Changing objects and links
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...
-    Attribute_Value: Can't set necessary attribute Mouse.weight to `u'one ton'`.
-        `Syntax error` for : `Float `weight``
+    Invariants: `Syntax error` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton`
     >>> m.set_raw (color = "yellow", weight = "6*7")
@@ -2006,34 +2005,34 @@ Primary key attributes
     >>> scope.BMT.Trap ("", None)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` : name is not None and name != ''
+    Invariants: Condition `name_not_empty` : The attribute name needs a non-empty value
         name = ''
-      Condition `serial_no_not_empty` : serial_no is not None and serial_no != ''
+      Condition `serial_no_not_empty` : The attribute serial_no needs a non-empty value
         serial_no = None
     >>> scope.BMT.Trap ("ha", None)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `serial_no_not_empty` : serial_no is not None and serial_no != ''
+    Invariants: Condition `serial_no_not_empty` : The attribute serial_no needs a non-empty value
         serial_no = None
     >>> scope.BMT.Trap ("", 0)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` : name is not None and name != ''
+    Invariants: Condition `name_not_empty` : The attribute name needs a non-empty value
         name = ''
     >>> scope.BMT.Trap (None, 0)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` : name is not None and name != ''
+    Invariants: Condition `name_not_empty` : The attribute name needs a non-empty value
         name = None
     >>> scope.BMT.Trap ("ha", "", raw = True)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `serial_no_not_empty` : serial_no is not None and serial_no != ''
+    Invariants: Condition `serial_no_not_empty` : The attribute serial_no needs a non-empty value
         serial_no = None
     >>> scope.BMT.Trap ("", "7", raw = True)
     Traceback (most recent call last):
     ...
-    Invariants: Condition `name_not_empty` : name is not None and name != ''
+    Invariants: Condition `name_not_empty` : The attribute name needs a non-empty value
         name = ''
 
 Auto-updating attributes

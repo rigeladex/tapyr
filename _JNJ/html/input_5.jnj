@@ -43,6 +43,7 @@
 ##    22-Jan-2014 (CT) Change `number` to use `_input`, not `_input_c`
 ##     7-May-2014 (CT) DRY option handling in `_input`;
 ##                     add `autofocus`, `multiple`, `readonly`
+##    26-Jun-2014 (CT) Change `_input` to remove empty `pattern` from `kw`
 ##    ««revision-date»»···
 ##--
 #}
@@ -68,10 +69,12 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
       {%- do options.append (opt) %}
     {% endif -%}
   {% endfor -%}
-  {% if not kw.get ("name", None) -%}
-    {#- Remove empty `name` from `kw` -#}
-    {%- do kw.pop ("name", None) -%}
-  {%- endif -%}
+  {%- for key in ("name", "pattern") %}
+    {% if not kw.get (key, None) -%}
+      {#- Remove empty key from `kw` -#}
+      {%- do kw.pop (key, None) -%}
+    {%- endif -%}
+  {% endfor -%}
   <input type="{{ typ }}"{{ kw|xmlattr }}
     {%- if options %} {{ " ".join (options) }}{% endif -%}
   />

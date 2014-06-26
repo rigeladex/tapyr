@@ -283,6 +283,8 @@
 #     1-May-2014 (CT) Change `_kw_raw_check_predicates` to catch  `Invariants`
 #                     * up to now, Error.Invariants of nested composites were
 #                       silently ignored, doh!
+#     2-Jul-2014 (CT) Change `_kw_raw_check_predicates` to wrap errors in
+#                     `MOM.Error.Invariants`
 #    ««revision-date»»···
 #--
 
@@ -763,23 +765,25 @@ class Entity (TFL.Meta.Object) :
     # end def _kw_check_predicates
 
     def _kw_raw_check_predicates (self, on_error = None, ** kw) :
+        Err    = MOM.Error
         ckd_kw = {}
         to_do  = []
+        errors = []
         if on_error is None :
             on_error = self._raise_attr_error
         for name, val, attr in self.set_attr_iter (kw, on_error) :
             if val is not None :
                 try :
                     ckd_kw [name] = ckd_val = attr.from_string (val, self)
-                except MOM.Error.Attribute_Value as exc :
-                    on_error (exc)
-                    to_do.append ((attr, u"", None))
-                except MOM.Error.Invariants as exc :
-                    exc.embed (self, name, attr)
-                    on_error (exc)
-                    to_do.append ((attr, u"", None))
-                except (TypeError, ValueError, MOM.Error.Error) as exc :
-                    on_error \
+                except (Err.Attribute_Value, Err.Attribute_Syntax) as exc :
+                    errors.append (exc)
+                    to_do.append  ((attr, u"", None))
+                except Err.Invariants as exc :
+                    exc.embed     (self, name, attr)
+                    errors.append (exc)
+                    to_do.append  ((attr, u"", None))
+                except (TypeError, ValueError, Err.Error) as exc :
+                    errors.append \
                         ( MOM.Error.Attribute_Value
                             (self, name, val, attr.kind, exc)
                         )
@@ -800,6 +804,8 @@ class Entity (TFL.Meta.Object) :
                     to_do.append ((attr, val, ckd_val))
             else :
                 to_do.append ((attr, u"", None))
+        if errors :
+            on_error (MOM.Error.Invariants (errors))
         result = self._kw_check_predicates (on_error = on_error, ** ckd_kw)
         return result, to_do
     # end def _kw_raw_check_predicates

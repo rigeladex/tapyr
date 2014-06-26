@@ -39,6 +39,7 @@
 #    17-Jun-2014 (CT) Add and use `Form_attr_spec`, `Form_spec`
 #    18-Jun-2014 (CT) Add `Add_Rev_Ref` (and remove stale `Expander`)
 #    19-Jun-2014 (CT) Add `Deleter`
+#     2-Jul-2014 (CT) Add `Request_Timeout` to `_rendered_post` and `form_value`
 #    ««revision-date»»···
 #--
 
@@ -124,7 +125,7 @@ class _Action_ (_Ancestor) :
             return request.session.edit_session (sid)
         except request.session.Expired as exc :
             ### XXX re-authorization form (password only)
-            raise self.top.Status.Request_Timeout (expired = "%s" % (exc, ))
+            raise self.top.Status.Request_Timeout ("%s" % (exc, ))
         except LookupError as exc :
             raise self.top.Status.Bad_Request ("Session expired: %s" % (exc, ))
     # end def session_secret
@@ -185,17 +186,20 @@ class _HTML_Action_ (_Ancestor) :
     # end def head_line
 
     def form_value (self, request, json_cargo) :
+        Status = self.top.Status
         try :
             sid    = json_cargo.get ("sid")
             secret = self.session_secret (request, sid)
             form   = self.form_instance  (sid = sid, session_secret = secret)
             result = form (self.scope, json_cargo)
+        except Status.Request_Timeout as exc :
+            raise
         except Exception as exc :
             logging.exception \
                 ( "form_value: \n  submitted json:\n    %s"
                 , formatted (json_cargo, 4)
                 )
-            raise self.top.Status.Bad_Request ("%s" % (exc, ))
+            raise Status.Bad_Request ("%s" % (exc, ))
         if result.conflicts :
             ### XXX needs to be changed ???
             raise self.top.Status.Conflict (conflicts = result.as_json_cargo)
@@ -449,13 +453,23 @@ class _Changer_ (_HTML_Action_) :
     def _rendered_post (self, request, response) :
         json   = request.json
         scope  = self.top.scope
+        Status = self.top.Status
         result = {}
         if json.get ("cancel") :
             ### the user has clicked on the cancel button and not on
             ### the submit button
             scope.rollback ()
         else :
-            fv = self.form_value (request, json ["cargo"])
+            try :
+                fv = self.form_value (request, json ["cargo"])
+            except Status.Request_Timeout as exc :
+                ### XXX re-authorization form (password only)
+                result ["expired"] = "\n".join \
+                    ( ( exc.message
+                      , _T ("Please reload the page")
+                      )
+                    )
+                return result
             if not fv.submission_errors :
                 try :
                     self._commit_scope_fv (scope, fv, request, response)
@@ -464,9 +478,9 @@ class _Changer_ (_HTML_Action_) :
                         if e.essence :
                             e._commit_errors = tuple (e.entity.errors)
             result.update (fv.as_json_cargo)
-            result ["html"] = reh = {}
-            get_template    = self.top.Templateer.get_template
             if 0 : ### XXX ???
+                result ["html"] = reh = {}
+                get_template    = self.top.Templateer.get_template
                 for e in fv.entity_elements [1:] :
                     tm          = e.template_module or e.parent.template_module
                     t           = get_template (tm)

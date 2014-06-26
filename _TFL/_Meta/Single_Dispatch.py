@@ -36,6 +36,7 @@
 #    12-Sep-2013 (CT) Allow more than one type arg for `add_type`
 #    16-Jan-2014 (CT) Add `Single_Dispatch.__new__` to allow arguments
 #                     when used as decorator
+#     2-Jul-2014 (CT) Add `__debug__` clause to `Single_Dispatch.add_type`
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,19 @@ class Single_Dispatch (TFL.Meta.Object) :
         if func is None :
             return lambda func : self.add_type (* Types, func = func)
         else :
+            if __debug__ :
+                try :
+                    top_name = getattr (self.top_func, "__name__")
+                    add_name = getattr (func, "__name__")
+                except AttributeError :
+                    pass
+                else :
+                    if top_name == add_name :
+                        raise TypeError \
+                            ( "Name clash; specify a different name for %s "
+                              "to avoid shadowing of generic function %s"
+                            % (func, self.top_func)
+                            )
             for T in Types :
                 registry = self.registry
                 if T in registry :

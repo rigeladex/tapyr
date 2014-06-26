@@ -173,18 +173,16 @@ _test_ip4 = """
     >>> Test_IP4_Address (address = '256.255.255.2', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP4_Address.address to `u'256.255.255.2'`.
-        `IP4_Address: Syntax: Invalid octet: 256` for : `IP4-address `address``
+    Invariants: `IP4_Address: Syntax: Invalid octet: 256` for : `IP4-address `address``
          expected type  : `IP4-address`
          got      value : `256.255.255.2`
     IP4 address must contain 4 decimal octets separated by `.`.
     >>> Test_IP4_Address (address = '2560.255.2.2', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP4_Address.address to `u'2560.255.2.2'`.
-        `IP4_Address: Syntax: Invalid octet: 2560` for : `IP4-address `address``
-        expected type  : `IP4-address`
-        got      value : `2560.255.2.2`
+    Invariants: `IP4_Address: Syntax: Invalid octet: 2560` for : `IP4-address `address``
+         expected type  : `IP4-address`
+         got      value : `2560.255.2.2`
     IP4 address must contain 4 decimal octets separated by `.`.
     >>> Test_IP4_Network (address = '111.222.233.244/31', raw = True)
     GTW.OMP.NET.Test_IP4_Network ("111.222.233.244/31")
@@ -199,16 +197,14 @@ _test_ip4 = """
     >>> Test_IP4_Network (address = '1.2.3.4/33', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP4_Network.address to `u'1.2.3.4/33'`.
-        `IP4_Address: Syntax: Invalid netmask: 33` for : `IP4-network `address``
+    Invariants: `IP4_Address: Syntax: Invalid netmask: 33` for : `IP4-network `address``
          expected type  : `IP4-network`
          got      value : `1.2.3.4/33`
     IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
     >>> Test_IP4_Network (address = '1.2.3.4/333', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP4_Network.address to `u'1.2.3.4/333'`.
-        `IP4_Address: Syntax: Invalid netmask: 333` for : `IP4-network `address``
+    Invariants: `IP4_Address: Syntax: Invalid netmask: 333` for : `IP4-network `address``
          expected type  : `IP4-network`
          got      value : `1.2.3.4/333`
     IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
@@ -286,40 +282,35 @@ _test_ip6 = """
     >>> Test_IP6_Address (address = '::ffff:12.34.56.78', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:12.34.56.78'`.
-        `IP6_Address: Syntax: Hex value too long: 12.34.56.78` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: 12.34.56.78` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:12.34.56.78`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '::ffff:192.0.2.128', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:192.0.2.128'`.
-        `IP6_Address: Syntax: Hex value too long: 192.0.2.128` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: 192.0.2.128` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:192.0.2.128`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '123', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'123'`.
-        `IP6_Address: Syntax: Not enough hex parts in 123` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Not enough hex parts in 123` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `123`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = 'ldkfj', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'ldkfj'`.
-        `IP6_Address: Syntax: Hex value too long: ldkfj` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: ldkfj` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `ldkfj`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '2001::FFD3::57ab', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'2001::FFD3::57ab'`.
-        `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `2001::FFD3::57ab`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
@@ -329,8 +320,7 @@ _test_ip6 = """
     ...     )
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'2001:db8:85a3::8a2e:37023:7334'`.
-        `IP6_Address: Syntax: Hex value too long: 37023` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: 37023` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `2001:db8:85a3::8a2e:37023:7334`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
@@ -340,96 +330,84 @@ _test_ip6 = """
     ...     )
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'2001:db8:85a3::8a2e:370k:7334'`.
-        `IP6_Address: Syntax: invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `2001:db8:85a3::8a2e:370k:7334`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3:4:5:6:7:8:9', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:2:3:4:5:6:7:8:9'`.
-        `IP6_Address: Syntax: Too many hex parts in 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Too many hex parts in 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:2:3:4:5:6:7:8:9`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1::2::3', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1::2::3'`.
-        `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1::2::3`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:::3:4:5', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:::3:4:5'`.
-        `IP6_Address: Syntax: Too many ':': 1:::3:4:5` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Too many ':': 1:::3:4:5` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:::3:4:5`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3::4:5:6:7:8:9', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:2:3::4:5:6:7:8:9'`.
-        `IP6_Address: Syntax: Too many hex parts in 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Too many hex parts in 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:2:3::4:5:6:7:8:9`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '::ffff:2.3.4', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:2.3.4'`.
-        `IP6_Address: Syntax: Hex value too long: 2.3.4` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: 2.3.4` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:2.3.4`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '::ffff:257.1.2.3', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'::ffff:257.1.2.3'`.
-        `IP6_Address: Syntax: Hex value too long: 257.1.2.3` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: 257.1.2.3` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `::ffff:257.1.2.3`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1.2.3.4', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1.2.3.4'`.
-        `IP6_Address: Syntax: Hex value too long: 1.2.3.4` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Hex value too long: 1.2.3.4` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1.2.3.4`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = ':aa:aa:aa', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u':aa:aa:aa'`.
-        `IP6_Address: Syntax: No single ':' at start allowed` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: No single ':' at start allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `:aa:aa:aa`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = 'aa:aa:aa:', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'aa:aa:aa:'`.
-        `IP6_Address: Syntax: No single ':' at end allowed` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: No single ':' at end allowed` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `aa:aa:aa:`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3:4:5:6:7', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u'1:2:3:4:5:6:7'`.
-        `IP6_Address: Syntax: Not enough hex parts in 1:2:3:4:5:6:7` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: Not enough hex parts in 1:2:3:4:5:6:7` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `1:2:3:4:5:6:7`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = ':::', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Address.address to `u':::'`.
-        `IP6_Address: Syntax: No ':' at start and end` for : `IP6-address `address``
+    Invariants: `IP6_Address: Syntax: No ':' at start and end` for : `IP6-address `address``
          expected type  : `IP6-address`
          got      value : `:::`
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
@@ -461,16 +439,14 @@ _test_ip6 = """
     >>> Test_IP6_Network (address = '1:2:3::/129', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Network.address to `u'1:2:3::/129'`.
-        `IP6_Address: Syntax: Invalid netmask: 129` for : `IP6-network `address``
+    Invariants: `IP6_Address: Syntax: Invalid netmask: 129` for : `IP6-network `address``
          expected type  : `IP6-network`
          got      value : `1:2:3::/129`
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
     >>> Test_IP6_Network (address = '1:2:3::/1290', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set primary attribute Test_IP6_Network.address to `u'1:2:3::/1290'`.
-        `IP6_Address: Syntax: Invalid netmask: 1290` for : `IP6-network `address``
+    Invariants: `IP6_Address: Syntax: Invalid netmask: 1290` for : `IP6-network `address``
          expected type  : `IP6-network`
          got      value : `1:2:3::/1290`
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.

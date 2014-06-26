@@ -62,6 +62,15 @@
 #                     `.submitted_value`
 #    19-Jun-2014 (CT) Factor `cooked` and `init` to `_Field_Entity_Mixin_`
 #    19-Jun-2014 (CT) Add `action_buttons`, `Entity_Rev_Ref.edit`
+#    27-Jun-2014 (CT) Add `po_index`
+#    30-Jun-2014 (CT) Change `Field.__call__` to skip empty, unchanged values
+#    30-Jun-2014 (CT) Use `GTW..MF3.Error.List`
+#     1-Jul-2014 (CT) Add `_Entity_.label`
+#     2-Jul-2014 (CT) Sort `submission_errors` by `po_index`
+#     3-Jul-2014 (CT) Factor and redefine `_required_missing_error`
+#     3-Jul-2014 (CT) Swap arguments of `_update_element_map`,
+#                     redefine `Entity_Rev_Ref._update_element_map`
+#     3-Jul-2014 (CT) Change `_Entity_Mixin_.__call__` to consider `required`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +82,7 @@ from   _MOM                     import MOM
 from   _TFL                     import TFL
 
 import _GTW._MF3.Completer
+import _GTW._MF3.Error
 
 from   _MOM.import_MOM          import Q
 
@@ -134,7 +144,7 @@ class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
                 cls.template_macro = name
             root = cls.m_root
             if getattr (root, "_Element_Map_body", None) :
-                cls._update_element_map (root)
+                root._update_element_map (cls)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -144,7 +154,7 @@ class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
             ### update all `_Element_Map`s up to `root`
             while getattr (Entity, "_Element_Map_body", None) is None :
                 Entity = Entity.Parent_Entity
-            result._update_element_map (Entity)
+            Entity._update_element_map (result)
             Entity = Entity.Parent_Entity
         return result
     # end def __call__
@@ -202,7 +212,7 @@ class M_Entity (_M_Element_) :
             result = cls._Element_Map_body = {}
             for e in cls.elements_transitive () :
                 if e is not cls :
-                    e._update_element_map (cls)
+                    cls._update_element_map (e)
         return result
     # end def _Element_Map
 
@@ -271,8 +281,9 @@ class _Base_ (TFL.Meta.Object) :
         ("_element_ids", "_reset_properties", "_pop_to_self", "_pop_to_self_")
     _pop_to_self        = ("parent", "template_macro", "template_module")
     _pop_to_self_       = ("index", )
+    _po_index           = None
     _required           = False
-    _reset_properties   = ("template_elements", )
+    _reset_properties   = ("template_elements", "po_index")
     _submitted_value    = undef
     _submission_errors  = ()
     _ui_rank            = (0, )
@@ -289,7 +300,7 @@ class _Base_ (TFL.Meta.Object) :
                 , * (e.commit_errors for e in self.elements)
                 )
             )
-    # end def submission_errors
+    # end def commit_errors
 
     @TFL.Meta.Once_Property
     def conflicts (self) :
@@ -333,6 +344,20 @@ class _Base_ (TFL.Meta.Object) :
             return self.parent.Entity
     # end def Parent_Entity
 
+    @property
+    def po_index (self) :
+        """Pre-order index of `self` in element hierarchy"""
+        root = self.root
+        if root._po_index is None :
+            root._setup_po_index ()
+        return self._po_index
+    # end def po_index
+
+    @po_index.deleter
+    def po_index (self) :
+        self._po_index = None
+    # end def po_index
+
     @TFL.Meta.Once_Property
     def root (self) :
         parent = self.parent
@@ -341,11 +366,12 @@ class _Base_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def submission_errors (self) :
-        return list \
+        return sorted \
             ( ichain
                 ( self._submission_errors
                 , * (e.submission_errors for e in self.elements)
                 )
+            , key = Q.po_index
             )
     # end def submission_errors
 
@@ -375,9 +401,8 @@ class _Base_ (TFL.Meta.Object) :
         if not soc.skip :
             yield soc
             for e in soc.elements :
-                if not e.skip :
-                    for et in e.elements_transitive () :
-                        yield et
+                for et in e.elements_transitive () :
+                    yield et
     # end def elements_transitive
 
     def reset_once_properties (self) :
@@ -411,15 +436,10 @@ class _Base_ (TFL.Meta.Object) :
         return cargo ["field_values"].get (self.id, {})
     # end def _my_cargo
 
-    @TFL.Meta.Class_and_Instance_Method
-    def _update_element_map (soc, root) :
-        if root is not soc :
-            Map = root._Element_Map
-            for k in soc._element_ids :
-                key = getattr (soc, k, None)
-                if key and not key in Map :
-                    Map [key] = soc
-    # end def _update_element_map
+    def _setup_po_index (self) :
+        for i, e in enumerate (self.root.elements_transitive ()) :
+            e._po_index = i
+    # end def _setup_po_index
 
     def _submitted_value_iter (self) :
         undef = self.undef
@@ -428,6 +448,18 @@ class _Base_ (TFL.Meta.Object) :
             if v is not undef :
                 yield e.name, v
     # end def _submitted_value_iter
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _update_element_map (soc, elem) :
+        if soc is not elem :
+            Map = soc._Element_Map
+            for k in elem._element_ids :
+                key = getattr (elem, k, None)
+                if key and not key in Map :
+                    Map [key] = elem
+    # end def _update_element_map
+
+    _update_element_map_base = _update_element_map
 
     def __iter__ (self) :
         for e in self.elements :
@@ -512,28 +544,29 @@ class _Entity_Mixin_ (_Base_) :
 
     def __call__ (self, scope, cargo) :
         essence = self.essence
-        errors  = self._submission_errors = []
-        r_errs  = 0
-        handler = self._create_from_submission if essence is None \
-            else  self._change_from_submission
-        try :
-            to_do = []
-            for e in self.elements :
-                try :
+        errors  = self._submission_errors = GTW.MF3.Error.List (self)
+        with errors :
+            r_errs  = 0
+            handler = self._create_from_submission if essence is None \
+                else  self._change_from_submission
+            try :
+                to_do = []
+                for e in self.elements :
+                    try :
+                        e (scope, cargo)
+                    except Delay_Call :
+                        to_do.append (e)
+                    else :
+                        if e.attr.kind.is_required :
+                            r_errs += len (e.submission_errors)
+                svs = self.submitted_value or {}
+                if (svs or self.required) and not (self.conflicts or r_errs) :
+                    handler (scope, svs)
+                for e in to_do :
                     e (scope, cargo)
-                except Delay_Call :
-                    to_do.append (e)
-                else :
-                    if e.attr.kind.is_required :
-                        r_errs += len (e.submission_errors)
-            svs = self.submitted_value
-            if svs and not (self.conflicts or r_errs) :
-                handler (scope, svs)
-            for e in to_do :
-                e (scope, cargo)
-        except MOM.Error.Error as exc :
-            if not errors :
-                errors.append (exc)
+            except MOM.Error.Error as exc :
+                if not errors :
+                    errors.append (exc)
     # end def __call__
 
     @classmethod
@@ -626,18 +659,12 @@ class _Entity_Mixin_ (_Base_) :
     def _create_instance (self, ETM, svs) :
         error = None
         on_error = self._submission_errors.append
+        result   = self.undef
         try :
             try :
                 rqas      = ETM.raw_query_attrs (svs, svs)
                 matches   = ETM.query (* rqas)
             except Exception as exc :
-                logging.exception \
-                    ( "Exception from "
-                      "`ETM.query (* ETM.raw_query_attrs (svs, svs))` "
-                      "for ETM = %s, svs = %s"
-                    % (ETM.type_name, sorted (svs.iteritems ()), )
-                    )
-                on_error (exc)
                 count     = 0
             else :
                 count     = matches.count ()
@@ -648,7 +675,7 @@ class _Entity_Mixin_ (_Base_) :
                 try :
                     epks  = ETM.E_Type.epkified (** svs)
                 except MOM.Error.Required_Missing as exc :
-                    error = exc
+                    error = self._required_missing_error (exc)
                 except Exception :
                     pass
                 if error is None :
@@ -665,9 +692,15 @@ class _Entity_Mixin_ (_Base_) :
             if not exc.any_required_empty :
                 on_error (exc)
         else :
-            self.essence = self._submitted_value = result
+            self._submitted_value = result
+            if result is not self.undef :
+                self.essence = result
             return result
     # end def _create_instance
+
+    def _required_missing_error (self, exc) :
+        return exc
+    # end def _required_missing_error
 
     def __iter__ (self) :
         result = self.render_groups or self.elements
@@ -703,6 +736,11 @@ class _Entity_ (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
     def Entity (self) :
         return self
     # end def Entity
+
+    @property
+    def label (self) :
+        return self.E_Type.ui_name_T
+    # end def label
 
     @property
     def ui_display (self) :
@@ -1116,6 +1154,7 @@ class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_
     action_buttons          = ("close", "clear", "reset", "remove")
     allow_new               = True
     id_sep                  = "::"
+    required                = True
     _pop_to_self            = ("allow_new", )
 
     @property
@@ -1139,6 +1178,7 @@ class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_
         parent = kw.get ("parent")
         kw.update (bare_id = parent.bare_id)
         result = cls.__c_super.Auto (E_Type, ** kw)
+        cls.name = cls.q_name = parent.q_name
         return result
     # end def Auto
 
@@ -1165,6 +1205,25 @@ class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_
             )
     # end def _auto_attributes
 
+    def _required_missing_error (self, exc) :
+        req_fields = list (e for e in self.elements if e._required)
+        missing    = list \
+            (f.name for f in req_fields if not f.submitted_value)
+        needed     = list (f.name for f in req_fields)
+        return MOM.Error.Required_Missing (self.E_Type, needed, missing, [], {})
+    # end def _required_missing_error
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _update_element_map (soc, elem) :
+        if soc is not elem :
+            soc._update_element_map_base (elem)
+            Map = soc._Element_Map
+            l   = len (soc.parent.q_name)
+            key = elem.q_name [l+1:]
+            if key and not key in Map :
+                Map [key] = elem
+    # end def _update_element_map
+
 # end class Entity_Rev_Ref
 
 @TFL.Add_To_Class ("MF3_Element", MAT.A_Attr_Type)
@@ -1182,17 +1241,17 @@ class Field (_Field_) :
             undef = self.undef
             edit  = my_cargo.get ("edit", undef)
             if edit is not undef :
-                if self.id_essence :
-                    init = my_cargo.get ("init", ak.get_raw (None))
+                default    = ak.get_raw (None)
+                id_essence = self.id_essence
+                init       = my_cargo.get ("init", default)
+                if id_essence :
                     asyn = ak.get_raw (self.essence)
                     if init != asyn :
                         self.conflicts += 1
                         self.asyn       = asyn
                         ### XXX add MOM.Error.?Async_Conflict?...
-                        ###     to essence._submission_errors
-                else :
-                    init = my_cargo.get ("init")
-                if edit != init :
+                        ###     to id_essence._submission_errors
+                if edit != init or (edit and not id_essence) :
                     self._submitted_value = edit
     # end def __call__
 
@@ -1244,7 +1303,6 @@ class Field_Composite (_Field_Composite_Mixin_, _Field_) :
     attr_selector       = MOM.Attr.Selector.editable
 
     def __call__ (self, scope, cargo) :
-        self._submission_errors = []
         for e in self.elements :
             e (scope, cargo)
     # end def __call__
@@ -1380,8 +1438,9 @@ class Field_Ref_Hidden (Field_Entity) :
     _attr_prop_map          = dict \
         (  (k, v)
         for k, v in pyk.iteritems (Field_Entity._attr_prop_map)
-        if  k != "input_widget"
+        if  k not in ("input_widget", "_required")
         )
+    _required           = False
 
     def __call__ (self, scope, cargo) :
         pass
@@ -1446,7 +1505,6 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
     def __call__ (self, scope, cargo) :
         self.populate_new (cargo)
         if self.parent.essence :
-            self._submission_errors = []
             for e in self.elements :
                 e (scope, cargo)
         else :

@@ -766,12 +766,12 @@ _test_referential_integrity = r"""
     >>> bir.skipper = None
     Traceback (most recent call last):
       ...
-    Required_Empty: Condition `skipper_not_empty` : skipper is not None and skipper != ''
+    Required_Empty: Condition `skipper_not_empty` : The attribute skipper needs a non-empty value
         skipper = None
     >>> bir.set (skipper = None)
     Traceback (most recent call last):
       ...
-    Invariants: Condition `skipper_not_empty` : skipper is not None and skipper != ''
+    Invariants: Condition `skipper_not_empty` : The attribute skipper needs a non-empty value
         skipper = None
     >>> print bir.skipper                             ### before s.destroy () 2
     ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, (u'scams', ))

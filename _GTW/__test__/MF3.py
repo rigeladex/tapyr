@@ -389,6 +389,91 @@ _test_element = """
     <Field Z-25:phones::desc@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
     <Field_Ref_Hidden Z-25:phones::left@3> (u'tanzer', u'christian', u'', u'')
 
+    >>> show_elements (f_p_z, "label")
+    <Entity Z-25> Person
+    <Field Z-25:last_name> Last name
+    <Field Z-25:first_name> First name
+    <Field Z-25:middle_name> Middle name
+    <Field Z-25:title> Academic title
+    <Field_Composite Z-25:lifetime> Lifetime
+    <Field Z-25:lifetime.start> Start
+    <Field Z-25:lifetime.finish> Finish
+    <Field Z-25:sex> Sex
+    <Field_Rev_Ref Z-25:phones> Phones
+    <Entity_Rev_Ref Z-25:phones@3> Person_has_Phone
+    <Field_Entity Z-25:phones::right@3> Phone
+    <Field Z-25:phones::right.country_code@3> Country code
+    <Field Z-25:phones::right.area_code@3> Area code
+    <Field Z-25:phones::right.number@3> Number
+    <Field Z-25:phones::extension@3> Extension
+    <Field Z-25:phones::desc@3> Description
+    <Field_Ref_Hidden Z-25:phones::left@3> Person
+
+    >>> show_elements (f_p_z, "_po_index")
+    <Entity Z-25> None
+    <Field Z-25:last_name> None
+    <Field Z-25:first_name> None
+    <Field Z-25:middle_name> None
+    <Field Z-25:title> None
+    <Field_Composite Z-25:lifetime> None
+    <Field Z-25:lifetime.start> None
+    <Field Z-25:lifetime.finish> None
+    <Field Z-25:sex> None
+    <Field_Rev_Ref Z-25:phones> None
+    <Entity_Rev_Ref Z-25:phones@3> None
+    <Field_Entity Z-25:phones::right@3> None
+    <Field Z-25:phones::right.country_code@3> None
+    <Field Z-25:phones::right.area_code@3> None
+    <Field Z-25:phones::right.number@3> None
+    <Field Z-25:phones::extension@3> None
+    <Field Z-25:phones::desc@3> None
+    <Field_Ref_Hidden Z-25:phones::left@3> None
+
+    >>> show_elements (f_p_z, "po_index")
+    <Entity Z-25> 0
+    <Field Z-25:last_name> 1
+    <Field Z-25:first_name> 2
+    <Field Z-25:middle_name> 3
+    <Field Z-25:title> 4
+    <Field_Composite Z-25:lifetime> 5
+    <Field Z-25:lifetime.start> 6
+    <Field Z-25:lifetime.finish> 7
+    <Field Z-25:sex> 8
+    <Field_Rev_Ref Z-25:phones> 9
+    <Entity_Rev_Ref Z-25:phones@3> 10
+    <Field_Entity Z-25:phones::right@3> 11
+    <Field Z-25:phones::right.country_code@3> 12
+    <Field Z-25:phones::right.area_code@3> 13
+    <Field Z-25:phones::right.number@3> 14
+    <Field Z-25:phones::extension@3> 15
+    <Field Z-25:phones::desc@3> 16
+    <Field_Ref_Hidden Z-25:phones::left@3> 17
+
+    >>> show_elements (f_p_z, "_po_index")
+    <Entity Z-25> 0
+    <Field Z-25:last_name> 1
+    <Field Z-25:first_name> 2
+    <Field Z-25:middle_name> 3
+    <Field Z-25:title> 4
+    <Field_Composite Z-25:lifetime> 5
+    <Field Z-25:lifetime.start> 6
+    <Field Z-25:lifetime.finish> 7
+    <Field Z-25:sex> 8
+    <Field_Rev_Ref Z-25:phones> 9
+    <Entity_Rev_Ref Z-25:phones@3> 10
+    <Field_Entity Z-25:phones::right@3> 11
+    <Field Z-25:phones::right.country_code@3> 12
+    <Field Z-25:phones::right.area_code@3> 13
+    <Field Z-25:phones::right.number@3> 14
+    <Field Z-25:phones::extension@3> 15
+    <Field Z-25:phones::desc@3> 16
+    <Field_Ref_Hidden Z-25:phones::left@3> 17
+
+    >>> f_p_z.reset_once_properties ()
+
+    >>> print (f_p_z, f_p_z._po_index)
+    <Entity Z-25> None
+
     >>> f_p_z ["Z-25:phones"]
     <Field_Rev_Ref Z-25:phones>
 
@@ -502,7 +587,7 @@ _test_element = """
     >>> for e in f_p_z.entity_elements :
     ...     print (e, formatted_1 (sorted (getattr (e, "_Element_Map", []))))
     <Entity Z-25> ['Z-25:first_name', 'Z-25:last_name', 'Z-25:lifetime', 'Z-25:lifetime.finish', 'Z-25:lifetime.start', 'Z-25:middle_name', 'Z-25:phones', 'Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'Z-25:phones@3', 'Z-25:sex', 'Z-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
-    <Entity_Rev_Ref Z-25:phones@3> ['Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number']
+    <Entity_Rev_Ref Z-25:phones@3> ['Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'right', 'right.area_code', 'right.country_code', 'right.number']
     <Field_Entity Z-25:phones::right@3> []
 
     >>> print (F_Person_z ["Z-25:phones"])
@@ -523,7 +608,7 @@ _test_element = """
     >>> proto = f_p_z ["Z-25:phones"].proto
 
     >>> print (formatted_1 (sorted (proto._Element_Map)))
-    ['Z-25:phones::desc', 'Z-25:phones::extension', 'Z-25:phones::left', 'Z-25:phones::left.first_name', 'Z-25:phones::left.last_name', 'Z-25:phones::left.middle_name', 'Z-25:phones::left.title', 'Z-25:phones::right', 'Z-25:phones::right.area_code', 'Z-25:phones::right.country_code', 'Z-25:phones::right.number', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number']
+    ['Z-25:phones::desc', 'Z-25:phones::extension', 'Z-25:phones::left', 'Z-25:phones::left.first_name', 'Z-25:phones::left.last_name', 'Z-25:phones::left.middle_name', 'Z-25:phones::left.title', 'Z-25:phones::right', 'Z-25:phones::right.area_code', 'Z-25:phones::right.country_code', 'Z-25:phones::right.number', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'right', 'right.area_code', 'right.country_code', 'right.number']
 
     >>> print (proto, proto.__class__, list (proto.elements_transitive ()))
     <class Entity_Rev_Ref Z-25:phones> <class '_GTW._MF3.Element.M_Entity_Rev_Ref'> [<class Entity_Rev_Ref Z-25:phones>, <class Field_Entity Z-25:phones::right>, <class Field Z-25:phones::right.country_code>, <class Field Z-25:phones::right.area_code>, <class Field Z-25:phones::right.number>, <class Field Z-25:phones::extension>, <class Field Z-25:phones::desc>, <class Field_Ref_Hidden Z-25:phones::left>, <class Field Z-25:phones::left.last_name>, <class Field Z-25:phones::left.first_name>, <class Field Z-25:phones::left.middle_name>, <class Field Z-25:phones::left.title>]

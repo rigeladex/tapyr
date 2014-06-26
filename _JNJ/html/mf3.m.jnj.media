@@ -28,6 +28,7 @@
 #    14-May-2014 (CT) Add `style_sheet`
 #    15-May-2014 (CT) Add `Media.Rule`
 #    17-Jun-2014 (CT) Add rules for `Entity-List`
+#     2-Jul-2014 (CT) Add rules for `.form-errors`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,16 @@ style_sheet = Style_Sheet \
                         , line_height          = Em (1.143)
                         , children             =
                             [ Rule_Class
+                                ( "bad"
+                                , background_color  = P.color_status_bad
+                                , children          =
+                                    [ Rule_Pseudo
+                                        ( "focus"
+                                        , border_width = Px (2)
+                                        )
+                                    ]
+                                )
+                            , Rule_Class
                                 ( "invalid"
                                 , border_color = P.color_status_bad
                                 , border_width = Px (2)
@@ -298,6 +309,52 @@ style_sheet = Style_Sheet \
                                     (Em (2.5), 0, 0, Em (12.0))
                                 )
                             ]
+                        )
+                    ]
+                )
+            , Rule
+                ( ".form-errors"
+                , background_color = P.color_status_bad
+                , border           = "1px solid " + P.background_color
+                , border_radius    = Em (1/2)
+                , margin           = TRBL (0, 0, Em (1.0))
+                , padding          = TRBL (Rem (0.5), Rem (1.1), 0)
+                , children         =
+                    [ Rule
+                        ( ".error-msg"
+                        , border           = "1px solid #DEDEDE"
+                        , border_radius    = Em (1/2)
+                        , padding          = TRBL (Rem (0.5), Rem (0.5), 0)
+                        , margin           = TRBL (0, 0, Rem (1.0))
+                        , children         =
+                            [ Rule
+                                ( "a.pure-button"
+                                , color     = P.color.m_blue
+                                , min_width = Rem  (2.0)
+                                , padding   =
+                                    TRBL (Rem (0.25), Rem (0.5), Rem (0.125))
+                                )
+                            ]
+                        )
+                    , Rule
+                        ( "h1", "h2", "p"
+                        , margin           = TRBL (0, 0, Rem (0.5))
+                        , padding          = 0
+                        )
+                    , Rule
+                        ( "h1", "h2"
+                        , background_color = "inherit"
+                        , color            = "inherit"
+                        )
+                    , Rule
+                        ( "h1"
+                        , font_size        = Em (1.5)
+                        , font_weight      = "bold"
+                        )
+                    , Rule
+                        ( "h2"
+                        , font_size        = Em (1.25)
+                        , font_weight      = "normal"
                         )
                     ]
                 )

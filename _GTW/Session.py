@@ -52,12 +52,15 @@
 #     5-May-2013 (CT) Add change guard to `username.setter`
 #    11-Dec-2013 (CT) Fix `_data` to check user *only* once after `_load ()`
 #    11-Feb-2014 (CT) Force `sid` to `str`
+#     2-Jul-2014 (CT) Localize `Epxired` message
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 
 from   _TFL                     import TFL
+from   _TFL.I18N                import _, _T, _Tn
+
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Sets
 
@@ -210,7 +213,7 @@ class Session (TFL.Meta.Object) :
                 )
         if soft_expiry and self._expired (soft_expiry) :
             raise self.Expired \
-                ( "Edit session expired since %s"
+                ( _T ("Edit session expired since %s")
                 % (soft_expiry.strftime ("%Y/%m/%d %H:%M"), )
                 )
         return hash

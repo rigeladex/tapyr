@@ -29,12 +29,15 @@
 //                     factor `setup_sub_form`
 //    19-Jun-2014 (CT) Add `action_callback.remove`; DRY `setup_sub_form`
 //    19-Jun-2014 (CT) Change `action_callback.close` to set `display` <input>
+//     2-Jul-2014 (CT) Add `form_errors`
 //    ««revision-date»»···
 //--
 
 ;
 ( function ($) {
     "use strict";
+
+    var L      = $GTW.L;
 
     var bwrap  = function bwrap (v) {
         return "<b>" + v + "</b>";
@@ -48,7 +51,9 @@
               , display_field            : ".Field.Display"
               , display_id_ref           : ".value.display.id_ref"
               , entity_list              : ".Entity-List"
+              , err_msg                  : "div.error-msg"
               , form_element             : "form[id]"
+              , form_errors              : "div.form-errors"
               , focusables               :
                   ".Field :input[id]:not(:hidden):not(.prefilled):not(.readonly)"
               , hidden_id_ref            : ".value.hidden.id_ref"
@@ -612,6 +617,67 @@
                 field_map [id] = f$;
               }
             };
+        var form_errors =
+            { container : function container () {
+                var S      = options.selectors;
+                var form$  = options.form$;
+                var result = $(S.form_errors, form$);
+                if (! result.length) {
+                    $("h1", form$).first ().after ($( L (S.form_errors)));
+                    result = $(S.form_errors, form$);
+                }
+                return result;
+              }
+            , display : function display (errors) {
+                var errs$ = form_errors.container ();
+                errs$.html
+                    ($(L ("h1", { html : translated ("Form errors")})));
+                for (var i = 0, li = errors.length, err; i < li; i++) {
+                    err = errors [i];
+                    form_errors.display_1 (errs$, err);
+                };
+                $(err_ref, errs$).addClass ("pure-button");
+                //$GTW.show_message ("Submit errors: ", errors);
+              }
+            , display_1 : function display_1 (errs$, err) {
+                var S      = options.selectors;
+                var ent$   = $("[id=\"" + err.entity + "\"]");
+                var err$   = $(L (S.err_msg));
+                var f$, r$;
+                if (ent$.length) {
+                    ent$.closest (S.closable).removeClass ("closed");
+                };
+                errs$.append (err$);
+                err$.append  ($( L ( "h2", { html : err.head })));
+                if ("description" in err) {
+                    err$.append
+                        ($(L ("p.description", { html : err.description })));
+                };
+                if ("explanation" in err) {
+                    err$.append
+                        ($(L ("p.explanation", { html : err.explanation })));
+                };
+                for (var i = 0, li = err.fields.length, f; i < li; i++) {
+                    f  = err.fields [i];
+                    f$ = $("[id=\"" + f.fid + "\"]");
+                    r$ = $(err_ref + "[data-id=\"" + f.fid + "\"]");
+                    f$.toggleClass ("bad",  true)
+                      .toggleClass ("good", false);
+                    r$.prop
+                        ( "title"
+                        , translated ("Correct field") + " " + f.label
+                        );
+                }
+              }
+            , goto_field : function goto_field (ev) {
+                var S       = options.selectors;
+                var a$      = $(this);
+                var id      = a$.data ("id");
+                var f$      = $("[id=\"" + id + "\"]");
+                f$.focus ();
+                return false;
+              }
+            };
         var setup_entity_display = function setup_entity_display (n) {
             var S  = options.selectors;
             var f$ = $(this);
@@ -693,8 +759,7 @@
                         $GTW.show_message
                             ("Submit conflicts", answer.conflicts);
                     } else if (answer ["errors"]) {
-                        $GTW.show_message ("Submit errors: ", answer.errors);
-                        // XXX _display_error_map (answer.errors);
+                        form_errors.display (answer.errors);
                     } else if (answer ["expired"]) {
                         // XXX display re-authorization form
                         $GTW.show_message ("Expired: ", answer.expired);
@@ -732,7 +797,16 @@
                 );
             return false;
         };
+        var translated = function translated (text) {
+            var result = text;
+            if (text in options.texts) {
+                result = options.texts [text];
+            };
+            return result;
+        }
+        var err_ref   = selectors.err_msg + " a";
         options.form$ = this;
+        this.delegate  (err_ref, "click", form_errors.goto_field);
         // bind `submit_cb` to `click` of submit buttons (need button name)
         // disable `submit` event for form to avoid IE to do normal form
         // submit after running `submit_cb`
