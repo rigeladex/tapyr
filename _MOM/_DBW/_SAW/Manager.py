@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -50,6 +50,7 @@
 #                     descendents of relevant E_Types
 #    20-Sep-2013 (CT) Use `QX.Mapper`, not `qs._saw_filter`
 #    26-Sep-2013 (CT) Add `reset_cache`
+#     4-Jul-2014 (CT) Add table-name to name of `UniqueConstraint`
 #    ««revision-date»»···
 #--
 
@@ -279,7 +280,9 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
                         tables.update (j.table for j in join)
                 if len (tables) == 1 :
                     unique = SA.schema.UniqueConstraint \
-                        (* columns, name = pk.name)
+                        ( * columns
+                        , name = "__".join ([sa_table.name, pk.name])
+                        )
                     sa_table.append_constraint (unique)
                     pred.ems_check = False
     # end def _add_check_constraints
