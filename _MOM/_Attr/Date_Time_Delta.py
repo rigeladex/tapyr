@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    16-Jun-2014 (RS) Creation
-#    ««revision-date»»···
+#    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 #--
 
 from   __future__            import unicode_literals

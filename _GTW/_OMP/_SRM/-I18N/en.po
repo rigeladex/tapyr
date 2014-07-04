@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-02-19 17:57+0100\n"
+"POT-Creation-Date: 2014-07-04 12:48+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -560,7 +560,7 @@ msgid "Sail number of boat (without nation!)"
 msgstr ""
 
 #: _GTW._OMP._SRM.Boat:0
-msgid "Sail number prefix of boat (e.g., \"X\", not the nation code!)."
+msgid "Sail number prefix of boat (e.g., 'X', not the nation code!)."
 msgstr ""
 
 #: _GTW._OMP._SRM.Boat:0
@@ -750,5 +750,8 @@ msgid "valid_vintage"
 msgstr ""
 
 #~ msgid "Weight of this regatta in compuation of laser-points."
+#~ msgstr ""
+
+#~ msgid "Sail number prefix of boat (e.g., \"X\", not the nation code!)."
 #~ msgstr ""
 

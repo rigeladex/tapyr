@@ -18,35 +18,3 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: _ReST/Roles.py:97
-msgid "\\u2018"
-msgstr ""
-
-#: _ReST/Roles.py:97
-msgid "\\u2019"
-msgstr ""
-
-#: _ReST/Roles.py:94
-msgid "\\u201C"
-msgstr ""
-
-#: _ReST/Roles.py:94
-msgid "\\u201D"
-msgstr ""
-
-#: _ReST/Roles.py:95
-msgid "\\u2039"
-msgstr ""
-
-#: _ReST/Roles.py:95
-msgid "\\u203A"
-msgstr ""
-
-#: _ReST/Roles.py:96
-msgid "«"
-msgstr ""
-
-#: _ReST/Roles.py:96
-msgid "»"
-msgstr ""
-

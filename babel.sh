@@ -31,13 +31,14 @@
 #    11-May-2012 (CT) Rename to babel.sh, add `compile` command
 #    23-May-2012 (CT) Use `python`, not `/usr/bin/python` in `compile`
 #    19-Feb-2014 (CT) Use `python -m` to run `_TFL.Babel`
+#     4-Jul-2014 (CT) Add `_GTW/_MF3` and `_GTW/_RST*`
 #    ««revision-date»»···
 #--
 
 cmd=${1:?"Specify a command: extract | language | compile"}; shift
 
 default_langs="en,de"
-default_dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _JNJ _ReST"
+default_dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_SRM _GTW/_OMP/_EVT _GTW/_MF3 _GTW/_RST _GTW/_RST/_TOP _GTW/_RST/_TOP/_MOM _JNJ _ReST"
 lib=$(dirname $(python -c 'from _TFL import sos; print sos.path.dirname (sos.__file__)'))
 
 ### `python -m _TFL.Babel` won't add `.../_TFL` to `sys.path`
