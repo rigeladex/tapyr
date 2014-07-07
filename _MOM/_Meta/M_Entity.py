@@ -221,6 +221,7 @@
 #     2-Apr-2014 (CT) Change `M_Id_Entity._m_setup_roles` to resolve
 #                     attributes referring to the type itself
 #    18-Jun-2014 (CT) Add `i_rank` to `db_sig`
+#     7-Jul-2014 (CT) Fix `_m_fix_type_set`
 #    ««revision-date»»···
 #--
 
@@ -869,15 +870,11 @@ class M_Id_Entity (M_Entity) :
     # end def _m_create_rev_ref_attr
 
     def _m_fix_type_set (cls, type_set) :
-        PNS_Aliases   = cls.PNS_Aliases
         PNS_Aliases_R = cls.PNS_Aliases_R
         for r in tuple (type_set) :
             pn, tn = r.rsplit (".", 1)
-            type_set.update \
-                ( ".".join ((A [pn], tn))
-                for A  in (PNS_Aliases, PNS_Aliases_R)
-                if  pn in A
-                )
+            if pn in PNS_Aliases_R :
+                type_set.update (".".join ((PNS_Aliases_R [pn], tn)))
     # end def _m_fix_type_set
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
