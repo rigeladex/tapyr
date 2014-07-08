@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -176,7 +176,8 @@
 #     8-Sep-2011 (CT)  `first_n` added
 #    12-Sep-2012 (CT)  Use `itertools.product` for `cartesian`, if available
 #    10-May-2013 (CT)  Add `plural_of`
-#    12-Jun-2013 (CT) Change `bool_split` to use `bool_split_iters`
+#    12-Jun-2013 (CT)  Change `bool_split` to use `bool_split_iters`
+#     8-Jul-2014 (CT)  Change `split_hst`, `rsplit_hst` to allow multiple `seps`
 #    ««revision-date»»···
 #--
 
@@ -969,7 +970,7 @@ def split_by_key (seq, key_cmp, min_result_size = 1) :
     return result
 # end def split_by_key
 
-def split_hst (string, sep) :
+def split_hst (string, * seps) :
     """Returns a three element tuple (head, sep, tail) with
        `"".join (split_hst (string)) == string` split around the
        first occurrence of `sep`.
@@ -1005,14 +1006,14 @@ def split_hst (string, sep) :
        >>> split_hst (",", ",")
        ('', ',', '')
     """
-    parts = string.split (sep, 1)
-    if len (parts) == 1 :
-        return parts [0], "", ""
-    else :
-        return parts [0], sep, parts [1]
+    for sep in seps :
+        parts = string.split (sep, 1)
+        if len (parts) == 2 :
+            return parts [0], sep, parts [1]
+    return parts [0], "", ""
 # end def split_hst
 
-def rsplit_hst (string, sep) :
+def rsplit_hst (string, * seps) :
     """Returns a three element tuple (tail, sep, head) with
        `"".join (rsplit_hst (string)) == string` split around the
        last (i.e., rightmost) occurrence of `sep`.
@@ -1037,11 +1038,11 @@ def rsplit_hst (string, sep) :
        >>> rsplit_hst (",", ",")
        ('', ',', '')
     """
-    parts = string.rsplit (sep, 1)
-    if len (parts) == 1 :
-        return "", "", parts [0]
-    else :
-        return parts [0], sep, parts [1]
+    for sep in seps :
+        parts = string.rsplit (sep, 1)
+        if len (parts) == 2 :
+            return parts [0], sep, parts [1]
+    return "", "", parts [0]
 # end def rsplit_hst
 
 def string_cross_sum (string) :
