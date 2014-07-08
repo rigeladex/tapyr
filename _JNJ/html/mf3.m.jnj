@@ -37,6 +37,7 @@
 ##    19-Jun-2014 (CT) Change `entity_buttons` to use `elem.action_buttons`
 ##    19-Jun-2014 (CT) Add `entity_button_remove`
 ##     2-Jul-2014 (CT) Add `texts` to `tail_scripts`
+##     8-Jul-2014 (CT) Use `<a>`, not `<button>`, for action buttons
 ##    ««revision-date»»···
 ##--
 #}
@@ -49,9 +50,9 @@
   {%- if i_add_cls %}
     {%- set i_cls = "%s %s" % (i_cls, i_add_cls) %}
   {% endif -%}
-  <button class="{{ a_cls }}" data-action="{{ action }}" tabindex="-1"
+  <a class="{{ a_cls }}" data-action="{{ action }}" tabindex="-1"
      {%- if title %} title="{{ title }}"{% endif -%}{{ button_spec|xmlattr }}
-  ><i class="{{ i_cls }}"></i>{{ text }}</button>
+  ><i class="{{ i_cls }}"></i>{{ text }}</a>
 {%- endmacro -%} {#- action_button -#}
 
 {%- macro do_description (page, form, elem, t_module) -%}

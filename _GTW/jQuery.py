@@ -66,6 +66,8 @@
 #    20-Feb-2014 (CT) Add `GTW_nav_off_canvas`
 #    29-Apr-2014 (CT) Add `GTW_jq_mf3`
 #     3-May-2014 (CT) Add `leaflet`
+#     8-Jul-2014 (CT) Add `a.pure-button` to `.not` clause of
+#                     `GTW_Form_Externalize`
 #    ««revision-date»»···
 #--
 
@@ -185,7 +187,7 @@ GTW.JS_On_Ready \
     )
 
 GTW.JS_On_Ready \
-    ( """$("form a").not ("a.ui-icon, a.button").gtw_externalize ();"""
+    ( """$("form a").not ("a.ui-icon, a.button, a.pure-button").gtw_externalize ();"""
     , name = "GTW_Form_Externalize"
     )
 

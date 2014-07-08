@@ -30,6 +30,8 @@
 //    19-Jun-2014 (CT) Add `action_callback.remove`; DRY `setup_sub_form`
 //    19-Jun-2014 (CT) Change `action_callback.close` to set `display` <input>
 //     2-Jul-2014 (CT) Add `form_errors`
+//     8-Jul-2014 (CT) Add `form_pid` to AJAX requests
+//     8-Jul-2014 (CT) Add `return false` to callback function `add_rev_ref`
 //    ««revision-date»»···
 //--
 
@@ -85,7 +87,8 @@
                 var cargo      = form_spec.cargo;
                 var F_id       = c$.prop ("id");
                 var data       =
-                    { sid             : cargo.sid
+                    { form_pid        : cargo.pid
+                    , sid             : cargo.sid
                     , sigs            : cargo.sigs
                     , trigger         : F_id
                     };
@@ -112,6 +115,7 @@
                       }
                     , "Add Rev_Ref"
                     );
+                return false;
               }
             , clear : function clear (ev) {
                 var S     = options.selectors;
@@ -250,13 +254,15 @@
                 var F_id         = f$.prop ("id");
                 var c_id         = f$.data ("completer");
                 var form_spec    = options.form_spec;
+                var cargo        = form_spec.cargo;
                 var f_completer  = form_spec.completers [c_id];
                 var field_values = completer.get_values (f_completer);
                 var data         =
                     { complete_entity : f_completer ["entity_p"] || false
                     , field_values    : field_values
-                    , sid             : form_spec.cargo.sid
-                    , sigs            : form_spec.cargo.sigs
+                    , form_pid        : cargo.pid
+                    , sid             : cargo.sid
+                    , sigs            : cargo.sigs
                     , trigger         : F_id
                     };
                 var success_cb = function success_cb (answer, status, xhr) {
@@ -281,7 +287,7 @@
                             ("Ajax completion error: ", answer.error);
                     };
                 };
-                // current value not in form_spec.cargo.field_values yet
+                // current value not in cargo.field_values yet
                 field_values [F_id] = f$.val ();
                 $.gtw_ajax_2json
                     ( { async         : true
@@ -320,7 +326,7 @@
               }
             , get_values : function get_values (f_completer) {
                 var fields = f_completer.fields;
-                var values = form_spec.cargo.field_values;
+                var values = options.form_spec.cargo.field_values;
                 var result = {};
                 var id, f$, ft, fv, val;
                 for (var i = 0, li = fields.length; i < li; i++) {
@@ -375,6 +381,7 @@
                     data  =
                         { complete_entity : true
                         , field_values    : completer.get_values (f_completer)
+                        , form_pid        : cargo.pid
                         , pid             : item.value
                         , sid             : cargo.sid
                         , sigs            : cargo.sigs
@@ -550,7 +557,7 @@
                         if (pid !== undefined) {
                             field_type.normal.put_cargo (id, value);
                         } else {
-                            fv      = form_spec.cargo.field_values [id];
+                            fv      = options.form_spec.cargo.field_values [id];
                             fv.edit = undefined;
                         };
                     } else {
@@ -585,7 +592,7 @@
                     return f$.val ();
                   }
                 , put_cargo : function put_cargo_normal (id, value) {
-                    var fv = form_spec.cargo.field_values [id];
+                    var fv = options.form_spec.cargo.field_values [id];
                     if (fv != undefined) {
                         fv.edit = value;
                     };
@@ -595,7 +602,7 @@
                   }
                 , reset : function reset (f$) {
                     var id = f$.prop ("id");
-                    var fv = form_spec.cargo.field_values [id];
+                    var fv = options.form_spec.cargo.field_values [id];
                     field_type.normal.put_input (f$, fv.init);
                   }
                 , truth : function truth_checkbox (value) {

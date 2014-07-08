@@ -40,6 +40,9 @@
 #    18-Jun-2014 (CT) Add `Add_Rev_Ref` (and remove stale `Expander`)
 #    19-Jun-2014 (CT) Add `Deleter`
 #     2-Jul-2014 (CT) Add `Request_Timeout` to `_rendered_post` and `form_value`
+#     8-Jul-2014 (CT) Redefine `_JSON_Action_.POST._response_body` to set
+#                     `resource.args` to `[form_pid]`
+#                     (factored from `Deleter._rendered_post`)
 #    ««revision-date»»···
 #--
 
@@ -229,6 +232,12 @@ class _JSON_Action_ (_Ancestor) :
     class _JSON_Action_POST_ (_JSON_Action_Method_, _Ancestor.POST) :
 
         _real_name             = "POST"
+
+        def _response_body (self, resource, request, response) :
+            resource.args = [request.json.get ("form_pid")]
+            result = self.__super._response_body (resource, request, response)
+            return result
+        # end def _response_body
 
     POST = _JSON_Action_POST_ # end class
 
@@ -608,14 +617,11 @@ class Deleter (_JSON_Action_PO_) :
     name                 = "delete"
 
     def _rendered_post (self, request, response) :
-        json           = request.json
-        form_pid       = json.get ("form_pid")
-        self.args      = [form_pid]
-        form, field    = self._get_form_field (request, json)
-        obj            = field.essence
+        form, field  = self._get_form_field (request, request.json)
+        obj          = field.essence
         if obj is not None :
-            result         = dict \
-                ( html             = """<h6>%s</h6>"""
+            result  = dict \
+                ( html   = """<h6>%s</h6>"""
                 % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
                 )
             obj.destroy ()

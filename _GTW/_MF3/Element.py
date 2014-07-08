@@ -71,6 +71,7 @@
 #     3-Jul-2014 (CT) Swap arguments of `_update_element_map`,
 #                     redefine `Entity_Rev_Ref._update_element_map`
 #     3-Jul-2014 (CT) Change `_Entity_Mixin_.__call__` to consider `required`
+#     8-Jul-2014 (CT) DRY `_Entity_.__getitem__`
 #    ««revision-date»»···
 #--
 
@@ -761,15 +762,18 @@ class _Entity_ (BaM (_Entity_Mixin_, _Element_, metaclass = M_Entity)) :
         try :
             return self._Element_Map [key]
         except KeyError :
+            ### only new rev-ref elements, i.e., those with `index_sep` in
+            ### key, might not in `_Element_Map`
             head, _, index = rsplit_hst (key, self.index_sep)
             if head and index :
-                if Entity_Rev_Ref.id_sep in head :
-                    head, _, tail  = rsplit_hst (head, Entity_Rev_Ref.id_sep)
+                id_sep     = Entity_Rev_Ref.id_sep
+                if id_sep in head :
+                    head, _, tail  = rsplit_hst (head, id_sep)
                 else :
-                    tail  = None
-                head_elem = self [head]
-                key       = tail if tail else int (index)
-                result    = head_elem [key]
+                    tail   = None
+                head_elem  = self [head]
+                key        = tail if tail else int (index)
+                result     = head_elem [key]
                 return result
             raise
     # end def __getitem__
