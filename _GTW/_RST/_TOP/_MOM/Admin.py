@@ -82,6 +82,7 @@
 #                     `_entry_type_map` based on `_v_entry_type_list`
 #    30-Apr-2014 (CT) Factor `_NC_Mixin_._child_kw`
 #     7-May-2014 (CT) Guard access to `default_child` in `_get_esf_filter`
+#     8-Jul-2014 (CT) Change `Group._pns_entries` to filter duplicates
 #    ««revision-date»»···
 #--
 
@@ -1581,6 +1582,7 @@ class Group (_Ancestor) :
     def _pns_entries (self, * pnss) :
         app_type = self.top.App_Type
         ET_Map   = self.top.ET_Map
+        seen     = set ()
         for pns in pnss :
             PNS = app_type.PNS_Map [pns]
             Nav = getattr (getattr (PNS, "Nav", None), "Admin", None)
@@ -1597,7 +1599,8 @@ class Group (_Ancestor) :
                                 ( name   = ET.ui_name
                                 , target = admin
                                 )
-                        if aa :
+                        if aa and ET.type_base_name not in seen :
+                            seen.add (ET.type_base_name)
                             yield T (parent = self, ** aa)
     # end def _pns_entries
 
