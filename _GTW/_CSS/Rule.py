@@ -34,6 +34,8 @@
 #     3-Apr-2013 (CT) Add `__call__`, add argument `proto` to `__init__`
 #     8-Apr-2013 (CT) Remove `R` and other abbreviations
 #    13-Apr-2014 (CT) Allow list-values in `Rule._formatted_decl`; factor `_gen`
+#     9-Jul-2014 (CT) `Rule.__init__` changed to allow `Rule` arguments
+#                     passed positionally
 #    ««revision-date»»···
 #--
 
@@ -108,17 +110,20 @@ class Rule (TFL.Meta.Object) :
         if proto :
             self.parent_sep = proto.parent_sep
         self.pop_to_self (declarations, "base_level", "parent", "parent_sep")
-        self.children      = list (self._pop_children (declarations))
-        sels               = []
-        kits               = []
+        self.children = list (self._pop_children (declarations))
+        sels          = []
+        kits          = []
         if proto :
             sels.extend (proto._selectors)
             kits.append (proto.declarations)
-            self.children  = proto.children + self.children
+            self.children = proto.children + self.children
         for s in selectors :
-            (kits if isinstance (s, dict) else sels).append (s)
-        self._selectors    = tuple (sels)
-        self.declarations  = Kits \
+            if isinstance (s, Rule) :
+                declarations = dict (s.declarations, ** declarations)
+            else :
+                (kits if isinstance (s, dict) else sels).append (s)
+        self._selectors   = tuple (sels)
+        self.declarations = Kits \
             ( * (tuple (kits) + tuple (declarations.pop ("kits", ())))
             , ** declarations
             )

@@ -56,6 +56,7 @@
 #    12-Apr-2014 (CT) Use `Border.P`, not `P_Border`
 #    15-May-2014 (CT) Add `color_lightest_grey`
 #    15-May-2014 (CT) Add `breakpoint.quite_narrow`
+#     9-Jul-2014 (CT) Add `Rule.rotate_45_left`
 #    ««revision-date»»···
 #--
 
@@ -400,6 +401,11 @@ class Media_Defaults (Definition) :
             , width            = Percent (95)
             , children         = [P.R.Rule.hover]
             , ** Border (radius = Px (10))
+            )
+
+        rotate_45_left     = Rule \
+            ( Transform ("rotate(-45deg)")
+            , display          = "inline-block"
             )
 
         row_even           = Rule_Pseudo \

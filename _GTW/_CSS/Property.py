@@ -29,6 +29,7 @@
 #    12-Apr-2014 (CT) Creation
 #    13-Apr-2014 (CT) Add `Value`, `Align_Items`, `Align_Self`, `Display`,
 #                     `Justify_Content`, `Order`, `Width`; factor `_Prop_`
+#     9-Jul-2014 (CT) Add `* args` to `Property.__call__`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,9 @@ vendor prefixes::
 
     >>> show (Transform (origin = "60% 100%", translate = "100px"))
     {'-ms-transform-origin' : '60% 100%', '-ms-transform-translate' : '100px', '-webkit-transform-origin' : '60% 100%', '-webkit-transform-translate' : '100px', 'transform-origin' : '60% 100%', 'transform-translate' : '100px'}
+
+    >>> show (Transform ("rotate(-45deg)", origin = "60% 100%", translate = "100px"))
+    {'-ms-transform' : 'rotate(-45deg)', '-ms-transform-origin' : '60% 100%', '-ms-transform-translate' : '100px', '-webkit-transform' : 'rotate(-45deg)', '-webkit-transform-origin' : '60% 100%', '-webkit-transform-translate' : '100px', 'transform' : 'rotate(-45deg)', 'transform-origin' : '60% 100%', 'transform-translate' : '100px'}
 
     >>> show (Align_Items ("center"))
     {'-webkit-align-items' : 'center', 'align-items' : 'center'}
@@ -104,13 +108,17 @@ class _Prop_ (TFL.Meta.Object) :
 class Property (_Prop_) :
     """CSS property specification with necessary vendor prefixes, if any."""
 
-    def __call__ (self, ** decls) :
+    def __call__ (self, * args, ** decls) :
         """Return a dict with `decls` plus any necessary prefixed declarations.
         """
         result    = {}
-        name = self.name
+        name      = self.name
         prefixes  = self.prefixes
         vp_map    = self.vp_map
+        if args :
+            v = result [name] = " ".join (args)
+            for p in prefixes :
+                result ["-".join ((p, name))] = v
         for k, v in decls.iteritems () :
             k = k.replace ("_", "-")
             n = "-".join ((name, k))
@@ -187,7 +195,7 @@ Order             = Value ( "order",           "-webkit")
 
 ### http://dev.w3.org/csswg/css-sizing/#column-sizing
 ### http://caniuse.com/#feat=intrinsic-width
-Width       = Value    \
+Width             = Value    \
     ( "width"
     , fill        = ("-moz", "-webkit")
     , fit_content = ("-moz", "-webkit")
