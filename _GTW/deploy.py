@@ -118,7 +118,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         , "-bugs_address:S?Email address to send bug reports to"
         , "-copyright_holder:S?Name of copyright holders"
         , "-dry_run:B?Don't run the command, just print what would be done"
-        , "-lib_dir:S"
+        , "-lib_dir:P:"
             "?Name of directory with the library used by the application"
         , "-passive_name:S?Name of symbolic link for passive version"
         , "-project_name:S?Name of project"
@@ -348,7 +348,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         print (fmt % ("app-dir",        P.app_dir))
         print (fmt % ("python",         P.python))
         print (fmt % ("python-library", self.lib_dir))
-        print (fmt % ("nested-library", P.lib_dir))
+        print (fmt % ("nested-library", P.py_path))
         print (fmt % ("PYTHONPATH",     sys.path))
         print \
             ( fmt
@@ -362,16 +362,17 @@ class GTWD_Command (TFL.Command.Root_Command) :
         P    = self._P (cmd)
         cwd  = self.pbl.cwd
         root = pjoin (cmd.root_path, cmd.apply_to_version)
+        dirs = [cmd.app_dir] + cmd.lib_dir
         args = tuple \
             ( ichain
                 ( ["-m", "compileall"]
                 , cmd.compile_options
                 , ((["-x"] + cmd.skip_modules) if cmd.skip_modules else [])
-                , [cmd.app_dir, cmd.lib_dir]
+                , dirs
                 )
             )
         clean = self.pbl ["find"] \
-            [cmd.app_dir, cmd.lib_dir, "-name", "*.py[co]", "-delete"]
+            [tuple (dirs + ["-name", "*.py[co]", "-delete"])]
         with cwd (root) :
             if cmd.verbose or cmd.dry_run :
                 print ("cd", self.pbl.path ())
@@ -412,7 +413,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         cwd  = self.pbl.cwd
         vcs  = self.pbl [cmd.vcs] [args]
         argv = tuple (cmd.argv)
-        for d in P.app_dir, P.lib_dir :
+        for d in P.dirs :
             with cwd (d) :
                 p = self.pbl.path ()
                 if cmd.verbose or cmd.dry_run :
@@ -436,19 +437,26 @@ class GTWD_Command (TFL.Command.Root_Command) :
             passive    = passive [len (prefix):].lstrip ("/")
         result = TFL.Record \
             ( active   = active
+            , cmd      = cmd
             , passive  = passive
             , prefix   = prefix
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, atv, atv)
-        result.app_dir  = sos.path.abspath \
-            (pjoin (result.selected, cmd.app_dir))
-        result.lib_dir  = pbl.env ["PYTHONPATH"] = sos.path.abspath \
-            (pjoin (result.selected, cmd.lib_dir))
+        result.app_dir  = pjoin (result.prefix, result.selected, cmd.app_dir)
+        result.py_path  = pbl.env ["PYTHONPATH"] = self._python_path (result)
+        result.lib_dirs = result.py_path.split (":")
         result.python   = pbl [cmd.py_path] \
             [tuple (o for o in cmd.py_options if o)]
+        result.dirs     = [result.app_dir] + result.lib_dirs
         return result
     # end def _P
+
+    def _python_path (self, P, version = None) :
+        if version is None :
+            version = P.selected
+        return ":".join (pjoin (P.prefix, version, p) for p in P.cmd.lib_dir)
+    # end def _python_path
 
 Command = GTWD_Command # end class
 

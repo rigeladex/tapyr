@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.
@@ -92,9 +92,9 @@ class GTW_OMP_Command (GTW.deploy.Command) :
         def _do (version, args) :
             app  = self._app_cmd (cmd, P, version)
             args = ("migrate", "-overwrite") + args
-            with self.pbl.env (PYTHONPATH = P.root / version / cmd.lib_dir) :
+            with self.pbl.env (PYTHONPATH = self._python_path (P, version)) :
                 self._app_call \
-                    (cmd, P, app, args, P.root / version / cmd.app_dir)
+                    (cmd, P, app, args, P.prefix / version / cmd.app_dir)
         if cmd.Active :
             _do (P.active,  ("-target_db_url", db_url, "-readonly"))
         if cmd.Passive :

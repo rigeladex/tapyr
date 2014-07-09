@@ -49,6 +49,7 @@
 #     7-Jan-2014 (CT) Move `-quiet` to `_FCGI_Script_`
 #     9-Jul-2014 (CT) Fix `_create_fcgi_script`: catch KeyError;
 #                     recognize stdout; use `P.lib_dir`, not `self.lib_dir`
+#     9-Jul-2014 (CT) Use `P.py_path`, not `P.lib_dir`
 #    ««revision-date»»···
 #--
 
@@ -186,18 +187,18 @@ class GT2W_Command (_Ancestor) :
         args   = ("fcgi", "-config", config) + tuple (argv)
         app    = self._app_cmd (cmd, P, args = args)
         s_path = script_path or cmd.script_path
-        def write (f, app, lib_dir) :
+        def write (f, app, py_path) :
             f.write ("#!/bin/sh\n")
-            f.write ("export PYTHONPATH=%s\n" % (lib_dir, ))
+            f.write ("export PYTHONPATH=%s\n" % (py_path, ))
             f.write ("exec %s\n" % (app, ))
         if s_path and not s_path.endswith (("-", "stdout")) :
             with open (s_path, "w") as f :
-                write (f, app, P.lib_dir)
+                write (f, app, P.py_path)
             self.pbl ["chmod"] ("+x", s_path)
             if not cmd.quiet :
                 print ("Created fcgi script", s_path)
         else :
-            write (sys.stdout, app, P.lib_dir)
+            write (sys.stdout, app, P.py_path)
     # end def _create_fcgi_script
 
     def _handle_create_config (self, cmd) :
