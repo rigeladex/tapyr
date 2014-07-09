@@ -80,6 +80,7 @@
 #    11-Dec-2013 (CT) Add `-CSRF_check`
 #     7-Apr-2014 (CT) Add `-ACAO`
 #     2-May-2014 (CT) Add option `webmaster`
+#     9-Jul-2014 (CT) Add `_template_prefixes`
 #    ««revision-date»»···
 #--
 
@@ -176,6 +177,8 @@ class GT2W_Command (GTW.OMP.Command) :
         , log_level         = 1
         , port              = 8090
         )
+
+    _template_prefixes      = {}
 
     ### Sub-commands defined as class attributes to allow redefinition by
     ### derived classes; meta class puts their names into `_sub_commands`
@@ -299,7 +302,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if cmd.UTP.use_templateer :
             from   _JNJ import JNJ
             import _JNJ.Templateer
-            from _JNJ.Media_Defaults import Media_Defaults
+            from   _JNJ.Media_Defaults import Media_Defaults
             globs = kw.pop ("globals", {})
             media = kw.get ("Media_Parameters", None)
             if media is None :
@@ -308,6 +311,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 ( encoding    = cmd.input_encoding
                 , globals     = dict (site_base = cmd.template_file, ** globs)
                 , i18n        = cmd.load_I18N
+                , prefixes    = self._template_prefixes
                 , trim_blocks = trim_blocks
                 , version     = version
                 , ** kw

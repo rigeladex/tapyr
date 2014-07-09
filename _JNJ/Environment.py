@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,6 +37,7 @@
 #    16-Mar-2011 (CT) Optional argument `GTW` added to `HTML`
 #    29-Mar-2012 (CT) Rename `CSS_Parameters` to `Media_Parameters`
 #    18-Nov-2013 (CT) Change default `encoding` to `utf-8`
+#     9-Jul-2014 (CT) Add `prefixes` argument to `HTML`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ import _JNJ.GTW
 
 from   _TFL               import sos
 from   _TFL.predicate     import uniq
+from   _TFL.pyk           import pyk
 import _TFL.I18N
 
 from jinja2 import Environment, FileSystemLoader, ChoiceLoader, PrefixLoader
@@ -63,6 +65,7 @@ def HTML \
         , i18n             = False
         , Media_Parameters = None
         , GTW              = None
+        , prefixes         = {}
         , ** kw
         ) :
     jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "utf-8")
@@ -72,6 +75,13 @@ def HTML \
     if load_path :
         loaders.append (FileSystemLoader (load_path, encoding))
     loaders.append (jnj_loader)
+    if prefixes :
+        sk = lambda x : (- len (x [1]), x [1])
+        for prefix, lp in sorted (pyk.iteritems (prefixes), key = sk) :
+            loaders.append \
+                ( PrefixLoader
+                   ({prefix : FileSystemLoader (lp, encoding)}, delimiter='::')
+                )
     loaders.append (PrefixLoader (dict (STD = jnj_loader), delimiter='::'))
     loader     = ChoiceLoader (loaders)
     extensions = (kw.pop ("extensions", []) + Default_Extensions)

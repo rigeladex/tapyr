@@ -85,6 +85,8 @@
 #    15-Apr-2014 (CT) Add `media.script_files` to `Template_E.js`
 #    24-Apr-2014 (CT) Add `afs_input`
 #    24-Apr-2014 (CT) Add `mf3`, `mf3_input`, `mf3_v_seq`, `mf3_h_cols`
+#     9-Jul-2014 (CT) Changge `js` to use `pyk.decoded`, not home-grown code,
+#                     to decode entries of `media.script_files`
 #    ««revision-date»»···
 #--
 
@@ -92,6 +94,7 @@ from   __future__  import unicode_literals
 
 from   _JNJ               import JNJ
 from   _TFL               import TFL
+from   _TFL.pyk           import pyk
 
 import _JNJ.Environment
 import _JNJ.GTW
@@ -278,7 +281,7 @@ class Template_E (_Template_) :
                         with open (p, "rb") as file :
                             yield file.read ().decode (encoding)
                 for s in sorted (media.script_files, key = TFL.Getter.rank) :
-                    yield s.body.decode (encoding)
+                    yield pyk.decoded (s.body, encoding)
             result = "\n\n".join \
                 (TFL.uniq (_gen (handler, encoding, self.scripts_c, media)))
             return result
