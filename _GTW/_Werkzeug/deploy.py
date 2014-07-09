@@ -47,6 +47,8 @@
 #    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
 #     7-Jan-2014 (CT) Use `-quiet`, not `-verbose`, for `create_config`
 #     7-Jan-2014 (CT) Move `-quiet` to `_FCGI_Script_`
+#     9-Jul-2014 (CT) Fix `_create_fcgi_script`: catch KeyError;
+#                     recognize stdout; use `P.lib_dir`, not `self.lib_dir`
 #    ««revision-date»»···
 #--
 
@@ -176,7 +178,10 @@ class GT2W_Command (_Ancestor) :
     def _create_fcgi_script (self, cmd, argv = (), script_path = None) :
         P      = self._P (cmd)
         a_conf = cmd.app_config
-        h_conf = cmd._spec ["HTTP_Config"].pathes
+        try :
+            h_conf = cmd._spec ["HTTP_Config"].pathes
+        except KeyError :
+            h_conf = []
         config = self.App_Config.auto_split.join (a_conf + h_conf)
         args   = ("fcgi", "-config", config) + tuple (argv)
         app    = self._app_cmd (cmd, P, args = args)
@@ -185,14 +190,14 @@ class GT2W_Command (_Ancestor) :
             f.write ("#!/bin/sh\n")
             f.write ("export PYTHONPATH=%s\n" % (lib_dir, ))
             f.write ("exec %s\n" % (app, ))
-        if s_path and s_path not in ("-", "stdout") :
+        if s_path and not s_path.endswith (("-", "stdout")) :
             with open (s_path, "w") as f :
-                write (f, app, self.lib_dir)
+                write (f, app, P.lib_dir)
             self.pbl ["chmod"] ("+x", s_path)
             if not cmd.quiet :
                 print ("Created fcgi script", s_path)
         else :
-            write (sys.stdout, app, self.lib_dir)
+            write (sys.stdout, app, P.lib_dir)
     # end def _create_fcgi_script
 
     def _handle_create_config (self, cmd) :
