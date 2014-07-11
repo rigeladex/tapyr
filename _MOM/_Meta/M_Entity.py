@@ -222,6 +222,7 @@
 #                     attributes referring to the type itself
 #    18-Jun-2014 (CT) Add `i_rank` to `db_sig`
 #     7-Jul-2014 (CT) Fix `_m_fix_type_set`
+#    11-Jul-2014 (CT) Add `is_partial`, `is_relevant` to `db_sig`
 #    ««revision-date»»···
 #--
 
@@ -977,7 +978,9 @@ class M_E_Type (M_E_Mixin) :
     @TFL.Meta.Once_Property
     def db_sig (cls) :
         return \
-            (cls.type_name, cls.i_rank, tuple (a.db_sig for a in cls.db_attr))
+            ( cls.type_name, cls.i_rank, cls.is_partial, cls.is_relevant
+            , tuple (a.db_sig for a in cls.db_attr)
+            )
     # end def db_sig
 
     @TFL.Meta.Once_Property

@@ -925,13 +925,13 @@ _test_element = """
     , 'pid' : 1
     , 'sid' : 0
     , 'sigs' :
-        { 'Z-25' : '07f7e560f0bce1d1fd7805e2a5e88ecad2e35badd9808b1535178897'
-        , 'Z-25:phones/1' : '25eae488af26467b65115025010fbaa04f2b8d5abe54b5985068557b'
-        , 'Z-25:phones/2' : '2961546c014e6555a285ce1895979dc5c33f3877961f307d9c14dd63'
-        , 'Z-25:phones::right/1' : '0ffe887fe6582a65d70ff310e710100dc85a8c31acb50595f78b9e28'
-        , 'Z-25:phones::right/2' : 'b42da816565176a9ec3897944b0c60df32829fd706d25d54ac60d710'
-        , 'Z-25:phones::right@3' : '4d67f40e34b0d8de295fcd90c84a2b260d0378bd8cada88015c962d1'
-        , 'Z-25:phones@3' : '7789ce61a7fe3d9173a8310a8dda790a2607af2ba8d9f3e2929a9c11'
+        { 'Z-25' : 'f8895947a3869c3f265b2ffefb54373444d86d5814aed4b7fd667fec'
+        , 'Z-25:phones/1' : 'd35ca80ac1fa6a532bf96d748cefbab69f1dcd2265cfd2bb4add0ed2'
+        , 'Z-25:phones/2' : '055a7b7bc92d51ec8199af68c98320aa76c9e652a234945bfc6327c0'
+        , 'Z-25:phones::right/1' : '7b33b33e0cafa2c5235898043f69a966203b25c08798e3acef3dd890'
+        , 'Z-25:phones::right/2' : '0e73443f6c3f51b0ae7c09b4e2b0977bca0df7442d9fc00211997714'
+        , 'Z-25:phones::right@3' : '5c44e77b9eb936b79630b47471eb1f309902b737e628dbe85d953e50'
+        , 'Z-25:phones@3' : '5c3fb4b026658153096ee63ec209930d2545c779114a8c10ec475306'
         }
     }
 
