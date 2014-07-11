@@ -106,6 +106,8 @@
 #     2-Mar-2014 (CT) Change `_m_create_link_ref_attr` to set `hidden_nested`
 #    16-Apr-2014 (CT) Add role-specific `auto_derive_np_kw` and support for
 #                     `_update_auto_kw` to `_m_create_role_child`
+#    11-Jul-2014 (CT) Change `child_np` to use `.E_Type`, not `.__class__` to
+#                     determine the `etypes` of `roles`
 #    ««revision-date»»···
 #--
 
@@ -425,7 +427,9 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
 
     def child_np (cls, roles) :
         """Return non-partial descendent for e-types of `roles`, if any."""
-        etypes = tuple (r.__class__  for r  in roles)
+        ### `roles` can contain `_Reload` instances --> need to use
+        ### `.E_Type`, because `.__class__` would be wrong
+        etypes = tuple (r.E_Type     for r  in roles)
         etns   = tuple (et.type_name for et in etypes)
         try :
             result = cls.child_np_map [etns]
