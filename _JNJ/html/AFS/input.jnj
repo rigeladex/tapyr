@@ -41,6 +41,7 @@
 ##    22-Jan-2014 (CT) Add `url`
 ##     7-May-2014 (CT) Change `boolean` to use `kwargs`
 ##     7-May-2014 (CT) Use `maxlength`, not `max_length`, for HTML attribute
+##    26-Jun-2014 (CT) Change `number` to always use `X.input.text`
 ##    ««revision-date»»···
 ##--
 #}
@@ -120,7 +121,12 @@
       )
   -%}
   {%- do kw.update (kwargs) %}
-  {{ field (X.input.number, elem, ** kw) }}
+  {%- do kw.update (pattern = None) %}
+  {#- For `type="number"`, browsers don't trigger `change` events, nor do
+  ##  they submit such values to the server, if the text in the input field
+  ##  doesn't look like a number
+  -#}
+  {{ field (X.input.text, elem, ** kw) }}
 {%- endmacro -%} {#- number -#}
 
 {%- macro password (elem) -%}
