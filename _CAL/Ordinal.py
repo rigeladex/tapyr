@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,8 @@
 # Revision Dates
 #     3-Jan-2007 (CT) Creation
 #    11-Aug-2007 (CT) `Quarter` and doc-test added
+#    11-Jul-2014 (CT) Add `is_first` and `to_year`
+#    13-Jul-2014 (CT) Fix `Week.to_date`, `Week.is_first`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +96,12 @@ class Month (TFL.Meta.Object) :
     """Ordinal numbers for months."""
 
     @classmethod
+    def is_first (cls, mo) :
+        y, m = divmod (mo, 12)
+        return m == 1
+    # end def is_first
+
+    @classmethod
     def to_date (cls, mo) :
         """Return date corresponding to month ordinal `mo`."""
         y, m = divmod (mo, 12)
@@ -106,10 +114,23 @@ class Month (TFL.Meta.Object) :
         return d.year * 12 + d.month
     # end def to_ordinal
 
+    @classmethod
+    def to_year (cls, mo) :
+        """Return year corresponding to month ordinal `mo`."""
+        y, m = divmod (mo, 12)
+        return y
+    # end def to_year
+
 # end class Month
 
 class Quarter (TFL.Meta.Object) :
     """Ordinal numbers for quarters"""
+
+    @classmethod
+    def is_first (cls, qo) :
+        y, q = divmod (qo, 4)
+        return q == 1
+    # end def is_first
 
     @classmethod
     def to_date (cls, qo) :
@@ -124,15 +145,30 @@ class Quarter (TFL.Meta.Object) :
         return d.year * 4 + d.quarter
     # end def to_ordinal
 
+    @classmethod
+    def to_year (cls, qo) :
+        """Return year corresponding to quarter ordinal `qo`."""
+        y, q = divmod (qo, 4)
+        return y
+    # end def to_year
+
 # end class Quarter
 
 class Week (TFL.Meta.Object) :
     """Ordinal numbers for weeks"""
 
+    tick_delta = 1
+
+    @classmethod
+    def is_first (cls, wo) :
+        d = cls.to_date (wo)
+        return 1 <= d.week <= cls.tick_delta
+    # end def is_first
+
     @classmethod
     def to_date (cls, wo) :
         """Return date corresponding to week ordinal `wo`."""
-        return CAL.Date.from_ordinal (wo * 7 + 1)
+        return CAL.Date.from_ordinal (wo * 7 + 4)
     # end def to_date
 
     @classmethod
@@ -141,10 +177,22 @@ class Week (TFL.Meta.Object) :
         return d.wk_ordinal
     # end def to_ordinal
 
+    @classmethod
+    def to_year (cls, wo) :
+        """Return year corresponding to week ordinal `wo`."""
+        d = cls.to_date (wo)
+        return d.year
+    # end def to_year
+
 # end class Week
 
 class Year (TFL.Meta.Object) :
     """Ordinal numbers for years."""
+
+    @classmethod
+    def is_first (cls, yo) :
+        return False
+    # end def is_first
 
     @classmethod
     def to_date (cls, yo) :
@@ -157,6 +205,12 @@ class Year (TFL.Meta.Object) :
         """Return year ordinal for date `d`."""
         return d.year
     # end def to_ordinal
+
+    @classmethod
+    def to_year (cls, yo) :
+        """Return date corresponding to year ordinal `yo`."""
+        return yo
+    # end def to_year
 
 # end class Year
 
