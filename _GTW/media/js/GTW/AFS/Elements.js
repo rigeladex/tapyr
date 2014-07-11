@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -51,12 +51,13 @@
 //     5-Mar-2012 (CT) Change `Field_Entity._setup_value` to copy `allow_new`
 //                     to `value`
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function () {
+    "use strict";
+
     var Elements;
     var id_suffix_pat = /\d+$/;
     var create = function create (spec) {

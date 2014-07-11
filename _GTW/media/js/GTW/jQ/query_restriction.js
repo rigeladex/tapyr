@@ -53,12 +53,13 @@
 //    11-Apr-2013 (CT) Add polymorphic attributes to attribute filter menu
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //     2-Mar-2014 (CT) Protect recursion in `attr_filters.add`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($, undefined) {
+    "use strict";
+
     var L = $GTW.L;
     $.fn.gtw_query_restriction = function (qrs, opts) {
         var completer_position = $.extend

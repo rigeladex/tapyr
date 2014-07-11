@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -22,12 +22,13 @@
 //     5-Apr-2011 (CT) Changed to restore `width`
 //     1-Jun-2011 (CT) Bug fixed
 //    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
+
     $.fn.gtw_pixpander = function (options) {
         options = $.extend
             ( { x_class     : "pixpanded"

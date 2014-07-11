@@ -47,12 +47,13 @@
 //    15-May-2014 (CT) Change `gtw_e_type_selector_hd_mf3` to ignore all
 //                     control characters between `tab` and `escape`
 //                     (which includes the shift key)
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($, undefined) {
+    "use strict";
+
     var bwrap = function bwrap (v) {
         return "<b>" + v + "</b>";
     };

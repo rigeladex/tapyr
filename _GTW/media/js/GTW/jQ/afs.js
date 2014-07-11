@@ -126,12 +126,13 @@
 //    23-May-2013 (CT) Disable `Reset` for `Entity` (removes `prefill` values)
 //    14-Jan-2014 (CT) Consider required checkboxes in `field_change_cb`
 //    17-Feb-2014 (CT) Add `feedback` to `submit_cb`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
+
     var L      = $GTW.L;
     var $AFS_E = $GTW.AFS.Elements;
     var bwrap  = function bwrap (v) {

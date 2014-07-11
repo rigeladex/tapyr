@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -19,12 +19,13 @@
 //    12-Jan-2011 (CT) Creation
 //    26-Jan-2011 (CT) Style change
 //    16-Oct-2011 (MG) Handling of placeholder for `password` changed
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
+
     $.fn.gtw_input_placeholders = function (opts) {
         var options  = $.extend
             ( { overlay_type : "b"

@@ -20,12 +20,13 @@
 //     5-Apr-2013 (CT) Adapt to API changes of jQueryUI 1.9+
 //     9-May-2014 (CT) Remove unused `$GTW.L`
 //    14-May-2014 (CT) Change `renderer` to handle `disabled`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
+
     var renderer =
         { html          : function _ac_render_item_html (ul, item) {
               var contents, result;

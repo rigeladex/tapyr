@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -19,12 +19,13 @@
 //    29-Feb-2012 (CT) Add `COPY`, `DELETE`, `EDIT`, and `RESET`
 //     5-Mar-2012 (CT) Add `HELP`, `INFO`, `REFRESH`, and `SELECT`,
 //                     change icons of `CONFIG` and `RESET`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function () {
+    "use strict";
+
     // http://jqueryui.com/themeroller/ has a list of jquery framework icons
     var default_icon_map =
         { ADD         : "plusthick"

@@ -19,12 +19,13 @@
 //     7-Mar-2012 (CT) Add `hidden`, set `disabled` of `hidden` to `false`, too
 //    10-Apr-2013 (CT) Add and use `closing_flag`
 //     3-May-2014 (CT) Add and use `trigger_event`, not hard-coded "focus"
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($, undefined) {
+    "use strict";
+
     $.fn.gtw_hd_input = function (opts) {
         var self      = this;
         var selectors = $.extend

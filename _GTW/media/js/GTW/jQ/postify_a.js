@@ -24,12 +24,13 @@
 //                     `this` to `"inherit"` to placate Chrome
 //    29-Apr-2013 (CT) Use `$GTW.show_message`, not `console.error`
 //    20-Jan-2014 (CT) Use `$GTW.show_message`, not `alert`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($) {
+    "use strict";
+
     $.fn.gtw_postify_a = function (opts) {
         var options  = $.extend
             ( { display_value   : "block"

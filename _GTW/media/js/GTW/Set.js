@@ -1,4 +1,4 @@
-// Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This script is licensed under the terms of either the
@@ -16,12 +16,13 @@
 //
 // Revision Dates
 //    10-Mar-2011 (CT) Creation
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function () {
+    "use strict";
+
     var _ = {}, hasOwnProperty = _.hasOwnProperty, token = {};
     var Set = $GTW.Class.extend (
         { init : function init () {

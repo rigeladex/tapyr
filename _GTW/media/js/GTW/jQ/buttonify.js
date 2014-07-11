@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -19,12 +19,13 @@
 //    15-Dec-2011 (CT) Use `UI_Icon_Map`, add `gtw_iconify`
 //    19-Mar-2012 (CT) Change `gtw_iconify` to use `.ui-state-default` in
 //                     parent of `.ui-icon`
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function ($, undefined) {
+    "use strict";
+
     $.fn.gtw_buttonify = function (icon_map, opts) {
         var icons   = new $GTW.UI_Icon_Map (icon_map);
         var options = $.extend

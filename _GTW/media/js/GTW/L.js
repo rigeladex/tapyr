@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of either the
@@ -15,12 +15,13 @@
 //
 // Revision Dates
 //    21-Feb-2012 (CT) Creation
+//    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    ««revision-date»»···
 //--
 
-"use strict";
-
 ( function (doc, undefined) {
+    "use strict";
+
     var assign_map =
         { innerHTML         : true
         , textContent       : true
