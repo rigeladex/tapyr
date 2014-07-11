@@ -108,6 +108,7 @@
 #                     `_saw_kind_wrapper_pq`
 #     6-Mar-2014 (CT) Fix `parent` of nested attributes in
 #                     `Kind_Wrapper_C._setup_attrs` and `._setup_alias_attrs`
+#    11-Jul-2014 (CT) Fix `_saw_column_type` for `if pts._Pickler_Type`
 #    ««revision-date»»···
 #--
 
@@ -694,7 +695,7 @@ def _saw_one_typed_column (self, DBW, wrapper, col_type, * args, ** kw) :
 @TFL.Add_To_Class ("_saw_columns", MOM.Attr.A_Attr_Type)
 @Single_Dispatch_Method (T = SAW.Manager.__class__)
 def _saw_columns_type (self, DBW, wrapper, ** kw) :
-    col_type = self._saw_column_type (DBW, wrapper, self.Pickled_Type)
+    col_type = self._saw_column_type  (DBW, wrapper, self.Pickled_Type)
     return self._saw_one_typed_column (DBW, wrapper, col_type, ** kw)
 # end def _saw_columns_type
 
@@ -761,8 +762,10 @@ def _saw_column_type (self, DBW, wrapper, pts) :
         result = DBW.PNS.Attr._saw_column_type_string (self, DBW, wrapper, pts)
     else :
         if pts._Pickler_Type is not None :
-            result = pts._Pickler_Type._saw_column_type \
-                (self, DBW, wrapper, pts)
+            ### need an instance of `pts._Pickler_Type` to call generic
+            ### function `_saw_column_type` on (otherwise, infinite recursion)
+            pta     = pts._Pickler_Type    (self.kind, self.e_type)
+            result  = pta._saw_column_type (DBW, wrapper, pta.Pickled_Type)
         else :
             p_type_map = wrapper.ATW.SA_Type.P_Type_Map
             try :

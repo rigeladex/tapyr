@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Jun-2014 (RS) Creation
+#    11-Jul-2014 (CT) Derive from `A_Attr_Type`, set `Pickler.Type` to `A_Float`
 #    ««revision-date»»···
 #--
 
@@ -44,20 +45,20 @@ import _CAL.Delta
 
 import datetime
 
-#_Ancestor_Essence = A_Attr_Type
-_Ancestor_Essence = _A_Float_
+_Ancestor_Essence = A_Attr_Type
 
 class A_Date_Time_Delta (_Ancestor_Essence) :
     """A date/time delta."""
 
-    example       = "1w 2d 13:10:17.5"
-    typ           = _ ("Time Delta")
-    P_Type        = datetime.timedelta
-    ui_length     = 20
+    code_format      = "%s"
+    example          = "1w 2d 13:10:17.5"
+    typ              = _ ("Time Delta")
+    P_Type           = datetime.timedelta
+    ui_length        = 20
 
     class Pickler (TFL.Meta.Object) :
 
-        Type          = _A_String_
+        Type          = A_Float
 
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :
