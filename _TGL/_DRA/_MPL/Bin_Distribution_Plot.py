@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #                     `typecode` (which obviously got lost in matplotlib 0.91)
 #    11-Aug-2009 (CT) Import `ma` from `numpy` instead of deprecated
 #                     `matplotlib.numerix`
+#    13-Jul-2014 (CT) Add `vmin` and `vmax`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,8 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         , linewidth   = 0.1
         )
     shading           = "flat"
+    vmin              = 0.0
+    vmax              = 100.0
     x_formatter       = None
     x_locator         = TGL.DRA.MPL.Bin_Locator
     x_pad             = 0
@@ -119,8 +122,8 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         pylab.pcolor \
             ( self.fm
             , cmap    = self.cmap
-            , vmin    = 0.0
-            , vmax    = 100.0
+            , vmin    = self.vmin
+            , vmax    = self.vmax
             , shading = self.shading
             )
         pylab.colorbar ()
