@@ -1,6 +1,6 @@
 {# Django template: nav-section-entry.html #}
 {% comment %}
-  ## Copyright (C) 2008-2011 Mag. Christian Tanzer. All rights reserved
+  ## Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
   ##
   ##
@@ -28,6 +28,7 @@
   ##    17-Oct-2008 (CT) Use `allow_user`  instead of `login_required`
   ##     9-Dec-2010 (CT) Support for `a_img` added
   ##    27-Jan-2011 (CT) Consider `link.hidden`
+  ##    13-Aug-2014 (CT) Remove `{{ link.site_prefix }}`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -37,7 +38,7 @@
     {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
     {% if nav_page.prefix|starts_with:link.prefix and link.has_children %}
       <li class="current-section {{ level }}">
-        <a href="{{ link.site_prefix }}{{ link.href }}"
+        <a href="{{ link.abs_href }}"
                {% if link.desc %}title="{{ link.desc }}"{% endif %}
                class="current-section"
             >{{ link.title }}</a>
@@ -49,7 +50,7 @@
       {% else %}
         {% if link.href %}
           <li class="nav-link {{ level }}">
-            <a href="{{ link.site_prefix }}{{ link.href }}"
+            <a href="{{ link.abs_href }}"
                {% if link.desc %}title="{{ link.desc }}"{% endif %}
             >
               {% if link.a_img %}

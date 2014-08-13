@@ -1,6 +1,6 @@
 {# Django template: site_admin_body.html #}
 {% comment %}
-  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
   ## ****************************************************************************
   ##
@@ -29,6 +29,7 @@
   ##
   ## Revision Dates
   ##    31-Aug-2009 (CT) Creation (factored from project-specific template)
+  ##    13-Aug-2014 (CT) Remove `{{ link.site_prefix }}`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -38,7 +39,7 @@
       {% if link|allow_user:request.user %}
         <tr class="{% cycle 'row1' 'row2' %}">
           <td>
-            <a href="{{ link.site_prefix }}{{ link.href }}"
+            <a href="{{ link.abs_href }}"
                {% if link.desc %}title="{{ link.desc }}"{% endif %}
             >{{ link.title }}</a>
           </td>
