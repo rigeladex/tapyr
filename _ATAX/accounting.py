@@ -163,6 +163,7 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     2-Jan-2014 (CT) Add and use `_decoded`
 #     3-Jan-2014 (CT) Add `output_encoding`; use `pyk.fprint`, not `print`
+#    14-Aug-2014 (CT) Add comment to clause for `ausgaben_minderung`
 #    ««revision-date»»···
 #--
 
@@ -337,6 +338,10 @@ class Account_Entry (_Entry_) :
                 self.konto         = self.haben
                 self.gegen_konto   = self.soll
             else :
+                ### In many cases, it is better to book dir `-` with a
+                ### negative amount instead
+                ###
+                ### XXX VAT should be handled properly here: compare `-`
                 self.konto         = self.soll
                 self.gegen_konto   = self.haben
         else :
