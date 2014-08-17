@@ -48,7 +48,7 @@
       {% ifequal link.href nav_page.href %}
         <li class="current-link {{ level }}">{{ link.title }}</li>
       {% else %}
-        {% if link.href %}
+        {% if link.abs_href %}
           <li class="nav-link {{ level }}">
             <a href="{{ link.abs_href }}"
                {% if link.desc %}title="{{ link.desc }}"{% endif %}
