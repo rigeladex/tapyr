@@ -55,6 +55,7 @@
 #    17-Jan-2014 (CT) Change attributes `year`, `handicap` to `Attr.Query`
 #    17-Jan-2014 (CT) Add query attribute `races_counted`
 #    30-Jan-2014 (CT) Add attributes `ranking_list_factor`, `starters`
+#    17-Aug-2014 (CT) Remove attribute `ranking_list_factor`
 #    ««revision-date»»···
 #--
 
@@ -136,17 +137,6 @@ class Regatta (_Ancestor_Essence) :
 
         # end class kind
 
-        class ranking_list_factor (A_Float) :
-            """Weight of this regatta in computation of ranking list points."""
-
-            kind               = Attr.Optional
-            raw_default        = "1.0"
-            format             = "%6.2f"
-            min_value          = 0.40
-            max_value          = 2.00
-
-        # end class ranking_list_factor
-
         class name (A_String) :
 
             kind               = Attr.Cached
@@ -217,7 +207,7 @@ class Regatta (_Ancestor_Essence) :
             kind               = Attr.Optional
             explanation        = """
                 This is the number of boats that actually participated in the
-                regatta. If the regatta field was split into the group, is
+                `regatta`. If the regatta field was split into groups, it is
                 the maximum number of starters of any group.
             """
 

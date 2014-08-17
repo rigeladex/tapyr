@@ -230,7 +230,6 @@ _test_code = r"""
     (<right.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<right.kind.AQ [Attr.Type.Querier String]>, u'-----')
-    (<right.ranking_list_factor.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.races.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<right.result.AQ [Attr.Type.Querier Composite]>, 'SRM.Regatta_Result')
     (<right.result.date.AQ [Attr.Type.Querier Ckd]>, u'-----')
@@ -273,7 +272,6 @@ _test_code = r"""
     (<last_cid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<pid.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<type_name.AQ [Attr.Type.Querier String]>, u'-----')
-    (<ranking_list_points_lp.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<rank.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<registration_date.AQ [Attr.Type.Querier Date]>, u'-----')
     (<events.AQ [Attr.Type.Querier Rev_Ref]>, 'EVT.Event')
@@ -324,7 +322,6 @@ _test_code = r"""
     (<teams.left.discards.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<teams.left.is_cancelled.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<teams.left.kind.AQ [Attr.Type.Querier String]>, u'-----')
-    (<teams.left.ranking_list_factor.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<teams.left.races.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<teams.left.result.AQ [Attr.Type.Querier Composite]>, 'SRM.Regatta_Result')
     (<teams.left.result.date.AQ [Attr.Type.Querier Ckd]>, u'-----')
@@ -381,7 +378,6 @@ _test_code = r"""
     right__discards
     right__is_cancelled
     right__kind
-    right__ranking_list_factor
     right__races
     right__result__date
     right__result__software
@@ -413,7 +409,6 @@ _test_code = r"""
     last_cid
     pid
     type_name
-    ranking_list_points_lp
     rank
     registration_date
     events__date__start
@@ -451,7 +446,6 @@ _test_code = r"""
     teams__left__discards
     teams__left__is_cancelled
     teams__left__kind
-    teams__left__ranking_list_factor
     teams__left__races
     teams__left__result__date
     teams__left__result__software
@@ -508,22 +502,22 @@ _test_code = r"""
     <MOM.Attr.Selector.Pred <MOM.Attr.Selector.Kind q_able> if Q.show_in_ui>
 
     >>> tuple (x.QR for x in AQ.regatta.Atoms)
-    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.perma_name, Q.right.left.year, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.ranking_list_factor, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.starters_rl, Q.right.perma_name, Q.right.races_counted, Q.right.year)
+    (Q.right.left.__raw_name, Q.right.left.date.start, Q.right.left.date.finish, Q.right.left.date.alive, Q.right.left.club.__raw_name, Q.right.left.club.long_name, Q.right.left.desc, Q.right.left.is_cancelled, Q.right.left.perma_name, Q.right.left.year, Q.right.boat_class.__raw_name, Q.right.discards, Q.right.is_cancelled, Q.right.kind, Q.right.races, Q.right.result.date, Q.right.result.software, Q.right.result.status, Q.right.starters_rl, Q.right.perma_name, Q.right.races_counted, Q.right.year)
 
     >>> scope.query_changes (type_name = "SRM.Regatta").order_by (Q.cid).first ()
     >>> scope.query_changes (type_name = "SRM.Regatta_C").order_by (Q.cid).first ()
-    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist', 'ranking_list_factor' : '  1.00'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
     >>> scope.query_changes (Q.type_name == "SRM.Regatta_H").order_by (Q.cid).first ()
-    <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '8', 'perma_name' : u'yardstick', 'ranking_list_factor' : '  1.00'}>
+    <Create SRM.Regatta_H ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H'), new-values = {'is_cancelled' : u'no', 'last_cid' : '8', 'perma_name' : u'yardstick'}>
 
     >>> scope.query_changes ((Q.type_name == "SRM.Regatta_C") | (Q.type_name == "SRM.Regatta_H")).order_by (Q.cid).first ()
-    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist', 'ranking_list_factor' : '  1.00'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
 
     >>> scope.query_changes (Q.OR (Q.type_name == "SRM.Regatta_C", Q.type_name == "SRM.Regatta_H")).order_by (Q.cid).first ()
-    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist', 'ranking_list_factor' : '  1.00'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
 
     >>> scope.query_changes (Q.type_name.IN (('SRM.Regatta', 'SRM.Regatta_H', 'SRM.Regatta_C'))).order_by (Q.cid).first ()
-    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist', 'ranking_list_factor' : '  1.00'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '7', 'perma_name' : u'optimist'}>
 
     >>> scope.commit ()
 
@@ -874,7 +868,7 @@ _test_undo = r"""
     >>> for _e in scope.MOM.Id_Entity.query_s () : ### 1
     ...    print (_e.pid, _e.as_code ())
     (6, u"SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'), )")
-    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = 'no', ranking_list_factor = 1.0)")
+    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = 'no')")
     (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
     (3, u"SRM.Boat ((u'optimist', ), 1107, u'AUT', u'', )")
     (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), 1107, u\'AUT\', u\'\'), ((u\'himmelfahrt\', (u\'2008-05-01\', u\'2008-05-01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'scams\'",)))')
@@ -941,7 +935,7 @@ _test_undo = r"""
     <Create PAP.Person (u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), new-values = {'last_cid' : '<n>'}>
     <Create SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', (u'SC-AMS', 'SRM.Club'), 'SRM.Sailor'), new-values = {'last_cid' : '<n>'}>
     <Create SRM.Regatta_Event (u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), new-values = {'last_cid' : '<n>', 'perma_name' : u'himmelfahrt'}>
-    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '<n>', 'perma_name' : u'optimist', 'ranking_list_factor' : '  1.00'}>
+    <Create SRM.Regatta_C ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), new-values = {'is_cancelled' : u'no', 'last_cid' : '<n>', 'perma_name' : u'optimist'}>
     <Create SRM.Boat_in_Regatta (((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat'), ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C'), 'SRM.Boat_in_Regatta'), new-values = {'last_cid' : '<n>', 'registration_date' : u'<today>', 'skipper' : 5}>
     <Modify SRM.Sailor ((u'Tanzer', u'Christian', u'', u'', 'PAP.Person'), u'AUT', u'29676', u'', 'SRM.Sailor'), old-values = {'club' : 2, 'last_cid' : '<n>'}, new-values = {'club' : u'', 'last_cid' : '<n>'}>
     <Destroy SRM.Club (u'SC-AMS', 'SRM.Club'), old-values = {'last_cid' : '<n>'}>
@@ -977,7 +971,7 @@ _test_undo = r"""
     >>> for _e in scope.MOM.Id_Entity.query_s () : ### 5
     ...    print (_e.pid, _e.as_code ())
     (6, u"SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'), )")
-    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = 'no', ranking_list_factor = 1.0)")
+    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = 'no')")
     (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
     (3, u"SRM.Boat ((u'optimist', ), 1107, u'AUT', u'', )")
     (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), 1107, u\'AUT\', u\'\'), ((u\'himmelfahrt\', (u\'2008-05-01\', u\'2008-05-01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'scams\'",)))')

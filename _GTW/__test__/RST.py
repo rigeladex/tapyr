@@ -424,10 +424,10 @@ _test_cqf = r"""
     SRM-Object    ()
     SRM-Page    (Date-Slug `perma_name`, Entity `event`, Text `text`, Date_Interval `date`, Format `format`, String `head_line`, String `desc`, Boolean `hidden`, Int `prio`)
     SRM-Race_Result    (Boat_in_Regatta `left`, Int `race`, Int `points`, String `status`, Boolean `discarded`)
-    SRM-Regatta    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Float `ranking_list_factor`, Int `races`, Regatta_Result `result`, Int `starters_rl`)
-    SRM-Regatta_C    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Float `ranking_list_factor`, Int `races`, Regatta_Result `result`, Int `starters_rl`, Boolean `is_team_race`)
+    SRM-Regatta    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`, Int `starters_rl`)
+    SRM-Regatta_C    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`, Int `starters_rl`, Boolean `is_team_race`)
     SRM-Regatta_Event    (String `name`, Date_Interval `date`, Entity `club`, String `desc`, Boolean `is_cancelled`)
-    SRM-Regatta_H    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Float `ranking_list_factor`, Int `races`, Regatta_Result `result`, Int `starters_rl`)
+    SRM-Regatta_H    (Regatta_Event `left`, Entity `boat_class`, Int `discards`, Boolean `is_cancelled`, String `kind`, Int `races`, Regatta_Result `result`, Int `starters_rl`)
     SRM-Sailor    (Person `left`, Nation `nation`, Int `mna_number`, Entity `club`)
     SRM-Team    (Regatta_C `left`, String `name`, Entity `club`, String `desc`, Entity `leader`, Int `place`)
     SRM-Team_has_Boat_in_Regatta    (Team `left`, Boat_in_Regatta `right`)
@@ -879,18 +879,6 @@ _test_doc = r"""
                   , 'type' : 'String'
                   , 'ui_name' : 'Type name'
                   }
-                , { 'default_value' : ''
-                  , 'description' : 'Points for ranking list based on low points vs. number of starters.'
-                  , 'example' : ' 42.00'
-                  , 'is_changeable' : False
-                  , 'is_required' : False
-                  , 'is_settable' : False
-                  , 'kind' : 'query'
-                  , 'name' : 'ranking_list_points_lp'
-                  , 'p_type' : 'float'
-                  , 'type' : 'Float'
-                  , 'ui_name' : 'Ranking list points lp'
-                  }
                 , { 'default_value' : '0'
                   , 'description' : 'Rank of registration of boat in regatta.'
                   , 'example' : 13
@@ -1065,20 +1053,6 @@ _test_doc = r"""
                   , 'type' : 'String'
                   , 'ui_name' : 'Kind'
                   }
-                , { 'default_value' : '1.0'
-                  , 'description' : 'Weight of this regatta in computation of ranking list points.'
-                  , 'example' : '  1.20'
-                  , 'is_changeable' : True
-                  , 'is_required' : False
-                  , 'is_settable' : True
-                  , 'kind' : 'optional'
-                  , 'max_value' : 2.0
-                  , 'min_value' : 0.4
-                  , 'name' : 'ranking_list_factor'
-                  , 'p_type' : 'float'
-                  , 'type' : 'Float'
-                  , 'ui_name' : 'Ranking list factor'
-                  }
                 , { 'default_value' : '0'
                   , 'description' : 'Number of races sailed in regatta'
                   , 'example' : '7'
@@ -1148,7 +1122,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
                   , 'example' : '42'
-                  , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
+                  , 'explanation' : 'This is the number of boats that actually participated in the\n`regatta`. If the regatta field was split into groups, it is\nthe maximum number of starters of any group.'
                   , 'is_changeable' : True
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -1364,20 +1338,6 @@ _test_doc = r"""
                   , 'type' : 'String'
                   , 'ui_name' : 'Kind'
                   }
-                , { 'default_value' : '1.0'
-                  , 'description' : 'Weight of this regatta in computation of ranking list points.'
-                  , 'example' : '  1.20'
-                  , 'is_changeable' : True
-                  , 'is_required' : False
-                  , 'is_settable' : True
-                  , 'kind' : 'optional'
-                  , 'max_value' : 2.0
-                  , 'min_value' : 0.4
-                  , 'name' : 'ranking_list_factor'
-                  , 'p_type' : 'float'
-                  , 'type' : 'Float'
-                  , 'ui_name' : 'Ranking list factor'
-                  }
                 , { 'default_value' : '0'
                   , 'description' : 'Number of races sailed in regatta'
                   , 'example' : '7'
@@ -1447,7 +1407,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
                   , 'example' : '42'
-                  , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
+                  , 'explanation' : 'This is the number of boats that actually participated in the\n`regatta`. If the regatta field was split into groups, it is\nthe maximum number of starters of any group.'
                   , 'is_changeable' : True
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -1692,20 +1652,6 @@ _test_doc = r"""
                   , 'type' : 'String'
                   , 'ui_name' : 'Kind'
                   }
-                , { 'default_value' : '1.0'
-                  , 'description' : 'Weight of this regatta in computation of ranking list points.'
-                  , 'example' : '  1.20'
-                  , 'is_changeable' : True
-                  , 'is_required' : False
-                  , 'is_settable' : True
-                  , 'kind' : 'optional'
-                  , 'max_value' : 2.0
-                  , 'min_value' : 0.4
-                  , 'name' : 'ranking_list_factor'
-                  , 'p_type' : 'float'
-                  , 'type' : 'Float'
-                  , 'ui_name' : 'Ranking list factor'
-                  }
                 , { 'default_value' : '0'
                   , 'description' : 'Number of races sailed in regatta'
                   , 'example' : '7'
@@ -1775,7 +1721,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Number of boats participating in the regatta as relevant for\nfor low-point based formula for ranking list points.'
                   , 'example' : '42'
-                  , 'explanation' : 'This is the number of boats that actually participated in the\nregatta. If the regatta field was split into the group, is\nthe maximum number of starters of any group.'
+                  , 'explanation' : 'This is the number of boats that actually participated in the\n`regatta`. If the regatta field was split into groups, it is\nthe maximum number of starters of any group.'
                   , 'is_changeable' : True
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -2924,7 +2870,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -2957,7 +2902,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : 1.0
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -2978,7 +2922,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : 1.0
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3004,7 +2947,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : 1.0
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3025,7 +2967,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3058,7 +2999,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3079,7 +3019,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3105,7 +3044,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3126,7 +3064,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3144,7 +3081,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3161,7 +3097,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3178,7 +3113,6 @@ _test_get = r"""
                       { 'pid' : 13
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3193,10 +3127,10 @@ _test_get = r"""
 
     >>> _ = show (R.get ("/v1/SRM-Regatta.csv?verbose&raw&brief"))
     { 'content' :
-        [ 'left,boat_class,discards,is_cancelled,kind,ranking_list_factor,races,result.date,result.software,result.status,starters_rl'
-        , '10,7,,no,,  1.00,,,,,'
-        , '10,9,,no,,  1.00,,,,,'
-        , '13,7,,no,,  1.00,,,,,'
+        [ 'left,boat_class,discards,is_cancelled,kind,races,result.date,result.software,result.status,starters_rl'
+        , '10,7,,no,,,,,,'
+        , '10,9,,no,,,,,,'
+        , '13,7,,no,,,,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose&raw&brief'
@@ -3204,10 +3138,10 @@ _test_get = r"""
 
     >>> _ = show (R.get ("/v1/SRM-Regatta.csv?verbose&raw"))
     { 'content' :
-        [ 'left.pid,left.url,boat_class.pid,boat_class.url,discards,is_cancelled,kind,ranking_list_factor,races,result.date,result.software,result.status,starters_rl'
-        , '10,/v1/SRM-Regatta_Event/10,7,/v1/SRM-Boat_Class/7,,no,,  1.00,,,,,'
-        , '10,/v1/SRM-Regatta_Event/10,9,/v1/SRM-Handicap/9,,no,,  1.00,,,,,'
-        , '13,/v1/SRM-Regatta_Event/13,7,/v1/SRM-Boat_Class/7,,no,,  1.00,,,,,'
+        [ 'left.pid,left.url,boat_class.pid,boat_class.url,discards,is_cancelled,kind,races,result.date,result.software,result.status,starters_rl'
+        , '10,/v1/SRM-Regatta_Event/10,7,/v1/SRM-Boat_Class/7,,no,,,,,,'
+        , '10,/v1/SRM-Regatta_Event/10,9,/v1/SRM-Handicap/9,,no,,,,,,'
+        , '13,/v1/SRM-Regatta_Event/13,7,/v1/SRM-Boat_Class/7,,no,,,,,,'
         ]
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Regatta.csv?verbose&raw'
@@ -3236,7 +3170,6 @@ _test_get = r"""
                   { 'boat_class' : 7
                   , 'is_cancelled' : 'no'
                   , 'left' : 10
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3247,7 +3180,6 @@ _test_get = r"""
                   { 'boat_class' : 9
                   , 'is_cancelled' : 'no'
                   , 'left' : 10
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3258,7 +3190,6 @@ _test_get = r"""
                   { 'boat_class' : 7
                   , 'is_cancelled' : 'no'
                   , 'left' : 13
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3315,7 +3246,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3348,7 +3278,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3369,7 +3298,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3395,7 +3323,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3416,7 +3343,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3447,7 +3373,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3468,7 +3393,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3501,7 +3425,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3527,7 +3450,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3548,7 +3470,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3581,7 +3502,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -3602,7 +3522,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3635,7 +3554,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3655,7 +3573,6 @@ _test_get = r"""
             , 'discards'
             , 'is_cancelled'
             , 'kind'
-            , 'ranking_list_factor'
             , 'races'
             , 'result.date'
             , 'result.software'
@@ -3688,7 +3605,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3709,7 +3625,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3898,7 +3813,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -3915,7 +3829,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -3932,7 +3845,6 @@ _test_get = r"""
                       { 'pid' : 13
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -4093,7 +4005,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 11
               , 'pid' : 11
@@ -4114,7 +4025,6 @@ _test_get = r"""
                       { 'pid' : 10
                       , 'url' : '/v1/SRM-Regatta_Event/10'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 12
               , 'pid' : 12
@@ -4140,7 +4050,6 @@ _test_get = r"""
                       , 'type_name' : 'SRM.Regatta_Event'
                       , 'url' : '/v1/SRM-Regatta_Event/13'
                       }
-                  , 'ranking_list_factor' : '  1.00'
                   }
               , 'cid' : 14
               , 'pid' : 14
@@ -4393,7 +4302,6 @@ _test_post = r"""
                         , 'type_name' : 'SRM.Regatta_Event'
                         , 'url' : '/v1/SRM-Regatta_Event/10'
                         }
-                  , 'ranking_list_factor' : '  1.00'
                     }
                 , 'cid' : 11
                 , 'pid' : 11

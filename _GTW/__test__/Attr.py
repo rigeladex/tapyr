@@ -663,10 +663,6 @@ _test_DET = """
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
         SRM.Regatta_H                 *  SRM.Regatta
-    ranking_list_factor [SRM.Regatta]
-        SRM.Regatta                      SRM.Regatta
-        SRM.Regatta_C                 *  SRM.Regatta
-        SRM.Regatta_H                 *  SRM.Regatta
     result [SRM.Regatta]
         SRM.Regatta                      SRM.Regatta
         SRM.Regatta_C                 *  SRM.Regatta
@@ -1258,7 +1254,6 @@ _test_pickled_types = """
     race                 Int             int               None     3     3
     races                Int             int               None     3     3
     rank                 Int             int               None    20    20
-    ranking_list_factor  Float           float             None    22    22
     region               String          unicode             20    21    20
     registered_in        String          unicode             64    65    64
     registration_date    Date            date              None    12    12

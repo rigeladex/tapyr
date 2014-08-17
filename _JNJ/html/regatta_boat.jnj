@@ -44,6 +44,7 @@
 ##    25-Aug-2013 (CT) Factor `td_li_sailor`; elide `middle_name` and `title`
 ##    30-Aug-2013 (CT) Add `middle_name` to `td_li_sailor`
 ##    12-Feb-2014 (CT) Factor from SCAMS
+##    17-Aug-2014 (CT) Remove `RLP Points`
 ##    ««revision-date»»···
 ##--
 #}
@@ -153,12 +154,6 @@
     </td>
   {%- endfor %}
 {%- endmacro -%} {#- td_race_results -#}
-
-{%- macro td_rl_points (regatta, boat) -%}
-  <td class="RLP Points" title="{{ GTW._T ("Ranking list points")}}">
-    {{- boat.FO.ranking_list_points_lp -}}
-  </td>
-{%- endmacro -%} {#- td_rl_points -#}
 
 {%- macro td_reg_date (regatta, boat) -%}
   {%- if not regatta.is_team_race %}
@@ -272,17 +267,6 @@
     </th>
   {% endif -%}
 {%- endmacro -%} {#- th_race_results -#}
-
-{%- macro th_rl_points (regatta, value = None) -%}
-  <th class="RLP Points" scope="col"
-    title="{{ GTW._T ("Ranking list points")}}">
-    {%- if value is none -%}
-      {{ GTW._T ("RLP") }}
-    {%- else -%}
-      {{ value }}
-    {%- endif -%}
-  </th>
-{%- endmacro -%} {#- th_rl_points -#}
 
 {%- macro th_reg_date (regatta, value = None) -%}
   {%- if not regatta.is_team_race %}

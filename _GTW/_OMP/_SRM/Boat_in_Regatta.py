@@ -46,6 +46,7 @@
 #    12-May-2013 (CT) Repace `auto_cache` by `link_ref_attr_name`
 #    13-May-2013 (CT) Use `query`, not `r_query`
 #    30-Jan-2014 (CT) Add attribute `ranking_list_points_lp`
+#    17-Aug-2014 (CT) Remove attribute `ranking_list_points_lp`
 #    ««revision-date»»···
 #--
 
@@ -106,27 +107,6 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             # end def computed
 
         # end class crew
-
-        class ranking_list_points_lp (A_Float) :
-            """Points for ranking list based on low points vs. number of starters."""
-
-            kind                = Attr.Query
-            format              = "%6.2f"
-
-            query               = \
-                ( ( (Q.regatta.starters_rl + 1)
-                  - (Q.points / Q.regatta.races_counted)
-                  )
-                * (100.0 / Q.regatta.starters_rl)
-                * Q.regatta.ranking_list_factor
-                )
-
-            query_preconditions = \
-                ( Q.regatta.races_counted
-                , Q.regatta.starters_rl
-                )
-
-        # end class ranking_list_points_lp
 
         class place (A_Int) :
             """Place of boat in this regatta."""

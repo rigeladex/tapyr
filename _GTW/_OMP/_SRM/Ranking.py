@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# #*** <License> ************************************************************#
+# This module is part of the package GTW.OMP.SRM.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# #*** </License> ***********************************************************#
+#
+#++
+# Name
+#    GTW.OMP.SRM.Ranking
+#
+# Purpose
+#    Model a ranking list for sailboat regattas
+#
+# Revision Dates
+#    17-Aug-2014 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   __future__ import division, print_function
+from   __future__ import absolute_import, unicode_literals
+
+from   _GTW                     import GTW
+from   _MOM.import_MOM          import *
+
+import _GTW._OMP._SRM.Regatta
+
+from   _TFL.I18N                import _, _T, _Tn
+import _TFL.Decorator
+
+_Ancestor_Essence = GTW.OMP.SRM.Object
+
+class Ranking (_Ancestor_Essence) :
+    """Ranking list for sailboat regattas"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class name (A_String) :
+            """Name of the ranking list"""
+
+            kind               = Attr.Primary
+            max_length         = 32
+
+        # end class name
+
+        class nick (A_String) :
+            """Nickname of ranking list"""
+
+            kind               = Attr.Required
+            max_length         = 8
+
+        # end class nick
+
+    # end class _Attributes
+
+    class _Predicates (_Ancestor_Essence._Predicates) :
+
+        _Ancestor = _Ancestor_Essence._Predicates
+
+        unique_nick = Pred.Unique.New_Pred \
+            ( "nick"
+            , name = "unique_nick"
+            , __doc__ =
+                """The value of the attribute `nick` must be unique over all
+                   instances of `Ranking`.
+                """
+            )
+    # end class _Predicates
+
+    def points (self, boat_in_regatta) :
+        """Ranking list points of `boat_in_regatta`"""
+        scope   = self.home_scope
+        regatta = boat_in_regatta.regatta
+        if regatta.races_counted and regatta.starters_rl :
+            rir = scope.SRM.Regatta_in_Ranking.instance (regatta, self)
+            if rir is not None :
+                result = \
+                    ( ( (regatta.starters_rl + 1)
+                      - (boat_in_regatta.points / regatta.races_counted)
+                      )
+                    * (100.0 / regatta.starters_rl)
+                    * rir.factor
+                    )
+                return result
+    # end def points
+
+# end class Ranking
+
+_Ancestor_Essence = GTW.OMP.SRM.Link2
+
+class Regatta_in_Ranking (_Ancestor_Essence) :
+    """Regatta participating in ranking list"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        ### Primary attributes
+
+        class left (_Ancestor.left) :
+            """Regatta that participates in ranking"""
+
+            role_type          = GTW.OMP.SRM.Regatta
+            auto_rev_ref       = True
+            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
+
+        # end class left
+
+        class right (_Ancestor.right) :
+            """Ranking the regatta participates in"""
+
+            role_type          = Ranking
+            auto_rev_ref       = True
+            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
+
+        # end class right
+
+        ### Non-primary attributes
+
+        class factor (A_Float) :
+            """Weight of this regatta in computation of ranking list points."""
+
+            kind               = Attr.Optional
+            raw_default        = "1.0"
+            format             = "%6.2f"
+            min_value          = 0.40
+            max_value          = 2.00
+
+        # end class factor
+
+    # end class _Attributes
+
+# end class Regatta_in_Ranking
+
+if __name__ != "__main__" :
+    GTW.OMP.SRM._Export ("*")
+### __END__ GTW.OMP.SRM.Ranking

@@ -494,7 +494,6 @@ _test_code = """
       discards            0
       is_cancelled        1
       kind                3
-      ranking_list_factor 0
       races               0
       result              None
         date                0
@@ -537,7 +536,6 @@ _test_code = """
     last_cid            0
     pid                 0
     type_name           3
-    ranking_list_points_lp0
     rank                0
     registration_date   0
     events              2
@@ -588,7 +586,6 @@ _test_code = """
         discards            0
         is_cancelled        1
         kind                3
-        ranking_list_factor 0
         races               0
         result              None
           date                0
@@ -659,7 +656,6 @@ _test_code = """
         Int `discards` right.discards
         Boolean `is_cancelled` right.is_cancelled
         String `kind` right.kind
-        Float `ranking_list_factor` right.ranking_list_factor
         Int `races` right.races
         Date-Time `date` right.result.date
         String `software` right.result.software
@@ -676,7 +672,6 @@ _test_code = """
         Int `discards` discards
         Boolean `is_cancelled` is_cancelled
         String `kind` kind
-        Float `ranking_list_factor` ranking_list_factor
         Int `races` races
         Date-Time `date` result.date
         String `software` result.software
@@ -742,10 +737,6 @@ _test_code = """
         String `type_name` type_name
     String `type_name` unwrapped
         String `type_name` type_name
-    Float `ranking_list_points_lp`
-        Float `ranking_list_points_lp` ranking_list_points_lp
-    Float `ranking_list_points_lp` unwrapped
-        Float `ranking_list_points_lp` ranking_list_points_lp
     Int `rank`
         Int `rank` rank
     Int `rank` unwrapped
@@ -810,7 +801,6 @@ _test_code = """
         Int `discards` teams.left.discards
         Boolean `is_cancelled` teams.left.is_cancelled
         String `kind` teams.left.kind
-        Float `ranking_list_factor` teams.left.ranking_list_factor
         Int `races` teams.left.races
         Date-Time `date` teams.left.result.date
         String `software` teams.left.result.software
