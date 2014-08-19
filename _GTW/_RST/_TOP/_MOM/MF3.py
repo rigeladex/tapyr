@@ -43,6 +43,7 @@
 #     8-Jul-2014 (CT) Redefine `_JSON_Action_.POST._response_body` to set
 #                     `resource.args` to `[form_pid]`
 #                     (factored from `Deleter._rendered_post`)
+#    19-Aug-2014 (CT) Factor `ac_ui_display` to `MOM.E_Type_Manager`
 #    ««revision-date»»···
 #--
 
@@ -317,16 +318,15 @@ class _JSON_Action_ (_Ancestor) :
         if n :
             if n < max_n :
                 result ["fields"]  = len    (names)
-                result ["matches"] = sorted \
-                    (self._ui_displayed (ETM, names, matches))
+                result ["matches"] = sorted (ETM.ac_ui_display (names, matches))
             else :
                 if json.trigger == json.trigger_n :
                     s_matches = query.attrs (fs [0]).limit (max_n).all ()
                     m = len (s_matches)
                     if m < max_n :
                         s_matches = \
-                            ( [m [0], "..."] for m in self._ui_displayed
-                                (ETM, names [:1], s_matches)
+                            ( [m [0], "..."] for m in ETM.ac_ui_display
+                                (names [:1], s_matches)
                             )
                         result ["fields"]  = 1
                         result ["matches"] = sorted (s_matches)

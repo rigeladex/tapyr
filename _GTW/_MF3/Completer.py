@@ -33,6 +33,7 @@
 #    13-May-2014 (CT) Add `choose`
 #    14-May-2014 (CT) Change `_q_a_as_json` to try single-attribute
 #                     completion if multi-attribute completion exceeds `limit`
+#    19-Aug-2014 (CT) Factor `ac_ui_display` to `MOM.E_Type_Manager`
 #    ««revision-date»»···
 #--
 
@@ -252,8 +253,7 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                 result.update \
                     ( fields    = fs_n
                     , field_ids = ids [: fs_n]
-                    , matches   = sorted \
-                        (self._ui_displayed (ETM, names, matches))
+                    , matches   = sorted (ETM.ac_ui_display (names, matches))
                     )
             else :
                 if fs_n > 1 :
@@ -261,8 +261,8 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                     m = len (s_matches)
                     if m < limit :
                         s_matches = sorted \
-                            ( [m [0], "..."] for m in self._ui_displayed
-                                (ETM, names [:1], s_matches)
+                            ( [m [0], "..."] for m in ETM.ac_ui_display
+                                (names [:1], s_matches)
                             )
                         result.update \
                             ( fields    = 1
@@ -301,21 +301,6 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                 result ["partial"]  = True
         return result
     # end def _q_e_as_json
-
-    def _ui_displayed (self, ETM, names, matches) :
-        def _gen () :
-            for n in names :
-                try :
-                    attr = ETM.get_etype_attribute (n)
-                except AttributeError :
-                    disp = lambda v : getattr (v, "ui_display", v)
-                else :
-                    disp = lambda v, attr = attr : attr.ac_ui_display (v)
-                yield disp
-        attr_displayers = list (_gen ())
-        for match in matches :
-            yield tuple (d (v) for d, v in zip (attr_displayers, match))
-    # end def _ui_displayed
 
     def __bool__ (self) :
         return self.id is not None and bool (self.elems)

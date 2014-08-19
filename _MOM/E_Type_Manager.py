@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -131,6 +131,7 @@
 #     4-Jun-2013 (CT) Change `getattr` to try `etype` first, then `.attributes`
 #    11-Jun-2013 (CT) Add error guards to `raw_query_attrs`
 #    21-Aug-2013 (CT) Factor `ems` and `query` from `Id_Entity` to `Entity`
+#    19-Aug-2014 (CT) Factor `ac_ui_display` in here
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,21 @@ class Entity (TFL.Meta.Object) :
                     if vq is not None :
                         yield vq
     # end def ac_query_attrs
+
+    def ac_ui_display (self, names, matches) :
+        def _gen (self, names) :
+            for n in names :
+                try :
+                    attr = self.get_etype_attribute (n)
+                except AttributeError :
+                    disp = lambda v : getattr (v, "ui_display", v)
+                else :
+                    disp = attr.ac_ui_display
+                yield disp
+        attr_displayers = list (_gen (self, names))
+        for match in matches :
+            yield tuple (d (v) for d, v in zip (attr_displayers, match))
+    # end def ac_ui_display
 
     def get_etype_attribute (self, name) :
         etype = self._etype

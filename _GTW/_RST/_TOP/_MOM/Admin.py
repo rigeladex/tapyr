@@ -83,6 +83,7 @@
 #    30-Apr-2014 (CT) Factor `_NC_Mixin_._child_kw`
 #     7-May-2014 (CT) Guard access to `default_child` in `_get_esf_filter`
 #     8-Jul-2014 (CT) Change `Group._pns_entries` to filter duplicates
+#    19-Aug-2014 (CT) Factor `ac_ui_display` to `MOM.E_Type_Manager`
 #    ««revision-date»»···
 #--
 
@@ -224,22 +225,6 @@ class _Action_ (_Ancestor) :
         raise self.top.Status.Forbidden (error)
     # end def _raise_403
 
-    def _ui_displayed (self, ETM, names, matches) :
-        def _gen () :
-            for n in names :
-                try :
-                    attr = ETM.get_etype_attribute (n)
-                except AttributeError :
-                    disp = lambda v : getattr (v, "ui_display", v)
-                else :
-                    disp = lambda v, attr = attr : attr.ac_ui_display (v)
-                yield disp
-        attr_displayers = list (_gen ())
-        for match in matches :
-            yield tuple \
-                (d (v) for d, v in zip (attr_displayers, match))
-    # end def _ui_displayed
-
 # end class _Action_
 
 _Ancestor = _Action_
@@ -378,16 +363,15 @@ class _JSON_Action_ (_Ancestor) :
         if n :
             if n < max_n :
                 result ["fields"]  = len    (names)
-                result ["matches"] = sorted \
-                    (self._ui_displayed (ETM, names, matches))
+                result ["matches"] = sorted (ETM.ac_ui_display (names, matches))
             else :
                 if json.trigger == json.trigger_n :
                     s_matches = query.attrs (fs [0]).limit (max_n).all ()
                     m = len (s_matches)
                     if m < max_n :
                         s_matches = \
-                            ( [m [0], "..."] for m in self._ui_displayed
-                                (ETM, names [:1], s_matches)
+                            ( [m [0], "..."] for m in ETM.ac_ui_display
+                                (names [:1], s_matches)
                             )
                         result ["fields"]  = 1
                         result ["matches"] = sorted (s_matches)
