@@ -32,6 +32,16 @@
 //     2-Jul-2014 (CT) Add `form_errors`
 //     8-Jul-2014 (CT) Add `form_pid` to AJAX requests
 //     8-Jul-2014 (CT) Add `return false` to callback function `add_rev_ref`
+//    24-Aug-2014 (CT) Pass `pid`, `sid`, `sigs` to `gtw_e_type_selector_hd_mf3`
+//    26-Aug-2014 (CT) Factor `close_section`, add `focus` to `close_section`
+//    26-Aug-2014 (CT) Add `response.finished` to `completer.select_cb`
+//    26-Aug-2014 (CT) Add `anchor` to `completer.completed_cb`
+//    27-Aug-2014 (CT) Add `field_blur_cb` and `field_focus_cb`
+//    28-Aug-2014 (CT) Add `composite_field` to `field_blur_cb`,
+//                     `field_focus_cb`
+//    29-Aug-2014 (CT) Add support for `max-rev-ref`
+//    30-Aug-2014 (CT) Add guard for `ft` to `completer.put_values`
+//    30-Aug-2014 (CT) Add `hide` and `show` calls for `$(S.form_errors)`
 //    ««revision-date»»···
 //--
 
@@ -49,7 +59,9 @@
         var field_map = {};
         var selectors = $.extend
             ( { closable                 : "section"
+              , composite_field          : ".Field-Composite"
               , container                : "div.Field"
+              , container_rev_ref        : ".Field-Entity"
               , display_field            : ".Field.Display"
               , display_id_ref           : ".value.display.id_ref"
               , entity_list              : ".Entity-List"
@@ -59,6 +71,7 @@
               , focusables               :
                   ".Field :input[id]:not(:hidden):not(.prefilled):not(.readonly)"
               , hidden_id_ref            : ".value.hidden.id_ref"
+              , id_field                 : ".Field :input[id]"
               , input_field              :
                   ".Field :input[id]:not(.prefilled):not(.readonly)"
               , status                   : "b.Status"
@@ -95,12 +108,19 @@
                 var success_cb = function success_cb (answer, status, xhr) {
                     var new$;
                     if (! answer ["error"]) {
-                        var fsu  = answer ["form_spec_update"];
-                        var html = answer ["html"];
+                        var fsu    = answer ["form_spec_update"];
+                        var html   = answer ["html"];
+                        var max_rr = c$.data ("max-rev-ref");
+                        var rr$, ab$;
                         c$.append (html);
                         $GTW.inspect.update_transitive (form_spec, fsu);
                         new$ = c$.children ().last ();
                         setup_sub_form (new$);
+                        rr$ = c$.children (S.container_rev_ref);
+                        if (rr$.length >= max_rr) {
+                            ab$ = $("[data-action=\"add_rev_ref\"]", c$);
+                            ab$.hide ();
+                        };
                     } else {
                         $GTW.show_message
                             ("Ajax completion error: ", answer.error);
@@ -131,26 +151,7 @@
                 return false;
               }
             , close : function close (ev) {
-                var S     = options.selectors;
-                var a$    = $(this);
-                var c$    = a$.closest (S.closable);
-                var d$    = $(S.display_id_ref, c$).first ();
-                var d     = d$.attr ("value"); // want initial value here
-                var fvs   = [];
-                var acc   = function acc (n) {
-                    var f$   = $(this);
-                    var v    = f$.val ();
-                    if (v !== "") {
-                        fvs.push (v);
-                    };
-                };
-                var fs$;
-                if (d === "") {
-                    fs$ = $(":input[id]:not(.prefilled):not(.display)", c$);
-                    fs$.each (acc);
-                    d$.val   (fvs.join (", "));
-                };
-                c$.addClass ("closed");
+                close_section ($(this));
                 return false;
               }
             , open : function open (ev) {
@@ -165,6 +166,7 @@
                 var S          = options.selectors;
                 var a$         = $(this);
                 var c$         = a$.closest (S.closable);
+                var p$         = c$.closest (S.entity_list);
                 var d$         = $(S.display_id_ref, c$).first ();
                 var i$         = $(S.hidden_id_ref,  c$).first ();
                 var elem_pid   = i$.val ();
@@ -173,10 +175,12 @@
                 var f_values   = cargo.field_values;
                 var sigs       = cargo.sigs;
                 var F_id       = d$.prop ("id");
+                var max_rr     = p$.data ("max-rev-ref");
                 var url        = options.url.remove;
                 var cleanup    = function cleanup (msg) {
                     delete f_values [elem_pid];
                     delete sigs     [elem_pid];
+                    var rr$, ab$;
                     $(":input[id]", c$).each
                         ( function (n) {
                             var f$   = $(this);
@@ -189,6 +193,11 @@
                         c$.html (msg);
                     } else {
                         c$.remove ();
+                    };
+                    rr$ = p$.children (S.container_rev_ref);
+                    if (rr$.length < max_rr) {
+                        ab$ = $("[data-action=\"add_rev_ref\"]", p$);
+                        ab$.show ();
                     };
                 };
                 var data, success_cb;
@@ -235,17 +244,55 @@
                 return false;
               }
             };
+        var close_section = function close_section (a$) {
+            var S     = options.selectors;
+            var c$    = a$.closest (S.closable);
+            var d$    = $(S.display_id_ref, c$).first ();
+            var t$    = $(S.focusables, c$).last ();
+            var d     = d$.attr ("value"); // want initial value here
+            var fvs   = [];
+            var acc   = function acc (n) {
+                var f$   = $(this);
+                var v    = f$.val ();
+                if (v !== "") {
+                    fvs.push (v);
+                };
+            };
+            var fs$, i, n$, s$;
+            if (d === "") {
+                fs$ = $(":input[id]:not(.prefilled):not(.display)", c$);
+                fs$.each (acc);
+                d$.val   (fvs.join (", "));
+            };
+            fs$ = $(S.focusables);
+            i   = fs$.index (t$);
+            n$  = fs$.get   (i+1);
+            s$ = $(S.submit).first ();
+            setTimeout
+                ( function () {
+                    s$.focus ();
+                    n$.focus ();
+                  }
+                , 0
+                );
+            c$.addClass ("closed");
+        };
         var completer =
             { completed_cb : function completed_cb
                     (f$, f_completer, response, entity_p, cargo) {
+                var a$;
                 if (response.completions > 0) {
                     if (response.fields > 0) {
                         completer.put_values (response, response.values, cargo);
                     };
                     if ((response.completions == 1) && entity_p) {
-                        action_callback.close.apply (f$);
-                        // TBD (cf. afs.js: _put_cb)
-                        // * move focus to following focusable <input>
+                        if ("anchor" in response) {
+                            a$ = $("[id=\"" + response.anchor + "\"]");
+                        };
+                        if (! a$.length) {
+                            a$ = f$;
+                        };
+                        close_section (a$);
                     };
                 };
               }
@@ -334,10 +381,12 @@
                     fv = values [id];
                     if (fv != undefined) {
                         f$  = field_map [id];
-                        ft  = f$.data   ("field_type");
-                        val = ft.get_cargo (fv);
-                        if (val != undefined) {
-                            result [id] = val;
+                        if (f$ != undefined) {
+                            ft  = f$.data   ("field_type");
+                            val = ft.get_cargo (fv);
+                            if (val != undefined) {
+                                result [id] = val;
+                            };
                         };
                     };
                 };
@@ -352,7 +401,11 @@
                     val  = match [i];
                     if (f$.length) {
                         ft = f$.data ("field_type");
-                        ft.put_input (f$, val);
+                        if (ft != undefined) {
+                            // prefilled and readonly fields don't have
+                            // `field_type`; they need no action here, anyway
+                            ft.put_input (f$, val);
+                        };
                     } else {
                         fv = values [id];
                         if (fv != undefined) {
@@ -376,7 +429,9 @@
                 };
                 completer.put_values (response, match, cargo);
                 if (response.partial) {
-                    setTimeout (function () { completer.trigger (f$); }, 1);
+                    if (! response.finished) {
+                        setTimeout (function () { completer.trigger (f$); }, 1);
+                    };
                 } else if (f_completer ["entity_p"]) {
                     data  =
                         { complete_entity : true
@@ -460,6 +515,14 @@
             };
             return false;
         };
+        var field_blur_cb = function field_blur_cb (ev) {
+            var S         = options.selectors;
+            var f$        = $(this);
+            var a$        = f$.siblings ().filter ($("aside"));
+            var c$        = f$.closest (S.composite_field);
+            a$.removeClass ("open");
+            $("aside", c$).removeClass ("open");
+        };
         var field_change_cb = function field_change_cb (ev) {
             var S         = options.selectors;
             var form_spec = options.form_spec;
@@ -491,6 +554,15 @@
                     f$.toggleClass ("missing", !  (new_value_p));
                 };
             };
+        };
+        var field_focus_cb = function field_focus_cb (ev) {
+            var S         = options.selectors;
+            var f$        = $(this);
+            var a$        = f$.siblings ().filter ($("aside"));
+            var c$        = f$.closest (S.composite_field);
+            var ca$       = $("aside", c$);
+            a$.addClass  ("open");
+            ca$.addClass ("open");
         };
         var field_type =
             { checkbox   :
@@ -609,7 +681,7 @@
                     return !! value;
                   }
                 }
-            , _setup : function _classify (n) {
+            , _setup : function _setup (n) {
                 var f$ = $(this);
                 var id = f$.prop ("id");
                 var typ;
@@ -644,6 +716,7 @@
                     form_errors.display_1 (errs$, err);
                 };
                 $(err_ref, errs$).addClass ("pure-button");
+                errs$.show ();
                 //$GTW.show_message ("Submit errors: ", errors);
               }
             , display_1 : function display_1 (errs$, err) {
@@ -697,6 +770,7 @@
         };
         var setup_esf_selector = function setup_esf_selector (n) {
             var S         = options.selectors;
+            var cargo     = options.form_spec.cargo;
             var f$        = $(this);
             var E_id      = closest_el_id (f$, S.form_element);
             var F_id      = f$.prop ("id");
@@ -712,6 +786,9 @@
                           { apply_cb  : apply_cb
                           , E_id      : E_id
                           , F_id      : F_id
+                          , pid       : cargo.pid
+                          , sid       : cargo.sid
+                          , sigs      : cargo.sigs
                           }
                       , url : options.url
                       }
@@ -719,23 +796,28 @@
             };
         };
         var setup_fields = function setup_fields (context) {
-            var S = options.selectors;
-            $(S.display_field, context)
-                .each    (setup_entity_display);
-            $(S.input_field, context)
-                .each    (field_type._setup)
-                .filter  ("[data-completer]")
-                    .each    (completer.setup)
-                    .end     ()
-                .filter  (".Selector .display")
-                    .each    (setup_esf_selector)
-                    .end     ()
-                .change  (field_change_cb)
-                .trigger ("change");
-            $(S.focusables, context)
-                .addClass  ("focusable")
+            var S     = options.selectors;
+            var dfs$  = $(S.display_field,   context);
+            var idfs$ = $(S.input_field,     context);
+            var infs$ = $(S.input_field,     context);
+            var ffs$  = $(S.focusables,      context);
+            dfs$.each      (setup_entity_display);
+            idfs$.each     (field_type._setup)
+                .change    (field_change_cb)
+                .trigger   ("change");
+            infs$
+                .blur      (field_blur_cb)
+                .focus     (field_focus_cb)
+                .filter    ("[data-completer]")
+                    .each  (completer.setup)
+                    .end   ()
+                .filter    (".Selector .display")
+                    .each  (setup_esf_selector)
+                    .end   ();
+            ffs$.addClass  ("focusable")
                 .first     (":input")
-                    .focus ();
+                    .focus ()
+                    .end   ();
         };
         var setup_sub_form = function setup_sub_form (f$) {
             var action;
@@ -748,6 +830,7 @@
             };
         };
         var submit_cb = function submit_cb (ev) {
+            var S            = options.selectors;
             var form$        = options.form$;
             var target$      = $(ev.target);
             var form_spec    = options.form_spec;
@@ -761,6 +844,7 @@
             var pre_submit_callbacks = options.pre_submit_callbacks;
             var success_cb = function success_cb (answer, status, xhr) {
                 if (! answer ["error"]) {
+                    $(S.form_errors, form$).hide ();
                     if (answer ["conflicts"]) {
                         // XXX
                         $GTW.show_message
@@ -771,10 +855,10 @@
                         // XXX display re-authorization form
                         $GTW.show_message ("Expired: ", answer.expired);
                     } else if (answer ["feedback"]) {
-                        $(":input, button, .action-button a", options.form$)
+                        $(":input, button, .action-button a", form$)
                             .addClass ("ui-state-disabled") // ???
                             .prop     ("disabled", true);
-                        options.form$.before (answer.feedback);
+                        form$.before (answer.feedback);
                     } else {
                         // Need timeout here for IE
                         setTimeout

@@ -38,6 +38,7 @@
 #    24-Jan-2012 (CT) Remove `Form_args`, `*_completer`,
 #                     i.e., stuff related to non-AFS forms
 #    28-Jan-2014 (CT) Add `Referral`
+#    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,18 @@ class Admin (object) :
             , "last_changed"
             )
         , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
+        , MF3_Attr_Spec        = dict
+            ( { "events.recurrence"    : dict
+                ( include_rev_refs     = ("rules", )
+                )
+              }
+            , events           = dict
+                ( include_rev_refs = ("recurrence", )
+                )
+            )
+        , MF3_Form_Spec        = dict
+            ( include_rev_refs = ("events", "clips")
+            )
         )
 
     Picture              = dict \
@@ -89,22 +102,6 @@ class Admin (object) :
         )
 
 # end class Admin
-
-from   _GTW._AFS._MOM import Spec
-import _GTW._OMP._SWP.Page
-
-GTW.OMP.SWP.Page.GTW.afs_spec = Spec.Entity \
-    ( include_links =
-        ( Spec.Entity_Link
-            ( "events"
-            , include_links =
-                ( Spec.Entity_Link ("recurrence", include_links = ("rules", ))
-                ,
-                )
-            )
-        , "clips"
-        )
-    )
 
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export_Module ()

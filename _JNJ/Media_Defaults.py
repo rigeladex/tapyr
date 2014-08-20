@@ -57,6 +57,7 @@
 #    15-May-2014 (CT) Add `color_lightest_grey`
 #    15-May-2014 (CT) Add `breakpoint.quite_narrow`
 #     9-Jul-2014 (CT) Add `Rule.rotate_45_left`
+#    26-Aug-2014 (CT) Add `pure` parameters
 #    ««revision-date»»···
 #--
 
@@ -331,6 +332,18 @@ class Media_Defaults (Definition) :
         week_height            = Em    (8)
 
     # end class cal
+
+    class pure (Definition) :
+        """Parameters of `pure` css as of version v0.4.2."""
+
+        input_focus_border_color = RGB_X ("#129FEA")
+
+        label_width              = Em (10.0)
+        label_margin_right       = Em (1.0)
+
+        aside_indent             = label_width + label_margin_right
+
+    # end class pure
 
     class tablesorter (Definition) :
 

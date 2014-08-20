@@ -87,6 +87,7 @@
 #    24-Apr-2014 (CT) Add `mf3`, `mf3_input`, `mf3_v_seq`, `mf3_h_cols`
 #     9-Jul-2014 (CT) Changge `js` to use `pyk.decoded`, not home-grown code,
 #                     to decode entries of `media.script_files`
+#    29-Aug-2014 (CT) Remove `AFS` specific templates
 #    ««revision-date»»···
 #--
 
@@ -557,11 +558,6 @@ Template ("account_reset_password",       "html/reset_password.jnj")
 Template ("account_reset_password_email", "email/reset_password.jnj")
 Template ("account_verify_new_email",     "email/verify_new_email.jnj")
 Template ("account_verify_email",         "email/verify_new_email.jnj")
-
-Template ("afs",           "html/afs.jnj")
-Template ("afs_input",     "html/AFS/input.jnj")
-Template ("afs_div_seq",   "html/AFS/div_seq.jnj", parent_name = "afs")
-Template ("afs_fc_horizo", "html/AFS/field_composite_horizo.jnj", parent_name = "afs_div_seq")
 
 Template ("mf3",           "html/mf3.m.jnj")
 Template ("mf3_input",     "html/MF3/input.m.jnj")

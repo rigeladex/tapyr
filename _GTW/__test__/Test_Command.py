@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -42,6 +42,7 @@
 #    27-Jun-2013 (CT) Add `SAW`-based backends
 #    25-Sep-2013 (CT) Add `debug`
 #    26-Sep-2013 (CT) Add `_backend_reset`
+#    27-Aug-2014 (CT) Remove import of `_GTW._AFS._MOM.Spec`
 #    ««revision-date»»···
 #--
 
@@ -71,8 +72,6 @@ import _GTW._Werkzeug.Command
 import _GTW._RST._TOP.import_TOP
 import _GTW._RST._TOP._MOM.import_MOM
 import _JNJ.Templateer
-
-import _GTW._AFS._MOM.Spec
 
 import _TFL.Filename
 import _TFL.Generators

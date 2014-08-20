@@ -35,6 +35,7 @@
 #                     i.e., stuff related to non-AFS forms
 #    24-Feb-2012 (CT) Remove `Event_occurs` (too electric by far)
 #    24-Feb-2014 (CT) Change `Event.list_display` (add `short_title`; order)
+#    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #    ««revision-date»»···
 #--
 
@@ -56,23 +57,23 @@ class Admin (object) :
         , list_display  = ("date", "time", "short_title", "left", "calendar")
         , sort_key      = TFL.Sorted_By
             ("-date.start", "-time.start", "short_title", "left")
+        , MF3_Attr_Spec        = dict
+            ( recurrence       = dict
+                ( include_rev_refs = ("rules", )
+                )
+            )
+        , MF3_Form_Spec        = dict
+            ( include_rev_refs = ("recurrence", )
+            )
+        )
+    Recurrence_Spec     = dict \
+        ( ETM           = "GTW.OMP.EVT.Recurrence_Spec"
+        , MF3_Form_Spec        = dict
+            ( include_rev_refs = ("rules", )
+            )
         )
 
 # end class Admin
-
-from   _GTW._AFS._MOM import Spec
-import _GTW._OMP._EVT.Event
-import _GTW._OMP._EVT.Recurrence_Spec
-
-GTW.OMP.EVT.Event.GTW.afs_spec           = Spec.Entity \
-    ( include_links =
-        ( Spec.Entity_Link ("recurrence", include_links = ("rules", ))
-        ,
-        )
-    )
-
-GTW.OMP.EVT.Recurrence_Spec.GTW.afs_spec = Spec.Entity \
-    (include_links = ("rules", ))
 
 if __name__ != "__main__" :
     GTW.OMP.EVT._Export_Module ()

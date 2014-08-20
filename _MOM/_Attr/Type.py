@@ -347,6 +347,7 @@
 #     7-Jun-2014 (CT) Add `_A_Rev_Ref_.ref_attr`
 #    30-Jun-2014 (CT) Add guard for `t` to `_A_Id_Entity_.from_string`
 #     2-Jul-2014 (CT) Add `syntax` to `A_Date`, `A_Date_Time`, and `A_Time`
+#    30-Aug-2014 (CT) Mark A_Boolean's `no` and `yes` for translation
 #    ««revision-date»»···
 #--
 
@@ -1316,11 +1317,16 @@ class _A_SPK_Entity_ (_A_Entity_) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return soc.format % \
-                ( tuple
-                    (a.as_string (a.get_value (value)) for a in value.primary)
-                ,
-                )
+            if isinstance (value, MOM.Id_Entity) :
+                return soc.format % \
+                    ( tuple
+                        (   a.as_string (a.get_value (value))
+                        for a in value.primary
+                        )
+                    ,
+                    )
+            else :
+                return repr (value)
         return ""
     # end def as_string
 
@@ -2077,10 +2083,10 @@ class A_Boolean (_A_Boolean_) :
     example           = "no"
     typ               = _ ("Boolean")
 
-    Table             = dict \
-        ( no          = False
-        , yes         = True
-        )
+    Table             = \
+        { _ ("no")    : False
+        , _ ("yes")   : True
+        }
 
     ### allow additional raw values without changing `eligible_raw_values`
     ### (want only canonical values in UI and documentation)

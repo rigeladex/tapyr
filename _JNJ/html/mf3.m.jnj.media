@@ -29,6 +29,10 @@
 #    15-May-2014 (CT) Add `Media.Rule`
 #    17-Jun-2014 (CT) Add rules for `Entity-List`
 #     2-Jul-2014 (CT) Add rules for `.form-errors`
+#    24-Aug-2014 (CT) Put Field-Entity action-buttons horizontally at bottom
+#                     of border; fix vertical spacing accordingly
+#    24-Aug-2014 (CT) Add rule for `aside` for media with `max_width = Rem (34)`
+#    27-Aug-2014 (CT) Change `.aside` to `display="block"`, not `"inline-block"`
 #    ««revision-date»»···
 #--
 
@@ -66,7 +70,7 @@ style_sheet = Style_Sheet \
                         )
                     , Rule
                         ( ".pure-button"
-                        , display      = "block"
+                        , display      = "inline-block"
                         , padding      = Em (0.5)
                         , margin       = TRBL (Em (0.25), 0)
                         )
@@ -131,17 +135,11 @@ style_sheet = Style_Sheet \
                         ( "Entity-List", "Field-Entity", "Field-Composite"
                         , border           = "1px solid #DEDEDE"
                         , border_radius    = Em (1/2)
-                        , padding          = TRBL (Rem (1.0), 0)
-                        , margin           = TRBL (Rem (1.0), 0)
+                        , padding          = TRBL (Rem (1.0), 0, Rem (0.5))
                         , children         =
                             [ Rule_Pseudo
                                 ( "hover"
                                 , background_color = P.color_lightest_grey
-                                )
-                            , Rule
-                                ( "section"
-                                , margin           = TRBL
-                                    (0, Em (2.0), Em (0.5), Em (1.0))
                                 )
                             , Rule_Child
                                 ( "h1"
@@ -171,20 +169,69 @@ style_sheet = Style_Sheet \
                         )
                     , Rule_Class
                         ( "Field-Entity", "Field-Composite"
+                        , margin           = TRBL (0, Em (1.0), Em (0.5))
+                        )
+                    , Rule_Class
+                        ( "Field-Composite.horizontal"
+                        , border           = 0
+                        , margin           = TRBL0 (b = Em (0.5))
+                        , padding          = 0
+                        , children             =
+                            [ Rule
+                                ( "div"
+                                , margin_bottom    = 0
+                                )
+                            , Rule_Child
+                                ( "label"
+                                , padding_top      = Em (2.0)
+                                , vertical_align   = "top"
+                                )
+                            , Rule_Child
+                                ( ".Fields"
+                                , display          = "inline-block"
+                                , margin           = 0
+                                , vertical_align   = "top"
+                                , children         =
+                                    [ Rule
+                                        ( "aside"
+                                        , padding_left     = Em (0.2)
+                                        , margin_left      = 0
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    , Rule_Class
+                        ( "Field-Entity"
                         , children         =
                             [ Rule_Child
                                 ( ".action-button"
-                                , margin_right     = Em (-1.0)
-                                , padding          = TRBL (Em (0.1), 0)
+                                , bottom           = 0
+                                , margin_bottom    = Em (-1.3)
+                                , padding          = TRBL (0, Em (0.5))
                                 , position         = "absolute"
-                                , right            = 0
-                                , top              = Em (0.25)
+                                , right            = Em (1)
                                 , visibility       = "visible"
+                                )
+                            , Rule_Sibling
+                                ( ".Field"
+                                , margin_top       = Em (1.5)
+                                )
+                            ]
+                        )
+                    , Rule_Class
+                        ( "Fields"
+                        , children         =
+                            [ Rule
+                                ( ".Field"
+                                , margin_top   = 0
                                 )
                             ]
                         )
                     , Rule_Class
                         ( "Entity-List"
+                        , margin           =
+                            TRBL (Rem (1.0), Rem (0.5), Rem (2.0), 0)
                         , padding_bottom   = Em (1.0)
                         , children         =
                             [ Rule_Child
@@ -202,7 +249,14 @@ style_sheet = Style_Sheet \
                                 )
                             , Rule_Child
                                 ( ".Field-Entity"
-                                , margin_top       = Em (1.0)
+                                , margin_bottom    = Em (0.5)
+                                , margin_top       = Em (0.5)
+                                , children         =
+                                    [ Rule_Sibling
+                                        ( ".Field-Entity"
+                                        , margin_top   = Em (1.5)
+                                        )
+                                    ]
                                 )
                             ]
                         )
@@ -210,12 +264,12 @@ style_sheet = Style_Sheet \
                         ( "Field-Entity.closed"
                         , children         =
                             [ Rule_Child
-                                ( ".action-button button"
+                                ( ".action-button .pure-button"
                                 , display              = "none"
                                 , visibility           = "hidden"
                                 )
                             , Rule_Child
-                                ( ".action-button button[data-action=remove]"
+                                ( ".action-button [data-action=remove]"
                                 , display              = "block"
                                 , visibility           = "visible"
                                 )
@@ -229,6 +283,30 @@ style_sheet = Style_Sheet \
                                 , display              = "none"
                                 , visibility           = "hidden"
                                 )
+                            , Rule_Sibling
+                                ( ".Field"
+                                , margin_top           = 0
+                                )
+                            ]
+                        )
+                    ]
+                )
+            , Rule
+                ( ".Field", ".Field-Composite"
+                , children         =
+                    [ Rule_Child
+                        ( "aside"
+                        , color                = P.color_half_grey
+                        , display              = "none"
+                        , margin               = TRBL0 (l = P.pure.aside_indent)
+                        , padding_left         = Em (0.5)
+                        , visibility           = "hidden"
+                        , children             =
+                            [ Rule_Class
+                                ( "open"
+                                , display              = "block"
+                                , visibility           = "visible"
+                                )
                             ]
                         )
                     ]
@@ -236,25 +314,13 @@ style_sheet = Style_Sheet \
             , Rule
                 ( ".Field"
                 , children         =
-                    [ Rule
-                        ( "aside"
-                        , display              = "none"
-                        , visibility           = "hidden"
-                        )
-                    , Rule_Class
-                        ( "Composite-horizontal"
-                        , margin           = TRBL0 (t = Em (1.0))
+                    [ Rule_Class
+                        ( "Confirmation"
                         , children             =
                             [ Rule_Child
-                                ( "label"
-                                , vertical_align   = "top"
-                                )
-                            , Rule_Child
-                                ( ".Fields"
-                                , display          = "inline-block"
-                                , margin           =
-                                    TRBL0 (b = Em (0.5))
-                                , vertical_align   = "top"
+                                ( "aside"
+                                , display              = "block"
+                                , visibility           = "visible"
                                 )
                             ]
                         )
@@ -287,6 +353,14 @@ style_sheet = Style_Sheet \
                                 , background_color     = "inherit"
                                 , border_color         = "inherit"
                                 , color                = "inherit"
+                                , children             =
+                                    [ Rule_Pseudo
+                                        ( "focus"
+                                        , P.Rule.focus
+                                        , border_color =
+                                            P.pure.input_focus_border_color
+                                        )
+                                    ]
                                 )
                             , Rule_Class
                                 ( "hidden.value"
@@ -294,7 +368,7 @@ style_sheet = Style_Sheet \
                                 )
                             , Rule_Pseudo
                                 ( "focus + aside"
-                                , display              = "inline-block"
+                                , display              = "block"
                                 , visibility           = "visible"
                                 )
                             ]
@@ -302,13 +376,6 @@ style_sheet = Style_Sheet \
                     , Rule
                         ( "textarea"
                         , height       = Em (10.0)
-                        , children     =
-                            [ Rule_Pseudo
-                                ( "focus + aside"
-                                , margin       = TRBL
-                                    (Em (2.5), 0, 0, Em (12.0))
-                                )
-                            ]
                         )
                     ]
                 )
@@ -392,8 +459,13 @@ style_sheet = Style_Sheet \
                 ( "form"
                 , children        =
                     [ Rule
-                        ( ".Field.mf3-control-group-h"
-                        , display              = "block"
+                        ( ".Field"
+                        , children             =
+                            [ Rule_Class
+                                ( ".mf3-control-group-h"
+                                , display              = "block"
+                                )
+                            ]
                         )
                     ]
                 )
@@ -408,9 +480,13 @@ style_sheet = Style_Sheet \
                     [ Rule
                         ( "section", "div"
                         , children         =
-                            [ Rule_Class
+                            [ Rule
+                                ( "aside"
+                                , margin_left          = 0
+                                )
+                            , Rule_Class
                                 ( "Entity"
-                                , children         =
+                                , children             =
                                     [ Rule_Child
                                         ( "h1"
                                         , margin           = TRBL (Em (0.5), 0)
@@ -420,7 +496,7 @@ style_sheet = Style_Sheet \
                                 )
                             , Rule_Class
                                 ( "Field-Entity", "Field-Composite"
-                                , padding_left     = Rem (0.5)
+                                , padding_left         = Rem (0.5)
                                 )
                             ]
                         )

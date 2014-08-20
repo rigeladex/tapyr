@@ -1127,13 +1127,13 @@ _test_code = """
           }
         , { 'Class' : 'Entity'
           , 'attrs' :
-              [ { 'name' : 'nation'
-                , 'sig_key' : 0
-                , 'ui_name' : 'Nation'
-                }
-              , { 'name' : 'mna_number'
+              [ { 'name' : 'mna_number'
                 , 'sig_key' : 4
                 , 'ui_name' : 'Mna number'
+                }
+              , { 'name' : 'nation'
+                , 'sig_key' : 0
+                , 'ui_name' : 'Nation'
                 }
               , { 'Class' : 'Entity'
                 , 'attrs' :

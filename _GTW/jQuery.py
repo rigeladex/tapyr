@@ -68,6 +68,7 @@
 #     3-May-2014 (CT) Add `leaflet`
 #     8-Jul-2014 (CT) Add `a.pure-button` to `.not` clause of
 #                     `GTW_Form_Externalize`
+#    29-Aug-2014 (CT) Remove `AFS` specific definitions
 #    ««revision-date»»···
 #--
 
@@ -158,12 +159,6 @@ GTW.Script \
     ( src      = "/media/GTW/js/GTW/L.js"
     , name     = "GTW_L"
     , requires = (GTW.Script._.GTW, )
-    )
-
-GTW.Script \
-    ( src      = "/media/GTW/js/GTW/AFS/Elements.js"
-    , name     = "GTW_afs_elements"
-    , requires = (GTW.Script._.GTW_inspect, )
     )
 
 GTW.Script \
@@ -272,25 +267,11 @@ GTW.JS_On_Ready \
     )
 
 GTW.Script \
-    ( src      = "/media/GTW/js/GTW/jQ/afs.js"
-    , name     = "GTW_jq_afs"
-    , requires =
-        ( GTW.Script._.GTW_afs_elements
-        , GTW.Script._.GTW_autocomplete
-        , GTW.Script._.GTW_buttonify
-        , GTW.Script._.GTW_e_type_selector
-        , GTW.Script._.GTW_UI_Icon_Map
-        , GTW.Script._.GTW_util
-        )
-    )
-
-GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/mf3.js"
     , name     = "GTW_jq_mf3"
     , requires =
         ( GTW.Script._.GTW_autocomplete
         , GTW.Script._.GTW_e_type_selector
-        , GTW.Script._.GTW_UI_Icon_Map
         , GTW.Script._.GTW_util
         , GTW.Script._.GTW_L
         )

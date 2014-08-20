@@ -285,6 +285,8 @@
 #                       silently ignored, doh!
 #     2-Jul-2014 (CT) Change `_kw_raw_check_predicates` to wrap errors in
 #                     `MOM.Error.Invariants`
+#    30-Aug-2014 (CT) Correct `_kw_check_required` to refuse value `None` for
+#                     required attributes
 #    ««revision-date»»···
 #--
 
@@ -744,7 +746,7 @@ class Entity (TFL.Meta.Object) :
 
     def _kw_check_required (self, * args, ** kw) :
         needed  = tuple (m.name for m in self.required)
-        missing = tuple (k for k in needed if k not in kw)
+        missing = tuple (k for k in needed if kw.get (k) is None)
         if missing :
             on_error   = kw.pop ("on_error", self._raise_attr_error)
             all_needed = tuple (m.name for m in self.primary_required) + needed

@@ -52,6 +52,9 @@
 #    13-Feb-2014 (CT) Use `object_entries` for `Archive.Year.regattas`
 #    25-Jun-2014 (CT) Redefine `_add_other_entries` to call
 #                     `_add_referral_entries`
+#    30-Aug-2014 (CT) Change `_regatta_registration_formatted` for MF3 forms
+#    30-Aug-2014 (CT) Factor `_formatted_submit_elements`
+#    30-Aug-2014 (CT) Apply `pyk.decoded` to result of `formatted`
 #    ««revision-date»»···
 #--
 
@@ -230,29 +233,30 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
         if bir and bir.admin :
             obj     = self.obj
             scope   = self.scope
-            form_kw = dict \
-                ( right = dict
-                    ( prefilled   = True
-                    , init        = obj
-                    )
-                )
+            mf3_attr_spec = dict (right = dict (default = obj))
             if isinstance (obj, scope.SRM.Regatta_C.E_Type) :
-                form_kw.update \
-                    ( left = dict
-                        ( left = dict
-                            ( prefilled   = True
-                            , init        = obj.boat_class
-                            )
+                b_class   = obj.boat_class
+                max_rr    = b_class.max_crew - 1
+                mf3_attr_spec.update \
+                    ( { "left.left"     : dict
+                        ( prefilled     = True
+                        , default       = b_class
                         )
-                    , Crew_Member = dict
-                        ( max_links   = obj.boat_class.max_crew - 1
+                      }
+                    , _crew = dict
+                        ( max_rev_ref   = max_rr
+                        # min_rev_ref   = max_rr
+                            ### XXX improve UI before adding `min_rev_ref`
                         )
                     )
+            NA = GTW.OMP.SRM.Nav.Admin.Boat_in_Regatta
             kw = dict \
                 ( bir.admin._orig_kw
                 , default_qr_kw         = dict (right___EQ = obj.pid)
-                , form_id               = "AF_BiR"
-                , form_parameters       = dict (form_kw = form_kw)
+                , MF3_Attr_Spec         = NA ["MF3_Attr_Spec_R"]
+                , MF3_Form_Spec         = NA ["MF3_Form_Spec_R"]
+                , mf3_attr_spec         = mf3_attr_spec
+                , mf3_id_prefix         = "BiR_R"
                 , implicit              = True
                 , name                  = "admin"
                 , parent                = self
@@ -331,57 +335,12 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
         return result
     # end def _get_pages
 
-    def _regatta_registration_changed_msg (self, scope, fv) :
-        def _gen (scope, fv) :
-            results = {}
-            for ev in fv.entity_values :
-                try :
-                    cc = ev.elem._changed_children \
-                        (ev, results, scope, ev.entity)
-                except Exception as exc:
-                    pass
-                else :
-                    if cc :
-                        yield "%s\n    %s\n" % \
-                            ( ev
-                            , "\n    ".join
-                                (   "%-25s: %s" % (k, v)
-                                for k, v in sorted (cc.iteritems ())
-                                )
-                            )
-                    else :
-                        yield str (ev)
-        return "\n\n".join (_gen (scope, fv))
+    def _regatta_registration_changed_msg (self, resource, scope, fv) :
+        return resource._formatted_submit_elements (scope, fv)
     # end def _regatta_registration_changed_msg
 
     def _regatta_registration_formatted (self, resource, scope, fv) :
-        skip   = dict \
-            ( { "SRM.Boat"          : dict
-                  ( left            = dict
-                      ( max_crew    = True
-                      )
-                  )
-              , "SRM.Regatta"       : dict
-                  ( boat_class      = True
-                  , is_cancelled    = True
-                  , kind            = True
-                  , left            = dict
-                      ( club        = True
-                      , desc        = True
-                      )
-                  , result          = True
-                  )
-              }
-            , skipper               = dict
-                ( left              = dict
-                    ( lifetime      = True
-                    , sex           = True
-                    )
-                , club              = dict
-                    ( long_name     = True
-                    )
-                )
-            )
+        skip = set (["right", "_crew.key"])
         return resource._formatted_submit_entities (scope, fv, skip)
     # end def _regatta_registration_formatted
 
@@ -394,14 +353,12 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     def _register_submit_error_callback (self, resource, request, response, scope, fv, result) :
         from _TFL.Formatter import Formatter
         formatted = Formatter (width = 1024)
+        errors    = pyk.decoded \
+            (b"\n\n".join (formatted (e) for e in fv.errors))
         message = "\n\n-----------------\n\n".join \
-            (( self._regatta_registration_formatted (resource, scope, fv)
-             , "\n\n".join
-                 ( "%s\n    %s"
-                   % (id, "\n    ".join (formatted (e, 2) for e in errors))
-                 for id, errors in fv.errors.iteritems ()
-                 )
-             , self._regatta_registration_changed_msg (scope, fv)
+            (( self._regatta_registration_formatted   (resource, scope, fv)
+             , errors
+             , self._regatta_registration_changed_msg (resource, scope, fv)
             ))
         self._send_registration_email \
             ( resource, request, response, scope, fv, result, message

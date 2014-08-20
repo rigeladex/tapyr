@@ -38,6 +38,10 @@
 ##    19-Jun-2014 (CT) Add `entity_button_remove`
 ##     2-Jul-2014 (CT) Add `texts` to `tail_scripts`
 ##     8-Jul-2014 (CT) Use `<a>`, not `<button>`, for action buttons
+##    27-Aug-2014 (CT) Use class `"Field Confirmation"`,
+##                     not `Field-Confirmation`, for `Field__Confirmation`
+##    28-Aug-2014 (CT) Add `do_description` to `Field_Composite`
+##    29-Aug-2014 (CT) Add `max_rev_ref` to `Field_Rev_Ref`
 ##    ««revision-date»»···
 ##--
 #}
@@ -251,7 +255,7 @@
 
 {%- macro Field__Confirmation (page, form, elem, t_module) -%}
   {{ GTW.call_macro
-      ( "do_field", page, form, elem, t_module, "Field-Confirmation"
+      ( "do_field", page, form, elem, t_module, "Field Confirmation"
       , templ_name = t_module, ** kwargs
       )
   -}}
@@ -260,16 +264,19 @@
 {%- macro Field_Composite (page, form, elem, t_module) -%}
   {%- onion GTW.len (elem.field_elements) > 1 %}
     {%- head %}
-      <section class="Field-Composite">
+      <div class="Field-Composite">
         <h1>
           {{- GTW._T (elem.label) -}}
         </h1>
+        {{ GTW.call_macro
+            ("do_description", page, form, elem, t_module, templ_name = t_module)
+        }}
     {%- body %}
       {{ GTW.call_macro
         ("do_elements", page, form, elem, t_module, templ_name = t_module)
       }}
     {%- tail %}
-      </section>
+      </div>
     {%- endonion %}
 {%- endmacro -%} {#- Field_Composite -#}
 
@@ -304,18 +311,22 @@
 {%- endmacro -%} {#- Field_Ref_Hidden -#}
 
 {%- macro Field_Rev_Ref (page, form, elem, t_module) -%}
-  {%- set label = elem.attr.Ref_Type.ui_name_T %}
-  <div class="Entity-List" id="{{ elem.id }}">
-    <h1>{{ label }}</h1>
-    <div class="action-button">{# -#}
-      {{- action_button
-          ("add_rev_ref", "plus", GTW._T ("Add a %s" % (label, )))
-      -}}
+  {%- if elem.max_rev_ref != 0 %}
+    {%- set label = elem.attr.Ref_Type.ui_name_T %}
+    <div class="Entity-List" id="{{ elem.id }}" {# -#}
+         data-max-rev-ref="{{ elem.max_rev_ref }}" {#- -#}
+    >
+      <h1>{{ label }}</h1>
+      <div class="action-button">{# -#}
+        {{- action_button
+            ("add_rev_ref", "plus", GTW._T ("Add a %s") % (label, ))
+        -}}
+      </div>
+      {{ GTW.call_macro
+          ("do_elements", page, form, elem, t_module, templ_name = t_module)
+      }}
     </div>
-    {{ GTW.call_macro
-        ("do_elements", page, form, elem, t_module, templ_name = t_module)
-    }}
-  </div>
+  {% endif -%}
 {%- endmacro -%} {#- Field_Rev_Ref -#}
 
 {%- macro main (page, form) -%}

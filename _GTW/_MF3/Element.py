@@ -72,6 +72,21 @@
 #                     redefine `Entity_Rev_Ref._update_element_map`
 #     3-Jul-2014 (CT) Change `_Entity_Mixin_.__call__` to consider `required`
 #     8-Jul-2014 (CT) DRY `_Entity_.__getitem__`
+#    21-Aug-2014 (CT) Set `mf3_template_module` for `A_Time_Interval`  to
+#                     `mf3_h_cols`, too
+#    21-Aug-2014 (CT) Allow unknown names in `include_rev_refs`
+#    27-Aug-2014 (CT) Change `Field_Entity._new_element` to only
+#                     set `kw ["skip"]` if `not self.allow_new`
+#    27-Aug-2014 (CT) Add `Field_Entity.default_essence`
+#    27-Aug-2014 (CT) Use `input_widget`, not `mf3_input_widget`, for MOM.Attr
+#    27-Aug-2014 (CT) Add `_Field_Base_.inner_required`
+#    29-Aug-2014 (CT) Add `max_rev_ref`, `min_rev_ref` to `Field_Rev_Ref`
+#    29-Aug-2014 (CT) Redefine `Entity_Rev_Ref._create_instance` to avoid
+#                     some errors due to empty rev-ref sub-form
+#                     (does not help against nested empty `Field_Entity`s)
+#    30-Aug-2014 (CT) Redefine `_Field_Entity_Mixin_._required_missing_error`
+#                     to ignore errors resulting from optional Entity or Rev_Ref
+#                     attributes that aren't filled in at all
 #    ««revision-date»»···
 #--
 
@@ -109,25 +124,30 @@ import json
 import logging
 
 MAT                                     = MOM.Attr
-MAT.A_Attr_Type.mf3_input_widget        = "mf3_input, string"
-MAT.A_Boolean.mf3_input_widget          = "mf3_input, boolean"
-MAT.A_Confirmation.mf3_input_widget     = "mf3_input, boolean"
-MAT.A_Date.mf3_input_widget             = "mf3_input, date"
-MAT.A_Date_Time.mf3_input_widget        = "mf3_input, datetime"
-MAT.A_Email.mf3_input_widget            = "mf3_input, email"
-MAT.A_Enum.mf3_input_widget             = "mf3_input, named_object"
-MAT.A_Int.mf3_input_widget              = "mf3_input, integer"
-MAT.A_Numeric_String.mf3_input_widget   = "mf3_input, number"
-MAT.A_Text.mf3_input_widget             = "mf3_input, text"
-MAT.A_Url.mf3_input_widget              = "mf3_input, url"
-MAT._A_Id_Entity_.mf3_input_widget      = "mf3_input, id_entity"
-MAT._A_Named_Object_.mf3_input_widget   = "mf3_input, named_object"
-MAT._A_Named_Value_.mf3_input_widget    = "mf3_input, named_value"
-MAT._A_Number_.mf3_input_widget         = "mf3_input, number"
+MAT.A_Attr_Type.input_widget            = "mf3_input, string"
+MAT.A_Boolean.input_widget              = "mf3_input, boolean"
+MAT.A_Confirmation.input_widget         = "mf3_input, boolean"
+MAT.A_Date.input_widget                 = "mf3_input, date"
+MAT.A_Date_Time.input_widget            = "mf3_input, datetime"
+MAT.A_Email.input_widget                = "mf3_input, email"
+MAT.A_Enum.input_widget                 = "mf3_input, named_object"
+MAT.A_Int.input_widget                  = "mf3_input, integer"
+MAT.A_Numeric_String.input_widget       = "mf3_input, number"
+MAT.A_Text.input_widget                 = "mf3_input, text"
+MAT.A_Url.input_widget                  = "mf3_input, url"
+MAT._A_Id_Entity_.input_widget          = "mf3_input, id_entity"
+MAT._A_Named_Object_.input_widget       = "mf3_input, named_object"
+MAT._A_Named_Value_.input_widget        = "mf3_input, named_value"
+MAT._A_Number_.input_widget             = "mf3_input, number"
 MAT.A_Attr_Type.mf3_template_macro      = None
 MAT.A_Confirmation.mf3_template_macro   = "Field__Confirmation"
 MAT.A_Attr_Type.mf3_template_module     = None
-MAT.A_Date_Interval.mf3_template_module = "mf3_h_cols"
+
+for _n in ("A_Date_Interval", "A_Time_Interval") :
+    _AT = getattr (MAT, _n, None)
+    if _AT is not None :
+        _AT.mf3_template_module = "mf3_h_cols"
+del _n, _AT
 
 class Delay_Call (BaseException) :
     """Delay call until rev-ref is defined."""
@@ -564,7 +584,12 @@ class _Entity_Mixin_ (_Base_) :
                 if (svs or self.required) and not (self.conflicts or r_errs) :
                     handler (scope, svs)
                 for e in to_do :
-                    e (scope, cargo)
+                    try :
+                        e (scope, cargo)
+                    except Delay_Call :
+                        ### Errors in form submission can result in missing
+                        ### `e.parent.essence` here which raises `Delay_Call`
+                        pass
             except MOM.Error.Error as exc :
                 if not errors :
                     errors.append (exc)
@@ -574,7 +599,8 @@ class _Entity_Mixin_ (_Base_) :
     def _auto_attributes (cls, E_Type) :
         result = cls.__c_super._auto_attributes (E_Type)
         if cls.include_rev_refs :
-            irrs   = MOM.Attr.Selector.Name (* cls.include_rev_refs) (E_Type)
+            irrs   = MOM.Attr.Selector.Name \
+                (* cls.include_rev_refs, ignore_missing = True) (E_Type)
             result = tuple (ichain (result, irrs))
         return result
     # end def _auto_attributes
@@ -658,7 +684,7 @@ class _Entity_Mixin_ (_Base_) :
     # end def _create_from_submission
 
     def _create_instance (self, ETM, svs) :
-        error = None
+        error    = None
         on_error = self._submission_errors.append
         result   = self.undef
         try :
@@ -676,7 +702,7 @@ class _Entity_Mixin_ (_Base_) :
                 try :
                     epks  = ETM.E_Type.epkified (** svs)
                 except MOM.Error.Required_Missing as exc :
-                    error = self._required_missing_error (exc)
+                    error = self._required_missing_error (exc, svs)
                 except Exception :
                     pass
                 if error is None :
@@ -687,7 +713,7 @@ class _Entity_Mixin_ (_Base_) :
                             ( ETM.E_Type, (), svs, count
                             , * matches.limit (3).all ()
                             )
-                if error is not None :
+                if error is not None and error is not self.undef :
                     on_error (error)
         except MOM.Error.Invariants as exc :
             if not exc.any_required_empty :
@@ -699,7 +725,7 @@ class _Entity_Mixin_ (_Base_) :
             return result
     # end def _create_instance
 
-    def _required_missing_error (self, exc) :
+    def _required_missing_error (self, exc, svs) :
         return exc
     # end def _required_missing_error
 
@@ -796,8 +822,8 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
           )
         , allow_new         = "ui_allow_new"
         , choices           = "Choices"
-        , input_widget      = "mf3_input_widget"
         , label             = "ui_name"
+        , input_widget      = "input_widget"
         , _required         = "is_required"
         , settable          = "is_settable"
         , template_macro    = "mf3_template_macro"
@@ -905,6 +931,11 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
         self._init = value
     # end def init
 
+    @property
+    def inner_required (self) :
+        return self._required and not self.parent.required
+    # end def inner_required
+
     @TFL.Meta.Class_Property
     @TFL.Meta.Class_and_Instance_Method
     def q_name (soc) :
@@ -998,6 +1029,17 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_) :
             result = ichain (((self.id, self.field_as_json_cargo), ), result)
         return result
     # end def fields_as_json_cargo
+
+    def _required_missing_error (self, exc, svs) :
+        result     = self.undef
+        filled_in  = list \
+            (  f.name for f in self.elements
+            if f.submitted_value and f.submitted_value != f.init
+            )
+        if filled_in or self.required :
+            result = self.__super._required_missing_error (exc, svs)
+        return result
+    # end def _required_missing_error
 
 # end class _Field_Entity_Mixin_
 
@@ -1209,12 +1251,25 @@ class Entity_Rev_Ref (BaM (_Field_Entity_Mixin_, _Entity_, metaclass = M_Entity_
             )
     # end def _auto_attributes
 
-    def _required_missing_error (self, exc) :
+    def _create_instance (self, ETM, svs) :
+        def filled_p (self, svs) :
+            for k in svs :
+                e = self [k]
+                if not e.readonly :
+                    return True
+            return False
+        if filled_p (self, svs) :
+            return self.__super._create_instance (ETM, svs)
+    # end def _create_instance
+
+    def _required_missing_error (self, exc, svs) :
         req_fields = list (e for e in self.elements if e._required)
         missing    = list \
             (f.name for f in req_fields if not f.submitted_value)
         needed     = list (f.name for f in req_fields)
-        return MOM.Error.Required_Missing (self.E_Type, needed, missing, [], {})
+        result     = MOM.Error.Required_Missing \
+            (self.E_Type, needed, missing, [], {})
+        return self.__super._required_missing_error (result, svs)
     # end def _required_missing_error
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1396,25 +1451,36 @@ class Field_Entity (_Field_Composite_Mixin_, _Field_Entity_Mixin_, _Field_) :
             return (self, )
     # end def completer_elems
 
+    @TFL.Meta.Once_Property
+    def default_essence (self) :
+        result = self.default
+        if result is self.undef :
+            result = self.attr.kind.get_value (None)
+        else :
+            ### XXX TBD: what to do about raw values here ???
+            pass
+        return result
+    # end def default_essence
+
     @property
     def essence (self) :
         result = self._essence
         if result is None :
-            result = self.default
-            if result is self.undef :
-                result = None
-            else :
-                ### XXX TBD: what to do about raw values here ???
-                pass
+            result = self.default_essence
         return result
     # end def essence
 
     @essence.setter
     def essence (self, value) :
-        if self._essence != None :
+        old = self._essence
+        if not (old is None or old is self.default_essence) :
+            try :
+                display = old.ui_display
+            except AttributeError :
+                display = "%s" % (old, )
             raise TypeError \
                 ( "%s already has value %s; cannot change to %"
-                % (self, self.essence.ui_display, value)
+                % (self, display, value)
                 )
         self._essence = value
     # end def essence
@@ -1430,7 +1496,8 @@ class Field_Entity (_Field_Composite_Mixin_, _Field_Entity_Mixin_, _Field_) :
     # end def submitted_value
 
     def _new_element (self, e, ** kw) :
-        kw ["skip"] = kw.get ("skip") or not self.allow_new
+        if not self.allow_new :
+            kw ["skip"] = True
         return self.__super._new_element (e, ** kw)
     # end def _new_element
 
@@ -1481,7 +1548,11 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
 
     attr_selector         = None
     max_index             = 0
+    max_rev_ref           = 1 << 31
+    min_rev_ref           = 0
     ui_rank               = (1 << 31, )
+
+    _pop_to_self          = ("max_rev_ref", "min_rev_ref")
 
     def __init__ (self, essence = None, ** kw) :
         self.__super.__init__ (essence, ** kw)
@@ -1491,7 +1562,11 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
         self.akw      = akw = dict (attr_spec, parent = self, ** kw)
         self.elements = []
         self._new_rrs = {}
-        if essence is not None :
+        if essence is None :
+            n = self.min_rev_ref
+            if n > 0 :
+                self.add (n, ** akw)
+        else :
             proto     = self.proto
             scope     = essence.home_scope
             ETM       = scope [self.attr.Ref_Type.type_name]

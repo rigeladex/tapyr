@@ -48,6 +48,14 @@
 //                     control characters between `tab` and `escape`
 //                     (which includes the shift key)
 //    11-Jul-2014 (CT) Move `"use strict"` into closure
+//    24-Aug-2014 (CT) Add `form_pid`, `sid`, `sigs` to `result` of
+//                     `ET_Selector_MF3.get_esf_data` and `.get_completion_data`
+//    24-Aug-2014 (CT) Remove `key` from `result`of
+//                     `ET_Selector_MF3.get_completion_data`
+//    24-Aug-2014 (CT) Change `get_completions` to always fill `values`
+//                     (i.e., remove guard for `self.completion_data.key`)
+//    28-Aug-2014 (CT) Finetune keys ignored by `gtw_e_type_selector_hd_mf3`
+//                     (e.g., add `cursor left`, `end`, and some others)
 //    ««revision-date»»···
 //--
 
@@ -243,19 +251,17 @@
               var trigger  = inp$.prop ("id");
               var values   = {}, n = 0;
               self.completion_data = self.get_completion_data ();
-              if (self.completion_data.key) {
-                  self.a_form$.find (":input").not ("button, .hidden").each
-                      ( function () {
-                          var i$ = $(this);
-                          var k  = i$.prop ("id");
-                          var v  = i$.val  ();
-                          if (k && v) {
-                              values [k] = v;
-                              n += 1;
-                          };
-                        }
-                      );
-              };
+              self.a_form$.find (":input").not ("button, .hidden").each
+                  ( function () {
+                      var i$ = $(this);
+                      var k  = i$.prop ("id");
+                      var v  = i$.val  ();
+                      if (k && v) {
+                          values [k] = v;
+                          n += 1;
+                      };
+                    }
+                  );
               if (n > 0 || options.treshold == 0) {
                   $.gtw_ajax_2json
                       ( { async         : true
@@ -433,19 +439,26 @@
     var ET_Selector_MF3 = ET_Selector.extend (
         { get_completion_data   : function get_completion_data () {
               var opts   = this.options;
-              var aid$   = this.a_form$.find (opts.selectors.aid);
+              var mf3    = opts.mf3;
               var tid$   = this.a_form$.find (opts.selectors.tid);
               var result =
-                  { key     : aid$.val ()
-                  , etns    : tid$.val ()
+                  { etns     : tid$.val ()
+                  , fid      : mf3.E_id
+                  , form_pid : mf3.pid
+                  , sid      : mf3.sid
+                  , sigs     : mf3.sigs
+                  , trigger  : mf3.F_id
                   };
               return result;
           }
         , get_esf_data          : function get_esf_data (ev, target$) {
-              var opts = this.options;
+              var mf3    = this.options.mf3;
               var result =
-                  { fid     : opts.mf3.E_id
-                  , trigger : opts.mf3.F_id
+                  { fid      : mf3.E_id
+                  , form_pid : mf3.pid
+                  , sid      : mf3.sid
+                  , sigs     : mf3.sigs
+                  , trigger  : mf3.F_id
                   };
               return result;
           }
@@ -530,17 +543,34 @@
                     ( { callback      : function (ev) {
                             var k = ev.which;
                                 // Unicode value of key pressed
-                                //   8     backspace
+                                //   8     backspace (delete backwars key)
                                 //   9     tab
                                 //  10     new line
                                 //  13     carriage return
+                                //  16     shift key
+                                //  17     control key
+                                //  18     alt key
                                 //  27     escape
-                                // 127     delete
-                            if (k >= 9 && k <= 27) {
+                                //  32     space
+                                //  33     page up           (mini keypad)
+                                //  33     page down         (mini keypad)
+                                //  35     end               (mini keypad)
+                                //  36     home              (mini keypad)
+                                //  37     cursor left
+                                //  38     cursor up
+                                //  39     cursor right
+                                //  40     cursor down
+                                //  45     insert            (mini keypad)
+                                //  46     delete            (mini keypad)
+                                // 127     backspace
+                            if (  k >=  9 // tab
+                               && k <= 39 // cursor right
+                               && ! (k in {32 : 1, 38 : 1}) // space, cursor up
+                               ) {
                                 return true;
                             };
                             selector.activate_cb (ev);
-                            if (k in {8 : 1, 127:1}) {
+                            if (k in {8 : 1, 46 : 1, 127:1}) {
                                 selector.clear_cb (ev);
                             };
                         }

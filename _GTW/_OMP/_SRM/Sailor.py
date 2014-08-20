@@ -37,6 +37,8 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    20-Jan-2012 (CT) Change `mna_number` from `A_String` to `A_Int`
 #     7-May-2014 (CT) Add `club.completer`
+#    26-Aug-2014 (CT) Add `ui_rank` declarations to move `mna_number` ahead
+#                     of `nation`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +71,7 @@ class Sailor (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.PAP.Person
             ui_allow_new       = True
+            ui_rank            = -5
 
             completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
 
@@ -78,6 +81,7 @@ class Sailor (_Ancestor_Essence) :
             """Nation for which the sailor sails."""
 
             kind               = Attr.Primary_Optional
+            ui_rank            = -2
 
         # end class nation
 
@@ -90,6 +94,7 @@ class Sailor (_Ancestor_Essence) :
             max_value          = 999999
             needs_raw_value    = True
             css_align          = "right"
+            ui_rank            = -4
 
         # end class mna_number
 
@@ -98,7 +103,8 @@ class Sailor (_Ancestor_Essence) :
 
             P_Type             = GTW.OMP.SRM.Club
             kind               = Attr.Primary_Optional
-            completer          = Attr.E_Completer_Spec  (Attr.Selector.primary)
+            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
+            ui_rank            = -1
 
         # end class club
 

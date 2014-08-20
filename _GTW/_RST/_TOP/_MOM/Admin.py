@@ -84,6 +84,16 @@
 #     7-May-2014 (CT) Guard access to `default_child` in `_get_esf_filter`
 #     8-Jul-2014 (CT) Change `Group._pns_entries` to filter duplicates
 #    19-Aug-2014 (CT) Factor `ac_ui_display` to `MOM.E_Type_Manager`
+#    20-Aug-2014 (CT) Factor `GTW.RST.TOP.MOM.Field`
+#    20-Aug-2014 (CT) Use `MF3`, not `AFS`, forms
+#    21-Aug-2014 (CT) Use `update_combined` to combine specs for MF3 forms
+#    24-Aug-2014 (CT) Change `_get_attr_filter` to use `_get_form_field`,
+#                     if possible, otherwise call `form.populate_new`
+#    24-Aug-2014 (CT) Change `QX_Completer._rendered_post` to use
+#                     `json.trigger_n`, not `json.trigger`
+#    28-Aug-2014 (CT) Change `_get_attr_filter` to include `etns` in `key`
+#    30-Aug-2014 (CT) Change `_formatted_submit_entities` to work with MF3 forms
+#    30-Aug-2014 (CT) Add `_formatted_submit_elements`
 #    ««revision-date»»···
 #--
 
@@ -95,15 +105,14 @@ from   _TFL                     import TFL
 
 import _CAL.Delta
 
-from   _GTW._AFS._MOM.Element   import Form  as AFS_Form
-from   _GTW._AFS.Value          import Value as AFS_Value
-
+from   _GTW._MF3                             import Element as MF3
 from   _GTW._RST._TOP._MOM.Query_Restriction import  \
      ( Query_Restriction      as QR
      , Query_Restriction_Spec as QRS
      )
 
 import _GTW._RST._TOP._MOM.Mixin
+import _GTW._RST._TOP._MOM.Field
 import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
 import _GTW.FO
@@ -117,8 +126,10 @@ import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.Formatter           import formatted
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import uniq
+from   _TFL.predicate           import callable, uniq
+from   _TFL.update_combined     import update_combined
 
 from   itertools                import chain as iter_chain
 from   posixpath                import join  as pp_join
@@ -129,10 +140,11 @@ _Ancestor = GTW.RST.TOP.Page
 
 class _Action_ (_Ancestor) :
 
-    args              = (None, )
-    implicit          = True
+    args                  = (None, )
+    implicit              = True
+    skip_etag             = True
 
-    _exclude_robots   = True
+    _exclude_robots       = True
 
     class _Action_POST_ (GTW.RST.POST) :
 
@@ -156,34 +168,22 @@ class _Action_ (_Ancestor) :
             return ETM.pid_query (pid)
     # end def obj
 
-    def field_element (self, form, fid) :
-        try :
-            return form  [fid]
-        except KeyError :
-            error = _T ("Form corrupted, unknown element id %s" % (fid, ))
-            raise self.top.Status.Bad_Request (error)
-    # end def field_element
-
-    def form_element (self, fid) :
-        try :
-            form = AFS_Form   [fid]
-            return form, form [fid]
-        except KeyError :
-            error = _T ("Form corrupted, unknown element id %s" % (fid, ))
-            raise self.top.Status.Bad_Request (error)
-    # end def form_element
-
-    def instantiated (self, elem, fid, ETM, obj, kw) :
-        ikw = dict (self._nested_form_parameters (elem), ** kw)
-        return elem.instantiated (fid, ETM, obj, ** ikw)
-    # end def instantiated
+    def form_instance (self, obj = None, ** kw) :
+        if obj is None :
+            obj = self.obj
+        attr_spec = dict (self.mf3_attr_spec, ** kw.pop ("mf3_attr_spec", {}))
+        kw.setdefault ("_hash_fct", kw.pop ("hash_fct", self.top.hash_fct))
+        result = self.parent.Form \
+            (self.scope, obj, attr_spec = attr_spec, ** kw)
+        return result
+    # end def form_instance
 
     def session_secret (self, request, sid) :
         try :
             return request.session.edit_session (sid)
         except request.session.Expired as exc :
             ### XXX re-authorization form (password only)
-            raise self.top.Status.Request_Timeout (expired = "%s" % (exc, ))
+            raise self.top.Status.Request_Timeout ("%s" % (exc, ))
         except LookupError as exc :
             raise self.top.Status.Bad_Request ("Session expired: %s" % (exc, ))
     # end def session_secret
@@ -201,20 +201,6 @@ class _Action_ (_Ancestor) :
                 )
     # end def _check_readonly
 
-    def _nested_form_parameters (self, elem) :
-        result = {}
-        fkw    = self.form_parameters.get ("form_kw")
-        if fkw :
-            for name in elem.names  :
-                try :
-                    fkw = fkw [name]
-                except KeyError :
-                    break
-            else :
-                result = dict (form_kw = {elem.name : fkw})
-        return result
-    # end def _nested_form_parameters
-
     def _raise_401 (self, request) :
         error = _T ("Not logged in or login-session is expired")
         raise self.top.Status.Unauthorized (error)
@@ -231,8 +217,16 @@ _Ancestor = _Action_
 
 class _HTML_Action_ (_Ancestor) :
 
-    argn                 = None
-    nav_off_canvas       = False
+    argn                  = None
+    nav_off_canvas        = False
+
+    class _HTML_Action_GET_ (_Ancestor.GET) :
+
+        _real_name             = "GET"
+        _renderers             = \
+            _Ancestor.GET._renderers + (GTW.RST.Mime_Type.JSON, )
+
+    GET = _HTML_Action_GET_ # end class
 
     class _HTML_Action_POST_ (_Ancestor.POST) :
 
@@ -249,31 +243,26 @@ class _HTML_Action_ (_Ancestor) :
             (_T (self.__class__.name.capitalize ()), self.E_Type.ui_name_T)
     # end def head_line
 
-    def form (self, obj = None, ** kw) :
-        if obj is None :
-            obj = self.obj
-        return self.parent.Form \
-            (self.ETM, obj, ** dict (self.form_parameters, ** kw))
-    # end def form
-
-    def form_value (self, json_cargo) :
+    def form_value (self, request, json_cargo) :
+        Status = self.top.Status
         try :
-            return AFS_Value.from_json (json_cargo)
+            sid    = json_cargo.get ("sid")
+            secret = self.session_secret (request, sid)
+            form   = self.form_instance  (sid = sid, session_secret = secret)
+            result = form (self.scope, json_cargo)
+        except Status.Request_Timeout as exc :
+            raise
         except Exception as exc :
-            raise self.top.Status.Bad_Request ("%s" % (exc, ))
+            logging.exception \
+                ( "form_value: \n  submitted json:\n    %s"
+                , formatted (json_cargo, 4)
+                )
+            raise Status.Bad_Request ("%s" % (exc, ))
+        if result.conflicts :
+            ### XXX needs to be changed ???
+            raise self.top.Status.Conflict (conflicts = result.as_json_cargo)
+        return result
     # end def form_value
-
-    def form_value_apply (self, fv, scope, sid, session_secret) :
-        try :
-            return fv.apply \
-                (scope, _sid = sid, _session_secret = session_secret)
-        except GTW.AFS.Error.Conflict :
-            raise self.top.Status.Conflict (conflicts = fv.as_json_cargo)
-        except Exception as exc :
-            if __debug__ :
-                logging.exception ("form_value_apply: %s", fv)
-            raise self.top.Status.Bad_Request ("%s" % (exc, ))
-    # end def form_value_apply
 
 # end class _HTML_Action_
 
@@ -299,29 +288,44 @@ class _JSON_Action_ (_Ancestor) :
 
         _real_name             = "POST"
 
+        def _response_body (self, resource, request, response) :
+            if request.json :
+                resource.args = [request.json.get ("form_pid")]
+            result = self.__super._response_body (resource, request, response)
+            return result
+        # end def _response_body
+
     POST = _JSON_Action_POST_ # end class
 
-    def _get_attr_filter (self, json) :
+    def _get_attr_filter (self, request, json) :
         ET  = self.E_Type
         etn = None
         if "key" in json :
-            key = json.key
+            key  = json.key
             if "etn" in json :
-                etn = json.etn
+                etn  = json.etn
         else :
-            form, elem = self.form_element  (json.fid)
-            field      = self.field_element (form, json.trigger)
-            etn        = elem.type_name
-            key        = field.name
+            r_json = request.json
+            if "sid" in json :
+                form, elem  = self._get_form_field (request, r_json)
+            else :
+                form = self.Form  (self.scope)
+                form.populate_new (r_json)
+                elem = form [json.trigger]
+            etn  = elem.Entity.E_Type.type_name
+            key  = elem.attr.name
+            if "etns" in json :
+                key = "%s[%s]" % (key, json.etns)
         if etn is not None :
-            ET  = self.scope [etn].E_Type
+            ET = self.scope [etn].E_Type
         return self.QR.Filter (ET, key)
     # end def _get_attr_filter
 
-    def _get_esf_filter (self, json) :
-        QR     = self.QR
-        ET     = self.E_Type
-        result = self._get_attr_filter (json)
+    def _get_esf_filter (self, request, json) :
+        QR        = self.QR
+        ET        = self.E_Type
+        result    = self._get_attr_filter (request, json)
+        fa_filter = Q.AQ.Show_in_UI_Selector
         result.polymorphic_epk = pepk = result.AQ.E_Type.polymorphic_epk
         if pepk :
             scope = self.scope
@@ -333,15 +337,28 @@ class _JSON_Action_ (_Ancestor) :
             sc = sc or getattr (result, "default_child", "")
             for i, cnp in enumerate (result.children_np) :
                 cf = QR.Filter (ET, "%s[%s]" % (cnp.full_name, cnp.type_name))
-                cf.filters = QR.Filter_Atoms (cf)
+                cf.filters = QR.Filter_Atoms (cf, fa_filter)
                 fnps.append (cf)
                 if cf.type_name == sc :
                     result ["selected_type"] = i
         else :
             result.selected_type = None
-            result.filters = QR.Filter_Atoms (result)
+            result.filters = QR.Filter_Atoms (result, fa_filter)
         return result
     # end def _get_esf_filter
+
+    def _get_form_field (self, request, json) :
+        sid        = json.get ("sid")
+        secret     = self.session_secret (request, sid)
+        form       = self.form_instance  (sid = sid, session_secret = secret)
+        form.populate_new (json)
+        try :
+            field  = form [json ["trigger"]]
+        except KeyError :
+            raise self.Status.Bad_Request
+        form.check_sigs (json)
+        return form, field
+    # end def _get_form_field
 
     def _rendered_completions (self, ETM, query, names, entity_p, json, AQ = None) :
         if entity_p :
@@ -427,51 +444,53 @@ class _JSON_Action_PO_ (_JSON_Action_) :
 
 class _Changer_ (_HTML_Action_) :
 
-    page_template_name   = "e_type_afs"
+    page_template_name   = "e_type_mf3"
 
     @property
     @getattr_safe
     def head_line (self) :
-        return _T (self.ETM.E_Type.ui_name)
+        pass
     # end def head_line
 
     @property
     @getattr_safe
     def injected_templates (self) :
-        return self.parent.changer_injected_templates
+        return self.parent.form_injected_templates
     # end def injected_templates
 
     def rendered (self, context, template = None) :
-        Status   = self.top.Status
+        args     = self.args
         obj      = context ["instance"] = None
         request  = context ["request"]
         response = context ["response"]
         req_data = request.req_data
-        pid      = req_data.get ("pid") or \
-            (self.args [0] if self.args else None)
+        parent   = self.parent
+        pid      = req_data.get ("pid") or (args [0] if args else None)
         scope    = self.top.scope
         self._check_readonly (request)
         if pid == "null" :
-            pid = None
+            pid  = None
         if pid is not None :
-            obj = context ["instance"] = self.pid_query_request (pid)
+            obj  = context ["instance"] = self.pid_query_request (pid)
         sid, session_secret = self._new_edit_session (response)
-        form = self.form \
-            ( obj
-            , referrer        = "%s%s" %
-                ( request.referrer or self.parent.abs_href
-                , "#pk-%s" % (obj.pid, ) if obj else ""
-                )
-            , _sid            = sid
-            , _session_secret = session_secret
+        referrer = "%s%s" % \
+            ( request.referrer or parent.abs_href
+            , parent.href_anchor_pid (obj)
             )
-        self.Media = self._get_media (head = getattr (form, "Media", None))
-        context.update (form = form)
+        form = self._rendered__form \
+            (context, obj, referrer, session_secret, sid)
         try :
             self.last_changed = obj.FO.last_changed
         except AttributeError :
             pass
-        return self.__super.rendered (context, template)
+        with self.LET (form = form, referrer = referrer) :
+            if response.renderer.name == "JSON" :
+                t      = self.top.Templateer.get_template (form.template_module)
+                result = dict \
+                    (form = t.call_macro ("main", self, form))
+            else :
+                result = self.__super.rendered (context, template)
+        return result
     # end def rendered
 
     def _call_submit_callback (self, cb, request, response, scope, fv, result) :
@@ -485,168 +504,187 @@ class _Changer_ (_HTML_Action_) :
                     )
     # end def _call_submit_callback
 
+    def _commit_scope_fv (self, scope, fv, request, response) :
+        self.commit_scope (request, response)
+    # end def _commit_scope_fv
+
+    def _formatted_submit_elements (self, scope, fv) :
+        def _gen (scope, fv) :
+            results = {}
+            fmt     = "%s:\n    %s"
+            for e in fv.elements_transitive () :
+                v = e.submitted_value
+                if not isinstance (v, dict) :
+                    if isinstance (v, MOM.Id_Entity) :
+                        v = v.FO
+                    yield fmt % (e.id, v)
+        return "\n\n".join (_gen (scope, fv))
+    # end def _formatted_submit_elements
+
     def _formatted_submit_entities (self, scope, fv, skip_attrs = {}) :
         result = []
-        for c in fv.entities () :
-            e = c.entity
-            if e is not None :
-                result.append (MOM.formatted (e, skip_attrs = skip_attrs))
+        if fv.essence :
+            result = self._formatted_submit_entity_iter (scope, fv, skip_attrs)
         return "\n\n".join (result)
     # end def _formatted_submit_entities
+
+    def _formatted_submit_entity_iter \
+            (self, scope, fv, skip_attrs, indent = 4) :
+        fmt = "%s :\n%s%s"
+        FO  = fv.essence.FO
+        for e in fv.elements :
+            v = e.submitted_value
+            k = e.r_name
+            if isinstance (e, MF3.Field_Ref_Hidden) or e.q_name in skip_attrs :
+                pass
+            elif not TFL.is_undefined (v) :
+                value = _T (getattr (FO, k))
+                yield fmt % (_T (e.label), " " * indent, value)
+            elif isinstance (e, MF3.Field_Rev_Ref) :
+                for e_r in e.elements :
+                    if e_r.essence :
+                        yield "%s %s:\n    %s" % \
+                            ( _T (e_r.label), e_r.index
+                            , "\n    ".join
+                                ( self._formatted_submit_entity_iter
+                                    (scope, e_r, skip_attrs, indent + 4)
+                                )
+                            )
+    # end def _formatted_submit_entity_iter
+
+    def _rendered__form (self, context, obj, referrer, session_secret, sid) :
+        form = self.form_instance \
+            (obj, sid = sid, session_secret = session_secret)
+        context.update (form = form, referrer = referrer)
+        return form
+    # end def _rendered__form
 
     def _rendered_post (self, request, response) :
         json   = request.json
         scope  = self.top.scope
+        Status = self.top.Status
         result = {}
         if json.get ("cancel") :
             ### the user has clicked on the cancel button and not on
             ### the submit button
             scope.rollback ()
         else :
-            fv             = self.form_value (json ["cargo"])
-            get_template   = self.top.Templateer.get_template
-            session_secret = self.session_secret (request, fv.sid)
-            self.form_value_apply (fv, scope, fv.sid, session_secret)
-            if not fv.errors :
+            try :
+                fv = self.form_value (request, json ["cargo"])
+            except Status.Request_Timeout as exc :
+                ### XXX re-authorization form (password only)
+                result ["expired"] = "\n".join \
+                    ( ( exc.message
+                      , _T ("Please reload the page")
+                      )
+                    )
+                return result
+            if not fv.submission_errors :
                 try :
-                    self.commit_scope (request, response)
+                    self._commit_scope_fv (scope, fv, request, response)
                 except Exception as exc :
-                    for e in fv.entities () :
-                        if e.entity :
-                            e.errors = tuple (e.entity.errors)
-                            fv.record_errors (e)
-            if fv.errors :
-                result ["errors"] = fv.errors
-            else :
-                ikw = dict \
-                    ( collapsed       = bool (json.get ("collapsed"))
-                    , _sid            = fv.sid
-                    , _session_secret = session_secret
-                    )
-                if "allow_new" in json :
-                    ikw ["allow_new"] = bool (json.get ("allow_new"))
-                result ["$child_ids"] = rids = []
-                for e in fv.entities () :
-                    if e.entity :
-                        obj = e.entity
-                        fi  = self.instantiated \
-                            (e.elem, e.id, obj.ETM, obj, ikw)
-                        result [e.id] = dict \
-                            ( html = get_template
-                                (e.elem.renderer).call_macro
-                                    (fi.widget, fi, fi, fi.renderer)
-                            , json = fi.as_json_cargo
-                            )
-                        rids.append (e.id)
-                self._call_submit_callback \
-                    ( self.submit_callback
-                    , request, response, scope, fv, result
-                    )
+                    for e in fv.entity_elements :
+                        if e.essence :
+                            e._commit_errors = tuple (e.entity.errors)
+            result.update (fv.as_json_cargo)
             if fv.errors :
                 self._call_submit_callback \
                     ( self.submit_error_callback
                     , request, response, scope, fv, result
                     )
                 scope.rollback ()
+            else :
+                self._call_submit_callback \
+                    ( self.submit_callback
+                    , request, response, scope, fv, result
+                    )
         return result
     # end def _rendered_post
 
 # end class _Changer_
 
-class Changer (_Changer_) :
-    """Page displaying form for changing a specific instance
-       of a etype with an AFS form.
-    """
+class Add_Rev_Ref (_JSON_Action_) :
+    """Add a sub-form for a rev-ref entity."""
+
+    name            = "add_rev_ref"
+
+    def _rendered_post (self, request, response) :
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        elem         = field.add ()
+        f_ajc        = form.as_json_cargo ### ensure proper ids for "completers"
+        t_module     = self.top.Templateer.get_template (elem.template_module)
+        html         = t_module.call_macro \
+            (elem.template_macro, self, form, elem, t_module)
+        result       = dict \
+            ( html             = html
+            , form_spec_update = elem.as_json_cargo
+            )
+        return result
+    # end def _rendered_post
+
+# end class Add_Rev_Ref
+
+class Instance (_Changer_) :
 
     argn            = 1
     name            = "change"
     _auth_required  = True
 
-# end class Changer
+    class _MF3_Delete_ (GTW.RST.DELETE) :
+
+        _real_name             = "DELETE"
+
+        def _response_body (self, resource, request, response) :
+            resource._check_readonly (request)
+            obj    = resource.obj
+            result = {}
+            if obj is None :
+                raise resource.Status.Not_Found ()
+            ### XXX confirm deleting links to `obj`
+            result ["replacement"] = _T \
+                ("""Object "%s" deleted""") % (obj.ui_display, )
+            obj.destroy ()
+            return result
+        # end def _response_body
+
+    DELETE = _MF3_Delete_ # end class
+
+# end class Instance
 
 class Completed (_JSON_Action_PO_) :
-    """Return auto completion values for a AFS page."""
+    """Return auto completion values for a MF3 page."""
 
-    name            = "completed"
+    name                 = "completed"
 
     def _rendered_post (self, request, response) :
-        json           = TFL.Record (** request.json)
-        result         = {}
-        scope          = self.top.scope
-        session_secret = self.session_secret (request, json.sid)
-        form, elem     = self.form_element   (json.fid)
-        field          = self.field_element  (form, json.trigger)
-        ETM = ETM_R    = scope [elem.type_name]
-        E_Type         = ETM.E_Type
-        if json.complete_entity :
-            obj = self.pid_query_request (json.pid, E_Type)
-            ikw = dict \
-                ( collapsed        = True
-                , copy             = False
-                , _sid             = json.sid
-                , _session_secret  = session_secret
-                )
-            if request.json.get ("allow_new") :
-                ikw ["allow_new"] = True
-            fi       = self.instantiated (elem, json.fid, ETM, obj, ikw)
-            renderer = self.top.Templateer.get_template (fi.renderer)
-            html     = renderer.call_macro (fi.widget, fi, fi, fi.renderer)
-            result.update \
-                ( completions = 1
-                , html        = html
-                , json        = fi.as_json_cargo
-                )
-        else :
-            attr      = getattr (E_Type, field.name)
-            completer = attr.completer
-            if completer is not None :
-                AQ = None
-                if issubclass (E_Type, MOM.An_Entity) :
-                    ETM_R = scope [elem.anchor.type_name]
-                    AQ    = getattr (ETM_R.E_Type.AQ, elem.name)
-                names = completer.names
-                fs    = ETM.raw_query_attrs (names, json.values, AQ)
-                query = ETM_R.query (* fs)
-                result ["completions"] = n = query.count ()
-                if n == 1 :
-                    af     = ETM.raw_query_attrs (names, AQ)
-                    values = query.attrs (* af).one ()
-                    result.update \
-                        ( fields = len (names)
-                        , names  = names
-                        , values = values
-                        )
-
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        result       = {}
+        scope        = self.top.scope
+        completer    = field.completer
+        if completer is not None :
+            eor    = self.eligible_object_restriction (completer.etn)
+            result = completer.choose (scope, json, eor, self.pid_query_request)
         return result
     # end def _rendered_post
 
 # end class Completed
 
 class Completer (_JSON_Action_PO_) :
-    """Do auto completion for a AFS page."""
+    """Do auto completion for a MF3 page."""
 
     name                 = "complete"
 
     def _rendered_post (self, request, response) :
-        json        = TFL.Record (** request.json)
-        result      = dict (matches = [], partial = False)
-        scope       = self.top.scope
-        form, elem  = self.form_element  (json.fid)
-        field       = self.field_element (form, json.trigger)
-        ETM = ETM_R = scope [elem.type_name]
-        E_Type      = ETM.E_Type
-        attr        = getattr (E_Type, field.name)
-        completer   = attr.completer
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        result       = dict (matches = [], partial = False)
+        scope        = self.top.scope
+        completer    = field.completer
         if completer is not None :
-            AQ = None
-            if issubclass (E_Type, MOM.An_Entity) :
-                ETM_R = scope [elem.anchor.type_name]
-                AQ    = getattr (ETM_R.E_Type.AQ, elem.name)
-            names  = completer.names
-            eor    = self.eligible_object_restriction (E_Type.type_name)
-            query  = completer (scope, json.values, ETM_R, AQ, eor)
-            result = self._rendered_completions \
-                (ETM, query, names, completer.entity_p, json, AQ)
+            eor    = self.eligible_object_restriction (completer.etn)
+            result = completer.choices (scope, json, eor, self.max_completions)
         return result
     # end def _rendered_post
 
@@ -654,7 +692,7 @@ class Completer (_JSON_Action_PO_) :
 
 class Creator (_Changer_) :
     """Page displaying form for creating a new instance of a etype with an
-       AFS form.
+       MF3 form.
     """
 
     argn                 = 0
@@ -670,7 +708,6 @@ class Deleter (_JSON_Action_PO_) :
     argn                 = None
 
     name                 = "delete"
-    page_template_name   = "e_type_delete"
 
     _auth_required       = True
 
@@ -678,46 +715,35 @@ class Deleter (_JSON_Action_PO_) :
         self._check_readonly (request)
         args = self.args
         if args and args [0] :
-            E_Type         = self.E_Type
-            sra            = self._set_result_args
-            pid            = args [0]
-            form, elem     = None, None
+            E_Type       = self.E_Type
+            pid          = args [0]
+            obj          = self.pid_query_request (pid, E_Type)
+            sra          = self._set_result_args
         else :
             sra            = self._set_result_json
-            json           = request.json
-            fid            = json.get ("fid")
-            pid            = json.get ("pid")
-            sid            = json.get ("sid")
-            session_secret = self.session_secret (request, sid)
-            form, elem     = self.form_element   (fid)
-            scope          = self.top.scope
-            ETM            = scope [elem.type_name]
-            E_Type         = ETM.E_Type
-        if pid is not None and pid != "null" :
-            result = {}
-            obj    = self.pid_query_request (pid, E_Type)
-            sra (obj, request, response, result, form, elem)
-            obj.destroy ()
+            form, field  = self._get_form_field (request, request.json)
+            obj          = field.essence
+        if obj is not None :
+            result       = {}
+            sra          (obj, request, response, result)
+            obj.destroy  ()
             return result
         else :
             error = _T ("You need to specify a pid!")
             raise self.top.Status.Bad_Request (error)
     # end def _rendered_post
 
-    def _set_result_args (self, obj, request, response, result, form, elem) :
+    def _set_result_args (self, obj, request, response, result) :
         result ["replacement"] = dict \
             ( html = """<td colspan="6">%s</td>"""
               % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
-              ### XXX use template to render this XXX
-            , ### XXX undelete link !!!
             )
     # end def _set_result_args
 
-    def _set_result_json (self, obj, request, response, result, form, elem) :
+    def _set_result_json (self, obj, request, response, result) :
         result ["html"] = \
-            ( """<h2>%s</h2>"""
-            % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
-              ### XXX use template to render this XXX
+            ( """<h6>%s</h6>"""
+                % (_T ("""Object "%s" deleted""") % (obj.ui_display, ))
             )
     # end def _set_result_json
 
@@ -759,49 +785,6 @@ class Displayer (GTW.RST.TOP.MOM.Entity_Mixin, GTW.RST.TOP.Page) :
 
 # end class Displayer
 
-class Expander (_JSON_Action_) :
-    """Expand a sub-form (e.g., Entity_Link)"""
-
-    name            = "expand"
-
-    POST            = None
-
-    def rendered (self, context, template = None) :
-        obj            = context ["instance"] = None
-        request        = context ["request"]
-        req_data       = request.req_data
-        fid            = req_data.get ("fid")
-        pid            = req_data.get ("pid")
-        sid            = req_data.get ("sid")
-        scope          = self.top.scope
-        form, elem     = self.form_element   (fid)
-        session_secret = self.session_secret (request, sid)
-        ETM            = scope [elem.type_name]
-        if issubclass (ETM.E_Type, MOM.An_Entity) :
-            ETM = scope [elem.anchor.type_name]
-        if pid is not None and pid != "null" :
-            obj = context ["instance"] = self.pid_query_request \
-                (pid, ETM.E_Type)
-        ikw = dict \
-            ( collapsed       = bool (req_data.get ("collapsed"))
-            , copy            = req_data.get ("copy")
-            , _sid            = sid
-            , _session_secret = session_secret
-            )
-        if "allow_new" in req_data :
-            ikw ["allow_new"] = bool (req_data ["allow_new"])
-        new_id_suffix = req_data.get ("new_id_suffix")
-        if new_id_suffix is not None :
-            ikw ["new_id_suffix"] = new_id_suffix
-        fi       = self.instantiated (elem, fid, ETM, obj, ikw)
-        renderer = self.top.Templateer.get_template (fi.renderer)
-        html     = renderer.call_macro (fi.widget, form, fi, fi.renderer)
-        json     = fi.as_json_cargo
-        return dict (html = html, json = json)
-    # end def rendered
-
-# end class Expander
-
 class QX_AF_Html (_JSON_Action_PO_) :
     """Process AJAX query for attr-filter's html"""
 
@@ -821,13 +804,13 @@ class QX_AF_Html (_JSON_Action_PO_) :
 # end class QX_AF_Html
 
 class QX_Completed (_JSON_Action_PO_) :
-    """Process AJAX query for entity auto completions"""
+    """Process AJAX query for accepting completion of entity auto completion"""
 
     name            = "esf_completed"
 
     def _rendered_post (self, request, response) :
         json   = TFL.Record (** request.json)
-        af     = self._get_esf_filter (json)
+        af     = self._get_esf_filter (request, json)
         ETM    = self.top.scope  [af.type_name]
         obj    = self.pid_query_request (json.pid, ETM.E_Type)
         for f in af.filters :
@@ -843,15 +826,15 @@ class QX_Completed (_JSON_Action_PO_) :
 # end class QX_Completed
 
 class QX_Completer (_JSON_Action_PO_) :
-    """Process AJAX query for entity auto completions"""
+    """Process AJAX query for querying completions for entity auto completions"""
 
     name            = "esf_completer"
 
     def _rendered_post (self, request, response) :
         json   = TFL.Record (** request.json)
-        af     = self._get_attr_filter (json)
+        af     = self._get_attr_filter (request, json)
         ET     = af.AQ.E_Type
-        at     = QR.Filter  (ET, json.trigger)
+        at     = QR.Filter  (ET, json.trigger_n)
         names  = tuple \
             ( uniq
                 ( iter_chain
@@ -865,9 +848,21 @@ class QX_Completer (_JSON_Action_PO_) :
             (scope, ET, request, ** request.json.get ("values", {}))
         ETM    = scope [ET.type_name]
         bq     = ETM.query_s ()
-        eor    = self.eligible_object_restriction (ET.type_name)
-        if eor is not None :
-            bq = bq.filter (eor)
+        if 0 : ### XXX TBD
+            ### For some attributes, `eligible_object_restriction` is too
+            ### restrictive here. For instance, an attribute referring to a
+            ### person should normally not be restricted even if the user is
+            ### only allowed to change his own `PAP.Person` instance
+            ###
+            ### `eligible_object_restriction` is used in two conflicting
+            ### ways:
+            ### - to restrict `objects` in `Admin_Restricted`
+            ### - to restrict the completions offered in an entity selector
+            ###   form: we might want some restrictions here, but not
+            ###   necessarily the same ones as for `Admin_Restricted`
+            eor    = self.eligible_object_restriction (ET.type_name)
+            if eor is not None :
+                bq = bq.filter (eor)
         query  = qr (bq).distinct ()
         entity_p = getattr (json, "entity_p", False)
         return self._rendered_completions (ETM, query, names, entity_p, json)
@@ -882,7 +877,7 @@ class QX_Entity_Selector_Form (_JSON_Action_PO_) :
 
     def _rendered_post (self, request, response) :
         json   = TFL.Record (** request.json)
-        af     = self._get_esf_filter (json)
+        af     = self._get_esf_filter (request, json)
         result = self._rendered_esf   (af)
         return result
     # end def _rendered_post
@@ -973,22 +968,256 @@ class _NC_Mixin_ (TFL.Meta.Object) :
 
 _Ancestor = GTW.RST.TOP.Dir_V
 
-class _QX_Dispatcher_ (_NC_Mixin_, _Ancestor) :
+class _QX_Dispatcher_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
 
-    name                    = "qx"
+    name                  = "qx"
 
     _v_entry_type_list    = \
-        ( QX_AF_Html, QX_Completed, QX_Completer
-        , QX_Entity_Selector_Form, QX_Order_By_Form, QX_Select_Attr_Form
-        )
+        (QX_Completed, QX_Completer, QX_Entity_Selector_Form)
+
+# end class _QX_Dispatcher_E_Type_Mixin_
+
+_Ancestor = _QX_Dispatcher_E_Type_Mixin_
+
+class _QX_Dispatcher_ (_Ancestor) :
+
+    _v_entry_type_list    = _Ancestor._v_entry_type_list + \
+        (QX_AF_Html, QX_Order_By_Form, QX_Select_Attr_Form)
 
 # end class _QX_Dispatcher_
 
+_Ancestor = GTW.RST.TOP._Base_
+
+class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
+    """Mixin handling MF3 forms for one E_Type."""
+
+    _real_name            = "E_Type_Mixin"
+
+    Field                 = GTW.RST.TOP.MOM.Field.Attr
+    Instance              = Instance
+
+    max_completions       = 20
+    mf3_attr_spec_d       = {}
+    nav_off_canvas        = True
+    skip_etag             = True
+    submit_callback       = None
+    submit_error_callback = None
+
+    _auth_required        = True
+    _exclude_robots       = True
+    _field_type_attr_name = "_gtw_admin_field_type"
+    _field_type_map       = {}
+    _greet_entry          = None
+    _list_display         = None
+    _mf3_attr_spec        = {}
+    _MF3_Attr_Spec        = {}
+    _MF3_Form_Spec        = {}
+    _mf3_id_prefix        = "MF3"
+    _sort_key             = None
+
+    _v_entry_type_list    = \
+        ( Add_Rev_Ref, Completed, Completer, Creator, Deleter, Displayer
+        , Instance
+        , _QX_Dispatcher_E_Type_Mixin_
+        )
+
+    @Once_Property
+    def et_map_name (self) :
+        if not self.implicit :
+            return "mf3"
+    # end def et_map_name
+
+    @Once_Property
+    @getattr_safe
+    def Form (self) :
+        return MF3.Entity.Auto \
+            ( self.E_Type
+            , attr_spec = self.MF3_Attr_Spec
+            , id_prefix = self.mf3_id_prefix
+            , ** self.MF3_Form_Spec
+            )
+    # end def Form
+
+    @Once_Property
+    @getattr_safe
+    def form_injected_templates (self) :
+        try :
+            form = self.Form
+        except LookupError :
+            renderers = set ()
+        else :
+            renderers = set (self.Form.template_module_iter ())
+        return tuple (self.top.Templateer.get_template (r) for r in renderers)
+    # end def form_injected_templates
+
+    @property
+    @getattr_safe
+    def mf3_attr_spec (self) :
+        """Attribute specification for MF3 form instance"""
+        result = self._mf3_attr_spec
+        xtra   = self.mf3_attr_spec_d
+        if xtra :
+            result = update_combined (result, xtra)
+        return result
+    # end def mf3_attr_spec
+
+    @mf3_attr_spec.setter
+    def mf3_attr_spec (self, value) :
+        self._mf3_attr_spec = update_combined (self._mf3_attr_spec, value)
+    # end def mf3_attr_spec
+
+    @property
+    @getattr_safe
+    def MF3_Attr_Spec (self) :
+        """Attribute specification for MF3 form class"""
+        result = self._MF3_Attr_Spec
+        return result
+    # end def MF3_Attr_Spec
+
+    @MF3_Attr_Spec.setter
+    def MF3_Attr_Spec (self, value) :
+        self._MF3_Attr_Spec = update_combined (self._MF3_Attr_Spec, value)
+    # end def MF3_Attr_Spec
+
+    @property
+    @getattr_safe
+    def MF3_Form_Spec (self) :
+        """Form specification for MF3 form class"""
+        result = self._MF3_Form_Spec
+        return result
+    # end def MF3_Form_Spec
+
+    @MF3_Form_Spec.setter
+    def MF3_Form_Spec (self, value) :
+        self._MF3_Form_Spec = update_combined (self._MF3_Form_Spec, value)
+    # end def MF3_Form_Spec
+
+    @property
+    @getattr_safe
+    def mf3_id_prefix (self) :
+        return self._mf3_id_prefix
+    # end def mf3_id_prefix
+
+    @mf3_id_prefix.setter
+    def mf3_id_prefix (self, value) :
+        self._mf3_id_prefix = value
+    # end def mf3_id_prefix
+
+    @Once_Property
+    @getattr_safe
+    def qr_spec (self) :
+        return QRS (self.E_Type)
+    # end def qr_spec
+
+    @property
+    @getattr_safe
+    def sort_key (self) :
+        result = self._sort_key
+        if result is None :
+            result = self.E_Type.sorted_by_epk
+        return result
+    # end def sort_key
+
+    @sort_key.setter
+    def sort_key (self, value) :
+        self._sort_key = value
+    # end def sort_key
+
+    def eligible_object_restriction (self, type_name) :
+        return None
+    # end def eligible_objects
+
+    def href_add_rev_ref (self) :
+        return pp_join (self.abs_href, "add_rev_ref")
+    # end def href_add_rev_ref
+
+    def href_complete (self) :
+        return pp_join (self.abs_href, "complete")
+    # end def href_complete
+
+    def href_completed (self) :
+        return pp_join (self.abs_href, "completed")
+    # end def href_completed
+
+    def href_delete (self, obj = None) :
+        result = pp_join (self.abs_href, "delete")
+        if obj is not None :
+            result = pp_join (result, str (obj.pid))
+        return result
+    # end def href_delete
+
+    def href_qx_esf_completed (self) :
+        return pp_join (self.abs_href, self.qx_prefix, "esf_completed")
+    # end def href_qx_esf_completed
+
+    def href_qx_esf_completer (self) :
+        return pp_join (self.abs_href, self.qx_prefix, "esf_completer")
+    # end def href_qx_esf_completer
+
+    def href_qx_esf (self) :
+        return pp_join (self.abs_href, self.qx_prefix, "esf")
+    # end def href_qx_esf
+
+    def is_current_dir (self, page) :
+        if not self.hidden :
+            p = page.href
+            s = self.href
+            return p == s or (p.startswith (s) and p [len (s)] == "/")
+    # end def is_current_dir
+
+    def page_from_obj (self, obj) :
+        result = self._new_child_x (self.Instance, str (obj.pid), ())
+        return result
+    # end def page_from_obj
+
+    def template_iter (self) :
+        T = self.top.Templateer
+        yield self.template
+        yield T.get_template \
+            (self.Instance.template_name, self.form_injected_templates)
+    # end def template_iter
+
+    def _get_child (self, child, * grandchildren) :
+        result = self.__super._get_child (child, * grandchildren)
+        if result is None and not grandchildren :
+            try :
+                pid = int (child)
+            except ValueError :
+                pass
+            else :
+                result = self.Instance \
+                    ( args   = (child, )
+                    , kind   = child
+                    , name   = child
+                    , parent = self
+                    , ** self._child_kw (child)
+                    )
+        if result is None and self._entry_type_map :
+            try :
+                T = self._entry_type_map [child]
+            except KeyError :
+                pass
+            else :
+                result = self._new_child (T, child, grandchildren)
+        return result
+    # end def _get_child
+
+    def _new_child (self, T, child, grandchildren) :
+        if child == self.qx_prefix and grandchildren :
+            new_child = self.__super._new_child
+        else :
+            new_child = self._new_child_x
+        return new_child (T, child, grandchildren)
+    # end def _new_child
+
+E_Type_Mixin = _Admin_E_Type_Mixin_ # end class
+
 _Ancestor = GTW.RST.TOP.Dir_V
 
-class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
+class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     """Directory displaying the instances of one E_Type."""
 
+    ### XXX remove this???
     button_types          = dict \
         ( ADD             = "button"
         , APPLY           = "submit"
@@ -1002,25 +1231,9 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         ( limit           = 25
         )
     dir_template_name     = "e_type_admin"
-    max_completions       = 20
-    nav_off_canvas        = True
-    skip_etag             = True
-    submit_callback       = None
-    submit_error_callback = None
 
-    _auth_required        = True
-    _exclude_robots       = True
-    _field_type_map       = {}
-    _form_id              = None
-    _form_parameters      = {}
-    _greet_entry          = None
-    _list_display         = None
-    _sort_key             = None
-
-    _v_entry_type_list    = \
-        ( Changer, Completed, Completer, Creator, Deleter, Displayer, Expander
-        , _QX_Dispatcher_
-        )
+    _v_entry_type_list    = _Admin_E_Type_Mixin_._v_entry_type_list [:-1] + \
+        ( _QX_Dispatcher_, )
 
     class _E_Type_GET_ (_Ancestor.GET) :
 
@@ -1070,81 +1283,11 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     # end class Entity
 
-    class Field (TFL.Meta.Object) :
-        """Model a field describing an attribute."""
-
-        def __init__ (self, aq) :
-            self.aq = aq
-        # end def __init__
-
-        @Once_Property
-        @getattr_safe
-        def attr (self) :
-            return self.aq._attr
-        # end def attr
-
-        @Once_Property
-        @getattr_safe
-        def css_class (self) :
-            attr = self.attr
-            if attr.css_align :
-                return "-".join (("align", attr.css_align))
-            return ""
-        # end def css_class
-
-        @property ### depends on currently selected language (I18N/L10N)
-        @getattr_safe
-        def description (self) :
-            return _T (self.attr.description)
-        # end def description
-
-        @Once_Property
-        @getattr_safe
-        def name (self) :
-            return self.aq._full_name
-        # end def name
-
-        @property ### depends on currently selected language (I18N/L10N)
-        @getattr_safe
-        def ui_name (self) :
-            ### put `zero-width-space` before `/`
-            return self.aq._ui_name_T.replace ("/", "\u200b/")
-        # end def ui_name
-
-        def as_html (self, o, v) :
-            return v
-        # end def as_thml
-
-        def value (self, o) :
-            if isinstance (o, MOM.Id_Entity) :
-                o = o.FO
-            result = getattr (o, self.name)
-            return result
-        # end def value
-
-        def __getattr__ (self, name) :
-            return getattr (self.attr, name)
-        # end def __getattr__
-
-    # end class Field
-
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "list_display", prefix = "_")
         self._field_map = {}
         self.__super.__init__ (** kw)
     # end def __init__
-
-    @Once_Property
-    @getattr_safe
-    def changer_injected_templates (self) :
-        try :
-            form = self.Form
-        except LookupError :
-            renderers = set ()
-        else :
-            renderers = set (self.Form.renderer_iter ())
-        return tuple (self.top.Templateer.get_template (r) for r in renderers)
-    # end def changer_injected_templates
 
     @property
     @getattr_safe
@@ -1169,44 +1312,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                 return dict (qr.request_args_abs, offset = 0)
     # end def first
 
-    @Once_Property
-    @getattr_safe
-    def Form (self) :
-        try :
-            result = AFS_Form [self.form_id]
-        except Exception as exc :
-            logging.exception \
-                ( "Getting form failed : %s %s %s"
-                , self.href, self.E_Type, self.form_id
-                )
-            raise
-        else :
-            return result
-    # end def Form
-
-    @property
-    @getattr_safe
-    def form_id (self) :
-        _form_id = self._form_id
-        return self.E_Type.GTW.afs_id if (_form_id is None) else _form_id
-    # end def form_id
-
-    @form_id.setter
-    def form_id (self, value) :
-        self._form_id = value
-    # end def form_id
-
-    @property
-    @getattr_safe
-    def form_parameters (self) :
-        return self._form_parameters
-    # end def form_parameters
-
-    @form_parameters.setter
-    def form_parameters (self, value) :
-        self._form_parameters = value
-    # end def form_parameters
-
     @property
     @getattr_safe
     def head_line (self) :
@@ -1226,20 +1331,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                 tail = "%s%s%s" % (tail, sep, cu)
         return "%s (%s)" % (_T (self.ETM.E_Type.ui_name), tail)
     # end def head_line
-
-    @property
-    @getattr_safe
-    def sort_key (self) :
-        result = self._sort_key
-        if result is None :
-            result = self.E_Type.sorted_by_epk
-        return result
-    # end def sort_key
-
-    @sort_key.setter
-    def sort_key (self, value) :
-        self._sort_key = value
-    # end def sort_key
 
     @Once_Property
     @getattr_safe
@@ -1291,27 +1382,21 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     @Once_Property
     @getattr_safe
-    def qr_spec (self) :
-        return QRS (self.E_Type)
-    # end def qr_spec
-
-    @Once_Property
-    @getattr_safe
     def _auto_list_display (self, ) :
         return tuple (a.name for a in self.E_Type.edit_attr)
     # end def _auto_list_display
 
     def changer (self, pid = None, ** kw) :
-        return self.Changer \
-            ( form_parameters = dict (self.form_parameters, ** kw)
-            , parent          = self
+        ### Usable by Jinja template to add change button to a html page
+        return self.Instance \
+            ( parent          = self
             , pid             = pid
             )
     # end def changer
 
-    def eligible_object_restriction (self, type_name) :
-        return None
-    # end def eligible_objects
+    def href_anchor_pid (self, obj) :
+        return "#pk-%s" % (obj.pid, ) if obj else ""
+    # end def href_anchor_pid
 
     def href_create (self) :
         return pp_join (self.abs_href, "create")
@@ -1321,21 +1406,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         return pp_join (self.abs_href, "change", str (obj.pid))
     # end def href_change
 
-    def href_complete (self) :
-        return pp_join (self.abs_href, "complete")
-    # end def href_complete
-
-    def href_completed (self) :
-        return pp_join (self.abs_href, "completed")
-    # end def href_completed
-
-    def href_delete (self, obj = None) :
-        result = pp_join (self.abs_href, "delete")
-        if obj is not None :
-            result = pp_join (result, str (obj.pid))
-        return result
-    # end def href_delete
-
     def href_display (self, obj = None) :
         man = self.manager
         if man :
@@ -1343,10 +1413,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         elif obj is not None :
             return pp_join (self.abs_href, "display", str (obj.pid))
     # end def href_display
-
-    def href_expand (self) :
-        return pp_join (self.abs_href, "expand")
-    # end def href_delete
 
     def href_qx_af_html (self) :
         return pp_join (self.abs_href, self.qx_prefix, "af_html")
@@ -1356,28 +1422,9 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         return pp_join (self.abs_href, self.qx_prefix, "asf")
     # end def href_qx_asf
 
-    def href_qx_esf_completed (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "esf_completed")
-    # end def href_qx_esf_completed
-
-    def href_qx_esf_completer (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "esf_completer")
-    # end def href_qx_esf_completer
-
-    def href_qx_esf (self) :
-        return pp_join (self.abs_href, self.qx_prefix, "esf")
-    # end def href_qx_esf
-
     def href_qx_obf (self) :
         return pp_join (self.abs_href, self.qx_prefix, "obf")
     # end def href_qx_obf
-
-    def is_current_dir (self, page) :
-        if not self.hidden :
-            p = page.href
-            s = self.href
-            return p == s or (p.startswith (s) and p [len (s)] == "/")
-    # end def is_current_dir
 
     def rendered (self, context, template = None) :
         request  = context ["request"]
@@ -1427,24 +1474,35 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         return result
     # end def rendered
 
-    def template_iter (self) :
-        T = self.top.Templateer
-        yield self.template
-        yield T.get_template \
-            (self.Changer.template_name, self.changer_injected_templates)
-        yield T.get_template (self.Deleter.template_name)
-    # end def template_iter
-
     def _fields (self, names) :
         def _gen (E_Type, names, map) :
-            AQ     = E_Type.AQ
-            Field  = self.Field
-            ft_map = self._field_type_map
+            AQ      = E_Type.AQ
+            Field   = self.Field
+            M_Field = GTW.RST.TOP.MOM.Field.M_Attr
+            ft_map  = self._field_type_map
             for n in names :
                 try :
-                    f = map [n]
+                    f  = map [n]
                 except KeyError :
-                    FT = ft_map.get (n, Field)
+                    FT = ft_map.get (n)
+                    if FT is None :
+                        at = E_Type.attr_prop (n)
+                        if at is not None :
+                            FT = ft_map.get (at)
+                        if FT is None :
+                            FT = getattr (at, self._field_type_attr_name, None)
+                            if callable (FT) and not issubclass (FT, M_Field) :
+                                try :
+                                    FT = FT ()
+                                except (TypeError, ValueError, LookupError) :
+                                    logging.exception \
+                                        ( "Evaluating callable "
+                                          "field-type-property %s %s failed"
+                                        % (self._field_type_attr_name, FT)
+                                        )
+                                    FT = None
+                    if FT is None :
+                        FT = Field
                     aq = getattr (AQ, n)
                     f  = map [n] = FT (aq)
                 yield f
@@ -1475,14 +1533,6 @@ class E_Type (_NC_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             with self.LET (fields = fields, query_restriction = qr):
                 yield
     # end def _handle_method_context
-
-    def _new_child (self, T, child, grandchildren) :
-        if child == self.qx_prefix and grandchildren :
-            new_child = self.__super._new_child
-        else :
-            new_child = self._new_child_x
-        return new_child (T, child, grandchildren)
-    # end def _new_child
 
 # end class E_Type
 

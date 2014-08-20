@@ -48,6 +48,8 @@
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_q_result`
 #     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
+#    26-Aug-2014 (CT) Add tests for `attrs` with argument `Q.skipper.club.name`,
+#                     `Q.RAW.skipper.club.name`, `Q.skipper.club.__raw_name`
 #    ««revision-date»»···
 #--
 
@@ -6150,6 +6152,27 @@ _test_q_result = """
 
     >>> ET = apt ["SRM.Boat_in_Regatta"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+
+    >>> show_query (qrt.attrs (Q.skipper.club.name))       ### SRM.Boat_in_Regatta
+    SQL: SELECT DISTINCT srm_club__1.name AS srm_club__1_name
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+           JOIN srm_sailor AS srm_sailor__1 ON srm_sailor__1.pid = srm_boat_in_regatta.skipper
+           JOIN srm_club AS srm_club__1 ON srm_club__1.pid = srm_sailor__1.club
+
+    >>> show_query (qrt.attrs (Q.RAW.skipper.club.name))   ### SRM.Boat_in_Regatta
+    SQL: SELECT DISTINCT srm_club__1.__raw_name AS srm_club__1___raw_name
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+           JOIN srm_sailor AS srm_sailor__1 ON srm_sailor__1.pid = srm_boat_in_regatta.skipper
+           JOIN srm_club AS srm_club__1 ON srm_club__1.pid = srm_sailor__1.club
+
+    >>> show_query (qrt.attrs (Q.skipper.club.__raw_name)) ### SRM.Boat_in_Regatta
+    SQL: SELECT DISTINCT srm_club__1.__raw_name AS srm_club__1___raw_name
+         FROM mom_id_entity
+           JOIN srm_boat_in_regatta ON mom_id_entity.pid = srm_boat_in_regatta.pid
+           JOIN srm_sailor AS srm_sailor__1 ON srm_sailor__1.pid = srm_boat_in_regatta.skipper
+           JOIN srm_club AS srm_club__1 ON srm_club__1.pid = srm_sailor__1.club
 
     >>> show_query (qrt.attrs (Q.boat, Q.SUM (Q.race_results.points), Q.points).group_by (Q.boat)) ### SRM.Boat_in_Regatta
     SQL: SELECT DISTINCT

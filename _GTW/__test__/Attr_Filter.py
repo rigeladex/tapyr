@@ -137,8 +137,8 @@ _test_code = """
     <accounts.active.AQ [Attr.Type.Querier Boolean]>
     <accounts.suspended.AQ [Attr.Type.Querier Boolean]>
     <sailors.AQ [Attr.Type.Querier Rev_Ref]>
-    <sailors.nation.AQ [Attr.Type.Querier Ckd]>
     <sailors.mna_number.AQ [Attr.Type.Querier Raw]>
+    <sailors.nation.AQ [Attr.Type.Querier Ckd]>
     <sailors.club.AQ [Attr.Type.Querier Id_Entity]>
     <sailors.club.name.AQ [Attr.Type.Querier String]>
     <sailors.club.long_name.AQ [Attr.Type.Querier String]>
@@ -194,8 +194,8 @@ _test_code = """
     <accounts.superuser.AQ [Attr.Type.Querier Boolean]>
     <accounts.active.AQ [Attr.Type.Querier Boolean]>
     <accounts.suspended.AQ [Attr.Type.Querier Boolean]>
-    <sailors.nation.AQ [Attr.Type.Querier Ckd]>
     <sailors.mna_number.AQ [Attr.Type.Querier Raw]>
+    <sailors.nation.AQ [Attr.Type.Querier Ckd]>
     <sailors.club.name.AQ [Attr.Type.Querier String]>
     <sailors.club.long_name.AQ [Attr.Type.Querier String]>
     <urls.value.AQ [Attr.Type.Querier String]>
@@ -514,8 +514,8 @@ _test_code = """
           finish              0
           alive               1
         sex                 0
-      nation              0
       mna_number          4
+      nation              0
       club                2
         name                3
         long_name           3
@@ -557,8 +557,8 @@ _test_code = """
       status              3
       discarded           1
     _crew               2
-      nation              0
       mna_number          4
+      nation              0
       club                2
         name                3
         long_name           3
@@ -689,8 +689,8 @@ _test_code = """
         Date `finish` skipper.left.lifetime.finish
         Boolean `alive` skipper.left.lifetime.alive
         Sex `sex` skipper.left.sex
-        Nation `nation` skipper.nation
         Int `mna_number` skipper.mna_number
+        Nation `nation` skipper.nation
         String `name` skipper.club.name
         String `long_name` skipper.club.long_name
     Entity `skipper` unwrapped
@@ -698,8 +698,8 @@ _test_code = """
         String `first_name` left.first_name
         String `middle_name` left.middle_name
         String `title` left.title
-        Nation `nation` nation
         Int `mna_number` mna_number
+        Nation `nation` nation
         String `name` club.name
     Int `place`
         Int `place` place
@@ -774,13 +774,13 @@ _test_code = """
         String `status` status
         Boolean `discarded` discarded
     Role_Ref_Set `_crew`
-        Nation `nation` _crew.nation
         Int `mna_number` _crew.mna_number
+        Nation `nation` _crew.nation
         String `name` _crew.club.name
         String `long_name` _crew.club.long_name
     Role_Ref_Set `_crew` unwrapped
-        Nation `nation` nation
         Int `mna_number` mna_number
+        Nation `nation` nation
         String `name` club.name
     Role_Ref_Set `teams`
         String `name` teams.left.left.name

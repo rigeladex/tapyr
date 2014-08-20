@@ -81,6 +81,8 @@
 #     7-Apr-2014 (CT) Add `-ACAO`
 #     2-May-2014 (CT) Add option `webmaster`
 #     9-Jul-2014 (CT) Add `_template_prefixes`
+#    20-Aug-2014 (CT) Remove `_GTW._AFS._MOM.Form_Cache`
+#    21-Aug-2014 (CT) Reify `after_app_type` as method of `RST_App`, `TOP_App`
 #    ««revision-date»»···
 #--
 
@@ -109,6 +111,10 @@ class RST_App (TFL.Meta.Object) :
     cache_prefix   = "rst_"
     use_templateer = False
 
+    def after_app_type (self, command, app_type) :
+        pass
+    # end def after_app_type
+
     def cachers (self, command, cmd) :
         return []
     # end def cachers
@@ -133,9 +139,12 @@ class TOP_App (TFL.Meta.Object) :
     cache_prefix   = ""
     use_templateer = True
 
+    def after_app_type (self, command, app_type) :
+        pass
+    # end def after_app_type
+
     def cachers (self, command, cmd) :
-        import _GTW._AFS._MOM.Form_Cache
-        return [GTW.AFS.MOM.Form_Cache (verbose = cmd.verbose)]
+        return []
     # end def cachers
 
     def create (self, command, cmd, * args, ** kw) :
@@ -169,6 +178,7 @@ class GT2W_Command (GTW.OMP.Command) :
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
     root                    = None
 
+    _after_app_type         = None
     _create_cache_p         = False
     _defaults               = dict \
         ( CSRF_check        = "yes"
@@ -247,12 +257,9 @@ class GT2W_Command (GTW.OMP.Command) :
 
     def app_type (self, * ems_dbw) :
         result = self.__super.app_type (* ems_dbw)
-        try :
-            Spec = GTW.AFS.MOM.Spec
-        except AttributeError :
-            pass
-        else :
-            Spec.setup_defaults ()
+        _after_app_type = self._after_app_type
+        if _after_app_type is not None :
+            _after_app_type (self, result)
         return result
     # end def app_type
 
@@ -453,6 +460,7 @@ class GT2W_Command (GTW.OMP.Command) :
         if cmd.media_domain :
             GTW.Media_Base.Domain = cmd.media_domain
         self._create_cache_p = self._create_cache_p or cmd.Setup_Cache
+        self._after_app_type = cmd.UTP.after_app_type
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
         self._load_I18N (cmd)
         sf_app = self._static_file_app (cmd)

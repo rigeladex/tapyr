@@ -44,6 +44,7 @@
 #     2-Feb-2012 (CT) Add `attr_spec` parameters to `AF_BiR`
 #    27-Feb-2012 (CT) Add `GTW.OMP.SRM.Club.GTW.afs_kw` (`collapsed = False`)
 #     4-Jun-2012 (CT) Rename `handicap` to `boat_class`
+#    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,22 @@ class Admin (object) :
             ( "-regatta.event.date.start"
             , "skipper.person.last_name"
             , "skipper.person.first_name"
+            )
+        , MF3_Form_Spec        = dict
+            ( include_rev_refs = ("_crew", "race_results")
+            )
+        , MF3_Attr_Spec_R      = dict
+            ( { "left.left.max_crew"
+                               : dict (skip       = True)
+              , "left.sail_number_x"
+                               : dict (skip       = True)
+              }
+            , right            = dict (prefilled  = True)
+            , place            = dict (skip       = True)
+            , points           = dict (skip       = True)
+            )
+        , MF3_Form_Spec_R      = dict
+            ( include_rev_refs = ("_crew", )
             )
         )
     Club               = dict \
@@ -124,32 +141,6 @@ class Admin (object) :
         )
 
 # end class Admin
-
-from   _GTW._AFS._MOM            import Spec
-from   _GTW._AFS._MOM.Form_Cache import Extra, Form_Cache
-
-import _GTW._OMP._SRM.Boat_in_Regatta
-
-GTW.OMP.SRM.Club.GTW.afs_kw = dict (collapsed  = False)
-GTW.OMP.SRM.Boat_in_Regatta.GTW.afs_spec = Spec.Entity \
-    (include_links = ("_crew", "race_results", ))
-
-Form_Cache.add \
-    ( Extra
-        ( "AF_BiR"
-        , dict
-            ( name = "GTW.OMP.SRM.Boat_in_Regatta"
-            , spec = Spec.Entity
-                ( attr_spec     = dict
-                    ( right     = dict (prefilled  = True)
-                    , place     = dict (show_in_ui = False)
-                    , points    = dict (show_in_ui = False)
-                    )
-                , include_links = ("_crew", )
-                )
-            )
-        )
-    )
 
 if __name__ != "__main__" :
      GTW.OMP.SRM._Export_Module ()

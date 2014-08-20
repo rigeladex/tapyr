@@ -34,6 +34,9 @@
 ##     7-May-2014 (CT) Add `integer`
 ##     7-May-2014 (CT) Use `maxlength`, not `max_length`, for HTML attribute
 ##    26-Jun-2014 (CT) Change `number` to always use `X.input.text`
+##    20-Aug-2014 (CT) Change `boolean`, `integer` to pass through `kwargs`
+##    27-Aug-2014 (CT) Use `inner_required`, not home-grown code, in `field`
+##    27-Aug-2014 (CT) Add `tabindex="-1"` for non-focusable input elements
 ##    ««revision-date»»···
 ##--
 #}
@@ -42,6 +45,7 @@
 
 {%- macro boolean (elem) -%}
   {%- set kw = {} if not elem.cooked else dict (checked = "checked") %}
+  {%- do kw.update (kwargs) %}
   {{ field (X.input.checkbox, elem, ** kw) }}
 {%- endmacro -%} {#- boolean -#}
 
@@ -58,7 +62,9 @@
 {%- endmacro -%} {#- email -#}
 
 {%- macro hidden (elem) -%}
-  {{ field (X.input.hidden, elem, ** kwargs) }}
+  {%- set kw = GTW.dict (kwargs) %}
+  {%- do kw.update (tabindex = "-1") %}
+  {{ field (X.input.hidden, elem, ** kw) }}
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro id_entity (elem) -%}
@@ -69,6 +75,7 @@
         , class     = GTW.filtered_join (" ", (class, "readonly"))
         , name      = None
         , readonly  = "readonly"
+        , tabindex  = "-1"
         , title     = elem.ui_display
         , value     = elem.ui_display
         )
@@ -78,6 +85,7 @@
         ( class     = GTW.filtered_join (" ", (class, "hidden", "id_ref"))
         , name      = elem.r_name
         , readonly  = "readonly"
+        , tabindex  = "-1"
         , value     = elem.edit
         )
     }}
@@ -94,7 +102,12 @@
 {%- endmacro -%} {#- id_entity -#}
 
 {%- macro integer (elem) -%}
-  {{ number (elem, pattern = "[-+]?[0-9]*") }}
+  {%- set kw = GTW.dict
+      ( pattern = "[-+]?[0-9]*"
+      )
+  -%}
+  {%- do kw.update (kwargs) %}
+  {{ number (elem, ** kw) }}
 {%- endmacro -%} {#- integer -#}
 
 {%- macro named_value (elem) -%}
@@ -174,7 +187,7 @@
   {%- set id = elem.id -%}
   {%- set kw = GTW.dict
       ( id            = id
-      , name          = elem.r_name
+      , name          = elem.r_name or id
       , value         = elem.edit
       )
   -%}
@@ -195,7 +208,7 @@
   {%- endif -%}
   {%- if elem.required %}
     {%- do kw.update (required = True) %}
-  {%- elif elem.attr and elem.attr.is_required %}
+  {%- elif elem.inner_required %}
     {%- do kw.update ( {"data-inner-required" : 1} ) %}
   {% endif -%}
   {{ typ (** kw) }}

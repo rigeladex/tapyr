@@ -71,12 +71,10 @@ _test_nav = """
     calendar_day
     console
     e_type_admin
-    e_type_afs
-    e_type_afs|afs_div_seq
-    e_type_afs|afs_div_seq|afs_fc_horizo
     e_type_aggregator
-    e_type_delete
     e_type_display
+    e_type_mf3
+    e_type_mf3|mf3
     gallery
     html/static.jnj
     login
@@ -108,10 +106,9 @@ _test_nav = """
     calendar_day
     console
     e_type_admin
-    e_type_afs
-    e_type_afs|afs_div_seq
-    e_type_afs|afs_div_seq|afs_fc_horizo
     e_type_display
+    e_type_mf3
+    e_type_mf3|mf3
     gallery
     html/static.jnj
     login
@@ -160,11 +157,12 @@ _test_nav = """
     Admin/Webseitenverwaltung/Gallery e_type_admin
     Admin/Webseitenverwaltung/Page e_type_admin
     Admin/Webseitenverwaltung/Picture e_type_admin
+    Admin/Webseitenverwaltung/Recurrence_Spec e_type_admin
     Admin/Webseitenverwaltung/Referral e_type_admin
 
     >>> php = nav_root.resource_from_href ("Admin/Personenverwaltung/Person_has_Phone/create")
     >>> print php.href, php.template.name
-    Admin/Personenverwaltung/Person_has_Phone/create e_type_afs|afs_div_seq
+    Admin/Personenverwaltung/Person_has_Phone/create e_type_mf3|mf3
 
     >>> css_map = TFL.defaultdict (list)
     >>> for k, v in TTT.css_href_map.iteritems () :
@@ -195,12 +193,9 @@ _test_nav = """
       ]
     , [ 'console' ]
     , [ 'e_type_admin' ]
-    ,
-      [ 'e_type_afs'
-      , 'e_type_afs|afs_div_seq'
-      , 'e_type_afs|afs_div_seq|afs_fc_horizo'
-      ]
     , [ 'e_type_display' ]
+    , [ 'e_type_mf3' ]
+    , [ 'e_type_mf3|mf3' ]
     , [ 'gallery' ]
     , [ 'photo' ]
     , [ 'site_admin' ]

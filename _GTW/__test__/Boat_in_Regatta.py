@@ -250,8 +250,8 @@ _test_code = r"""
     (<skipper.left.lifetime.finish.AQ [Attr.Type.Querier Date]>, u'-----')
     (<skipper.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<skipper.left.sex.AQ [Attr.Type.Querier Ckd]>, u'-----')
-    (<skipper.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
+    (<skipper.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<skipper.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<skipper.club.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<skipper.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
@@ -293,8 +293,8 @@ _test_code = r"""
     (<race_results.status.AQ [Attr.Type.Querier String]>, u'-----')
     (<race_results.discarded.AQ [Attr.Type.Querier Boolean]>, u'-----')
     (<_crew.AQ [Attr.Type.Querier Rev_Ref]>, 'SRM.Sailor')
-    (<_crew.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<_crew.mna_number.AQ [Attr.Type.Querier Raw]>, u'-----')
+    (<_crew.nation.AQ [Attr.Type.Querier Ckd]>, u'-----')
     (<_crew.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<_crew.club.name.AQ [Attr.Type.Querier String]>, u'-----')
     (<_crew.club.long_name.AQ [Attr.Type.Querier String]>, u'-----')
@@ -394,8 +394,8 @@ _test_code = r"""
     skipper__left__lifetime__finish
     skipper__left__lifetime__alive
     skipper__left__sex
-    skipper__nation
     skipper__mna_number
+    skipper__nation
     skipper__club__name
     skipper__club__long_name
     place
@@ -424,8 +424,8 @@ _test_code = r"""
     race_results__points
     race_results__status
     race_results__discarded
-    _crew__nation
     _crew__mna_number
+    _crew__nation
     _crew__club__name
     _crew__club__long_name
     teams__left__left__name
@@ -868,7 +868,7 @@ _test_undo = r"""
     >>> for _e in scope.MOM.Id_Entity.query_s () : ### 1
     ...    print (_e.pid, _e.as_code ())
     (6, u"SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'), )")
-    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = 'no')")
+    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = u'no')")
     (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
     (3, u"SRM.Boat ((u'optimist', ), 1107, u'AUT', u'', )")
     (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), 1107, u\'AUT\', u\'\'), ((u\'himmelfahrt\', (u\'2008-05-01\', u\'2008-05-01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'scams\'",)))')
@@ -971,7 +971,7 @@ _test_undo = r"""
     >>> for _e in scope.MOM.Id_Entity.query_s () : ### 5
     ...    print (_e.pid, _e.as_code ())
     (6, u"SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'), )")
-    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = 'no')")
+    (7, u"SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ), is_cancelled = u'no')")
     (1, u"SRM.Boat_Class (u'optimist', max_crew = 1)")
     (3, u"SRM.Boat ((u'optimist', ), 1107, u'AUT', u'', )")
     (8, u'SRM.Boat_in_Regatta (((u\'optimist\', ), 1107, u\'AUT\', u\'\'), ((u\'himmelfahrt\', (u\'2008-05-01\', u\'2008-05-01\')), (u\'optimist\', )), skipper = ((u"u\'tanzer\'", u"u\'christian\'", u"u\'\'", u"u\'\'"), u"u\'AUT\'", u\'29676\', (u"u\'scams\'",)))')

@@ -58,6 +58,8 @@
 #     3-Apr-2014 (CT) Save `_SAW_ORIGINAL` in `Una.XS_ORDER_BY`
 #    16-Apr-2014 (CT) Add `And_Distributive` and `Or_Distributive`
 #    16-Apr-2014 (CT) Add `Q.NIL`
+#    26-Aug-2014 (CT) Factor `_attr_kind_wrapper_and_col`, use in
+#                     `Kind_EPK._get_attr` (to support `__raw_«name»`)
 #    ««revision-date»»···
 #--
 
@@ -75,6 +77,7 @@ import _MOM._DBW._SAW.Attr
 import _MOM._DBW._SAW.Q_Result
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch, Single_Dispatch_Method
+from   _TFL.Decorator             import getattr_safe
 from   _TFL.predicate             import cartesian, split_hst
 
 import _TFL._Meta.Object
@@ -89,6 +92,22 @@ import itertools
 import operator
 
 TFL._Filter_.predicate_precious_p = True
+
+def _attr_kind_wrapper_and_col (ETW, name) :
+    col = None
+    try :
+        result = ETW.q_able_attrs [name]
+    except KeyError as exc :
+        ### raw names aren't in `.q_able_attrs`, but they are in `.QC`
+        try :
+            col = ETW.QC [name]
+        except KeyError as exc :
+            raise TypeError \
+                ("Unknown attribute `%s` for %s" % (name, ETW.type_name))
+        else :
+            result = col.MOM_Wrapper
+    return result, col
+# end def _attr_kind_wrapper_and_col
 
 @TFL.dict_from_class
 class _Op_Map_ (object) :
@@ -196,18 +215,9 @@ class Mapper (_RAW_) :
         is_raw = head == "RAW"
         if is_raw :
             head, _, tail = split_hst (tail, ".")
-        try :
-            akw = ETW.q_able_attrs [head]
-        except KeyError as exc :
-            ### raw names aren't in `q_able_attrs`, but they are in `ETW.QC`
-            try :
-                col = ETW.QC [head]
-            except KeyError as exc :
-                raise TypeError \
-                    ("Unknown attribute `%s` for %s" % (head, ETW.type_name))
-            else :
-                akw    = col.MOM_Wrapper
-                is_raw = is_raw or col.MOM_Is_Raw
+        akw, col = _attr_kind_wrapper_and_col (ETW, head)
+        if col is not None :
+            is_raw = is_raw or col.MOM_Is_Raw
         result = akw.QX (self, akw, _is_raw = is_raw)
         if tail :
             result = getattr (result, tail)
@@ -1294,8 +1304,11 @@ class Kind_EPK (_Attr_) :
             akw     = self._akw
             ETW, pj = self.ETW.attr_join_etw_alias \
                 (akw, akw.attr.E_Type, akw.ETW)
-            r_akw   = ETW.q_able_attrs [name]
-            result  = self._inner (r_akw, ETW = ETW)
+            r_akw, col = _attr_kind_wrapper_and_col (ETW, name)
+            ikw     = {}
+            if col is not None and col.MOM_Is_Raw :
+                ikw = dict (_is_raw = True)
+            result  = self._inner (r_akw, ETW = ETW, ** ikw)
             self._add_join_parent (pj)
             head_col = self._head_col
             if head_col is not None :
@@ -1504,6 +1517,7 @@ class Kind_Query (_Attr_) :
     # end def _columns_ob
 
     @TFL.Meta.Once_Property
+    @getattr_safe
     def _inner_qx (self) :
         akw           = self._akw
         ETW           = akw.outer if akw.outer else akw.ETW

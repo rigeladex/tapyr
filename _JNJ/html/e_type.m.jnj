@@ -55,6 +55,7 @@
 ##    11-Mar-2014 (CT) Add guard for `href_change`, `href_delete` to
 ##                     `admin_table`; add `href_display`
 ##    14-Mar-2014 (CT) Add and use `nav_buttons`
+##    24-Aug-2014 (CT) Factor `esf_title`; DRY `result` of `esf_title`
 ##    ««revision-date»»···
 ##--
 #}
@@ -92,7 +93,7 @@
 
 {%- macro entity_selector_form (page, af, form_class="") -%}
   <form class = "{{ ('QR ES ' + form_class).strip () }}" {# -#}
-      title="{{ GTW._T ("Select %s for attribute %s") % (af.ui_type_name, af.ui_name) }}"{# -#}
+      title="{{ esf_title (af) }}"{# -#}
   >
     <input class="hidden" name="__esf_for_attr__" value="{{ af.id }}">
     <input class="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
@@ -117,15 +118,13 @@
 {%- endmacro -%} {#- entity_selector_form -#}
 
 {%- macro entity_selector_form_p (page, af) -%}
-  <div
-    title="{{ GTW._T ("Select %s for attribute %s") % (af.ui_type_name, af.ui_name) }}"{# -#}
-  >
+  <div title="{{ esf_title (af) }}">
     <h2>
       {{- GTW._T ("Select one of the types below") -}}
     </h2>
     <div class="ESF-Polymorphic">
       {%- for cf in af.filters_np %}
-        <h3 title="{{ GTW._T ("Select %s for attribute %s") % (cf.ui_type_name, cf.ui_name) }}">
+        <h3 title="{{ esf_title (cf) }}">
           <a href="#"> {#- remove `<a>` after upgrading to jQueryUI 1.9+ -#}
             {{- GTW._T ("Select a %s") % cf.ui_type_name -}}
           </a>
@@ -135,6 +134,16 @@
     </div>
   </div>
 {%- endmacro -%} {#- entity_selector_form_p -#}
+
+{%- macro esf_title (af) -%}
+  {%- set type_name = af.ui_type_name %}
+  {%- set attr_name = af.ui_name %}
+  {%- if type_name == attr_name %}
+    {{- GTW._T ("Select %s ") % (attr_name, ) -}}
+  {%- else %}
+    {{- GTW._T ("Select %s for attribute %s") % (type_name, attr_name) -}}
+  {% endif -%}
+{%- endmacro -%} {#- esf_title -#}
 
 {%- macro nav_buttons (page, fields, objects) -%}
   {%- set nof = GTW.len (fields)  %}

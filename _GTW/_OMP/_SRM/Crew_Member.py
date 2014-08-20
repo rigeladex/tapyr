@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -33,6 +33,7 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #     8-Aug-2012 (CT) Add `example`
 #    12-May-2013 (CT) Replace `auto_cache` by `rev_ref_attr_name`
+#    26-Aug-2014 (CT) Add `key.ui_rank`
 #    ««revision-date»»···
 #--
 
@@ -87,6 +88,7 @@ class Crew_Member (_Ancestor_Essence) :
             Kind_Mixins        = (Attr.Sticky_Mixin, )
             default            = 0
             example            = 7
+            ui_rank            = 10
 
         # end class key
 

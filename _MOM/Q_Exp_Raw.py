@@ -35,6 +35,7 @@
 #                     remove `_RAW_` and `_RAW_DESC_` (nice simplification)
 #    30-Aug-2013 (CT) Remove `SET`
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
+#    26-Aug-2014 (CT) Change `_Get_Raw_._getter` to allow composite `key`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,8 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
         if hasattr (obj, "raw_attr") and key in obj.attributes :
             return obj.raw_attr (key)
         else :
-            result = getattr (obj, key)
+            getter = getattr (TFL.Getter, key)
+            result = getter  (obj)
             if isinstance (obj, MOM.Entity) :
                 result = unicode (result)
             return result

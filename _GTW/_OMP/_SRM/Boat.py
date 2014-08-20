@@ -53,6 +53,7 @@
 #     3-Jun-2013 (CT) Use `.attr_prop` to access attribute descriptors
 #    13-Aug-2013 (CT) Change `sail_number` from `Primary_Optional` to `Primary`
 #    26-Mar-2014 (CT) Remove double quotes from `sail_number_x.description`
+#    29-Aug-2014 (CT) Add `syntax` descriptions to `sail_number`, `sail_number_x`
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,10 @@ class Boat (_Ancestor_Essence) :
             max_value          = 999999
             needs_raw_value    = True
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+            syntax             = """
+                This field contains only the numeric part of the sail number,
+                not the nation, nor modifiers like `X`!
+            """
 
         # end class sail_number
 
@@ -120,6 +125,10 @@ class Boat (_Ancestor_Essence) :
             ignore_case        = "upper"
             max_length         = 8
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+            syntax             = """
+                This field contains only additional modifiers `X` but not the
+                sailnumber itself or the nation!
+            """
 
         # end class sail_number_x
 

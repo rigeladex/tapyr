@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -53,6 +53,7 @@
 #     7-May-2013 (CT) Add `Association`, `_import_association_cb`
 #     7-May-2013 (CT) Add `urls` to `include_links` of `Person`
 #    15-May-2013 (CT) Use `*_links` for `include_links`
+#    21-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #    ««revision-date»»···
 #--
 
@@ -66,35 +67,59 @@ from   _TFL.I18N                import _
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
+    property_include_rev_refs = \
+        ("persons", "companies", "associations")
+
+    subject_include_rev_refs  = \
+        ("addresses", "emails", "phones")
+
     Address              = dict \
         ( ETM            = "GTW.OMP.PAP.Address"
         , list_display   = ("zip", "city", "street", "desc")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = ("gps", ) + property_include_rev_refs
+            )
         , sort_key       = TFL.Sorted_By ( "zip", "street")
         )
 
     Association          = dict \
         ( ETM            = "GTW.OMP.PAP.Association"
         , list_display   = ("name", "short_name", "lifetime")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = subject_include_rev_refs
+            )
         )
 
     Company              = dict \
         ( ETM            = "GTW.OMP.PAP.Company"
         , list_display   = ("name", "short_name", "lifetime")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = subject_include_rev_refs
+            )
         )
 
     Email                = dict \
         ( ETM            = "GTW.OMP.PAP.Email"
         , list_display   = ("ui_display", "desc")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = property_include_rev_refs
+            )
         )
 
     IM_Handle            = dict \
         ( ETM            = "GTW.OMP.PAP.IM_Handle"
         , list_display   = ("ui_display", "desc")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = property_include_rev_refs
+            )
         )
 
     Nickname             = dict \
         ( ETM            = "GTW.OMP.PAP.Nickname"
         , list_display   = ("ui_display", "desc")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = property_include_rev_refs
+            )
         )
 
     Person               = dict \
@@ -103,16 +128,26 @@ class Admin (object) :
             ( "last_name", "first_name", "middle_name", "title"
             , "lifetime", "sex"
             )
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs =
+                (subject_include_rev_refs + ("im_handles", "accounts"))
+            )
         )
 
     Phone                = dict \
         ( ETM            = "GTW.OMP.PAP.Phone"
         , list_display   = ("ui_display", "desc")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = property_include_rev_refs
+            )
         )
 
     Url                  = dict \
         ( ETM            = "GTW.OMP.PAP.Url"
         , list_display   = ("ui_display", "desc")
+        , MF3_Form_Spec  = dict
+            ( include_rev_refs = property_include_rev_refs
+            )
         )
 
     Address_Position     = dict \
@@ -164,50 +199,6 @@ class Admin (object) :
         )
 
 # end class Admin
-
-from   _GTW._AFS._MOM import Spec
-import _GTW._OMP._PAP.Company
-import _GTW._OMP._PAP.Person
-
-GTW.OMP.PAP.Company.GTW.afs_spec = Spec.Entity \
-    ( include_links =
-        ("address_links", "email_links", "phone_links", "url_links")
-    )
-GTW.OMP.PAP.Person.GTW.afs_spec = Spec.Entity \
-    ( include_links =
-        ( "account_links", "address_links", "email_links", "im_handle_links"
-        , "nickname_links", "phone_links", "url_links"
-        )
-    )
-GTW.OMP.PAP.Address.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("person_links", "company_links", "PAP.Address_Position"))
-GTW.OMP.PAP.Email.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("person_links", "company_links"))
-GTW.OMP.PAP.Phone.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("person_links", "company_links"))
-GTW.OMP.PAP.Url.GTW.afs_spec = Spec.Entity \
-    ( include_links = ("person_links", "company_links"))
-
-from   _MOM import MOM
-import _MOM._Attr.Date_Interval
-import _MOM._Attr.Position
-import _MOM._Attr.Time_Interval
-
-MOM.Attr.Date_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
-MOM.Attr.Position.GTW.afs_kw      = dict (renderer = "afs_fc_horizo")
-MOM.Attr.Time_Interval.GTW.afs_kw = dict (renderer = "afs_fc_horizo")
-
-def _import_association_cb (module) :
-    PAP = GTW.OMP.PAP
-    PAP.Association.GTW.afs_spec = Spec.Entity \
-        ( include_links =
-            ("address_links", "email_links", "phone_links", "url_links")
-        )
-    for T in (PAP.Address, PAP.Email, PAP.Phone, PAP.Url) :
-        T.GTW.afs_spec.add_links ("association_links")
-
-GTW.OMP.PAP._Add_Import_Callback \
-    ("_GTW._OMP._PAP.Association", _import_association_cb)
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export_Module ()

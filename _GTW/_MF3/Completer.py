@@ -34,6 +34,17 @@
 #    14-May-2014 (CT) Change `_q_a_as_json` to try single-attribute
 #                     completion if multi-attribute completion exceeds `limit`
 #    19-Aug-2014 (CT) Factor `ac_ui_display` to `MOM.E_Type_Manager`
+#    25-Aug-2014 (CT) Fix `choose` to handle `Id_Entity` instances properly
+#    25-Aug-2014 (CT) Change `elems` to use `entity_p_buddy_elems`, either of
+#                     `embedder` or `self`
+#    25-Aug-2014 (CT) Change `own_elems` to return `buddies`, only
+#    25-Aug-2014 (CT) Change `embedded_elems` to `Once_Property`; change
+#                     `E_Completer.embedded_elems` to return `embedded_elems`
+#                     of all `.elem.elements` with `.completer`
+#    26-Aug-2014 (CT) Add `anchor` to `result` of `choose`
+#    29-Aug-2014 (CT) Factor `field_values`; add init-values for `readonly`
+#                     elements
+#    30-Aug-2014 (CT) Sort `matches` in `_q_e_as_json`
 #    ««revision-date»»···
 #--
 
@@ -103,32 +114,37 @@ class _MF3_Completer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def elems (self) :
-        return tuple (uniq (ichain (self.own_elems, self.embedder_elems)))
+        if self.embedder :
+            elems  = ichain ((self.elem, ), self.embedder.entity_p_buddy_elems)
+            result = tuple  (uniq (elems))
+        else :
+            result = self.entity_p_buddy_elems
+        return result
     # end def elems
 
     @TFL.Meta.Once_Property
-    def embedder_elems (self) :
-        result = ()
-        if self.embedder is not None :
-            result = self.embedder.embedded_elems (self)
+    def embedded_elems (self) :
+        return (self.elem, )
+    # end def embedded_elems
+
+    @TFL.Meta.Once_Property
+    def entity_p_buddy_elems (self) :
+        result = self.own_elems
+        if self.entity_p :
+            def _gen (self) :
+                yield self.own_elems
+                for e in self.anchor.elements :
+                    c = e.completer
+                    if c is not None and c.entity_p :
+                        yield c.embedded_elems
+            result = tuple (uniq (ichain (* _gen (self))))
         return result
-    # end def embedder_elems
+    # end def entity_p_buddy_elems
 
     @TFL.Meta.Once_Property
     def etn (self) :
         return self.anchor.E_Type.type_name
     # end def etn
-
-    @TFL.Meta.Once_Property
-    def id (self) :
-        completer_map = self.elem.root.completer_map
-        sig           = self.sig
-        try :
-            result = completer_map [sig]
-        except KeyError :
-            result = completer_map [sig] = len (completer_map)
-        return result
-    # end def id
 
     @TFL.Meta.Once_Property
     def field_ids (self) :
@@ -142,26 +158,33 @@ class _MF3_Completer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def fields (self) :
-        return tuple \
-            ( sorted
-                ( uniq
-                    ( str (id) for id in ichain
-                        ((self.elem.id, ), (e.id for e in self.elems))
-                    )
-                )
-            )
+        return tuple (str (id) for id in sorted (self.field_ids))
     # end def fields
+
+    @TFL.Meta.Once_Property
+    def id (self) :
+        completer_map = self.elem.root.completer_map
+        sig           = self.sig
+        try :
+            result = completer_map [sig]
+        except KeyError :
+            result = completer_map [sig] = len (completer_map)
+        return result
+    # end def id
 
     @TFL.Meta.Once_Property
     def own_elems (self) :
         def _gen (self) :
             ep = self.elem.parent
+            yield (self.elem, )
             for n in self.attr.completer.names :
                 elem = ep.get (n)
                 if elem is not None :
-                    for e in elem.completer_elems :
-                        yield e
-        return tuple (_gen (self))
+                    if elem.completer is not None :
+                        yield elem.completer.embedded_elems
+                    else :
+                        yield (elem, )
+        return tuple (uniq (ichain (* _gen (self))))
     # end def own_elems
 
     @TFL.Meta.Once_Property
@@ -197,7 +220,7 @@ class _MF3_Completer_ (TFL.Meta.Object) :
     def choices (self, scope, json, xtra_filter, max_completions = 20) :
         ETM       = scope [self.etn]
         limit     = max_completions + 1
-        query     = self.query (ETM, json ["field_values"], xtra_filter)
+        query     = self.query (ETM, self.field_values (json), xtra_filter)
         q_as_json = self._q_e_as_json if self.entity_p else self._q_a_as_json
         return q_as_json (ETM, query, json, limit)
     # end def choices
@@ -210,21 +233,33 @@ class _MF3_Completer_ (TFL.Meta.Object) :
         fs     = tuple (getattr (AQ, n).QR for n in self.attr_names)
         ids    = self.field_ids
         obj    = pid_query_request (json ["pid"], E_Type)
-        ### XXX ???
-        ### instantiate anchor
-        ### render template expansion for instantiated anchor
-        ### use input_hd for Id_Entity ???
-        ### change/create buttons for input_hd to open Id_Entity fields
+        def _gen_values (obj, fs) :
+            for f in fs :
+                v = f (obj)
+                if isinstance (v, MOM.Id_Entity) :
+                    v = dict (display = v.ui_display, pid = v.pid)
+                yield v
+            yield dict (display = obj.ui_display, pid = obj.pid)
         result = dict \
             ( completions  = 1
             , fields       = len  (fs)                  + 1
             , field_ids    = list (ids)                 + [anchor.id]
-            , values       = list (f (obj) for f in fs) +
-                [dict (display = obj.ui_display, pid = obj.pid)]
-            # html         = ...
+            , values       = list (_gen_values (obj, fs))
             )
+        if self.entity_p :
+            result ["anchor"] = anchor.id
         return result
     # end def choose
+
+    def field_values (self, json) :
+        result = dict (json ["field_values"])
+        for e in self.elems :
+            if e.id not in result :
+                v = e.init
+                if e.readonly and v is not None and not TFL.is_undefined (v) :
+                    result [e.id] = v
+        return result
+    # end def field_values
 
     def query (self, ETM, values, xtra_filter) :
         aq_fs = self.aq_filters (ETM, values)
@@ -239,7 +274,6 @@ class _MF3_Completer_ (TFL.Meta.Object) :
     def _q_a_as_json (self, ETM, query, json, limit, names = None) :
         if names is None :
             names = self.attr_names
-        anchor    = self.anchor
         AQ        = ETM.E_Type.AQ
         fs        = tuple (getattr (AQ, n).QR for n in names)
         fs_n      = len (fs)
@@ -290,21 +324,28 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                 result.update \
                     ( fields    = 2
                     , field_ids = []
-                    , matches   = list ((m.ui_display, m.pid) for m in matches)
+                    , matches   = list
+                        (   (m.ui_display, m.pid)
+                        for m in sorted (matches, key = ETM.sort_key)
+                        )
                     )
             else :
                 names  = self.attr_names [:1]
                 result = dict \
                     ( self._q_a_as_json (ETM, query, json, limit, names = names)
-                    , ** result
+                    , partial = True
                     )
-                result ["partial"]  = True
         return result
     # end def _q_e_as_json
 
     def __bool__ (self) :
         return self.id is not None and bool (self.elems)
     # end def __bool__
+
+    def __repr__ (self) :
+        return "<%s for %s, treshold = %d, entity_p = %1d>" % \
+            (self.__class__.__name__, self.elem, self.treshold, self.entity_p)
+    # end def __repr__
 
 Completer = _MF3_Completer_ # end class
 
@@ -331,28 +372,13 @@ class _MF3_C_Completer_ (_Nested_Completer_) :
     # end def id
 
     @TFL.Meta.Once_Property
-    def fields (self) :
-        ### The `name` of the composite attribute itself isn't needed, there
-        ### isn't any corresponding field, after all
-        return self.__super.fields [1:]
-    # end def fields
-
-    @TFL.Meta.Once_Property
     def own_elems (self) :
-        elem   = self.elem
-        result = self.__super.own_elems
-        result = tuple \
-            ( ichain
-                ( (e for e in result if e is not self)
-                , elem.field_elements
-                )
-            )
-        return result
+        return self.elem.field_elements
     # end def own_elems
 
-    def embedded_elems (self, inner) :
-        ### already contained in `own_elems`
-        return ()
+    @TFL.Meta.Once_Property
+    def embedded_elems (self) :
+        return self.own_elems
     # end def embedded_elems
 
 C_Completer = _MF3_C_Completer_ # end class
@@ -362,22 +388,15 @@ class _MF3_E_Completer_ (_Nested_Completer_) :
 
     _real_name = "E_Completer"
 
-    def __init__ (self, elem) :
-        self._nested = []
-        self.__super.__init__ (elem)
-    # end def __init__
-
-    def add_inner (self, inner) :
-        self._nested.append    (inner)
-        self.__super.add_inner (inner)
-    # end def add_inner
-
-    def embedded_elems (self, inner) :
-        def _gen (self, inner) :
-            for e in self._nested :
-                if e is not inner :
-                  yield e.own_elems
-        return tuple (uniq (ichain (* _gen (self, inner))))
+    @TFL.Meta.Once_Property
+    def embedded_elems (self) :
+        def _gen (self) :
+            for e in self.elem.elements :
+                c = e.completer
+                if c is not None :
+                    yield c.embedded_elems
+            yield (self.elem, )
+        return tuple (uniq (ichain (* _gen (self))))
     # end def embedded_elems
 
 E_Completer = _MF3_E_Completer_ # end class

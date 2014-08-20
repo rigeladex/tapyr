@@ -45,6 +45,7 @@
 #                     `ui_attr` as synonym for `q_able`
 #    10-Jul-2013 (CT) Define `ui_attr` as `Pred (Q.show_in_ui, q_able)`
 #     2-Mar-2014 (CT) Add `ui_attr_transitive`
+#    21-Aug-2014 (CT) Add `ignore_missing` to `Name` and `_Name_Selection_`
 #    ««revision-date»»···
 #--
 
@@ -177,18 +178,27 @@ class _Name_Selection_ (_Selection_) :
 
     def __init__ (self, spec, E_Type, anchor = None) :
         self.__super.__init__ (E_Type, anchor)
-        self._names = tuple (spec.names)
+        self._names          = tuple (spec.names)
+        self._ignore_missing = spec._ignore_missing
     # end def __init__
 
     @TFL.Meta.Once_Property
     def attrs (self) :
-        attributes = self.E_Type.attributes
-        return tuple (attributes [n] for n in self.names)
+        def _gen (self) :
+            attributes = self.E_Type.attributes
+            ignore     = self._ignore_missing
+            for n in self._names :
+                try :
+                    yield attributes [n]
+                except KeyError :
+                    if not ignore :
+                        raise
+        return tuple (_gen (self))
     # end def attrs
 
-    @property
+    @TFL.Meta.Once_Property
     def names (self) :
-        return self._names
+        return tuple (a.name for a in self.attrs)
     # end def names
 
 # end class _Name_Selection_
@@ -310,9 +320,11 @@ class Name (_Selector_) :
 
     Type = _Name_Selection_
 
-    def __init__ (self, * names) :
+    def __init__ (self, * names, ** kw) :
         assert names
-        self.names = names
+        self.names           = names
+        self._ignore_missing = kw.pop ("ignore_missing", False)
+        assert not kw
     # end def __init__
 
     def __repr__ (self) :

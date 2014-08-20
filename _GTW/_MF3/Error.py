@@ -29,6 +29,8 @@
 #    30-Jun-2014 (CT) Creation
 #     1-Jul-2014 (CT) Continue creation
 #     2-Jul-2014 (CT) Continue creation..
+#    29-Aug-2014 (CT) Add `guard` for `e.attributes` to `finish`
+#    30-Aug-2014 (CT) Use `b"..."` for `__repr__` formats
 #    ««revision-date»»···
 #--
 
@@ -234,7 +236,7 @@ class Wrapper (TFL.Meta.Object) :
     # end def _error_as_json_cargo__Required_Missing
 
     def __repr__ (self) :
-        return "%r;ERR-%d: %r" % (self.entity, self.index, self.error)
+        return b"%r;ERR-%d: %r" % (self.entity, self.index, self.error)
     # end def __repr__
 
 # end class Wrapper
@@ -273,8 +275,13 @@ class List (TFL.Meta.Object) :
             raw_errors = self._raw_errors
             arm = defaultdict_rank ()
             for e in raw_errors :
-                for a in e.attributes :
-                    arm [a] = min (e.rank, arm [a])
+                try :
+                    attrs = e.attributes
+                except AttributeError :
+                    pass
+                else :
+                    for a in attrs :
+                        arm [a] = min (e.rank, arm [a])
             for e in raw_errors :
                 e.__keep = all ((arm [a] == e.rank) for a in e.attributes)
             errors = dusplit (raw_errors, Q.__keep) [-1]
@@ -309,7 +316,7 @@ class List (TFL.Meta.Object) :
     # end def __len__
 
     def __repr__ (self) :
-        return "%r: %d errors" % (self.entity, len (self))
+        return b"%r: %d errors" % (self.entity, len (self))
     # end def __repr__
 
 # end class List

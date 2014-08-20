@@ -28,6 +28,9 @@
 ##
 ## Revision Dates
 ##     1-May-2014 (CT) Creation
+##    28-Aug-2014 (CT) Add `do_description` to `Field_Composite`
+##    28-Aug-2014 (CT) Change class of `Field_Composite` to
+##                     `Field-Composite horizontal`
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,8 +49,8 @@
 
 {%- macro Field_Composite (page, form, elem, t_module) -%}
   {%- if GTW.len (elem.field_elements) > 1 %}
-    <div class="Field Composite-horizontal pure-control-group">
-      <label class="Field-Composite">
+    <div class="Field-Composite horizontal pure-control-group">
+      <label>
         {{- GTW._T (elem.label) -}}
       </label>
       <div class="Fields">
@@ -55,6 +58,9 @@
           ("do_elements", page, form, elem, t_module, templ_name = t_module)
         }}
       </div>
+      {{ GTW.call_macro
+          ("do_description", page, form, elem, t_module, templ_name = t_module)
+      }}
     </div>
   {%- elif elem.field_elements %}
     {%- set e = elem.field_elements [0] %}

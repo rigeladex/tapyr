@@ -324,11 +324,11 @@ class _Invariant_ (Error) :
             bindings = self.bindings
         for k, v in bindings :
             if isinstance (v, (list, tuple)) :
-                v = ", ".join ("%s" % (x, ) for x in v)
+                v = ", ".join ("%s" % (pyk.decoded (x), ) for x in v)
             elif v is None :
                 v = _T ("None")
             else :
-                v = ("%r" if self.raw else "%s") % (v, )
+                v = ("%r" if self.raw else "%s") % (pyk.decoded (v), )
                 if v.startswith (('u"', "u'")) :
                     v = v [1:]
             yield "%s = %s" % (k, v)
@@ -877,6 +877,9 @@ class Not_Unique (_Invariant_) :
 
 class Partial_Type (Error) :
     """Raised when creation of an object of a partial type is tried."""
+
+    attributes       = ()
+
 # end class Partial_Type
 
 class Permission (_Invariant_, ValueError) :

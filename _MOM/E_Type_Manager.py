@@ -132,6 +132,7 @@
 #    11-Jun-2013 (CT) Add error guards to `raw_query_attrs`
 #    21-Aug-2013 (CT) Factor `ems` and `query` from `Id_Entity` to `Entity`
 #    19-Aug-2014 (CT) Factor `ac_ui_display` in here
+#    30-Aug-2014 (CT) Add `dict` to `isinstance` check in `Link._cooked_role`
 #    ««revision-date»»···
 #--
 
@@ -630,7 +631,7 @@ class Link (Id_Entity) :
     def _cooked_role (self, r, v) :
         result = v
         if not isinstance (result, MOM.Entity) :
-            if not isinstance (v, (tuple, list, int)) :
+            if not isinstance (v, (dict, tuple, list, int)) :
                 if not (v.startswith ("(") and v.endswith (")")) :
                     v = (v, )
             result = r.from_string (v, None)

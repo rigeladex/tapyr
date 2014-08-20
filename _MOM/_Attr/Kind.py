@@ -228,6 +228,7 @@
 #    30-Apr-2014 (CT) Add `change_forbidden`
 #     2-May-2014 (CT) Fix `change_forbidden` for `Init_Only_Mixin`
 #                     (only True for existing instance!)
+#    27-Aug-2014 (CT) Add guard for `None` to `_get_computed`
 #    ««revision-date»»···
 #--
 
@@ -505,12 +506,13 @@ class Kind (MOM.Prop.Kind) :
     # end def _check_sanity_default
 
     def _get_computed (self, obj) :
-        attr     = self.attr
-        computed = attr.computed
-        if TFL.callable (computed) :
-            val = computed (obj)
-            if val is not None :
-                return attr.cooked (val)
+        if obj is not None :
+            attr     = self.attr
+            computed = attr.computed
+            if TFL.callable (computed) :
+                val = computed (obj)
+                if val is not None :
+                    return attr.cooked (val)
     # end def _get_computed
 
     def _inc_changes (self, man, obj, value) :
@@ -1426,6 +1428,8 @@ class _Query_ (_Cached_, _Computed_Mixin_) :
     # end def is_partial
 
     def _get_computed (self, obj) :
+        if obj is None :
+            return
         Undef = TFL.Undef
         attr  = self.attr
         if not  (   attr.query_preconditions
