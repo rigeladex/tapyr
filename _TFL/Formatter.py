@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -37,6 +37,7 @@
 #    18-Nov-2011 (CT) Add optional argument `sep`
 #    18-Nov-2011 (CT) Add formatting of `TFL.Record`
 #    12-Jun-2012 (CT) Don't show `Recursion` on empty `things`
+#    21-Aug-2014 (CT) Add formatting of `set`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,9 @@ class Formatter (TFL.Meta.Object) :
         elif isinstance (thing, list) :
             f = self._format_list
             a = "[", "]"
+        elif isinstance (thing, set) :
+            f = self._format_set
+            a = "{", "}"
         elif isinstance (thing, tuple) :
             f = self._format_list
             a = "(", ")"
@@ -259,6 +263,12 @@ class Formatter (TFL.Meta.Object) :
         else :
             yield "%sRecord ()" % (leader or ws, )
     # end def _format_record
+
+    @TFL.Attributed (recurses = True)
+    def _format_set (self, thing, level, seen, ws, leader, open, clos) :
+        return self._format_list \
+            (sorted (thing), level, seen, ws, leader, open, clos)
+    # end def _format_set
 
     def _repr (self, thing) :
         result = "%r" % (thing, )
