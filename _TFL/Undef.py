@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -29,6 +29,7 @@
 #     3-Sep-2010 (CT) Creation
 #    28-Sep-2010 (CT) `__nonzero__` added
 #    22-Feb-2013 (CT) Add doc-tests
+#    21-Aug-2014 (CT) Add `is_undefined`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,11 @@ class Undef (object) :
     # end def __repr__
 
 # end class Undef
+
+def is_undefined (value) :
+    """Return True, if `value` is an instance of `Undef`."""
+    return isinstance (value, Undef)
+# end def is_undefined
 
 __doc__ = """
 Module `Undef`
@@ -109,5 +115,5 @@ it's `repr` is taken and as long as nobody applies boolean tests to it.
 """
 
 if __name__ != "__main__" :
-    TFL._Export ("Undef")
+    TFL._Export ("Undef", "is_undefined")
 ### __END__ TFL.Undef
