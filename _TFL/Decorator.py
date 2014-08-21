@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,7 +57,8 @@
 #    28-May-2013 (CT)  Add `subclass_responsibility`
 #    28-May-2013 (CT)  Change `Decorator` to properly support `classmethod`
 #    29-May-2013 (CT)  Kludge around Python2.6 lack of classmethod introspection
-#    18-Sep-2013 (CT) Add `dict_from_class`
+#    18-Sep-2013 (CT)  Add `dict_from_class`
+#    21-Aug-2014 (CT)  Add `Add_To_Object`
 #    ««revision-date»»···
 #--
 
@@ -267,6 +268,21 @@ def Add_To_Class (name, * classes, ** kw) :
         return x
     return decorator
 # end def Add_To_Class
+
+def Add_To_Object (* objects, ** kw) :
+    """Adds decorated function/class as attribute to `objects`.
+
+       If `name` is passed as keyword argument, it is used as name for the
+       added attribute, otherwise the `__name__` of the decorated
+       function/class is used.
+    """
+    def decorator (x) :
+        name = kw.get ("name", x.__name__)
+        for o in objects :
+            setattr (o, name, x)
+        return x
+    return decorator
+# end def Add_To_Object
 
 def dict_from_class (cls) :
     """Return `cls.__dict__`."""
