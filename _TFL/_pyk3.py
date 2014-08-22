@@ -40,6 +40,7 @@
 #    27-Nov-2013 (CT) Add `number_types`
 #     3-Jan-2014 (CT) Add `encoded`, `user_config`
 #    17-Feb-2014 (CT) Add `decoded`
+#    22-Aug-2014 (CT) Allow multiple `encodings` for `encoded`
 #    ««revision-date»»···
 #--
 
@@ -86,11 +87,19 @@ class _Pyk_ (object) :
     Classic_Class_Type = None
 
     @staticmethod
-    def decoded (v, encoding = None) :
-        if encoding is None :
-            encoding = pyk.user_config.input_encoding
+    def decoded (v, * encodings) :
+        if not encodings :
+            encodings = [pyk.user_config.input_encoding]
         if isinstance (v, bytes) :
-            v = v.decode (encoding, "replace")
+            for encoding in encodings :
+                try :
+                    v = v.decode (encoding, "replace")
+                except Exception as exc :
+                    pass
+                else :
+                    break
+            else :
+                raise exc
         elif not isinstance (v, str) :
             v = str (v)
         return v
