@@ -33,6 +33,7 @@
 #    31-Jul-2012 (CT) Add `HTTP_Exception`
 #    20-Jan-2014 (CT) Add `url_x`
 #    13-Mar-2014 (CT) Remove `url_x`
+#    28-Aug-2014 (CT) Wrap `safe_str_cmp` to normalize args to `iso-8859-1`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
+from   _TFL.pyk                   import pyk
 
 import _GTW.Request_Data
 import _GTW._Werkzeug
@@ -51,10 +53,16 @@ import _TFL._Meta.M_Class
 from   werkzeug.contrib.wrappers     import \
            JSONRequestMixin, DynamicCharsetRequestMixin
 from   werkzeug.exceptions           import HTTPException as HTTP_Exception
-from   werkzeug.security             import safe_str_cmp
+from   werkzeug.security             import safe_str_cmp as _wz_safe_str_cmp
 from   werkzeug.wrappers             import Request
 
 import json
+
+def safe_str_cmp (lhs, rhs) :
+    l = pyk.encoded (lhs, "iso-8859-1")
+    r = pyk.encoded (rhs, "iso-8859-1")
+    return _wz_safe_str_cmp (l, r)
+# end def safe_str_cmp
 
 class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
     """Extend werkzeug's Request class."""
