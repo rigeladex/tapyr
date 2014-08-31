@@ -32,6 +32,7 @@
 #    23-May-2012 (CT) Use `python`, not `/usr/bin/python` in `compile`
 #    19-Feb-2014 (CT) Use `python -m` to run `_TFL.Babel`
 #     4-Jul-2014 (CT) Add `_GTW/_MF3` and `_GTW/_RST*`
+#    31-Aug-2014 (CT) Add argument for `PYTHONPATH` to `compile`
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,12 @@ case "$cmd" in
     "compile" )
         model=${1:-./model.py}; shift
         langs=${1:-${default_langs}}; shift
+        pypa=${1}
+        if [ -n "$pypa" ]
+        then
+            export PYTHONPATH=$pypa
+            echo $PYTHONPATH
+        fi
         for lang in $(IFS=, ; echo ${langs})
         do
             mkdir -p "./locale/${lang}/LC_MESSAGES"

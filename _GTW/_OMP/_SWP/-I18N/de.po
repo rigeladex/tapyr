@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-07-04 12:48+0200\n"
-"PO-Revision-Date: 2012-05-23 10:17+0200\n"
+"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"PO-Revision-Date: 2014-08-31 11:31+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -64,7 +64,7 @@ msgstr "Seite soll nicht ni Navigation aufscheinen."
 
 #: _GTW._OMP._SWP.Referral:0
 msgid "Download name"
-msgstr ""
+msgstr "Name für heruntergeladene Datei"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Extension of file holding picture."
@@ -134,6 +134,8 @@ msgstr "Verknüpfung zu"
 #: _GTW._OMP._SWP.Referral:0
 msgid "Mark `target_url` as downloadable URL with specified filename."
 msgstr ""
+"Markiere `target_url` als herunterladbare Datei mit angegebenem "
+"Dateinamen."
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Markup format used for `text`"

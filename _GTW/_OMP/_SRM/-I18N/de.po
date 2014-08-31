@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-07-04 12:48+0200\n"
-"PO-Revision-Date: 2012-05-23 10:17+0200\n"
+"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"PO-Revision-Date: 2014-08-31 11:29+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -458,10 +458,6 @@ msgstr[1] "Wettfahrtergebnisse"
 msgid "Races"
 msgstr "Wettfahrten"
 
-#: _GTW._OMP._SRM.Regatta:0
-msgid "Ranking list factor"
-msgstr "Ranglistenfaktor"
-
 #: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_in_Regatta:0
 #: _GTW._OMP._SRM.Team:0
 msgid "Regatta"
@@ -703,10 +699,6 @@ msgstr "Vereinigte Staaten von Amerika"
 msgid "Web page with information about a sailing regatta."
 msgstr "Webseite mit Informationen zu einer Segelregatta."
 
-#: _GTW._OMP._SRM.Regatta:0
-msgid "Weight of this regatta in computation of ranking list points."
-msgstr "Gewicht der Regatta bei der Berechnung der Ranglistenpunkte."
-
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
 msgid "`Boat_in_Regatta` sailing for `Team`"
 msgstr "Boot, das in der Regatta für das Team segelt."
@@ -735,7 +727,7 @@ msgstr "Das Baujahr kann nicht in der Zukunft liegen."
 msgid "crew_number_valid"
 msgstr "Gültige Anzahl an Crewmitgliedern"
 
-#: _GTW/_OMP/_SRM/Crew_Member.py:97
+#: _GTW/_OMP/_SRM/Crew_Member.py:99
 msgid "trimmer"
 msgstr "Trimmer"
 
@@ -754,4 +746,10 @@ msgstr "Gültiger Segelnummerprefix"
 #: _GTW._OMP._SRM.Boat:0
 msgid "valid_vintage"
 msgstr "Gültiges Baujahr"
+
+#~ msgid "Ranking list factor"
+#~ msgstr "Ranglistenfaktor"
+
+#~ msgid "Weight of this regatta in computation of ranking list points."
+#~ msgstr "Gewicht der Regatta bei der Berechnung der Ranglistenpunkte."
 

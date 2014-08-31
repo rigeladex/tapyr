@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-07-04 12:48+0200\n"
+"POT-Creation-Date: 2014-08-31 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "%s: regatta registration"
 msgstr ""
 
-#: _GTW/_RST/_TOP/_MOM/SRM.py:422
+#: _GTW/_RST/_TOP/_MOM/SRM.py:379
 #, python-format
 msgid "%s: regatta registration %s"
 msgstr ""
@@ -116,7 +116,7 @@ msgid "April"
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:335 _GTW/_NAV/_E_Type/Admin.py:1106
-#: _GTW/_RST/_TOP/_MOM/Admin.py:192 _GTW/_RST/_TOP/_MOM/MF3.py:136
+#: _GTW/_RST/_TOP/_MOM/Admin.py:194
 msgid "At the moment, the database is set to readonly to allow maintenance."
 msgstr ""
 
@@ -128,11 +128,11 @@ msgstr ""
 msgid "August"
 msgstr ""
 
-#: _GTW/__test__/Test_Command.py:220
+#: _GTW/__test__/Test_Command.py:219
 msgid "Auth"
 msgstr ""
 
-#: _GTW/__test__/Test_Command.py:222
+#: _GTW/__test__/Test_Command.py:221
 msgid "Authorization and Account handling"
 msgstr ""
 
@@ -140,8 +140,16 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
-#: _GTW/__test__/Test_Command.py:228
+#: _GTW/__test__/Test_Command.py:227
 msgid "Choice of language used for localization"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Field.py:144
+msgid "Created"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Field.py:138
+msgid "Date of creation."
 msgstr ""
 
 #: _GTW/_NAV/Calendar.py:97 _GTW/_RST/_TOP/Calendar.py:313
@@ -197,7 +205,6 @@ msgid "Field `%(field)s` is required"
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:267 _GTW/_NAV/_E_Type/Admin.py:283
-#: _GTW/_RST/_TOP/_MOM/Admin.py:161 _GTW/_RST/_TOP/_MOM/Admin.py:170
 #, python-format
 msgid "Form corrupted, unknown element id %s"
 msgstr ""
@@ -258,7 +265,7 @@ msgstr ""
 msgid "June"
 msgstr ""
 
-#: _GTW/__test__/Test_Command.py:226
+#: _GTW/__test__/Test_Command.py:225
 msgid "L10N"
 msgstr ""
 
@@ -267,12 +274,17 @@ msgstr ""
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:166 _GTW/_RST/_TOP/_MOM/SRM.py:312
+#: _GTW/_NAV/_E_Type/SRM.py:166 _GTW/_RST/_TOP/_MOM/SRM.py:316
 msgid "List of participants for"
 msgstr ""
 
 #: _GTW/_NAV/Auth.py:283 _GTW/_RST/_TOP/Auth.py:471
 msgid "Logout successful."
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Field.py:297
+#, python-format
+msgid "Make phone call to %s"
 msgstr ""
 
 #: _GTW/_RST/Signed_Token.py:101
@@ -306,7 +318,7 @@ msgstr ""
 msgid "Monday"
 msgstr ""
 
-#: _GTW/_MF3/Completer.py:278
+#: _GTW/_MF3/Completer.py:312
 #, python-format
 msgid "More than %s matches"
 msgstr ""
@@ -328,13 +340,11 @@ msgstr ""
 msgid "No activation request for this account"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:222
-#: _GTW/_RST/_TOP/_MOM/MF3.py:152
+#: _GTW/_NAV/_E_Type/Admin.py:367 _GTW/_RST/_TOP/_MOM/Admin.py:210
 msgid "Not authorized for this page"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:217
-#: _GTW/_RST/_TOP/_MOM/MF3.py:147
+#: _GTW/_NAV/_E_Type/Admin.py:359 _GTW/_RST/_TOP/_MOM/Admin.py:205
 msgid "Not logged in or login-session is expired"
 msgstr ""
 
@@ -347,8 +357,8 @@ msgid "November"
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:773 _GTW/_NAV/_E_Type/Admin.py:800
-#: _GTW/_RST/_TOP/_MOM/Admin.py:725 _GTW/_RST/_TOP/_MOM/Admin.py:734
-#: _GTW/_RST/_TOP/_MOM/MF3.py:547 _GTW/_RST/_TOP/_MOM/MF3.py:619
+#: _GTW/_RST/_TOP/_MOM/Admin.py:646 _GTW/_RST/_TOP/_MOM/Admin.py:739
+#: _GTW/_RST/_TOP/_MOM/Admin.py:746
 #, python-format
 msgid "Object \"%s\" deleted"
 msgstr ""
@@ -365,7 +375,7 @@ msgstr ""
 msgid "One of the passwords is incorrect"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:139 _GTW/_RST/_TOP/_MOM/SRM.py:280
+#: _GTW/_NAV/_E_Type/SRM.py:139 _GTW/_RST/_TOP/_MOM/SRM.py:284
 msgid "Participants"
 msgstr ""
 
@@ -386,13 +396,13 @@ msgstr ""
 msgid "Please enter a username"
 msgstr ""
 
-#: _GTW/_MF3/Error.py:227
+#: _GTW/_MF3/Error.py:229
 msgid "Please enter a value for the missing attribute"
 msgid_plural "Please enter values for the missing attributes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_RST/_TOP/_MOM/MF3.py:469
+#: _GTW/_RST/_TOP/_MOM/Admin.py:578
 msgid "Please reload the page"
 msgstr ""
 
@@ -410,7 +420,7 @@ msgstr ""
 msgid "Query restriction triggered error: %s '%s'"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:171 _GTW/_RST/_TOP/_MOM/SRM.py:317
+#: _GTW/_NAV/_E_Type/SRM.py:171 _GTW/_RST/_TOP/_MOM/SRM.py:321
 msgid "Registration list"
 msgstr ""
 
@@ -430,11 +440,11 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:140 _GTW/_RST/_TOP/_MOM/SRM.py:281
+#: _GTW/_NAV/_E_Type/SRM.py:140 _GTW/_RST/_TOP/_MOM/SRM.py:285
 msgid "Results"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/SRM.py:162 _GTW/_RST/_TOP/_MOM/SRM.py:309
+#: _GTW/_NAV/_E_Type/SRM.py:162 _GTW/_RST/_TOP/_MOM/SRM.py:313
 msgid "Results for"
 msgstr ""
 
@@ -444,6 +454,11 @@ msgstr ""
 
 #: _GTW/_NAV/Calendar.py:91 _GTW/_RST/_TOP/Calendar.py:307
 msgid "Saturday"
+msgstr ""
+
+#: _GTW/_RST/_TOP/_MOM/Field.py:281
+#, python-format
+msgid "Send email to %s"
 msgstr ""
 
 #: _GTW/_NAV/Calendar.py:96 _GTW/_RST/_TOP/Calendar.py:312
@@ -596,7 +611,7 @@ msgid "Welcome %s."
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:780 _GTW/_NAV/_E_Type/Admin.py:808
-#: _GTW/_RST/_TOP/_MOM/Admin.py:718
+#: _GTW/_RST/_TOP/_MOM/Admin.py:732
 msgid "You need to specify a pid!"
 msgstr ""
 
