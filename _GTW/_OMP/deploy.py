@@ -35,6 +35,7 @@
 #    31-May-2012 (CT) Change default of `_Migrate_.db_name` to `/tmp/migrate`
 #    31-May-2012 (CT) Use `cwd` in `_handle_migrate` (again!)
 #     1-Jun-2012 (CT) Factor `_app_call` from `_handle_migrate`
+#     1-Sep-2014 (CT) Use `pjoin`, not `plumbum.path` operator `/`
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,7 @@ class GTW_OMP_Command (GTW.deploy.Command) :
             args = ("migrate", "-overwrite") + args
             with self.pbl.env (PYTHONPATH = self._python_path (P, version)) :
                 self._app_call \
-                    (cmd, P, app, args, P.prefix / version / cmd.app_dir)
+                    (cmd, P, app, args, pjoin (P.prefix, version, cmd.app_dir))
         if cmd.Active :
             _do (P.active,  ("-target_db_url", db_url, "-readonly"))
         if cmd.Passive :

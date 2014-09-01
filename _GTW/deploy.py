@@ -53,6 +53,9 @@
 #    20-Dec-2013 (CT) Fix `_P` to handle non-standard `apply_to_version`
 #    15-Jan-2014 (CT) Change `_P` to set `.python` after `env ["PYTHONPATH"]`
 #     1-Sep-2014 (CT) Convert `prefix` to `pbl.path`
+#     1-Sep-2014 (CT) Use `pjoin`, not `plumbum.path` operator `/`
+#     1-Sep-2014 (CT) Use `P.cmd.apply_to_version` as default version for
+#                     `_python_path` (need symbolic link in path)
 #    ««revision-date»»···
 #--
 
@@ -269,7 +272,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         if version is None :
             version = cmd.apply_to_version
         result = P.python \
-            [P.root / version / cmd.app_dir / cmd.app_module]
+            [pjoin (str (P.root), version, cmd.app_dir, cmd.app_module)]
         if cmd.verbose :
             result = result ["-verbose"]
         if args :
@@ -441,11 +444,11 @@ class GTWD_Command (TFL.Command.Root_Command) :
             ( active   = active
             , cmd      = cmd
             , passive  = passive
-            , prefix   = pbl.path (prefix)
+            , prefix   = prefix
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, atv, atv)
-        result.app_dir  = str (result.prefix / result.selected / cmd.app_dir)
+        result.app_dir  = pjoin (result.prefix, result.selected, cmd.app_dir)
         result.py_path  = pbl.env ["PYTHONPATH"] = self._python_path (result)
         result.lib_dirs = result.py_path.split (":")
         result.python   = pbl [cmd.py_path] \
@@ -456,8 +459,8 @@ class GTWD_Command (TFL.Command.Root_Command) :
 
     def _python_path (self, P, version = None) :
         if version is None :
-            version = P.selected
-        return ":".join (str (P.prefix / version / p) for p in P.cmd.lib_dir)
+            version = P.cmd.apply_to_version
+        return ":".join (pjoin (P.prefix, version, p) for p in P.cmd.lib_dir)
     # end def _python_path
 
 Command = GTWD_Command # end class
