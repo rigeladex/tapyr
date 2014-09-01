@@ -94,6 +94,7 @@
 #                     not `needed`; set `Required_Missing.val_disp` to `kw`
 #     2-Jul-2014 (CT) Improve `Attribute_Syntax`
 #     3-Jul-2014 (CT) Redefine `Required_Empty.head`
+#     1-Sep-2014 (CT) Fix translatability of `Permission.as_unicode`
 #    ««revision-date»»···
 #--
 
@@ -903,11 +904,11 @@ class Permission (_Invariant_, ValueError) :
     def as_unicode (self) :
         attr   = self.attribute
         result = \
-            ( _T( "Permission error for : `%r`"
-                  "\n     allowed  values : (%s)"
+            ( _T( "Permission error for : `%s`;"
+                  "\n     allowed  values : (%s),"
                   "\n     got      value  : `%s`"
                 )
-            % (attr, ", ".join (self.allowed), self.value)
+            % (attr.ui_name_T, ", ".join (self.allowed), self.value)
             )
         return result
     # end def as_unicode

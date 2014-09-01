@@ -440,12 +440,12 @@ msgstr[1] "Objekte"
 #: _MOM/Error.py:906
 #, python-format
 msgid ""
-"Permission error for : `%r`\n"
-"     allowed  values : (%s)\n"
+"Permission error for : `%s`;\n"
+"     allowed  values : (%s),\n"
 "     got      value  : `%s`"
 msgstr ""
-"Zugriffsfehler für   : `%r`\n"
-"     erlaubte Werte  : (%s)\n"
+"Zugriffsfehler für   : `%s`;\n"
+"     erlaubte Werte  : (%s),\n"
 "     erhaltener Wert : `%s`"
 
 #: _MOM/_EMS/_Manager_.py:264
@@ -801,4 +801,3 @@ msgstr ""
 
 #~ msgid "Model a date_interval (start, finish [default: `start`])."
 #~ msgstr ""
-

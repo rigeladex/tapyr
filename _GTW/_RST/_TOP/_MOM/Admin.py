@@ -94,6 +94,12 @@
 #    28-Aug-2014 (CT) Change `_get_attr_filter` to include `etns` in `key`
 #    30-Aug-2014 (CT) Change `_formatted_submit_entities` to work with MF3 forms
 #    30-Aug-2014 (CT) Add `_formatted_submit_elements`
+#     1-Sep-2014 (CT) Change `E_Type_Mixin._get_child` to use
+#                     `_child_kw ("change")` for `Instance`
+#     1-Sep-2014 (CT) Change `_NC_Mixin_._new_child_x` to always call
+#                     `_child_kw`
+#     1-Sep-2014 (CT) Change `_Changer_._rendered_post` to handle commit
+#                     error properly
 #    ««revision-date»»···
 #--
 
@@ -579,15 +585,16 @@ class _Changer_ (_HTML_Action_) :
                       )
                     )
                 return result
-            if not fv.submission_errors :
+            errors = fv.submission_errors
+            if not errors :
                 try :
                     self._commit_scope_fv (scope, fv, request, response)
                 except Exception as exc :
                     for e in fv.entity_elements :
                         if e.essence :
-                            e._commit_errors = tuple (e.entity.errors)
+                            errors.extend (e.essence.errors)
             result.update (fv.as_json_cargo)
-            if fv.errors :
+            if errors :
                 self._call_submit_callback \
                     ( self.submit_error_callback
                     , request, response, scope, fv, result
@@ -952,14 +959,13 @@ class _NC_Mixin_ (TFL.Meta.Object) :
         argn = T.argn
         if argn is None or len (grandchildren) == argn :
             name   = pp_join (* grandchildren) if grandchildren else ""
-            kw     = dict \
-                ( args   = grandchildren
+            kw     = self._child_kw \
+                ( child
+                , args   = grandchildren
                 , kind   = child
                 , name   = "%s/%s" % (child, name) if name else child
                 , parent = self
                 )
-            if name :
-                kw = self._child_kw (child, ** kw)
             result = T (** kw)
             return result
     # end def _new_child_x
@@ -1190,7 +1196,7 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
                     , kind   = child
                     , name   = child
                     , parent = self
-                    , ** self._child_kw (child)
+                    , ** self._child_kw ("change")
                     )
         if result is None and self._entry_type_map :
             try :
