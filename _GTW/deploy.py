@@ -347,6 +347,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         print (fmt % ("selected",       P.selected))
         print (fmt % ("prefix",         P.prefix))
         print (fmt % ("app-dir",        P.app_dir))
+        print (fmt % ("lib-dirs",       P.lib_dirs))
         print (fmt % ("python",         P.python))
         print (fmt % ("python-library", self.lib_dir))
         print (fmt % ("nested-library", P.py_path))
