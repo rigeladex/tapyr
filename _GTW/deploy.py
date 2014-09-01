@@ -52,6 +52,7 @@
 #    27-Jul-2013 (CT) Remove old `.pyc` and `.pyo` files in `_handle_pycompile`
 #    20-Dec-2013 (CT) Fix `_P` to handle non-standard `apply_to_version`
 #    15-Jan-2014 (CT) Change `_P` to set `.python` after `env ["PYTHONPATH"]`
+#     1-Sep-2014 (CT) Convert `prefix` to `pbl.path`
 #    ««revision-date»»···
 #--
 
@@ -439,11 +440,11 @@ class GTWD_Command (TFL.Command.Root_Command) :
             ( active   = active
             , cmd      = cmd
             , passive  = passive
-            , prefix   = prefix
+            , prefix   = pbl.path (prefix)
             , root     = pbl.path (root)
             )
         result.selected = getattr (result, atv, atv)
-        result.app_dir  = pjoin (result.prefix, result.selected, cmd.app_dir)
+        result.app_dir  = str (result.prefix / result.selected / cmd.app_dir)
         result.py_path  = pbl.env ["PYTHONPATH"] = self._python_path (result)
         result.lib_dirs = result.py_path.split (":")
         result.python   = pbl [cmd.py_path] \
@@ -455,7 +456,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
     def _python_path (self, P, version = None) :
         if version is None :
             version = P.selected
-        return ":".join (pjoin (P.prefix, version, p) for p in P.cmd.lib_dir)
+        return ":".join (str (P.prefix / version / p) for p in P.cmd.lib_dir)
     # end def _python_path
 
 Command = GTWD_Command # end class
