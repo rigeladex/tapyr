@@ -50,6 +50,7 @@
 #     9-Jul-2014 (CT) Fix `_create_fcgi_script`: catch KeyError;
 #                     recognize stdout; use `P.lib_dir`, not `self.lib_dir`
 #     9-Jul-2014 (CT) Use `P.py_path`, not `P.lib_dir`
+#     1-Sep-2014 (CT) Add `lib_dirs` to arguments of `templateer.call_macro`
 #    ««revision-date»»···
 #--
 
@@ -220,6 +221,7 @@ class GT2W_Command (_Ancestor) :
             , ca_key_name    = cmd.ca_key_name
             , ca_path        = cmd.ca_path
             , cmd            = cmd
+            , lib_dirs       = cmd.lib_dir
             , port           = cmd.port
             , root           = cmd.root_dir
             , script         = cmd.script_path

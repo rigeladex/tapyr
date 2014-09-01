@@ -1,6 +1,6 @@
 {#- jinja template: apache.m.jnj -#}
 {#
-## Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -23,6 +23,7 @@
 ##    18-Dec-2013 (CT) Add `gtw_host_80_redirect`
 ##    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
 ##    29-Apr-2014 (CT) Use `-`, not `/`, as separator for logfile names
+##     1-Sep-2014 (CT) Use `lib_dir` parameter, not hard-coded `"lib"`
 ##    ««revision-date»»···
 ##--
 #}
@@ -51,18 +52,19 @@
   Header add Strict-Transport-Security "max-age=15768000"
 {% endmacro -%} {#- force_ssl -#}
 
-{%- macro gtw_aliases (root) -%}
-  Alias /media/GTW/ {{ root -}}/lib/_GTW/media/
+{%- macro gtw_aliases (root, lib_dir = "lib") -%}
+  Alias /media/GTW/ {{ root -}}/{{ lib_dir }}/_GTW/media/
   Alias /media/v/   {{ root -}}/www/app/media/v/
   Alias /media/     {{ root -}}/www/media/
 {% endmacro -%} {#- gtw_aliases -#}
 
-{%- macro gtw_expires (root) -%}
-  {{ file_match_expires  ("gif|jpe?g|png",              1, "year") }}
-  {{ dir_expires_default (root + "/lib/_GTW/media/js",  1, "week") }}
-  {{ dir_expires_default (root + "/lib/_GTW/media/css", 1, "week") }}
-  {{ dir_expires_default (root + "/www/media/v",        1, "year") }}
-  {{ dir_expires_default (root + "/www/media",          1, "day" ) }}
+{%- macro gtw_expires (root, lib_dir = "lib") -%}
+  {%- set lib_media = "/". join ((root, lib_dir, "_GTW/media/")) %}
+  {{ file_match_expires  ("gif|jpe?g|png",        1, "year") }}
+  {{ dir_expires_default (lib_media + "js",       1, "week") }}
+  {{ dir_expires_default (lib_media + "css",      1, "week") }}
+  {{ dir_expires_default (root + "/www/media/v",  1, "year") }}
+  {{ dir_expires_default (root + "/www/media",    1, "day" ) }}
 {% endmacro -%} {#- gtw_expires -#}
 
 {%- macro gtw_host
@@ -73,6 +75,7 @@
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
+  {%- set lib_dir = kwargs.get ("lib_dirs", ["lib"]) [-1] %}
   {% call virtual_host
       ( server_name = server_name
       , address     = address
@@ -85,9 +88,9 @@
   -%}
   {% if _caller %}{{ _caller () }}{% endif %}
 
-  {{ gtw_aliases     (root) }}
-  {{ gtw_permissions (root) }}
-  {{ gtw_expires     (root) }}
+  {{ gtw_aliases     (root, lib_dir) }}
+  {{ gtw_permissions (root, lib_dir) }}
+  {{ gtw_expires     (root, lib_dir) }}
   {{ use_fcgi        (root, script) }}
   {% endcall %} {# AT.virtual_host #}
 {% endmacro -%} {#- gtw_host -#}
@@ -163,8 +166,8 @@
   {% endcall %} {# gtw_host_ssl #}
 {% endmacro -%} {#- gtw_host_ssl_cc -#}
 
-{%- macro gtw_permissions (root) -%}
-  <Directory {{ root -}}/lib/_GTW/media>
+{%- macro gtw_permissions (root, lib_dir = "lib") -%}
+  <Directory {{ root -}}/{{ lib_dir }}/_GTW/media>
     Order    deny,allow
     Allow    from all
     FileETag all
