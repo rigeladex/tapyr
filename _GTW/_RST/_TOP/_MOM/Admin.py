@@ -100,6 +100,9 @@
 #                     `_child_kw`
 #     1-Sep-2014 (CT) Change `_Changer_._rendered_post` to handle commit
 #                     error properly
+#     2-Sep-2014 (CT) Change `_Changer_.rendered` to call
+#                     `form.set_request_defaults (req_data)`,
+#                     unfactor `_rendered__form` into `_Changer_.rendered`
 #    ««revision-date»»···
 #--
 
@@ -174,10 +177,10 @@ class _Action_ (_Ancestor) :
             return ETM.pid_query (pid)
     # end def obj
 
-    def form_instance (self, obj = None, ** kw) :
+    def form_instance (self, obj = None, mf3_attr_spec = {}, ** kw) :
         if obj is None :
             obj = self.obj
-        attr_spec = dict (self.mf3_attr_spec, ** kw.pop ("mf3_attr_spec", {}))
+        attr_spec = dict (self.mf3_attr_spec, ** mf3_attr_spec)
         kw.setdefault ("_hash_fct", kw.pop ("hash_fct", self.top.hash_fct))
         result = self.parent.Form \
             (self.scope, obj, attr_spec = attr_spec, ** kw)
@@ -483,8 +486,10 @@ class _Changer_ (_HTML_Action_) :
             ( request.referrer or parent.abs_href
             , parent.href_anchor_pid (obj)
             )
-        form = self._rendered__form \
-            (context, obj, referrer, session_secret, sid)
+        form = self.form_instance \
+            (obj, session_secret = session_secret, sid = sid)
+        form.set_request_defaults (req_data, scope)
+        context.update (form = form, referrer = referrer)
         try :
             self.last_changed = obj.FO.last_changed
         except AttributeError :
@@ -557,13 +562,6 @@ class _Changer_ (_HTML_Action_) :
                                 )
                             )
     # end def _formatted_submit_entity_iter
-
-    def _rendered__form (self, context, obj, referrer, session_secret, sid) :
-        form = self.form_instance \
-            (obj, sid = sid, session_secret = session_secret)
-        context.update (form = form, referrer = referrer)
-        return form
-    # end def _rendered__form
 
     def _rendered_post (self, request, response) :
         json   = request.json

@@ -87,6 +87,8 @@
 #    30-Aug-2014 (CT) Redefine `_Field_Entity_Mixin_._required_missing_error`
 #                     to ignore errors resulting from optional Entity or Rev_Ref
 #                     attributes that aren't filled in at all
+#     2-Sep-2014 (CT) Add `set_request_defaults`
+#     2-Sep-2014 (CT) Fix `change_forbidden` call in `_Field_Base_.readonly`
 #    ««revision-date»»···
 #--
 
@@ -960,11 +962,12 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
 
     @property
     def readonly (self) :
+        p_essence = self.parent.id_essence
         return any \
             ( ( not self.settable
               , self.prefilled
-              , self.id_essence is not None
-                and self.attr.kind.change_forbidden (self.essence)
+              , p_essence is not None
+                and self.attr.kind.change_forbidden (p_essence)
               )
             )
     # end def readonly
@@ -983,6 +986,10 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     def _own_id (soc, essence) :
         return soc.name
     # end def _own_id
+
+    def _set_request_default (self, v, scope) :
+        self.default = v
+    # end def _set_request_default
 
 # end class _Field_Base_
 
@@ -1040,6 +1047,15 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_) :
             result = self.__super._required_missing_error (exc, svs)
         return result
     # end def _required_missing_error
+
+    def _set_request_default (self, v, scope) :
+        ETM = scope [self.E_Type]
+        try :
+            self.essence = ETM.pid_query (v)
+        except Exception as exc :
+            logging.error \
+                ("Invalid request parameter for %s: %s\n    %s", self, v, exc)
+    # end def _set_request_default
 
 # end class _Field_Entity_Mixin_
 
@@ -1163,6 +1179,21 @@ class Entity (_Entity_) :
                     pn (cargo)
             e.reset_once_properties ()
     # end def populate_new
+
+    def set_request_defaults (self, req_data, scope) :
+        AQ = self.E_Type.AQ
+        for k, v in sorted (pyk.iteritems (req_data)) :
+            try :
+                ### Use `AQ` and `aq._q_name` to allow specific role-names, etc.
+                aq   = getattr (AQ, k)
+                elem = self [aq._q_name]
+            except Exception :
+                ### not an attribute default, obviously
+                pass
+            else :
+                if elem.id_essence is None and not elem.readonly :
+                    elem._set_request_default (v, scope)
+    # end def set_request_defaults
 
     def sig_hash (self, sig) :
         dbid   = self.scope.db_meta_data.dbid
