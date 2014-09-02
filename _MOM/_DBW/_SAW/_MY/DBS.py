@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.MY.
@@ -29,6 +29,7 @@
 #    24-Jun-2013 (CT) Creation
 #    17-Jul-2013 (CT) Remove dependency on `MOM.DBW.SAS`
 #    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_scheme`
+#     2-Sep-2014 (CT) Quote database name in `CREATE DATABASE` statement
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,7 @@ class MY_DBS (MOM.DBW.SAW._NFB_DBS_) :
         try :
             engine = cls.create_engine (TFL.Url (db_url.scheme_auth))
             engine.execute \
-                ( "CREATE DATABASE IF NOT EXISTS %s "
+                ( """CREATE DATABASE IF NOT EXISTS "%s" """
                     "DEFAULT CHARACTER SET %s "
                     "DEFAULT COLLATE %s_bin"
                 % (str (db_url.path), encoding, encoding)

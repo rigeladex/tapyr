@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.PG.
@@ -29,6 +29,7 @@
 #    24-Jun-2013 (CT) Creation
 #    17-Jul-2013 (CT) Remove dependency on `MOM.DBW.SAS`
 #    23-Aug-2013 (CT) Remove SAS-compatibility kludge `sa_scheme`
+#     2-Sep-2014 (CT) Quote database name in `CREATE DATABASE` statement
 #    ««revision-date»»···
 #--
 
@@ -120,7 +121,7 @@ class PG_DBS (MOM.DBW.SAW._NFB_DBS_) :
             if not result :
                 ### database does not exist -> create it
                 conn.execute \
-                    ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
+                    ( """CREATE DATABASE "%s" ENCODING='%s' TEMPLATE %s"""
                     % (str (db_url.path), encoding, template)
                     )
     # end def create_database

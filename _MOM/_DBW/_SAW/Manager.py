@@ -51,6 +51,7 @@
 #    20-Sep-2013 (CT) Use `QX.Mapper`, not `qs._saw_filter`
 #    26-Sep-2013 (CT) Add `reset_cache`
 #     4-Jul-2014 (CT) Add table-name to name of `UniqueConstraint`
+#     2-Sep-2014 (CT) Add `no_identifier_pat`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,7 @@ import _MOM._DBW._SAW.Session
 import _MOM._SCM.Change
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch_Method
+from   _TFL.Regexp                import Regexp, re
 
 import itertools
 
@@ -90,6 +92,8 @@ class _Reload_Mixin_ (object) :
 
 class App_Type_Wrapper (TFL.Meta.Object) :
     """SAW specific information about a derived App_Type"""
+
+    no_identifier_pat   = Regexp(r"\W")
 
     def __init__ (self, app_type) :
         self.app_type   = app_type

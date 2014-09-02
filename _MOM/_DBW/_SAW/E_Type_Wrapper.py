@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -82,6 +82,7 @@
 #                     * change `table_name` to use `.sa_table_x.name`, if any
 #                     * use `_mangled_alias` in `_get_sa_table_alias`
 #    26-Sep-2013 (CT) Add `reset_cache`
+#     2-Sep-2014 (CT) Quote table name if it's not a valid SQL identifier
 #    ««revision-date»»···
 #--
 
@@ -750,7 +751,9 @@ class E_Type_Wrapper (_E_Type_Wrapper_) :
             cols, unique  = self._setup_columns (e_type, db_attrs_o, PNS)
             t_name        = self.table_name
             if self.key_o or self.key_p :
-                kw  = PNS.DBS.table_kw
+                kw  = dict (PNS.DBS.table_kw)
+                if ATW.no_identifier_pat.search (t_name) :
+                    kw ["quote"] = True
                 seq = self.sequence
                 if seq and seq.sa_column is None :
                     kw.update (seq._table_kw)
