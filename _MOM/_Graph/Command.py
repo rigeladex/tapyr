@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2012 (CT) Creation
 #    13-Jun-2013 (CT) Remove `PNS_Aliases`
+#     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    ««revision-date»»···
 #--
 
@@ -77,10 +78,11 @@ class MOM_Graph_Command (TFL.Command.Root_Command) :
     # end def graph
 
     def dynamic_defaults (self, defaults) :
-        result = self.__super.dynamic_defaults (defaults)
-        if "dir" not in defaults :
+        result   = self.__super.dynamic_defaults (defaults)
+        combined = dict (defaults, ** result)
+        if "dir" not in combined :
             result ["dir"] = self._app_dir_default
-        if "name" not in defaults :
+        if "name" not in combined :
             result ["name"] = self.PNS._._bname
         return result
     # end def dynamic_defaults

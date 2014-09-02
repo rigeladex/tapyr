@@ -56,6 +56,7 @@
 #     1-Sep-2014 (CT) Use `pjoin`, not `plumbum.path` operator `/`
 #     1-Sep-2014 (CT) Use `P.cmd.apply_to_version` as default version for
 #                     `_python_path` (need symbolic link in path)
+#     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    ««revision-date»»···
 #--
 
@@ -190,14 +191,15 @@ class GTWD_Command (TFL.Command.Root_Command) :
         _Compile_ = _GTWD_Compile_ # end class
 
         def dynamic_defaults (self, defaults) :
-            result = self.__super.dynamic_defaults (defaults)
-            if "babel_config" not in result :
+            result   = self.__super.dynamic_defaults (defaults)
+            combined = dict (defaults, ** result)
+            if "babel_config" not in combined :
                 bc = self._babel_config
                 if bc :
                     if not sos.path.isabs (bc) :
                         bc = pjoin (self.lib_dir, bc)
                     result ["babel_config"] = bc
-            if "package_dirs" not in result :
+            if "package_dirs" not in combined :
                 result ["package_dirs"] = self._package_dirs
             return result
         # end def dynamic_defaults

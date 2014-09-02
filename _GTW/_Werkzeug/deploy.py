@@ -51,6 +51,8 @@
 #                     recognize stdout; use `P.lib_dir`, not `self.lib_dir`
 #     9-Jul-2014 (CT) Use `P.py_path`, not `P.lib_dir`
 #     1-Sep-2014 (CT) Add `lib_dirs` to arguments of `templateer.call_macro`
+#     2-Sep-2014 (CT) Add and use `template_package_dirs`
+#     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    ««revision-date»»···
 #--
 
@@ -62,6 +64,7 @@ from   _TFL                   import TFL
 import _GTW._OMP.deploy
 
 from   _TFL                   import sos
+from   _TFL.import_module     import import_module
 from   _TFL.predicate         import uniq
 from   _TFL.Regexp            import Re_Replacer, re
 
@@ -81,6 +84,10 @@ class GT2W_Command (_Ancestor) :
     """Manage deployment applications based on GTW.Werkzeug."""
 
     _rn_prefix              = "GT2W"
+
+    _defaults      = dict \
+        ( template_package_dirs = ["_JNJ"]
+        )
 
     class _GT2W_HTTP_Config_ (TFL.Command.Root_Command.Config) :
         """Config file for HTTP-config specific options"""
@@ -146,10 +153,16 @@ class GT2W_Command (_Ancestor) :
             )
 
         def dynamic_defaults (self, defaults) :
-            import _JNJ
-            result = self.__super.dynamic_defaults (defaults)
-            tdirs  = list (result.get ("template_dirs", ()))
-            tdirs.extend  ([self.app_dir, sos.path.dirname (_JNJ.__file__)])
+            def _gen_template_dirs (self, defaults) :
+                yield self.app_dir
+                tpds = defaults.get ("template_package_dirs", ["_JNJ"])
+                for tpd in tpds :
+                    mod = import_module (tpd)
+                    yield sos.path.dirname (mod.__file__)
+            result   = self.__super.dynamic_defaults (defaults)
+            combined = dict (defaults, ** result)
+            tdirs    = list (combined.get ("template_dirs", ()))
+            tdirs.extend  (_gen_template_dirs (self, combined))
             result ["template_dirs"] = tuple (uniq (tdirs))
             return result
         # end def dynamic_defaults

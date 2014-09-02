@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.
@@ -71,6 +71,7 @@
 #    23-Aug-2013 (CT) Add option `-Engine_Echo`
 #    25-Aug-2013 (CT) Add and use `_cleaned_url` to avoid leaking DB passwords
 #    25-Aug-2013 (CT) Change `_print_info` to elide commits, if too many
+#     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    ««revision-date»»···
 #--
 
@@ -281,10 +282,11 @@ class MOM_Command (TFL.Command.Root_Command) :
     # end def app_type_and_url
 
     def dynamic_defaults (self, defaults) :
-        result = self.__super.dynamic_defaults (defaults)
-        if "db_name" not in defaults :
+        result   = self.__super.dynamic_defaults (defaults)
+        combined = dict (defaults, ** result)
+        if "db_name" not in combined :
             result ["db_name"] = self.default_db_name
-        if "mig_auth_file" not in defaults :
+        if "mig_auth_file" not in combined :
             result ["mig_auth_file"] = self.default_mig_auth_file
         return result
     # end def dynamic_defaults

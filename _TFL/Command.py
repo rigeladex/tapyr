@@ -51,6 +51,8 @@
 #                     (resulted in double application of `base_dirs`)
 #    17-Dec-2013 (CT) Improve $-expansion for `Rel_Path_Option.base_dirs`
 #    18-Dec-2013 (CT) Add `abspath` to `app_dir`
+#     2-Sep-2014 (CT) Change defaults to add `_init_kw` before
+#                     `dynamic_defaults`
 #    ««revision-date»»···
 #--
 
@@ -374,8 +376,8 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     @TFL.Meta.Once_Property
     def defaults (self) :
         result = dict (self._defaults)
-        result.update (self.dynamic_defaults (result))
         result.update (self._init_kw)
+        result.update (self.dynamic_defaults (result))
         return result
     # end def defaults
 
