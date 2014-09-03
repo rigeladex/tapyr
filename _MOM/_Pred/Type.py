@@ -58,6 +58,8 @@
 #    11-Mar-2013 (CT) Derive `_Condition_` from `MOM.Prop.Type`, not `object`
 #     3-Jun-2013 (CT) Print exception info to stderr, not stdout
 #     3-Apr-2014 (CT) Change `set_c_attr_value` to use `obj.FO`, not `r0.FO`
+#     3-Sep-2014 (CT) Change `set_s_attr_value` to use `attr.prop`, not
+#                     `hasattr (obj, name)`
 #    ««revision-date»»···
 #--
 
@@ -191,8 +193,8 @@ class _Condition_ (MOM.Prop.Type):
 
     def set_s_attr_value (self, obj, dict, name, val_dict) :
         result = None
+        attr   = obj.attr_prop (name)
         if name in dict :
-            attr   = obj.attr_prop (name)
             result = dict [name]
             if attr is not None and result is not None :
                 try :
@@ -201,7 +203,7 @@ class _Condition_ (MOM.Prop.Type):
                     print "Error in `cooked` of `%s` for value `%s` [%s]" % \
                         (attr, result, obj)
                     raise
-        elif hasattr (obj, name) or (name in self.attr_none) :
+        elif attr is not None or (name in self.attr_none) :
             result = self.kind.get_attr_value (obj, name)
         else :
             raise AttributeError \
