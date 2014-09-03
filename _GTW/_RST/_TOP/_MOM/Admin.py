@@ -103,6 +103,9 @@
 #     2-Sep-2014 (CT) Change `_Changer_.rendered` to call
 #                     `form.set_request_defaults (req_data)`,
 #                     unfactor `_rendered__form` into `_Changer_.rendered`
+#     3-Sep-2014 (CT) Return `elem` from `_get_attr_filter`
+#     3-Sep-2014 (CT) Change `QX_Completer._rendered_post` to use
+#                     `elem.restrict_completion`
 #    ««revision-date»»···
 #--
 
@@ -307,8 +310,9 @@ class _JSON_Action_ (_Ancestor) :
     POST = _JSON_Action_POST_ # end class
 
     def _get_attr_filter (self, request, json) :
-        ET  = self.E_Type
-        etn = None
+        ET   = self.E_Type
+        etn  = None
+        elem = None
         if "key" in json :
             key  = json.key
             if "etn" in json :
@@ -327,13 +331,13 @@ class _JSON_Action_ (_Ancestor) :
                 key = "%s[%s]" % (key, json.etns)
         if etn is not None :
             ET = self.scope [etn].E_Type
-        return self.QR.Filter (ET, key)
+        return self.QR.Filter (ET, key), elem
     # end def _get_attr_filter
 
     def _get_esf_filter (self, request, json) :
         QR        = self.QR
         ET        = self.E_Type
-        result    = self._get_attr_filter (request, json)
+        result, _ = self._get_attr_filter (request, json)
         fa_filter = Q.AQ.Show_in_UI_Selector
         result.polymorphic_epk = pepk = result.AQ.E_Type.polymorphic_epk
         if pepk :
@@ -836,11 +840,11 @@ class QX_Completer (_JSON_Action_PO_) :
     name            = "esf_completer"
 
     def _rendered_post (self, request, response) :
-        json   = TFL.Record (** request.json)
-        af     = self._get_attr_filter (request, json)
-        ET     = af.AQ.E_Type
-        at     = QR.Filter  (ET, json.trigger_n)
-        names  = tuple \
+        json     = TFL.Record (** request.json)
+        af, elem = self._get_attr_filter (request, json)
+        ET       = af.AQ.E_Type
+        at       = QR.Filter  (ET, json.trigger_n)
+        names    = tuple \
             ( uniq
                 ( iter_chain
                     ( (at.AQ._full_name, )
@@ -848,14 +852,15 @@ class QX_Completer (_JSON_Action_PO_) :
                     )
                 )
             )
-        scope  = self.top.scope
-        qr     = QR.from_request \
+        scope    = self.top.scope
+        qr       = QR.from_request \
             (scope, ET, request, ** request.json.get ("values", {}))
-        ETM    = scope [ET.type_name]
-        bq     = ETM.query_s ()
-        if 0 : ### XXX TBD
+        ETM      = scope [ET.type_name]
+        bq       = ETM.query_s ()
+        eor_p    = elem is None or elem.restrict_completion
+        if eor_p :
             ### For some attributes, `eligible_object_restriction` is too
-            ### restrictive here. For instance, an attribute referring to a
+            ### restrictive. For instance, an attribute referring to a
             ### person should normally not be restricted even if the user is
             ### only allowed to change his own `PAP.Person` instance
             ###

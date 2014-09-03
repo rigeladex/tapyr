@@ -89,6 +89,7 @@
 #                     attributes that aren't filled in at all
 #     2-Sep-2014 (CT) Add `set_request_defaults`
 #     2-Sep-2014 (CT) Fix `change_forbidden` call in `_Field_Base_.readonly`
+#     3-Sep-2014 (CT) Add attribute `restrict_completion`
 #    ««revision-date»»···
 #--
 
@@ -291,6 +292,7 @@ class _Base_ (TFL.Meta.Object) :
     parent              = None
     pid_sep             = "@"
     q_name              = None
+    restrict_completion = False
     skip                = False
     template_module     = "mf3"
     undef               = TFL.Undef ("value")
@@ -562,7 +564,12 @@ class _Entity_Mixin_ (_Base_) :
         (MOM.Attr.Selector.primary, MOM.Attr.Selector.required)
     include_rev_refs    = ()
     render_groups       = ()
-    _pop_to_self        = ("attr_selector", "include_rev_refs", "render_groups")
+    _pop_to_self        = \
+        ( "attr_selector"
+        , "include_rev_refs"
+        , "render_groups"
+        , "restrict_completion"
+        )
     _reset_properties   = ("sig", )
 
     def __call__ (self, scope, cargo) :
@@ -837,15 +844,19 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     _element_ids            = ("q_name", )
     _init                   = _Base_.undef
     _pop_to_self            = \
-        ( "allow_new",        "changeable"
-        , "css_align",        "css_class",        "default"
-        , "description",      "edit",             "explanation"
-        , "init",             "input_widget",     "label"
-        , "prefilled",        "skip",             "settable"
-        , "template_module",  "template_macro"
+        ( "allow_new",           "changeable"
+        , "css_align",           "css_class"
+        , "default",             "description"
+        , "edit",                "explanation"
+        , "init",                "input_widget"
+        , "label",               "prefilled"
+        , "restrict_completion"
+        , "skip",                "settable"
+        , "template_module",     "template_macro"
         )
     _pop_to_self_           = ("collapsed", "required")
     _q_name                 = None
+    _restrict_completion    = _Base_.undef
 
     def __init__ (self, essence = None, ** kw) :
         q_name      = self.q_name
@@ -976,6 +987,19 @@ class _Field_Base_ (BaM (_Element_, metaclass = M_Field)) :
     def required (self) :
         return self.parent.required and self._required
     # end def required
+
+    @property
+    def restrict_completion (self) :
+        result = self._restrict_completion
+        if result is self.undef :
+            result = self.parent.restrict_completion
+        return result
+    # end def restrict_completion
+
+    @restrict_completion.setter
+    def restrict_completion (self, value) :
+        self._restrict_completion = value
+    # end def restrict_completion
 
     @property
     def sig (self) :
