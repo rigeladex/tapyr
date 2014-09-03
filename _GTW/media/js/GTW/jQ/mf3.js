@@ -42,6 +42,7 @@
 //    29-Aug-2014 (CT) Add support for `max-rev-ref`
 //    30-Aug-2014 (CT) Add guard for `ft` to `completer.put_values`
 //    30-Aug-2014 (CT) Add `hide` and `show` calls for `$(S.form_errors)`
+//     3-Sep-2014 (CT) Use `.call`, not `.apply`, in `entity_display_open_cb`
 //    ««revision-date»»···
 //--
 
@@ -509,9 +510,9 @@
             if (k >= 9 && k <= 27) {
                 return true;
             };
-            action_callback.open.apply (this, ev);
+            action_callback.open.call (this, ev);
             if (k in {8 : 1, 127:1}) {
-                action_callback.clear.apply (this, ev);
+                action_callback.clear.call (this, ev);
             };
             return false;
         };
