@@ -58,6 +58,7 @@
 #    15-May-2014 (CT) Add `breakpoint.quite_narrow`
 #     9-Jul-2014 (CT) Add `Rule.rotate_45_left`
 #    26-Aug-2014 (CT) Add `pure` parameters
+#     3-Sep-2014 (CT) Add `Rule.hidden`
 #    ««revision-date»»···
 #--
 
@@ -378,6 +379,11 @@ class Media_Defaults (Definition) :
             ( "focus"
             ,  P.R.color_spec_selected
             , outline      = P.R.outline_focus
+            )
+
+        hidden             = Rule \
+            ( display      = "none"
+            , visibility   = "hidden"
             )
 
         hover              = Rule_Pseudo \
