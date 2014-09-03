@@ -62,6 +62,7 @@
 #     7-Jan-2014 (CT) Change `Logout.POST` to redirect to non-cc domain
 #     7-Jan-2014 (CT) Fix ancestor of `_Logout_.POST`
 #                     (use `_Cmd_`, not `_Form_Cmd_`)
+#     3-Sep-2014 (CT) Add message to `Forbidden` of `_skip_render`
 #    ««revision-date»»···
 #--
 
@@ -106,7 +107,11 @@ class _Cmd_ (_Ancestor) :
                     if resource.s_domain :
                         raise Status.See_Other (resource.secure_url)
                     else :
-                        raise Status.Forbidden ()
+                        msg = _T \
+                            ( "Unless run in TEST mode, "
+                              "access to %s is only allowed over https!"
+                            ) % (resource.abs_href, )
+                        raise Status.Forbidden (msg)
             return result
         # end def _skip_render
 
