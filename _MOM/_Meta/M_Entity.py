@@ -223,6 +223,7 @@
 #    18-Jun-2014 (CT) Add `i_rank` to `db_sig`
 #     7-Jul-2014 (CT) Fix `_m_fix_type_set`
 #    11-Jul-2014 (CT) Add `is_partial`, `is_relevant` to `db_sig`
+#     4-Sep-2014 (CT) Add `pka.E_Type.is_relevant` to `_m_setup_sorted_by`
 #    ««revision-date»»···
 #--
 
@@ -1369,7 +1370,7 @@ class M_E_Type_Id (M_E_Type) :
                     if pka.E_Type :
                         pka_sb = _pka_sorted_by (pka.name, pka.E_Type)
                         if isinstance (pka.attr, MOM.Attr._A_Id_Entity_) :
-                            if pka_sb :
+                            if pka_sb and pka.E_Type.is_relevant :
                                 sbs.extend (pka_sb)
                             else :
                                 ### Class is too abstract:
