@@ -39,6 +39,7 @@
 #    23-Jun-2014 (RS) Document traceback in `A_Int_Interval_C`
 #    24-Jun-2014 (CT) Fix `A_Int_Interval_C.computed__upper`
 #    24-Jun-2014 (CT) Force attribute names to `str`
+#     4-Sep-2014 (RS) Fix interval limit: `lower` <= `upper` not '<'
 #    ««revision-date»»···
 #--
 
@@ -102,10 +103,10 @@ class _Interval_ (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Predicates
 
         class is_valid (Pred.Condition) :
-            """The upper bound must be greater than the lower bound."""
+            """The upper bound must be greater or equal to the lower bound."""
 
             kind               = Pred.Object
-            assertion          = "lower < upper"
+            assertion          = "lower <= upper"
             attributes         = ("lower", "upper")
 
         # end class is_valid
