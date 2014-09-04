@@ -54,6 +54,8 @@
 #     7-May-2013 (CT) Add `urls` to `include_links` of `Person`
 #    15-May-2013 (CT) Use `*_links` for `include_links`
 #    21-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
+#     4-Sep-2014 (CT) Add `Adhoc_Group`, `Id_Entity_permits_Group`,
+#                     `Person_in_Group`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +82,10 @@ class Admin (object) :
             ( include_rev_refs = ("gps", ) + property_include_rev_refs
             )
         , sort_key       = TFL.Sorted_By ( "zip", "street")
+        )
+
+    Adhoc_Group          = dict \
+        ( ETM            = "GTW.OMP.PAP.Adhoc_Group"
         )
 
     Association          = dict \
@@ -170,6 +176,10 @@ class Admin (object) :
         ( ETM            = "GTW.OMP.PAP.Company_has_Url"
         )
 
+    Id_Entity_permits_Group = dict \
+        ( ETM            = "GTW.OMP.PAP.Id_Entity_permits_Group"
+        )
+
     Person_has_Account   = dict \
         ( ETM            = "GTW.OMP.PAP.Person_has_Account"
         )
@@ -196,6 +206,11 @@ class Admin (object) :
 
     Person_has_Url       = dict \
         ( ETM            = "GTW.OMP.PAP.Person_has_Url"
+        )
+
+    Person_in_Group      = dict \
+        ( ETM            = "GTW.OMP.PAP.Person_in_Group"
+        , sort_key       = TFL.Sorted_By ("pid") ### XXX remove this
         )
 
 # end class Admin

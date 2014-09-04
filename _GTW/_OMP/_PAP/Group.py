@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jun-2014 (RS) Creation
+#     4-Sep-2014 (CT) Add query attribute `my_group`
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,17 @@ class _PAP_Group_ (_Ancestor_Essence) :
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
 
         # end class short_name
+
+        class my_group (_Ancestor.my_group) :
+            """Just an alias to be compatible with other entities supporting
+               `my_group`.
+            """
+
+            P_Type             = "PAP.Group"
+            query              = Q.SELF
+            hidden             = True
+
+        # end class my_group
 
     # end class _Attributes
 

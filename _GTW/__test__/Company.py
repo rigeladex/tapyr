@@ -2168,6 +2168,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Subject_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
         phones          query      PAP.Phone                 PAP.Subject_has_Phone
@@ -2182,6 +2183,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Subject_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
         phones          query      PAP.Phone                 PAP.Subject_has_Phone
@@ -2196,6 +2198,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Subject_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         phone_links     query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
         phones          query      PAP.Phone                 PAP.Subject_has_Phone
@@ -2210,6 +2213,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Company_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         phone_links     query      PAP.Company_has_Phone     PAP.Company_has_Phone
         phones          query      PAP.Phone                 PAP.Company_has_Phone
@@ -2225,6 +2229,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Company_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         owner           primary    PAP.Biz_Man
         phone_links     query      PAP.Company_has_Phone     PAP.Company_has_Phone
@@ -2240,6 +2245,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Association_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         phone_links     query      PAP.Association_has_Phone PAP.Association_has_Phone
         phones          query      PAP.Phone                 PAP.Association_has_Phone
@@ -2257,6 +2263,7 @@ _test_entity_attr = """
         emails          query      PAP.Email                 PAP.Person_has_Email
         events          query      EVT.Event                 EVT.Event
         last_changed_by computed   MOM.Id_Entity
+        my_group        query      PAP.Group
         my_person       query      PAP.Person
         phone_links     query      PAP.Person_has_Phone      PAP.Person_has_Phone
         phones          query      PAP.Phone                 PAP.Person_has_Phone
@@ -2424,6 +2431,7 @@ _test_entity_attr = """
         addresses                           query      PAP.Address               PAP.Subject_has_Address
         email_links                         query      PAP.Subject_has_Email     PAP.Subject_has_Email
         emails                              query      PAP.Email                 PAP.Subject_has_Email
+        my_group                            query      PAP.Group
         phone_links                         query      PAP.Subject_has_Phone     PAP.Subject_has_Phone
         phones                              query      PAP.Phone                 PAP.Subject_has_Phone
         property_links                      query      PAP.Subject_has_Property  PAP.Subject_has_Property

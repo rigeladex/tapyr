@@ -4765,6 +4765,7 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>
+        my_group                  : <SAW : Entity `my_group`>
         my_person                 : <SAW : Entity `my_person`>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
@@ -4785,6 +4786,7 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
+        my_group                  : <SAW : Entity `my_group`>
         my_person                 : <SAW : Entity `my_person`>
         name                      : <SAW : String `name` (PAP.Company)>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
@@ -4807,6 +4809,7 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
+        my_group                  : <SAW : Entity `my_group`>
         my_person                 : <SAW : Entity `my_person`>
         name                      : <SAW : String `name` (PAP.Company)>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
@@ -4838,6 +4841,7 @@ _test_qc_map = """
         lifetime.alive            : <SAW : Boolean `lifetime.alive`>
         lifetime.finish           : pap_company.lifetime__finish
         lifetime.start            : pap_company.lifetime__start
+        my_group                  : <SAW : Entity `my_group`>
         my_person                 : <SAW : Entity `my_person`>
         name                      : pap_company.name
         phone_links               : <SAW : Link_Ref_List `phone_links`>
@@ -4911,6 +4915,7 @@ _test_qc_map = """
         lifetime.finish           : pap_person.lifetime__finish
         lifetime.start            : pap_person.lifetime__start
         middle_name               : pap_person.middle_name
+        my_group                  : <SAW : Entity `my_group`>
         my_person                 : <SAW : Entity `my_person`>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
