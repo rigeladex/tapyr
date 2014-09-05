@@ -25,6 +25,7 @@
 #
 # Revision Dates
 #    20-Aug-2014 (CT) Creation
+#     5-Sep-2014 (CT) Remove `leaflet`
 #    ««revision-date»»···
 #--
 
@@ -32,6 +33,5 @@ from   __future__ import division
 
 Style_File  ("/media/GTW/css/font-awesome.css")
 Style_File  ("/media/GTW/css/pure.css")
-Style_File  ("/media/GTW/css/leaflet.css")
 
 ### __END__ html/e_type_mf3.jnj.media
