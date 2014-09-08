@@ -121,6 +121,10 @@ msgstr "Geburtstag (und Sterbetag)"
 msgid "Email address (including domain)"
 msgstr "Emailadresse (inkl. Domain)"
 
+#: _GTW._OMP._PAP.Email:0
+msgid "Email address"
+msgstr "Emailadresse"
+
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Email of company"
 msgstr "Emailadresse der Firma"
@@ -563,12 +567,8 @@ msgstr "Postleitzahl der Adresse"
 #~ msgid "Academic title."
 #~ msgstr "Akademischer Titel."
 
-#~ msgid "Email address"
-#~ msgstr "Emailadresse"
-
 #~ msgid "Salutation"
 #~ msgstr "Anrede"
 
 #~ msgid ""
 #~ msgstr "Anrede, die in Briefen oder Emails verwendet werden soll."
-

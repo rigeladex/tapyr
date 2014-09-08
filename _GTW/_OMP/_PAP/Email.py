@@ -36,6 +36,7 @@
 #    12-Sep-2012 (CT) Derive from `Property`
 #    16-Jan-2014 (CT) Remove explicit definition of `address.ui_name`
 #                     (use default `Address`, not `Email address`, for it)
+#     8-Sep-2014 (CT) Set `address.ui_name` to `Email address`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class _PAP_Email_ (_Ancestor_Essence) :
             ignore_case    = True
             max_length     = 80
             rank           = 1
+            ui_name        = "Email address"
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
 
