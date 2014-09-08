@@ -32,7 +32,8 @@
 #    24-Aug-2014 (CT) Put Field-Entity action-buttons horizontally at bottom
 #                     of border; fix vertical spacing accordingly
 #    24-Aug-2014 (CT) Add rule for `aside` for media with `max_width = Rem (34)`
-#    27-Aug-2014 (CT) Change `.aside` to `display="block"`, not `"inline-block"`
+#    27-Aug-2014 (CT) Change `aside` to `display="block"`, not `"inline-block"`
+#     8-Sep-2014 (CT) Fix rules for `quite_narrow` screens
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,15 @@ style_sheet = Style_Sheet \
                     , Rule_Class
                         ( "Field-Entity", "Field-Composite"
                         , margin           = TRBL (0, Em (1.0), Em (0.5))
+                        )
+                    , Rule_Sibling
+                        ( "section", "div"
+                        , children             =
+                            [ Rule_Class
+                                ( "Field-Entity", "Field-Composite"
+                                , margin_top           = Rem (1.5)
+                                )
+                            ]
                         )
                     , Rule_Class
                         ( "Field-Composite.horizontal"
@@ -475,16 +485,16 @@ style_sheet = Style_Sheet \
         ( Media.Query ("screen", P.breakpoint.quite_narrow)
         , rules               =
             [ Rule
-                ( "form"
+                ( ".pure-form"
                 , children        =
                     [ Rule
+                        ( ".action-button"
+                        , font_size        = Em (1.125)
+                        )
+                    , Rule
                         ( "section", "div"
                         , children         =
-                            [ Rule
-                                ( "aside"
-                                , margin_left          = 0
-                                )
-                            , Rule_Class
+                            [ Rule_Class
                                 ( "Entity"
                                 , children             =
                                     [ Rule_Child
@@ -495,8 +505,36 @@ style_sheet = Style_Sheet \
                                     ]
                                 )
                             , Rule_Class
-                                ( "Field-Entity", "Field-Composite"
+                                ( "Field"
+                                , children             =
+                                    [ Rule
+                                        ( "label"
+                                        , margin_top           = Rem (0.5)
+                                        )
+                                    ]
+                                )
+                            , Rule_Class
+                                ( "Field", "Field-Entity", "Field-Composite"
                                 , padding_left         = Rem (0.5)
+                                , children             =
+                                    [ Rule
+                                        ( "aside"
+                                        , margin           = TRBL (0)
+                                        )
+                                    ]
+                                )
+                            , Rule_Class
+                                ( "Field-Entity", "Field-Composite"
+                                , margin               = TRBL (Rem (1.0))
+                                )
+                            , Rule_Sibling
+                                ( "section", "div"
+                                , children             =
+                                    [ Rule_Class
+                                        ( "Field-Entity", "Field-Composite"
+                                        , margin_top           = Rem (1.5)
+                                        )
+                                    ]
                                 )
                             ]
                         )
