@@ -178,6 +178,7 @@
 #    10-May-2013 (CT)  Add `plural_of`
 #    12-Jun-2013 (CT)  Change `bool_split` to use `bool_split_iters`
 #     8-Jul-2014 (CT)  Change `split_hst`, `rsplit_hst` to allow multiple `seps`
+#     9-Sep-2014 (CT)  Add guard for `seps` to `split_hst`, `rsplit_hst`
 #    ««revision-date»»···
 #--
 
@@ -1006,6 +1007,8 @@ def split_hst (string, * seps) :
        >>> split_hst (",", ",")
        ('', ',', '')
     """
+    if not seps :
+        raise TypeError ("split_hst() takes at least 2 arguments (1 given)")
     for sep in seps :
         parts = string.split (sep, 1)
         if len (parts) == 2 :
@@ -1038,6 +1041,8 @@ def rsplit_hst (string, * seps) :
        >>> rsplit_hst (",", ",")
        ('', ',', '')
     """
+    if not seps :
+        raise TypeError ("rsplit_hst() takes at least 2 arguments (1 given)")
     for sep in seps :
         parts = string.rsplit (sep, 1)
         if len (parts) == 2 :
