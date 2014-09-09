@@ -78,6 +78,9 @@
 #                     add `__and__`, `__invert__`, `__or__` to `Root`
 #    16-Apr-2014 (CT) Change `AND` and `OR` to distribute binary operations
 #    16-Apr-2014 (CT) Add `NIL`
+#    10-Sep-2014 (CT) Add `__getattr__` and `__getitem__` to `_Bool_Bin_Op_`
+#    11-Sep-2014 (CT) Add `Q.APPLY`
+#    11-Sep-2014 (CT) Add `_Distributive_` as mixin for `_Bool_Bin_Op_`, `_Get_`
 #    ««revision-date»»···
 #--
 
@@ -364,7 +367,7 @@ import _TFL.Decorator
 import _TFL.Filter
 import _TFL.Undef
 
-from   _TFL._Meta.Single_Dispatch import Single_Dispatch
+from   _TFL._Meta.Single_Dispatch import Single_Dispatch, Single_Dispatch_Method
 from   _TFL.predicate             import callable
 
 import operator
@@ -441,8 +444,23 @@ class Base (TFL.Meta.Object) :
     >>> (Q.foo | Q.bar) > 0
     <Filter_Or [Q.foo > 0, Q.bar > 0]>
 
-    >>> print (Q.OR (Q.foo, Q.bar, Q.baz) == 42)
+    >>> Q.OR (Q.foo, Q.bar, Q.baz)
+    <_OR_ [Q.foo, Q.bar, Q.baz]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz).qux
+    <_OR_ [Q.foo.qux, Q.bar.qux, Q.baz.qux]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz) == 42
     <Filter_Or [Q.foo == 42, Q.bar == 42, Q.baz == 42]>
+
+    >>> Q.OR (Q.foo, Q.bar, Q.baz).qux < 137
+    <Filter_Or [Q.foo.qux < 137, Q.bar.qux < 137, Q.baz.qux < 137]>
+
+    >>> Q.foo.bar.OR (Q.baz, Q.qux)
+    <_OR_ [Q.foo.bar.baz, Q.foo.bar.qux]>
+
+    >>> Q.foo.bar.OR (Q.baz, Q.qux) > 23
+    <Filter_Or [Q.foo.bar.baz > 23, Q.foo.bar.qux > 23]>
 
     >>> r1
     Record (bar = 137, baz = 11, foo = 42)
@@ -486,6 +504,20 @@ class Base (TFL.Meta.Object) :
     def AND (self, * args) :
         return self._AND_ (self, * args)
     # end def AND
+
+    @Single_Dispatch_Method
+    def APPLY (self, getter, * args) :
+        result = getter
+        if args :
+            result = result (* args)
+        return result
+    # end def APPLY
+
+    @APPLY.add_type (* pyk.string_types)
+    def APPLY_string (self, s, * args) :
+        getter = getattr (self, s)
+        return self.APPLY (getter, * args)
+    # end def APPLY_string
 
     def OR (self, * args) :
         return self._OR_  (self, * args)
@@ -905,6 +937,25 @@ class _Date_ (TFL.Meta.Object) :
 
 # end class _Date_
 
+class _Distributive_ (Q_Root) :
+    """Mixin for classes that should distribute AND and OR"""
+
+    def AND (self, * args) :
+        if len (args) < 1 :
+            raise TypeError \
+                ("AND needs at least 1 argument (%s given)" % len (args))
+        return self.Q.AND (* tuple (Q.APPLY (a, self) for a in args))
+    # end def AND
+
+    def OR (self, * args) :
+        if len (args) < 1 :
+            raise TypeError \
+                ("OR needs at least 1 argument (%s given)" % len (args))
+        return self.Q.OR (* tuple (Q.APPLY (a, self) for a in args))
+    # end def OR
+
+# end class _Distributive_
+
 @pyk.adapt__bool__
 class _Exp_Base_ (Q_Root) :
 
@@ -1108,13 +1159,13 @@ class _Exp_B_ (_Exp_Base_) :
 
 # end class _Exp_B_
 
-class _Bool_Bin_Op_ (_Exp_) :
+class _Bool_Bin_Op_ (_Distributive_, _Exp_) :
     """Base class for boolean binary operations `AND` and `OR`"""
 
     def __new__ (cls, Q, * qs) :
         ### We only want to distribute binary operators if all `qs` are
         ### getters
-        if all (isinstance (a, (Q._Get_, BVAR)) for a in qs) :
+        if all (isinstance (a, (BVAR, _Distributive_)) for a in qs) :
             return cls.__c_super.__new__ (cls, Q, * qs)
         else :
             return cls._Ancestor (* qs)
@@ -1124,6 +1175,14 @@ class _Bool_Bin_Op_ (_Exp_) :
         self.Q = Q
         self.__super.__init__ (* qs)
     # end def __init__
+
+    def __getattr__ (self, name) :
+        return self.__class__ (Q, * (getattr (p, name) for p in self.predicates))
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return self.__class__ (Q, * (p [key] for p in self.predicates))
+    # end def __getitem__
 
 # end class _Bool_Bin_Op_
 
@@ -1144,7 +1203,7 @@ class _OR_ (_Bool_Bin_Op_, TFL.Filter_Or) :
 # end class _OR_
 
 @TFL.Add_New_Method (Base)
-class _Get_ (_Exp_) :
+class _Get_ (_Distributive_, _Exp_) :
     """Query getter"""
 
     predicate_precious_p = True

@@ -67,6 +67,8 @@
 #    21-Mar-2013 (CT) Add `value` guard to `_Composite_.__call__._gen`
 #     7-Oct-2013 (CT) Set `Q.Ignore_Exception` to `AttributeError`
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
+#     9-Sep-2014 (CT) Use `MOM.Q_Exp`, not `TFL.Q_Exp`;
+#                     import `Q` from `MOM.Q_Exp`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +77,7 @@ from   __future__  import unicode_literals
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
+from   _MOM.Q_Exp            import Q
 import _MOM._Attr
 
 from   _TFL.I18N             import _
@@ -82,9 +85,6 @@ from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
-import _TFL.Q_Exp
-
-Q = TFL.Q_Exp.Base (Ignore_Exception = AttributeError)
 
 class _M_Filter_ (TFL.Meta.Object.__class__) :
     """Meta class for Filter classes."""
@@ -567,5 +567,4 @@ class Id_Entity_Not_Equal (Not_Equal, _Id_Entity_) :
 
 if __name__ != "__main__" :
     MOM.Attr._Export_Module ()
-    MOM._Export ("Q")
 ### __END__ MOM.Attr.Filter

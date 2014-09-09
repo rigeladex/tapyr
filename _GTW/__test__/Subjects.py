@@ -36,6 +36,7 @@
 #     8-Mar-2013 (CT) Add subclasses of `Association` to test
 #                     `polymorphic_epk` over multiple inheritance levels
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
+#     9-Sep-2014 (CT) Add tests for query expressions with type restriction
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,33 @@ _test_code = """
     >>> _ = PAP.Person_has_Phone  (pt, PAP.Phone ("43", "1", "135790", raw = True))
     >>> _ = PAP.Company_has_Phone (co, PAP.Phone ("43", "1", "246802", raw = True), extension = "16", raw = True)
 
+    >>> PAP.Subject_has_Property.query ().count ()
+    10
+
+    >>> PAP.Subject_has_Property.query (Q.left ["PAP.Association"]).count ()
+    0
+
+    >>> PAP.Subject_has_Property.query (Q.left ["PAP.Company"]).count ()
+    3
+
+    >>> PAP.Subject_has_Property.query (Q.left ["PAP.Person"]).count ()
+    7
+
+    >>> PAP.Subject_has_Property.query (Q.right ["PAP.Address"]).count ()
+    0
+
+    >>> PAP.Subject_has_Property.query (Q.right ["PAP.Email"]).count ()
+    6
+
+    >>> PAP.Subject_has_Property.query (Q.right ["PAP.Email"].address.CONTAINS (".co")).count ()
+    4
+
+    >>> PAP.Subject_has_Property.query (Q.right ["PAP.Email"].address.ENDSWITH ("@mangari.org")).count ()
+    2
+
+    >>> PAP.Subject_has_Property.query (Q.right [Q.PAP.Phone]).count ()
+    4
+
     >>> PAP.Subject_has_Email.query_s ().all ()
     [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
     >>> PAP.Company_has_Email.query_s ().all ()
@@ -126,7 +154,7 @@ _test_code = """
     >>> PAP.Subject_has_Property.query_s (left = pt).all ()
     [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
-    #>>> PAP.Subject_has_Property.query_s (subject = pt).all ()
+    >>> PAP.Subject_has_Property.query_s (subject = pt).all ()
     [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
 
     >>> PAP.Subject_has_Phone.query_s (Q.right.number.CONTAINS ("2")).all ()

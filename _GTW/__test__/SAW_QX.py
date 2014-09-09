@@ -194,7 +194,7 @@ _test_getters = """
     <MOM.Date_Interval | QX.Kind for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
         <MOM.Date_Interval | QX.Kind_Composite for
-            <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
+            RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.lifetime.start.year))
     <MOM.Date_Interval | QX.Kind for
@@ -402,19 +402,38 @@ _test_getters = """
     <PAP.Subject | QX.Kind_Partial for
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
-            RAW <SAW : Subject `left` [pap_subject_has_property.left]>>
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
       <MOM.Date_Interval | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
           <MOM.Date_Interval | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
-                  RAW <SAW : Subject `left` [pap_subject_has_property.left]>>
+                   <SAW : Subject `left` [pap_subject_has_property.left]>>
       <MOM.Date_Interval | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
           <MOM.Date_Interval | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
-                  RAW <SAW : Subject `left` [pap_subject_has_property.left]>>
+                   <SAW : Subject `left` [pap_subject_has_property.left]>>
+
+    >>> x_start__raw = qxs (Q.subject.lifetime.start.RAW)
+    >>> show (x_start__raw)
+    <PAP.Subject | QX.Kind_Partial for
+        RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
+        <PAP.Subject_has_Phone | QX.Kind_EPK for
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
+      <MOM.Date_Interval | QX.Kind for
+          RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
+          <MOM.Date_Interval | QX.Kind_Composite for
+              RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
+              <PAP.Subject_has_Phone | QX.Kind_EPK for
+                   <SAW : Subject `left` [pap_subject_has_property.left]>>
+      <MOM.Date_Interval | QX.Kind for
+          RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
+          <MOM.Date_Interval | QX.Kind_Composite for
+              RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
+              <PAP.Subject_has_Phone | QX.Kind_EPK for
+                   <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> x_alive = qxs (Q.subject.lifetime.alive)
     >>> show (x_alive)
