@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -37,6 +37,7 @@
 #     5-Jul-2011 (CT) `MOM.Attr.Selector` added
 #    19-Jul-2011 (CT) `MOM.Q_Exp_Raw` added
 #    15-Jun-2013 (CT) Import `Derived_PNS`
+#     9-Sep-2014 (CT) Rename `MOM.Q_Exp_Raw` to `MOM.Q_Exp`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ import _MOM.Entity
 import _MOM.Error
 import _MOM.Link
 import _MOM.Object
-import _MOM.Q_Exp_Raw
+import _MOM.Q_Exp
 import _MOM.Scope
 
 import _MOM._Attr.Selector

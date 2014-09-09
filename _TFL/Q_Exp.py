@@ -1160,7 +1160,6 @@ class _Get_ (_Exp_) :
         try :
             return self._getter (obj)
         except Q.Ignore_Exception as exc :
-            Q.undef.exc = exc
             return Q.undef
     # end def predicate
 

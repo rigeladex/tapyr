@@ -20,10 +20,11 @@
 #
 #++
 # Name
-#    MOM.Q_Exp_Raw
+#    MOM.Q_Exp
 #
 # Purpose
-#    Extend TFL.Q_Exp to support query expressions for raw values
+#    Extend TFL.Q_Exp to support MOM-specific query expressions,
+#    e.g., for raw values
 #
 # Revision Dates
 #    19-Jul-2011 (CT) Creation
@@ -36,6 +37,7 @@
 #    30-Aug-2013 (CT) Remove `SET`
 #     4-Apr-2014 (CT) Use `TFL.Q_Exp.Base`, not `TFL.Attr_Query ()`
 #    26-Aug-2014 (CT) Change `_Get_Raw_._getter` to allow composite `key`
+#     9-Sep-2014 (CT) Rename from `MOM.Q_Exp_Raw` to `MOM.Q_Exp`
 #    ««revision-date»»···
 #--
 
@@ -104,4 +106,4 @@ class _Get_Raw_ (TFL.Q_Exp._Get_) :
 
 if __name__ != "__main__" :
     MOM._Export_Module ()
-### __END__ MOM.Q_Exp_Raw
+### __END__ MOM.Q_Exp
