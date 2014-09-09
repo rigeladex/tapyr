@@ -1197,7 +1197,7 @@ _test_code = """
           , 'attrs' :
               [ { 'name' : 'address'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Address'
+                , 'ui_name' : 'Email address'
                 }
               , { 'name' : 'desc'
                 , 'sig_key' : 3

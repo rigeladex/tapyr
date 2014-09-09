@@ -876,7 +876,7 @@ _test_code = """
           , 'attrs' :
               [ { 'name' : 'address'
                 , 'sig_key' : 3
-                , 'ui_name' : 'Address'
+                , 'ui_name' : 'Email address'
                 }
               , { 'name' : 'desc'
                 , 'sig_key' : 3
@@ -1974,7 +1974,7 @@ _test_code = """
             , id = 'emails__address'
             , name = 'address'
             , sig_key = 3
-            , ui_name = 'Emails/Address'
+            , ui_name = 'Emails/Email address'
             )
           , Record
             ( attr = String `desc`

@@ -1555,7 +1555,7 @@ _test_qr = """
             , id = 'emails__address'
             , name = 'address'
             , sig_key = 3
-            , ui_name = 'Emails/Address'
+            , ui_name = 'Emails/Email address'
             )
           , Record
             ( attr = String `desc`
