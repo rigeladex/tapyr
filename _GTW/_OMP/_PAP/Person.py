@@ -52,6 +52,8 @@
 #    22-Mar-2013 (CT) Set `Subject.default_child` to `Person`
 #     9-Jan-2014 (CT) Remove attribute `salutation`
 #    16-Apr-2014 (CT) Add query attribute `my_person`
+#    12-Sep-2014 (CT) Remove `my_person`
+#                     [use type restriction in queries, instead]
 #    ««revision-date»»···
 #--
 
@@ -167,17 +169,6 @@ class _PAP_Person_ (_Ancestor_Essence) :
         # end class title
 
         ### Non-primary attributes
-
-        class my_person (_Ancestor.my_person) :
-            """Just an alias to be compatible with other entities supporting
-               `my_person`.
-            """
-
-            P_Type             = "PAP.Person"
-            query              = Q.SELF
-            hidden             = True
-
-        # end class my_person
 
         class sex (A_Sex) :
 

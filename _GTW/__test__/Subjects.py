@@ -92,6 +92,9 @@ _test_code = """
     >>> PAP.Subject_has_Property.query (Q.left ["PAP.Association"]).count ()
     0
 
+    >>> PAP.Subject_has_Property.query (Q.left ["PAP.Legal_Entity"]).count ()
+    3
+
     >>> PAP.Subject_has_Property.query (Q.left ["PAP.Company"]).count ()
     3
 
@@ -345,6 +348,57 @@ _test_code = """
 
 """
 
+_test_saw = """
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> print (PAP.Subject_has_Property.query (Q.left ["PAP.Legal_Entity"]))
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_company AS pap_company__1 ON pap_company__1.pid = pap_subject_has_property."left"
+           LEFT OUTER JOIN pap_association AS pap_association__1 ON pap_association__1.pid = pap_subject_has_property."left"
+         WHERE pap_company__1.pid IS NOT NULL
+            OR pap_association__1.pid IS NOT NULL
+
+    >>> print (PAP.Subject_has_Property.query (Q.left ["PAP.Legal_Entity"].name == "ISAF").formatted ())
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_company AS pap_company__1 ON pap_company__1.pid = pap_subject_has_property."left"
+           LEFT OUTER JOIN pap_association AS pap_association__1 ON pap_association__1.pid = pap_subject_has_property."left"
+         WHERE pap_company__1.name = :name_1
+            OR pap_association__1.name = :name_2
+    Parameters:
+         name_1               : u'ISAF'
+         name_2               : u'ISAF'
+
+"""
 ### XXX auto cached roles are currently not supported
 ### XXX * either remove _test_acr or re-add auto-cached roles and fix _test_acr
 _test_acr = """
@@ -410,5 +464,14 @@ class Association_T (_Ancestor_Essence) :
 # end class Association_T
 
 __test__ = Scaffold.create_test_dict (_test_code)
+__test__.update \
+    ( Scaffold.create_test_dict
+        ( dict
+            ( test_saw = _test_saw
+            )
+        , ignore = ("HPS", )
+        )
+    )
+
 
 ### __END__ GTW.__test__.Subjects

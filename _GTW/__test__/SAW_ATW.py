@@ -50,6 +50,7 @@
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    26-Aug-2014 (CT) Add tests for `attrs` with argument `Q.skipper.club.name`,
 #                     `Q.RAW.skipper.club.name`, `Q.skipper.club.__raw_name`
+#     9-Sep-2014 (CT) Add test for query with type restriction
 #    ««revision-date»»···
 #--
 
@@ -1211,13 +1212,13 @@ _test_attr_wrappers = """
           Primary_Optional, _Sticky_Mixin_, _Primary_D_, _Primary_, _User_, _DB_Attr_
     PAP.Subject_has_Url <-- PAP.Subject_has_Property
     PAP.Company_has_Url <-- PAP.Subject_has_Property
-    PAP.Person_has_Url
+    PAP.Person_has_Url <-- PAP.Subject_has_Property
     PAP.Company_has_Phone <-- PAP.Subject_has_Phone
-    PAP.Person_has_Phone
+    PAP.Person_has_Phone <-- PAP.Subject_has_Phone
     PAP.Company_has_Email <-- PAP.Subject_has_Property
-    PAP.Person_has_Email
+    PAP.Person_has_Email <-- PAP.Subject_has_Property
     PAP.Company_has_Address <-- PAP.Subject_has_Property
-    PAP.Person_has_Address
+    PAP.Person_has_Address <-- PAP.Subject_has_Property
 
     >>> show_attr_mro (apt ["Auth.Account"])
     Auth.Account
@@ -4262,6 +4263,7 @@ _test_q_result = """
          FROM mom_md_change
            JOIN mom_id_entity AS mom_id_entity__1 ON mom_id_entity__1.pid = mom_md_change."user"
            LEFT OUTER JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_id_entity__1.pid
+           JOIN mom_md_change AS mom_md_change__2 ON mom_md_change__2.pid = mom_md_change."user"
          WHERE mom_md_change__2.kind = :kind_1
             AND mom_md_change__2."user" = mom_md_change."user"
             AND mom_md_change.parent_cid = :parent_cid_1
@@ -6353,6 +6355,147 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
          ORDER BY pap_person_has_account__4."left" IS NULL
 
+    >>> ET  = apt ["PAP.Subject_has_Property"]
+    >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+
+    >>> print (qrs.filter (Q.left)) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+         WHERE pap_subject_has_property."left" IS NOT NULL
+
+    >>> print (qrs.filter (Q.left["PAP.Person"])) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE pap_person.pid IS NOT NULL
+
+    >>> print (qrs.filter (Q.left["PAP.Person"] == 42).formatted ()) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE pap_person.pid = :pid_1
+    Parameters:
+         pid_1                : 42
+
+    >>> print (qrs.filter (Q.left["PAP.Person"].last_name).formatted ()) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE pap_person.last_name != :last_name_1
+    Parameters:
+         last_name_1          : u''
+
+    >>> print (qrs.filter (Q.left["PAP.Person"].last_name.RAW == "Duck").formatted ()) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_person ON pap_person.pid = pap_subject_has_property."left"
+         WHERE pap_person.__raw_last_name = :__raw_last_name_1
+    Parameters:
+         __raw_last_name_1    : u'Duck'
+
+    >>> print (qrs.filter (Q.left["PAP.Legal_Entity"])) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_company AS pap_company__2 ON pap_company__2.pid = pap_subject_has_property."left"
+         WHERE pap_company__2.pid IS NOT NULL
+
+    >>> print (qrs.filter (Q.left["PAP.Legal_Entity"].name)) ### PAP.Subject_has_Property
+    SQL: SELECT
+           mom_id_entity.electric AS mom_id_entity_electric,
+           mom_id_entity.last_cid AS mom_id_entity_last_cid,
+           mom_id_entity.pid AS mom_id_entity_pid,
+           mom_id_entity.type_name AS mom_id_entity_type_name,
+           mom_id_entity.x_locked AS mom_id_entity_x_locked,
+           pap_subject_has_phone.extension AS pap_subject_has_phone_extension,
+           pap_subject_has_phone.pid AS pap_subject_has_phone_pid,
+           pap_subject_has_property."desc" AS pap_subject_has_property_desc,
+           pap_subject_has_property."left" AS pap_subject_has_property_left,
+           pap_subject_has_property."right" AS pap_subject_has_property_right,
+           pap_subject_has_property.pid AS pap_subject_has_property_pid
+         FROM mom_id_entity
+           JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
+           LEFT OUTER JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
+           LEFT OUTER JOIN pap_company AS pap_company__2 ON pap_company__2.pid = pap_subject_has_property."left"
+         WHERE pap_company__2.name != :name_1
+
 """
 
 _test_q_result_x = """
@@ -7007,8 +7150,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>
-        my_group                  : <SAW : Entity `my_group`>
-        my_person                 : <SAW : Entity `my_person`>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
         pid                       : mom_id_entity.pid
@@ -7028,8 +7169,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
-        my_group                  : <SAW : Entity `my_group`>
-        my_person                 : <SAW : Entity `my_person`>
         name                      : <SAW : String `name` (PAP.Company)>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
@@ -7051,8 +7190,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         lifetime                  : <SAW : Date_Interval `lifetime` (PAP.Company)>
-        my_group                  : <SAW : Entity `my_group`>
-        my_person                 : <SAW : Entity `my_person`>
         name                      : <SAW : String `name` (PAP.Company)>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
@@ -7083,8 +7220,6 @@ _test_qc_map = """
         lifetime.alive            : <SAW : Boolean `lifetime.alive`>
         lifetime.finish           : pap_company.lifetime__finish
         lifetime.start            : pap_company.lifetime__start
-        my_group                  : <SAW : Entity `my_group`>
-        my_person                 : <SAW : Entity `my_person`>
         name                      : pap_company.name
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
@@ -7157,8 +7292,6 @@ _test_qc_map = """
         lifetime.finish           : pap_person.lifetime__finish
         lifetime.start            : pap_person.lifetime__start
         middle_name               : pap_person.middle_name
-        my_group                  : <SAW : Entity `my_group`>
-        my_person                 : <SAW : Entity `my_person`>
         phone_links               : <SAW : Link_Ref_List `phone_links`>
         phones                    : <SAW : Role_Ref_Set `phones`>
         pid                       : mom_id_entity.pid
@@ -7272,7 +7405,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_person_has_account.left
-        my_person                 : <SAW : Entity `my_person`>
         person                    : pap_person_has_account.left
         pid                       : mom_id_entity.pid
         right                     : pap_person_has_account.right
@@ -7974,7 +8106,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_subject_has_property.left
-        my_person                 : <SAW : Entity `my_person`>
         person                    : pap_subject_has_property.left
         pid                       : mom_id_entity.pid
         property                  : pap_subject_has_property.right
@@ -8009,7 +8140,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_subject_has_property.left
-        my_person                 : <SAW : Entity `my_person`>
         person                    : pap_subject_has_property.left
         phone                     : pap_subject_has_property.right
         pid                       : mom_id_entity.pid
@@ -8043,7 +8173,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_subject_has_property.left
-        my_person                 : <SAW : Entity `my_person`>
         person                    : pap_subject_has_property.left
         pid                       : mom_id_entity.pid
         property                  : pap_subject_has_property.right
@@ -8076,7 +8205,6 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : pap_subject_has_property.left
-        my_person                 : <SAW : Entity `my_person`>
         person                    : pap_subject_has_property.left
         pid                       : mom_id_entity.pid
         property                  : pap_subject_has_property.right

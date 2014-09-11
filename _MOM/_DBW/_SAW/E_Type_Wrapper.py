@@ -83,6 +83,7 @@
 #                     * use `_mangled_alias` in `_get_sa_table_alias`
 #    26-Sep-2013 (CT) Add `reset_cache`
 #     2-Sep-2014 (CT) Quote table name if it's not a valid SQL identifier
+#    12-Sep-2014 (CT) Factor `etw_alias`
 #    ««revision-date»»···
 #--
 
@@ -324,11 +325,7 @@ class _E_Type_Wrapper_Base_ (TFL.Meta.Object) :
         middle = (self if X_ETW is None else X_ETW).table_name
         key    = (t_name, middle, a_name)
         xtra   = ()
-        try :
-            result = self._aja_map [key]
-        except KeyError :
-            alias  = "%s____%s__%s" % key
-            result = self._aja_map [key] = E_Type_Wrapper_Alias (ETW, alias)
+        result = self.etw_alias (ETW, * key)
         if akw.columns and a_name not in self.sa_table_x.c :
             ### need an extra join because `akw`'s column is not in
             ### `self.sa_table_x` but in that of a parent
@@ -337,6 +334,15 @@ class _E_Type_Wrapper_Base_ (TFL.Meta.Object) :
             xtra    = (getattr (akw_col.table.c, self.spk_name), self.spk_col)
         return result, xtra
     # end def attr_join_etw_alias
+
+    def etw_alias (self, ETW, * key) :
+        try :
+            result = self._aja_map [key]
+        except KeyError :
+            alias  = "%s____%s__%s" % key
+            result = self._aja_map [key] = E_Type_Wrapper_Alias (ETW, alias)
+        return result
+    # end def etw_alias
 
     def reset_cache (self) :
         self._aja_map = {}

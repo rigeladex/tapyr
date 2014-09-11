@@ -109,6 +109,7 @@
 #     6-Mar-2014 (CT) Fix `parent` of nested attributes in
 #                     `Kind_Wrapper_C._setup_attrs` and `._setup_alias_attrs`
 #    11-Jul-2014 (CT) Fix `_saw_column_type` for `if pts._Pickler_Type`
+#    12-Sep-2014 (CT) Add `A_Join.key` including `t_col`
 #    ««revision-date»»···
 #--
 
@@ -143,11 +144,15 @@ MOM.Attr.A_Attr_Type.SAW_Column_Type = SA.schema.Column
 class A_Join (TFL.Meta.Object) :
     """Encapsulate a join bound to an attribute"""
 
+    special_col_names = ("left", "middle", "pid", "right")
+
     def __init__ (self, toc, s_col, t_col, joiner, op = None) :
-        self.table  = \
+        self.table  = table = \
             toc if not isinstance (toc, SA.schema.Column) else toc.table
         self.cols   = s_col, t_col
         self.joiner = joiner
+        self.key    = table if t_col.name in self.special_col_names \
+            else (table, t_col)
         self.op     = op if op is not None else operator.__eq__
     # end def __init__
 

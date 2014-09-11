@@ -29,6 +29,7 @@
 #    30-Aug-2013 (CT) Creation
 #    31-Jan-2014 (CT) Add test for `__{true,floor}div__`  to `_test_expr`
 #     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
+#     9-Sep-2014 (CT) Add tests for query with type restriction
 #    ««revision-date»»···
 #--
 
@@ -964,6 +965,87 @@ _test_expr = """
               <SRM.Regatta | QX.Kind_EPK for
                    <SAW : Regatta_Event `left` [srm_regatta.left]>>
       2013
+
+    >>> ET  = apt ["PAP.Subject_has_Property"]
+    >>> qrs = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
+    >>> qxs = QX.Mapper (qrs)
+
+    >>> show (qxs (Q.left)) ### PAP.Subject_has_Property
+    <PAP.Subject_has_Property | QX.Kind_EPK for
+         <SAW : Subject `left` [pap_subject_has_property.left]>>
+
+    >>> show (qxs (Q.left["PAP.Person"])) ### PAP.Subject_has_Property
+    <PAP.Person | QX._Kind_EPK_Restricted_ for
+         <SAW : Subject `left` [pap_subject_has_property.left]>>
+        <PAP.Subject_has_Property | QX.Kind_EPK for
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
+
+    >>> show (qxs (Q.left["PAP.Person"].last_name)) ### PAP.Subject_has_Property
+    <PAP.Person | QX.Kind for
+         <SAW : String `last_name` [pap_person.last_name, pap_person.__raw_last_name]>>
+        <PAP.Person | QX._Kind_EPK_Restricted_ for
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
+            <PAP.Subject_has_Property | QX.Kind_EPK for
+                 <SAW : Subject `left` [pap_subject_has_property.left]>>
+
+    >>> show (qxs (Q.subject["PAP.Person"].lifetime)) ### PAP.Subject_has_Property
+    <MOM.Date_Interval | QX.Kind_Composite for
+         <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
+        <PAP.Person | QX._Kind_EPK_Restricted_ for
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
+            <PAP.Subject_has_Property | QX.Kind_EPK for
+                 <SAW : Subject `left` [pap_subject_has_property.left]>>
+
+    >>> show (qxs (Q.subject["PAP.Person"].lifetime.alive)) ### PAP.Subject_has_Property
+    <MOM.Date_Interval | QX.Kind_Query for
+         <SAW : Boolean `lifetime.alive`>>
+        <MOM.Date_Interval | QX.Kind_Composite for
+             <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
+            <PAP.Person | QX._Kind_EPK_Restricted_ for
+                 <SAW : Subject `left` [pap_subject_has_property.left]>>
+                <PAP.Subject_has_Property | QX.Kind_EPK for
+                     <SAW : Subject `left` [pap_subject_has_property.left]>>
+        :AND:
+          :OR:
+            Bin:__eq__:
+              <MOM.Date_Interval | QX.Kind for
+                   <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
+              None
+            Bin:__le__:
+              <MOM.Date_Interval | QX.Kind for
+                   <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
+              <<today>>
+          :OR:
+            Bin:__eq__:
+              <MOM.Date_Interval | QX.Kind for
+                   <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
+              None
+            Bin:__ge__:
+              <MOM.Date_Interval | QX.Kind for
+                   <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
+              <<today>>
+
+    >>> show (qxs (Q.left["PAP.Legal_Entity"])) ### PAP.Subject_has_Property
+    <PAP.Subject_has_Property | QX._Kind_Partial_Restricted_ for
+         <SAW : Subject `left` [pap_subject_has_property.left]>>
+        <PAP.Subject_has_Property | QX.Kind_EPK for
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
+      <PAP.Company | QX._Kind_EPK_Restricted_ for
+           <SAW : Subject `left` [pap_subject_has_property.left]>>
+          <PAP.Subject_has_Property | QX.Kind_EPK for
+               <SAW : Subject `left` [pap_subject_has_property.left]>>
+
+    >>> show (qxs (Q.left["PAP.Legal_Entity"].name)) ### PAP.Subject_has_Property
+    <PAP.Subject_has_Property | QX._Kind_Partial_Restricted_ for
+         <SAW : Subject `left` [pap_subject_has_property.left]>>
+        <PAP.Subject_has_Property | QX.Kind_EPK for
+             <SAW : Subject `left` [pap_subject_has_property.left]>>
+      <PAP.Company | QX.Kind for
+           <SAW : String `name` [pap_company__2.name, pap_company__2.__raw_name]>>
+          <PAP.Company | QX._Kind_EPK_Restricted_ for
+               <SAW : Subject `left` [pap_subject_has_property.left]>>
+              <PAP.Subject_has_Property | QX.Kind_EPK for
+                   <SAW : Subject `left` [pap_subject_has_property.left]>>
 
 """
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Jun-2014 (RS) Creation
 #     4-Sep-2014 (CT) Add `ui_allow_new = False` to `left` and `right`
+#    12-Sep-2014 (CT) Add `left.rev_ref_attr_name = "member"`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,7 @@ class Person_in_Group (_Ancestor_Essence) :
             """%(left.role_type.ui_name)s linked to %(right.role_type.ui_name)s"""
 
             role_type           = PAP.Person
+            rev_ref_attr_name   = "member"
             ui_allow_new        = False
 
         # end class left

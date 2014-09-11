@@ -29,6 +29,8 @@
 #     6-Dec-2012 (CT) Creation
 #    15-May-2013 (CT) Rename `auto_cache` to `auto_rev_ref`
 #    16-Apr-2014 (CT) Add query attribute `my_person`
+#    12-Sep-2014 (CT) Remove `my_person`
+#                     [use type restriction in queries, instead]
 #    ««revision-date»»···
 #--
 
@@ -71,16 +73,6 @@ class Person_has_Account (_Ancestor_Essence) :
         # end class right
 
         ### Non-primary attributes
-
-        class my_person (A_Id_Entity) :
-            """Person this %(right.role_name)s is attached to."""
-
-            kind                = Attr.Query
-            P_Type              = "PAP.Person"
-            query               = Q.left
-            hidden              = True
-
-        # end class my_person
 
     # end class _Attributes
 

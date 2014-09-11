@@ -65,6 +65,7 @@
 #    29-Jan-2014 (CT) Fix `count` to support `bindings`; factor `_execute`
 #     3-Apr-2014 (CT) For `distinct`, add `order_by` criteria to `select` clause
 #     7-May-2014 (CT) Add guard against `None` to `_Base_._get_xs`
+#    12-Sep-2014 (CT) Use `A_Join.key`, not `A_Join.table`, for `joined` set
 #    ««revision-date»»···
 #--
 
@@ -327,8 +328,8 @@ class _Base_ (TFL.Meta.Object) :
 
     def _extend_join (self, join, joined, jxs) :
         for a_join in jxs :
-            if a_join.table not in joined :
-                joined.add (a_join.table)
+            if a_join.key not in joined :
+                joined.add (a_join.key)
                 join = a_join (join)
         return join
     # end def _extend_join

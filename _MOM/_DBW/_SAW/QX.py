@@ -60,6 +60,15 @@
 #    16-Apr-2014 (CT) Add `Q.NIL`
 #    26-Aug-2014 (CT) Factor `_attr_kind_wrapper_and_col`, use in
 #                     `Kind_EPK._get_attr` (to support `__raw_«name»`)
+#    10-Sep-2014 (CT) Add support for type restriction
+#                     + `Kind_EPK.__getitem__`
+#                     + `_Kind_EPK_Restricted_`, `_Kind_Partial_Restricted_`
+#                     + `_Q_ETR_Proxy_`, `_fixed_q_exp_get_etr_ `
+#    12-Sep-2014 (CT) Use `A_Join.key`, not `A_Join.table`, for `_join_set`
+#    12-Sep-2014 (CT) Add `_polymorphic_x`
+#    12-Sep-2014 (CT) Add `_Bool_Distributive_.__getattr__`, `.__getitem__`
+#    12-Sep-2014 (CT) Add `_etw_alias` to `Kind_EPK.__getitem__` and
+#                     `_Kind_Partial_Restricted_._children`
 #    ««revision-date»»···
 #--
 
@@ -169,6 +178,8 @@ class Mapper (_RAW_) :
     """
 
     _is_raw               = False
+    _outer                = None
+    _polymorphic_x        = None
 
     def __init__ (self, QR, ETW = None) :
         self.QR           = QR
@@ -190,12 +201,17 @@ class Mapper (_RAW_) :
         return self.ETW.e_type
     # end def E_Type
 
-    def REF (self, ETW, _is_raw = False, _polymorphic = False) :
-        result              = self.__class__ (self.QR, ETW)
-        result._is_raw      = self._is_raw      or _is_raw
-        result._polymorphic = self._polymorphic or _polymorphic
-        result._joins       = self._joins
-        result._join_set    = self._join_set
+    def REF ( self, ETW
+            , _is_raw         = False
+            , _polymorphic    = False
+            , _polymorphic_x  = None
+            ) :
+        result                = self.__class__ (self.QR, ETW)
+        result._is_raw        = self._is_raw        or _is_raw
+        result._polymorphic   = self._polymorphic   or _polymorphic
+        result._polymorphic_x = self._polymorphic_x or _polymorphic_x
+        result._joins         = self._joins
+        result._join_set      = self._join_set
         return result
     # end def REF
 
@@ -204,8 +220,8 @@ class Mapper (_RAW_) :
         _join_set = self._join_set
         for j in joins :
             table = j.table
-            if table not in _join_set :
-                _join_set.add (table)
+            if j.key not in _join_set :
+                _join_set.add (j.key)
                 _joins.append (j)
     # end def _add_joins
 
@@ -218,7 +234,7 @@ class Mapper (_RAW_) :
         akw, col = _attr_kind_wrapper_and_col (ETW, head)
         if col is not None :
             is_raw = is_raw or col.MOM_Is_Raw
-        result = akw.QX (self, akw, _is_raw = is_raw)
+        result = akw.QX (self, akw, _is_raw = is_raw, _outer = self._outer)
         if tail :
             result = getattr (result, tail)
         return result
@@ -327,6 +343,31 @@ class _Q_Call_Proxy_ (_Q_Exp_Proxy_) :
     # end def predicate
 
 # end class _Q_Call_Proxy_
+
+class _Q_ETR_Proxy_ (_Q_Exp_Proxy_) :
+    """Proxy for a MOM.Q._Get_._E_Type_Restriction_ instance"""
+
+    def __init__ (self, q_etr) :
+        self.Q           = q_etr.Q
+        self.head_getter = q_etr._head_getter
+        self.tail_getter = q_etr._tail_getter
+        self.type_name   = q_etr._type_name
+    # end def __init__
+
+    def predicate (self, qx) :
+        """Called during execution of Mapper.__call__ to map a
+            Q._Get_._E_Type_Restriction_ instance to a QX-specific instance.
+        """
+        hg     = self.head_getter
+        tg     = self.tail_getter
+        tn     = self.type_name
+        result = qx (hg) [tn]
+        if tg is not None :
+            result = tg (result)
+        return result
+    # end def predicate
+
+# end class _Q_ETR_Proxy_
 
 class _Q_NIL_Proxy_ (Q._NIL_) :
     """Proxy for a Q.NIL expression"""
@@ -565,6 +606,8 @@ class _BVAR_ (_Base_, Q.BVAR.BVAR) :
 
 class _Bool_ (_Q_Exp_Proxy_, _Base_) :
 
+    _polymorphic_x        = None
+
     def __init__ (self, predicates) :
         self.predicates = predicates
     # end def __init__
@@ -617,8 +660,9 @@ class _Bool_ (_Q_Exp_Proxy_, _Base_) :
         """Called during execution of Mapper.__call__ to map a TFL.Q_Exp
            instance to a QX-specific instance.
         """
+        XR = X.REF (X.ETW, _polymorphic_x = self._polymorphic_x)
         self.predicates = list \
-            (p.predicate (X, * args, ** kw) for p in self.predicates)
+            (p.predicate (XR, * args, ** kw) for p in self.predicates)
         return self
     # end def predicate
 
@@ -639,6 +683,16 @@ class _Bool_Distributive_ (_Bool_) :
             ([p._op_bin (rhs, name, op, reverse) for p in self.predicates])
         return result
     # end def _op_bin
+
+    def __getattr__ (self, name) :
+        self.predicates = list (getattr (p, name) for p in self.predicates)
+        return self
+    # end def __getattr__
+
+    def __getitem__ (self, type_name) :
+        self.predicates = list (p [type_name] for p in self.predicates)
+        return self
+    # end def __getitem__
 
 # end class _Bool_Distributive_
 
@@ -664,6 +718,10 @@ class Or (_Bool_) :
 
     name = "OR"
     op   = staticmethod (SA.expression.or_)
+
+    ### The `predicates` of the `OR` expression must be joined with
+    ### `LEFT OUTER JOIN`
+    _polymorphic_x        = True
 
 # end class Or
 
@@ -951,12 +1009,12 @@ class _Attr_ (_RAW_, _Base_) :
     _field           = None
 
     def __init__ (self, X, _akw, ETW = None, _is_raw = False, _outer = None, _polymorphic = None) :
-        self.X            = X
-        self._akw         = _akw
-        self.ETW          = ETW if ETW is not None else _akw.ETW
-        self._is_raw      = _is_raw or X._is_raw
-        self._outer       = _outer
-        self._polymorphic = \
+        self.X              = X
+        self._akw           = _akw
+        self.ETW            = ETW if ETW is not None else _akw.ETW
+        self._is_raw        = _is_raw or X._is_raw
+        self._outer         = _outer
+        self._polymorphic   = \
             _polymorphic if _polymorphic is not None else X._polymorphic
     # end def __init__
 
@@ -1025,7 +1083,7 @@ class _Attr_ (_RAW_, _Base_) :
         X._add_joins (* joins)
     # end def _add_joins_col
 
-    def _add_joins_inner (self, inner, head_col, polymorphic = False) :
+    def _add_joins_inner (self, inner, head_col, polymorphic = None) :
         def _gen (ETW, head_col, cols, joiner) :
             A_Join = SAW.Attr.A_Join
             pkn    = ETW.spk_name
@@ -1037,11 +1095,14 @@ class _Attr_ (_RAW_, _Base_) :
                     pass
                 else :
                     yield A_Join (col, ctab.c [pkn], head_col, joiner)
-        X           = self.X
-        polymorphic = self._polymorphic or inner._polymorphic or polymorphic
-        joiner      = TFL.Method.outerjoin if polymorphic else TFL.Method.join
+        if polymorphic is None :
+            polymorphic = self.X._polymorphic_x
+        if polymorphic is None :
+            polymorphic = self._polymorphic or inner._polymorphic
+        joiner = TFL.Method.outerjoin if polymorphic else TFL.Method.join
         if inner._columns :
-            X._add_joins (* _gen (inner.ETW, head_col, inner._columns, joiner))
+            self.X._add_joins \
+                (* _gen (inner.ETW, head_col, inner._columns, joiner))
     # end def _add_joins_inner
 
     def _add_join_parent (self, pj, polymorphic = False) :
@@ -1062,6 +1123,11 @@ class _Attr_ (_RAW_, _Base_) :
             for c in qx._columns_ob :
                 yield c
     # end def _columns_ob_epk_iter
+
+    def _etw_alias (self, ETW, col_name) :
+        return ETW.etw_alias \
+            (ETW, ETW.table_name, self.ETW.table_name, col_name)
+    # end def _etw_alias
 
     def _get_attr (self, name) :
         raise AttributeError (name)
@@ -1317,7 +1383,88 @@ class Kind_EPK (_Attr_) :
         return result
     # end def _get_attr
 
+    def __getitem__ (self, type_name) :
+        akw     = self._akw
+        apt     = self.ETW.e_type.app_type
+        E_Type  = apt.entity_type (type_name)
+        if E_Type is None :
+            raise TypeError \
+                ( "App-type %s doesn't have E-Type with name %s"
+                % (apt, type_name)
+                )
+        elif not issubclass (E_Type, akw.attr.E_Type) :
+            raise TypeError \
+                ( "E-Type %s must be subclass of %s, but isn't"
+                % (type_name, self.E_Type.type_name)
+                )
+        ETW = E_Type._SAW
+        KT  = _Kind_Partial_Restricted_ if E_Type.is_partial \
+            else _Kind_EPK_Restricted_
+        head_col = self._head_col
+        if head_col.name not in SAW.Attr.A_Join.special_col_names :
+            ETW = self._etw_alias (ETW, head_col.name)
+        result             = KT \
+            ( X            = self.X
+            , _akw         = akw
+            , ETW          = ETW
+            , _is_raw      = self._is_raw
+            , _outer       = self
+            )
+        self._add_joins_inner (result, head_col)
+        return result
+    # end def __getitem__
+
 # end class Kind_EPK
+
+class _Kind_EPK_Restricted_ (_Attr_) :
+
+    _XS_FILTER              = TFL.Meta.Alias_Property ("XS_FILTER")
+
+    @TFL.Meta.Once_Property
+    def E_Type (self) :
+        return self.ETW.e_type
+    # end def E_Type
+
+    @TFL.Meta.Once_Property
+    def XS_FILTER (self) :
+        return self._head_col != None
+    # end def XS_FILTER
+
+    @TFL.Meta.Once_Property
+    def _XS_FILTER (self) :
+        return self._head_col
+    # end def _XS_FILTER
+
+    @TFL.Meta.Once_Property
+    def _columns (self) :
+        return [self.ETW.spk_col]
+    # end def _columns
+
+    @TFL.Meta.Once_Property
+    def _columns_ob (self) :
+        return list (self._columns_ob_epk_iter (self.E_Type))
+    # end def _columns_ob
+
+    @TFL.Meta.Once_Property
+    def _head_col (self) :
+        return self.ETW.spk_col
+    # end def _head_col
+
+    def _get_attr (self, name) :
+        if name == "pid" or not name :
+            result  = self
+        else :
+            ETW        = self.ETW
+            r_akw, col = _attr_kind_wrapper_and_col (ETW, name)
+            result     = self._inner (r_akw)
+        return result
+    # end def _get_attr
+
+    def _get_field (self, name, head, tail) :
+        pass ### no fields here
+    # end def _get_field
+
+# end class _Kind_EPK_Restricted_
 
 @TFL.Add_To_Class ("QX", SAW.Attr.Kind_Wrapper_P)
 class Kind_Partial (_Attr_) :
@@ -1367,9 +1514,9 @@ class Kind_Partial (_Attr_) :
                 akw  = self._akw
                 name = akw.name
                 for ETW in akw.ETW.children :
-                    akw = ETW.q_able_attrs [name]
+                    i_akw = ETW.q_able_attrs [name]
                     yield self._inner \
-                        ( akw
+                        ( i_akw
                         , ETW          = ETW
                         , _is_raw      = self._is_raw
                         , _outer       = self._outer
@@ -1457,6 +1604,29 @@ class Kind_Partial (_Attr_) :
     # end def _xs_filter_una
 
 # end class Kind_Partial
+
+class _Kind_Partial_Restricted_ (Kind_Partial) :
+
+    @TFL.Meta.Once_Property
+    def _children (self) :
+        ### `Once_Property` because `_is_raw` might be set after `__init__`
+        with self.X.LET (_polymorphic = True) :
+            def _gen (self) :
+                akw = self._akw
+                for ETW in self.ETW.children :
+                    ETW = self._etw_alias (ETW, akw.ckd_name)
+                    yield _Kind_EPK_Restricted_ \
+                        ( X            = self.X
+                        , _akw         = akw
+                        , ETW          = ETW
+                        , _is_raw      = self._is_raw
+                        , _outer       = self._outer
+                        , _polymorphic = True
+                        )
+            return list (_gen (self))
+    # end def _children
+
+# end class _Kind_Partial_Restricted_
 
 @_Base_._op_bin.add_type (Kind_Partial)
 def _op_bin_partial_r_ (self, rhs, name, op, reverse) :
@@ -1896,6 +2066,11 @@ def _fixed_q_exp_get_ (x) :
     Q  = QC (Ignore_Exception = QC.Ignore_Exception)
     return x.__class__ (Q, x._name, x._getter)
 # end def _fixed_q_exp_get_
+
+@fixed_q_exp.add_type (Q._Get_._E_Type_Restriction_)
+def _fixed_q_exp_get_etr_ (x) :
+    return _Q_ETR_Proxy_ (x)
+# end def _fixed_q_exp_get_etr_
 
 @fixed_q_exp.add_type (Q.RAW._Get_Raw_)
 def _fixed_q_exp_get_raw_ (x) :

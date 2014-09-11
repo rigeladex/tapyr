@@ -29,6 +29,8 @@
 #     6-Mar-2012 (CT) Creation
 #    19-Mar-2012 (CT) Add `is_partial = True` to `Subject`
 #     4-Sep-2014 (CT) Add query attribute `my_group`
+#    12-Sep-2014 (CT) Remove `my_group`, `my_person`
+#                     [use type restriction in queries, instead]
 #    ««revision-date»»···
 #--
 
@@ -64,44 +66,6 @@ class _PAP_Subject_ (_Ancestor_Essence) :
             kind           = Attr.Optional
 
         # end class lifetime
-
-        class my_group (A_Id_Entity) :
-            """Just an alias to be allow polymorphic queries using `my_group`.
-
-               For instance, if a E_Type has an attribute `owner` with P_Type
-               `PAP.Subject`, a query like::
-
-                   Q.owner == g
-
-               where `g` is an instance of `PAP.Group` will work, but would
-               fail without the `my_group` defined here as `Q.NIL`.
-            """
-
-            kind               = Attr.Query
-            P_Type             = "PAP.Group"
-            query              = Q.NIL
-            hidden             = True
-
-        # end class my_group
-
-        class my_person (A_Id_Entity) :
-            """Just an alias to be allow polymorphic queries using `my_person`.
-
-               For instance, if a E_Type has an attribute `owner` with P_Type
-               `PAP.Subject`, a query like::
-
-                   Q.owner == p
-
-               where `p` is an instance of `PAP.Person` will work, but would
-               fail without the `my_person` defined here as `Q.NIL`.
-            """
-
-            kind               = Attr.Query
-            P_Type             = "PAP.Person"
-            query              = Q.NIL
-            hidden             = True
-
-        # end class my_person
 
     # end class _Attributes
 
