@@ -30,6 +30,7 @@
 #     7-Aug-2012 (CT) Change `GTW.RST.MOM.RST_` to `GTW.RST.MOM.`
 #     7-Dec-2012 (CT) Rename `query_filters` to `query_filters_s`
 #    20-May-2014 (CT) Fix `query`
+#    13-Sep-2014 (CT) Change `change_query_filters` to `change_query_types`
 #    ««revision-date»»···
 #--
 
@@ -116,18 +117,13 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
 
     @Once_Property
     @getattr_safe
-    def change_query_filters (self) :
-        def _gen (ETMS) :
-            for ETM in ETMS :
-                E_Type = ETM.E_Type
-                if E_Type.is_partial :
-                    for c in E_Type.children_np :
-                        yield c
-                else :
-                    yield E_Type.type_name
-        result = (Q.type_name.IN (sorted (_gen (self.ETMS))), )
+    def change_query_types (self) :
+        result = set ()
+        for ETM in ETMS :
+            E_Type = ETM.E_Type
+            result.update (self._change_query_types (E_Type))
         return result
-    # end def change_query_filters
+    # end def change_query_types
 
     @property
     @getattr_safe

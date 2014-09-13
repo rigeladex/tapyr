@@ -353,7 +353,7 @@ _test_cqf = r"""
     SWP-Object_PN
         (Q.type_name.in_ (['SWP.Gallery', 'SWP.Page', 'SWP.Referral'],),)
     SWP-Page
-        (Q.type_name == SWP.Page,)
+        (Q.type_name.in_ (['SRM.Page', 'SWP.Clip_X', 'SWP.Page', 'SWP.Page_Y'],),)
     SWP-Page_Y
         (Q.type_name == SWP.Page_Y,)
     SWP-Picture

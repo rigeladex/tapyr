@@ -81,6 +81,7 @@
 #     4-Oct-2013 (CT) Fix `E_Type_Mixin._handle_method_context` (use tuple)
 #    28-Mar-2014 (CT) Add `Base_Mixin.q_able_attributes`
 #    29-Apr-2014 (CT) Make `_old_cid` dependent on `_change_info_key`
+#    13-Sep-2014 (CT) Factor `change_query_types`
 #    ««revision-date»»···
 #--
 
@@ -432,6 +433,15 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
             return cid
     # end def _changed_cid
 
+    def _change_query_types (self, E_Type) :
+        if E_Type.is_partial :
+            result = set (E_Type.children_np)
+        else :
+            result = set (E_Type.children)
+            result.add   (E_Type.type_name)
+        return result
+    # end def _change_query_types
+
     def _check_pid_gone (self, pid, E_Type, scope) :
         lc = scope.query_changes \
             (pid = pid).order_by (self._sort_key_cid_reverse).first ()
@@ -553,15 +563,23 @@ class _RST_MOM_E_Type_Mixin_ (Mixin) :
     @Once_Property
     @getattr_safe
     def change_query_filters (self) :
-        result = ()
         E_Type = self.E_Type
-        if E_Type.is_partial :
-            if E_Type.type_name != "MOM.Id_Entity" :
-                result = (Q.type_name.IN (sorted (E_Type.children_np)), )
+        if E_Type.type_name == "MOM.Id_Entity" :
+            result = ()
         else :
-            result = (Q.type_name == E_Type.type_name, )
+            cqts = self.change_query_types
+            if E_Type.is_partial or len (cqts) > 1 :
+                result = (Q.type_name.IN (sorted (cqts)), )
+            else :
+                result = (Q.type_name == E_Type.type_name, )
         return result
     # end def change_query_filters
+
+    @Once_Property
+    @getattr_safe
+    def change_query_types (self) :
+        return self._change_query_types (self.E_Type)
+    # end def change_query_types
 
     def query (self, sort_key = None) :
         result = self.ETM.query \
