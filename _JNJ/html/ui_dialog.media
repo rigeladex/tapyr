@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Apr-2013 (CT) Creation
+#    15-Sep-2014 (CT) Add rule for `... .ui-dialog-titlebar`
 #    ««revision-date»»···
 #--
 
@@ -34,6 +35,11 @@ style_sheet = Style_Sheet \
     ( Rule
         ( ".no-close .ui-dialog-titlebar-close"
         , display                  = None
+        )
+    , Rule
+        ( ".ui-dialog .ui-dialog-titlebar .ui-dialog-title"
+        , max_width                = Percent (100)
+        , white_space              = "normal"
         )
     )
 

@@ -56,6 +56,7 @@
 //                     (i.e., remove guard for `self.completion_data.key`)
 //    28-Aug-2014 (CT) Finetune keys ignored by `gtw_e_type_selector_hd_mf3`
 //                     (e.g., add `cursor left`, `end`, and some others)
+//    15-Sep-2014 (CT) Change `default_position` from `right` to `left`
 //    ««revision-date»»···
 //--
 
@@ -66,8 +67,8 @@
         return "<b>" + v + "</b>";
     };
     var default_position =
-        { my         : "right top"
-        , at         : "right bottom"
+        { my         : "left top"
+        , at         : "left bottom"
         , collision  : "fit"
         };
     var ET_Selector = $GTW.Class.extend (

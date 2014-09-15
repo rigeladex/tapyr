@@ -56,6 +56,8 @@
 ##                     `admin_table`; add `href_display`
 ##    14-Mar-2014 (CT) Add and use `nav_buttons`
 ##    24-Aug-2014 (CT) Factor `esf_title`; DRY `result` of `esf_title`
+##    15-Sep-2014 (CT) Change `entity_selector_form` to use pure forms,
+##                     `attr_filter_pure` an `_qr_button_pure`
 ##    ««revision-date»»···
 ##--
 #}
@@ -63,6 +65,13 @@
 {%- import (html_version or "html/5.jnj") as X -%}
 {%- import "html/form.jnj" as Form with context %}
 {%- import "STD::html/navigation.jnj" as NT with context %}
+
+{%- macro attr_filter_pure (af) -%}
+  <div class="pure-control-group" title="{{ af.ui_name }}">
+    <label for="{{ af.id }}">{{ af.ui_name }}</label>
+    {{ GTW.call_macro (af.attr.input_widget, af) }}
+  </div>
+{%- endmacro -%} {#- attr_filter_pure -#}
 
 {%- macro attr_filter_table (filters, need_op = True) -%}
   <table class="{{ kwargs.get ("class", "attrs") }}">
@@ -92,28 +101,32 @@
 {%- endmacro -%} {#- attr_filter_tr -#}
 
 {%- macro entity_selector_form (page, af, form_class="") -%}
-  <form class = "{{ ('QR ES ' + form_class).strip () }}" {# -#}
+  <form class = "{{ ('pure-form pure-form-aligned ' + form_class).strip () }}" {# -#}
       title="{{ esf_title (af) }}"{# -#}
   >
-    <input class="hidden" name="__esf_for_attr__" value="{{ af.id }}">
-    <input class="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
-    {{ attr_filter_table (af.filters, need_op = False) }}
-    {{ _qr_button
-        ( GTW._  ("Apply")
-        , GTW._T ("Use the currently selected %s") % af.ui_type_name
-        , "submit"
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Cancel")
-        , GTW._T ("Leave form without selecting %s") % af.ui_type_name
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Clear")
-        , GTW._T ("Reset fields")
-        )
-    }}
+    <input type="hidden" name="__esf_for_attr__" value="{{ af.id }}">
+    <input type="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
+    {% for f in af.filters %}
+      {{- attr_filter_pure (f) }}
+    {% endfor -%}
+    <div class="pure-controls">
+      {{ _qr_button_pure
+          ( GTW._  ("Apply"), "check"
+          , GTW._T ("Use the currently selected %s") % af.ui_type_name
+          , "submit"
+          )
+      }}
+      {{ _qr_button_pure
+          ( GTW._  ("Clear"), "eraser"
+          , GTW._T ("Reset fields")
+          )
+      }}
+      {{ _qr_button_pure
+          ( GTW._  ("Cancel"), "times"
+          , GTW._T ("Leave form without selecting %s") % af.ui_type_name
+          )
+      }}
+    </div>
   </form>
 {%- endmacro -%} {#- entity_selector_form -#}
 
@@ -217,6 +230,24 @@
     {{ text or GTW._T (name) }}
   </button>
 {%- endmacro -%} {#- _qr_button -#}
+
+{%- macro _qr_button_pure (name, icon_name, title, typ = None, text = None, disabled = False, i_add_cls = None) -%}
+  {%- set NAME  = name.upper () %}
+  {%- set cls   = kwargs.pop ("class", "") %}
+  {%- set i_cls = GTW.filtered_join
+      (" ", ("fa fa-%s" % (icon_name, ), i_add_cls))
+  %}
+  {%- if disabled %}
+    {%- set cls = GTW.filtered_join (" ", (cls, "disabled")) %}
+  {% endif -%}
+  <button name="{{ NAME }}" title="{{ title }}" type="{{ typ or "button" }}"
+    class="{{ cls }}"
+    {{ kwargs|xmlattr -}}
+  >
+    <i class="{{ i_cls }}"></i>
+    {{ text or GTW._T (name) }}
+  </button>
+{%- endmacro -%} {#- _qr_button_pure -#}
 
 {%- macro qr_button (page, name, title, text = None, disabled = False) -%}
   {%- set typ = page.button_types.get (name.upper (), "button") %}

@@ -32,8 +32,12 @@
 #     3-Apr-2013 (CT) Add `Rule.clearfix` to rule for `.QR`
 #     9-Apr-2013 (CT) Include "html/ui_dialog.media"
 #    14-Mar-2014 (CT) Add rule for `.rel-nav`
+#    15-Sep-2014 (CT) Add `Style_File` for `font-awesome` and `pure`
 #    ««revision-date»»···
 #--
+
+Style_File  ("/media/GTW/css/font-awesome.css")
+Style_File  ("/media/GTW/css/pure.css")
 
 style_sheet = Style_Sheet \
     ( Rule

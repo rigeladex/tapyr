@@ -37,6 +37,7 @@
 #     2-Apr-2013 (CT) Factor `test_qr`, add `test_esf`
 #    11-Apr-2013 (CT) Adapt to changes in `MOM.Attr.Querier`
 #     9-Dec-2013 (CT) Adapt to style changes of Auth forms
+#    15-Sep-2014 (CT) Adapt to change of macro `entity_selector_form`
 #    ««revision-date»»···
 #--
 
@@ -1882,38 +1883,37 @@ _test_esf = """
 
     >>> ETT = crad.Templateer.get_template ("e_type")
     >>> print (ETT.call_macro ("entity_selector_form", crad, afa))
-    <form class = "QR ES" title="Select Company_R for attribute Affiliate">
-        <input class="hidden" name="__esf_for_attr__" value="affiliate___AC">
-        <input class="hidden" name="__esf_for_type__" value="PAP.Company_R">
-        <table class="attrs">
-        <tbody>
-          <tr title="Name">
-        <td class="name">
-          <label for="name___AC">Name</label>
-        </td><td class="value">
-              <input type="text" class="value" id="name___AC" name="name___AC"/>
-        </td>
-        <td class="disabler"></td>
-      </tr>
-          <tr title="Registered in">
-        <td class="name">
-          <label for="registered_in___AC">Registered in</label>
-        </td><td class="value">
-              <input type="text" class="value" id="registered_in___AC" name="registered_in___AC"/>
-        </td>
-        <td class="disabler"></td>
-      </tr>
-          </tbody>
-      </table>
-        <button name="APPLY" title="Use the currently selected Company_R" type="submit"    >
+    <form class = "pure-form pure-form-aligned" title="Select Company_R for attribute Affiliate">
+        <input type="hidden" name="__esf_for_attr__" value="affiliate___AC">
+        <input type="hidden" name="__esf_for_type__" value="PAP.Company_R">
+        <div class="pure-control-group" title="Name">
+        <label for="name___AC">Name</label>
+                  <input type="text" class="" id="name___AC" name="name___AC"/>
+      </div>
+        <div class="pure-control-group" title="Registered in">
+        <label for="registered_in___AC">Registered in</label>
+                  <input type="text" class="" id="registered_in___AC" name="registered_in___AC"/>
+      </div>
+        <div class="pure-controls">
+          <button name="APPLY" title="Use the currently selected Company_R" type="submit"
+        class=""
+        >
+        <i class="fa fa-check"></i>
         Apply
       </button>
-        <button name="CANCEL" title="Leave form without selecting Company_R" type="button"    >
-        Cancel
-      </button>
-        <button name="CLEAR" title="Reset fields" type="button"    >
+          <button name="CLEAR" title="Reset fields" type="button"
+        class=""
+        >
+        <i class="fa fa-eraser"></i>
         Clear
       </button>
+          <button name="CANCEL" title="Leave form without selecting Company_R" type="button"
+        class=""
+        >
+        <i class="fa fa-times"></i>
+        Cancel
+      </button>
+        </div>
       </form>
 
     >>> afos = QR.Filter (crad.E_Type, "owner")
@@ -2204,54 +2204,45 @@ _test_esf = """
     )
 
     >>> print (ETT.call_macro ("entity_selector_form", crad, afop))
-    <form class = "QR ES" title="Select Person for attribute Owner[Person]">
-        <input class="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
-        <input class="hidden" name="__esf_for_type__" value="PAP.Person">
-        <table class="attrs">
-        <tbody>
-          <tr title="Last name">
-        <td class="name">
-          <label for="last_name___AC">Last name</label>
-        </td><td class="value">
-              <input type="text" class="value" id="last_name___AC" name="last_name___AC"/>
-        </td>
-        <td class="disabler"></td>
-      </tr>
-          <tr title="First name">
-        <td class="name">
-          <label for="first_name___AC">First name</label>
-        </td><td class="value">
-              <input type="text" class="value" id="first_name___AC" name="first_name___AC"/>
-        </td>
-        <td class="disabler"></td>
-      </tr>
-          <tr title="Middle name">
-        <td class="name">
-          <label for="middle_name___AC">Middle name</label>
-        </td><td class="value">
-              <input type="text" class="value" id="middle_name___AC" name="middle_name___AC"/>
-        </td>
-        <td class="disabler"></td>
-      </tr>
-          <tr title="Academic title">
-        <td class="name">
-          <label for="title___AC">Academic title</label>
-        </td><td class="value">
-              <input type="text" class="value" id="title___AC" name="title___AC"/>
-        </td>
-        <td class="disabler"></td>
-      </tr>
-          </tbody>
-      </table>
-        <button name="APPLY" title="Use the currently selected Person" type="submit"    >
+    <form class = "pure-form pure-form-aligned" title="Select Person for attribute Owner[Person]">
+        <input type="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
+        <input type="hidden" name="__esf_for_type__" value="PAP.Person">
+        <div class="pure-control-group" title="Last name">
+        <label for="last_name___AC">Last name</label>
+                  <input type="text" class="" id="last_name___AC" name="last_name___AC"/>
+      </div>
+        <div class="pure-control-group" title="First name">
+        <label for="first_name___AC">First name</label>
+                  <input type="text" class="" id="first_name___AC" name="first_name___AC"/>
+      </div>
+        <div class="pure-control-group" title="Middle name">
+        <label for="middle_name___AC">Middle name</label>
+                  <input type="text" class="" id="middle_name___AC" name="middle_name___AC"/>
+      </div>
+        <div class="pure-control-group" title="Academic title">
+        <label for="title___AC">Academic title</label>
+                  <input type="text" class="" id="title___AC" name="title___AC"/>
+      </div>
+        <div class="pure-controls">
+          <button name="APPLY" title="Use the currently selected Person" type="submit"
+        class=""
+        >
+        <i class="fa fa-check"></i>
         Apply
       </button>
-        <button name="CANCEL" title="Leave form without selecting Person" type="button"    >
-        Cancel
-      </button>
-        <button name="CLEAR" title="Reset fields" type="button"    >
+          <button name="CLEAR" title="Reset fields" type="button"
+        class=""
+        >
+        <i class="fa fa-eraser"></i>
         Clear
       </button>
+          <button name="CANCEL" title="Leave form without selecting Person" type="button"
+        class=""
+        >
+        <i class="fa fa-times"></i>
+        Cancel
+      </button>
+        </div>
       </form>
 
 """

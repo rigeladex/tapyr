@@ -32,33 +32,41 @@
 #     5-Apr-2013 (CT) Add `overflow_y` to `.ui-autocomplete`
 #     8-Apr-2013 (CT) Add `max_height` to `.ui-autocomplete`
 #    14-May-2014 (CT) Add rule for `i.disabled`
+#    15-Sep-2014 (CT) Improve rule for `... .ui-menu-item a`
+#                     * increase specificity
+#                     * allow wrapping on white-space
+#                     * add `display`, `padding_left`, `text_indent` to create
+#                       hanging indent
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
-        ( ".ui-autocomplete "
+        ( ".ui-autocomplete"
         , display        = "block"
         , max_height     = Percent (80)
         , overflow_y     = "auto"
         , children =
-            [ Rule
-                ( ".ui-menu-item"
+            [ Rule_Class
+                ( "ui-menu .ui-menu-item"
                 , children =
                     [ Rule
                         ("a"
-                        , white_space   = "nowrap"
+                        , display       = "block"
+                        , padding_left  = Em ( 2.0)
+                        , text_indent   = Em (-1.6)
+                        , white_space   = "normal"
                         )
                     , Rule
                         ( "b"
                         , font_weight   = "normal"
-                        , padding_left  = "0.25em"
+                        , padding_left  = Em (0.25)
                         )
                     , Rule
                         ( "b:first-child:not(:last-child)"
                         , font_weight   = "bold"
                         , padding_left  = 0
-                        , padding_right = "0.75em"
+                        , padding_right = Em (0.75)
                         )
                     ]
                 )
