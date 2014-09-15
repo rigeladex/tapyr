@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,6 +41,7 @@
 #    16-Jun-2010 (CT) s/print/pyk.fprint/
 #    29-Mar-2012 (CT) Add support for `tzinfo`; factor `as_local`; use
 #                     `CAL.Time._from_string_match_kw`
+#    15-Sep-2014 (CT) Add `_Date_Time_Arg_` to `CAO` as `[Arg|Opt].Date_Time`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,7 @@ import _CAL.Date
 import _CAL.Time
 
 from   _TFL._Meta.Once_Property import Once_Property
+import _TFL.CAO
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
 
@@ -266,6 +268,20 @@ class Date_Time_M (CAL._Mutable_DTW_) :
     Class = Date_Time
 
 # end class Date_Time_M
+
+class _Date_Time_Arg_ (TFL.CAO.Str) :
+    """Argument or option with a (calendary) date/time value"""
+
+    _real_name = "Date_Time"
+
+    def cook (self, value, cao = None) :
+        if value == "now" :
+            return Date_Time ()
+        if value :
+            return Date_Time.from_string (value)
+    # end def cook
+
+# end class _Date_Time_Arg_
 
 if __name__ != "__main__" :
     CAL._Export ("*")
