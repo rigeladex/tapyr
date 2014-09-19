@@ -42,6 +42,7 @@
 #    29-Mar-2012 (CT) Add support for `tzinfo`; factor `as_local`; use
 #                     `CAL.Time._from_string_match_kw`
 #    15-Sep-2014 (CT) Add `_Date_Time_Arg_` to `CAO` as `[Arg|Opt].Date_Time`
+#    19-Sep-2014 (CT) Add `from_string_x`
 #    ««revision-date»»···
 #--
 
@@ -130,6 +131,36 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> dt.as_utc ()
        Date_Time (2012, 3, 29, 14, 6, 46, 0)
 
+       >>> td = Date_Time (2014, 9, 19, 17, 23, 42)
+       >>> tt = CAL.Time  (17, 23, 42)
+
+       >>> Date_Time.from_string_x ("2017/09/19 17:42:23")
+       Date_Time (2017, 9, 19, 17, 42, 23, 0)
+
+       >>> td
+       Date_Time (2014, 9, 19, 17, 23, 42, 0)
+
+       >>> tt
+       Time (17, 23, 42, 0)
+
+       >>> Date_Time.from_string_x ("+15m", date = td)
+       Date_Time (2014, 9, 19, 17, 38, 42, 0)
+
+       >>> Date_Time.from_string_x ("+3d",  date = td)
+       Date_Time (2014, 9, 22, 17, 23, 42, 0)
+
+       >>> Date_Time.from_string_x ("15:40", date = td, now = tt)
+       Date_Time (2014, 9, 19, 15, 40, 0, 0)
+
+       >>> Date_Time.from_string_x ("15:40", date = td, now = tt, future = True)
+       Date_Time (2014, 9, 20, 15, 40, 0, 0)
+
+       >>> Date_Time.from_string_x ("18:40", date = td, now = tt)
+       Date_Time (2014, 9, 19, 18, 40, 0, 0)
+
+       >>> Date_Time.from_string_x ("18:40", date = td, now = tt, future = True)
+       Date_Time (2014, 9, 19, 18, 40, 0, 0)
+
     """
 
     _Type            = datetime.datetime
@@ -197,6 +228,38 @@ class Date_Time (CAL.Date, CAL.Time) :
     # end def from_ical
 
     @classmethod
+    def from_string_x (cls, s, ** kw) :
+        """Convert `s` to `Date_Time`.
+
+           `s` can be a valid string representation of
+
+           * a date and time value
+
+           * a date and time delta value (relative to `now` at the time of call)
+
+           * a time value (relative to today's date at the time of call)
+
+           Possible keyword arguments are:
+
+           * `future`: if `s` is a time value smaller than `now`, force
+             `result` to tomorrow
+
+           * `date`: apply delta or time value `s` to `date` instead of `now`
+
+           * `time`: compare time value `s` to `time` instead of `now`
+
+        """
+        v = s.strip ()
+        if v.startswith (("+", "-")) :
+            return cls._from_string_delta (v, ** kw)
+        else :
+            try :
+                return cls.from_string (v)
+            except ValueError :
+                return cls._from_string_time (v, ** kw)
+    # end def from_string_x
+
+    @classmethod
     def from_julian (cls, jd, kind = "CJD") :
         k = kind
         if kind.endswith ("S") :
@@ -227,6 +290,13 @@ class Date_Time (CAL.Date, CAL.Time) :
     # end def sidereal_time_deg
 
     @classmethod
+    def _from_string_delta (cls, s, ** kw) :
+        now   = kw.get ("date") or cls ()
+        delta = cls.Delta.from_string (s)
+        return now + delta
+    # end def _from_string_delta
+
+    @classmethod
     def _from_string_match_kw (cls, s, match) :
         assert match
         kw = super (Date_Time, cls)._from_string_match_kw (s, match)
@@ -236,6 +306,17 @@ class Date_Time (CAL.Date, CAL.Time) :
             kw.update (CAL.Time._from_string_match_kw (t, match))
         return kw
     # end def _from_string_match_kw
+
+    @classmethod
+    def _from_string_time (cls, s, ** kw) :
+        future = kw.get ("future")
+        date   = kw.get ("date")   or CAL.Date ()
+        now    = kw.get ("time")   or CAL.Time ()
+        time   = CAL.Time.from_string (s)
+        if future and time < now :
+            date += 1
+        return cls.combine (date, time)
+    # end def _from_string_time
 
     def __getattr__ (self, name) :
         result = self.__super.__getattr__ (name)
