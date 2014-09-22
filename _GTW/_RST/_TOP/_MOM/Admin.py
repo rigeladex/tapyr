@@ -106,6 +106,7 @@
 #     3-Sep-2014 (CT) Return `elem` from `_get_attr_filter`
 #     3-Sep-2014 (CT) Change `QX_Completer._rendered_post` to use
 #                     `elem.restrict_completion`
+#    22-Sep-2014 (CT) Catch missing `cargo` (die, spammers, die!)
 #    ««revision-date»»···
 #--
 
@@ -578,7 +579,11 @@ class _Changer_ (_HTML_Action_) :
             scope.rollback ()
         else :
             try :
-                fv = self.form_value (request, json ["cargo"])
+                cargo = json ["cargo"]
+            except KeyError :
+                raise self.top.Status.Bad_Request ("Missing cargo")
+            try :
+                fv = self.form_value (request, cargo)
             except Status.Request_Timeout as exc :
                 ### XXX re-authorization form (password only)
                 result ["expired"] = "\n".join \
