@@ -72,6 +72,8 @@
 #    25-Aug-2013 (CT) Add and use `_cleaned_url` to avoid leaking DB passwords
 #    25-Aug-2013 (CT) Change `_print_info` to elide commits, if too many
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
+#    22-Sep-2014 (CT) Add sub-command `_Script_`,
+#                     methods `_handle_script` and `_handle_script_globals`
 #    ««revision-date»»···
 #--
 
@@ -83,6 +85,7 @@ import _MOM.DB_Man
 import _MOM._EMS.Backends
 
 from   _TFL                   import sos
+from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer, re
 
@@ -241,6 +244,21 @@ class MOM_Command (TFL.Command.Root_Command) :
             )
 
     _Readonly_ = _MOM_Readonly_ # end class
+
+    class _MOM_Script_ (_Sub_Command_) :
+        """Run one or more scripts."""
+
+        _args                   = \
+            ( "script:P?Name of script(s) to run"
+            ,
+            )
+        min_args                = 1
+        _opts                   = \
+            ( "-load:B=yes?Load database before running script(s)"
+            , "-commit:B=yes?Commit changes to database after running script(s)"
+            )
+
+    _Script_ = _MOM_Script_ # end class
 
     class _MOM_Shell_ (_Sub_Command_) :
         """Open interactive python shell."""
@@ -441,6 +459,38 @@ class MOM_Command (TFL.Command.Root_Command) :
             self._print_info (apt, url, db_man.db_meta_data)
         db_man.destroy ()
     # end def _handle_readonly
+
+    def _handle_script (self, cmd) :
+        if cmd.load :
+            scope = self._handle_load (cmd)
+        globs = self._handle_script_globals (cmd = cmd, scope = scope)
+        for script_path in cmd.argv :
+            local  = {}
+            try :
+                with open (script_path, "rb") as f :
+                    exec (f.read (), globs, local)
+            except Exception as exc :
+                head = _T ("Script %s triggered exception" % (script_path, ))
+                tail = "    \n".join (unicode (exc).split ("\n"))
+                pyk.fprint (head)
+                pyk.fprint ("   ", tail)
+                raise SystemExit (1)
+        if cmd.commit :
+            scope.commit      ()
+            scope.ems.compact ()
+            scope.destroy     ()
+    # end def _handle_script
+
+    def _handle_script_globals (self, cmd, scope, ** kw) :
+        return dict \
+            ( kw
+            , cmd      = cmd
+            , MOM      = MOM
+            , Q        = Q
+            , scope    = scope
+            , TFL      = TFL
+            )
+    # end def _handle_script_globals
 
     def _handle_shell (self, cmd) :
         scope = self._handle_load (cmd)

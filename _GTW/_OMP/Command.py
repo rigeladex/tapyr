@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.
@@ -58,6 +58,7 @@
 #    23-Aug-2013 (CT) Replace `shell` otpion `echo`
 #                     * use new generic option `-Engine_Echo` instead
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
+#    22-Sep-2014 (CT) Redefine `_Script_`, `_handle_script_globals`
 #    ««revision-date»»···
 #--
 
@@ -200,6 +201,15 @@ class GTW_Command (MOM.Command) :
 
     _Setup_Cache_ = _GTW_Setup_Cache_ # end class
 
+    class _GTW_Script_ (_GTW_Server_Base_, MOM.Command._Script_) :
+
+        _opts                   = \
+            ( "wsgi:B?Create the wsgi application before running the script(s)"
+            ,
+            )
+
+    _Script_ = _GTW_Script_ # end class
+
     class _GTW_Shell_ (_GTW_Server_Base_, MOM.Command._Shell_) :
 
         _opts                   = \
@@ -240,6 +250,19 @@ class GTW_Command (MOM.Command) :
     def _handle_setup_cache (self, cmd) :
         raise NotImplementedError
     # end def _handle_setup_cache
+
+    def _handle_script_globals (self, cmd, scope, ** kw) :
+        if cmd.wsgi :
+            wsgi = self._handle_wsgi (cmd)
+            root = top = self.root
+            kw.update (root = root, top = top, wsgi = wsgi)
+        return self.__super._handle_script_globals \
+            ( cmd, scope
+            , CAL      = CAL
+            , GTW      = GTW
+            , ** kw
+            )
+    # end def _handle_script_globals
 
     def _handle_shell (self, cmd) :
         from _MOM.import_MOM import Q
