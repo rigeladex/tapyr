@@ -69,6 +69,8 @@
 #    12-Sep-2014 (CT) Add `_Bool_Distributive_.__getattr__`, `.__getitem__`
 #    12-Sep-2014 (CT) Add `_etw_alias` to `Kind_EPK.__getitem__` and
 #                     `_Kind_Partial_Restricted_._children`
+#    23-Sep-2014 (CT) Use `_polymorphic_x` in `_add_joins_col` and
+#                     `_add_join_parent`, too
 #    ««revision-date»»···
 #--
 
@@ -1067,7 +1069,7 @@ class _Attr_ (_RAW_, _Base_) :
 
     def _add_joins_col (self, head_col, * cols, ** kw) :
         def _gen (head_col, cols, joiner) :
-            A_Join = SAW.Attr.A_Join
+            A_Join  = SAW.Attr.A_Join
             for col in cols :
                 try :
                     ### only do this for real columns
@@ -1076,10 +1078,11 @@ class _Attr_ (_RAW_, _Base_) :
                     pass
                 else :
                     yield A_Join (col, col, head_col, joiner)
-        X      = self.X
-        joiner = TFL.Method.outerjoin \
-            if self._polymorphic or kw.get ("polymorphic") else TFL.Method.join
-        joins  = tuple (_gen (head_col, cols, joiner))
+        X           = self.X
+        polymorphic = kw.get ("polymorphic", self.X._polymorphic_x)
+        joiner      = TFL.Method.outerjoin \
+            if polymorphic or self._polymorphic else TFL.Method.join
+        joins       = tuple (_gen (head_col, cols, joiner))
         X._add_joins (* joins)
     # end def _add_joins_col
 
@@ -1105,11 +1108,13 @@ class _Attr_ (_RAW_, _Base_) :
                 (* _gen (inner.ETW, head_col, inner._columns, joiner))
     # end def _add_joins_inner
 
-    def _add_join_parent (self, pj, polymorphic = False) :
+    def _add_join_parent (self, pj, polymorphic = None) :
         if pj :
             s_col, t_col = pj
+            if polymorphic is None :
+                polymorphic = self.X._polymorphic_x
             joiner = TFL.Method.outerjoin \
-                if self._polymorphic or polymorphic else TFL.Method.join
+                if polymorphic or self._polymorphic else TFL.Method.join
             self.X._add_joins (SAW.Attr.A_Join (s_col, s_col, t_col, joiner))
     # end def _add_join_parent
 
