@@ -40,6 +40,7 @@
 #    28-Mar-2013 (CT) Hide associations with more than one role
 #    20-Feb-2014 (CT) Set `E_Type.nav_off_canvas` to True
 #    14-Apr-2014 (CT) Set `App_Type.pid` to `ET_Doc`
+#    24-Sep-2014 (CT) Prefer PNS-alias over PNS-name
 #    ««revision-date»»···
 #--
 
@@ -134,11 +135,12 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     # end class Grapher
 
     def __init__ (self, ** kw) :
-        self.pop_to_self (kw, "PNS", prefix = "_")
+        self.pop_to_self      (kw, "PNS", prefix = "_")
         self.__super.__init__ (** kw)
-        PNS = self.PNS
+        PNS  = self.PNS
+        name = kw.get ("name") or PNS._._bname
         if not self.short_title :
-            self.short_title = name = PNS._._bname
+            self.short_title = name
         if not self.title :
             self.title = _T ("Documentation for package namespace %s") % (name,)
     # end def __init__
@@ -305,10 +307,11 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         app_type = self.top.App_Type
         for k, pns in sorted (app_type.PNS_Set.iteritems ()) :
             parent = self
+            names  = [k]
             if "." in k :
                 names  = k.split (".")
                 parent = self._get_child (* names [:-1])
-            entry = self.PNS (PNS = pns, name = pns._._bname, parent = parent)
+            entry = self.PNS (PNS = pns, name = names [-1], parent = parent)
             if entry.entries :
                 entry.hidden = all (e.hidden for e in entry.entries)
                 if parent is self :
