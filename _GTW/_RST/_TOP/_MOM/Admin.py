@@ -107,6 +107,7 @@
 #     3-Sep-2014 (CT) Change `QX_Completer._rendered_post` to use
 #                     `elem.restrict_completion`
 #    22-Sep-2014 (CT) Catch missing `cargo` (die, spammers, die!)
+#    24-Sep-2014 (CT) Factor `set_request_defaults`
 #    ««revision-date»»···
 #--
 
@@ -493,7 +494,7 @@ class _Changer_ (_HTML_Action_) :
             )
         form = self.form_instance \
             (obj, session_secret = session_secret, sid = sid)
-        form.set_request_defaults (req_data, scope)
+        self.set_request_defaults (form, req_data, scope)
         context.update (form = form, referrer = referrer)
         try :
             self.last_changed = obj.FO.last_changed
@@ -508,6 +509,10 @@ class _Changer_ (_HTML_Action_) :
                 result = self.__super.rendered (context, template)
         return result
     # end def rendered
+
+    def set_request_defaults (self, form, req_data, scope) :
+        form.set_request_defaults (req_data, scope)
+    # end def set_request_defaults
 
     def _call_submit_callback (self, cb, request, response, scope, fv, result) :
         if TFL.callable (cb) :
