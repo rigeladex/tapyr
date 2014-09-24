@@ -287,6 +287,10 @@
 #                     `MOM.Error.Invariants`
 #    30-Aug-2014 (CT) Correct `_kw_check_required` to refuse value `None` for
 #                     required attributes
+#    25-Sep-2014 (CT) Rename `signified` to `args_as_kw`; add `epk_as_kw`
+#    25-Sep-2014 (CT) Add and use `_kw_polished`
+#    25-Sep-2014 (CT) Factor `_kw_undeprecated`, `_set_ckd_inner`,
+#                     `_set_raw_inner`
 #    ««revision-date»»···
 #--
 
@@ -663,28 +667,22 @@ class Entity (TFL.Meta.Object) :
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
         assert "raw" not in kw
-        gen = \
-            (   (name, attr.get_raw_pid (self))
-            for attr, name, value in self._record_iter (kw)
-            if  attr.get_value (self) != value
-            )
-        with self._record_context (gen, self.SCM_Change_Attr) :
-            return self._set_ckd (on_error, ** kw)
+        ukw = dict (self._kw_undeprecated (kw))
+        return self._set_ckd_inner (on_error, ** kw)
     # end def set
 
     def set_attr_iter (self, attr_dict, on_error = None) :
-        attributes = self.attributes
+        attr_get = self.E_Type.attr_prop
         if on_error is None :
             on_error = self._raise_attr_error
         for name, val in attr_dict.iteritems () :
-            cnam = self.deprecated_attr_names.get (name, name)
-            attr = attributes.get (cnam)
-            if attr :
+            attr = attr_get (name)
+            if attr is not None :
                 if not attr.is_settable :
                     on_error \
                         (MOM.Error.Attribute_Set (self, name, val, attr.kind))
                 else :
-                    yield (cnam, val, attr)
+                    yield (name, val, attr)
             elif name != "raw" :
                 on_error (MOM.Error.Attribute_Unknown (self, name, val))
     # end def set_attr_iter
@@ -701,13 +699,9 @@ class Entity (TFL.Meta.Object) :
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
         assert "raw" not in kw
-        gen = \
-            (   (name, raw_pid)
-            for attr, name, value, raw, raw_pid in self._record_iter_raw (kw)
-            if  raw != value
-            )
-        with self._record_context (gen, self.SCM_Change_Attr) :
-            return self._set_raw (on_error, ** kw)
+        ukw = dict (self._kw_undeprecated (kw))
+        pkw = self._kw_polished (ukw)
+        return self._set_raw_inner (on_error, ** pkw)
     # end def set_raw
 
     def sync_attributes (self) :
@@ -812,6 +806,21 @@ class Entity (TFL.Meta.Object) :
         return result, to_do
     # end def _kw_raw_check_predicates
 
+    def _kw_polished (self, attr_dict) :
+        result = attr_dict
+        for attr in self.polish_attr :
+            if attr.name in result :
+                val    = result [attr.name]
+                result = attr.polisher (attr, result, val)
+        return result
+    # end def _kw_polished
+
+    def _kw_undeprecated (self, attr_dict) :
+        for name, val in attr_dict.iteritems () :
+            cnam = self.deprecated_attr_names.get (name, name)
+            yield cnam, val
+    # end def _kw_undeprecated
+
     def _print_attr_err (self, exc) :
         if debug:
             logging.exception (repr (self))
@@ -864,6 +873,16 @@ class Entity (TFL.Meta.Object) :
         return man.total_changes - tc
     # end def _set_ckd
 
+    def _set_ckd_inner (self, on_error = None, ** kw) :
+        gen = \
+            (   (name, attr.get_raw_pid (self))
+            for attr, name, value in self._record_iter (kw)
+            if  attr.get_value (self) != value
+            )
+        with self._record_context (gen, self.SCM_Change_Attr) :
+            return self._set_ckd (on_error, ** kw)
+    # end def _set_ckd_inner
+
     def _set_raw (self, on_error = None, ** kw) :
         man = self._attr_man
         tc  = man.total_changes
@@ -878,6 +897,16 @@ class Entity (TFL.Meta.Object) :
             man.do_updates_pending (self)
         return man.total_changes - tc
     # end def _set_raw
+
+    def _set_raw_inner (self, on_error = None, ** kw) :
+        gen = \
+            (   (name, raw_pid)
+            for attr, name, value, raw, raw_pid in self._record_iter_raw (kw)
+            if  raw != value
+            )
+        with self._record_context (gen, self.SCM_Change_Attr) :
+            return self._set_raw (on_error, ** kw)
+    # end def _set_raw_inner
 
     def _store_attr_error (self, exc) :
         logging.exception ("Setting attribute failed with exception")
@@ -988,7 +1017,27 @@ class An_Entity (Entity) :
             return self.owner.attr_prop (self.attr_name)
     # end def owner_attr
 
-    def set (self, on_error = None, ** kw) :
+    def _init_attributes (self) :
+        self.owner = None
+        self.__super._init_attributes ()
+    # end def _init_attributes_
+
+    def _main__init__ (self, * args, ** kw) :
+        raw = bool (kw.pop ("raw", False))
+        akw = self.args_as_kw   (* args, ** kw)
+        ukw = dict (self._kw_undeprecated (akw))
+        skw = self._kw_polished (ukw) if raw else ukw
+        self._kw_check_required (* args, ** skw)
+        if skw :
+            setter = self._set_raw if raw else self._set_ckd
+            setter (** skw)
+    # end def _main__init__
+
+    def _repr (self, type_name) :
+        return u"%s (%s)" % (type_name, self.attr_as_code ().rstrip (", "))
+    # end def _repr
+
+    def _set_ckd_inner (self, on_error = None, ** kw) :
         owner_attr = self.owner_attr
         if owner_attr is None or self.electric or not owner_attr.record_changes :
             return self._set_ckd (on_error, ** kw)
@@ -996,10 +1045,10 @@ class An_Entity (Entity) :
             ### Change in primary attribute might be a `rename`
             return self.owner.set (** {self.attr_name : self.copy (** kw)})
         else :
-            return self.__super.set (on_error, ** kw)
-    # end def set
+            return self.__super._set_ckd_inner (on_error, ** kw)
+    # end def _set_ckd_inner
 
-    def set_raw (self, on_error = None, ** kw) :
+    def _set_raw_inner (self, on_error = None, ** kw) :
         owner_attr = self.owner_attr
         if owner_attr is None or self.electric or not owner_attr.record_changes :
             return self._set_raw (on_error, ** kw)
@@ -1008,26 +1057,8 @@ class An_Entity (Entity) :
             return self.owner.set \
                 (** {self.attr_name : self.copy (raw = True, ** kw)})
         else :
-            return self.__super.set_raw (on_error, ** kw)
-    # end def set_raw
-
-    def _init_attributes (self) :
-        self.owner = None
-        self.__super._init_attributes ()
-    # end def _init_attributes_
-
-    def _main__init__ (self, * args, ** kw) :
-        skw = self.signified (* args, ** kw)
-        raw = bool (skw.pop ("raw", False))
-        self._kw_check_required (* args, ** skw)
-        if skw :
-            set = self._set_raw if raw else self._set_ckd
-            set (** skw)
-    # end def _main__init__
-
-    def _repr (self, type_name) :
-        return u"%s (%s)" % (type_name, self.attr_as_code ().rstrip (", "))
-    # end def _repr
+            return self.__super._set_raw_inner (on_error, ** kw)
+    # end def _set_raw_inner
 
     def __eq__ (self, rhs) :
         rhs = getattr (rhs, "hash_key", rhs)
@@ -1498,6 +1529,14 @@ class Id_Entity (_Ancestor_Essence) :
     # end def example_attrs
 
     @classmethod
+    def epk_as_kw (cls, * epk, ** kw) :
+        on_error = kw.pop ("on_error", None)
+        if epk and isinstance (epk [-1], cls.Type_Name_Type) :
+            epk  = epk [:-1]
+        return dict (cls.args_as_kw (* epk, ** kw), on_error = on_error)
+    # end def epk_as_kw
+
+    @classmethod
     def epkified (cls, * epk, ** kw) :
         if epk and isinstance (epk [-1], cls.Type_Name_Type) :
             epk  = epk [:-1]
@@ -1665,22 +1704,25 @@ class Id_Entity (_Ancestor_Essence) :
     def _main__init__ (self, * epk, ** kw) :
         self.implicit = kw.pop ("implicit", False)
         raw           = bool (kw.pop ("raw", False))
+        akw           = self.epk_as_kw (* epk, ** kw)
+        ukw           = dict (self._kw_undeprecated (akw))
+        pkw           = self._kw_polished (ukw) if raw else ukw
         setter        = self.__super._set_raw if raw else self.__super._set_ckd
             ### Need to use `__super.` methods here because it's not a `rename`
         try :
-            epk, kw = self.epkified (* epk, ** kw)
-            self._kw_check_required (* epk, ** kw)
+            epk, pkw = self.epkified (raw = raw, ** pkw)
+            self._kw_check_required (* epk, ** pkw)
         except MOM.Error.Required_Missing as exc :
             self._pred_man.missing_required = exc
-            kw.update (self._init_epk (epk))
+            pkw.update (self._init_epk (epk))
             checker = \
                 (  self._kw_raw_check_predicates
                 if raw else self._kw_check_predicates
                 )
-            checker (** kw)
+            checker (** pkw)
             raise MOM.Error.Invariants (self._pred_man)
-        kw.update (self._init_epk (epk))
-        setter (** kw)
+        pkw.update (self._init_epk (epk))
+        setter (** pkw)
         required_errors = self._pred_man.required_errors
         if required_errors :
             raise MOM.Error.Invariants (self._pred_man)

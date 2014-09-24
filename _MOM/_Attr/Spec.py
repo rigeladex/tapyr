@@ -75,6 +75,7 @@
 #    28-Mar-2014 (CT) Redefine `_create_properties` to exclude rev-refs to
 #                     `refuse_links`
 #    28-Mar-2014 (CT) Add `e_type.link_ref_map`
+#    25-Sep-2014 (CT) Add `polish_attr`
 #    ««revision-date»»···
 #--
 
@@ -148,20 +149,26 @@ class Spec (MOM.Prop.Spec) :
                 )
             )
         e_type.link_ref_map     = dict ((a.E_Type, a) for a in lra)
-        e_type.surrogate_attr   = tuple \
-            (   a for a in e_type.db_attr
-            if  isinstance (a.attr, MOM.Attr.A_Surrogate)
-            )
-        e_type.rev_ref_attr     = tuple \
+        e_type.polish_attr      = tuple \
             ( sorted
-                ( MOM.Attr.Selector.A_Type (MOM.Attr._A_Rev_Ref_) (e_type)
-                , key = sk
+                ( (a for a in e_type.edit_attr if a.attr.polisher is not None)
+                , key = TFL.Sorted_By ("ui_rank", "rank", "name")
                 )
             )
         e_type.primary_required = pr = list \
             (p for p in e_type.primary if p.is_required)
         e_type.primary_optional = list \
             (p for p in e_type.primary [len (pr): ] if not p.electric)
+        e_type.rev_ref_attr     = tuple \
+            ( sorted
+                ( MOM.Attr.Selector.A_Type (MOM.Attr._A_Rev_Ref_) (e_type)
+                , key = sk
+                )
+            )
+        e_type.surrogate_attr   = tuple \
+            (   a for a in e_type.db_attr
+            if  isinstance (a.attr, MOM.Attr.A_Surrogate)
+            )
         e_type.ui_attr          = tuple (MOM.Attr.Selector.ui_attr (e_type))
         own_surrogates          = tuple \
             (a for a in e_type.surrogate_attr if a.name in self._own_names)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,6 +50,7 @@
 #    31-Dec-2010 (CT) `Multi_Regexp.search_all` and `.search_iter` added
 #    25-Mar-2013 (CT) Add `Copy`, `__nonzero__`, doctest to `Regexp`
 #    27-Mar-2013 (CT) Add `Multi_Re_Replacer.add`
+#    24-Sep-2014 (CT) Factor `Multi_Regexp.add`
 #    ««revision-date»»···
 #--
 
@@ -217,25 +218,22 @@ class Regexp (TFL.Meta.Object) :
 
 # end class Regexp
 
-class Multi_Regexp :
+class Multi_Regexp (TFL.Meta.Object) :
     """Wrap multiple regexpes (returns the first match, if any)."""
 
     def __init__ (self, * patterns, ** kw) :
-        self.patterns    = []
-        self.last_match  = None
-        add              = self.patterns.append
+        self.patterns   = []
+        self.last_match = None
+        self.add (* patterns, ** kw)
+    # end def __init__
+
+    def add (self, * patterns, ** kw) :
+        add = self.patterns.append
         for p in patterns :
             if isinstance (p, pyk.string_types) :
                 p = Regexp (p, ** kw)
             add (p)
-    # end def __init__
-
-    def _delegate (self, meth, * args, ** kw) :
-        for p in self.patterns :
-            result = self.last_match = getattr (p, meth) (* args, ** kw)
-            if result :
-                return result
-    # end def _delegate
+    # end def add
 
     def match (self, * args, ** kw) :
         return self._delegate ("match", * args, ** kw)
@@ -254,6 +252,13 @@ class Multi_Regexp :
             for m in p.search_iter (string, pos, endpos) :
                 yield m
     # end def search_iter
+
+    def _delegate (self, meth, * args, ** kw) :
+        for p in self.patterns :
+            result = self.last_match = getattr (p, meth) (* args, ** kw)
+            if result :
+                return result
+    # end def _delegate
 
     def __getattr__ (self, name) :
         try :

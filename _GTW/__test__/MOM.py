@@ -815,40 +815,105 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
         return (left, right, location), kw
 
     >>> for et in apt._T_Extension :
-    ...   if issubclass (et, MOM.An_Entity) and et.signified :
-    ...     print "***", et.type_name, "***", et.usr_sig
-    ...     print et.signified and et.signified.source_code.rstrip ()
+    ...   if et.args_as_kw :
+    ...     print "***", et.type_name, "***", getattr (et, "usr_sig", "") or getattr (et, "epk_sig", "")
+    ...     print et.args_as_kw and et.args_as_kw.source_code.rstrip ()
     *** MOM.Date_Interval *** ('start', 'finish')
-    def signified (cls, start = undefined, finish = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, start = undefined, finish = undefined) :
+        kw = dict ((k, v) for k, v in [("start", start), ("finish", finish)] if v is not undefined)
         return kw
     *** MOM.Date_Interval_C *** ('start', 'finish')
-    def signified (cls, start = undefined, finish = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, start = undefined, finish = undefined) :
+        kw = dict ((k, v) for k, v in [("start", start), ("finish", finish)] if v is not undefined)
         return kw
     *** MOM.Date_Interval_N *** ('start', 'finish')
-    def signified (cls, start = undefined, finish = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("start", start), ("finish", finish), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, start = undefined, finish = undefined) :
+        kw = dict ((k, v) for k, v in [("start", start), ("finish", finish)] if v is not undefined)
         return kw
     *** MOM.Float_Interval *** ('lower', 'upper')
-    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, lower = undefined, upper = undefined) :
+        kw = dict ((k, v) for k, v in [("lower", lower), ("upper", upper)] if v is not undefined)
         return kw
     *** MOM.Frequency_Interval *** ('lower', 'upper')
-    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, lower = undefined, upper = undefined) :
+        kw = dict ((k, v) for k, v in [("lower", lower), ("upper", upper)] if v is not undefined)
         return kw
     *** MOM.Int_Interval *** ('lower', 'upper')
-    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, lower = undefined, upper = undefined) :
+        kw = dict ((k, v) for k, v in [("lower", lower), ("upper", upper)] if v is not undefined)
         return kw
     *** MOM.Int_Interval_C *** ('lower', 'upper')
-    def signified (cls, lower = undefined, upper = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("lower", lower), ("upper", upper), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, lower = undefined, upper = undefined) :
+        kw = dict ((k, v) for k, v in [("lower", lower), ("upper", upper)] if v is not undefined)
         return kw
     *** MOM.Position *** ('lat', 'lon', 'height')
-    def signified (cls, lat = undefined, lon = undefined, height = undefined, raw = undefined) :
-        kw = dict ((k, v) for k, v in (("lat", lat), ("lon", lon), ("height", height), ("raw", raw)) if v is not undefined)
+    def args_as_kw (cls, lat = undefined, lon = undefined, height = undefined) :
+        kw = dict ((k, v) for k, v in [("lat", lat), ("lon", lon), ("height", height)] if v is not undefined)
+        return kw
+    *** BMT.Location *** ('lon', 'lat')
+    def args_as_kw (cls, lon = undefined, lat = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("lon", lon), ("lat", lat)] if v is not undefined)
+        return kw
+    *** BMT.Person *** ('last_name', 'first_name', 'middle_name')
+    def args_as_kw (cls, last_name = undefined, first_name = undefined, middle_name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("last_name", last_name), ("first_name", first_name), ("middle_name", middle_name)] if v is not undefined)
+        return kw
+    *** BMT.Mouse *** ('name',)
+    def args_as_kw (cls, name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name)] if v is not undefined)
+        return kw
+    *** BMT.Rat *** ('name',)
+    def args_as_kw (cls, name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name)] if v is not undefined)
+        return kw
+    *** BMT.Beaver *** ('name',)
+    def args_as_kw (cls, name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name)] if v is not undefined)
+        return kw
+    *** BMT.Otter *** ('name',)
+    def args_as_kw (cls, name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name)] if v is not undefined)
+        return kw
+    *** BMT.Trap *** ('name', 'serial_no')
+    def args_as_kw (cls, name = undefined, serial_no = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name), ("serial_no", serial_no)] if v is not undefined)
+        return kw
+    *** BMT.Supertrap *** ('name', 'serial_no')
+    def args_as_kw (cls, name = undefined, serial_no = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name), ("serial_no", serial_no)] if v is not undefined)
+        return kw
+    *** BMT.Rodent_is_sick *** ('left', 'sick_leave')
+    def args_as_kw (cls, left = undefined, sick_leave = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("sick_leave", sick_leave)] if v is not undefined)
+        return kw
+    *** BMT.Expected_Traptime *** ('left', 'expected_traptime')
+    def args_as_kw (cls, left = undefined, expected_traptime = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("expected_traptime", expected_traptime)] if v is not undefined)
+        return kw
+    *** BMT.Rodent_in_Trap *** ('left', 'right')
+    def args_as_kw (cls, left = undefined, right = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("right", right)] if v is not undefined)
+        return kw
+    *** BMT.Person_owns_Trap *** ('left', 'right')
+    def args_as_kw (cls, left = undefined, right = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("right", right)] if v is not undefined)
+        return kw
+    *** BMT.Person_sets_Trap *** ('left', 'right', 'location')
+    def args_as_kw (cls, left = undefined, right = undefined, location = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("right", right), ("location", location)] if v is not undefined)
         return kw
 
 Each entity_type knows about its children:

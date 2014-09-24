@@ -54,6 +54,7 @@
 #    16-Apr-2014 (CT) Add query attribute `my_person`
 #    12-Sep-2014 (CT) Remove `my_person`
 #                     [use type restriction in queries, instead]
+#    24-Sep-2014 (CT) Add `polisher` to `last_name`, `first_name`, `middle_name`
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            polisher       = Attr.Polisher.capitalize_last_word
 
         # end class last_name
 
@@ -138,6 +140,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 2
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            polisher       = Attr.Polisher.capitalize
 
         # end class first_name
 
@@ -151,6 +154,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            polisher       = Attr.Polisher.capitalize
 
         # end class middle_name
 
@@ -178,11 +182,6 @@ class _PAP_Person_ (_Ancestor_Essence) :
 
     # end class _Attributes
 
-    @property
-    def ui_display_format (self) :
-        result = []
-        if self.title :
-            result.append ("%(title)s")
     @property
     def ui_display_format (self) :
         result = ["%(last_name)s %(first_name)s"]

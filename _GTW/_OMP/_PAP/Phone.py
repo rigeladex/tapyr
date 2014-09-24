@@ -38,6 +38,7 @@
 #    12-Sep-2012 (CT) Derive from `Property`
 #     7-Mar-2014 (CT) Add `ui_rank` in reverse order of `rank`
 #                     (to improve completion)
+#    24-Sep-2014 (CT) Add `polisher` to `country_code`, `area_code`, `number`
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             ui_rank        = -1
 
             completer      = Attr.Completer_Spec  (1)
+            polisher       = Attr.Polisher.country_code_clean
 
         # end class country_code
 
@@ -86,6 +88,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             completer      = Attr.Completer_Spec  \
                 (1, Attr.Selector.Name ("country_code"))
+            polisher       = Attr.Polisher.area_code_clean
 
         # end class area_code
 
@@ -100,6 +103,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             ui_rank        = -3
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            polisher       = Attr.Polisher.phone_number_split
 
         # end class number
 

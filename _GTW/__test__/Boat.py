@@ -303,7 +303,7 @@ _test_code = """
     >>> SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
     Traceback (most recent call last):
       ...
-    Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = 187042)
+    Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = '187042')
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
           ( 'left' ,)
@@ -317,7 +317,7 @@ _test_code = """
             , '187042'
             )
           ]
-      , 'description' : 'Instead it got: (sail_number = 187042)'
+      , 'description' : "Instead it got: (sail_number = '187042')"
       , 'explanation' : 'All required attributes must be supplied'
       , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
@@ -336,7 +336,7 @@ _test_code = """
       ...
     Invariants: Condition `AC_check_sail_number_1` : 0 <= sail_number <= 999999
         sail_number = -187042
-      Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = -187042)
+      Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = '-187042')
 
     >>> print formatted (MOM.Error.as_json_cargo (* errors))
     [ { 'attributes' :
@@ -351,7 +351,7 @@ _test_code = """
             , '-187042'
             )
           ]
-      , 'description' : 'Instead it got: (sail_number = -187042)'
+      , 'description' : "Instead it got: (sail_number = '-187042')"
       , 'explanation' : 'All required attributes must be supplied'
       , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True

@@ -348,6 +348,8 @@
 #    30-Jun-2014 (CT) Add guard for `t` to `_A_Id_Entity_.from_string`
 #     2-Jul-2014 (CT) Add `syntax` to `A_Date`, `A_Date_Time`, and `A_Time`
 #    30-Aug-2014 (CT) Mark A_Boolean's `no` and `yes` for translation
+#    24-Sep-2014 (CT) Add `polisher`
+#    25-Sep-2014 (CT) Rename `signified` to `args_as_kw`
 #    ««revision-date»»···
 #--
 
@@ -364,6 +366,7 @@ from   _MOM.SQ               import SQ
 import _MOM._Attr.Coll
 import _MOM._Attr.Completer
 import _MOM._Attr.Kind
+import _MOM._Attr.Polisher
 import _MOM._Attr.Querier
 import _MOM._Attr.Selector
 import _MOM._Meta.M_Attr_Type
@@ -487,6 +490,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     Kind_Mixins         = ()
     needs_raw_value     = False
     Pickler             = None
+    polisher            = None
     P_Type              = None  ### Python type of attribute values
     Q_Ckd_Type          = MOM.Attr.Querier.Ckd
     Q_Raw_Type          = MOM.Attr.Querier.Raw
@@ -948,7 +952,7 @@ class _A_Composite_ (_A_Entity_) :
             try :
                 value = dict (value)
             except (TypeError, ValueError) :
-                value = P_Type.signified (* value)
+                value = P_Type.args_as_kw (* value)
         if isinstance (value, dict) :
             value = P_Type (** value)
         if value is not None and not isinstance (value, P_Type) :
@@ -983,7 +987,7 @@ class _A_Composite_ (_A_Entity_) :
             try :
                 t = dict (t)
             except (TypeError, ValueError) :
-                t = P_Type.signified (* t)
+                t = P_Type.args_as_kw (* t)
         t.setdefault ("raw", True)
         return P_Type (** t)
     # end def from_string

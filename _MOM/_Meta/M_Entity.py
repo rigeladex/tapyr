@@ -224,6 +224,9 @@
 #     7-Jul-2014 (CT) Fix `_m_fix_type_set`
 #    11-Jul-2014 (CT) Add `is_partial`, `is_relevant` to `db_sig`
 #     4-Sep-2014 (CT) Add `pka.E_Type.is_relevant` to `_m_setup_sorted_by`
+#    25-Sep-2014 (CT) Rename `signified` to `args_as_kw`
+#    25-Sep-2014 (CT) Move `_m_auto_args_as_kw` up to `M_E_Mixin`, remove `raw`
+#    25-Sep-2014 (CT) Add `args_as_kw` to `M_E_Type_Id`
 #    ««revision-date»»···
 #--
 
@@ -265,22 +268,29 @@ class Type_Name_Type (unicode) :
 class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     """Meta mixin for M_Entity and M_E_Type."""
 
-    _Class_Kind    = "Bare Essence"
+    _Class_Kind      = "Bare Essence"
 
-    _S_Extension   = []     ### List of E_Spec
-    _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
-    _PNS_Aliases   = {}
-    _PNS_Aliases_R = None
-    _type_names    = set ()
+    _S_Extension     = []   ### List of E_Spec
+    _BET_map         = {}   ### Dict of bare essential types (type_name -> BET)
+    _PNS_Aliases     = {}
+    _PNS_Aliases_R   = None
 
-    m_sorted_by    = TFL.Sorted_By ("i_rank")
+    _args_as_kw_sep  = "\n    "
+    _args_as_kw_body = """%(body)s"""
+    _args_as_kw_tail = """return kw\n"""
 
-    M_Root         = None
-    Type_Name_Type = Type_Name_Type
+    _type_names      = set ()
+
+    args_as_kw       = None
+
+    m_sorted_by      = TFL.Sorted_By ("i_rank")
+
+    M_Root           = None
+    Type_Name_Type   = Type_Name_Type
 
     ### `ui_type_name` can be used in docstrings of attribute types, where
     ### `ui_name` would refer to the attribute's ui-name, not the E_Type's
-    ui_type_name               = TFL.Meta.Alias_Property ("ui_name")
+    ui_type_name     = TFL.Meta.Alias_Property ("ui_name")
 
     @property
     def PNS_Aliases (cls) :
@@ -461,6 +471,32 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         else :
             cls.ui_name = cls.pns_qualified (ui_name)
     # end def set_alias
+
+    def _m_auto_args_as_kw (cls, sig, attrs) :
+        def _gen_args (attrs, dict) :
+            fmt = """("%s", %s)"""
+            for a in attrs :
+                yield fmt % (a.name, a.name)
+        args    = ", ".join ("%s = undefined" % a for a in sig)
+        form    = cls._args_as_kw_sep.join \
+            ((cls._args_as_kw_head, cls._args_as_kw_body, cls._args_as_kw_tail))
+        undefined = TFL.Undef ("argument")
+        globals = dict (class_globals (cls), undefined = undefined)
+        scope   = dict ()
+        code    = form % dict \
+            ( args   = args
+            , body   =
+                ( "%s ((k, v) for k, v in [%s] if v is not undefined)"
+                % (cls._args_as_kw_dict, ", ".join (_gen_args (attrs, dict)))
+                )
+            )
+        exec (code, globals, scope)
+        result             = scope ["args_as_kw"]
+        result.sig         = sig
+        result.args        = args
+        result.source_code = code
+        return classmethod (result)
+    # end def _m_auto_args_as_kw
 
     def _m_init_name_attributes (cls) :
         cls._set_type_names (cls.__name__)
@@ -765,41 +801,8 @@ M_Entity.M_Root = M_Entity
 class M_An_Entity (M_Entity) :
     """Meta class for MOM.An_Entity"""
 
-    _signified_sep  = "\n    "
-    _signified_head = """def signified (cls, %(args)s, raw = undefined) :"""
-    _signified_body = """%(body)s"""
-    _signified_tail = """return kw\n"""
-
-    def _m_auto_signified (cls, usr_sig, user_attrs) :
-        def _gen_args (user_attrs, dict) :
-            ### Need to pass `dict` in here to avoid::
-            ###   SyntaxError: unqualified exec is not allowed in
-            ###     function '_m_auto_signified'
-            ###     it contains a nested function with free variables
-            fmt = """("%(name)s", %(name)s)"""
-            for a in user_attrs :
-                yield fmt % dict (name = a.name)
-            yield fmt % dict (name = "raw")
-        args    = ", ".join ("%s = undefined" % a for a in usr_sig)
-        form    = cls._signified_sep.join \
-            ((cls._signified_head, cls._signified_body, cls._signified_tail))
-        undefined = TFL.Undef ("argument")
-        globals = dict (class_globals (cls), undefined = undefined)
-        scope   = dict ()
-        code    = form % dict \
-            ( args   = args
-            , body   =
-                ( "kw = dict ((k, v) for k, v in (%s) if v is not undefined)"
-                % (", ".join (_gen_args (user_attrs, dict)), )
-                )
-            )
-        exec (code, globals, scope)
-        result             = scope ["signified"]
-        result.usr_sig     = usr_sig
-        result.args        = args
-        result.source_code = code
-        return classmethod (result)
-    # end def _m_auto_signified
+    _args_as_kw_dict = "kw = dict"
+    _args_as_kw_head = """def args_as_kw (cls, %(args)s) :"""
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         user_attrs = sorted \
@@ -811,11 +814,11 @@ class M_An_Entity (M_Entity) :
         usr_sig    = tuple (a.name for a in user_attrs)
         r_kw       = dict \
             ( polymorphic_epk = False
-            , signified       = None
+            , args_as_kw      = None
             , usr_sig         = usr_sig
             )
         if usr_sig and not cls.is_partial :
-            r_kw ["signified"] = cls._m_auto_signified (usr_sig, user_attrs)
+            r_kw ["args_as_kw"] = cls._m_auto_args_as_kw (usr_sig, user_attrs)
         result     = cls.__m_super._m_new_e_type_dict \
             (app_type, etypes, bases, ** r_kw)
         return result
@@ -1198,11 +1201,14 @@ class M_E_Type_An (M_E_Type) :
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
 
-    Manager        = MOM.E_Type_Manager.Id_Entity
+    Manager          = MOM.E_Type_Manager.Id_Entity
 
-    _epkified_sep  = "\n    "
-    _epkified_head = """def epkified_%(suffix)s (cls, %(args)s) :"""
-    _epkified_tail = """return (%(epk)s), kw\n"""
+    _args_as_kw_dict = "kw = dict (kw)\n    kw.update"
+    _args_as_kw_head = """def args_as_kw (cls, %(args)s, ** kw) :"""
+
+    _epkified_sep    = "\n    "
+    _epkified_head   = """def epkified_%(suffix)s (cls, %(args)s) :"""
+    _epkified_tail   = """return (%(epk)s), kw\n"""
 
     @property
     def electric (cls) :
@@ -1343,6 +1349,8 @@ class M_E_Type_Id (M_E_Type) :
         epk_sig          = cls.epk_sig
         cls.epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
         cls.epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
+        if epk_sig and not cls.is_partial :
+            cls.args_as_kw = cls._m_auto_args_as_kw (epk_sig, pkas)
     # end def _m_setup_attributes
 
     def _m_setup_children (cls, bases, dct) :
