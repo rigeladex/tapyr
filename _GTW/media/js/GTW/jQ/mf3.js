@@ -43,6 +43,7 @@
 //    30-Aug-2014 (CT) Add guard for `ft` to `completer.put_values`
 //    30-Aug-2014 (CT) Add `hide` and `show` calls for `$(S.form_errors)`
 //     3-Sep-2014 (CT) Use `.call`, not `.apply`, in `entity_display_open_cb`
+//    25-Sep-2014 (CT) Add `polish_field`
 //    ««revision-date»»···
 //--
 
@@ -519,10 +520,25 @@
         var field_blur_cb = function field_blur_cb (ev) {
             var S         = options.selectors;
             var f$        = $(this);
-            var a$        = f$.siblings ().filter ($("aside"));
-            var c$        = f$.closest (S.composite_field);
+            var a$        = f$.siblings  ().filter ($("aside"));
+            var c$        = f$.closest   (S.composite_field);
+            var ft        = f$.data      ("field_type");
+            var old_value = f$.data      ("old_value");
+            var polisher  = f$.data      ("polisher");
+            var new_value = ft.get_input (f$);
             a$.removeClass ("open");
             $("aside", c$).removeClass ("open");
+            if (  polisher
+               && new_value !== ""
+               && ((! old_value) || old_value != new_value)
+               ) {
+                setTimeout
+                    ( function () {
+                        polish_field (f$, f$.prop ("id"), new_value)
+                      }
+                    , 0
+                    );
+            };
         };
         var field_change_cb = function field_change_cb (ev) {
             var S         = options.selectors;
@@ -558,10 +574,15 @@
         };
         var field_focus_cb = function field_focus_cb (ev) {
             var S         = options.selectors;
+            var values    = options.form_spec.cargo.field_values;
             var f$        = $(this);
             var a$        = f$.siblings ().filter ($("aside"));
             var c$        = f$.closest (S.composite_field);
             var ca$       = $("aside", c$);
+            var F_id      = f$.prop ("id");
+            var ft        = f$.data ("field_type");
+            var fv        = values [F_id];
+            f$.data ("old_value", ft.get_cargo (fv));
             a$.addClass  ("open");
             ca$.addClass ("open");
         };
@@ -759,6 +780,42 @@
                 return false;
               }
             };
+        var polish_field = function polish_field (f$, F_id, new_value) {
+            var c_id         = f$.data ("completer");
+            var form_spec    = options.form_spec;
+            var cargo        = form_spec.cargo;
+            var f_completer  = form_spec.completers [c_id];
+            var field_values, data;
+            var success_cb = function success_cb (answer, status, xhr) {
+                if (! answer ["error"]) {
+                    completer.put_values (answer, answer.field_values, cargo);
+                } else {
+                    $GTW.show_message
+                        ("Ajax polisher error: ", answer.error);
+                };
+            };
+            if (f_completer) {
+                field_values = completer.get_values (f_completer);
+            } else {
+                field_values = {};
+            };
+            field_values [F_id] = new_value;
+            data =
+                { field_values    : field_values
+                , form_pid        : cargo.pid
+                , sid             : cargo.sid
+                , sigs            : cargo.sigs
+                , trigger         : F_id
+                };
+            $.gtw_ajax_2json
+                ( { async         : true
+                  , data          : data
+                  , success       : success_cb
+                  , url           : options.url.polisher
+                  }
+                , "Polish"
+                );
+        };
         var setup_entity_display = function setup_entity_display (n) {
             var S  = options.selectors;
             var f$ = $(this);

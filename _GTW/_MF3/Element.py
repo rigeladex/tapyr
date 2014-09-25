@@ -90,6 +90,7 @@
 #     2-Sep-2014 (CT) Add `set_request_defaults`
 #     2-Sep-2014 (CT) Fix `change_forbidden` call in `_Field_Base_.readonly`
 #     3-Sep-2014 (CT) Add attribute `restrict_completion`
+#    25-Sep-2014 (CT) Add `polisher`
 #    ««revision-date»»···
 #--
 
@@ -291,6 +292,7 @@ class _Base_ (TFL.Meta.Object) :
     name                = None
     parent              = None
     pid_sep             = "@"
+    polisher            = None
     q_name              = None
     restrict_completion = False
     skip                = False
@@ -1401,6 +1403,11 @@ class Field (_Field_) :
             result ["conflict"] = asyn
         return result
     # end def field_as_json_cargo
+
+    @TFL.Meta.Once_Property
+    def polisher (self) :
+        return self.attr.polisher
+    # end def polisher
 
     @property
     def ui_display (self) :

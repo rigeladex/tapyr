@@ -108,6 +108,7 @@
 #                     `elem.restrict_completion`
 #    22-Sep-2014 (CT) Catch missing `cargo` (die, spammers, die!)
 #    24-Sep-2014 (CT) Factor `set_request_defaults`
+#    25-Sep-2014 (CT) Add `Polisher`
 #    ««revision-date»»···
 #--
 
@@ -804,6 +805,45 @@ class Displayer (GTW.RST.TOP.MOM.Entity_Mixin, GTW.RST.TOP.Page) :
 
 # end class Displayer
 
+class Polisher (_JSON_Action_PO_) :
+    """Polish attribute values for a MF3 page."""
+
+    name                 = "polish"
+
+    def _polished (self, request, response, form, field, json, values) :
+        elems   = dict   ((k, form [k]) for k in values)
+        fids    = sorted (elems)
+        v_dict  = dict   ((e.attr.name, values [k]) for k, e in elems.items ())
+        p_dict  = field.polisher (field.attr, v_dict)
+        result  = dict \
+            ( field_ids    = fids
+            , field_values = list
+                (p_dict.get (elems [k].attr.name) for k in fids)
+            )
+        return result
+    # end def _polished
+
+    def _rendered_post (self, request, response) :
+        json         = request.json
+        form, field  = self._get_form_field (request, json)
+        result       = {}
+        scope        = self.top.scope
+        polisher     = field.polisher
+        if polisher is not None :
+            try :
+                values = json ["field_values"]
+            except KeyError :
+                raise self.top.Status.Bad_Request ("Missing field values")
+            result = self._polished \
+                (request, response, form, field, json, values)
+        else :
+            result ["error"] = _T ("Field %s doesn't have a polisher") \
+                % (field.label, )
+        return result
+    # end def _rendered_post
+
+# end class Polisher
+
 class QX_AF_Html (_JSON_Action_PO_) :
     """Process AJAX query for attr-filter's html"""
 
@@ -1036,7 +1076,7 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
 
     _v_entry_type_list    = \
         ( Add_Rev_Ref, Completed, Completer, Creator, Deleter, Displayer
-        , Instance
+        , Instance, Polisher
         , _QX_Dispatcher_E_Type_Mixin_
         )
 
@@ -1164,6 +1204,10 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
             result = pp_join (result, str (obj.pid))
         return result
     # end def href_delete
+
+    def href_polisher (self) :
+        return pp_join (self.abs_href, "polish")
+    # end def href_polisher
 
     def href_qx_esf_completed (self) :
         return pp_join (self.abs_href, self.qx_prefix, "esf_completed")
