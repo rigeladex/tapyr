@@ -134,6 +134,7 @@
 #    19-Aug-2014 (CT) Factor `ac_ui_display` in here
 #    30-Aug-2014 (CT) Add `dict` to `isinstance` check in `Link._cooked_role`
 #    26-Sep-2014 (CT) Change `_epkified` to use `_kw_polished`, if possible
+#    26-Sep-2014 (CT) Use `_kw_polished` for `raw` only
 #    ««revision-date»»···
 #--
 
@@ -433,7 +434,7 @@ class Id_Entity (Entity) :
         ### `MOM.Error.Required_Missing`
         kw = dict (kw)
         kw.pop ("on_error", None)
-        if etype.args_as_kw :
+        if etype.args_as_kw and kw.get ("raw", False) :
             pkw = etype._kw_polished (etype.epk_as_kw (* epk, ** kw))
             epk = ()
         else :
