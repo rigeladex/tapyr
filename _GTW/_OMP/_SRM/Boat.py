@@ -54,6 +54,7 @@
 #    13-Aug-2013 (CT) Change `sail_number` from `Primary_Optional` to `Primary`
 #    26-Mar-2014 (CT) Remove double quotes from `sail_number_x.description`
 #    29-Aug-2014 (CT) Add `syntax` descriptions to `sail_number`, `sail_number_x`
+#    26-Sep-2014 (CT) Add `sail_number.polisher`
 #    ««revision-date»»···
 #--
 
@@ -68,9 +69,18 @@ import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.Regexp              import Regexp, re
+from   _TFL.Regexp              import Multi_Regexp, Regexp, re
 
 _Ancestor_Essence = GTW.OMP.SRM.Link1
+
+_sail_number_split = MOM.Attr.Polisher.Match_Split \
+    ( Regexp
+        ( r"^"
+          r"(?:(?P<nation>[A-Za-z]{3}) +)?"
+          r"(?:(?P<sail_number_x>[A-Za-z]+)[- ]*)?"
+          r"(?P<sail_number>\d+)"
+        )
+    )
 
 class Boat (_Ancestor_Essence) :
     """Boat of a specific boat-class."""
@@ -110,6 +120,7 @@ class Boat (_Ancestor_Essence) :
             max_value          = 999999
             needs_raw_value    = True
             completer          = Attr.Completer_Spec  (1, Attr.Selector.primary)
+            polisher           = _sail_number_split
             syntax             = """
                 This field contains only the numeric part of the sail number,
                 not the nation, nor modifiers like `X`!

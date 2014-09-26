@@ -45,6 +45,7 @@
 #    27-Feb-2012 (CT) Add `GTW.OMP.SRM.Club.GTW.afs_kw` (`collapsed = False`)
 #     4-Jun-2012 (CT) Rename `handicap` to `boat_class`
 #    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
+#    26-Sep-2014 (CT) Change `sail_number_x` from `skip` to `readonly`
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,7 @@ class Admin (object) :
             ( { "left.left.max_crew"
                                : dict (skip       = True)
               , "left.sail_number_x"
-                               : dict (skip       = True)
+                               : dict (readonly   = True)
               }
             , right            = dict (prefilled  = True)
             , place            = dict (skip       = True)
