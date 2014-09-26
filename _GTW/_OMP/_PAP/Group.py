@@ -31,6 +31,8 @@
 #    12-Sep-2014 (CT) Remove `my_group`
 #                     [use type restriction in queries, instead]
 #    26-Sep-2014 (CT) Add `name.polisher`
+#    26-Sep-2014 (CT) Use `Polisher.capitalize_if_not_mixed_case`,
+#                     not `.capitalize`
 #    ««revision-date»»···
 #--
 
@@ -65,7 +67,7 @@ class _PAP_Group_ (_Ancestor_Essence) :
             max_length         = 64
             ignore_case        = True
             completer          = Attr.Completer_Spec  (2, Attr.Selector.primary)
-            polisher           = Attr.Polisher.capitalize
+            polisher           = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class name
 

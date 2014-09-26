@@ -39,6 +39,8 @@
 #    14-May-2014 (CT) Set `country.completer.treshold` to `0`
 #    15-May-2014 (CT) Reduce `street.completer.treshold` to `1`
 #    26-Sep-2014 (CT) Add `polisher`
+#    26-Sep-2014 (CT) Use `Polisher.capitalize_if_not_mixed_case`,
+#                     not `.capitalize`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +74,7 @@ class _PAP_Address_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize
+            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class street
 
@@ -102,7 +104,7 @@ class _PAP_Address_ (_Ancestor_Essence) :
 
             completer      = Attr.Completer_Spec  \
                 (1, Attr.Selector.Primary_Followers ())
-            polisher       = Attr.Polisher.capitalize
+            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class city
 
@@ -130,7 +132,7 @@ class _PAP_Address_ (_Ancestor_Essence) :
             ignore_case    = True
             max_length     = 20
             rank           = 5
-            polisher       = Attr.Polisher.capitalize
+            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class region
 

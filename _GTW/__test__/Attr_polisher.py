@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    25-Sep-2014 (CT) Creation
+#    26-Sep-2014 (CT) Add `test_address`
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,31 @@ from   __future__ import absolute_import, unicode_literals
 
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
+
+_test_address = """
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> def test (* args, ** kw) :
+    ...    a = PAP.Address (* args, raw = True, ** kw)
+    ...    print (a.ui_display)
+    ...    a.destroy ()
+
+    >>> test ("An der langen Lacke", "1220", "Wien", "Austria")
+    An der langen Lacke, 1220, Wien, Austria
+
+    >>> test ("an der langen lacke", "1220", "wien", "austria")
+    An Der Langen Lacke, 1220, Wien, Austria
+
+    >>> test ("AN DER LANGEN LACKE", "1220", "WIEN", "AUSTRIA")
+    An Der Langen Lacke, 1220, Wien, Austria
+
+    >>> test ("An der langen Lacke", "1220", "wIEn", "Austria")
+    An der langen Lacke, 1220, wIEn, Austria
+
+"""
 
 _test_person = """
 
@@ -91,7 +117,8 @@ _test_phone = """
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( test_person         = _test_person
+        ( test_address        = _test_address
+        , test_person         = _test_person
         , test_phone          = _test_phone
         )
     )

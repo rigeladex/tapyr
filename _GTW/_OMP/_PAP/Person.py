@@ -55,6 +55,9 @@
 #    12-Sep-2014 (CT) Remove `my_person`
 #                     [use type restriction in queries, instead]
 #    24-Sep-2014 (CT) Add `polisher` to `last_name`, `first_name`, `middle_name`
+#    26-Sep-2014 (CT) Use `Polisher.capitalize_if_not_mixed_case`,
+#                     not `.capitalize`
+#    26-Sep-2014 (CT) Add `polisher = capitalize_if_lower_case` to `title`
 #    ««revision-date»»···
 #--
 
@@ -140,7 +143,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 2
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize
+            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class first_name
 
@@ -154,7 +157,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize
+            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class middle_name
 
@@ -169,6 +172,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             ui_name        = _("Academic title")
 
             completer      = Attr.Completer_Spec  (1)
+            polisher       = Attr.Polisher.capitalize_if_lower_case
 
         # end class title
 

@@ -179,6 +179,7 @@
 #    12-Jun-2013 (CT)  Change `bool_split` to use `bool_split_iters`
 #     8-Jul-2014 (CT)  Change `split_hst`, `rsplit_hst` to allow multiple `seps`
 #     9-Sep-2014 (CT)  Add guard for `seps` to `split_hst`, `rsplit_hst`
+#    26-Sep-2014 (CT) Add `is_mixed_case`, `is_not_mixed_case`
 #    ««revision-date»»···
 #--
 
@@ -635,6 +636,43 @@ def is_contiguous (seq) :
             return False
     return True
 # end def is_contiguous
+
+def is_mixed_case (s) :
+    """Returns true if `s` is a mixed case string.
+
+    >>> is_mixed_case ("abc 123 DEF.IJK!")
+    True
+    >>> is_mixed_case ("ABC 123 DEF.IJK!")
+    False
+    >>> is_mixed_case ("abc 123 DEF.IJK! äÖüß")
+    True
+    >>> is_mixed_case ("ABC 123 DEF.IJK! ÄÖÜSZ")
+    False
+
+    """
+    result = False
+    if isinstance (s, pyk.string_types) :
+        any_lower = any (c.islower () for c in s)
+        any_upper = any (c.isupper () for c in s)
+        result    = any_lower and any_upper
+    return result
+# end def is_mixed_case
+
+def is_not_mixed_case (s) :
+    """Returns true if `s` is not a mixed case string.
+
+    >>> is_not_mixed_case ("abc 123 DEF.IJK!")
+    False
+    >>> is_not_mixed_case ("ABC 123 DEF.IJK!")
+    True
+    >>> is_not_mixed_case ("abc 123 DEF.IJK! äÖüß")
+    False
+    >>> is_not_mixed_case ("ABC 123 DEF.IJK! ÄÖÜSZ")
+    True
+
+    """
+    return not is_mixed_case (s)
+# end def is_not_mixed_case
 
 def is_ordered (seq, decorator = None) :
     """Returns whether `seq` is ordered (according to `decorator`)

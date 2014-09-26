@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    24-Sep-2014 (CT) Creation
+#    26-Sep-2014 (CT) Add `guard`, `capitalize_if_not_mixed_case`,
+#                     `capitalize_if_lower_case`
 #    ««revision-date»»···
 #--
 
@@ -42,9 +44,12 @@ from   _TFL.pyk              import pyk
 from   _TFL.Regexp           import *
 
 import _TFL._Meta.Object
+import _TFL.predicate
 
 class _Polisher_ (TFL.Meta.Object) :
     """Base class for Polishers"""
+
+    guard = None
 
     def __init__ (self, ** kw) :
         for k, v in pyk.iteritems (kw) :
@@ -59,8 +64,9 @@ class _Polisher_ (TFL.Meta.Object) :
         if value is None :
             value = value_dict.get (name)
         if isinstance (value, pyk.string_types) :
+            guard = self.guard
             value = value.strip ()
-            if value :
+            if value and (guard is None or guard (value)) :
                 self._polish (attr, name, value, result)
         return result
     # end def __call__
@@ -77,10 +83,10 @@ class _Polisher_ (TFL.Meta.Object) :
 class Match_Split (_Polisher_) :
     """Polisher splitting a value into several attribute values."""
 
-    def __init__ (self, matcher) :
+    def __init__ (self, matcher, ** kw) :
         if isinstance (matcher, (Regexp, ) + pyk.string_types) :
             matcher = Multi_Regexp (matcher)
-        self.__super.__init__ (matcher = matcher)
+        self.__super.__init__ (matcher = matcher, ** kw)
     # end def __init__
 
     def add (self, * matchers, ** kw) :
@@ -101,8 +107,8 @@ class Match_Split (_Polisher_) :
 class Replace (_Polisher_) :
     """Polisher replacing matches of regular expressions."""
 
-    def __init__ (self, replacer) :
-        self.__super.__init__ (replacer = replacer)
+    def __init__ (self, replacer, ** kw) :
+        self.__super.__init__ (replacer = replacer, ** kw)
     # end def __init__
 
     def _polish (self, attr, name, value, result) :
@@ -135,6 +141,16 @@ capitalize = Replace \
         , _capitalize_words
         , re.UNICODE
         )
+    )
+
+capitalize_if_lower_case = Replace \
+    ( Re_Replacer (r"\w+", _capitalize_words, re.UNICODE)
+    , guard = lambda s : s.islower ()
+    )
+
+capitalize_if_not_mixed_case = Replace \
+    ( Re_Replacer (r"\w+", _capitalize_words, re.UNICODE)
+    , guard = TFL.is_not_mixed_case
     )
 
 capitalize_last_word = Replace \
@@ -178,98 +194,114 @@ phone_number_split = Match_Split \
     )
 
 _test_capitalize = """
+    >>> from _TFL.Record import Record
+    >>> attr = Record (name = "test")
+    >>> def test (polisher, value) :
+    ...     rd = polisher (attr, dict (test = value))
+    ...     print (rd ["test"])
+
     >>> l = "fröhlich-tanzer"
     >>> m = "Fröhlich-Tanzer"
     >>> u = "FRÖHLICH-TANZER"
 
-    >>> print (capitalize.replacer (l))
+    >>> test (capitalize, l)
     Fröhlich-Tanzer
-    >>> print (capitalize.replacer (m))
+    >>> test (capitalize, m)
     Fröhlich-Tanzer
-    >>> print (capitalize.replacer (u))
+    >>> test (capitalize, u)
     Fröhlich-Tanzer
 
-    >>> print (capitalize_last_word.replacer (l))
+    >>> test (capitalize_last_word, l)
     Fröhlich-Tanzer
-    >>> print (capitalize_last_word.replacer (m))
+    >>> test (capitalize_last_word, m)
     Fröhlich-Tanzer
-    >>> print (capitalize_last_word.replacer (u))
+    >>> test (capitalize_last_word, u)
     Fröhlich-Tanzer
 
     >>> l = "christian fröhlich-tanzer"
     >>> m = "Christian Fröhlich-Tanzer"
     >>> u = "CHRISTIAN FRÖHLICH-TANZER"
 
-    >>> print (capitalize.replacer (l))
+    >>> test (capitalize, l)
     Christian Fröhlich-Tanzer
-    >>> print (capitalize.replacer (m))
+    >>> test (capitalize, m)
     Christian Fröhlich-Tanzer
-    >>> print (capitalize.replacer (u))
+    >>> test (capitalize, u)
     Christian Fröhlich-Tanzer
 
-    >>> print (capitalize_last_word.replacer (l))
+    >>> test (capitalize_last_word, l)
     christian Fröhlich-Tanzer
-    >>> print (capitalize_last_word.replacer (m))
+    >>> test (capitalize_last_word, m)
     Christian Fröhlich-Tanzer
-    >>> print (capitalize_last_word.replacer (u))
+    >>> test (capitalize_last_word, u)
     CHRISTIAN Fröhlich-Tanzer
 
     >>> l = "van der fröhlich-tanzer"
     >>> m = "van der Fröhlich-Tanzer"
     >>> u = "van der FRÖHLICH-TANZER"
+    >>> v = "VAN DER FRÖHLICH-TANZER"
 
-    >>> print (capitalize.replacer (l))
+    >>> test (capitalize, l)
     Van Der Fröhlich-Tanzer
-    >>> print (capitalize.replacer (m))
+    >>> test (capitalize, m)
     Van Der Fröhlich-Tanzer
-    >>> print (capitalize.replacer (u))
+    >>> test (capitalize, u)
     Van Der Fröhlich-Tanzer
 
-    >>> print (capitalize_last_word.replacer (l))
+    >>> test (capitalize_if_not_mixed_case, l)
+    Van Der Fröhlich-Tanzer
+    >>> test (capitalize_if_not_mixed_case, m)
     van der Fröhlich-Tanzer
-    >>> print (capitalize_last_word.replacer (m))
+    >>> test (capitalize_if_not_mixed_case, u)
+    van der FRÖHLICH-TANZER
+    >>> test (capitalize_if_not_mixed_case, v)
+    Van Der Fröhlich-Tanzer
+
+    >>> test (capitalize_last_word, l)
     van der Fröhlich-Tanzer
-    >>> print (capitalize_last_word.replacer (u))
+    >>> test (capitalize_last_word, m)
+    van der Fröhlich-Tanzer
+    >>> test (capitalize_last_word, u)
     van der Fröhlich-Tanzer
 
     >>> l = "mctanzer"
     >>> m = "McTanzer"
     >>> u = "MCTANZER"
 
-    >>> print (capitalize.replacer (l))
+    >>> test (capitalize, l)
     Mctanzer
-    >>> print (capitalize.replacer (m))
+    >>> test (capitalize, m)
     McTanzer
-    >>> print (capitalize.replacer (u))
+    >>> test (capitalize, u)
     Mctanzer
 
-    >>> print (capitalize_last_word.replacer (l))
+    >>> test (capitalize_last_word, l)
     Mctanzer
-    >>> print (capitalize_last_word.replacer (m))
+    >>> test (capitalize_last_word, m)
     McTanzer
-    >>> print (capitalize_last_word.replacer (u))
+    >>> test (capitalize_last_word, u)
     Mctanzer
 
     >>> l = "mag."
     >>> m = "Mag."
     >>> u = "MAG."
 
-    >>> print (capitalize.replacer (l))
+    >>> test (capitalize, l)
     Mag.
-    >>> print (capitalize.replacer (m))
+    >>> test (capitalize, m)
     Mag.
-    >>> print (capitalize.replacer (u))
+    >>> test (capitalize, u)
     Mag.
 
     >>> l = "dipl.ing."
     >>> m = "Dipl.Ing."
     >>> u = "DIPL.ING."
 
-    >>> print (capitalize.replacer (l))
+    >>> test (capitalize, l)
     Dipl.Ing.
-    >>> print (capitalize.replacer (m))
+    >>> test (capitalize, m)
     Dipl.Ing.
-    >>> print (capitalize.replacer (u))
+    >>> test (capitalize, u)
     Dipl.Ing.
 
 """
