@@ -408,6 +408,7 @@
                             // `field_type`; they need no action here, anyway
                             ft.put_input (f$, val);
                         };
+                        f$.data ("old_value", val);
                     } else {
                         fv = values [id];
                         if (fv != undefined) {

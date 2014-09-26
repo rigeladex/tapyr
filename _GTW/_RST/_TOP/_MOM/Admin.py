@@ -109,6 +109,7 @@
 #    22-Sep-2014 (CT) Catch missing `cargo` (die, spammers, die!)
 #    24-Sep-2014 (CT) Factor `set_request_defaults`
 #    25-Sep-2014 (CT) Add `Polisher`
+#    26-Sep-2014 (CT) Use `_polished` in `Completer._rendered_post`
 #    ««revision-date»»···
 #--
 
@@ -456,6 +457,19 @@ class _JSON_Action_PO_ (_JSON_Action_) :
 
     GET = None
 
+    def _polished (self, request, response, form, field, json, values) :
+        elems   = dict   ((k, form [k]) for k in values)
+        fids    = sorted (elems)
+        v_dict  = dict   ((e.attr.name, values [k]) for k, e in elems.items ())
+        p_dict  = field.polisher (field.attr, v_dict)
+        result  = dict \
+            ( field_ids    = fids
+            , field_values = list
+                (p_dict.get (elems [k].attr.name) for k in fids)
+            )
+        return result
+    # end def _polished
+
 # end class _JSON_Action_PO_
 
 class _Changer_ (_HTML_Action_) :
@@ -703,6 +717,16 @@ class Completer (_JSON_Action_PO_) :
         scope        = self.top.scope
         completer    = field.completer
         if completer is not None :
+            polisher = field.polisher
+            if polisher is not None :
+                try :
+                    values   = json ["field_values"]
+                    pd       = self._polished \
+                        (request, response, form, field, json, values)
+                    values.update \
+                        (zip (pd ["field_ids"], pd ["field_values"]))
+                except Exception as exc :
+                    logging.exception (exc)
             eor    = self.eligible_object_restriction (completer.etn)
             result = completer.choices (scope, json, eor, self.max_completions)
         return result
@@ -809,19 +833,6 @@ class Polisher (_JSON_Action_PO_) :
     """Polish attribute values for a MF3 page."""
 
     name                 = "polish"
-
-    def _polished (self, request, response, form, field, json, values) :
-        elems   = dict   ((k, form [k]) for k in values)
-        fids    = sorted (elems)
-        v_dict  = dict   ((e.attr.name, values [k]) for k, e in elems.items ())
-        p_dict  = field.polisher (field.attr, v_dict)
-        result  = dict \
-            ( field_ids    = fids
-            , field_values = list
-                (p_dict.get (elems [k].attr.name) for k in fids)
-            )
-        return result
-    # end def _polished
 
     def _rendered_post (self, request, response) :
         json         = request.json
