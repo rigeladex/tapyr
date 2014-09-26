@@ -30,6 +30,7 @@
 #     4-Sep-2014 (CT) Add query attribute `my_group`
 #    12-Sep-2014 (CT) Remove `my_group`
 #                     [use type restriction in queries, instead]
+#    26-Sep-2014 (CT) Add `name.polisher`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ class _PAP_Group_ (_Ancestor_Essence) :
             max_length         = 64
             ignore_case        = True
             completer          = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            polisher           = Attr.Polisher.capitalize
 
         # end class name
 
