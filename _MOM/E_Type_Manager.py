@@ -133,6 +133,7 @@
 #    21-Aug-2013 (CT) Factor `ems` and `query` from `Id_Entity` to `Entity`
 #    19-Aug-2014 (CT) Factor `ac_ui_display` in here
 #    30-Aug-2014 (CT) Add `dict` to `isinstance` check in `Link._cooked_role`
+#    26-Sep-2014 (CT) Change `_epkified` to use `_kw_polished`, if possible
 #    ««revision-date»»···
 #--
 
@@ -370,6 +371,7 @@ class Id_Entity (Entity) :
     def exists (self, * epk, ** kw) :
         """Return true if an object or link with primary key `epk` exists."""
         epk, kw, this = self.cooked_epk (epk, kw)
+        kw.pop ("on_error", None)
         if kw :
             raise TypeError (kw)
         return this.ems.exists (this._etype, epk)
@@ -431,7 +433,12 @@ class Id_Entity (Entity) :
         ### `MOM.Error.Required_Missing`
         kw = dict (kw)
         kw.pop ("on_error", None)
-        return etype.epkified (* epk, ** kw), this
+        if etype.args_as_kw :
+            pkw = etype._kw_polished (etype.epk_as_kw (* epk, ** kw))
+            epk = ()
+        else :
+            pkw = kw
+        return etype.epkified (* epk, ** pkw), this
     # end def _epkified
 
 # end class Id_Entity

@@ -291,6 +291,7 @@
 #    25-Sep-2014 (CT) Add and use `_kw_polished`
 #    25-Sep-2014 (CT) Factor `_kw_undeprecated`, `_set_ckd_inner`,
 #                     `_set_raw_inner`
+#    26-Sep-2014 (CT) Change `_kw_polished`, `_kw_undeprecated` to `classmethod`
 #    ««revision-date»»···
 #--
 
@@ -806,18 +807,20 @@ class Entity (TFL.Meta.Object) :
         return result, to_do
     # end def _kw_raw_check_predicates
 
-    def _kw_polished (self, attr_dict) :
+    @classmethod
+    def _kw_polished (cls, attr_dict) :
         result = attr_dict
-        for attr in self.polish_attr :
+        for attr in cls.polish_attr :
             if attr.name in result :
                 val    = result [attr.name]
                 result = attr.polisher (attr, result, val)
         return result
     # end def _kw_polished
 
-    def _kw_undeprecated (self, attr_dict) :
+    @classmethod
+    def _kw_undeprecated (cls, attr_dict) :
         for name, val in attr_dict.iteritems () :
-            cnam = self.deprecated_attr_names.get (name, name)
+            cnam = cls.deprecated_attr_names.get (name, name)
             yield cnam, val
     # end def _kw_undeprecated
 
@@ -1546,7 +1549,7 @@ class Id_Entity (_Ancestor_Essence) :
         try :
             return epkifier (* epk, ** kw)
         except TypeError, exc :
-            on_error = kw.pop ("on_error", cls._raise_attr_error)
+            on_error = kw.pop ("on_error", None) or cls._raise_attr_error
             needed   = tuple (m.name for m in cls.primary_required)
             missing  = tuple (p for p in needed [len (epk):] if p not in kw)
             if missing :

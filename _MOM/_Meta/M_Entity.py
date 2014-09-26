@@ -227,6 +227,7 @@
 #    25-Sep-2014 (CT) Rename `signified` to `args_as_kw`
 #    25-Sep-2014 (CT) Move `_m_auto_args_as_kw` up to `M_E_Mixin`, remove `raw`
 #    25-Sep-2014 (CT) Add `args_as_kw` to `M_E_Type_Id`
+#    26-Sep-2014 (CT) Add `args_as_kw` for partial types with `epk_sig`, too
 #    ««revision-date»»···
 #--
 
@@ -1349,7 +1350,7 @@ class M_E_Type_Id (M_E_Type) :
         epk_sig          = cls.epk_sig
         cls.epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
         cls.epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
-        if epk_sig and not cls.is_partial :
+        if epk_sig :
             cls.args_as_kw = cls._m_auto_args_as_kw (epk_sig, pkas)
     # end def _m_setup_attributes
 

@@ -818,6 +818,31 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     ...   if et.args_as_kw :
     ...     print "***", et.type_name, "***", getattr (et, "usr_sig", "") or getattr (et, "epk_sig", "")
     ...     print et.args_as_kw and et.args_as_kw.source_code.rstrip ()
+    *** MOM.Link *** ('left',)
+    def args_as_kw (cls, left = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left)] if v is not undefined)
+        return kw
+    *** MOM.Link1 *** ('left',)
+    def args_as_kw (cls, left = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left)] if v is not undefined)
+        return kw
+    *** MOM._MOM_Link_n_ *** ('left', 'right')
+    def args_as_kw (cls, left = undefined, right = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("right", right)] if v is not undefined)
+        return kw
+    *** MOM.Link2 *** ('left', 'right')
+    def args_as_kw (cls, left = undefined, right = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("right", right)] if v is not undefined)
+        return kw
+    *** MOM.Link3 *** ('left', 'middle', 'right')
+    def args_as_kw (cls, left = undefined, middle = undefined, right = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("left", left), ("middle", middle), ("right", right)] if v is not undefined)
+        return kw
     *** MOM.Date_Interval *** ('start', 'finish')
     def args_as_kw (cls, start = undefined, finish = undefined) :
         kw = dict ((k, v) for k, v in [("start", start), ("finish", finish)] if v is not undefined)
@@ -850,6 +875,11 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     def args_as_kw (cls, lat = undefined, lon = undefined, height = undefined) :
         kw = dict ((k, v) for k, v in [("lat", lat), ("lon", lon), ("height", height)] if v is not undefined)
         return kw
+    *** MOM.Named_Object *** ('name',)
+    def args_as_kw (cls, name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name)] if v is not undefined)
+        return kw
     *** BMT.Location *** ('lon', 'lat')
     def args_as_kw (cls, lon = undefined, lat = undefined, ** kw) :
         kw = dict (kw)
@@ -859,6 +889,11 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     def args_as_kw (cls, last_name = undefined, first_name = undefined, middle_name = undefined, ** kw) :
         kw = dict (kw)
         kw.update ((k, v) for k, v in [("last_name", last_name), ("first_name", first_name), ("middle_name", middle_name)] if v is not undefined)
+        return kw
+    *** BMT.Rodent *** ('name',)
+    def args_as_kw (cls, name = undefined, ** kw) :
+        kw = dict (kw)
+        kw.update ((k, v) for k, v in [("name", name)] if v is not undefined)
         return kw
     *** BMT.Mouse *** ('name',)
     def args_as_kw (cls, name = undefined, ** kw) :
