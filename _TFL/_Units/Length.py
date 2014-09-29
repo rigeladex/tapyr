@@ -32,6 +32,7 @@
 #                      in the context of units is a bad thing (TM))
 #     8-Nov-2006 (CED) Some parsec variants added (used in astronomy for large
 #                      structures)
+#    28-Sep-2014 (CT)  Add `light_second`
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,7 @@ class Length (TFL.Units.Kind) :
         , Unit ("nautical_mile",  1852.0,                    "Nm")
         # physics units
         , Unit ("astronomical_unit", 1.49597870691e11,       "AU")
+        , Unit ("light_second",      299792458,              "ls")
         , Unit ("light_year",        9.4607304725808e15,     "ly")
         , Unit ("kiloparsec", TFL.Units.kilo * _parsec,     "kpc")
         , Unit ("megaparsec", TFL.Units.mega * _parsec,     "Mpc")

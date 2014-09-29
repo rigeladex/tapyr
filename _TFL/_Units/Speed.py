@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,13 +57,13 @@ class Speed (TFL.Units.Kind) :
     _units        = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # Usual units
-          Unit ("kilometer_per_hour", Length.kilometer     / Time.hour, "kmh")
+          Unit ("kilometer_per_hour", Length.kilometer     / Time.hour,   "kmh")
         # US customary units
         , Unit ("furlong_per_fortnight", Length.furlong    / Time.fortnight)
-        , Unit ("mile_per_hour",      Length.statute_mile  / Time.hour, "mph")
-        , Unit ("knots",              Length.nautical_mile / Time.hour, "kn")
+        , Unit ("mile_per_hour",      Length.statute_mile  / Time.hour,   "mph")
+        , Unit ("knots",              Length.nautical_mile / Time.hour,    "kn")
         # physics units
-        , Unit ("speed_of_light",     2.99792458e8,  "c")
+        , Unit ("speed_of_light",     Length.light_second  / Time.second,   "c")
         )
 
 # end class Speed
