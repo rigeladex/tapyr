@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #     1-Dec-2009 (CT) Ignore `__getslice__` warnings
 #    14-Jan-2011 (CT) `-format`, `-color`, `-x_off`, and `-y_off` added
 #    16-Jun-2013 (CT) Use `TFL.CAO`, not `TFL.Command_Line`
+#     1-Oct-2014 (CT) Add `fix_rotation`
 #    ««revision-date»»···
 #--
 
@@ -43,10 +44,22 @@ from   _CAL.Date          import Date
 from   _TFL               import TFL
 from   _TFL               import sos
 from   _TFL.Filename      import *
+from   _TFL.Regexp        import Regexp, re
 
 import _TFL.CAO
+import _TFL.FCM
+
+import warnings
+warnings.filterwarnings ("ignore", module = "^PIL.*")
+warnings.filterwarnings \
+    ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
 
 from   PIL import Image, ImageDraw, ImageFile, ImageFont, ExifTags
+
+try :
+    import plumbum
+except ImportError :
+    plumbum = None
 
 ### http://mail.python.org/pipermail/image-sig/1999-August/000816.html
 ### to avoid exception
@@ -54,11 +67,18 @@ from   PIL import Image, ImageDraw, ImageFile, ImageFont, ExifTags
 
 ImageFile.MAXBLOCK = 1000000 # default is 64k
 
-def convert_one (src, name, i_size, t_size, holder, year, font, imp, thp, format, color, x_off, y_off) :
-    im = Image.open (src)
-    th = im.copy    ()
-    im.thumbnail    (i_size, Image.ANTIALIAS)
-    th.thumbnail    (t_size, Image.ANTIALIAS)
+_rotate_pat = Regexp (r"Rotate\s+(?P<angle>\d+)\s+CW")
+
+def convert_one \
+        ( src, name, i_size, t_size, holder, year, font, imp, thp
+        , format, color, x_off, y_off
+        , temp_dir = None
+        ) :
+    f_src = fix_rotation (src, temp_dir)
+    im    = Image.open   (f_src)
+    th    = im.copy      ()
+    im.thumbnail (i_size, Image.ANTIALIAS)
+    th.thumbnail (t_size, Image.ANTIALIAS)
     if holder :
         xo   = x_off if x_off > 0 else im.size [0] + x_off
         yo   = y_off if y_off > 0 else im.size [1] + y_off
@@ -69,6 +89,23 @@ def convert_one (src, name, i_size, t_size, holder, year, font, imp, thp, format
     im.save (imp, format, progressive = True)
     th.save (thp, format, progressive = True)
 # end def convert_one
+
+def fix_rotation (src, temp_dir) :
+    result = src
+    if plumbum is not None :
+        pbl     = plumbum.local
+        rot_pat = _rotate_pat
+        jt_rot  = pbl ["jpegtran"] \
+            ["-copy", "all", "-perfect", "-optimize", "-rotate"]
+        xt      = pbl ["exiftool"] ["-Orientation"]
+        orient  = xt (src)
+        if rot_pat.search (orient) :
+            angle  = rot_pat.angle
+            result = Filename (Filename (src).base_ext, default_dir = temp_dir).name
+            cmd    = jt_rot [str (angle), src] > result
+            cmd ()
+    return result
+# end def fix_rotation
 
 def _main (cmd) :
     font   = ImageFont.load_default ()
@@ -84,38 +121,41 @@ def _main (cmd) :
     i_size = cmd.i_size, cmd.i_size
     t_size = cmd.t_size, cmd.t_size
     td     = sos.expanded_path (cmd.target_dir)
-    if cmd.add_to_dir :
-        if not sos.path.isdir (td) :
-            print ("Making directory %s" % (td, ))
-            sos.mkdir_p (td)
-        for src in cmd.argv [1:] :
-            src, name = src.split ("=")
-            if not name :
-                name = src
-            name = Filename (name).base
-            imp  = sos.path.join (td, "%s_im.%s" % (name, ext))
-            thp  = sos.path.join (td, "%s_th.%s" % (name, ext))
-            convert_one \
-                ( src, name, i_size, t_size, holder, year, font, imp, thp
-                , fmt, color, x_off, y_off
-                )
-    else :
-        td_im = sos.path.join (td, "im")
-        td_th = sos.path.join (td, "th")
-        for x in td_im, td_th :
-            if not sos.path.isdir (x) :
-                print ("Making directory %s" % (x, ))
-                sos.mkdir_p (x)
-        pid  = cmd.start_pid
-        for src in sorted (sos.expanded_globs (* cmd.argv [1:])) :
-            pid  += 1
-            name  = "%04d.%s" % (pid, ext)
-            imp   = sos.path.join (td_im, name)
-            thp   = sos.path.join (td_th, name)
-            convert_one \
-                ( src, name, i_size, t_size, holder, year, font, imp, thp
-                , fmt, color, x_off, y_off
-                )
+    with TFL.temp_dir () as temp_dir :
+        if cmd.add_to_dir :
+            if not sos.path.isdir (td) :
+                print ("Making directory %s" % (td, ))
+                sos.mkdir_p (td)
+            for src in cmd.argv [1:] :
+                src, name = src.split ("=")
+                if not name :
+                    name = src
+                name = Filename (name).base
+                imp  = sos.path.join (td, "%s_im.%s" % (name, ext))
+                thp  = sos.path.join (td, "%s_th.%s" % (name, ext))
+                convert_one \
+                    ( src, name, i_size, t_size, holder, year, font, imp, thp
+                    , fmt, color, x_off, y_off
+                    , temp_dir
+                    )
+        else :
+            td_im = sos.path.join (td, "im")
+            td_th = sos.path.join (td, "th")
+            for x in td_im, td_th :
+                if not sos.path.isdir (x) :
+                    print ("Making directory %s" % (x, ))
+                    sos.mkdir_p (x)
+            pid  = cmd.start_pid
+            for src in sorted (sos.expanded_globs (* cmd.argv [1:])) :
+                pid  += 1
+                name  = "%04d.%s" % (pid, ext)
+                imp   = sos.path.join (td_im, name)
+                thp   = sos.path.join (td_th, name)
+                convert_one \
+                    ( src, name, i_size, t_size, holder, year, font, imp, thp
+                    , fmt, color, x_off, y_off
+                    , temp_dir
+                    )
 # end def _main
 
 today = Date ()
@@ -143,10 +183,6 @@ _Command = TFL.CAO.Cmd \
         )
     , min_args      = 2
     )
-
-import warnings
-warnings.filterwarnings \
-    ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
 
 if __name__ == "__main__" :
     _Command ()
