@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Mar-2009 (CT) Creation
 #     1-Jun-2012 (CT) Add `import` of `traceback` to `open_to_replace`
+#     1-Oct-2014 (CT) Add `temp_dir`
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,18 @@ def open_to_replace (file_name, mode = "w", buffering = -1, backup_name = None) 
                     traceback.print_exc ()
         sos.rename (temp_name, file_name)
 # end def open_to_replace
+
+@TFL.Contextmanager
+def temp_dir (suffix = "", prefix = "tmp", dir = "/tmp", auto_remove = True) :
+    """Context manager that creates a temporary directory."""
+    temp_dir_path = tempfile.mkdtemp \
+        (suffix = suffix, prefix = prefix, dir = dir)
+    try :
+        yield temp_dir_path
+    finally :
+        if auto_remove and sos.path.exists (temp_dir_path) :
+            sos.rmdir (temp_dir_path, deletefiles = True)
+# end def temp_dir
 
 if __name__ != "__main__" :
     TFL._Export ("*")
