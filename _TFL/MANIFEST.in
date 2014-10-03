@@ -1,2 +1,2 @@
-include LGPL
-include _SDG/_C/to_do.list
+exclude .dirin .dirout .gitignore to-do
+include TFL-version
