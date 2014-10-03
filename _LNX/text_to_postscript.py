@@ -27,6 +27,7 @@
 #    19-Dec-2013 (CT) Creation
 #     3-Jan-2014 (CT) Change `-header` to `U`, use `pyk.encoded` for `options`
 #    11-Feb-2014 (CT) Add support for STDIN
+#     3-Oct-2014 (CT) Add `$b` for header (to select basename of file)
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,9 @@ class _TTP_Sub_Command_ (TFL.Command.Sub_Command) :
         def _gen (l, m, r, file_name, file_time) :
             now = time.strftime (self.time_fmt, time.localtime ())
             for x in (l, m, r) :
-                if x == "$n" :
+                if x == "$b" :
+                    x = Filename (file_name).base
+                elif x == "$n" :
                     x = file_name
                 elif x == "$t" :
                     x = now
