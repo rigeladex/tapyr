@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,9 +46,10 @@ end of the civil, nautic, and astronomical twilight.
 from   _TFL                  import TFL
 from   _CAL                  import CAL
 
-from   _TFL._TKT._Tk.CTK     import *
 from   _TFL.predicate        import pairwise
 from   _TFL.Angle            import Angle_D, Angle_R
+
+from   _TGL._TKT._Tk.CTK     import *
 
 import _CAL.Date
 import _CAL.Time
