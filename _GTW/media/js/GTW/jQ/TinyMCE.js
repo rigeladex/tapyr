@@ -1,9 +1,8 @@
 // Copyright (C) 2012-2014 Martin Glueck All rights reserved
 // Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 // #*** <License> ************************************************************#
-// This software is licensed under the terms of either the
-// MIT License or the GNU Affero General Public License (AGPL) Version 3.
-// http://www.c-tanzer.at/license/mit_or_agpl.html
+// This software is licensed under the terms of the BSD 3-Clause License
+// <http://www.c-tanzer.at/license/bsd_3c.html>.
 // #*** </License> ***********************************************************#
 //
 //++

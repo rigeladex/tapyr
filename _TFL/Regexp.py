@@ -3,19 +3,8 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
-#
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# This module is licensed under the terms of the BSD 3-Clause License
+# <http://www.c-tanzer.at/license/bsd_3c.html>.
 # ****************************************************************************
 #
 #++
@@ -51,6 +40,7 @@
 #    25-Mar-2013 (CT) Add `Copy`, `__nonzero__`, doctest to `Regexp`
 #    27-Mar-2013 (CT) Add `Multi_Re_Replacer.add`
 #    24-Sep-2014 (CT) Factor `Multi_Regexp.add`
+#    13-Oct-2014 (CT) Add `Multi_Regexp.sub` and `.subn`
 #    ««revision-date»»···
 #--
 
@@ -253,6 +243,14 @@ class Multi_Regexp (TFL.Meta.Object) :
             for m in p.search_iter (string, pos, endpos) :
                 yield m
     # end def search_iter
+
+    def sub (self, * args, ** kw) :
+        return self._delegate ("sub", * args, ** kw)
+    # end def sub
+
+    def subn (self, * args, ** kw) :
+        return self._delegate ("subn", * args, ** kw)
+    # end def subn
 
     def _delegate (self, meth, * args, ** kw) :
         for p in self.patterns :

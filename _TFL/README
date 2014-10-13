@@ -1,6 +1,6 @@
 This directory contains the Python package TFL. It contains the basic
 infrastructure for my (Christian Tanzer's) Python projects. TFL is
-distributed under the conditions of the GNU Lesser General Public License
-(see file LGPL in this directory).
+distributed under the conditions of the BSD 3-Clause License
+(see file LICENSE in this directory).
 
 Reports of bugs in TFL should be sent to tanzer@swing.co.at.
