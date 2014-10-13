@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2014 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@undefined.dontknow
 # ****************************************************************************
 #
@@ -107,6 +107,8 @@
 #    26-Jan-2006 (MG) Update after `sync` command implemented
 #    ««revision-date»»···
 #--
+
+from   __future__              import print_function
 
 from   _TFL                    import TFL
 from   _TGL                    import TGL
@@ -650,10 +652,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             for box in boxes :
                 try :
                     self.box_views [box.root].update (box)
-                except Exception, exc :
-                    print "*** PMA.UI.Office._commit:", \
-                        exc.__class__.__name__, exc
-            print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
+                except Exception as exc :
+                    print \
+                        ( "*** PMA.UI.Office._commit:"
+                        , exc.__class__.__name__, exc
+                        )
+            print ("Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text)))
     # end def _commit
 
     def _create_delivery_view (self, mbx_msg_view) :
@@ -703,7 +707,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         comp   = ANS.Composer   (smtp = smtp, send_cb = self._mail_sent)
         result = getattr        (comp, cmd) (* args)
         time.sleep (0.1)
-        print text
+        print (text)
         time.sleep (0.1)
         return result
     # end def _mail_compose
@@ -716,7 +720,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 for r in recs.split (",") :
                     receivers.add (r)
         time.sleep (0.1)
-        print "Mail sent to %s" % (", ".join (receivers))
+        print ("Mail sent to %s" % (", ".join (receivers)))
         time.sleep (0.1)
         return email
     # end def _mail_sent
@@ -729,7 +733,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 for r in recs.split (",") :
                     receivers.add (r)
         time.sleep (0.1)
-        print "Mail sent to %s" % (", ".join (receivers))
+        print ("Mail sent to %s" % (", ".join (receivers)))
         time.sleep (0.1)
         return email
     # end def _mail_sent
@@ -741,14 +745,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         if not msgs :
             msgs = (status.current_box.status.current_message, )
         if msgs :
-            print text % dict \
+            print \
+                ( text
+                % dict
                     ( cb_qname = status.current_box.qname
                     , cmd      = cmd
                     , tb_qname = getattr (status.target_box, "qname", "")
-                    ),
+                    )
+                , end = " "
+                )
             for msg in msgs :
                 result = getattr (msg.pending, cmd) (* args)
-                print msg.number,
+                print (msg.number, end = " ")
                 view.update  (msg)
             print
         return result
@@ -821,7 +829,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 ( "`%s`: %s"
                 % (box.qname, ", ".join (str (m.number) for m in msgs))
                 )
-        print "Commit %s" % (", ".join (text), )
+        print ("Commit %s" % (", ".join (text), ))
     # end def _update_commit_action
 
     def _update_box_status (self, old, new, mailbox) :

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -110,7 +110,7 @@ class Polling_Thread (_Thread_) :
     # end def quit
 
     def _poll (self) :
-        raise NotImplemented, "%s must implement _poll" % self.__class__
+        raise NotImplemented ("%s must implement _poll" % self.__class__)
     # end def _poll
 
 # end class Polling_Thread

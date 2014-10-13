@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,8 @@
 #    14-Dec-2007 (MG) `Suppress_Redirect` option added
 #    ««revision-date»»···
 #--
+
+from   __future__             import print_function
 
 from   _TFL                   import TFL
 from   _PMA                   import PMA
@@ -90,7 +92,7 @@ class Starter (PMA.UI.Mixin) :
     def __init__ (self, ANS, cmd, start_mainloop = True) :
         self.__super.__init__   (PMA.UI.App_Context (ANS))
         if cmd.Version :
-            pass ### print ANS.Version.product_info ()
+            pass ### print (ANS.Version.product_info ())
         self._do_imports        (cmd)
         self._protected_start   (cmd)
         if start_mainloop :
@@ -169,7 +171,7 @@ class Starter (PMA.UI.Mixin) :
                 raise
             except :
                 pass
-            raise SystemExit, 9999
+            raise SystemExit (9999)
     # end def _protected_start
 
     def _start (self, cmd) :

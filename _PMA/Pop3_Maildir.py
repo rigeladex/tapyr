@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -104,9 +104,11 @@ class Pop3_Poller (PMA.Polling_Thread) :
             try :
                 self.maildir.unsynced.value += \
                     self.download_pop (server, self.maildir)
-            except Exception, exc :
-                print >> sys.__stderr__, \
-                    "Exception during `download_pop`: %s" % (exc, )
+            except Exception as exc :
+                print \
+                    ( "Exception during `download_pop`: %s" % (exc, )
+                    , file = sys.__stderr__
+                    )
         finally :
             server.quit ()
     # end def _poll
@@ -139,7 +141,7 @@ class Pop3_Maildir (PMA.Maildir) :
     # end def __init__
 
     def passwd_cb (self) :
-        raise NotImplemented, "Must pass passwd to Pop3_Maildir"
+        raise NotImplemented ("Must pass passwd to Pop3_Maildir")
     # end def passwd_cb
 
 # end class Pop3_Maildir

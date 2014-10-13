@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -83,6 +83,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__              import print_function
+
 from   _TFL                    import TFL
 from   _TGL                    import TGL
 from   _PMA                    import PMA
@@ -153,8 +155,10 @@ class _Mailbox_ (TFL.Meta.Object) :
         if qname not in self._Table :
             self._Table [qname] = self
         else :
-            raise KeyError, "Duplicate mailbox name %s <-> %s" % \
-                (self.path, self._Table [qname].path)
+            raise KeyError \
+                ( "Duplicate mailbox name %s <-> %s"
+                % (self.path, self._Table [qname].path)
+                )
         self.status = status = PMA.Box_Status (self)
         if self.supports_status :
             self.status_fn = fn = sos.path.join (path, ".status")
@@ -350,9 +354,9 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         source = message.path
         try :
             sos.link (source, target)
-        except OSError, exc :
+        except OSError as exc :
             if exc.args [0] != errno.EXDEV :
-                print source, target
+                print (source, target)
                 raise
             self.__super._copy_msg_file (message, target)
     # end def _copy_msg_file
@@ -635,7 +639,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     # end def add_messages
 
     def add_subbox (self, b, transitive = False) :
-        if isinstance (b, (str, unicode)) :
+        if isinstance (b, pyk.string_types) :
             s = self._new_subbox (sos.path.join (self.path, b))
         else :
             if b.name in self._box_dict :
@@ -667,33 +671,6 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     # end def md_name
 
 # end class Mailbox
-
-"""
-from   _PMA                    import PMA
-import _PMA.Mailbox
-mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
-print mb.summary ().encode ("utf-8", "replace")
-m = mb.messages [-4]
-print u"\n".join (m.formatted ()).encode ("utf-8", "replace")
-#mb=PMA.Maildir ("/swing/private/.Tanzer/Maildir")
-mb=PMA.Maildir ("/tmp/Maildir")
-mb=PMA.Unix_Mailbox ("/var/mail/appoyer")
-mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/CT")
-mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
-print mb.summary ().encode ("utf-8", "replace")
-m = mb.messages [-3]
-mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
-m = mb.messages [60]
-print u"\n".join (list (m.formatted ()) [:100]).encode ("utf-8", "replace")
-print u"\n".join (m.formatted ()).encode ("utf-8", "replace")
-m = mb.messages [-3]
-tb = PMA.Mailbox ("/swing/private/tanzer/PMA/S")
-tb.import_from_mailbox (mb, transitive = True)
-tb.add_messages (m)
-print tb.summary ().encode ("utf-8", "replace")
-sb = mb.sub_boxes[0]
-
-"""
 
 if __name__ != "__main__" :
     PMA._Export ("*", "_Mailbox_", "_Mailbox_in_Dir_", "_Mailbox_in_Dir_S_")
