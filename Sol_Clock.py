@@ -48,6 +48,7 @@ from   _CAL                  import CAL
 
 from   _TFL.predicate        import pairwise
 from   _TFL.Angle            import Angle_D, Angle_R
+from   _TFL.pyk              import pyk
 
 from   _TGL._TKT._Tk.CTK     import *
 
@@ -232,10 +233,10 @@ class Display (TFL.Meta.Object) :
         for i in range (0, 360, 90) :
             self._arc (i - 1, +2, "grid",  rect, ())
         self._setup_ticks \
-            (canvas, size, border, range (0, 360, 45), a_size / 10., 25)
+            (canvas, size, border, pyk.range (0, 360, 45), a_size / 10., 25)
         self._setup_ticks \
             ( canvas, size, border
-            , (i for i in range (0, 360, 15) if (i % 45) != 0)
+            , (i for i in pyk.range (0, 360, 15) if (i % 45) != 0)
             , a_size / 16., 20
             )
         if border >= 10 :
@@ -307,7 +308,7 @@ class Toplevel (TFL.Meta.Object) :
         self.toplevel.destroy ()
         try :
             CTK.root.destroy  ()
-        except StandardError, exc :
+        except Exception as exc :
             pass
     # end def destroy
 

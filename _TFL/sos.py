@@ -66,7 +66,11 @@
 #    ««revision-date»»···
 #--
 
-from    _TFL import TFL
+from   __future__               import print_function
+
+from   _TFL                     import TFL
+
+from   _TFL.pyk                 import pyk
 
 import _TFL.Decorator
 
@@ -127,7 +131,7 @@ if (name == "nt") or (name == "win32") :
         try :
             if path [- len (sep):] == sep and path [- len (sep) - 1] != ":" :
                 path = path [: - len (sep)]
-        except StandardError :
+        except Exception :
             pass
         return _os_path_isdir (path)
     # end def _hacked_isdir
@@ -245,7 +249,7 @@ def listdir_exts (in_dir, * extensions) :
         __extension_dict = {}
         for e in extensions :
             __extension_dict [e] = 1
-        return filter (_ext_filter, listdir_full (in_dir))
+        return list (p for p in listdir_full (in_dir) if _ext_filter (p))
     else :
         return [f for f in listdir_full (in_dir) if not path.isdir (f)]
 # end def listdir_exts
@@ -301,7 +305,7 @@ def system_info_env () :
         ( program  = sys.executable
         , platform = sys.platform
         )
-    for k, v in environ.iteritems () :
+    for k, v in pyk.iteritems (environ) :
         for p in patterns :
             if p.search (k) :
                 result [k] = v

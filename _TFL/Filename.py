@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -95,18 +95,22 @@
    name, and file extension.
 """
 
-from   __future__  import absolute_import, division
-from   __future__  import print_function
+from   __future__                 import absolute_import, division
+from   __future__                 import print_function
 
-from   _TFL           import TFL
-from   _TFL.pyk       import pyk
-from   _TFL           import sos
-from   _TFL.predicate import *
+from   _TFL                       import TFL
+
+from   _TFL.predicate             import *
+from   _TFL.pyk                   import pyk
+from   _TFL                       import sos
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL._Meta.Object
 import _TFL.Environment
 
-class Filename (TFL.Meta.Object):
+@pyk.adapt__bool__
+@totally_ordered
+class Filename (TFL.Meta.Object) :
     """Represents a filename with its parts: path, base name and file
        extension.
 
@@ -350,19 +354,27 @@ class Filename (TFL.Meta.Object):
         return base, ext
     # end def split_ext
 
-    def __cmp__ (self, other) :
+    def __bool__ (self) :
+        return bool (self.base)
+    # end def __bool__
+
+    def __eq__ (self, other) :
         if isinstance (other, Filename) :
-            return cmp (self.name, other.name)
-        return cmp (self.name, other)
-    # end def __cmp__
+            return self.name == other.name
+        else :
+            return self.name == other
+    # end def __eq__
 
     def __hash__ (self) :
         return hash (self.name)
     # end def __hash__
 
-    def __nonzero__ (self) :
-        return len (self.base)
-    # end def __nonzero__
+    def __lt__ (self, other) :
+        if isinstance (other, Filename) :
+            return self.name < other.name
+        else :
+            return self.name < other
+    # end def __lt__
 
     def __repr__ (self) :
         """Returns a string representation of the Filename object"""

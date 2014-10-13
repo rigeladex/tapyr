@@ -258,7 +258,7 @@ def ungettext (singular, plural = None, n = 99, trans = None) :
         try :
             translator = (trans or Config.current).ungettext
         except AttributeError :
-            return text
+            return plural
         else :
             return translator (singular, plural, n)
 # end def ungettext

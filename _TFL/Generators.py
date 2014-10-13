@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,6 +47,7 @@
 #    11-Nov-2009 (CT) Exception handler changed for 3-compatibility
 #    22-Feb-2013 (CT)  Use `TFL.Undef ()` not `object ()`
 #    12-Jun-2013 (CT) Add `bool_split_iters`
+#     7-Oct-2014 (CT) Change `paired_map` not to use `len`
 #    ««revision-date»»···
 #--
 
@@ -140,14 +141,14 @@ class Look_Ahead_Gen (object) :
         self._sentinel = self.succ = TFL.Undef ("sentinel")
     # end def __init__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         try :
             if self.succ is self._sentinel :
                 self.succ = next (self.source)
         except StopIteration :
             return False
         return True
-    # end def __nonzero__
+    # end def __bool__
 
     def __iter__ (self) :
         source    = self.source
@@ -238,22 +239,24 @@ def pairwise_circle (seq) :
 def paired_map (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
 
+       >>> list (paired_map ("", []))
+       []
        >>> list (paired_map ("abc", range (4)))
        [('a', 0), ('b', 1), ('c', 2), (None, 3)]
+       >>> list (paired_map ("abc", range (3)))
+       [('a', 0), ('b', 1), ('c', 2)]
        >>> list (paired_map ("abc", range (2)))
        [('a', 0), ('b', 1), ('c', None)]
     """
-    i, l1, l2 = 0, len (s1), len (s2)
-    l         = min (l1, l2)
-    while i < l :
-        yield s1 [i], s2 [i]
-        i += 1
-    while i < l1 :
-        yield s1 [i], None
-        i += 1
-    while i < l2 :
-        yield None, s2 [i]
-        i += 1
+    def _gen (s) :
+        for x in s :
+            yield x, True
+        while True :
+            yield None, False
+    for (l, next_l), (r, next_r) in pyk.izip (_gen (s1), _gen (s2)) :
+        if not (next_l or next_r) :
+            break
+        yield l, r
 # end def paired_map
 
 class Lazy_List :

@@ -118,6 +118,7 @@
 #    20-Dec-2013 (CT) Fix `Rel_Path.resolved_pathes` for absolute values
 #     3-Jan-2014 (CT) Factor `user_config`, add `Unicode`,
 #                     use `pyk.encoded` for `help`
+#    12-Oct-2014 (CT) Add `SHA`
 #    ««revision-date»»···
 #--
 
@@ -1134,10 +1135,26 @@ class Set (_Spec_) :
                 ( "Unkown value `%s` for %s\n    Specify one of: %s"
                 % (value, self, sorted (self.choices))
                 )
-        return value
+        return self.__super.cook (value, cao)
     # end def cook
 
 # end class Set
+
+class SHA (_User_Config_Entry_, Set) :
+    """Name of secure hash algorithm to use."""
+
+    def __init__ (self, ** kw) :
+        import _TFL.Secure_Hash
+        self.__super.__init__ (choices = TFL.Secure_Hash.algorithms, ** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        import _TFL.Secure_Hash
+        result = self.__super.cook (value, cao)
+        return getattr (TFL.Secure_Hash, result)
+    # end def cook
+
+# end class SHA
 
 class Str (_Spec_) :
     """Argument or option with a string value"""
@@ -1160,7 +1177,7 @@ class Unicode (_Spec_) :
     type_abbr     = "U"
 
     def cook (self, value, cao = None) :
-        result = unicode (value, self.user_config.input_encoding)
+        result = pyk.text_type (value, self.user_config.input_encoding)
         return result
     # end def cook
 

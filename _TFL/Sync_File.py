@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -90,10 +90,12 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                import TFL
-from   _TFL.Error          import *
-from   _TFL.Filename       import Filename
-from   _TFL                import sos
+from   __future__              import print_function
+
+from   _TFL                    import TFL
+from   _TFL.Error              import *
+from   _TFL.Filename           import Filename
+from   _TFL                    import sos
 import _TFL.d_dict
 import _TFL.Environment
 import _TFL.Ordered_Set
@@ -147,7 +149,7 @@ class _Sync_File_ :
         if self._file :
             self._file.close ()
         else :
-            raise Not_Open, self.file_name
+            raise Not_Open (self.file_name)
     # end def _close
 
     def _close_lock (self) :
@@ -169,9 +171,9 @@ class _Sync_File_ :
                 result = f.readline ()
             finally :
                 f.close ()
-        except (SystemExit, KeyboardInterrupt), exc :
+        except (SystemExit, KeyboardInterrupt) as exc :
             raise
-        except IOError, exc :
+        except IOError as exc :
             if exc.args [0] != errno.ENOENT :
                 raise
         except :
@@ -194,10 +196,10 @@ class _Sync_File_ :
             if self._can_lock :
                 self._lfile_name = name = fname.name
                 self._lock_file  = sos.open (name, sos.O_CREAT | sos.O_EXCL)
-        except sos.error, exc :
+        except sos.error as exc :
             if exc.args [0] != errno.EEXIST :
                 raise
-            raise Sync_Conflict, self.file_name
+            raise Sync_Conflict (self.file_name)
     # end def _open_lock
 
     def _write_header (self, file) :
@@ -249,9 +251,12 @@ class Sync_File (_Sync_File_) :
 
     def _check_type (self, file_name) :
         if not sos.path.isfile (file_name) :
-            print file_name, sos.path.exists (file_name), \
-                sos.path.isfile (file_name)
-            raise Not_A_File, file_name
+            print \
+                ( file_name
+                , sos.path.exists (file_name)
+                , sos.path.isfile (file_name)
+                )
+            raise Not_A_File (file_name)
     # end def _check_type
 
     def _open_r (self, mode, bufsize, backup_name) :
@@ -276,7 +281,7 @@ class Sync_File (_Sync_File_) :
                 self.exists = 1
             else :
                 self.changed_key = curr_key
-                raise Sync_Conflict, self
+                raise Sync_Conflict (self)
         finally :
             if not result :
                 sos.rename         (tmp_name, self.file_name)
@@ -298,11 +303,11 @@ class Sync_File (_Sync_File_) :
         try :
             sos.rename (self.file_name, tmp_name)
             curr_key = self._get_key (tmp_name)
-        except sos.error, exc :
+        except sos.error as exc :
             if exc.args [0] != errno.ENOENT :
                 raise
             tmp_name = None
-        except (SystemExit, KeyboardInterrupt, IOError), exc :
+        except (SystemExit, KeyboardInterrupt, IOError) as exc :
             raise
         except :
             pass
@@ -372,7 +377,7 @@ class _Open_Sync_Dir_ :
     def _check_exists (self) :
         name = self.sync_dir.file_name
         if not sos.path.isdir (name) :
-            raise Not_A_Dir, name
+            raise Not_A_Dir (name)
         self._get_files_from_stamp ()
     # end def _check_exists
 
@@ -463,17 +468,19 @@ class Open_Sync_Dir_W (_Open_Sync_Dir_) :
             else :
                 sos.rmdir (name, deletefiles = 1)
                 if sos.path.exists (name) :
-                    raise Could_Not_Delete_Old_DB, \
+                    raise Could_Not_Delete_Old_DB \
                         ( "Deleting %s failed without error message from "
                           "the OS. Try saving to a different database."
-                        ) % (name, )
+                        % (name, )
+                        )
                 try :
                     sos.mkdir (name)
                 except (IOError, OSError) :
-                    raise Could_Not_Delete_Old_DB, \
+                    raise Could_Not_Delete_Old_DB \
                         ( "Deleting %s failed without error message from "
                           "the OS. Try saving to a different database."
-                        ) % (name, )
+                        % (name, )
+                        )
         else :
             sos.mkdir (name)
         self.name = name
@@ -506,7 +513,7 @@ class Sync_Dir (_Sync_File_) :
 
     def _check_type (self, file_name) :
         if not sos.path.isdir (file_name) :
-            raise Not_A_Dir, file_name
+            raise Not_A_Dir (file_name)
     # end def _check_type
 
     def _close (self) :
@@ -517,7 +524,7 @@ class Sync_Dir (_Sync_File_) :
             self._file = None
             sync_file.close ()
         else :
-            raise Not_Open, self.file_name
+            raise Not_Open (self.file_name)
     # end def _close
 
     def _open_key_file (self, file_name, mode) :
@@ -555,18 +562,20 @@ class Sync_DB_ :
         assert (self.data_base is None)
         db = self.data_base = self._sync_file (file_name)
         if not self.data_base.last_key :
-            print "No key in db file %s" % file_name
+            print ("No key in db file %s" % file_name)
         else :
             try :
                 file = db.open ("r")
-            except Already_Open, exc :
+            except Already_Open as exc :
                 ### traceback.print_exc ()
-                print "The %s `%s' is currently locked by another user" \
-                      % (db.file_desc, db.file_name)
-                raise Already_Open, db
+                print \
+                    ( "The %s `%s' is currently locked by another user"
+                    % (db.file_desc, db.file_name)
+                    )
+                raise Already_Open (db)
             except KeyboardInterrupt :
                 raise
-            except StandardError, exc :
+            except Exception as exc :
                 ### traceback.print_exc ()
                 print \
                     ( "The %s `%s' couldn't be opened for reading due "
@@ -597,14 +606,16 @@ class Sync_DB_ :
         db = self.data_base
         try :
             file = db.open ()
-        except Sync_Conflict, exc :
+        except Sync_Conflict as exc :
             ### traceback.print_exc ()
-            print "The %s `%s' was changed since you started to work on it" % \
-                (db.file_desc, db.file_name)
-            raise Sync_Error, db
+            print \
+                ( "The %s `%s' was changed since you started to work on it"
+                % (db.file_desc, db.file_name)
+                )
+            raise Sync_Error (db)
         except KeyboardInterrupt :
             raise
-        except StandardError, exc :
+        except Exception as exc :
             ### traceback.print_exc ()
             print \
                 ( "The %s `%s' couldn't be opened for writing "

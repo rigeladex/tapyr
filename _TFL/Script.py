@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This library is free software; you can redistribute it and/or
@@ -39,23 +39,25 @@
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #     9-Aug-2006 (CT) `Script.__hash__` changed to return
 #                     `hash (self.name)` instead of `id (self)`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
+from   __future__                 import print_function
 
+from   _TFL                       import TFL
+from   _TFL.Filename              import *
+from   _TFL.Functor               import Functor
+from   _TFL.Gauge_Logger          import Gauge_Logger
+from   _TFL                       import sos
+from   _TFL._Meta.totally_ordered import totally_ordered
 
-from   _TFL              import TFL
-from   _TFL.Filename     import *
-from   _TFL.Functor      import Functor
-from   _TFL.Gauge_Logger import Gauge_Logger
-from   _TFL              import sos
+import _TFL._Meta.Object
 
 import sys
 import traceback
 
-class Script :
+@totally_ordered
+class Script (TFL.Meta.Object) :
 
     def __init__ (self, path, glob_dict = {}, local_dict = {}, name = None, doc = "") :
         fn             = Filename (path, absolute = 1)
@@ -95,10 +97,10 @@ class Script :
                 self.gauge.echo   ("Finished execution of %s\n" % self.path)
             finally :
                 sys.path  = self.old_path
-        except KeyboardInterrupt, exc :
+        except KeyboardInterrupt as exc :
             raise
-        except StandardError :
-            print "Error during execution of", self.path
+        except Exception :
+            print ("Error during execution of", self.path)
             traceback.print_exc ()
             self.error = sys.exc_info () [1]
     # end def __call__
@@ -115,13 +117,17 @@ class Script :
         sys.path      = self._sys_pth [:]
     # end def reset_python_path
 
-    def __cmp__ (self, other) :
-        return cmp (self.name, other.name)
-    # end def __cmp__
+    def __eq__ (self, other) :
+        return self.name == getattr (other, "name", other)
+    # end def __eq__
 
     def __hash__ (self) :
         return hash (self.name)
     # end def __hash__
+
+    def __lt__ (self, other) :
+        return self.name < getattr (other, "name", other)
+    # end def __lt__
 
 # end class Script
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,10 +43,13 @@ def _test_assertion (expr, locals, msg = "", expression = None) :
         for k, v in items :
             if k == "self" or k [0] == "_" : continue
             tail.append ("%-20s = %r" % (k, v))
-        msg = "%s\n    %s" % ( ", ".join     (filter (None, (expression, msg)))
-                             , "\n    ".join (tail)
-                             )
-        raise AssertionError, msg
+        msg = \
+            ( "%s\n    %s"
+            % ( ", ".join     (x for x in (expression, msg) if x)
+              , "\n    ".join (tail)
+              )
+            )
+        raise AssertionError (msg)
 # end def _test_assertion
 
 def Assertion (expression, msg = "") :
@@ -63,7 +66,7 @@ def Assertion (expression, msg = "") :
     locals = TFL.Caller.locals ()
     try :
         result = eval (expression, TFL.Caller.globals (), locals)
-    except Exception, exc :
+    except Exception as exc :
         _test_assertion (0,      locals, str (exc), expression)
     _test_assertion     (result, locals, msg,       expression)
 # end def Assertion

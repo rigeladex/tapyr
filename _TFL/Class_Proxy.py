@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,12 +35,10 @@
 #                     classes have a hard time redefining `__call__`)
 #    10-Jan-2005 (CT) `__repr__` changed to not future warn about negative
 #                     values of `id`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
+from   __future__               import print_function
 
 class Class_Proxy :
     """Transparent proxy for a class."""
@@ -52,7 +50,7 @@ class Class_Proxy :
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             return self._delegate_attribute (name)
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __call__ (self, * args, ** kw) :
@@ -85,18 +83,18 @@ class Class_Proxy :
 import __builtin__
 
 def isinstance_cp (object, C, isinstance = __builtin__.isinstance) :
-    ### print "isinstance", object, C
+    ### print ("isinstance", object, C)
     ### from caller_globals import caller_info
-    ### print "isinstance", caller_info ()
+    ### print ("isinstance", caller_info ())
     if hasattr (C, "_Class") :
         C = C._Class
     return isinstance (object, C)
 # end def isinstance_cp
 
 def issubclass_cp (C, B, issubclass = __builtin__.issubclass) :
-    ### print "issubclass", C, B
+    ### print ("issubclass", C, B)
     ### from caller_globals import caller_info
-    ### print "isinstance", caller_info ()
+    ### print ("isinstance", caller_info ())
     if hasattr (C, "_Class") : C = C._Class
     if hasattr (B, "_Class") : B = B._Class
     return issubclass (C, B)
@@ -111,9 +109,9 @@ del __builtin__
 ###     import __builtin__
 ###
 ###     def isinstance (object, C, isinstance = __builtin__.isinstance) :
-###         ### print "isinstance", object, C
+###         ### print ("isinstance", object, C)
 ###         from caller_globals import caller_info
-###         print "isinstance", caller_info ()
+###         print ("isinstance", caller_info ())
 ###         if hasattr (C, "_Class") :
 ###             C = C._Class
 ###         return isinstance (object, C)
@@ -121,9 +119,9 @@ del __builtin__
 ###     __builtin__.isinstance = isinstance
 ###
 ###     def issubclass (C, B, issubclass = __builtin__.issubclass) :
-###         ### print "issubclass", C, B
+###         ### print ("issubclass", C, B)
 ###         from caller_globals import caller_info
-###         print "isinstance", caller_info ()
+###         print ("isinstance", caller_info ())
 ###         if hasattr (C, "_Class") : C = C._Class
 ###         if hasattr (B, "_Class") : B = B._Class
 ###         return issubclass (C, B)

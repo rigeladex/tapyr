@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2003 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 1999-2014 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -101,7 +101,7 @@ def itemize_txt (description) :
         desc.append (r"\begin{itemize}")
         start = item_tail_pat.start ()
         items = "\n" + d [item_head_pat.start () : start]
-        for item in filter (None, items.split ("\n- ")):
+        for item in (i for i in items.split ("\n- ") if i) :
             item_txt = " ".join (item.split ("\n"), )
             if string.strip (item_txt) :
                 desc.append (r"  \item %s" % item_txt)
@@ -445,7 +445,7 @@ class Figure_ :
     # end def __init__
 
     def _remove_white (self, s) :
-        return filter (lambda c : c not in string.whitespace, s)
+        return "".join (c for c in s if c not in string.whitespace)
     # end def _remove_white
 
     def preamble (self, graphic_name) :

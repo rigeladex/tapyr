@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -109,7 +109,7 @@ def moving_average (s, n, central = False) :
     else :
         i = n - 1
     s = iter    (s)
-    w = DL_Ring (s.next () for k in range (n))
+    w = DL_Ring (next (s) for k in range (n))
     m = float   (n)
     v = sum     (w.values ()) / m
     yield i, v

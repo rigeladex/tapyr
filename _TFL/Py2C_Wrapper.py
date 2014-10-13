@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -249,11 +249,11 @@ class Py_Object_T (_Py_Object_) :
     c_types       = ("PyTypeObject ", "PyObject *")
 
     def temporary (self, C, add) :
-        raise NotImplementedError, "Py_Object_T.temporary"
+        raise NotImplementedError ("Py_Object_T.temporary")
     # end def temporary
 
     def make_copy (self, C, add) :
-        raise NotImplementedError, "Py_Object_T.make_copy"
+        raise NotImplementedError ("Py_Object_T.make_copy")
     # end def make_copy
 
 # end class Py_Object_T

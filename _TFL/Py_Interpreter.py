@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2010 DI Christian Eder <eder@tttech.com>
+# Copyright (C) 2005-2014 DI Christian Eder <eder@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -32,8 +32,10 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL             import TFL
-from   _TFL.predicate   import *
+from   __future__              import print_function
+
+from   _TFL                    import TFL
+from   _TFL.predicate          import *
 
 import rlcompleter
 
@@ -58,9 +60,9 @@ class Pycode_Compiler (object) :
         if loc_dct is None :
             loc_dct = {}
         if self.can_eval :
-            print eval (self.code, glob_dct, loc_dct)
+            print (eval (self.code, glob_dct, loc_dct))
         else :
-            exec self.code in glob_dct, loc_dct
+            exec (self.code, glob_dct, loc_dct)
     # end def __call__
 
 # end class Pycode_Compiler
@@ -72,7 +74,7 @@ def complete_command (line, glob_dct, loc_dct = None) :
     c                   = rlcompleter.Completer (d)
     try :
         c.complete (line, 0)
-    except StandardError :
+    except Exception :
         return None, None
     match = "".join ((prefix, space, common_head (c.matches)))
     cands = ", ".join (sorted (s.split (".") [-1] for s in set (c.matches)))

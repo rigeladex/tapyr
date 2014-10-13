@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2002-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,14 +51,18 @@
 #    ««revision-date»»···
 #--
 
-from   __future__       import print_function
+from   __future__          import print_function
 
-from    _TFL     import TFL
-from    _TFL._D2 import D2
-import  _TFL._Meta.Object
+from   _TFL                import TFL
 
-import  math
+from   _TFL._D2            import D2
+from   _TFL.pyk            import pyk
 
+import _TFL._Meta.Object
+
+import math
+
+@pyk.adapt__bool__
 class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
 
@@ -102,9 +106,9 @@ class _Point_ (TFL.Meta.Object) :
         return 2
     # end def __len__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return not (self.x == self.y == 0)
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         return "%s %s" % (self.__class__.__name__, tuple (self))
@@ -116,6 +120,7 @@ class _Point_ (TFL.Meta.Object) :
 
 # end class _Point_
 
+@pyk.adapt__div__
 class Point (_Point_) :
     """Model a point in rectangular, 2-dimensional space."""
 
@@ -151,14 +156,14 @@ class Point (_Point_) :
 
     __radd__ = __add__
 
-    def __div__  (self, right) :
+    def __floordiv__  (self, right) :
         try :
             return self.__class__ \
-                (float (self.x) / right.x, float (self.y) / right.y)
+                (self.x // right.x, self.y // right.y)
         except AttributeError :
             return self.__class__ \
-                (float (self.x) / right,   float (self.y) / right)
-    # end def __div__
+                (self.x // right,   self.y // right)
+    # end def __floordiv__
 
     def __mul__  (self, right) :
         try :
@@ -192,8 +197,18 @@ class Point (_Point_) :
 
     __rsub__ = __sub__
 
+    def __truediv__  (self, right) :
+        try :
+            return self.__class__ \
+                (float (self.x) / right.x, float (self.y) / right.y)
+        except AttributeError :
+            return self.__class__ \
+                (float (self.x) / right,   float (self.y) / right)
+    # end def __truediv__
+
 # end class Point
 
+@pyk.adapt__div__
 class _R_Point_ (_Point_) :
     """Base class for Points positioned relative to another point."""
 
@@ -251,10 +266,10 @@ class _R_Point_ (_Point_) :
             )
     # end def __add__
 
-    def __div__  (self, right) :
+    def __floordiv__  (self, right) :
         return self.__class__ \
-            (* self._reference () + (self._offset, self._scale / right))
-    # end def __div__
+            (* self._reference () + (self._offset, self._scale // right))
+    # end def __floordiv__
 
     def __mul__  (self, right) :
         return self.__class__ \
@@ -288,6 +303,11 @@ class _R_Point_ (_Point_) :
               )
             )
     # end def __sub__
+
+    def __truediv__  (self, right) :
+        return self.__class__ \
+            (* self._reference () + (self._offset, self._scale / right))
+    # end def __truediv__
 
 # end class _R_Point_
 

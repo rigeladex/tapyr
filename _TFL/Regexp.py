@@ -70,6 +70,7 @@ else :
     ### `sre` returns a type
     re_RegexObject = type (re.compile (""))
 
+@pyk.adapt__bool__
 class Regexp (TFL.Meta.Object) :
     """Wrap a regular expression pattern and the last match, if any.
 
@@ -212,9 +213,9 @@ class Regexp (TFL.Meta.Object) :
         raise AttributeError (name)
     # end def __getattr__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.last_match)
-    # end def __nonzero__
+    # end def __bool__
 
 # end class Regexp
 

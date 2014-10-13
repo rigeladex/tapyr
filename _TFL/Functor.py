@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,9 +39,11 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__               import print_function
 
-from   _TFL             import TFL
+from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
+
 import _TFL.Function
 
 class Functor (TFL.Function) :
@@ -84,7 +86,7 @@ class Functor (TFL.Function) :
         kw   = self.kw
         if kw :
             tail = ", %s" % ", ".join \
-                ("%s = %s" % (k, v) for (k, v) in sorted (kw.iteritems ()))
+                ("%s = %s" % (k, v) for (k, v) in sorted (pyk.iteritems (kw)))
         return "%s (%s + %s + %s%s)" % \
             ( self.__Ancestor.__repr__ (self)
             , self.head_args, "<args>", self.tail_args, tail

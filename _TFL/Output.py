@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,7 +31,10 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL           import TFL
+from   __future__               import print_function
+
+from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 
@@ -53,7 +56,7 @@ class Redirect_Std (TFL.Meta.Object) :
     # end def __init__
 
     def destroy (self) :
-        for r, orig in self.redirects.iteritems () :
+        for r, orig in pyk.iteritems (self.redirects) :
             if getattr (sys, r, None) is self :
                 setattr (sys, r, orig)
         self.redirects = {}

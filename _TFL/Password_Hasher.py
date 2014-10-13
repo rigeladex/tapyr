@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -36,21 +36,25 @@
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
 #    28-May-2013 (CT) Use `@subclass_responsibility` instead of home-grown code
 #    25-Jun-2013 (CT) Make doctest Python-2.6 compatible
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__          import absolute_import, division
+from   __future__          import print_function, unicode_literals
 
 from   _TFL                import TFL
-from   _TFL.pyk            import pyk
 
 from   _TFL._Meta          import Meta
 from   _TFL.Decorator      import subclass_responsibility
+from   _TFL.portable_repr  import portable_repr
+from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL.Secure_Hash
 
-import hashlib
+import binascii
 import uuid
 
 class M_Password_Hasher (Meta.Object.__class__) :
@@ -68,7 +72,7 @@ class M_Password_Hasher (Meta.Object.__class__) :
     @TFL.Meta.Once_Property
     def default (cls) :
         return max \
-            ((t for t in cls.Table.itervalues ()), key = lambda t : t.rank)
+            ((t for t in pyk.itervalues (cls.Table)), key = lambda t : t.rank)
     # end def default
 
     def _m_add (cls, name, Table) :
@@ -91,6 +95,21 @@ class M_Password_Hasher (Meta.Object.__class__) :
 
 # end class M_Password_Hasher
 
+class M_Password_Hasher_SHA (M_Password_Hasher) :
+    """Meta class for password hashers using secure hash algorithms."""
+
+    @TFL.Meta.Once_Property
+    def Hasher (cls) :
+        return getattr (TFL.Secure_Hash, cls.__name__)
+    # end def Hasher
+
+    @TFL.Meta.Once_Property
+    def rank (cls) :
+        return cls.Hasher ().digest_size
+    # end def rank
+
+# end class M_Password_Hasher_SHA
+
 class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
     """Base class for password hashers
 
@@ -106,8 +125,6 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
     NotImplementedError: Password_Hasher must implement method ...
 
     """
-
-    rank          = 0
 
     def __init__ (self, * args, ** kw) :
         raise TypeError ("Cannot instantiate %s" % (self.__class__, ))
@@ -130,31 +147,22 @@ class Password_Hasher (Meta.BaM (Meta.Object, metaclass = M_Password_Hasher)) :
         """True if `clear_password` and `hashed_password` match"""
     # end def verify
 
-    @classmethod
-    def hash_cmp (cls, l, r) :
-        if len (l) == len (r) :
-            s = 0
-            for a, b in pyk.izip (l, r) :
-                s |= ord (a) ^ ord (b)
-            return s == 0
-        return False
-    # end def hash_cmp
-
 # end class Password_Hasher
 
-class _Hashlib_Password_Hasher_ (Password_Hasher) :
-    """Password Hasher based on algorithm provided by `hashlib`"""
+class _Password_Hasher_SHA_ \
+          (Meta.BaM (Password_Hasher, metaclass = M_Password_Hasher_SHA)) :
+    """Password Hasher based on secure hash algorithm"""
 
-    sep           = "::"
+    sep           = b"::"
 
     @classmethod
     def hashed (cls, clear_password, salt = None) :
         """Hashed value of `clear_password` using `salt`"""
+        Hasher = cls.Hasher
         if salt is None :
             salt = cls.salt ()
-        hasher = hashlib.new      (cls.__name__, salt.encode ("utf-8"))
-        hasher.update             (clear_password.encode ("utf-8"))
-        hashed = hasher.hexdigest ()
+        salt   = Hasher._encoded  (salt)
+        hashed = binascii.hexlify (Hasher.pbkdf2_hmac (clear_password, salt))
         return cls.sep.join       ((salt, hashed))
     # end def hashed
 
@@ -166,19 +174,20 @@ class _Hashlib_Password_Hasher_ (Password_Hasher) :
         except Exception :
             return False
         else :
-            return cls.hash_cmp \
+            return cls.Hasher.compare_hexdigest \
                 (hashed_password, cls.hashed (clear_password, salt))
     # end def verify
 
-# end class _Hashlib_Password_Hasher_
+# end class _Password_Hasher_SHA_
 
-class sha224 (_Hashlib_Password_Hasher_) :
+class sha224 (_Password_Hasher_SHA_) :
     """Password Hasher using `sha224` for hashing.
 
     >>> pr = "Ao9ug9wahWae"
     >>> ph = Password_Hasher.sha224.hashed (pr, "salt")
-    >>> print (ph)
-    salt::c757a76c94d588083565a9e076ce00b703c5a743d6c2736266279018
+    >>> print (portable_repr (ph))
+    'salt::373ea460b8c323c468673a3702d7f0a90214dd48414bfa6cb7a639c4'
+
     >>> Password_Hasher.sha224.verify (pr, ph)
     True
     >>> Password_Hasher.sha224.verify (pr, pr)
@@ -187,8 +196,6 @@ class sha224 (_Hashlib_Password_Hasher_) :
     False
 
     """
-
-    rank          = 1
 
 # end class sha224
 

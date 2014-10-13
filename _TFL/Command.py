@@ -60,11 +60,11 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _TFL                   import TFL
 
-from   _TFL.pyk               import pyk
-from   _TFL                   import sos
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.object_globals    import object_module
 from   _TFL.predicate         import first, split_hst, uniq
+from   _TFL.pyk               import pyk
+from   _TFL                   import sos
 
 import _TFL.Accessor
 import _TFL.CAO
@@ -135,7 +135,7 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
             raise TypeError \
                 ("%s::%s must define `type`" % (cmd, self.__class__.__name__))
         type = self.type
-        if isinstance (type, basestring) :
+        if isinstance (type, pyk.string_types) :
             try :
                 type = self.type = TFL.CAO.Opt.Table [type]
             except KeyError :
@@ -220,7 +220,7 @@ class TFL_Rel_Path_Option (Option) :
     def _gen_base_dirs (self, bds) :
         for bd in bds :
             cwd = sos.getcwd ()
-            if isinstance (bd, basestring) and bd.startswith ("$") :
+            if isinstance (bd, pyk.string_types) and bd.startswith ("$") :
                 h, _, t = split_hst (bd, "/")
                 h       = getattr (self.cmd, h [1:])
                 if h == "" :
@@ -279,7 +279,7 @@ class _M_Command_ (_Meta_Base_) :
     def _update_set (cls, dct, T, name) :
         dct [name] = _set = set (dct.get (name, ()))
         _set.update \
-            (  v.__name__ for v in dct.itervalues ()
+            (  v.__name__ for v in pyk.itervalues (dct)
             if isinstance (v, T) and not getattr (v, "is_partial", 0)
             )
     # end def _update_set
@@ -429,7 +429,7 @@ class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
         def _gen (self) :
             defaults = self.defaults
             for sc in self._sub_commands :
-                if isinstance (sc, basestring) :
+                if isinstance (sc, pyk.string_types) :
                     sc = getattr  (self, sc)
                 if not isinstance (sc, TFL.CAO.Cmd) :
                     sc = sc (_parent = self, ** defaults)
@@ -484,7 +484,7 @@ class TFL_Sub_Command_Combiner (Command) :
     def sub_command_seq (self) :
         def _gen (self) :
             for sc in self._sub_command_seq :
-                if isinstance (sc, basestring) :
+                if isinstance (sc, pyk.string_types) :
                     yield [sc]
                 else :
                     yield sc
@@ -502,7 +502,7 @@ class TFL_Sub_Command_Combiner (Command) :
         result = []
         raws   = cmd._raw
         opts   = cmd._opt_dict
-        for k, v in cmd._map.iteritems () :
+        for k, v in pyk.iteritems (cmd._map) :
             opt = opts.get (k)
             if opt :
                 mk = "-" + k

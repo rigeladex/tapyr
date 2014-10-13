@@ -39,17 +39,19 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL           import TFL
-import _TFL.defaultdict
+from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
+
 import _TFL._Babel.Extract
 import _TFL._Babel.Config_File
 import _TFL.CAO
+import _TFL.defaultdict
 
-import  os
-import  sys
 import  glob
-import  tempfile
+import  os
 import  shutil
+import  sys
+import  tempfile
 
 try :
     from multiprocessing import Process, JoinableQueue
@@ -72,7 +74,7 @@ class Language_File_Collection (object) :
         directories = set ()
         i18n_dirs   = set ()
         for mod in sys.modules.values () :
-            if isinstance (getattr (mod, "__file__", None), basestring) :
+            if isinstance (getattr (mod, "__file__", None), pyk.string_types) :
                 directories.add (os.path.dirname (mod.__file__))
         for directory in directories :
             i18n = os.path.join (directory, "-I18N")
@@ -100,7 +102,7 @@ class Language_File_Collection (object) :
     # end def _add_languages
 
     def init_or_update (self, cmd) :
-        for lang, files in self.files_per_language.iteritems () :
+        for lang, files in pyk.iteritems (self.files_per_language) :
             for f in files :
                 output_dir = os.path.dirname (f)
                 template   = "%s%s" % (cmd.template_file, cmd.file_suffix)
@@ -158,7 +160,7 @@ class Language_File_Collection (object) :
     # end def _output_file_name
 
     def compile (self, cmd) :
-        for lang, files in self.files_per_language.iteritems () :
+        for lang, files in pyk.iteritems (self.files_per_language) :
             for po_file_n in files :
                 po_file    = TFL.Babel.PO_File.load (po_file_n)
                 if po_file.fuzzy and not cmd.use_fuzzy :
@@ -180,7 +182,7 @@ class Language_File_Collection (object) :
     # end def compile
 
     def compile_combined (self, cmd) :
-        for lang, files in self.files_per_language.iteritems () :
+        for lang, files in pyk.iteritems (self.files_per_language) :
             po_file   = TFL.Babel.PO_File.combined (* files)
             if po_file.fuzzy and not cmd.use_fuzzy :
                 print "Catalog %r is marked as fuzzy, skipping" % (files [0], )

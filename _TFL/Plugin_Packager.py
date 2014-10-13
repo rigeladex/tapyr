@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -59,22 +59,25 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   __future__               import print_function
 
-import copy
-import hashlib
-import sys
+from   _TFL                     import TFL
+
+from   _TFL.Filename            import Filename, Dirname
+from   _TFL.Regexp              import Regexp
+from   _TFL.predicate           import *
+from   _TFL.pyk                 import pyk
 
 import _TFL.Accessor
 import _TFL.CAO
 import _TFL.Import_Closure
-import _TFL.import_module
 import _TFL._Meta.Object
+import _TFL.import_module
 import _TFL.sos
 
-from   _TFL.Filename       import Filename, Dirname
-from   _TFL.Regexp         import Regexp
-from   _TFL.predicate      import *
+import copy
+import hashlib
+import sys
 
 class Plugin_Packager (TFL.Meta.Object) :
 
@@ -93,7 +96,7 @@ class Plugin_Packager (TFL.Meta.Object) :
             (pi_root_name, import_path, ignore)
         self.delta_closure = dc = self.pi_closure - ap_closure
         pi_packages        = \
-            [ p for p in dc.pkg_dict.itervalues ()
+            [ p for p in pyk.itervalues (dc.pkg_dict)
                 if  p.pkg.startswith ("_Plugins") and p.level == 1
             ]
         assert len (pi_packages) == 1
@@ -179,7 +182,7 @@ class Plugin_Packager (TFL.Meta.Object) :
            for pyp in pym.pkg_chain () :
                if pyp.rel_name not in dc.pym_dict :
                    dc._add (pyp)
-        for pym in dc.pym_dict.itervalues () :
+        for pym in pyk.itervalues (dc.pym_dict) :
             pym.target_pkg  = pym.pkg
             pym.target_path = path.join \
                 (self.target_root, pym.pkg.replace (".", sep), pym.base_path)
@@ -220,8 +223,8 @@ def _main (cmd) :
             , ignore      = ignore
             )
     else :
-        print "One of the options -AP_Closure or -Diff must be specified"
-        raise SystemExit, 9
+        print ("One of the options -AP_Closure or -Diff must be specified")
+        raise SystemExit (9)
     packager = Plugin_Packager \
         (cmd.pi_root_name, ap_closure, import_path, cmd.target_root, ignore)
 # end def _main

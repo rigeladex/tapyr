@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,8 +37,10 @@
 #--
 
 from   _TFL      import TFL
+from   _TFL.pyk  import pyk
 
 import _TFL.sos
+
 import dircache
 import fnmatch
 import re
@@ -101,7 +103,7 @@ class File :
         elif name == "permissions" :
             result = self.permissions = stat.S_IMODE (self.mode)
             return result
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def isdir (self) :
@@ -161,7 +163,7 @@ class Directory (File) :
                 F = self.filter
             else :
                 F = TFL.sos.path.isfile
-            result      = filter (F, all)
+            result      = list (p for p in all if F (p))
             self._files = [ self.File (f, parent = self, filter = F)
                             for f in result
                           ]
@@ -207,7 +209,7 @@ class Regexp_Filter :
     """Filter using regular expressions"""
 
     def __init__ (self, pattern) :
-        if isinstance (pattern, (str, unicode)) :
+        if isinstance (pattern, pyk.string_types) :
             pattern = re.compile (pattern)
         self.pattern = pattern
     # end def __init__

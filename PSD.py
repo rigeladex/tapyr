@@ -658,7 +658,7 @@ class Toplevel (TFL.Meta.Object) :
         self.toplevel.destroy ()
         try :
             CTK.root.destroy  ()
-        except StandardError, exc :
+        except Exception as exc :
             pass
     # end def destroy
 

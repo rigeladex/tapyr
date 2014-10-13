@@ -208,6 +208,7 @@ def _comparison_operator (op) :
 # end def _comparison_operator
 
 @pyk.adapt__bool__
+@pyk.adapt__str__
 class _Attr_ (object) :
     """Wrapper for result of `.attr` method."""
 
@@ -267,12 +268,8 @@ class _Attr_ (object) :
     # end def __repr__
 
     def __str__ (self) :
-        return str (self._VALUE)
+        return pyk.text_type (self._VALUE)
     # end def __str__
-
-    def __unicode__ (self) :
-        return unicode (self._VALUE)
-    # end def __unicode__
 
 # end class _Attr_
 
@@ -351,7 +348,7 @@ class _Q_Result_ (TFL.Meta.Object) :
 
     def attr (self, getter, allow_duplicates = False) :
         _Attr_ = self._Attr_
-        if isinstance (getter, basestring) :
+        if isinstance (getter, pyk.string_types) :
             getter = getattr (self.Q, getter)
         distinct = self._distinct or not allow_duplicates
         if distinct and isinstance (distinct, bool) :
@@ -372,7 +369,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         def _g (getters) :
             Q = self.Q
             for getter in getters :
-                if isinstance (getter, basestring) :
+                if isinstance (getter, pyk.string_types) :
                     getter = getattr (Q, getter)
                 yield getter
         getters  = tuple (_g (getters))
@@ -537,7 +534,7 @@ class _Q_Result_Group_By_ (_Q_Result_Filtered_) :
                 result [key]   = row
             if sums :
                 sum_fixed      = []
-                for key, row in result.iteritems () :
+                for key, row in pyk.iteritems (result) :
                     if sum_col is None :
                         sum_fixed.append (sums [key])
                     else :

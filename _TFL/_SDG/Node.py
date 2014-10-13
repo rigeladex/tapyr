@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -75,6 +75,8 @@
 #                      `object`
 #    26-Feb-2012 (MG)  `__future__` imports added
 #    23-May-2013 (CT)  Use `TFL.Meta.BaM` for Python-3 compatibility
+#    10-Oct-2014 (CT)  Use `pyk.encoded` in `_write_to_stream`,
+#                      unless `stream is sys.stdout`
 #    ««revision-date»»···
 #--
 
@@ -381,7 +383,8 @@ T_Node
     )
 """
 
-from   __future__  import absolute_import, division, print_function, unicode_literals
+from   __future__        import absolute_import, division
+from   __future__        import print_function, unicode_literals
 
 from   _TFL              import TFL
 from   _TFL.pyk          import pyk
@@ -394,6 +397,8 @@ import _TFL._SDG.M_Node
 import _TFL._Meta.Object
 
 from   _TFL.predicate    import *
+from   _TFL.pyk          import pyk
+
 import sys
 
 class Invalid_Node (Exception) :
@@ -418,7 +423,7 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     """Node of a structured document."""
 
     children             = property (lambda s : s._children_iter ())
-    children_group_names = (Body, ) = range (1)
+    children_group_names = (Body, ) = pyk.range (1)
     default_cgi          = Body
     body_children        = property (lambda s : s.children_groups [s.Body])
 
@@ -619,11 +624,13 @@ class Node (TFL.Meta.BaM (TFL.Meta.Object, metaclass = TFL.SDG.M_Node)) :
     # end def _reset_children
 
     def _write_to_stream (self, gen, stream, gauge = None) :
+        encoded = pyk.encoded
         if stream is None :
-            stream = sys.stdout
+            encoded = lambda x : x
+            stream  = sys.stdout
         for x in gen :
-            stream.write  (x)
-            stream.write  ("\n")
+            stream.write  (encoded (x))
+            stream.write  (encoded ("\n"))
             if gauge is not None :
                 gauge.inc ()
     # end def _write_to_stream

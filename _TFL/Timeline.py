@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -89,11 +89,14 @@
 #--
 
 from   _TFL                  import TFL
+
+from   _TFL.Generators       import enumerate_slice
+from   _TFL.pyk              import pyk
+
 import _TFL.Interval_Set
 import _TFL.Numeric_Interval
 import _TFL._Meta.Object
 
-from   _TFL.Generators       import enumerate_slice
 from   bisect                import bisect
 
 class Timeline_Error (Exception) :
@@ -178,6 +181,7 @@ class TL_Section_Mod_P (TL_Section) :
 
 # end class TL_Section_Mod_P
 
+@pyk.adapt__bool__
 class TLS_Periodic (TFL.Meta.Object) :
     """Set of periodic TL_Sections from Timeline"""
 
@@ -263,9 +267,9 @@ class TLS_Periodic (TFL.Meta.Object) :
         return self.to_cut
     # end def _prepare_cut_mod_p
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.minmax > 0
-    # end def __nonzero__
+    # end def __bool__
 
     def __iter__ (self) :
         return iter (self.generations)

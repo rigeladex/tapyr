@@ -41,6 +41,10 @@
 #     3-Jan-2014 (CT) Factor `encoded`, `user_config`
 #    17-Feb-2014 (CT) Add `decoded`
 #    22-Aug-2014 (CT) Allow multiple `encodings` for `encoded`
+#     7-Oct-2014 (CT) Add `config_parser`, `ifilter`, `reprify`
+#     9-Oct-2014 (CT) Add `builtins`
+#    10-Oct-2014 (CT) Add `urlencode`, `urlparse`
+#    13-Oct-2014 (CT) Add `byte_type`
 #    ««revision-date»»···
 #--
 
@@ -97,10 +101,25 @@ class _Pyk_ (object) :
     # end def adapt__str__
 
     @lazy_property
+    def builtins (self) :
+        import __builtin__
+        return __builtin__
+    # end def builtins
+
+    byte_type  = str
+    byte_types = (bytes, str)
+
+    @lazy_property
     def Classic_Class_Type (self) :
         import types
         return types.ClassType
     # end def Classic_Class_Type
+
+    @lazy_property
+    def config_parser (self) :
+        import ConfigParser
+        return ConfigParser
+    # end def config_parser
 
     @staticmethod
     def decoded (v, * encodings) :
@@ -153,6 +172,7 @@ class _Pyk_ (object) :
         file.write (txt + end)
     # end def fprint
 
+    ifilter   = itertools.ifilter
     int_types = (int, long)
     izip      = itertools.izip
 
@@ -193,6 +213,13 @@ class _Pyk_ (object) :
         return cPickle
     # end def pickle
 
+    range       = staticmethod (range)
+
+    @staticmethod
+    def reprify (r) :
+        return pyk.encoded (r)
+    # end def reprify
+
     @lazy_property
     def StringIO (self) :
         import cStringIO
@@ -202,6 +229,18 @@ class _Pyk_ (object) :
     string_types = (str, unicode)
     text_type    = unicode
     unichr       = unichr
+
+    @lazy_property
+    def urlencode (self) :
+        from urllib import urlencode
+        return urlencode
+    # end def urlencode
+
+    @lazy_property
+    def urlparse (self) :
+        import urlparse
+        return urlparse
+    # end def urlparse
 
     @lazy_property
     def user_config (self) :

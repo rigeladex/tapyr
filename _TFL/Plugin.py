@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -70,7 +70,7 @@ class M_Plugin (TFL.Meta.M_Class) :
 
     def __call__ (cls, name, * args, ** kw) :
         if name in cls.Table :
-            raise KeyError, "Duplicate plugin name %s" % (name, )
+            raise KeyError ("Duplicate plugin name %s" % (name, ))
         result           = cls.__m_super.__call__ (name, * args, ** kw)
         cls.Table [name] = result
         return result
