@@ -42,6 +42,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function, unicode_literals
+
 test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -64,23 +66,23 @@ test_code = r"""
     >>> q  = MOM.Document.query ()
     >>> qs = MOM.Document.query_s ()
     >>> q.order_by (Q.pid).all ()
-    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
+    [MOM.Document (('ln', 'fn', '', ''), '//foo.bar/baz', ''), MOM.Document (('ln', 'fn', '', ''), '//foo.bar/qux', ''), MOM.Document (('title_1', ), '//foo.bar/quux.jpg', '')]
 
     >>> q.order_by (TFL.Sorted_By ("pid")).all ()
-    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
+    [MOM.Document (('ln', 'fn', '', ''), '//foo.bar/baz', ''), MOM.Document (('ln', 'fn', '', ''), '//foo.bar/qux', ''), MOM.Document (('title_1', ), '//foo.bar/quux.jpg', '')]
 
     >>> q.order_by (MOM.Document.sorted_by).all ()
-    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
+    [MOM.Document (('ln', 'fn', '', ''), '//foo.bar/baz', ''), MOM.Document (('ln', 'fn', '', ''), '//foo.bar/qux', ''), MOM.Document (('title_1', ), '//foo.bar/quux.jpg', '')]
 
     >>> qs.all ()
-    [MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/baz', u''), MOM.Document ((u'ln', u'fn', u'', u''), u'//foo.bar/qux', u''), MOM.Document ((u'title_1', ), u'//foo.bar/quux.jpg', u'')]
+    [MOM.Document (('ln', 'fn', '', ''), '//foo.bar/baz', ''), MOM.Document (('ln', 'fn', '', ''), '//foo.bar/qux', ''), MOM.Document (('title_1', ), '//foo.bar/quux.jpg', '')]
 
     >>> q = scope.query_changes (type_name = "SWP.Page").order_by (Q.cid)
     >>> for c in q.all () :
-    ...     print c
-    <Create SWP.Page (u'title_1', 'SWP.Page'), new-values = {'contents' : u'<p>text 1</p>\n', 'date' : (('start', u'2012-06-10'),), 'last_cid' : '2', 'text' : u'text 1'}>
-    <Create SWP.Page (u'title_2', 'SWP.Page'), new-values = {'contents' : u'<p>text 2</p>\n', 'date' : (('start', u'2012-06-10'),), 'last_cid' : '3', 'text' : u'text 2'}>
-    <Create SWP.Page (u'title_3', 'SWP.Page'), new-values = {'contents' : u'<p>text 3</p>\n', 'date' : (('start', u'2012-06-10'),), 'last_cid' : '4', 'text' : u'text 3'}>
+    ...     print (c)
+    <Create SWP.Page ('title_1', 'SWP.Page'), new-values = {'contents' : '<p>text 1</p>\n', 'date' : (('start', '2012-06-10'),), 'last_cid' : '2', 'text' : 'text 1'}>
+    <Create SWP.Page ('title_2', 'SWP.Page'), new-values = {'contents' : '<p>text 2</p>\n', 'date' : (('start', '2012-06-10'),), 'last_cid' : '3', 'text' : 'text 2'}>
+    <Create SWP.Page ('title_3', 'SWP.Page'), new-values = {'contents' : '<p>text 3</p>\n', 'date' : (('start', '2012-06-10'),), 'last_cid' : '4', 'text' : 'text 3'}>
 
     >>> scope.MOM.Id_Entity.query ().order_by (Q.pid).attrs ("type_name", "pid").all ()
     [('PAP.Person', 1), ('SWP.Page', 2), ('SWP.Page', 3), ('SWP.Page', 4), ('MOM.Document', 5), ('MOM.Document', 6), ('MOM.Document', 7)]

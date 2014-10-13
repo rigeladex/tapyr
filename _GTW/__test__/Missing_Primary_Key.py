@@ -36,45 +36,46 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 _test_code = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
     >>> errors = []
-    >>> print PAP.Person.count
+    >>> print (PAP.Person.count)
     0
-    >>> PAP.Person (last_name = u"", first_name = u"", raw = True)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     PAP.Person (last_name = u"", first_name = u"", raw = True)
     Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
-        first_name = ''
+        first_name = None
       Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
-        last_name = ''
+        last_name = None
     >>> errors
     []
-    >>> print PAP.Person.count
+    >>> print (PAP.Person.count)
     0
 
-    >>> PAP.Person \
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     PAP.Person \
     ...     ( last_name  = u"last_name"
     ...     , first_name = u""
     ...     , raw        = True
     ...     , on_error   = errors.append
     ...     )
     ...
-    Traceback (most recent call last):
-      ...
     Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
-        first_name = ''
-    >>> errors
-    [Invariants(Required_Empty(u'Person', Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
-        first_name = ''),)]
-    >>> for e in errors :
-    ...     print e
-    Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
-        first_name = ''
+        first_name = None
 
-    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    >>> errors
+    [Invariants(Required_Empty('Person', Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
+        first_name = None),)]
+    >>> for e in errors :
+    ...     print (e)
+    Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
+        first_name = None
+
+    >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' :
     [ 'first_name' ]
       , 'bindings' :
@@ -89,14 +90,13 @@ _test_code = r"""
     ]
 
     >>> errors = []
-    >>> PAP.Person (last_name = u"", first_name = u"", raw = True, on_error = errors.append)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     PAP.Person (last_name = u"", first_name = u"", raw = True, on_error = errors.append)
     Invariants: Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
-        first_name = ''
+        first_name = None
       Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
-        last_name = ''
-    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+        last_name = None
+    >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' :
     [ 'first_name' ]
       , 'bindings' :
@@ -121,11 +121,11 @@ _test_code = r"""
       }
     ]
 
-    >>> print PAP.Person.count
+    >>> print (PAP.Person.count)
     0
 
-    >>> PAP.Person.epkified_ckd.args
-    u"last_name, first_name, middle_name = u'', title = u''"
+    >>> prepr (PAP.Person.epkified_ckd.args)
+    "last_name, first_name, middle_name = '', title = ''"
     >>> PAP.Person.epk_sig
     ('last_name', 'first_name', 'middle_name', 'title')
     >>> PAP.Person.primary_required

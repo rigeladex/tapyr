@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,17 +41,23 @@
 #    ««revision-date»»···
 #--
 
+from   __future__             import print_function, unicode_literals
+
 from   _TFL                   import TFL
-import _TFL.Filename
+
 from   _TFL.Caller            import Scope
+from   _TFL.pyk               import pyk
+
+import _TFL.CAO
+import _TFL.Filename
+import _TFL.Record
 import _TFL._Meta.Object
 import _TFL.defaultdict
 import _TFL.sos               as     os
-import _TFL.Record
-import _TFL.CAO
-import  re
-import  traceback
-import  stat
+
+import re
+import stat
+import traceback
 
 class CSS_Template (TFL.Meta.Object) :
     """Models a css template and teh dependencies to parameter files."""
@@ -81,7 +87,7 @@ class CSS_Template (TFL.Meta.Object) :
         if os.path.isfile (self.parameter_file.name) :
             self._update_dependencies    ()
         else :
-            print "*** no parameter file for", self.template.name
+            print ("*** no parameter file for", self.template.name)
             self.parameter_file = None
     # end def __init__
 
@@ -109,8 +115,10 @@ class CSS_Template (TFL.Meta.Object) :
             outf  = open  (self.css_file.name, "wb")
             outf.write    (ct % Scope (globs = self.pdict, locls = overrides))
             outf.close    ()
-            print "[%04d] CSS file created `%s`" \
+            print \
+                ( "[%04d] CSS file created `%s`"
                 % (self.count, self.css_file.name, )
+                )
             self.count += 1
         except :
             traceback.print_exc ()
@@ -155,10 +163,10 @@ def watch_directories (pyinotify, timeout, overrides, * directories) :
         _watch_directories_pyinotify (pyinotify, overrides, * directories)
     else :
         import time
-        print "Polling fallback, interval %dms" % (timeout, )
+        print ("Polling fallback, interval %dms" % (timeout, ))
         while True :
             time.sleep (1000. / timeout)
-            for template in CSS_Template.templates.itervalues () :
+            for template in pyk.itervalues (CSS_Template.templates) :
                 template.check_for_update ()
 # end def watch_directories
 
@@ -226,10 +234,10 @@ def main (cmd) :
             import pyinotify
         except ImportError :
             pyinotify = None
-            print "pyinotify not found, fall back to polling"
+            print ("pyinotify not found, fall back to polling")
         for d in cmd.watch_directories :
             CSS_Template.find_templates (pyinotify is None, d, False)
-        for t in CSS_Template.templates.itervalues () :
+        for t in pyk.itervalues (CSS_Template.templates) :
             t.create_css_file (keywords)
         watch_directories \
             (pyinotify, cmd.poll_timeout, keywords, * cmd.watch_directories)

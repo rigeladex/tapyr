@@ -66,242 +66,8 @@ from   _TFL.predicate                      import split_hst, rsplit_hst
 import _TFL.Regexp
 
 import itertools
-nl     = chr (10)
-indent = "  " * 2
-sk     = lambda x : (x.type_name, x.i_rank, )
 
-def formatted_column (c) :
-    tail = []
-    c_MOM_Kind = getattr (c, "MOM_Kind", None)
-    if c_MOM_Kind :
-        tail.append \
-            ( "%s %s %s"
-            % ( c_MOM_Kind.__class__.__name__
-              , c_MOM_Kind.typ
-              , getattr (c_MOM_Kind, "name", c_MOM_Kind)
-              )
-            )
-    else :
-        tail.append ("-" * 10)
-    if c.primary_key :
-        tail.append ("primary")
-    if c.foreign_keys :
-        tail.extend (str (fk) for fk in sorted (c.foreign_keys))
-    if c_MOM_Kind and isinstance (c_MOM_Kind.attr, MOM.Attr._A_Id_Entity_) :
-        tail.append (repr (c.type))
-    typ = str (c.type).capitalize ()
-    return ("Column %-25s : %-20s %s" % (c.name, typ, " ".join (tail))).strip ()
-# end def formatted_column
-
-def formatted_select (ETW, name = "select", select = None) :
-    sep = nl + indent
-    if select is None :
-        select = getattr (ETW, name, None)
-    if select is None :
-        return "No '%s'" % (name, )
-    text = str (select)
-    def _gen (lines, indent = 7) :
-        s = "," + sep + (" " * indent)
-        inner_indent = " " * (indent - 7)
-        inner_sep    = "\n" + inner_indent
-        for l in lines :
-            if "," in l :
-                comps = sorted (c.strip () for c in l.split (","))
-                yield s.join (comps)
-            elif "JOIN" in l :
-                rerep = TFL.Re_Replacer \
-                    ( "((?:[A-Z]+ )*JOIN)"
-                    , "\n       \\1"
-                    )
-                p  = rerep (l)
-                ps = list (x.rstrip () for x in p.split ("\n"))
-                p  = inner_indent + inner_sep.join (ps)
-                yield p
-            elif "WHERE" in l :
-                rerep = TFL.Re_Replacer \
-                    ( "((?:\s+)*(?:AND|OR)\s+)"
-                    , "\n       \\1"
-                    )
-                p  = rerep (l)
-                ps = list (x.rstrip () for x in p.split ("\n"))
-                p  = inner_indent + inner_sep.join (ps)
-                yield p
-            else :
-                yield l
-    gindent = 7
-    head, _, tail  = split_hst  (text, " ")
-    t_head, t_sep, t_tail = split_hst (tail, "\nFROM (SELECT")
-    if t_sep :
-        head = sep.join ((" ".join ((head, t_head)), t_sep.strip ()))
-        tail, t_sep, t_tail_tip = rsplit_hst (t_tail, ")")
-        ttt_lines = t_tail_tip.split (nl)
-        gindent += 6
-    lines  = tail.split (nl)
-    result = " ".join \
-        ((head, sep.join (x.rstrip () for x in _gen (lines, gindent))))
-    if t_sep :
-        r_tail = sep.join (x.rstrip () for x in _gen (ttt_lines))
-        result = sep.join (( result, " " * 5 + t_sep + r_tail))
-    return result.rstrip ()
-# end def formatted_select
-
-def formatted_table (ST, nl, indent) :
-    sep   = nl + indent
-    def _gen () :
-        for c in ST.columns :
-            yield formatted_column (c)
-    return sep.join (x.rstrip () for x in sorted (_gen ()))
-# end def formatted_table
-
-def show_ancestors (apt) :
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk) :
-        T = ETW.e_type
-        xs = ("%-36s" % (T.type_name), )
-        if ETW.ancestors :
-            xs += ("<" , " < ".join ("%-16s" % (a.type_name, ) for a in ETW.ancestors).rstrip ())
-        print (" ".join (xs).rstrip ())
-# end def show_ancestors
-
-_ignore_kinds = set \
-    (( "_Co_Base_", "_Computed_Mixin_", "_Query_", "_Typed_Collection_Mixin_"
-     , "Id_Entity_Reference_Mixin", "Kind"
-    ))
-
-def _kind_mro (kind, ignore = _ignore_kinds) :
-    return \
-        ( c.__name__ for c in kind.__class__.__mro__
-        if  issubclass (c, MOM.Attr.Kind)
-        and "__" not in c.__name__
-        and c.__name__ not in ignore
-        )
-# end def _kind_mro
-
-def show_attr_mro (ET) :
-    def show (ET, level = 1) :
-        in0 = "  " * (level)
-        in1 = "  " * (level + 1)
-        for name, kind in sorted (pyk.iteritems (ET.attributes)) :
-            if isinstance (kind, MOM.Attr.Auto_Cached) or not kind.show_in_ui :
-                continue
-            amro  = ", ".join (_kind_mro (kind))
-            tail  = ("-> %s" % (kind.E_Type.type_name, )) if kind.E_Type else ""
-            lin1  = ("%s%-20s %s" % (in0, name, tail)).rstrip ()
-            print ("%s\n%s%s" % (lin1, in1, amro))
-            if kind.is_composite :
-                show (kind.attr.E_Type, level + 1)
-    print (ET.type_name)
-    show (ET)
-# end def show_attr_mro
-
-def show_attr_wrappers (apt) :
-    def show (W, level = 0) :
-        qas = W.q_able_attrs_o
-        if qas :
-            in0 = "  " * (level + bool (level))
-            in1 = in0 + " " * (level + 1 + (not level))
-            in2 = in1 + "    "
-            print ("%s%s" % (in0, W.type_name))
-            for name, aw in sorted (pyk.iteritems (qas)) :
-                if not getattr (aw.kind, "show_in_ui", True) : continue
-                amro = ", ".join (_kind_mro (aw.kind))
-                print \
-                    ( "%s%s : %s\n%s%s"
-                    % (in1, aw.__class__.__name__, aw.kind, in2, amro)
-                    )
-                if aw.q_able_attrs_o :
-                    show (aw, level + 1)
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk) :
-        show (ETW)
-# end def show_attr_wrappers
-
-def show_q_able (apt) :
-    def _gen (ETW) :
-        for k, q in sorted (pyk.iteritems (ETW.q_able_attrs)) :
-            if not q.kind.show_in_ui : continue
-            if k == q.attr.name :
-                ### filter attribute-aliases
-                yield str (q)
-                if q.q_able_attrs :
-                    for k, q in sorted (pyk.iteritems (q.q_able_attrs)) :
-                        if not q.kind.show_in_ui : continue
-                        if not q.columns :
-                            yield str (q)
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
-        print (ETW)
-        print (" ", "\n  ".join (_gen (ETW)))
-# end def show_q_able
-
-def show_q_able_names (apt) :
-    def _gen (q_able_attrs, level = 0) :
-        for k, q in sorted (pyk.iteritems (q_able_attrs)) :
-            if not q.kind.show_in_ui : continue
-            if k == q.attr.name :
-                ### filter attribute-aliases
-                yield "%s%-30s: %s" % ("    " * level, k, ", ".join (q.q_able_names))
-                if q.q_able_attrs :
-                    for x in _gen (q.q_able_attrs, level + 1) :
-                        yield x
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
-        print (ETW)
-        print (" ", "\n  ".join (_gen (ETW.q_able_attrs)))
-# end def show_q_able_names
-
-def show_qc_map (apt) :
-    def _show (QC, indent = 4) :
-        if QC.Map :
-            for k, v in sorted (pyk.iteritems (QC.Map)) :
-                print (("%-30s: %.80s" % (" " * indent + k, v)).rstrip ())
-                if isinstance (v, QC.__class__) :
-                    _show (v, indent + 4)
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
-        if ETW.sa_tables :
-            print (ETW)
-            _show (ETW.QC)
-# end def show_qc_map
-
-def show_root_table (apt) :
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
-        T = ETW.e_type
-        print (("%-36s %s" % (T.type_name, ETW.root_table)).rstrip ())
-# end def show_root_table
-
-def show_selects (apt, name = "select") :
-    sk = lambda x : (x.e_type.i_rank, )
-    for ETW in sorted (pyk.itervalues (apt._SAW.et_map), key = sk):
-        T = ETW.e_type
-        if ETW.has_relevant_tables :
-            second = "" if T.relevant_root is T \
-                else (T.relevant_root.type_name if T.relevant_root else "")
-            head   = ("%s %s" % (T.type_name, second)).strip ()
-            print ("%s%s" % (head, nl), "  ", formatted_select (ETW, name = name))
-# end def show_selects
-
-def show_sequences (apt) :
-    for ETW in apt._SAW.e_types_t :
-        seqs = ", ".join (s.seq_name for s in ETW.sequences)
-        if seqs :
-            print ("%-40s : %s" % (ETW.type_name, seqs))
-# end def show_sequences
-
-def show_tables (apt) :
-    for ETW in apt._SAW.e_types_t :
-        T = ETW.e_type
-        ST = ETW.sa_table
-        second = ("(%s)" % (ETW.parent.type_name, )) if ETW.parent else ""
-        third  = "" if T.relevant_root is T \
-                  else (T.relevant_root and T.relevant_root.type_name)
-        head   = (" ".join ((T.type_name, second, third or ""))).strip ()
-        head   = ("%s <Table %s>" % (head, ETW.sa_table)).strip ()
-        print ("%s%s" % (head, nl), "  ", formatted_table (ETW.sa_table, nl, indent))
-    for seq in apt._SAW.sequences :
-        print ("<Table for %s>%s" % (seq.attr, nl), "  ", formatted_table (seq.sa_table, nl, indent))
-# end def show_tables
+from   _GTW.__test__._SAW_test_functions import *
 
 _test_ancestors = """
     >>> apt, url = Scaffold.app_type_and_url (%(p1)s, %(n1)s)
@@ -615,6 +381,7 @@ _test_attr_wrappers = """
           Optional, _User_, _DB_Attr_
       Kind_Wrapper : Boolean `suspended`
           Internal, _DB_System_, _DB_Attr_, _System_
+    Auth.Account_Anonymous <-- Auth._Account_
     Auth.Account
       Kind_Wrapper_R : Link_Ref_List `_account_action_s`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -1080,6 +847,7 @@ _test_attr_wrappers = """
           Required, _Required_Mixin_, _User_, _DB_Attr_
       Kind_Wrapper : Float `sail_area`
           Optional, _User_, _DB_Attr_
+    SRM.Handicap <-- SRM._Boat_Class_
     SRM.Link
       Kind_Wrapper_P : Left `left`
           Link_Role, _EPK_Mixin_, _SPK_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
@@ -11262,75 +11030,75 @@ _test_tables = """
     Auth._Account_ (MOM.Id_Entity) <Table auth__account_>
         Column enabled                   : Boolean              Optional Boolean enabled
         Column name                      : Varchar(80)          Primary Email name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column superuser                 : Boolean              Optional Boolean superuser
         Column suspended                 : Boolean              Internal Boolean suspended
     Auth.Account_Anonymous (Auth._Account_) Auth._Account_ <Table auth_account_anonymous>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'auth__account_.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('auth__account_.pid')
     Auth.Account (Auth._Account_) Auth._Account_ <Table auth_account>
         Column password                  : Varchar(120)         Internal String password
         Column ph_name                   : Varchar(64)          Internal__Sticky String ph_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'auth__account_.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('auth__account_.pid')
     Auth.Certificate (MOM.Id_Entity) <Table auth_certificate>
         Column cert_id                   : Integer              Internal__Just_Once Surrogate cert_id primary
         Column desc                      : Varchar(40)          Primary_Optional String desc
         Column email                     : Varchar(80)          Primary Email email
         Column pem                       : Blob                 Internal None pem
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid ForeignKey('mom_id_entity.pid')
         Column revocation_date           : Datetime             Optional Date-Time revocation_date
         Column validity__finish          : Datetime             Optional__Nested Date-Time finish
         Column validity__start           : Datetime             Necessary__Nested Date-Time start
     Auth.Group (MOM.Id_Entity) <Table auth_group>
         Column desc                      : Varchar(20)          Optional String desc
         Column name                      : Varchar(32)          Primary String name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     Auth.Account_in_Group (MOM.Id_Entity) <Table auth_account_in_group>
         Column left                      : Integer              Link_Role Account left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Group right Id_Entity()
     Auth.Account_Activation (MOM.Id_Entity) <Table auth_account_activation>
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     Auth.Account_Password_Change_Required (MOM.Id_Entity) <Table auth_account_password_change_required>
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     Auth.Account_EMail_Verification (MOM.Id_Entity) <Table auth_account_email_verification>
         Column expires                   : Datetime             Necessary Date-Time expires
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
         Column new_email                 : Varchar(80)          Optional Email new_email
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column token                     : Varchar(64)          Primary__Init_Only String token
     Auth.Account_Password_Reset (MOM.Id_Entity) <Table auth_account_password_reset>
         Column expires                   : Datetime             Necessary Date-Time expires
         Column left                      : Integer              Link_Role__Init_Only Account left Id_Entity()
         Column password                  : Varchar(64)          Necessary String password
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column token                     : Varchar(64)          Primary__Init_Only String token
     EVT.Calendar (MOM.Id_Entity) <Table evt_calendar>
         Column desc                      : Varchar(80)          Optional String desc
         Column name                      : Varchar(32)          Primary Name name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     EVT.Event (MOM.Id_Entity) <Table evt_event>
         Column calendar                  : Integer              Primary_Optional__Id_Entity_Reference Entity calendar Id_Entity()
         Column date__finish              : Date                 Optional__Nested Date finish
         Column date__start               : Date                 Necessary__Nested Date start
         Column detail                    : Varchar(160)         Optional String detail
         Column left                      : Integer              Link_Role__Init_Only Id_Entity left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column short_title               : Varchar(30)          Optional String short_title
         Column time__finish              : Time                 Optional__Nested Time finish
         Column time__start               : Time                 Necessary__Nested Time start
     EVT.Event_occurs (MOM.Id_Entity) <Table evt_event_occurs>
         Column date                      : Date                 Primary Date date
         Column left                      : Integer              Link_Role__Init_Only Event left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column time__finish              : Time                 Optional__Nested Time finish
         Column time__start               : Time                 Necessary__Nested Time start
     EVT.Recurrence_Spec (MOM.Id_Entity) <Table evt_recurrence_spec>
         Column date_exceptions           : Blob                 Optional__Typed_Collection Date_List date_exceptions
         Column dates                     : Blob                 Optional__Typed_Collection Date_List dates
         Column left                      : Integer              Link_Role__Init_Only Event left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     EVT.Recurrence_Rule (MOM.Id_Entity) <Table evt_recurrence_rule>
         Column count                     : Integer              Optional Int count
         Column desc                      : Varchar(20)          Primary_Optional String desc
@@ -11341,7 +11109,7 @@ _test_tables = """
         Column month                     : Blob                 Optional__Typed_Collection Int_List month
         Column month_day                 : Blob                 Optional__Typed_Collection Int_List month_day
         Column period                    : Integer              Optional Int period
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column restrict_pos              : Blob                 Optional__Typed_Collection Int_List restrict_pos
         Column start                     : Date                 Optional__Computed_Set Date start
         Column unit                      : Integer              Optional__Sticky Unit unit
@@ -11357,7 +11125,7 @@ _test_tables = """
         Column city                      : Varchar(30)          Primary__Raw_Value String city
         Column country                   : Varchar(20)          Primary__Raw_Value String country
         Column desc                      : Varchar(20)          Optional String desc
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column region                    : Varchar(20)          Optional__Raw_Value String region
         Column street                    : Varchar(60)          Primary__Raw_Value String street
         Column zip                       : Varchar(6)           Primary__Raw_Value String zip
@@ -11368,20 +11136,20 @@ _test_tables = """
         Column lifetime__finish          : Date                 Optional__Nested Date finish
         Column lifetime__start           : Date                 Necessary__Nested Date start
         Column name                      : Varchar(64)          Primary__Raw_Value String name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column registered_in             : Varchar(64)          Primary_Optional__Raw_Value String registered_in
         Column short_name                : Varchar(12)          Optional__Raw_Value String short_name
     PAP.Email (MOM.Id_Entity) <Table pap_email>
         Column __raw_address             : Varchar(80)          Primary__Raw_Value Email address
         Column address                   : Varchar(80)          Primary__Raw_Value Email address
         Column desc                      : Varchar(20)          Optional String desc
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     PAP.Phone (MOM.Id_Entity) <Table pap_phone>
         Column area_code                 : Varchar(5)           Primary Numeric_String area_code
         Column country_code              : Varchar(3)           Primary Numeric_String country_code
         Column desc                      : Varchar(20)          Optional String desc
         Column number                    : Varchar(14)          Primary Numeric_String number
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     PAP.Person (MOM.Id_Entity) <Table pap_person>
         Column __raw_first_name          : Varchar(32)          Primary__Raw_Value String first_name
         Column __raw_last_name           : Varchar(48)          Primary__Raw_Value String last_name
@@ -11392,16 +11160,16 @@ _test_tables = """
         Column lifetime__finish          : Date                 Optional__Nested Date finish
         Column lifetime__start           : Date                 Necessary__Nested Date start
         Column middle_name               : Varchar(32)          Primary_Optional__Raw_Value String middle_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column sex                       : Varchar(1)           Necessary Sex sex
         Column title                     : Varchar(20)          Primary_Optional__Raw_Value String title
     PAP.Url (MOM.Id_Entity) <Table pap_url>
         Column desc                      : Varchar(20)          Optional String desc
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column value                     : Varchar(160)         Primary Url value
     PAP.Address_Position (MOM.Id_Entity) <Table pap_address_position>
         Column left                      : Integer              Link_Role__Init_Only Address left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column position____raw_lat       : Varchar(22)          Necessary__Raw_Value__Nested Angle lat
         Column position____raw_lon       : Varchar(22)          Necessary__Raw_Value__Nested Angle lon
         Column position__height          : Float                Optional__Nested Float height
@@ -11409,34 +11177,34 @@ _test_tables = """
         Column position__lon             : Float                Necessary__Raw_Value__Nested Angle lon
     PAP.Person_has_Account (MOM.Id_Entity) <Table pap_person_has_account>
         Column left                      : Integer              Link_Role Person left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Account right Id_Entity()
     SRM._Boat_Class_ (MOM.Id_Entity) <Table srm__boat_class_>
         Column __raw_name                : Varchar(48)          Primary__Raw_Value String name
         Column name                      : Varchar(48)          Primary__Raw_Value String name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     SRM.Boat_Class (SRM._Boat_Class_) SRM._Boat_Class_ <Table srm_boat_class>
         Column beam                      : Float                Optional Float beam
         Column loa                       : Float                Optional Float loa
         Column max_crew                  : Smallint             Required Int max_crew
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'srm__boat_class_.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('srm__boat_class_.pid')
         Column sail_area                 : Float                Optional Float sail_area
     SRM.Handicap (SRM._Boat_Class_) SRM._Boat_Class_ <Table srm_handicap>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'srm__boat_class_.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('srm__boat_class_.pid')
     SRM.Boat (MOM.Id_Entity) <Table srm_boat>
         Column __raw_sail_number         : Varchar(7)           Primary__Raw_Value Int sail_number
         Column __raw_sail_number_x       : Varchar(8)           Primary_Optional__Raw_Value String sail_number_x
         Column left                      : Integer              Link_Role__Init_Only Boat_Class left Id_Entity()
         Column name                      : Varchar(48)          Optional String name
         Column nation                    : Varchar(3)           Primary_Optional Nation nation
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column sail_number               : Integer              Primary__Raw_Value Int sail_number
         Column sail_number_x             : Varchar(8)           Primary_Optional__Raw_Value String sail_number_x
     SRM.Club (MOM.Id_Entity) <Table srm_club>
         Column __raw_name                : Varchar(8)           Primary__Raw_Value String name
         Column long_name                 : Varchar(64)          Optional String long_name
         Column name                      : Varchar(8)           Primary__Raw_Value String name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     SRM.Regatta_Event (MOM.Id_Entity) <Table srm_regatta_event>
         Column __raw_name                : Varchar(64)          Primary__Raw_Value String name
         Column club                      : Integer              Optional__Id_Entity_Reference Entity club Id_Entity()
@@ -11446,7 +11214,7 @@ _test_tables = """
         Column is_cancelled              : Boolean              Optional Boolean is_cancelled
         Column name                      : Varchar(64)          Primary__Raw_Value String name
         Column perma_name                : Varchar(64)          Internal__Auto_Update_Lazy__Computed_Set String perma_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     SWP.Page (MOM.Id_Entity) <Table swp_page>
         Column contents                  : Text                 Internal__Auto_Update Text contents
         Column date__finish              : Date                 Optional__Nested Date finish
@@ -11455,13 +11223,13 @@ _test_tables = """
         Column head_line                 : Varchar(256)         Optional String head_line
         Column hidden                    : Boolean              Optional Boolean hidden
         Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column prio                      : Integer              Optional__Sticky Int prio
         Column short_title               : Varchar(30)          Necessary String short_title
         Column text                      : Text                 Required Text text
         Column title                     : Varchar(120)         Necessary String title
     SWP.Page_Y (SWP.Page) SWP.Page <Table swp_page_y>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'swp_page.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('swp_page.pid')
         Column year                      : Integer              Primary_Optional Int year
     SWP.Clip_O (MOM.Id_Entity) <Table swp_clip_o>
         Column abstract                  : Text                 Required Text abstract
@@ -11471,18 +11239,18 @@ _test_tables = """
         Column date_x__finish            : Date                 Optional__Nested Date finish
         Column date_x__start             : Date                 Necessary__Nested Date start
         Column left                      : Integer              Link_Role__Init_Only Object_PN left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column prio                      : Integer              Optional__Sticky Int prio
     SWP.Clip_X (SWP.Page) SWP.Page <Table swp_clip_x>
         Column link_to                   : Varchar(160)         Optional Url link_to
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'swp_page.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('swp_page.pid')
     SWP.Gallery (MOM.Id_Entity) <Table swp_gallery>
         Column date__finish              : Date                 Optional__Nested Date finish
         Column date__start               : Date                 Necessary__Sticky__Nested Date start
         Column directory                 : Text                 Necessary Directory directory
         Column hidden                    : Boolean              Optional Boolean hidden
         Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column prio                      : Integer              Optional__Sticky Int prio
         Column short_title               : Varchar(30)          Necessary String short_title
         Column title                     : Varchar(120)         Necessary String title
@@ -11493,7 +11261,7 @@ _test_tables = """
         Column photo__extension          : Varchar(10)          Optional__Init_Only__Nested String extension
         Column photo__height             : Smallint             Necessary__Nested Y height
         Column photo__width              : Smallint             Necessary__Nested X width
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column thumb__extension          : Varchar(10)          Optional__Init_Only__Nested String extension
         Column thumb__height             : Smallint             Necessary__Nested Y height
         Column thumb__width              : Smallint             Necessary__Nested X width
@@ -11504,7 +11272,7 @@ _test_tables = """
         Column hidden                    : Boolean              Optional Boolean hidden
         Column parent_url                : Varchar(160)         Primary Url parent_url
         Column perma_name                : Varchar(80)          Primary Date-Slug perma_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column prio                      : Integer              Optional__Sticky Int prio
         Column short_title               : Varchar(30)          Necessary String short_title
         Column target_url                : Varchar(160)         Required Url target_url
@@ -11512,7 +11280,7 @@ _test_tables = """
     SRM.Page (SWP.Page) SWP.Page <Table srm_page>
         Column desc                      : Varchar(30)          Optional__Computed_Set String desc
         Column event                     : Integer              Primary__Id_Entity_Reference Entity event Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'swp_page.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('swp_page.pid')
     SRM.Regatta (MOM.Id_Entity) <Table srm_regatta>
         Column boat_class                : Integer              Primary__Id_Entity_Reference Entity boat_class Id_Entity()
         Column discards                  : Integer              Optional Int discards
@@ -11520,7 +11288,7 @@ _test_tables = """
         Column kind                      : Varchar(32)          Optional String kind
         Column left                      : Integer              Link_Role__Init_Only Regatta_Event left Id_Entity()
         Column perma_name                : Varchar(64)          Internal__Auto_Update_Lazy__Computed_Set String perma_name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column races                     : Integer              Optional Int races
         Column result__date              : Datetime             Necessary__Nested Date-Time date
         Column result__software          : Varchar(64)          Optional__Nested String software
@@ -11528,19 +11296,19 @@ _test_tables = """
         Column starters_rl               : Integer              Optional Int starters_rl
     SRM.Regatta_C (SRM.Regatta) SRM.Regatta <Table srm_regatta_c>
         Column is_team_race              : Boolean              Optional Boolean is_team_race
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'srm_regatta.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('srm_regatta.pid')
     SRM.Regatta_H (SRM.Regatta) SRM.Regatta <Table srm_regatta_h>
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'srm_regatta.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('srm_regatta.pid')
     SRM.Sailor (MOM.Id_Entity) <Table srm_sailor>
         Column __raw_mna_number          : Varchar(7)           Primary_Optional__Raw_Value Int mna_number
         Column club                      : Integer              Primary_Optional__Id_Entity_Reference Entity club Id_Entity()
         Column left                      : Integer              Link_Role__Init_Only Person left Id_Entity()
         Column mna_number                : Integer              Primary_Optional__Raw_Value Int mna_number
         Column nation                    : Varchar(3)           Primary_Optional Nation nation
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
     SRM.Boat_in_Regatta (MOM.Id_Entity) <Table srm_boat_in_regatta>
         Column left                      : Integer              Link_Role Boat left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column place                     : Integer              Optional Int place
         Column points                    : Integer              Optional Int points
         Column rank                      : Integer              Internal Int rank
@@ -11550,7 +11318,7 @@ _test_tables = """
     SRM.Race_Result (MOM.Id_Entity) <Table srm_race_result>
         Column discarded                 : Boolean              Optional__Sticky Boolean discarded
         Column left                      : Integer              Link_Role__Init_Only Boat_in_Regatta left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column points                    : Integer              Necessary Int points
         Column race                      : Smallint             Primary Int race
         Column status                    : Varchar(8)           Optional String status
@@ -11561,60 +11329,60 @@ _test_tables = """
         Column leader                    : Integer              Optional__Id_Entity_Reference Entity leader Id_Entity()
         Column left                      : Integer              Link_Role__Init_Only Regatta_C left Id_Entity()
         Column name                      : Varchar(64)          Primary__Raw_Value String name
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column place                     : Integer              Optional Int place
         Column registration_date         : Date                 Internal Date registration_date
     SRM.Crew_Member (MOM.Id_Entity) <Table srm_crew_member>
         Column key                       : Integer              Optional__Sticky Int key
         Column left                      : Integer              Link_Role Boat_in_Regatta left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Sailor right Id_Entity()
         Column role                      : Varchar(32)          Optional String role
     SRM.Team_has_Boat_in_Regatta (MOM.Id_Entity) <Table srm_team_has_boat_in_regatta>
         Column left                      : Integer              Link_Role Team left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Boat_in_Regatta right Id_Entity()
     PAP.Company_has_Url (MOM.Id_Entity) <Table pap_company_has_url>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Company left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Url right Id_Entity()
     PAP.Person_has_Url (MOM.Id_Entity) <Table pap_person_has_url>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Person left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Url right Id_Entity()
     PAP.Company_has_Phone (MOM.Id_Entity) <Table pap_company_has_phone>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column extension                 : Varchar(5)           Primary_Optional Numeric_String extension
         Column left                      : Integer              Link_Role Company left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Phone right Id_Entity()
     PAP.Person_has_Phone (MOM.Id_Entity) <Table pap_person_has_phone>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column extension                 : Varchar(5)           Primary_Optional Numeric_String extension
         Column left                      : Integer              Link_Role Person left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Phone right Id_Entity()
     PAP.Company_has_Email (MOM.Id_Entity) <Table pap_company_has_email>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Company left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Email right Id_Entity()
     PAP.Person_has_Email (MOM.Id_Entity) <Table pap_person_has_email>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Person left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Email right Id_Entity()
     PAP.Company_has_Address (MOM.Id_Entity) <Table pap_company_has_address>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Company left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Address right Id_Entity()
     PAP.Person_has_Address (MOM.Id_Entity) <Table pap_person_has_address>
         Column desc                      : Varchar(20)          Optional__Computed_Set String desc
         Column left                      : Integer              Link_Role Person left Id_Entity()
-        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey(u'mom_id_entity.pid')
+        Column pid                       : Integer              Internal__Just_Once Surrogate pid primary ForeignKey('mom_id_entity.pid')
         Column right                     : Integer              Link_Role Address right Id_Entity()
     <Table for Surrogate `pid`>
         Column electric                  : Boolean              Internal Boolean electric
@@ -11832,7 +11600,7 @@ _test_unique = """
         DBW Uniqueness predicate: unique_epk ('left', 'nation', 'mna_number', 'club')
     SRM.Boat_in_Regatta
         EMS
-        DBW Uniqueness predicate: unique_epk ('left', 'right'), Uniqueness predicate: unique_regatta_skipper (u'regatta', u'skipper')
+        DBW Uniqueness predicate: unique_epk ('left', 'right'), Uniqueness predicate: unique_regatta_skipper ('regatta', 'skipper')
     SRM.Race_Result
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'race')

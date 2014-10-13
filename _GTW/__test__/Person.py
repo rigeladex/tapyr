@@ -42,51 +42,55 @@
 #    ««revision-date»»···
 #--
 
+from   __future__  import print_function
+
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
 
-    >>> print PAP.Person.count
+    >>> print (PAP.Person.count)
     0
     >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian") ### 1
     >>> p
-    PAP.Person (u'tanzer', u'christian', u'', u'')
-    >>> print PAP.Person.count
+    PAP.Person ('tanzer', 'christian', '', '')
+    >>> print (PAP.Person.count)
     1
     >>> PAP.Person.instance ("Tanzer", "Christian")
-    PAP.Person (u'tanzer', u'christian', u'', u'')
+    PAP.Person ('tanzer', 'christian', '', '')
     >>> PAP.Person.query_s ().all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u'')]
+    [PAP.Person ('tanzer', 'christian', '', '')]
 
     >>> PAP.Person.instance_or_new ("Tanzer", "Christian") ### 2
-    PAP.Person (u'tanzer', u'christian', u'', u'')
-    >>> print PAP.Person.count
+    PAP.Person ('tanzer', 'christian', '', '')
+    >>> print (PAP.Person.count)
     1
 
     >>> p.edit_attr
     (String `last_name`, String `first_name`, String `middle_name`, String `title`, Date_Interval `lifetime`, Sex `sex`)
     >>> for a in p.edit_attr :
-    ...     a.name, a.P_Type.__name__, a.get_value (p), a.get_raw (p)
-    ('last_name', 'unicode', u'tanzer', u'Tanzer')
-    ('first_name', 'unicode', u'christian', u'Christian')
-    ('middle_name', 'unicode', u'', u'')
-    ('title', 'unicode', u'', u'')
-    ('lifetime', 'Date_Interval', MOM.Date_Interval (), u'')
-    ('sex', 'unicode', None, u'')
+    ...     pn = a.P_Type.__name__
+    ...     pn = portable_repr.Type_Name_Map.get (pn, pn)
+    ...     prepr ((a.name, pn, a.get_value (p), a.get_raw (p)))
+    ('last_name', 'text-string', 'tanzer', 'Tanzer')
+    ('first_name', 'text-string', 'christian', 'Christian')
+    ('middle_name', 'text-string', '', '')
+    ('title', 'text-string', '', '')
+    ('lifetime', 'Date_Interval', MOM.Date_Interval (), '')
+    ('sex', 'text-string', None, '')
 
     >>> _ = PAP.Person ("Tanzer", "Egon")
     >>> _ = PAP.Person ("Tanzer", "Walter")
     >>> _ = PAP.Person ("Tanzer", "Martin")
     >>> _ = PAP.Person ("Tanzer", "Michael")
 
-    >>> print PAP.Person.count
+    >>> print (PAP.Person.count)
     5
-    >>> print PAP.Person.query ().count ()
+    >>> print (PAP.Person.query ().count ())
     5
-    >>> print PAP.Person.query (Q.first_name.CONTAINS ("i")).count ()
+    >>> print (PAP.Person.query (Q.first_name.CONTAINS ("i")).count ())
     3
-    >>> print PAP.Person.query (Q.RAW.first_name.STARTSWITH ("M")).count ()
+    >>> print (PAP.Person.query (Q.RAW.first_name.STARTSWITH ("M")).count ())
     2
 
     >>> S = MOM.Attr.Selector
@@ -122,13 +126,13 @@ _test_code = """
     ()
 
     >>> lnc = PAP.Person.last_name.completer
-    >>> print lnc.name, lnc.names, lnc.treshold
+    >>> print (lnc.name, lnc.names, lnc.treshold)
     last_name ('last_name', 'first_name', 'middle_name', 'title') 2
     >>> fnc = PAP.Person.first_name.completer
-    >>> print fnc.name, fnc.names, fnc.treshold
+    >>> print (fnc.name, fnc.names, fnc.treshold)
     first_name ('first_name', 'last_name', 'middle_name', 'title') 2
     >>> tnc = PAP.Person.title.completer
-    >>> print tnc.name, tnc.names, tnc.treshold
+    >>> print (tnc.name, tnc.names, tnc.treshold)
     title ('title',) 1
 
     >>> show_ac (lnc, scope, dict (last_name = "Ta"))
@@ -168,9 +172,9 @@ _test_code = """
     >>> PAP.Person.query_s (Q.last_name == "Tanzer").all ()
     []
     >>> PAP.Person.query_s (Q.RAW.last_name == "Tanzer").all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Person (u'tanzer', u'egon', u'', u''), PAP.Person (u'tanzer', u'martin', u'', u''), PAP.Person (u'tanzer', u'michael', u'', u''), PAP.Person (u'tanzer', u'walter', u'', u'')]
+    [PAP.Person ('tanzer', 'christian', '', ''), PAP.Person ('tanzer', 'egon', '', ''), PAP.Person ('tanzer', 'martin', '', ''), PAP.Person ('tanzer', 'michael', '', ''), PAP.Person ('tanzer', 'walter', '', '')]
     >>> PAP.Person.query_s (Q.RAW.last_name.STARTSWITH ("Ta")).all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Person (u'tanzer', u'egon', u'', u''), PAP.Person (u'tanzer', u'martin', u'', u''), PAP.Person (u'tanzer', u'michael', u'', u''), PAP.Person (u'tanzer', u'walter', u'', u'')]
+    [PAP.Person ('tanzer', 'christian', '', ''), PAP.Person ('tanzer', 'egon', '', ''), PAP.Person ('tanzer', 'martin', '', ''), PAP.Person ('tanzer', 'michael', '', ''), PAP.Person ('tanzer', 'walter', '', '')]
 
     >>> PAP.Person.query ().order_by (TFL.Sorted_By ("-first_name")).count ()
     5
@@ -189,7 +193,7 @@ _test_partial_roles = """
     >>> for ET in scope.T_Extension :
     ...     for pr in ET.Partial_Roles :
     ...         pret = scope.entity_type (pr.E_Type)
-    ...         print ET.type_name, pr, pret.type_name, sorted (pret.children_np)
+    ...         print (ET.type_name, portable_repr (pr), pret.type_name, sorted (pret.children_np))
     EVT.Event <class '_GTW._OMP._EVT.Event.left'> MOM.Id_Entity ['Auth.Account', 'Auth.Account_Activation', 'Auth.Account_Anonymous', 'Auth.Account_EMail_Verification', 'Auth.Account_Password_Change_Required', 'Auth.Account_Password_Reset', 'Auth.Account_in_Group', 'Auth.Certificate', 'Auth.Group', 'EVT.Calendar', 'EVT.Event', 'EVT.Event_occurs', 'EVT.Recurrence_Rule', 'EVT.Recurrence_Spec', 'PAP.Address', 'PAP.Address_Position', 'PAP.Company', 'PAP.Company_has_Address', 'PAP.Company_has_Email', 'PAP.Company_has_Phone', 'PAP.Company_has_Url', 'PAP.Email', 'PAP.Person', 'PAP.Person_has_Account', 'PAP.Person_has_Address', 'PAP.Person_has_Email', 'PAP.Person_has_Phone', 'PAP.Person_has_Url', 'PAP.Phone', 'PAP.Url', 'SRM.Boat', 'SRM.Boat_Class', 'SRM.Boat_in_Regatta', 'SRM.Club', 'SRM.Crew_Member', 'SRM.Handicap', 'SRM.Page', 'SRM.Race_Result', 'SRM.Regatta_C', 'SRM.Regatta_Event', 'SRM.Regatta_H', 'SRM.Sailor', 'SRM.Team', 'SRM.Team_has_Boat_in_Regatta', 'SWP.Clip_O', 'SWP.Gallery', 'SWP.Page', 'SWP.Picture', 'SWP.Referral']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.left'> PAP.Subject ['PAP.Company', 'PAP.Person']
     PAP.Subject_has_Property <class '_GTW._OMP._PAP.Subject_has_Property.right'> PAP.Property ['PAP.Address', 'PAP.Email', 'PAP.Phone', 'PAP.Url']
@@ -211,7 +215,7 @@ _test_roles = """
     ...     for r in ET.Roles :
     ...         if r.E_Type :
     ...             ret = scope.entity_type (r.E_Type)
-    ...             print ET.type_name, r, ret.type_name
+    ...             print (ET.type_name, r, ret.type_name)
     Auth.Account_in_Group Account `left` Auth.Account
     Auth.Account_in_Group Group `right` Auth.Group
     Auth._Account_Action_ Account `left` Auth.Account
@@ -285,7 +289,7 @@ def show_ac (completer, scope, val_dict, complete_entity = False) :
     if complete_entity :
         deps += ("pid", "last_cid")
     attrs = tuple (getattr (Q.RAW, a) for a in deps)
-    print "\n".join (_gen (q.attrs (* attrs)))
+    print ("\n".join (_gen (q.attrs (* attrs))))
 
 __test__ = Scaffold.create_test_dict \
     ( dict

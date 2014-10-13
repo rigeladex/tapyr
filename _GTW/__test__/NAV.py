@@ -41,7 +41,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__               import print_function, unicode_literals
 
 _test_nav = """
     >>> nav_root = create_app () # doctest:+ELLIPSIS
@@ -49,11 +49,12 @@ _test_nav = """
 
     >>> TTT = nav_root.Templateer.Template_Type
 
-    >>> print nav_root.abs_href
+    >>> print (nav_root.abs_href)
     /
 
-    >>> for t in sorted (nav_root.template_iter ()) :
-    ...    print t.name
+    >>> sk = Sorted_By ()
+    >>> for t in sorted (nav_root.template_iter (), key = sk) :
+    ...    print (t.name)
     400
     401
     403
@@ -87,8 +88,8 @@ _test_nav = """
     regatta_result_teamrace
     site_admin
 
-    >>> for k in sorted (TTT.css_href_map) :
-    ...    print k
+    >>> for k in sorted (TTT.css_href_map, key = sk) :
+    ...    print (k)
     400
     401
     403
@@ -118,7 +119,7 @@ _test_nav = """
 
     >>> for owl in nav_root.own_links_transitive :
     ...   if not owl.hidden:
-    ...     print owl.href, owl.template.name
+    ...     print (owl.href, owl.template.name)
     Admin site_admin
     Admin/Benutzerverwaltung site_admin
     Admin/Personenverwaltung site_admin
@@ -162,14 +163,14 @@ _test_nav = """
     Admin/Webseitenverwaltung/Referral e_type_admin
 
     >>> php = nav_root.resource_from_href ("Admin/Personenverwaltung/Person_has_Phone/create")
-    >>> print php.href, php.template.name
+    >>> print (php.href, php.template.name)
     Admin/Personenverwaltung/Person_has_Phone/create e_type_mf3|mf3
 
     >>> css_map = TFL.defaultdict (list)
-    >>> for k, v in TTT.css_href_map.iteritems () :
+    >>> for k, v in pyk.iteritems (TTT.css_href_map) :
     ...     css_map [v].append (k)
-    >>> css_users = sorted (sorted (vs) for vs in css_map.itervalues ())
-    >>> print formatted (css_users)
+    >>> css_users = sorted ((sorted (vs, key = sk) for vs in pyk.itervalues (css_map)), key = sk)
+    >>> print (formatted (css_users))
     [
       [ 400
       , 403
@@ -213,8 +214,8 @@ _test_qr = """
     <E_Type Company_R: /Admin/Personenverwaltung/Company_R>
 
     >>> QR = crad.QR
-    >>> QR
-    <class '_GTW._RST._TOP._MOM.Query_Restriction.Query_Restriction'>
+    >>> QR.__module__
+    '_GTW._RST._TOP._MOM.Query_Restriction'
 
     >>> crad.E_Type.AQ.affiliate
     <affiliate.AQ [Attr.Type.Querier Id_Entity]>
@@ -224,7 +225,7 @@ _test_qr = """
     >>> tuple (a.QR for a in crad.E_Type.AQ.affiliate.Attrs)
     (Q.affiliate.__raw_name, Q.affiliate.__raw_registered_in, Q.affiliate.lifetime, Q.affiliate.__raw_short_name, Q.affiliate.affiliate, Q.affiliate.owner)
 
-    >>> print (formatted (QR.Filter_Atoms (QR.Filter (crad.E_Type, "affiliate"))))
+    >>> print ((formatted (QR.Filter_Atoms (QR.Filter (crad.E_Type, "affiliate")))))
     ( Record
       ( AQ = <name.AQ [Attr.Type.Querier String]>
       , attr = String `name`
@@ -257,7 +258,7 @@ _test_qr = """
       )
     )
 
-    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate")))
+    >>> print ((formatted (QR.Filter (crad.E_Type, "affiliate"))))
     Record
     ( AQ = <affiliate.AQ [Attr.Type.Querier Id_Entity]>
     , Class = 'Entity'
@@ -450,7 +451,7 @@ _test_qr = """
     , value = None
     )
 
-    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__name")))
+    >>> print ((formatted (QR.Filter (crad.E_Type, "affiliate__name"))))
     Record
     ( AQ = <affiliate.name.AQ [Attr.Type.Querier String]>
     , attr = String `name`
@@ -467,7 +468,7 @@ _test_qr = """
     , value = None
     )
 
-    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__lifetime")))
+    >>> print ((formatted (QR.Filter (crad.E_Type, "affiliate__lifetime"))))
     Record
     ( AQ = <affiliate.lifetime.AQ [Attr.Type.Querier Composite]>
     , attr = Date_Interval `lifetime`
@@ -513,7 +514,7 @@ _test_qr = """
     , value = None
     )
 
-    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__lifetime", dict (start = "20130320"))))
+    >>> print ((formatted (QR.Filter (crad.E_Type, "affiliate__lifetime", dict (start = "20130320")))))
     Record
     ( AQ = <affiliate.lifetime.AQ [Attr.Type.Querier Composite]>
     , attr = Date_Interval `lifetime`
@@ -560,7 +561,7 @@ _test_qr = """
     , value = <Recursion on dict...>
     )
 
-    >>> print (formatted (QR.Filter (crad.E_Type, "affiliate__lifetime__start")))
+    >>> print ((formatted (QR.Filter (crad.E_Type, "affiliate__lifetime__start"))))
     Record
     ( AQ = <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]>
     , attr = Date `start`
@@ -581,7 +582,7 @@ _test_qr = """
     >>> qrs
     <Attr.Type.Querier.Query_Restriction_Spec for PAP.Company_R>
 
-    >>> print (formatted (qrs.As_Template_Elem))
+    >>> print ((formatted (qrs.As_Template_Elem)))
     [ Record
       ( attr = String `name`
       , full_name = 'name'
@@ -1654,7 +1655,7 @@ _test_esf = """
     >>> QR       = crad.QR
     >>> afa      = QR.Filter (crad.E_Type, "affiliate")
 
-    >>> print (formatted (afa))
+    >>> print ((formatted (afa)))
     Record
     ( AQ = <affiliate.AQ [Attr.Type.Querier Id_Entity]>
     , Class = 'Entity'
@@ -1848,7 +1849,7 @@ _test_esf = """
     )
 
     >>> afa.filters = QR.Filter_Atoms (afa)
-    >>> print (formatted (afa.filters))
+    >>> print ((formatted (afa.filters)))
     ( Record
       ( AQ = <name.AQ [Attr.Type.Querier String]>
       , attr = String `name`
@@ -1882,7 +1883,7 @@ _test_esf = """
     )
 
     >>> ETT = crad.Templateer.get_template ("e_type")
-    >>> print (ETT.call_macro ("entity_selector_form", crad, afa))
+    >>> print ((ETT.call_macro ("entity_selector_form", crad, afa)))
     <form class = "pure-form pure-form-aligned" title="Select Company_R for attribute Affiliate">
         <input type="hidden" name="__esf_for_attr__" value="affiliate___AC">
         <input type="hidden" name="__esf_for_type__" value="PAP.Company_R">
@@ -1920,7 +1921,7 @@ _test_esf = """
     >>> afos.AQ.E_Type.polymorphic_epk
     True
 
-    >>> print (formatted (afos))
+    >>> print ((formatted (afos)))
     Record
     ( AQ = <owner.AQ [Attr.Type.Querier Id_Entity]>
     , Class = 'Entity'
@@ -2047,7 +2048,7 @@ _test_esf = """
     )
 
     >>> afos.filters  = QR.Filter_Atoms (afos)
-    >>> print (formatted (afos.filters))
+    >>> print ((formatted (afos.filters)))
     ( Record
       ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
       , attr = Date `start`
@@ -2084,7 +2085,7 @@ _test_esf = """
     >>> afop.AQ.E_Type.polymorphic_epk
     False
 
-    >>> print (formatted (afop))
+    >>> print ((formatted (afop)))
     Record
     ( AQ = <owner.AQ [Attr.Type.Querier _Id_Entity_NP_]>
     , Class = 'Entity'
@@ -2140,7 +2141,7 @@ _test_esf = """
 
     >>> afop.filters  = QR.Filter_Atoms (afop)
 
-    >>> print (formatted (afop.filters))
+    >>> print ((formatted (afop.filters)))
     ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
@@ -2321,8 +2322,8 @@ def _monkey_patch_xmlattr () :
     def do_xmlattr(_eval_ctx, d, autospace=True):
         rv = u' '.join( sorted
             ( u'%s="%s"' % (escape(key), escape(value))
-            for key, value in d.iteritems()
-            if value is not None and not isinstance(value, filters.Undefined)
+            for key, value in pyk.iteritems (d)
+            if value is not None and not isinstance (value, filters.Undefined)
             )
         )
         if autospace and rv:

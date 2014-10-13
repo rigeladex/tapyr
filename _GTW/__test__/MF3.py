@@ -180,7 +180,7 @@ _test_element = """
     <Field X-25:first_name> christian
     <Field X-25:middle_name>
     <Field X-25:title>
-    <Field_Composite X-25:lifetime> (u'1959-09-26', )
+    <Field_Composite X-25:lifetime> ('1959-09-26', )
     <Field X-25:lifetime.start> 1959-09-26
     <Field X-25:lifetime.finish> None
     <Field X-25:sex> None
@@ -260,26 +260,26 @@ _test_element = """
     <Field X-25:sex>
 
     >>> show_elements (f_p, "essence")
-    <Entity X-25> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:last_name> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:first_name> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:middle_name> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:title> (u'tanzer', u'christian', u'', u'')
-    <Field_Composite X-25:lifetime> (u'1959-09-26', )
-    <Field X-25:lifetime.start> (u'1959-09-26', )
-    <Field X-25:lifetime.finish> (u'1959-09-26', )
-    <Field X-25:sex> (u'tanzer', u'christian', u'', u'')
+    <Entity X-25> ('tanzer', 'christian', '', '')
+    <Field X-25:last_name> ('tanzer', 'christian', '', '')
+    <Field X-25:first_name> ('tanzer', 'christian', '', '')
+    <Field X-25:middle_name> ('tanzer', 'christian', '', '')
+    <Field X-25:title> ('tanzer', 'christian', '', '')
+    <Field_Composite X-25:lifetime> ('1959-09-26', )
+    <Field X-25:lifetime.start> ('1959-09-26', )
+    <Field X-25:lifetime.finish> ('1959-09-26', )
+    <Field X-25:sex> ('tanzer', 'christian', '', '')
 
     >>> show_elements (f_p, "Entity.essence")
-    <Entity X-25> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:last_name> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:first_name> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:middle_name> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:title> (u'tanzer', u'christian', u'', u'')
-    <Field_Composite X-25:lifetime> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:lifetime.start> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:lifetime.finish> (u'tanzer', u'christian', u'', u'')
-    <Field X-25:sex> (u'tanzer', u'christian', u'', u'')
+    <Entity X-25> ('tanzer', 'christian', '', '')
+    <Field X-25:last_name> ('tanzer', 'christian', '', '')
+    <Field X-25:first_name> ('tanzer', 'christian', '', '')
+    <Field X-25:middle_name> ('tanzer', 'christian', '', '')
+    <Field X-25:title> ('tanzer', 'christian', '', '')
+    <Field_Composite X-25:lifetime> ('tanzer', 'christian', '', '')
+    <Field X-25:lifetime.start> ('tanzer', 'christian', '', '')
+    <Field X-25:lifetime.finish> ('tanzer', 'christian', '', '')
+    <Field X-25:sex> ('tanzer', 'christian', '', '')
 
     >>> show_elements (f_Person, "root")
     <Entity X-25> <Entity X-25>
@@ -372,24 +372,24 @@ _test_element = """
     <Field_Ref_Hidden Z-25:phones::left@3> <Entity_Rev_Ref Z-25:phones@3>
 
     >>> show_elements (f_p_z, "essence")
-    <Entity Z-25> (u'tanzer', u'christian', u'', u'')
-    <Field Z-25:last_name> (u'tanzer', u'christian', u'', u'')
-    <Field Z-25:first_name> (u'tanzer', u'christian', u'', u'')
-    <Field Z-25:middle_name> (u'tanzer', u'christian', u'', u'')
-    <Field Z-25:title> (u'tanzer', u'christian', u'', u'')
-    <Field_Composite Z-25:lifetime> (u'1959-09-26', )
-    <Field Z-25:lifetime.start> (u'1959-09-26', )
-    <Field Z-25:lifetime.finish> (u'1959-09-26', )
-    <Field Z-25:sex> (u'tanzer', u'christian', u'', u'')
-    <Field_Rev_Ref Z-25:phones> (u'tanzer', u'christian', u'', u'')
-    <Entity_Rev_Ref Z-25:phones@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
-    <Field_Entity Z-25:phones::right@3> (u'43', u'1', u'98765432')
-    <Field Z-25:phones::right.country_code@3> (u'43', u'1', u'98765432')
-    <Field Z-25:phones::right.area_code@3> (u'43', u'1', u'98765432')
-    <Field Z-25:phones::right.number@3> (u'43', u'1', u'98765432')
-    <Field Z-25:phones::extension@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
-    <Field Z-25:phones::desc@3> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
-    <Field_Ref_Hidden Z-25:phones::left@3> (u'tanzer', u'christian', u'', u'')
+    <Entity Z-25> ('tanzer', 'christian', '', '')
+    <Field Z-25:last_name> ('tanzer', 'christian', '', '')
+    <Field Z-25:first_name> ('tanzer', 'christian', '', '')
+    <Field Z-25:middle_name> ('tanzer', 'christian', '', '')
+    <Field Z-25:title> ('tanzer', 'christian', '', '')
+    <Field_Composite Z-25:lifetime> ('1959-09-26', )
+    <Field Z-25:lifetime.start> ('1959-09-26', )
+    <Field Z-25:lifetime.finish> ('1959-09-26', )
+    <Field Z-25:sex> ('tanzer', 'christian', '', '')
+    <Field_Rev_Ref Z-25:phones> ('tanzer', 'christian', '', '')
+    <Entity_Rev_Ref Z-25:phones@3> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field_Entity Z-25:phones::right@3> ('43', '1', '98765432')
+    <Field Z-25:phones::right.country_code@3> ('43', '1', '98765432')
+    <Field Z-25:phones::right.area_code@3> ('43', '1', '98765432')
+    <Field Z-25:phones::right.number@3> ('43', '1', '98765432')
+    <Field Z-25:phones::extension@3> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field Z-25:phones::desc@3> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field_Ref_Hidden Z-25:phones::left@3> ('tanzer', 'christian', '', '')
 
     >>> show_elements (f_p_z, "label")
     <Entity Z-25> Person
@@ -927,13 +927,13 @@ _test_element = """
     , 'pid' : 1
     , 'sid' : 0
     , 'sigs' :
-        { 'Z-25' : 'f8895947a3869c3f265b2ffefb54373444d86d5814aed4b7fd667fec'
-        , 'Z-25:phones/1' : 'd35ca80ac1fa6a532bf96d748cefbab69f1dcd2265cfd2bb4add0ed2'
-        , 'Z-25:phones/2' : '055a7b7bc92d51ec8199af68c98320aa76c9e652a234945bfc6327c0'
-        , 'Z-25:phones::right/1' : '7b33b33e0cafa2c5235898043f69a966203b25c08798e3acef3dd890'
-        , 'Z-25:phones::right/2' : '0e73443f6c3f51b0ae7c09b4e2b0977bca0df7442d9fc00211997714'
-        , 'Z-25:phones::right@3' : '5c44e77b9eb936b79630b47471eb1f309902b737e628dbe85d953e50'
-        , 'Z-25:phones@3' : '5c3fb4b026658153096ee63ec209930d2545c779114a8c10ec475306'
+        { 'Z-25' : '2hlTTFMmT1hJi0kq5MQuyCr6WmF9b5B2nmHYOA'
+        , 'Z-25:phones/1' : 'rxOWrKAni9TtNK7adGpkWPrcMCk343U0wM1pTg'
+        , 'Z-25:phones/2' : 'S8XT_eNq2aQfkmTDGmrHD698fnX_X2LFBhmqZw'
+        , 'Z-25:phones::right/1' : 'Ns7Nu4X4Nc3HHcWdtE14luPi2y6jqYcartoaxg'
+        , 'Z-25:phones::right/2' : 'OVTv1ZRI0Vq2Vcoba2hkry1uxjqAssS0R6SuZQ'
+        , 'Z-25:phones::right@3' : 'icuOQnLIQhqyS0AmrbzypVHdq-J0RJiq9ASQLA'
+        , 'Z-25:phones@3' : 'OFkmD5SY6Ct3pJurGHNxsWTi_KnVuhn8FVVzCQ'
         }
     }
 
@@ -1280,8 +1280,8 @@ _test_element = """
 
     >>> show_elements (f_pph, "cooked")
     <Entity X-118> ---
-    <Field_Entity X-118:left> (u'tanzer', u'christian', u'', u'')
-    <Field_Entity X-118:right> (u'43', u'1', u'98765432')
+    <Field_Entity X-118:left> ('tanzer', 'christian', '', '')
+    <Field_Entity X-118:right> ('43', '1', '98765432')
     <Field X-118:right.country_code> 43
     <Field X-118:right.area_code> 1
     <Field X-118:right.number> 98765432
@@ -1309,14 +1309,14 @@ _test_element = """
     <Field X-118:desc> example
 
     >>> show_elements (f_pph, "essence")
-    <Entity X-118> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
-    <Field_Entity X-118:left> (u'tanzer', u'christian', u'', u'')
-    <Field_Entity X-118:right> (u'43', u'1', u'98765432')
-    <Field X-118:right.country_code> (u'43', u'1', u'98765432')
-    <Field X-118:right.area_code> (u'43', u'1', u'98765432')
-    <Field X-118:right.number> (u'43', u'1', u'98765432')
-    <Field X-118:extension> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
-    <Field X-118:desc> ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'98765432'), u'42')
+    <Entity X-118> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field_Entity X-118:left> ('tanzer', 'christian', '', '')
+    <Field_Entity X-118:right> ('43', '1', '98765432')
+    <Field X-118:right.country_code> ('43', '1', '98765432')
+    <Field X-118:right.area_code> ('43', '1', '98765432')
+    <Field X-118:right.number> ('43', '1', '98765432')
+    <Field X-118:extension> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field X-118:desc> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
 
     >>> show_elements (f_pph, "q_name")
     <Entity X-118> None

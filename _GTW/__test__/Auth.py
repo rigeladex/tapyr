@@ -117,7 +117,7 @@ _login_logout = r"""
 
     >>> Auth.Account.force_password_change (a2)
     >>> a2.password_change_required
-    Auth.Account_Password_Change_Required ((u'a2@foo.bar', ))
+    Auth.Account_Password_Change_Required (('a2@foo.bar', ))
     >>> resp   = Scaffold.test_post ("/Auth/login.html", data = data)
     >>> show_errors (resp)
     >>> resp.headers ["Location"] ### login a2 - redirect to change passwd
@@ -471,7 +471,7 @@ _test_migration     = r"""
     >>> for k, d in sorted (pyk.iteritems (mig)) :
     ...     print (k)
     ...     for epk in sorted (d) :
-    ...         print (" " * 2, epk)
+    ...         print (" " * 2, portable_repr (epk))
     ...         print \
     ...             ( " " * 5
     ...             , (chr (10) + "      ").join
@@ -481,7 +481,7 @@ _test_migration     = r"""
     ...                 )
     ...             )
     Account
-       (u'a1@foo.bar', 'Auth.Account')
+       ('a1@foo.bar', 'Auth.Account')
           electric   : no
           enabled    : yes
           password   : <password>
@@ -489,7 +489,7 @@ _test_migration     = r"""
           superuser  : yes
           suspended  : no
           x_locked   : no
-       (u'a2@foo.bar', 'Auth.Account')
+       ('a2@foo.bar', 'Auth.Account')
           electric   : no
           enabled    : yes
           password   : <password>
@@ -497,7 +497,7 @@ _test_migration     = r"""
           superuser  : no
           suspended  : no
           x_locked   : no
-       (u'a3@foo.bar', 'Auth.Account')
+       ('a3@foo.bar', 'Auth.Account')
           electric   : no
           enabled    : yes
           password   : <password>
@@ -505,7 +505,7 @@ _test_migration     = r"""
           superuser  : no
           suspended  : yes
           x_locked   : no
-       (u'a4@foo.bar', 'Auth.Account')
+       ('a4@foo.bar', 'Auth.Account')
           electric   : no
           enabled    : no
           password   : <password>
@@ -514,13 +514,13 @@ _test_migration     = r"""
           suspended  : yes
           x_locked   : no
     Group
-       (u'g1', 'Auth.Group')
+       ('g1', 'Auth.Group')
           desc       :
           electric   : no
           x_locked   : no
     Person
     links
-       ((u'a1@foo.bar', 'Auth.Account'), (u'g1', 'Auth.Group'), 'Auth.Account_in_Group')
+       (('a1@foo.bar', 'Auth.Account'), ('g1', 'Auth.Group'), 'Auth.Account_in_Group')
           electric   : no
           x_locked   : no
 
@@ -533,7 +533,7 @@ _test_query_attr    = r"""
     >>> Auth   = scope.Auth
 
     >>> Auth.Account.query (Q.active == True).all ()
-    [Auth.Account (u'a1@foo.bar'), Auth.Account (u'a2@foo.bar')]
+    [Auth.Account ('a1@foo.bar'), Auth.Account ('a2@foo.bar')]
 """
 
 from   _GTW.__test__.Test_Command import *

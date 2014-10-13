@@ -129,6 +129,7 @@ from   __future__  import unicode_literals
 from   _GTW        import GTW
 from   _MOM        import MOM
 from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 
 from   _GTW._AFS   import Element as AE
 
@@ -229,7 +230,7 @@ class _MOM_Entity_MI_ (_MOM_Element_, AE.Entity) :
                     ( "Exception from "
                       "`ETM.query (* ETM.raw_query_attrs (akw, akw))` "
                       "for akw = %s"
-                    % (sorted (akw.iteritems ()), )
+                    % (sorted (pyk.iteritems (akw)), )
                     )
                 raise
             else :

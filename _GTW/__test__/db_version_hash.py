@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -32,6 +32,9 @@
 #                     backend tests in one run
 #    ««revision-date»»···
 #--
+
+from   __future__               import print_function
+
 _simple_test = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -54,9 +57,9 @@ same database version):
 Now let's simulate a change of the database version hash:
 
     >>> apt.db_version_hash = "<a version hash which should never happen>"
-    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-       ...
+    >>> with expect_except (MOM.Error.Incompatible_DB_Version) :
+    ...     scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
     Incompatible_DB_Version: Cannot load database because of a database version hash missmatch:
       Tool  database version hash: <a version hash which should never happen>
       Scope database version hash: ...
@@ -83,13 +86,11 @@ _real_db_test = r"""
     ...     , env    = env
     ...     )
     >>> sout, serr = cmd.communicate ()
-    >>> print sout.strip ().split ("\n") [-1]  # doctest:+ELLIPSIS
-    Creating new scope MOMT__...
-    >>> serr
+    >>> prepr (serr)
     ''
-    >>> scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-       ...
+    >>> with expect_except (MOM.Error.Incompatible_DB_Version) :
+    ...     scope = Scaffold.scope (%(p1)s, %(n1)s, create = False) # doctest:+ELLIPSIS
+    Loading scope MOMT__...
     Incompatible_DB_Version: Cannot load database because of a database version hash missmatch:
       Tool  database version hash: ...
       Scope database version hash: ...

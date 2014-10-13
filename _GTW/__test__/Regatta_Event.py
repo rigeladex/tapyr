@@ -33,6 +33,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -41,25 +43,25 @@ _test_code = """
     >>> rev = RE (u"Himmelfahrt", ("20080501", ), raw = True)
     >>> rev.pid
     1
-    >>> rev.epk_raw
-    (u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event')
+    >>> prepr (rev.epk_raw)
+    ('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event')
 
     >>> RE.instance (* rev.epk_raw, raw = True)
-    SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))
+    SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))
     >>> RE.instance (* rev.epk)
-    SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))
+    SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))
 
     >>> sort_key = TFL.Sorted_By ("-date.start", "name")
 
-    >>> print sort_key
+    >>> print (sort_key)
     <Sorted_By: Descending-Getter function for `.date.start`, Getter function for `.name`>
-    >>> print RE.E_Type.sort_key_pm (sort_key)
+    >>> print (RE.E_Type.sort_key_pm (sort_key))
     <Sorted_By: Getter function for `.relevant_root.type_name`, <Sorted_By: Descending-Getter function for `.date.start`, Getter function for `.name`>>
 
     >>> list (RE.query (sort_key = sort_key))
-    [SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))]
+    [SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))]
     >>> list (RE.query_s (sort_key = sort_key))
-    [SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))]
+    [SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))]
 
     >>> scope.commit ()
 
@@ -73,17 +75,17 @@ _test_code = """
     0
 
     >>> RE.query ().all ()
-    [SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))]
+    [SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))]
 
     >>> for x in RE.query () :
-    ...     print x.ui_display
+    ...     print (x.ui_display)
     Himmelfahrt 2008-05-01
 
     >>> rev.set_raw (name = "Himmelfahrtskommando")
     1
 
     >>> RE.query ().all ()
-    [SRM.Regatta_Event (u'himmelfahrtskommando', (u'2008-05-01', u'2008-05-01'))]
+    [SRM.Regatta_Event ('himmelfahrtskommando', ('2008-05-01', '2008-05-01'))]
 
     >>> rev.set (name = "Himmelfahrt")
     1

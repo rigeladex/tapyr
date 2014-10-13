@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -41,13 +41,14 @@ from   _MOM.import_MOM          import _A_Named_Object_
 import _GTW._OMP._PAP
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 class A_Sex (_A_Named_Object_) :
     """Sex of a person."""
 
     example   = u"F"
     typ       = "Sex"
-    P_Type    = unicode
+    P_Type    = pyk.text_type
     Table     = \
         { u"F"  : _(u"Female")
         , u"M"  : _(u"Male")

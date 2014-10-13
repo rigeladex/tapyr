@@ -69,6 +69,7 @@ from   _TFL.Regexp              import Regexp, re
 
 from   itertools                import chain as ichain
 
+@pyk.adapt__bool__
 class RST_Query_Restriction (TFL.Meta.Object) :
     """Query restriction for RESTful MOM resources."""
 
@@ -159,7 +160,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
 
     @classmethod
     def from_request (cls, scope, E_Type, request, ** kw) :
-        data   = dict (kw, ** dict (request.req_data.iteritems ()))
+        data   = dict (kw, ** dict (pyk.iteritems (request.req_data)))
         result = cls \
             ( limit          = data.pop ("limit",  0)
             , offset         = data.pop ("offset", 0)
@@ -355,7 +356,7 @@ class RST_Query_Restriction (TFL.Meta.Object) :
                 f, fq = soc._setup_attr (E_Type, fn, name, op, value)
                 filters.append   (f)
                 filters_q.append (fq)
-        for name, t_map in map.iteritems () :
+        for name, t_map in pyk.iteritems (map) :
             if len (t_map) > 1 :
                 raise ValueError \
                     ( "Got types %s instead of exactly one type"
@@ -532,9 +533,9 @@ class RST_Query_Restriction (TFL.Meta.Object) :
                 self.order_by_q = TFL.Sorted_By (* ichain (* criteria))
     # end def _setup_order_by
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.limit or self.offset or self.filters_q)
-    # end def __nonzero__
+    # end def __bool__
 
 Query_Restriction = RST_Query_Restriction # end class
 

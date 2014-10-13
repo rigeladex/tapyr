@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -45,17 +45,20 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 from   _GTW                     import GTW
 from   _TFL.pyk                 import pyk
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _GTW.Session
-import cPickle
 import os
 import stat
 import sys
 
-class Lock_Failed (StandardError) :
+cPickle = pyk.pickle
+
+class Lock_Failed (Exception) :
     pass
 # end class Lock_Failed
 
@@ -75,7 +78,7 @@ if os.name == "nt" :
         hfile = win32file._get_osfhandle (file.fileno ())
         try:
             win32file.LockFileEx (hfile, flags, 0, -0x10000, __overlapped)
-        except pywintypes.error as  exc_value:
+        except pywintypes.error as exc_value:
             # error: (33, "LockFileEx", "The process cannot access the file because another process has locked a portion of the file.")
             if exc_value [0] == 33:
                 raise Lock_Failed  ()
@@ -88,7 +91,7 @@ if os.name == "nt" :
         hfile = win32file._get_osfhandle (file.fileno ())
         try:
             win32file.UnlockFileEx (hfile, 0, -0x10000, __overlapped)
-        except pywintypes.error, exc_value:
+        except pywintypes.error as exc_value:
             if exc_value[0] == 158:
                 # error: (158, "UnlockFileEx", "The segment is already unlocked.")
                 # To match the "posix" implementation, silently ignore this error
@@ -196,7 +199,7 @@ class File_Session (GTW.Session) :
     >>> session.get ("lang")
     'de_AT'
     >>> del session.lang
-    >>> print session.get ("lang")
+    >>> print (session.get ("lang"))
     None
     >>> session.get ("lang") == session2 ["lang"]
     False
@@ -247,7 +250,7 @@ class File_Session (GTW.Session) :
             with Locked_File (self.file_name, "rb") as f :
                 cargo = f.read ()
         except Exception as exc :
-            pyk.fprint \
+            print \
                 ( ">>> Exception"
                 , exc
                 , "when trying to load session data from"
@@ -258,7 +261,7 @@ class File_Session (GTW.Session) :
             try :
                 result = cPickle.loads (cargo)
             except Exception as exc :
-                pyk.fprint \
+                print \
                     ( ">>> Exception"
                     , exc
                     , "when trying to unpickle session data from"

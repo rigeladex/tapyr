@@ -57,6 +57,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _GTW._RST.Mime_Type
 
@@ -83,10 +84,8 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class HTTP_Method (TFL.Meta.Object) :
+class HTTP_Method (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _Meta_)) :
     """Base class for HTTP methods."""
-
-    __metaclass__              = _Meta_
 
     needs_body                 = True
 
@@ -249,7 +248,7 @@ class _HTTP_OPTIONS_ (_HTTP_Method_R_NB_) :
 
     def __call__ (self, resource, request, response) :
         methods = self.methods = sorted \
-            (  k for k, m in resource.SUPPORTED_METHODS.iteritems ()
+            (  k for k, m in pyk.iteritems (resource.SUPPORTED_METHODS)
             if resource.allow_method (m, request.user)
             )
         response.set_header ("Allow", ", ".join (methods))

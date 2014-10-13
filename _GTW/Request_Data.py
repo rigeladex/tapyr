@@ -50,12 +50,15 @@
 #--
 
 from   _TFL              import TFL
+from   _TFL.pyk          import pyk
+
 import _TFL._Meta.Object
 
 from   _GTW              import GTW
 
 import  logging
 
+@pyk.adapt__bool__
 class _GTW_Request_Data_ (TFL.Meta.Object) :
     """Convert the list values into no lists during access."""
 
@@ -85,12 +88,12 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
 
     def iteritems (self) :
         convert = self._convert_element
-        for key in self.data.iterkeys () :
+        for key in pyk.iterkeys (self.data) :
             yield key, convert (key, self [key])
     # end def iteritems
 
     def iterkeys (self) :
-        return self.data.iterkeys ()
+        return pyk.iterkeys (self.data)
     # end def iterkeys
 
     def pop (self, key, default = None) :
@@ -109,8 +112,8 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
     # end def _convert_element
 
     def _normalized (self, value) :
-        if isinstance (value, (str, bytes)) :
-            return unicode (value, "utf8", "replace")
+        if isinstance (value, pyk.byte_types) :
+            return pyk.text_type (value, "utf8", "replace")
         return value
     # end def _normalized
 
@@ -126,9 +129,9 @@ class _GTW_Request_Data_ (TFL.Meta.Object) :
         return iter (self.data)
     # end def __iter__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.data)
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         return repr (self.data)

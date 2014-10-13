@@ -119,7 +119,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__               import print_function, unicode_literals
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
@@ -133,6 +133,7 @@ import _TFL.Undef
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import split_hst
 from   _TFL.Regexp              import Regexp, re
+from   _TFL.pyk                 import pyk
 
 import json
 
@@ -151,10 +152,8 @@ class M_Form (_M_Element_) :
 
 # end class M_Form
 
-class _Element_ (TFL.Meta.Object) :
+class _Element_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Element_)) :
     """Base class for AFS element classes."""
-
-    __metaclass__   = _M_Element_
 
     children        = ()
     completer       = None
@@ -335,7 +334,7 @@ class _Element_ (TFL.Meta.Object) :
 
     def _anchor_self (self, anchor) :
         if anchor is not None :
-            if isinstance (anchor, basestring) :
+            if isinstance (anchor, pyk.string_types) :
                 self.anchor_id = anchor
             else :
                 self.anchor_id = anchor.id
@@ -423,12 +422,7 @@ class _Element_ (TFL.Meta.Object) :
         for k in "name", "type_name" :
             n = self.kw.get (k)
             if n is not None :
-                if isinstance (n, unicode) :
-                    try :
-                        n = str (n)
-                    except :
-                        pass
-                v = "%r" % n
+                v = "%r" % pyk.encoded (n, "iso-8859-1")
                 if infos [-1] != v :
                     infos.append (v)
         return "<%s %s>" % (self.__class__.__name__, " ".join (infos))
@@ -441,7 +435,7 @@ class _Anchor_MI_ (_Element_) :
     def _anchor_children (self, anchor = None) :
         if anchor is not None :
             self._anchor_self (anchor)
-            if isinstance (anchor, basestring) :
+            if isinstance (anchor, pyk.string_types) :
                 anchor = self.anchor
             self.names = list (anchor.names)
             if self.name :
@@ -456,7 +450,7 @@ class _Field_MI_ (_Element_) :
     def _anchor_children (self, anchor = None) :
         if anchor is not None :
             self._anchor_self (anchor)
-            if isinstance (anchor, basestring) :
+            if isinstance (anchor, pyk.string_types) :
                 anchor = self.anchor
             ac = anchor.completer
             sc = self.completer
@@ -500,12 +494,10 @@ class Entity (_Anchor_MI_, _Element_) :
     # end def apply
 
     def form_hash (self, value, ** kw) :
-        _sid = kw.get ("_sid", 0)
         _session_secret = kw.get ("_session_secret")
-        if isinstance (_sid, unicode) :
-            _sid = str (_sid)
-        if isinstance (_session_secret, unicode) :
-            _session_secret = str (_session_secret)
+        _sid            = kw.get ("_sid", 0)
+        _session_secret = pyk.encoded (_session_secret, "iso-8859-1")
+        _sid            = pyk.encoded (_sid, "iso-8859-1")
         sig = value.sig = value.form_sig \
             (self._value_sig_t (value), _sid, _session_secret)
         result = value.form_hash (sig)
@@ -615,11 +607,7 @@ class Entity_List (_Field_MI_, _Element_List_) :
         n = getattr (self, "name", None) or getattr (self, "type_name", None)
         p = str (self.proto)
         if n :
-            if isinstance (n, unicode) :
-                try :
-                    n = str (n)
-                except :
-                    pass
+            n = pyk.encoded (n, "iso-8859-1")
             return "<%s %s %r %s>" % (self.__class__.__name__, self.id, n, p)
         else :
             return "<%s %s %s>"    % (self.__class__.__name__, self.id, p)
@@ -709,10 +697,8 @@ class Fieldset (_Element_) :
 
 # end class Fieldset
 
-class Form (_Element_List_) :
+class Form (TFL.Meta.BaM (_Element_List_, metaclass = M_Form)) :
     """Model a AJAX-enhanced form."""
-
-    __metaclass__  = M_Form
 
     het_c          = "section" ### HTML element type to be used for container
     het_h          = "h1"      ### HTML element type to be used for heading
@@ -860,7 +846,7 @@ Usage example::
     ...             )
     ...         ]
     ...     )
-    >>> print repr (f)
+    >>> print (repr (f))
     <Form F>
      <Entity F-0 u'PAP.Person'>
       <Fieldset F-0:0 u'primary'>
@@ -881,29 +867,29 @@ Usage example::
     >>> [str (f.id_map [id]) for id in sorted (f.id_map)]
     ["<Entity F-0 u'PAP.Person'>", "<Fieldset F-0:0 u'primary'>", "<Field F-0:0:0 u'last_name'>", "<Field F-0:0:1 u'first_name'>", "<Field_Composite F-0:1 u'lifetime'>", "<Field F-0:1.0 u'start'>", "<Field F-0:1.1 u'finish'>", "<Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>", "<Entity F-0:2::p u'PAP.Person_has_Email'>", "<Field F-0:2::p-0 u'desc'>", "<Entity F-0:2::p-1 u'PAP.Email'>", "<Field F-0:2::p-1:0 u'address'>", "<Entity F-1 u'SRM.Boat_Type'>", "<Field F-1:0 u'name'>"]
 
-    >>> print f ["F-0:1.0"]
+    >>> print (f ["F-0:1.0"])
     <Field F-0:1.0 u'start'>
-    >>> print f ["F-0:2"]
+    >>> print (f ["F-0:2"])
     <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
-    >>> print f ["F-0:2::p"]
+    >>> print (f ["F-0:2::p"])
     <Entity F-0:2::p u'PAP.Person_has_Email'>
-    >>> print f ["F-0:2::p-0"]
+    >>> print (f ["F-0:2::p-0"])
     <Field F-0:2::p-0 u'desc'>
-    >>> print f ["F-0:2::p-0"]
+    >>> print (f ["F-0:2::p-0"])
     <Field F-0:2::p-0 u'desc'>
-    >>> print f ["F-0:2::1-0"]
+    >>> print (f ["F-0:2::1-0"])
     <Field F-0:2::p-0 u'desc'>
     >>> fel = f ["F-0:2"]
-    >>> print fel.proto
+    >>> print (fel.proto)
     <Entity F-0:2::p u'PAP.Person_has_Email'>
 
     >>> g = f.copy ()
     >>> gel = g ["F-0:2"]
-    >>> print gel.add_child ()
+    >>> print (gel.add_child ())
     <Entity F-0:2::0 u'PAP.Person_has_Email'>
-    >>> print gel.add_child ()
+    >>> print (gel.add_child ())
     <Entity F-0:2::1 u'PAP.Person_has_Email'>
-    >>> print repr (g)
+    >>> print (repr (g))
     <Form F>
      <Entity F-0 u'PAP.Person'>
       <Fieldset F-0:0 u'primary'>
@@ -925,22 +911,22 @@ Usage example::
       <Field F-1:0 u'name'>
     >>> sorted (g.id_map)
     [u'F-0', u'F-0:0', u'F-0:0:0', u'F-0:0:1', u'F-0:1', u'F-0:1.0', u'F-0:1.1', u'F-0:2', u'F-0:2::0', u'F-0:2::0-0', u'F-0:2::0-1', u'F-0:2::0-1:0', u'F-0:2::1', u'F-0:2::1-0', u'F-0:2::1-1', u'F-0:2::1-1:0', u'F-0:2::p', u'F-0:2::p-0', u'F-0:2::p-1', u'F-0:2::p-1:0', u'F-1', u'F-1:0']
-    >>> print g ["F-0:2::p-0"]
+    >>> print (g ["F-0:2::p-0"])
     <Field F-0:2::p-0 u'desc'>
-    >>> print g ["F-0:2::0-0"]
+    >>> print (g ["F-0:2::0-0"])
     <Field F-0:2::0-0 u'desc'>
-    >>> print g ["F-0:2::1-0"]
+    >>> print (g ["F-0:2::1-0"])
     <Field F-0:2::1-0 u'desc'>
-    >>> print g ["F-0:2::42-0"]
+    >>> print (g ["F-0:2::42-0"])
     <Field F-0:2::p-0 u'desc'>
     >>> tuple (str (c) for c in gel.children)
     ("<Entity F-0:2::0 u'PAP.Person_has_Email'>", "<Entity F-0:2::1 u'PAP.Person_has_Email'>")
 
-    >>> print Form ["F"]
+    >>> print (Form ["F"])
     <Form F>
-    >>> print Form ["F-0:2::0"]
+    >>> print (Form ["F-0:2::0"])
     <Form F>
-    >>> print f ["F"]
+    >>> print (f ["F"])
     <Form F>
 
 """

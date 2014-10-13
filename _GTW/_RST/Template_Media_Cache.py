@@ -37,8 +37,11 @@
 #     2-May-2013 (CT) Use `root.hash_fct` and `root.b64_encoded`
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #    15-Apr-2014 (CT) Always create `js` cache to include `Script_File`
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
+
+from   __future__             import print_function
 
 from   _GTW                   import GTW
 from   _TFL                   import TFL
@@ -46,6 +49,7 @@ from   _TFL                   import TFL
 import _GTW._RST
 import _GTW.Media
 
+from   _TFL.pyk               import pyk
 from   _TFL                   import sos
 
 import _TFL._Meta.Object
@@ -123,16 +127,16 @@ class Template_Media_Cache (TFL.Meta.Object) :
         try :
             attr = getattr (t, name)
         except Exception as exc :
-            print name, "exception for template", t.path
-            print "   ", exc
+            print (name, "exception for template", t.path)
+            print ("   ", exc)
             if __debug__ :
                 import traceback
                 traceback.print_exc ()
         else :
             if attr :
-                attr = attr.encode      (t.env.encoding)
-                h    = root.hash_fct    (attr).digest ()
-                k    = root.b64_encoded (h)
+                attr = attr.encode (t.env.encoding)
+                k    = pyk.decoded \
+                    (root.hash_fct (attr).b64digest (strip = True))
                 if k not in map :
                     cn      = ".".join      ((k, name.lower ()))
                     href    = pp_join       (self.prefix,    cn)
@@ -155,13 +159,13 @@ class Template_Media_Cache (TFL.Meta.Object) :
         media_dir = self.media_dir
         if not sos.path.isdir (media_dir) :
             sos.mkdir_p (media_dir)
-        for k, (href, fn, attr) in map.iteritems () :
+        for k, (href, fn, attr) in pyk.iteritems (map) :
             with open (fn, "wb") as file :
                 if minifier is not None :
                     attr = minifier (attr)
                 file.write (attr)
                 if self.verbose :
-                    print "Wrote template media cache file", fn
+                    print ("Wrote template media cache file", fn)
     # end def _create_cache
 
     def _get_etag (self, root, css_map, js_map, t_set) :
@@ -176,9 +180,10 @@ class Template_Media_Cache (TFL.Meta.Object) :
             for t in sorted (t_set, key = TFL.Getter.path) :
                 s = t.source
                 if s is not None :
-                    yield s.encode ("utf-8", "replace")
-        h = root.hash_fct ("\n".join (_gen (css_map, js_map, t_set))).digest ()
-        return root.b64_encoded (h)
+                    yield s
+        result = root.hash_fct \
+            (tuple (_gen (css_map, js_map, t_set))).b64digest ()
+        return result
     # end def _get_etag
 
     def __str__ (self) :

@@ -50,6 +50,7 @@ import _GTW._RST
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.multimap            import mm_list
+from   _TFL.pyk                 import pyk
 from   _TFL                     import sos
 
 import _TFL._Meta.M_Class
@@ -78,13 +79,11 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class _Base_ (TFL.Meta.Object) :
+class _Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _Meta_)) :
     """Base class for mime type renderers.
 
        http://tools.ietf.org/html/rfc4287
     """
-
-    __metaclass__              = _Meta_
 
     ### to be defined by subclasses
     extensions                 = ()
@@ -190,12 +189,11 @@ class RST_CSV (_Base_) :
     def rendered (self, request, response, body) :
         if isinstance (body, dict) :
             import csv
-            from   StringIO import StringIO
             names = body.get ("names")
             if names :
                 rs  = body ["rows"]
                 nm  = dict ((n, n) for n in names)
-                f   = StringIO       ()
+                f   = pyk.StringIO   ()
                 dw  = csv.DictWriter (f, names)
                 dw.writerow          (nm)
                 try :
@@ -260,7 +258,7 @@ class RST_SVG (_Base_) :
     mime_types                 = ("image/svg+xml", )
 
     def rendered (self, request, response, body) :
-        if not isinstance (body, basestring) :
+        if not isinstance (body, pyk.string_types) :
             raise TypeError ("Expected string; got: %r" % (body, ))
         return body
     # end def rendered
@@ -275,10 +273,11 @@ class RST_TXT (_Base_) :
 
     def rendered (self, request, response, body) :
         if isinstance (body, dict) :
-            body = ["%s = %r" % (k, v) for k, v in sorted (body.iteritems ())]
+            body = \
+                ["%s = %r" % (k, v) for k, v in sorted (pyk.iteritems (body))]
         if isinstance (body, (list, tuple)) :
             body = "\n".join (body)
-        elif not isinstance (body, basestring) :
+        elif not isinstance (body, pyk.string_types) :
             raise TypeError \
                 ("Expected string, list, or dict; got: %r" % (body, ))
         return body

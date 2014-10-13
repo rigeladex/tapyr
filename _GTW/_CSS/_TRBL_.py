@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.CSS.
@@ -35,10 +35,12 @@ from   __future__  import print_function, unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
+from   _TFL.pyk                   import pyk
 
 import _GTW._CSS
 import _TFL._Meta.Object
 
+@pyk.adapt__bool__
 class _TRBL0_ (TFL.Meta.Object) :
     """Base class for top/right/bottom/left spec."""
 
@@ -62,9 +64,9 @@ class _TRBL0_ (TFL.Meta.Object) :
         return iter (self.values)
     # end def __iter__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return any (self.values)
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         values = list (self.values)

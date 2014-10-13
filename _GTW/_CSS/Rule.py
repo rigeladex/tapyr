@@ -51,6 +51,7 @@ import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
+from   _TFL.pyk                   import pyk
 
 ### Add support for CSS3 elements that need browser-prefixes (e.g.,
 ### border-radius, ...)
@@ -69,7 +70,7 @@ class M_Rule (TFL.Meta.Object.__class__) :
 
 # end class M_Rule
 
-class Rule (TFL.Meta.Object) :
+class Rule (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Rule)) :
     """Model a CSS rule.
 
     >>> import itertools
@@ -97,8 +98,6 @@ class Rule (TFL.Meta.Object) :
         }
 
     """
-
-    __metaclass__ = M_Rule
 
     base_level   = 0
     media_rule   = None
@@ -168,7 +167,7 @@ class Rule (TFL.Meta.Object) :
 
     def _formatted_decl (self, declarations, sep) :
         def _gen (declarations) :
-            for (p, v) in declarations.iteritems () :
+            for (p, v) in pyk.iteritems (declarations) :
                 k = p.replace ("_", "-")
                 if not isinstance (v, (tuple, list)) :
                     v = (v, )
@@ -256,7 +255,7 @@ class Rule_Sibling (Rule) :
 # end class Rule_Sibling
 
 __all__ = tuple \
-    ( k for (k, v) in globals ().iteritems () if isinstance (v, M_Rule)
+    ( k for (k, v) in pyk.iteritems (globals ()) if isinstance (v, M_Rule)
     ) + ("Kits", )
 
 if __name__ != "__main__" :

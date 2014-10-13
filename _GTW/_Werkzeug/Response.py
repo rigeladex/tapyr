@@ -40,23 +40,28 @@ from   _TFL                       import TFL
 import _GTW._Werkzeug
 
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.M_Class
 
-from   werkzeug.wrappers             import Response
-from   werkzeug.contrib.wrappers     import DynamicCharsetResponseMixin
-from   werkzeug.urls                 import Href
+from   werkzeug.wrappers          import Response
+from   werkzeug.contrib.wrappers  import DynamicCharsetResponseMixin
+from   werkzeug.urls              import Href
 
-class _WZG_Response_ (DynamicCharsetResponseMixin, Response) :
+class _WZG_Response_ \
+          ( TFL.Meta.BaM
+              ( DynamicCharsetResponseMixin, Response
+              , metaclass = TFL.Meta.M_Class
+              )
+          ) :
     """Extend werkzeug's Response class."""
 
-    __metaclass__        = TFL.Meta.M_Class
     _real_name           = "Response"
 
     default_charset      = "utf-8"
 
     def add_header (self, key, value, ** kw) :
-        if isinstance (key, unicode) :
+        if isinstance (key, pyk.text_type) :
             key = key.encode ("ascii")
         return self.headers.add (key, value, ** kw)
     # end def add_header
@@ -81,7 +86,7 @@ class _WZG_Response_ (DynamicCharsetResponseMixin, Response) :
     # end def write
 
     def set_header (self, key, value, ** kw) :
-        if isinstance (key, unicode) :
+        if isinstance (key, pyk.text_type) :
             key = key.encode ("ascii")
         return self.headers.set (key, value, ** kw)
     # end def set_header

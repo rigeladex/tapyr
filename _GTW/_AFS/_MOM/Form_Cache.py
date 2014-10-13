@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.MOM.
@@ -39,6 +39,8 @@ from   _TFL                   import TFL
 
 from   _GTW._AFS._MOM.Element import Form
 
+from   _TFL.pyk               import pyk
+
 import _TFL._Meta.Object
 
 class Extra (TFL.Meta.Object) :
@@ -58,7 +60,7 @@ class Extra (TFL.Meta.Object) :
 
     def _gen_children (self, app_type) :
         for e in self.entities :
-            if isinstance (e, basestring) :
+            if isinstance (e, pyk.string_types) :
                 name = e
                 spec = None
                 kw   = {}

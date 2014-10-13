@@ -62,7 +62,9 @@ from   _MOM.import_MOM          import MOM
 
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 from   _TFL._Meta.Once_Property import Once_Property
+
 import _TFL._Meta.Object
 import _TFL.Record
 
@@ -232,7 +234,9 @@ class _RST_MOM_Doc_E_Type_ (Mixin, GTW.RST.MOM.Base_Mixin, _Ancestor) :
 
         def _response_children (self, resource, request, response, children) :
             return list \
-                (self._response_ref_e_types (resource, children.itervalues ()))
+                ( self._response_ref_e_types
+                    (resource, pyk.itervalues (children))
+                )
         # end def _response_children
 
         def _response_parents (self, resource, request, response, parents) :
@@ -301,7 +305,7 @@ class _RST_MOM_Doc_App_Type_ (Dir_Mixin, _Ancestor) :
     # end def __init__
 
     def resource_from_e_type (self, e_type) :
-        if not isinstance (e_type, basestring) :
+        if not isinstance (e_type, pyk.string_types) :
             e_type = getattr (e_type, "type_name")
         result = self._entry_map.get (e_type.replace (".", "-"))
         return result

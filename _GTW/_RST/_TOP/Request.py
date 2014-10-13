@@ -43,6 +43,7 @@
 #    11-Dec-2013 (CT) Factor `csrf_token`
 #    11-Feb-2014 (CT) Remove `username.setter` (redundant to `Response...`)
 #    29-Apr-2014 (CT) Add `getattr_safe` to property `username`
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,7 @@ from   _TFL                     import TFL
 
 from   _TFL.Decorator           import getattr_safe
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.pyk                 import pyk
 
 import _GTW.File_Session
 import _GTW._RST._TOP
@@ -134,8 +136,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
 
     def _session_hash (self, sig) :
         root   = self.root
-        hash   = root.hash_fct     (str (sig)).digest ()
-        result = root.b64_encoded  (hash, altchars = "~@")
+        result = root.hash_fct (sig).b64digest (altchars = "~@", strip = True)
         return result
     # end def _session_hash
 
@@ -143,12 +144,12 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
         sig    = self._session_sig  (username)
         result = self._session_hash (sig)
         return result
-    # end def _session_hash
+    # end def _session_hasher
 
     def _session_sig (self, user) :
         root  = self.root
         scope = root.scope
-        if isinstance (user, basestring) :
+        if isinstance (user, pyk.string_types) :
             user = root._get_user (user)
         return \
             ( getattr (user, "password", user)

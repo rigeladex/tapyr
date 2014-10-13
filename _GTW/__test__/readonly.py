@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -56,9 +56,8 @@ _test_code = r"""
 
     The scope is now readonly. So commiting a change should raise an error
     >>> p2 = scope.PAP.Person (u"LN2", u"FN")
-    >>> scope.commit () # commit after create fails
-    Traceback (most recent call last):
-       ...
+    >>> with expect_except (MOM.Error.Readonly_DB) :
+    ...     scope.commit () # commit after create fails
     Readonly_DB: Database is set to readonly.
 
     >>> scope.ems.session.readonly ### 3
@@ -68,16 +67,15 @@ _test_code = r"""
     >>> p = scope.PAP.Person.query ().one ()
     >>> p.set_raw    (title = u"Ing.")
     1
-    >>> scope.commit () ### update fails
-    Traceback (most recent call last):
-       ...
+    >>> with expect_except (MOM.Error.Readonly_DB) :
+    ...     scope.commit () ### update fails
     Readonly_DB: Database is set to readonly.
 
     >>> scope.ems.session.readonly ### 4
     True
 
     >>> scope.PAP.Person.query ().all () ### without title
-    [PAP.Person (u'ln', u'fn', u'', u'')]
+    [PAP.Person ('ln', 'fn', '', '')]
 
     >>> scope.destroy ()
 

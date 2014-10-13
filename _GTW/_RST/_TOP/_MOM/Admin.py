@@ -145,6 +145,7 @@ from   _TFL.Decorator           import getattr_safe
 from   _TFL.Formatter           import formatted
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import callable, uniq
+from   _TFL.pyk                 import pyk
 from   _TFL.update_combined     import update_combined
 
 from   itertools                import chain as iter_chain
@@ -188,7 +189,7 @@ class _Action_ (_Ancestor) :
         if obj is None :
             obj = self.obj
         attr_spec = dict (self.mf3_attr_spec, ** mf3_attr_spec)
-        kw.setdefault ("_hash_fct", kw.pop ("hash_fct", self.top.hash_fct))
+        kw.setdefault ("_hash_fct", self.top.hash_fct)
         result = self.parent.Form \
             (self.scope, obj, attr_spec = attr_spec, ** kw)
         return result
@@ -1723,7 +1724,7 @@ class Site (Group) :
     _auth_required       = True
 
     def _auto_entries (self) :
-        for et in self.top.ET_Map.itervalues () :
+        for et in pyk.itervalues (self.top.ET_Map) :
             man = et.manager
             if man is not None and et.admin is None :
                 m_kw        = man.admin_args.copy ()

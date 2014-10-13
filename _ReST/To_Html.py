@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ReST.
@@ -38,6 +38,7 @@ import _ReST.Roles
 import _ReST.Directives
 
 from   _TFL.predicate           import uniq
+from   _TFL.pyk                 import pyk
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL._Meta.Object
@@ -72,7 +73,7 @@ class To_Html (TFL.Meta.Object) :
             , ** kw
             )
         parts = self._publish_parts \
-            ( source             = unicode (text)
+            ( source             = pyk.decoded (text)
             , writer_name        = "html4css1"
             , settings_overrides = settings
             )

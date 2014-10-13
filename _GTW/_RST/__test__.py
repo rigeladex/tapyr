@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -175,7 +175,7 @@ __doc__ = """
     >>> GTW.RST.Mime_Type.JSON.mime_types
     (u'application/json',)
 
-    >>> for n, r in sorted (GTW.RST.Mime_Type.JSON.Table.iteritems ()) :
+    >>> for n, r in sorted (pyk.iteritems (GTW.RST.Mime_Type.JSON.Table)) :
     ...     print (r.name, r.extensions, r.mime_types)
     ATOM ('atom',) (u'application/atom+xml',)
     CSV ('csv',) (u'text/csv',)

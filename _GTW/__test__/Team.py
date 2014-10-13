@@ -57,23 +57,23 @@ _test_code = r"""
     >>> t1.regatta.event.date.start
     datetime.date(2010, 9, 18)
 
-    >>> SRM.Team.query ().order_by (TFL.Sorted_By ("name")).all ()
-    [SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/2'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'wien/4')]
+    >>> prepr (SRM.Team.query ().order_by (TFL.Sorted_By ("name")).all ())
+    [SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'tirol/1'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'tirol/2'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'vorarlberg/1'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'vorarlberg/2'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/2'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'wien/3'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'wien/4')]
 
     >>> scope.rollback ()
 
-    >>> SRM.Team.query (Q.regatta.event.date.start == t1.regatta.event.date.start).order_by (TFL.Sorted_By ("name")).all ()
-    [SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/2')]
+    >>> prepr (SRM.Team.query (Q.regatta.event.date.start == t1.regatta.event.date.start).order_by (TFL.Sorted_By ("name")).all ())
+    [SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'tirol/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'vorarlberg/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/2')]
 
     >>> scope.rollback ()
 
-    >>> SRM.Team.query ().order_by ("-left.left.date.start", "name").all ()
-    [SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/2')]
+    >>> prepr (SRM.Team.query ().order_by ("-left.left.date.start", "name").all ())
+    [SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'tirol/2'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'vorarlberg/2'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'wien/3'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'wien/4'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'tirol/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'vorarlberg/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/2')]
 
     >>> scope.rollback ()
 
-    >>> SRM.Team.query ().order_by ("regatta.event.date.-start", "name").all ()
-    [SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'tirol/2'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'vorarlberg/2'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'wien/3'), SRM.Team (((u'teamrace', (u'2011-10-15', u'2011-10-15')), (u'optimist', )), u'wien/4'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'tirol/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'vorarlberg/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/1'), SRM.Team (((u'teamrace', (u'2010-09-18', u'2010-09-18')), (u'optimist', )), u'wien/2')]
+    >>> prepr (SRM.Team.query ().order_by ("regatta.event.date.-start", "name").all ())
+    [SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'tirol/2'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'vorarlberg/2'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'wien/3'), SRM.Team ((('teamrace', ('2011-10-15', '2011-10-15')), ('optimist', )), 'wien/4'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'tirol/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'vorarlberg/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/1'), SRM.Team ((('teamrace', ('2010-09-18', '2010-09-18')), ('optimist', )), 'wien/2')]
 
 
 """

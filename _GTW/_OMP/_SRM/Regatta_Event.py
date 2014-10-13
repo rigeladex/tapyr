@@ -53,6 +53,8 @@ import _GTW._OMP._SRM.Club
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                   import pyk
+
 import _TFL.Ascii
 
 _Ancestor_Essence = GTW.OMP.SRM.Object
@@ -124,7 +126,8 @@ class Regatta_Event (_Ancestor_Essence) :
             auto_up_depends    = ("name", )
 
             def computed (self, obj) :
-                return TFL.Ascii.sanitized_filename (obj.name.lower ())
+                return pyk.decoded \
+                    (TFL.Ascii.sanitized_filename (obj.name.lower ()))
             # end def computed
 
         # end class perma_name

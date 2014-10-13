@@ -33,7 +33,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__                 import print_function, unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
@@ -43,6 +43,7 @@ import _GTW._CSS
 import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
 
 class M_Media (TFL.Meta.Object.__class__) :
     """Meta class for media types and queries."""
@@ -57,10 +58,8 @@ class M_Media (TFL.Meta.Object.__class__) :
 
 # end class M_Media
 
-class _Media_ (TFL.Meta.Object) :
+class _Media_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Media)) :
     """Base class for media types and queries."""
-
-    __metaclass__   = M_Media
 
     nick            = None
 
@@ -69,9 +68,9 @@ class _Media_ (TFL.Meta.Object) :
 class Expression (_Media_) :
     """Media query expression.
 
-    >>> print MX ("color")
+    >>> print (MX ("color"))
     (color)
-    >>> print MX ("min_width", "1000px")
+    >>> print (MX ("min_width", "1000px"))
     (min-width: 1000px)
     """
 
@@ -94,20 +93,20 @@ class Expression (_Media_) :
 class Query (_Media_) :
     """Media query.
 
-    >>> print Query ()
+    >>> print (Query ())
     <BLANKLINE>
-    >>> print Query ("screen")
+    >>> print (Query ("screen"))
     screen
-    >>> print MQ ("screen", "color", min_width = "1000px")
+    >>> print (MQ ("screen", "color", min_width = "1000px"))
     screen and (color) and (min-width: 1000px)
-    >>> print MQ ("all", "color", min_width = "1000px")
+    >>> print (MQ ("all", "color", min_width = "1000px"))
     (color) and (min-width: 1000px)
-    >>> print MQ (MX ("color"), min_width = "1000px")
+    >>> print (MQ (MX ("color"), min_width = "1000px"))
     (color) and (min-width: 1000px)
 
     Beware: skipping `type` and using strings for `* exprs` fails::
 
-    >>> print MQ ("color", min_width = "1000px")
+    >>> print (MQ ("color", min_width = "1000px"))
     color and (min-width: 1000px)
     """
 
@@ -143,15 +142,15 @@ class Query (_Media_) :
         add        = self.exprs.append
         for x in exprs :
             if isinstance (x, dict) :
-                for f, e in sorted (x.iteritems ()) :
+                for f, e in sorted (pyk.iteritems (x)) :
                     add (Expression (f, e))
             else :
-                if isinstance (x, basestring) :
+                if isinstance (x, pyk.string_types) :
                     x = (x, )
                 if not isinstance (x, Expression) :
                     x = Expression (* x)
                 add (x)
-        for f, e in sorted (kw.iteritems ()) :
+        for f, e in sorted (pyk.iteritems (kw)) :
             add (Expression (f, e))
     # end def _setup_exprs
 
@@ -173,18 +172,18 @@ class Rule (_Media_) :
     >>> from _GTW._CSS.Rule import Rule as R
     >>> r1 = R ("tr.row1", "div.row1", color = "grey", clear = "both")
     >>> r2 = R ("tr.row2", "div.row2", color = "blue", clear = "both")
-    >>> print r1
+    >>> print (r1)
     tr.row1, div.row1
       { clear : both
       ; color : grey
       }
-    >>> print r2
+    >>> print (r2)
     tr.row2, div.row2
       { clear : both
       ; color : blue
       }
     >>> qr = Rule (MQ ("screen", "color", min_width = "1000px"), rules = (r1, r2))
-    >>> print qr
+    >>> print (qr)
     @media screen and (color) and (min-width: 1000px)
       {
         tr.row1, div.row1
@@ -243,9 +242,9 @@ class Rule (_Media_) :
 class Type (_Media_) :
     """Media type.
 
-    >>> print Type ("screen")
+    >>> print (Type ("screen"))
     screen
-    >>> print Type ("all")
+    >>> print (Type ("all"))
     all
     >>> Type ("screen") is Type ("screen")
     True
@@ -290,7 +289,7 @@ _g.update (Type.Table)
 _g.update (M_Media.Nick)
 
 __all__ = tuple \
-    (k for (k, v) in _g.iteritems () if isinstance (v, (M_Media, Type)))
+    (k for (k, v) in pyk.iteritems (_g) if isinstance (v, (M_Media, Type)))
 del _g
 
 if __name__ != "__main__" :

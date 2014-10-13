@@ -103,6 +103,8 @@ import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
 from   _TFL.predicate           import uniq
+from   _TFL.pyk                 import pyk
+
 import _TFL._Meta.Object
 import _TFL.Accessor
 import _TFL.Decorator
@@ -236,7 +238,7 @@ class _Entity_Mixin_ (_Base_) :
     # end def elements
 
     def _entity_link (self, l) :
-        return (Entity_Link (l) if isinstance (l, basestring) else l)
+        return (Entity_Link (l) if isinstance (l, pyk.string_types) else l)
     # end def _entity_link
 
 # end class _Entity_Mixin_

@@ -41,7 +41,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import print_function, unicode_literals
 
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -49,7 +49,7 @@ _test_code = """
     >>> PAP = scope.PAP
 
     >>> for aq in PAP.Person.E_Type.AQ.Attrs :
-    ...     print aq
+    ...     print (aq)
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
@@ -71,7 +71,7 @@ _test_code = """
 
     >>> paq = MOM.Attr.Querier.E_Type (PAP.Person.E_Type, MOM.Attr.Selector.ui_attr)
     >>> for aq in paq.Attrs :
-    ...     print aq
+    ...     print (aq)
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
@@ -92,7 +92,7 @@ _test_code = """
     <addresses.AQ [Attr.Type.Querier Rev_Ref]>
 
     >>> for aq in paq.Attrs_Transitive :
-    ...     print aq
+    ...     print (aq)
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
@@ -162,7 +162,7 @@ _test_code = """
     <addresses.region.AQ [Attr.Type.Querier String]>
 
     >>> for aq in paq.Atoms :
-    ...     print aq
+    ...     print (aq)
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
@@ -214,7 +214,7 @@ _test_code = """
     <addresses.region.AQ [Attr.Type.Querier String]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.Atoms :
-    ...     print aq
+    ...     print (aq)
     <left.last_name.AQ [Attr.Type.Querier String_FL]>
     <left.first_name.AQ [Attr.Type.Querier String_FL]>
     <left.middle_name.AQ [Attr.Type.Querier String]>
@@ -249,7 +249,7 @@ _test_code = """
     <events.short_title.AQ [Attr.Type.Querier String]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Atoms :
-    ...     print aq
+    ...     print (aq)
     <left.last_name.AQ [Attr.Type.Querier String_FL]>
     <left.first_name.AQ [Attr.Type.Querier String_FL]>
     <left.middle_name.AQ [Attr.Type.Querier String]>
@@ -260,7 +260,7 @@ _test_code = """
     <left.sex.AQ [Attr.Type.Querier Ckd]>
 
     >>> for aq in PAP.Person_has_Phone.E_Type.AQ.left.Unwrapped_Atoms :
-    ...     print aq
+    ...     print (aq)
     <last_name.AQ [Attr.Type.Querier String_FL]>
     <first_name.AQ [Attr.Type.Querier String_FL]>
     <middle_name.AQ [Attr.Type.Querier String]>
@@ -274,15 +274,15 @@ _test_code = """
     >>> php_attrs      = MOM.Attr.Selector.ui_attr (PAP.Person_has_Phone.E_Type)
     >>> lifetime_attrs = MOM.Attr.Selector.ui_attr (ET_lifetime)
 
-    >>> person_attrs.names
-    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'sex', 'creation', 'last_change', 'last_cid', 'pid', 'type_name', u'events', u'accounts', u'sailors', u'urls', u'phones', u'emails', u'addresses')
-    >>> php_attrs.names
-    ('left', 'right', 'extension', 'desc', 'creation', 'last_change', 'last_cid', 'pid', 'type_name', u'events')
-    >>> lifetime_attrs.names
+    >>> prepr (person_attrs.names)
+    ('last_name', 'first_name', 'middle_name', 'title', 'lifetime', 'sex', 'creation', 'last_change', 'last_cid', 'pid', 'type_name', 'events', 'accounts', 'sailors', 'urls', 'phones', 'emails', 'addresses')
+    >>> prepr (php_attrs.names)
+    ('left', 'right', 'extension', 'desc', 'creation', 'last_change', 'last_cid', 'pid', 'type_name', 'events')
+    >>> prepr (lifetime_attrs.names)
     ('start', 'finish', 'alive')
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.AQ
+    ...     print (attr.typ, attr.AQ)
     String <last_name.AQ [Attr.Type.Querier String_FL]>
     String <first_name.AQ [Attr.Type.Querier String_FL]>
     String <middle_name.AQ [Attr.Type.Querier String]>
@@ -303,7 +303,7 @@ _test_code = """
     Role_Ref_Set <addresses.AQ [Attr.Type.Querier Rev_Ref]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.AQ.AC
+    ...     print (attr.typ, attr.AQ.AC)
     String <Attr.Auto_Complete_PN last_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_PN first_name.STARTSWITH [auto-complete]>
     String <Attr.Auto_Complete_S middle_name.STARTSWITH [auto-complete]>
@@ -324,7 +324,7 @@ _test_code = """
     Role_Ref_Set <Attr.Id_Entity_Auto_Complete addresses.EQ [auto-complete]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, getattr (attr.AQ, "GE", "** GE undefined **")
+    ...     print (attr.typ, getattr (attr.AQ, "GE", "** GE undefined **"))
     String <Attr.Greater_Equal last_name.GE [>=]>
     String <Attr.Greater_Equal first_name.GE [>=]>
     String <Attr.Greater_Equal middle_name.GE [>=]>
@@ -345,7 +345,7 @@ _test_code = """
     Role_Ref_Set <Attr.Id_Entity_Greater_Equal addresses.GE [>=]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, getattr (attr.AQ, "CONTAINS", "** CONTAINS undefined **")
+    ...     print (attr.typ, getattr (attr.AQ, "CONTAINS", "** CONTAINS undefined **"))
     String <Attr.Contains last_name.CONTAINS [contains]>
     String <Attr.Contains first_name.CONTAINS [contains]>
     String <Attr.Contains middle_name.CONTAINS [contains]>
@@ -366,25 +366,25 @@ _test_code = """
     Role_Ref_Set ** CONTAINS undefined **
 
     >>> for attr in lifetime_attrs :
-    ...     print attr.typ, attr.AQ
+    ...     print (attr.typ, attr.AQ)
     Date <start.AQ [Attr.Type.Querier Date]>
     Date <finish.AQ [Attr.Type.Querier Date]>
     Boolean <alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in lifetime_attrs :
-    ...     print attr.typ, getattr (PAP.Person.E_Type.AQ.lifetime, attr.name)
+    ...     print (attr.typ, getattr (PAP.Person.E_Type.AQ.lifetime, attr.name))
     Date <lifetime.start.AQ [Attr.Type.Querier Date]>
     Date <lifetime.finish.AQ [Attr.Type.Querier Date]>
     Boolean <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in lifetime_attrs :
-    ...     print attr, getattr (ET_lifetime.AQ, attr.name)
+    ...     print (attr, getattr (ET_lifetime.AQ, attr.name))
     Date `start` <lifetime.start.AQ [Attr.Type.Querier Date]>
     Date `finish` <lifetime.finish.AQ [Attr.Type.Querier Date]>
     Boolean `alive` <lifetime.alive.AQ [Attr.Type.Querier Boolean]>
 
     >>> for attr in person_attrs :
-    ...     print attr.typ, attr.AQ.__class__
+    ...     print (attr.typ, attr.AQ.__class__)
     String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String_FL ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
     String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
@@ -405,7 +405,7 @@ _test_code = """
     Role_Ref_Set <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
 
     >>> for attr in php_attrs :
-    ...     print attr.typ, attr.AQ.__class__
+    ...     print (attr.typ, attr.AQ.__class__)
     Person <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Phone <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')>
     Numeric_String <Attr.Type.Querier String ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')>
@@ -418,28 +418,28 @@ _test_code = """
     Link_Ref_List <Attr.Type.Querier Rev_Ref ('EQ', 'IN', 'NE')>
 
     >>> for attr in lifetime_attrs :
-    ...     print attr.typ, attr.AQ.__class__
+    ...     print (attr.typ, attr.AQ.__class__)
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Date <Attr.Type.Querier Date ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')>
     Boolean <Attr.Type.Querier Boolean ('EQ',)>
 
     >>> PhP_ET_person = PAP.Person_has_Phone.E_Type.attributes ["left"]
-    >>> print PhP_ET_person.AQ
+    >>> print (PhP_ET_person.AQ)
     <left.AQ [Attr.Type.Querier Id_Entity]>
-    >>> print PhP_ET_person.AQ.lifetime
+    >>> print (PhP_ET_person.AQ.lifetime)
     <left.lifetime.AQ [Attr.Type.Querier Composite]>
-    >>> print PhP_ET_person.AQ.lifetime.start
+    >>> print (PhP_ET_person.AQ.lifetime.start)
     <left.lifetime.start.AQ [Attr.Type.Querier Date]>
 
-    >>> print PAP.Person_has_Phone.E_Type.AQ.person
+    >>> print (PAP.Person_has_Phone.E_Type.AQ.person)
     <left.AQ [Attr.Type.Querier Id_Entity]>
-    >>> print PAP.Person_has_Phone.E_Type.AQ.person.lifetime
+    >>> print (PAP.Person_has_Phone.E_Type.AQ.person.lifetime)
     <left.lifetime.AQ [Attr.Type.Querier Composite]>
-    >>> print PAP.Person_has_Phone.E_Type.AQ.person.lifetime.start
+    >>> print (PAP.Person_has_Phone.E_Type.AQ.person.lifetime.start)
     <left.lifetime.start.AQ [Attr.Type.Querier Date]>
 
     >>> def show_Q (a, level = 0) :
-    ...     print "%%s%%-20s%%s" %% ("  " * level, a._attr_name, a.Sig_Key)
+    ...     print ("%%s%%-20s%%s" %% ("  " * level, a._attr_name, a.Sig_Key))
     ...     for c in a.Attrs :
     ...         show_Q (c, level + 1)
     >>> AQ = PAP.Person_has_Phone.AQ
@@ -615,13 +615,13 @@ _test_code = """
       registration_date   0
 
     >>> def show_QA (a) :
-    ...     print repr (a._attr)
+    ...     print (repr (a._attr))
     ...     for c in a.Atoms :
-    ...         print "   ", repr (c._attr), c._full_name
+    ...         print ("   ", repr (c._attr), c._full_name)
     >>> def show_QUA (a) :
-    ...     print repr (a._attr), "unwrapped"
+    ...     print (repr (a._attr), "unwrapped")
     ...     for c in a.Unwrapped_Atoms :
-    ...         print "   ", repr (c._attr), c._full_name
+    ...         print ("   ", repr (c._attr), c._full_name)
     >>> for pka in scope.SRM.Boat_in_Regatta.E_Type.AQ.Attrs :
     ...     show_QA (pka)
     ...     show_QUA (pka)
@@ -843,7 +843,7 @@ _test_code = """
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
     ...     msg = "%%s %%s %%s" %% (at.typ, at.AQ.__class__, at.AQ.Sig_Key)
     ...     if msg not in seen :
-    ...         print msg
+    ...         print (msg)
     ...         seen.add (msg)
     Account <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
     Address <Attr.Type.Querier Id_Entity ('EQ', 'IN', 'NE')> 2
@@ -901,16 +901,16 @@ _test_code = """
     X <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
     Y <Attr.Type.Querier Ckd ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')> 0
 
-    >>> for sig, Sig_Key in sorted (at.AQ.Signatures.iteritems (), key = TFL.Getter [1]) :
-    ...     print Sig_Key, sig
+    >>> for sig, Sig_Key in sorted (pyk.iteritems (at.AQ.Signatures), key = TFL.Getter [1]) :
+    ...     print (Sig_Key, sig)
     0 ('EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE')
     1 ('EQ',)
     2 ('EQ', 'IN', 'NE')
     3 ('CONTAINS', 'ENDSWITH', 'EQ', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'STARTSWITH')
     4 ('CONTAINS', 'ENDSWITH', 'EQ', 'EQS', 'GE', 'GT', 'IN', 'LE', 'LT', 'NE', 'NES', 'STARTSWITH')
 
-    >>> for k, v in sorted (at.AQ.Base_Op_Table.iteritems ()) :
-    ...     print "%%-12s %%s" %% (k, v)
+    >>> for k, v in sorted (pyk.iteritems (at.AQ.Base_Op_Table)) :
+    ...     print ("%%-12s %%s" %% (k, v))
     CONTAINS     <Attr.Filter CONTAINS [contains]>
     ENDSWITH     <Attr.Filter ENDSWITH [ends-with]>
     EQ           <Attr.Filter EQ [==]>
@@ -928,32 +928,33 @@ _test_code = """
     >>> for at in sorted (scope.attribute_types, key = TFL.Getter.typ) :
     ...     k = at.typ
     ...     if k not in seen and not isinstance (at, MOM.Attr._A_Entity_):
-    ...         print "%%-20s %%-20s %%s" %% (at.typ, at, at.P_Type or "-"*10)
+    ...         pt = portable_repr (at.P_Type) if at.P_Type else ("-" * 10)
+    ...         print ("%%-20s %%-20s %%s" %% (at.typ, at, pt))
     ...         seen.add (k)
-    Angle                lat                  <type 'float'>
-    Boolean              discarded            <type 'bool'>
-    Date                 date                 <type 'datetime.date'>
-    Date-Slug            perma_name           <type 'unicode'>
-    Date-Time            date                 <type 'datetime.datetime'>
+    Angle                lat                  <class 'builtins.float'>
+    Boolean              discarded            <class 'builtins.bool'>
+    Date                 date                 <class 'datetime.date'>
+    Date-Slug            perma_name           <class 'builtins.text-string'>
+    Date-Time            date                 <class 'datetime.datetime'>
     Date_List            date_exceptions      <class '_MOM._Attr.Coll.List'>
-    Directory            directory            <type 'str'>
-    Email                address              <type 'unicode'>
-    Float                beam                 <type 'float'>
+    Directory            directory            <class 'builtins.byte-string'>
+    Email                address              <class 'builtins.text-string'>
+    Float                beam                 <class 'builtins.float'>
     Format               format               ----------
-    Int                  count                <type 'int'>
+    Int                  count                <class 'builtins.int'>
     Int_List             easter_offset        <class '_MOM._Attr.Coll.List'>
-    Name                 name                 <type 'unicode'>
-    Nation               nation               <type 'unicode'>
-    Numeric_String       area_code            <type 'unicode'>
-    Sex                  sex                  <type 'unicode'>
-    String               city                 <type 'unicode'>
-    Text                 abstract             <type 'unicode'>
-    Time                 finish               <type 'datetime.time'>
-    Unit                 unit                 <type 'int'>
-    Url                  link_to              <type 'unicode'>
+    Name                 name                 <class 'builtins.text-string'>
+    Nation               nation               <class 'builtins.text-string'>
+    Numeric_String       area_code            <class 'builtins.text-string'>
+    Sex                  sex                  <class 'builtins.text-string'>
+    String               city                 <class 'builtins.text-string'>
+    Text                 abstract             <class 'builtins.text-string'>
+    Time                 finish               <class 'datetime.time'>
+    Unit                 unit                 <class 'builtins.int'>
+    Url                  link_to              <class 'builtins.text-string'>
     Weekday_RR_List      week_day             <class '_MOM._Attr.Coll.List'>
-    X                    width                <type 'int'>
-    Y                    height               <type 'int'>
+    X                    width                <class 'builtins.int'>
+    Y                    height               <class 'builtins.int'>
 
 """
 

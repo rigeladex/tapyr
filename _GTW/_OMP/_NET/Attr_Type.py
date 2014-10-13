@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.NET.
@@ -218,7 +218,7 @@ def _import_saw_pg (module) :
 GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAW.Manager",     _import_saw)
 GTW.OMP.NET._Add_Import_Callback ("_MOM._DBW._SAW._PG.Manager", _import_saw_pg)
 
-__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 if __name__ != "__main__" :
     GTW.OMP.NET._Export ("*")

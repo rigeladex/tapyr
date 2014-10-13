@@ -53,6 +53,7 @@
 #    11-Dec-2013 (CT) Fix `_data` to check user *only* once after `_load ()`
 #    11-Feb-2014 (CT) Force `sid` to `str`
 #     2-Jul-2014 (CT) Localize `Epxired` message
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
@@ -60,13 +61,14 @@ from   _GTW                     import GTW
 
 from   _TFL                     import TFL
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Sets
+import _TFL.User_Config
 
 import base64
 import datetime
-import hashlib
 import os
 import random
 import time
@@ -75,13 +77,14 @@ import uuid
 ### session key generation is based on the version found in Django
 ### (www.djangoproject.com)
 
-MAX_SESSION_KEY = 340282366920938463463374607431768211456L     # 2 ** 128
+MAX_SESSION_KEY = 340282366920938463463374607431768211456     # 2 ** 128
 # Use the system (hardware-based) random number generator if it exists.
 if hasattr(random, "SystemRandom") :
     randrange = random.SystemRandom ().randrange
 else:
     randrange = random.randrange
 
+@pyk.adapt__bool__
 class User (TFL.Meta.Object) :
     """Encapsulate user information for session."""
 
@@ -105,9 +108,9 @@ class User (TFL.Meta.Object) :
             self.sessions = {}
     # end def name
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self._name is not None
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         return "GTW.Session.User (%s)" % self._name
@@ -120,7 +123,7 @@ class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
 
 # end class M_Session
 
-class Session (TFL.Meta.Object) :
+class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     """Base class for sessions
 
        >>> from _GTW.Memory_Session import Memory_Session
@@ -129,8 +132,6 @@ class Session (TFL.Meta.Object) :
        >>> session.sid != session2.sid
        True
     """
-
-    __metaclass__      = M_Session
 
     _data_dict         = None
     _non_data_attrs    = set \
@@ -232,10 +233,10 @@ class Session (TFL.Meta.Object) :
         assert self.user
         hard_expiry = self._expiry (ttl, "user_session_ttl")
         soft_expiry = self._expiry (ttl, "edit_session_ttl")
-        hash_fct    = self._settings.get ("hash_fct", hashlib.sha224)
-        id     = uuid.uuid4 ().hex
-        hash   = base64.b64encode \
-            (hash_fct (str ((hash_sig, hard_expiry, soft_expiry))).digest ())
+        hash_fct    = self._settings.get ("hash_fct", TFL.user_config.sha)
+        id          = uuid.uuid4 ().hex
+        hash        = \
+            hash_fct ((hash_sig, hard_expiry, soft_expiry)).b64digest ()
         self.user.sessions [id] = (hard_expiry, soft_expiry, hash)
         return id, hash
     # end def new_edit_session
@@ -247,14 +248,14 @@ class Session (TFL.Meta.Object) :
             pid = 1
         else :
             pid = getpid ()
-        hash_fct = self._settings.get ("hash_fct", hashlib.sha224)
+        hash_fct = self._settings.get ("hash_fct", TFL.user_config.sha)
         while True :
             id = hash_fct \
                 ( "%s%s%s%s"
-                % ( randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
+                % (randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
                 ).hexdigest ()
             if check is None or not check (id) :
-                return str (id)
+                return pyk.text_type (id)
     # end def New_ID
 
     def pop (self, name, default = None) :

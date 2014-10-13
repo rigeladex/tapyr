@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -69,8 +69,8 @@ class _GTW_Test_Command_ (GTW_Test_Command) :
 
     _rn_prefix            = "_GTW_Test"
 
-    SALT                  = bytes \
-        ( "ohQueiro7theG4vai9shi4oi9iedeethaeshooqu7oThi9Eecephaj")
+    SALT                  = \
+        b"ohQueiro7theG4vai9shi4oi9iedeethaeshooqu7oThi9Eecephaj"
 
     def fixtures (self, scope) :
         if sos.environ.get ("GTW_FIXTURES") :

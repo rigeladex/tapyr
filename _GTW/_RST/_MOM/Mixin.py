@@ -100,6 +100,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.Formatter           import formatted_1
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 import _TFL.Record
@@ -173,7 +174,7 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
                     v = ETM.instance_or_new (raw = True, ** v)
                 elif isinstance (v, int) :        ### pid
                     v = scope.pid_query (v)
-                elif isinstance (v, basestring) : ### single epk argument
+                elif isinstance (v, pyk.string_types) : ### single epk argument
                     v = ETM.instance_or_new (v, raw = True)
                 elif isinstance (v, list) :       ### list of epk arguments
                     v = ETM.instance_or_new (* v, raw = True)
@@ -235,7 +236,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
     @getattr_safe
     def E_Type (self) :
         ETM = self._ETM
-        if isinstance (ETM, basestring) :
+        if isinstance (ETM, pyk.string_types) :
             result = self.top.App_Type [ETM]
         else :
             result = ETM.E_Type
@@ -282,7 +283,7 @@ class _RST_MOM_Base_Mixin_ (TFL.Meta.Object) :
         ET = self.E_Type
         AQ = ET.AQ
         for v in vs :
-            if isinstance (v, basestring) :
+            if isinstance (v, pyk.string_types) :
                 try :
                     v = getattr (AQ, v)._attr
                 except AttributeError as exc :
@@ -311,7 +312,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
     @getattr_safe
     def ETM (self) :
         result = self._ETM
-        if isinstance (result, basestring) :
+        if isinstance (result, pyk.string_types) :
             result = self.top.scope [result]
         return result
     # end def ETM
@@ -455,7 +456,7 @@ class _RST_MOM_Mixin_ (Base_Mixin) :
                 else :
                     if user.person :
                         user = user.person
-                    user = unicode (user.FO)
+                    user = pyk.text_type (user.FO)
             error = \
                 (  _T ("%s `%s` doesn't exist anymore!")
                 % (_T (E_Type.ui_name), pid)

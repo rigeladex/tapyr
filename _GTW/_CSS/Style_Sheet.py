@@ -36,6 +36,7 @@
 #    14-Jan-2011 (CT) `Eval` and `Read` removed (done by JNJ.Templateer now)
 #    13-Sep-2011 (CT) `Style_File` added
 #     9-Apr-2014 (CT) Add `static_handler` to `Style_File`
+#    10-Oct-2014 (CT) Use `@pyk.adapt__str__` abnd `pyk.decoded`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ from   _TFL                       import TFL
 import _GTW._CSS.Media
 
 from   _TFL                       import sos
+from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -59,9 +61,8 @@ class M_Style_Sheet (TFL.Meta.Object.__class__) :
 
 # end class M_Style_Sheet
 
-class _Style_Sheet_ (TFL.Meta.Object) :
-
-    __metaclass__ = M_Style_Sheet
+class _Style_Sheet_ \
+        (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Style_Sheet)) :
 
     name          = None
     rank          = 0
@@ -73,6 +74,7 @@ class _Style_Sheet_ (TFL.Meta.Object) :
 
 # end class _Style_Sheet_
 
+@pyk.adapt__str__
 class Style_Sheet (_Style_Sheet_) :
     """Model a CSS style sheet"""
 
@@ -112,6 +114,7 @@ class Style_Sheet (_Style_Sheet_) :
 
 # end class Style_Sheet
 
+@pyk.adapt__str__
 class Style_File (_Style_Sheet_) :
     """Model a style file containing plain old CSS."""
 
@@ -131,7 +134,7 @@ class Style_File (_Style_Sheet_) :
         if self.static_handler and not sos.path.isfile (fn) :
             fn = self.static_handler.get_path (fn)
         with open (fn, "rb") as f :
-            return f.read ().strip ()
+            return pyk.decoded (f.read ().strip ())
     # end def body
 
     def __str__ (self) :
@@ -143,7 +146,8 @@ class Style_File (_Style_Sheet_) :
 S = Style_Sheet
 
 __all__ = tuple \
-    ( k for (k, v) in globals ().iteritems () if isinstance (v, M_Style_Sheet)
+    ( k for (k, v) in pyk.iteritems (globals ())
+        if  isinstance (v, M_Style_Sheet)
     )
 
 if __name__ != "__main__" :

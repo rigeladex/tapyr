@@ -75,6 +75,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first, uniq
+from   _TFL.pyk                 import pyk
 
 import _TFL.defaultdict
 
@@ -119,7 +120,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
 
             def _response_body_csv (self, resource, request, response) :
                 def conv (s) :
-                    return unicode (s).encode ("utf-8", "replace")
+                    return pyk.text_type (s).encode ("utf-8", "replace")
                 boats    = resource.obj.boats
                 if not boats :
                     return {}

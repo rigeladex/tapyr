@@ -67,6 +67,7 @@ import _TFL._Meta.Object
 import _TFL.Undef
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.pyk                 import pyk
 
 import base64
 import hashlib
@@ -125,7 +126,7 @@ class _Base_ (TFL.Meta.Object) :
     # end def entity_children
 
     def form_hash (self, form_sig) :
-        hash = hashlib.sha224 (unicode (form_sig)).digest ()
+        hash = hashlib.sha224 (pyk.encoded (form_sig, "utf-8")).digest ()
         return base64.b64encode (hash, b":-").rstrip (b"=")
     # end def form_hash
 
@@ -154,7 +155,7 @@ class _Base_ (TFL.Meta.Object) :
 
     def _v_repr (self, v, name) :
         if isinstance (v, dict) :
-            result = "%r" % (sorted (v.iteritems ()), )
+            result = "%r" % (sorted (pyk.iteritems (v)), )
         else :
             result = "%r" % (v, )
             if result.startswith (("u'", 'u"')) :

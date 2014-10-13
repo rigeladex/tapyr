@@ -59,78 +59,78 @@ _query_test = """
     >>> scope.commit ()
 
     >>> a1.person
-    PAP.Person (u'ln', u'fn', u'', u'')
+    PAP.Person ('ln', 'fn', '', '')
 
     >>> a1.qt
-    PAP.Person (u'ln', u'fn', u'', u'')
+    PAP.Person ('ln', 'fn', '', '')
 
-    >>> p1.accounts
-    set([Auth.Account_T (u'test-ln+fn@foo.bar')])
+    >>> prepr (p1.accounts)
+    {Auth.Account_T ('test-ln+fn@foo.bar')}
 
     >>> pha1.owner
-    PAP.Person (u'ln', u'fn', u'', u'')
+    PAP.Person ('ln', 'fn', '', '')
 
     >>> PAP.Person_has_Account_Test.query (Q.owner.last_name == "nl").all ()
-    [PAP.Person_has_Account_Test ((u'nl', u'fn', u'', u''), (u'test-nl-fn@foo.bar', ))]
+    [PAP.Person_has_Account_Test (('nl', 'fn', '', ''), ('test-nl-fn@foo.bar', ))]
 
     >>> Auth.Account_T.query (Q.qt.last_name == "ln").count ()
     2
 
     >>> Auth.Account_T.query_s (Q.qt.last_name == "ln").all ()
-    [Auth.Account_T (u'test-ln+fn@foo.bar'), Auth.Account_T (u'test-ln+nf@foo.bar')]
+    [Auth.Account_T ('test-ln+fn@foo.bar'), Auth.Account_T ('test-ln+nf@foo.bar')]
 
     >>> Auth.Account.query_s (Q.person == p1).all ()
-    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+    [Auth.Account_T ('test-ln+fn@foo.bar')]
 
     >>> Auth.Account.query_s (Q.person.first_name == "nf").all ()
-    [Auth.Account_T (u'test-ln+nf@foo.bar')]
+    [Auth.Account_T ('test-ln+nf@foo.bar')]
 
     >>> nicky = PAP.Person_Nickname_Test (p1, 'nicky', raw = True)
     >>> nicky
-    PAP.Person_Nickname_Test ((u'ln', u'fn', u'', u''), u'nicky')
+    PAP.Person_Nickname_Test (('ln', 'fn', '', ''), 'nicky')
 
     >>> wolp = PAP.Wolperdinger ("Wolp", raw = True)
     >>> wolp
-    PAP.Wolperdinger (u'Wolp')
+    PAP.Wolperdinger ('Wolp')
     >>> w = PAP.Wrzlbrmft ('WRZL', wolp, raw = True)
     >>> w
-    PAP.Wrzlbrmft (u'WRZL', (u'Wolp', ))
+    PAP.Wrzlbrmft ('WRZL', ('Wolp', ))
     >>> phw = PAP.Person_has_Wrzlbrmft (p1, w)
     >>> phw
-    PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))
+    PAP.Person_has_Wrzlbrmft (('ln', 'fn', '', ''), ('WRZL', ('Wolp', )))
 
     >>> PAP.Wrzlbrmft.query (Q.my_wolp == wolp).all ()
-    [PAP.Wrzlbrmft (u'WRZL', (u'Wolp', ))]
+    [PAP.Wrzlbrmft ('WRZL', ('Wolp', ))]
 
     >>> PAP.Person_has_Wrzlbrmft.query_s (Q.right == w).all ()
-    [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
+    [PAP.Person_has_Wrzlbrmft (('ln', 'fn', '', ''), ('WRZL', ('Wolp', )))]
 
     >>> PAP.Person_has_Wrzlbrmft.query_s (Q.wrzlbrmft == w).all ()
-    [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
+    [PAP.Person_has_Wrzlbrmft (('ln', 'fn', '', ''), ('WRZL', ('Wolp', )))]
 
     >>> PAP.Person_has_Wrzlbrmft.query_s (Q.wrzlbrmft.my_wolp == wolp).all ()
-    [PAP.Person_has_Wrzlbrmft ((u'ln', u'fn', u'', u''), (u'WRZL', (u'Wolp', )))]
+    [PAP.Person_has_Wrzlbrmft (('ln', 'fn', '', ''), ('WRZL', ('Wolp', )))]
 
     >>> PAP.Person.query_s (Q.wrzlbrmft == w).all ()
-    [PAP.Person (u'ln', u'fn', u'', u'')]
+    [PAP.Person ('ln', 'fn', '', '')]
 
     >>> PAP.Person.query_s (Q.wrzlbrmft.wolp == wolp).all ()
-    [PAP.Person (u'ln', u'fn', u'', u'')]
+    [PAP.Person ('ln', 'fn', '', '')]
 
     >>> PAP.Person.query_s (Q.wrzlbrmft.my_wolp == wolp).all ()
-    [PAP.Person (u'ln', u'fn', u'', u'')]
+    [PAP.Person ('ln', 'fn', '', '')]
 
     >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.wolp == wolp).all ()
-    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+    [Auth.Account_T ('test-ln+fn@foo.bar')]
 
     >>> Auth.Account_T.query_s (Q.person.wrzlbrmft.my_wolp == wolp).all ()
-    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+    [Auth.Account_T ('test-ln+fn@foo.bar')]
 
     >>> Auth.Account_T.query_s (Q.p_wrzl.my_wolp == wolp).all ()
-    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+    [Auth.Account_T ('test-ln+fn@foo.bar')]
 
     >>> Auth.Account_T.query_s (Q.p_nick.name == "nicky").all ()
-    [Auth.Account_T (u'test-ln+fn@foo.bar')]
+    [Auth.Account_T ('test-ln+fn@foo.bar')]
 
 """
 

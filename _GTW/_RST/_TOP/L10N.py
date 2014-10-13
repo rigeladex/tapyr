@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -48,6 +48,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 from   posixpath                import join  as pp_join
 
@@ -84,6 +85,7 @@ class _Language_ (_Ancestor) :
 
 # end class _Language_
 
+@pyk.adapt__bool__
 class L10N (GTW.RST.TOP.Dir) :
     """Navigation directory supporting language selection."""
 
@@ -117,7 +119,7 @@ class L10N (GTW.RST.TOP.Dir) :
         key    = tuple (lang)
         result = self._flag_map.get (key)
         if result is None :
-            if isinstance (lang, basestring) :
+            if isinstance (lang, pyk.string_types) :
                 lang = lang.split ("_")
             check    = self.static_handler.get_path
             map      = self.country_map
@@ -140,9 +142,9 @@ class L10N (GTW.RST.TOP.Dir) :
             return result
     # end def _get_child
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.languages)
-    # end def __nonzero__
+    # end def __bool__
 
 # end class L10N
 

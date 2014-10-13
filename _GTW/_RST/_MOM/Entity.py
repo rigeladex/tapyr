@@ -70,6 +70,7 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 import _TFL.Undef
@@ -292,7 +293,7 @@ class _RST_MOM_Entity_ (GTW.RST.MOM.Entity_Mixin, _Ancestor) :
         assert "name" not in kw
         self.pop_to_self (kw, "ETM", prefix = "_")
         obj = kw.pop ("obj")
-        if isinstance (obj, (int, long, basestring)) :
+        if isinstance (obj, pyk.int_types + pyk.string_types) :
             obj   = self.scope.pid_query (obj)
         self.obj  = obj
         self.name = str (obj.pid)

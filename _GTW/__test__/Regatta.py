@@ -36,6 +36,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -45,26 +47,26 @@ _test_code = """
     >>> bc  = SRM.Boat_Class (u"Optimist", max_crew = 1)
     >>> ys  = SRM.Handicap ("Yardstick")
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", ("20080501", ), raw = True)
-    >>> rev.epk_raw
-    (u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event')
+    >>> prepr (rev.epk_raw)
+    ('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event')
     >>> SRM.Regatta_Event.instance (* rev.epk_raw, raw = True)
-    SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))
+    SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))
     >>> SRM.Regatta_Event.instance (* rev.epk)
-    SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))
+    SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01'))
     >>> reg = SRM.Regatta_C (rev.epk_raw, boat_class = bc.epk_raw, result = ("2008-05-01 17:21", ), raw = True)
-    >>> reg.epk_raw
-    ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C')
+    >>> prepr (reg.epk_raw)
+    (('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event'), ('Optimist', 'SRM.Boat_Class'), 'SRM.Regatta_C')
     >>> SRM.Regatta_C.instance (* reg.epk_raw, raw = True)
-    SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ))
+    SRM.Regatta_C (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', ))
     >>> SRM.Regatta_C.instance (* reg.epk)
-    SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ))
+    SRM.Regatta_C (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', ))
     >>> reh = SRM.Regatta_H (rev.epk_raw, ys,  raw = True)
-    >>> reh.epk_raw
-    ((u'Himmelfahrt', (('finish', u'2008-05-01'), ('start', u'2008-05-01')), 'SRM.Regatta_Event'), (u'Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H')
+    >>> prepr (reh.epk_raw)
+    (('Himmelfahrt', (('finish', '2008-05-01'), ('start', '2008-05-01')), 'SRM.Regatta_Event'), ('Yardstick', 'SRM.Handicap'), 'SRM.Regatta_H')
     >>> SRM.Regatta_H.instance (* reh.epk_raw, raw = True)
-    SRM.Regatta_H ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', ))
+    SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))
     >>> SRM.Regatta_H.instance (* reh.epk)
-    SRM.Regatta_H ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', ))
+    SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))
 
     >>> reg.result
     SRM.Regatta_Result ('2008-05-01 17:21:00')
@@ -88,39 +90,39 @@ _test_code = """
     '2008-05-01 13:21:00'
 
     >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008-05-01").all ()
-    [SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', ))]
+    [SRM.Regatta_C (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', )), SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))]
 
-    >>> print reg.sorted_by
+    >>> print (reg.sorted_by)
     <Sorted_By: Getter function for `.left.name`, Getter function for `.left.date.start`, Getter function for `.left.date.finish`, Getter function for `.boat_class.name`>
-    >>> print reh.sorted_by
+    >>> print (reh.sorted_by)
     <Sorted_By: Getter function for `.left.name`, Getter function for `.left.date.start`, Getter function for `.left.date.finish`, Getter function for `.boat_class.name`>
 
     >>> sk = TFL.Sorted_By (scope.MOM.Id_Entity.sort_key)
-    >>> print sk (reg)
-    (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'optimist'))),)
-    >>> print sk (reh)
-    (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'yardstick'))),)
+    >>> prepr (sk (reg))
+    (('tuple', (('tuple', ('text-string', 'himmelfahrt')), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('text-string', 'optimist')))),)
+    >>> prepr (sk (reh))
+    (('tuple', (('tuple', ('text-string', 'himmelfahrt')), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('text-string', 'yardstick')))),)
 
     >>> SRM.Regatta.query_s (Q.RAW.left.date.start == "2008-05-01").order_by (sk).all ()
-    [SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', ))]
+    [SRM.Regatta_C (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', )), SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))]
 
     >>> scope.MOM.Id_Entity.query_s ().order_by (sk).all ()
-    [SRM.Regatta_Event (u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', )), SRM.Boat_Class (u'optimist'), PAP.Person (u'tanzer', u'christian', u'', u''), SRM.Handicap (u'yardstick')]
+    [SRM.Regatta_Event ('himmelfahrt', ('2008-05-01', '2008-05-01')), SRM.Regatta_C (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', )), SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', )), SRM.Boat_Class ('optimist'), PAP.Person ('tanzer', 'christian', '', ''), SRM.Handicap ('yardstick')]
 
     >>> for x in scope.MOM.Id_Entity.query_s ().order_by (sk) :
-    ...    print x, NL, "   ", sk (x)
-    (u'himmelfahrt', (u'2008-05-01', u'2008-05-01'))
-        (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)))),)
-    ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', ))
-        (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'optimist'))),)
-    ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', ))
-        (('tuple', (('unicode', u'himmelfahrt'), ('date', datetime.date(2008, 5, 1)), ('date', datetime.date(2008, 5, 1)), ('unicode', u'yardstick'))),)
-    (u'optimist')
-        (('tuple', (('unicode', u'optimist'),)),)
-    (u'tanzer', u'christian', u'', u'')
-        (('tuple', (('unicode', u'tanzer'), ('unicode', u'christian'), ('unicode', u''), ('unicode', u''))),)
-    (u'yardstick')
-        (('tuple', (('unicode', u'yardstick'),)),)
+    ...    print (x, NL, "   ", portable_repr (sk (x)))
+    ('himmelfahrt', ('2008-05-01', '2008-05-01'))
+         (('tuple', (('tuple', ('text-string', 'himmelfahrt')), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('date', datetime.date(2008, 5, 1))))),)
+    (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', ))
+         (('tuple', (('tuple', ('text-string', 'himmelfahrt')), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('text-string', 'optimist')))),)
+    (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))
+         (('tuple', (('tuple', ('text-string', 'himmelfahrt')), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('date', datetime.date(2008, 5, 1))), ('tuple', ('text-string', 'yardstick')))),)
+    ('optimist')
+         (('tuple', (('tuple', ('text-string', 'optimist')),)),)
+    ('tanzer', 'christian', '', '')
+         (('tuple', (('tuple', ('text-string', 'tanzer')), ('tuple', ('text-string', 'christian')), ('tuple', ('text-string', '')), ('tuple', ('text-string', '')))),)
+    ('yardstick')
+         (('tuple', (('tuple', ('text-string', 'yardstick')),)),)
 
 #    ### XXX auto cached roles are currently not supported
 #    ### XXX * either remove tests or re-add auto-cached roles and fix tests
@@ -132,11 +134,11 @@ _test_code = """
 #    [<Link_Cacher_n (GTW.OMP.SRM.Regatta_H) event --> regattas>]
 
     >>> crs = SRM.Regatta_Event.regattas
-    >>> print crs, ":", crs.Ref_Type.type_name
+    >>> print (crs, ":", crs.Ref_Type.type_name)
     Link_Ref_List `regattas` : SRM.Regatta
 
-    >>> sorted (rev.regattas)
-    [SRM.Regatta_C ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'optimist', )), SRM.Regatta_H ((u'himmelfahrt', (u'2008-05-01', u'2008-05-01')), (u'yardstick', ))]
+    >>> sorted (rev.regattas, key = TFL.Sorted_By ())
+    [SRM.Regatta_C (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('optimist', )), SRM.Regatta_H (('himmelfahrt', ('2008-05-01', '2008-05-01')), ('yardstick', ))]
 
 """
 

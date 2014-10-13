@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This modify is part of the package GTW.OMP.SRM.
@@ -40,6 +40,7 @@ from   _MOM.import_MOM          import *
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import Re_Replacer, re
 
 _Ancestor_Essence = GTW.OMP.SRM.Object
@@ -67,7 +68,7 @@ class Club (_Ancestor_Essence) :
             @TFL.Meta.Class_and_Instance_Method
             def cooked (soc, value) :
                 if value is not None :
-                    return soc._clean (unicode (value))
+                    return soc._clean (pyk.text_type (value))
                 return value
             # end def cooked
 

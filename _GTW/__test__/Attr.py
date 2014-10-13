@@ -44,6 +44,7 @@ import _GTW._OMP._SRM.import_SRM
 
 from   _GTW.__test__.model import *
 from   _MOM.inspect        import children_trans_iter
+from   _TFL.pyk            import pyk
 
 def _attr_map (Top) :
     result = TFL.defaultdict (list)
@@ -1170,80 +1171,82 @@ _test_pickled_types = """
     ...     if kind.save_to_db and not kind.is_composite :
     ...         pt = kind.Pickled_Type
     ...         if pt :
-    ...             p_types.add (pt.p_type.__name__)
-    ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, kind.typ, pt.__name__, pt.max_length, pt.max_ui_length, pt.length))
-    abstract             Text            unicode              0   120     0
-    address              Email           unicode             80    81    80
-    area_code            Numeric_String  unicode              5     6     5
+    ...             pn = pt.__name__
+    ...             pn = portable_repr.Type_Name_Map.get (pn, pn)
+    ...             p_types.add (pn)
+    ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, kind.typ, pn, pt.max_length, pt.max_ui_length, pt.length))
+    abstract             Text            text-string          0   120     0
+    address              Email           text-string         80    81    80
+    area_code            Numeric_String  text-string          5     6     5
     beam                 Float           float             None    22    22
     boat_class           Entity          _Boat_Class_      None    20    20
     calendar             Entity          Calendar          None    20    20
-    city                 String          unicode             30    31    30
+    city                 String          text-string         30    31    30
     club                 Entity          Club              None    20    20
     club                 Entity          Club              None    20    20
     club                 Entity          Club              None    20    20
-    contents             Text            unicode              0   120     0
-    contents             Text            unicode              0   120     0
+    contents             Text            text-string          0   120     0
+    contents             Text            text-string          0   120     0
     count                Int             int               None     1     1
-    country              String          unicode             20    21    20
-    country_code         Numeric_String  unicode              3     4     3
+    country              String          text-string         20    21    20
+    country_code         Numeric_String  text-string          3     4     3
     date                 Date            date              None    12    12
-    date_exceptions      Date_List       str                  0    20     0
-    dates                Date_List       str                  0    20     0
-    desc                 String          unicode             80    81    80
-    desc                 String          unicode             20    21    20
-    desc                 String          unicode             20    21    20
-    desc                 String          unicode             20    21    20
-    desc                 String          unicode             30    31    30
-    desc                 String          unicode            160   161   160
-    desc                 String          unicode            160   161   160
-    detail               String          unicode            160   161   160
-    directory            Directory       str                  0   120     0
+    date_exceptions      Date_List       byte-string          0    20     0
+    dates                Date_List       byte-string          0    20     0
+    desc                 String          text-string         80    81    80
+    desc                 String          text-string         20    21    20
+    desc                 String          text-string         20    21    20
+    desc                 String          text-string         20    21    20
+    desc                 String          text-string         30    31    30
+    desc                 String          text-string        160   161   160
+    desc                 String          text-string        160   161   160
+    detail               String          text-string        160   161   160
+    directory            Directory       byte-string          0   120     0
     discarded            Boolean         bool              None     5     5
     discards             Int             int               None     3     3
-    download_name        String          unicode             64    65    64
-    easter_offset        Int_List        str                  0    20     0
+    download_name        String          text-string         64    65    64
+    easter_offset        Int_List        byte-string          0    20     0
     event                Entity          Regatta_Event     None    20    20
-    extension            Numeric_String  unicode              5     6     5
+    extension            Numeric_String  text-string          5     6     5
     finish               Date            date              None    12    12
-    first_name           String          unicode             32    33    32
-    format               Format          unicode              8     9     8
-    head_line            String          unicode            256   257   256
+    first_name           String          text-string         32    33    32
+    format               Format          text-string          8     9     8
+    head_line            String          text-string        256   257   256
     hidden               Boolean         bool              None     5     5
     is_cancelled         Boolean         bool              None     5     5
     is_cancelled         Boolean         bool              None     5     5
     is_exception         Boolean         bool              None     5     5
     is_team_race         Boolean         bool              None     5     5
     key                  Int             int               None    20    20
-    kind                 String          unicode             32    33    32
+    kind                 String          text-string         32    33    32
     last_cid             Int             int               None    20    20
-    last_name            String          unicode             48    49    48
+    last_name            String          text-string         48    49    48
     leader               Entity          Person            None    20    20
-    link_to              Url             unicode            160   161   160
+    link_to              Url             text-string        160   161   160
     loa                  Float           float             None    22    22
-    long_name            String          unicode             64    65    64
+    long_name            String          text-string         64    65    64
     max_crew             Int             int               None     2     2
-    middle_name          String          unicode             32    33    32
+    middle_name          String          text-string         32    33    32
     mna_number           Int             int               None     7     7
-    month                Int_List        str                  0    20     0
-    month_day            Int_List        str                  0    20     0
-    name                 Name            unicode             32    33    32
-    name                 String          unicode             64    65    64
-    name                 String          unicode             48    49    48
-    name                 String          unicode              8     9     8
-    name                 String          unicode             64    65    64
-    name                 String          unicode             64    65    64
-    name                 String          unicode             48    49    48
-    name                 String          unicode            100   101   100
-    nation               Nation          unicode              3    20     3
-    nation               Nation          unicode              3    20     3
-    number               Numeric_String  unicode             14    15    14
+    month                Int_List        byte-string          0    20     0
+    month_day            Int_List        byte-string          0    20     0
+    name                 Name            text-string         32    33    32
+    name                 String          text-string         64    65    64
+    name                 String          text-string         48    49    48
+    name                 String          text-string          8     9     8
+    name                 String          text-string         64    65    64
+    name                 String          text-string         64    65    64
+    name                 String          text-string         48    49    48
+    name                 String          text-string        100   101   100
+    nation               Nation          text-string          3    20     3
+    nation               Nation          text-string          3    20     3
+    number               Numeric_String  text-string         14    15    14
     number               Int             int               None    20    20
-    parent_url           Url             unicode            160   161   160
+    parent_url           Url             text-string        160   161   160
     period               Int             int               None     1     1
-    perma_name           String          unicode             64    65    64
-    perma_name           String          unicode             64    65    64
-    perma_name           Date-Slug       unicode             80    81    80
+    perma_name           String          text-string         64    65    64
+    perma_name           String          text-string         64    65    64
+    perma_name           Date-Slug       text-string         80    81    80
     pid                  Surrogate       int               None    20    20
     place                Int             int               None     1     1
     place                Int             int               None     1     1
@@ -1254,36 +1257,36 @@ _test_pickled_types = """
     race                 Int             int               None     3     3
     races                Int             int               None     3     3
     rank                 Int             int               None    20    20
-    region               String          unicode             20    21    20
-    registered_in        String          unicode             64    65    64
+    region               String          text-string         20    21    20
+    registered_in        String          text-string         64    65    64
     registration_date    Date            date              None    12    12
     registration_date    Date            date              None    12    12
-    restrict_pos         Int_List        str                  0    20     0
-    role                 String          unicode             32    33    32
+    restrict_pos         Int_List        byte-string          0    20     0
+    role                 String          text-string         32    33    32
     sail_area            Float           float             None    22    22
     sail_number          Int             int               None     7     7
-    sail_number_x        String          unicode              8     9     8
-    sex                  Sex             unicode              1     2     1
-    short_name           String          unicode             12    13    12
-    short_title          String          unicode             30    31    30
-    short_title          String          unicode             30    31    30
+    sail_number_x        String          text-string          8     9     8
+    sex                  Sex             text-string          1     2     1
+    short_name           String          text-string         12    13    12
+    short_title          String          text-string         30    31    30
+    short_title          String          text-string         30    31    30
     skipper              Entity          Sailor            None    20    20
     start                Date            date              None    12    12
     starters_rl          Int             int               None    20    20
-    status               String          unicode              8     9     8
-    street               String          unicode             60    61    60
-    target_url           Url             unicode            160   161   160
-    text                 Text            unicode              0   120     0
-    title                String          unicode             20    21    20
-    title                String          unicode            120   121   120
-    type_name            String          unicode             64    65    64
+    status               String          text-string          8     9     8
+    street               String          text-string         60    61    60
+    target_url           Url             text-string        160   161   160
+    text                 Text            text-string          0   120     0
+    title                String          text-string         20    21    20
+    title                String          text-string        120   121   120
+    type_name            String          text-string         64    65    64
     unit                 Unit            int               None    20    20
-    value                Url             unicode            160   161   160
-    week                 Int_List        str                  0    20     0
-    week_day             Weekday_RR_List str                  0    20     0
+    value                Url             text-string        160   161   160
+    week                 Int_List        byte-string          0    20     0
+    week_day             Weekday_RR_List byte-string          0    20     0
     year                 Int             int               None     5     5
-    year_day             Int_List        str                  0    20     0
-    zip                  String          unicode              6     7     6
+    year_day             Int_List        byte-string          0    20     0
+    zip                  String          text-string          6     7     6
 
     >>> for p in sorted (p_types) :
     ...     print (p)
@@ -1294,38 +1297,40 @@ _test_pickled_types = """
     Sailor
     _Boat_Class_
     bool
+    byte-string
     date
     float
     int
-    str
-    unicode
+    text-string
 
     >>> for (name, DT), xs in sorted (pyk.iteritems (a_map)) :
     ...     kind, ET = xs [0]
     ...     if kind.save_to_db and not kind.is_composite :
     ...         pt = kind.Pickled_Type_Raw
     ...         if pt :
-    ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, kind.typ, pt.__name__, pt.max_length, pt.max_ui_length, pt.length))
-    address              Email           unicode             80    81    80
-    city                 String          unicode             30    31    30
-    country              String          unicode             20    21    20
-    first_name           String          unicode             32    33    32
-    last_name            String          unicode             48    49    48
-    middle_name          String          unicode             32    33    32
-    mna_number           Int             unicode           None     7     7
-    name                 String          unicode             64    65    64
-    name                 String          unicode              8     9     8
-    name                 String          unicode             64    65    64
-    name                 String          unicode             64    65    64
-    name                 String          unicode             48    49    48
-    region               String          unicode             20    21    20
-    registered_in        String          unicode             64    65    64
-    sail_number          Int             unicode           None     7     7
-    sail_number_x        String          unicode              8     9     8
-    short_name           String          unicode             12    13    12
-    street               String          unicode             60    61    60
-    title                String          unicode             20    21    20
-    zip                  String          unicode              6     7     6
+    ...             pn = pt.__name__
+    ...             pn = portable_repr.Type_Name_Map.get (pn, pn)
+    ...             print ("%%-20s %%-15s %%-15s %%6s %%5d %%5d" %% (kind.name, kind.typ, pn, pt.max_length, pt.max_ui_length, pt.length))
+    address              Email           text-string         80    81    80
+    city                 String          text-string         30    31    30
+    country              String          text-string         20    21    20
+    first_name           String          text-string         32    33    32
+    last_name            String          text-string         48    49    48
+    middle_name          String          text-string         32    33    32
+    mna_number           Int             text-string       None     7     7
+    name                 String          text-string         64    65    64
+    name                 String          text-string          8     9     8
+    name                 String          text-string         64    65    64
+    name                 String          text-string         64    65    64
+    name                 String          text-string         48    49    48
+    region               String          text-string         20    21    20
+    registered_in        String          text-string         64    65    64
+    sail_number          Int             text-string       None     7     7
+    sail_number_x        String          text-string          8     9     8
+    short_name           String          text-string         12    13    12
+    street               String          text-string         60    61    60
+    title                String          text-string         20    21    20
+    zip                  String          text-string          6     7     6
 
 """
 

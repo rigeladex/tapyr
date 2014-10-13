@@ -52,16 +52,16 @@ _test_code = """
     >>> ta = PAP.Association ("Towel Carriers Association", short_name = "TCA", raw = True)
 
     >>> print (p1.ui_repr)
-    PAP.Person (u'Doe', u'Jane', u'', u'')
+    PAP.Person ('Doe', 'Jane', '', '')
 
     >>> print (bm.ui_repr)
-    PAP.Biz_Man ((u'Doe', u'Jane', u'', u'', 'PAP.Person'),)
+    PAP.Biz_Man (('Doe', 'Jane', '', '', 'PAP.Person'),)
 
     >>> print (cp.ui_repr)
-    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
+    PAP.Company_P ('Doe, Inc.', (('Doe', 'Jane', '', '', 'PAP.Person'), 'PAP.Biz_Man'), '')
 
     >>> print (ta.ui_repr)
-    PAP.Association (u'Towel Carriers Association',)
+    PAP.Association ('Towel Carriers Association',)
 
     >>> scope.commit ()
 
@@ -107,17 +107,17 @@ _test_code = """
 
     >>> for s in PAP.Subject.query ().order_by (TFL.Sorted_By ("type_name", "pid")) :
     ...     print (s.ui_repr)
-    PAP.Association (u'Towel Carriers Association',)
-    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
-    PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
-    PAP.Person (u'Doe', u'Jane', u'', u'')
+    PAP.Association ('Towel Carriers Association',)
+    PAP.Company_P ('Doe, Inc.', (('Doe', 'Jane', '', '', 'PAP.Person'), 'PAP.Biz_Man'), '')
+    PAP.Company_P ("Jane's, Inc.", (('Doe', 'Jane', '', '', 'PAP.Person'), 'PAP.Biz_Man'), '')
+    PAP.Person ('Doe', 'Jane', '', '')
 
     >>> for s in PAP.Subject.query_s () :
     ...     print (s.ui_repr)
-    PAP.Person (u'Doe', u'Jane', u'', u'')
-    PAP.Company_P (u'Doe, Inc.', ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
-    PAP.Company_P (u"Jane's, Inc.", ((u'Doe', u'Jane', u'', u'', 'PAP.Person'), 'PAP.Biz_Man'), u'')
-    PAP.Association (u'Towel Carriers Association',)
+    PAP.Person ('Doe', 'Jane', '', '')
+    PAP.Company_P ('Doe, Inc.', (('Doe', 'Jane', '', '', 'PAP.Person'), 'PAP.Biz_Man'), '')
+    PAP.Company_P ("Jane's, Inc.", (('Doe', 'Jane', '', '', 'PAP.Person'), 'PAP.Biz_Man'), '')
+    PAP.Association ('Towel Carriers Association',)
 
     >>> sk = lambda x : (not bool (x.children), x.i_rank)
     >>> for i, (T, l) in enumerate (children_trans_iter (PAP.Subject, sort_key = sk)) :
@@ -3188,6 +3188,7 @@ _test_saw = """
 from   _GTW.__test__.model      import *
 from   _MOM.import_MOM          import Q
 from   _MOM.inspect             import children_trans_iter
+from   _TFL.pyk                 import pyk
 
 import _GTW._OMP._PAP.Association
 import _GTW._RST._TOP._MOM.Query_Restriction
@@ -3253,7 +3254,7 @@ def T_attrs (T, seen = None) :
         , MOM.Attr._A_Id_Entity_Collection_
         )
     def _gen () :
-        for n, a in sorted (T.attributes.iteritems ()) :
+        for n, a in sorted (pyk.iteritems (T.attributes)) :
             attr = a.attr
             PT   = attr.P_Type
             if PT and isinstance (attr, Ref_Attr_Types) :
@@ -3273,7 +3274,7 @@ def show_T_attrs (Root, format, seen, sk, lead = ".") :
                 RT = getattr (getattr (a, "Ref_Type", None), "type_name", "")
                 if not RT :
                     RT = getattr (a, "assoc", "")
-                    if not isinstance (RT, basestring) :
+                    if not isinstance (RT, pyk.string_types) :
                         RT = getattr (RT, "type_name", "")
                 if RT.startswith ("GTW.OMP.") :
                     RT = RT [len ("GTW.OMP."):]

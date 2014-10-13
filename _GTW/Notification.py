@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -51,18 +51,21 @@ Short test for the notification framework
     True
     >>> session2.notifications
     [Notification ('Password reset mail has been sent', datetime.datetime(2010, 2, 20, 11, 42, 42)), Notification ('User has been logged out', datetime.datetime(2010, 2, 20, 11, 42))]
-    >>> print session2.notifications.discarge ()
+    >>> print (session2.notifications.discarge ())
     User has been logged out
     Password reset mail has been sent
-    >>> print session2.notifications.discarge ()
+    >>> print (session2.notifications.discarge ())
     <BLANKLINE>
     >>> session.remove ()
 """
 
-from   _TFL                import TFL
-import _TFL._Meta.Object
+from   __future__          import print_function
 
 from   _GTW                import GTW
+from   _TFL                import TFL
+from   _TFL.pyk            import pyk
+
+import _TFL._Meta.Object
 
 import  datetime
 
@@ -80,10 +83,11 @@ class M_Notification_Collection (TFL.Meta.Object.__class__) :
 
 # end class M_Notification_Collection
 
-class Notification_Collection (TFL.Meta.Object) :
+class Notification_Collection \
+          ( TFL.Meta.BaM
+              (TFL.Meta.Object, metaclass = M_Notification_Collection)
+          ) :
     """Collection of all notifications for a session."""
-
-    __metaclass__ = M_Notification_Collection
 
     def __init__ (self) :
         self._notifications = []
@@ -114,7 +118,7 @@ class Notification_Collection (TFL.Meta.Object) :
             result.append (head)
             result.append \
                 ( joiner.join
-                    (  unicode (s)
+                    (  pyk.text_type (s)
                     for s in sorted (items, key = lambda n : n.time)
                     )
                 )
@@ -125,6 +129,7 @@ class Notification_Collection (TFL.Meta.Object) :
 
 # end class Notification_Collection
 
+@pyk.adapt__str__
 class Notification (TFL.Meta.Object) :
     """A notification based on plain text."""
 
@@ -137,13 +142,9 @@ class Notification (TFL.Meta.Object) :
         return self.message
     # end def __str__
 
-    def __unicode__ (self) :
-        return self.message
-    # end def __unicode__
-
     def __repr__ (self) :
-        return \
-           "%s (%r, %r)" % (self.__class__.__name__, self.message, self.time)
+        return pyk.reprify \
+            ("%s (%r, %r)" % (self.__class__.__name__, self.message, self.time))
     # end def __repr__
 
 # end class Notification

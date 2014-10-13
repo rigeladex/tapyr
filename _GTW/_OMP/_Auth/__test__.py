@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -34,6 +34,10 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
+from   _TFL.pyk                 import pyk
+
 """
 Test if we can set a e-type specific manager class
     >>> scope.Auth.Account.__class__
@@ -60,12 +64,12 @@ Now, let's test the login/logout handlers
     True
     >>> handler = POST  ("/account/login")
     >>> form = handler.context ["login_form"]
-    >>> sorted (form.field_errors.iteritems ())
+    >>> sorted (pyk.iteritems (form.field_errors))
     [('password', [u'The password is required.']), ('username', [u'A user name is required to login.'])]
     >>> handler = POST \\
     ...   ( "/account/login", username = acc1.name, password = "passwd2")
     >>> form = handler.context ["login_form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([u'Username or password incorrect'], [])
     >>> handler = POST \\
     ...  ("/account/login", username = acc1.name, password = "passwd1", next = "/next")
@@ -83,15 +87,15 @@ Now, let's test the login/logout handlers
     False
     >>> handler.session.get ("username") is None
     True
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     Logout successfull.
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     <BLANKLINE>
     >>> handler = GET ("/account/logout", headers = dict (Referer = "/i-was-here"))
     Traceback (most recent call last):
         ...
     Redirect_302: /i-was-here
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     Logout successfull.
 
     >>> handler = POST ("/account/login", username = acc1.name, password = "passwd1")
@@ -125,21 +129,21 @@ Test the password change
     >>> [f.name for f in handler.context ["form"].fields]
     ['password', 'npassword1', 'npassword2']
     >>> handler = POST (cpwd_url)
-    >>> sorted (handler.context ["form"].field_errors.iteritems ())
+    >>> sorted (pyk.iteritems (handler.context ["form"].field_errors))
     [('npassword1', [u'The new password is required.']), ('npassword2', [u'Please repeat the new password.']), ('password', [u'The old password is required.'])]
     >>> handler = POST (cpwd_url, password = "?", npassword1 = "new-passwd", npassword2 = "new-passwd")
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([u'One of the passwords is incorrect'], [])
     >>> handler = POST (cpwd_url, password = "passwd1", npassword1 = "passwd1", npassword2 = "passwd2")
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([u"Passwords don't match."], [])
     >>> handler = POST (cpwd_url, password = "passwd1", npassword1 = "passwdn", npassword2 = "passwdn")
     Traceback (most recent call last):
         ....
     Redirect_302: /
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     The password has been changed.
     >>> acc1.verify_password ("passwdn")
     True
@@ -154,7 +158,7 @@ Next, we test the reset password functions
     Traceback (most recent call last):
         ....
     Redirect_302: /
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     The reset password instructions have been sent to your email address.
 
     >>> acc2.active
@@ -163,7 +167,7 @@ Next, we test the reset password functions
     Traceback (most recent call last):
         ....
     Redirect_302: /
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     The reset password instructions have been sent to your email address.
     >>> reset_pwd  = scope.Auth.Account_Password_Reset.query (account = acc2).all ()
     >>> new_password_1 = reset_pwd [0].password
@@ -219,7 +223,7 @@ Account activation
     >>> handler = GET ("/account/activate")
     >>> handler = POST ("/account/activate")
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([], [('npassword1', [u'The new password is required.']), ('npassword2', [u'Please repeat the new password.']), ('password', [u'The password is required.']), ('username', [u'A user name is required to login.'])])
     >>> handler = POST \\
     ...   ( "/account/activate", username = acc3.name, password = "?"
@@ -227,7 +231,7 @@ Account activation
     ...   , npassword2 = "passwd3"
     ...   )
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([u'Username or password incorrect'], [])
     >>> handler = POST \\
     ...   ( "/account/activate", username = acc3.name, password = temp_passwd
@@ -237,7 +241,7 @@ Account activation
     Traceback (most recent call last):
        ...
     Redirect_302: /
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     Activation successfull.
     >>> acc3.verify_password ("passwd3")
     True
@@ -250,19 +254,19 @@ Change E-Mail address
     >>> handler = GET  (cp_url)
     >>> handler = POST (cp_url)
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([], [('new_email', [u'The new E-Mail address is required.']), ('password', [u'The old password is required.'])])
     >>> handler = POST \\
     ...   (cp_url, password = "passwd4", new_email = "user4@example.com")
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([], [('password', [u'The password is incorrect'])])
     >>> handler = POST \\
     ...   (cp_url, password = "passwd3", new_email = "user4@example.com")
     Traceback (most recent call last):
         ...
     Redirect_302: /
-    >>> print handler.session.notifications.discarge ()
+    >>> print (handler.session.notifications.discarge ())
     A confirmation email has been sent to the new email address.
     >>> verify_links = scope.Auth.Account_EMail_Verification.query ().all ()
     >>> len (verify_links)
@@ -286,7 +290,7 @@ Register account
     >>> handler = GET  ("/account/register")
     >>> handler = POST ("/account/register")
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([], [('npassword1', [u'The new password is required.']), ('npassword2', [u'Please repeat the new password.']), ('username', [u'A user name is required to login.'])])
     >>> handler = POST \\
     ...     ( "/account/register"
@@ -295,7 +299,7 @@ Register account
     ...     , npassword2 = "passwd6"
     ...     )
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([], [('username', [u'This username is already in use.'])])
     >>> handler = POST \\
     ...     ( "/account/register"
@@ -304,7 +308,7 @@ Register account
     ...     , npassword2 = "passwd6"
     ...     )
     >>> form = handler.context ["form"]
-    >>> form.errors, sorted (form.field_errors.iteritems ())
+    >>> form.errors, sorted (pyk.iteritems (form.field_errors))
     ([u"Passwords don't match."], [])
     >>> handler = POST \\
     ...     ( "/account/register"

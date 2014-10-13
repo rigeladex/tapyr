@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -42,6 +42,7 @@ import _GTW._RST._MOM
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.pyk                 import pyk
 from   _TFL.predicate           import callable
 
 from   posixpath                import join as pp_join
@@ -49,6 +50,7 @@ from   posixpath                import join as pp_join
 import json
 import requests
 
+@pyk.adapt__bool__
 class _Entity_ (TFL.Meta.Object) :
     """Base class for Object and Resource"""
 
@@ -148,9 +150,9 @@ class _Entity_ (TFL.Meta.Object) :
             return iter (entries)
     # end def __iter__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._result)
-    # end def __nonzero__
+    # end def __bool__
 
     def __setattr__ (self, name, value) :
         if name.startswith ("_") :
@@ -260,7 +262,7 @@ class Requester (TFL.Meta.Object) :
         self.session = s = requests.Session ()
         if params :
             s.params.update (params)
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             setattr (s, k, v)
         s.headers.update ({ "Content-Type" : "application/json" })
     # end def __init__

@@ -63,6 +63,7 @@
 #     7-Jan-2014 (CT) Fix ancestor of `_Logout_.POST`
 #                     (use `_Cmd_`, not `_Form_Cmd_`)
 #     3-Sep-2014 (CT) Add message to `Forbidden` of `_skip_render`
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
@@ -83,13 +84,14 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.Filename            import Filename
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 from   posixpath                import join  as pp_join
-from   urllib                   import urlencode
 
 import datetime
 import time
-import urlparse
+
+urlparse = pyk.urlparse
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -601,11 +603,11 @@ class _Make_Cert_ (_Ancestor) :
     POST = _Make_Cert__POST_ # end class
 
     def _challenge_hash (self, request) :
-        scope = self.top.scope
-        user  = request.user
-        sig   = "%s:::%s" %     (scope.db_meta_data.dbid, user.name)
-        hash  = self.hash_fct   (sig).digest ()
-        return self.b64_encoded (hash, altchars = b":-")
+        scope  = self.top.scope
+        user   = request.user
+        sig    = "%s:::%s" %   (scope.db_meta_data.dbid, user.name)
+        result = self.hash_fct (sig).b64digest (altchars = b":-", strip = True)
+        return result
     # end def _challenge_hash
 
 # end class _Make_Cert_
@@ -835,7 +837,7 @@ class Auth (_Ancestor) :
     # end def href_reset_password
 
     def _href_q (self, * args, ** kw) :
-        return "%s?%s" % (pp_join (* args), urlencode (kw))
+        return "%s?%s" % (pp_join (* args), pyk.urlencode (kw))
     # end def _href_q
 
     def _new_child (self, T, child, grandchildren) :

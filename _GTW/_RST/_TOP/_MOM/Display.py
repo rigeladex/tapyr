@@ -59,6 +59,7 @@ from   _MOM.import_MOM          import MOM, Q
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 from   posixpath                import join  as pp_join
 
@@ -205,7 +206,8 @@ class _TOP_MOM_E_Type_Archive_ (E_Type) :
             self._entry_map = {}
             self._entries   = []
             def _years (self, year) :
-                for y in xrange (year + 1, self.top.copyright_start - 1, -1) :
+                for y in pyk.xrange \
+                        (year + 1, self.top.copyright_start - 1, -1) :
                     yp  = self.Year \
                         ( name      = str (y)
                         , page_args = self.page_args

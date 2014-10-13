@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
@@ -42,6 +42,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
 
 import _GTW._RST.Resource
 import _GTW._RST._MOM.E_Type
@@ -82,13 +83,13 @@ class _RST_MOM_Scope_ (_Ancestor) :
     # end def __init__
 
     def href_e_type (self, e_type) :
-        if not isinstance (e_type, basestring) :
+        if not isinstance (e_type, pyk.string_types) :
             e_type = e_type.type_name
         return pp_join (self.abs_href, e_type.replace (".", "-"))
     # end def href_obj
 
     def resource_from_e_type (self, e_type) :
-        if not isinstance (e_type, basestring) :
+        if not isinstance (e_type, pyk.string_types) :
             e_type = getattr (e_type, "type_name")
         result = self._entry_map.get (e_type.replace (".", "-"))
         return result

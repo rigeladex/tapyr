@@ -49,49 +49,48 @@ _test_code = r"""
     >>> SWP = scope.SWP
 
     >>> SWP.Page_U ("foo", text = "U", format = SWP.Format.ReST)
-    SWP.Page_U (u'foo')
+    SWP.Page_U ('foo')
     >>> scope.commit ()
 
     >>> SWP.Page_U.query_s (perma_name = "foo").all ()
-    [SWP.Page_U (u'foo')]
+    [SWP.Page_U ('foo')]
     >>> SWP.Page_V.query_s (perma_name = "foo").all ()
     []
     >>> SWP.Page.query_s (perma_name = "foo").all ()
-    [SWP.Page_U (u'foo')]
+    [SWP.Page_U ('foo')]
 
     >>> scope.commit ()
-    >>> SWP.Page_V ("foo", text = "V")
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     SWP.Page_V ("foo", text = "V")
     Invariants: The attribute values for ('perma_name',) must be unique for each object
-      The new definition of Page V SWP.Page_V (u'foo',) would clash with 1 existing entities
+      The new definition of Page V SWP.Page_V ('foo',) would clash with 1 existing entities
       Already existing:
-        SWP.Page_U (u'foo',)
+        SWP.Page_U ('foo',)
     >>> SWP.Page_U.query_s (perma_name = "foo").all ()
-    [SWP.Page_U (u'foo')]
+    [SWP.Page_U ('foo')]
     >>> SWP.Page_V.query_s (perma_name = "foo").all ()
     []
     >>> SWP.Page.query_s (perma_name = "foo").all ()
-    [SWP.Page_U (u'foo')]
+    [SWP.Page_U ('foo')]
 
     >>> SWP.Page_V ("bar", text = "V", format = "Markdown", raw = True)
-    SWP.Page_V (u'bar')
+    SWP.Page_V ('bar')
     >>> scope.commit ()
 
     >>> SWP.Page_U.query_s ().all ()
-    [SWP.Page_U (u'foo')]
+    [SWP.Page_U ('foo')]
     >>> SWP.Page_V.query_s ().all ()
-    [SWP.Page_V (u'bar')]
+    [SWP.Page_V ('bar')]
     >>> SWP.Page.query_s ().all ()
-    [SWP.Page_V (u'bar'), SWP.Page_U (u'foo')]
+    [SWP.Page_V ('bar'), SWP.Page_U ('foo')]
 
     >>> akw = dict (format = "Markdown")
     >>> SWP.Page.query_s (* SWP.Page.raw_query_attrs (akw, akw)).all ()
-    [SWP.Page_V (u'bar')]
+    [SWP.Page_V ('bar')]
 
     >>> akw = dict (format = "ReST")
     >>> SWP.Page.query_s (* SWP.Page.raw_query_attrs (akw, akw)).all ()
-    [SWP.Page_U (u'foo')]
+    [SWP.Page_U ('foo')]
 
     >>> fmt = "%%(type_name)-45s  %%(polymorphic_epk)-5s  %%(epk_sig)s"
     >>> rets = list (et for et in scope.app_type._T_Extension if et.PNS != MOM and et.is_relevant)
@@ -455,20 +454,20 @@ _auto_update = r"""
     >>> SWP = scope.SWP
 
     >>> p = SWP.Page (perma_name = "p1", text = "First text")
-    >>> p.text, p.contents
-    (u'First text', u'<p>First text</p>\n')
+    >>> prepr ((p.text, p.contents))
+    ('First text', '<p>First text</p>\n')
 
     >>> p.set (text = "New Text")
     2
-    >>> p.text, p.contents
-    (u'New Text', u'<p>New Text</p>\n')
+    >>> prepr ((p.text, p.contents))
+    ('New Text', '<p>New Text</p>\n')
 
     >>> scope.commit ()
 
     >>> if hasattr (scope.ems.session, "expunge") : scope.ems.session.expunge ()
     >>> p = SWP.Page.query ().first ()
-    >>> p.text, p.contents
-    (u'New Text', u'<p>New Text</p>\n')
+    >>> prepr ((p.text, p.contents))
+    ('New Text', '<p>New Text</p>\n')
 
 """
 

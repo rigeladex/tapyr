@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -38,6 +38,7 @@ from   _GTW._RST._MOM.Query_Restriction import *
 import _GTW._RST._TOP._MOM
 
 from   _TFL.I18N                        import _, _T, _Tn
+from   _TFL.pyk                         import pyk
 
 _Ancestor = RST_Query_Restriction
 
@@ -70,7 +71,7 @@ class TOP_Query_Restriction_Spec (MOM.Attr.Querier.E_Type) :
     def As_Json_Cargo (self) :
         result = self.__super.As_Json_Cargo
         op_map = result ["op_map"]
-        for k, v in op_map.iteritems () :
+        for k, v in pyk.iteritems (op_map) :
             v ["label"] = Styler_Safe (v ["sym"])
         return result
     # end def As_Json_Cargo

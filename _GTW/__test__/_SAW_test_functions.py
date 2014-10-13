@@ -33,14 +33,15 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
+from   __future__            import division, print_function
+from   __future__            import absolute_import, unicode_literals
 
-from   _MOM.import_MOM  import MOM, Q
+from   _MOM.import_MOM       import MOM, Q
 
-from   _TFL             import TFL
-from   _TFL.pyk         import pyk
-from   _TFL.predicate   import split_hst, rsplit_hst
+from   _TFL                  import TFL
+from   _TFL.portable_repr    import portable_repr
+from   _TFL.predicate        import split_hst, rsplit_hst
+from   _TFL.pyk              import pyk
 
 import _TFL.Regexp
 
@@ -66,15 +67,21 @@ def formatted_column (c) :
     if c.primary_key :
         tail.append ("primary")
     if c.foreign_keys :
-        tail.extend (str (fk) for fk in sorted (c.foreign_keys))
+        tail.extend \
+            (formatted_foreign_key (fk) for fk in sorted (c.foreign_keys))
     if c_MOM_Kind and isinstance (c_MOM_Kind.attr, MOM.Attr._A_Id_Entity_) :
-        tail.append (repr (c.type))
+        tail.append (portable_repr (c.type))
     try :
         typ = str (c.type).capitalize ()
     except Exception :
         typ = c.type.__class__.__name__
     return ("Column %-25s : %-20s %s" % (c.name, typ, " ".join (tail))).strip ()
 # end def formatted_column
+
+def formatted_foreign_key (fk) :
+    result = str (fk).replace ("(u'", "('")
+    return result
+# end def formatted_foreign_key
 
 def formatted_select (ETW, name = "select", select = None) :
     sep = nl + indent
@@ -322,9 +329,15 @@ def show_tables (apt, pred = pred) :
                   else (T.relevant_root and T.relevant_root.type_name)
         head   = (" ".join ((T.type_name, second, third or ""))).strip ()
         head   = ("%s <Table %s>" % (head, ETW.sa_table)).strip ()
-        print ("%s%s" % (head, nl), "  ", formatted_table (ETW.sa_table, nl, indent))
+        print \
+            ( "%s%s" % (head, nl), "  "
+            , formatted_table (ETW.sa_table, nl, indent)
+            )
     for seq in apt._SAW.sequences :
-        print ("<Table for %s>%s" % (seq.attr, nl), "  ", formatted_table (seq.sa_table, nl, indent))
+        print \
+            ( "<Table for %s>%s" % (seq.attr, nl), "  "
+            , formatted_table (seq.sa_table, nl, indent)
+            )
 # end def show_tables
 
 ### __END__ _GTW.__test__._SAW_test_functions

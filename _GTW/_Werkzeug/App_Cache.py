@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -31,6 +31,7 @@
 #    26-Jul-2012 (CT) Fix typo
 #    10-Aug-2012 (CT) Add `verbose`
 #    11-Dec-2013 (CT) Use `time_block` unconditionally
+#    12-Oct-2014 (CT) Change `load` to convert `pickle` errors to `IOError`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,16 @@ class App_Cache (TFL.Meta.Object) :
         try :
             with open (path, "rb") as file :
                 cargo = pyk.pickle.load (file)
-        except StandardError as exc :
+        except ValueError as exc :
+            msg = pyk.decoded (exc)
+            if "pickle" in msg :
+                raise IOError (exc)
+            logging.warning \
+                ( "Loading pickle dump %s failed with exception: %s"
+                % (path, exc)
+                )
+            raise
+        except Exception as exc :
             logging.warning \
                 ( "Loading pickle dump %s failed with exception: %s"
                 % (path, exc)
@@ -103,7 +113,7 @@ class App_Cache (TFL.Meta.Object) :
                     pyk.pickle.dump (cargo, file, pyk.pickle.HIGHEST_PROTOCOL)
                 if self.verbose :
                     print ("Stored pickle dump %s successfully" % path)
-            except StandardError as exc :
+            except Exception as exc :
                 logging.warning \
                     ( "Storing pickle dump %s failed with exception: %s"
                     % (path, exc)
@@ -115,7 +125,7 @@ class App_Cache (TFL.Meta.Object) :
         for cp in sorted (self.cachers, key = TFL.Getter.cache_rank) :
             try :
                 yield cp
-            except StandardError as exc :
+            except Exception as exc :
                 logging.warning \
                     ( "%s of %s failed with exception `%s`.\n%s"
                     % (msg_head, cp, exc, msg_tail)

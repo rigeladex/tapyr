@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -34,7 +34,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import print_function, unicode_literals
 
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -43,7 +43,7 @@ _test_code = """
     >>> g = graph (scope.app_type)
 
     >>> for v in g.nodes () :
-    ...   print "%%-45s %%s" %% (v, v.label)
+    ...   print ("%%-45s %%s" %% (v, v.label))
     <Graph.Link2  SRM.Boat_in_Regatta>            _in_
     <Graph.Link1  SRM.Boat>                       SRM.Boat
     <Graph.Object SRM.Boat_Class>                 SRM.Boat_Class
@@ -60,24 +60,24 @@ _test_code = """
     <Graph.Object PAP.Subject>                    PAP.Subject
 
     >>> for v in g.nodes () :
-    ...   print "%%-45s %%s" %% (v, v.label_parts)
-    <Graph.Link2  SRM.Boat_in_Regatta>            (u'_in_',)
-    <Graph.Link1  SRM.Boat>                       (u'SRM', u'.Boat')
-    <Graph.Object SRM.Boat_Class>                 (u'SRM', u'.Boat', u'_Class')
-    <Graph.Link1  SRM.Regatta>                    (u'SRM', u'.Regatta')
-    <Graph.Object SRM.Regatta_Event>              (u'SRM', u'.Regatta', u'_Event')
-    <Graph.Object SRM.Club>                       (u'SRM', u'.Club')
-    <Graph.Link2  SRM.Crew_Member>                (u'SRM', u'.Crew', u'_Member')
-    <Graph.Link1  SRM.Sailor>                     (u'SRM', u'.Sailor')
-    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   (u'_has_',)
-    <Graph.Link1  SRM.Team>                       (u'SRM', u'.Team')
-    <Graph.Link1  SRM.Regatta_C>                  (u'SRM', u'.Regatta', u'_C')
-    <Graph.Link1  SRM.Race_Result>                (u'SRM', u'.Race', u'_Result')
-    <Graph.Object PAP.Person>                     (u'PAP', u'.Person')
-    <Graph.Object PAP.Subject>                    (u'PAP', u'.Subject')
+    ...   print ("%%-45s %%s" %% (v, portable_repr (v.label_parts)))
+    <Graph.Link2  SRM.Boat_in_Regatta>            ('_in_',)
+    <Graph.Link1  SRM.Boat>                       ('SRM', '.Boat')
+    <Graph.Object SRM.Boat_Class>                 ('SRM', '.Boat', '_Class')
+    <Graph.Link1  SRM.Regatta>                    ('SRM', '.Regatta')
+    <Graph.Object SRM.Regatta_Event>              ('SRM', '.Regatta', '_Event')
+    <Graph.Object SRM.Club>                       ('SRM', '.Club')
+    <Graph.Link2  SRM.Crew_Member>                ('SRM', '.Crew', '_Member')
+    <Graph.Link1  SRM.Sailor>                     ('SRM', '.Sailor')
+    <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   ('_has_',)
+    <Graph.Link1  SRM.Team>                       ('SRM', '.Team')
+    <Graph.Link1  SRM.Regatta_C>                  ('SRM', '.Regatta', '_C')
+    <Graph.Link1  SRM.Race_Result>                ('SRM', '.Race', '_Result')
+    <Graph.Object PAP.Person>                     ('PAP', '.Person')
+    <Graph.Object PAP.Subject>                    ('PAP', '.Subject')
 
     >>> for v in g.nodes (sort_key = TFL.Getter.type_name) :
-    ...   print "%%-45s %%-45s %%s" %% (v, v.anchor, v.pos)
+    ...   print ("%%-45s %%-45s %%s" %% (v, v.anchor, v.pos))
     <Graph.Object PAP.Person>                     <Graph.Link1  SRM.Sailor>                     N*3
     <Graph.Object PAP.Subject>                    <Graph.Object PAP.Person>                     E*2 + N*3
     <Graph.Link1  SRM.Boat>                       <Graph.Link2  SRM.Boat_in_Regatta>            W
@@ -94,7 +94,7 @@ _test_code = """
     <Graph.Link2  SRM.Team_has_Boat_in_Regatta>   <Graph.Link2  SRM.Boat_in_Regatta>            S
 
     >>> for v in g.nodes (sort_key = TFL.Getter.type_name) :
-    ...     print v.type_name, v.e_type.Roles
+    ...     print (v.type_name, v.e_type.Roles)
     PAP.Person ()
     PAP.Subject ()
     SRM.Boat (Boat_Class `left`,)
@@ -112,8 +112,8 @@ _test_code = """
 
     >>> for v in g.nodes () :
     ...     if v.rel_map :
-    ...         for a, l in sorted (v.rel_map.iteritems ()) :
-    ...             print l
+    ...         for a, l in sorted (pyk.iteritems (v.rel_map)) :
+    ...             print (l)
     <Graph.Relation.Role SRM.Boat_in_Regatta.left -> SRM.Boat>
     <Graph.Relation.Role SRM.Boat_in_Regatta.right -> SRM.Regatta>
     <Graph.Relation.Attr SRM.Boat_in_Regatta.skipper -> SRM.Sailor>
@@ -134,8 +134,8 @@ _test_code = """
 
     >>> for v in g.nodes () :
     ...     if v.rel_map :
-    ...         for a, l in sorted (v.rel_map.iteritems ()) :
-    ...             print l.kind, l.source, l.target
+    ...         for a, l in sorted (pyk.iteritems (v.rel_map)) :
+    ...             print (l.kind, l.source, l.target)
     Role <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Boat>
     Role <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Regatta>
     Attr <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Sailor>
@@ -155,7 +155,7 @@ _test_code = """
     IS_A <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
     >>> for v in g.nodes () :
-    ...     print "%%-45s %%-12s %%s" %% (v, v.pos, tuple (v.pos))
+    ...     print ("%%-45s %%-12s %%s" %% (v, v.pos, tuple (v.pos)))
     <Graph.Link2  SRM.Boat_in_Regatta>            (0,0)        (0, 0)
     <Graph.Link1  SRM.Boat>                       W            (-1, 0)
     <Graph.Object SRM.Boat_Class>                 W*2          (-2, 0)
@@ -174,10 +174,10 @@ _test_code = """
     >>> ar = Ascii_Renderer (g)
 
     >>> for v in g.nodes () :
-    ...     for a, l in sorted (v.rel_map.iteritems ()) :
+    ...     for a, l in sorted (pyk.iteritems (v.rel_map)) :
     ...       if l.source_connector and l.target_connector :
-    ...         print "%%-30s %%-30s %%-10s %%-10s %%-10s %%1.1s %%5.3f %%1.1s %%5.3f" %% ((
-    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta) + tuple(l.source_connector) + tuple(l.target_connector))
+    ...         print ("%%-30s %%-30s %%-10s %%-10s %%-10s %%1.1s %%5.3f %%1.1s %%5.3f" %% ((
+    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta) + tuple(l.source_connector) + tuple(l.target_connector)))
     SRM.Boat_in_Regatta            SRM.Boat                       (0,0)      W          E          l 0.500 r 0.500
     SRM.Boat_in_Regatta            SRM.Regatta                    (0,0)      E          W          r 0.500 l 0.500
     SRM.Boat_in_Regatta            SRM.Sailor                     (0,0)      N*2        S*2        t 0.250 b 0.250
@@ -197,10 +197,10 @@ _test_code = """
     PAP.Person                     PAP.Subject                    N*3        E*2 + N*3  W*2        r 0.500 l 0.500
 
     >>> for v in g.nodes () :
-    ...     for a, l in sorted (v.rel_map.iteritems ()) :
+    ...     for a, l in sorted (pyk.iteritems (v.rel_map)) :
     ...       if l.source_connector and l.target_connector :
-    ...         print "%%-30s %%-30s %%-10s %%-10s %%-10s %%s" %% (
-    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta, tuple (tuple (tuple (p) for p in g) for g in l.guides))
+    ...         print ("%%-30s %%-30s %%-10s %%-10s %%-10s %%s" %% (
+    ...            l.source.type_name, l.target.type_name, l.source.pos, l.target.pos, l.delta, tuple (tuple (tuple (p) for p in g) for g in l.guides)))
     SRM.Boat_in_Regatta            SRM.Boat                       (0,0)      W          E          ()
     SRM.Boat_in_Regatta            SRM.Regatta                    (0,0)      E          W          ()
     SRM.Boat_in_Regatta            SRM.Sailor                     (0,0)      N*2        S*2        ()
@@ -232,7 +232,7 @@ _test_code = """
     (160, 70)
 
     >>> for n in ar.nodes :
-    ...     print "%%-45s %%-12s %%s" %% (n.entity, tuple (n.pos), tuple (n.entity.pos))
+    ...     print ("%%-45s %%-12s %%s" %% (n.entity, tuple (n.pos), tuple (n.entity.pos)))
     <Graph.Link2  SRM.Boat_in_Regatta>            (72, 39)     (0, 0)
     <Graph.Link1  SRM.Boat>                       (40, 39)     (-1, 0)
     <Graph.Object SRM.Boat_Class>                 (8, 39)      (-2, 0)
@@ -249,7 +249,7 @@ _test_code = """
     <Graph.Object PAP.Subject>                    (136, 3)     (2, 3)
 
     >>> for n in ar.nodes :
-    ...     print "%%-45s %%-12s %%s %%s" %% (n.entity, n.box.top_left, (n.min_x, n.min_y), (n.max_x, n.max_y))
+    ...     print ("%%-45s %%-12s %%s %%s" %% (n.entity, n.box.top_left, (n.min_x, n.min_y), (n.max_x, n.max_y)))
     <Graph.Link2  SRM.Boat_in_Regatta>            (72, 39)     (56.0, 19.0) (104.0, 43.0)
     <Graph.Link1  SRM.Boat>                       (40, 39)     (24.0, 39) (56.0, 43.0)
     <Graph.Object SRM.Boat_Class>                 (8, 39)      (8, 39) (24.0, 43.0)
@@ -266,8 +266,8 @@ _test_code = """
     <Graph.Object PAP.Subject>                    (136, 3)     (136, 3) (152.0, 7.0)
 
     >>> for n in ar.nodes :
-    ...     for k, l in sorted (n.link_map.iteritems ()) :
-    ...         print l.relation.kind, k, l.source.entity, l.target.entity
+    ...     for k, l in sorted (pyk.iteritems (n.link_map)) :
+    ...         print (l.relation.kind, k, l.source.entity, l.target.entity)
     Role left <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Boat>
     Role right <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Regatta>
     Attr skipper <Graph.Link2  SRM.Boat_in_Regatta> <Graph.Link1  SRM.Sailor>
@@ -286,7 +286,7 @@ _test_code = """
     Role left <Graph.Link1  SRM.Race_Result> <Graph.Link2  SRM.Boat_in_Regatta>
     IS_A IS_A_PAP.Subject <Graph.Object PAP.Person> <Graph.Object PAP.Subject>
 
-    >>> print ar.render ()
+    >>> print (ar.render ())
                                                                             +---------------+                                               +---------------+
                                                                             | PAP.Person    |                                               | PAP.Subject   |
                                                                             |               >...............................................>               |
@@ -360,7 +360,7 @@ _test_code = """
     (0, 0, 1600, 1750)
 
     >>> for n in sr.nodes :
-    ...     print "%%-45s %%-12s %%s %%s" %% (n.entity, n.box.top_left, (n.min_x, n.min_y), (n.max_x, n.max_y))
+    ...     print ("%%-45s %%-12s %%s %%s" %% (n.entity, n.box.top_left, (n.min_x, n.min_y), (n.max_x, n.max_y)))
     <Graph.Link2  SRM.Boat_in_Regatta>            (720, 975)   (560.0, 475.0) (1040.0, 1075.0)
     <Graph.Link1  SRM.Boat>                       (400, 975)   (240.0, 975) (560.0, 1075.0)
     <Graph.Object SRM.Boat_Class>                 (80, 975)    (80, 975) (240.0, 1075.0)
@@ -389,7 +389,7 @@ _test_guides_EN = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_EN.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### EN
+    >>> print (ar.render ()) ### EN
                                             +---------------+               +---------------+
                                             | _has_         |               | PAP.Phone     |
                                 +-----------<               >--------------->               |
@@ -446,7 +446,7 @@ _test_guides_ES = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_ES.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### ES
+    >>> print (ar.render ()) ### ES
             +--------------->...............>---------------+
             | PAP.Person    <-----------+   | PAP.Subject   |
             |               <-------+   |   |               |
@@ -503,7 +503,7 @@ _test_guides_NE = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_NE.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### NE
+    >>> print (ar.render ()) ### NE
                                             +---------------+               +---------------+               +---------------+
                                             | PAP.Address   |               | PAP.Email     |               | PAP.Phone     |
                                             |               |               |               |               |               |
@@ -547,7 +547,7 @@ _test_guides_NW = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_NW.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### NW
+    >>> print (ar.render ()) ### NW
             +---------------+               +---------------+               +---------------+
             | PAP.Phone     |               | PAP.Email     |               | PAP.Address   |
             |               |               |               |               |               |
@@ -592,7 +592,7 @@ _test_guides_SE = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_SE.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### SE
+    >>> print (ar.render ()) ### SE
             +---------------+
             | PAP.Person    |
             |               |
@@ -637,7 +637,7 @@ _test_guides_SW = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_SW.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### SW
+    >>> print (ar.render ()) ### SW
                                                                                                             +---------------+
                                                                                                             | PAP.Person    |
                                                                                                             |               |
@@ -682,7 +682,7 @@ _test_guides_WN = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_WN.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### WN
+    >>> print (ar.render ()) ### WN
             +---------------+               +---------------+
             | PAP.Phone     |               | _has_         |
             |               <---------------<               >-----------+
@@ -739,7 +739,7 @@ _test_guides_WS = """
     >>> _    = sr.render ()
     >>> with open ("/tmp/guides_WS.svg", "wb") as f :
     ...    sr.canvas.write_to_xml_stream (f)
-    >>> print ar.render () ### WS
+    >>> print (ar.render ()) ### WS
                                             +---------------<...............<---------------+
                                             | PAP.Subject   |   +-----------> PAP.Person    |
                                             |               |   |   +------->               |

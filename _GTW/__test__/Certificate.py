@@ -55,64 +55,63 @@ _test_create = """
     >>> scope.commit ()
 
     >>> all_cs = Auth.Certificate.query_s ().all ()
-    >>> all_cs
-    [Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), Auth.Certificate (u'foo@baz', ('2013-01-31', ), u'')]
+    >>> prepr (all_cs)
+    [Auth.Certificate ('foo@bar', ('2013-01-16', ), ''), Auth.Certificate ('foo@baz', ('2013-01-31', ), '')]
 
     >>> for c in all_cs :
     ...     print (c.as_code (), c.validity.start)
-    Auth.Certificate (u'foo@bar', ('2013-01-16', ), u'', ) 2013-01-16 00:00:00
-    Auth.Certificate (u'foo@baz', ('2013-01-31', ), u'', ) 2013-01-31 00:00:00
+    Auth.Certificate ('foo@bar', ('2013-01-16', ), '', ) 2013-01-16 00:00:00
+    Auth.Certificate ('foo@baz', ('2013-01-31', ), '', ) 2013-01-31 00:00:00
 
     >>> c3 = Auth.Certificate (email = "foo@baz", validity = ("20150131", ), raw = True)
 
     >>> scope.commit ()
 
     >>> all_cs = Auth.Certificate.query_s ().all ()
-    >>> all_cs
-    [Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), Auth.Certificate (u'foo@baz', ('2013-01-31', ), u''), Auth.Certificate (u'foo@baz', ('2015-01-31', ), u'')]
+    >>> prepr (all_cs)
+    [Auth.Certificate ('foo@bar', ('2013-01-16', ), ''), Auth.Certificate ('foo@baz', ('2013-01-31', ), ''), Auth.Certificate ('foo@baz', ('2015-01-31', ), '')]
 
-    >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), False)
+    >>> prepr ((c1, c1.alive))
+    (Auth.Certificate ('foo@bar', ('2013-01-16', ), ''), False)
 
     >>> c1.pem = b"fake value to fool `alive`"
 
-    >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), True)
+    >>> prepr ((c1, c1.alive))
+    (Auth.Certificate ('foo@bar', ('2013-01-16', ), ''), True)
 
     >>> rdf = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = +1)
     >>> rdp = MOM.Attr.A_Date_Time.now () + datetime.timedelta (days = -1)
-    >>> _ = c1.set (revocation_date = rdf) # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-    ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     _ = c1.set (revocation_date = rdf) # doctest:+ELLIPSIS
     Invariants: Condition `valid_revocation_date` : The revocation date cannot be in the future. (revocation_date <= today)
         revocation_date = ...
         today = ...
 
     >>> _ = c1.set (revocation_date = rdp)
-    >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), False)
+    >>> prepr ((c1, c1.alive))
+    (Auth.Certificate ('foo@bar', ('2013-01-16', ), ''), False)
 
     >>> scope.commit ()
-    >>> (c1, c1.alive)
-    (Auth.Certificate (u'foo@bar', ('2013-01-16', ), u''), False)
+    >>> prepr ((c1, c1.alive))
+    (Auth.Certificate ('foo@bar', ('2013-01-16', ), ''), False)
 
     >>> c4 = Auth.Certificate (email = "foo@foo", validity = (), raw = True)
 
-    >>> (c4, c4.alive)
-    (Auth.Certificate (u'foo@foo', (), u''), None)
+    >>> prepr ((c4, c4.alive))
+    (Auth.Certificate ('foo@foo', (), ''), None)
 
     >>> c4.validity.start = "20130225"
-    >>> (c4, c4.alive)
-    (Auth.Certificate (u'foo@foo', ('2013-02-25', ), u''), False)
+    >>> prepr ((c4, c4.alive))
+    (Auth.Certificate ('foo@foo', ('2013-02-25', ), ''), False)
 
     >>> c4.pem = b"fake value to fool `alive`"
-    >>> (c4, c4.alive)
-    (Auth.Certificate (u'foo@foo', ('2013-02-25', ), u''), True)
+    >>> prepr ((c4, c4.alive))
+    (Auth.Certificate ('foo@foo', ('2013-02-25', ), ''), True)
 
     >>> c5 = Auth.Certificate (email = "bar@foo", validity = ("20130225", ), raw = True)
 
-    >>> (c5, c5.alive)
-    (Auth.Certificate (u'bar@foo', ('2013-02-25', ), u''), False)
+    >>> prepr ((c5, c5.alive))
+    (Auth.Certificate ('bar@foo', ('2013-02-25', ), ''), False)
 
     >>> for c in Auth.Certificate.query ().order_by (Q.cert_id) :
     ...     (int (c.pid), int (c.cert_id or 0) or None)

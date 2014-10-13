@@ -37,7 +37,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import print_function, unicode_literals
 
 _attr_ac_query = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
@@ -52,7 +52,7 @@ _attr_ac_query = """
     >>> for value in "Ma", "martin", "CHRi" :
     ...    q = PAP.Person.AQ.first_name.AC (value)
     ...    for o in (p1, p2, p3) :
-    ...        print value, o.first_name, q (o)
+    ...        print (value, o.first_name, q (o))
     Ma martin True
     Ma christian False
     Ma karl False
@@ -66,7 +66,7 @@ _attr_ac_query = """
     >>> for value in "Gl", "Glueck", "Ferdinand" :
     ...    q = PAP.Person.AQ.last_name.AC (value)
     ...    for o in (p1, p2, p3) :
-    ...        print value, o.last_name, q (o)
+    ...        print (value, o.last_name, q (o))
     Gl glueck True
     Gl tanzer False
     Gl franz-ferdinand False
@@ -85,66 +85,66 @@ _attr_ac_query = """
     >>> q6  = PAP.Person.AQ.lifetime.AC (dict (start = "1959"))
     >>> q7 = PAP.Person.AQ.lifetime.start.AC ("1959-09-26")
 
-    >>> print q1
-    Q.lifetime.start == 1959-09-26
-    >>> print q2
-    <Filter_And [Q.lifetime.finish == 1994-08-04, Q.lifetime.start == 1907-03-08]>
-    >>> print q4
+    >>> print (q1)
+    Q.lifetime.start == datetime.date(1959, 9, 26)
+    >>> print (q2)
+    <Filter_And [Q.lifetime.finish == datetime.date(1994, 8, 4), Q.lifetime.start == datetime.date(1907, 3, 8)]>
+    >>> print (q4)
     <Filter_And [Q.lifetime.finish.between (datetime.date(1994, 1, 1), datetime.date(1994, 12, 31)), Q.lifetime.start.between (datetime.date(1907, 1, 1), datetime.date(1907, 12, 31))]>
-    >>> print q5
-    Q.first_name.contains (u'ti',)
-    >>> print q6
+    >>> print (q5)
+    Q.first_name.contains ('ti',)
+    >>> print (q6)
     Q.lifetime.start.between (datetime.date(1959, 1, 1), datetime.date(1959, 12, 31))
 
-    >>> print q7
-    Q.lifetime.start == 1959-09-26
+    >>> print (q7)
+    Q.lifetime.start == datetime.date(1959, 9, 26)
 
-    >>> print " and ".join (str (p) for p in q2.predicates)
-    Q.lifetime.finish == 1994-08-04 and Q.lifetime.start == 1907-03-08
+    >>> print (" and ".join (str (p) for p in q2.predicates))
+    Q.lifetime.finish == datetime.date(1994, 8, 4) and Q.lifetime.start == datetime.date(1907, 3, 8)
 
     >>> PAP.Person.query_s (q1).all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    [PAP.Person ('tanzer', 'christian', '', 'mag.')]
     >>> PAP.Person.query_s (q2).all ()
-    [PAP.Person (u'tanzer', u'egon', u'', u'')]
+    [PAP.Person ('tanzer', 'egon', '', '')]
     >>> PAP.Person.query_s (q1 | q3).all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u'mag.'), PAP.Person (u'tanzer', u'egon', u'', u'')]
+    [PAP.Person ('tanzer', 'christian', '', 'mag.'), PAP.Person ('tanzer', 'egon', '', '')]
     >>> PAP.Person.query_s (q4).all ()
-    [PAP.Person (u'tanzer', u'egon', u'', u'')]
-    >>> list (p.ui_display for p in PAP.Person.query_s (q5))
-    [u'Glueck Martin', u'Tanzer Christian, Mag.']
+    [PAP.Person ('tanzer', 'egon', '', '')]
+    >>> prepr ((list (p.ui_display for p in PAP.Person.query_s (q5))))
+    ['Glueck Martin', 'Tanzer Christian, Mag.']
 
-    >>> PAP.Person.query_s (q6).all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    >>> prepr ((PAP.Person.query_s (q6).all ()))
+    [PAP.Person ('tanzer', 'christian', '', 'mag.')]
 
-    >>> PAP.Person.query_s (q7).all ()
-    [PAP.Person (u'tanzer', u'christian', u'', u'mag.')]
+    >>> prepr ((PAP.Person.query_s (q7).all ()))
+    [PAP.Person ('tanzer', 'christian', '', 'mag.')]
 
     >>> q = PAP.Person.AQ.last_name.AC ("Franz")
-    >>> print " or ".join (str (p) for p in q.predicates)
-    Q.last_name.startswith (u'franz',) or Q.last_name.contains (u'-franz',)
+    >>> print (" or ".join (str (p) for p in q.predicates))
+    Q.last_name.startswith ('franz',) or Q.last_name.contains ('-franz',)
     >>> q = PAP.Person.AQ.last_name.AC ("Franz-F")
-    >>> print q
-    Q.last_name.startswith (u'franz-f',)
+    >>> print (q)
+    Q.last_name.startswith ('franz-f',)
 
     >>> qs1  = SRM.Sailor.AQ.left.AC (dict (last_name = "Tan"))
     >>> qs2  = SRM.Sailor.AQ.left.last_name.AC ("Tan")
 
-    >>> print qs1
-    <Filter_Or [Q.left.last_name.startswith (u'tan',), Q.left.last_name.contains (u'-tan',)]>
-    >>> print qs2
-    <Filter_Or [Q.left.last_name.startswith (u'tan',), Q.left.last_name.contains (u'-tan',)]>
+    >>> print (qs1)
+    <Filter_Or [Q.left.last_name.startswith ('tan',), Q.left.last_name.contains ('-tan',)]>
+    >>> print (qs2)
+    <Filter_Or [Q.left.last_name.startswith ('tan',), Q.left.last_name.contains ('-tan',)]>
 
     >>> SRM.Sailor.query_s (qs1).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
+    [SRM.Sailor (('tanzer', 'christian', '', 'mag.'), '', None, '')]
     >>> SRM.Sailor.query_s (qs2).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u'mag.'), '', None, u'')]
+    [SRM.Sailor (('tanzer', 'christian', '', 'mag.'), '', None, '')]
 
     >>> a1 = PAP.Address ("Langstrasse 4",    "2244", "Spannberg", "Austria")
     >>> a2 = PAP.Address ("Glasauergasse 32", "1130", "Wien",      "Austria")
     >>> for value in "22", "11", "10" :
     ...    q = PAP.Address.AQ.zip.AC (value)
     ...    for o in (a1, a2) :
-    ...        print value, o.zip, q (o)
+    ...        print (value, o.zip, q (o))
     22 2244 True
     22 1130 False
     11 2244 False
@@ -154,12 +154,12 @@ _attr_ac_query = """
 
     >>> SRM   = scope.SRM
     >>> opti  = SRM.Boat_Class ("Optimist", max_crew = 1)
-    >>> b1    = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True) ### 1
-    >>> b2    = SRM.Boat.instance_or_new (u'Optimist', u"1208", u"AUT", raw = True) ### 2
+    >>> b1    = SRM.Boat.instance_or_new ('Optimist', u"1107", u"AUT", raw = True) ### 1
+    >>> b2    = SRM.Boat.instance_or_new ('Optimist', u"1208", u"AUT", raw = True) ### 2
     >>> for value in "11", "12" :
     ...    q = SRM.Boat.AQ.sail_number.AC (value)
     ...    for o in (b1, b2) :
-    ...        print value, o.sail_number, q (o)
+    ...        print (value, o.sail_number, q (o))
     11 1107 True
     11 1208 False
     12 1107 False
@@ -170,25 +170,25 @@ _attr_ac_query = """
     >>> a3p.position
     MOM.Position (48.190111, 16.26867)
     >>> a3.gps
-    PAP.Address_Position ((u'glasauergasse 32/3', u'1130', u'wien', u'austria'), (48.190111, 16.26867))
+    PAP.Address_Position (('glasauergasse 32/3', '1130', 'wien', 'austria'), (48.190111, 16.26867))
 
     >>> a4 = PAP.Address ("Glasauergasse 32/2", "1130", "Wien", "Austria", raw = True)
     >>> a4p = PAP.Address_Position (a4, position = ("48d 11m 25s", "16d 16m 7s"), raw = True)
     >>> a4p.position
     MOM.Position (48.1902777778, 16.2686111111)
-    >>> print a4p
-    ((u'glasauergasse 32/2', u'1130', u'wien', u'austria'), (48.1902777778, 16.2686111111))
-    >>> print a4p.position
+    >>> print (a4p)
+    (('glasauergasse 32/2', '1130', 'wien', 'austria'), (48.1902777778, 16.2686111111))
+    >>> print (a4p.position)
     (48.1902777778, 16.2686111111)
-    >>> print a4p.attr_prop ("position").as_code (a4p.position)
+    >>> print (a4p.attr_prop ("position").as_code (a4p.position))
     (48.1902777778, 16.2686111111)
 
     >>> p42 = scope.MOM.Position (42.4242, 137.137137)
     >>> p42
     MOM.Position (42.4242, 137.137137)
-    >>> print p42.as_code ()
+    >>> print (p42.as_code ())
     MOM.Position (42.4242, 137.137137)
-    >>> print p42.attr_as_code ()
+    >>> print (p42.attr_as_code ())
     42.4242, 137.137137
 
     >>> p42r = scope.MOM.Position ("42d42m42s", "137d13m7.137s", raw = True)
@@ -196,17 +196,17 @@ _attr_ac_query = """
     MOM.Position (42.7116666667, 137.218649167)
 
     >>> list (PAP.Person.raw_query_attrs (["first_name"], dict (first_name = "Martin")))
-    [Q.first_name == martin]
+    [Q.first_name == 'martin']
 
     >>> list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48.190111"))))
     [Q.position.lat == 48.190111]
 
     >>> apq = list (PAP.Address_Position.raw_query_attrs (["position"], dict (position = dict (lat = "48d 11m 25s")))) [0]
-    >>> apq
+    >>> prepr (apq)
     Q.position.lat == 48.1902777778
 
     >>> PAP.Address_Position.query_s (apq).all ()
-    [PAP.Address_Position ((u'glasauergasse 32/2', u'1130', u'wien', u'austria'), (48.1902777778, 16.2686111111))]
+    [PAP.Address_Position (('glasauergasse 32/2', '1130', 'wien', 'austria'), (48.1902777778, 16.2686111111))]
 
 """
 
@@ -214,14 +214,14 @@ _epk_splitter_test = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
     >>> PAP = scope.PAP
-    >>> scope.PAP.Person.epk_splitter ("Ma")
-    [(u'Ma',)]
-    >>> scope.PAP.Person.epk_splitter ("Martin G")
-    [(u'Martin G',), (u'Martin', u'G')]
-    >>> scope.PAP.Person.epk_splitter ("Gl Ma")
-    [(u'Gl Ma',), (u'Gl', u'Ma')]
-    >>> scope.PAP.Person.epk_splitter ("Van der Bel")
-    [(u'Van der Bel',), (u'Van der', u'Bel'), (u'Van', u'der Bel')]
+    >>> prepr ((scope.PAP.Person.epk_splitter ("Ma")))
+    [('Ma',)]
+    >>> prepr ((scope.PAP.Person.epk_splitter ("Martin G")))
+    [('Martin G',), ('Martin', 'G')]
+    >>> prepr ((scope.PAP.Person.epk_splitter ("Gl Ma")))
+    [('Gl Ma',), ('Gl', 'Ma')]
+    >>> prepr ((scope.PAP.Person.epk_splitter ("Van der Bel")))
+    [('Van der Bel',), ('Van der', 'Bel'), ('Van', 'der Bel')]
 
 """
 
@@ -238,19 +238,19 @@ _ac_query = """
 
     >>> for acs in ("Ma", "Ta", "Van", "Van der B") :
     ...     for p, qs in enumerate (PAP.Person.ac_query_auto_split (acs)) :
-    ...         print p, acs
+    ...         print (p, acs)
     ...         for o in sorted (qs, key = lambda p : p.last_name) :
-    ...             print " ", o
+    ...             print (" ", o)
     0 Ma
-      (u'glueck', u'martin', u'', u'')
-      (u'tanzer', u'christian', u'', u'mag.')
+      ('glueck', 'martin', '', '')
+      ('tanzer', 'christian', '', 'mag.')
     0 Ta
-      (u'tanzer', u'christian', u'', u'mag.')
+      ('tanzer', 'christian', '', 'mag.')
     0 Van
-      (u'van der bellen', u'alexander', u'', u'')
-      (u'van persie', u'robin', u'', u'')
+      ('van der bellen', 'alexander', '', '')
+      ('van persie', 'robin', '', '')
     0 Van der B
-      (u'van der bellen', u'alexander', u'', u'')
+      ('van der bellen', 'alexander', '', '')
     1 Van der B
     2 Van der B
 

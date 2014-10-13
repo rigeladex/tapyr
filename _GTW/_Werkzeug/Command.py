@@ -172,8 +172,8 @@ class GT2W_Command (GTW.OMP.Command) :
 
     _rn_prefix              = "GT2W"
 
-    SALT                    = bytes \
-        ("Needs to defined uniquely for each application")
+    SALT                    = \
+        b"Needs to defined uniquely for each application"
 
     base_template_dir       = sos.path.dirname (_JNJ.__file__)
     root                    = None
@@ -314,7 +314,7 @@ class GT2W_Command (GTW.OMP.Command) :
             media = kw.get ("Media_Parameters", None)
             if media is None :
                 kw ["Media_Parameters"] = Media_Defaults ()
-            return JNJ.Templateer \
+            result = JNJ.Templateer \
                 ( encoding    = cmd.input_encoding
                 , globals     = dict (site_base = cmd.template_file, ** globs)
                 , i18n        = cmd.load_I18N
@@ -323,6 +323,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , version     = version
                 , ** kw
                 )
+            return result
     # end def _create_templateer
 
     def _get_root (self, cmd, apt, url, ** kw) :
@@ -364,7 +365,7 @@ class GT2W_Command (GTW.OMP.Command) :
                 , log_level           = cmd.log_level
                 , page_template_name  = cmd.template_file
                 , s_domain            = cmd.s_domain
-                , session_id          = bytes ("SESSION_ID")
+                , session_id          = b"SESSION_ID"
                 , smtp                = self._get_smtp (cmd)
                 , use_www_debugger    = cmd.debug
                 , user_session_ttl    = cmd.user_session_ttl.date_time_delta

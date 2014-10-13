@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.CSS.
@@ -45,6 +45,7 @@ from   _TFL._Meta.Once_Property   import Once_Property
 
 from   _TFL.Color                 import *
 from   _TFL.Color                 import _Color_
+from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 
 class _Color_Converter_ (TFL.Meta.Object) :
@@ -133,7 +134,7 @@ class _Color_Converter_ (TFL.Meta.Object) :
         )
 
     def __call__ (self, v) :
-        if isinstance (v, basestring) :
+        if isinstance (v, pyk.string_types) :
             percent = lambda x : max (min (int (x), 100), 0)
             v = v.strip ()
             if v in self.keywords :

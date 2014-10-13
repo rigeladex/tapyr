@@ -179,7 +179,7 @@ class Wrapper (TFL.Meta.Object) :
     @Single_Dispatch_Method
     def _error_as_json_cargo (self, error) :
         return dict \
-            ( description = html_escape (unicode (error))
+            ( description = html_escape (pyk.text_type (error))
             , head        = error.__class__.__name__
             )
     # end def _error_as_json_cargo

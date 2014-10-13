@@ -46,22 +46,26 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, unicode_literals
+from   __future__  import absolute_import, division
+from   __future__  import print_function, unicode_literals
 
 from   _GTW                     import GTW
 from   _JNJ                     import JNJ
 from   _MOM                     import MOM
 from   _TFL                     import TFL
-from   _TFL.pyk                 import pyk
 
 from   _MOM.import_MOM          import *
 from   _MOM.inspect             import show_ref_map, show_ref_maps
 from   _MOM.Product_Version     import Product_Version, IV_Number
 
-from   _TFL                     import sos
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Class_Property
+from   _TFL.CAO                 import expect_except
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.portable_repr       import portable_repr
+from   _TFL.pyk                 import pyk
+from   _TFL.Sorted_By           import Sorted_By
+from   _TFL                     import sos
 
 from   _TFL.Formatter           import Formatter, formatted_1
 
@@ -80,6 +84,9 @@ from    werkzeug.test     import Client, EnvironBuilder
 from    werkzeug.wrappers import BaseResponse
 import  pyquery
 import  lxml.html
+
+def prepr (* args) :
+    print (* (portable_repr (a) for a in args))
 
 model_src        = sos.path.dirname (__file__)
 form_pickle_path = sos.path.join    (model_src, "afs_form_table.pck")
@@ -134,7 +141,7 @@ class GTW_Test_Command (_Ancestor) :
     default_db_name       = "test"
     reset_callbacks       = []
 
-    SALT                  = bytes ("4418c024-c51f-42b5-9032-be3ef10b1a61")
+    SALT                  = b"4418c024-c51f-42b5-9032-be3ef10b1a61"
 
     _defaults             = dict \
         ( config          = "~/.gtw-test.config"
@@ -247,14 +254,14 @@ class GTW_Test_Command (_Ancestor) :
                 backends = list (p.strip () for p in backends.split (":"))
         if combiner is None :
             combiner = self.combiner
-        if isinstance (ignore, basestring) :
+        if isinstance (ignore, pyk.string_types) :
             ignore   = set ((ignore, ))
         elif not isinstance (ignore, set) :
             ignore   = set (ignore)
         if not isinstance (test_spec, dict) :
             test_spec = {"" : test_spec}
         for w in combiner ((b for b in backends if b not in ignore), bpt) :
-            for name, code in test_spec.iteritems () :
+            for name, code in pyk.iteritems (test_spec) :
                 key  = "_".join (p for p in (name, ) + w if p)
                 bsd  = dict (self._backend_spec (w))
                 test = "%s\n\n    %s\n" % \

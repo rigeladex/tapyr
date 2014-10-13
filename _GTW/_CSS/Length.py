@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.CSS.
@@ -51,6 +51,7 @@ import _GTW._CSS._TRBL_
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
 
+from   _TFL.pyk                   import pyk
 from   _TFL.Regexp                import Regexp, re
 
 class M_Length (TFL.Meta.Object.__class__) :
@@ -82,7 +83,9 @@ class M_Length (TFL.Meta.Object.__class__) :
 
 # end class M_Length
 
-class _Length_ (TFL.Meta.Object) :
+@pyk.adapt__bool__
+@pyk.adapt__div__
+class _Length_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Length)) :
     """Model a CSS length value.
 
     >>> print (Px (3))
@@ -113,8 +116,6 @@ class _Length_ (TFL.Meta.Object) :
 
     """
 
-    __metaclass__ = M_Length
-
     unit_name     = None
 
     def __init__ (self, value = 0) :
@@ -134,16 +135,14 @@ class _Length_ (TFL.Meta.Object) :
         return self.__class__ (self.value + rhs.value)
     # end def __add__
 
-    def __div__ (self, rhs) :
+    def __truediv__ (self, rhs) :
         if not isinstance (rhs, (int, float)) :
             raise TypeError \
                 ( "Cannot divide %r and %r objects"
                 % (self.__class__.__name__, rhs.__class__.__name__)
                 )
         return self.__class__ (self.value / rhs)
-    # end def __div__
-
-    __truediv__ = __div__
+    # end def __truediv__
 
     def __eq__ (self, rhs) :
         ru = getattr (rhs, "unit_name", None)
@@ -200,9 +199,9 @@ class _Length_ (TFL.Meta.Object) :
         return self.__class__ (- self.value)
     # end def __neg__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.value)
-    # end def __nonzero__
+    # end def __bool__
 
     def __pos__ (self) :
         return self
@@ -261,7 +260,7 @@ def Length (v) :
     """
     if v in (0, "0") :
         result = Px (0)
-    elif isinstance (v, basestring) :
+    elif isinstance (v, pyk.string_types) :
         pat = _Length_.Pat
         v   = v.strip ()
         if v in _length_keywords :
@@ -363,6 +362,7 @@ class Vw (_Length_) :
 
 # end class Vw
 
+@pyk.adapt__div__
 class TRBL0 (GTW.CSS._TRBL0_) :
     """Top/right/bottom/left spec, undefined values are 0.
 
@@ -417,11 +417,9 @@ class TRBL0 (GTW.CSS._TRBL0_) :
             (* tuple (v + r for v, r in zip (self.values, rhs)))
     # end def __add__
 
-    def __div__ (self, rhs) :
+    def __truediv__ (self, rhs) :
         return self.__class__ (* tuple (v / rhs for v in self.values))
-    # end def __div__
-
-    __truediv__ = __div__
+    # end def __truediv__
 
     def __floordiv__ (self, rhs) :
         return self.__class__ (* tuple (v // rhs for v in self.values))
@@ -497,6 +495,7 @@ class TRBL (GTW.CSS._TRBL_, TRBL0) :
 
 # end class TRBL
 
+@pyk.adapt__bool__
 class HV (TFL.Meta.Object) :
     """Horizontal/vertical pair of `Length` of `TRBL`.
 
@@ -511,9 +510,9 @@ class HV (TFL.Meta.Object) :
         self.v = v
     # end def __init__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.h or self.v
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         return "%s / %s" % (self.h, self.v)
@@ -522,7 +521,8 @@ class HV (TFL.Meta.Object) :
 # end class HV
 
 __all__ = tuple \
-    ( k for (k, v) in globals ().iteritems () if getattr (v, "unit_name", None)
+    ( k for (k, v) in pyk.iteritems (globals ())
+        if  getattr (v, "unit_name", None)
     ) + ("Length", "TRBL0", "TRBL", "HV")
 
 if __name__ != "__main__" :

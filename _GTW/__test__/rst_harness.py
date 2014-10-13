@@ -167,7 +167,7 @@ def show (r, ** kw) :
     json = req_json (r)
     if json is not None :
         if normalize_json :
-            json = dict ( _normal (k, v) for k, v in json.iteritems ())
+            json = dict ( _normal (k, v) for k, v in pyk.iteritems (json))
         kw ["json"] = json
     elif r.content :
         kw ["content"] = r.content.replace ("\r", "").strip ().split ("\n")
@@ -188,7 +188,7 @@ def showf (r, ** kw) :
     return show \
         ( r
         , headers = dict
-            ( _normal (k, v) for k, v in r.headers.iteritems ()
+            ( _normal (k, v) for k, v in pyk.iteritems (r.headers)
             if k.lower () not in skip_headers
             )
         , ** kw

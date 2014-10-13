@@ -88,6 +88,8 @@ from   _GTW.Parameters            import P_dict
 import _GTW._CSS
 
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
+
 import _TFL._Meta.Object
 
 from   itertools                  import chain as ichain
@@ -119,7 +121,7 @@ class Property (_Prop_) :
             v = result [name] = " ".join (args)
             for p in prefixes :
                 result ["-".join ((p, name))] = v
-        for k, v in decls.iteritems () :
+        for k, v in pyk.iteritems (decls) :
             k = k.replace ("_", "-")
             n = "-".join ((name, k))
             result [n] = v
@@ -153,7 +155,7 @@ class Value (_Prop_) :
 
     def __call__ (self, value) :
         name   = self.name.replace       ("_", "-")
-        v      = unicode (value).replace ("_", "-")
+        v      = pyk.text_type (value).replace ("_", "-")
         prefs  = self.vp_map.get (value, ())
         if prefs :
             values = [v]
