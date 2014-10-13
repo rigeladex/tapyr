@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -65,7 +65,7 @@ class Primes (TFL.Immutable_Ordered_Set) :
                     break
                 _i = _i + 1
             else :
-                raise ValueError, (str (number), "Needs bigger prime table")
+                raise ValueError (str (number), "Needs bigger prime table")
             self.Factors [number] = result
             return result
     # end def factors
@@ -92,7 +92,7 @@ class Primes (TFL.Immutable_Ordered_Set) :
                     break
                 _i = _i + 1
             else :
-                raise ValueError, (str (number), "Needs bigger prime table")
+                raise ValueError (str (number), "Needs bigger prime table")
             self.U_Factors [number] = result
             return result
     # end def u_factors

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,9 +48,10 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL             import TFL
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
-class Interface_Mismatch (StandardError) :
+class Interface_Mismatch (Exception) :
     pass
 
 class IV_Number :
@@ -78,9 +79,9 @@ class IV_Number :
         , comp_max     = None
         , db_extension = None
         ) :
-        if isinstance (producer, (str, unicode)) :
+        if isinstance (producer, pyk.string_types) :
             producer = (producer, )
-        if isinstance (consumer, (str, unicode)) :
+        if isinstance (consumer, pyk.string_types) :
             consumer = (consumer, )
         self.name              = name
         self.producer          = producer
@@ -129,14 +130,14 @@ class IV_Number :
            Once an attribute is set, it cannot be changed to another value.
         """
         if hasattr (self, name) and name != "external_version" :
-            raise TypeError, \
+            raise TypeError \
                 ( "Attribute %s is readonly. Cannot change value from %s to %s"
                 % (name, getattr (self, name), value)
                 )
         self.__dict__ [name] = value
         if name == "external_version" :
             if not self.compatible (value) :
-                raise Interface_Mismatch, self
+                raise Interface_Mismatch (self)
     # end def __setattr__
 
     def __str__ (self) :

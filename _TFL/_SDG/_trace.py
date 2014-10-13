@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,15 +27,13 @@
 #
 # Revision Dates
 #    22-Sep-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
+from   _TFL                     import TFL
+from   _TFL.predicate           import *
+from   _TFL.pyk                 import pyk
 
-
-from   predicate         import *
-from   _TFL              import TFL
 import _TFL._SDG.Node
 import _TFL._SDG.Formatter
 import _TFL._FMW.Tracer
@@ -49,7 +47,7 @@ def _ (self) :
         except KeyError :
             pass
     return ", ".join \
-        ([("%s = %s" % (n, v)) for (n, v) in sorted (d.iteritems ())])
+        ([("%s = %s" % (n, v)) for (n, v) in sorted (pyk.iteritems (d))])
 TFL.Caller.Object_Scope.__str__ = TFL.Caller.Object_Scope.__repr__ = _
 
 def _ (self) :

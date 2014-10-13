@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -54,13 +54,14 @@
 
 from   __future__            import unicode_literals
 
-from   _MOM.import_MOM import *
-from   _MOM.import_MOM import \
+from   _MOM.import_MOM       import *
+from   _MOM.import_MOM       import \
      ( _A_Binary_String_
      , _A_Typed_List_
      )
 
-from   _TFL.I18N       import _, _T, _Tn
+from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.pyk              import pyk
 
 import _TFL.r_eval
 
@@ -110,7 +111,7 @@ class A_Weekday_RR (A_Attr_Type) :
     def cooked (soc, value) :
         if isinstance (value, int) :
             value = soc.Table [soc.Names [value]]
-        elif isinstance (value, basestring) :
+        elif isinstance (value, pyk.string_types) :
             value = soc.Table [value]
         if value is not None and not isinstance (value, soc.P_Type) :
             raise ValueError \
@@ -135,7 +136,7 @@ class A_Weekday_RR_List (_A_Typed_List_) :
 
 # end class A_Weekday_RR_List
 
-__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

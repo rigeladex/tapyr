@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -73,11 +73,12 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM           import MOM
-from   _TFL           import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
 
-from   _TFL           import sos
-from   _TFL.predicate import sliced
+from   _TFL                  import sos
+from   _TFL.predicate        import sliced
+from   _TFL.pyk              import pyk
 
 import _MOM.DB_Meta_Data
 import _MOM.Error
@@ -94,9 +95,10 @@ import _TFL.open_w_lock
 import _TFL.Record
 
 import contextlib
-import pickle
 import stat
-import zipfile            as     ZF
+import zipfile               as     ZF
+
+pickle = pyk.pickle
 
 TZF = TFL.module_copy \
     ( "zipfile"
@@ -475,7 +477,7 @@ class Store_S (Store) :
             s_name = TFL.Filename ("by_pid", self.x_uri)
             cargo  = \
                 [   e.as_pickle_cargo ()
-                for pid, e in sorted (scope.ems.pm.table.iteritems ())
+                for pid, e in sorted (pyk.iteritems (scope.ems.pm.table))
                 ]
             with open (s_name.name, "wb") as file :
                 pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -484,7 +484,7 @@ class Derived_Package_Namespace (Package_Namespace) :
     # end def __init__
 
     def _Reload (self, * modules) :
-        for c in self.__cached.iterkeys () :
+        for c in pyk.iterkeys (self.__cached) :
             delattr (self, c)
         self.__cached = {}
         self._parent._Reload ()

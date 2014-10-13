@@ -161,18 +161,16 @@ _test_set = """
     >>> print (p.type_name, p.ui_display)
     PAP.Person Tanzer Christian
 
-    >>> p.set (type_name = "not PAP.Person")
-    Traceback (most recent call last):
-      ...
-    Attribute_Set: Can't set internal attribute Person.type_name to `u'not PAP.Person'`
+    >>> with expect_except (MOM.Error.Attribute_Set) :
+    ...     p.set (type_name = "not PAP.Person")
+    Attribute_Set: Can't set internal attribute Person.type_name to 'not PAP.Person'
 
     >>> print (p.type_name, p.ui_display)
     PAP.Person Tanzer Christian
 
-    >>> p.set_raw (type_name = "not PAP.Person")
-    Traceback (most recent call last):
-      ...
-    Attribute_Set: Can't set internal attribute Person.type_name to `u'not PAP.Person'`
+    >>> with expect_except (MOM.Error.Attribute_Set) :
+    ...     p.set_raw (type_name = "not PAP.Person")
+    Attribute_Set: Can't set internal attribute Person.type_name to 'not PAP.Person'
 
     >>> print (p.type_name, p.ui_display)
     PAP.Person Tanzer Christian

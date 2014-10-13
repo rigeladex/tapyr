@@ -78,6 +78,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__          import unicode_literals, print_function
+
 from   _MOM                import MOM
 from   _TFL                import TFL
 from   _TFL.pyk            import pyk
@@ -142,7 +144,7 @@ class Root (MOM.Meta.M_Prop_Type) :
             cls.query = property (lambda s : s.query_fct ())
         check = dct.get ("check")
         if check is not None :
-            assert not isinstance (check, basestring), \
+            assert not isinstance (check, pyk.string_types), \
                 ( "%s.check needs to be a tuple, not a string: %r"
                 % (name, check)
                 )
@@ -175,7 +177,7 @@ class Composite (Root) :
             if _Attributes :
                 kw ["_Attributes"] = P_Type_parent._Attributes.__class__ \
                     ( "_Attributes", (P_Type_parent._Attributes, )
-                    , _Attributes.__dict__
+                    , dict (_Attributes.__dict__)
                     )
             if _Predicates :
                 kw ["_Predicates"] = P_Type_parent._Predicates.__class__ \
@@ -242,7 +244,7 @@ class Named_Value (Root) :
            unique mapping.
         """
         result = {None : ""}
-        for i, v in cls.Table.iteritems () :
+        for i, v in pyk.iteritems (cls.Table) :
             if v in result :
                 raise TypeError \
                     ( "Non-unique mapping for %s: "
@@ -261,7 +263,7 @@ class Named_Value (Root) :
         return \
             ( "The following string values are accepted as valid "
               "%s values: %s"
-            % (cls.typ, ", ".join (sorted (cls.Table.iterkeys ())))
+            % (cls.typ, ", ".join (sorted (pyk.iterkeys (cls.Table))))
             )
     # end def syntax
 
@@ -287,20 +289,20 @@ class Named_Object (Named_Value) :
 
 # end class Named_Object
 
-def _unicode_lower (s) :
-    return unicode (s).lower ()
-# end def _unicode_lower
+def _text_lower (s) :
+    return pyk.text_type (s).lower ()
+# end def _text_lower
 
-def _unicode_upper (s) :
-    return unicode (s).upper ()
-# end def _unicode_upper
+def _text_upper (s) :
+    return pyk.text_type (s).upper ()
+# end def _text_upper
 
-_unicode_ignore_case = dict \
-    ( { False        : unicode
-      , True         : _unicode_lower
+_text_ignore_case = dict \
+    ( { False        : pyk.text_type
+      , True         : _text_lower
       }
-    , lower          = _unicode_lower
-    , upper          = _unicode_upper
+    , lower          = _text_lower
+    , upper          = _text_upper
     )
 
 class String (Root) :
@@ -313,7 +315,7 @@ class String (Root) :
     def __init__ (cls, name, bases, dct) :
         cls.needs_raw_value = bool (cls.ignore_case)
         cls.__m_super.__init__ (name, bases, dct)
-        cooked = s_cooked = _unicode_ignore_case [cls.ignore_case]
+        cooked = s_cooked = _text_ignore_case [cls.ignore_case]
         if "cooked" in dct :
             c_name = cls._m_mangled_attr_name ("cooked")
             setattr (cls, c_name, dct ["cooked"])
@@ -345,7 +347,7 @@ class Surrogate (Root) :
                     % ( cls, bases
                       , "\n    ".join
                           ( "%s : %s"
-                          % (k, v) for k, v in sorted (pyk.iteritems (dct))
+                          % (k, v) for k, v in sorted (pyk.iteritems (pykdct))
                           )
                       )
                     )
@@ -357,7 +359,7 @@ class Surrogate (Root) :
                     % ( cls, bases
                       , "\n    ".join
                           ( "%s : %s"
-                          % (k, v) for k, v in sorted (pyk.iteritems (dct))
+                          % (k, v) for k, v in sorted (pyk.iteritems (pykdct))
                           )
                       )
                     )
@@ -380,9 +382,8 @@ class _M_Bin_Pickler_ (TFL.Meta.Object.__class__) :
 class Typed_Collection (Root) :
     """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
 
-    class _Pickler_ (TFL.Meta.Object) :
-
-        __metaclass__ = _M_Bin_Pickler_
+    class _Pickler_ \
+              (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Bin_Pickler_)) :
 
         @classmethod
         def as_cargo (cls, attr_kind, attr_type, value) :
@@ -472,7 +473,7 @@ class Unit (Root) :
             if ud :
                 du = dct.get ("_default_unit")
                 if du is None :
-                    for n, v in ud.iteritems () :
+                    for n, v in pyk.iteritems (ud) :
                         if v == 1.0 :
                             du = n
                             setattr (cls, "_default_unit", du)
@@ -486,7 +487,7 @@ class Unit (Root) :
                               "the number by at least one space."
                               "\n"
                               "You can use the following units: %s."
-                              % (du, ", ".join (sorted (ud.iterkeys ())))
+                              % (du, ", ".join (sorted (pyk.iterkeys (ud))))
                             , getattr (cls, "_syntax_spec_tail", "")
                             )
                         if s
@@ -496,12 +497,14 @@ class Unit (Root) :
                     print \
                         ( "Attribute type %s doesn't specify a `_default_unit`"
                           "with value 1.0 in `_unit_dict`"
-                        ) % name
+                        % name
+                        )
             elif __debug__ :
                 if not getattr (cls, "_unit_dict", None) :
                     print \
                         ( "Attribute type %s doesn't specify a _unit_dict"
-                        ) % name
+                        % name
+                        )
     # end def __init__
 
 # end class Unit

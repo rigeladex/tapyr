@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -68,8 +68,8 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> x = SRM.Boat ((u'Optimist',),     1, "AUT")
-    >>> x.nation
-    u'AUT'
+    >>> prepr (x.nation)
+    'AUT'
     >>> x = SRM.Boat ((u'Optimist',),     2, "AUT")
     >>> x = SRM.Boat ((u'Laser',),        3, "AUT")
     >>> x = SRM.Boat ((u'Seascape 18',), 14, "AUT")

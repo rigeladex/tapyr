@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,13 +33,15 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM          import MOM
-from   _TFL          import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._SCM
 
 import _TFL._Meta.Object
 
+@pyk.adapt__bool__
 class History_Mixin (TFL.Meta.Object) :
 
     change_count = 0
@@ -52,9 +54,9 @@ class History_Mixin (TFL.Meta.Object) :
         self.history.append (change)
     # end def add_change
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.change_count or self.history)
-    # end def __nonzero__
+    # end def __bool__
 
 # end class History_Mixin
 

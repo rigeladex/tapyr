@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,15 +29,13 @@
 # Revision Dates
 #    16-Aug-2000 (CT) Creation
 #    11-Feb-2006 (CT) Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
+from   _TFL                import TFL
+from   _TFL.pyk            import pyk
 
-
-from   _TFL             import TFL
-
+@pyk.adapt__bool__
 class _Black_Hole_ :
     """Takes all function calls and attribute accesses thrown at it and
        ignores them.
@@ -51,12 +49,17 @@ class _Black_Hole_ :
 
     def __init__    (s, * args, ** kw) : pass
     def __call__    (s, * args, ** kw) : return s
-    def __cmp__     (s, o)             : return 0
+    def __bool__    (s)                : return False
     def __coerce__  (s, o)             : return s, s
+    def __eq__      (s, o)             : return False
     def __getattr__ (s, n)             : return s
+    def __ge__      (s, o)             : return False
+    def __gt__      (s, o)             : return False
     def __hash__    (s)                : return 0
     def __len__     (s)                : return 0
-    def __nonzero__ (s)                : return 0
+    def __le__      (s, o)             : return False
+    def __lt__      (s, o)             : return False
+    def __ne__      (s, o)             : return False
     def __repr__    (s)                : return "<_Black_Hole_ at %s>" % id (s)
     def __str__     (s)                : return ""
 

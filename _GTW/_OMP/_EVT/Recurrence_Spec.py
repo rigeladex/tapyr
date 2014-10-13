@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.EVT.
@@ -48,6 +48,7 @@ import _GTW._OMP._EVT.Entity
 import _GTW._OMP._EVT.Event
 
 from   _TFL.I18N                  import _, _T, _Tn
+from   _TFL.pyk                   import pyk
 
 import datetime
 import dateutil.rrule
@@ -448,7 +449,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
     # end def _change_callback
 
     def _rrule_attrs (self) :
-        for a in self.attributes.itervalues () :
+        for a in pyk.itervalues (self.attributes) :
             name = getattr (a, "rrule_name", None)
             if name :
                 value = a.get_value (self)

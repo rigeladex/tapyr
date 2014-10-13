@@ -190,6 +190,11 @@ import _PMA.Mailcap
 import _PMA.Msg_Status
 import _PMA.SB
 
+from   _TFL.predicate          import callable, filtered_join, first, split_hst
+from   _TFL.pyk                import pyk
+from   _TFL.Regexp             import *
+from   _TFL                    import sos
+
 import _TFL.Accessor
 import _TFL.Ascii
 import _TFL.Caller
@@ -199,9 +204,6 @@ import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 
-from   _TFL.predicate          import callable, split_hst
-from   _TFL.Regexp             import *
-from   _TFL                    import sos
 import textwrap
 import time
 import weakref
@@ -267,7 +269,7 @@ class Msg_Scope (TFL.Caller.Scope) :
                     return self._defaults [name]
                 except (NameError, KeyError) :
                     pass
-            raise self.Lookup_Error, name
+            raise self.Lookup_Error (name)
     # end def _get_attr_
 
     def _get_body (self) :
@@ -355,7 +357,7 @@ class Msg_Scope (TFL.Caller.Scope) :
 
     def _get_sender_name (self) :
         try :
-            result = filter (None, self._get_sender_ ()) [0]
+            result = first (s for s in self._get_sender_ () if s)
         except IndexError :
             result = None
         if result is not None :
@@ -367,7 +369,7 @@ class Msg_Scope (TFL.Caller.Scope) :
         try :
             return self._get_attr_ (name)
         except self.Lookup_Error :
-            raise AttributeError, name
+            raise AttributeError (name)
     # end def __getattr__
 
     def __getitem__ (self, index) :
@@ -739,7 +741,7 @@ class _Message_ (_Msg_Part_) :
     _formatted = formatted
 
     def _new_part (self, name, p, i) :
-        p_name = ".".join (filter (None, (name, str (i))))
+        p_name = filtered_join (".", (name, str (i)))
         if p.is_multipart () :
             result = Message_Part (p, p_name)
         else :
@@ -895,6 +897,7 @@ class Message (_Message_) :
 
 # end class Message
 
+@pyk.adapt__bool__
 class _Pending_Action_ (TFL.Meta.Object) :
 
     msg     = property (TFL.Getter._msg)
@@ -919,7 +922,7 @@ class _Pending_Action_ (TFL.Meta.Object) :
         if hasattr (source, "delete") :
             try :
                 source.delete (msg)
-            except Exception, exc :
+            except Exception as exc :
                 print \
                     ( "Couldn't delete `%s (%s)` due to exception `%s`"
                     % (msg.number, msg.name, exc)
@@ -982,12 +985,12 @@ class _Pending_Action_ (TFL.Meta.Object) :
     # end def untrain_spam
 
     def __len__ (self) :
-        return self.__nonzero__ ()
+        return self.__bool__ ()
     # end def __len__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._delete or self._targets)
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         result = ["%s" % self._msg.name]

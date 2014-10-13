@@ -208,7 +208,7 @@ class _MF3_Completer_ (TFL.Meta.Object) :
             AQ   = ETM.AQ
             fmap = self.field_map
             root = self.elem.root
-            for k, v in values.iteritems () :
+            for k, v in pyk.iteritems (values) :
                 if v != "" :
                     name = fmap.get (k)
                     if name is not None :

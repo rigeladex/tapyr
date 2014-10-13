@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2013 Martin Glück. All rights reserved
+# Copyright (C) 2005-2014 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -34,14 +34,19 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
+from   __future__                 import print_function
+
+from   _CAL                       import CAL
+from   _TFL                       import TFL
+
+from   _TFL.pyk                   import pyk
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL._Meta.Object
 import _TFL._Meta.Property
 import _TFL._Meta.M_Class
 import _TFL.CAO
 
-from   _CAL              import CAL
 import _CAL.Date_Time
 
 import icalendar
@@ -54,6 +59,7 @@ class Undefined (object) :
 
 # end class Undefined
 
+@totally_ordered
 class Email (TFL.Meta.Object) :
     """Convert an icalendar vCalAddress property"""
 
@@ -74,15 +80,21 @@ class Email (TFL.Meta.Object) :
 
     __str__ = __repr__
 
-    def __cmp__ (self, other) :
+    def __eq__ (self, other) :
         s = self.address,                      self.role
         o = getattr (other, "address", other), getattr (other, "role", other)
-        return cmp (s, o)
-    # end def __cmp__
+        return s == o
+    # end def __eq__
 
     def __hash__ (self) :
         return hash ((self.address, self.role))
     # end def __hash__
+
+    def __lt__ (self, other) :
+        s = self.address,                      self.role
+        o = getattr (other, "address", other), getattr (other, "role", other)
+        return s < o
+    # end def __lt__
 
 # end class Email
 
@@ -109,8 +121,8 @@ class ICal_Prop (TFL.Meta.Property) :
     def _get_value (self, obj) :
         try :
             value = obj._icomp [self.name]
-        except KeyError, exc:
-            raise AttributeError, exc
+        except KeyError as exc:
+            raise AttributeError (exc)
         if value.__class__ in self.conversion :
             value = self.conversion [value.__class__] (value)
         return value
@@ -124,8 +136,8 @@ class ICal_Multi_Prop (ICal_Prop) :
     def _get_value (self, obj) :
         try :
             values = obj._icomp [self.name]
-        except KeyError, exc:
-            raise AttributeError, exc
+        except KeyError as exc:
+            raise AttributeError (exc)
         if not isinstance (values, (list, tuple)) :
             values = (values, )
         result = []
@@ -279,17 +291,17 @@ for ical_cls in \
 
 def _main (cmd) :
     cal = Calendar (cmd.ical_file)
-    print cal
+    print (cal)
     if cmd.ical_file_old :
         old = Calendar (cmd.ical_file_old)
         width = (17, 30, 30)
         format = " ".join ("%%-%ds" % (w, ) for w in width)
         sep    = " ".join ("~" * w for w in width)
-        print
-        print format % ("WHERE", "OLD", "NEW")
-        print sep
+        print ()
+        print (format % ("WHERE", "OLD", "NEW"))
+        print (sep)
         for where, new, old in cal.diff (old) :
-            print format % (where, old, new)
+            print (format % (where, old, new))
 # end def _main
 
 _Command = TFL.CAO.Cmd \

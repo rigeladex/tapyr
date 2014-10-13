@@ -58,6 +58,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 import _TFL.Ascii
 import _TFL.Attr_Mapper
@@ -118,7 +119,7 @@ class TOP_MOM_Entity_Mixin_Base \
     def __init__ (self, ** kw) :
         obj = kw ["obj"]
         if "name" not in kw :
-            name = unicode (getattr (obj, "perma_name", None))
+            name = pyk.text_type (getattr (obj, "perma_name", None))
             if name is None :
                 name = getattr (obj, "name", obj.pid)
             kw ["name"] = TFL.Ascii.sanitized_filename (name)
@@ -204,7 +205,8 @@ class TOP_MOM_E_Type_Mixin_Base \
             , _T (name.capitalize () if name [0] >= a else name)
             )
         self.__super.__init__ \
-            ( name          = TFL.Ascii.sanitized_filename (unicode (name))
+            ( name          = TFL.Ascii.sanitized_filename
+                (pyk.text_type (name))
             , short_title   = short_title
             , title         = title
             , ** kw

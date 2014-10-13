@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
@@ -463,7 +463,7 @@ class Session_S (_Session_) :
             self.change_count += self.needs_commit
             self.__super.commit             ()
             self._mark_entities_for_reload  ()
-        except self.engine.Commit_Conflict_Exception, exc:
+        except self.engine.Commit_Conflict_Exception as exc:
             self.scope.rollback             ()
             raise MOM.Error.Commit_Conflict ()
     # end def commit
@@ -474,7 +474,7 @@ class Session_S (_Session_) :
             self.change_count += 1
             self.needs_commit  = True
             def _find_entites (ref_map) :
-                for ET, attrs in ref_map.iteritems () :
+                for ET, attrs in pyk.iteritems (ref_map) :
                     if not ET.is_partial :
                         QR         = self.Q_Result (ET)
                         query_args = TFL.Filter_Or \
@@ -597,7 +597,7 @@ class Session_S (_Session_) :
 
     def _mark_entities_for_reload (self, keep_zombies = False) :
         ### dict will be modified
-        for pid, e in tuple (self._pid_map.iteritems ()) :
+        for pid, e in tuple (pyk.iteritems (self._pid_map)) :
             if isinstance (e, MOM._Id_Entity_Destroyed_Mixin_) :
                 if not keep_zombies :
                     del self._pid_map [pid]

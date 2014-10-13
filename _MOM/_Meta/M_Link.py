@@ -119,6 +119,8 @@ import _MOM.E_Type_Manager
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.predicate        import cartesian, plural_of, uniq
+from   _TFL.pyk              import pyk
+
 import _TFL.multimap
 import _TFL.Undef
 
@@ -137,7 +139,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     # end def __init__
 
     def m_create_role_children (cls, role) :
-        if not isinstance (role, basestring) :
+        if not isinstance (role, pyk.string_types) :
            role = role.name
         cls._role_children_to_add.append (role)
     # end def m_create_role_children
@@ -154,7 +156,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
             ( tuple
                 ( (r.name, c)
                 for c in sorted
-                    ( r.E_Type.children_np.itervalues ()
+                    ( pyk.itervalues (r.E_Type.children_np)
                     , key = TFL.Getter.i_rank
                     )
                 )
@@ -217,7 +219,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 for rtn in (etype.type_name, etype.type_base_name) :
                     ra_kw = cls.auto_derive_np_kw [rtn, role.name]
                     auto_kw.update (ra_kw)
-            for auto_kw_updater in auto_kw ["_update_auto_kw"].itervalues () :
+            for auto_kw_updater in pyk.itervalues (auto_kw ["_update_auto_kw"]):
                 auto_kw_updater (auto_kw)
             for role, etype in rets :
                 r_rkw = dict \
@@ -231,7 +233,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 ### reset cache
                 role._children_np = role._children_np_transitive = None
             is_partial = \
-                (  any (r.role_type.is_partial for r in rkw.itervalues ())
+                (  any (r.role_type.is_partial for r in pyk.itervalues (rkw))
                 or any
                     (   (not r.role_type) or r.role_type.is_partial
                     for r in cls.Role_Attrs if r.name not in rkw
@@ -266,7 +268,9 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         for role in uniq (cls._role_children_to_add) :
             role = getattr (cls._Attributes, role)
             children = sorted \
-                (role.E_Type.children_np.itervalues (), key = TFL.Getter.i_rank)
+                ( pyk.itervalues (role.E_Type.children_np)
+                , key = TFL.Getter.i_rank
+                )
             for c in children :
                 cls._m_create_role_child ((role.name, c))
     # end def _m_create_role_children
@@ -295,7 +299,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
         cls._Attributes.m_setup_names (cls)
         def _gen_roles (cls) :
             for a in sorted \
-                    ( cls._Attributes._names.itervalues ()
+                    ( pyk.itervalues (cls._Attributes._names)
                     , key = TFL.Sorted_By ("rank", "name")
                     ) :
                 if a is not None and issubclass (a, MOM.Attr.A_Link_Role) :
@@ -434,7 +438,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
         try :
             result = cls.child_np_map [etns]
         except KeyError :
-            for cnp in cls.children_np.itervalues () :
+            for cnp in pyk.itervalues (cls.children_np) :
                 if etypes == tuple (r.role_type for r in cnp.Roles) :
                     result = cls.child_np_map [etns] = cnp
                     break

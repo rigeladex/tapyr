@@ -63,10 +63,10 @@ import _TFL.Sorted_By
 
 import itertools
 
-class _Prop_Spec_ (TFL.Meta.Object) :
+class _Prop_Spec_ \
+          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Spec)) :
     """Base class for attribute and predicate specification."""
 
-    __metaclass__       = MOM.Meta.M_Prop_Spec
     _real_name          = "Spec"
     _lists_to_combine   = ("Kind_Mixins", )
 
@@ -85,7 +85,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def __init__
 
     def fix_doc (self, et_scope) :
-        for p in self._prop_dict.itervalues () :
+        for p in pyk.itervalues (self._prop_dict) :
             p.prop.fix_doc (et_scope)
             if p.prop.description :
                 p.__doc__ = p.prop.description
@@ -104,19 +104,19 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     def _create_prop_dict (self, e_type) :
         self._prop_dict = self._prop_dict_cls ()
         self._prop_kind = dict ((k, []) for k in self._Prop_Pkg.Kind.Table)
-        for n, v in self._prop_kind.iteritems () :
+        for n, v in pyk.iteritems (self._prop_kind) :
             setattr (e_type, self._kind_list_name (n), v)
     # end def _create_prop_dict
 
     def _create_properties (self, e_type) :
-        for n, prop_type in self._own_names.iteritems () :
+        for n, prop_type in pyk.iteritems (self._own_names) :
             if prop_type is not None :
                 self._add_prop (e_type, n, prop_type)
         base_props = {}
         for b in e_type.__bases__ [::-1] :
             bps = getattr (b, self._prop_map_name, {})
             base_props.update (bps)
-        for n, prop_type in self._names.iteritems () :
+        for n, prop_type in pyk.iteritems (self._names) :
             if n not in self._own_names :
                 ### Inherited property: include in `_prop_dict` and `_prop_kind`
                 prop = base_props.get (n)
@@ -162,7 +162,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def _setup_prop
 
     def _sort_properties (self, e_type) :
-        for pk in self._prop_kind.itervalues () :
+        for pk in pyk.itervalues (self._prop_kind) :
             pk.sort (key = TFL.Sorted_By ("rank", "name"))
     # end def _sort_properties
 

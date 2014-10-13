@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,13 +47,15 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__                 import print_function, unicode_literals
 
-from   _TFL import TFL
+from   _TFL                       import TFL
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL._Meta.totally_ordered import totally_ordered
+from   _TFL.portable_repr         import portable_repr
+from   _TFL.pyk                   import pyk
 
 import _TFL.Accessor
 
@@ -78,12 +80,11 @@ class Desc_Getter (TFL.Meta.Object) :
 
     def __call__ (self, x) :
         v = self.getter (x)
-        t = type (v).__name__
-        return self.Descending ((Sorted_By.type_name_map.get (t, t), v))
+        return self.Descending (Sorted_By.typed_key (v))
     # end def __call__
 
     def __repr__ (self) :
-       return "%s-%s" % (self.Descending.__name__, self.getter)
+       return "%s-%s" % (self.Descending.__name__, portable_repr (self.getter))
     # end def __repr__
 
 # end class Desc_Getter
@@ -96,7 +97,8 @@ class Sorted_By (TFL.Meta.Object) :
            >>> from _TFL.Record import Record as R
            >>> NL = chr (10)
            >>> def show (l, key) :
-           ...     print (NL.join (str (s) for s in sorted (l, key = key)))
+           ...     sl = sorted (l, key = key)
+           ...     print (NL.join (str (s) for s in sl))
            ...
            >>> l = [ R (a = 1, b = 1, c = "abcd")
            ...     , R (a = 1, b = 2, c = "ABCD")
@@ -238,10 +240,12 @@ class Sorted_By (TFL.Meta.Object) :
     Ignore_Exception = (LookupError, AttributeError)
 
     type_name_map = dict \
-        ( bool    = "number"
+        ( portable_repr.Type_Name_Map
+        , bool    = "number"
         , Decimal = "number"
         , float   = "number"
         , int     = "number"
+        , long    = "number"
         )
 
     def __init__ (self, * criteria) :
@@ -249,16 +253,15 @@ class Sorted_By (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, x) :
-        def gen (x, keys, type_map) :
+        def gen (x, keys, typed_key) :
             Ignore = self.Ignore_Exception
             for key in keys :
                 try :
                     v = key (x)
                 except Ignore :
                     v = None
-                t = type (v).__name__
-                yield (type_map.get (t, t), v)
-        return tuple (gen (x, self.keys, self.type_name_map))
+                yield typed_key (v)
+        return tuple (gen (x, self.keys, self.typed_key))
     # end def __call__
 
     @Once_Property
@@ -267,13 +270,39 @@ class Sorted_By (TFL.Meta.Object) :
         for c in self.criteria :
             if hasattr (c, "__call__") :
                 key = c
+            elif c == "+" :
+                key = self.typed_value
+            elif c == "-" :
+                key = Desc_Getter (self.typed_value)
             elif c.startswith ("-") or ".-" in c :
                 key = Desc_Getter (getattr (TFL.Getter, c.replace ("-", "")))
             else :
                 key = getattr (TFL.Getter, c)
             result.append (key)
+        if not result :
+            result.append (self.typed_value)
         return result
     # end def keys
+
+    @classmethod
+    def type_name (cls, v) :
+        t = type (v).__name__
+        return cls.type_name_map.get (t, t)
+    # end def type_name
+
+    @classmethod
+    def typed_key (cls, v) :
+        result = v
+        typer  = cls.type_name
+        if isinstance (v, (list, tuple)) :
+            result = tuple ((typer (x), x) for x in v)
+        return typer (v), result
+    # end def typed_key
+
+    @staticmethod
+    def typed_value (x) :
+        return x
+    # end def typed_value
 
     def __iter__ (self) :
         return iter (self.criteria)
@@ -281,7 +310,9 @@ class Sorted_By (TFL.Meta.Object) :
 
     def __repr__ (self) :
        return "<%s: %s>" % \
-          (self.__class__.__name__, ", ".join (str (key) for key in self.keys))
+           ( self.__class__.__name__
+           , ", ".join (portable_repr (key) for key in self.keys)
+           )
     # end def __repr__
 
 # end class Sorted_By

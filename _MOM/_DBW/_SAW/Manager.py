@@ -159,7 +159,7 @@ class _M_SAW_Manager_ (MOM.DBW._Manager_.__class__) :
                     for c in columns
                     )
                 )
-            for (k, columns) in sorted (cls.meta_table_columns.iteritems ())
+            for (k, columns) in sorted (pyk.iteritems (cls.meta_table_columns))
             )
     # end def db_sig
 

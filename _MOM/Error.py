@@ -95,10 +95,12 @@
 #     2-Jul-2014 (CT) Improve `Attribute_Syntax`
 #     3-Jul-2014 (CT) Redefine `Required_Empty.head`
 #     1-Sep-2014 (CT) Fix translatability of `Permission.as_unicode`
+#     9-Oct-2014 (CT) Use `portable_repr`
+#    10-Oct-2014 (CT) Use `pyk.reprify`, not `pyk.encoded`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__               import unicode_literals
 
 from   _TFL                     import TFL
 from   _MOM                     import MOM
@@ -107,6 +109,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import *
+from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 from   _TFL.Record              import Record
 
@@ -131,7 +134,7 @@ def as_json_cargo (* excs) :
                 cargo = exc.as_json_cargo
             except AttributeError :
                 cargo = dict \
-                    ( description = unicode (exc)
+                    ( description = pyk.text_type (exc)
                     , head        = exc.__class__.__name__
                     )
             if isinstance (cargo, (list, tuple)) :
@@ -142,22 +145,25 @@ def as_json_cargo (* excs) :
     return list (_gen (excs))
 # end def as_json_cargo
 
-class _MOM_Error_ (StandardError) :
+@pyk.adapt__str__
+class _MOM_Error_ \
+          ( TFL.Meta.BaM
+              (Exception, metaclass = TFL.Meta.Object.__class__)
+          ) :
     """Root class of MOM exceptions"""
 
-    __metaclass__    = TFL.Meta.Object.__class__
     _real_name       = "Error"
 
     arg_sep          = ", "
     is_required      = False
 
     _json_attributes = \
-        ( "as_unicode"
+        ( "as_text"
         , "is_required"
         )
 
     _json_map        = dict \
-        ( as_unicode = "description"
+        ( as_text    = "description"
         )
 
     _rank_d          = 1
@@ -175,17 +181,17 @@ class _MOM_Error_ (StandardError) :
     # end def as_json_cargo
 
     @Once_Property
-    def as_str (self) :
-        return pyk.encoded (unicode (self))
-    # end def as_str
-
-    @Once_Property
-    def as_unicode (self) :
+    def as_text (self) :
         result = self.arg_sep.join (self.str_arg (self.args))
         if not result :
             result = _T (self.__class__.__doc__)
         return result
-    # end def as_unicode
+    # end def as_text
+
+    @Once_Property
+    def encoded (self) :
+        return pyk.encoded (self.as_text)
+    # end def encoded
 
     @Once_Property
     def rank (self) :
@@ -195,35 +201,35 @@ class _MOM_Error_ (StandardError) :
     def str_arg (self, args) :
         for a in args :
             try :
-                s = unicode (a)
+                s = pyk.text_type (a)
             except Exception as exc :
-                s = "%s --> %s" % (repr (a), exc)
+                s = "%s --> %s" % (portable_repr (a), exc)
             yield s
     # end def str_arg
 
     def __eq__ (self, other) :
-        return self.as_str == pyk.encoded (other)
+        return self.encoded == pyk.encoded (other)
     # end def __eq__
 
     def __le__ (self, other) :
-        return self.as_str <= pyk.encoded (other)
+        return self.encoded <= pyk.encoded (other)
     # end def __le__
 
     def __lt__ (self, other) :
-        return self.as_str < pyk.encoded (other)
+        return self.encoded < pyk.encoded (other)
     # end def __lt__
 
     def __hash__ (self) :
-        return hash (self.as_str)
+        return hash (self.encoded)
     # end def __hash__
 
-    def __str__ (self) :
-        return self.as_str
-    # end def __str__
+    def __repr__ (self) :
+        return "".join ((self.__class__.__name__, portable_repr (self.args)))
+    # end def __repr__
 
-    def __unicode__ (self) :
-        return self.as_unicode
-    # end def __unicode__
+    def __str__ (self) :
+        return self.as_text
+    # end def __str__
 
 Error = _MOM_Error_ # end class
 
@@ -284,7 +290,7 @@ class _Invariant_ (Error) :
 
     @Once_Property
     def bindings (self) :
-        return sorted ((k, unicode (v)) for k, v in self.val_disp.iteritems ())
+        return sorted (pyk.iteritems (self.val_disp))
     # end def bindings
 
     @property
@@ -325,13 +331,10 @@ class _Invariant_ (Error) :
             bindings = self.bindings
         for k, v in bindings :
             if isinstance (v, (list, tuple)) :
-                v = ", ".join ("%s" % (pyk.decoded (x), ) for x in v)
-            elif v is None :
+                v = ", ".join \
+                    ("%s" % (portable_repr (pyk.decoded (x)), ) for x in v)
+            elif v is None or v == "''":
                 v = _T ("None")
-            else :
-                v = ("%r" if self.raw else "%s") % (pyk.decoded (v), )
-                if v.startswith (('u"', "u'")) :
-                    v = v [1:]
             yield "%s = %s" % (k, v)
     # end def _formatted_bindings
 
@@ -346,7 +349,7 @@ class Ambiguous_Epk (_Invariant_) :
         assert 1 < count <= len (matches), \
             "count = %s, matches = %s" % (count, matches)
         self.e_type     = e_type
-        self.epk        = tuple (repr (x) for x in epk)
+        self.epk        = portable_repr (epk)
         self.kw         = kw
         self.count      = count
         self.matches    = tuple (m.ui_display for m in matches)
@@ -381,10 +384,10 @@ class Ambiguous_Epk (_Invariant_) :
     def bindings (self) :
         FO = self.FO
         return sorted \
-            (   (k, (pyk.encoded (FO (k, v)) if v is not None else v))
+            (   (k, (pyk.reprify (FO (k, v)) if v is not None else v))
             for (k, v) in itertools.chain
                 ( (zip (self.e_type.epk_sig, self.epk))
-                , self.kw.iteritems ()
+                , pyk.iteritems (self.kw)
                 )
             )
     # end def bindings
@@ -414,7 +417,7 @@ class Ambiguous_Epk (_Invariant_) :
 class Attribute (Error) :
 
     _json_attributes = \
-        ( "as_unicode"
+        ( "as_text"
         , "attributes"
         , "bindings"
         , "is_required"
@@ -423,13 +426,13 @@ class Attribute (Error) :
     def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
         if entity :
             msg = \
-                ( _T ("Can't set %s attribute %s.%s to `%r`")
-                % (_T (kind), entity.type_base_name, name, val)
+                ( _T ("Can't set %s attribute %s.%s to %s")
+                % (_T (kind), entity.type_base_name, name, portable_repr (val))
                 )
         else :
             msg = \
-                ( _T ("Can't set %s attribute %s to %r")
-                % (_T (kind), name, val)
+                ( _T ("Can't set %s attribute %s to %s")
+                % (_T (kind), name, portable_repr (val))
                 )
         if exc :
             msg = "%s.\n    %s" % (msg, exc)
@@ -449,9 +452,9 @@ class Attribute (Error) :
             try :
                 fov   = FO (name, self.value)
             except Exception :
-                value = pyk.encoded (self.value, "utf-8")
+                value = pyk.reprify (self.value)
             else :
-                value = pyk.encoded (fov, "utf-8")
+                value = pyk.reprify (fov)
             return ((name, value), )
     # end def bindings
 
@@ -472,7 +475,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
     _rank_s        = -10
 
     _json_attributes = ("description", ) + tuple \
-        (a for a in _Invariant_._json_attributes if a != "as_unicode")
+        (a for a in _Invariant_._json_attributes if a != "as_text")
 
     class inv :
         name       = "syntax_valid"
@@ -492,21 +495,23 @@ class Attribute_Syntax (_Invariant_, ValueError) :
     # end def __init__
 
     @Once_Property
-    def as_unicode (self) :
+    def as_text (self) :
         attr   = self.attribute
         result = \
-            ( _T ( "`%s` for : `%r`"
-                   "\n     expected type  : `%s`"
-                   "\n     got      value : `%s`"
+            ( _T ( "`%s` for : `%s`"
+                   "\n     expected type  : %s"
+                   "\n     got      value : %s"
                  )
             % ( self.exc_str or _T ("Syntax error")
-              , attr, attr.typ, self.value
+              , portable_repr (attr)
+              , portable_repr (attr.typ)
+              , portable_repr (self.value)
               )
             )
         if attr.syntax :
             result = "\n".join ((result, _T (attr.syntax)))
         return result
-    # end def as_unicode
+    # end def as_text
 
     @Once_Property
     def bindings (self) :
@@ -606,10 +611,10 @@ class Invariant (_Invariant_) :
     # end def __init__
 
     @Once_Property
-    def as_unicode (self) :
+    def as_text (self) :
         return self._as_string \
             (head = "%s `%s` : " % (_T ("Condition"), _T (self.inv.name)))
-    # end def as_unicode
+    # end def as_text
 
     @Once_Property
     def description (self) :
@@ -716,7 +721,7 @@ class Invariants (Error) :
         try :
             return err.inv.name
         except AttributeError :
-            return unicode (err)
+            return pyk.text_type (err)
     # end def _sort_key
 
 # end class Invariants
@@ -732,7 +737,7 @@ class Multiplicity (Error) :
         self.e_type       = e_type
         self.role         = role
         self.type_name    = e_type.ui_name
-        self.l_ui_display = pyk.encoded (epk)
+        self.l_ui_display = pyk.reprify (epk)
         self.r_ui_display = r_obj.ui_repr
         self.extra_links  = tuple \
             ( TFL.Record
@@ -745,17 +750,18 @@ class Multiplicity (Error) :
     # end def __init__
 
     @Once_Property
-    def as_unicode (self) :
+    def as_text (self) :
         return self.description
-    # end def as_unicode
+    # end def as_text
 
     @Once_Property
     def head (self) :
+        fmt = _T \
+            ( "The new definition of %s %s would exceed the maximum "
+              "number [%s] of links allowed for %s."
+            )
         return \
-            ( _T
-              ("The new definition of %s %s would exceed the maximum "
-               "number [%s] of links allowed for %s."
-              )
+            ( fmt
             % ( self.type_name, self.l_ui_display
               , self.role.max_links, self.r_ui_display
               )
@@ -849,9 +855,9 @@ class Not_Unique (_Invariant_) :
     # end def __init__
 
     @Once_Property
-    def as_unicode (self) :
+    def as_text (self) :
         return self.description
-    # end def as_unicode
+    # end def as_text
 
     @Once_Property
     def head (self) :
@@ -901,7 +907,7 @@ class Permission (_Invariant_, ValueError) :
     # end def __init__
 
     @Once_Property
-    def as_unicode (self) :
+    def as_text (self) :
         attr   = self.attribute
         result = \
             ( _T( "Permission error for : `%s`;"
@@ -911,7 +917,7 @@ class Permission (_Invariant_, ValueError) :
             % (attr.ui_name_T, ", ".join (self.allowed), self.value)
             )
         return result
-    # end def as_unicode
+    # end def as_text
 
     @Once_Property
     def bindings (self) :
@@ -920,7 +926,7 @@ class Permission (_Invariant_, ValueError) :
 
     @Once_Property
     def head (self) :
-        return unicode (self)
+        return pyk.text_type (self)
     # end def head
 
 # end class Permission
@@ -946,23 +952,25 @@ class Quant (Invariant) :
         for v, d in paired (self.violators, self.violators_attr) :
             if len (bvars) > 1 and isinstance (v, (list, tuple)) :
                 for k, v in paired (bvars, v) :
-                    yield (pyk.encoded (k), repr (r))
+                    yield (pyk.decoded (k, "utf-8"), portable_repr (r))
             elif isinstance (v, (list, tuple)) :
                 yield \
-                    ( pyk.encoded (inv.bvar)
-                    , "[%s]" % (", ".join (map (unicode, v)), )
+                    ( pyk.decoded (inv.bvar, "utf-8")
+                    , "[%s]" % (", ".join (map (pyk.text_type, v)), )
                     )
             else :
-                yield (pyk.encoded (inv.bvar), repr (v))
+                yield (pyk.decoded (inv.bvar, "utf-8"), portable_repr (v))
             if d :
                 try :
-                    items = d.iteritems ()
+                    items = pyk.iteritems (d)
                 except AttributeError :
-                    val = repr (d)
+                    val = portable_repr (d)
                 else :
                     val = sorted \
-                        ((pyk.encoded (a), repr (x)) for (a, x) in items)
-                yield repr (v), val
+                        (   (pyk.decoded (a, "utf-8"), portable_repr (x))
+                        for (a, x) in items
+                        )
+                yield portable_repr (v), val
     # end def _violator_values
 
 # end class Quant
@@ -1004,7 +1012,7 @@ class Required_Missing (_Invariant_) :
         raw = kw.pop ("raw", False)
         self.__super.__init__ (e_type, raw)
         self.attributes = missing
-        self.epk        = tuple (repr (x) for x in epk)
+        self.epk        = epk
         self.e_type     = e_type
         self.kind       = kind
         self.kw         = kw
@@ -1025,16 +1033,13 @@ class Required_Missing (_Invariant_) :
 
     @Once_Property
     def description (self) :
+        epk_values   = zip \
+            (self.e_type.epk_sig, (portable_repr (x) for x in self.epk))
+        epk_bindings = self._formatted_bindings (epk_values)
+        kw_bindings  = self._formatted_bindings (pyk.iteritems (self.kw))
         return \
             ( _T ("Instead it got: (%s)")
-            % (", ".join
-                  ( itertools.chain
-                      ( self._formatted_bindings
-                          (zip (self.e_type.epk_sig, self.epk))
-                      , self._formatted_bindings (self.kw.iteritems ())
-                      )
-                  )
-              )
+            % ", ".join (itertools.chain (epk_bindings, kw_bindings))
             )
     # end def description
 

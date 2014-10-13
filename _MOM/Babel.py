@@ -43,6 +43,9 @@
 #    31-Aug-2014 (CT) Add exception handler to `Extract` --> debug info
 #    ««revision-date»»···
 #--
+
+from   __future__          import unicode_literals, print_function
+
 from   _MOM                import MOM
 
 from   _TFL                import TFL
@@ -95,9 +98,9 @@ def Extract (fobj, keywords, comment_tags, config, method) :
     try :
         exec (code, globals (), d)
     except Exception as exc :
-        print "*** Error during Babel.Extract", fobj, "*" * 40
-        print exc
-        print code
+        print ("*** Error during Babel.Extract", fobj, "*" * 40)
+        print (exc)
+        print (code)
         raise
     else :
         return d ["main"] (encoding, config, method)

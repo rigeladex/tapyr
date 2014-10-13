@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Martin Glueck All rights reserved
+# Copyright (C) 2013-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.elFinder.
@@ -35,19 +35,25 @@
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from    _GTW                       import GTW
-from    _MOM                       import MOM
-from    _TFL                       import TFL
-from    _TFL                       import sos as os
-from    _TFL._Meta.Once_Property   import Once_Property
-from    _MOM.import_MOM            import Q
-import  _GTW._RST._TOP.Page
-import   PIL.Image
-import   time
-import   datetime
-import   mimetypes
-from    _GTW._RST._TOP._elFinder   import elFinder
-import  _GTW._RST._TOP._elFinder._Filesystem_Driver_
+from   _GTW                       import GTW
+from   _MOM                       import MOM
+from   _TFL                       import TFL
+
+from   _GTW._RST._TOP._elFinder   import elFinder
+
+from   _MOM.import_MOM            import Q
+
+from   _TFL                       import sos as os
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
+
+import _GTW._RST._TOP.Page
+import _GTW._RST._TOP._elFinder._Filesystem_Driver_
+
+import datetime
+import mimetypes
+import time
+import PIL.Image
 
 class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
     """Creates on directory for each tag."""
@@ -116,7 +122,7 @@ class Tag_Cloud_Driver (elFinder._Filesystem_Driver_) :
     # end def _copy_from
 
     def _create_file (self, dir, file) :
-        if isinstance (file, basestring) :
+        if isinstance (file, pyk.string_types) :
             file_name = os.path.join (self.root_dir, dir, file)
         return open (file_name, "wb")
     # end def _create_file

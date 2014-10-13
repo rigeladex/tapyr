@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -46,13 +46,12 @@ _test_code = r"""
     >>> b2 = SRM.Boat       (bc, 2, "AUT")
     >>> int (b2.pid)
     101
-    >>> b3 = SRM.Boat       (bc, 2, "AUT") # doctest:+ELLIPSIS
-    Traceback (most recent call last):
-        ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     b3 = SRM.Boat       (bc, 2, "AUT") # doctest:+ELLIPSIS
     Invariants: The attribute values for ('left', 'sail_number', 'nation', 'sail_number_x') must be unique for each object
-      The new definition of Boat SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'2', u'AUT', u'') would clash with 1 existing entities
+      The new definition of Boat SRM.Boat (('Optimist', 'SRM.Boat_Class'), '2', 'AUT', '') would clash with 1 existing entities
       Already existing:
-        SRM.Boat ((u'Optimist', 'SRM.Boat_Class'), u'2', u'AUT', u'')
+        SRM.Boat (('Optimist', 'SRM.Boat_Class'), '2', 'AUT', '')
     >>> b3 = SRM.Boat       (bc, 3, "AUT")
     >>> b3.pid > b2.pid
     True

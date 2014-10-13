@@ -43,13 +43,14 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__                 import print_function, unicode_literals
 
 from   _GTW                       import GTW
 from   _TFL                       import TFL
 
 from   _TFL._Meta.Property        import Lazy_Property
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
 from   _TFL                       import sos
 
 import _TFL._Meta.Object
@@ -82,7 +83,7 @@ class _Parameter_ (TFL.Q_Exp.Q_Root) :
 
     def _resolved_kw (self, P, kw) :
         Q_Root = TFL.Q_Exp.Q_Root
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             if isinstance (v, Q_Root) :
                 v = v (P)
             yield k, v
@@ -141,7 +142,7 @@ class M_Definition (TFL.Meta.Object.__class__) :
         bn = tuple (reversed ([getattr (b, "_nested_", {}) for b in bases]))
         cls._nested_ = _nested_ = ddict (* bn)
         Q_Root = TFL.Q_Exp.Q_Root
-        for k, v in dct.iteritems () :
+        for k, v in pyk.iteritems (dct) :
             if isinstance (v, Q_Root) :
                 setattr (cls, k, Lazy_Property (k, v))
             elif isinstance (v, M_Definition) :
@@ -150,14 +151,14 @@ class M_Definition (TFL.Meta.Object.__class__) :
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
-        for k, v in cls._nested_.iteritems () :
+        for k, v in pyk.iteritems (cls._nested_) :
             setattr (result, k, v (R = result))
         return result
     # end def __call__
 
 # end class M_Definition
 
-class Definition (TFL.Meta.Object) :
+class Definition (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Definition)) :
     """Definition of parameters for media, i.e., CSS and JS, fragments.
 
     >>> class Defaults (Definition) :
@@ -192,8 +193,6 @@ class Definition (TFL.Meta.Object) :
     >>> sorted (D.nav_col.spec.items ()), sorted (E.nav_col.spec.items ())
     ([('a', 42), ('border', u'solid')], [('a', 137), ('border', u'solid')])
     """
-
-    __metaclass__ = M_Definition
 
     def __init__ (self, R = None) :
         self.R = R
@@ -343,7 +342,7 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
     def _eval_file (self, filename) :
         with open (filename, "rt") as file :
             self.globs ["__name__"] = filename
-            exec (file, self.globs, self)
+            exec (file.read (), self.globs, self)
     # end def _eval_file
 
     def _setup_media (self) :
@@ -358,7 +357,9 @@ class _Parameters_Scope_ (TFL.Caller.Object_Scope_Mutable) :
 
     def __getitem__ (self, index) :
         try :
-            if isinstance (index, basestring) and not index.startswith ("_") :
+            if (   isinstance (index, pyk.string_types)
+               and not index.startswith ("_")
+               ) :
                 return getattr (self, index)
         except AttributeError :
             return self.__super.__getitem__ (index)
@@ -382,7 +383,7 @@ __doc__ = r"""
 ...         (str (s) for s in sorted (fragments, key = TFL.Getter.rank))
 
 >>> scope = Scope (Media_Defaults, env).Eval (base_media)
->>> print as_string (scope.style_sheets)
+>>> print (as_string (scope.style_sheets))
 a, abbr, acronym, address, article, aside, audio
   { border         : 0
   ; font           : inherit
@@ -399,7 +400,7 @@ a.hide
     display:          none
 }
 /* <-- */
->>> print as_string (scope.script_files)
+>>> print (as_string (scope.script_files))
 /* a test javascript file directly included */
 
 >>> list (scope.scripts)
@@ -411,7 +412,7 @@ a.hide
 >>> list (scope.rel_links)
 [href="/media/GTW/css/jquery.gritter.rel.css"]
 
->>> print as_string (scope.js_on_ready)
+>>> print (as_string (scope.js_on_ready))
 /* this is a JS on ready code */
 
 """

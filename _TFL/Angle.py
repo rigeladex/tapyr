@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,19 +30,25 @@
 #    30-Nov-2007 (CT) Moved to TFL
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    23-Dec-2010 (CT) Doctest fixed (don't use `repr` of floating point numbers)
+#    13-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__                 import print_function
 
-from   _TFL                     import TFL
-from   _TFL.pyk                 import pyk
+from   _TFL                       import TFL
 
-from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.portable_repr         import portable_repr
+from   _TFL.pyk                   import pyk
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL._Meta.totally_ordered import totally_ordered
+
 import _TFL._Meta.Object
 
 import math
 
+@totally_ordered
+@pyk.adapt__div__
 @pyk.adapt__str__
 class _Angle_ (TFL.Meta.Object) :
     """Model an angle"""
@@ -114,19 +120,24 @@ class _Angle_ (TFL.Meta.Object) :
         return self.__class__ (float (self) + getattr (rhs, self.name, rhs))
     # end def __add__
 
-    def __cmp__ (self, rhs) :
+    def __eq__ (self, rhs) :
         r = getattr (rhs, "degrees", rhs)
-        return cmp (self.degrees, r)
-    # end def __cmp__
+        return self.degrees == r
+    # end def __eq__
 
-    def __div__ (self, rhs) :
+    def __floordiv__ (self, rhs) :
         assert not isinstance (rhs, _Angle_)
-        return self.__class__ (float (self) / rhs)
-    # end def __div__
+        return self.__class__ (int (self) // rhs)
+    # end def __floordiv__
 
     def __hash__ (self) :
         return hash (self.degrees)
     # end def __hash__
+
+    def __lt__ (self, rhs) :
+        r = getattr (rhs, "degrees", rhs)
+        return self.degrees < r
+    # end def __lt__
 
     def __mul__ (self, rhs) :
         assert not isinstance (rhs, _Angle_)
@@ -134,7 +145,8 @@ class _Angle_ (TFL.Meta.Object) :
     # end def __mul__
 
     def __repr__ (self) :
-        return "%s (%s)" % (self.__class__.__name__, float (self))
+        return "%s (%s)" % \
+            (self.__class__.__name__, portable_repr (float (self)))
     # end def __repr__
 
     def __str__ (self) :
@@ -144,6 +156,11 @@ class _Angle_ (TFL.Meta.Object) :
     def __sub__ (self, rhs) :
         return self.__class__ (float (self) - getattr (rhs, self.name, rhs))
     # end def __sub__
+
+    def __truediv__ (self, rhs) :
+        assert not isinstance (rhs, _Angle_)
+        return self.__class__ (float (self) / rhs)
+    # end def __truediv__
 
 # end class _Angle_
 
@@ -157,7 +174,7 @@ class Angle_D (_Angle_) :
        >>> print (Angle_D (45, 20, 40))
        045°20'40''
        >>> Angle_D (45)
-       Angle_D (45.0)
+       Angle_D (45)
        >>> Angle_D (45, 30)
        Angle_D (45.5)
        >>> Angle_D (45, 30, 36)
@@ -189,6 +206,10 @@ class Angle_D (_Angle_) :
     def __float__ (self) :
         return self.degrees
     # end def __float__
+
+    def __int__ (self) :
+        return int (self.degrees)
+    # end def __int__
 
 # end class Angle_D
 
@@ -224,6 +245,10 @@ class Angle_R (_Angle_) :
     def __float__ (self) :
         return self.radians
     # end def __float__
+
+    def __int__ (self) :
+        return int (self.radians)
+    # end def __int__
 
 # end class Angle_R
 

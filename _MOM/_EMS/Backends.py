@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.EMS.
@@ -52,13 +52,13 @@ import _MOM._EMS
 _hps = ("Hash", "_HPS.Manager")
 
 Map  = dict \
-    ( hps        = _hps
+    ( { ""    : _hps
+      , None  : _hps
+      }
+    , hps        = _hps
     , mysql      = ("SAW",  "_SAW._MY.Manager")
     , postgresql = ("SAW",  "_SAW._PG.Manager")
     , sqlite     = ("SAW",  "_SAW._SQ.Manager")
-    , ** { ""    : _hps
-         , None  : _hps
-         }
     )
 
 def get (url) :

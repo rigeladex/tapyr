@@ -61,6 +61,7 @@ import _GTW._RST
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -93,12 +94,10 @@ class _Meta_ (TFL.Meta.M_Class) :
 
 # end class _Meta_
 
-class Status (StandardError, TFL.Meta.Object) :
+class Status (TFL.Meta.BaM (Exception, TFL.Meta.Object, metaclass = _Meta_)) :
     """Base class for HTTP status exceptions"""
 
     ### http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-
-    __metaclass__ = _Meta_
 
     cache_control = None
     description   = None
@@ -140,7 +139,7 @@ class Status (StandardError, TFL.Meta.Object) :
             if self.message :
                 ### Backwards compatibility with old-style Jinja templates
                 try :
-                    request.Error = unicode (self.message)
+                    request.Error = pyk.text_type (self.message)
                 except Exception :
                     request.Error = str (self.message)
         response.status_code  = self.status_code
@@ -184,8 +183,8 @@ class Status (StandardError, TFL.Meta.Object) :
             else :
                 desc = _T (self.description)
                 body = \
-                    ( "%s: %s"
-                    % (desc, unicode (self.message)) if self.message else desc
+                    (  ("%s: %s" % (desc, pyk.text_type (self.message)))
+                    if self.message else desc
                     )
         else :
             body = dict \
@@ -193,7 +192,7 @@ class Status (StandardError, TFL.Meta.Object) :
                 , description = self.description
                 )
             if self.message :
-                body ["message"] = unicode (self.message)
+                body ["message"] = pyk.text_type (self.message)
         render (request, response, body)
     # end def _add_response_body
 
@@ -205,7 +204,7 @@ class Status (StandardError, TFL.Meta.Object) :
         result  = [repr (self.__class__)]
         message = self.message
         if message :
-            if not isinstance (message, basestring) :
+            if not isinstance (message, pyk.string_types) :
                 message = str (message)
             result.append (message)
         return " ".join (result)

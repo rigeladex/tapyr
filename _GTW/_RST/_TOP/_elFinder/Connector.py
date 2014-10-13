@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Martin Glueck All rights reserved
+# Copyright (C) 2013-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.elFinder.
@@ -33,17 +33,21 @@
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from    _GTW                       import GTW
-from    _MOM                       import MOM
-from    _TFL                       import TFL
-from    _TFL                       import sos as os
-from    _TFL._Meta.Once_Property   import Once_Property
+from   _GTW                       import GTW
+from   _MOM                       import MOM
+from   _TFL                       import TFL
 
-import  _GTW._RST._TOP.Page
-from    _GTW._RST._TOP._elFinder   import elFinder
-import  _GTW._RST._TOP._elFinder.Error
-import   PIL.Image
-import   mimetypes
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.pyk                   import pyk
+from   _TFL                       import sos as os
+
+import _GTW._RST._TOP.Page
+
+from   _GTW._RST._TOP._elFinder   import elFinder
+import _GTW._RST._TOP._elFinder.Error
+
+import mimetypes
+import PIL.Image
 
 class _Download_ (GTW.RST.Mime_Type._Base_) :
     """Renderer which forces the browser to open the download dialog"""
@@ -90,8 +94,8 @@ class Connector (_Ancestor) :
         for i, r in enumerate (roots) :
             try :
                 r.initialize (self.scope, "r%02d" % (i, ))
-            except StandardError as e :
-                self.mount_errors.append (unicode (e))
+            except Exception as e :
+                self.mount_errors.append (pyk.text_type (e))
             else :
                 if r.default :
                     default         = r
@@ -125,7 +129,7 @@ class Connector (_Ancestor) :
             init              = int (req_data.get ("init", "0"))
             volume, path_spec = resource.strip_volume (req_data ["target"])
             added             = []
-            for file in request.req_data.files.itervalues () :
+            for file in pyk.itervalues (request.req_data.files) :
                 added.append (volume.add (path_spec, file))
             return dict (added = added)
         # end def _response_body

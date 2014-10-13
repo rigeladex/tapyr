@@ -36,7 +36,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__  import print_function, unicode_literals
 
 import _GTW.Request_Data
 
@@ -55,21 +55,21 @@ _test_code = """
     >>> SRM = scope.SRM
 
     >>> qe = QR.from_request (scope, PAP.Person.E_Type, f_req (qux = "42", qix = "Miles"))
-    >>> print qe.limit, qe.offset, qe.filters
+    >>> print (qe.limit, qe.offset, qe.filters)
     0 0 ()
 
     >>> rd = f_req (
     ...   limit = 24, last_name___GE = "Qux", lifetime__start___EQ = "2008", foo = "bar")
     >>> qr = QR.from_request (scope, PAP.Person.E_Type, rd)
-    >>> print qr.limit, qr.offset
+    >>> print (qr.limit, qr.offset)
     24 0
 
-    >>> print formatted (qr.filters_q)
-    ( Q.last_name >= qux
+    >>> print (formatted (qr.filters_q))
+    ( Q.last_name >= 'qux'
     , Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31))
     )
 
-    >>> print formatted (qr.filters)
+    >>> print (formatted (qr.filters))
     ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
@@ -102,7 +102,7 @@ _test_code = """
       )
     )
 
-    >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name"))
+    >>> print (formatted (qr.Filter (PAP.Person.E_Type, "last_name")))
     Record
     ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
     , attr = String `last_name`
@@ -118,7 +118,7 @@ _test_code = """
     , ui_name = 'Last name'
     , value = None
     )
-    >>> print formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE"))
+    >>> print (formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE")))
     Record
     ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
     , attr = String `last_name`
@@ -135,7 +135,7 @@ _test_code = """
     , value = None
     )
 
-    >>> print formatted (qr.filters)
+    >>> print (formatted (qr.filters))
     ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
@@ -168,11 +168,11 @@ _test_code = """
       )
     )
 
-    >>> print qr.filters_q
-    (Q.last_name >= qux, Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
+    >>> print (qr.filters_q)
+    (Q.last_name >= 'qux', Q.lifetime.start.between (datetime.date(2008, 1, 1), datetime.date(2008, 12, 31)))
 
     >>> qo = QR.from_request (scope, PAP.Person.E_Type, f_req (order_by = "-lifetime,last_name"))
-    >>> print formatted (qo.order_by)
+    >>> print (formatted (qo.order_by))
     ( Record
       ( attr = Date_Interval `lifetime`
       , attrs =
@@ -222,7 +222,7 @@ _test_code = """
       )
     )
 
-    >>> print qo.order_by_q
+    >>> print (qo.order_by_q)
     <Sorted_By: Descending-Getter function for `.lifetime.start`, Descending-Getter function for `.lifetime.finish`, Getter function for `.last_name`>
 
     >>> AS  = MOM.Attr.Selector
@@ -230,7 +230,7 @@ _test_code = """
     >>> fns = AS.List (AS.primary, AS.Name ("points", "place")) (BiR).names
     >>> qrs = QRS (BiR, fns)
 
-    >>> print formatted (qrs.As_Json_Cargo) ### SRM.Boat_in_Regatta
+    >>> print (formatted (qrs.As_Json_Cargo)) ### SRM.Boat_in_Regatta
     { 'filters' :
         [ { 'Class' : 'Entity'
           , 'attrs' :
@@ -423,7 +423,7 @@ _test_code = """
     }
 
     >>> def show_f (f, indent = "") :
-    ...     print "%%s%%s" %% (indent, f), f._outer
+    ...     print ("%%s%%s" %% (indent, f), f._outer)
     ...     for c in f.Attrs :
     ...         show_f (c, indent + "    ")
 
@@ -446,7 +446,7 @@ _test_code = """
     <place.AQ [Attr.Type.Querier Ckd]> <SRM.Boat_in_Regatta.AQ>
     <points.AQ [Attr.Type.Querier Ckd]> <SRM.Boat_in_Regatta.AQ>
 
-    >>> print formatted (list (f.As_Template_Elem for f in qrs.Attrs))
+    >>> print (formatted (list (f.As_Template_Elem for f in qrs.Attrs)))
     [ Record
       ( Class = 'Entity'
       , attr = Boat `left`
@@ -773,7 +773,7 @@ _test_code = """
     >>> fns = AS.ui_attr (PAP.Person.E_Type).names
     >>> qrs = QRS (PAP.Person.E_Type, fns)
 
-    >>> print formatted (qrs.As_Json_Cargo) ### PAP.Person
+    >>> print (formatted (qrs.As_Json_Cargo)) ### PAP.Person
     { 'filters' :
         [ { 'name' : 'last_name'
           , 'sig_key' : 3
@@ -1360,10 +1360,10 @@ _test_pepk = """
 
     >>> rd = f_req (last_name = "Qux")
     >>> for afa in QR.af_args_fif (rd.req_data, QR._a_pat_opt) :
-    ...    print afa
-    (u'last_name___EQ', u'last_name', '', u'', u'EQ', u'Qux')
+    ...    prepr (afa)
+    ('last_name___EQ', 'last_name', '', '', 'EQ', 'Qux')
 
-    >>> print formatted (QR.Filter (PAP.Person.E_Type, "last_name", "Qux"))
+    >>> print (formatted (QR.Filter (PAP.Person.E_Type, "last_name", "Qux")))
     Record
     ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
     , attr = String `last_name`
@@ -1389,13 +1389,13 @@ _test_pepk = """
     >>> rdx = Record (req_data = GTW.Request_Data (rdd), req_data_list = GTW.Request_Data_List (rdd))
 
     >>> for afa in QR.af_args_fif (rdx.req_data) :
-    ...    print afa
-    (u'spouse[PAP.Person]__last_name___GE', u'spouse', u'PAP.Person', u'last_name', u'GE', u'Qux')
-    (u'spouse[PAP.Person]__lifetime__start___EQ', u'spouse', u'PAP.Person', u'lifetime.start', u'EQ', u'2008')
-    (u'title___EQ', u'title', '', u'', u'EQ', u'Dr.')
+    ...    prepr (afa)
+    ('spouse[PAP.Person]__last_name___GE', 'spouse', 'PAP.Person', 'last_name', 'GE', 'Qux')
+    ('spouse[PAP.Person]__lifetime__start___EQ', 'spouse', 'PAP.Person', 'lifetime.start', 'EQ', '2008')
+    ('title___EQ', 'title', '', '', 'EQ', 'Dr.')
 
     >>> qrx = QR.from_request (scope, PAP.Person_M.E_Type, rdx)
-    >>> print formatted (qrx.filters)
+    >>> print (formatted (qrx.filters))
     ( Record
       ( AQ = <title.AQ [Attr.Type.Querier String]>
       , attr = String `title`
@@ -1447,7 +1447,7 @@ _test_pepk = """
     >>> p2  = PAP.Person_M ("Bar", "Baz", title = "Dr.", spouse = p1, raw = True)
 
     >>> PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid")).all ()
-    [PAP.Person_M (u'qux', u'foo', u'', u''), PAP.Person_M (u'bar', u'baz', u'', u'dr.')]
+    [PAP.Person_M ('qux', 'foo', '', ''), PAP.Person_M ('bar', 'baz', '', 'dr.')]
     >>> pids = PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid")).attr ("pid").all ()
     >>> list (int (p) for p in pids)
     [1, 2]
@@ -1518,10 +1518,17 @@ _test_pepk = """
     [2]
 
     >>> qr.filters_q # doctest:+ELLIPSIS
-    (Q.title == dr., Q.spouse.in_ (...,))
+    (Q.title == 'dr.', Q.spouse.in_ (SQL: SELECT DISTINCT mom_id_entity.pid AS mom_id_entity_pid
+         FROM mom_id_entity
+           JOIN pap_person ON mom_id_entity.pid = pap_person.pid
+           LEFT OUTER JOIN pap_person_m ON pap_person.pid = pap_person_m.pid
+         WHERE pap_person.last_name >= :last_name_1
+            AND pap_person.lifetime__start IS NOT NULL
+            AND pap_person.lifetime__start >= :lifetime__start_1
+            AND pap_person.lifetime__start <= :lifetime__start_2,))
 
     >>> qr (PAP.Person_M.query (sort_key = TFL.Sorted_By ("pid"))).all ()
-    [PAP.Person_M (u'bar', u'baz', u'', u'dr.')]
+    [PAP.Person_M ('bar', 'baz', '', 'dr.')]
 
 """
 

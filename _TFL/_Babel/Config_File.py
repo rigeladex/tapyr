@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -29,23 +29,25 @@
 #    21-Jan-2010 (MG) Creation
 #    30-Jan-2010 (MG) `get_list`: `combine_default` added
 #    15-Apr-2012 (CT) Fix doctests
+#     7-Oct-2014 (CT) Make Python-3 compatible
 #    ««revision-date»»···
 #--
 
+from   __future__              import print_function
+
 from   _TFL                    import TFL
+from   _TFL.pyk                import pyk
 
 import _TFL._Meta.Object
 import _TFL._Babel.Extractor
 import _TFL._Babel.PO_File
 
-import  ConfigParser
 from    babel.util             import odict
 
 class Config_File (TFL.Meta.Object) :
     """A extractor config file.
 
     >>> from   _TFL.Formatter import formatted_1
-    >>> import cStringIO
 
     >>> source = '''[defaults]
     ... load_translations = _MOM, _GTW
@@ -59,13 +61,13 @@ class Config_File (TFL.Meta.Object) :
     ... ignore_pattern = **/__*__.py, **/_OMP/**.py
     ... '''
 
-    >>> file = cStringIO.StringIO (source)
-    >>> cfg = Config_File (file)
+    >>> file = pyk.StringIO (source)
+    >>> cfg  = Config_File (file)
 
-    >>> print formatted_1 (cfg.defaults)
+    >>> print (formatted_1 (cfg.defaults))
     {'load_translations' : '_MOM, _GTW', 'loaded_translations' : <PO_File MOM/GTW/JNJ>}
 
-    >>> sorted (cfg.extractors.iteritems ())# doctest:+ELLIPSIS
+    >>> sorted (pyk.iteritems (cfg.extractors))# doctest:+ELLIPSIS
     [('mom', ...), ('python', <function Python at ...>)]
 
     >>> sorted (cfg.patterns)
@@ -103,7 +105,7 @@ class Config_File (TFL.Meta.Object) :
                                                           (section))
         self.defaults ["loaded_translations"] = self._load_pkg_translations \
            (self.defaults.get (self.load_translation_key))
-        for mo in self._method_options.values () :
+        for mo in list (pyk.itervalues (self._method_options)) :
            self._method_options ["loaded_translations"] = \
                self._load_pkg_translations (mo.get (self.load_translation_key))
     # end def _add_config
@@ -111,7 +113,7 @@ class Config_File (TFL.Meta.Object) :
     def _as_config_parser (self, filename) :
         config = None
         if filename :
-            config = ConfigParser.RawConfigParser (dict_type = odict)
+            config = pyk.config_parser.RawConfigParser (dict_type = odict)
             if not hasattr (filename, "read") :
                 filename = open ((filename))
             config.readfp (filename)
@@ -138,7 +140,7 @@ class Config_File (TFL.Meta.Object) :
             , combine_default = False
             ) :
         value = self.get (option, method, default)
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             value = set (p.strip () for p in value.split (","))
         if combine_default :
             default_value = self.get (option, "defaults", None)

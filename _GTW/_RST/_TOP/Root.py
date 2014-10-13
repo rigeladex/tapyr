@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -52,11 +52,12 @@ import _GTW._RST._TOP.Dir
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 
-import time
 import datetime
+import time
 
 GTW.RST.Root.E_Type_Desc.add_properties \
     ("admin", "doc", "manager", "rest_api", "rest_doc")
@@ -123,7 +124,7 @@ class TOP_Root (GTW.RST.TOP._Dir_, GTW.RST.Root) :
     @property
     @getattr_safe
     def h_title (self) :
-        return unicode (self.owner or self.name)
+        return pyk.text_type (self.owner or self.name)
     # end def h_title
 
     @Once_Property

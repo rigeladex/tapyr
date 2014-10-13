@@ -91,11 +91,12 @@
 #     2-Sep-2014 (CT) Fix `change_forbidden` call in `_Field_Base_.readonly`
 #     3-Sep-2014 (CT) Add attribute `restrict_completion`
 #    25-Sep-2014 (CT) Add `polisher`
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
+from   __future__               import division, print_function
+from   __future__               import absolute_import, unicode_literals
 
 from   _GTW                     import GTW
 from   _MOM                     import MOM
@@ -110,6 +111,7 @@ import _MOM._Attr.Selector
 import _MOM._Attr.Type
 
 from   _TFL._Meta.M_Class       import BaM
+from   _TFL.portable_repr       import portable_repr
 from   _TFL.predicate           import filtered_join, rsplit_hst
 from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import Regexp, re
@@ -122,8 +124,6 @@ import _TFL.Undef
 
 from   itertools                import chain as ichain
 
-import hashlib
-import hmac
 import json
 import logging
 
@@ -684,7 +684,7 @@ class _Entity_Mixin_ (_Base_) :
         except Exception as exc :
             logging.exception \
                 ( "Exception from `set_raw` for %r with %s"
-                % (self.essence, sorted (svs.iteritems ()))
+                % (self.essence, sorted (pyk.iteritems (svs)))
                 )
             on_error (exc)
     # end def _change_from_submission
@@ -1135,7 +1135,7 @@ class Entity (_Entity_) :
     sid                 = 0
     session_secret      = "some-secret"
 
-    _hash_fct           = hashlib.sha224
+    _hash_fct           = None
     _pop_to_self        = ("_hash_fct", "sid", "session_secret")
     _reset_properties   = ("as_json", "as_json_cargo", "entity_elements", )
 
@@ -1181,6 +1181,14 @@ class Entity (_Entity_) :
         return result
     # end def as_json_cargo
 
+    @property
+    def hash_fct (self) :
+        result = self._hash_fct
+        if result is None :
+            result = self._hash_fct = TFL.user_config.sha
+        return result
+    # end def hash_fct
+
     def check_sigs (self, cargo) :
         cargo_sigs = cargo.get ("sigs", {})
         for e in self.entity_elements :
@@ -1223,11 +1231,11 @@ class Entity (_Entity_) :
 
     def sig_hash (self, sig) :
         dbid   = self.scope.db_meta_data.dbid
-        salt   = pyk.encoded (self.session_secret)
-        result = hmac.new (salt, digestmod = self._hash_fct)
+        salt   = self.session_secret
+        result = self.hash_fct.hmac (salt)
         for s in (self.id, sig, self.E_Type.db_sig, dbid) :
-            result.update (pyk.encoded (s))
-        return result.hexdigest ()
+            result.update (s)
+        return portable_repr (result.b64digest (strip = True)).strip (""""'""")
     # end def sig_hash
 
     @TFL.Meta.Class_and_Instance_Method

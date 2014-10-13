@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -43,6 +43,8 @@
 #    24-Jan-2013 (CT) Change `nation` from `Austria` to `AUT`
 #    ««revision-date»»···
 #--
+
+from   __future__        import print_function
 
 from _GTW.__test__.model import *
 
@@ -93,43 +95,43 @@ _test_code = r"""
     >>> sw.last_cid
     7
     >>> for c in scope.uncommitted_changes :
-    ...     print c
-    <Create SRM.Boat_Class (u'29er', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '2', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'470er', 'SRM.Boat_Class'), new-values = {'last_cid' : '3', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'49er', 'SRM.Boat_Class'), new-values = {'last_cid' : '4', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Aquila Kiel', 'SRM.Boat_Class'), new-values = {'last_cid' : '5', 'max_crew' : u'3'}>
-    <Copy SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
-        <Create SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : u'3'}>
-    <Create SRM.Boat_Class (u'Fam', 'SRM.Boat_Class'), new-values = {'last_cid' : '8', 'max_crew' : u'3'}>
-    <Create SRM.Boat_Class (u'Finn-Dinghy', 'SRM.Boat_Class'), new-values = {'last_cid' : '9', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'Korsar', 'SRM.Boat_Class'), new-values = {'last_cid' : '10', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '11', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'Laser 4.7', 'SRM.Boat_Class'), new-values = {'last_cid' : '12', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'Laser Master', 'SRM.Boat_Class'), new-values = {'last_cid' : '13', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'Laser Radial', 'SRM.Boat_Class'), new-values = {'last_cid' : '14', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'O-Jolle', 'SRM.Boat_Class'), new-values = {'last_cid' : '15', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '16', 'max_crew' : u'1'}>
-    <Create SRM.Boat_Class (u'Pirat Regatta', 'SRM.Boat_Class'), new-values = {'last_cid' : '17', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Pirat Klassik', 'SRM.Boat_Class'), new-values = {'last_cid' : '18', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Pirat Schulboot', 'SRM.Boat_Class'), new-values = {'last_cid' : '19', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Pirat', 'SRM.Boat_Class'), new-values = {'last_cid' : '20', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Robby Jolle', 'SRM.Boat_Class'), new-values = {'last_cid' : '21', 'max_crew' : u'2'}>
-    <Create SRM.Boat_Class (u'Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '22', 'max_crew' : u'4'}>
-    <Create SRM.Boat_Class (u'Zoom8', 'SRM.Boat_Class'), new-values = {'last_cid' : '23', 'max_crew' : u'1'}>
+    ...     print (c)
+    <Create SRM.Boat_Class ('29er', 'SRM.Boat_Class'), new-values = {'last_cid' : '1', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('420er', 'SRM.Boat_Class'), new-values = {'last_cid' : '2', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('470er', 'SRM.Boat_Class'), new-values = {'last_cid' : '3', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('49er', 'SRM.Boat_Class'), new-values = {'last_cid' : '4', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Aquila Kiel', 'SRM.Boat_Class'), new-values = {'last_cid' : '5', 'max_crew' : '3'}>
+    <Copy SRM.Boat_Class ('Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
+        <Create SRM.Boat_Class ('Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : '3'}>
+    <Create SRM.Boat_Class ('Fam', 'SRM.Boat_Class'), new-values = {'last_cid' : '8', 'max_crew' : '3'}>
+    <Create SRM.Boat_Class ('Finn-Dinghy', 'SRM.Boat_Class'), new-values = {'last_cid' : '9', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('Korsar', 'SRM.Boat_Class'), new-values = {'last_cid' : '10', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Laser', 'SRM.Boat_Class'), new-values = {'last_cid' : '11', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('Laser 4.7', 'SRM.Boat_Class'), new-values = {'last_cid' : '12', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('Laser Master', 'SRM.Boat_Class'), new-values = {'last_cid' : '13', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('Laser Radial', 'SRM.Boat_Class'), new-values = {'last_cid' : '14', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('O-Jolle', 'SRM.Boat_Class'), new-values = {'last_cid' : '15', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('Optimist', 'SRM.Boat_Class'), new-values = {'last_cid' : '16', 'max_crew' : '1'}>
+    <Create SRM.Boat_Class ('Pirat Regatta', 'SRM.Boat_Class'), new-values = {'last_cid' : '17', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Pirat Klassik', 'SRM.Boat_Class'), new-values = {'last_cid' : '18', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Pirat Schulboot', 'SRM.Boat_Class'), new-values = {'last_cid' : '19', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Pirat', 'SRM.Boat_Class'), new-values = {'last_cid' : '20', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Robby Jolle', 'SRM.Boat_Class'), new-values = {'last_cid' : '21', 'max_crew' : '2'}>
+    <Create SRM.Boat_Class ('Seascape 18', 'SRM.Boat_Class'), new-values = {'last_cid' : '22', 'max_crew' : '4'}>
+    <Create SRM.Boat_Class ('Zoom8', 'SRM.Boat_Class'), new-values = {'last_cid' : '23', 'max_crew' : '1'}>
 
     >>> scope.commit ()
 
-    >>> x = SRM.Boat ((u'Optimist',),     1, u"AUT")
-    >>> x = SRM.Boat ((u'Optimist',),     2, u"AUT")
-    >>> x = SRM.Boat ((u'Laser',),        3, u"AUT")
-    >>> x = SRM.Boat ((u'Seascape 18',), 14, u"AUT")
+    >>> x = SRM.Boat (('Optimist',),     1, u"AUT")
+    >>> x = SRM.Boat (('Optimist',),     2, u"AUT")
+    >>> x = SRM.Boat (('Laser',),        3, u"AUT")
+    >>> x = SRM.Boat (('Seascape 18',), 14, u"AUT")
 
     >>> scope.commit ()
 
     >>> bc  = SRM.Boat_Class.instance (u"Optimist")
     >>> ys  = SRM.Handicap ("Yardstick")
-    >>> b   = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True)
+    >>> b   = SRM.Boat.instance_or_new ('Optimist', u"1107", u"AUT", raw = True)
     >>> p   = PAP.Person.instance_or_new (u"Tanzer", u"Christian")
     >>> s   = SRM.Sailor.instance_or_new (p.epk_raw, nation = u"AUT", mna_number = u"29676", raw = True) ### 1
     >>> rev = SRM.Regatta_Event (u"Himmelfahrt", dict (start = u"20080501", raw = True), raw = True)
@@ -161,11 +163,11 @@ _test_code = r"""
     >>> scope.commit ()
 
     >>> MOM.B = True
-    >>> print sw.last_cid ### X
+    >>> print (sw.last_cid) ### X
     7
     >>> scope.MOM.Id_Entity.count
     36
-    >>> print sw.last_cid ### Y
+    >>> print (sw.last_cid) ### Y
     7
     >>> MOM.B = False
     >>> int (scope.query_changes ().count ())
@@ -175,12 +177,12 @@ _test_code = r"""
     >>> len (scope.SRM.Regatta_Event.query ().first ().regattas)
     2
     >>> b = SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
-    >>> print b.last_cid, sw.last_cid, b is sw
+    >>> print (b.last_cid, sw.last_cid, b is sw)
     7 7 True
     >>> c = scope.query_changes (cid = b.last_cid).one ()
-    >>> print c ### change in source scope
-    <Copy SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
-        <Create SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : u'3'}>
+    >>> print (c) ### change in source scope
+    <Copy SRM.Boat_Class ('Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
+        <Create SRM.Boat_Class ('Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : '3'}>
     >>> len (c.children)
     1
     >>> int (c.cid), int (c.children [0].cid)
@@ -198,7 +200,7 @@ _test_code = r"""
     >>> scope.query_changes (type_name = "SRM.Boat_Class").count ()
     26
     >>> b = scope.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
-    >>> print b.last_cid ### before migration
+    >>> print (b.last_cid) ### before migration
     7
 
     Save contents of scope to database and destroy scope:
@@ -232,11 +234,11 @@ _test_code = r"""
     2
     >>> [s for (s, t) in zip (scope_s, scope_t) if s.last_cid != t.last_cid or not s.last_cid]
     []
-    >>> [s.query_changes (type_name = "SRM.Boat_Class").count () for s in scope_t, scope_s]
+    >>> [s.query_changes (type_name = "SRM.Boat_Class").count () for s in (scope_t, scope_s)]
     [26, 26]
     >>> bs = scope_s.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
     >>> bt = scope_t.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
-    >>> print bs.last_cid, bt.last_cid ### migrated to HPS
+    >>> print (bs.last_cid, bt.last_cid) ### migrated to HPS
     7 7
 
     Now we delete the original database and then migrate back into the
@@ -268,12 +270,12 @@ _test_code = r"""
     []
 
     >>> b = scope_u.SRM.Boat_Class.query (Q.RAW.name == u"Aquila Schwert").one ()
-    >>> print b.last_cid ### after migration
+    >>> print (b.last_cid) ### after migration
     7
     >>> c = scope_u.query_changes (cid = b.last_cid).one () ### mig scope
-    >>> print c
-    <Copy SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
-        <Create SRM.Boat_Class (u'Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : u'3'}>
+    >>> print (c)
+    <Copy SRM.Boat_Class ('Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '7'}>
+        <Create SRM.Boat_Class ('Aquila Schwert', 'SRM.Boat_Class'), new-values = {'last_cid' : '6', 'max_crew' : '3'}>
     >>> len (c.children)
     1
     >>> int (c.cid), int (c.children [0].cid)

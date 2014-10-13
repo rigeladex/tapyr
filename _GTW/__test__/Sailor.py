@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.__test__.
@@ -39,33 +39,33 @@ _test_code = """
     >>> SRM = scope.SRM
     >>> p = PAP.Person.instance_or_new ("Tanzer", "Christian")
     >>> p
-    PAP.Person (u'tanzer', u'christian', u'', u'')
+    PAP.Person ('tanzer', 'christian', '', '')
     >>> s = SRM.Sailor.instance_or_new (p, nation = "AUT", raw = True) ### 1
     >>> s
-    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', None, u'')
+    SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', None, '')
 
     >>> _ = s.set (mna_number = 29676)
     >>> s
-    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')
     >>> SRM.Sailor.instance (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, nation = "AUT", mna_number = "29676", raw = True)
-    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')
     >>> SRM.Sailor.instance_or_new (p.epk_raw, s.nation, s.mna_number)
-    SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')
+    SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')
 
-    >>> SRM.Sailor.query (left = p).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
-    >>> SRM.Sailor.query (left = p.pid).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
-    >>> SRM.Sailor.query (Q.left == p).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
-    >>> SRM.Sailor.query (Q.left == p.pid).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
-    >>> SRM.Sailor.query (Q.left.pid == p.pid).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
-    >>> SRM.Sailor.query (Q.left.pid == p).all ()
-    [SRM.Sailor ((u'tanzer', u'christian', u'', u''), u'AUT', 29676, u'')]
+    >>> prepr (SRM.Sailor.query (left = p).all ())
+    [SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')]
+    >>> prepr (SRM.Sailor.query (left = p.pid).all ())
+    [SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')]
+    >>> prepr (SRM.Sailor.query (Q.left == p).all ())
+    [SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')]
+    >>> prepr (SRM.Sailor.query (Q.left == p.pid).all ())
+    [SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')]
+    >>> prepr (SRM.Sailor.query (Q.left.pid == p.pid).all ())
+    [SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')]
+    >>> prepr (SRM.Sailor.query (Q.left.pid == p).all ())
+    [SRM.Sailor (('tanzer', 'christian', '', ''), 'AUT', 29676, '')]
 
 """
 

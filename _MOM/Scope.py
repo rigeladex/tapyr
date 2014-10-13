@@ -199,6 +199,7 @@ class _Example_ (TFL.Meta.Object) :
 
 # end class _Example_
 
+@pyk.adapt__str__
 class Scope (TFL.Meta.Object) :
 
     active                 = None
@@ -238,7 +239,7 @@ class Scope (TFL.Meta.Object) :
         """Return the relevant roots of the application."""
         Top = self.MOM.Id_Entity.E_Type
         return sorted \
-            (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
+            (pyk.itervalues (Top.relevant_roots), key = Top.m_sorted_by)
     # end def relevant_roots
 
     @TFL.Meta.Once_Property
@@ -522,7 +523,7 @@ class Scope (TFL.Meta.Object) :
     @classmethod
     def destroy_all (cls) :
         """Destroy all scopes."""
-        for i, s in sorted (Scope.Table.iteritems (), reverse = True) :
+        for i, s in sorted (pyk.iteritems (Scope.Table), reverse = True) :
             try :
                 s.destroy ()
             except Exception :
@@ -559,7 +560,7 @@ class Scope (TFL.Meta.Object) :
 
     def entity_type (self, entity) :
         """Return scope specific entity type for `entity` (-name)."""
-        if isinstance (entity, basestring) :
+        if isinstance (entity, pyk.string_types) :
             name = entity
         else :
             name = entity.type_name
@@ -809,7 +810,7 @@ class Scope (TFL.Meta.Object) :
         _pkg_ns = self._pkg_ns = {}
         Pkg_NS  = self.Pkg_NS
         for name, pns in sorted \
-                (app_type.PNS_Map.iteritems (), key = TFL.Getter [0]) :
+                (pyk.iteritems (app_type.PNS_Map), key = TFL.Getter [0]) :
             _pkg_ns [name]  = Pkg_NS (self, pns, name)
             for outer, pns in self._outer_pgk_ns (name, pns, _pkg_ns):
                 _pkg_ns [outer] = Pkg_NS (self, pns, outer)
@@ -840,7 +841,7 @@ class Scope (TFL.Meta.Object) :
     # end def __getattr__
 
     def __getitem__ (self, name) :
-        if not isinstance (name, basestring) :
+        if not isinstance (name, pyk.string_types) :
             name = name.type_name
         try :
             return self._get_etm (name)

@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     9-Oct-2014 (CT) Creation
+#     9-Oct-2014 (CT) Fix `dict` items, empty `tuple`, `unicode`; add `set`
+#    10-Oct-2014 (CT) Add `function`
 #    ««revision-date»»···
 #--
 
@@ -38,6 +40,7 @@ from   _TFL                       import TFL
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 from   _TFL.pyk                   import pyk
 
+import collections
 import sys
 
 __doc__ = r"""
@@ -48,11 +51,14 @@ For most object types, ``eval (portable_repr (object)) == object``.
 
 Examples::
 
-    >>> print (portable_repr ([1,2,3, "a", u"b", "c"]))
-    [1, 2, 3, 'a', 'b', 'c']
+    >>> print (portable_repr ([1,2,3, "a", u"b", "c", b"bytes"]))
+    [1, 2, 3, 'a', 'b', 'c', 'bytes']
 
     >>> print (portable_repr ({ 1: u"a", 2: "b", "c" : 23, u"d" : 42 }))
-    {'c', 23, 'd', 42, 1, 'a', 2, 'b'}
+    {'c' : 23, 'd' : 42, 1 : 'a', 2 : 'b'}
+
+    >>> print (portable_repr (set ([1, "a", "2", 3])))
+    {'2', 'a', 1, 3}
 
     >>> print (portable_repr (1 << 65))
     36893488147419103232
@@ -75,13 +81,20 @@ Examples::
     <class 'builtins.dict'>
 
     >>> print (portable_repr (type (u"")))
-    <class 'builtins.<text-string>'>
+    <class 'builtins.text-string'>
 
     >>> print (portable_repr (type (b"")))
-    <class 'builtins.<byte-string>'>
+    <class 'builtins.byte-string'>
 
     >>> print (portable_repr (type (1 << 65)))
     <class 'builtins.int'>
+
+    >>> portable_repr(portable_repr.top_func)
+    '<function portable_repr>'
+
+    >>> dd = TFL.defaultdict(int,{1: 2, "a": 42})
+    >>> portable_repr (dd)
+    "defaultdict(<class 'builtins.int'>, {'a' : 42, 1 : 2})"
 
 """
 
@@ -96,13 +109,23 @@ def portable_repr (obj) :
     return builtin_repr (obj)
 # end def portable_repr
 
+@portable_repr.add_type (collections.defaultdict)
+def portable_repr_default_dict (obj) :
+    pr_dict = portable_repr.dispatch (dict)
+    return "%s(%s, %s)" % \
+        ( obj.__class__.__name__
+        , portable_repr (obj.default_factory)
+        , pr_dict (obj)
+        )
+# end def portable_repr_default_dict
+
 @portable_repr.add_type (dict)
 def portable_repr_dict (obj) :
     return "".join \
         ( ( "{"
           , ( ", ".join
                 ( sorted
-                    ( ", ".join ([portable_repr (k), portable_repr (v)])
+                    ( " : ".join ([portable_repr (k), portable_repr (v)])
                     for k, v in pyk.iteritems (obj)
                     )
                 )
@@ -117,16 +140,41 @@ def portable_repr_float (obj) :
     return "%.12g" % obj
 # end def portable_repr_float
 
-@portable_repr.add_type (list, tuple)
-def portable_repr_list_tuple (obj) :
-    empty = builtin_repr (obj.__class__ ())
+@portable_repr.add_type (type (portable_repr.top_func))
+def portable_repr_function (obj) :
+    return "<function %s>" % obj.__name__
+# end def portable_repr_function
+
+@portable_repr.add_type (list)
+def portable_repr_list (obj) :
     return "".join \
-        ( ( empty [0]
+        ( ( "["
           , (", ".join (portable_repr (x) for x in obj))
-          , empty [-1]
+          , "]"
           )
         )
-# end def portable_repr_list_tuple
+# end def portable_repr_list
+
+@portable_repr.add_type (set)
+def portable_repr_set (obj) :
+    return "".join \
+        ( ( "{"
+          , (", ".join (sorted (portable_repr (x) for x in obj)))
+          , "}"
+          )
+        )
+# end def portable_repr_set
+
+@portable_repr.add_type (tuple)
+def portable_repr_tuple (obj) :
+    return "".join \
+        ( ( "("
+          , (", ".join (portable_repr (x) for x in obj))
+          , "," if len (obj) == 1 else ""
+          , ")"
+          )
+        )
+# end def portable_repr_tuple
 
 @portable_repr.add_type (type)
 def portable_repr_type (obj) :
@@ -138,11 +186,11 @@ def portable_repr_type (obj) :
 # end def portable_repr_type
 
 if sys.version_info < (3,) :
-    _type_name_map = dict \
-        ( bytes    = "<byte-string>"
+    _type_name_map = portable_repr.Type_Name_Map = dict \
+        ( bytes    = "byte-string"
         , long     = "int"
-        , str      = "<byte-string>"
-        , unicode  = "<text-string>"
+        , str      = "byte-string"
+        , unicode  = "text-string"
         )
 
     @portable_repr.add_type (long)
@@ -152,14 +200,19 @@ if sys.version_info < (3,) :
 
     @portable_repr.add_type (unicode)
     def portable_repr_unicode (obj) :
-        return builtin_repr (obj) [1:]
+        return builtin_repr (obj).lstrip ("u")
     # end def portable_repr_unicode
 
 else : ### Python version >= 3
-    _type_name_map = dict \
-        ( bytes    = "<byte-string>"
-        , str      = "<text-string>"
+    _type_name_map = portable_repr.Type_Name_Map = dict \
+        ( bytes    = "byte-string"
+        , str      = "text-string"
         )
+
+    @portable_repr.add_type (bytes)
+    def portable_repr_bytes (obj) :
+        return builtin_repr (obj).lstrip ("b")
+    # end def portable_repr_bytes
 
 __all__ = ("portable_repr", )
 

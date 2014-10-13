@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -32,6 +32,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 from   _GTW                     import GTW
 import _GTW.Session
 
@@ -57,7 +59,7 @@ class Memory_Session (GTW.Session) :
     >>> session.get ("lang")
     'de_AT'
     >>> del session.lang
-    >>> print session.get ("lang")
+    >>> print (session.get ("lang"))
     None
     >>> session.get ("lang") == session2 ["lang"]
     False
@@ -93,5 +95,3 @@ class Memory_Session (GTW.Session) :
 if __name__ != "__main__" :
     GTW._Export ("*")
 ### __END__ GTW.Memory_Session
-
-

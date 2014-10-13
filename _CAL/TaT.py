@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,12 +39,14 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
-from   _CAL                    import CAL
+from   __future__                 import print_function
+
+from   _TFL                       import TFL
+from   _CAL                       import CAL
 import _TFL._Meta.Object
 
-from   _TFL.Generators         import alt_iter
-from   _TFL.predicate          import identity
+from   _TFL.Generators            import alt_iter
+from   _TFL.predicate             import identity
 
 import itertools
 
@@ -115,7 +117,7 @@ class TaT_Conditioner (TFL.Meta.Object) :
        >>> ts_1_3  = TaT_Shifter (Date_Delta (days =  1), Date_Delta (days = 3))
        >>> ts__1_3  = TaT_Shifter (Date_Delta (days =  -1), Date_Delta (days = 3))
        >>> for i in range (7) :
-       ...   print i, TaT_Conditioner (lambda d : d.weekday == i, ts_1_6) (start)
+       ...   print (i, TaT_Conditioner (lambda d : d.weekday == i, ts_1_6) (start))
        ...
        0 2004-10-25
        1 2004-10-26
@@ -125,7 +127,7 @@ class TaT_Conditioner (TFL.Meta.Object) :
        5 2004-10-23
        6 2004-10-24
        >>> for i in range (7) :
-       ...     print i, TaT_Conditioner (lambda d : d.weekday == i, ts__1_6) (start)
+       ...     print (i, TaT_Conditioner (lambda d : d.weekday == i, ts__1_6) (start))
        ...
        0 2004-10-18
        1 2004-10-19
@@ -138,7 +140,7 @@ class TaT_Conditioner (TFL.Meta.Object) :
        >>> md = Month_Delta (1)
        >>> start = Date (2004, 1, 1)
        >>> for i in range (12) :
-       ...     print start, TaT_Conditioner (lambda d : d.weekday == 0, tas) (start)
+       ...     print (start, TaT_Conditioner (lambda d : d.weekday == 0, tas) (start))
        ...     start = start + md
        ...
        2004-01-01 2003-12-29
@@ -195,7 +197,7 @@ class TaT (TFL.Meta.Object) :
        >>> upper = Date (2005, 1, 5)
        >>> is_monday = TaT_Conditioner (lambda d : d.weekday == 0, tas)
        >>> for x in TaT (start, upper, md, conditioner = is_monday) :
-       ...     print x
+       ...     print (x)
        ...
        2003-12-29
        2004-02-02
@@ -220,7 +222,7 @@ class TaT (TFL.Meta.Object) :
        >>> start -= dd1
        >>> upper += dd3
        >>> for t in TaT (start, upper, dd2, dd2, dd3) :
-       ...     print t.formatted ("%a %F")
+       ...     print (t.formatted ("%a %F"))
        ...
        Mon 2004-10-25
        Wed 2004-10-27
@@ -241,13 +243,13 @@ class TaT (TFL.Meta.Object) :
         deltas        = itertools.cycle (self.deltas)
         upper         = self.upper
         conditioner   = self.conditioner
-        next          = self.start
-        while next <= upper :
-            n = conditioner (next)
+        curr          = self.start
+        while curr <= upper :
+            n = conditioner (curr)
             if n is not None :
                 if n <= upper :
                     yield n
-            next = next + deltas.next ()
+            curr += next (deltas)
     # end def __iter__
 
 # end class TaT

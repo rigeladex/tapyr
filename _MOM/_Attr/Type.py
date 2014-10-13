@@ -350,6 +350,9 @@
 #    30-Aug-2014 (CT) Mark A_Boolean's `no` and `yes` for translation
 #    24-Sep-2014 (CT) Add `polisher`
 #    25-Sep-2014 (CT) Rename `signified` to `args_as_kw`
+#     9-Oct-2014 (CT) Use `portable_repr`
+#    13-Oct-2014 (CT) Set `P_Type` of `_A_Filename_` and `_A_String_Ascii_`
+#                     to `pyk.byte_type`
 #    ««revision-date»»···
 #--
 
@@ -358,7 +361,6 @@ from   __future__            import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
-from   _TFL.pyk              import pyk
 
 from   _MOM._Attr.Filter     import Q
 from   _MOM.SQ               import SQ
@@ -373,7 +375,9 @@ import _MOM._Meta.M_Attr_Type
 import _MOM._Prop.Type
 
 from   _TFL.I18N             import _, _T
+from   _TFL.portable_repr    import portable_repr
 from   _TFL.predicate        import uniq
+from   _TFL.pyk              import pyk
 from   _TFL.Regexp           import *
 from   _TFL                  import sos
 
@@ -460,10 +464,15 @@ class Pickled_Type_Spec (TFL.Meta.Object) :
 
 # end class Pickled_Type_Spec
 
-class A_Attr_Type (MOM.Prop.Type) :
+@pyk.adapt__str__
+class A_Attr_Type \
+          ( TFL.Meta.BaM
+              ( MOM.Prop.Type
+              , metaclass = MOM.Meta.M_Attr_Type.Root
+              )
+          ) :
     """Root class for attribute types for the MOM meta object model."""
 
-    __metaclass__       = MOM.Meta.M_Attr_Type.Root
     _doc_properties     = ("syntax", )
     _sets_to_combine    = MOM.Prop.Type._sets_to_combine  + ("check", )
     _lists_to_combine   = MOM.Prop.Type._lists_to_combine + ("Kind_Mixins", )
@@ -472,7 +481,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     check               = set ()
     check_syntax        = None
     Choices             = None
-    code_format         = "%r"
+    code_format         = None
     completer           = None
     computed            = None
     computed_default    = None
@@ -534,7 +543,7 @@ class A_Attr_Type (MOM.Prop.Type) :
     @TFL.Meta.Once_Property
     def Pickled_Type_Raw (self) :
         if self.needs_raw_value :
-            return Pickled_Type_Spec (unicode, self)
+            return Pickled_Type_Spec (pyk.text_type, self)
     # end def Pickled_Type_Raw
 
     @TFL.Meta.Class_and_Instance_Once_Property
@@ -637,8 +646,14 @@ class A_Attr_Type (MOM.Prop.Type) :
         return self.kind.as_arg_raw (self)
     # end def as_arg_raw
 
-    def as_code (self, value) :
-        return self.code_format % (value, )
+    @TFL.Meta.Class_and_Instance_Method
+    def as_code (soc, value) :
+        fmt = soc.code_format
+        if fmt is None :
+            result = portable_repr (value)
+        else :
+            result = fmt % (value, )
+        return result
     # end def as_code
 
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
@@ -701,7 +716,7 @@ class A_Attr_Type (MOM.Prop.Type) :
         except MOM.Error.Attribute_Syntax as exc :
             if s :
                 raise
-        except StandardError as exc :
+        except Exception as exc :
             if s :
                 raise MOM.Error.Attribute_Syntax (obj, self, s, str (exc))
     # end def from_string
@@ -799,10 +814,6 @@ class _A_Binary_String_ (A_Attr_Type) :
     max_length          = 0
     P_Type              = bytes
 
-    def as_code (self, value) :
-        return repr (value)
-    # end def as_code
-
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         return value or ""
@@ -896,10 +907,11 @@ class _A_Entity_ (A_Attr_Type) :
 
 # end class _A_Entity_
 
-class _A_Composite_ (_A_Entity_) :
+class _A_Composite_ \
+          ( TFL.Meta.BaM
+              (_A_Entity_, metaclass = MOM.Meta.M_Attr_Type.Composite)
+          ) :
     """Common base class for composite attributes of an object."""
-
-    __metaclass__       = MOM.Meta.M_Attr_Type.Composite
 
     Kind_Mixins         = (MOM.Attr._Composite_Mixin_, )
 
@@ -918,10 +930,11 @@ class _A_Composite_ (_A_Entity_) :
         return self.P_Type.sorted_by
     # end def sorted_by
 
-    def as_code (self, value) :
+    @TFL.Meta.Class_and_Instance_Method
+    def as_code (soc, value) :
         if value is not None :
             return "(%s)" % (value.attr_as_code (), )
-        return ""
+        return portable_repr (())
     # end def as_code
 
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
@@ -996,7 +1009,7 @@ class _A_Composite_ (_A_Entity_) :
         for c in self.__super._checkers (e_type, kind) :
             yield c
         name = self.name
-        for k, ps in self.P_Type._Predicates._pred_kind.iteritems () :
+        for k, ps in pyk.iteritems (self.P_Type._Predicates._pred_kind) :
             if kind.electric :
                 k = kind.kind
                 p_kind = MOM.Pred.System
@@ -1038,7 +1051,7 @@ class _A_Date_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return unicode (value.strftime (soc._output_format ()))
+            return pyk.text_type (value.strftime (soc._output_format ()))
         return ""
     # end def as_string
 
@@ -1065,17 +1078,18 @@ class _A_Date_ (A_Attr_Type) :
 
 # end class _A_Date_
 
-class _A_Named_Value_ (A_Attr_Type) :
+class _A_Named_Value_ \
+          ( TFL.Meta.BaM
+              (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Named_Value)
+          ) :
     """Common base class for attributes holding named values."""
-
-    __metaclass__     = MOM.Meta.M_Attr_Type.Named_Value
 
     C_Type            = None ### Attribute type applicable to cooked values
 
     needs_raw_value   = False
 
     def as_code (self, value) :
-        return self.code_format % (self.__class__.Elbat [value], )
+        return self.__super.as_code (self.__class__.Elbat [value])
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1114,10 +1128,9 @@ class _A_Named_Value_ (A_Attr_Type) :
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
 
-    code_format         = "%s"
     math_dict           = dict \
         ( dict
-            (  (k, v) for k, v in math.__dict__.iteritems ()
+            (  (k, v) for k, v in pyk.iteritems (math.__dict__)
             if not k.startswith ("_")
             )
         , Decimal = decimal.Decimal
@@ -1315,7 +1328,7 @@ class _A_SPK_Entity_ (_A_Entity_) :
         if value is not None :
             return tuple \
                 (a.as_code (a.get_value (value)) for a in value.primary)
-        return repr ("")
+        return portable_repr ("")
     # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1338,7 +1351,7 @@ class _A_SPK_Entity_ (_A_Entity_) :
         E_Type = self.E_Type
         if not isinstance (value, E_Type.Essence) :
             typ       = _T (getattr (value, "ui_name", value.__class__))
-            v_display = getattr (value, "ui_display", unicode (value))
+            v_display = getattr (value, "ui_display", pyk.text_type (value))
             raise MOM.Error.Wrong_Type \
                 ( _T
                     ( "%s '%s' not eligible for attribute %s,"
@@ -1655,7 +1668,7 @@ class _A_Filename_ (_A_String_Base_) :
     """Base class for attributes holding filenames."""
 
     needs_raw_value   = False
-    P_Type            = str
+    P_Type            = pyk.byte_type
 
     open_mode         = "w"
     """`open_mode` defines the mode to use for opening the file specified
@@ -1699,14 +1712,17 @@ class _A_Filename_ (_A_String_Base_) :
 
 # end class _A_Filename_
 
-class _A_String_ (Atomic_Json_Mixin, _A_String_Base_) :
+class _A_String_ \
+          ( TFL.Meta.BaM
+              ( Atomic_Json_Mixin, _A_String_Base_
+              , metaclass = MOM.Meta.M_Attr_Type.String
+              )
+          ) :
     """Base class for string-valued attributes of an object."""
-
-    __metaclass__     = MOM.Meta.M_Attr_Type.String
 
     ignore_case       = False
     needs_raw_value   = False
-    P_Type            = unicode
+    P_Type            = pyk.text_type
 
     @TFL.Meta.Class_and_Instance_Once_Property
     def db_sig (self) :
@@ -1718,7 +1734,7 @@ class _A_String_ (Atomic_Json_Mixin, _A_String_Base_) :
 class _A_String_Ascii_ (_A_String_) :
     """Base class for ascii-string-valued attributes of an object."""
 
-    P_Type            = str
+    P_Type            = pyk.byte_type
     _cooked_re        = Regexp \
         ( "^[\x00-\x7F]*$"
         , re.VERBOSE
@@ -1735,12 +1751,13 @@ class _A_String_Ascii_ (_A_String_) :
 
 # end class _A_String_Ascii_
 
-class _A_Named_Object_ (_A_Named_Value_) :
+class _A_Named_Object_ \
+          ( TFL.Meta.BaM
+              (_A_Named_Value_, metaclass = MOM.Meta.M_Attr_Type.Named_Object)
+          ) :
     """Common base class for attributes holding named objects (that cannot be
        directly put into a database).
     """
-
-    __metaclass__     = MOM.Meta.M_Attr_Type.Named_Object
 
     class Pickler (TFL.Meta.Object) :
 
@@ -1767,7 +1784,7 @@ class _A_Named_Object_ (_A_Named_Value_) :
     @TFL.Meta.Class_and_Instance_Once_Property
     def Choices (self) :
         return sorted \
-            ( ((k, str (v)) for k, v in self.Table.iteritems ())
+            ( ((k, str (v)) for k, v in pyk.iteritems (self.Table))
             , key = TFL.Getter [1]
             )
     # end def Choices
@@ -1790,12 +1807,16 @@ class _A_Named_Object_ (_A_Named_Value_) :
 
 # end class _A_Named_Object_
 
-class _A_Typed_Collection_ (_A_Collection_) :
+class _A_Typed_Collection_ \
+          ( TFL.Meta.BaM
+              ( _A_Collection_
+              , metaclass = MOM.Meta.M_Attr_Type.Typed_Collection
+              )
+          ) :
     """Base class for attributes that hold a collection of strictly typed
        values.
     """
 
-    __metaclass__     = MOM.Meta.M_Attr_Type.Typed_Collection
     Kind_Mixins       = (MOM.Attr._Typed_Collection_Mixin_, )
 
     @TFL.Meta.Class_and_Instance_Method
@@ -1904,7 +1925,7 @@ class _A_Id_Entity_Collection_ (_A_Typed_Collection_) :
             def _gen (values, default) :
                 for v in values :
                     if isinstance (v, MOM.Entity) :
-                        v = unicode (v.FO)
+                        v = pyk.text_type (v.FO)
                     yield v
             return None, None, tuple (_gen (values, default))
     # end def FO_nested
@@ -1923,12 +1944,12 @@ class _A_Id_Entity_Set_ (_A_Typed_Set_, _A_Id_Entity_Collection_) :
 
 # end class _A_Id_Entity_Set_
 
-class _A_Unit_ (A_Attr_Type) :
+class _A_Unit_ \
+          (TFL.Meta.BaM (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Unit)) :
     """Mixin for attributes describing physical quantities with optional
        units.
     """
 
-    __metaclass__    = MOM.Meta.M_Attr_Type.Unit
     _default_unit    = None ### set by meta class
     needs_raw_value  = True
     _unit_dict       = {}
@@ -1964,7 +1985,7 @@ class _A_Unit_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def eligible_raw_values (soc, obj = None) :
-        return sorted (soc._unit_dict.iterkeys ())
+        return sorted (pyk.iterkeys (soc._unit_dict))
     # end def eligible_raw_values
 
     @TFL.Meta.Class_and_Instance_Method
@@ -2194,7 +2215,7 @@ class A_Date (_A_Date_) :
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
         value = self.kind.get_value (obj)
         if value is not None :
-            return unicode (value.strftime ("%Y-%m-%d"))
+            return pyk.text_type (value.strftime ("%Y-%m-%d"))
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
@@ -2270,7 +2291,7 @@ class A_Date_Time (_A_Date_) :
         value = self.kind.get_value (obj)
         if value is not None :
             if not value.time () :
-                return unicode (value.strftime ("%Y-%m-%d"))
+                return pyk.text_type (value.strftime ("%Y-%m-%d"))
             else :
                 offset = TFL.user_config.time_zone.utcoffset (value)
                 oh, os = divmod (offset.total_seconds (), 3600)
@@ -2330,10 +2351,11 @@ class A_Date_Time_List (_A_Typed_List_) :
 
 # end class A_Date_Time_List
 
-class A_Decimal (_A_Decimal_) :
+class A_Decimal \
+          ( TFL.Meta.BaM
+              (_A_Decimal_, metaclass = MOM.Meta.M_Attr_Type.Decimal)
+          ) :
     """Decimal number."""
-
-    __metaclass__  = MOM.Meta.M_Attr_Type.Decimal
 
     rounding       = decimal.ROUND_HALF_UP
 
@@ -2389,13 +2411,12 @@ class A_Email (Syntax_Re_Mixin, _A_String_) :
 
 # end class A_Email
 
-class A_Enum (A_Attr_Type) :
+class A_Enum \
+          (TFL.Meta.BaM (A_Attr_Type, metaclass = MOM.Meta.M_Attr_Type.Enum)) :
     """Base class for enumeration attributes. An enumeration is defined by a
        `Table` mapping the keys (used as raw and cooked values) to their
        description.
     """
-
-    __metaclass__     = MOM.Meta.M_Attr_Type.Enum
 
     C_Type            = None ### Attribute type applicable to cooked values
     needs_raw_value   = False
@@ -2405,12 +2426,14 @@ class A_Enum (A_Attr_Type) :
         ### cannot cache this because of L10N
         ### XXX cache by language
         return sorted \
-            ((k, "%s [%s]" % (k, _T (v))) for k, v in self.Table .iteritems ())
+            (  (k, "%s [%s]" % (k, _T (v)))
+            for k, v in pyk.iteritems (self.Table)
+            )
     # end def Choices
 
     def as_code (self, value) :
         if value is not None :
-            return self.C_Type.code_format % (value, )
+            return self.C_Type.as_code (value)
         return "''"
     # end def as_code
 
@@ -2505,7 +2528,9 @@ class A_Filename (_A_Filename_) :
 # end class A_Filename
 
 class A_Float (_A_Float_) :
-    code_format    = "%s"
+
+    pass
+
 # end class A_Float
 
 class A_Frequency (_A_Unit_, _A_Float_) :
@@ -2582,10 +2607,11 @@ class A_Link_Ref_List (_A_Link_Ref_, _A_Id_Entity_List_) :
 
 # end class A_Link_Ref_List
 
-class A_Link_Role (_A_Id_Entity_) :
+class A_Link_Role \
+          ( TFL.Meta.BaM
+              (_A_Id_Entity_, metaclass = MOM.Meta.M_Attr_Type.Link_Role)
+          ) :
     """Link-role."""
-
-    __metaclass__       = MOM.Meta.M_Attr_Type.Link_Role
 
     auto_rev_ref        = False
     auto_rev_ref_np     = False
@@ -2667,7 +2693,7 @@ class A_Numeric_String (_A_String_Base_) :
     example           = "42"
     typ               = _ ("Numeric_String")
 
-    P_Type            = unicode
+    P_Type            = pyk.text_type
     as_number         = int
 
     @TFL.Meta.Class_and_Instance_Method
@@ -2759,10 +2785,9 @@ class A_String (_A_String_) :
 
 # end class A_String
 
-class A_Surrogate (_A_Int_) :
+class A_Surrogate \
+          (TFL.Meta.BaM (_A_Int_, metaclass = MOM.Meta.M_Attr_Type.Surrogate)) :
     """A surrogate key. There can be only one per class."""
-
-    __metaclass__  = MOM.Meta.M_Attr_Type.Surrogate
 
     typ            = _ ("Surrogate")
     kind           = MOM.Attr.Internal
@@ -2801,7 +2826,7 @@ class A_Time (_A_Date_) :
     def as_rest_cargo_ckd (self, obj, * args, ** kw) :
         value = self.kind.get_value (obj)
         if value is not None :
-            return unicode (value.strftime ("%H:%M:%S"))
+            return pyk.text_type (value.strftime ("%H:%M:%S"))
     # end def as_rest_cargo_ckd
 
     @TFL.Meta.Class_and_Instance_Method
@@ -2995,7 +3020,8 @@ Class `MOM.Attr.A_Attr_Type`
 
 """
 
-__all__  = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__  = tuple \
+    (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 __all__ += \
     ( "decimal"

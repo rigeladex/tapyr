@@ -34,11 +34,15 @@
 #    29-Jan-2013 (CT) Force `Unique.kind` to `Uniqueness`, not `Region`
 #    12-Jun-2013 (CT) Add `is_partial_p`
 #    31-Jul-2013 (CT) Change `Unique.__init__` to set `error` to `None`
+#    10-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
-from   _MOM                import MOM
-from   _TFL                import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
+
+from   _TFL.portable_repr    import portable_repr
+from   _TFL.pyk              import pyk
 
 import _MOM._Meta.M_Prop_Type
 
@@ -62,7 +66,7 @@ class _Condition_ (MOM.Meta.M_Prop_Type) :
 
     def __new__ (meta, name, bases, dct) :
         for a in meta._force_tuple :
-            if a in dct and isinstance (dct [a], (str, unicode)) :
+            if a in dct and isinstance (dct [a], pyk.string_types) :
                 dct [a] = (dct [a], )
         dct.setdefault \
             ( "is_partial_p"
@@ -73,6 +77,7 @@ class _Condition_ (MOM.Meta.M_Prop_Type) :
 
 # end class _Condition_
 
+@pyk.adapt__str__
 class Condition (_Condition_) :
     """Meta class for :class:`~_MOM._Pred.Type.Condition`
 
@@ -99,16 +104,17 @@ class Condition (_Condition_) :
     # end def __str__
 
     def __repr__ (cls) :
-        return '%s (%r, "%s", %r)' % \
+        return "%s (%s, %s, %s)" % \
             ( cls.__class__.__name__
-            , cls.attributes
-            , cls.assertion
-            , cls.parameters
+            , portable_repr (cls.attributes)
+            , portable_repr (cls.assertion)
+            , portable_repr (cls.parameters)
             )
     # end def __repr__
 
 # end class Condition
 
+@pyk.adapt__str__
 class Quantifier (_Condition_) :
     """Meta class for quantifier predicates.
 
@@ -149,7 +155,7 @@ class Quantifier (_Condition_) :
             if not getattr (cls, "guard_attr", None) :
                 setattr (cls, "guard_attr", (guard, ))
             setattr (cls, "guard_code", compile (guard, guard, "eval"))
-        if isinstance (cls.seq, basestring) :
+        if isinstance (cls.seq, pyk.string_types) :
             setattr (cls, "seq_code", compile (cls.seq, cls.seq, "eval"))
         if cls.bvar and cls.bvar_attr :
             one_element_code = \
@@ -170,12 +176,12 @@ class Quantifier (_Condition_) :
     # end def __str__
 
     def __repr__ (cls) :
-        return '%s (%r, "%s", %r, %r)' % \
+        return '%s (%s, %s, %s, %s)' % \
             ( cls.__class__.__name__
-            , cls.bvar
-            , cls.assertion
-            , cls.seq
-            , cls.description
+            , portable_repr (cls.bvar)
+            , portable_repr (cls.assertion)
+            , portable_repr (cls.seq)
+            , portable_repr (cls.description)
             )
     # end def __repr__
 
@@ -201,6 +207,7 @@ class U_Quantifier (Quantifier) :
 
 # end class U_Quantifier
 
+@pyk.adapt__str__
 class Unique (_Condition_) :
     """Meta class for :class:`~_MOM._Pred.Type.Unique`"""
 
@@ -226,7 +233,7 @@ class Unique (_Condition_) :
     # end def __init__
 
     def __str__  (cls) :
-        return "%s %r" % (cls.name, cls.attr_none)
+        return "%s %s" % (cls.name, portable_repr (cls.attr_none))
     # end def __str__
 
     def __repr__ (cls) :
@@ -247,7 +254,6 @@ Module `MOM.Meta.M_Pred_Type`
 .. autoclass:: N_Quantifier
 .. autoclass:: U_Quantifier
 .. autoclass:: Unique
-
 
 """
 

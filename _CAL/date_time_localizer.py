@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package CAL.
@@ -31,13 +31,14 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import absolute_import, division, unicode_literals
+from   __future__          import absolute_import, division, unicode_literals
 
-from   _TFL             import TFL
-from   _CAL             import CAL
+from   _TFL                import TFL
+from   _CAL                import CAL
 
-from   _TFL.Regexp      import Regexp, Multi_Re_Replacer, Re_Replacer, re
-from   _TFL.pyk         import pyk
+from   _TFL.Regexp         import Regexp, Multi_Re_Replacer, Re_Replacer, re
+from   _TFL.portable_repr  import portable_repr
+from   _TFL.pyk            import pyk
 
 import _CAL.Date_Time
 import _TFL.CAO
@@ -65,12 +66,12 @@ def date_time_localizer \
         (s, format = "%Y-%m-%d %H:%M", pattern = None, count = 0) :
     """Convert date-times in `s` into local time without tzoffset.
 
-    >>> date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org")
-    u'09d82ac 2012-03-29 21:06 martin@mangari.org'
-    >>> date_time_localizer ("f6baffa 2012-03-29 10:06:46 -0400 martin@mangari.org")
-    u'f6baffa 2012-03-29 16:06 martin@mangari.org'
-    >>> date_time_localizer ("f99a29d 2005-03-22 09:34:40 +0000 tanzer@swing.co.at")
-    u'f99a29d 2005-03-22 10:34 tanzer@swing.co.at'
+    >>> print (portable_repr (date_time_localizer ("09d82ac 2012-03-29 21:06:26 +0200 martin@mangari.org")))
+    '09d82ac 2012-03-29 21:06 martin@mangari.org'
+    >>> print (portable_repr (date_time_localizer ("f6baffa 2012-03-29 10:06:46 -0400 martin@mangari.org")))
+    'f6baffa 2012-03-29 16:06 martin@mangari.org'
+    >>> print (portable_repr (date_time_localizer ("f99a29d 2005-03-22 09:34:40 +0000 tanzer@swing.co.at")))
+    'f99a29d 2005-03-22 10:34 tanzer@swing.co.at'
 
     """
     if pattern is None :

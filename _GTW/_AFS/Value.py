@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -70,6 +70,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.I18N                import _
 from   _TFL.predicate           import uniq
+from   _TFL.pyk                 import pyk
 
 import json
 
@@ -104,7 +105,7 @@ class Value (_Base_) :
 
     @classmethod
     def from_json (cls, json_data) :
-        if isinstance (json_data, basestring) :
+        if isinstance (json_data, pyk.string_types) :
             cargo = json.loads (json_data)
         else :
             cargo = json_data
@@ -159,7 +160,7 @@ class Value (_Base_) :
         if result is None :
             result = self.elem.init
         if isinstance (result, str) :
-            result = unicode (result)
+            result = pyk.text_type (result)
         return result
     # end def init
 
@@ -231,7 +232,8 @@ class Value (_Base_) :
     # end def _get_elem
 
     def __repr__ (self) :
-        result = ["%s\n    > %s" % (str (self), sorted (self.jc.iteritems ()))]
+        result = \
+            ["%s\n    > %s" % (str (self), sorted (pyk.iteritems (self.jc)))]
         result.extend ("  %r" % c for c in self.children)
         return "\n".join (result)
     # end def __repr__

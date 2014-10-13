@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -44,16 +44,16 @@ _test_code = """
 
     >>> laser.max_crew ### before commit
     1
-    >>> b1.name ### before commit
-    u''
+    >>> prepr (b1.name) ### before commit
+    ''
 
     >>> scope.commit  ()
     >>> modify_scope (%(p1)s, %(n1)s)
 
     >>> laser.max_crew ### after change
     2
-    >>> b1.name ### after change
-    u'My Boat'
+    >>> prepr (b1.name) ### after change
+    'My Boat'
 
     >>> b3 = scope.SRM.Boat.query (nation = u"AUT").one ()
     >>> b3 is b1

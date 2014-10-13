@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -60,12 +60,15 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                 import TFL
+from   __future__            import print_function, unicode_literals
+
+from   _TFL                  import TFL
 
 import _TFL._Meta.Object
 import _TFL.import_module
 
-from   _TFL.IV_Number       import *
+from   _TFL.IV_Number        import *
+from   _TFL.pyk              import pyk
 
 import sys
 import time
@@ -159,11 +162,11 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
            returned by `command_spec').
         """
         if cmd.all or cmd.c_macro :
-            print self.as_c_macros   ()
+            print (self.as_c_macros   ())
         if cmd.all or cmd.product_info :
-            print self.product_info  ()
+            print (self.product_info  ())
         if cmd.all or cmd.tex_macro :
-            print self.as_tex_macros ()
+            print (self.as_tex_macros ())
     # end def print_infos
 
     def _c_macros (self) :
@@ -229,7 +232,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
     # end def _product_info
 
     def _setup_ivn (self, kw) :
-        for k, v in list (kw.iteritems ()) :
+        for k, v in list (pyk.iteritems (kw)) :
             if not isinstance (v, IV_Number) :
                 del kw [k]
             setattr (self, k, v)
@@ -297,7 +300,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         if name in self.ivn :
             self.ivn [name].external_version = value
         elif name in self.__dict__ :
-            raise TypeError, \
+            raise TypeError \
                 ( "Attribute %s is readonly. Cannot change value from %s to %s"
                 % (name, getattr (self, name), value)
                 )

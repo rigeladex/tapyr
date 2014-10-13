@@ -69,15 +69,17 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 from   _JNJ                     import JNJ
 from   _TFL                     import TFL
 
 from   _GTW                     import HTML
 
-from   _TFL.pyk                 import pyk
-from   _TFL                     import sos
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import filtered_join
+from   _TFL.pyk                 import pyk
+from   _TFL                     import sos
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -125,7 +127,7 @@ class GTW (TFL.Meta.Object) :
         try :
             macro  = self.get_macro (macro_name, templ_name, widget_type)
         except ValueError :
-            print repr ((macro_name, templ_name, _args, _kw))
+            print (repr ((macro_name, templ_name, _args, _kw)))
             raise
         return macro (* _args, ** _kw)
     # end def call_macro
@@ -186,7 +188,7 @@ class GTW (TFL.Meta.Object) :
         """Return macro `macro_name` from template `templ_name`."""
         if widget_type :
             macro_name = getattr (macro_name, widget_type)
-        if not isinstance (macro_name, basestring) :
+        if not isinstance (macro_name, pyk.string_types) :
             macro_name = str (macro_name)
         if templ_name is None :
             templ_name, macro_name = \
@@ -207,7 +209,7 @@ class GTW (TFL.Meta.Object) :
     list       = staticmethod (list)
 
     def log_stdout (self, * text) :
-        print " ".join (str (l) for l in text)
+        print (* text)
         return ""
     # end def log_stdout
 
@@ -277,7 +279,7 @@ class GTW (TFL.Meta.Object) :
         if text is None :
             text = uri
         attrs = ['href="%s:%s"' % (scheme, uri)]
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             attrs.append ('%s="%s"' % (k, v))
         attrs = " ".join (sorted (attrs))
         result = u"""<a %(attrs)s>%(text)s</a>""" % locals ()

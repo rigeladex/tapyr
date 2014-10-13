@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -40,13 +40,18 @@
 #     4-Dec-2012 (CT) Correct `Vimeo.player_url`
 #     4-Dec-2012 (CT) Remove `http:` (--> protocol-relative)
 #    20-Aug-2013 (CT) Add `(TM)` to, change `(c)` and `...` in, `Entity_Map`
+#    12-Oct-2014 (CT) Change `Cleaner` to use `BeautifulSoup4`
+#    12-Oct-2014 (CT) Add `Cleaner.parser`
 #    ««revision-date»»···
 #--
+
+from   __future__               import print_function
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -54,8 +59,6 @@ import _TFL._Meta.Object
 import _TFL.Caller
 
 from   random                   import randrange
-
-import urllib
 
 _obfuscator_format = """\
 <a class="nospam" title="%(need)s">%(text)s</a>\
@@ -102,15 +105,17 @@ def _obfuscator (scheme = "mailto") :
 
 obfuscator = dict ((s, _obfuscator (s)) for s in scheme_map)
 
+@pyk.adapt__str__
 class Cleaner (TFL.Meta.Object) :
     """Clean up HTML using BeautifulSoup."""
 
-    def __init__ (self, input) :
-        self.input = input
+    def __init__ (self, input, parser = None) :
+        self.input  = input
+        self.parser = parser
     # end def __init__
 
     def remove_comments (self) :
-        from BeautifulSoup import Comment
+        from bs4 import Comment
         matcher = lambda t : isinstance (t, Comment)
         return [str (c) for c in self._remove (text = matcher)]
     # end def remove_comments
@@ -121,8 +126,8 @@ class Cleaner (TFL.Meta.Object) :
 
     @Once_Property
     def soup (self) :
-        from BeautifulSoup import BeautifulSoup
-        return BeautifulSoup (self.input)
+        from bs4 import BeautifulSoup
+        return BeautifulSoup (self.input, self.parser)
     # end def soup
 
     def _remove (self, * args, ** kw) :
@@ -134,12 +139,8 @@ class Cleaner (TFL.Meta.Object) :
     # end def _remove
 
     def __str__ (self) :
-        return str (self.soup)
+        return pyk.text_type (self.soup)
     # end def __str__
-
-    def __unicode__ (self) :
-        return unicode (self.soup)
-    # end def __unicode__
 
 # end class Cleaner
 
@@ -207,8 +208,8 @@ class Video (TFL.Meta.Object) :
         height      = kw.pop ("height",      self.height)
         width       = kw.pop ("width",       self.width)
         desc        = kw.pop ("desc",        self.watcher_url + video_id)
-        query       = "?" + urllib.urlencode \
-            (sorted (dict (self.q_parameters, ** kw).iteritems ()))
+        query       = "?" + pyk.urlencode \
+            (sorted (pyk.iteritems (dict (self.q_parameters, ** kw))))
         result      = self.format % TFL.Caller.Object_Scope (self)
         result      = self.ws_replacer (result)
         return result
@@ -219,7 +220,7 @@ class Video (TFL.Meta.Object) :
 class Vimeo (Video) :
     """Generate html-element to embedd a Vimeo video.
 
-    >>> print vimeo_video ("34480636", desc = "Seascape 18 Gaea+ Christmas Sailing", align = "right")
+    >>> print (vimeo_video ("34480636", desc = "Seascape 18 Gaea+ Christmas Sailing", align = "right"))
     <div class="video align-right" style="width:410px">
      <iframe
      src="//player.vimeo.com/video/34480636?api=1&autoplay=0&byline=0&color=%2300adef&loop=0&portrait=0&title=0"
@@ -257,7 +258,7 @@ class Vimeo (Video) :
 class Youtube (Video) :
     """Generate html-element to embedd a youtube video.
 
-    >>> print youtube_video ("EeMJErxbn1I", css_class = "centered")
+    >>> print (youtube_video ("EeMJErxbn1I", css_class = "centered"))
     <div class="video centered" style="width:435px">
      <iframe
      src="//www.youtube.com/embed/EeMJErxbn1I?autohide=2&autoplay=0&controls=1&enablejsapi=1&fs=1&hd=0&loop=0&modestbranding=0&rel=0&showinfo=0&showsearch=0&theme=light"

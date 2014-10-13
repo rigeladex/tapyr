@@ -56,7 +56,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__                 import print_function, unicode_literals
 
 from   _MOM.import_MOM            import *
 from   _MOM._Attr.Type            import *
@@ -186,7 +186,10 @@ class Event (_Ancestor_Essence) :
             if self is not None :
                 self.compute_occurrences ()
             else :
-                print "No entity found for %s change-callback for change %s" % (cls, change)
+                print \
+                    ( "No entity found for %s change-callback for change %s"
+                    % (cls, change)
+                    )
     # end def _change_callback
 
 # end class Event

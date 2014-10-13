@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -57,6 +57,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__                         import print_function
+
 from   _TFL                               import TFL
 from   _GTW                               import GTW
 
@@ -65,8 +67,10 @@ import _TFL.Undef
 
 import _TFL._Meta.Object
 import _TFL._Meta.M_Unique_If_Named
+
 from   _TFL._Meta.Once_Property           import Once_Property
 from   _TFL._Meta.Property                import Alias_Property
+from   _TFL.pyk                           import pyk
 
 from   posixpath import join as pjoin
 
@@ -100,10 +104,9 @@ class Media_Base (TFL.Meta.Object) :
 
 # end class Media_Base
 
-class CSS_Link (Media_Base) :
+class CSS_Link \
+        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
     """Model a CSS link object."""
-
-    __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     condition     = ""
     media_type    = "all"
@@ -148,7 +151,7 @@ class Rel_Link (Media_Base) :
     def attrs (self) :
         return " ".join \
             (   '''%s="%s"''' % (k, v)
-            for (k, v) in sorted (self._kw.iteritems ())
+            for (k, v) in sorted (pyk.iteritems (self._kw))
             )
     # end def attrs
 
@@ -162,10 +165,9 @@ class Rel_Link (Media_Base) :
 
 # end class Rel_Link
 
-class Script (Media_Base) :
+class Script \
+        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
     """Model a script element"""
-
-    __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     href          = Alias_Property ("src")
 
@@ -218,10 +220,9 @@ class Script (Media_Base) :
 
 # end class Script
 
-class JS_On_Ready (Media_Base) :
+class JS_On_Ready \
+        (TFL.Meta.BaM (Media_Base, metaclass = TFL.Meta.M_Unique_If_Named)) :
     """A javascript code which should be executed once the document is loaded"""
-
-    __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     default_rank  = TFL.Undef ("rank")
     name          = None
@@ -245,6 +246,7 @@ class JS_On_Ready (Media_Base) :
 
 # end class JS_On_Ready
 
+@pyk.adapt__bool__
 class Media_List (TFL.Meta.Object) :
     """Model a list of media objects"""
 
@@ -282,9 +284,9 @@ class Media_List (TFL.Meta.Object) :
         return len (self.values)
     # end def __len__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.values)
-    # end def __nonzero__
+    # end def __bool__
 
     def __iter__ (self) :
         return iter (self.values)
@@ -396,19 +398,19 @@ class Media (TFL.Meta.Object) :
 
        >>> m = Media (css_links = ("a.css", "/b/c.css"),
        ...       scripts = ("foo.js", "bar.js", "http://baz.js"))
-       >>> print NL.join (repr (l) for l in m.css_links)
+       >>> print (NL.join (repr (l) for l in m.css_links))
        all: /test/styles/a.css
        all: /b/c.css
        >>> tuple (str (l) for l in m.scripts)
        ('/test/js/foo.js', '/test/js/bar.js', 'http://baz.js')
        >>> n = Media (("/test/styles/a.css", CSS_Link ("c.css", media_type = "screen")))
-       >>> print NL.join (repr (l) for l in n.css_links)
+       >>> print (NL.join (repr (l) for l in n.css_links))
        all: /test/styles/a.css
        screen: /test/styles/c.css
        >>> tuple (str (l) for l in n.scripts)
        ()
        >>> q = Media (scripts = ("qux.js", ), children = (m, n))
-       >>> print NL.join (repr (l) for l in q.css_links)
+       >>> print (NL.join (repr (l) for l in q.css_links))
        all: /test/styles/a.css
        all: /b/c.css
        screen: /test/styles/c.css
@@ -437,13 +439,13 @@ class Media (TFL.Meta.Object) :
 
     @classmethod
     def from_list (cls, medias, ** kw) :
-        to_add = dict ((n, v) for n, v in kw.iteritems () if v)
+        to_add = dict ((n, v) for n, v in pyk.iteritems (kw) if v)
         if len (medias) == 1 and not to_add :
             result = medias [0]
         else :
             result = \
                 GTW.Media (children = medias) if (medias or to_add) else None
-        for n, v in to_add.iteritems () :
+        for n, v in pyk.iteritems (to_add) :
             getattr (result, n).add (* v)
         return result
     # end def from_list

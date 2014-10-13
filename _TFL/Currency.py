@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,8 +42,8 @@
 
 from   __future__  import print_function
 
-from   _TFL import TFL
-from   _TFL.pyk import pyk
+from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 
 import _TFL._Meta.Object
 import _TFL.Decorator
@@ -101,6 +101,7 @@ class _M_Currency_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Currency_
 
+@pyk.adapt__bool__
 @pyk.adapt__div__
 @pyk.adapt__str__
 class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
@@ -224,9 +225,9 @@ class _Currency_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Currency_)) :
         return self.C_Type (- self.amount)
     # end def __neg__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.amount)
-    # end def __nonzero__
+    # end def __bool__
 
     def __pos__ (self) :
         return self.C_Type (self.amount)

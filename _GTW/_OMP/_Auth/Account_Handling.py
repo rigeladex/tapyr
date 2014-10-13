@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.OMP.Auth.
@@ -56,7 +56,7 @@ from   _TFL.I18N              import _, _T, _Tn
 import  uuid
 import  datetime
 
-class Action_Expired (StandardError) : pass
+class Action_Expired (Exception) : pass
 
 _Ancestor_Essence = Auth.Link1
 

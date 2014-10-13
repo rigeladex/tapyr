@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -40,6 +40,7 @@ from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.pyk                 import pyk
 
 import _GTW._RST.HTTP_Method
 import _GTW._RST._TOP.Dir
@@ -124,7 +125,7 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
         escaped = escape (obj)
         a       = repr   (escaped [:limit])
         b       = repr   (escaped [limit:])
-        if isinstance (obj, unicode) :
+        if isinstance (obj, pyk.text_type) :
             buf.append ('u')
             a = a [1:]
             b = b [1:]
@@ -133,7 +134,7 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
         else:
             buf.append (a)
         buf.append     ('</span>')
-        return _add_subclass_info (u''.join (buf), obj, (str, unicode))
+        return _add_subclass_info (u''.join (buf), obj, pyk.string_types)
     # end def string_repr
 
     def dict_repr (self, d, recursive, limit = 5) :
@@ -141,7 +142,7 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
             return _add_subclass_info (u'{...}', d, dict)
         buf = ['{']
         have_extended_section = False
-        for idx, (key, value) in enumerate (d.iteritems ()) :
+        for idx, (key, value) in enumerate (pyk.iteritems (d)) :
             if idx :
                 buf.append (', ')
             if idx == (limit - 1) :
@@ -166,9 +167,9 @@ class HTML_Repr_Generator (TFL.Meta.Object) :
     # end def object_repr
 
     def dispatch_repr (self, obj, recursive) :
-        if isinstance (obj, (int, long, float, complex)) :
+        if isinstance (obj, pyk.int_types + (float, complex)) :
             return u'<span class="number">%r</span>' % (obj, )
-        if isinstance (obj, basestring) :
+        if isinstance (obj, pyk.string_types) :
             return self.string_repr    (obj)
         if isinstance (obj, RegexType) :
             return self.regex_repr     (obj)
@@ -285,7 +286,7 @@ class _Py_Console_ (code.InteractiveInterpreter) :
 
     def runcode (self, code) :
         try:
-            exec code in self.globals, self.locals
+            exec (code, self.globals, self.locals)
         except:
             self.showtraceback ()
     # end def runcode

@@ -203,7 +203,7 @@ class _Q_ (_Mixin_, _Cal_Page_) :
         response = context ["response"]
         try :
             qa   = self._q_args (anchor, request)
-        except Exception, exc :
+        except Exception (exc) :
             raise self.Status.Not_Found (exc)
         if qa.anchor == self.anchor :
             this = self

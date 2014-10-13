@@ -66,6 +66,7 @@
 #     3-Apr-2014 (CT) For `distinct`, add `order_by` criteria to `select` clause
 #     7-May-2014 (CT) Add guard against `None` to `_Base_._get_xs`
 #    12-Sep-2014 (CT) Use `A_Join.key`, not `A_Join.table`, for `joined` set
+#     9-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,6 @@ from   __future__                import division, print_function
 from   __future__                import absolute_import, unicode_literals
 
 from   _TFL                      import TFL
-from   _TFL.pyk                  import pyk
 
 from   _MOM.import_MOM           import MOM, Q
 from   _MOM._DBW._SAW            import SAW, SA
@@ -83,6 +83,8 @@ import _MOM._DBW._SAW.Attr
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 from   _TFL.Decorator            import subclass_responsibility
+from   _TFL.portable_repr        import portable_repr
+from   _TFL.pyk                  import pyk
 
 import _TFL.Accessor
 import _TFL.Decorator
@@ -235,13 +237,13 @@ class _Base_ (TFL.Meta.Object) :
     # end def first
 
     def formatted (self) :
-        result = [repr (self)]
+        result = [portable_repr (self)]
         sq     = self.sa_query
         cq     = sq.compile ()
         if cq.params :
             result.append ("Parameters:")
             result.extend \
-                (   ("     %-20s : %r" % (k, v))
+                (   ("     %-20s : %s" % (k, portable_repr (v)))
                 for k, v in sorted (pyk.iteritems (cq.params))
                 )
         return "\n".join (result)
@@ -501,7 +503,9 @@ class _Attr_ (_Attr_Base_) :
         cols = self.cols
         if len (cols) != 1 :
             raise TypeError \
-                ("attr %r must result in a single column; got %s" % (ax, cols))
+                ( "attr %s must result in a single column; got %s"
+                % (portable_repr (ax), cols)
+                )
         self.col = cols [0]
     # end def __init__
 

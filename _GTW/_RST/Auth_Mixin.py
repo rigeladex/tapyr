@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -44,9 +44,8 @@ import _TFL._Meta.Object
 
 import collections
 
-class Errors (collections.defaultdict) :
-
-    __metaclass__ = TFL.Meta.M_Class
+class Errors \
+        (TFL.Meta.BaM (collections.defaultdict, metaclass = TFL.Meta.M_Class)) :
 
     def __init__ (self) :
         self.__super.__init__ (list)

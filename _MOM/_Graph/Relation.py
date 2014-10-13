@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -54,11 +54,13 @@ import _MOM._Graph
 
 from   _TFL._D2               import D2, Cardinal_Direction as CD
 from   _TFL.Math_Func         import sign
+from   _TFL.pyk               import pyk
 
 import _TFL.Decorator
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
+@pyk.adapt__str__
 class Connector (TFL.Meta.Object) :
     """Connector of a relation to a node."""
 
@@ -207,7 +209,7 @@ class _Relation_ (_R_Base_) :
         self.pop_to_self (kw, "guide_offset", "source_side", "target_side")
         if kw :
             raise TypeError \
-                ("Unknown arguments %s" % (sorted (kw.iteritems ())))
+                ("Unknown arguments %s" % (sorted (pyk.iteritems (kw))))
         self.source   = source
         self.target   = target
     # end def __init__

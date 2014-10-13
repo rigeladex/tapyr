@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Martin Glueck All rights reserved
+# Copyright (C) 2011-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 #
@@ -31,12 +31,14 @@
 #    ««revision-date»»···
 #--
 
-from   __future__   import unicode_literals
+from   __future__   import print_function, unicode_literals
+
 from   _TFL         import TFL
 import _TFL.CAO
 from   _TFL.Regexp  import *
 import _TFL.sos     as     os
 from    run_doctest import format_x, format_f, format_s
+
 import  new
 import  sys
 import  doctest
@@ -70,15 +72,13 @@ def _main (cmd) :
             , verbose     = cmd.verbose
             , optionflags = flags
             )
-    except KeyboardInterrupt :
-        raise
-    except StandardError, exc :
-        print >> sys.stderr, format_x % (replacer (a), exc, et)
+    except Exception as exc :
+        print (format_x % (replacer (a), exc, et), file = sys.stderr)
         raise
     else :
         cases  = int (bool (t))
         format = format_f if f else format_s
-        print >> sys.stderr, replacer (format % TFL.Caller.Scope ())
+        print (replacer (format % TFL.Caller.Scope ()), file = sys.stderr)
 # end def _main
 
 _Command = TFL.CAO.Cmd \

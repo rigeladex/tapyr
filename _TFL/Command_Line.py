@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -183,11 +183,13 @@ Features provided:
     - Help
 """
 
-import sys
+from   __future__                 import print_function
 
-from   _TFL               import TFL
-from   _TFL.predicate     import *
-from   _TFL.Regexp        import Regexp, re
+from   _TFL                       import TFL
+from   _TFL.predicate             import *
+from   _TFL.pyk                   import pyk
+from   _TFL.Regexp                import Regexp, re
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL.Abbr_Key_Dict
 import _TFL.Environment
@@ -197,7 +199,9 @@ import _TFL.r_eval
 import _TFL.sos
 import _TFL._Meta.Object
 
-class Cmd_Error (StandardError) :
+import sys
+
+class Cmd_Error (Exception) :
 
     def __init__ (self, * args) :
         self.args = args
@@ -247,12 +251,13 @@ def _cook_F (value) :
 # end def _cook_F
 
 def _cook_X (value) :
-    if isinstance (value, (str, unicode)) :
+    if isinstance (value, pyk.string_types) :
         return long (value, 0)
     else :
         return long (value)
 # end def _cook_X
 
+@totally_ordered
 class Arg (TFL.Meta.Object) :
 
     kind         = "argument"
@@ -310,7 +315,7 @@ class Arg (TFL.Meta.Object) :
     def _cooked_value (self, value) :
         if value in ("", None) :
             value = self.cooked_default
-        if isinstance (value, (str, unicode)) :
+        if isinstance (value, pyk.string_types) :
             try :
                 cook = self.cook
                 if self.type in "L" and not self.paren_pat.match (value) :
@@ -320,8 +325,8 @@ class Arg (TFL.Meta.Object) :
                 except ValueError :
                     ### `eval' handles expressions
                     value = cook (TFL.r_eval (value))
-            except StandardError, exc :
-                print exc
+            except Exception as exc :
+                print (exc)
                 raise Cmd_Error \
                     ( "Invalid value `%s' for %s `%s' of type `%s'"
                     % (value, self.kind, self.name, self.type)
@@ -329,22 +334,28 @@ class Arg (TFL.Meta.Object) :
         return value
     # end def _cooked_value
 
+    def __eq__ (self, rhs) :
+        if hasattr (rhs, "name") :
+            rhs = rhs.name
+        return self.name == rhs
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash (self.name)
+    # end def __hash__
+
+    def __lt__ (self, rhs) :
+        if hasattr (rhs, "name") :
+            rhs = rhs.name
+        return self.name < rhs
+    # end def __lt__
+
     def __repr__ (self) :
         return "%s (%s, %s, %s, %s, %d)" % \
             ( self.__class__.__name__
             , self.name, self.type, self.cooked_default, self.value, self.pos
             )
     # end def __repr__
-
-    def __cmp__ (self, rhs) :
-        if hasattr (rhs, "name") :
-            rhs = rhs.name
-        return cmp (self.name, rhs)
-    # end def __cmp__
-
-    def __hash__ (self) :
-        return hash (self.name)
-    # end def __hash__
 
 # end class Arg
 
@@ -505,7 +516,7 @@ class Opt_D (Opt_L) :
     def __init__ (self, dict, ** kw) :
         self._dict = dict
         self.__super.__init__ \
-            ( selection = sorted (dict.iterkeys ())
+            ( selection = sorted (pyk.iterkeys (dict))
             , cook      = self._cooked_key
             , ** kw
             )
@@ -615,7 +626,7 @@ class _Help_ (TFL.Meta.Object) :
     def _opts (self, cmd) :
         result = []
         opts   = \
-             [ (n, o) for (n, o) in cmd.option.iteritems ()
+             [ (n, o) for (n, o) in pyk.iteritems (cmd.option)
                       if n == o.name and not o.hide
              ]
         if opts :
@@ -675,6 +686,7 @@ class _Help_ (TFL.Meta.Object) :
 
 # end class _Help_
 
+@pyk.adapt__bool__
 class Command_Spec (TFL.Meta.Object) :
     """Define syntax for command-line options and arguments.
 
@@ -792,11 +804,11 @@ class Command_Spec (TFL.Meta.Object) :
                  , max_args     = -1
                  , description  = ""
                  ) :
-        if not isinstance (description, (str, unicode)) :
+        if not isinstance (description, pyk.string_types) :
             description= "\n".join (description)
-        if isinstance (option_spec, (str, unicode)) :
+        if isinstance (option_spec, pyk.string_types) :
             option_spec       = (option_spec, )
-        if isinstance (arg_spec, (str, unicode)) :
+        if isinstance (arg_spec, pyk.string_types) :
             arg_spec          = (arg_spec, )
         self._min_args        = min_args
         self._max_args        = \
@@ -862,9 +874,9 @@ class Command_Spec (TFL.Meta.Object) :
         return str (_Help_ (self))
     # end def help
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return 1
-    # end def __nonzero__
+    # end def __bool__
 
 # end class Command_Spec
 
@@ -949,7 +961,7 @@ class Command_Line (Command_Spec) :
                         option = self.option [name]
                     except KeyError :
                         if re.match (hpat, "help") or re.match (hpat, "?") :
-                            print self.help ()
+                            print (self.help ())
                             if i == 1 and n == 2 :
                                 raise SystemExit
                         else :
@@ -976,17 +988,19 @@ class Command_Line (Command_Spec) :
             # end while i < n
             ### assert (self.argn == j)
             if self._max_args >= 0 and self.argn > self._max_args :
-                raise Cmd_Error ( "%s doesn't accept more than %d arguments"
-                                % (self.script_name, self._max_args)
-                                )
+                raise Cmd_Error \
+                    ( "%s doesn't accept more than %d arguments"
+                    % (self.script_name, self._max_args)
+                    )
             if self.argn < self._min_args :
-                raise Cmd_Error ( "%s requires at least %d arguments"
-                                % (self.script_name, self._min_args)
-                                )
+                raise Cmd_Error \
+                    ( "%s requires at least %d arguments"
+                    % (self.script_name, self._min_args)
+                    )
         except KeyboardInterrupt :
             raise
-        except StandardError, exc :
-            print exc
+        except Exception as exc :
+            print (exc)
             if help_on_err :
                 sys.stderr.write ("\n%s\n" % (self.help (), ))
                 exc_on_err = exc_on_err or self.exc_on_err
@@ -1003,12 +1017,12 @@ class Command_Line (Command_Spec) :
 
     def arg (self, index_or_name) :
         """Returns the value of the argument `index_or_name'."""
-        if isinstance (index_or_name, (int, long)) :
+        if isinstance (index_or_name, pyk.int_types) :
             return self.argv     [index_or_name]
-        elif isinstance (index_or_name, (str, unicode)) :
+        elif isinstance (index_or_name, pyk.string_types) :
             return self.arg_dict [index_or_name].value
         else :
-            raise KeyError, index_or_name
+            raise KeyError (index_or_name)
     # end def arg
 
     def arg_pos (self, index_or_name) :
@@ -1016,12 +1030,12 @@ class Command_Line (Command_Spec) :
            command line. (The position takes into account options and
            arguments).
         """
-        if isinstance (index_or_name, (int, long)) :
+        if isinstance (index_or_name, pyk.int_types) :
             return self.argv     [index_or_name].pos
-        elif isinstance (index_or_name, (str, unicode)) :
+        elif isinstance (index_or_name, pyk.string_types) :
             return self.arg_dict [index_or_name].pos
         else :
-            raise KeyError, index_or_name
+            raise KeyError (index_or_name)
     # end def arg_pos
 
     def key_value (self, name) :
@@ -1037,13 +1051,13 @@ class Command_Line (Command_Spec) :
     # end def __getattr__
 
     def __getitem__ (self, index) :
-        if isinstance (index, (int, long)) :
+        if isinstance (index, pyk.int_types) :
             return self.arg (index)
         else :
             try :
                 return self._attribute_value (index)
             except AttributeError :
-                raise KeyError, index
+                raise KeyError (index)
     # end def __getitem__
 
     def _attribute_value (self, name) :
@@ -1062,7 +1076,7 @@ class Command_Line (Command_Spec) :
             return getattr (self, _name)
         if name in self.keywords :
             return self.keywords [name].value
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def _attribute_value
 
     def _finish (self, i, n, j, arg_array) :

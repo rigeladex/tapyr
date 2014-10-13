@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -80,9 +80,8 @@ class M_Coll (TFL.Meta.M_Class) :
 
 # end class M_Coll
 
-class _Mixin_ (object) :
+class _Mixin_ (TFL.Meta.BaM (object, metaclass = M_Coll)) :
 
-    __metaclass__   = M_Coll
     P_Type          = None
 
     attr_name       = None

@@ -237,7 +237,6 @@ from   __future__            import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
-from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
@@ -249,17 +248,18 @@ import _MOM._Meta.M_Attr_Kind
 import _MOM._Prop.Kind
 
 from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.portable_repr    import portable_repr
+from   _TFL.pyk              import pyk
 
 import itertools
 import logging
-import pickle
 
-class Kind (MOM.Prop.Kind) :
+pickle = pyk.pickle
+
+class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
     """Root class of attribute kinds to be used as properties for essential
        attributes of the MOM meta object model.
     """
-
-    __metaclass__         = MOM.Meta.M_Attr_Kind
 
     attr                  = None
     db_sig_version        = 0
@@ -452,7 +452,7 @@ class Kind (MOM.Prop.Kind) :
             try :
                 value = self.attr.from_string (raw_value, obj, glob_dict)
                 self.attr.check_invariant     (obj, value)
-            except StandardError as exc :
+            except Exception as exc :
                 if dont_raise :
                     if __debug__ :
                         logging.exception \
@@ -494,7 +494,7 @@ class Kind (MOM.Prop.Kind) :
     def _check_sanity_default (self, attr_type, e_type) :
         default = getattr (attr_type, "raw_default", None)
         if (   default is not None
-           and not isinstance (default, basestring)
+           and not isinstance (default, pyk.string_types)
            ) :
             d = attr_type.as_string (default)
             if d == "" and default is not None :
@@ -532,7 +532,7 @@ class Kind (MOM.Prop.Kind) :
         if value is not None :
             try :
                 value = self.attr.cooked (value)
-            except StandardError as exc :
+            except Exception as exc :
                 if __debug__ :
                     logging.exception \
                         ( "%s: %s.%s, value `%s` [%r]"
@@ -922,9 +922,11 @@ class _Computed_Mixin_ (Kind) :
             if kind != "computed" :
                 kind += "/Computed"
             raise TypeError \
-                ( "%s is %s but has default %r "
+                ( "%s is %s but has default %s "
                   "(i.e., `computed` will never be called)\n    %s"
-                % (attr_type, kind, default, self.__class__.__mro__)
+                % ( attr_type, kind, portable_repr (default)
+                  , self.__class__.__mro__
+                  )
                 )
     # end def _check_sanity
 
@@ -1007,7 +1009,7 @@ class _Raw_Value_Mixin_ (Kind) :
         if raw_value :
             try :
                 value = self.attr.from_string (raw_value, obj, obj.globals ())
-            except StandardError as exc :
+            except Exception as exc :
                 if __debug__ :
                     logging.exception \
                         ("%s._sync: %s -> %r" % (self, obj, raw_value))
@@ -1149,11 +1151,11 @@ class _Primary_ (Kind) :
 class _Primary_D_ (_Primary_) :
 
     def as_arg_ckd (self, attr) :
-        return "%s = %r" % (attr.name, attr.default)
+        return "%s = %s" % (attr.name, portable_repr (attr.default))
     # end def as_arg_ckd
 
     def as_arg_raw (self, attr) :
-        return "%s = %r" % (attr.name, attr.raw_default)
+        return "%s = %s" % (attr.name, portable_repr (attr.raw_default))
     # end def as_arg_raw
 
     def epk_def_set (self, code) :
@@ -1666,7 +1668,7 @@ Class `MOM.Attr.Kind`
 """
 
 __all__ = tuple \
-    (  k for (k, v) in globals ().iteritems ()
+    (  k for (k, v) in pyk.iteritems (globals ())
     if isinstance (v, MOM.Meta.M_Attr_Kind)
     )
 

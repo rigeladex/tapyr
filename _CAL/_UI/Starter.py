@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__             import print_function
+
 from   _TFL                   import TFL
 from   _CAL                   import CAL
 
@@ -46,8 +48,8 @@ import _CAL._UI.Mixin
 from   _TFL.Command_Line      import Command_Line, Opt, Arg
 from   _TFL.Filename          import Filename
 
-import _TFL.Environment
 import _TFL.Abbr_Key_Dict
+import _TFL.Environment
 
 import sys
 import traceback
@@ -84,7 +86,7 @@ class Starter (CAL.UI.Mixin) :
     def __init__ (self, ANS, cmd, start_mainloop = True) :
         self.__super.__init__   (CAL.UI.App_Context (ANS))
         if cmd.Version :
-            pass ### print ANS.Version.product_info ()
+            pass ### print (ANS.Version.product_info ())
         self._do_imports        (cmd)
         self._protected_start   (cmd)
         if start_mainloop :
@@ -164,7 +166,7 @@ class Starter (CAL.UI.Mixin) :
                 raise
             except :
                 pass
-            raise SystemExit, 9999
+            raise SystemExit (9999)
     # end def _protected_start
 
     def _start (self, cmd) :

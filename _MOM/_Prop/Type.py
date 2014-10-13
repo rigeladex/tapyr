@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Prop.
@@ -44,10 +44,14 @@ import _TFL._Meta.Object
 import _TFL._Meta.Property
 import _TFL.Caller
 
-class _Prop_Type_ (TFL.Meta.Object) :
+class _Prop_Type_ \
+          ( TFL.Meta.BaM
+              ( TFL.Meta.Object
+              , metaclass = TFL.Meta.M_Auto_Combine
+              )
+          ) :
     """Base class for attribute and predicate types"""
 
-    __metaclass__       = TFL.Meta.M_Auto_Combine
     _real_name          = "Type"
     _sets_to_combine    = ("_doc_properties", )
     _doc_properties     = ("description", "explanation")

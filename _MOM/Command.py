@@ -74,6 +74,7 @@
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    22-Sep-2014 (CT) Add sub-command `_Script_`,
 #                     methods `_handle_script` and `_handle_script_globals`
+#    12-Oct-2014 (CT) Add option `-sha` with default `sha224`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,7 @@ import _TFL.Command
 import _TFL.Context
 import _TFL.Environment
 import _TFL.Filename
+import _TFL.Secure_Hash
 import _TFL._Meta.Once_Property
 
 import contextlib
@@ -160,6 +162,7 @@ class MOM_Command (TFL.Command.Root_Command) :
     _default_db_name        = "" ### used by `default_db_name`
     _defaults               = dict \
         ( copyright_start   = 2010
+        , sha               = TFL.Secure_Hash.sha224
         )
     _opts                   = \
         ( "-Auth_Migrate:B?Migrate authorization objects"
@@ -179,6 +182,7 @@ class MOM_Command (TFL.Command.Root_Command) :
             , description = "Default name of auth migration file"
             , max_number  = 1
             )
+        , TFL.CAO.SHA ()
         , SA_WE_Opt ()
         , "-verbose:B"
         )
@@ -471,7 +475,7 @@ class MOM_Command (TFL.Command.Root_Command) :
                     exec (f.read (), globs, local)
             except Exception as exc :
                 head = _T ("Script %s triggered exception" % (script_path, ))
-                tail = "    \n".join (unicode (exc).split ("\n"))
+                tail = "    \n".join (pyk.text_type (exc).split ("\n"))
                 pyk.fprint (head)
                 pyk.fprint ("   ", tail)
                 raise SystemExit (1)

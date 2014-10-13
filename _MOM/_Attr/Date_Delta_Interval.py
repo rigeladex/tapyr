@@ -92,7 +92,7 @@ class A_Date_or_Delta (A_Attr_Type) :
     def as_string (soc, value) :
         if value is not None :
             if isinstance (value, datetime.date) :
-                return unicode (value.strftime (soc._output_format ()))
+                return pyk.text_type (value.strftime (soc._output_format ()))
             else :
                 return str (value)
         return ""
@@ -199,7 +199,7 @@ class A_Date_Delta_Interval_N (A_Date_Delta_Interval) :
 
 # end class A_Date_Interval
 
-__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

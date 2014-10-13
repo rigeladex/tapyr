@@ -99,7 +99,7 @@ def open_to_replace (file_name, mode = "w", buffering = -1, backup_name = None) 
         if backup_name :
             try :
                 sos.rename (file_name, backup_name)
-            except sos.error, exc :
+            except sos.error as exc :
                 if exc.args [0] != errno.ENOENT :
                     import traceback
                     traceback.print_exc ()

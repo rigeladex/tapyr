@@ -96,7 +96,7 @@ import _TFL.Sorted_By
 
 from   _TFL.predicate        import callable, first, uniq
 
-class Spec (MOM.Prop.Spec) :
+class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Attr_Spec)) :
     """Attribute specification for MOM entities (objects and links).
 
        A :class:`~_MOM.Entity.Entity` class contains a descendent of `Spec`
@@ -112,8 +112,6 @@ class Spec (MOM.Prop.Spec) :
 
        is added to the `E_Type`.
     """
-
-    __metaclass__   = MOM.Meta.M_Attr_Spec
 
     _Prop_Pkg       = MOM.Attr
     _Prop_Spec_Name = "_Attributes"
@@ -210,7 +208,7 @@ class Spec (MOM.Prop.Spec) :
         _own_names   = self._own_names
         refuse_links = getattr (e_type, "refuse_links", None)
         if refuse_links :
-            for n, atc in _names.iteritems () :
+            for n, atc in pyk.iteritems (_names) :
                 if  (   atc is not None
                     and n not in _own_names
                     and issubclass (atc, MOM.Attr._A_Rev_Ref_)
@@ -249,7 +247,7 @@ class Spec (MOM.Prop.Spec) :
 
     def _setup_attrs (self, e_type) :
         attr_dict = self._attr_dict
-        for a in attr_dict.itervalues () :
+        for a in pyk.itervalues (attr_dict) :
             for d in a.attr.auto_up_depends :
                 try :
                     x = attr_dict [d]

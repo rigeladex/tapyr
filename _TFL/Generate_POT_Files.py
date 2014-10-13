@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2014 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -30,19 +30,25 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #    ««revision-date»»···
 #--
+
 """This is the module doc string which, as a test is long enough to span at
    least two lines in the source file.
 """
-import  tokenize
-import  sys
+
 from   _TFL                  import TFL
-import _TFL._Meta.Object
-import _TFL.defaultdict
-import  datetime
-import  re
+
 from   _TFL.I18N             import _, _T
 from   _TFL.predicate        import any_true
+from   _TFL.pyk              import pyk
+
+import _TFL._Meta.Object
+import _TFL.defaultdict
 import _TFL.r_eval
+
+import  datetime
+import  re
+import  sys
+import  tokenize
 
 class Test :
     """This is a class docstring"""
@@ -107,23 +113,26 @@ msgstr ""
         now         = datetime.datetime.now ()
         kw ["time"] = now.strftime ("%Y-%m-%d %H:%M %Z")
         kw ["year"] = now.year
-        for key, default in dict ( title      = "Project Dummy"
-                                 , company    = "My Company"
-                                 , translator = authors [0]
-                                 , version    = "0.1"
-                                 , encoding   = "UTF-8"
-                                 ).iteritems () :
+        for key, default in pyk.iteritems \
+                ( dict
+                    ( title      = "Project Dummy"
+                    , company    = "My Company"
+                    , translator = authors [0]
+                    , version    = "0.1"
+                    , encoding   = "UTF-8"
+                    )
+                ) :
             if key not in kw :
                 kw [key] = default
         kw ["authors"] = ", ".join (authors)
         if filename :
-            file       = open   (filename, "w")
+            file       = open (filename, "w")
         else :
             file       = sys.stdout
         file.write (self.pot_header % kw)
         file.write ("\n")
         for (singular, plural), locations in sorted \
-                (self._translations.iteritems ()) :
+                (pyk.iteritems (self._translations)) :
             locs = ["%s:%s" % (fn, ln) for (fn, ln, _) in sorted (locations)]
             file.write ("\n")
             file.write ("#: %s\n"      % (" ".join (locs), ))

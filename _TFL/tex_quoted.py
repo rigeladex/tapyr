@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,10 +34,11 @@
 #    ««revision-date»»
 #--
 
+from   __future__               import unicode_literals
 
-
-from _TFL        import TFL
-from _TFL.Regexp import Regexp, re
+from   _TFL                     import TFL
+from   _TFL.pyk                 import pyk
+from   _TFL.Regexp              import Regexp, re
 
 _tex_pi_symbols = Regexp (r"[«»]", re.X)
 _tex_to_quote   = Regexp (r"([\\#~%&${}^])", re.X)
@@ -82,7 +83,7 @@ def tex_quoted (s) :
        if ugly, way.
     """
     s = tex_quoted_no_underscore (s)
-    if isinstance (s, (str, unicode)) :
+    if isinstance (s, pyk.string_types) :
         s = _tex_underscore.sub   (_tex_subs_to_quote,   s)
     return s
 # end def tex_quoted
@@ -90,7 +91,7 @@ def tex_quoted (s) :
 def tex_quoted_no_underscore (s) :
     """Same as tex_quoted but does NOT quote underscores.
     """
-    if isinstance (s, (str, unicode)) :
+    if isinstance (s, pyk.string_types) :
         s = _tex_pi_symbols.sub (_tex_subs_pi_symbols, s)
         s = _tex_to_quote.sub   (_tex_subs_to_quote,   s)
         s = _tex_tt_symbols.sub (_tex_subs_tt_symbols, s)
@@ -99,7 +100,7 @@ def tex_quoted_no_underscore (s) :
 # end def tex_quoted_no_underscore
 
 def tex_quoted_underscore_word_with_path (s) :
-    if isinstance (s, (str, unicode)) :
+    if isinstance (s, pyk.string_types) :
         s = _tex_path_text.sub (_tex_subs_to_path, s)
     return s
 # end def tex_quoted_underscore_word_with_path

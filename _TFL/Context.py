@@ -38,7 +38,9 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
+
 import _TFL.Decorator
 import _TFL.Undef
 
@@ -52,17 +54,17 @@ def attr_let (obj, ** kw) :
     """
     store = {}
     undef = TFL.Undef ()
-    for k, v in kw.iteritems () :
+    for k, v in pyk.iteritems (kw) :
         store [k] = getattr (obj, k, undef)
     try :
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             try :
                 setattr (obj, k, v)
             except AttributeError as exc :
                 raise AttributeError ("%s: [%s = %r]" % (exc, k, v))
         yield
     finally :
-        for k, v in store.iteritems () :
+        for k, v in pyk.iteritems (store) :
             if v is undef :
                 delattr (obj, k)
             else :
@@ -79,14 +81,14 @@ def dict_let (dct, ** kw) :
     """
     store = {}
     undef = TFL.Undef ()
-    for k, v in kw.iteritems () :
+    for k, v in pyk.iteritems (kw) :
         store [k] = dct.get (k, undef)
     try :
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             dct [k] = v
         yield
     finally :
-        for k, v in store.iteritems () :
+        for k, v in pyk.iteritems (store) :
             if v is undef :
                 del dct [k]
             else :

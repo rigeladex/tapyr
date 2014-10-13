@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -31,6 +31,7 @@
 #--
 
 from   _TFL                    import TFL
+from   _TFL.pyk                import pyk
 
 import _TFL._Babel
 
@@ -62,7 +63,7 @@ class Translations (babel.support.Translations) :
             raise IOError (0, "Bad magic number", filename)
         # Now put all messages from the .mo file buffer into the catalog
         # dictionary.
-        for i in xrange (0, msgcount):
+        for i in pyk.xrange (0, msgcount) :
             mlen, moff = unpack (ii, buf [masteridx : masteridx + 8])
             tlen, toff = unpack (ii, buf [transidx  : transidx  + 8])
             mend       = moff + mlen
@@ -108,9 +109,9 @@ class Translations (babel.support.Translations) :
                 msgid1, msgid2 = msg.split  ("\x00")
                 tmsg           = tmsg.split ("\x00")
                 if self._charset:
-                    msgid1 = unicode (msgid1, self._charset)
-                    msgid2 = unicode (msgid2, self._charset)
-                    tmsg   = [unicode (x, self._charset) for x in tmsg]
+                    msgid1 = pyk.text_type (msgid1, self._charset)
+                    msgid2 = pyk.text_type (msgid2, self._charset)
+                    tmsg   = [pyk.text_type (x, self._charset) for x in tmsg]
                 for i, msg in enumerate (tmsg) :
                     catalog [(msgid1, i)] = msg
                 ### In addtion to the two keys to the catalog as well to be
@@ -120,8 +121,8 @@ class Translations (babel.support.Translations) :
                 catalog [msgid2] = tmsg [-1]
             else:
                 if self._charset :
-                    msg       = unicode (msg,  self._charset)
-                    tmsg      = unicode (tmsg, self._charset)
+                    msg       = pyk.text_type (msg,  self._charset)
+                    tmsg      = pyk.text_type (tmsg, self._charset)
                 catalog [msg] = tmsg
             # advance to next entry in the seek tables
             masteridx += 8

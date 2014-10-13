@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2011 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,9 +36,13 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL           import TFL
-from   _TFL.predicate import sorted
-from   _TFL.primes_4  import primes
+from   __future__                 import print_function
+
+from   _TFL                       import TFL
+
+from   _TFL.primes_4              import primes
+from   _TFL.pyk                   import pyk
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import math
 
@@ -52,6 +56,7 @@ def Divisor_Dag (n) :
         return _Divisor_Dag_       (n)
 # end def Divisor_Dag
 
+@totally_ordered
 class _Divisor_Dag_ :
     """Directed acyclic graph of all divisors of a number.
 
@@ -70,7 +75,7 @@ class _Divisor_Dag_ :
 
     def __init__ (self, n) :
         if n < 1 :
-            raise ValueError, (n, "must be > 0")
+            raise ValueError (n, "must be > 0")
         self.Table [n]  = self
         self.number     = n
         self.subdags    = []
@@ -152,7 +157,7 @@ class _Divisor_Dag_ :
         elif name == "nodes" :
             result = self.nodes = self.depth_first_list ()
         else :
-            raise AttributeError, name
+            raise AttributeError (name)
         return result
     # end def _add_subdag
 
@@ -164,15 +169,21 @@ class _Divisor_Dag_ :
         return str (self.number)
     # end def __repr__
 
-    def __cmp__ (self, other) :
+    def __eq__ (self, other) :
         if isinstance (other, _Divisor_Dag_) :
             other = other.number
-        return cmp (self.number, other)
-    # end def __cmp__
+        return self.number == other
+    # end def __eq__
 
     def __hash__ (self) :
         return hash (self.number)
     # end def divisors
+
+    def __lt__ (self, other) :
+        if isinstance (other, _Divisor_Dag_) :
+            other = other.number
+        return self.number < other
+    # end def __lt__
 
 # end class _Divisor_Dag_
 
@@ -205,9 +216,9 @@ else :
         duration           = float (t2 - t1 - ignore) / iterations
         result             = duration / len (d.divisors)
         return (len (d.divisors), duration, result, number)
-    cases   = ( ( 2, range (1, 16))
+    cases   = ( ( 2, pyk.range (1, 16))
               , (10, [10] * 16)
-              , ( 2, map (lambda i, p = primes : p [i], range (16)))
+              , ( 2, map (lambda i, p = primes : p [i], pyk.range (16)))
               )
     numbers = []
     for number, factors in cases :
@@ -220,6 +231,8 @@ else :
     for number in sorted (numbers) :
         results.append (test_time (number, iterations))
     for (divisors, duration, d, number) in sorted (results) :
-        print "Divisor_Dag (%8d) : %3d divisors %.6fs (%.6fs / divisor)" % \
-              (number, divisors, duration, d)
+        print \
+            ( "Divisor_Dag (%8d) : %3d divisors %.6fs (%.6fs / divisor)"
+            % (number, divisors, duration, d)
+            )
 ### __END__ TFL.Divisor_Dag

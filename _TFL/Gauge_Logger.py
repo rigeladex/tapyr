@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,12 +47,15 @@
 #    ««revision-date»»···
 #--
 
+from   __future__          import print_function, unicode_literals
 
+from   _TFL                import TFL
+from   _TFL.pyk            import pyk
 
-from   _TFL              import TFL
 import _TFL._Meta.Object
 import _TFL.predicate
 
+@pyk.adapt__bool__
 class Gauge_Logger (TFL.Meta.Object) :
     """Provide access to progress gauge without introducing dependencies to
        window system (e.g., instances of Gauge_Logger can be used in
@@ -67,11 +70,11 @@ class Gauge_Logger (TFL.Meta.Object) :
         verbose = kw.get ("verbose", 1)
         if self.log >= verbose :
             for m in msg :
-                print m,
+                print (m, end = " ")
     # end def echo
 
     def _activate (self, title = "", label = " ", * args, ** kw) :
-        print label or title
+        print (label or title)
     # end def _activate
 
     def __getattr__ (self, name) :
@@ -82,9 +85,9 @@ class Gauge_Logger (TFL.Meta.Object) :
         return TFL.relax
     # end def __getattr__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.gauge is not None
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         return "Log: %d, Gauge: %s" % (self.log, self.gauge)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
@@ -94,7 +94,7 @@ class Static_File_App (TFL.Meta.Object) :
         _dm     = self._dir_map
         prefix  = self.prefix
         if isinstance (_dm, dict) :
-            _dm = sorted (_dm.iteritems (), reverse = True)
+            _dm = sorted (pyk.iteritems (_dm), reverse = True)
         for k, v in _dm :
             add (("/".join ((prefix, k)).lstrip ("/"), v))
         return tuple (result)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,9 +46,11 @@ end of the civil, nautic, and astronomical twilight.
 from   _TFL                  import TFL
 from   _CAL                  import CAL
 
-from   _TFL._TKT._Tk.CTK     import *
 from   _TFL.predicate        import pairwise
 from   _TFL.Angle            import Angle_D, Angle_R
+from   _TFL.pyk              import pyk
+
+from   _TGL._TKT._Tk.CTK     import *
 
 import _CAL.Date
 import _CAL.Time
@@ -231,10 +233,10 @@ class Display (TFL.Meta.Object) :
         for i in range (0, 360, 90) :
             self._arc (i - 1, +2, "grid",  rect, ())
         self._setup_ticks \
-            (canvas, size, border, range (0, 360, 45), a_size / 10., 25)
+            (canvas, size, border, pyk.range (0, 360, 45), a_size / 10., 25)
         self._setup_ticks \
             ( canvas, size, border
-            , (i for i in range (0, 360, 15) if (i % 45) != 0)
+            , (i for i in pyk.range (0, 360, 15) if (i % 45) != 0)
             , a_size / 16., 20
             )
         if border >= 10 :
@@ -306,7 +308,7 @@ class Toplevel (TFL.Meta.Object) :
         self.toplevel.destroy ()
         try :
             CTK.root.destroy  ()
-        except StandardError, exc :
+        except Exception as exc :
             pass
     # end def destroy
 

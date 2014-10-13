@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -40,6 +40,7 @@ from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
 
 from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.pyk              import pyk
 
 _Ancestor_Essence = MOM.An_Entity
 
@@ -134,7 +135,7 @@ class A_2D_Float (_A_Composite_) :
 
 # end class A_2D_Float
 
-__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (*  __all__)

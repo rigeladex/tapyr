@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -37,6 +37,7 @@ from   _MOM.import_MOM           import *
 from   _GTW._RST._TOP.import_TOP import *
 
 from   _TFL.Formatter            import Formatter, formatted_1
+from   _TFL.pyk                  import pyk
 
 import _TFL.I18N
 
@@ -122,7 +123,7 @@ __doc__ = """
     >>> sorted (l10n._entry_map.items ())
     [(u'de', <_Language_ de: /L10N/de>), (u'en', <_Language_ en: /L10N/en>)]
 
-    >>> for k, v in sorted (root3.Status.Status.Table.iteritems ()) :
+    >>> for k, v in sorted (pyk.iteritems (root3.Status.Status.Table)) :
     ...     print (v)
     <HTTP status 100: Continue>
     <HTTP status 101: Switching protocols>

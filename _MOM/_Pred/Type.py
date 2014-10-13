@@ -60,10 +60,11 @@
 #     3-Apr-2014 (CT) Change `set_c_attr_value` to use `obj.FO`, not `r0.FO`
 #     3-Sep-2014 (CT) Change `set_s_attr_value` to use `attr.prop`, not
 #                     `hasattr (obj, name)`
+#    10-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__            import unicode_literals, print_function
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
@@ -74,16 +75,23 @@ import _MOM._Meta.M_Pred_Type
 import _MOM._Pred
 import _MOM._Prop.Type
 
+from   _TFL.portable_repr    import portable_repr
+from   _TFL.pyk              import pyk
+
 import _TFL._Meta.Object
 import _TFL.Caller
 import _TFL.d_dict
 
 import traceback
 
-class _Condition_ (MOM.Prop.Type):
+@pyk.adapt__bool__
+class _Condition_ \
+          ( TFL.Meta.BaM
+              ( MOM.Prop.Type
+              , metaclass = MOM.Meta.M_Pred_Type._Condition_
+              )
+          ) :
     ### Base class for all predicates (atomic and quantifiers).
-
-    __metaclass__   = MOM.Meta.M_Pred_Type._Condition_
 
     assertion       = ""
     assert_code     = None
@@ -153,14 +161,14 @@ class _Condition_ (MOM.Prop.Type):
                 (p, obj, glob_dict, val_dict, "parameter")
             if val is None or exc is not None :
                 return True
-            val_disp [p] = repr (val)
-        for b, expr in self.bindings.iteritems () :
+            val_disp [p] = val if val is None else portable_repr (val)
+        for b, expr in pyk.iteritems (self.bindings) :
             exc, val = self._eval_expr \
                 (expr, obj, glob_dict, val_dict, "binding")
             if exc is not None :
                 return True
             val_dict [b] = val
-            val_disp [b] = "%r << %s" % (val, expr)
+            val_disp [b] = "%s << %s" % (portable_repr (val), expr)
         return self._satisfied (obj, glob_dict, val_dict)
     # end def satisfied
 
@@ -199,9 +207,11 @@ class _Condition_ (MOM.Prop.Type):
             if attr is not None and result is not None :
                 try :
                     result = attr.cooked (result)
-                except Exception, exc :
-                    print "Error in `cooked` of `%s` for value `%s` [%s]" % \
-                        (attr, result, obj)
+                except Exception as exc :
+                    print \
+                        ( "Error in `cooked` of `%s` for value `%s` [%s]"
+                        % (attr, result, obj)
+                        )
                     raise
         elif attr is not None or (name in self.attr_none) :
             result = self.kind.get_attr_value (obj, name)
@@ -225,9 +235,11 @@ class _Condition_ (MOM.Prop.Type):
     def _eval_expr (self, expr, obj, glob_dict, val_dict, kind, text = None) :
         try :
             val = eval (expr, glob_dict, val_dict)
-        except StandardError as exc :
-            print "Exception `%s` in %s `%s` of %s for predicate %s" \
+        except Exception as exc :
+            print \
+                ( "Exception `%s` in %s `%s` of %s for predicate %s"
                 % (exc, kind, text or expr, obj, self)
+                )
             return exc, True
         return None, val
     # end def _eval_expr
@@ -239,7 +251,7 @@ class _Condition_ (MOM.Prop.Type):
             for a in self.guard_attr :
                 try :
                     self.set_attr_value (obj, attr_dict, a, val_dict)
-                except StandardError :
+                except Exception :
                     ### allow guards accessing global objects to fail
                     pass
             exc, result = self._eval_expr \
@@ -257,9 +269,9 @@ class _Condition_ (MOM.Prop.Type):
         return result
     # end def _val_dict
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return not self.error
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         if self.error :
@@ -270,10 +282,13 @@ class _Condition_ (MOM.Prop.Type):
 
 # end class _Condition_
 
-class Condition (_Condition_) :
+class Condition \
+          ( TFL.Meta.BaM
+              ( _Condition_
+              , metaclass = MOM.Meta.M_Pred_Type.Condition
+              )
+          ) :
     """A predicate defined by a simple assertion."""
-
-    __metaclass__ = MOM.Meta.M_Pred_Type.Condition
 
     Error_Type    = MOM.Error.Invariant
 
@@ -307,7 +322,7 @@ class Condition (_Condition_) :
         ### that didn't work as expected -- the called function had empty
         ### `locals ()` and therefore crashed and burned with `NameError`s
         return eval \
-            ( self.assert_function.im_func.func_code
+            ( self.assert_function.__func__.func_code
             , TFL.d_dict (val_dict, glob_dict, self = self)
             )
     # end def eval_condition_assert_code_as_function
@@ -322,19 +337,24 @@ class Condition (_Condition_) :
             else :
                 self._add_entities_to_extra_links (obj, [])
                 self.error = self.Error_Type (obj, self)
-        except StandardError as exc :
-            print "Exception `%s` in evaluation of predicate `%s` for %s" \
+        except Exception as exc :
+            print \
+                ( "Exception `%s` in evaluation of predicate `%s` for %s"
                 % (exc, self.name, obj)
+                )
             self.error = self.Error_Type (obj, self)
         return not self.error
     # end def _satisfied
 
 # end class Condition
 
-class _Quantifier_ (_Condition_) :
+class _Quantifier_ \
+          ( TFL.Meta.BaM
+              ( _Condition_
+              , metaclass = MOM.Meta.M_Pred_Type.Quantifier
+              )
+          ) :
     ### Base class for quantifier predicates of the MOM object model.
-
-    __metaclass__   = MOM.Meta.M_Pred_Type.Quantifier
 
     Error_Type      = MOM.Error.Quant
 
@@ -385,7 +405,7 @@ class _Quantifier_ (_Condition_) :
         except Exception as exc :
             if __debug__ :
                 import sys
-                print >> sys.stderr, "Exception in _q_sequence", self, obj
+                print ("Exception in _q_sequence", self, obj, file = sys.stderr)
                 traceback.print_exc ()
             return ()
     # end def _q_sequence
@@ -398,8 +418,8 @@ class _Quantifier_ (_Condition_) :
         try :
             seq = self._q_sequence (obj, gd, val_dict)
             res = self._quantified (seq, obj, gd, val_dict)
-        except StandardError as exc :
-            self.val_disp ["*** Exception ***"] = repr (exc)
+        except Exception as exc :
+            self.val_disp ["*** Exception ***"] = portable_repr (exc)
             self.error = self.Error_Type (obj, self)
         else :
             if self._is_correct (r for r in res if r) :
@@ -433,12 +453,15 @@ class E_Quant (_Quantifier_) :
 
 # end class E_Quant
 
-class N_Quant (_Quantifier_) :
+class N_Quant \
+          ( TFL.Meta.BaM
+              ( _Quantifier_
+              , metaclass = MOM.Meta.M_Pred_Type.N_Quantifier
+              )
+          ) :
     """A predicate defined by a numeric quantifier over a set of
        values or objects.
     """
-
-    __metaclass__ = MOM.Meta.M_Pred_Type.N_Quantifier
 
     lower_limit = None
     upper_limit = None
@@ -456,12 +479,15 @@ class N_Quant (_Quantifier_) :
 
 # end class N_Quant
 
-class U_Quant (_Quantifier_) :
+class U_Quant \
+          ( TFL.Meta.BaM
+              ( _Quantifier_
+              , metaclass = MOM.Meta.M_Pred_Type.U_Quantifier
+              )
+          ) :
     """A predicate defined by an universal quantifier over a set of
        values or objects.
     """
-
-    __metaclass__ = MOM.Meta.M_Pred_Type.U_Quantifier
 
     def _is_correct (self, res) :
         return not any (res)
@@ -473,14 +499,17 @@ class U_Quant (_Quantifier_) :
 
 # end class U_Quant
 
-class Unique (_Condition_) :
+class Unique \
+          ( TFL.Meta.BaM
+              ( _Condition_
+              , metaclass = MOM.Meta.M_Pred_Type.Unique
+              )
+          ) :
     ### A predicate defining a uniqueness constraint over a set of attributes.
     ###
     ### For Unique predicates, the predicate is evaluated even if some
     ### attributes have a value equal to `None`, i.e., all attributes must be
     ### listed listed in `attr_none`.
-
-    __metaclass__   = MOM.Meta.M_Pred_Type.Unique
 
     ### DBW backend sets `ems_check` to `False` if database performs the check
     ems_check = True
@@ -495,8 +524,8 @@ class Unique (_Condition_) :
             name = "unique_%s" % (suffix, )
         if not kw.get ("__doc__") :
             kw ["__doc__"] = \
-                ( "The attribute values for %r must be unique for each object"
-                % (attrs, )
+                ( "The attribute values for %s must be unique for each object"
+                % portable_repr (attrs)
                 )
         if not kw.get ("__module__") :
             kw ["__module__"] = TFL.Caller.globals () ["__name__"]
@@ -545,7 +574,7 @@ def Attribute_Check (name, attr, assertion, attr_none = (), ** kw) :
                 )
             )
     except Exception :
-        print "%s [%s, %s] : `%s`" % (name, attr, attr_none, assertion)
+        print ("%s [%s, %s] : `%s`" % (name, attr, attr_none, assertion))
     else :
         return result
 # end def Attribute_Check

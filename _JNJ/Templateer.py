@@ -88,6 +88,8 @@
 #     9-Jul-2014 (CT) Changge `js` to use `pyk.decoded`, not home-grown code,
 #                     to decode entries of `media.script_files`
 #    29-Aug-2014 (CT) Remove `AFS` specific templates
+#    12-Oct-2014 (CT) Add `sk` to `__lt__` to avoid Python-3 exception
+#                     because different types
 #    ««revision-date»»···
 #--
 
@@ -105,6 +107,7 @@ import _TFL.Accessor
 import _TFL.multimap
 import _TFL.predicate
 import _TFL.r_eval
+import _TFL.Sorted_By
 
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL._Meta.totally_ordered import totally_ordered
@@ -224,7 +227,7 @@ class Template_E (_Template_) :
     @Once_Property
     def env_globals (self) :
         return dict \
-            (  (k, v) for k, v in self.env.globals.iteritems ()
+            (  (k, v) for k, v in pyk.iteritems (self.env.globals)
             if not k.startswith ("_")
             )
     # end def env_globals
@@ -257,7 +260,7 @@ class Template_E (_Template_) :
                     except Exception :
                         pass
                     else :
-                        if isinstance (pathes, basestring) :
+                        if isinstance (pathes, pyk.string_types) :
                             pathes = [pathes]
                         for p in pathes :
                             yield self.__class__ (env, p)
@@ -442,7 +445,7 @@ class Template_E (_Template_) :
         result = Media \
             ( self.css_links
             , scripts
-            , ("\n".join (str (x) for x in self.js_on_ready), )
+            , ("\n".join (pyk.decoded (x) for x in self.js_on_ready), )
             , self.rel_links
             )
         if css_href :
@@ -454,7 +457,7 @@ class Template_E (_Template_) :
     def get_css (cls, media) :
         if media :
             return "\n\n".join \
-                ( str (s) for s in
+                ( pyk.decoded (s) for s in
                     sorted (media.style_sheets, key = TFL.Getter.rank)
                 )
     # end def get_css
@@ -525,7 +528,8 @@ class Template_E (_Template_) :
     # end def __hash__
 
     def __lt__ (self, rhs) :
-        return self.name < getattr (rhs, "name", rhs)
+        sk = TFL.Sorted_By ()
+        return sk (self.name) < sk (getattr (rhs, "name", rhs))
     # end def __lt__
 
     def __repr__ (self) :
@@ -614,7 +618,7 @@ class Templateer (TFL.Meta.Object) :
             , etag         = None
             )
         self.Template_Map  = T.Map
-        for t in sorted (Template.Map.itervalues (), key = TFL.Getter.id) :
+        for t in sorted (pyk.itervalues (Template.Map), key = TFL.Getter.id) :
             T.copy (env, t)
     # end def __init__
 
@@ -633,7 +637,7 @@ class Templateer (TFL.Meta.Object) :
         if injected :
             name_i = "%s|%s" % \
                 ( result.name
-                , "|".join (str (t.name) for t in sorted (injected))
+                , "|".join (pyk.decoded (t.name) for t in sorted (injected))
                 )
             if name_i in T.Map :
                 result = T.Map [name_i]
@@ -647,7 +651,7 @@ class Templateer (TFL.Meta.Object) :
 
     def render (self, template_or_name, context) :
         template = template_or_name
-        if isinstance (template_or_name, basestring) :
+        if isinstance (template_or_name, pyk.string_types) :
             template = self.get_template (template_or_name)
         return template.render (context)
     # end def render

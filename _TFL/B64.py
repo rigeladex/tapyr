@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,12 +31,8 @@
 #    12-Sep-2004 (CT) `_ord_map` changed (sequence of characters in sorted
 #                     order, `.` replaced by `_`)
 #    12-Sep-2004 (CT) Optional parameters added to `atoi` and `itoa`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 _base    = 64
 _chars   = "0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
@@ -66,7 +62,7 @@ def itoa (number, _base = _base, _ord_map = _ord_map) :
             result.append (_ord_map [r])
         result.reverse ()
     else :
-        raise ValueError, "Cannot handle negative number %s." % (number, )
+        raise ValueError ("Cannot handle negative number %s." % (number, ))
     return "".join (result)
 # end def itoa
 

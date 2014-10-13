@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -33,22 +33,24 @@
 #    21-Jun-2012 (CT) Handle `time_zone` properly in `set_default`
 #    21-Jun-2012 (CT) Autoconvert `time_zone` values passed as string
 #    21-Jun-2012 (CT) Fix typo
+#    12-Oct-2014 (CT) Add `sha`
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals, absolute_import
+from   __future__               import unicode_literals, absolute_import
 
-from   _MOM        import MOM
-from   _TFL        import TFL
+from   _MOM                     import MOM
+from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Property
 import _TFL.Context
 
 import locale
-import threading
 import sys
+import threading
 
 class User_Config (threading.local) :
     """Provide thread-local user configuration."""
@@ -59,6 +61,7 @@ class User_Config (threading.local) :
     input_encoding       = locale.getpreferredencoding ()
     language             = "en"
     output_encoding      = input_encoding
+    _sha                 = "sha224"
     user                 = None
 
     _time_zone           = None
@@ -74,18 +77,34 @@ class User_Config (threading.local) :
     # end def __init__
 
     @property
+    def sha (self) :
+        import _TFL.Secure_Hash
+        result = self._sha
+        if result is None :
+            result = self._sha = TFL.Secure_Hash.sha224
+        elif isinstance (result, pyk.text_type) :
+            result = self._sha = getattr (TFL.Secure_Hash, result)
+        return result
+    # end def sha
+
+    @sha.setter
+    def sha (self, value) :
+        self._sha = value
+    # end def sha
+
+    @property
     def time_zone (self) :
         if self.tz is not None :
             if self._time_zone is None :
                 self._time_zone = self.tz.tzutc ()
-            elif isinstance (self._time_zone, basestring) :
+            elif isinstance (self._time_zone, pyk.string_types) :
                 self._time_zone = self.get_tz (self._time_zone)
         return self._time_zone
     # end def time_zone
 
     @time_zone.setter
     def time_zone (self, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             value = self.get_tz (value)
         self._time_zone = value
     # end def time_zone
@@ -120,14 +139,14 @@ class User_Config (threading.local) :
             raise AttributeError ("Cannot set default for _initialized")
         if name == "time_zone" :
             name = "_time_zone"
-            if isinstance (value, basestring) :
+            if isinstance (value, pyk.string_types) :
                 value = self.get_tz (value)
         setattr (self.__class__, name, value)
         return value
     # end def set_default
 
     def set_defaults (self, ** kw) :
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             self.set_default (k, v)
     # end def set_defaults
 

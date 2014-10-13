@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,13 +37,14 @@
 #    ««revision-date»»···
 #--
 
-from   __future__        import with_statement
+from   __future__               import print_function
 
 from   _TFL                     import TFL
 from   _CAL                     import CAL
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import *
+from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -62,10 +63,10 @@ class M_Entry (TFL.Meta.Object.__class__) :
             cls.Kind = name
     # end def __init__
 
-class _Entry_ (TFL.Meta.Object) :
-    """Base class for entries"""
+# end class M_Entry
 
-    __metaclass__ = M_Entry
+class _Entry_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Entry)) :
+    """Base class for entries"""
 
     free    = 0.0
     sick    = 0.0
@@ -158,6 +159,7 @@ class Free (_Entry_) :
 
 # end class Free
 
+@pyk.adapt__bool__
 class Period (TFL.Meta.Object) :
     """Collect entries for a period of work."""
 
@@ -208,9 +210,9 @@ class Period (TFL.Meta.Object) :
         return ""
     # end def _formatted
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.entries)
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         return self.format % \
@@ -248,9 +250,9 @@ def load_period \
         ) :
     entries  = load_entries (file_name)
     if after :
-        entries = filter (lambda e : e.date >= after, entries)
+        entries = tuple (e for e in entries if e.date >= after)
     if before :
-        entries = filter (lambda e : e.date <= before, entries)
+        entries = tuple (e for e in entries if e.date <= before)
     days  = [D_Period (d) for d in dusplit (entries, TFL.Getter.date)]
     units = [Period (w) for w in dusplit (days, splitter)] if splitter else days
     return Period (units)
@@ -276,7 +278,7 @@ def _main (cmd) :
         cm_d      = Y.dmap [(year, 12, 24)]
         d_range   = ""
         if cmd.after :
-            days  = filter (lambda d : d.date >= cmd.after, days)
+            days  = tuple (d for d in days if d.date >= cmd.after)
             if cm_d.date < cmd.after :
                 cm_d = None
             d = cmd.after
@@ -284,7 +286,7 @@ def _main (cmd) :
             if not cmd.before :
                 d_range = "%s-31.12." % (d_range, )
         if cmd.before :
-            days  = filter (lambda d : d.date <= cmd.before, days)
+            days  = tuple (d for d in days if d.date <= cmd.before)
             if cm_d and cm_d.date > cmd.before :
                 cm_d = None
             if not cmd.after :
@@ -312,19 +314,23 @@ def _main (cmd) :
             ( "%s%s: %.0f Arbeitstage, %.0f Feiertage"
               ", %.0f Urlaubstage, %.0f Soll-Stunden"
             )
-        print form % \
-            (year, d_range, workdays, holidays, vacation, workdays * cmd.hpd)
+        print \
+            ( form
+            % (year, d_range, workdays, holidays, vacation, workdays * cmd.hpd)
+            )
     if cmd.argv :
         splitter = TFL.Getter.date.week if cmd.Weekly else TFL.Getter.date.month
         P   = load_periods (cmd.argv, splitter, cmd.before, cmd.after)
         tot = str (P)
-        print P.format % \
-            ("Periode", "Arbeit [h]", "Krank [h]", "Total [h]", "Urlaubstage")
+        print \
+            ( P.format
+            % ("Periode", "Arbeit [h]", "Krank [h]", "Total [h]", "Urlaubstage")
+            )
         if not cmd.quiet :
             for d in P.entries :
-                print d
-            print "=" * len (tot)
-        print tot
+                print (d)
+            print ("=" * len (tot))
+        print (tot)
 # end def _main
 
 _Command = TFL.CAO.Cmd \

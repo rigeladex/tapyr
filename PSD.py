@@ -46,11 +46,13 @@
 #--
 
 from   _TFL                  import TFL
-from   _TFL._TKT._Tk.CTK     import *
+
 from   _TFL.Record           import Record
 from   _TFL.Numeric_Interval import Numeric_Interval as Ival
 from   _TFL.predicate        import *
 from   _TFL.Regexp           import *
+from   _TFL                  import sos
+
 from   _TFL._D2              import D2
 from   _TFL._D2.Screen       import Rect
 
@@ -58,7 +60,7 @@ import _TFL._D2.Point
 import _TFL._Meta.Object
 import _TFL.CAO
 
-from   _TFL                  import sos
+from   _TGL._TKT._Tk.CTK     import *
 
 from   _LNX.Bat_Charge       import Bat_Charge
 
@@ -656,7 +658,7 @@ class Toplevel (TFL.Meta.Object) :
         self.toplevel.destroy ()
         try :
             CTK.root.destroy  ()
-        except StandardError, exc :
+        except Exception as exc :
             pass
     # end def destroy
 

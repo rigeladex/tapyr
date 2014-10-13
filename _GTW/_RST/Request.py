@@ -235,7 +235,7 @@ class _RST_Request_ (TFL.Meta.Object) :
 
     @property
     def settings (self) :
-        return self.root._kw
+        return dict (self.root._kw, hash_fct = self.root.hash_fct)
     # end def settings
 
     @Once_Property

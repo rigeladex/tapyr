@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -104,6 +104,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__            import unicode_literals, print_function
+
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
@@ -120,6 +122,7 @@ import _TFL.defaultdict
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.predicate        import intersection_n
+from   _TFL.pyk              import pyk
 
 import itertools
 import logging
@@ -145,7 +148,7 @@ class Manager (MOM.EMS._Manager_) :
     def all_links (self, obj_id) :
         r_map  = self._r_map
         result = sorted \
-            ( itertools.chain (* (rm [obj_id] for rm in r_map.itervalues ()))
+            ( itertools.chain (* (rm [obj_id] for rm in pyk.itervalues (r_map)))
             , key = self.scope.MOM.Id_Entity.sort_key_pm ()
             )
         return result
@@ -184,7 +187,7 @@ class Manager (MOM.EMS._Manager_) :
         return \
             [ getattr (scope, e.type_name)
             for e in (   tables [n].get (R.epk_to_hpk (* epk))
-                     for (n, R) in roots.iteritems ()
+                     for (n, R) in pyk.iteritems (roots)
                      )
             if  isinstance (e, Type.Essence)
             ]
@@ -203,7 +206,7 @@ class Manager (MOM.EMS._Manager_) :
             results = \
                 [   e
                 for e in (   tables [n].get (R.epk_to_hpk (* epk))
-                         for (n, R) in roots.iteritems ()
+                         for (n, R) in pyk.iteritems (roots)
                          )
                 if  isinstance (e, Type.Essence)
                 ]
@@ -265,11 +268,11 @@ class Manager (MOM.EMS._Manager_) :
         strict  = kw.pop ("strict", False)
         q       = [self._r_query_t, self._r_query_s] [strict]
         queries = []
-        for (rn, obj) in rkw.iteritems () :
+        for (rn, obj) in pyk.iteritems (rkw) :
             try :
                 i = Type.role_map [rn]
             except KeyError :
-                print Type, Type.Roles, Type.role_map
+                print (Type, Type.Roles, Type.role_map)
                 raise
             role = Type.Roles [i]
             queries.append (q (r_map, role, obj))
@@ -320,20 +323,19 @@ class Manager (MOM.EMS._Manager_) :
     def _query_multi_root (self, Type, strict = False) :
         tables = self._tables
         return self.Q_Result_Composite \
-            ([self.Q_Result (tables [t].itervalues ())
-             for t in Type.relevant_roots
-             ]
+            ( [   self.Q_Result (pyk.itervalues (tables [t]))
+              for t in Type.relevant_roots
+              ]
             )
     # end def _query_multi_root
 
     def _query_single_root (self, Type, strict = False) :
         root   = Type.relevant_root
         tables = self._tables
-        result = tables [root.type_name].itervalues ()
+        result = pyk.itervalues (tables [root.type_name])
         if root is not Type :
             ### filter siblings derived from same `relevant_root`
-            result = itertools.ifilter \
-                (lambda x : isinstance (x, Type), result)
+            result = pyk.ifilter (lambda x : isinstance (x, Type), result)
         return self.Q_Result (result)
     # end def _query_single_root
 
@@ -346,7 +348,7 @@ class Manager (MOM.EMS._Manager_) :
         return itertools.chain \
             ( r_map [role] [obj.pid]
             , * ( r_map [c.Roles [i]] [obj.pid]
-                for c in role.assoc.children.itervalues ()
+                for c in pyk.itervalues (role.assoc.children)
                 )
             )
     # end def _r_query_t
@@ -384,7 +386,7 @@ class Manager (MOM.EMS._Manager_) :
         if seen is None :
             seen = set ()
         result = self._counts [Type.type_name]
-        for n, c in Type.children.iteritems () :
+        for n, c in pyk.iteritems (Type.children) :
             if n not in seen :
                 seen.add (n)
                 result += self._t_count (c, seen)

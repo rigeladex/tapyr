@@ -91,22 +91,29 @@
 #    24-Jul-2013 (CT) Add `Create.update`
 #    27-Nov-2013 (MG) Fix `Create` change to allow migration of older scopes
 #    27-Nov-2013 (CT) Fix `_pickle_attrs` migration of `c_user`
+#     9-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
-from   _MOM               import MOM
-from   _TFL               import TFL
+from   __future__            import print_function
+
+from   _MOM                  import MOM
+from   _TFL                  import TFL
 
 import _MOM._SCM.History_Mixin
 import _MOM._SCM.Recorder
+
+from   _TFL.pyk              import pyk
+from   _TFL.portable_repr    import portable_repr
 
 import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
 
 import datetime
 import itertools
-import pickle
 import weakref
+
+pickle = pyk.pickle
 
 class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
@@ -373,14 +380,12 @@ class _Entity_ (Undoable) :
     # end def _pickle_attrs
 
     def _repr (self) :
-        result = ["%s %s %s" % (self.kind, self.type_repr, self.epk)]
-        def format (d) :
-            return ", ".join \
-                (sorted ("%r : %r" % (k, v) for (k, v) in d.iteritems ()))
+        result = \
+            ["%s %s %s" % (self.kind, self.type_repr, portable_repr (self.epk))]
         if self.old_attr :
-            result.append ("old-values = {%s}" % format (self.old_attr))
+            result.append ("old-values = %s" % portable_repr (self.old_attr))
         if self.new_attr :
-            result.append ("new-values = {%s}" % format (self.new_attr))
+            result.append ("new-values = %s" % portable_repr (self.new_attr))
         return ", ".join (result)
     # end def _repr
 
@@ -555,9 +560,9 @@ class _Attr_ (_Entity_) :
         cargo = self.new_attr
         try :
             self._modify (scope, cargo)
-        except Exception, exc :
-            print exc
-            print "   ", self.pid, self.epk, sorted (cargo.iteritems())
+        except Exception as exc :
+            print (exc)
+            print ("   ", self.pid, self.epk, sorted (pyk.iteritems (cargo)))
             raise
     # end def _restore
 

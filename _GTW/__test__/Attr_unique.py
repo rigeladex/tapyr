@@ -176,7 +176,7 @@ _test_unique = """
         DBW Uniqueness predicate: unique_epk ('left', 'nation', 'mna_number', 'club')
     SRM.Boat_in_Regatta
         EMS
-        DBW Uniqueness predicate: unique_epk ('left', 'right'), Uniqueness predicate: unique_regatta_skipper (u'regatta', u'skipper')
+        DBW Uniqueness predicate: unique_epk ('left', 'right'), Uniqueness predicate: unique_regatta_skipper ('regatta', 'skipper')
     SRM.Race_Result
         EMS
         DBW Uniqueness predicate: unique_epk ('left', 'race')

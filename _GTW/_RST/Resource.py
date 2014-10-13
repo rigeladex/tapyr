@@ -134,6 +134,7 @@
 #                     (factor `_resource_from_href`)
 #    29-Apr-2014 (CT) Add `Root._old_cids`
 #    30-Apr-2014 (CT) Move `_new_child` from `Dir_V` to `_Dir_Base_`
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
@@ -141,7 +142,6 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
-from   _TFL.pyk                 import pyk
 
 import _GTW._RST.import_RST
 import _GTW._RST.R_Map
@@ -153,6 +153,7 @@ from   _TFL.Decorator           import getattr_safe
 from   _TFL.Filename            import Filename
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import callable, first, uniq
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import \
     Regexp, Re_Replacer, Multi_Re_Replacer, re
 
@@ -163,6 +164,7 @@ import _TFL.Context
 import _TFL.defaultdict
 import _TFL.Environment
 import _TFL.Record
+import _TFL.User_Config
 
 from   posixpath import \
     ( join          as pp_join
@@ -174,7 +176,6 @@ from   posixpath import \
 
 import datetime
 import base64
-import hashlib
 import logging
 import re
 import sys
@@ -197,11 +198,11 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
             if callable (v) :
                 sms [k] = v
                 tn = getattr (v, "template_name", None)
-                if isinstance (tn, basestring) : ### beware of `property`
+                if isinstance (tn, pyk.string_types) : ### beware of `property`
                     cls._template_names.add (tn)
         for k in ("page_template_name", "dir_template_name") :
             tn = dct.get (k)
-            if isinstance (tn, basestring) : ### beware of `property`
+            if isinstance (tn, pyk.string_types) : ### beware of `property`
                 cls._template_names.add (tn)
         cls._m_after__init__ (name, bases, dct)
     # end def __init__
@@ -229,10 +230,9 @@ class _RST_Meta_ (TFL.Meta.M_Class) :
 
 # end class _RST_Meta_
 
-class _RST_Base_ (TFL.Meta.Object) :
+class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     """Base class for RESTful resources."""
 
-    __metaclass__              = _RST_Meta_
     _real_name                 = "_Base_"
 
     Status                     = GTW.RST.HTTP_Status
@@ -280,12 +280,12 @@ class _RST_Base_ (TFL.Meta.Object) :
             )
         encoding = kw.get ("input_encoding") or \
             getattr (parent, "input_encoding", Root.input_encoding)
-        for k, v in kw.iteritems () :
-            if isinstance (v, str) :
-                v = unicode (v, encoding)
+        for k, v in pyk.iteritems (kw) :
+            if isinstance (v, pyk.byte_types) :
+                v = pyk.decoded (v, encoding)
             try :
                 setattr (self, k, v)
-            except AttributeError, exc :
+            except AttributeError (exc) :
                 print (self.href or "/{ROOT}", k, v, "\n   ", exc)
         if self.implicit :
             self.hidden = True
@@ -485,7 +485,7 @@ class _RST_Base_ (TFL.Meta.Object) :
     def page_template (self, value) :
         T = self.Templateer
         self._page_template = None
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             self.page_template_name = value
         elif T is not None and not isinstance (value, T.Template_Type) :
             self.page_template_name = value.name
@@ -602,7 +602,7 @@ class _RST_Base_ (TFL.Meta.Object) :
         if self.auth_required and not \
                (user and user.authenticated and user.active) :
             return False
-        if isinstance (method, basestring) :
+        if isinstance (method, pyk.string_types) :
             try :
                 method = GTW.RST.HTTP_Method.Table [method]
             except KeyError :
@@ -621,15 +621,6 @@ class _RST_Base_ (TFL.Meta.Object) :
         return self.allow_method (self.GET, user)
     # end def allow_user
 
-    def b64_encoded (self, s, ** kw) :
-        altchars = self.b64_altchars
-        if "altchars" in kw :
-            altchars = bytes (kw.pop ("altchars"))
-        assert not kw
-        result = base64.b64encode (s, altchars)
-        return result.rstrip (b"=")
-    # end def b64_encoded
-
     def check_postconditions (self, request, response) :
         if not self.postconditions_checked :
             self.postconditions_checked = True
@@ -647,16 +638,13 @@ class _RST_Base_ (TFL.Meta.Object) :
     def get_etag (self, request) :
         ci = self.change_info
         result = list \
-            ( str (x) for x in (self.rst_etag, request.lang, request.username)
-            if x
-            )
+            (x for x in (self.rst_etag, request.lang, request.username) if x)
         if ci :
             ci_etag = getattr (ci, "etag", None)
             if ci_etag :
                 result.append (ci_etag)
         if result :
-            h = self.hash_fct ("-".join (result)).digest ()
-            return self.b64_encoded (h)
+            return self.hash_fct (result).b64digest ()
     # end def get_etag
 
     def get_last_modified (self, request) :
@@ -921,7 +909,7 @@ class RST_Alias (_Ancestor) :
 
     @target.setter
     def target (self, value) :
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             self._target_href = value
             self._target_page = None
         else :
@@ -992,7 +980,7 @@ class RST_A_Link (_Ancestor) :
         download = self.download
         if download :
             dl_target = download \
-                if isinstance (download, basestring) else self.name
+                if isinstance (download, pyk.string_types) else self.name
             result.update (download = dl_target)
         return result
     # end def a_attr_dict
@@ -1077,7 +1065,7 @@ class _RST_Dir_Base_ (_Ancestor) :
     @dir_template.setter
     def dir_template (self, value) :
         self._dir_template = None
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             self.dir_template_name = value
         elif not isinstance (value, self.Templateer.Template_Type) :
             self.dir_template_name = value.name
@@ -1286,7 +1274,7 @@ class RST_Dir_V (_Ancestor) :
         for t in self.__super.template_iter () :
             yield t
         if self._entry_type_map :
-            for e in self._entry_type_map.itervalues () :
+            for e in pyk.itervalues (self._entry_type_map) :
                 for t in e.template_iter () :
                     yield t
     # end def template_iter
@@ -1390,7 +1378,6 @@ class RST_Root (_Ancestor) :
     domain                     = ""
     encoding                   = "utf-8"    ### output encoding
     error_email_template       = "error_email"
-    hash_fct                   = hashlib.sha224
     i18n                       = False
     ignore_picky_accept        = False
     input_encoding             = "utf-8"
@@ -1405,6 +1392,7 @@ class RST_Root (_Ancestor) :
     user                       = None
 
     _exclude_robots            = True
+    _hash_fct                  = None
     _href_pat                  = None
     _name                      = ""
     _needs_parent              = False
@@ -1452,7 +1440,6 @@ class RST_Root (_Ancestor) :
         self._change_infos  = {}
         self._old_cids      = {}
         self.top            = self
-        kw.setdefault ("hash_fct", self.hash_fct)
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -1466,6 +1453,20 @@ class RST_Root (_Ancestor) :
         ### Short term hack to load all entries once to fill `Table`
         return list (self.entries_transitive)
     # end def first_time
+
+    @property
+    @getattr_safe
+    def hash_fct (self) :
+        result = self._hash_fct
+        if result is None :
+            result = self._hash_fct = TFL.user_config.sha
+        return result
+    # end def hash_fct
+
+    @hash_fct.setter
+    def hash_fct (self, value) :
+        self._hash_fct = value
+    # end def hash_fct
 
     @property
     @getattr_safe
@@ -1539,7 +1540,7 @@ class RST_Root (_Ancestor) :
     # end def webmaster
 
     def allow (self, resource, user, method = "GET") :
-        if isinstance (resource, basestring) :
+        if isinstance (resource, pyk.string_types) :
             resource = self.resource_from_href (resource)
         if resource :
             try :

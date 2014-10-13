@@ -98,7 +98,7 @@ class SMTP (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
-        if isinstance (text, unicode) :
+        if isinstance (text, pyk.text_type) :
             raise TypeError \
                 ("SMTP () expects a byte string, got unicode: %r" % text)
         email = message_from_string (text)

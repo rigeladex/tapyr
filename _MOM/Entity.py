@@ -292,6 +292,7 @@
 #    25-Sep-2014 (CT) Factor `_kw_undeprecated`, `_set_ckd_inner`,
 #                     `_set_raw_inner`
 #    26-Sep-2014 (CT) Change `_kw_polished`, `_kw_undeprecated` to `classmethod`
+#     9-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
@@ -300,7 +301,6 @@ from   __future__  import print_function, unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
-from   _TFL.pyk              import pyk
 
 import _MOM._Attr.Kind
 import _MOM._Attr.Manager
@@ -328,16 +328,16 @@ import _TFL.Undef
 
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.object_globals   import object_globals
+from   _TFL.portable_repr    import portable_repr
 from   _TFL.predicate        import paired
+from   _TFL.pyk              import pyk
 
 import itertools
 import logging
 import traceback
 
-class Entity (TFL.Meta.Object) :
+class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     """Internal root class for MOM entities with and without identity."""
-
-    __metaclass__         = MOM.Meta.M_Entity
 
     PNS                   = MOM
 
@@ -399,7 +399,8 @@ class Entity (TFL.Meta.Object) :
             def computed (self, obj) :
                 return "%s %s" % \
                     ( obj.type_name
-                    , tuple (a.get_raw (self) for a in self.sig_attr)
+                    , portable_repr
+                        (tuple (a.get_raw (self) for a in self.sig_attr))
                     )
             # end def computed
 
@@ -411,6 +412,7 @@ class Entity (TFL.Meta.Object) :
         pass
     # end class _Predicates
 
+    @pyk.adapt__str__
     class _FO_ (TFL.Meta.Object) :
         """Formatter for attributes of object."""
 
@@ -437,10 +439,8 @@ class Entity (TFL.Meta.Object) :
                     else :
                         def get_raw () :
                             result = attr.attr.as_string (value)
-                            if isinstance (value, basestring) :
-                                result = repr (result)
-                                if result.startswith (("u'", 'u"')) :
-                                    result = result [1:]
+                            if isinstance (value, pyk.string_types) :
+                                result = portable_repr (result)
                             elif result == "" :
                                 result = "None"
                             return result
@@ -462,7 +462,7 @@ class Entity (TFL.Meta.Object) :
 
         def _get_repr (self, name, getter) :
             try :
-                result = repr (getter (self.__obj))
+                result = portable_repr (getter (self.__obj))
             except (AttributeError, LookupError) :
                 if "." in name :
                     result = ""
@@ -485,12 +485,8 @@ class Entity (TFL.Meta.Object) :
         # end def __getitem__
 
         def __str__ (self) :
-            return TFL.I18N.encode_o (unicode (self))
-        # end def __str__
-
-        def __unicode__ (self) :
             return self.__obj.ui_display
-        # end def __unicode__
+        # end def __str__
 
     # end class _FO_
 
@@ -566,7 +562,7 @@ class Entity (TFL.Meta.Object) :
     def as_attr_pickle_cargo (self) :
         return dict \
             (   (a.name, a.get_pickle_cargo  (self))
-            for a in self.attributes.itervalues () if a.save_to_db
+            for a in pyk.itervalues (self.attributes) if a.save_to_db
             )
     # end def as_attr_pickle_cargo
 
@@ -609,7 +605,7 @@ class Entity (TFL.Meta.Object) :
         result     = {}
         if on_error is None :
             on_error = soc._raise_attr_error
-        for name, value in kw.iteritems () :
+        for name, value in pyk.iteritems (kw) :
             attr = attributes.get (name)
             if attr :
                 try :
@@ -676,7 +672,7 @@ class Entity (TFL.Meta.Object) :
         attr_get = self.E_Type.attr_prop
         if on_error is None :
             on_error = self._raise_attr_error
-        for name, val in attr_dict.iteritems () :
+        for name, val in pyk.iteritems (attr_dict) :
             attr = attr_get (name)
             if attr is not None :
                 if not attr.is_settable :
@@ -690,7 +686,7 @@ class Entity (TFL.Meta.Object) :
 
     def set_pickle_cargo (self, cargo) :
         attr_get = self.attributes.get
-        for k, v in cargo.iteritems () :
+        for k, v in pyk.iteritems (cargo) :
             attr = attr_get (k)
             ### XXX Add legacy lifting
             if attr :
@@ -743,7 +739,7 @@ class Entity (TFL.Meta.Object) :
         needed  = tuple (m.name for m in self.required)
         missing = tuple (k for k in needed if kw.get (k) is None)
         if missing :
-            on_error   = kw.pop ("on_error", self._raise_attr_error)
+            on_error   = kw.pop ("on_error") or self._raise_attr_error
             all_needed = tuple (m.name for m in self.primary_required) + needed
             error = MOM.Error.Required_Missing \
                 (self.__class__, all_needed, missing, args, kw)
@@ -791,7 +787,7 @@ class Entity (TFL.Meta.Object) :
                             , self.type_name, self, name, val, type (val)
                             )
                     to_do.append ((attr, u"", None))
-                except StandardError as exc :
+                except Exception as exc :
                     if 0:
                         logging.exception \
                         ( "\n    %s %s, attribute conversion error %s: %s [%s]"
@@ -819,7 +815,7 @@ class Entity (TFL.Meta.Object) :
 
     @classmethod
     def _kw_undeprecated (cls, attr_dict) :
-        for name, val in attr_dict.iteritems () :
+        for name, val in pyk.iteritems (attr_dict) :
             cnam = cls.deprecated_attr_names.get (name, name)
             yield cnam, val
     # end def _kw_undeprecated
@@ -849,7 +845,7 @@ class Entity (TFL.Meta.Object) :
     def _record_iter (self, kw) :
         attributes = self.__class__.attributes
         recordable = self.recordable_attrs
-        for name, value in kw.iteritems () :
+        for name, value in pyk.iteritems (kw) :
             attr = attributes.get (name, None)
             if attr in recordable :
                 yield attr, attr.name, value
@@ -928,21 +924,17 @@ class Entity (TFL.Meta.Object) :
 
     def __repr__ (self) :
         try :
-            return TFL.I18N.encode_o (self._repr (self.type_name))
+            return pyk.reprify (self._repr (self.type_name))
         except AttributeError :
             return "<%s Incomplete>" % (self.ui_name_T, )
     # end def __repr__
 
-    def __str__ (self) :
-        return TFL.I18N.encode_o (unicode (self))
-    # end def __str__
-
 # end class Entity
 
-class An_Entity (Entity) :
+@pyk.adapt__bool__
+@pyk.adapt__str__
+class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
     """Root class for anonymous entities without identity."""
-
-    __metaclass__         = MOM.Meta.M_An_Entity
 
     has_identity          = False
     is_partial            = True
@@ -965,7 +957,7 @@ class An_Entity (Entity) :
     # end def as_pickle_cargo
 
     def as_string (self) :
-        return tuple (sorted (self.raw_attr_dict.iteritems ()))
+        return tuple (sorted (pyk.iteritems (self.raw_attr_dict)))
     # end def as_string
 
     def attr_as_code (self) :
@@ -1072,13 +1064,13 @@ class An_Entity (Entity) :
         return hash (self.hash_key)
     # end def __hash__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.has_substance ()
-    # end def __nonzero__
+    # end def __bool__
 
-    def __unicode__ (self) :
-        return u"(%s)" % (self.attr_as_code ())
-    # end def __unicode__
+    def __str__ (self) :
+        return "(%s)" % (self.attr_as_code ())
+    # end def __str__
 
 # end class An_Entity
 
@@ -1086,12 +1078,12 @@ _Ancestor_Essence = Entity
 
 @TFL.Add_To_Class ("P_Type",   _A_Id_Entity_)
 @TFL.Add_To_Class ("P_Type_S", _A_Id_Entity_)
-class Id_Entity (_Ancestor_Essence) :
+@pyk.adapt__str__
+class Id_Entity \
+          (TFL.Meta.BaM (_Ancestor_Essence, metaclass = MOM.Meta.M_Id_Entity)) :
     """Root class for MOM entities with identity, i.e.,
        objects and links.
     """
-
-    __metaclass__         = MOM.Meta.M_Id_Entity
 
     has_identity          = True
     is_partial            = True
@@ -1263,7 +1255,8 @@ class Id_Entity (_Ancestor_Essence) :
         class ui_repr (_Ancestor.ui_repr) :
 
             def computed (self, obj) :
-                return "%s %s" % (obj.type_name, obj.epk_raw [:-1])
+                return "%s %s" % \
+                    (obj.type_name, portable_repr (obj.epk_raw [:-1]))
             # end def computed
 
         # end class ui_repr
@@ -1352,7 +1345,7 @@ class Id_Entity (_Ancestor_Essence) :
         try :
             result = tuple (_gen ())
         except Exception :
-            result = "..."
+            result = ("...", )
         return result
     # end def epk_as_code
 
@@ -1424,7 +1417,7 @@ class Id_Entity (_Ancestor_Essence) :
         scope = self.home_scope
         def _gen (self, ref_map, scope) :
             pid = self.pid
-            for ET, attrs in ref_map.iteritems () :
+            for ET, attrs in pyk.iteritems (ref_map) :
                 qfs = tuple ((getattr (Q, a) == pid) for a in attrs)
                 ETM = scope [ET.type_name]
                 yield ETM.query (Q.OR (* qfs)).distinct ()
@@ -1456,7 +1449,9 @@ class Id_Entity (_Ancestor_Essence) :
     # end def as_pickle_cargo
 
     def attr_as_code (self) :
-        result = ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
+        eas    = self.epk_as_code
+        aas    = (self.__super.attr_as_code (), )
+        result = ", ".join (eas + aas)
         if "," not in result :
             result += ","
         return result
@@ -1548,7 +1543,7 @@ class Id_Entity (_Ancestor_Essence) :
             ### `epkified_ckd` and `epkified_raw` are created by meta machinery
         try :
             return epkifier (* epk, ** kw)
-        except TypeError, exc :
+        except TypeError as exc :
             on_error = kw.pop ("on_error", None) or cls._raise_attr_error
             needed   = tuple (m.name for m in cls.primary_required)
             missing  = tuple (p for p in needed [len (epk):] if p not in kw)
@@ -1560,7 +1555,7 @@ class Id_Entity (_Ancestor_Essence) :
             else :
                 raise TypeError \
                     ( _T ("%s needs the arguments %s, got %s instead")
-                    % (cls.ui_name_T, needed, epk)
+                    % (cls.ui_name_T, needed, portable_repr (epk))
                     )
     # end def epkified
 
@@ -1736,7 +1731,7 @@ class Id_Entity (_Ancestor_Essence) :
         if diffs :
             def _renamer () :
                 attributes = self.attributes
-                for k, v in pkas_ckd.iteritems () :
+                for k, v in pyk.iteritems (pkas_ckd) :
                     attr = attributes [k]
                     attr._set_cooked_inner (self, v)
                     attr._set_raw_inner    (self, pkas_raw [k], v)
@@ -1778,12 +1773,12 @@ class Id_Entity (_Ancestor_Essence) :
     # end def _set_raw
 
     def __eq__ (self, rhs) :
-        if isinstance (rhs, (int, long)) or \
+        if isinstance (rhs, pyk.int_types) or \
            (   isinstance (rhs, TFL.Q_Result._Attr_)
-           and isinstance (rhs._VALUE, (int, long))
+           and isinstance (rhs._VALUE, pyk.int_types)
            ) :
             return self.pid == rhs
-        elif isinstance (rhs, basestring) :
+        elif isinstance (rhs, pyk.string_types) :
             try :
                 pid = int (rhs)
             except (ValueError, TypeError) :
@@ -1818,14 +1813,14 @@ class Id_Entity (_Ancestor_Essence) :
             attr.__set__ (self, value)
     # end def __setattr__
 
-    def __unicode__ (self) :
+    def __str__ (self) :
         epk = self.epk
         if len (epk) == 1 :
-            format = u"%s"
+            format = "%s"
         else :
-            format = u"(%s)"
+            format = "(%s)"
         return format % (", ".join (self.epk_as_code))
-    # end def __unicode__
+    # end def __str__
 
 # end class Id_Entity
 
@@ -1876,11 +1871,12 @@ class _Id_Entity_Reload_Mixin_ (_Id_Entity_Mixin_) :
 
 # end class _Id_Entity_Reload_Mixin_
 
+@pyk.adapt__bool__
 class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
     """Mixin indicating an entity that was already destroyed."""
 
     def __getattribute__ (self, name) :
-        if name in ("E_Type", "__class__", "__nonzero__", "__repr__") :
+        if name in ("E_Type", "__bool__", "__class__", "__nonzero__", "__repr__") :
             return object.__getattribute__ (self, name)
         elif name in ("last_cid", "pid", "type_name") :
             try :
@@ -1911,9 +1907,9 @@ class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
             (str (e_type.type_base_name + "_Destroyed"), (cls, e_type), {})
     # end def define_e_type
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return False
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         ### Need to reset `self.__class__` temporarily to get proper `__repr__`
@@ -1928,12 +1924,10 @@ class _Id_Entity_Destroyed_Mixin_ (_Id_Entity_Mixin_) :
 
 # end class _Id_Entity_Destroyed_Mixin_
 
-class MD_Entity (Entity) :
+class MD_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_MD_Entity)) :
     """Root class for meta-data entities, e.g., entities recording changes to
        the object model.
     """
-
-    __metaclass__         = MOM.Meta.M_MD_Entity
 
     has_identity          = True
     is_locked             = True

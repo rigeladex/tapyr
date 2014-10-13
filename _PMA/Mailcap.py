@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -87,7 +87,7 @@ class Mailcap_Entry (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         if name in self.cap_dict :
             return self.cap_dict [name]
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __getitem__ (self, key) :
@@ -183,14 +183,6 @@ class _Mailcap_ (TFL.Meta.Object) :
 # end class _Mailcap_
 
 Mailcap = _Mailcap_ ()
-
-"""
-from   _PMA.Mailcap import *
-mt = Mailcap ['application/msword']
-print "".join (mt.as_text ("/tmp/TTP-ViewNG_primer.doc"))
-mt.system ("view", "/tmp/TTP-ViewNG_primer.doc")
-
-"""
 
 if __name__ != "__main__" :
     PMA._Export ("*", "Mailcap")

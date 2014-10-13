@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013 Martin Glueck All rights reserved
+# Copyright (C) 2013-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.elFinder.
@@ -37,7 +37,7 @@ from    _GTW                       import GTW
 from    _TFL._Meta.Once_Property   import Once_Property
 import  _GTW._RST._TOP._elFinder
 
-class Error (StandardError) :
+class Error (Exception) :
     """elFinder error message"""
 
     def __init__ (self, code, data = None) :

@@ -45,18 +45,18 @@ _test_attr = r"""
     >>> scope.commit                       ()
 
     >>> per
-    PAP.Person (u'ln', u'fn', u'', u'')
+    PAP.Person ('ln', 'fn', '', '')
     >>> per.lifetime
-    MOM.Date_Interval (u'2010-01-01')
+    MOM.Date_Interval ('2010-01-01')
 
     >>> per.lifetime.finish = "2010-02-01"
     >>> per.lifetime
-    MOM.Date_Interval (u'2010-01-01', u'2010-02-01')
+    MOM.Date_Interval ('2010-01-01', '2010-02-01')
 
     >>> scope.rollback ()
 
     >>> per.lifetime
-    MOM.Date_Interval (u'2010-01-01')
+    MOM.Date_Interval ('2010-01-01')
 
 """
 
@@ -72,23 +72,22 @@ _test_create = r"""
 
     >>> PAP.Person.count ### 1
     2
-    >>> PAP.Person.query (sort_key = "pid").all () ### 1
-    [PAP.Person (u'ln', u'fn', u'', u''), PAP.Person (u'ln', u'fn1', u'', u'')]
+    >>> prepr (PAP.Person.query (sort_key = "pid").all ()) ### 1
+    [PAP.Person ('ln', 'fn', '', ''), PAP.Person ('ln', 'fn1', '', '')]
     >>> len (scope.uncommitted_changes) ### 1
     1
 
-    >>> per = PAP.Person ("ln", "fn")
-    Traceback (most recent call last):
-    ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     per = PAP.Person ("ln", "fn")
     Invariants: The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object
-      The new definition of Person PAP.Person (u'ln', u'fn', u'', u'') would clash with 1 existing entities
+      The new definition of Person PAP.Person ('ln', 'fn', '', '') would clash with 1 existing entities
       Already existing:
-        PAP.Person (u'ln', u'fn', u'', u'')
+        PAP.Person ('ln', 'fn', '', '')
 
     >>> PAP.Person.count ### 2
     2
-    >>> PAP.Person.query (sort_key = "pid").all () ### 2
-    [PAP.Person (u'ln', u'fn', u'', u''), PAP.Person (u'ln', u'fn1', u'', u'')]
+    >>> prepr (PAP.Person.query (sort_key = "pid").all ()) ### 2
+    [PAP.Person ('ln', 'fn', '', ''), PAP.Person ('ln', 'fn1', '', '')]
     >>> len (scope.uncommitted_changes) ### 2
     1
 
@@ -96,20 +95,20 @@ _test_create = r"""
 
     >>> PAP.Person.count ### 3
     1
-    >>> PAP.Person.query (sort_key = "pid").all () ### 3
-    [PAP.Person (u'ln', u'fn', u'', u'')]
+    >>> prepr (PAP.Person.query (sort_key = "pid").all ()) ### 3
+    [PAP.Person ('ln', 'fn', '', '')]
     >>> len (scope.uncommitted_changes) ### 3
     0
 
     >>> scope.rollback () ### 4
 
-    >>> PAP.Person.query (first_name = "fn1").all ()
+    >>> prepr (PAP.Person.query (first_name = "fn1").all ())
     []
 
     >>> PAP.Person.count ### 5
     1
-    >>> PAP.Person.query (sort_key = "pid").all () ### 5
-    [PAP.Person (u'ln', u'fn', u'', u'')]
+    >>> prepr ((PAP.Person.query (sort_key = "pid").all ())) ### 5
+    [PAP.Person ('ln', 'fn', '', '')]
     >>> len (scope.uncommitted_changes) ### 5
     0
 
@@ -127,24 +126,24 @@ _test_create_m = r"""
     >>> scope.commit ()
 
     >>> scope.MOM.Id_Entity.query (sort_key = Q.pid).all () ### 1
-    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Email (u'tanzer@swing.co.at'), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person ('tanzer', 'christian', '', ''), PAP.Email ('tanzer@swing.co.at'), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
     >>> scope.rollback () ### 2
 
     >>> scope.MOM.Id_Entity.query (sort_key = Q.pid).all () ### 3
-    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Email (u'tanzer@swing.co.at'), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person ('tanzer', 'christian', '', ''), PAP.Email ('tanzer@swing.co.at'), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
     >>> p2 = PAP.Person ("Schlatterbeck", "Ralf", raw = True)
     >>> e2 = PAP.Email  ("rsc@runtux.com")
     >>> _  = PAP.Person_has_Email (p2, e2)
 
     >>> scope.MOM.Id_Entity.query (sort_key = Q.pid).all () ### 4
-    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Email (u'tanzer@swing.co.at'), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', )), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Email (u'rsc@runtux.com'), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'rsc@runtux.com', ))]
+    [PAP.Person ('tanzer', 'christian', '', ''), PAP.Email ('tanzer@swing.co.at'), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', )), PAP.Person ('schlatterbeck', 'ralf', '', ''), PAP.Email ('rsc@runtux.com'), PAP.Person_has_Email (('schlatterbeck', 'ralf', '', ''), ('rsc@runtux.com', ))]
 
     >>> scope.rollback () ### 5
 
     >>> scope.MOM.Id_Entity.query (sort_key = Q.pid).all () ### 6
-    [PAP.Person (u'tanzer', u'christian', u'', u''), PAP.Email (u'tanzer@swing.co.at'), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    [PAP.Person ('tanzer', 'christian', '', ''), PAP.Email ('tanzer@swing.co.at'), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
 """
 

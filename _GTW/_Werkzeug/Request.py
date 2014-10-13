@@ -64,10 +64,14 @@ def safe_str_cmp (lhs, rhs) :
     return _wz_safe_str_cmp (l, r)
 # end def safe_str_cmp
 
-class _WZG_Request_ (DynamicCharsetRequestMixin, JSONRequestMixin, Request) :
+class _WZG_Request_ \
+          ( TFL.Meta.BaM
+              ( DynamicCharsetRequestMixin, JSONRequestMixin, Request
+              , metaclass = TFL.Meta.M_Class
+              )
+          ) :
     """Extend werkzeug's Request class."""
 
-    __metaclass__        = TFL.Meta.M_Class
     _real_name           = "Request"
 
     url_charset          = "utf-8"

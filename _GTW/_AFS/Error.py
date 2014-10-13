@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
@@ -41,10 +41,8 @@ import _TFL._Meta.Object
 
 from   _TFL.I18N                import _
 
-class Base (Exception) :
+class Base (TFL.Meta.BaM (Exception, metaclass = TFL.Meta.M_Class)) :
     """Base class for AFS exceptions"""
-
-    __metaclass__             = TFL.Meta.M_Class
 
     message = None
     status  = 400

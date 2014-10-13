@@ -53,6 +53,7 @@ from   _TFL.pyk                  import pyk
 import _GTW._RST
 
 from   _TFL._Meta.Once_Property  import Once_Property
+from   _TFL.pyk                  import pyk
 
 import _TFL._Meta.M_Auto_Combine_Sets
 import _TFL._Meta.M_Class
@@ -67,10 +68,9 @@ class _M_Response_ (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
 
 # end class _M_Response_
 
-class _RST_Response_ (TFL.Meta.Object) :
+class _RST_Response_ \
+          (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Response_)) :
     """Wrap and extend wsgi-specific Response class."""
-
-    __metaclass__     = _M_Response_
 
     _auto_headers     = \
         { "X-Frame-Options" : "SAMEORIGIN"
@@ -97,9 +97,9 @@ class _RST_Response_ (TFL.Meta.Object) :
         for c in list (_request.cookies_to_delete) :
             self.clear_cookie (c)
         _request.cookies_to_delete.clear ()
-        for k, v in self._auto_headers.iteritems () :
+        for k, v in pyk.iteritems (self._auto_headers) :
             _response.add_header (k, v)
-        for rel, (value, kw) in sorted (self._links.iteritems ()) :
+        for rel, (value, kw) in sorted (pyk.iteritems (self._links)) :
             _response.add_header ("link", value, rel = rel, ** kw)
         return _response.__call__ (* args, ** kw)
     # end def __call__
@@ -170,7 +170,7 @@ class _RST_Response_ (TFL.Meta.Object) :
     def set_cookie (self, name, value = "", ** kw) :
         _request  = self._request
         _request.cookies_to_delete.discard (name)
-        if isinstance (value, unicode) :
+        if isinstance (value, pyk.text_type) :
             value = value.encode (_request.cookie_encoding)
         return self._response.set_cookie (name, value, ** kw)
     # end def set_cookie

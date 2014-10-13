@@ -47,7 +47,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import unicode_literals
+from   __future__               import print_function, unicode_literals
 
 from   _MOM.import_MOM          import *
 from   _GTW._OMP._NET.Attr_Type import *
@@ -161,28 +161,28 @@ _test_ip4 = """
     >>> Test_IP4_Address ('111.222.233.244/22', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to `111.222.232.0/22`.
+    Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to 111.222.232.0/22.
         Invalid netmask: 22; must be empty or 32
 
     >>> Test_IP4_Address (address = '1.2.3.4/22', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to `1.2.0.0/22`.
+    Attribute_Value: Can't set IP4-address `address` attribute Test_IP4_Address.address to 1.2.0.0/22.
         Invalid netmask: 22; must be empty or 32
 
     >>> Test_IP4_Address (address = '256.255.255.2', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP4_Address: Syntax: Invalid octet: 256` for : `IP4-address `address``
-         expected type  : `IP4-address`
-         got      value : `256.255.255.2`
+         expected type  : 'IP4-address'
+         got      value : '256.255.255.2'
     IP4 address must contain 4 decimal octets separated by `.`.
     >>> Test_IP4_Address (address = '2560.255.2.2', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP4_Address: Syntax: Invalid octet: 2560` for : `IP4-address `address``
-         expected type  : `IP4-address`
-         got      value : `2560.255.2.2`
+         expected type  : 'IP4-address'
+         got      value : '2560.255.2.2'
     IP4 address must contain 4 decimal octets separated by `.`.
     >>> Test_IP4_Network (address = '111.222.233.244/31', raw = True)
     GTW.OMP.NET.Test_IP4_Network ("111.222.233.244/31")
@@ -198,15 +198,15 @@ _test_ip4 = """
     Traceback (most recent call last):
      ...
     Invariants: `IP4_Address: Syntax: Invalid netmask: 33` for : `IP4-network `address``
-         expected type  : `IP4-network`
-         got      value : `1.2.3.4/33`
+         expected type  : 'IP4-network'
+         got      value : '1.2.3.4/33'
     IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
     >>> Test_IP4_Network (address = '1.2.3.4/333', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP4_Address: Syntax: Invalid netmask: 333` for : `IP4-network `address``
-         expected type  : `IP4-network`
-         got      value : `1.2.3.4/333`
+         expected type  : 'IP4-network'
+         got      value : '1.2.3.4/333'
     IP4 network must contain 4 decimal octets separated by `.`, optionally followed by `/` and a number between 0 and 32. The bits right of the netmask are automatically set to zero.
 
 """
@@ -283,36 +283,36 @@ _test_ip6 = """
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 12.34.56.78` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:12.34.56.78`
+         expected type  : 'IP6-address'
+         got      value : '::ffff:12.34.56.78'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '::ffff:192.0.2.128', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 192.0.2.128` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:192.0.2.128`
+         expected type  : 'IP6-address'
+         got      value : '::ffff:192.0.2.128'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '123', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Not enough hex parts in 123` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `123`
+         expected type  : 'IP6-address'
+         got      value : '123'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = 'ldkfj', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: ldkfj` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `ldkfj`
+         expected type  : 'IP6-address'
+         got      value : 'ldkfj'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '2001::FFD3::57ab', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `2001::FFD3::57ab`
+         expected type  : 'IP6-address'
+         got      value : '2001::FFD3::57ab'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address \\
     ...     ( address = '2001:db8:85a3::8a2e:37023:7334'
@@ -321,8 +321,8 @@ _test_ip6 = """
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 37023` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `2001:db8:85a3::8a2e:37023:7334`
+         expected type  : 'IP6-address'
+         got      value : '2001:db8:85a3::8a2e:37023:7334'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address \\
     ...     ( address = '2001:db8:85a3::8a2e:370k:7334'
@@ -331,90 +331,90 @@ _test_ip6 = """
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: invalid literal for long() with base 16: '370k'` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `2001:db8:85a3::8a2e:370k:7334`
+         expected type  : 'IP6-address'
+         got      value : '2001:db8:85a3::8a2e:370k:7334'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3:4:5:6:7:8:9', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Too many hex parts in 1:2:3:4:5:6:7:8:9` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:2:3:4:5:6:7:8:9`
+         expected type  : 'IP6-address'
+         got      value : '1:2:3:4:5:6:7:8:9'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1::2::3', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Only one '::' allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1::2::3`
+         expected type  : 'IP6-address'
+         got      value : '1::2::3'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:::3:4:5', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Too many ':': 1:::3:4:5` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:::3:4:5`
+         expected type  : 'IP6-address'
+         got      value : '1:::3:4:5'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3::4:5:6:7:8:9', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Too many hex parts in 1:2:3::4:5:6:7:8:9` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:2:3::4:5:6:7:8:9`
+         expected type  : 'IP6-address'
+         got      value : '1:2:3::4:5:6:7:8:9'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '::ffff:2.3.4', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 2.3.4` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:2.3.4`
+         expected type  : 'IP6-address'
+         got      value : '::ffff:2.3.4'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '::ffff:257.1.2.3', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 257.1.2.3` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `::ffff:257.1.2.3`
+         expected type  : 'IP6-address'
+         got      value : '::ffff:257.1.2.3'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1.2.3.4', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Hex value too long: 1.2.3.4` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1.2.3.4`
+         expected type  : 'IP6-address'
+         got      value : '1.2.3.4'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = ':aa:aa:aa', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: No single ':' at start allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `:aa:aa:aa`
+         expected type  : 'IP6-address'
+         got      value : ':aa:aa:aa'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = 'aa:aa:aa:', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: No single ':' at end allowed` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `aa:aa:aa:`
+         expected type  : 'IP6-address'
+         got      value : 'aa:aa:aa:'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3:4:5:6:7', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Not enough hex parts in 1:2:3:4:5:6:7` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `1:2:3:4:5:6:7`
+         expected type  : 'IP6-address'
+         got      value : '1:2:3:4:5:6:7'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = ':::', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: No ':' at start and end` for : `IP6-address `address``
-         expected type  : `IP6-address`
-         got      value : `:::`
+         expected type  : 'IP6-address'
+         got      value : ':::'
     IP6 address must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used.
     >>> Test_IP6_Address (address = '1:2:3::/127', raw = True)
     Traceback (most recent call last):
      ...
-    Attribute_Value: Can't set IP6-address `address` attribute Test_IP6_Address.address to `1:2:3::/127`.
+    Attribute_Value: Can't set IP6-address `address` attribute Test_IP6_Address.address to 1:2:3::/127.
         Invalid netmask: 127; must be empty or 128
 
     >>> Test_IP6_Network (address = '1:2:3::/48', raw = True)
@@ -440,15 +440,15 @@ _test_ip6 = """
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Invalid netmask: 129` for : `IP6-network `address``
-         expected type  : `IP6-network`
-         got      value : `1:2:3::/129`
+         expected type  : 'IP6-network'
+         got      value : '1:2:3::/129'
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
     >>> Test_IP6_Network (address = '1:2:3::/1290', raw = True)
     Traceback (most recent call last):
      ...
     Invariants: `IP6_Address: Syntax: Invalid netmask: 1290` for : `IP6-network `address``
-         expected type  : `IP6-network`
-         got      value : `1:2:3::/1290`
+         expected type  : 'IP6-network'
+         got      value : '1:2:3::/1290'
     IP6 network must contain up to 8 hexadecimal numbers with up to 4 digits separated by `:`. A single empty group `::` can be used. This is optionally followed by `/` and a number between 0 and 128. The bits right of the netmask are automatically set to zero.
 
 """
@@ -461,7 +461,7 @@ _test_mac = """
     >>> MAC_Address = NET.MAC_Address
 
     >>> MAC_Address ("00:11:22:33:44:55")
-    GTW.OMP.NET.MAC_Address (u'00:11:22:33:44:55')
+    GTW.OMP.NET.MAC_Address ('00:11:22:33:44:55')
 
     >>> MAC_Address ("000:11:22:33:44:55")
     Traceback (most recent call last):
@@ -470,16 +470,16 @@ _test_mac = """
         address = '000:11:22:33:44:55'
         length = 18 << len (address)
       `Syntax error` for : `MAC-address `address``
-         expected type  : `MAC-address`
-         got      value : `000:11:22:33:44:55`
+         expected type  : 'MAC-address'
+         got      value : '000:11:22:33:44:55'
     A MAC address must contain 6 hexadecimal octets separated by `:`.
 
     >>> MAC_Address ("00:11:22:33:44")
     Traceback (most recent call last):
      ...
     Invariants: `Syntax error` for : `MAC-address `address``
-         expected type  : `MAC-address`
-         got      value : `00:11:22:33:44`
+         expected type  : 'MAC-address'
+         got      value : '00:11:22:33:44'
     A MAC address must contain 6 hexadecimal octets separated by `:`.
 
     >>> MAC_Address ("00:11:22:33:44:55:66")
@@ -489,8 +489,8 @@ _test_mac = """
         address = '00:11:22:33:44:55:66'
         length = 20 << len (address)
       `Syntax error` for : `MAC-address `address``
-         expected type  : `MAC-address`
-         got      value : `00:11:22:33:44:55:66`
+         expected type  : 'MAC-address'
+         got      value : '00:11:22:33:44:55:66'
     A MAC address must contain 6 hexadecimal octets separated by `:`.
 
 """
@@ -617,7 +617,7 @@ _test_query = r"""
     3
 
     >>> for a, m in Test_IP4_Network.query ().order_by ("-address.mask_len", "address").attrs ("address", "address.mask_len") :
-    ...     print a, m
+    ...     print (a, m)
     192.168.1.0/29 29
     192.168.1.8/29 29
     192.168.1.0/28 28
@@ -728,11 +728,11 @@ _test_query = r"""
     >>> type (rqs [0].rhs)
     <class 'rsclib.IP_Address.IP4_Address'>
     >>> matches = Test_IP4_Network.query_s (* rqs).all ()
-    >>> print "\n".join (repr (x) for x in matches)
+    >>> print ("\n".join (repr (x) for x in matches))
     GTW.OMP.NET.Test_IP4_Network ("192.168.1.8/29")
 
     >>> matches2 = Test_IP4_Network.query_s (Q.address == n43.address).all ()
-    >>> print "\n".join (repr (x) for x in matches2)
+    >>> print ("\n".join (repr (x) for x in matches2))
     GTW.OMP.NET.Test_IP4_Network ("192.168.1.8/29")
 
 """
@@ -796,7 +796,7 @@ _test_qx_pg = """
            JOIN gtw_omp_net_test_ip4_address ON mom_id_entity.pid = gtw_omp_net_test_ip4_address.pid
          WHERE gtw_omp_net_test_ip4_address.address <<= :address_1
     Parameters:
-         address_1            : u'192.168.23.0/28'
+         address_1            : '192.168.23.0/28'
 
     >>> show_query (Test_IP4_Network.query (Q.address != network))
     SQL: SELECT
@@ -861,8 +861,8 @@ _test_qx_sq = """
          WHERE gtw_omp_net_test_ip4_address.address__numeric >= :address__numeric_1
             AND gtw_omp_net_test_ip4_address.address__numeric <= :address__numeric_2
     Parameters:
-         address__numeric_1   : 1084752128L
-         address__numeric_2   : 1084752143L
+         address__numeric_1   : 1084752128
+         address__numeric_2   : 1084752143
 
     >>> show_query (Test_IP4_Address.query (Q.address.IN ("192.168.23.0/28")))
     SQL: SELECT
@@ -879,8 +879,8 @@ _test_qx_sq = """
          WHERE gtw_omp_net_test_ip4_address.address__numeric >= :address__numeric_1
             AND gtw_omp_net_test_ip4_address.address__numeric <= :address__numeric_2
     Parameters:
-         address__numeric_1   : 1084757760L
-         address__numeric_2   : 1084757775L
+         address__numeric_1   : 1084757760
+         address__numeric_2   : 1084757775
 
     >>> show_query (Test_IP4_Network.query (Q.address != network))
     SQL: SELECT
@@ -900,7 +900,7 @@ _test_qx_sq = """
             OR gtw_omp_net_test_ip4_network.address__mask_len != :address__mask_len_1
     Parameters:
          address__mask_len_1  : 28
-         address__numeric_1   : 1084752128L
+         address__numeric_1   : 1084752128
 
 
 """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -57,6 +57,7 @@ from   _TFL._D2               import Cardinal_Direction as CD
 from   _TFL.Math_Func         import sign
 from   _TFL.multimap          import mm_list
 from   _TFL.predicate         import dusplit
+from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Regexp, re
 
 import _TFL.Decorator
@@ -69,6 +70,8 @@ _word_sep = Regexp("([^A-Za-z0-9])")
 class Rel_Placer (TFL.Meta.Object) :
     """Place attachement points of all relations of an Entity."""
 
+    @pyk.adapt__bool__
+    @pyk.adapt__str__
     class Dir_Placer (TFL.Meta.Object) :
         """Placer for relations in one cardinal direction"""
 
@@ -133,7 +136,7 @@ class Rel_Placer (TFL.Meta.Object) :
                         , getattr (p, self.dim)
                         )
                     map [key].append (r)
-            for k, rs in map.iteritems () :
+            for k, rs in pyk.iteritems (map) :
                 step = k [0] * self.sort_sign
                 if len (rs) > 1 :
                     for i, r in enumerate (rs [1::step]) :
@@ -176,7 +179,7 @@ class Rel_Placer (TFL.Meta.Object) :
             offset = gen_offset (offset_s, seen)
             for r in rels :
                 if r.connector.offset is None :
-                    r.connector.offset = offset.next ()
+                    r.connector.offset = next (offset)
         # end def place_connectors
 
         def setup_connectors (self) :
@@ -203,9 +206,9 @@ class Rel_Placer (TFL.Meta.Object) :
             return getattr (self.rp, name)
         # end def __getattr__
 
-        def __nonzero__ (self) :
+        def __bool__ (self) :
             return bool (self.rels)
-        # end def __nonzero__
+        # end def __bool__
 
         def __str__ (self) :
             return self.side
@@ -324,7 +327,7 @@ class Rel_Placer (TFL.Meta.Object) :
                 )
             )
         sort_key = TFL.Sorted_By ("slack", "max_rels", "name")
-        by_slack = sorted (placers.itervalues (), key = sort_key)
+        by_slack = sorted (pyk.itervalues (placers), key = sort_key)
         for dp in by_slack :
             if dp.slack < 0 :
                 dp.slacker ()
@@ -343,6 +346,7 @@ class Rel_Placer (TFL.Meta.Object) :
 
 # end class Rel_Placer
 
+@pyk.adapt__bool__
 class Entity (TFL.Meta.Object) :
 
     attr            = None
@@ -399,8 +403,8 @@ class Entity (TFL.Meta.Object) :
             it = iter (parts [1:])
             while True :
                 try :
-                    s = it.next ()
-                    p = it.next ()
+                    s = next (it)
+                    p = next (it)
                 except StopIteration :
                     break
                 yield s + p
@@ -430,7 +434,7 @@ class Entity (TFL.Meta.Object) :
 
     @property
     def placers (self) :
-        for p in self.placer.placers.itervalues () :
+        for p in pyk.itervalues (self.placer.placers) :
             if p :
                 yield p
     # end def placers
@@ -479,7 +483,7 @@ class Entity (TFL.Meta.Object) :
         self.pop_to_self (kw, "label", prefix = "_")
         if kw :
             raise TypeError \
-                ("Unknown arguments: %s" % (sorted (kw.iteritems ()), ))
+                ("Unknown arguments: %s" % (sorted (pyk.iteritems (kw)), ))
         for a in args :
             self._add (a)
         return self
@@ -532,7 +536,7 @@ class Entity (TFL.Meta.Object) :
 
     def set_guides (self) :
         """Set guide points to relations in `self.rel_map`."""
-        for r in self.rel_map.itervalues () :
+        for r in pyk.itervalues (self.rel_map) :
             r.set_guides ()
     # end def set_guides
 

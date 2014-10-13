@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.
@@ -56,10 +56,8 @@ class _M_DBS_ (TFL.Meta.Object.__class__) :
 
 # end class _M_DBS_
 
-class _DBS_ (TFL.Meta.Object) :
+class _DBS_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_DBS_)) :
     """Base class for DBS classes."""
-
-    __metaclass__    = _M_DBS_
 
     Fatal_Exceptions = ()
 

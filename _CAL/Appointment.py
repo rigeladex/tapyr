@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,11 +35,13 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL           import TFL
-from   _CAL           import CAL
-import _TFL._Meta.Object
+from   _CAL                       import CAL
+from   _TFL                       import TFL
 
-from   _TFL.Regexp    import *
+from   _TFL.Regexp                import *
+from   _TFL._Meta.totally_ordered import totally_ordered
+
+import _TFL._Meta.Object
 
 time_pat        = Regexp \
     ( r"(?P<time> "
@@ -62,6 +64,7 @@ entry_pat       = Regexp \
     , re.VERBOSE | re.MULTILINE | re.DOTALL
     )
 
+@totally_ordered
 class Appointment (TFL.Meta.Object) :
     """Model one appointment in a calendar"""
 
@@ -83,17 +86,21 @@ class Appointment (TFL.Meta.Object) :
             return d_h + (d_m / 60.)
     # end def _duration
 
-    def __str__ (self) :
-        return self.format % (self.time, self.prio, self.activity)
-    # end def __str__
-
-    def __cmp__ (self, rhs) :
-        return cmp (self.text, getattr (rhs, "text", rhs))
-    # end def __cmp__
+    def __eq__ (self, rhs) :
+        return self.text == getattr (rhs, "text", rhs)
+    # end def __eq__
 
     def __hash__ (self) :
         return hash (self.text)
     # end def __hash__
+
+    def __lt__ (self, rhs) :
+        return self.text < getattr (rhs, "text", rhs)
+    # end def __lt__
+
+    def __str__ (self) :
+        return self.format % (self.time, self.prio, self.activity)
+    # end def __str__
 
 # end class Appointment
 

@@ -32,6 +32,7 @@
 #    17-Mar-2010 (CT) `Cleaner` added to `HTML`
 #    22-Mar-2011 (CT) `M_Format.__str__` added
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
+#    12-Oct-2014 (CT) Adapt `HTML` to `GTW.HTML.Cleaner` using BeautifulSoup4
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ import _GTW.HTML
 import _ReST.To_Html
 
 from   _TFL.I18N              import _, _T, _Tn
+from   _TFL.pyk               import pyk
 
 import _TFL._Meta.Object
 
@@ -67,7 +69,7 @@ class M_Format (TFL.Meta.Object.__class__) :
     # end def __str__
 
     def _m_add (cls, name, Table) :
-        name = unicode (name)
+        name = pyk.text_type (name)
         assert name not in Table, "Name clash: `%s` <-> `%s`" % \
             (name, Table [name].__class__)
         Table [name] = cls
@@ -75,9 +77,9 @@ class M_Format (TFL.Meta.Object.__class__) :
 
 # end class M_Format
 
-class _Format_ (TFL.Meta.Object) :
+class _Format_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Format)) :
 
-    __metaclass__ = M_Format
+    pass
 
 # end class _Format_
 
@@ -85,11 +87,13 @@ class HTML (_Format_) :
     """Formatter for text in HTML markup"""
 
     forbidden = \
-        "applet frame frameset head html iframe input object script".split (" ")
+        ( "applet body frame frameset head html iframe input object script"
+            .split (" ")
+        )
 
     @classmethod
     def convert (cls, text) :
-        cleaner  = GTW.HTML.Cleaner (text)
+        cleaner  = GTW.HTML.Cleaner (text, "html.parser")
         comments = cleaner.remove_comments ()
         if comments :
             raise ValueError \
@@ -98,11 +102,11 @@ class HTML (_Format_) :
                 )
         forbidden = cleaner.remove_tags (* cls.forbidden)
         if forbidden :
-            raise ValueError\
+            raise ValueError \
                 ( _T ("HTML must not contain any of the tags:\n%s")
                 % ("    ".join (forbidden), )
                 )
-        return unicode (cleaner)
+        return pyk.text_type (cleaner)
     # end def convert
 
 # end class HTML

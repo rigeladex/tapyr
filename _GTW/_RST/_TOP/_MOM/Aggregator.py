@@ -51,6 +51,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import first
+from   _TFL.pyk                 import pyk
 
 from   posixpath                import join as pp_join
 
@@ -150,7 +151,7 @@ class Aggregator (GTW.RST.MOM.Mixin, _Ancestor) :
     def ETMS (self) :
         result = []
         for etm in self._kw ["_ETMS"] :
-            if isinstance (etm, basestring) :
+            if isinstance (etm, pyk.string_types) :
                 etm = self.top.scope [etm]
             result.append (etm)
         return result

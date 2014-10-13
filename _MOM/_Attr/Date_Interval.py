@@ -53,9 +53,11 @@ from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_
 
 from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.pyk              import pyk
 
 _Ancestor_Essence = MOM.An_Entity
 
+@pyk.adapt__bool__
 class Date_Interval (_Ancestor_Essence) :
     """Model a date interval (start, finish)."""
 
@@ -144,9 +146,9 @@ class Date_Interval (_Ancestor_Essence) :
         return self.ui_display_sep.join ("%%(%s)s" % name for name in attrs)
     # end def ui_display_format
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.start is not None
-    # end def __nonzero__
+    # end def __bool__
 
 # end class Date_Interval
 
@@ -195,7 +197,7 @@ class A_Date_Interval_N (A_Date_Interval) :
 
 # end class A_Date_Interval_N
 
-__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

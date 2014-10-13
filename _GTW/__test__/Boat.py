@@ -43,6 +43,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__               import print_function
+
 _test_code = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -50,14 +52,14 @@ _test_code = """
 
     >>> bc = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> bc
-    SRM.Boat_Class (u'optimist')
+    SRM.Boat_Class ('optimist')
 
     >>> bc.pid
     1
     >>> scope.commit ()
 
     >>> scope.SRM.Boat_Class.query ().all ()
-    [SRM.Boat_Class (u'optimist')]
+    [SRM.Boat_Class ('optimist')]
     >>> change = scope.query_changes (pid = bc.pid).one ()
     >>> change.c_time == change.time, change.c_user ==change.user
     (True, True)
@@ -66,7 +68,7 @@ _test_code = """
     >>> scope.ems.convert_creation_change \
         (bc.pid, c_time = c_time, time = time, user = 42, c_user = 23)
     >>> change = scope.query_changes (pid = bc.pid).one ()
-    >>> print formatted_1 ((change.c_user, change.c_time, change.user, change.time)) ### before commit
+    >>> prepr ((change.c_user, change.c_time, change.user, change.time)) ### before commit
     (23, datetime.datetime(2012, 1, 1, 0, 0), 42, datetime.datetime(2012, 4, 1, 10, 0))
 
     >>> bc.last_change.time
@@ -78,149 +80,146 @@ _test_code = """
     >>> bc.creation_date
     datetime.datetime(2012, 1, 1, 0, 0)
 
-    >>> print scope.SRM.Boat_Class.count ### 1
+    >>> print (scope.SRM.Boat_Class.count) ### 1
     1
     >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
-    >>> print scope.SRM.Boat_Class.count ### 2
+    >>> print (scope.SRM.Boat_Class.count) ### 2
     2
 
-    >>> scope.SRM.Boat_Class.query (name = u'optimist').all ()
-    [SRM.Boat_Class (u'optimist')]
-    >>> scope.SRM.Boat_Class.instance (u'Optimist')
-    SRM.Boat_Class (u'optimist')
-    >>> SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True) ### 1
-    SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')
-    >>> print scope.SRM.Boat.count ### 3
+    >>> scope.SRM.Boat_Class.query (name = 'optimist').all ()
+    [SRM.Boat_Class ('optimist')]
+    >>> scope.SRM.Boat_Class.instance ('Optimist')
+    SRM.Boat_Class ('optimist')
+    >>> SRM.Boat.instance_or_new ('Optimist', "1107", "AUT", raw = True) ### 1
+    SRM.Boat (('optimist', ), 1107, 'AUT', '')
+    >>> print (scope.SRM.Boat.count) ### 3
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 1107, 'AUT', '')]
     >>> scope.commit ()
 
     >>> change = scope.query_changes (pid = bc.pid).one ()
-    >>> print formatted_1 ((change.c_user, change.c_time, change.user, change.time)) ### after commit
+    >>> prepr ((change.c_user, change.c_time, change.user, change.time)) ### after commit
     (23, datetime.datetime(2012, 1, 1, 0, 0), 42, datetime.datetime(2012, 4, 1, 10, 0))
 
-    >>> SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True) ### 2
-    SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')
-    >>> print scope.SRM.Boat.count ### 4
+    >>> SRM.Boat.instance_or_new ('Optimist', "1107", "AUT", raw = True) ### 2
+    SRM.Boat (('optimist', ), 1107, 'AUT', '')
+    >>> print (scope.SRM.Boat.count) ### 4
     1
     >>> scope.SRM.Boat.query_s ().all ()
-    [SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 1107, 'AUT', '')]
 
-    >>> b = SRM.Boat.instance_or_new (u'Optimist', u"1107", u"AUT", raw = True) ### 3
-    >>> c = SRM.Boat (u"Optimist", "42", None, "OE", raw = True)
+    >>> b = SRM.Boat.instance_or_new ('Optimist', "1107", "AUT", raw = True) ### 3
+    >>> c = SRM.Boat ("Optimist", "42", None, "OE", raw = True)
 
-    >>> print scope.SRM.Boat.count ### 5
+    >>> print (scope.SRM.Boat.count) ### 5
     2
     >>> scope.SRM.Boat.query_s ().all ()
-    [SRM.Boat ((u'optimist', ), 42, '', u'OE'), SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 42, '', 'OE'), SRM.Boat (('optimist', ), 1107, 'AUT', '')]
 
-    >>> print (c.sail_number, c.sail_number_head, c.sail_number_tail)
-    (42, u'OE', u'42')
-    >>> print (c.FO.sail_number, c.FO.sail_number_head, c.FO.sail_number_tail)
-    (u'42', u'OE', u'42')
-    >>> print (b.sail_number, b.sail_number_head, b.sail_number_tail)
-    (1107, u'', u'1107')
+    >>> prepr ((c.sail_number, c.sail_number_head, c.sail_number_tail))
+    (42, 'OE', '42')
+    >>> prepr ((c.FO.sail_number, c.FO.sail_number_head, c.FO.sail_number_tail))
+    ('42', 'OE', '42')
+    >>> prepr ((b.sail_number, b.sail_number_head, b.sail_number_tail))
+    (1107, '', '1107')
 
     >>> s1 = TFL.Sorted_By ("name")
     >>> s2 = TFL.Sorted_By ("-name")
     >>> SRM.Boat_Class.query ().order_by (s1).all ()
-    [SRM.Boat_Class (u'laser'), SRM.Boat_Class (u'optimist')]
+    [SRM.Boat_Class ('laser'), SRM.Boat_Class ('optimist')]
     >>> SRM.Boat_Class.query ().order_by (s1).order_by (s2).all ()
-    [SRM.Boat_Class (u'optimist'), SRM.Boat_Class (u'laser')]
+    [SRM.Boat_Class ('optimist'), SRM.Boat_Class ('laser')]
 
-    >>> print SRM.Boat.sail_number.Q_Raw.EQ
+    >>> prepr (SRM.Boat.sail_number.Q_Raw.EQ)
     <Attr.Equal sail_number.EQ [==]>
     >>> rf = SRM.Boat.sail_number.Q_Raw.EQ ("1107")
     >>> rf (b)
     True
 
-    >>> getattr (b, "__raw_sail_number", "No raw value???")
-    u'1107'
+    >>> prepr (getattr (b, "__raw_sail_number", "No raw value???"))
+    '1107'
 
-    >>> print SRM.Boat.sail_number.Q_Raw.EQ  ("1107")
+    >>> print (SRM.Boat.sail_number.Q_Raw.EQ  ("1107"))
     Q.sail_number == 1107
-    >>> print SRM.Boat.sail_number.Q_Raw.EQS ("1107")
-    Q.__raw_sail_number == 1107
-    >>> print SRM.Boat.sail_number.Q_Raw.AC  ("11")
-    Q.__raw_sail_number.startswith (u'11',)
+    >>> print (SRM.Boat.sail_number.Q_Raw.EQS ("1107"))
+    Q.__raw_sail_number == '1107'
+    >>> print (SRM.Boat.sail_number.Q_Raw.AC  ("11"))
+    Q.__raw_sail_number.startswith ('11',)
 
     >>> bq = SRM.Boat.query_s ()
     >>> bq.all ()
-    [SRM.Boat ((u'optimist', ), 42, '', u'OE'), SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 42, '', 'OE'), SRM.Boat (('optimist', ), 1107, 'AUT', '')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.EQ ("1107")).all ()
-    [SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 1107, 'AUT', '')]
     >>> SRM.Boat.query_s (SRM.Boat.sail_number.Q_Raw.AC ("11")).all ()
-    [SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 1107, 'AUT', '')]
 
-    >>> print scope.SRM.Boat.count ### 6
+    >>> print (scope.SRM.Boat.count) ### 6
     2
 
     >>> b.set (left = laser)
     Traceback (most recent call last):
       ...
-    AttributeError: Init-only attribute `Boat.left` cannot be changed from `(u'optimist')` to `(u'laser')` after object creation
+    AttributeError: Init-only attribute `Boat.left` cannot be changed from `('optimist')` to `('laser')` after object creation
 
-    >>> print scope.SRM.Boat.count ### 7
+    >>> print (scope.SRM.Boat.count) ### 7
     2
     >>> scope.commit ()
 
     >>> SRM.Boat.query_s ().all () ### before Name_Clash
-    [SRM.Boat ((u'optimist', ), 42, '', u'OE'), SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 42, '', 'OE'), SRM.Boat (('optimist', ), 1107, 'AUT', '')]
 
     >>> laser.max_crew ### before name clash, before change
     1
     >>> laser.max_crew = 2
     >>> laser.max_crew ### before name clash, after change
     2
-    >>> d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     d = SRM.Boat (SRM.Boat_Class ("Optimist", max_crew = 1), "AUT", "1134")
     Invariants: The attribute values for ('name',) must be unique for each object
-      The new definition of Boat_Class SRM.Boat_Class (u'Optimist',) would clash with 1 existing entities
+      The new definition of Boat_Class SRM.Boat_Class ('Optimist',) would clash with 1 existing entities
       Already existing:
-        SRM.Boat_Class (u'Optimist',)
+        SRM.Boat_Class ('Optimist',)
 
-    >>> print scope.SRM.Boat.count ### 8
+    >>> print (scope.SRM.Boat.count) ### 8
     2
     >>> laser.max_crew ### after name clash
     2
 
     >>> SRM.Boat.query_s ().all () ### after Name_Clash
-    [SRM.Boat ((u'optimist', ), 42, '', u'OE'), SRM.Boat ((u'optimist', ), 1107, u'AUT', u'')]
+    [SRM.Boat (('optimist', ), 42, '', 'OE'), SRM.Boat (('optimist', ), 1107, 'AUT', '')]
 
-    >>> print sorted (b.b_class._pred_man.errors.items ()) ### before invariant errors
+    >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### before invariant errors
     [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
 
-    >>> b.b_class.max_crew = 0
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariant) :
+    ...     b.b_class.max_crew = 0
     Invariant: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0
-    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `setattr`
+    >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `setattr`
     [('object', []), ('region', []), ('system', []), ('uniqueness', [])]
 
 
     >>> errors = []
-    >>> b.b_class.set (max_crew = 0)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     b.b_class.set (max_crew = 0)
     Invariants: Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0
-    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 0)`
-    [('object', [Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = 0)`
+    [('object', [Invariant(SRM.Boat_Class ('optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 0)]), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
     []
     >>> b.b_class.set (max_crew = 5, on_error = errors.append)
     0
-    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = 5)`
-    [('object', [Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = 5)`
+    [('object', [Invariant(SRM.Boat_Class ('optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5)]), ('region', []), ('system', []), ('uniqueness', [])]
     >>> errors
-    [Invariants(Invariant(SRM.Boat_Class (u'optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
+    [Invariants(Invariant(SRM.Boat_Class ('optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5),)]
-    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' :
     [ 'max_crew' ]
       , 'bindings' :
@@ -234,43 +233,39 @@ _test_code = """
       }
     ]
 
-    >>> b.b_class.set (max_crew = None)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     b.b_class.set (max_crew = None)
     Invariants: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None
-    >>> print sorted (b.b_class._pred_man.errors.items ()) ### after invariant error from `.set (max_crew = None)`
-    [('object', [Required_Empty(SRM.Boat_Class (u'optimist'), Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
+    >>> prepr (sorted (b.b_class._pred_man.errors.items ())) ### after invariant error from `.set (max_crew = None)`
+    [('object', [Required_Empty(SRM.Boat_Class ('optimist'), Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None)]), ('region', []), ('system', []), ('uniqueness', [])]
 
-    >>> b.b_class.max_crew = None
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Required_Empty) :
+    ...     b.b_class.max_crew = None
     Required_Empty: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None
 
     >>> errors = []
-    >>> SRM.Boat_Class ("Seascape 18", on_error = errors.append)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     SRM.Boat_Class ("Seascape 18", on_error = errors.append)
     Invariants: Boat_Class needs the attributes: ('name', 'max_crew'); Instead it got: (name = 'Seascape 18')
     >>> errors
-    [Required_Missing(u"Boat_Class needs the attributes: ('name', 'max_crew')", u"Instead it got: (name = 'Seascape 18')")]
+    [Required_Missing("Boat_Class needs the attributes: ('name', 'max_crew')", "Instead it got: (name = 'Seascape 18')")]
 
     >>> errors = []
-    >>> SRM.Boat_Class (max_crew = 4, on_error = errors.append)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     SRM.Boat_Class (max_crew = 4, on_error = errors.append)
     Invariants: Boat_Class needs the attribute: ('name',); Instead it got: (max_crew = 4)
     >>> errors
-    [Required_Missing(u"Boat_Class needs the attribute: ('name',)", u'Instead it got: (max_crew = 4)')]
-    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    [Required_Missing("Boat_Class needs the attribute: ('name',)", 'Instead it got: (max_crew = 4)')]
+    >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' :
     ( 'name' ,)
       , 'bindings' :
           [
             ( 'max_crew'
-            , '4'
+            , 4
             )
           ,
             ( 'name'
@@ -285,26 +280,24 @@ _test_code = """
     ]
 
     >>> errors = []
-    >>> SRM.Boat_Class (on_error = errors.append)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     SRM.Boat_Class (on_error = errors.append)
     Invariants: Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
         max_crew = None
       Condition `name_not_empty` : The attribute name needs a non-empty value
-        name = ''
+        name = None
       Boat_Class needs the attribute: ('name',); Instead it got: ()
 
     >>> errors
-    [Required_Missing(u"Boat_Class needs the attribute: ('name',)", u'Instead it got: ()'), Invariants(Required_Empty(u'Boat_Class', Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
-        max_crew = None), Required_Empty(u'Boat_Class', Condition `name_not_empty` : The attribute name needs a non-empty value
-        name = ''))]
+    [Required_Missing("Boat_Class needs the attribute: ('name',)", 'Instead it got: ()'), Invariants(Required_Empty('Boat_Class', Condition `max_crew_not_empty` : The attribute max_crew needs a non-empty value
+        max_crew = None), Required_Empty('Boat_Class', Condition `name_not_empty` : The attribute name needs a non-empty value
+        name = None))]
 
     >>> errors = []
-    >>> SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
-    Traceback (most recent call last):
-      ...
-    Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = '187042')
-    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
+    Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = 187042)
+    >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' :
           ( 'left' ,)
       , 'bindings' :
@@ -317,7 +310,7 @@ _test_code = """
             , '187042'
             )
           ]
-      , 'description' : "Instead it got: (sail_number = '187042')"
+      , 'description' : 'Instead it got: (sail_number = 187042)'
       , 'explanation' : 'All required attributes must be supplied'
       , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
@@ -331,14 +324,13 @@ _test_code = """
     ]
 
     >>> errors = []
-    >>> SRM.Boat (sail_number = "-187042", raw = True, on_error = errors.append)
-    Traceback (most recent call last):
-      ...
+    >>> with expect_except (MOM.Error.Invariants) :
+    ...     SRM.Boat (sail_number = "-187042", raw = True, on_error = errors.append)
     Invariants: Condition `AC_check_sail_number_1` : 0 <= sail_number <= 999999
         sail_number = -187042
-      Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = '-187042')
+      Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = -187042)
 
-    >>> print formatted (MOM.Error.as_json_cargo (* errors))
+    >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
     [ { 'attributes' :
           ( 'left' ,)
       , 'bindings' :
@@ -351,7 +343,7 @@ _test_code = """
             , '-187042'
             )
           ]
-      , 'description' : "Instead it got: (sail_number = '-187042')"
+      , 'description' : 'Instead it got: (sail_number = -187042)'
       , 'explanation' : 'All required attributes must be supplied'
       , 'head' : "Boat needs the attributes: ('left', 'sail_number')"
       , 'is_required' : True
@@ -384,20 +376,20 @@ _test_instances_committed = """
 
     >>> opti = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> opti
-    SRM.Boat_Class (u'optimist')
+    SRM.Boat_Class ('optimist')
     >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
-    >>> b = SRM.Boat.instance_or_new (opti, u"1107", u"AUT", raw = True)
-    >>> c = SRM.Boat (u"Optimist", "42", None, "OE", raw = True)
+    >>> b = SRM.Boat.instance_or_new (opti, "1107", "AUT", raw = True)
+    >>> c = SRM.Boat ("Optimist", "42", None, "OE", raw = True)
 
     >>> scope.commit ()
 
     >>> show_by_pid (scope.SRM.Boat_Class)
-    1   : Boat_Class (u'Optimist', 'SRM.Boat_Class')
-    2   : Boat_Class (u'Laser', 'SRM.Boat_Class')
+    1   : Boat_Class ('Optimist', 'SRM.Boat_Class')
+    2   : Boat_Class ('Laser', 'SRM.Boat_Class')
 
     >>> show_by_pid (scope.SRM.Boat)
-    3   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat')
-    4   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'42', u'', u'OE', 'SRM.Boat')
+    3   : Boat       (('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat')
+    4   : Boat       (('Optimist', 'SRM.Boat_Class'), '42', '', 'OE', 'SRM.Boat')
 
 """
 
@@ -408,24 +400,27 @@ _test_instances_pending = """
 
     >>> opti = SRM.Boat_Class ("Optimist", max_crew = 1)
     >>> opti
-    SRM.Boat_Class (u'optimist')
+    SRM.Boat_Class ('optimist')
     >>> laser = SRM.Boat_Class ("Laser", max_crew = 1)
-    >>> b = SRM.Boat.instance_or_new (opti, u"1107", u"AUT", raw = True)
-    >>> c = SRM.Boat (u"Optimist", "42", None, "OE", raw = True)
+    >>> b = SRM.Boat.instance_or_new (opti, "1107", "AUT", raw = True)
+    >>> c = SRM.Boat ("Optimist", "42", None, "OE", raw = True)
 
     >>> show_by_pid (scope.SRM.Boat_Class)
-    1   : Boat_Class (u'Optimist', 'SRM.Boat_Class')
-    2   : Boat_Class (u'Laser', 'SRM.Boat_Class')
+    1   : Boat_Class ('Optimist', 'SRM.Boat_Class')
+    2   : Boat_Class ('Laser', 'SRM.Boat_Class')
 
     >>> show_by_pid (scope.SRM.Boat)
-    3   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'1107', u'AUT', u'', 'SRM.Boat')
-    4   : Boat       ((u'Optimist', 'SRM.Boat_Class'), u'42', u'', u'OE', 'SRM.Boat')
+    3   : Boat       (('Optimist', 'SRM.Boat_Class'), '1107', 'AUT', '', 'SRM.Boat')
+    4   : Boat       (('Optimist', 'SRM.Boat_Class'), '42', '', 'OE', 'SRM.Boat')
 
 """
 
 def show_by_pid (ETM) :
     for x in ETM.query ().order_by (Q.pid) :
-        print ("%-3s : %-10s %s" % (x.pid, x.type_base_name, x.epk_raw))
+        print \
+            ( "%-3s : %-10s %s"
+            % (x.pid, x.type_base_name, portable_repr (x.epk_raw))
+            )
 # end def show_by_pid
 
 from _GTW.__test__.model import *

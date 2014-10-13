@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
+# Copyright (C) 2006-2014 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -176,7 +176,7 @@ class _DPN_ZipImporter_ (DPN_Importer) :
        for importing.
     """
 
-    _path = filter (os.path.isfile, sys.path)
+    _path = list (p for p in sys.path if os.path.isfile (p))
 
     def _get_zipimporter (self, zip_path) :
         zi = sys.path_importer_cache.get (zip_path)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2014 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -47,11 +47,16 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                       import TFL
+from   __future__                 import print_function
+
 from   _PMA                       import PMA
+from   _TFL                       import TFL
+
 import _PMA.Mailbox
+
+from   _TFL.sos                   import sos
+
 import  poplib
-import _TFL.sos as sos
 
 class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     """A POP3 mailbox which receives the messages from the account and adds
@@ -146,7 +151,7 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     # end def MB_Type
 
     def passwd_cb (self) :
-        raise NotImplemented, "Must pass passwd to POP3_Mailbox"
+        raise NotImplemented ("Must pass passwd to POP3_Mailbox")
     # end def passwd_cb
 
     def pop_list (self, pop, msg_no = None) :
@@ -171,7 +176,7 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
                     result._pma_msg_no = msg_no
                     self._save (msg, result)
                 else :
-                    print "This shouldn't happen!"
+                    print ("This shouldn't happen!")
             finally :
                 pop.quit ()
         return result
@@ -210,7 +215,7 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     # end def _new_message
 
     def _new_subbox (self, path) :
-        raise TypeError, "POP3_Mailbox doesn't support sub-boxes"
+        raise TypeError ("POP3_Mailbox doesn't support sub-boxes")
     # end def _new_subbox
 
     def _pop_msg_query (self, cmd, msg_no) :

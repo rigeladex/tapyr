@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -43,6 +43,7 @@ from   __future__            import unicode_literals
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._Attr
 
@@ -88,7 +89,7 @@ class Manager (TFL.Meta.Object) :
 
     def reset_attributes (self, obj) :
         self.reset_pending ()
-        for a in sorted (self.attr_dict.itervalues (), key = TFL.Getter.rank) :
+        for a in sorted (pyk.itervalues (self.attr_dict), key = TFL.Getter.rank) :
             a.reset (obj)
         if self.pending_cross_ref :
             self.sync_pending (obj)
@@ -116,7 +117,7 @@ class Manager (TFL.Meta.Object) :
     def sync_pending (self, obj) :
         pending = self.pending_cross_ref
         self.reset_pending ()
-        for a, updater in pending.iteritems () :
+        for a, updater in pyk.iteritems (pending) :
             updater (a)
     # end def sync_pending
 

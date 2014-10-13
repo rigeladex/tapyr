@@ -78,18 +78,19 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__                  import print_function
 
 ### Note: this module is obsolete and shouldn't be used for new code
 
-from   _TFL        import TFL
-from   _TFL.pyk    import pyk
-from   _TFL.Regexp import *
-
-from   time        import *
+from   _TFL                       import TFL
+from   _TFL.pyk                   import pyk
+from   _TFL.Regexp                import *
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL.CAO
 import _TFL.r_eval
+
+from   time                       import *
 
 class Time_Tuple :
     """Encapsulate a time tuple as used by time.gmtime, time.mktime, and
@@ -312,6 +313,7 @@ def day_to_time_tuple (day_string) :
     raise ValueError (day_string)
 # end def time_tuple
 
+@totally_ordered
 class Date :
     """Model a date."""
 
@@ -333,20 +335,6 @@ class Date :
         self.value = date
     # end def __init__
 
-    def __getattr__ (self, name) :
-        if name == "tuple" :
-            result = self.tuple = self.local_tuple ()
-            return result
-        return getattr (self.tuple, name)
-    # end def __getattr__
-
-    def inc (self, n = 1) :
-        """Increment `self' by `n' days."""
-        self.value = self.value + n * 86400
-        if hasattr (self, "tuple") :
-            del self.tuple
-    # end def inc
-
     def dec (self, n = 1) :
         """Decrement `self' by `n' days."""
         self.value = self.value - n * 86400
@@ -358,6 +346,13 @@ class Date :
         return strftime (format, localtime (self.value))
     # end def formatted
 
+    def inc (self, n = 1) :
+        """Increment `self' by `n' days."""
+        self.value = self.value + n * 86400
+        if hasattr (self, "tuple") :
+            del self.tuple
+    # end def inc
+
     def local_tuple (self) :
         """Return `self' as `Time_Tuple' (local time)"""
         return Time_Tuple (* localtime (self.value))
@@ -368,27 +363,38 @@ class Date :
         return Time_Tuple (* gmtime (self.value))
     # end def gm_tuple
 
-    def __str__ (self) :
-        return self.formatted ()
-    # end def formatted
-
     def __add__ (self, n) :
         """Return value of `self' incremented by `n' days."""
         return self.__class__ (self.value + n * 86400)
     # end def __add__
 
-    def __sub__ (self, n) :
-        """Return value `self' decremented by `n' days."""
-        return self.__class__ (self.value - n * 86400)
-    # end def __sub__
+    def __eq__ (self, other) :
+        return self.value == getattr (other, "value", other)
+    # end def __eq__
 
-    def __cmp__ (self, other) :
-        return cmp (self.value, other.value)
-    # end def __cmp__
+    def __getattr__ (self, name) :
+        if name == "tuple" :
+            result = self.tuple = self.local_tuple ()
+            return result
+        return getattr (self.tuple, name)
+    # end def __getattr__
 
     def __hash__ (self) :
         return hash (self.value)
     # end def __hash__
+
+    def __lt__ (self, other) :
+        return self.value < getattr (other, "value", other)
+    # end def __lt__
+
+    def __str__ (self) :
+        return self.formatted ()
+    # end def formatted
+
+    def __sub__ (self, n) :
+        """Return value `self' decremented by `n' days."""
+        return self.__class__ (self.value - n * 86400)
+    # end def __sub__
 
 # end class Date
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -94,7 +94,7 @@ class _V_Mailbox_ (PMA._Mailbox_) :
     # end def add_messages
 
     def add_subbox (self, * args, ** kw) :
-        raise TypeError, "Only adding of a Filter_Mailbox supported!"
+        raise TypeError ("Only adding of a Filter_Mailbox supported!")
     # end def add_subbox
 
     def delete (self, * messages) :

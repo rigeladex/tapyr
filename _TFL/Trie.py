@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -38,8 +38,8 @@
 
 from   __future__  import print_function
 
-from   _TFL import       TFL
-from   _TFL.pyk import pyk
+from   _TFL        import TFL
+from   _TFL.pyk    import pyk
 
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
@@ -425,7 +425,7 @@ class Word_Trie (TFL.Meta.Object) :
         """Generate all words with a Levenshtein-distance <= max_edits to word."""
         ### http://en.wikipedia.org/wiki/Levenshtein_distance
         ### http://stevehanov.ca/blog/index.php?id=114
-        row_1 = range (len (word) + 1)
+        row_1 = pyk.range (len (word) + 1)
         for char, node in pyk.iteritems (self.root.children) :
             for m in self._match_iter_inner \
                     (col_iter, word, max_edits, char, node, row_1) :

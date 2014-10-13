@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,8 @@
 #
 # Revision Dates
 #    17-Dec-2003 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 import sys
 
@@ -51,7 +47,7 @@ def module_copy (name, ** kw) :
     else :
         result = __import__ (name, {}, {})
         del sys.modules [name]
-    for k, v in kw.iteritems () :
+    for k, v in kw.items () :
         setattr (result, k, v)
     return result
 # end def module_copy

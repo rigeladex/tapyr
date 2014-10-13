@@ -98,6 +98,7 @@ from   _TFL.Decorator        import getattr_safe
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.defaultdict      import defaultdict_int as ETC
 from   _TFL.predicate        import filtered_join, split_hst, uniq
+from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -295,13 +296,11 @@ class _M_Type_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Type_
 
-class _Type_ (_Base_) :
+class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
     """Base class for Type classes.
 
        A Type class provides all filters for a set of Attr.Type classes.
     """
-
-    __metaclass__ = _M_Type_
 
     Base_Op_Table = Filter._Filter_.Base_Op_Table
 
@@ -493,7 +492,7 @@ class _Type_ (_Base_) :
 
     def _cooker (self, value) :
         attr = self._attr
-        if isinstance (value, basestring) :
+        if isinstance (value, pyk.string_types) :
             return attr.from_string (value, None, {}, {})
         else :
             return attr.cooked (value)
@@ -630,7 +629,7 @@ class Id_Entity (_Composite_) :
         if E_Types_CNP :
             return dict \
                 (   (k, _Id_Entity_NP_ (ET, self._attr))
-                for (k, ET) in E_Types_CNP.iteritems ()
+                for (k, ET) in pyk.iteritems (E_Types_CNP)
                 )
     # end def E_Types_AQ
 
@@ -701,7 +700,7 @@ class Id_Entity (_Composite_) :
         result     = self.__super._sig_map_transitive (seen_etypes)
         E_Types_AQ = self.E_Types_AQ
         if E_Types_AQ :
-            for aq in E_Types_AQ.itervalues () :
+            for aq in pyk.itervalues (E_Types_AQ) :
                 result.update (aq._sig_map_transitive (seen_etypes))
         return result
     # end def _sig_map_transitive
@@ -833,7 +832,7 @@ class Raw (String) :
     @TFL.Meta.Once_Property
     @getattr_safe
     def _string_cooker (self) :
-        return unicode
+        return pyk.text_type
     # end def _string_cooker
 
     @TFL.Meta.Once_Property
@@ -889,7 +888,7 @@ class E_Type (_Container_) :
     @property
     def Op_Map (self) :
         result = {}
-        for k, v in _Type_.Base_Op_Table.iteritems () :
+        for k, v in pyk.iteritems (_Type_.Base_Op_Table) :
             sym = _T (v.op_sym)
             result [k] = dict \
                 ( desc  = _T (v.desc)

@@ -41,6 +41,12 @@
 #     3-Jan-2014 (CT) Add `encoded`, `user_config`
 #    17-Feb-2014 (CT) Add `decoded`
 #    22-Aug-2014 (CT) Allow multiple `encodings` for `encoded`
+#     7-Oct-2014 (CT) Change `iter*` to wrap `result` in `iter`
+#     7-Oct-2014 (CT) Add `config_parser`, `ifilter`, `reprify`
+#     7-Oct-2014 (CT) Fix `encoded`
+#     9-Oct-2014 (CT) Add `builtins`
+#    10-Oct-2014 (CT) Add `urlencode`, `urlparse`
+#    13-Oct-2014 (CT) Add `byte_type`
 #    ««revision-date»»···
 #--
 
@@ -84,6 +90,21 @@ class _Pyk_ (object) :
         return cls
     # end def adapt__str__
 
+    @lazy_property
+    def builtins (self) :
+        import builtins
+        return builtins
+    # end def builtins
+
+    byte_type  = bytes
+    byte_types = (bytes, )
+
+    @lazy_property
+    def config_parser (self) :
+        import configparser
+        return configparser
+    # end def config_parser
+
     Classic_Class_Type = None
 
     @staticmethod
@@ -109,10 +130,10 @@ class _Pyk_ (object) :
     def encoded (v, encoding = None) :
         if encoding is None :
             encoding = pyk.user_config.output_encoding
+        if not isinstance (v, str) :
+            v = str (v)
         if isinstance (v, str) :
             v = v.encode (encoding, "replace")
-        elif not isinstance (v, str) :
-            v = str (v)
         return v
     # end def encoded
 
@@ -121,19 +142,32 @@ class _Pyk_ (object) :
 
     @staticmethod
     def iteritems (dct) :
-        return dct.items ()
+        try :
+            items = dct.items
+        except AttributeError :
+            items = dct.iteritems
+        return iter (items ())
     # end def iteritems
 
     @staticmethod
     def iterkeys (dct) :
-        return dct.keys ()
+        try :
+            keys = dct.keys
+        except AttributeError :
+            keys = dct.iterkeys
+        return iter (keys ())
     # end def iterkeys
 
     @staticmethod
     def itervalues (dct) :
-        return dct.values ()
+        try :
+            values = dct.values
+        except AttributeError :
+            values = dct.itervalues
+        return iter (values ())
     # end def itervalues
 
+    ifilter    = staticmethod (filter)
     izip       = staticmethod (zip)
     long_types = (type ("no_longin_in_Py3", (object, ), {}), )
 
@@ -156,6 +190,18 @@ class _Pyk_ (object) :
         return pickle
     # end def pickle
 
+    xrange = staticmethod (range)
+
+    @staticmethod
+    def range (* args, ** kw) :
+        return list (range (* args, ** kw))
+    # end def range
+
+    @staticmethod
+    def reprify (r) :
+        return pyk.decoded (r)
+    # end def reprify
+
     @lazy_property
     def StringIO (self) :
         import io
@@ -167,6 +213,18 @@ class _Pyk_ (object) :
     unichr             = chr
 
     @lazy_property
+    def urlencode (self) :
+        from urllib.parse import urlencode
+        return urlencode
+    # end def urlencode
+
+    @lazy_property
+    def urlparse (self) :
+        from urllib import parse
+        return parse
+    # end def urlparse
+
+    @lazy_property
     def user_config (self) :
         from   _TFL.User_Config import user_config
         return user_config
@@ -175,8 +233,6 @@ class _Pyk_ (object) :
     def zip (self, * args) :
         return list (self.izip (* args))
     # end def zip
-
-    xrange = staticmethod (range)
 
 # end class _Pyk_
 

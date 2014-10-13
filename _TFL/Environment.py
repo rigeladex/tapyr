@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -52,6 +52,7 @@
 #    27-Apr-2010 (CT) `exec_python_startup` added
 #    21-Jun-2010 (CT) `py_shell` added
 #    28-May-2013 (CT) Use `in`, not `has_key`
+#    12-Oct-2014 (CT) Change `exec_python_startup` to `open` with flags `rb`
 #    ««revision-date»»···
 #--
 
@@ -95,7 +96,7 @@ def exec_python_startup () :
     if not _python_startup_loaded :
         ps = sos.environ.get ("PYTHONSTARTUP")
         if ps and sos.path.exists (ps) :
-            with open (ps) as f :
+            with open (ps, "rb") as f :
                 exec (f.read ())
         _python_startup_loaded = True
 # end def exec_python_startup

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2012 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -49,14 +49,19 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
-from   _CAL                    import CAL
+from   _CAL                       import CAL
+from   _TFL                       import TFL
+
+from   _TFL.pyk                   import pyk
+from   _TFL._Meta.totally_ordered import totally_ordered
+
 import _TFL._Meta.Object
 import _TFL.Accessor
 
 import datetime
 import time
 
+@totally_ordered
 class _DTW_ (TFL.Meta.Object) :
     """Root for `datetime` wrappers"""
 
@@ -115,7 +120,7 @@ class _DTW_ (TFL.Meta.Object) :
 
     def _delta (self, delta) :
         result = delta
-        if isinstance (delta, (int, long, float)) :
+        if isinstance (delta, pyk.int_types + (float, )) :
             result = self.Delta (delta)
         return result
     # end def _delta
@@ -131,17 +136,25 @@ class _DTW_ (TFL.Meta.Object) :
         return self._Type (** kw)
     # end def _new_object
 
-    def __cmp__ (self, rhs) :
-        return cmp (self._body, getattr (rhs, self._kind, rhs))
-    # end def __cmp__
+    def __eq__ (self, rhs) :
+        return self._body == getattr (rhs, self._kind, rhs)
+    # end def __eq__
 
     def __getattr__ (self, name) :
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __hash__ (self) :
         return hash (self._body)
     # end def __hash__
+
+    def __lt__ (self, rhs) :
+        return self._body < getattr (rhs, self._kind, rhs)
+    # end def __lt__
+
+    def __str__ (self) :
+        return str (self._body)
+    # end def __str__
 
     def __repr__ (self) :
         return "%s (%s)" % \
@@ -151,12 +164,9 @@ class _DTW_ (TFL.Meta.Object) :
             )
     # end def __repr__
 
-    def __str__ (self) :
-        return str (self._body)
-    # end def __str__
-
 # end class _DTW_
 
+@totally_ordered
 class _Mutable_DTW_ (TFL.Meta.Object) :
     """Root for mutable `datetime` wrappers"""
 
@@ -173,14 +183,16 @@ class _Mutable_DTW_ (TFL.Meta.Object) :
         return self.__class__ (** {self.Class._kind : self._wrapped + rhs})
     # end def __add__
 
-    __cmp__ = property (lambda s : s._wrapped.__cmp__)
+    def __eq__ (self, rhs) :
+        return self._wrapped == rhs
+    # end def __eq__
 
     def __getattr__ (self, name) :
         return getattr (self._wrapped, name)
     # end def __getattr__
 
     def __hash__ (self) :
-        raise KeyError, "%s is not hashable"
+        raise KeyError ("%s is not hashable")
     # end def __hash__
 
     def __iadd__ (self, rhs) :
@@ -192,6 +204,10 @@ class _Mutable_DTW_ (TFL.Meta.Object) :
         self._wrapped -= rhs
         return self
     # end def __isub__
+
+    def __lt__ (self, rhs) :
+        return self._wrapped < rhs
+    # end def __lt__
 
     def __sub__ (self, rhs) :
         return self.__class__ (** {self.Class._kind : self._wrapped - rhs})

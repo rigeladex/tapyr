@@ -35,20 +35,26 @@
 #    ««revision-date»»···
 #--
 
-from   __future__        import with_statement
+from   __future__        import print_function
 
 from   _ATAX             import ATAX
 from   _CAL              import CAL
+from   _TFL              import TFL
+
 from   _ATAX.accounting  import ignor_pat
+
 from   _TFL.predicate    import *
+from   _TFL.pyk          import pyk
 from   _TFL.Regexp       import *
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _CAL.Date_Time
+
 import _TFL._Meta.Object
 import _TFL.CAO
 import _TFL.Environment
 
+@pyk.adapt__bool__
 class FB_Entry (TFL.Meta.Object) :
     """Model one entry of a Fahrtenbuch"""
 
@@ -99,9 +105,9 @@ class FB_Entry (TFL.Meta.Object) :
         return self.atax_format % (date, f * km, km)
     # end def atax
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.delta)
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         date = self.date.formatted ("%d.%m.%Y")
@@ -137,7 +143,7 @@ class Fahrtenbuch (TFL.Meta.Object) :
                 try :
                     d, km, priv, desc = [f.strip () for f in line.split ("&", 4)]
                 except ValueError :
-                    print "Split error `%s`" % line
+                    print ("Split error `%s`" % line)
                 else :
                     last = result._new_entry (last, d, km, priv, desc)
                     add (last)
@@ -244,9 +250,9 @@ def _main (cmd) :
     ATAX.Command.load_config (cmd)
     fb = Fahrtenbuch.from_file (cmd.user, cmd.fahrtenbuch)
     if not cmd.km_geld :
-        print fb.tex ()
+        print (fb.tex ())
     else :
-        print fb.km_geld ()
+        print (fb.km_geld ())
 # end def _main
 
 _Command = TFL.CAO.Cmd \

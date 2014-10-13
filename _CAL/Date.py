@@ -81,6 +81,7 @@ import _TFL.CAO
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Math_Func           import horner
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
 
 import datetime
@@ -432,7 +433,7 @@ class Date (CAL._DTW_) :
     def _from_string_match_kw (cls, s, match) :
         assert match
         kw = {}
-        for k, v in match.groupdict ().iteritems () :
+        for k, v in pyk.iteritems (match.groupdict ()) :
             if v :
                 v = v.lower ()
                 if k == "month" and v in cls.months :

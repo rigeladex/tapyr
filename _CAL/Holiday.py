@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,8 +43,11 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
+from   __future__               import print_function
+
 from   _CAL                    import CAL
+from   _TFL                    import TFL
+from   _TFL.pyk                import pyk
 
 import _CAL.Date
 import _CAL.Delta
@@ -67,8 +70,8 @@ def easter_date_gauss (year) :
     elif 2200 <= year <= 2299 :
         m, n = 25, 0
     else :
-        raise NotImplementedError, \
-              "Only implemented for years between 1583 and 2299"
+        raise NotImplementedError \
+            ("Only implemented for years between 1583 and 2299")
     a   = year                   % 19
     b   = year                   %  4
     c   = year                   %  7
@@ -81,7 +84,7 @@ def easter_date_gauss (year) :
         day   = d + e - 9
         month = 4
         if day in (25, 26) and d == 28 and e == 6 and a > 10 :
-            ### print d, e, a, (d == 28, e == 6, a > 10)
+            ### print (d, e, a, (d == 28, e == 6, a > 10))
             day -= 7
     return (year, month, day)
 # end def easter_date_gauss
@@ -127,11 +130,11 @@ easter_dependent_holidays = \
 def holidays (Y) :
     result  = {}
     year    = Y.year
-    for h, n in fixed_holidays.iteritems () :
+    for h, n in pyk.iteritems (fixed_holidays) :
         result [CAL.Date (year, * h).ordinal] = n
     y, m, d = easter_date (year)
     ED      = CAL.Date (y, m, d)
-    for d, n in easter_dependent_holidays.iteritems () :
+    for d, n in pyk.iteritems (easter_dependent_holidays) :
         D = ED + CAL.Date_Delta (days = d)
         result [D.ordinal] = n
     return result
@@ -143,9 +146,9 @@ def _main (cmd) :
     year = CAL.Date (cmd.year, 1, 1)
     Y    = CAL.Year (cmd.year)
     Y.populate ()
-    for ordinal, name in sorted (holidays (year).iteritems ()) :
+    for ordinal, name in sorted (pyk.iteritems (holidays (year))) :
         o = ordinal - year.ordinal + 1
-        print "%3d %s %s" % (o, Y.cal._days [ordinal], name)
+        print ("%3d %s %s" % (o, Y.cal._days [ordinal], name))
 # end def _main
 
 today    = CAL.Date ()

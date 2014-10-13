@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,16 +47,19 @@
 #    20-Feb-2010 (CT) `__contains__` added
 #    20-Jul-2011 (CT) `_properties` added to allow subclasses to define
 #                     property setters that actually work
+#    10-Oct-2014 (CT) Use `portable_repr`
 #    ««revision-date»»···
 #--
 
-from   _TFL           import TFL
-from   _TFL.pyk       import pyk
+from   _TFL                import TFL
 
-from   _TFL.predicate import sorted
+from   _TFL.portable_repr  import portable_repr
+from   _TFL.predicate      import sorted
+from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 
+@pyk.adapt__bool__
 class Record (TFL.Meta.Object) :
     """Class emulating a struct/record (but dynamically).
 
@@ -65,6 +68,13 @@ class Record (TFL.Meta.Object) :
        'y'
        >>> r.kw
        {'foo': 42}
+
+       >>> bool (r)
+       True
+
+       >>> bool (Record ())
+       False
+
     """
 
     _properties = ()
@@ -86,11 +96,15 @@ class Record (TFL.Meta.Object) :
 
     def _formatted_kw (self) :
         return ", ".join \
-            ( (   "%s = %r" % (k, v)
+            ( (   "%s = %s" % (k, portable_repr (v))
               for (k, v) in sorted (pyk.iteritems (self._kw))
               )
             )
     # end def _formatted_kw
+
+    def __bool__ (self) :
+        return bool (self._kw)
+    # end def __bool__
 
     def __contains__ (self, item) :
         return item in self._kw
@@ -122,10 +136,6 @@ class Record (TFL.Meta.Object) :
     def __len__ (self) :
         return len (self._kw)
     # end def __len__
-
-    def __nonzero__ (self) :
-        return bool (self._kw)
-    # end def __nonzero__
 
     def __repr__ (self) :
         return "%s (%s)" % \

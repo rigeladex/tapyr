@@ -61,12 +61,12 @@ _test_code = """
     >>> print (PAP.Subject.count, PAP.Company.count_strict, PAP.Person.count_strict)
     5 2 3
 
-    >>> PAP.Subject.query_s ().all ()
-    [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Company (u'lucky software', u''), PAP.Company (u'open source consulting', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
-    >>> PAP.Company.query_s ().all ()
-    [PAP.Company (u'lucky software', u''), PAP.Company (u'open source consulting', u'')]
-    >>> PAP.Person.query_s ().all ()
-    [PAP.Person (u'glueck', u'martin', u'', u''), PAP.Person (u'schlatterbeck', u'ralf', u'', u''), PAP.Person (u'tanzer', u'christian', u'', u'')]
+    >>> prepr (PAP.Subject.query_s ().all ())
+    [PAP.Person ('glueck', 'martin', '', ''), PAP.Company ('lucky software', ''), PAP.Company ('open source consulting', ''), PAP.Person ('schlatterbeck', 'ralf', '', ''), PAP.Person ('tanzer', 'christian', '', '')]
+    >>> prepr (PAP.Company.query_s ().all ())
+    [PAP.Company ('lucky software', ''), PAP.Company ('open source consulting', '')]
+    >>> prepr (PAP.Person.query_s ().all ())
+    [PAP.Person ('glueck', 'martin', '', ''), PAP.Person ('schlatterbeck', 'ralf', '', ''), PAP.Person ('tanzer', 'christian', '', '')]
 
     >>> eg  = PAP.Email ("martin@mangari.org")
     >>> es  = PAP.Email ("ralf@runtux.com")
@@ -116,55 +116,55 @@ _test_code = """
     >>> PAP.Subject_has_Property.query (Q.right [Q.PAP.Phone]).count ()
     4
 
-    >>> PAP.Subject_has_Email.query_s ().all ()
-    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
-    >>> PAP.Company_has_Email.query_s ().all ()
-    [PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', ))]
-    >>> PAP.Person_has_Email.query_s ().all ()
-    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Subject_has_Email.query_s ().all ())
+    [PAP.Person_has_Email (('glueck', 'martin', '', ''), ('martin@mangari.org', )), PAP.Company_has_Email (('lucky software', ''), ('lucky@mangari.org', )), PAP.Company_has_Email (('open source consulting', ''), ('office@runtux.com', )), PAP.Person_has_Email (('schlatterbeck', 'ralf', '', ''), ('ralf@runtux.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Company_has_Email.query_s ().all ())
+    [PAP.Company_has_Email (('lucky software', ''), ('lucky@mangari.org', )), PAP.Company_has_Email (('open source consulting', ''), ('office@runtux.com', ))]
+    >>> prepr (PAP.Person_has_Email.query_s ().all ())
+    [PAP.Person_has_Email (('glueck', 'martin', '', ''), ('martin@mangari.org', )), PAP.Person_has_Email (('schlatterbeck', 'ralf', '', ''), ('ralf@runtux.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
-    >>> PAP.Subject_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ()
-    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', ))]
-    >>> PAP.Subject_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ()
-    [PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
-    >>> PAP.Person_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ()
-    [PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', ))]
-    >>> PAP.Person_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ()
-    [PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Subject_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ())
+    [PAP.Person_has_Email (('glueck', 'martin', '', ''), ('martin@mangari.org', )), PAP.Company_has_Email (('lucky software', ''), ('lucky@mangari.org', ))]
+    >>> prepr (PAP.Subject_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ())
+    [PAP.Company_has_Email (('open source consulting', ''), ('office@runtux.com', )), PAP.Person_has_Email (('schlatterbeck', 'ralf', '', ''), ('ralf@runtux.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Person_has_Email.query_s (Q.right.address.ENDSWITH ("@mangari.org")).all ())
+    [PAP.Person_has_Email (('glueck', 'martin', '', ''), ('martin@mangari.org', ))]
+    >>> prepr (PAP.Person_has_Email.query_s (Q.right.address.CONTAINS (".co")).all ())
+    [PAP.Person_has_Email (('schlatterbeck', 'ralf', '', ''), ('ralf@runtux.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
-    >>> sorted (pg.emails, key = PAP.Email.sorted_by)
-    [PAP.Email (u'martin@mangari.org')]
-    >>> sorted (ps.emails, key = PAP.Email.sorted_by)
-    [PAP.Email (u'ralf@runtux.com')]
-    >>> sorted (pt.emails, key = PAP.Email.sorted_by)
-    [PAP.Email (u'tanzer@gg32.com'), PAP.Email (u'tanzer@swing.co.at')]
+    >>> prepr (sorted (pg.emails, key = PAP.Email.sorted_by))
+    [PAP.Email ('martin@mangari.org')]
+    >>> prepr (sorted (ps.emails, key = PAP.Email.sorted_by))
+    [PAP.Email ('ralf@runtux.com')]
+    >>> prepr (sorted (pt.emails, key = PAP.Email.sorted_by))
+    [PAP.Email ('tanzer@gg32.com'), PAP.Email ('tanzer@swing.co.at')]
 
     >>> _ = PAP.Company_has_Email (co, "ralf@runtux.com")
 
-    >>> sorted (cl.emails, key = PAP.Email.sorted_by)
-    [PAP.Email (u'lucky@mangari.org')]
-    >>> sorted (co.emails, key = PAP.Email.sorted_by)
-    [PAP.Email (u'office@runtux.com'), PAP.Email (u'ralf@runtux.com')]
+    >>> prepr (sorted (cl.emails, key = PAP.Email.sorted_by))
+    [PAP.Email ('lucky@mangari.org')]
+    >>> prepr (sorted (co.emails, key = PAP.Email.sorted_by))
+    [PAP.Email ('office@runtux.com'), PAP.Email ('ralf@runtux.com')]
 
     >>> rr = PAP.Email.instance ("ralf@runtux.com")
-    >>> sorted (rr.persons, key = PAP.Person.sorted_by)
-    [PAP.Person (u'schlatterbeck', u'ralf', u'', u'')]
-    >>> sorted (rr.companies, key = PAP.Company.sorted_by)
-    [PAP.Company (u'open source consulting', u'')]
+    >>> prepr (sorted (rr.persons, key = PAP.Person.sorted_by))
+    [PAP.Person ('schlatterbeck', 'ralf', '', '')]
+    >>> prepr (sorted (rr.companies, key = PAP.Company.sorted_by))
+    [PAP.Company ('open source consulting', '')]
 
-    >>> PAP.Subject_has_Property.query_s ().all ()
-    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Person_has_Email ((u'glueck', u'martin', u'', u''), (u'martin@mangari.org', )), PAP.Company_has_Email ((u'lucky software', u''), (u'lucky@mangari.org', )), PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16'), PAP.Company_has_Email ((u'open source consulting', u''), (u'office@runtux.com', )), PAP.Company_has_Email ((u'open source consulting', u''), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'schlatterbeck', u'ralf', u'', u''), (u'43', u'1', u'987654'), u''), PAP.Person_has_Email ((u'schlatterbeck', u'ralf', u'', u''), (u'ralf@runtux.com', )), PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
-    >>> PAP.Subject_has_Property.query_s (left = pt).all ()
-    [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Subject_has_Property.query_s ().all ())
+    [PAP.Person_has_Phone (('glueck', 'martin', '', ''), ('43', '1', '234567'), ''), PAP.Person_has_Email (('glueck', 'martin', '', ''), ('martin@mangari.org', )), PAP.Company_has_Email (('lucky software', ''), ('lucky@mangari.org', )), PAP.Company_has_Phone (('open source consulting', ''), ('43', '1', '246802'), '16'), PAP.Company_has_Email (('open source consulting', ''), ('office@runtux.com', )), PAP.Company_has_Email (('open source consulting', ''), ('ralf@runtux.com', )), PAP.Person_has_Phone (('schlatterbeck', 'ralf', '', ''), ('43', '1', '987654'), ''), PAP.Person_has_Email (('schlatterbeck', 'ralf', '', ''), ('ralf@runtux.com', )), PAP.Person_has_Phone (('tanzer', 'christian', '', ''), ('43', '1', '135790'), ''), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Subject_has_Property.query_s (left = pt).all ())
+    [PAP.Person_has_Phone (('tanzer', 'christian', '', ''), ('43', '1', '135790'), ''), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
-    >>> PAP.Subject_has_Property.query_s (subject = pt).all ()
-    [PAP.Person_has_Phone ((u'tanzer', u'christian', u'', u''), (u'43', u'1', u'135790'), u''), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@gg32.com', )), PAP.Person_has_Email ((u'tanzer', u'christian', u'', u''), (u'tanzer@swing.co.at', ))]
+    >>> prepr (PAP.Subject_has_Property.query_s (subject = pt).all ())
+    [PAP.Person_has_Phone (('tanzer', 'christian', '', ''), ('43', '1', '135790'), ''), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@gg32.com', )), PAP.Person_has_Email (('tanzer', 'christian', '', ''), ('tanzer@swing.co.at', ))]
 
-    >>> PAP.Subject_has_Phone.query_s (Q.right.number.CONTAINS ("2")).all ()
-    [PAP.Person_has_Phone ((u'glueck', u'martin', u'', u''), (u'43', u'1', u'234567'), u''), PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16')]
+    >>> prepr (PAP.Subject_has_Phone.query_s (Q.right.number.CONTAINS ("2")).all ())
+    [PAP.Person_has_Phone (('glueck', 'martin', '', ''), ('43', '1', '234567'), ''), PAP.Company_has_Phone (('open source consulting', ''), ('43', '1', '246802'), '16')]
 
-    >>> PAP.Subject_has_Phone.query_s (Q.extension != "").all ()
-    [PAP.Company_has_Phone ((u'open source consulting', u''), (u'43', u'1', u'246802'), u'16')]
+    >>> prepr (PAP.Subject_has_Phone.query_s (Q.extension != "").all ())
+    [PAP.Company_has_Phone (('open source consulting', ''), ('43', '1', '246802'), '16')]
 
     >>> def show_emails (ET) :
     ...     attr = ET.emails
@@ -179,8 +179,8 @@ _test_code = """
     <class '_GTW._OMP._PAP.Person.emails'> : `Email` linked to `Person` [ PAP.Person_has_Email ]
 
     >>> ET = PAP.Person_has_Address.E_Type
-    >>> sorted (ET.role_map)
-    ['Address', 'PAP.Address', 'PAP.Person', 'Person', u'address', u'left', u'person', u'right']
+    >>> prepr (sorted (ET.role_map))
+    ['Address', 'PAP.Address', 'PAP.Person', 'Person', 'address', 'left', 'person', 'right']
     >>> ET.Roles
     (Person `left`, Address `right`)
     >>> ET.edit_attr
@@ -395,8 +395,8 @@ _test_saw = """
          WHERE pap_company__1.name = :name_1
             OR pap_association__1.name = :name_2
     Parameters:
-         name_1               : u'ISAF'
-         name_2               : u'ISAF'
+         name_1               : 'ISAF'
+         name_2               : 'ISAF'
 
 """
 ### XXX auto cached roles are currently not supported

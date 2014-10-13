@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,8 +33,9 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM          import MOM
-from   _TFL          import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._SCM.Change
 import _MOM._SCM.History_Mixin
@@ -103,7 +104,7 @@ class Tracker (MOM.SCM.History_Mixin) :
         result = self._recorder (Change, * args, ** kw)
         self.total_changes += 1
         if self.dependents :
-            self._recorder.update (self.dependents.itervalues ())
+            self._recorder.update (pyk.itervalues (self.dependents))
         return result
     # end def record
 

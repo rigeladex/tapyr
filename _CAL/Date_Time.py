@@ -63,7 +63,7 @@ class Date_Time (CAL.Date, CAL.Time) :
     """Model a (gregorian) date plus time.
 
        >>> from _CAL.Delta import Date_Time_Delta as Delta
-       >>> d = Date_Time (2004, 10, 15, 16, 03, 14)
+       >>> d = Date_Time (2004, 10, 15, 16,  3, 14)
        >>> pyk.fprint (d)
        2004-10-15 16:03:14
        >>> d.year, d.month, d.day, d.datetime, d.week, d.weekday, d.ordinal
@@ -76,7 +76,7 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> d = d - 1
        >>> d.year, d.month, d.day, d.datetime, d.week, d.weekday, d.ordinal
        (2004, 10, 11, datetime.datetime(2004, 10, 11, 16, 3, 14), 42, 0, 731865)
-       >>> d1 = d2 = Date_Time (2004, 10, 15, 16, 03, 14)
+       >>> d1 = d2 = Date_Time (2004, 10, 15, 16,  3, 14)
        >>> id (d1) == id (d2)
        True
        >>> d1 += 1
@@ -149,16 +149,16 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> Date_Time.from_string_x ("+3d",  date = td)
        Date_Time (2014, 9, 22, 17, 23, 42, 0)
 
-       >>> Date_Time.from_string_x ("15:40", date = td, now = tt)
+       >>> Date_Time.from_string_x ("15:40", date = td, time = tt)
        Date_Time (2014, 9, 19, 15, 40, 0, 0)
 
-       >>> Date_Time.from_string_x ("15:40", date = td, now = tt, future = True)
+       >>> Date_Time.from_string_x ("15:40", date = td, time = tt, future = True)
        Date_Time (2014, 9, 20, 15, 40, 0, 0)
 
-       >>> Date_Time.from_string_x ("18:40", date = td, now = tt)
+       >>> Date_Time.from_string_x ("18:40", date = td, time = tt)
        Date_Time (2014, 9, 19, 18, 40, 0, 0)
 
-       >>> Date_Time.from_string_x ("18:40", date = td, now = tt, future = True)
+       >>> Date_Time.from_string_x ("18:40", date = td, time = tt, future = True)
        Date_Time (2014, 9, 19, 18, 40, 0, 0)
 
     """
@@ -334,7 +334,7 @@ class Date_Time (CAL.Date, CAL.Time) :
 class Date_Time_M (CAL._Mutable_DTW_) :
     """Mutable datetime object
 
-       >>> d1 = d2 = Date_Time_M (2004, 10, 15, 16, 03, 14)
+       >>> d1 = d2 = Date_Time_M (2004, 10, 15, 16,  3, 14)
        >>> pyk.fprint (d1, d2)
        2004-10-15 16:03:14 2004-10-15 16:03:14
        >>> id (d1) == id (d2)

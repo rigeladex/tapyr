@@ -56,8 +56,9 @@ import _GTW._RST._TOP.Page
 from   _MOM.import_MOM          import MOM
 
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Decorator           import getattr_safe
+from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 from   posixpath                import join as pp_join
 
@@ -149,7 +150,7 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     @getattr_safe
     def PNS (self) :
         result = self._PNS
-        if isinstance (result, basestring) :
+        if isinstance (result, pyk.string_types) :
             result = self._PNS = self.top.App_Type.PNS_Map [result]
         return result
     # end def PNS
@@ -238,10 +239,9 @@ class _RST_TOP_MOM_Doc_PNS_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
         PNS_graph = self.PNS_graph
         if PNS_graph is not None :
             from _MOM._Graph.SVG import Renderer as SVG_Renderer
-            from StringIO import StringIO
             g = PNS_graph.graph (self.top.App_Type)
             r = SVG_Renderer (g, want_document = want_document)
-            f = StringIO ()
+            f = pyk.StringIO ()
             r.render ()
             r.canvas.write_to_xml_stream (f)
             return f.getvalue ()
@@ -290,7 +290,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
     # end def __init__
 
     def resource_from_e_type (self, e_type) :
-        if isinstance (e_type, basestring) :
+        if isinstance (e_type, pyk.string_types) :
             e_type = self.App_Type.entity_type (e_type)
         if e_type :
             names  = e_type.type_name.split (".")
@@ -305,7 +305,7 @@ class _RST_TOP_MOM_Doc_App_Type_ (GTW.RST.MOM.Doc.Dir_Mixin, _Ancestor) :
 
     def _gen_entries (self) :
         app_type = self.top.App_Type
-        for k, pns in sorted (app_type.PNS_Set.iteritems ()) :
+        for k, pns in sorted (pyk.iteritems (app_type.PNS_Set)) :
             parent = self
             names  = [k]
             if "." in k :

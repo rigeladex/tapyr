@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,16 +37,18 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__                 import print_function
 
-from   _TFL           import TFL
-from   _TFL.pyk       import pyk
+from   _TFL                       import TFL
 
-from   _TFL.Regexp    import Regexp, re
+from   _TFL.pyk                   import pyk
+from   _TFL.Regexp                import Regexp, re
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import Math_Func
 
 @pyk.adapt__div__
+@totally_ordered
 class Ratio :
     """Model ratio of two integer numbers.
 
@@ -157,60 +159,26 @@ class Ratio :
         return result
     # end def normalized
 
-    def __int__ (self) :
-        return int (self.n / self.d)
-    # end def __int__
+    def __add__ (self, rhs) :
+        result  = self.__class__ (self)
+        result += rhs
+        return result
+    # end def __add__
+
+    __radd__ = __add__
+
+    def __eq__ (self, rhs) :
+        if rhs is None :
+            return False
+        else :
+            if not isinstance (rhs, Ratio) :
+                rhs = self.__class__ (rhs)
+            return float (self) == float (rhs)
+    # end def __eq__
 
     def __float__ (self) :
         return float (self.n / (1.0 * self.d))
     # end def __float__
-
-    def __str__ (self) :
-        return "%s / %s" % (self.n, self.d)
-    # end def __str__
-
-    def __repr__ (self) :
-        return "Ratio (%r)" % (str (self), )
-    # end def __repr__
-
-    def __imul__ (self, rhs) :
-        if not isinstance (rhs, Ratio) :
-            rhs = self.__class__ (rhs)
-        self.n *= rhs.n
-        self.d *= rhs.d
-        self.normalize ()
-        return self
-    # end def __imul__
-
-    def __mul__ (self, rhs) :
-        result  = self.__class__ (self)
-        result *= rhs
-        return result
-    # end def __mul__
-
-    __rmul__ = __mul__
-
-    def __itruediv__ (self, rhs) :
-        if not isinstance (rhs, Ratio) :
-            rhs = self.__class__ (rhs)
-        self   *= rhs.reciprocal ()
-        return self
-    # end def __itruediv__
-
-    def __truediv__ (self, rhs) :
-        result  = self.__class__ (self.n, self.d)
-        result /= rhs
-        return result
-    # end def __truediv__
-
-    def __rtruediv__ (self, lhs) :
-        ### XXX CED: Originally this one did not return a `Ratio` instance,
-        ### XXX but tried to keep the type of `lhs` ?
-        ### XXX If this would be preferable, all the other `__rXXX__`
-        ### XXX functions should do this also. Therefore `__rmul__`
-        ### XXX and `__radd__` should be implemented
-        return lhs * self.reciprocal ()
-    # end def __rtruediv__
 
     def __iadd__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
@@ -221,13 +189,18 @@ class Ratio :
         return self
     # end def __iadd__
 
-    def __add__ (self, rhs) :
-        result  = self.__class__ (self)
-        result += rhs
-        return result
-    # end def __add__
+    def __imul__ (self, rhs) :
+        if not isinstance (rhs, Ratio) :
+            rhs = self.__class__ (rhs)
+        self.n *= rhs.n
+        self.d *= rhs.d
+        self.normalize ()
+        return self
+    # end def __imul__
 
-    __radd__ = __add__
+    def __int__ (self) :
+        return int (self.n / self.d)
+    # end def __int__
 
     def __isub__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
@@ -235,6 +208,38 @@ class Ratio :
         self   += rhs.inversed ()
         return self
     # end def __isub__
+
+    def __itruediv__ (self, rhs) :
+        if not isinstance (rhs, Ratio) :
+            rhs = self.__class__ (rhs)
+        self   *= rhs.reciprocal ()
+        return self
+    # end def __itruediv__
+
+    def __lt__ (self, rhs) :
+        if rhs is None :
+            return False
+        else :
+            if not isinstance (rhs, Ratio) :
+                rhs = self.__class__ (rhs)
+            return float (self) < float (rhs)
+    # end def __lt__
+
+    def __mul__ (self, rhs) :
+        result  = self.__class__ (self)
+        result *= rhs
+        return result
+    # end def __mul__
+
+    __rmul__ = __mul__
+
+    def __repr__ (self) :
+        return "Ratio (%r)" % (str (self), )
+    # end def __repr__
+
+    def __str__ (self) :
+        return "%s / %s" % (self.n, self.d)
+    # end def __str__
 
     def __sub__ (self, rhs) :
         result  = self.__class__ (self)
@@ -246,14 +251,15 @@ class Ratio :
         return lhs + self.inversed ()
     # end def __rsub__
 
-    def __cmp__ (self, rhs) :
-        if rhs is None :
-            return cmp (float (self), rhs)
-        else :
-            if not isinstance (rhs, Ratio) :
-                rhs = self.__class__ (rhs)
-            return cmp (float (self), float (rhs))
-    # end def __cmp__
+    def __truediv__ (self, rhs) :
+        result  = self.__class__ (self.n, self.d)
+        result /= rhs
+        return result
+    # end def __truediv__
+
+    def __rtruediv__ (self, lhs) :
+        return lhs * self.reciprocal ()
+    # end def __rtruediv__
 
 # end class Ratio
 

@@ -29,6 +29,7 @@
 #     6-Dec-2013 (CT) Creation
 #    11-Dec-2013 (CT) Use `request.host`, not `.host_url`, for `Anti_CSRF`
 #    24-Feb-2014 (CT) Change `__repr__` to use `pyk.encoded`
+#    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    ««revision-date»»···
 #--
 
@@ -38,11 +39,10 @@ from   __future__ import absolute_import, unicode_literals
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-from   _TFL.pyk                 import pyk
-
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Formatter           import formatted_1
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.pyk                 import pyk
 
 import _GTW._RST
 
@@ -50,8 +50,6 @@ import _TFL._Meta.Object
 
 import base64
 import datetime
-import hashlib
-import hmac
 import logging
 import time
 
@@ -75,11 +73,7 @@ class _Base_ (TFL.Meta.Object) :
     def __init__ (self, request, data, ** kw) :
         time = request.current_time
         self.__dict__.update \
-            ( cargo     = base64.b64encode
-                (    data.encode (self.encoding)
-                if   isinstance  (data, pyk.text_type)
-                else data
-                )
+            ( cargo     = base64.b64encode (pyk.encoded (data, self.encoding))
             , data      = data
             , request   = request
             , time      = time
@@ -170,8 +164,7 @@ class _Base_ (TFL.Meta.Object) :
     # end def value
 
     def _signature (self, request, secrets, * parts) :
-        head    = unicode  (secrets).encode (self.encoding)
-        result  = hmac.new (head, digestmod = request.root.hash_fct)
+        result  = request.root.hash_fct.hmac (secrets)
         sig_sep = self.sig_sep
         for p in parts :
             result.update (sig_sep)
@@ -279,6 +272,7 @@ __doc__ = r"""
     >>> from   _GTW._Werkzeug import Werkzeug
     >>> from   _TFL.Record    import Record
     >>> import _GTW._Werkzeug.Request
+    >>> import _TFL.Secure_Hash
 
     >>> req = Record \
     ...     ( cookie_salt  = "<some-salt>"
@@ -288,7 +282,7 @@ __doc__ = r"""
     ...     , remote_addr  = "111.222.333.444"
     ...     , root         = Record
     ...         ( HTTP     = Werkzeug
-    ...         , hash_fct = hashlib.sha224
+    ...         , hash_fct = TFL.Secure_Hash.sha224
     ...         , scope    = Record (db_meta_data = Record (dbid = "ABCDEFG"))
     ...         )
     ...     , session      = Record (sid = 4711)

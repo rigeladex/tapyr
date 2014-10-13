@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -54,24 +54,24 @@ _test_code = """
     []
     >>> link = PAP.Person_has_Address (person, address1)
     >>> sorted (person.addresses) #2
-    [PAP.Address (u'street 1', u'zip', u'city', u'country')]
+    [PAP.Address ('street 1', 'zip', 'city', 'country')]
     >>> sorted (PAP.Person_has_Address.query ().all ())
-    [PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 1', u'zip', u'city', u'country'))]
+    [PAP.Person_has_Address (('test', 'person', '', ''), ('street 1', 'zip', 'city', 'country'))]
     >>> link.set (address = address2)
     1
     >>> sorted (person.addresses) #3
-    [PAP.Address (u'street 2', u'zip', u'city', u'country')]
+    [PAP.Address ('street 2', 'zip', 'city', 'country')]
     >>> link
-    PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country'))
+    PAP.Person_has_Address (('test', 'person', '', ''), ('street 2', 'zip', 'city', 'country'))
     >>> sorted (PAP.Person_has_Address.query ().all ())
-    [PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country'))]
+    [PAP.Person_has_Address (('test', 'person', '', ''), ('street 2', 'zip', 'city', 'country'))]
     >>> link.set_raw (right = address1.epk_raw)
     1
 
-    >>> [e.address for e in person.emails]
-    [u'person@example.com']
-    >>> [e.address for e in person2.emails]
-    [u'person2@example.com']
+    >>> prepr ([e.address for e in person.emails])
+    ['person@example.com']
+    >>> prepr ([e.address for e in person2.emails])
+    ['person2@example.com']
 
 
 """

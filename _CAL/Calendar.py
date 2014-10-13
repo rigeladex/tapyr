@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,12 +35,18 @@
 #    ««revision-date»»···
 #--
 
+from   __future__        import print_function
+
 from   _CAL              import CAL
 from   _TFL              import TFL
+
 import _CAL.Date
 import _CAL.Year
+
 import _TFL._Meta.Object
 import _TFL.Accessor
+
+from   _TFL.pyk          import pyk
 from   _TFL.predicate    import *
 from   _TFL              import sos
 
@@ -60,9 +66,9 @@ class _Cal_Dict_ (dict) :
                 result = self [key] = self.creator (key)
             except KeyboardInterrupt :
                 raise
-            except StandardError, exc :
-                print "_Cal_Dict_", self.creator, exc
-                raise KeyError, key
+            except Exception as exc :
+                print ("_Cal_Dict_", self.creator, exc)
+                raise KeyError (key)
             else :
                 return result
     # end def __getitem__
@@ -117,8 +123,10 @@ class Calendar (TFL.Meta.Object) :
         if wko in self._weeks :
             return self._weeks [wko]
         else :
-            print "%s._new_week is stymied: %s" % \
-                (self.__class__.__name__, wko)
+            print \
+                ( "%s._new_week is stymied: %s"
+                % (self.__class__.__name__, wko)
+                )
     # end def _new_week
 
     def _new_year (self, year) :

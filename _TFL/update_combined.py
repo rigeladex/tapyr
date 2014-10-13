@@ -204,7 +204,7 @@ replacing like the standard ``dict`` method ``update()``does .
     >>> formatted_1 (update_combined (l3, r3))
     "{'bar' : {1, 2, 3, 4, 5}, 'qux' : {4, 5}}"
 
-    >>> l4 = range (10)
+    >>> l4 = list (range (10))
     >>> r4 = filtered_list (20, 30, 40, filter = lambda x : bool (x % 2))
     >>> formatted_1 (l4)
     '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]'

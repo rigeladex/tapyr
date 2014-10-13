@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -84,7 +84,7 @@ r"""
     ...                  )
     ...     )
     >>> obj.default_render_mode = "mode_1"
-    >>> print env.from_string (template).render (obj = obj)
+    >>> print (env.from_string (template).render (obj = obj))
     <BLANKLINE>
        Mode-1  --  Macro 1
        call macro 2 in same mode (should be mode 1)
@@ -99,10 +99,11 @@ r"""
            Mode-2  --  Macro 3
 """
 
-from _JNJ.Environment import HTML
-from _TFL.Record      import *
-from  jinja2          import DictLoader
-from _GTW             import GTW
+from   __future__       import print_function
+from   _JNJ.Environment import HTML
+from   _TFL.Record      import *
+from   jinja2           import DictLoader
+from   _GTW             import GTW
 
 import _GTW._Form.Render_Mode_Description
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This program is free software; you can redistribute it and/or modify
@@ -50,13 +50,15 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
-from   _TFL              import sos
+from   __future__          import print_function
+
+from   _TFL                import TFL
+from   _TFL                import sos
+from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
 import _TFL.Environment
 
-import pickle
 import sys
 import traceback
 
@@ -82,14 +84,14 @@ class App_State (TFL.Meta.Object) :
         try :
             return self.state [name]
         except KeyError :
-            raise AttributeError, name
+            raise AttributeError (name)
     # end def __getattr__
 
     def __setattr__ (self, name, value) :
         if name in self.state :
             self.state [name] = value
         else :
-            raise AttributeError, name
+            raise AttributeError (name)
     # end def __setattr__
 
     def __repr__ (self) :
@@ -115,8 +117,8 @@ class App_State (TFL.Meta.Object) :
                     , root = win32con.HKEY_CURRENT_USER
                     )
                 if state.value :
-                    state = pickle.loads  (state.value)
-                    self.state.update     (state)
+                    state = pyk.pickle.loads (state.value)
+                    self.state.update (state)
             except (SystemExit, KeyboardInterrupt) :
                 raise
             except win32api.error :
@@ -132,13 +134,13 @@ class App_State (TFL.Meta.Object) :
                     ( r"%s" % self.foldername ()
                     , root = win32con.HKEY_CURRENT_USER
                     )
-                state     = pickle.dumps   ( self.state, self.bin)
-                reg_entry.write            ( "state", state)
+                state     = pyk.pickle.dumps (self.state, self.bin)
+                reg_entry.write ("state", state)
             except (SystemExit, KeyboardInterrupt) :
                 raise
-            except win32api.error, exc :
-                print "Could not write application state to Windows registry"
-                print exc
+            except win32api.error as exc :
+                print ("Could not write application state to Windows registry")
+                print (exc)
             except :
                 traceback.print_exc ()
         # end def dump
@@ -151,12 +153,9 @@ class App_State (TFL.Meta.Object) :
         def load (self) :
             """Load persistent application state from rc file"""
             try :
-                file = open (self.filename (), "rb")
-                try     :
-                    state = pickle.load  (file)
-                    self.state.update    (state)
-                finally :
-                    file.close           ()
+                with open (self.filename (), "rb") as file :
+                    state = pyk.pickle.load (file)
+                    self.state.update (state)
             except (SystemExit, KeyboardInterrupt) :
                 raise
             except :
@@ -166,12 +165,9 @@ class App_State (TFL.Meta.Object) :
         def dump (self) :
             """Dump persistent application state to rc file"""
             try :
-                state = pickle.dumps (self.state, self.bin)
-                file  = open         (self.filename (), "wb")
-                try :
+                state = pyk.pickle.dumps (self.state, self.bin)
+                with open (self.filename (), "wb") as file :
                     file.write (state)
-                finally :
-                    file.close ()
             except (SystemExit, KeyboardInterrupt) :
                 raise
             except :

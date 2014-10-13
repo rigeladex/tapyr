@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -65,7 +65,7 @@ class Existing_Translations (object) :
 
 # end class Existing_Translations
 
-class Skip (StandardError) : pass
+class Skip (Exception) : pass
 
 Default_Keywords = dict \
     ( _         = (1, )
@@ -107,7 +107,7 @@ def Extract (dirname, template_file, config, cmd) :
                                 raise Skip
                         filepath = os.path.join (absname, filename)
                         rfp      = TFL.relative_to_python_path (filepath)
-                        print "Method `%-10s`: `%s" % (method_name, filename)
+                        print ("Method `%-10s`: `%s" % (method_name, filename))
                         trans = config.get ("loaded_translations", method_name)
                         for lineno, message, comments, found_in in \
                                 _extract_from_file    \
@@ -127,8 +127,8 @@ def Extract (dirname, template_file, config, cmd) :
                                     )
                         break
             except Skip :
-                print "Ignore             : `%s" % (filename, )
-    print >> sys.stderr, "Create template file", template_file
+                print ("Ignore             : `%s" % (filename, ))
+    print ("Create template file", template_file, file = sys.stderr)
     po_file.save (template_file)
 # end def Extract
 
@@ -170,7 +170,7 @@ def _extract_from_file (method_name, file_name, config, cmd, keywords) :
         if not messages [first_msg_index]:
             # An empty string msgid isn't valid, emit a warning
             where = '%s:%i' % (file_name, lineno)
-            print >> sys.stderr, empty_msgid_warning % where
+            print (empty_msgid_warning % where, file = sys.stderr)
             continue
         messages = tuple (msgs)
         if len (messages) == 1:

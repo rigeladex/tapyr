@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -127,19 +127,23 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
-from   _TFL.predicate    import *
-from   _TFL.Regexp       import Regexp, re
-from   _TFL.Filename     import Filename
-from   _TFL.Importers    import DPN_Importer, DERIVED_PNS_TOKEN
-from   _TFL.Composition  import Composition
+from   _TFL                       import TFL
 
-import sys
+from   _TFL.Composition           import Composition
+from   _TFL.Filename              import Filename
+from   _TFL.Importers             import DPN_Importer, DERIVED_PNS_TOKEN
+from   _TFL.Regexp                import Regexp, re
+from   _TFL.predicate             import *
+from   _TFL.pyk                   import pyk
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL._Meta.Object
 import _TFL.CAO
 import _TFL.sos
 
+import sys
+
+@totally_ordered
 class P_M (TFL.Meta.Object) :
     """Encapsulate a python module found by Import_Closure"""
 
@@ -177,16 +181,25 @@ class P_M (TFL.Meta.Object) :
                )
     # end def pkg_chain
 
-    def __cmp__ (self, rhs) :
+    def __eq__ (self, rhs) :
         try :
-            return cmp (self.path_name, rhs.path_name)
+            rhs = rhs.path_name
         except AttributeError :
-            return cmp (self.path_name, rhs)
-    # end def __cmp__
+            pass
+        return self.path_name == rhs
+    # end def __eq__
 
     def __hash__ (self) :
         return hash (self.path_name)
     # end def __hash__
+
+    def __lt__ (self, rhs) :
+        try :
+            rhs = rhs.path_name
+        except AttributeError :
+            pass
+        return self.path_name < rhs
+    # end def __lt__
 
     def __repr__ (self) :
         return "%s (%r, %r, %r)" % \
@@ -237,7 +250,7 @@ class Derived_PNS_Finder (TFL.Meta.Object) :
     def _build_closure (self, res) :
         dct    = dict (filter (None, res))
         result = {}
-        for key, val in dct.iteritems () :
+        for key, val in pyk.iteritems (dct) :
             token = [DERIVED_PNS_TOKEN, key]
             while val :
                 token.append (val)
@@ -486,7 +499,7 @@ class Import_Closure :
     def __sub__ (self, rhs) :
         result = self.__class__.new \
             (self.root_pym, self.import_path, self.ignore)
-        for k, pym in self.pym_dict.iteritems () :
+        for k, pym in pyk.iteritems (self.pym_dict) :
             if k not in rhs.pym_dict :
                 result._add (pym)
                 pn = pym.pkg
@@ -565,5 +578,4 @@ if __name__ != "__main__":
     TFL._Export ("Import_Closure", "Derived_PNS_Finder")
 else :
     _Command ()
-#    main (command_spec ())
 ### __END__ TFL.Import_Closure

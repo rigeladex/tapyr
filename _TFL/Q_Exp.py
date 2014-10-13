@@ -359,7 +359,6 @@ q-expressions::
 from   __future__                 import division, print_function
 
 from   _TFL                       import TFL
-from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -369,6 +368,8 @@ import _TFL.Undef
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch, Single_Dispatch_Method
 from   _TFL.predicate             import callable
+from   _TFL.portable_repr         import portable_repr
+from   _TFL.pyk                   import pyk
 
 import operator
 
@@ -616,7 +617,7 @@ class _Aggr_ (Q_Root) :
     # end def predicate
 
     def __repr__ (self) :
-        return "Q.%s (%r)" % (self.op_name, self.rhs, )
+        return "Q.%s (%s)" % (self.op_name, portable_repr (self.rhs))
     # end def __repr__
 
 # end class _Aggr_
@@ -701,7 +702,8 @@ class _Bin_ (Q_Root) :
         lhs, rhs = self.lhs, self.rhs
         if self.reverse :
             lhs, rhs = rhs, lhs
-        return "%s %s %s" % (lhs, self.op_map.get (op, op), rhs)
+        return "%s %s %s" % \
+            (portable_repr (lhs), self.op_map.get (op, op), portable_repr (rhs))
     # end def __repr__
 
 # end class _Bin_
@@ -711,10 +713,22 @@ class _Bin_ (Q_Root) :
 class _Una_ (Q_Root) :
     """Unary query expression"""
 
+    ### Python 3 uses non-thunder names, map everything to canonical names
+    name_map             = dict \
+        ( __invert__     = "__not__"
+        , __neg__        = "__neg__"
+        , __not__        = "__not__"
+        , invert         = "__not__"
+        , neg            = "__neg__"
+        , not_           = "__not__"
+        )
     op_map               = dict \
         ( __invert__     = "~"
         , __not__        = "~"
         , __neg__        = "-"
+        , invert         = "~"
+        , neg            = "-"
+        , not_           = "~"
         )
     op_patch             = dict \
         ( _Una_Bool_     = dict
@@ -749,7 +763,7 @@ class _Una_ (Q_Root) :
     def __repr__ (self) :
         op  = self.op.__name__
         lhs = self.lhs
-        return "%s %s" % (self.op_map.get (op, op), lhs)
+        return "%s %s" % (self.op_map.get (op, op), portable_repr (lhs))
     # end def __repr__
 
 # end class _Una_
@@ -784,7 +798,7 @@ class _Call_ (Q_Root) :
 
     def __repr__ (self) :
         op = self.op.__name__
-        return "%s.%s %r" % (self.lhs, op, self.args)
+        return "%s.%s %s" % (self.lhs, op, portable_repr (self.args))
     # end def __repr__
 
 # end class _Call_

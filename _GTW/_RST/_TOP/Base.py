@@ -360,7 +360,10 @@ class _TOP_Base_ (_Ancestor) :
     # end def etype_manager
 
     def formatted (self, sep = "\n    ") :
-        kvs = ("%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
+        kvs = \
+            (   "%s : %r" % (k, v)
+            for (k, v) in sorted (pyk.iteritems (self._kw))
+            )
         return "<%s %s\n    %s\n  >" % (self.Type, self.name, sep.join (kvs))
     # end def formatted
 

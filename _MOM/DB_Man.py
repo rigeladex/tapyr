@@ -41,11 +41,13 @@
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Object
 import _TFL.Record
 import _MOM.Legacy_Lifter
 
+@pyk.adapt__str__
 class DB_Man (TFL.Meta.Object) :
     """Manager for data bases of MOM."""
 
