@@ -39,17 +39,18 @@
 
 from   __future__ import absolute_import, division, print_function, unicode_literals
 
-from    _MOM             import MOM
-from    _TFL             import TFL
+from    _MOM                 import MOM
+from    _TFL                 import TFL
+from   _TFL.pyk              import pyk
 
 import  _TFL._Meta.Object
 import  _TFL.import_module
-import  _TFL.sos         as     os
+import  _TFL.sos             as     os
 
-class _MOM_Legacy_Lifter_ (object) :
+class _MOM_Legacy_Lifter_ \
+          (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Auto_Combine_Dicts)) :
     """Base class for project specific legacy lifters"""
 
-    __metaclass__      = TFL.Meta.M_Auto_Combine_Dicts
     _real_name         = "Legacy_Lifter"
 
     _dicts_to_combine  = \
@@ -116,7 +117,7 @@ class _MOM_Legacy_Lifter_ (object) :
             result = map [type_name] = []
             apt    = self.db_man.app_type
             pc_et  = apt [type_name]
-            for tn, et_lifter_name in self.E_Type_Lifter.iteritems () :
+            for tn, et_lifter_name in pyk.iteritems (self.E_Type_Lifter) :
                 et = apt [tn]
                 if issubclass (pc_et, et) :
                     result.append (getattr (self, et_lifter_name))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2014 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -92,10 +92,8 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Manager_
 
-class _Manager_ (TFL.Meta.Object) :
+class _Manager_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Manager_)) :
     """Base class for database backend specific _Manager_ classes"""
-
-    __metaclass__    = _M_Manager_
 
     Pid_Manager      = MOM.DBW.Pid_Manager
     type_name        = "Bare"

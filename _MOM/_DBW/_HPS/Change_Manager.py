@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.DBW.HPS.
@@ -32,8 +32,9 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM       import MOM
-from   _TFL       import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._DBW._HPS
 
@@ -68,7 +69,7 @@ class Change_Manager (TFL.Meta.Object) :
     # end def rollback
 
     def __iter__ (self) :
-        return self.table.itervalues ()
+        return pyk.itervalues (self.table)
     # end def __iter__
 
 # end class Change_Manager

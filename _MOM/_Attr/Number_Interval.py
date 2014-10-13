@@ -50,6 +50,8 @@ from   __future__            import unicode_literals
 from   _MOM.import_MOM       import *
 from   _MOM.import_MOM       import _A_Composite_, _A_Number_
 
+from   _TFL.pyk              import pyk
+
 import _TFL.Caller
 
 _Ancestor_Essence = MOM.An_Entity
@@ -204,7 +206,7 @@ class A_Int_Interval_C (A_Int_Interval) :
 # end class A_Int_Interval_C
 
 __all__ = tuple \
-    (  k for (k, v) in globals ().iteritems ()
+    (  k for (k, v) in pyk.iteritems (globals ())
     if is_attr_type (v) and not v.__name__ == "_Interval_"
     )
 

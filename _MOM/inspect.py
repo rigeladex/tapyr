@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
@@ -38,10 +38,11 @@
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
 
-from   _MOM import MOM
-from   _TFL import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
 
-from   _TFL.Formatter           import formatted_1
+from   _TFL.Formatter        import formatted_1
+from   _TFL.pyk              import pyk
 
 import _MOM._Meta.M_Entity
 import _TFL.Accessor
@@ -57,7 +58,7 @@ def children_trans_iter (T, level = 0, seen = None, sort_key = None) :
     if sort_key is None :
         sort_key = TFL.Getter.i_rank
     yield T, level
-    for c in sorted (T.children.itervalues (), key = sort_key) :
+    for c in sorted (pyk.itervalues (T.children), key = sort_key) :
         if c not in seen :
             seen.add (c)
             for cc, l in children_trans_iter (c, level + 1, seen, sort_key) :
@@ -84,7 +85,7 @@ def show_children (T, bi = "  ", level = 0, seen = None) :
         seen = set ()
     print ("%s%s" % (bi * level, T.type_name))
     l1 = level + 1
-    for c in sorted (T.children.itervalues (), key = TFL.Getter.i_rank) :
+    for c in sorted (pyk.itervalues (T.children), key = TFL.Getter.i_rank) :
         if c not in seen :
             show_children (c, bi, l1, seen)
             seen.add (c)
@@ -99,7 +100,7 @@ def show_ref_map (T, name) :
             , "\n    ".join
                 ( sorted
                     (   formatted_1 ((c.type_name, sorted (eias)))
-                    for c, eias in map.iteritems ()
+                    for c, eias in pyk.iteritems (map)
                     )
                 )
             )

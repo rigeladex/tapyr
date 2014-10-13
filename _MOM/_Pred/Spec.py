@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -41,8 +41,11 @@
 #    ««revision-date»»···
 #--
 
+from   __future__            import unicode_literals, print_function
+
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._Meta.M_Pred_Spec
 import _MOM._Pred.Kind
@@ -53,7 +56,7 @@ import _TFL._Meta.Property
 import _TFL._Meta.Once_Property
 import _TFL.defaultdict
 
-class Spec (MOM.Prop.Spec) :
+class Spec (TFL.Meta.BaM (MOM.Prop.Spec, metaclass = MOM.Meta.M_Pred_Spec)) :
     """Predicate specification for MOM entities (objects and links).
 
        A :class:`~_MOM.Entity.Entity` class contains a descendent of `Spec`
@@ -65,7 +68,6 @@ class Spec (MOM.Prop.Spec) :
        to the `E_Type`.
     """
 
-    __metaclass__   = MOM.Meta.M_Pred_Spec
 
     _Prop_Pkg       = MOM.Pred
     _Prop_Spec_Name = "_Predicates"
@@ -93,7 +95,7 @@ class Spec (MOM.Prop.Spec) :
 
     def _create_properties (self, e_type) :
         self.__super._create_properties (e_type)
-        for n, a in e_type.attributes.iteritems () :
+        for n, a in pyk.iteritems (e_type.attributes) :
             self._setup_attr_checker (e_type, a)
         if e_type.epk_sig :
             uniq_epk = MOM.Pred.Unique.New_Pred \
@@ -113,7 +115,7 @@ class Spec (MOM.Prop.Spec) :
         kind = (MOM.Pred.Object, MOM.Pred.System) [attr.electric]
         stem = "AC_check_%s" % (attr.name, )
         for i, check in enumerate (attr._checkers (e_type)) :
-            if isinstance (check, basestring) :
+            if isinstance (check, pyk.string_types) :
                 name      = "%s_%d" % (stem, i)
                 c_kind    = kind
                 prop_type = MOM.Pred.Attribute_Check (name, attr.name, check)
@@ -130,7 +132,7 @@ class Spec (MOM.Prop.Spec) :
                     )
                 self._setup_prop (e_type, name, c_kind.kind, checker)
             else :
-                print e_type, attr, check
+                print (e_type, attr, check)
     # end def _setup_attr_checker
 
 # end class Spec

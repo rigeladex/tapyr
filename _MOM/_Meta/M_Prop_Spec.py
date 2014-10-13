@@ -40,8 +40,11 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM                import MOM
-from   _TFL                import TFL
+from   __future__            import unicode_literals, print_function
+
+from   _MOM                  import MOM
+from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _TFL._Meta.M_Class
 import _MOM._Meta.M_Prop_Type
@@ -62,12 +65,12 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
             _names.update (getattr (b, "_names", {}))
         _own_names.update \
             (  (n, v)
-            for n, v in _names.iteritems () if v and v.dyn_doc_p
+            for n, v in pyk.iteritems (_names) if v and v.dyn_doc_p
             )
         Overrides = dct.get ("_Overrides")
         if Overrides and cls not in cls._Overridden :
             cls._Overridden.add (cls)
-            for k, o in Overrides.iteritems () :
+            for k, o in pyk.iteritems (Overrides) :
                 try :
                     p = getattr (cls, k)
                 except KeyError :
@@ -80,7 +83,7 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
                         ( k, (p, ), dict (o, __module__ = cls.__module__))
                     setattr (cls, k, d)
         auto_up_depends = set ()
-        for n, v in dct.iteritems () :
+        for n, v in pyk.iteritems (dct) :
             if getattr (v, "is_partial_p", True) or n == "_Overrides" :
                 continue
             if v is None :
@@ -100,7 +103,7 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
                     try :
                         del _names [bn]
                     except KeyError :
-                        print cls, v, n, bn
+                        print (cls, v, n, bn)
                         raise
             elif n in _names :
                 raise cls._m_inconsistent_prop (n, v, _names, dct)

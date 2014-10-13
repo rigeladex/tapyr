@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.SCM.
@@ -52,10 +52,13 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM               import MOM
-from   _TFL               import TFL
+from   _MOM                  import MOM
+from   _TFL                  import TFL
 
 import _MOM._SCM.Change
+
+from   _TFL.portable_repr    import portable_repr
+from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
@@ -70,7 +73,7 @@ class _Entity_Summary_ (TFL.Meta.Object) :
 
     def check_attr_conflicts (self, entity, initial_values) :
         result = False
-        for name, acs in self.attribute_changes.iteritems () :
+        for name, acs in pyk.iteritems (self.attribute_changes) :
             attr    = entity.attr_prop   (name)
             ini     = initial_values.get (name)
             result += acs.check_conflict (attr, entity, ini)
@@ -80,7 +83,7 @@ class _Entity_Summary_ (TFL.Meta.Object) :
     def check_ini_vs_cur (self, entity, initial_values, r_name) :
         result    = False
         check_all = not self.is_dead
-        for name, ini in initial_values.iteritems () :
+        for name, ini in pyk.iteritems (initial_values) :
             attr  = entity.attr_prop (name)
             if check_all or not attr.electric :
                 result += acs.check_ini_vs_cur (attr, entity, ini, r_name)
@@ -89,6 +92,7 @@ class _Entity_Summary_ (TFL.Meta.Object) :
 
 # end class _Entity_Summary_
 
+@pyk.adapt__bool__
 class Attr_Summary (TFL.Meta.Object) :
     """Change summary for a single attribute of a single `pid`."""
 
@@ -122,16 +126,18 @@ class Attr_Summary (TFL.Meta.Object) :
         return result
     # end def check_ini_vs_cur
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.old is not self.undef
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
-        return "(old = %r, new = %r)" % (self.old, self.new)
+        return "(old = %s, new = %s)" % \
+            (portable_repr (self.old), portable_repr (self.new))
     # end def __repr__
 
 # end class Attr_Summary
 
+@pyk.adapt__bool__
 class Attr_C_Summary (_Entity_Summary_) :
     """Change summary for a composite attribute of a single `pid`."""
 
@@ -154,7 +160,7 @@ class Attr_C_Summary (_Entity_Summary_) :
     def cur (self) :
         return tuple \
             (   (k, v.cur)
-            for (k, v) in sorted (self.attribute_changes.iteritems ())
+            for (k, v) in sorted (pyk.iteritems (self.attribute_changes))
             )
     # end def cur
 
@@ -162,7 +168,7 @@ class Attr_C_Summary (_Entity_Summary_) :
     def new (self) :
         return tuple \
             (   (k, v.new)
-            for (k, v) in sorted (self.attribute_changes.iteritems ())
+            for (k, v) in sorted (pyk.iteritems (self.attribute_changes))
             )
     # end def new
 
@@ -170,7 +176,7 @@ class Attr_C_Summary (_Entity_Summary_) :
     def old (self) :
         return tuple \
             (   (k, v.old)
-            for (k, v) in sorted (self.attribute_changes.iteritems ())
+            for (k, v) in sorted (pyk.iteritems (self.attribute_changes))
             )
     # end def old
 
@@ -200,15 +206,15 @@ class Attr_C_Summary (_Entity_Summary_) :
     # end def items
 
     def iteritems (self) :
-        return self.attribute_changes.iteritems ()
+        return pyk.iteritems (self.attribute_changes)
     # end def iteritems
 
     def iterkeys (self) :
-        return self.attribute_changes.iterkeys ()
+        return pyk.iterkeys (self.attribute_changes)
     # end def iterkeys
 
     def itervalues (self) :
-        return self.attribute_changes.itervalues ()
+        return pyk.itervalues (self.attribute_changes)
     # end def itervalues
 
     def keys (self) :
@@ -231,20 +237,22 @@ class Attr_C_Summary (_Entity_Summary_) :
         return len (self.attribute_changes)
     # end def __len__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self.attribute_changes)
-    # end def __nonzero__
+    # end def __bool__
 
     def __getitem__ (self, key) :
         return self.attribute_changes [key]
     # end def __getitem__
 
     def __repr__ (self) :
-        return "(old = %r, new = %r)" % (self.old, self.new)
+        return "(old = %s, new = %s)" % \
+            (portable_repr (self.old), portable_repr (self.new))
     # end def __repr__
 
 # end class Attr_C_Summary
 
+@pyk.adapt__bool__
 class Pid (_Entity_Summary_) :
     """Change summary for a single `pid`."""
 
@@ -271,7 +279,7 @@ class Pid (_Entity_Summary_) :
                     new = c.new_attr.get (a)
                 res = (result if a == "last_cid" else r)
                 res [a].add (old, new)
-        for a, ra in list (result.iteritems ()) :
+        for a, ra in list (pyk.iteritems (result)) :
             if ra.old == ra.new :
                 del result [a]
         return result
@@ -321,7 +329,7 @@ class Pid (_Entity_Summary_) :
     def apply (self, scope) :
         kw = dict \
             ( (name, acs.new)
-            for name, acs in self.attribute_changes.iteritems ()
+            for name, acs in pyk.iteritems (self.attribute_changes)
             if  acs.merges and not acs.conflicts
             )
         if self.is_born and not self.entity :
@@ -354,9 +362,9 @@ class Pid (_Entity_Summary_) :
         return len (self._changes)
     # end def __len__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._changes) and not (self.is_born and self.is_dead)
-    # end def __nonzero__
+    # end def __bool__
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())
@@ -364,6 +372,7 @@ class Pid (_Entity_Summary_) :
 
 # end class Pid
 
+@pyk.adapt__bool__
 class Summary (TFL.Meta.Object) :
     """Summary of changes per `pid`"""
 
@@ -383,7 +392,7 @@ class Summary (TFL.Meta.Object) :
     @property
     def changed_attrs (self) :
         result = dict ()
-        for pid, csp in self.by_pid.iteritems () :
+        for pid, csp in pyk.iteritems (self.by_pid) :
             if csp.changed_attrs and not csp.is_dead :
                 result [pid] = csp.changed_attrs
         return result
@@ -405,7 +414,7 @@ class Summary (TFL.Meta.Object) :
         """
         result = self.conflicts, self.merges = set (), set ()
         by_epk = self.by_epk
-        for csp in self.by_pid.itervalues () :
+        for csp in pyk.itervalues (self.by_pid) :
             args = (initial_values.get (csp.pid, {}), scope, csp) + result
             by_epk [(csp.type_name, csp.epk)] = csp
             if csp.is_dead :
@@ -418,7 +427,7 @@ class Summary (TFL.Meta.Object) :
     # end def change_conflicts
 
     def entities (self, ems) :
-        for pid, csp in self.by_pid.iteritems () :
+        for pid, csp in pyk.iteritems (self.by_pid) :
             if not csp.is_dead :
                 yield ems.pid_query (pid)
     # end def entities
@@ -498,9 +507,9 @@ class Summary (TFL.Meta.Object) :
         return len (self._changes)
     # end def __len__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return bool (self._changes)
-    # end def __nonzero__
+    # end def __bool__
 
 # end class Summary
 

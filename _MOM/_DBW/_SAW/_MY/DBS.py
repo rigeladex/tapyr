@@ -87,7 +87,7 @@ class MY_DBS (MOM.DBW.SAW._NFB_DBS_) :
         ### not exist (even using the IF EXISTS clause)
         try :
             engine.execute ("use %s" % (str (db_url.path), ))
-        except SA.Exception.OperationalError, exc :
+        except SA.Exception.OperationalError as exc :
             if (  '(1049, "Unknown database \'%s\'")' % (db_url.path, )
                not in exc.message
                ) :

@@ -52,6 +52,7 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 
 from   _TFL.predicate        import uniq
+from   _TFL.pyk              import pyk
 
 import _MOM._Attr.Selector
 
@@ -90,7 +91,7 @@ class Completer (TFL.Meta.Object) :
         ETM = scope [self.etn]
         if ETM_R is None :
             ETM_R = ETM
-        vd  = dict  ((k, v) for k, v in val_dict.iteritems () if v != "")
+        vd  = dict  ((k, v) for k, v in pyk.iteritems (val_dict) if v != "")
         fs  = tuple (ETM.ac_query_attrs (self.names, vd, AQ))
         if fs or self.treshold == 0 :
             q = ETM_R.query_s (* fs)

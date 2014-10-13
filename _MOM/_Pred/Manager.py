@@ -50,6 +50,7 @@ import _MOM.Error
 import _TFL._Meta.Object
 
 from   _TFL.predicate        import callable, dusplit
+from   _TFL.pyk              import pyk
 
 import itertools
 
@@ -66,20 +67,20 @@ class Manager (TFL.Meta.Object) :
         self.reset_predicates  ()
     # end def __init__
 
-    has_errors   = property (lambda s : any (s.errors.itervalues   ()))
-    has_warnings = property (lambda s : any (s.warnings.itervalues ()))
+    has_errors   = property (lambda s : any (pyk.itervalues   (s.errors)))
+    has_warnings = property (lambda s : any (pyk.itervalues (s.warnings)))
 
     def reset_predicates (self) :
         self.errors   = errors   = {}
         self.warnings = warnings = {}
         self.missing_required    = None
-        for k in self.pred_kind.iterkeys () :
+        for k in pyk.iterkeys (self.pred_kind) :
             errors   [k] = []
             warnings [k] = []
     # end def reset_predicates
 
     def check_all (self, obj, attr_dict = {}) :
-        for k in self.pred_kind.iterkeys () :
+        for k in pyk.iterkeys (self.pred_kind) :
             self.check_kind (k, obj, attr_dict)
         return MOM.Pred.Err_and_Warn_List (self.errors, self.warnings)
     # end def check_all
@@ -160,11 +161,11 @@ class Manager (TFL.Meta.Object) :
                        )
             else :
                 return lambda obj, attr_dict = {} : []
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __iter__ (self) :
-        result = itertools.chain (* self.errors.itervalues ())
+        result = itertools.chain (* pyk.itervalues (self.errors))
         if self.missing_required is not None :
             result = itertools.chain ([self.missing_required], result)
         return result

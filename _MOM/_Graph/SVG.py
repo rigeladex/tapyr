@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -56,6 +56,7 @@ import _MOM._Graph.Entity
 import _MOM._Graph.Relation
 
 from   _TFL.predicate         import pairwise
+from   _TFL.pyk               import pyk
 from   _TFL._SDG._XML._SVG    import SVG
 from   _TFL._D2               import D2, Cardinal_Direction as CD
 
@@ -160,7 +161,7 @@ class Renderer (MOM.Graph._Renderer_) :
         lkind = link.relation.kind.lower ()
         kw   = dict \
             (   ("marker_%s" % (k, ), "url(#%s)" % (v, ))
-            for k, v in self.link_markers.get (lkind, {}).iteritems ()
+            for k, v in pyk.iteritems (self.link_markers.get (lkind, {}))
             )
         colr = getattr (P.color, "%s_link" % lkind)
         paid = "%s::path" % (rel.rid, )

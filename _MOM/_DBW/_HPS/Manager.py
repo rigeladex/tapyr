@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -106,10 +106,8 @@ class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
 
 # end class _M_HPS_Manager_
 
-class Manager (MOM.DBW._Manager_) :
+class Manager (TFL.Meta.BaM (MOM.DBW._Manager_, metaclass = _M_HPS_Manager_)) :
     """Database wrapper for Hash-Pickle-Store."""
-
-    __metaclass__ = _M_HPS_Manager_
 
     Pid_Manager   = MOM.DBW.HPS.Pid_Manager
 

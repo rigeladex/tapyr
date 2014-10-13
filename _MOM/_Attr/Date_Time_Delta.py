@@ -103,7 +103,7 @@ class A_Date_Time_Delta (_Ancestor_Essence) :
                     r.append (".%06d" % value.microseconds)
                 return "".join (r)
             else :
-                return unicode (value)
+                return pyk.text_type (value)
         return ""
     # end def as_string
 
@@ -121,7 +121,7 @@ class A_Date_Time_Delta (_Ancestor_Essence) :
 
 # end class A_Date_Time_Delta
 
-__all__ = tuple (k for (k, v) in globals ().iteritems () if is_attr_type (v))
+__all__ = tuple (k for (k, v) in pyk.iteritems (globals ()) if is_attr_type (v))
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

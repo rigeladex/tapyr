@@ -81,6 +81,7 @@ from   _MOM.Q_Exp            import Q
 import _MOM._Attr
 
 from   _TFL.I18N             import _
+from   _TFL.pyk              import pyk
 from   _TFL.Regexp           import Regexp, re
 
 import _TFL._Meta.Object
@@ -117,10 +118,8 @@ class _M_Filter_ (TFL.Meta.Object.__class__) :
 
 # end class _M_Filter_
 
-class _Filter_ (TFL.Meta.Object) :
+class _Filter_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Filter_)) :
     """Base class for attribute filters."""
-
-    __metaclass__ = _M_Filter_
 
     op_fct        = None ### Must be redefined for subclasses or instances
     op_sym        = None ### Must be redefined for subclasses
@@ -194,7 +193,7 @@ class _Composite_ (_Filter_) :
         E_Type = self.attr.E_Type
         def _gen () :
             if value is not None :
-                for k, v in sorted (value.iteritems ()) :
+                for k, v in sorted (pyk.iteritems (value)) :
                     qk   = getattr (q,  k)
                     qop  = getattr (qk, self.base_op_key)
                     r    = qop     (v)
@@ -251,7 +250,7 @@ class _Id_Entity_ (_Composite_) :
         if isinstance (value, dict) :
             return self.__super.__call__ (value)
         else :
-            if isinstance (value, basestring) :
+            if isinstance (value, pyk.string_types) :
                 value = int (value) if value else None
             return self.query (value)
     # end def __call__
@@ -363,7 +362,7 @@ class In (_Filter_) :
     def cooker (self) :
         qc = self.querier._cooker
         def _ (v) :
-            if isinstance (v, basestring) :
+            if isinstance (v, pyk.string_types) :
                 v = list (x.strip () for x in v.split (","))
             return list (qc (x) for x in v)
         return _

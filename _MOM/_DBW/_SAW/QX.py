@@ -71,6 +71,9 @@
 #                     `_Kind_Partial_Restricted_._children`
 #    23-Sep-2014 (CT) Use `_polymorphic_x` in `_add_joins_col` and
 #                     `_add_join_parent`, too
+#    10-Oct-2014 (CT) Protect access to `operator.__div__`
+#                     (hack only needed for Python 2, anyway)
+#    10-Oct-2014 (CT) Use `TFL.Q_Exp._Una_.name_map` to get operator names
 #    ««revision-date»»···
 #--
 
@@ -266,12 +269,9 @@ def _add_call_op (cls, name, op) :
 # end def _add_call_op
 
 def _add_una_op (cls, name, op) :
-    sq_name = name
-    sq_op   = op
-    if name != op.__name__ :
-        ### invert/not
-        sq_op    = getattr (operator, name)
-        sq_name  = op.__name__
+    op_name = op.__name__
+    sq_op   = op if name == op_name else getattr (operator, name)
+    sq_name = TFL.Q_Exp._Una_.name_map.get (op_name, name)
     def _ (self) :
         return self._op_una (sq_name, sq_op)
     _.__doc__    = sq_op.__doc__
@@ -280,11 +280,11 @@ def _add_una_op (cls, name, op) :
 # end def _add_una_op
 
 def _add_operators (cls) :
-    for name, (op, reverse) in TFL.Q_Exp._Bin_.Table.iteritems () :
+    for name, (op, reverse) in pyk.iteritems (TFL.Q_Exp._Bin_.Table) :
         _add_bin_op  (cls, name, op, reverse)
-    for name, op in TFL.Q_Exp._Call_.Table.iteritems () :
+    for name, op in pyk.iteritems (TFL.Q_Exp._Call_.Table) :
         _add_call_op (cls, name, op)
-    for name, op in TFL.Q_Exp._Una_.Table.iteritems () :
+    for name, op in pyk.iteritems (TFL.Q_Exp._Una_.Table) :
         _add_una_op  (cls, name, op)
     return cls
 # end def _add_operators
@@ -881,14 +881,15 @@ class Bin (_Op_) :
         if reverse :
             lhs, rhs = rhs, lhs
         op = self.op
+        op_div = getattr (operator, "__div__", None)
         if op is operator.__truediv__ :
             typ = SA.types.Float ### XXX use SA.types.Decimal if necessary
             lhs = SA.expression.cast (lhs, typ)
             rhs = SA.expression.cast (rhs, typ)
-        elif op is operator.__floordiv__ :
+        elif op_div is not None and op is operator.__floordiv__ :
             ### avoid TypeError:
             ###     unsupported operand type(s) for //: 'Column' and 'Column'
-            op = operator.__div__
+            op = op_div
         return op (lhs, rhs)
     # end def apply
 

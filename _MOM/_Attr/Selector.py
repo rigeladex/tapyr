@@ -56,6 +56,7 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 
 from   _TFL.predicate        import uniq
+from   _TFL.pyk              import pyk
 
 from   _MOM._Attr.Filter     import Q
 
@@ -108,7 +109,7 @@ class _A_Type_Selection_ (_Selection_) :
         a_type = self.a_type
         sk     = TFL.Sorted_By ("rank", "name")
         result = tuple \
-            (  a for a in sorted (E_Type.attributes.itervalues (), key = sk)
+            (  a for a in sorted (pyk.itervalues (E_Type.attributes), key = sk)
             if isinstance (a.attr, a_type)
             )
         return result

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -47,22 +47,23 @@
 #    13-Jun-2013 (CT) Move `PNS_Aliases`, `PNS_Aliases_R` to `MOM.Entity`
 #    13-Jun-2013 (CT) Add `PNS_Set`
 #    23-Aug-2013 (CT) Add guard for `fqn != qn` to `add_type`
+#    12-Oct-2014 (CT) Use `TFL.user_config.sha` instead of home-grown code
 #    ««revision-date»»···
 #--
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
+from   _TFL.pyk              import pyk
 
 import _MOM._EMS.Backends
 
 import _TFL.multimap
 import _TFL.Ordered_Set
+import _TFL.User_Config
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
-import base64
-import hashlib
-
+@pyk.adapt__str__
 class _App_Type_ (TFL.Meta.Object) :
     """Encapsulate information about a specific application type."""
 
@@ -100,7 +101,7 @@ class _App_Type_ (TFL.Meta.Object) :
     # end def run_kill_callbacks
 
     def Url (self, db_url) :
-        if isinstance (db_url, basestring) :
+        if isinstance (db_url, pyk.string_types) :
             _, _, DBS = MOM.EMS.Backends.get (db_url)
             return DBS.Url (db_url, self.ANS)
         return db_url
@@ -148,15 +149,16 @@ class _App_Type_D_ (_App_Type_) :
         result = set ()
         for T in self._T_Extension :
             if not T.is_partial :
-                for ak in T.attributes.itervalues () :
+                for ak in pyk.itervalues (T.attributes) :
                     result.add (ak.attr)
         return sorted (result, key = TFL.Sorted_By ("typ", "name"))
     # end def all_attribute_types
 
     @TFL.Meta.Once_Property
     def db_version_hash (self) :
-        hash = hashlib.sha224 (str (self.db_sig)).digest ()
-        return base64.b64encode (hash, "_-").replace ("=", "")
+        sha    = TFL.user_config.sha
+        result = sha (self.db_sig).b64digest (strip = True)
+        return result
     # end def db_version_hash
 
     @TFL.Meta.Once_Property
@@ -229,7 +231,7 @@ class _App_Type_D_ (_App_Type_) :
 
     def entity_type (self, entity) :
         """Returns app-type specific type of `entity`."""
-        if isinstance (entity, basestring) :
+        if isinstance (entity, pyk.string_types) :
             name = entity
         else :
             name = entity.Essence.type_name

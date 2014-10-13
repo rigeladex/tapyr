@@ -244,9 +244,10 @@ import _TFL.Decorator
 import _TFL.Sorted_By
 import _TFL.Undef
 
-from   _TFL.predicate        import any_true, first
-from   _TFL.object_globals   import class_globals
 from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.object_globals   import class_globals
+from   _TFL.predicate        import any_true, first
+from   _TFL.pyk              import pyk
 
 import _MOM._Meta
 import _MOM.Scope
@@ -254,7 +255,7 @@ import _MOM.E_Type_Manager
 
 import sys
 
-class Type_Name_Type (unicode) :
+class Type_Name_Type (pyk.text_type) :
     """Type used for `type_name`."""
 
     def __repr__ (self) :
@@ -310,7 +311,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         if result is None :
             result = M_E_Mixin._PNS_Aliases_R = dict \
                 (  (v._Package_Namespace__qname, k)
-                for k, v in M_E_Mixin._PNS_Aliases.iteritems ()
+                for k, v in pyk.iteritems (M_E_Mixin._PNS_Aliases)
                 )
         return result
     # end def PNS_Aliases_R
@@ -356,9 +357,9 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         result = cls._children_np
         if result is None :
             def _gen (cls) :
-                for k, c in cls.children.iteritems () :
+                for k, c in pyk.iteritems (cls.children) :
                     if c.is_partial :
-                        for knp, cnp in c.children_np.iteritems () :
+                        for knp, cnp in pyk.iteritems (c.children_np) :
                             yield knp, cnp
                     else :
                         yield k, c
@@ -372,7 +373,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         result = cls._children_np_transitive
         if result is None :
             result = cls._children_np_transitive = dict \
-                (  (tn, c) for tn, c in cls.children_transitive.iteritems ()
+                (  (tn, c) for tn, c in pyk.iteritems (cls.children_transitive)
                 if not c.is_partial
                 )
         return result
@@ -386,7 +387,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             def _gen (cls) :
                 def _gen_children (cls) :
                     yield cls
-                    for c in cls.children.itervalues () :
+                    for c in pyk.itervalues (cls.children) :
                         for x in _gen_children (c) :
                             yield x
                 for c in _gen_children (cls) :
@@ -404,12 +405,12 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     @default_child.setter
     def default_child (cls, child) :
         if not cls.is_partial :
-            raise TypeError, \
+            raise TypeError \
                 ( "Cannot set default_child of non-partial class %s to %s"
                 % (cls, child)
                 )
         elif cls._default_child is not None :
-            raise TypeError, \
+            raise TypeError \
                 ( "Cannot change default_child of class %s from %s to %s"
                 % (cls, cls._default_child, child)
                 )
@@ -447,7 +448,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             result = ".".join ((pn, name))
         else :
             result = name
-        return unicode (result)
+        return pyk.text_type (result)
     # end def pns_qualified_f
 
     def pns_qualified (cls, name) :
@@ -457,7 +458,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             result = ".".join ((pn, name))
         else :
             result = name
-        return unicode (result)
+        return pyk.text_type (result)
     # end def pns_qualified
 
     def set_default_child (cls, child) :
@@ -807,7 +808,7 @@ class M_An_Entity (M_Entity) :
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         user_attrs = sorted \
-            ( (  a for a in cls._Attributes._names.itervalues ()
+            ( (  a for a in pyk.itervalues (cls._Attributes._names)
               if a is not None and not a.kind.electric
               )
             , key  = TFL.Getter.sig_rank
@@ -887,7 +888,7 @@ class M_Id_Entity (M_Entity) :
         def _typ (a) :
             return getattr (a, "P_Type_S", a.P_Type)
         pkas = sorted \
-            ( (  a for a in cls._Attributes._names.itervalues ()
+            ( (  a for a in pyk.itervalues (cls._Attributes._names)
               if a is not None and a.kind.is_primary
               )
             , key = TFL.Getter.sig_rank
@@ -931,7 +932,7 @@ class M_Id_Entity (M_Entity) :
         cls._m_fix_type_set (cls.refuse_links)
         cls.__m_super._m_setup_roles ()
         def _gen_refs (cls) :
-            for a in list (cls._Attributes._names.itervalues ()) :
+            for a in list (pyk.itervalues (cls._Attributes._names)) :
                 if a is not None and issubclass (a, MOM.Attr.A_Id_Entity) :
                     yield a
         for ref in _gen_refs (cls) :
@@ -943,7 +944,7 @@ class M_Id_Entity (M_Entity) :
                 if r_type :
                     if r_type == cls.type_name :
                         r_type = cls
-                    if not isinstance (r_type, basestring) :
+                    if not isinstance (r_type, pyk.string_types) :
                         cls._m_create_rev_ref_attr \
                             (MOM.Attr.A_Rev_Ref_Set, rev_name, ref, r_type, cls)
     # end def _m_setup_roles
@@ -992,7 +993,7 @@ class M_E_Type (M_E_Mixin) :
     def m_recordable_attrs (cls) :
         """Set of attributes that need recording by change management and DBW"""
         return set \
-            (a for a in cls.attributes.itervalues () if a.record_changes)
+            (a for a in pyk.itervalues (cls.attributes) if a.record_changes)
     # end def m_recordable_attrs
 
     @property
@@ -1023,7 +1024,7 @@ class M_E_Type (M_E_Mixin) :
             if result.check :
                 cls._Predicates._setup_attr_checker (cls, result)
             if transitive :
-                for c in cls.children.itervalues () :
+                for c in pyk.itervalues (cls.children) :
                     c.add_attribute \
                         ( attr
                         , verbose   = False
@@ -1038,7 +1039,7 @@ class M_E_Type (M_E_Mixin) :
         result = cls._m_add_prop \
             (pred, cls._Predicates, verbose, parent, override)
         if transitive and result is not None :
-            for c in cls.children.itervalues () :
+            for c in pyk.itervalues (cls.children) :
                 c.add_predicate \
                     ( pred
                     , verbose   = False
@@ -1144,7 +1145,7 @@ class M_E_Type (M_E_Mixin) :
                             if attr.is_required :
                                 pv.pred.is_required = True
         P._syntax_checks = \
-            [  a for a in attr_dict.itervalues ()
+            [  a for a in pyk.itervalues (attr_dict)
             if (not a.electric) and TFL.callable (a.attr.check_syntax)
             ]
     # end def _m_setup_attributes
@@ -1276,7 +1277,7 @@ class M_E_Type_Id (M_E_Type) :
     def _calc_ref_map (cls, name, _name, refuse = None) :
         result = TFL.defaultdict (set)
         for b in cls.__bases__ :
-            for k, v in getattr (b, name, {}).iteritems () :
+            for k, v in pyk.iteritems (getattr (b, name, {})) :
                 if refuse and k.type_name in refuse :
                     def _filter (k, v):
                         for n in v :
@@ -1287,7 +1288,7 @@ class M_E_Type_Id (M_E_Type) :
                 if v :
                     result [k].update (v)
         own_map = getattr (cls, _name)
-        for k, v in own_map.iteritems () :
+        for k, v in pyk.iteritems (own_map) :
             if not k.is_partial :
                 result [k].update (v)
         return result
@@ -1303,7 +1304,7 @@ class M_E_Type_Id (M_E_Type) :
             , args   = ", ".join (x for x in (args, "** kw") if x)
             , suffix = suffix
             )
-        exec code in globals, scope
+        exec (code, globals, scope)
         result             = scope ["epkified_%s" % suffix]
         result.epk_sig     = epk_sig
         result.args        = args
@@ -1408,7 +1409,7 @@ class M_E_Type_Id (M_E_Type) :
     def _m_setup_relevant_roots (cls) :
         if not cls.relevant_root :
             rr = cls.relevant_roots
-            for c in cls.children.itervalues () :
+            for c in pyk.itervalues (cls.children) :
                 if c.relevant_root is c :
                     rr [c.type_name] = c
                 else :

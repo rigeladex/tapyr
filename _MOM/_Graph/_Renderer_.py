@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -47,6 +47,7 @@ import _MOM._Graph.Entity
 import _MOM._Graph.Relation
 
 from   _TFL.predicate         import pairwise
+from   _TFL.pyk               import pyk
 from   _TFL._D2               import D2, Cardinal_Direction as CD
 from   _TFL._D2.Screen        import Rect
 
@@ -120,7 +121,7 @@ class Node (TFL.Meta.Object) :
     def max_x (self) :
         link_map = self.link_map
         max_x_links = \
-            max (l.max_x for l in link_map.itervalues ()) if link_map else 0
+            max (l.max_x for l in pyk.itervalues (link_map)) if link_map else 0
         return max (self.box.bottom_right.x, max_x_links)
     # end def max_x
 
@@ -128,14 +129,14 @@ class Node (TFL.Meta.Object) :
     def max_y (self) :
         link_map = self.link_map
         max_y_links = \
-            max (l.max_y for l in link_map.itervalues ()) if link_map else 0
+            max (l.max_y for l in pyk.itervalues (link_map)) if link_map else 0
         return max (self.box.bottom_right.y, max_y_links)
     # end def max_y
 
     @TFL.Meta.Once_Property
     def min_x (self) :
         link_map = self.link_map
-        min_x_links = min (l.min_x for l in link_map.itervalues ()) \
+        min_x_links = min (l.min_x for l in pyk.itervalues (link_map)) \
             if link_map else self.max_x
         return min (self.box.top_left.x, min_x_links)
     # end def min_x
@@ -143,7 +144,7 @@ class Node (TFL.Meta.Object) :
     @TFL.Meta.Once_Property
     def min_y (self) :
         link_map = self.link_map
-        min_y_links = min (l.min_y for l in link_map.itervalues ()) \
+        min_y_links = min (l.min_y for l in pyk.itervalues (link_map)) \
             if link_map else self.max_y
         return min (self.box.top_left.y, min_y_links)
     # end def min_y
@@ -154,7 +155,7 @@ class Node (TFL.Meta.Object) :
         Link     = renderer.Link
         link_map = self.link_map
         node_map = renderer.node_map
-        for k, r in sorted (entity.rel_map.iteritems ()) :
+        for k, r in sorted (pyk.iteritems (entity.rel_map)) :
             link_map [k] = Link (r, self, node_map [r.target.type_name])
     # end def setup_links
 
@@ -205,7 +206,7 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def max_x_spec (self) :
-        return max (v.pos.x for v in self.graph.node_map.itervalues ())
+        return max (v.pos.x for v in pyk.itervalues (self.graph.node_map))
     # end def max_x_spec
 
     @TFL.Meta.Once_Property
@@ -215,7 +216,7 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def max_y_spec (self) :
-        return max (v.pos.y for v in self.graph.node_map.itervalues ())
+        return max (v.pos.y for v in pyk.itervalues (self.graph.node_map))
     # end def max_y_spec
 
     @TFL.Meta.Once_Property
@@ -226,7 +227,7 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def min_x_spec (self) :
-        return min (v.pos.x for v in self.graph.node_map.itervalues ())
+        return min (v.pos.x for v in pyk.itervalues (self.graph.node_map))
     # end def min_x_spec
 
     @TFL.Meta.Once_Property
@@ -237,7 +238,7 @@ class _Renderer_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def min_y_spec (self) :
-        return min (v.pos.y for v in self.graph.node_map.itervalues ())
+        return min (v.pos.y for v in pyk.itervalues (self.graph.node_map))
     # end def min_y_spec
 
     @TFL.Meta.Once_Property
@@ -261,7 +262,7 @@ class _Renderer_ (TFL.Meta.Object) :
             self.render_node (n, canvas)
         link_sort_key = TFL.Sorted_By ("relation.rid")
         for n in nodes :
-            for l in sorted (n.link_map.itervalues (), key = link_sort_key) :
+            for l in sorted (pyk.itervalues (n.link_map), key = link_sort_key) :
                 self.render_link (l, canvas)
     # end def render
 

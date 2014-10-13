@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Graph.
@@ -43,6 +43,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 
 from   _MOM               import MOM
 from   _TFL               import TFL
+from   _TFL.pyk           import pyk
 
 import _MOM._Graph.Relation
 
@@ -56,6 +57,7 @@ def _Instance (cls) :
     return cls ()
 # end def _Instance
 
+@pyk.adapt__str__
 class _Spec_Item_ (TFL.Meta.Object) :
     """Base class for specs of entity, attribute, role, is_a"""
 
@@ -98,7 +100,7 @@ class _Spec_Item_ (TFL.Meta.Object) :
     def __str__ (self) :
         return "<%s.%s %s %s>" % \
             ( self.__class__.__name__, self._name
-            , self._args, sorted (self._kw.iteritems ())
+            , self._args, sorted (pyk.iteritems (self._kw))
             )
     # end def __str__
 
@@ -243,13 +245,13 @@ class Graph (TFL.Meta.Object) :
     # end def add
 
     def nodes (self, sort_key = TFL.Getter.index) :
-        return sorted (self.node_map.itervalues (), key = sort_key)
+        return sorted (pyk.itervalues (self.node_map), key = sort_key)
     # end def nodes
 
     def setup_links (self) :
         if not self._setup_links_p :
             sort_key = TFL.Sorted_By ("slack", "type_name")
-            nodes    = sorted (self.node_map.itervalues (), key = sort_key)
+            nodes    = sorted (pyk.itervalues (self.node_map), key = sort_key)
             for n in nodes :
                 n.setup_links ()
             for n in nodes :
