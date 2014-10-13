@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -41,11 +41,14 @@
 #    ««revision-date»»···
 #--
 
-import jinja2
-from   jinja2              import ext
-from   _TFL._Babel.Extract import Default_Keywords
 from   _JNJ                import JNJ
 import _JNJ.Environment
+
+from   _TFL._Babel.Extract import Default_Keywords
+from   _TFL.pyk            import pyk
+
+import jinja2
+from   jinja2              import ext
 
 def Extract (fobj, keywords, comment_tags, config, method) :
     keywords = Default_Keywords
@@ -74,7 +77,7 @@ if jinja2.__version__ >= "2.7" :
                 continue
             extensions.add (ext.import_string (extension))
         for extension in JNJ.Environment.Default_Extensions :
-            if isinstance (extension, basestring) :
+            if isinstance (extension, pyk.string_types) :
                 extension = ext.import_string (extension)
             extensions.add (extension)
         if ext.InternationalizationExtension not in extensions :
@@ -128,7 +131,7 @@ else :
                 continue
             extensions.add (ext.import_string (extension))
         for extension in JNJ.Environment.Default_Extensions :
-            if isinstance (extension, basestring) :
+            if isinstance (extension, pyk.string_types) :
                 extension = ext.import_string (extension)
             extensions.add (extension)
         if ext.InternationalizationExtension not in extensions :
@@ -181,7 +184,7 @@ def extract_from_ast ( node
         strings = []
         for arg in node.args :
             if (   isinstance (arg,       ext.nodes.Const)
-               and isinstance (arg.value, basestring)
+               and isinstance (arg.value, pyk.string_types)
                ) :
                 strings.append (arg.value.lstrip ("\n"))
             else:

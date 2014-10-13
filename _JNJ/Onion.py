@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Dec-2009 (CT) Creation
+#    12-Oct-2014 (CT) Use `next` function, not method (Python-3 compatibility)
 #    ««revision-date»»···
 #--
 
@@ -102,30 +103,30 @@ class Onion (Extension) :
 
     def parse (self, parser) :
         tag    = parser.stream.current
-        lineno = parser.stream.next ().lineno
+        lineno = next (parser.stream).lineno
         cond   = parser.parse_expression ()
         ### first, seek to the start of the "head" token
         parser.parse_statements (["name:head"], drop_needle = True)
         h_then = parser.parse_statements (["name:else", "name:body"])
         if parser.stream.current.value == "else" :
-            parser.stream.next ()
+            next (parser.stream)
             h_else = parser.parse_statements (["name:body"])
         else :
             h_else = None
-        parser.stream.next ()
+        next (parser.stream)
         body   = parser.parse_statements (["name:endonion", "name:tail"])
         result = [nodes.If ( cond, h_then, h_else)]
         result.extend (body)
         if parser.stream.current.value == "tail" :
-            parser.stream.next ()
+            next (parser.stream)
             t_then = parser.parse_statements (["name:else", "name:endonion"])
             if parser.stream.current.value == "else" :
-                parser.stream.next ()
+                next (parser.stream)
                 t_else = parser.parse_statements (["name:endonion"])
             else :
                 t_else = None
             result.append (nodes.If (cond, t_then, t_else))
-        parser.stream.next ()
+        next (parser.stream)
         return result
     # end def parse
 
