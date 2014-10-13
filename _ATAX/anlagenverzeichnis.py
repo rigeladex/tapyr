@@ -56,11 +56,13 @@
 #    ««revision-date»»···
 #--
 
-from   __future__ import division, print_function
-from   __future__ import absolute_import, unicode_literals
+from   __future__       import division, print_function
+from   __future__       import absolute_import, unicode_literals
 
 from   _ATAX.accounting import *
 from   _ATAX.accounting import _Base_, _Entry_
+
+from   _TFL.pyk         import pyk
 from   _TFL.Regexp      import *
 
 import _TFL.CAO
@@ -80,6 +82,7 @@ class _Mixin_ (TFL.Meta.Object) :
 
 # end class _Mixin_
 
+@pyk.adapt__bool__
 class _IFB_ (TFL.Meta.Object) :
     """Base class for FBiG and IFB."""
 
@@ -93,9 +96,9 @@ class _IFB_ (TFL.Meta.Object) :
         self.value  = self.value.rounded_as_target ()
     # end def round
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         return self.alive and bool (self.value)
-    # end def __nonzero__
+    # end def __bool__
 
 # end class _IFB_
 
@@ -145,7 +148,7 @@ class Anlagen_Entry (_Mixin_, _Entry_) :
             , self.birth_date, self.a_value, self.afa_spec, ifb
             , self.death_date
             )                = split_pat.split     (line, 8)
-        except ValueError, exc :
+        except ValueError as exc :
             print (line)
             raise
         final                = "31.12.2037"
@@ -234,13 +237,13 @@ class Anlagen_Entry (_Mixin_, _Entry_) :
         first_rate_pat = self.first_rate_pat
         later_rate_pat = self.later_rate_pat
         if not first_rate_pat.match (first_rate) :
-            raise ValueError, \
-                  "%s doesn't match a depreciation rate" % (first_rate, )
+            raise ValueError \
+                ("%s doesn't match a depreciation rate" % (first_rate, ))
         later_rates = []
         for r in rates [1:] :
             if not later_rate_pat.match (r) :
-                raise ValueError, \
-                      "%s doesn't match a depreciation rate" % (r, )
+                raise ValueError \
+                    ("%s doesn't match a depreciation rate" % (r, ))
             y = Time_Tuple (later_rate_pat.year).year
             later_rates.append ((y, TFL.r_eval (later_rate_pat.rate) * 1.0))
         y_rate  = self.base_rate = TFL.r_eval (first_rate_pat.rate) * 1.0
