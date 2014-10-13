@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2007-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,11 +43,14 @@
 #    ««revision-date»»···
 #--
 
-from   _CAL                     import CAL
-from   _TFL                     import TFL
+from   __future__                 import print_function
 
-from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.Angle               import Angle_D, Angle_R
+from   _CAL                       import CAL
+from   _TFL                       import TFL
+
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.Angle                 import Angle_D, Angle_R
+from   _TFL.portable_repr         import portable_repr
 
 import _CAL._Sky.Location
 import _CAL._Sky.RTS
@@ -61,41 +64,41 @@ class Sun (TFL.Meta.Object) :
        ### Example 25.a of J. Meeus, p.165
        >>> import _CAL.Date
        >>> s = Sun (CAL.Date (1992, 10, 13))
-       >>> print s.t
+       >>> print (portable_repr (s.t))
        -0.0721834360027
        >>> s.geometric_mean_longitude
        Angle_D (201.807196507)
        >>> s.geometric_mean_anomaly
        Angle_D (278.993966432)
-       >>> print s.eccentriticy_earth_orbit
+       >>> print (portable_repr (s.eccentriticy_earth_orbit))
        0.0167116677149
        >>> s.equation_of_center
        Angle_D (-1.89732384337)
        >>> s.true_longitude
        Angle_D (199.909872663)
-       >>> print s.true_longitude
+       >>> print (s.true_longitude)
        199°54'35''
-       >>> print s.radius_vector
+       >>> print (portable_repr (s.radius_vector))
        0.997661950006
        >>> s.omega
        Angle_D (264.652582177)
        >>> s.apparent_longitude
        Angle_D (199.90894186)
-       >>> print s.apparent_longitude
+       >>> print (s.apparent_longitude)
        199°54'32''
        >>> s.mean_obliquity_ecliptic
        Angle_D (23.4402297955)
-       >>> print s.mean_obliquity_ecliptic
+       >>> print (s.mean_obliquity_ecliptic)
        023°26'24''
-       >>> print s.mean_obliquity_ecliptic.seconds
+       >>> print (portable_repr (s.mean_obliquity_ecliptic.seconds))
        24.8272638004
        >>> s.obliquity_corrected
        Angle_D (23.4399912173)
-       >>> print s.right_ascension.degrees
+       >>> print (portable_repr (s.right_ascension.degrees))
        -161.619174788
-       >>> print s.declination.degrees
+       >>> print (portable_repr (s.declination.degrees))
        -7.78506979602
-       >>> print s.equation_of_time
+       >>> print (portable_repr (s.equation_of_time))
        13.7110102528
     """
 
@@ -326,23 +329,31 @@ class RTS_Sun (CAL.Sky.RTS) :
 def _main (cmd) :
     date = CAL.Date.from_string (cmd.date)
     rts  = RTS_Sun.On_Day (date, CAL.Sky.Location (cmd.latitude, cmd.longitude))
-    print "Sunrise : %s, transit : %s, sunset : %s" % \
-        (rts.rise, rts.transit, rts.set)
+    print \
+        ( "Sunrise : %s, transit : %s, sunset : %s"
+        % (rts.rise, rts.transit, rts.set)
+        )
     if cmd.day_length :
-        print "Day length: %02d:%02d" % (rts.day_length).hh_mm
+        print ("Day length: %02d:%02d" % (rts.day_length).hh_mm)
     if cmd.transit :
-        print "Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees
-        print "Transit height  : %6.2f degrees" % rts.transit.altitude.degrees
-        print "Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees
+        print ("Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees)
+        print ("Transit height  : %6.2f degrees" % rts.transit.altitude.degrees)
+        print ("Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees)
     if cmd.civil_twilight :
-        print "Civil  twilight starts %s, ends %s" % \
-            (rts.civil_twilight_start, rts.civil_twilight_finis)
+        print \
+            ( "Civil  twilight starts %s, ends %s"
+            % (rts.civil_twilight_start, rts.civil_twilight_finis)
+            )
     if cmd.nautic_twilight :
-        print "Nautic twilight starts %s, ends %s" % \
-            (rts.nautic_twilight_start, rts.nautic_twilight_finis)
+        print \
+            ( "Nautic twilight starts %s, ends %s"
+            % (rts.nautic_twilight_start, rts.nautic_twilight_finis)
+            )
     if cmd.astro_twilight :
-        print "Astro  twilight starts %s, ends %s" % \
-            (rts.astro_twilight_start, rts.astro_twilight_finis)
+        print \
+            ( "Astro  twilight starts %s, ends %s"
+            % (rts.astro_twilight_start, rts.astro_twilight_finis)
+            )
 # end def _main
 
 _Command = TFL.CAO.Cmd \

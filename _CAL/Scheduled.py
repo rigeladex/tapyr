@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,9 +38,15 @@
 #    ««revision-date»»···
 #--
 
+from   __future__              import print_function
+
 from   _TFL                    import TFL
 from   _CAL                    import CAL
+
 import _CAL.Formatter_Scope
+
+from   _TFL.pyk                import pyk
+
 import _TFL._Meta.Object
 
 class Scheduled (TFL.Meta.Object) :
@@ -69,19 +75,19 @@ class Scheduled (TFL.Meta.Object) :
        ...               , start       = Time       (16, 0, 0)
        ...               , duration    = Time_Delta ( 1, 30)
        ...               ).formatted ()
-       >>> print s
+       >>> print (s)
        > 16:00-17:30   < First test
        >>> s = Scheduled ( description = "Second test"
        ...               , priority    = "A"
        ...               , start       = Time       (16, 0, 0)
        ...               ).formatted ()
-       >>> print s
+       >>> print (s)
        > 16:00       A < Second test
        >>> s = Scheduled ( description = "Third test"
        ...               , priority    = "B"
        ...               , duration    = Time_Delta ( 1, 30)
        ...               ).formatted ()
-       >>> print s
+       >>> print (s)
        >    1h 30m   B < Third test
     """
 
@@ -132,7 +138,7 @@ class Scheduled (TFL.Meta.Object) :
     time              = property (_get_time)
 
     def __init__ (self, ** kw) :
-        for k, v in kw.iteritems () :
+        for k, v in pyk.iteritems (kw) :
             if v is not None :
                 setattr (self, k, v)
     # end def __init__
@@ -149,7 +155,7 @@ class Scheduled (TFL.Meta.Object) :
     # end def formatted
 
     def substantial_attributes (self) :
-        for n, d in self.attr_defaults.iteritems () :
+        for n, d in pyk.iteritems (self.attr_defaults) :
             v = getattr (self, n)
             if v is not d :
                 yield n, v
@@ -160,7 +166,7 @@ class Scheduled (TFL.Meta.Object) :
             return getattr (self.prototype, name)
         elif name in self.attr_defaults :
             return self.attr_defaults [name]
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __str__ (self) :
@@ -204,12 +210,14 @@ Scheduled \
           "> %(time)-11s %(priority)1.1s < %(description)s"
     )
 
-print Scheduled \
-    ( description = "First test"
-    , start       = Time       (16, 0, 0)
-    , format      =
-          "> %(time)-11s %(priority)1.1s < %(description)s"
-    ).formatted ()
+print \
+    ( Scheduled
+        ( description = "First test"
+        , start       = Time       (16, 0, 0)
+        , format      =
+              "> %(time)-11s %(priority)1.1s < %(description)s"
+        ).formatted ()
+    )
 
 """
 if __name__ != "__main__" :

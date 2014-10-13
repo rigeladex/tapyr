@@ -74,26 +74,44 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
+from   __future__                 import print_function
 
-from   _CAL              import CAL
-from   _TFL              import TFL
+from   _CAL                       import CAL
+from   _TFL                       import TFL
 
 import _CAL.Appointment
 import _CAL.Date
 import _CAL.Holiday
 
+from   _TFL.predicate             import *
+from   _TFL.pyk                   import pyk
+from   _TFL                       import sos
+from   _TFL._Meta.totally_ordered import totally_ordered
+
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.Accessor
 import _TFL.CAO
-import _TFL.d_dict
 import _TFL.I18N
 
-from   _TFL.predicate    import *
-from   _TFL              import sos
+@totally_ordered
+class _Ordinal_ (TFL.Meta.Object) :
 
-class Day (TFL.Meta.Object) :
+    def __eq__ (self, rhs) :
+        return self.ordinal == getattr (rhs, "ordinal", rhs)
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash (self.ordinal)
+    # end def __hash__
+
+    def __lt__ (self, rhs) :
+        return self.ordinal < getattr (rhs, "ordinal", rhs)
+    # end def __lt__
+
+# end class _Ordinal_
+
+class Day (_Ordinal_) :
     """Model a single day in a calendar"""
 
     day_abbr   = property (lambda s : s.date.formatted ("%a"))
@@ -106,9 +124,9 @@ class Day (TFL.Meta.Object) :
 
     def __new__ (cls, cal, date) :
         Table = cal._days
-        if isinstance (date, (str, unicode)) :
+        if isinstance (date, pyk.string_types) :
             date = CAL.Date.from_string (date)
-        elif isinstance (date, (int, long)) :
+        elif isinstance (date, pyk.int_types) :
             date = CAL.Date.from_ordinal (date)
         id = date.ordinal
         if id in Table :
@@ -165,30 +183,23 @@ class Day (TFL.Meta.Object) :
         return self._cal.year [self.year]
     # end def Year
 
-    def __cmp__ (self, rhs) :
-        return cmp (self.ordinal, getattr (rhs, "ordinal", rhs))
-    # end def __cmp__
-
     def __getattr__ (self, name) :
         return getattr (self.date, name)
     # end def __getattr__
-
-    def __hash__ (self) :
-        return hash (self.ordinal)
-    # end def __hash__
-
-    def __str__ (self) :
-        return self.date.formatted ("%Y/%m/%d")
-    # end def __str__
 
     def __repr__ (self) :
         return """%s ("%s")""" % \
                (self.__class__.__name__, self.date.formatted ("%Y/%m/%d"))
     # end def __repr__
 
+    def __str__ (self) :
+        return self.date.formatted ("%Y/%m/%d")
+    # end def __str__
+
 # end class Day
 
-class Week (TFL.Meta.Object) :
+@pyk.adapt__bool__
+class Week (_Ordinal_) :
     """Model a single week in a calendar"""
 
     tue        = property (TFL.Getter.days [1])
@@ -225,33 +236,25 @@ class Week (TFL.Meta.Object) :
             days.extend (cal.day [d.date + i] for i in range (1, 7))
     # end def populate
 
-    def __cmp__ (self, rhs) :
-        return cmp (self.ordinal, getattr (rhs, "ordinal", rhs))
-    # end def __cmp__
-
     def __getattr__ (self, name) :
         if name == "days" :
             self.populate ()
             return self.days
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
-
-    def __hash__ (self) :
-        return hash (self.ordinal)
-    # end def __hash__
 
     def __int__ (self) :
         return self.number
     # end def __int__
 
-    def __nonzero__ (self) :
+    def __bool__ (self) :
         n = self.number
         return (   (n > 0)
                and (  (n < 53)
                    or (int (self.year) == int (self.thu.year))
                    )
                )
-    # end def __nonzero__
+    # end def __bool__
 
     def __str__ (self) :
         return "week %2.2d" % (self.number, )
@@ -297,21 +300,21 @@ class Month (TFL.Meta.Object) :
         if name == "days" :
             self.populate ()
             return self.days
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __len__ (self) :
         return len (self.days)
     # end def __len__
 
-    def __str__ (self) :
-        return self.head.formatted ("%Y/%m")
-    # end def __str__
-
     def __repr__ (self) :
         return "%s (%s, %s)" % \
             (self.__class__.__name__, self.year.number, self.month)
     # end def __repr__
+
+    def __str__ (self) :
+        return self.head.formatted ("%Y/%m")
+    # end def __str__
 
 # end class Month
 
@@ -436,7 +439,7 @@ class Year (TFL.Meta.Object) :
         if name in ("days", "dmap") :
             self.populate ()
             return getattr (self, name)
-        raise AttributeError, name
+        raise AttributeError (name)
     # end def __getattr__
 
     def __int__ (self) :
@@ -447,13 +450,13 @@ class Year (TFL.Meta.Object) :
         return len (self.days)
     # end def __len__
 
-    def __str__ (self) :
-        return "%s" % (self.year, )
-    # end def __str__
-
     def __repr__ (self) :
         return "%s (%s)" % (self.__class__.__name__, self.year)
     # end def __repr__
+
+    def __str__ (self) :
+        return "%s" % (self.year, )
+    # end def __str__
 
 # end class Year
 

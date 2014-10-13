@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU Library General Public
 # License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA q02139, USA.
 # ****************************************************************************
 #
 #++
@@ -59,11 +59,10 @@
 #    ««revision-date»»···
 #--
 
-from   __future__               import print_function
+from   __future__                 import print_function
 
-from   _CAL                     import CAL
-from   _TFL                     import TFL
-from   _TFL.pyk                 import pyk
+from   _CAL                       import CAL
+from   _TFL                       import TFL
 
 import _CAL._DTW_
 
@@ -72,8 +71,10 @@ import _TFL.CAO
 import _TFL.defaultdict
 import _TFL.Math_Func
 
-from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.Regexp              import *
+from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL.Regexp                import *
+from   _TFL.pyk                   import pyk
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import datetime
 import operator
@@ -87,14 +88,14 @@ class _Delta_ (CAL._DTW_) :
         if match :
             return cls (** cls._from_string_match_kw (s, match))
         else :
-            raise ValueError, s
+            raise ValueError (s)
     # end def from_string
 
     @classmethod
     def _from_string_match_kw (cls, s, match) :
         assert match
         kw = TFL.defaultdict (int)
-        for k, v in match.groupdict ().iteritems () :
+        for k, v in pyk.iteritems (match.groupdict ()) :
             if v :
                 if k.startswith ("sub") :
                     n    = k [3:]
@@ -296,7 +297,7 @@ class Time_Delta (_DT_Delta_) :
     def delta_op (self, rhs, op) :
         result = self.__super.delta_op (rhs, op)
         if result._body.days :
-            raise OverflowError, result
+            raise OverflowError (result)
         return result
     # end def delta_op
 
@@ -354,14 +355,14 @@ class Date_Delta (_DT_Delta_) :
     >>> print (Date_Delta.from_string ("-2 weeks +3 days"))
     -11 days, 0:00:00
 
-    >>> print (Date_Delta.from_string ("42 days") + datetime.date (2014, 03, 04))
+    >>> print (Date_Delta.from_string ("42 days") + datetime.date (2014,  3,  4))
     2014-04-15
-    >>> print (Date_Delta.from_string ("-28 days") + datetime.date (2014, 03, 04))
+    >>> print (Date_Delta.from_string ("-28 days") + datetime.date (2014,  3,  4))
     2014-02-04
 
-    >>> print (datetime.date (2014, 03, 04) + Date_Delta.from_string ("42 days"))
+    >>> print (datetime.date (2014,  3,  4) + Date_Delta.from_string ("42 days"))
     2014-04-15
-    >>> print (datetime.date (2014, 03, 04) + Date_Delta.from_string ("-28 days"))
+    >>> print (datetime.date (2014,  3,  4) + Date_Delta.from_string ("-28 days"))
     2014-02-04
 
     """
@@ -495,6 +496,7 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
 
 # end class Date_Time_Delta
 
+@totally_ordered
 class Month_Delta (_Delta_) :
     """Model month-stepping delta
 
@@ -569,7 +571,7 @@ class Month_Delta (_Delta_) :
     ValueError: Can't specify `months` and `days > 28` simultaneously: Month_Delta (months = 3, days = 42) --> +3 months, +42 days
 
     >>> import datetime
-    >>> d = datetime.date (2014, 03, 04)
+    >>> d = datetime.date (2014,  3,  4)
     >>> print (d, "+ +5", d + Month_Delta (5))
     2014-03-04 + +5 2014-08-04
     >>> print (d, "+ -5", d + Month_Delta (-5))
@@ -672,17 +674,24 @@ class Month_Delta (_Delta_) :
             return self.__class__ (self.months + rhs, days = abs (self.days))
     # end def __add__
 
-    def __cmp__ (self, rhs) :
+    def __eq__ (self, rhs) :
         try :
             rhs = rhs.months, rhs.days
         except AttributeError :
             pass
-        return cmp ((self.months, self.days), rhs)
-    # end def __cmp__
+        return (self.months, self.days) == rhs
+    # end def __eq__
 
     def __hash__ (self) :
         return hash ((self.months, self.days))
     # end def __hash__
+
+    def __lt__ (self, rhs) :
+        try :
+            return (self.months, self.days) < (rhs.months, rhs.days)
+        except AttributeError :
+            return False
+    # end def __lt__
 
     def __neg__ (self) :
         return self.__class__ (months = - self.months, days = - self.days)

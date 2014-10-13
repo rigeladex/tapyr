@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,8 @@
 #    ««revision-date»»···
 #--
 
+from   __future__            import print_function
+
 from   _TFL                  import TFL
 from   _CAL                  import CAL
 
@@ -58,6 +60,7 @@ import _TFL.CAO
 
 from   _TFL.Filename         import *
 from   _TFL.predicate        import *
+from   _TFL.pyk              import pyk
 from   _TFL.Regexp           import *
 from   _TFL                  import sos
 
@@ -149,7 +152,7 @@ def _date_time (Y, pat_match) :
                     time = "%s-%2.2d:%2.2d" % (time, hh, mm)
         return day, month, year, time
     else :
-        raise ValueError, "`%s` must specify either date or time"
+        raise ValueError ("`%s` must specify either date or time")
 # end def _date_time
 
 def _add_appointment (Y, pat_match, holidays_too) :
@@ -204,17 +207,17 @@ def _main (cmd) :
             if app_pat.match (a.strip ()) :
                 _add_appointment (Y, app_pat, cmd.holidays_too)
             else :
-                print "%s doesn't match an appointment" % a
+                print ("%s doesn't match an appointment" % a)
     if cmd.Show :
         for a in cmd.argv :
             if app_pat.match (a.strip ()) :
-                print a
+                print (a)
                 pat_match = app_pat
                 day, month, year, time = _date_time (Y, pat_match)
                 for D in _day_generator (pat_match, day, month, year, Y) :
-                    print "   ", D
+                    print ("   ", D)
             else :
-                print "%s doesn't match an appointment" % a
+                print ("%s doesn't match an appointment" % a)
     if sort :
         Y.sort_appointments ()
         write_plan (Y, file_name, cmd.replace)

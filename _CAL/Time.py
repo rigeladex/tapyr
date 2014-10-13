@@ -46,8 +46,11 @@ from   __future__               import print_function
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
+
 import _CAL._DTW_
 import _TFL.Accessor
+
+from   _TFL.pyk                 import pyk
 from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -74,7 +77,7 @@ class Time (CAL._DTW_) :
        >>> from _CAL.Delta import Time_Delta as Delta
        >>> try :
        ...     t1 + Delta (hours = 10)
-       ... except OverflowError, exc :
+       ... except OverflowError as exc :
        ...     print (exc)
        ...
        1 day, 0:30:00
@@ -203,7 +206,7 @@ class Time (CAL._DTW_) :
     def _from_string_match_kw (cls, s, match) :
         assert match
         kw = {}
-        for k, v in match.groupdict ().iteritems () :
+        for k, v in pyk.iteritems (match.groupdict ()) :
             if v :
                 if k == "tzinfo" :
                     from dateutil.tz import tzoffset

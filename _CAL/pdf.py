@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2003-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This library is free software; you can redistribute it and/or
@@ -58,6 +58,7 @@ from   _CAL           import CAL
 
 from   _TFL.Filename  import *
 from   _TFL.predicate import *
+from   _TFL.pyk       import pyk
 from   _TFL.Regexp    import *
 from   _TFL           import sos
 
@@ -164,7 +165,7 @@ class PDF_Plan (PDF_P) :
 
     def generate_pdf (self, Y, pager, wpp) :
         for w in self.seq_generator (self.first_unit, self.last_unit, wpp) :
-            page = pager.next ()
+            page = next (pager)
             if w is not None :
                 self.one_unit (Y, w, page)
     # end def generate_pdf
@@ -209,7 +210,7 @@ class PDF_Plan (PDF_P) :
     # end def seq_generator
 
     def _cooked (self, text) :
-        return unicode (text, "utf-8", "replace")
+        return pyk.text_type (text, "utf-8", "replace")
     # end def _cooked
 
 # end class PDF_Plan
@@ -304,14 +305,14 @@ class PDF_Plan_Week (PDF_Plan) :
         if hd :
             hd = TFL.I18N.encode_o (hd)
         if hd :
-            lg.next ()
-            xo, yo = lg.next ()
+            next (lg)
+            xo, yo = next  (lg)
             c.setFont      (font, ts // 2)
             self.draw_text (c, xo, yo, hd [:20], self.blue)
             c.setFont      (font, ts // 5)
         for a in getattr (d, "appointments", []) :
             try :
-                 xo, yo = lg.next ()
+                 xo, yo = next (lg)
             except StopIteration :
                 break
             txt = ("%s %s" % (a.time or ">", a.activity)) [:40]
