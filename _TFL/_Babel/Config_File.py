@@ -37,7 +37,7 @@ from    babel.util             import odict
 class Config_File (TFL.Meta.Object) :
     """A extractor config file.
 
-    >>> from   _TFL.Formatter import formatted_1
+    >>> from   _TFL.portable_repr import portable_repr
 
     >>> source = '''[defaults]
     ... load_translations = _MOM, _GTW
@@ -54,7 +54,7 @@ class Config_File (TFL.Meta.Object) :
     >>> file = pyk.StringIO (source)
     >>> cfg  = Config_File (file)
 
-    >>> print (formatted_1 (cfg.defaults))
+    >>> print (portable_repr (cfg.defaults))
     {'load_translations' : '_MOM, _GTW', 'loaded_translations' : <PO_File MOM/GTW/JNJ>}
 
     >>> sorted (pyk.iteritems (cfg.extractors))# doctest:+ELLIPSIS

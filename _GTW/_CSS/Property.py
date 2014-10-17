@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.CSS.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -27,9 +27,9 @@
 Specification of CSS properties with automatically generated
 vendor prefixes::
 
-    >>> from _TFL.Formatter import formatted_1
+    >>> from   _TFL.portable_repr import portable_repr
     >>> def show (p) :
-    ...     print (formatted_1 (p))
+    ...     print (portable_repr (p))
 
     >>> Border    = Property ("border")
 

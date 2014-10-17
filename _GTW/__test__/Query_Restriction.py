@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -61,101 +61,108 @@ _test_code = """
 
     >>> print (formatted (qr.filters))
     ( Record
-      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
-      , attr = String `last_name`
-      , edit = 'Qux'
-      , full_name = 'last_name'
-      , id = 'last_name___GE'
-      , name = 'last_name___GE'
-      , op = Record
-          ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
-          , label = '&ge;'
-          )
-      , sig_key = 3
-      , ui_name = 'Last name'
-      , value = 'Qux'
-      )
+        ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+        , attr = String `last_name`
+        , edit = 'Qux'
+        , full_name = 'last_name'
+        , id = 'last_name___GE'
+        , name = 'last_name___GE'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , label = '&ge;'
+            )
+        , sig_key = 3
+        , ui_name = 'Last name'
+        , value = 'Qux'
+        )
     , Record
-      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
-      , attr = Date `start`
-      , edit = '2008'
-      , full_name = 'lifetime.start'
-      , id = 'lifetime__start___EQ'
-      , name = 'lifetime__start___EQ'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = '&equiv;'
-          )
-      , sig_key = 0
-      , ui_name = 'Lifetime/Start'
-      , value = '2008'
-      )
+        ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+        , attr = Date `start`
+        , edit = '2008'
+        , full_name = 'lifetime.start'
+        , id = 'lifetime__start___EQ'
+        , name = 'lifetime__start___EQ'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is equal to the specified value'
+            , label = '&equiv;'
+            )
+        , sig_key = 0
+        , ui_name = 'Lifetime/Start'
+        , value = '2008'
+        )
     )
 
     >>> print (formatted (qr.Filter (PAP.Person.E_Type, "last_name")))
     Record
-    ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
-    , attr = String `last_name`
-    , edit = None
-    , full_name = 'last_name'
-    , id = 'last_name___AC'
-    , name = 'last_name___AC'
-    , op = Record
-        ( desc = 'Select entities where the attribute value starts with the specified value'
-        , label = 'auto-complete'
-        )
-    , sig_key = 3
-    , ui_name = 'Last name'
-    , value = None
-    )
-    >>> print (formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE")))
-    Record
-    ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
-    , attr = String `last_name`
-    , edit = None
-    , full_name = 'last_name'
-    , id = 'last_name___GE'
-    , name = 'last_name___GE'
-    , op = Record
-        ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
-        , label = '&ge;'
-        )
-    , sig_key = 3
-    , ui_name = 'Last name'
-    , value = None
-    )
-
-    >>> print (formatted (qr.filters))
-    ( Record
       ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
       , attr = String `last_name`
-      , edit = 'Qux'
+      , edit = None
+      , full_name = 'last_name'
+      , id = 'last_name___AC'
+      , name = 'last_name___AC'
+      , op =
+        Record
+          ( desc = 'Select entities where the attribute value starts with the specified value'
+          , label = 'auto-complete'
+          )
+      , sig_key = 3
+      , ui_name = 'Last name'
+      , value = None
+      )
+
+    >>> print (formatted (qr.Filter (PAP.Person.E_Type, "last_name___GE")))
+    Record
+      ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+      , attr = String `last_name`
+      , edit = None
       , full_name = 'last_name'
       , id = 'last_name___GE'
       , name = 'last_name___GE'
-      , op = Record
+      , op =
+        Record
           ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
           , label = '&ge;'
           )
       , sig_key = 3
       , ui_name = 'Last name'
-      , value = 'Qux'
+      , value = None
       )
+
+    >>> print (formatted (qr.filters))
+    ( Record
+        ( AQ = <last_name.AQ [Attr.Type.Querier String_FL]>
+        , attr = String `last_name`
+        , edit = 'Qux'
+        , full_name = 'last_name'
+        , id = 'last_name___GE'
+        , name = 'last_name___GE'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is greater than, or equal to, the specified value'
+            , label = '&ge;'
+            )
+        , sig_key = 3
+        , ui_name = 'Last name'
+        , value = 'Qux'
+        )
     , Record
-      ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
-      , attr = Date `start`
-      , edit = '2008'
-      , full_name = 'lifetime.start'
-      , id = 'lifetime__start___EQ'
-      , name = 'lifetime__start___EQ'
-      , op = Record
-          ( desc = 'Select entities where the attribute is equal to the specified value'
-          , label = '&equiv;'
-          )
-      , sig_key = 0
-      , ui_name = 'Lifetime/Start'
-      , value = '2008'
-      )
+        ( AQ = <lifetime.start.AQ [Attr.Type.Querier Date]>
+        , attr = Date `start`
+        , edit = '2008'
+        , full_name = 'lifetime.start'
+        , id = 'lifetime__start___EQ'
+        , name = 'lifetime__start___EQ'
+        , op =
+          Record
+            ( desc = 'Select entities where the attribute is equal to the specified value'
+            , label = '&equiv;'
+            )
+        , sig_key = 0
+        , ui_name = 'Lifetime/Start'
+        , value = '2008'
+        )
     )
 
     >>> print (qr.filters_q)
@@ -164,52 +171,52 @@ _test_code = """
     >>> qo = QR.from_request (scope, PAP.Person.E_Type, f_req (order_by = "-lifetime,last_name"))
     >>> print (formatted (qo.order_by))
     ( Record
-      ( attr = Date_Interval `lifetime`
-      , attrs =
+        ( attr = Date_Interval `lifetime`
+        , attrs =
           [ Record
-            ( attr = Date `start`
-            , full_name = 'lifetime.start'
-            , id = 'lifetime__start'
-            , name = 'start'
-            , sig_key = 0
-            , ui_name = 'Lifetime/Start'
-            )
+              ( attr = Date `start`
+              , full_name = 'lifetime.start'
+              , id = 'lifetime__start'
+              , name = 'start'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Start'
+              )
           , Record
-            ( attr = Date `finish`
-            , full_name = 'lifetime.finish'
-            , id = 'lifetime__finish'
-            , name = 'finish'
-            , sig_key = 0
-            , ui_name = 'Lifetime/Finish'
-            )
+              ( attr = Date `finish`
+              , full_name = 'lifetime.finish'
+              , id = 'lifetime__finish'
+              , name = 'finish'
+              , sig_key = 0
+              , ui_name = 'Lifetime/Finish'
+              )
           , Record
-            ( attr = Boolean `alive`
-            , choices =
+              ( attr = Boolean `alive`
+              , choices =
                 [ 'no'
                 , 'yes'
                 ]
-            , full_name = 'lifetime.alive'
-            , id = 'lifetime__alive'
-            , name = 'alive'
-            , sig_key = 1
-            , ui_name = 'Lifetime/Alive'
-            )
+              , full_name = 'lifetime.alive'
+              , id = 'lifetime__alive'
+              , name = 'alive'
+              , sig_key = 1
+              , ui_name = 'Lifetime/Alive'
+              )
           ]
-      , full_name = 'lifetime'
-      , id = 'lifetime'
-      , name = '-lifetime'
-      , sign = '-'
-      , ui_name = '-Lifetime'
-      )
+        , full_name = 'lifetime'
+        , id = 'lifetime'
+        , name = '-lifetime'
+        , sign = '-'
+        , ui_name = '-Lifetime'
+        )
     , Record
-      ( attr = String `last_name`
-      , full_name = 'last_name'
-      , id = 'last_name'
-      , name = 'last_name'
-      , sig_key = 3
-      , sign = ''
-      , ui_name = 'Last name'
-      )
+        ( attr = String `last_name`
+        , full_name = 'last_name'
+        , id = 'last_name'
+        , name = 'last_name'
+        , sig_key = 3
+        , sign = ''
+        , ui_name = 'Last name'
+        )
     )
 
     >>> print (qo.order_by_q)
@@ -1304,8 +1311,7 @@ _test_code = """
             , 'LT'
             , 'NE'
             )
-        , 1 :
-    ( 'EQ' ,)
+        , 1 : ('EQ', )
         , 2 :
             ( 'EQ'
             , 'IN'
@@ -1549,9 +1555,6 @@ class Person_M (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Person_M
-
-from   _TFL.Formatter                        import Formatter, formatted_1
-formatted = Formatter (width = 240)
 
 from   itertools                             import chain as ichain
 

@@ -20,6 +20,7 @@
 # Revision Dates
 #    30-Dec-2010 (CT) Creation
 #    21-Jan-2014 (CT) Support `exprs` of type `dict` in `Query._setup_exprs`
+#    17-Oct-2014 (CT) Put uppercased names into `Type.Table` because `print`
 #    ««revision-date»»···
 #--
 
@@ -232,36 +233,41 @@ class Rule (_Media_) :
 class Type (_Media_) :
     """Media type.
 
-    >>> print (Type ("screen"))
-    screen
     >>> print (Type ("all"))
     all
+
+    >>> print (Type ("print"))
+    print
+
+    >>> print (Type ("screen"))
+    screen
+
+    >>> print (Type ("Screen"))
+    screen
+
     >>> Type ("screen") is Type ("screen")
     True
+
     >>> Type ("screen") is Type ("all")
     False
-    >>> Type ("Screen")
-    Traceback (most recent call last):
-      ...
-    ValueError: Screen
+
     """
 
     nick  = "MT"
     Table = {}
 
     def __new__ (cls, name) :
-        if name != name.lower () :
-            raise ValueError (name)
+        name = name.upper ()
         if name in cls.Table :
             result = cls.Table [name]
         else :
             result = cls.Table [name] = cls.__c_super.__new__ (cls)
-            result.name = name
+            result.name = name.lower ()
         return result
     # end def __new__
 
     def __init__ (self, name) :
-        self.name = name
+        self.name = name.lower ()
     # end def __init__
 
     def __str__ (self) :

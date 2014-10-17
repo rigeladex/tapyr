@@ -48,6 +48,8 @@
 #    29-May-2013 (CT)  Kludge around Python2.6 lack of classmethod introspection
 #    18-Sep-2013 (CT)  Add `dict_from_class`
 #    21-Aug-2014 (CT)  Add `Add_To_Object`
+#    16-Oct-2014 (CT)  Change `dict_from_class` to return real `dict`,
+#                      remove thunder properties from its result
 #    ««revision-date»»···
 #--
 
@@ -275,7 +277,10 @@ def Add_To_Object (* objects, ** kw) :
 
 def dict_from_class (cls) :
     """Return `cls.__dict__`."""
-    return cls.__dict__
+    return dict \
+        ( (k, v) for k, v in pyk.iteritems (cls.__dict__)
+        if not k.startswith ("__")
+        )
 # end def dict_from_class
 
 @Decorator

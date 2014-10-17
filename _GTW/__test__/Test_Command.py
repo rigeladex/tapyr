@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -51,15 +51,12 @@ from   _MOM.Product_Version     import Product_Version, IV_Number
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Class_Property
 from   _TFL.CAO                 import expect_except
+from   _TFL.formatted_repr      import formatted_repr as formatted
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 from   _TFL.Sorted_By           import Sorted_By
 from   _TFL                     import sos
-
-from   _TFL.Formatter           import Formatter, formatted_1
-
-formatted = Formatter (width = 240)
 
 import _GTW._Werkzeug.Command
 

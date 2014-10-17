@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -971,8 +971,7 @@ _test_code = """
             , 'LT'
             , 'NE'
             )
-        , 1 :
-    ( 'EQ' ,)
+        , 1 : ('EQ', )
         , 2 :
             ( 'EQ'
             , 'IN'
@@ -1145,7 +1144,10 @@ _test_code = """
             )
           , Record
             ( attr = Boolean `alive`
-            , choices = <Recursion on list...>
+            , choices =
+                [ 'no'
+                , 'yes'
+                ]
             , full_name = 'lifetime.alive'
             , id = 'lifetime__alive'
             , name = 'alive'
@@ -1239,7 +1241,10 @@ _test_code = """
                               )
                             , Record
                               ( attr = Boolean `alive`
-                              , choices = <Recursion on list...>
+                              , choices =
+                                  [ 'no'
+                                  , 'yes'
+                                  ]
                               , full_name = 'affiliate.owner.left.lifetime.alive'
                               , id = 'affiliate__owner__left__lifetime__alive'
                               , name = 'alive'
@@ -1254,7 +1259,16 @@ _test_code = """
                         )
                       , Record
                         ( attr = Sex `sex`
-                        , choices = <Recursion on list...>
+                        , choices =
+                            [
+                              ( 'F'
+                              , 'Female'
+                              )
+                            ,
+                              ( 'M'
+                              , 'Male'
+                              )
+                            ]
                         , full_name = 'affiliate.owner.left.sex'
                         , id = 'affiliate__owner__left__sex'
                         , name = 'sex'
@@ -1308,7 +1322,10 @@ _test_code = """
                   )
                 , Record
                   ( attr = Boolean `alive`
-                  , choices = <Recursion on list...>
+                  , choices =
+                      [ 'no'
+                      , 'yes'
+                      ]
                   , full_name = 'affiliate.lifetime.alive'
                   , id = 'affiliate__lifetime__alive'
                   , name = 'alive'
@@ -1788,7 +1805,10 @@ _test_code = """
                   )
                 , Record
                   ( attr = Boolean `alive`
-                  , choices = <Recursion on list...>
+                  , choices =
+                      [ 'no'
+                      , 'yes'
+                      ]
                   , full_name = 'events.date.alive'
                   , id = 'events__date__alive'
                   , name = 'alive'

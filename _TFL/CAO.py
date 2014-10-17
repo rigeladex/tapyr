@@ -111,15 +111,16 @@
 #    ««revision-date»»···
 #--
 
-from   __future__         import print_function
+from   __future__          import print_function
 
-from   _TFL               import TFL
-from   _TFL.pyk           import pyk
+from   _TFL                import TFL
 
-from   _TFL               import sos
-from   _TFL.I18N          import _, _T, _Tn
-from   _TFL.Regexp        import Regexp, re
-from   _TFL.Trie          import Word_Trie as Trie
+from   _TFL.formatted_repr import formatted_repr
+from   _TFL.I18N           import _, _T, _Tn
+from   _TFL.Regexp         import Regexp, re
+from   _TFL.Trie           import Word_Trie as Trie
+from   _TFL.pyk            import pyk
+from   _TFL                import sos
 
 import _TFL.Accessor
 import _TFL.Context
@@ -133,7 +134,7 @@ import _TFL.predicate
 import _TFL.r_eval
 import _TFL.Undef
 
-from   itertools          import chain as ichain
+from   itertools           import chain as ichain
 
 import decimal
 import sys
@@ -845,9 +846,8 @@ class Help (_Spec_O_) :
             ("%s%s%-*s  = %s" % (head, prefix, max_l, name, raw))
         if e_cooked != raw :
             if isinstance (cooked, (list, dict)) :
-                from _TFL.Formatter import formatted
                 pyk.fprint \
-                    (formatted (cooked, level = (len (head) // 4 + 1) * 2))
+                    (formatted_repr (cooked, level = (len (head) // 4 + 1) * 2))
             else :
                 pyk.fprint ("%s    %s" % (head, cooked))
     # end def _help_value
@@ -1931,7 +1931,7 @@ specified. ::
             -Pdb_on_Exception   = False
             -help               = []
             -indent             = 4
-                [ 4 ]
+                [4]
             -output             = None
                 ()
             -verbose            = True

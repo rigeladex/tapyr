@@ -310,7 +310,6 @@ import _GTW._NAV.Template_Media_Cache
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
-from   _TFL.Formatter           import formatted
 from   _TFL.predicate           import uniq
 from   _TFL.Record              import Record
 from   _TFL.Regexp              import Dict_Replacer
@@ -686,13 +685,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def send_email
 
     def _send_error_email (self, handler, exc, tbi) :
+        from _TFL.formatted_repr import formatted_repr
         email     = self.email_from
         request   = handler.request
         headers   = request.headers
         message   = "Headers:\n    %s\n\nBody:\n    %s\n\n%s" % \
             ( "\n    ".join
                 ("%-20s: %s" % (k, v) for k, v in headers.iteritems ())
-            , formatted (handler.body)
+            , formatted_repr (handler.body)
             , tbi
             )
         kw = {}

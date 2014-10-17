@@ -451,7 +451,6 @@ test_code = r"""
 
 import _MOM.Document
 from   _GTW.__test__.model      import *
-from   _TFL.Formatter           import formatted_1
 
 __test__ = Scaffold.create_test_dict (test_code)
 

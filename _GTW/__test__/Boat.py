@@ -210,11 +210,9 @@ _test_code = """
     [Invariants(Invariant(SRM.Boat_Class ('optimist'), Condition `AC_check_max_crew_1` : 1 <= max_crew <= 4
         max_crew = 5),)]
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' :
-    [ 'max_crew' ]
+    [ { 'attributes' : ['max_crew']
       , 'bindings' :
-          [
-            ( 'max_crew'
+          [ ( 'max_crew'
             , '5'
             )
           ]
@@ -250,15 +248,12 @@ _test_code = """
     >>> errors
     [Required_Missing("Boat_Class needs the attribute: ('name',)", 'Instead it got: (max_crew = 4)')]
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' :
-    ( 'name' ,)
+    [ { 'attributes' : ('name', )
       , 'bindings' :
-          [
-            ( 'max_crew'
+          [ ( 'max_crew'
             , 4
             )
-          ,
-            ( 'name'
+          , ( 'name'
             , None
             )
           ]
@@ -288,15 +283,12 @@ _test_code = """
     ...     SRM.Boat (sail_number = "187042", raw = True, on_error = errors.append)
     Invariants: Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = 187042)
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' :
-          ( 'left' ,)
+    [ { 'attributes' : ('left', )
       , 'bindings' :
-          [
-            ( 'left'
+          [ ( 'left'
             , None
             )
-          ,
-            ( 'sail_number'
+          , ( 'sail_number'
             , '187042'
             )
           ]
@@ -321,15 +313,12 @@ _test_code = """
       Boat needs the attributes: ('left', 'sail_number'); Instead it got: (sail_number = -187042)
 
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' :
-          ( 'left' ,)
+    [ { 'attributes' : ('left', )
       , 'bindings' :
-          [
-            ( 'left'
+          [ ( 'left'
             , None
             )
-          ,
-            ( 'sail_number'
+          , ( 'sail_number'
             , '-187042'
             )
           ]
@@ -344,11 +333,9 @@ _test_code = """
               ]
           }
       }
-    , { 'attributes' :
-    [ 'sail_number' ]
+    , { 'attributes' : ['sail_number']
       , 'bindings' :
-          [
-            ( 'sail_number'
+          [ ( 'sail_number'
             , '-187042'
             )
           ]

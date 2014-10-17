@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -26,14 +26,12 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _MOM.import_MOM           import *
 from   _GTW._RST._TOP.import_TOP import *
 
-from   _TFL.Formatter            import Formatter, formatted_1
+from   _TFL.portable_repr        import portable_repr
 from   _TFL.pyk                  import pyk
 
 import _TFL.I18N
 
 TFL.I18N.load ("en", "de")
-
-formatted = Formatter (width = 240)
 
 __doc__ = """
 
@@ -86,32 +84,32 @@ __doc__ = """
     >>> ets
     (<Page about: /about>, <Dir news: /news>, <Page Sensation: /news/Sensation>, <Auth Auth: /Auth>, <L10N L10N: /L10N>, <_Language_ de: /L10N/de>, <_Language_ en: /L10N/en>)
 
-    >>> sorted (root3._template_names)
-    [u'account_change_email', u'account_change_password', u'account_make_cert', u'account_register', u'account_reset_password', u'calendar', u'calendar_day', u'console', u'e_type_admin', u'e_type_afs', u'e_type_aggregator', u'e_type_delete', u'gallery', u'login', u'photo', u'regatta_calendar', u'regatta_page', u'regatta_registration', u'regatta_result', u'regatta_result_teamrace', u'site_admin']
+    >>> print (portable_repr (sorted (root3._template_names)))
+    ['account_change_email', 'account_change_password', 'account_make_cert', 'account_register', 'account_reset_password', 'calendar', 'calendar_day', 'console', 'e_type_admin', 'e_type_aggregator', 'e_type_display', 'e_type_mf3', 'gallery', 'login', 'photo', 'regatta_calendar', 'regatta_page', 'regatta_registration', 'regatta_result', 'regatta_result_teamrace', 'site_admin']
 
     >>> auth = root3.SC.Auth
     >>> auth
     <Auth Auth: /Auth>
-    >>> sorted (auth._entry_map)
+    >>> print (portable_repr (sorted (auth._entry_map)))
     []
     >>> auth._get_child ("login")
     <_Login_ login: /Auth/login>
-    >>> sorted (auth._entry_map)
-    [u'login']
+    >>> print (portable_repr (sorted (auth._entry_map)))
+    ['login']
     >>> auth._get_child ("register")
     <_Register_ register: /Auth/register>
-    >>> sorted (auth._entry_map)
-    [u'login', u'register']
+    >>> print (portable_repr (sorted (auth._entry_map)))
+    ['login', 'register']
     >>> auth._get_child ("activate")
     <_Activate_ activate: /Auth/activate>
-    >>> sorted (auth._entry_map)
-    [u'activate', u'login', u'register']
+    >>> print (portable_repr (sorted (auth._entry_map)))
+    ['activate', 'login', 'register']
 
     >>> l10n = root3.SC.L10N
-    >>> sorted (l10n._entry_map)
-    [u'de', u'en']
-    >>> sorted (l10n._entry_map.items ())
-    [(u'de', <_Language_ de: /L10N/de>), (u'en', <_Language_ en: /L10N/en>)]
+    >>> print (portable_repr (sorted (l10n._entry_map)))
+    ['de', 'en']
+    >>> print (portable_repr (sorted (l10n._entry_map.items ())))
+    [('de', <_Language_ de: /L10N/de>), ('en', <_Language_ en: /L10N/en>)]
 
     >>> for k, v in sorted (pyk.iteritems (root3.Status.Status.Table)) :
     ...     print (v)

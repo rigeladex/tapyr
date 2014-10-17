@@ -289,11 +289,7 @@ _copy_test = """
     """
 
 from   _GTW.__test__.model import *
-from   _MOM.import_MOM     import Q
 from   _TFL.predicate      import first
-from   _TFL.Formatter           import Formatter
-
-formatted = Formatter (width = 240)
 
 import datetime
 

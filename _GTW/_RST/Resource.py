@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -657,7 +657,7 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     # end def sane_referrer
 
     def send_error_email (self, request, exc, tbi = None, xtra = None) :
-        from _TFL.Formatter import formatted
+        from _TFL.formatted_repr import formatted_repr as formatted
         try :
             email     = self.email_from
             enc       = self.encoding

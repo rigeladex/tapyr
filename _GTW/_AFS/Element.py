@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.AFS.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -793,8 +793,7 @@ class Group (Fieldset) :
 __doc__ = """
 Usage example::
 
-    >>> from _TFL.Formatter import Formatter
-    >>> formatted = Formatter (width = 160)
+    >>> from _TFL.portable_repr import portable_repr
     >>> f = Form ( "F"
     ...     , children =
     ...         [ Entity
@@ -836,81 +835,81 @@ Usage example::
     ...             )
     ...         ]
     ...     )
-    >>> print (repr (f))
+    >>> print (f.formatted ())
     <Form F>
-     <Entity F-0 u'PAP.Person'>
-      <Fieldset F-0:0 u'primary'>
-       <Field F-0:0:0 u'last_name'>
-       <Field F-0:0:1 u'first_name'>
-      <Field_Composite F-0:1 u'lifetime'>
-       <Field F-0:1.0 u'start'>
-       <Field F-0:1.1 u'finish'>
-      <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
-       <Entity F-0:2::p u'PAP.Person_has_Email'>
-        <Field F-0:2::p-0 u'desc'>
-        <Entity F-0:2::p-1 u'PAP.Email'>
-         <Field F-0:2::p-1:0 u'address'>
-     <Entity F-1 u'SRM.Boat_Type'>
-      <Field F-1:0 u'name'>
-    >>> sorted (f.id_map)
-    [u'F-0', u'F-0:0', u'F-0:0:0', u'F-0:0:1', u'F-0:1', u'F-0:1.0', u'F-0:1.1', u'F-0:2', u'F-0:2::p', u'F-0:2::p-0', u'F-0:2::p-1', u'F-0:2::p-1:0', u'F-1', u'F-1:0']
+     <Entity F-0 'PAP.Person'>
+      <Fieldset F-0:0 'primary'>
+       <Field F-0:0:0 'last_name'>
+       <Field F-0:0:1 'first_name'>
+      <Field_Composite F-0:1 'lifetime'>
+       <Field F-0:1.0 'start'>
+       <Field F-0:1.1 'finish'>
+      <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
+       <Entity F-0:2::p 'PAP.Person_has_Email'>
+        <Field F-0:2::p-0 'desc'>
+        <Entity F-0:2::p-1 'PAP.Email'>
+         <Field F-0:2::p-1:0 'address'>
+     <Entity F-1 'SRM.Boat_Type'>
+      <Field F-1:0 'name'>
+    >>> print (portable_repr (sorted (f.id_map)))
+    ['F-0', 'F-0:0', 'F-0:0:0', 'F-0:0:1', 'F-0:1', 'F-0:1.0', 'F-0:1.1', 'F-0:2', 'F-0:2::p', 'F-0:2::p-0', 'F-0:2::p-1', 'F-0:2::p-1:0', 'F-1', 'F-1:0']
     >>> [str (f.id_map [id]) for id in sorted (f.id_map)]
-    ["<Entity F-0 u'PAP.Person'>", "<Fieldset F-0:0 u'primary'>", "<Field F-0:0:0 u'last_name'>", "<Field F-0:0:1 u'first_name'>", "<Field_Composite F-0:1 u'lifetime'>", "<Field F-0:1.0 u'start'>", "<Field F-0:1.1 u'finish'>", "<Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>", "<Entity F-0:2::p u'PAP.Person_has_Email'>", "<Field F-0:2::p-0 u'desc'>", "<Entity F-0:2::p-1 u'PAP.Email'>", "<Field F-0:2::p-1:0 u'address'>", "<Entity F-1 u'SRM.Boat_Type'>", "<Field F-1:0 u'name'>"]
+    ["<Entity F-0 'PAP.Person'>", "<Fieldset F-0:0 'primary'>", "<Field F-0:0:0 'last_name'>", "<Field F-0:0:1 'first_name'>", "<Field_Composite F-0:1 'lifetime'>", "<Field F-0:1.0 'start'>", "<Field F-0:1.1 'finish'>", "<Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>", "<Entity F-0:2::p 'PAP.Person_has_Email'>", "<Field F-0:2::p-0 'desc'>", "<Entity F-0:2::p-1 'PAP.Email'>", "<Field F-0:2::p-1:0 'address'>", "<Entity F-1 'SRM.Boat_Type'>", "<Field F-1:0 'name'>"]
 
     >>> print (f ["F-0:1.0"])
-    <Field F-0:1.0 u'start'>
+    <Field F-0:1.0 'start'>
     >>> print (f ["F-0:2"])
-    <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
+    <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
     >>> print (f ["F-0:2::p"])
-    <Entity F-0:2::p u'PAP.Person_has_Email'>
+    <Entity F-0:2::p 'PAP.Person_has_Email'>
     >>> print (f ["F-0:2::p-0"])
-    <Field F-0:2::p-0 u'desc'>
+    <Field F-0:2::p-0 'desc'>
     >>> print (f ["F-0:2::p-0"])
-    <Field F-0:2::p-0 u'desc'>
+    <Field F-0:2::p-0 'desc'>
     >>> print (f ["F-0:2::1-0"])
-    <Field F-0:2::p-0 u'desc'>
+    <Field F-0:2::p-0 'desc'>
     >>> fel = f ["F-0:2"]
     >>> print (fel.proto)
-    <Entity F-0:2::p u'PAP.Person_has_Email'>
+    <Entity F-0:2::p 'PAP.Person_has_Email'>
 
     >>> g = f.copy ()
     >>> gel = g ["F-0:2"]
     >>> print (gel.add_child ())
-    <Entity F-0:2::0 u'PAP.Person_has_Email'>
+    <Entity F-0:2::0 'PAP.Person_has_Email'>
     >>> print (gel.add_child ())
-    <Entity F-0:2::1 u'PAP.Person_has_Email'>
-    >>> print (repr (g))
+    <Entity F-0:2::1 'PAP.Person_has_Email'>
+    >>> print (g.formatted ())
     <Form F>
-     <Entity F-0 u'PAP.Person'>
-      <Fieldset F-0:0 u'primary'>
-       <Field F-0:0:0 u'last_name'>
-       <Field F-0:0:1 u'first_name'>
-      <Field_Composite F-0:1 u'lifetime'>
-       <Field F-0:1.0 u'start'>
-       <Field F-0:1.1 u'finish'>
-      <Entity_List F-0:2 <Entity F-0:2::p u'PAP.Person_has_Email'>>
-       <Entity F-0:2::0 u'PAP.Person_has_Email'>
-        <Field F-0:2::0-0 u'desc'>
-        <Entity F-0:2::0-1 u'PAP.Email'>
-         <Field F-0:2::0-1:0 u'address'>
-       <Entity F-0:2::1 u'PAP.Person_has_Email'>
-        <Field F-0:2::1-0 u'desc'>
-        <Entity F-0:2::1-1 u'PAP.Email'>
-         <Field F-0:2::1-1:0 u'address'>
-     <Entity F-1 u'SRM.Boat_Type'>
-      <Field F-1:0 u'name'>
-    >>> sorted (g.id_map)
-    [u'F-0', u'F-0:0', u'F-0:0:0', u'F-0:0:1', u'F-0:1', u'F-0:1.0', u'F-0:1.1', u'F-0:2', u'F-0:2::0', u'F-0:2::0-0', u'F-0:2::0-1', u'F-0:2::0-1:0', u'F-0:2::1', u'F-0:2::1-0', u'F-0:2::1-1', u'F-0:2::1-1:0', u'F-0:2::p', u'F-0:2::p-0', u'F-0:2::p-1', u'F-0:2::p-1:0', u'F-1', u'F-1:0']
+     <Entity F-0 'PAP.Person'>
+      <Fieldset F-0:0 'primary'>
+       <Field F-0:0:0 'last_name'>
+       <Field F-0:0:1 'first_name'>
+      <Field_Composite F-0:1 'lifetime'>
+       <Field F-0:1.0 'start'>
+       <Field F-0:1.1 'finish'>
+      <Entity_List F-0:2 <Entity F-0:2::p 'PAP.Person_has_Email'>>
+       <Entity F-0:2::0 'PAP.Person_has_Email'>
+        <Field F-0:2::0-0 'desc'>
+        <Entity F-0:2::0-1 'PAP.Email'>
+         <Field F-0:2::0-1:0 'address'>
+       <Entity F-0:2::1 'PAP.Person_has_Email'>
+        <Field F-0:2::1-0 'desc'>
+        <Entity F-0:2::1-1 'PAP.Email'>
+         <Field F-0:2::1-1:0 'address'>
+     <Entity F-1 'SRM.Boat_Type'>
+      <Field F-1:0 'name'>
+    >>> print (portable_repr (sorted (g.id_map)))
+    ['F-0', 'F-0:0', 'F-0:0:0', 'F-0:0:1', 'F-0:1', 'F-0:1.0', 'F-0:1.1', 'F-0:2', 'F-0:2::0', 'F-0:2::0-0', 'F-0:2::0-1', 'F-0:2::0-1:0', 'F-0:2::1', 'F-0:2::1-0', 'F-0:2::1-1', 'F-0:2::1-1:0', 'F-0:2::p', 'F-0:2::p-0', 'F-0:2::p-1', 'F-0:2::p-1:0', 'F-1', 'F-1:0']
     >>> print (g ["F-0:2::p-0"])
-    <Field F-0:2::p-0 u'desc'>
+    <Field F-0:2::p-0 'desc'>
     >>> print (g ["F-0:2::0-0"])
-    <Field F-0:2::0-0 u'desc'>
+    <Field F-0:2::0-0 'desc'>
     >>> print (g ["F-0:2::1-0"])
-    <Field F-0:2::1-0 u'desc'>
+    <Field F-0:2::1-0 'desc'>
     >>> print (g ["F-0:2::42-0"])
-    <Field F-0:2::p-0 u'desc'>
+    <Field F-0:2::p-0 'desc'>
     >>> tuple (str (c) for c in gel.children)
-    ("<Entity F-0:2::0 u'PAP.Person_has_Email'>", "<Entity F-0:2::1 u'PAP.Person_has_Email'>")
+    ("<Entity F-0:2::0 'PAP.Person_has_Email'>", "<Entity F-0:2::1 'PAP.Person_has_Email'>")
 
     >>> print (Form ["F"])
     <Form F>

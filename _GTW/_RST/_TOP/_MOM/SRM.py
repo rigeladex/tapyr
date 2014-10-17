@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -342,8 +342,7 @@ class Regatta (GTW.RST.TOP.MOM.Entity_Mixin_Base, _Ancestor) :
     # end def _register_submit_callback
 
     def _register_submit_error_callback (self, resource, request, response, scope, fv, result) :
-        from _TFL.Formatter import Formatter
-        formatted = Formatter (width = 1024)
+        from _TFL.formatted_repr import formatted_repr as formatted
         errors    = pyk.decoded \
             (b"\n\n".join (formatted (e) for e in fv.errors))
         message = "\n\n-----------------\n\n".join \

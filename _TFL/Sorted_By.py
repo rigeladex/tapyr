@@ -275,8 +275,13 @@ class Sorted_By (TFL.Meta.Object) :
 
     @classmethod
     def type_name (cls, v) :
-        t = type (v).__name__
-        return cls.type_name_map.get (t, t)
+        t = type (v)
+        n = t.__name__
+        r = cls.type_name_map.get (n, n)
+        if r == "byte-string" and v.isalnum :
+            r = "text-string"
+            v = pyk.text_type (v, "ascii")
+        return r, v
     # end def type_name
 
     @classmethod
@@ -284,8 +289,8 @@ class Sorted_By (TFL.Meta.Object) :
         result = v
         typer  = cls.type_name
         if isinstance (v, (list, tuple)) :
-            result = tuple ((typer (x), x) for x in v)
-        return typer (v), result
+            result = tuple (typer (x) for x in v)
+        return typer (result)
     # end def typed_key
 
     @staticmethod

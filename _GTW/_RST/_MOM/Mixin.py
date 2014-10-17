@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -88,8 +88,8 @@ from   _MOM.import_MOM          import MOM, Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
-from   _TFL.Formatter           import formatted_1
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 
 import _TFL._Meta.Object
@@ -181,7 +181,7 @@ class _PUT_POST_Mixin_ (GTW.RST.HTTP_Method) :
         if invalids :
             raise ValueError \
                 ( "Request contains invalid attribute names "
-                + formatted_1 (invalids)
+                + portable_repr (invalids)
                 )
         self._resolve_nested_request_attrs \
             (resource, request, response, E_Type, attrs)

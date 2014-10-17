@@ -66,11 +66,9 @@ _test_code = r"""
         first_name = None
 
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' :
-    [ 'first_name' ]
+    [ { 'attributes' : ['first_name']
       , 'bindings' :
-          [
-            ( 'first_name'
+          [ ( 'first_name'
             , "''"
             )
           ]
@@ -87,22 +85,18 @@ _test_code = r"""
       Condition `last_name_not_empty` : The attribute last_name needs a non-empty value
         last_name = None
     >>> print (formatted (MOM.Error.as_json_cargo (* errors)))
-    [ { 'attributes' :
-    [ 'first_name' ]
+    [ { 'attributes' : ['first_name']
       , 'bindings' :
-          [
-            ( 'first_name'
+          [ ( 'first_name'
             , "''"
             )
           ]
       , 'head' : 'The attribute first_name needs a non-empty value'
       , 'is_required' : True
       }
-    , { 'attributes' :
-    [ 'last_name' ]
+    , { 'attributes' : ['last_name']
       , 'bindings' :
-          [
-            ( 'last_name'
+          [ ( 'last_name'
             , "''"
             )
           ]

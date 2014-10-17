@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -89,7 +89,7 @@ class HTTP_Method (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _Meta_)) :
                 try :
                     response.renderer (request, response, body)
                 except Exception as exc :
-                    from _TFL.Formatter import formatted
+                    from _TFL.formatted_repr import formatted_repr as formatted
                     import traceback
                     tb = traceback.format_exc ()
                     resource.send_error_email \

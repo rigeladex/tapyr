@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -30,8 +30,8 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 from   _TFL._Meta.Once_Property import Once_Property
-from   _TFL.Formatter           import formatted_1
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 
 import _GTW._RST
@@ -177,12 +177,12 @@ class _Base_ (TFL.Meta.Object) :
     def __repr__ (self) :
         result = "%s: %s, %s" % \
             ( self.__class__.__name__
-            , formatted_1 (self.data)
-            , formatted_1 (self.secrets)
+            , portable_repr (self.data)
+            , portable_repr (self.secrets)
             )
         if self._invalid :
             result = "%s\n    %s" % (result, self._invalid)
-        return pyk.encoded (result)
+        return pyk.reprify (result)
     # end def __repr__
 
     def __str__ (self) :

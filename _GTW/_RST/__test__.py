@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -24,9 +24,8 @@ from   __future__ import absolute_import, division, print_function, unicode_lite
 
 from   _GTW._RST.Resource       import *
 
-from   _TFL.Formatter           import Formatter, formatted_1
-
-formatted = Formatter (width = 240)
+from   _TFL.formatted_repr      import formatted_repr
+from   _TFL.portable_repr       import portable_repr
 
 def show_1 (resource, level) :
     p = resource.parent.abs_href if resource.parent else "-"
@@ -79,25 +78,23 @@ __doc__ = """
     ...             )
     ...         )
     ...     )
-    >>> print (formatted (e_types))
-    (
-      ( <class '_GTW._RST.Resource.Dir'>
+    >>> print (formatted_repr (e_types))
+    ( ( <class '_GTW._RST.Resource.Dir'>
       , ()
       , { 'description' : 'Legal person'
         , 'entries' :
-            (
-              ( <class '_GTW._RST.Resource.Leaf'>
+            ( ( <class '_GTW._RST.Resource.Leaf'>
               , ()
-                , { 'implicit' : True
-                  , 'name' : '1'
-                  }
+              , { 'implicit' : True
+                , 'name' : '1'
+                }
               )
+            ,
             )
         , 'name' : 'PAP-Company'
         }
       )
-    ,
-      ( <class '_GTW._RST.Resource.Dir'>
+    , ( <class '_GTW._RST.Resource.Dir'>
       , ()
       , { 'description' : 'Natural person'
         , 'name' : 'PAP-Person'
@@ -153,10 +150,10 @@ __doc__ = """
         <Dir PAP-Person: /v1/PAP-Person> parent = /v1, top = /
       <Dir v2: /v2> parent = /, top = /
 
-    >>> print (formatted_1 (root.GET.render_man.by_extension))
-    {'json' : [<class '_GTW._RST.Mime_Type.JSON'>]}
-    >>> print (formatted_1 (root.GET.render_man.by_mime_type))
-    {'application/json' : [<class '_GTW._RST.Mime_Type.JSON'>]}
+    >>> print (portable_repr (root.GET.render_man.by_extension))
+    mm_list(<class 'builtins.list'>, {'json' : [<class '_GTW._RST.Mime_Type.JSON'>]})
+    >>> print (portable_repr (root.GET.render_man.by_mime_type))
+    mm_list(<class 'builtins.list'>, {'application/json' : [<class '_GTW._RST.Mime_Type.JSON'>]})
 
     >>> GTW.RST.Mime_Type.JSON
     <class '_GTW._RST.Mime_Type.JSON'>
@@ -172,7 +169,9 @@ __doc__ = """
     HTML (u'html', u'htm') (u'text/html',)
     HTML_T (u'html', u'htm') (u'text/html',)
     JSON ('json',) (u'application/json',)
+    SVG ('svg',) (u'image/svg+xml',)
     TXT ('txt',) (u'text/plain',)
+    User_Cert ('user_cert',) (u'application/x-x509-user-cert',)
     XHTML ('xhtml',) (u'application/xhtml+xml',)
     XML ('xml',) (u'text/xml', u'application/xml')
 

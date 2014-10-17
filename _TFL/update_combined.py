@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -165,50 +165,50 @@ Update a dictionary/list/set with elements of another
 dictionary/list/set, combining existing keys or values, instead of
 replacing like the standard ``dict`` method ``update()``does .
 
-    >>> from   _TFL.Formatter           import formatted_1
+    >>> from   _TFL.portable_repr import portable_repr
 
     >>> l1 = dict (foo = 1, bar = { 1 : "a", 2 : "b"}, qux = [2, 3])
     >>> r1 = dict (bar = { 2 : "baz", 3 : "c" }, qux = [5, 7])
-    >>> formatted_1 (l1)
+    >>> portable_repr (l1)
     "{'bar' : {1 : 'a', 2 : 'b'}, 'foo' : 1, 'qux' : [2, 3]}"
-    >>> formatted_1 (r1)
+    >>> portable_repr (r1)
     "{'bar' : {2 : 'baz', 3 : 'c'}, 'qux' : [5, 7]}"
-    >>> formatted_1 (update_combined (l1, r1))
+    >>> portable_repr (update_combined (l1, r1))
     "{'bar' : {1 : 'a', 2 : 'baz', 3 : 'c'}, 'foo' : 1, 'qux' : [2, 3, 5, 7]}"
 
     >>> l2 = dict (bar = list_dont_combine ([1, 2, 3]), qux = [1, 2, 3])
     >>> r2 = dict (bar = [4, 5], qux = list_dont_combine ([4, 5]))
-    >>> formatted_1 (l2)
+    >>> portable_repr (l2)
     "{'bar' : [1, 2, 3], 'qux' : [1, 2, 3]}"
-    >>> formatted_1 (r2)
+    >>> portable_repr (r2)
     "{'bar' : [4, 5], 'qux' : [4, 5]}"
-    >>> formatted_1 (update_combined (l2, r2))
+    >>> portable_repr (update_combined (l2, r2))
     "{'bar' : [1, 2, 3, 4, 5], 'qux' : [4, 5]}"
 
     >>> l3 = dict (bar = set ([1, 2, 3]), qux = set ([1, 2, 3]))
     >>> r3 = dict (bar = set ([4, 5]), qux = set_dont_combine ([4, 5]))
-    >>> formatted_1 (l3)
+    >>> portable_repr (l3)
     "{'bar' : {1, 2, 3}, 'qux' : {1, 2, 3}}"
-    >>> formatted_1 (r3)
+    >>> portable_repr (r3)
     "{'bar' : {4, 5}, 'qux' : {4, 5}}"
-    >>> formatted_1 (update_combined (l3, r3))
+    >>> portable_repr (update_combined (l3, r3))
     "{'bar' : {1, 2, 3, 4, 5}, 'qux' : {4, 5}}"
 
     >>> l4 = list (range (10))
     >>> r4 = filtered_list (20, 30, 40, filter = lambda x : bool (x % 2))
-    >>> formatted_1 (l4)
+    >>> portable_repr (l4)
     '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]'
-    >>> formatted_1 (r4)
+    >>> portable_repr (r4)
     '[20, 30, 40]'
-    >>> formatted_1 (update_combined (l4, r4))
+    >>> portable_repr (update_combined (l4, r4))
     '[1, 3, 5, 7, 9, 20, 30, 40]'
 
     >>> r5 = filtered_list (20, 30, 40, filter = lambda x : not (x % 2))
-    >>> formatted_1 (l4)
+    >>> portable_repr (l4)
     '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]'
-    >>> formatted_1 (r5)
+    >>> portable_repr (r5)
     '[20, 30, 40]'
-    >>> formatted_1 (update_combined (l4, r5))
+    >>> portable_repr (update_combined (l4, r5))
     '[0, 2, 4, 6, 8, 20, 30, 40]'
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>

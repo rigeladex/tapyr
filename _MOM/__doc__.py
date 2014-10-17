@@ -1880,9 +1880,6 @@ Modules and nested package namespaces
 
 """
 
-from   _TFL.Formatter           import Formatter, formatted_1 as formatted1
-formatted  = Formatter (width = 240)
-
 from   _MOM.inspect             import show_ref_map, show_ref_maps
 
 __doc__ = doctest = dt_form % dict \

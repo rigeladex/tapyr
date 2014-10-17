@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -75,8 +75,7 @@ class RAT (GTW.RST.Auth_Mixin, _Ancestor) :
             username, password = self._credentials_validation \
                 (resource, request, debug = debug)
             if self.errors :
-                from _TFL.Formatter import Formatter
-                formatted = Formatter (width = 1024)
+                from _TFL.formatted_repr import formatted_repr as formatted
                 result ["errors"]    = self.errors
                 response.status_code = 400
                 resource.send_error_email \

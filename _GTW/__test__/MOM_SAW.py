@@ -25,11 +25,12 @@
 from   __future__  import print_function, unicode_literals
 
 from   _GTW.__test__.MOM import \
-    ( dt_form, MOM, BMT, show, NL, sos, formatted, formatted1, last_change
+    ( dt_form, MOM, BMT, show, NL, sos, last_change
     , expect_except, portable_repr, prepr, pyk
     )
 from   _MOM.inspect import show_children, show_ref_map, show_ref_maps
 
+from   _TFL.formatted_repr        import formatted_repr as formatted
 from   _TFL.Regexp                import Dict_Replacer, re
 
 filter_dbw_pat = re.compile \

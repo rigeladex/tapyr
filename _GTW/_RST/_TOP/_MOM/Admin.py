@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -132,7 +132,7 @@ import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Decorator           import getattr_safe
-from   _TFL.Formatter           import formatted
+from   _TFL.formatted_repr      import formatted_repr as formatted
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import callable, uniq
 from   _TFL.pyk                 import pyk

@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -36,7 +36,6 @@ from   _GTW.__test__.model        import *
 from   _GTW._MF3                  import Element as MF3_E
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
-from   _TFL.Formatter             import formatted_1
 from   _TFL.Regexp                import Multi_Re_Replacer, Re_Replacer, re
 
 _cleaner = Re_Replacer \
@@ -72,7 +71,7 @@ def elem_x (x, getters, default = "---") :
             tail = ", ".join \
                 ("%s = %s" % (k, v) for k, v in sorted (pyk.iteritems (tail)))
         if isinstance (tail, (dict, list, tuple)) :
-            tail = formatted_1 (tail)
+            tail = portable_repr (tail)
         result.append (str (tail))
     return result
 # end def elem_x
@@ -573,11 +572,11 @@ _test_element = """
     <Field_Ref_Hidden Z-25:phones::left@3> left
 
     >>> for e in f_p.entity_elements :
-    ...     print (e, formatted_1 (sorted (getattr (e, "_Element_Map", []))))
+    ...     print (e, portable_repr (sorted (getattr (e, "_Element_Map", []))))
     <Entity X-25> ['X-25:first_name', 'X-25:last_name', 'X-25:lifetime', 'X-25:lifetime.finish', 'X-25:lifetime.start', 'X-25:middle_name', 'X-25:sex', 'X-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'sex', 'title']
 
     >>> for e in f_p_z.entity_elements :
-    ...     print (e, formatted_1 (sorted (getattr (e, "_Element_Map", []))))
+    ...     print (e, portable_repr (sorted (getattr (e, "_Element_Map", []))))
     <Entity Z-25> ['Z-25:first_name', 'Z-25:last_name', 'Z-25:lifetime', 'Z-25:lifetime.finish', 'Z-25:lifetime.start', 'Z-25:middle_name', 'Z-25:phones', 'Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'Z-25:phones@3', 'Z-25:sex', 'Z-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
     <Entity_Rev_Ref Z-25:phones@3> ['Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'right', 'right.area_code', 'right.country_code', 'right.number']
     <Field_Entity Z-25:phones::right@3> []
@@ -599,7 +598,7 @@ _test_element = """
 
     >>> proto = f_p_z ["Z-25:phones"].proto
 
-    >>> print (formatted_1 (sorted (proto._Element_Map)))
+    >>> print (portable_repr (sorted (proto._Element_Map)))
     ['Z-25:phones::desc', 'Z-25:phones::extension', 'Z-25:phones::left', 'Z-25:phones::left.first_name', 'Z-25:phones::left.last_name', 'Z-25:phones::left.middle_name', 'Z-25:phones::left.title', 'Z-25:phones::right', 'Z-25:phones::right.area_code', 'Z-25:phones::right.country_code', 'Z-25:phones::right.number', 'desc', 'extension', 'left', 'left.first_name', 'left.last_name', 'left.middle_name', 'left.title', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'right', 'right.area_code', 'right.country_code', 'right.number']
 
     >>> print (proto, proto.__class__, list (proto.elements_transitive ()))
@@ -639,37 +638,23 @@ _test_element = """
     F      phones.desc                Atom
 
     >>> show_field_values (f_p)
-    { 'X-25:first_name' :
-        { 'init' : 'Christian' }
-    , 'X-25:last_name' :
-        { 'init' : 'Tanzer' }
-    , 'X-25:lifetime.finish' :
-        {}
-    , 'X-25:lifetime.start' :
-        { 'init' : '1959-09-26' }
-    , 'X-25:middle_name' :
-        {}
-    , 'X-25:sex' :
-        {}
-    , 'X-25:title' :
-        {}
+    { 'X-25:first_name' : {'init' : 'Christian'}
+    , 'X-25:last_name' : {'init' : 'Tanzer'}
+    , 'X-25:lifetime.finish' : {}
+    , 'X-25:lifetime.start' : {'init' : '1959-09-26'}
+    , 'X-25:middle_name' : {}
+    , 'X-25:sex' : {}
+    , 'X-25:title' : {}
     }
 
     >>> show_field_values (f_p_z)
-    { 'Z-25:first_name' :
-        { 'init' : 'Christian' }
-    , 'Z-25:last_name' :
-        { 'init' : 'Tanzer' }
-    , 'Z-25:lifetime.finish' :
-        {}
-    , 'Z-25:lifetime.start' :
-        { 'init' : '1959-09-26' }
-    , 'Z-25:middle_name' :
-        {}
-    , 'Z-25:phones::desc@3' :
-        { 'init' : 'example' }
-    , 'Z-25:phones::extension@3' :
-        { 'init' : '42' }
+    { 'Z-25:first_name' : {'init' : 'Christian'}
+    , 'Z-25:last_name' : {'init' : 'Tanzer'}
+    , 'Z-25:lifetime.finish' : {}
+    , 'Z-25:lifetime.start' : {'init' : '1959-09-26'}
+    , 'Z-25:middle_name' : {}
+    , 'Z-25:phones::desc@3' : {'init' : 'example'}
+    , 'Z-25:phones::extension@3' : {'init' : '42'}
     , 'Z-25:phones::left@3' :
         { 'init' :
             { 'cid' : 1
@@ -677,12 +662,9 @@ _test_element = """
             , 'pid' : 1
             }
         }
-    , 'Z-25:phones::right.area_code@3' :
-        { 'init' : '1' }
-    , 'Z-25:phones::right.country_code@3' :
-        { 'init' : '43' }
-    , 'Z-25:phones::right.number@3' :
-        { 'init' : '98765432' }
+    , 'Z-25:phones::right.area_code@3' : {'init' : '1'}
+    , 'Z-25:phones::right.country_code@3' : {'init' : '43'}
+    , 'Z-25:phones::right.number@3' : {'init' : '98765432'}
     , 'Z-25:phones::right@3' :
         { 'init' :
             { 'cid' : 2
@@ -697,16 +679,14 @@ _test_element = """
             , 'pid' : 3
             }
         }
-    , 'Z-25:sex' :
-        {}
-    , 'Z-25:title' :
-        {}
+    , 'Z-25:sex' : {}
+    , 'Z-25:title' : {}
     }
 
-    >>> print (formatted_1 (sorted (f_p._Element_Map)))
+    >>> print (portable_repr (sorted (f_p._Element_Map)))
     ['X-25:first_name', 'X-25:last_name', 'X-25:lifetime', 'X-25:lifetime.finish', 'X-25:lifetime.start', 'X-25:middle_name', 'X-25:sex', 'X-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'sex', 'title']
 
-    >>> print (formatted_1 (sorted (f_p_z._Element_Map)))
+    >>> print (portable_repr (sorted (f_p_z._Element_Map)))
     ['Z-25:first_name', 'Z-25:last_name', 'Z-25:lifetime', 'Z-25:lifetime.finish', 'Z-25:lifetime.start', 'Z-25:middle_name', 'Z-25:phones', 'Z-25:phones::desc@3', 'Z-25:phones::extension@3', 'Z-25:phones::left.first_name@3', 'Z-25:phones::left.last_name@3', 'Z-25:phones::left.middle_name@3', 'Z-25:phones::left.title@3', 'Z-25:phones::left@3', 'Z-25:phones::right.area_code@3', 'Z-25:phones::right.country_code@3', 'Z-25:phones::right.number@3', 'Z-25:phones::right@3', 'Z-25:phones@3', 'Z-25:sex', 'Z-25:title', 'first_name', 'last_name', 'lifetime', 'lifetime.finish', 'lifetime.start', 'middle_name', 'phones', 'phones.desc', 'phones.extension', 'phones.left', 'phones.left.first_name', 'phones.left.last_name', 'phones.left.middle_name', 'phones.left.title', 'phones.right', 'phones.right.area_code', 'phones.right.country_code', 'phones.right.number', 'sex', 'title']
 
     >>> show_elements (f_p_z2, "Entity")
@@ -832,36 +812,19 @@ _test_element = """
     >>> f_p_z2_cargo = f_p_z2.as_json_cargo ["cargo"]
     >>> print (formatted (f_p_z2_cargo))
     { 'field_values' :
-        { 'Z-25:first_name' :
-            { 'init' : 'Christian' }
-        , 'Z-25:last_name' :
-            { 'init' : 'Tanzer' }
-        , 'Z-25:lifetime.finish' :
-            {}
-        , 'Z-25:lifetime.start' :
-            { 'init' : '1959-09-26' }
-        , 'Z-25:middle_name' :
-            {}
-        , 'Z-25:phones::desc/1' :
-            {}
-        , 'Z-25:phones::desc/2' :
-            {}
-        , 'Z-25:phones::desc@3' :
-            { 'init' : 'example' }
-        , 'Z-25:phones::extension/1' :
-            {}
-        , 'Z-25:phones::extension/2' :
-            {}
-        , 'Z-25:phones::extension@3' :
-            { 'init' : '42' }
-        , 'Z-25:phones::left/1' :
-            { 'init' :
-                {}
-            }
-        , 'Z-25:phones::left/2' :
-            { 'init' :
-                {}
-            }
+        { 'Z-25:first_name' : {'init' : 'Christian'}
+        , 'Z-25:last_name' : {'init' : 'Tanzer'}
+        , 'Z-25:lifetime.finish' : {}
+        , 'Z-25:lifetime.start' : {'init' : '1959-09-26'}
+        , 'Z-25:middle_name' : {}
+        , 'Z-25:phones::desc/1' : {}
+        , 'Z-25:phones::desc/2' : {}
+        , 'Z-25:phones::desc@3' : {'init' : 'example'}
+        , 'Z-25:phones::extension/1' : {}
+        , 'Z-25:phones::extension/2' : {}
+        , 'Z-25:phones::extension@3' : {'init' : '42'}
+        , 'Z-25:phones::left/1' : {'init' : {}}
+        , 'Z-25:phones::left/2' : {'init' : {}}
         , 'Z-25:phones::left@3' :
             { 'init' :
                 { 'cid' : 1
@@ -869,32 +832,17 @@ _test_element = """
                 , 'pid' : 1
                 }
             }
-        , 'Z-25:phones::right.area_code/1' :
-            {}
-        , 'Z-25:phones::right.area_code/2' :
-            {}
-        , 'Z-25:phones::right.area_code@3' :
-            { 'init' : '1' }
-        , 'Z-25:phones::right.country_code/1' :
-            { 'edit' : '43' }
-        , 'Z-25:phones::right.country_code/2' :
-            { 'edit' : '43' }
-        , 'Z-25:phones::right.country_code@3' :
-            { 'init' : '43' }
-        , 'Z-25:phones::right.number/1' :
-            {}
-        , 'Z-25:phones::right.number/2' :
-            {}
-        , 'Z-25:phones::right.number@3' :
-            { 'init' : '98765432' }
-        , 'Z-25:phones::right/1' :
-            { 'init' :
-                {}
-            }
-        , 'Z-25:phones::right/2' :
-            { 'init' :
-                {}
-            }
+        , 'Z-25:phones::right.area_code/1' : {}
+        , 'Z-25:phones::right.area_code/2' : {}
+        , 'Z-25:phones::right.area_code@3' : {'init' : '1'}
+        , 'Z-25:phones::right.country_code/1' : {'edit' : '43'}
+        , 'Z-25:phones::right.country_code/2' : {'edit' : '43'}
+        , 'Z-25:phones::right.country_code@3' : {'init' : '43'}
+        , 'Z-25:phones::right.number/1' : {}
+        , 'Z-25:phones::right.number/2' : {}
+        , 'Z-25:phones::right.number@3' : {'init' : '98765432'}
+        , 'Z-25:phones::right/1' : {'init' : {}}
+        , 'Z-25:phones::right/2' : {'init' : {}}
         , 'Z-25:phones::right@3' :
             { 'init' :
                 { 'cid' : 2
@@ -909,10 +857,8 @@ _test_element = """
                 , 'pid' : 3
                 }
             }
-        , 'Z-25:sex' :
-            {}
-        , 'Z-25:title' :
-            {}
+        , 'Z-25:sex' : {}
+        , 'Z-25:title' : {}
         }
     , 'pid' : 1
     , 'sid' : 0
@@ -1329,10 +1275,8 @@ _test_element = """
     <Field X-118:desc> False
 
     >>> show_field_values (f_pph)
-    { 'X-118:desc' :
-        { 'init' : 'example' }
-    , 'X-118:extension' :
-        { 'init' : '42' }
+    { 'X-118:desc' : {'init' : 'example'}
+    , 'X-118:extension' : {'init' : '42'}
     , 'X-118:left' :
         { 'init' :
             { 'cid' : 1
@@ -1347,72 +1291,39 @@ _test_element = """
             , 'pid' : 2
             }
         }
-    , 'X-118:right.area_code' :
-        { 'init' : '1' }
-    , 'X-118:right.country_code' :
-        { 'init' : '43' }
-    , 'X-118:right.number' :
-        { 'init' : '98765432' }
+    , 'X-118:right.area_code' : {'init' : '1'}
+    , 'X-118:right.country_code' : {'init' : '43'}
+    , 'X-118:right.number' : {'init' : '98765432'}
     }
 
 
     >>> show_field_values (f_PhP_s)
-    { 'Y-118:desc' :
-        {}
-    , 'Y-118:extension' :
-        {}
-    , 'Y-118:left' :
-        { 'init' :
-            {}
-        }
-    , 'Y-118:right' :
-        { 'init' :
-            {}
-        }
-    , 'Y-118:right.area_code' :
-        {}
-    , 'Y-118:right.country_code' :
-        { 'edit' : '49' }
-    , 'Y-118:right.number' :
-        {}
+    { 'Y-118:desc' : {}
+    , 'Y-118:extension' : {}
+    , 'Y-118:left' : {'init' : {}}
+    , 'Y-118:right' : {'init' : {}}
+    , 'Y-118:right.area_code' : {}
+    , 'Y-118:right.country_code' : {'edit' : '49'}
+    , 'Y-118:right.number' : {}
     }
 
 
     >>> show_field_values (f_PhP_z)
-    { 'Z-118:desc' :
-        {}
-    , 'Z-118:extension' :
-        {}
-    , 'Z-118:left' :
-        { 'init' :
-            {}
-        }
-    , 'Z-118:left.first_name' :
-        {}
-    , 'Z-118:left.last_name' :
-        {}
-    , 'Z-118:left.lifetime.finish' :
-        {}
-    , 'Z-118:left.lifetime.start' :
-        {}
-    , 'Z-118:left.middle_name' :
-        {}
-    , 'Z-118:left.sex' :
-        {}
-    , 'Z-118:left.title' :
-        {}
-    , 'Z-118:right' :
-        { 'init' :
-            {}
-        }
-    , 'Z-118:right.area_code' :
-        {}
-    , 'Z-118:right.country_code' :
-        { 'edit' : '43' }
-    , 'Z-118:right.desc' :
-        {}
-    , 'Z-118:right.number' :
-        {}
+    { 'Z-118:desc' : {}
+    , 'Z-118:extension' : {}
+    , 'Z-118:left' : {'init' : {}}
+    , 'Z-118:left.first_name' : {}
+    , 'Z-118:left.last_name' : {}
+    , 'Z-118:left.lifetime.finish' : {}
+    , 'Z-118:left.lifetime.start' : {}
+    , 'Z-118:left.middle_name' : {}
+    , 'Z-118:left.sex' : {}
+    , 'Z-118:left.title' : {}
+    , 'Z-118:right' : {'init' : {}}
+    , 'Z-118:right.area_code' : {}
+    , 'Z-118:right.country_code' : {'edit' : '43'}
+    , 'Z-118:right.desc' : {}
+    , 'Z-118:right.number' : {}
     }
 
     >>> set (x.id for x in F_PhP.elements_transitive ()) >= set (x.id for x in f_PhP.elements_transitive ())
@@ -1702,7 +1613,7 @@ _test_element = """
         }
     , 1 :
         { 'entity_p' : True
-        , 'fields' : [ 'R-106:left.left.name' ]
+        , 'fields' : ['R-106:left.left.name']
         , 'treshold' : 1
         }
     , 2 :
@@ -1726,17 +1637,17 @@ _test_element = """
         }
     , 4 :
         { 'entity_p' : False
-        , 'fields' : [ 'R-106:right.left.date.start' ]
+        , 'fields' : ['R-106:right.left.date.start']
         , 'treshold' : 4
         }
     , 5 :
         { 'entity_p' : False
-        , 'fields' : [ 'R-106:right.left.date.finish' ]
+        , 'fields' : ['R-106:right.left.date.finish']
         , 'treshold' : 4
         }
     , 6 :
         { 'entity_p' : True
-        , 'fields' : [ 'R-106:right.boat_class.name' ]
+        , 'fields' : ['R-106:right.boat_class.name']
         , 'treshold' : 1
         }
     , 7 :
@@ -1756,7 +1667,7 @@ _test_element = """
         }
     , 8 :
         { 'entity_p' : False
-        , 'fields' : [ 'R-106:skipper.left.title' ]
+        , 'fields' : ['R-106:skipper.left.title']
         , 'treshold' : 1
         }
     }
@@ -1940,17 +1851,17 @@ _test_element = """
         }
     , 1 :
         { 'entity_p' : False
-        , 'fields' : [ 'X-25:title' ]
+        , 'fields' : ['X-25:title']
         , 'treshold' : 1
         }
     , 2 :
         { 'entity_p' : False
-        , 'fields' : [ 'X-25:lifetime.start' ]
+        , 'fields' : ['X-25:lifetime.start']
         , 'treshold' : 4
         }
     , 3 :
         { 'entity_p' : False
-        , 'fields' : [ 'X-25:lifetime.finish' ]
+        , 'fields' : ['X-25:lifetime.finish']
         , 'treshold' : 4
         }
     }

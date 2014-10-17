@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -48,7 +48,7 @@
 #     4-Oct-2013 (CT) Add test for query argument `fields`
 #    31-Mar-2014 (CT) Apply `date_cleaner` to `R.get("/Doc/SRM-Boat_in_Regatta")`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
-#    ««revision-date»»···
+#    ««»»···
 #--
 
 from   __future__  import absolute_import, division, print_function, unicode_literals
@@ -559,8 +559,7 @@ _test_delete = r"""
     }
 
     >>> _ = show (R.get ("/v1/pid?count")) ### 5
-    { 'json' :
-        { 'count' : 16 }
+    { 'json' : {'count' : 16}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -584,8 +583,7 @@ _test_delete = r"""
     }
 
     >>> _ = show (R.get ("/v1/pid?count")) ### 7
-    { 'json' :
-        { 'count' : 14 }
+    { 'json' : {'count' : 14}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -845,7 +843,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Permanent id of the instance.'
                   , 'example' : '42'
-                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database migrations.'
                   , 'is_changeable' : False
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -938,20 +936,17 @@ _test_doc = r"""
                 ]
             }
         , 'cross_references' :
-            [ { 'attributes' :
-    [ 'left' ]
+            [ { 'attributes' : ['left']
               , 'lra' : 'sailor_links'
               , 'type_name' : 'SRM.Crew_Member'
               , 'url' : '/Doc/SRM-Crew_Member'
               }
-            , { 'attributes' :
-    [ 'left' ]
+            , { 'attributes' : ['left']
               , 'lra' : 'race_results'
               , 'type_name' : 'SRM.Race_Result'
               , 'url' : '/Doc/SRM-Race_Result'
               }
-            , { 'attributes' :
-    [ 'right' ]
+            , { 'attributes' : ['right']
               , 'lra' : 'team_links'
               , 'type_name' : 'SRM.Team_has_Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Team_has_Boat_in_Regatta'
@@ -1164,7 +1159,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Permanent id of the instance.'
                   , 'example' : '42'
-                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database migrations.'
                   , 'is_changeable' : False
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -1235,8 +1230,7 @@ _test_doc = r"""
               }
             ]
         , 'cross_references' :
-            [ { 'attributes' :
-    [ 'right' ]
+            [ { 'attributes' : ['right']
               , 'lra' : 'boats'
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
@@ -1462,7 +1456,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Permanent id of the instance.'
                   , 'example' : '42'
-                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database migrations.'
                   , 'is_changeable' : False
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -1539,14 +1533,12 @@ _test_doc = r"""
                 ]
             }
         , 'cross_references' :
-            [ { 'attributes' :
-    [ 'right' ]
+            [ { 'attributes' : ['right']
               , 'lra' : 'boats'
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
               }
-            , { 'attributes' :
-    [ 'left' ]
+            , { 'attributes' : ['left']
               , 'lra' : 'teams'
               , 'type_name' : 'SRM.Team'
               , 'url' : '/Doc/SRM-Team'
@@ -1763,7 +1755,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Permanent id of the instance.'
                   , 'example' : '42'
-                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database migrations.'
                   , 'is_changeable' : False
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -1826,8 +1818,7 @@ _test_doc = r"""
                 ]
             }
         , 'cross_references' :
-            [ { 'attributes' :
-    [ 'right' ]
+            [ { 'attributes' : ['right']
               , 'lra' : 'boats'
               , 'type_name' : 'SRM.Boat_in_Regatta'
               , 'url' : '/Doc/SRM-Boat_in_Regatta'
@@ -1952,7 +1943,7 @@ _test_doc = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Permanent id of the instance.'
                   , 'example' : '42'
-                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database migrations.'
                   , 'is_changeable' : False
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -2400,8 +2391,7 @@ _test_get = r"""
     }
 
     >>> r = show (R.get ("/v0"))
-    { 'json' :
-        { 'description' : 'Not found' }
+    { 'json' : {'description' : 'Not found'}
     , 'status' : 404
     , 'url' : 'http://localhost:9999/v0'
     }
@@ -2757,7 +2747,7 @@ _test_get = r"""
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="Person_has_Phone links", /v1/PAP-Person/1/url_links; rel="Person_has_Url links", /v1/PAP-Person/1/sailors; rel="Sailor links", /Doc/PAP-Person; rel=doc'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -2790,7 +2780,7 @@ _test_get = r"""
         , 'content-type' : 'application/json'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="Person_has_Phone links", /v1/PAP-Person/1/url_links; rel="Person_has_Url links", /v1/PAP-Person/1/sailors; rel="Sailor links", /Doc/PAP-Person; rel=doc'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -2812,8 +2802,7 @@ _test_get = r"""
                 []
             , '/v1/PAP-Person/1/phone_links' :
                 []
-            , '/v1/PAP-Person/1/sailors' :
-                [ '/v1/SRM-Sailor/4' ]
+            , '/v1/PAP-Person/1/sailors' : ['/v1/SRM-Sailor/4']
             , '/v1/PAP-Person/1/url_links' :
                 []
             }
@@ -2830,7 +2819,7 @@ _test_get = r"""
         { 'cache-control' : 'no-cache'
         , 'date' : '<datetime instance>'
         , 'etag' : 'ETag value'
-        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="P
+        , 'link' : '/v1/PAP-Person/1/account_links; rel="Person_has_Account links", /v1/PAP-Person/1/address_links; rel="Person_has_Address links", /v1/PAP-Person/1/email_links; rel="Person_has_Email links", /v1/PAP-Person/1/phone_links; rel="Person_has_Phone links", /v1/PAP-Person/1/url_links; rel="Person_has_Url links", /v1/PAP-Person/1/sailors; rel="Sailor links", /Doc/PAP-Person; rel=doc'
         , 'server' : '<server>'
         , 'x-last-cid' : '1'
         }
@@ -2899,8 +2888,7 @@ _test_get = r"""
               }
             , { 'attributes' :
                   { 'boat_class' :
-                      { 'attributes' :
-                          { 'name' : 'yardstick' }
+                      { 'attributes' : {'name' : 'yardstick'}
                       , 'cid' : 9
                       , 'pid' : 9
                       , 'type_name' : 'SRM.Handicap'
@@ -2996,8 +2984,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'name' : 'Yardstick' }
+                      { 'attributes_raw' : {'name' : 'Yardstick'}
                       , 'cid' : 9
                       , 'pid' : 9
                       , 'type_name' : 'SRM.Handicap'
@@ -3275,8 +3262,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'name' : 'Yardstick' }
+                      { 'attributes_raw' : {'name' : 'Yardstick'}
                       , 'cid' : 9
                       , 'pid' : 9
                       , 'type_name' : 'SRM.Handicap'
@@ -3341,8 +3327,7 @@ _test_get = r"""
         , 'entries' :
             [ { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'name' : 'Yardstick' }
+                      { 'attributes_raw' : {'name' : 'Yardstick'}
                       , 'cid' : 9
                       , 'pid' : 9
                       , 'type_name' : 'SRM.Handicap'
@@ -3602,8 +3587,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'name' : 'Yardstick' }
+                      { 'attributes_raw' : {'name' : 'Yardstick'}
                       , 'cid' : 9
                       , 'pid' : 9
                       , 'type_name' : 'SRM.Handicap'
@@ -3640,7 +3624,7 @@ _test_get = r"""
 
     >>> r = show (R.get ("/v1/SRM-Regatta_H?brief"))
     { 'json' :
-        { 'entries' : [ 12 ]
+        { 'entries' : [12]
         , 'url_template' : '/v1/SRM-Regatta_H/{entry}'
         }
     , 'status' : 200
@@ -3694,8 +3678,7 @@ _test_get = r"""
               , 'type_name' : 'SRM.Boat_Class'
               , 'url' : '/v1/MOM-Object/7'
               }
-            , { 'attributes_raw' :
-                  { 'name' : 'Yardstick' }
+            , { 'attributes_raw' : {'name' : 'Yardstick'}
               , 'cid' : 9
               , 'pid' : 9
               , 'type_name' : 'SRM.Handicap'
@@ -3733,8 +3716,7 @@ _test_get = r"""
 
     >>> r = show (R.get ("/v1/MOM-Link?verbose&raw"))
     { 'json' :
-        { 'attribute_names' :
-    [ 'left' ]
+        { 'attribute_names' : ['left']
         , 'entries' :
             [ { 'attributes_raw' :
                   { 'club' : None
@@ -3886,8 +3868,7 @@ _test_get = r"""
 
     >>> r = show (R.get ("/v1/MOM-Link?verbose&raw&closure"))
     { 'json' :
-        { 'attribute_names' :
-    [ 'left' ]
+        { 'attribute_names' : ['left']
         , 'entries' :
             [ { 'attributes_raw' :
                   { 'club' : None
@@ -4002,8 +3983,7 @@ _test_get = r"""
               }
             , { 'attributes_raw' :
                   { 'boat_class' :
-                      { 'attributes_raw' :
-                          { 'name' : 'Yardstick' }
+                      { 'attributes_raw' : {'name' : 'Yardstick'}
                       , 'cid' : 9
                       , 'pid' : 9
                       , 'type_name' : 'SRM.Handicap'
@@ -4132,15 +4112,13 @@ _test_get = r"""
     }
 
     >>> _ = show (R.get ("/v1/pid?count&strict"))
-    { 'json' :
-        { 'count' : 0 }
+    { 'json' : {'count' : 0}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count&strict'
     }
 
     >>> _ = show (R.get ("/v1/pid?count"))
-    { 'json' :
-        { 'count' : 16 }
+    { 'json' : {'count' : 16}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -4170,8 +4148,7 @@ _test_post = r"""
     >>> server = run_server (%(p1)s, %(n1)s)
 
     >>> _ = show (R.get ("/v1/pid?count"))
-    { 'json' :
-        { 'count' : 16 }
+    { 'json' : {'count' : 16}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -4188,15 +4165,13 @@ _test_post = r"""
     ... )
     >>> headers = { "Content-Type": "application/json" }
     >>> _ = show (R.post ("/v1/PAP-Person", headers=headers))
-    { 'json' :
-        { 'error' : 'You need to send the attributes defining the object with the request in `attributes_raw`(content-type "application/json")' }
+    { 'json' : {'error' : 'You need to send the attributes defining the object with the request in `attributes_raw`(content-type "application/json")'}
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
     >>> _ = show (R.post ("/v1/PAP-Person", data=snoopy_cargo, headers = {}))
-    { 'json' :
-        { 'error' : 'You need to send the attributes defining the object with the request in `attributes_raw`(content-type "application/json")' }
+    { 'json' : {'error' : 'You need to send the attributes defining the object with the request in `attributes_raw`(content-type "application/json")'}
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
@@ -4216,8 +4191,7 @@ _test_post = r"""
         { 'attributes_raw' :
             { 'first_name' : 'Snoopy'
             , 'last_name' : 'Dog'
-            , 'lifetime' :
-                { 'start' : '2000-11-22' }
+            , 'lifetime' : {'start' : '2000-11-22'}
             , 'middle_name' : 'The'
             , 'title' : ''
             }
@@ -4300,8 +4274,7 @@ _test_post = r"""
             , 'skipper' :
                 { 'attributes_raw' :
                     { 'club' :
-                        { 'attributes_raw' :
-                            { 'name' : 'SC-AMS' }
+                        { 'attributes_raw' : {'name' : 'SC-AMS'}
                         , 'cid' : 19
                         , 'pid' : 19
                         , 'type_name' : 'SRM.Club'
@@ -4338,8 +4311,7 @@ _test_post = r"""
     }
 
     >>> _ = show (R.get ("/v1/pid?count"))
-    { 'json' :
-        { 'count' : 21 }
+    { 'json' : {'count' : 21}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -4361,8 +4333,7 @@ _test_post = r"""
         { 'attributes_raw' :
             { 'first_name' : 'Rin'
             , 'last_name' : 'Tin'
-            , 'lifetime' :
-                { 'start' : '2000-11-22' }
+            , 'lifetime' : {'start' : '2000-11-22'}
             , 'middle_name' : 'Tin'
             , 'title' : ''
             }
@@ -4376,15 +4347,13 @@ _test_post = r"""
     }
 
     >>> s  = show (requests.put (p, data=cargo_c, headers=headers))
-    { 'json' :
-        { 'error' : 'Cid mismatch: requested cid = 17, current cid = 22' }
+    { 'json' : {'error' : 'Cid mismatch: requested cid = 17, current cid = 22'}
     , 'status' : 409
     , 'url' : 'http://localhost:9999/v1/PAP-Person/17'
     }
 
     >>> _ = show (R.get ("/v1/pid?count"))
-    { 'json' :
-        { 'count' : 21 }
+    { 'json' : {'count' : 21}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -4399,15 +4368,13 @@ _test_post = r"""
     ...     )
     ... )
     >>> _ = show (R.post ("/v1/PAP-Person", data=cargo_g, headers=headers))
-    { 'json' :
-        { 'error' : "Request contains invalid attribute names ('hates',)" }
+    { 'json' : {'error' : "Request contains invalid attribute names ('hates',)"}
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
 
     >>> _ = show (R.get ("/v1/pid?count"))
-    { 'json' :
-        { 'count' : 21 }
+    { 'json' : {'count' : 21}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/pid?count'
     }
@@ -4475,8 +4442,7 @@ _test_post = r"""
         { 'attributes' :
             { 'first_name' : 'rin'
             , 'last_name' : 'tin'
-            , 'lifetime' :
-                { 'start' : '2000-11-22' }
+            , 'lifetime' : {'start' : '2000-11-22'}
             , 'middle_name' : 'tin'
             , 'title' : ''
             }
@@ -4487,8 +4453,7 @@ _test_post = r"""
                 []
             , '/v1/PAP-Person/17/address_links' :
                 []
-            , '/v1/PAP-Person/17/email_links' :
-                [ '/v1/PAP-Person_has_Email/23' ]
+            , '/v1/PAP-Person/17/email_links' : ['/v1/PAP-Person_has_Email/23']
             , '/v1/PAP-Person/17/phone_links' :
                 []
             , '/v1/PAP-Person/17/sailors' :
@@ -4508,8 +4473,7 @@ _test_post = r"""
         { 'attributes' :
             { 'first_name' : 'rin'
             , 'last_name' : 'tin'
-            , 'lifetime' :
-                { 'start' : '2000-11-22' }
+            , 'lifetime' : {'start' : '2000-11-22'}
             , 'middle_name' : 'tin'
             , 'title' : ''
             }
@@ -4552,8 +4516,7 @@ _test_post = r"""
     }
 
     >>> _ = show (R.post ("/v1/PAP-Person", data=cargo_c, headers=headers))
-    { 'json' :
-        { 'error' : "The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object\n  The new definition of Person PAP.Person ('Tin', 'Rin', 'Tin', '') would clash with 1 existing entities\n  Alread
+    { 'json' : {'error' : "The attribute values for ('last_name', 'first_name', 'middle_name', 'title') must be unique for each object\n  The new definition of Person PAP.Person ('Tin', 'Rin', 'Tin', '') would clash with 1 existing entities\n  Already existing:\n    PAP.Person ('Tin', 'Rin', 'Tin', '')"}
     , 'status' : 400
     , 'url' : 'http://localhost:9999/v1/PAP-Person'
     }
@@ -4672,7 +4635,7 @@ _test_query = r"""
 
     >>> _ = show (R.get ("/v1/pid?order_by=pid&offset=0&limit=1&brief"))
     { 'json' :
-        { 'entries' : [ 1 ]
+        { 'entries' : [1]
         , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
@@ -4681,7 +4644,7 @@ _test_query = r"""
 
     >>> _ = show (R.get ("/v1/pid?order_by=pid&FIRST&limit=1&brief"))
     { 'json' :
-        { 'entries' : [ 1 ]
+        { 'entries' : [1]
         , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
@@ -4690,7 +4653,7 @@ _test_query = r"""
 
     >>> _ = show (R.get ("/v1/pid?order_by=pid&offset=-1&limit=1&brief"))
     { 'json' :
-        { 'entries' : [ 16 ]
+        { 'entries' : [16]
         , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
@@ -4699,7 +4662,7 @@ _test_query = r"""
 
     >>> _ = show (R.get ("/v1/pid?order_by=pid&LAST&limit=1&brief"))
     { 'json' :
-        { 'entries' : [ 16 ]
+        { 'entries' : [16]
         , 'url_template' : '/v1/MOM-Id_Entity/{entry}'
         }
     , 'status' : 200
@@ -4708,7 +4671,7 @@ _test_query = r"""
 
     >>> for i in range (10) :
     ...     r = R.get ("/v1/pid?brief&order_by=pid&limit=4&offset=" + str (i))
-    ...     print (i, ":", formatted_1 (req_json (r)))
+    ...     print (i, ":", portable_repr (req_json (r)))
     0 : {'entries' : [1, 2, 3, 4], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
     1 : {'entries' : [2, 3, 4, 5], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
     2 : {'entries' : [3, 4, 5, 6], 'url_template' : '/v1/MOM-Id_Entity/{entry}'}
@@ -4787,8 +4750,7 @@ _test_query = r"""
     }
 
     >>> r = show (R.get ("/v1/SRM-Boat_in_Regatta.csv?AQ=left,EQ,11&verbose&raw&brief"))
-    { 'content' :
-    [ 'left,right,skipper,place,points' ]
+    { 'content' : ['left,right,skipper,place,points']
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/SRM-Boat_in_Regatta.csv?AQ=left,EQ,11&verbose&raw&brief'
     }
@@ -4832,8 +4794,7 @@ _test_query = r"""
     , 'url' : 'http://localhost:9999/v1/MOM-Object?count&AQ=last_name,EQ,tanzer'
     }
     >>> r = show (R.get ("/v1/PAP-Person?count&AQ=last_name,EQ,tanzer"))
-    { 'json' :
-        { 'count' : 3 }
+    { 'json' : {'count' : 3}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/v1/PAP-Person?count&AQ=last_name,EQ,tanzer'
     }
@@ -4902,10 +4863,8 @@ _test_rat = r"""
     >>> show (r)
     { 'json' :
         { 'errors' :
-            { 'null' :
-    [ 'Please enter a username' ]
-            , 'username' :
-    [ 'A user name is required to login.' ]
+            { 'null' : ['Please enter a username']
+            , 'username' : ['A user name is required to login.']
             }
         }
     , 'status' : 400
@@ -4916,8 +4875,7 @@ _test_rat = r"""
     >>> rat_cargo = json.dumps (dict (username = "test@test.test", password = "test"))
     >>> r = R.post ("/RAT", data = rat_cargo, headers = headers)
     >>> show (r, normalize_json = True)
-    { 'json' :
-        { 'RAT' : '<REST authorization token>' }
+    { 'json' : {'RAT' : '<REST authorization token>'}
     , 'status' : 200
     , 'url' : 'http://localhost:9999/RAT'
     }
@@ -5029,7 +4987,7 @@ _test_rat = r"""
                 , { 'default_value' : ''
                   , 'description' : 'Permanent id of the instance.'
                   , 'example' : '42'
-                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database
+                  , 'explanation' : 'The `pid` is unique over all entities in a given scope. Once\ncreated, the `pid` of an instance never changes and is not ever\nreused for a different instance.\n\nThe `pid` remains unchanged during database migrations.'
                   , 'is_changeable' : False
                   , 'is_required' : False
                   , 'is_settable' : True
@@ -5193,12 +5151,12 @@ _test_rat = r"""
                 ]
             }
         , 'cross_references' :
-            [ { 'attributes' : [ 'left' ]
+            [ { 'attributes' : ['left']
               , 'lra' : 'group_links'
               , 'type_name' : 'Auth.Account_in_Group'
               , 'url' : '/Doc/Auth-Account_in_Group'
               }
-            , { 'attributes' : [ 'right' ]
+            , { 'attributes' : ['right']
               , 'lra' : 'person_links'
               , 'type_name' : 'PAP.Person_has_Account'
               , 'url' : '/Doc/PAP-Person_has_Account'
@@ -5233,8 +5191,7 @@ _test_rat = r"""
         , 'server' : '<server>'
         , 'www-authenticate' : 'Basic realm="basic-auth"'
         }
-    , 'json' :
-        { 'description' : 'Unauthorized' }
+    , 'json' : {'description' : 'Unauthorized'}
     , 'status' : 401
     , 'url' : 'http://localhost:9999/v1/Auth-Account'
     }

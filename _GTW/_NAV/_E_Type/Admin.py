@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.NAV.E_Type.
@@ -579,11 +579,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request    = handler.request
             result     = {}
             if json is None :
-                from _TFL.Formatter import formatted_1
+                from _TFL.portable_repr import portable_repr
                 logging.warning \
                     ( "AFS form post requests without content-type json"
                       "\n    Headers: %s"                      "\n    Body: %s"
-                    % (formatted_1 (request.headers), handler.body)
+                    % (portable_repr (request.headers), handler.body)
                     )
                 return handler.write_json (result)
             try :
@@ -636,8 +636,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 try :
                     return handler.write_json (result)
                 except Exception as exc :
-                    from _TFL.Formatter import formatted
-                    self._send_error_email (handler, exc, formatted (result))
+                    from _TFL.formatted_repr import formatted_repr
+                    self._send_error_email \
+                        (handler, exc, formatted_repr (result))
                     raise
             except JSON_Error as exc :
                 return exc (handler)

@@ -1068,7 +1068,7 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (pyk.itervalues (ET_Supertrap.attributes), key = TFL.Getter.name)
     [Blob `FO`, Role_Ref `catch`, Entity `created_by`, Rev_Ref `creation`, Date-Time `creation_date`, Boolean `electric`, Int `is_used`, Rev_Ref `last_change`, Date-Time `last_changed`, Entity `last_changed_by`, Int `last_cid`, Float `max_weight`, Name `name`, Role_Ref `owner`, Link_Ref `owner_link`, Link_Ref_List `owner_links`, Surrogate `pid`, Int_Interval `reaction_time_range`, Link_Ref `rodent_link`, Link_Ref_List `rodent_links`, Int `serial_no`, Role_Ref `setter`, Link_Ref `setter_link`, Link_Ref_List `setter_links`, String `type_name`, String `ui_display`, String `ui_repr`, Float `up_ex`, Float `up_ex_q`, Float_Interval `weights`, Boolean `x_locked`]
 
-    >>> print (formatted1 (sorted (ET_Id_Entity.relevant_roots)))
+    >>> print (portable_repr (sorted (ET_Id_Entity.relevant_roots)))
     ['BMT.Expected_Traptime', 'BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
     >>> ET_Person.relevant_root
     <class 'BMT.Person' [BMT__Hash__HPS]>
@@ -1079,16 +1079,16 @@ The app-type specific entity-types are ready to be used by
 
     >>> sorted (ET_Person.children)
     []
-    >>> print (formatted1 (sorted (ET_Rodent.children)))
+    >>> print (portable_repr (sorted (ET_Rodent.children)))
     ['BMT.Mouse', 'BMT.Rat']
     >>> sorted (pyk.itervalues (ET_Rodent.children), key = TFL.Getter.type_name)
     [<class 'BMT.Mouse' [BMT__Hash__HPS]>, <class 'BMT.Rat' [BMT__Hash__HPS]>]
     >>> sorted (ET_Rat.children)
     []
 
-    >>> print (formatted1 (sorted (apt.etypes)))
+    >>> print (portable_repr (sorted (apt.etypes)))
     ['BMT.Beaver', 'BMT.Expected_Traptime', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Id_Entity', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link3', 'MOM.MD_Change', 'MOM.MD_Entity', 'MOM.Named_Object', 'MOM.Object', 'MOM.Position', 'MOM._Interval_', 'MOM._MOM_Link_n_']
-    >>> print (formatted1 ([t.type_name for t in apt._T_Extension]))
+    >>> print (portable_repr ([t.type_name for t in apt._T_Extension]))
     ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.MD_Entity', 'MOM.MD_Change', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link3', 'MOM.Object', 'MOM.Date_Interval', 'MOM.Date_Interval_C', 'MOM.Date_Interval_N', 'MOM._Interval_', 'MOM.Float_Interval', 'MOM.Frequency_Interval', 'MOM.Int_Interval', 'MOM.Int_Interval_C', 'MOM.Position', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Expected_Traptime', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
     >>> for t in apt._T_Extension [2:] :
     ...     print ("%%-35s %%s" %% (t.type_name, t.epk_sig))
@@ -1838,9 +1838,9 @@ Deleting objects and links
     >>> prepr (m.object_referring_attributes)
     defaultdict(<class 'builtins.list'>, {})
 
-    >>> print (formatted1 (sorted (d.type_name for d in m.dependencies)))
+    >>> print (portable_repr (sorted (d.type_name for d in m.dependencies)))
     ['BMT.Rodent_in_Trap']
-    >>> print (formatted1 (sorted (d.type_name for d in t1.dependencies))) ### 1
+    >>> print (portable_repr (sorted (d.type_name for d in t1.dependencies))) ### 1
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap', 'BMT.Rodent_in_Trap']
 
     >>> m_id  = m.pid
@@ -1869,7 +1869,7 @@ Deleting objects and links
     >>> show (scope.ems.all_links (m_id))
     []
 
-    >>> print (formatted1 (sorted (d.type_name for d in t1.dependencies))) ### 2
+    >>> print (portable_repr (sorted (d.type_name for d in t1.dependencies))) ### 2
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap']
 
     .. ### DBW-specific finish
@@ -2183,10 +2183,8 @@ Setting attribute values with Queries
 
 """
 
-from   _TFL.Formatter           import Formatter, formatted_1 as formatted1
-formatted  = Formatter (width = 240)
-
 from   _MOM.inspect             import show_ref_map, show_ref_maps
+
 def last_change (scope) :
     return scope.query_changes().order_by (TFL.Sorted_By ("-cid")).first ()
 # end def last_change

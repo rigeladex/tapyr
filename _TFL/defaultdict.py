@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -150,7 +150,7 @@ class defaultdict_kd (_defaultdict_) :
 def defaultdict_nested (depth = 1, leaf = dict) :
     """Return a `defaultdict` nested to `depth` with leaves of type `leaf`.
 
-    >>> from _TFL.Formatter import formatted
+    >>> from _TFL.formatted_repr import formatted_repr as formatted
     >>> ddn_1 = defaultdict_nested (1, int)
     >>> ddn_1 # doctest:+ELLIPSIS
     defaultdict(<... 'int'>, {})
@@ -161,27 +161,14 @@ def defaultdict_nested (depth = 1, leaf = dict) :
     defaultdict(<... 'int'>, {'foo': 2})
     >>> ddn_2 ["foo"] ["bar"] += 42
     >>> print (formatted (ddn_1))
-    { 'foo' : 2 }
+    {'foo' : 2}
     >>> print (formatted (ddn_2))
-    { 'foo' :
-        { 'bar' : 42 }
-    }
+    {'foo' : {'bar' : 42}}
     >>> ddn_7 = defaultdict_nested (7, int)
     >>> ddn_7 [1] [2] [3] [4] [5] [6] [7] = "foo"
     >>> print (formatted (ddn_7))
-    { 1 :
-        { 2 :
-            { 3 :
-                { 4 :
-                    { 5 :
-                        { 6 :
-                            { 7 : 'foo' }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    {1 : {2 : {3 : {4 : {5 : {6 : {7 : 'foo'}}}}}}}
+
     >>> ddn_7 [0] [1] [2] [3] [4] [5] [6] [7] = "bar"
     Traceback (most recent call last):
       ...

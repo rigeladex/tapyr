@@ -37,6 +37,7 @@
 #    20-Jul-2011 (CT) `_properties` added to allow subclasses to define
 #                     property setters that actually work
 #    10-Oct-2014 (CT) Use `portable_repr`
+#    15-Oct-2014 (CT) Add `_portable_repr_Record`, protect against recursion
 #    ««revision-date»»···
 #--
 
@@ -52,17 +53,20 @@ import _TFL._Meta.Object
 class Record (TFL.Meta.Object) :
     """Class emulating a struct/record (but dynamically).
 
-       >>> r = Record (x = "y", kw = dict (foo = 42))
-       >>> r.x
-       'y'
-       >>> r.kw
-       {'foo': 42}
+    >>> r = Record (x = "y", kw = dict (foo = 42))
+    >>> r.x
+    'y'
+    >>> r.kw
+    {'foo': 42}
 
-       >>> bool (r)
-       True
+    >>> bool (r)
+    True
 
-       >>> bool (Record ())
-       False
+    >>> bool (Record ())
+    False
+
+    >>> r
+    Record (kw = {'foo' : 42}, x = 'y')
 
     """
 
@@ -83,9 +87,11 @@ class Record (TFL.Meta.Object) :
         return result
     # end def copy
 
-    def _formatted_kw (self) :
+    def _formatted_kw (self, seen = None) :
+        if seen is None :
+            seen = set ([id (self)])
         return ", ".join \
-            ( (   "%s = %s" % (k, portable_repr (v))
+            ( (   "%s = %s" % (k, portable_repr.call (v, seen))
               for (k, v) in sorted (pyk.iteritems (self._kw))
               )
             )
@@ -127,8 +133,7 @@ class Record (TFL.Meta.Object) :
     # end def __len__
 
     def __repr__ (self) :
-        return "%s (%s)" % \
-            (self.__class__.__name__, self._formatted_kw ())
+        return portable_repr (self)
     # end def __repr__
 
     def __setattr__ (self, name, value) :
@@ -158,10 +163,25 @@ class Record (TFL.Meta.Object) :
 class Record_S (Record) :
     """Record usable as dict for %-interpolation with nested attributes.
 
-       >>> c = Record_S (x = 1)
-           >>> o = Record_S (a = 42, b = Record_S (a = 137, b = "foo", c = c))
-       >>> "o.a = %(a)s, o.b.a = %(b.a)s, o.b.c.x = %(b.c.x)s" % o
-       'o.a = 42, o.b.a = 137, o.b.c.x = 1'
+    >>> c = Record_S (x = 1)
+    >>> o = Record_S (a = 42, b = Record_S (a = 137, b = "foo", c = c))
+    >>> "o.a = %(a)s, o.b.a = %(b.a)s, o.b.c.x = %(b.c.x)s" % o
+    'o.a = 42, o.b.a = 137, o.b.c.x = 1'
+
+    >>> c
+    Record_S (x = 1)
+
+    >>> o
+    Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (x = 1)))
+
+    >>> c.y = o
+
+    >>> c
+    Record_S (x = 1, y = Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (...))))
+
+    >>> o
+    Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (x = 1, y = Record_S (...))))
+
     """
 
     def __getitem__ (self, key) :
@@ -178,6 +198,17 @@ class Record_S (Record) :
     # end def __getitem__
 
 # end class Record_S
+
+@portable_repr.add_type (Record)
+@portable_repr.recurses
+def _portable_repr_Record (obj, seen) :
+    return "%s (%s)" % (obj.__class__.__name__, obj._formatted_kw (seen))
+# end def _portable_repr_Record
+
+@portable_repr.recursion_repr.add_type (Record)
+def _recursion_repr_Record (obj) :
+    return "%s (...)" % (obj.__class__.__name__, )
+# end def _recursion_repr_Record
 
 if __name__ != "__main__" :
     TFL._Export ("*")
