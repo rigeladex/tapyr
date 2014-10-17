@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    15-Oct-2014 (CT) Creation
+#    17-Oct-2014 (CT) Add `compact`
 #    ««revision-date»»···
 #--
 
@@ -49,13 +50,13 @@ class _formatted_repr_properties (object) :
     Type_Name_Map = portable_repr.Type_Name_Map
 
     @Single_Dispatch
-    def generic_formatted_repr_iter (obj, level, seen) :
+    def generic_formatted_repr_iter (obj, level, compact, seen) :
         yield FRIT (level, True, "", portable_repr.call (obj, seen), "")
     # end def generic_formatted_repr_iter
 
     @Decorator
     def recurses (f) :
-        def _ (obj, level, seen) :
+        def _ (obj, level, compact, seen) :
             oid = id (obj)
             if oid in seen :
                 yield FRIT \
@@ -63,16 +64,21 @@ class _formatted_repr_properties (object) :
             else :
                 seen = set (seen)
                 seen.add   (oid)
-                for x in f (obj, level, seen) :
-                    yield x
+                compact_frit = formatted_repr._compact_frit \
+                    (obj, level, compact, seen)
+                if compact_frit is not None :
+                    yield compact_frit
+                else :
+                    for x in f (obj, level, compact, seen) :
+                        yield x
         return _
     # end def recurses
 
     @generic_formatted_repr_iter.add_type (dict)
     @recurses
-    def dict (obj, level, seen) :
+    def dict (obj, level, compact, seen) :
         if obj :
-            it = formatted_repr._items_iter (obj, level + 1, seen)
+            it = formatted_repr._items_iter (obj, level + 1, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, "{ ", ", ", " }") :
                 yield x
@@ -82,9 +88,9 @@ class _formatted_repr_properties (object) :
 
     @generic_formatted_repr_iter.add_type (list)
     @recurses
-    def list (obj, level, seen) :
+    def list (obj, level, compact, seen) :
         if obj :
-            it = formatted_repr._values_iter (obj, level + 1, seen)
+            it = formatted_repr._values_iter (obj, level + 1, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, "[ ", ", ", " ]") :
                 yield x
@@ -94,23 +100,23 @@ class _formatted_repr_properties (object) :
 
     @generic_formatted_repr_iter.add_type (Record)
     @recurses
-    def record (obj, level, seen) :
-        def _iter (obj, level, seen) :
-            it = formatted_repr._record_iter (obj, level, seen)
+    def record (obj, level, compact, seen) :
+        def _iter (obj, level, compact, seen) :
+            it = formatted_repr._record_iter (obj, level, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, "( ", ", ", " )") :
                 yield x
-        it = _iter (obj, level + 1, seen)
+        it = _iter (obj, level + 1, compact, seen)
         for x in formatted_repr._structure_iter \
                 (it, level, "Record ", "", "", nl_after_open = True) :
             yield x
     # end def record
 
     @generic_formatted_repr_iter.add_type (set)
-    def set (obj, level, seen) :
+    def set (obj, level, compact, seen) :
         if obj :
             it = formatted_repr._values_iter \
-                (sorted (obj, key = SK), level, seen)
+                (sorted (obj, key = SK), level, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, "{ ", ", ", " }") :
                 yield x
@@ -120,9 +126,9 @@ class _formatted_repr_properties (object) :
 
     @generic_formatted_repr_iter.add_type (tuple)
     @recurses
-    def tuple (obj, level, seen) :
+    def tuple (obj, level, compact, seen) :
         if obj :
-            it = formatted_repr._values_iter (obj, level + 1, seen)
+            it = formatted_repr._values_iter (obj, level + 1, compact, seen)
             clos = (",", " )") if len (obj) == 1 else " )"
             for x in formatted_repr._structure_iter \
                     (it, level, "( ", ", ", clos) :
@@ -131,19 +137,26 @@ class _formatted_repr_properties (object) :
             yield FRIT (level, True, "", "()", "")
     # end def tuple
 
-    def _items_iter (obj, level, seen) :
+    def _compact_frit (obj, level, compact, seen) :
+        if compact :
+            body = portable_repr (obj)
+            if len (body) < (80 if compact == True else compact) :
+                return FRIT (level, True, "", body, "")
+    # end def _compact_frit
+
+    def _items_iter (obj, level, compact, seen) :
         for k, v in sorted (pyk.iteritems (obj), key = SK) :
             rk = portable_repr (k)
-            it = formatted_repr.iter (v, level + 1, seen)
+            it = formatted_repr.iter (v, level + 1, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, rk + " : ", "", "", nl_after_open = True) :
                 yield x
     # end def _items_iter
 
-    def _record_iter (obj, level, seen) :
+    def _record_iter (obj, level, compact, seen) :
         for k, v in sorted (pyk.iteritems (obj._kw), key = SK) :
             rk = pyk.text_type (k)
-            it = formatted_repr.iter (v, level + 1, seen)
+            it = formatted_repr.iter (v, level + 1, compact, seen)
             for x in formatted_repr._structure_iter \
                     (it, level, rk + " = ", "", "", nl_after_open = True) :
                 yield x
@@ -180,9 +193,9 @@ class _formatted_repr_properties (object) :
                     yield FRIT (level, False, c, "", "")
     # end def _structure_iter
 
-    def _values_iter (obj, level, seen) :
+    def _values_iter (obj, level, compact, seen) :
         for v in obj :
-            for x in formatted_repr.iter (v, level, seen) :
+            for x in formatted_repr.iter (v, level, compact, seen) :
                 yield x
     # end def _values_iter
 
@@ -197,22 +210,27 @@ _formatted_repr_properties.update \
     )
 
 @Attributed (** _formatted_repr_properties)
-def formatted_repr (obj, level = 0, indent = "  ") :
-    """Return a formatted canonical string representation of `obj`.
-    """
+def formatted_repr (obj, level = 0, compact = False, indent = "  ") :
+    """Return a formatted canonical string representation of `obj`."""
     return  "\n".join \
         ( ( "".join ((indent * line.level, line.head, line.body, line.tail))
           ).replace (" ", " ").rstrip (" ")
-        for line in formatted_repr.iter (obj, level, seen = set ())
+        for line in formatted_repr.iter (obj, level, compact, seen = set ())
         )
 # end def formatted_repr
 
-def test_formatted_repr (obj, level = 0, indent = "  ") :
+@Attributed (** _formatted_repr_properties)
+def formatted_repr_compact (obj, level = 0, compact = 80, indent = "  ") :
+    """Return a compact formatted canonical string representation of `obj`."""
+    return formatted_repr (obj, level, compact, indent)
+# end def formatted_repr_compact
+
+def test_formatted_repr (obj, level = 0, compact = False, indent = "  ") :
     """Return a formatted canonical string representation of `obj`.
     """
     return  "\n".join \
         ( portable_repr (line)
-        for line in formatted_repr.iter (obj, level, seen = set ())
+        for line in formatted_repr.iter (obj, level, compact, seen = set ())
         )
 # end def test_formatted_repr
 
@@ -334,6 +352,17 @@ Examples::
     , 'z'
     ]
 
+    >>> print (formatted_repr_compact (l3))
+    [ 'x'
+    , 'y'
+    , [1, 2, [], 3, ['a', ['b'], 'c', [...]]]
+    , ['a', ['b'], 'c', [1, 2, [], 3, [...]]]
+    , 'z'
+    ]
+
+    >>> print (formatted_repr (l3, compact = 120))
+    ['x', 'y', [1, 2, [], 3, ['a', ['b'], 'c', [...]]], ['a', ['b'], 'c', [1, 2, [], 3, [...]]], 'z']
+
     >>> thing = ["abc", "dfg", {1: "abc", 2: "xyz", 0: (42, 137)}]
 
     >>> print (formatted_repr (thing))
@@ -366,6 +395,17 @@ Examples::
       }
     ]
 
+    >>> print (formatted_repr_compact (thing))
+    [ 'abc'
+    , 'dfg'
+    , { 0 : (42, 137)
+      , 1 : 'abc'
+      , 2 : 'xyz'
+      , 'nested' : ['u', 'v']
+      , 'recursive' : [...]
+      }
+    ]
+
     >>> print (formatted_repr (Record (qux = 23)))
     Record (qux = 23)
 
@@ -391,7 +431,7 @@ Examples::
 
 """
 
-__all__ = ("formatted_repr", )
+__all__ = ("formatted_repr", "formatted_repr_compact")
 
 if __name__ != "__main__" :
     TFL._Export (* __all__)
