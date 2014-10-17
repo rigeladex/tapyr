@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.DBW.SAW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -47,6 +47,7 @@
 #    27-Nov-2013 (MG) `Session_PC.consume` used getattr for `max_surrs` for
 #                     scopes which have an old meta data structure
 #    11-Dec-2013 (CT) Change `load_info` to preserve `dbid`
+#    15-Oct-2014 (CT) Pass `db_meta_data` to `Incompatible_DB_Version`
 #    ««revision-date»»···
 #--
 
@@ -334,7 +335,8 @@ class _Session_ (TFL.Meta.Object) :
         if meta_data.dbv_hash != scope.app_type.db_version_hash :
             self.close ()
             raise MOM.Error.Incompatible_DB_Version \
-                ( TFL.I18N._T
+                ( meta_data
+                , TFL.I18N._T
                    ( "Cannot load database because of a database version hash "
                      "missmatch:\n"
                      "  Tool  database version hash: %s\n"

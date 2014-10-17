@@ -87,6 +87,7 @@
 #     1-Sep-2014 (CT) Fix translatability of `Permission.as_unicode`
 #     9-Oct-2014 (CT) Use `portable_repr`
 #    10-Oct-2014 (CT) Use `pyk.reprify`, not `pyk.encoded`
+#    15-Oct-2014 (CT) Add `db_meta_data` to `Incompatible_DB_Version`
 #    ««revision-date»»···
 #--
 
@@ -572,6 +573,12 @@ class Empty_DB (DB) :
 
 class Incompatible_DB_Version (DB) :
     """Database version is not compatible to software version."""
+
+    def __init__ (self, db_meta_data, * args, ** kw) :
+        self.db_meta_data = db_meta_data
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
 # end class Incompatible_DB_Version
 
 class Inconsistent_Attribute (Error) :

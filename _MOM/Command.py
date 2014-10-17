@@ -65,10 +65,11 @@
 #    22-Sep-2014 (CT) Add sub-command `_Script_`,
 #                     methods `_handle_script` and `_handle_script_globals`
 #    12-Oct-2014 (CT) Add option `-sha` with default `sha224`
+#    14-Oct-2014 (CT) Add sub-command `version_hash`
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__             import print_function
 
 from   _MOM.import_MOM        import *
 
@@ -77,6 +78,7 @@ import _MOM._EMS.Backends
 
 from   _TFL                   import sos
 from   _TFL.I18N              import _, _T, _Tn
+from   _TFL.portable_repr     import portable_repr
 from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer, re
 
@@ -188,6 +190,16 @@ class MOM_Command (TFL.Command.Root_Command) :
         """Create database specified by `-db_url`."""
 
     _Create_ = _MOM_Create_ # end class
+
+    class _MOM_Version_Hash_ (_Sub_Command_) :
+        """Show version-hashof program or database or both."""
+
+        _opts                   = \
+            ( "database:B?Show hash of database version"
+            , "code:B?Show hash of program version"
+            )
+
+    _Version_Hash_ = _MOM_Version_Hash_ # end class
 
     class _MOM_Delete_ (_Sub_Command_) :
         """Delete database specified by `-db_url`."""
@@ -387,6 +399,29 @@ class MOM_Command (TFL.Command.Root_Command) :
         scope.ems.compact ()
         scope.destroy     ()
     # end def _handle_create
+
+    def _handle_version_hash (self, cmd) :
+        both     = cmd.database and cmd.code
+        verbose  = cmd.verbose or both
+        apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
+        dbv      = apt.db_version_hash
+        fmt      = "%(dbv)s"
+        if verbose :
+            dbv  = portable_repr (dbv)
+            fmt  = "%(kind)s = %(dbv)s"
+        if cmd.code or not cmd.database :
+            kind = "code_version_hash" if both else "dbv_hash"
+            print (fmt % dict (kind = kind, dbv = dbv))
+        if cmd.database :
+            try :
+                db_man = self.DB_Man.connect (apt, url)
+            except MOM.Error.Incompatible_DB_Version as exc :
+                db_meta_data = exc.db_meta_data
+            else :
+                db_meta_data = db_man.db_meta_data
+            dbv  = portable_repr (db_meta_data.dbv_hash)
+            print (fmt % dict (kind = "database_version_hash", dbv = dbv))
+    # end def _handle_version_hash
 
     def _handle_delete (self, cmd) :
         apt, url = self.app_type_and_url (cmd.db_url, cmd.db_name)
