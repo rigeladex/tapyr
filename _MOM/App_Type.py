@@ -38,6 +38,7 @@
 #    13-Jun-2013 (CT) Add `PNS_Set`
 #    23-Aug-2013 (CT) Add guard for `fqn != qn` to `add_type`
 #    12-Oct-2014 (CT) Use `TFL.user_config.sha` instead of home-grown code
+#    17-Oct-2014 (CT) Change `db_sig` to use a dict, not tuple, of E_Types
 #    ««revision-date»»···
 #--
 
@@ -155,7 +156,10 @@ class _App_Type_D_ (_App_Type_) :
     def db_sig (self) :
         return \
             ( self.DBW.db_sig
-            + tuple (T.db_sig for T in self._T_Extension if T.relevant_root)
+            , dict
+                (  (T.type_name, T.db_sig)
+                for T in self._T_Extension if T.relevant_root
+                )
             )
     # end def db_sig
 

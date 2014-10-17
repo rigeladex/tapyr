@@ -49,6 +49,7 @@
 #                     * use new generic option `-Engine_Echo` instead
 #    18-Nov-2013 (CT) Change default `input_encoding` to `utf-8`
 #    22-Sep-2014 (CT) Redefine `_Script_`, `_handle_script_globals`
+#    17-Oct-2014 (CT) Pass globals to `py_shell`
 #    ««revision-date»»···
 #--
 
@@ -258,12 +259,12 @@ class GTW_Command (MOM.Command) :
     # end def _handle_script_globals
 
     def _handle_shell (self, cmd) :
-        from _MOM.import_MOM import Q
         scope = self._handle_load (cmd)
         if cmd.wsgi :
             wsgi = self._handle_wsgi (cmd)
             root = top = self.root
-        TFL.Environment.py_shell ()
+        globs = self._handle_script_globals (cmd = cmd, scope = scope)
+        TFL.Environment.py_shell (globs)
     # end def _handle_shell
 
     def _handle_wsgi (self, cmd) :

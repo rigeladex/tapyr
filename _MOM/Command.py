@@ -66,6 +66,7 @@
 #                     methods `_handle_script` and `_handle_script_globals`
 #    12-Oct-2014 (CT) Add option `-sha` with default `sha224`
 #    14-Oct-2014 (CT) Add sub-command `version_hash`
+#    17-Oct-2014 (CT) Pass globals to `py_shell`
 #    ««revision-date»»···
 #--
 
@@ -76,11 +77,12 @@ from   _MOM.import_MOM        import *
 import _MOM.DB_Man
 import _MOM._EMS.Backends
 
-from   _TFL                   import sos
+from   _TFL.formatted_repr    import formatted_repr, formatted_repr_compact
 from   _TFL.I18N              import _, _T, _Tn
 from   _TFL.portable_repr     import portable_repr
 from   _TFL.pyk               import pyk
 from   _TFL.Regexp            import Re_Replacer, re
+from   _TFL                   import sos
 
 import _TFL.CAO
 import _TFL.Command
@@ -513,17 +515,21 @@ class MOM_Command (TFL.Command.Root_Command) :
     def _handle_script_globals (self, cmd, scope, ** kw) :
         return dict \
             ( kw
-            , cmd      = cmd
-            , MOM      = MOM
-            , Q        = Q
-            , scope    = scope
-            , TFL      = TFL
+            , cmd               = cmd
+            , formatted         = formatted_repr
+            , formatted_compact = formatted_repr_compact
+            , MOM               = MOM
+            , portable_repr     = portable_repr
+            , Q                 = Q
+            , scope             = scope
+            , TFL               = TFL
             )
     # end def _handle_script_globals
 
     def _handle_shell (self, cmd) :
         scope = self._handle_load (cmd)
-        TFL.Environment.py_shell  ()
+        globs = self._handle_script_globals (cmd = cmd, scope = scope)
+        TFL.Environment.py_shell (globs)
     # end def _handle_shell
 
     def _load_scope (self, apt, url) :

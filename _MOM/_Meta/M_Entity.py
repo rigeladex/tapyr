@@ -218,6 +218,9 @@
 #    25-Sep-2014 (CT) Move `_m_auto_args_as_kw` up to `M_E_Mixin`, remove `raw`
 #    25-Sep-2014 (CT) Add `args_as_kw` to `M_E_Type_Id`
 #    26-Sep-2014 (CT) Add `args_as_kw` for partial types with `epk_sig`, too
+#    17-Oct-2014 (CT) Change `db_sig` to
+#                     * return a dict, not a tuple
+#                     * use a dict, not tuple, of attributes
 #    ««revision-date»»···
 #--
 
@@ -973,9 +976,11 @@ class M_E_Type (M_E_Mixin) :
 
     @TFL.Meta.Once_Property
     def db_sig (cls) :
-        return \
-            ( cls.type_name, cls.i_rank, cls.is_partial, cls.is_relevant
-            , tuple (a.db_sig for a in cls.db_attr)
+        return dict \
+            ( i_rank        = cls.i_rank
+            , is_partial    = cls.is_partial
+            , is_relevant   = cls.is_relevant
+            , db_attributes = dict ((a.name, a.db_sig) for a in cls.db_attr)
             )
     # end def db_sig
 

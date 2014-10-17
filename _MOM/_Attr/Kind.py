@@ -219,6 +219,7 @@
 #     2-May-2014 (CT) Fix `change_forbidden` for `Init_Only_Mixin`
 #                     (only True for existing instance!)
 #    27-Aug-2014 (CT) Add guard for `None` to `_get_computed`
+#    17-Oct-2014 (CT) Change `db_sig` to wrap kind-specific sig in tuple
 #    ««revision-date»»···
 #--
 
@@ -317,10 +318,11 @@ class Kind (TFL.Meta.BaM (MOM.Prop.Kind, metaclass = MOM.Meta.M_Attr_Kind)) :
     @TFL.Meta.Once_Property
     def db_sig (self) :
         return \
-            ( self.db_sig_version
-            , self.is_required
-            , self.is_primary
-            , self.needs_raw_value
+            ( ( self.db_sig_version
+              , self.is_required
+              , self.is_primary
+              , self.needs_raw_value
+              )
             , self.attr.db_sig
             )
     # end def db_sig
