@@ -33,6 +33,7 @@
 #     4-Jan-2006 (CT) `MB_Type` changed to update `_pma_msg_no` and
 #                     `_pma_size` for messages already in `seen`
 #     4-Jan-2006 (CT) `_msg_no` changed to consider `max_no`
+#    20-Oct-2014 (CT) Fix `sos` import
 #    ««revision-date»»···
 #--
 
@@ -43,7 +44,7 @@ from   _TFL                       import TFL
 
 import _PMA.Mailbox
 
-from   _TFL.sos                   import sos
+from   _TFL                       import sos
 
 import  poplib
 

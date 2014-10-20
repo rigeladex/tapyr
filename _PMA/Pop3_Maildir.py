@@ -19,8 +19,11 @@
 #     4-Jan-2006 (CT) Creation
 #     5-Jan-2006 (CT) `Polling_Thread` factored
 #     5-Jan-2006 (CT) `Pop3_Maildir_SSL` added
+#    20-Oct-2014 (CT) Add missing `__future__` import for `print_function`
 #    ««revision-date»»···
 #--
+
+from   __future__                 import print_function
 
 from   _TFL                       import TFL
 from   _PMA                       import PMA
@@ -29,7 +32,8 @@ from   _PMA                       import Lib
 import _PMA.Mailbox
 import _PMA.Thread
 import _TFL._Meta.Object
-import _TFL.sos as sos
+
+from   _TFL                       import sos
 
 import poplib
 import sys

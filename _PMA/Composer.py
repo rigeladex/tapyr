@@ -508,6 +508,6 @@ if __name__ != "__main__" :
     PMA._Export ("*")
 else :
     import _PMA.Composer
-    PMA.load_user_config ()
-    _Command ()
+    PMA.load_user_config   ()
+    _PMA.Composer._Command ()
 ### __END__ PMA.Composer
