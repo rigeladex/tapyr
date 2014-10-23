@@ -22,8 +22,12 @@
 #    24-Feb-2010 (MG) Duplicate message check added
 #    27-Feb-2010 (MG) Allow the extraction method to specify in which file
 #                     the translation was found
+#    23-Oct-2014 (CT) Add missing `__future__` import of `print_function`
 #    ««revision-date»»···
 #--
+
+from   __future__                    import print_function
+
 from   _TFL                          import TFL
 from   _TFL.predicate                import any_true
 import _TFL.relative_to_search_path

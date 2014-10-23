@@ -17,8 +17,11 @@
 #
 # Revision Dates
 #    18-Jun-2010 (CT) Creation (factored from TFL.I18N)
+#    23-Oct-2014 (CT) Add `__future__` import of `print_function`
 #    ««revision-date»»···
 #--
+
+from   __future__              import print_function
 
 from   _TFL                    import TFL
 from   _TFL.pyk                import pyk

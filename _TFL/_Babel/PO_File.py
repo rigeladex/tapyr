@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Martin Glueck All rights reserved
+# Copyright (C) 2010-2014 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package TFL.Babel.
@@ -27,7 +27,7 @@
 #    ««revision-date»»···
 #--
 
-from   __future__  import print_function
+from   __future__              import print_function
 
 from   _TFL                    import TFL
 
