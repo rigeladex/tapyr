@@ -77,15 +77,15 @@ Now, let's test the login/logout handlers
     False
     >>> handler.session.get ("username") is None
     True
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     Logout successfull.
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     <BLANKLINE>
     >>> handler = GET ("/account/logout", headers = dict (Referer = "/i-was-here"))
     Traceback (most recent call last):
         ...
     Redirect_302: /i-was-here
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     Logout successfull.
 
     >>> handler = POST ("/account/login", username = acc1.name, password = "passwd1")
@@ -133,7 +133,7 @@ Test the password change
     Traceback (most recent call last):
         ....
     Redirect_302: /
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     The password has been changed.
     >>> acc1.verify_password ("passwdn")
     True
@@ -148,7 +148,7 @@ Next, we test the reset password functions
     Traceback (most recent call last):
         ....
     Redirect_302: /
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     The reset password instructions have been sent to your email address.
 
     >>> acc2.active
@@ -157,7 +157,7 @@ Next, we test the reset password functions
     Traceback (most recent call last):
         ....
     Redirect_302: /
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     The reset password instructions have been sent to your email address.
     >>> reset_pwd  = scope.Auth.Account_Password_Reset.query (account = acc2).all ()
     >>> new_password_1 = reset_pwd [0].password
@@ -231,7 +231,7 @@ Account activation
     Traceback (most recent call last):
        ...
     Redirect_302: /
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     Activation successfull.
     >>> acc3.verify_password ("passwd3")
     True
@@ -256,7 +256,7 @@ Change E-Mail address
     Traceback (most recent call last):
         ...
     Redirect_302: /
-    >>> print (handler.session.notifications.discarge ())
+    >>> print (handler.session.notifications.disgorge ())
     A confirmation email has been sent to the new email address.
     >>> verify_links = scope.Auth.Account_EMail_Verification.query ().all ()
     >>> len (verify_links)

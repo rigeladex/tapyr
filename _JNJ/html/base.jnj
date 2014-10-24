@@ -105,7 +105,7 @@
             {%- block notifications -%}
               {%- if notifications %}
                 <div class="notifications">
-                  {{- notifications.discarge ("<p>", "</p><p>", "</p>") -}}
+                  {{- notifications.disgorge ("<p>", "</p><p>", "</p>") -}}
                 </div>
               {% endif -%}
             {%- endblock notifications -%}

@@ -19,6 +19,8 @@
 #    20-Feb-2010 (MG) Creation
 #    17-Aug-2012 (MG) Add new `Cached` property and adapt pickle behavior
 #    18-Aug-2012 (MG) Fix `discarge` to avoid `empty` head/tail result
+#    24-Oct-2014 (CT) Add `Notification_Collection.__repr__`, use `portable_repr`
+#    24-Oct-2014 (CT) Fix spelling: s/discarge/disgorge/g
 #    ««revision-date»»···
 #--
 """
@@ -41,10 +43,10 @@ Short test for the notification framework
     True
     >>> session2.notifications
     [Notification ('Password reset mail has been sent', datetime.datetime(2010, 2, 20, 11, 42, 42)), Notification ('User has been logged out', datetime.datetime(2010, 2, 20, 11, 42))]
-    >>> print (session2.notifications.discarge ())
+    >>> print (session2.notifications.disgorge ())
     User has been logged out
     Password reset mail has been sent
-    >>> print (session2.notifications.discarge ())
+    >>> print (session2.notifications.disgorge ())
     <BLANKLINE>
     >>> session.remove ()
 """
@@ -53,6 +55,8 @@ from   __future__          import print_function
 
 from   _GTW                import GTW
 from   _TFL                import TFL
+
+from   _TFL.portable_repr  import portable_repr
 from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
@@ -87,21 +91,12 @@ class Notification_Collection \
         self._notifications.append (arg)
     # end def append
 
-    def __iter__ (self) :
-        return iter (self._notifications)
-    # end def __iter__
-
-    def __getstate__ (self) :
-        self.__dict__.pop ("Cached", ())
-        return self.__dict__
-    # end def __getstate__
-
     @TFL.Meta.Once_Property
     def Cached (self) :
         return tuple (self)
     # end def Cached
 
-    def discarge (self, head = "", joiner = "\n", tail = "") :
+    def disgorge (self, head = "", joiner = "\n", tail = "") :
         self.Cached = items = tuple (self._notifications)
         result      = []
         if items :
@@ -115,7 +110,20 @@ class Notification_Collection \
             result.append (tail)
             self._notifications = []
         return "".join (result)
-    # end def discarge
+    # end def disgorge
+
+    def __getstate__ (self) :
+        self.__dict__.pop ("Cached", ())
+        return self.__dict__
+    # end def __getstate__
+
+    def __iter__ (self) :
+        return iter (self._notifications)
+    # end def __iter__
+
+    def __repr__ (self) :
+        return portable_repr (self._notifications)
+    # end def __repr__
 
 # end class Notification_Collection
 
@@ -128,14 +136,19 @@ class Notification (TFL.Meta.Object) :
         self.time    = time or datetime.datetime.now ()
     # end def __init__
 
+    def __repr__ (self) :
+        return pyk.reprify \
+            ( "%s (%s, %s)"
+            % ( self.__class__.__name__
+              , portable_repr (self.message)
+              , portable_repr (self.time)
+              )
+            )
+    # end def __repr__
+
     def __str__ (self) :
         return self.message
     # end def __str__
-
-    def __repr__ (self) :
-        return pyk.reprify \
-            ("%s (%r, %r)" % (self.__class__.__name__, self.message, self.time))
-    # end def __repr__
 
 # end class Notification
 
