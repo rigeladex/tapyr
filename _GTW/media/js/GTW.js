@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -21,6 +21,7 @@
 //    26-Jan-2011 (CT) `update_proto` factored, `update` added
 //    27-Jan-2011 (CT) `Module` added and used for `$GTW`
 //    27-Jan-2011 (CT) Argument `meta` added to `extend`
+//    24-Oct-2014 (CT) Change `license` and `license_url` passed to `Module`
 //    ««revision-date»»···
 //--
 
@@ -107,10 +108,10 @@ var $GTW;
         { Class       : Class
         , Module      : Module
         , author      : "christian.tanzer@swing.co.at"
-        , copyright   : "Copyright (C) 2011-2013 Christian Tanzer"
-        , license     : "Dual licensed under the MIT or AGPLv3 licenses."
-        , license_url : "http://www.c-tanzer.at/license/mit_or_agpl.html"
-        , version     : "1.0"
+        , copyright   : "Copyright (C) 2011-2014 Christian Tanzer"
+        , license     : "BSD 3-Clause license"
+        , license_url : "http://www.c-tanzer.at/license/bsd_3c.html"
+        , version     : "1.1"
         }
     );
   } ()
