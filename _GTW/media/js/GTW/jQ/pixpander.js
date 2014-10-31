@@ -22,6 +22,7 @@
 //     1-Jun-2011 (CT) Bug fixed
 //    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
 //    11-Jul-2014 (CT) Move `"use strict"` into closure
+//    31-Oct-2014 (CT) Fix compatibility with jQuery 1.9 (attr vs. prop, toggle)
 //    ««revision-date»»···
 //--
 
@@ -44,16 +45,20 @@
                 var wd   = img$.css ("width")
                 var show = function (event, url, style, wd) {
                     img$
-                        .attr ({ src : url, style : style })
+                        .prop ({ src : url, style : style })
                         .css  ({ width : wd ? wd : "auto" })
                         ;
                     options.x_class && img$.toggleClass (options.x_class);
                     return false;
                 };
-                img$.toggle
-                    ( function (ev) { return show (ev, a.attr ("href"), ""); }
-                    , function (ev) { return show (ev, src, sty, wd); }
-                    );
+                var toggle = function toggle (ev) {
+                    if (img$.prop ("src") == src) {
+                        return show (ev, a.attr ("href"), "");
+                    } else {
+                        return show (ev, src, sty, wd);
+                    };
+                };
+                img$.click (toggle);
             }
         );
         return this;

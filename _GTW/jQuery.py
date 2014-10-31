@@ -59,6 +59,7 @@
 #     8-Jul-2014 (CT) Add `a.pure-button` to `.not` clause of
 #                     `GTW_Form_Externalize`
 #    29-Aug-2014 (CT) Remove `AFS` specific definitions
+#    31-Oct-2014 (CT) Fix typo that fails in jQuery 1.11.1
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,7 @@ GTW.Script \
         )
     )
 GTW.JS_On_Ready \
-    ( """$("a[href^='http://'], a[href^='https://', a[href^='//']").gtw_externalize ();"""
+    ( """$("a[href^='http://'], a[href^='https://'], a[href^='//']").gtw_externalize ();"""
     , name = "GTW_Externalize"
     )
 
