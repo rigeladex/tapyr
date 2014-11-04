@@ -47,6 +47,7 @@
 #    27-Aug-2013 (CT) Add `addressee` to `forward_format`, `resend_format`,
 #                     `defaults`
 #    17-Mar-2014 (CT) Add option `-msg_base_dirs`
+#     4-Nov-2014 (CT) Add `-attach` options, factor `_process_attachement`
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,7 @@ from   _TFL.predicate          import callable, first
 from   _TFL.Regexp             import *
 import _TFL.sos
 
+from   itertools               import chain as ichain
 try :
     import subprocess
 except ImportError :
@@ -128,6 +130,7 @@ class Composer (TFL.Meta.Object) :
     """Support interactive sending of emails"""
 
     addressee           = ""
+    attach              = None
     body_marker         = "--text follows this line--"
     domain              = TFL.Environment.mailname ()
     editor              = "emacsclient --alternate-editor vi"
@@ -211,12 +214,14 @@ class Composer (TFL.Meta.Object) :
             , rst2html         = False
             , receiver         = None
             , subject          = None
+            , attach           = None
             ) :
         if editor   is not None    : self.editor   = editor
         if user     is not None    : self.user     = user
         if domain   is not None    : self.domain   = domain
         if receiver is not None    : self.receiver = receiver
         if subject  is not None    : self.subject  = subject
+        if attach   is not None    : self.attach   = attach
         if user is not None or domain is not None :
             self.email_address = "%s@%s" % (self.user, self.domain)
         self.smtp              = smtp
@@ -409,6 +414,16 @@ class Composer (TFL.Meta.Object) :
         return result.encode (PMA.default_encoding, "replace" )
     # end def _formatted
 
+    def _process_attachement (self, email, name, add_headers = None) :
+        p = PMA.Mime.Part \
+            (TFL.sos.expanded_path (name.strip (";")), add_headers)
+        if p :
+            if not email.is_multipart () :
+                email = self._as_multipart (email)
+            email.attach (p)
+        return email
+    # end def _process_attachement
+
     def _process_attachement_headers (self, email) :
         ah = self._attachement_header
         for value in email.get_all (ah, []) :
@@ -420,13 +435,11 @@ class Composer (TFL.Meta.Object) :
                 else :
                     name        = value
                     add_headers = None
-                p = PMA.Mime.Part \
-                    (TFL.sos.expanded_path (name.strip (";")), add_headers)
-                if p :
-                    if not email.is_multipart () :
-                        email = self._as_multipart (email)
-                    email.attach (p)
+                email = self._process_attachement (email, name, add_headers)
         del email [ah]
+        if self.attach :
+            for name in self.attach :
+                email = self._process_attachement (email, name)
         return email
     # end def _process_attachement_headers
 
@@ -454,11 +467,24 @@ def _main (cmd) :
         , user           = cmd.mail_user
         , use_tls        = cmd.tls
         )
-    comp = PMA.Composer \
+    attach = sorted \
+        ( ichain
+            ( ichain
+                (  * tuple
+                     ( TFL.CAO.Rel_Path.resolved_pathes
+                         (cmd.msg_base_dirs, m)
+                     for m in cmd.Attach_Message
+                     )
+                )
+            , cmd.attach
+            )
+        )
+    comp   = PMA.Composer \
         ( cmd.editor, cmd.user, cmd.domain, smtp
         , rst2html = cmd.HTML
         , receiver = cmd.To
         , subject  = cmd.subject
+        , attach   = attach
         )
     def message_from_arg (cmd, arg) :
         try :
@@ -481,7 +507,9 @@ _Command = TFL.CAO.Cmd \
     ( handler     = _main
     , max_args    = 0
     , opts        =
-        ( "-bounce:S?Message to resend"
+        ( "-attach:P ?File to attach"
+        , "-Attach_Message:P ?Message to attach"
+        , "-bounce:S?Message to resend"
         , "-config:C?File specifying defaults for options"
         , "-domain:S?Domain of sender"
         , "-editor:S?Command used to start editor"
