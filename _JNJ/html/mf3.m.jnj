@@ -4,7 +4,7 @@
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
-## 
+##
 ## This template is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -33,6 +33,8 @@
 ##    28-Aug-2014 (CT) Add `do_description` to `Field_Composite`
 ##    29-Aug-2014 (CT) Add `max_rev_ref` to `Field_Rev_Ref`
 ##    25-Sep-2014 (CT) Add `polisher` to `Field`
+##    21-Nov-2014 (CT) Correct use of `safe` in `do_description`
+##                     (`safe` applied to `None` returns `"None"`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -51,13 +53,13 @@
 {%- endmacro -%} {#- action_button -#}
 
 {%- macro do_description (page, form, elem, t_module) -%}
-  {%- set desc = GTW._T (elem.ui_description or elem.description)|safe %}
+  {%- set desc = GTW._T (elem.ui_description or elem.description) %}
   {%- if desc -%}
-    {%- set labl = elem.label and GTW._T (elem.label)|safe %}
+    {%- set labl = GTW._T (elem.label) %}
     {%- if desc != labl %}
-      {%- set expl = GTW._T (elem.explanation)|safe %}
-      <aside class="Desc" {%- if expl %} title="{{ expl }}"{% endif -%}>
-        {{- desc -}}
+      {%- set expl = GTW._T (elem.explanation) %}
+      <aside class="Desc" {%- if expl %} title="{{ expl|safe }}"{% endif -%}>
+        {{- desc|safe -}}
       </aside>
     {% endif -%}
   {%- endif -%}
