@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -22,6 +22,7 @@
 #     8-Nov-2006 (CED) Some parsec variants added (used in astronomy for large
 #                      structures)
 #    28-Sep-2014 (CT)  Add `light_second`
+#    26-Nov-2014 (CT)  Correct spelling of `deca` (not `deka`!)
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ class Length (TFL.Units.Kind) :
         , Unit ("millimeter",     TFL.Units.milli,           "mm")
         , Unit ("centimeter",     TFL.Units.centi,           "cm")
         , Unit ("decimeter",      TFL.Units.deci,            "dm")
-        , Unit ("dekameter",      TFL.Units.deka,           "dam")
+        , Unit ("decameter",      TFL.Units.deca,           "dam")
         , Unit ("hectometer",     TFL.Units.hecto,           "hm")
         , Unit ("kilometer",      TFL.Units.kilo,            "km")
         # US customary units

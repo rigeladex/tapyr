@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,6 +16,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#    26-Nov-2014 (CT) Correct spelling of `deca` (not `deka`!)
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ class Volume (TFL.Units.Kind) :
         , Unit ("cubic_millimeter", Length.millimeter   ** 3, "cbmm")
         , Unit ("cubic_centimeter", Length.centimeter   ** 3, "cbcm")
         , Unit ("cubic_decimeter",  Length.decimeter    ** 3, "cbdm")
-        , Unit ("cubic_dekameter",  Length.dekameter    ** 3, "cbdam")
+        , Unit ("cubic_decameter",  Length.decameter    ** 3, "cbdam")
         , Unit ("cubic_hectometer", Length.hectometer   ** 3, "cbhm")
         , Unit ("cubic_kilometer",  Length.kilometer    ** 3, "cbkm")
         # US customary units

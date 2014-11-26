@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -15,14 +15,16 @@
 #    Mass units
 #
 # Revision Dates
-#     8-Aug-2004 (CT) Creation
+#     8-Aug-2004 (CT)  Creation
 #     8-Nov-2006 (CED) `firkin` added (old british unit)
+#    26-Nov-2014 (CT)  Use prefixes, add `decagram`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL._Units.Kind
+import _TFL._Units.Prefix
 
 class Mass (TFL.Units.Kind) :
     """Units of mass
@@ -31,6 +33,10 @@ class Mass (TFL.Units.Kind) :
        1
        >>> Mass (1, "g")
        0.001
+       >>> Mass (1, "dag")
+       0.01
+       >>> Mass (1, "t")
+       1000
        >>> Mass (1, "oz")
        0.028349523125
        >>> Mass (1, "stone")
@@ -45,21 +51,22 @@ class Mass (TFL.Units.Kind) :
     _pound            = 0.45359237
     _units            = \
         (
-        # SI prefixes
-          Unit ("microgram",               0.000000001, "ug")
-        , Unit ("milligram",               0.000001,    "mg")
-        , Unit ("gram",                    0.001,       "g")
-        , Unit ("ton",                  1000.0,         "t")
+        # SI prefixes (as base unit is `kilogram`, these are offset by `kilo`)
+          Unit ("microgram", TFL.Units.micro / TFL.Units.kilo, "ug")
+        , Unit ("milligram", TFL.Units.milli / TFL.Units.kilo, "mg")
+        , Unit ("gram",                    1 / TFL.Units.kilo, "g")
+        , Unit ("decagram",  TFL.Units.deca  / TFL.Units.kilo, "dag")
+        , Unit ("ton",       TFL.Units.kilo,                   "t")
         # US customary units
-        , Unit ("pound",                _pound,         "lb")
-        , Unit ("grain",                _pound / 7000)
-        , Unit ("drams",                _pound /  256,  "dr")
-        , Unit ("ounce",                _pound /   16,  "oz")
-        , Unit ("short_ton",            _pound * 2000)
-        , Unit ("long_ton",             _pound * 2240)
+        , Unit ("pound",     _pound,                           "lb")
+        , Unit ("grain",     _pound / 7000)
+        , Unit ("drams",     _pound /  256,                    "dr")
+        , Unit ("ounce",     _pound /   16,                    "oz")
+        , Unit ("short_ton", _pound * 2000)
+        , Unit ("long_ton",  _pound * 2240)
         # Odd British unit
-        , Unit ("stone",                _pound *   14)
-        , Unit ("firkin",                    40.91481)
+        , Unit ("stone",     _pound *   14)
+        , Unit ("firkin",    40.91481)
         )
 
 # end class Mass

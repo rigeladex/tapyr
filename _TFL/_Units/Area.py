@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -15,8 +15,9 @@
 #    Area units
 #
 # Revision Dates
-#     8-Aug-2004 (CT) Creation
+#     8-Aug-2004 (CT)  Creation
 #     8-Nov-2006 (CED) `nanoacre` added (used in chip design)
+#    26-Nov-2014 (CT)  Correct spelling of `deca` (not `deka`!)
 #    ««revision-date»»···
 #--
 
@@ -54,7 +55,7 @@ class Area (TFL.Units.Kind) :
     Unit              = TFL.Units.Unit
 
     base_unit         = Unit ("square_meter", 1.0, "sqm")
-    _are              = Length.dekameter  ** 2
+    _are              = Length.decameter  ** 2
     _hectare          = Length.hectometer ** 2
     _sq_mile          = Length.statute_mile ** 2
     _units            = \
@@ -65,7 +66,7 @@ class Area (TFL.Units.Kind) :
         , Unit ("square_millimeter",  Length.millimeter   ** 2,  "sqmm")
         , Unit ("square_centimeter",  Length.centimeter   ** 2,  "sqcm")
         , Unit ("square_decimeter",   Length.decimeter    ** 2,  "sqdm")
-        , Unit ("square_dekameter",   _are,                      "sqdam")
+        , Unit ("square_decameter",   _are,                      "sqdam")
         , Unit ("square_hectometer",  _hectare,                  "sqhm")
         , Unit ("square_kilometer",   Length.kilometer    ** 2,  "sqkm")
         , Unit ("are",                _are,)

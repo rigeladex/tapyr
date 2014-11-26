@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2014 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -16,8 +16,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    26-Nov-2014 (CT) Correct spelling of `deca` (not `deka`!)
 #    ««revision-date»»···
 #--
 
@@ -38,7 +37,7 @@ micro  = 1E-6
 milli  = 1E-3
 centi  = 1E-2
 deci   = 1E-1
-deka   = 1E+1
+deca   = 1E+1
 hecto  = 1E+2
 kilo   = 1E+3
 mega   = 1E+6
@@ -60,7 +59,7 @@ prefix_abbreviations = dict \
     , m              = milli
     , c              = centi
     , d              = deci
-    , da             = deka
+    , da             = deca
     , h              = hecto
     , k              = kilo
     , M              = mega
@@ -85,7 +84,7 @@ if __name__ != "__main__" :
         , "milli"
         , "centi"
         , "deci"
-        , "deka"
+        , "deca"
         , "hecto"
         , "kilo"
         , "mega"
