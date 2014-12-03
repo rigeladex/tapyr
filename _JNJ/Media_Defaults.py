@@ -49,6 +49,8 @@
 #     9-Jul-2014 (CT) Add `Rule.rotate_45_left`
 #    26-Aug-2014 (CT) Add `pure` parameters
 #     3-Sep-2014 (CT) Add `Rule.hidden`
+#     3-Dec-2014 (CT) Add `color.alphabet_max_contrast_colors` and
+#                     `color.kellys_max_contrast_colors`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +66,38 @@ class Media_Defaults (Definition) :
     """Provide defaults for CSS fragments in html/*.css"""
 
     class color (Definition) :
+
+        ### color alphabet
+        ### http://eleanormaclure.files.wordpress.com/2011/03/colour-coding.pdf
+        ###
+        ### The RGB color values were taken with gcolor2's color picker from
+        ### colour-coding.pdf
+        abc_a                  = RGB_X     ("#C5A1CA")
+        abc_b                  = RGB_X     ("#486EB5")
+        abc_c                  = RGB_X     ("#82411D")
+        abc_d                  = RGB_X     ("#401A57")
+        abc_e                  = RGB_X     ("#1F1E1E")
+        abc_f                  = RGB_X     ("#335A36")
+        abc_g                  = RGB_X     ("#78C259")
+        abc_h                  = RGB_X     ("#EDC99A")
+        abc_i                  = RGB_X     ("#7F8080")
+        abc_j                  = RGB_X     ("#BEDEAE")
+        abc_k                  = RGB_X     ("#877A2F")
+        abc_l                  = RGB_X     ("#A5C43A")
+        abc_m                  = RGB_X     ("#9B247F")
+        abc_n                  = RGB_X     ("#253777")
+        abc_o                  = RGB_X     ("#E1A131")
+        abc_p                  = RGB_X     ("#E6A4B5")
+        abc_q                  = RGB_X     ("#50662E")
+        abc_r                  = RGB_X     ("#CF2128")
+        abc_s                  = RGB_X     ("#A4DBDF")
+        abc_t                  = RGB_X     ("#56968C")
+        abc_u                  = RGB_X     ("#E0E77B")
+        abc_v                  = RGB_X     ("#584EA0")
+        abc_w                  = RGB_X     ("#7D1416")
+        abc_x                  = RGB_X     ("#F3F190")
+        abc_y                  = RGB_X     ("#ECDA43")
+        abc_z                  = RGB_X     ("#D55428")
 
         ### muted colors
         m_aqua                 = RGB_X     ("#7FDBFF")
@@ -89,7 +123,7 @@ class Media_Defaults (Definition) :
         p_black                = SVG_Color ("black")
         p_blue                 = SVG_Color ("blue")
         p_cyan                 = SVG_Color ("cyan")
-        p_gray                 = SVG_Color ("gray")
+        p_gray = p_grey        = SVG_Color ("gray")
         p_green                = SVG_Color ("green")
         p_lime                 = SVG_Color ("lime")
         p_magenta              = SVG_Color ("magenta")
@@ -101,6 +135,103 @@ class Media_Defaults (Definition) :
         p_teal                 = SVG_Color ("teal")
         p_white                = SVG_Color ("white")
         p_yellow               = SVG_Color ("yellow")
+
+        ### Kelly's 22 colors of maximum contrast
+        ### http://www.iscc.org/pdf/PC54_1724_001.pdf
+        ### http://burgess-studio.co.uk/colour/
+        ### http://eleanormaclure.files.wordpress.com/2011/03/colour-coding.pdf
+        ###
+        ### The order of colors in Kelly's list was planned so that there
+        ### would be maximum contrast between colors in a set if the required
+        ### number of colors were always selected in order from the top. So a
+        ### set of five colors should be white, black, yellow, purple, and
+        ### orange. And if seven colors were required, light blue and red
+        ### should be added. Kelly took care of the needs of people with
+        ### defective color vision. The first nine colors would be maximally
+        ### different for such people as well as for people with normal
+        ### vision. These nine colors are also readily distinguishable by
+        ### color name.
+        ###
+        ### The RGB color values were taken with gcolor2's color picker from
+        ### colour-coding.pdf
+        k_white                = RGB_X     ("#FFFFFF") #  1
+        k_black                = RGB_X     ("#1F1E1E") #  2
+        k_yellow               = RGB_X     ("#EBCD3F") #  3
+        k_purple               = RGB_X     ("#6F308B") #  4
+        k_orange               = RGB_X     ("#DB6A28") #  5
+        k_light_blue           = RGB_X     ("#98CEE6") #  6
+        k_red                  = RGB_X     ("#B91F36") #  7
+        k_buff                 = RGB_X     ("#C1BC82") #  8
+        k_gray = k_grey        = RGB_X     ("#7F8080") #  9 ———————————
+        k_green                = RGB_X     ("#62A647") # 10
+        k_purplish_pink        = RGB_X     ("#D386B1") # 11
+        k_blue                 = RGB_X     ("#4578B4") # 12
+        k_yellowish_pink       = RGB_X     ("#DD8565") # 13
+        k_violet               = RGB_X     ("#493896") # 14
+        k_orange_yellow        = RGB_X     ("#E1A131") # 15
+        k_purplish_red         = RGB_X     ("#91278B") # 16
+        k_greenish_yellow      = RGB_X     ("#E9E857") # 17
+        k_reddish_brown        = RGB_X     ("#7D1716") # 18
+        k_yellow_green         = RGB_X     ("#93AD3C") # 19
+        k_yellowish_brown      = RGB_X     ("#6E3515") # 20
+        k_reddish_orange       = RGB_X     ("#D12D27") # 21
+        k_olive_green          = RGB_X     ("#2C3617") # 22
+
+        kellys_max_contrast_colors = \
+          [ k_white
+          , k_black
+          , k_yellow
+          , k_purple
+          , k_orange
+          , k_light_blue
+          , k_red
+          , k_buff
+          , k_gray
+          , k_green
+          , k_purplish_pink
+          , k_blue
+          , k_yellowish_pink
+          , k_violet
+          , k_orange_yellow
+          , k_purplish_red
+          , k_greenish_yellow
+          , k_reddish_brown
+          , k_yellow_green
+          , k_yellowish_brown
+          , k_reddish_orange
+          , k_olive_green
+          ]
+
+        ### The order in the following list tries to maximize contrast,
+        ### analogously to Kelly's list
+        alphabet_max_contrast_colors = \
+          [ abc_e
+          , abc_y
+          , abc_d
+          , abc_z
+          , abc_s
+          , abc_r
+          , abc_x
+          , abc_i
+          , abc_g
+          , abc_p
+          , abc_b
+          , abc_h
+          , abc_v
+          , abc_o
+          , abc_m
+          , abc_u
+          , abc_w
+          , abc_l
+          , abc_c
+          , abc_a
+          , abc_q
+          , abc_j
+          , abc_n
+          , abc_k
+          , abc_f
+          , abc_t
+          ]
 
     # end class color
 
