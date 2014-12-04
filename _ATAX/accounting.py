@@ -156,6 +156,7 @@
 #    14-Aug-2014 (CT) Add comment to clause for `ausgaben_minderung`
 #     4-Dec-2014 (MG) Add `T_Account.calculation_method` to allow
 #                     customization of calculation method
+#     4-Dec-2014 (CT) Remove debug output for `calculation_method`
 #    ««revision-date»»···
 #--
 
@@ -1409,7 +1410,6 @@ class T_Account (Account) :
               )
             , tc
             )
-        sys.stderr.write (self.calculation_method.decode ("iso-8859-1"))
         pyk.fprint ("\n%s." % (self.calculation_method, ))
     # end def print_ein_aus_rechnung
 
