@@ -154,6 +154,8 @@
 #     2-Jan-2014 (CT) Add and use `_decoded`
 #     3-Jan-2014 (CT) Add `output_encoding`; use `pyk.fprint`, not `print`
 #    14-Aug-2014 (CT) Add comment to clause for `ausgaben_minderung`
+#     4-Dec-2014 (MG) Add `T_Account.calculation_method` to allow
+#                     customization of calculation method
 #    ««revision-date»»···
 #--
 
@@ -1090,6 +1092,8 @@ class T_Account (Account) :
     vorsteuer_gkonto   = "9999"
     t_konto_ignore_pat = Regexp (r"^[01239]\d\d\d\d?", re.X)
     firma              = "<<<Specify in config file, e.g., ATAX.config>>>"
+    calculation_method = \
+      "Das Ergebnis wurde gemäß Par.4/3 EStG nach der Nettomethode erstellt"
 
     def __init__ (self, name = "", year = 0, konto_desc = None, vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)
@@ -1405,10 +1409,8 @@ class T_Account (Account) :
               )
             , tc
             )
-        pyk.fprint \
-            ( "\nDas Ergebnis wurde gemäß Par.4/3 EStG nach der "
-              "Nettomethode erstellt."
-            )
+        sys.stderr.write (self.calculation_method.decode ("iso-8859-1"))
+        pyk.fprint ("\n%s." % (self.calculation_method, ))
     # end def print_ein_aus_rechnung
 
     g_anteil = EUR (0)
