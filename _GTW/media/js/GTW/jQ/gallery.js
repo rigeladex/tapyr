@@ -21,8 +21,9 @@
 //    30-Nov-2010 (CT) `scroll` added and used
 //    20-Jan-2011 (CT) Rename function `GTW_Gallery` to `gtw_gallery`
 //    26-Jan-2011 (CT) Style change
-//    30-Nov-2011 (CT) Use `return false` instead of .`preventDefault`
+//    30-Nov-2011 (CT) Use `return false` instead of `.preventDefault`
 //     8-Apr-2014 (CT) Remove `css` rule to hide `overflow` to `th_div$`
+//     5-Dec-2014 (CT) Add `gallery$`, click-binding for `photo_selector`
 //    ««revision-date»»···
 //--
 
@@ -39,16 +40,17 @@
             , opts && opts ["controls"] || {}
             );
         var options  = $.extend
-            ( { delay           : 3000
-              , inline_selector : ".gallery .inline"
-              , photo_selector  : ".photo img"
-              , play_class      : "playing"
-              , selected_class  : "selected"
-              , url_transformer : function (name)
+            ( { delay               : 3000
+              , gallery_selector    : ".gallery"
+              , inline_selector     : ".inline"
+              , photo_selector      : ".photo img"
+              , play_class          : "playing"
+              , selected_class      : "selected"
+              , url_transformer     : function (name)
                   { return name.replace (/\/th\//, "/im/"); }
               }
             , opts || {}
-            , { controls        : controls }
+            , { controls            : controls }
             );
         var scroll = function (thumb$) {
             var w1  = options.th_div$.width ();
@@ -65,7 +67,7 @@
         };
         var show = function (index, event) {
             var len   = options.thumbnails$.length;
-            var photo = $(options.photo_selector);
+            var photo = $(options.photo_selector, gallery$);
             var alt   = photo.attr ("alt");
             var thumb, url;
             if (index < 0) {
@@ -89,7 +91,7 @@
         var prev  = function (event) { return show (options.current - 1, event); };
         var start = function (event) {
             options.play_cb = window.setInterval (next, options.delay);
-            $(options.controls.play)
+            $(options.controls.play, gallery$)
                 .addClass (options.play_class)
                 .unbind   ("click")
                 .click    (stop)
@@ -100,7 +102,7 @@
         var stop = function (event) {
             if ($(options.controls.play).hasClass (options.play_class)) {
                 window.clearInterval (options.play_cb);
-                $(options.controls.play)
+                $(options.controls.play, gallery$)
                     .unbind      ("click")
                     .click       (start)
                     .removeClass (options.play_class)
@@ -108,8 +110,8 @@
                         ({ icons: { primary: "ui-icon-play" }, text: false });
             };
         };
-        this.addClass ("inline");
-        options.current = 0;
+        var gallery$        = this.closest (options.gallery_selector);
+        options.current     = 0;
         options.th_div$     = this;
         options.th_box$     = $(".box", this);
         options.thumbnails$ = $("img",  this);
@@ -121,26 +123,29 @@
                     return show ($(this).data ("GTW-gallery-index"), ev);
                   }
                 );
-        $(options.controls.next)
+        $(options.controls.next, gallery$)
             .click (function (ev) { stop (ev); return next (ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-next" }, text : false });
-        $(options.controls.prev)
+        $(options.controls.prev, gallery$)
             .click (function (ev) { stop (ev); return prev (ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-prev" }, text : false });
-        $(options.controls.head)
+        $(options.controls.head, gallery$)
             .click (function (ev) { stop (ev); return show (0, ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-start" }, text : false });
-        $(options.controls.tail)
+        $(options.controls.tail, gallery$)
             .click (function (ev) { stop (ev); return show (-1, ev); })
             .button
                 ({ icons : { primary : "ui-icon-seek-end" }, text : false });
-        $(options.controls.play)
+        $(options.controls.play, gallery$)
             .click  (start)
             .button ({ icons : { primary : "ui-icon-play" }, text : false });
-        $(options.inline_selector).show ();
+        $(options.photo_selector, gallery$)
+            .click (function (ev) { stop (ev); return next (ev); });
+        $(options.inline_selector, gallery$).show ();
+        this.addClass ("inline");
         show (0);
         return this;
     };
