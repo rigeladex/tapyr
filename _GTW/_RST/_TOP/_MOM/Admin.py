@@ -100,6 +100,8 @@
 #    24-Sep-2014 (CT) Factor `set_request_defaults`
 #    25-Sep-2014 (CT) Add `Polisher`
 #    26-Sep-2014 (CT) Use `_polished` in `Completer._rendered_post`
+#    30-Oct-2014 (CT) Adapt to changes of `e_type` template macros
+#    31-Oct-2014 (CT) Change `E_Type.rendered` to pass `qr_next_p`, not buttons
 #    12-Dec-2014 (CT) Add `_Changer_.POST ` to call `csrf_check`
 #    ««revision-date»»···
 #--
@@ -867,7 +869,7 @@ class QX_AF_Html (_JSON_Action_PO_) :
         af              = QR.Filter (E_Type, json.key)
         template        = self.top.Templateer.get_template ("e_type")
         call_macro      = template.call_macro
-        result ["html"] = call_macro ("attr_filter_tr", af)
+        result ["html"] = call_macro ("attr_filter_pure", self, af)
         return result
     # end def _rendered_post
 
@@ -966,7 +968,7 @@ class QX_Order_By_Form (_JSON_Action_PO_) :
         E_Type          = self.E_Type
         template        = self.top.Templateer.get_template ("e_type")
         call_macro      = template.call_macro
-        result ["html"] = call_macro ("order_by_form")
+        result ["html"] = call_macro ("order_by_form", self)
         return result
     # end def _rendered_post
 
@@ -983,7 +985,7 @@ class QX_Select_Attr_Form (_JSON_Action_PO_) :
         E_Type          = self.E_Type
         template        = self.top.Templateer.get_template ("e_type")
         call_macro      = template.call_macro
-        result ["html"] = call_macro ("select_attr_form")
+        result ["html"] = call_macro ("select_attr_form", self)
         return result
     # end def _rendered_post
 
@@ -1291,13 +1293,16 @@ _Ancestor = GTW.RST.TOP.Dir_V
 class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     """Directory displaying the instances of one E_Type."""
 
-    ### XXX remove this???
     button_types          = dict \
         ( ADD             = "button"
         , APPLY           = "submit"
         , CANCEL          = "button"
         , CLEAR           = "button"
         , CLOSE           = "button"
+        , FIRST           = "submit"
+        , LAST            = "submit"
+        , NEXT            = "submit"
+        , PREV            = "submit"
         )
 
     css_group             = "Type"
@@ -1507,19 +1512,7 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         fields   = self.fields
         Entity   = self.Entity
         objects  = tuple (Entity (obj = o, parent = self) for o in self.objects)
-        next_p   = qr.next_p
-        prev_p   = qr.prev_p
-        button_types = dict \
-            ( self.button_types
-            , FIRST  = "submit" if prev_p else "button"
-            , LAST   = "submit" if next_p else "button"
-            , NEXT   = "submit" if next_p else "button"
-            , PREV   = "submit" if prev_p else "button"
-            )
-        with self.LET \
-                 ( query_size   = len (objects)
-                 , button_types = button_types
-                 ) :
+        with self.LET (query_size = len (objects)) :
             context.update \
                 ( fields            = fields
                 , objects           = objects
@@ -1528,20 +1521,15 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
             if response.renderer and response.renderer.name == "JSON" :
                 template   = self.top.Templateer.get_template ("e_type")
                 call_macro = template.call_macro
-                buttons    = dict \
-                    ( FIRST = call_macro ("qr_button_first", self, qr)
-                    , LAST  = call_macro ("qr_button_last",  self, qr)
-                    , NEXT  = call_macro ("qr_button_next",  self, qr)
-                    , PREV  = call_macro ("qr_button_prev",  self, qr)
-                    )
-                result = dict \
-                    ( buttons          = buttons
-                    , callbacks        = ["setup_obj_list"]
+                result     = dict \
+                    ( callbacks        = ["setup_obj_list"]
                     , head_line        = self.head_line
                     , limit            = qr.limit
                     , object_container = call_macro
                         ("admin_table", self, fields, objects)
                     , offset           = qr.offset
+                    , qr_next_p        = qr.next_p
+                    , qr_prev_p        = qr.prev_p
                     )
             else :
                 result = self.__super.rendered (context, template)

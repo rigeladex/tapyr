@@ -4,7 +4,7 @@
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
-## 
+##
 ## This template is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -27,6 +27,7 @@
 ##    20-Aug-2014 (CT) Change `boolean`, `integer` to pass through `kwargs`
 ##    27-Aug-2014 (CT) Use `inner_required`, not home-grown code, in `field`
 ##    27-Aug-2014 (CT) Add `tabindex="-1"` for non-focusable input elements
+##    21-Nov-2014 (CT) Factor `X.input.hd_input`, `_id_entity_display`
 ##    ««revision-date»»···
 ##--
 #}
@@ -60,36 +61,40 @@
 {%- macro id_entity (elem) -%}
   {%- set class = kwargs.pop ("class", None)  %}
   {%- if elem.readonly %}
-    {{ field
-        ( X.input.text, elem
+    {{ _id_entity_display
+        ( typ       = X.input.text
+        , elem      = elem
         , class     = GTW.filtered_join (" ", (class, "readonly"))
-        , name      = None
-        , readonly  = "readonly"
         , tabindex  = "-1"
-        , title     = elem.ui_display
-        , value     = elem.ui_display
         )
     }}
   {%- else %}
-    {{ X.input.text
-        ( class     = GTW.filtered_join (" ", (class, "hidden", "id_ref"))
+    {{ X.input.hd_input
+        ( class     = GTW.filtered_join (" ", (class, "id_ref"))
         , name      = elem.r_name
-        , readonly  = "readonly"
-        , tabindex  = "-1"
-        , value     = elem.edit
-        )
-    }}
-    {{ field
-        ( X.input.text, elem
-        , class     = GTW.filtered_join (" ", (class, "display", "id_ref"))
-        , name      = None
-        , readonly  = "readonly"
-        , title     = elem.ui_display
-        , value     = elem.ui_display
+        , h_value   = elem.edit
+        , d_value   = elem.ui_display
+        , d_typ     = _id_entity_display
+        , typ       = X.input.text
+        , elem      = elem
         )
     }}
   {% endif -%}
 {%- endmacro -%} {#- id_entity -#}
+
+{%- macro _id_entity_display (typ, elem) -%}
+  {%- do kwargs.pop ("value", None) %}
+  {%- do kwargs.pop ("name",  None) %}
+  {{ field
+      ( typ, elem
+      , name      = name
+      , readonly  = True
+      , title     = elem.ui_display
+      , value     = elem.ui_display
+      , ** kwargs
+      )
+  }}
+{%- endmacro -%} {#- _id_entity_display -#}
 
 {%- macro integer (elem) -%}
   {%- set kw = GTW.dict

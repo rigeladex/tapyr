@@ -59,7 +59,10 @@
 #     8-Jul-2014 (CT) Add `a.pure-button` to `.not` clause of
 #                     `GTW_Form_Externalize`
 #    29-Aug-2014 (CT) Remove `AFS` specific definitions
+#    24-Oct-2014 (CT) Add `GTW_button_pure`
+#    30-Oct-2014 (CT) Add dependencies to `GTW_button_pure`
 #    31-Oct-2014 (CT) Fix typo that fails in jQuery 1.11.1
+#    10-Dec-2014 (CT) Remove dependencies to `GTW_buttonify`
 #    ««revision-date»»···
 #--
 
@@ -193,6 +196,13 @@ GTW.Script \
     )
 
 GTW.Script \
+    ( src      = "/media/GTW/js/GTW/jQ/button_pure.js"
+    , name     = "GTW_button_pure"
+    , rank     = -10
+    , requires = (GTW.Script._.jQuery_UI, GTW.Script._.GTW)
+    )
+
+GTW.Script \
     ( src      = "/media/GTW/js/GTW/jQ/hd_input.js"
     , name     = "GTW_hd_input"
     , requires = (GTW.Script._.jQuery, )
@@ -225,7 +235,7 @@ GTW.Script \
     , name     = "GTW_e_type_selector"
     , requires =
         ( GTW.Script._.GTW_autocomplete
-        , GTW.Script._.GTW_buttonify
+        , GTW.Script._.GTW_button_pure
         , GTW.Script._.GTW_jq_util
         , GTW.Script._.GTW_util
         )
@@ -236,7 +246,7 @@ GTW.Script \
     , name     = "GTW_query_restriction"
     , requires =
         ( GTW.Script._.GTW_autocomplete
-        , GTW.Script._.GTW_buttonify
+        , GTW.Script._.GTW_button_pure
         , GTW.Script._.GTW_e_type_selector
         , GTW.Script._.GTW_jq_util
         , GTW.Script._.GTW_util

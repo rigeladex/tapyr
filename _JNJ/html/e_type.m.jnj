@@ -1,10 +1,10 @@
-{#- jinja template: _e_type.jnj -#}
+{#- jinja template: html/e_type.m.jnj -#}
 {#
-## Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
-## 
+##
 ## This template is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -14,7 +14,7 @@
 ##    html/e_type.m.jnj
 ##
 ## Purpose
-##    Macros for GTW.NAV.E_Type pages
+##    Macros for E_Type pages
 ##
 ## Revision Dates
 ##    21-Nov-2011 (CT) Creation (factored from html/e_type_admin.jnj)
@@ -47,48 +47,20 @@
 ##    14-Mar-2014 (CT) Add and use `nav_buttons`
 ##    24-Aug-2014 (CT) Factor `esf_title`; DRY `result` of `esf_title`
 ##    15-Sep-2014 (CT) Change `entity_selector_form` to use pure forms,
-##                     `attr_filter_pure` an `_qr_button_pure`
+##                     `attr_filter_pure` and `_qr_button_pure`
+##    30-Oct-2014 (CT) Factor `e_type_q.m.jnj`, switch to pure buttons
+##     2-Dec-2014 (CT) Remove class `button` from `direction` and `disabler`
+##     3-Dec-2014 (CT) Factor `esf_field`
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import (html_version or "html/5.jnj") as X -%}
 {%- import "html/form.jnj" as Form with context %}
+{%- import "html/e_type_q.m.jnj" as ETQ with context %}
 {%- import "STD::html/navigation.jnj" as NT with context %}
 
-{%- macro attr_filter_pure (af) -%}
-  <div class="pure-control-group" title="{{ af.ui_name }}">
-    <label for="{{ af.id }}">{{ af.ui_name }}</label>
-    {{ GTW.call_macro (af.attr.input_widget, af) }}
-  </div>
-{%- endmacro -%} {#- attr_filter_pure -#}
-
-{%- macro attr_filter_table (filters, need_op = True) -%}
-  <table class="{{ kwargs.get ("class", "attrs") }}">
-    <tbody>
-      {% for af in filters %}
-        {{- attr_filter_tr (af, need_op) }}
-      {% endfor -%}
-    </tbody>
-  </table>
-{%- endmacro -%} {#- attr_filter_table -#}
-
-{%- macro attr_filter_tr (af, need_op = True) -%}
-  <tr title="{{ af.ui_name }}">
-    <td class="name">
-      <label for="{{ af.id }}">{{ af.ui_name }}</label>
-    </td>
-    {%- if need_op %}
-      <td class="op" title="{{ af.op.desc }}">
-        <a class="button">{{- af.op.label -}}</a>
-      </td>
-    {% endif -%}
-    <td class="value{%- if af.Class %} {{ af.Class }}{%- endif -%}">
-      {{ GTW.call_macro (af.attr.input_widget, af, class = "value") }}
-    </td>
-    <td class="disabler"></td>
-  </tr>
-{%- endmacro -%} {#- attr_filter_tr -#}
+{%- set attr_filter_pure = ETQ.attr_filter_field %}
 
 {%- macro entity_selector_form (page, af, form_class="") -%}
   <form class = "{{ ('pure-form pure-form-aligned ' + form_class).strip () }}" {# -#}
@@ -97,25 +69,28 @@
     <input type="hidden" name="__esf_for_attr__" value="{{ af.id }}">
     <input type="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
     {% for f in af.filters %}
-      {{- attr_filter_pure (f) }}
+      {{- esf_field (page, f) }}
     {% endfor -%}
     <div class="pure-controls">
-      {{ _qr_button_pure
-          ( GTW._  ("Apply"), "check"
-          , GTW._T ("Use the currently selected %s") % af.ui_type_name
-          , "submit"
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Apply")
+          , title = GTW._T ("Use the currently selected %s") % af.ui_type_name
+          , typ   = "submit"
           )
-      }}
-      {{ _qr_button_pure
-          ( GTW._  ("Clear"), "eraser"
-          , GTW._T ("Reset fields")
+      -}}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Clear")
+          , title = GTW._T ("Reset fields")
           )
-      }}
-      {{ _qr_button_pure
-          ( GTW._  ("Cancel"), "times"
-          , GTW._T ("Leave form without selecting %s") % af.ui_type_name
+      -}}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Cancel")
+          , title = GTW._T ("Leave form without selecting %s") % af.ui_type_name
           )
-      }}
+      -}}
     </div>
   </form>
 {%- endmacro -%} {#- entity_selector_form -#}
@@ -137,6 +112,23 @@
     </div>
   </div>
 {%- endmacro -%} {#- entity_selector_form_p -#}
+
+{%- macro esf_field (page, af) -%}
+  {%- set cls   = GTW.filtered_join
+      ( " "
+      , ("pure-control-group", kwargs.pop ("class", "attr-filter"))
+      )
+  %}
+  <div class="{{ cls }}" title="{{ af.ui_name }}">
+    <label for="{{ af.id }}">{# -#}
+      {{ af.ui_name }}{# -#}
+    </label>
+    <span class="value{%- if af.Class %} {{ af.Class }}{%- endif -%}">
+      {{ GTW.call_macro (af.attr.input_widget, af, class = "value") -}}
+    </span>
+    <a class="disabler"></a>
+  </div>
+{%- endmacro -%} {#- esf_field -#}
 
 {%- macro esf_title (af) -%}
   {%- set type_name = af.ui_type_name %}
@@ -171,118 +163,49 @@
   {{ obj_button (page, E_Type, tag, page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "circle-plus", "add") }}
 {%- endmacro -%} {#- obj_create_button -#}
 
-{%- macro order_by_form () -%}
+{%- macro order_by_form (page) -%}
   <form class = "QR order-by" {# -#}
       title="{{ GTW._T ("Order-by Criteria") }}"{# -#}
   >
     <ul class="attributes"></ul>
     <ul class="prototype hidden">
       <li>
-        <a class="button disabler"></a>
-        <a class="button direction"></a>
+        <a class="disabler"></a>
+        <a class="direction"></a>
         <b></b>
       </li>
     </ul>
-    {{ _qr_button
-        ( GTW._  ("Apply")
-        , GTW._T ("Use set of criteria currently displayed in order-by form")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Cancel")
-        , GTW._T ("Leave form without changing set of order-by criteria")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Clear")
-        , GTW._T ("Reset order-by criteria")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Add")
-        , GTW._T ("Add an order-by criterion")
-        , text = GTW._T ("Add criterion")
-        )
-    }}
+    <div class="pure-controls">
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Apply")
+          , title = GTW._T
+              ("Use set of criteria currently displayed in order-by form")
+          )
+      }}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Cancel")
+          , title = GTW._T
+              ("Leave form without changing set of order-by criteria")
+          )
+      }}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Clear")
+          , title = GTW._T ("Reset order-by criteria")
+          )
+      }}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Add")
+          , title = GTW._T ("Add an order-by criterion")
+          , text  = GTW._T ("Add criterion")
+          )
+      }}
+    </div>
   </form>
 {%- endmacro -%} {#- order_by_form -#}
-
-{%- macro _qr_button (name, title, typ, text, disabled = False) -%}
-  {%- set NAME = name.upper () %}
-  {%- set cls  = kwargs.pop ("class", "") %}
-  {%- if disabled %}
-    {%- set cls = GTW.filtered_join (" ", (cls, "disabled")) %}
-  {% endif -%}
-  <button name="{{ NAME }}" title="{{ title }}" type="{{ typ or "button" }}"
-    {%- if cls %} class="{{ cls }}"{% endif %}
-    {{ kwargs|xmlattr -}}
-  >
-    {{ text or GTW._T (name) }}
-  </button>
-{%- endmacro -%} {#- _qr_button -#}
-
-{%- macro _qr_button_pure (name, icon_name, title, typ = None, text = None, disabled = False, i_add_cls = None) -%}
-  {%- set NAME  = name.upper () %}
-  {%- set cls   = kwargs.pop ("class", "") %}
-  {%- set i_cls = GTW.filtered_join
-      (" ", ("fa fa-%s" % (icon_name, ), i_add_cls))
-  %}
-  {%- if disabled %}
-    {%- set cls = GTW.filtered_join (" ", (cls, "disabled")) %}
-  {% endif -%}
-  <button name="{{ NAME }}" title="{{ title }}" type="{{ typ or "button" }}"
-    class="{{ cls }}"
-    {{ kwargs|xmlattr -}}
-  >
-    <i class="{{ i_cls }}"></i>
-    {{ text or GTW._T (name) }}
-  </button>
-{%- endmacro -%} {#- _qr_button_pure -#}
-
-{%- macro qr_button (page, name, title, text = None, disabled = False) -%}
-  {%- set typ = page.button_types.get (name.upper (), "button") %}
-  {{ _qr_button (name, title, typ, text, disabled = disabled, ** kwargs) }}
-{%- endmacro -%} {#- qr_button -#}
-
-{%- macro qr_button_first (page, qr) -%}
-  {{ qr_button
-      ( page
-      , GTW._  ("First")
-      , GTW._T ("Display first batch of objects matching the restriction")
-      , disabled = not qr.prev_p
-      )
-  }}
-{%- endmacro -%} {#- qr_button_first -#}
-
-{%- macro qr_button_last (page, qr) -%}
-  {{ qr_button
-      ( page
-      , GTW._  ("Last")
-      , GTW._T ("Display last batch of objects matching the restriction")
-      , disabled = not qr.next_p
-      )
-  }}
-{%- endmacro -%} {#- qr_button_last -#}
-
-{%- macro qr_button_next (page, qr) -%}
-  {{ qr_button
-      ( page
-      , GTW._  ("Next")
-      , GTW._T ("Display next batch of objects matching the restriction")
-      , disabled = not qr.next_p
-      )
-  }}
-{%- endmacro -%} {#- qr_button_next -#}
-
-{%- macro qr_button_prev (page, qr) -%}
-  {{ qr_button
-      ( page
-      , GTW._  ("Prev")
-      , GTW._T ("Display previous batch of objects matching the restriction")
-      , disabled = not qr.prev_p
-      )
-  }}
-{%- endmacro -%} {#- qr_button_prev -#}
 
 {%- macro qr_field (name, title, value, label) -%}
   {%- set caller = kwargs.pop ("caller",   None) -%}
@@ -304,109 +227,46 @@
   </li>
 {%- endmacro -%} {#- qr_field -#}
 
-{%- macro qr_control (page, fields, qr) -%}
-  {%- set action = page.abs_href -%}
-  {%- set E_Type = page.E_Type %}
-  {% call Form.form (action = action, method = "get", class = "QR") -%}
-    {{ qr_button
-        ( page
-        , GTW._  ("Apply")
-        , GTW._T ("Display list of objects matching the restriction")
-        )
-    }}
-    {{ qr_button_last  (page, qr) }}
-    {{ qr_button_next  (page, qr) }}
-    {{ qr_button_prev  (page, qr) }}
-    {{ qr_button_first (page, qr) }}
-    {%- if not page.skip_qr_attr_select %}
-      {{ qr_button
-          ( page
-          , GTW._  ("Config")
-          , GTW._T ("Select the attributes to be displayed for each object")
-          , GTW._T ("Select attributes")
-          )
-      }}
-    {% endif -%}
-    {{ qr_button
-        ( page
-        , GTW._  ("Add")
-        , GTW._T ("Add a rule to restrict the objects to a specific attribute value")
-        , GTW._T ("Add restriction")
-        )
-    }}
-    <input class="value hidden" name="fields" {# -#}
-      value="{{ GTW.attr_join (',', fields, 'name') }}"{# -#}
-    >
-    <ul class="limits">
-      {{ qr_field
-          ( "limit"
-          , GTW._T ("Limit number of entities displayed")
-          , qr.limit
-          )
-      }}
-      {{ qr_field
-          ( "offset"
-          , GTW._T ("Number of first entity to display")
-          , qr.offset_f
-          )
-      }}
-      {% call qr_field
-          ( "order_by"
-          , GTW._T ("Field(s) to use for ordering entities")
-          , GTW._T ("Order by")
-          )
-      %}
-        {{ X.input.text
-            ( name      = "order_by"
-            , value     = qr.order_by_names
-            , class     = "value hidden"
-            )
-        }}
-        {{ X.input.text
-            ( id        = "QR-order_by"
-            , value     = qr.order_by_ui_names
-            , disabled  = True
-            , class     = "value display"
-            )
-        }}
-      {% endcall %} {# qr_field #}
-    </ul>
-    {{ attr_filter_table (qr.filters) }}
-  {% endcall %} {# form #}
-{%- endmacro -%} {#- qr_control -#}
-
-{%- macro select_attr_form () -%}
+{%- macro select_attr_form (page) -%}
   <form class = "QR select-attr" {# -#}
       title="{{ GTW._T ("Select the attributes to be displayed for each object") }}"{# -#}
   >
     <ul class="attributes"></ul>
     <ul class="prototype hidden">
       <li>
-        <a class="button disabler"></a>
+        <a class="disabler"></a>
         <b></b>
       </li>
     </ul>
-    {{ _qr_button
-        ( GTW._  ("Apply")
-        , GTW._T ("Use set of attributes currently displayed in form")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Cancel")
-        , GTW._T ("Leave form without changing set of attributes to display")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Clear")
-        , GTW._T ("Reset form to default")
-        )
-    }}
-    {{ _qr_button
-        ( GTW._  ("Add")
-        , GTW._T ("Add an attribute to be displayed")
-        , text = GTW._T ("Add attribute")
-        )
-    }}
+    <div class="pure-controls">
+      {{ ETQ.button
+          ( page
+          , class = "pure-button-primary"
+          , name  = GTW._  ("Apply")
+          , title = GTW._T ("Use set of attributes currently displayed in form")
+          )
+      }}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Cancel")
+          , title = GTW._T
+              ("Leave form without changing set of attributes to display")
+          )
+      }}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Clear")
+          , title = GTW._T ("Reset form to default")
+          )
+      }}
+      {{ ETQ.button
+          ( page
+          , name  = GTW._  ("Add")
+          , title = GTW._T ("Add an attribute to be displayed")
+          , text  = GTW._T ("Add attribute")
+          )
+      }}
+    </div>
   </form>
 {%- endmacro -%} {#- select_attr_form -#}
 
@@ -467,7 +327,7 @@
 
 {%- macro admin  (page, fields, objects) -%}
   {{ vip_button  (page, "top") }}
-  {{ qr_control  (page, fields, page.query_restriction) }}
+  {{ ETQ.qr_form (page, fields, page.query_restriction) }}
   {{ admin_table (page, fields, objects) }}
   {{ vip_button  (page, "bot") }}
 {%- endmacro -%} {#- admin -#}

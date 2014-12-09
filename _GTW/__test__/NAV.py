@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -28,6 +28,7 @@
 #    11-Apr-2013 (CT) Adapt to changes in `MOM.Attr.Querier`
 #     9-Dec-2013 (CT) Adapt to style changes of Auth forms
 #    15-Sep-2014 (CT) Adapt to change of macro `entity_selector_form`
+#     2-Jan-2015 (CT) Adapt to another change of macro `entity_selector_form`
 #    ««revision-date»»···
 #--
 
@@ -172,6 +173,7 @@ _test_nav = """
       , 'account_register'
       , 'calendar'
       , 'calendar_day'
+      , 'e_type_mf3'
       , 'html/static.jnj'
       ]
     , [ 401
@@ -184,7 +186,6 @@ _test_nav = """
     , ['console']
     , ['e_type_admin']
     , ['e_type_display']
-    , ['e_type_mf3']
     , ['e_type_mf3|mf3']
     , ['gallery']
     , ['photo']
@@ -1887,33 +1888,30 @@ _test_esf = """
     <form class = "pure-form pure-form-aligned" title="Select Company_R for attribute Affiliate">
         <input type="hidden" name="__esf_for_attr__" value="affiliate___AC">
         <input type="hidden" name="__esf_for_type__" value="PAP.Company_R">
-        <div class="pure-control-group" title="Name">
+          <div class="pure-control-group attr-filter" title="Name">
         <label for="name___AC">Name</label>
-                  <input type="text" class="" id="name___AC" name="name___AC"/>
+        <span class="value">
+                    <input type="text" class="value" id="name___AC" name="name___AC"/>
+       </span>
+        <a class="disabler"></a>
       </div>
-        <div class="pure-control-group" title="Registered in">
+          <div class="pure-control-group attr-filter" title="Registered in">
         <label for="registered_in___AC">Registered in</label>
-                  <input type="text" class="" id="registered_in___AC" name="registered_in___AC"/>
+        <span class="value">
+                    <input type="text" class="value" id="registered_in___AC" name="registered_in___AC"/>
+       </span>
+        <a class="disabler"></a>
       </div>
         <div class="pure-controls">
-          <button name="APPLY" title="Use the currently selected Company_R" type="submit"
-        class=""
-        >
-        <i class="fa fa-check"></i>
-        Apply
-      </button>
-          <button name="CLEAR" title="Reset fields" type="button"
-        class=""
-        >
-        <i class="fa fa-eraser"></i>
-        Clear
-      </button>
-          <button name="CANCEL" title="Leave form without selecting Company_R" type="button"
-        class=""
-        >
-        <i class="fa fa-times"></i>
-        Cancel
-      </button>
+                      <button class="pure-button" name="APPLY" title="Use the currently selected Company_R" type="submit">
+          <i class="fa"></i><b>Apply</b>
+        </button>
+                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
+          <i class="fa"></i><b>Clear</b>
+        </button>
+                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Company_R" type="button">
+          <i class="fa"></i><b>Cancel</b>
+        </button>
         </div>
       </form>
 
@@ -2208,41 +2206,44 @@ _test_esf = """
     <form class = "pure-form pure-form-aligned" title="Select Person for attribute Owner[Person]">
         <input type="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
         <input type="hidden" name="__esf_for_type__" value="PAP.Person">
-        <div class="pure-control-group" title="Last name">
+          <div class="pure-control-group attr-filter" title="Last name">
         <label for="last_name___AC">Last name</label>
-                  <input type="text" class="" id="last_name___AC" name="last_name___AC"/>
+        <span class="value">
+                    <input type="text" class="value" id="last_name___AC" name="last_name___AC"/>
+       </span>
+        <a class="disabler"></a>
       </div>
-        <div class="pure-control-group" title="First name">
+          <div class="pure-control-group attr-filter" title="First name">
         <label for="first_name___AC">First name</label>
-                  <input type="text" class="" id="first_name___AC" name="first_name___AC"/>
+        <span class="value">
+                    <input type="text" class="value" id="first_name___AC" name="first_name___AC"/>
+       </span>
+        <a class="disabler"></a>
       </div>
-        <div class="pure-control-group" title="Middle name">
+          <div class="pure-control-group attr-filter" title="Middle name">
         <label for="middle_name___AC">Middle name</label>
-                  <input type="text" class="" id="middle_name___AC" name="middle_name___AC"/>
+        <span class="value">
+                    <input type="text" class="value" id="middle_name___AC" name="middle_name___AC"/>
+       </span>
+        <a class="disabler"></a>
       </div>
-        <div class="pure-control-group" title="Academic title">
+          <div class="pure-control-group attr-filter" title="Academic title">
         <label for="title___AC">Academic title</label>
-                  <input type="text" class="" id="title___AC" name="title___AC"/>
+        <span class="value">
+                    <input type="text" class="value" id="title___AC" name="title___AC"/>
+       </span>
+        <a class="disabler"></a>
       </div>
         <div class="pure-controls">
-          <button name="APPLY" title="Use the currently selected Person" type="submit"
-        class=""
-        >
-        <i class="fa fa-check"></i>
-        Apply
-      </button>
-          <button name="CLEAR" title="Reset fields" type="button"
-        class=""
-        >
-        <i class="fa fa-eraser"></i>
-        Clear
-      </button>
-          <button name="CANCEL" title="Leave form without selecting Person" type="button"
-        class=""
-        >
-        <i class="fa fa-times"></i>
-        Cancel
-      </button>
+                      <button class="pure-button" name="APPLY" title="Use the currently selected Person" type="submit">
+          <i class="fa"></i><b>Apply</b>
+        </button>
+                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
+          <i class="fa"></i><b>Clear</b>
+        </button>
+                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Person" type="button">
+          <i class="fa"></i><b>Cancel</b>
+        </button>
         </div>
       </form>
 

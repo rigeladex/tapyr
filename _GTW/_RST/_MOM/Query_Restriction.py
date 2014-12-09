@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -438,12 +438,12 @@ class RST_Query_Restriction (TFL.Meta.Object) :
         qate    = q.As_Template_Elem
         f       = dict \
             ( qate._kw
+            , AQ     = q
             , attr   = q._attr
             , edit   = value
             , id     = fn
             , name   = fn
             , op     = soc._qop_desc (qop)
-            , AQ     = q
             , value  = value
             )
         return TFL.Record (** f), fq

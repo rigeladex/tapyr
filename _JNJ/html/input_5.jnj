@@ -34,6 +34,8 @@
 ##     7-May-2014 (CT) DRY option handling in `_input`;
 ##                     add `autofocus`, `multiple`, `readonly`
 ##    26-Jun-2014 (CT) Change `_input` to remove empty `pattern` from `kw`
+##    23-Oct-2014 (CT) Add `button`, `button_pure`; factor `with_opts_kw`
+##    21-Nov-2014 (CT) Add `hd_input`
 ##    ««revision-date»»···
 ##--
 #}
@@ -51,8 +53,9 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- set select_v = _common.select_v     %}
 {%- set textarea = _common.textarea     %}
 
-{%- macro _input (typ, kw) -%}
-  {%- do kw.pop ("caller", "") -%}
+{%- macro with_opts_kw (kw) -%}
+  {%- set caller  = kwargs.pop ("caller") -%}
+  {%- do            kw.pop     ("caller", "") -%}
   {%- set options = [] %}
   {%- for opt in ("autofocus", "disabled", "multiple", "readonly", "required") %}
     {%- if kw.pop (opt, None) %}
@@ -65,9 +68,15 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
       {%- do kw.pop (key, None) -%}
     {%- endif -%}
   {% endfor -%}
-  <input type="{{ typ }}"{{ kw|xmlattr }}
-    {%- if options %} {{ " ".join (options) }}{% endif -%}
-  />
+  {{- caller (" ".join (options), kw) -}}
+{%- endmacro -%} {#- with_opts_kw -#}
+
+{%- macro _input (typ, kw) -%}
+  {% call(options, okw) with_opts_kw (kw) -%}
+    <input type="{{ typ }}"{{ okw|xmlattr }}
+      {%- if options %} {{ options }}{% endif -%}
+    />
+  {% endcall %} {# with_opts_kw #}
 {%- endmacro -%} {#- text -#}
 
 {%- macro _input_c (typ, kw) -%}
@@ -79,6 +88,35 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
   {%- set kw    = GTW.dict (kw, class = class) -%}
   {{- _input ("text", kw) -}}
 {%- endmacro -%} {#- _input_c -#}
+
+{%- macro button () -%}
+  {%- set button_caller = kwargs.pop ("caller") -%}
+  {% call(opts, kw) with_opts_kw (kwargs) -%}
+    <button{{ kw|xmlattr }}{% if opts %} {{ opts }}{% endif -%}>
+      {{ button_caller () }}
+    </button>
+  {% endcall %} {# with_opts_kw #}
+{%- endmacro -%} {#- button -#}
+
+{%- macro button_pure (icon_name = None, text = None, icon_class_add = None) -%}
+  {%- set class =  GTW.filtered_join
+      ( " "
+      , ( "pure-button"
+        , "pure-button-disabled" if kwargs.get ("disabled") else ""
+        , kwargs.pop ("class", "")
+        )
+      )
+  %}
+  {%- set i_cls = GTW.filtered_join
+      ( " "
+      , ("fa", ("fa-%s" % (icon_name, ) if icon_name else ""), icon_class_add)
+      )
+  %}
+  {% call button (class = class, ** kwargs) -%}
+    <i class="{{ i_cls }}"></i>
+    {%- if text      %}<b>{{ text }}</b>{% endif -%}
+  {% endcall %} {# button #}
+{%- endmacro -%} {#- button_pure -#}
 
 {%- macro checkbox () -%}
   {{ _input ("checkbox", kwargs) }}
@@ -163,5 +201,26 @@ XXX http://html5doctor.com/avoiding-common-html5-mistakes/ Boolean attributes
 {%- macro week () -%}
   {{ _input ("week", kwargs) }}
 {%- endmacro -%}
+
+{%- macro hd_input (name, h_value, d_value, h_typ = text, d_typ = text) -%}
+  {%- set class   = kwargs.pop ("class") %}
+  {%- set h_class = kwargs.pop ("h_class", None) %}
+  {%- set d_class = kwargs.pop ("d_class", None) %}
+  {{ h_typ
+      ( class     = GTW.filtered_join (" ", (class, "hidden", h_class))
+      , name      = name
+      , readonly  = True
+      , tabindex  = "-1"
+      , value     = h_value
+      )
+  }}
+  {{ d_typ
+      ( class     = GTW.filtered_join (" ", (class, "display", d_class))
+      , name      = None
+      , value     = d_value
+      , ** kwargs
+      )
+  }}
+{%- endmacro -%} {#- hd_input -#}
 
 {#- __END__ jinja template: html/input_5.jnj -#}

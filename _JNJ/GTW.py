@@ -55,6 +55,7 @@
 #    10-Apr-2014 (CT) Add `first`
 #    14-Apr-2014 (CT) Add `ichain`
 #    18-Apr-2014 (CT) Add `bool`
+#     2-Dec-2014 (CT) Add `setattr`
 #    ««revision-date»»···
 #--
 
@@ -244,6 +245,7 @@ class GTW (TFL.Meta.Object) :
     # end def render_mode
 
     reversed   = staticmethod (reversed)
+    setattr    = staticmethod (setattr)
     sorted     = staticmethod (sorted)
     Sorted_By  = TFL.Sorted_By
     styler     = staticmethod (HTML.Styler)

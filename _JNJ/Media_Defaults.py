@@ -246,6 +246,7 @@ class Media_Defaults (Definition) :
     color_lightest_grey    = RGB_X     ("#F8F8F8")
     color_lighter_grey     = RGB_X     ("#EDEDED")
     color_light_grey       = RGB_X     ("#DEDEDE")
+    color_border_grey      = RGB_X     ("#CCCCCC")
     color_medium_grey      = RGB_X     ("#BEBEBE")
     color_half_grey        = RGB_X     ("#888888")
     color_dark_grey        = RGB_X     ("#444444")
@@ -277,7 +278,7 @@ class Media_Defaults (Definition) :
 
     col_padding            = Px (5)
 
-    background_color       = SVG_Color ("white")
+    background_color       = P.color.p_white
     link_color             = RGB_X     ("#0000EE")
     no_link_color          = RGB_X     ("#333333")
     text_color             = RGB_X     ("#000033")
@@ -469,7 +470,7 @@ class Media_Defaults (Definition) :
 
     class tablesorter (Definition) :
 
-        color_marker           = "white"
+        color_marker           = P.R.background_color
         margin_top             = Px (8)
         opacity                = 0.75
         width                  = Px (5)
@@ -696,14 +697,14 @@ class Media_Defaults (Definition) :
     class Debugger (Definition) :
 
         background_color           = P.R.background_color
-        console_border_color       = RGB_X ("#CCC")
-        console_background_color   = RGB_X ("#FAFAFA")
-        console_text_color         = "black"
+        console_border_color       = P.R.color_border_grey
+        console_background_color   = P.R.color_lightest_grey
+        console_text_color         = P.R.color.m_black
 
-        form_text_color            = RGB_X ("#555")
+        form_text_color            = P.R.color_dark_grey
 
-        traceback_background_color = "white"
-        traceback_text_color       = "white"
+        traceback_background_color = P.R.background_color
+        traceback_text_color       = P.R.background_color
 
     # end class Debugger
 

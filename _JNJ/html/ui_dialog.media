@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #     9-Apr-2013 (CT) Creation
 #    15-Sep-2014 (CT) Add rule for `... .ui-dialog-titlebar`
+#     5-Dec-2014 (CT) Use pure buttons for `.ui-dialog`
 #    ««revision-date»»···
 #--
 
@@ -30,6 +31,19 @@ style_sheet = Style_Sheet \
         ( ".ui-dialog .ui-dialog-titlebar .ui-dialog-title"
         , max_width                = Percent (100)
         , white_space              = "normal"
+        )
+    , Rule
+        ( ".ui-dialog .pure-button"
+        , children                 =
+            [ Rule
+                ( "b"
+                , display                  = "none"
+                )
+            , Rule
+                ( ".fa"
+                , color                    = P.color.m_blue
+                )
+            ]
         )
     )
 

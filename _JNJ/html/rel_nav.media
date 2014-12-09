@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    14-Mar-2014 (CT) Creation
+#     5-Dec-2014 (CT) Use pure buttons for `.rel-nav`
 #    ««revision-date»»···
 #--
 
@@ -25,46 +26,14 @@ style_sheet = Style_Sheet \
         ( ".rel-nav"
         , children             =
             [ Rule
-                ( "a", "b"
-                , display          = "inline-block"
-                , height           = Em (2.0)
-                , padding          = TRBL0 (t = Em (0.125))
-                , text_align       = "center"
-                , vertical_align   = "middle"
-                , width            = Em (2.0)
+                ( ".fa"
+                , color            = P.color_target
                 , children         =
-                    [ Rule_Pseudo
-                        ( "not(:first-child)"
-                        , margin   = TRBL0 (l = Em (0.5))
+                    [ Rule
+                        ( "b"
+                        , P.Rule.hidden
                         )
                     ]
-                )
-            , Rule
-                ( "a"
-                , background_color = P.color_heading
-                , border           = P.border_button
-                , color            = P.color_selected
-                , position         = "relative"
-                , children         =
-                    [ P.Rule.hover_rev
-                    , Rule
-                        ( ".first"
-                        , left     = Em (-0.05)
-                        , position = "absolute"
-                        )
-                    , Rule
-                        ( ".last"
-                        , left     = Em (0.65)
-                        , position = "absolute"
-                        )
-                    ]
-                , ** Border (radius = Px (10))
-                )
-            , Rule
-                ( "b"
-                , background_color = P.background_color
-                , border_color     = P.background_color
-                , border_style     = "solid"
                 )
             ]
         )

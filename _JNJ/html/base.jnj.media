@@ -50,11 +50,17 @@
 #     8-Apr-2014 (CT) Add rules for `.invisible`, `.clearfix`
 #    12-Apr-2014 (CT) Add rule for `.module`
 #     9-Jul-2014 (CT) Add rule for ".rotate-45-left"
+#     5-Dec-2014 (CT) Add `Style_File` for `pure.css` and `font-awesome.css`
+#     5-Dec-2014 (CT) Add `padding_left` to `.nav-off-canvas .pg_body`
+#    10-Dec-2014 (CT) Remove `Include` of `reset.media`; pure.css includes reset
 #    ««revision-date»»···
 #--
 
-Include ("html/reset.media")
-Include ("html/base.media")
+Style_File  ("/media/GTW/css/font-awesome.css")
+Style_File  ("/media/GTW/css/pure.css")
+Style_File  ("/media/GTW/css/grids-responsive.css")
+
+Include     ("html/base.media")
 
 style_sheet = Style_Sheet \
     ( Rule
@@ -168,7 +174,13 @@ style_sheet = Style_Sheet \
             [ Rule_Class
                 ( "nav-off-canvas"
                 , margin_left      = - P.nav_col.full_width - P.col_padding
-                , children         = [P.Rule.pg_nav_show]
+                , children         =
+                    [ P.Rule.pg_nav_show
+                    , Rule
+                        ( ".pg_body"
+                        , padding_left  = Em (0.5)
+                        )
+                    ]
                 )
             , Rule_Class
                 ( "nav-on-canvas"
@@ -492,16 +504,16 @@ style_sheet = Style_Sheet \
         )
     )
 
-Include ("html/print.media")
+Include  ("html/print.media")
 
-Script (GTW.Script._.Modernizr)
+Script   (GTW.Script._.Modernizr)
 
 ### the base file requires at least the jquery.gritter stuff for the
 ### notification
-Script (GTW.Script._.jQuery_UI)
-Script (GTW.Script._.jQuery_Gritter)
+Script   (GTW.Script._.jQuery_UI)
+Script   (GTW.Script._.jQuery_Gritter)
 
-Script (GTW.Script._.GTW_nav_off_canvas)
+Script   (GTW.Script._.GTW_nav_off_canvas)
 
 CSS_Link (GTW.CSS_Link._.jQuery_UI)
 CSS_Link (GTW.CSS_Link._.jQuery_Gritter)

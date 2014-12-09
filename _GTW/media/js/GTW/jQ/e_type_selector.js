@@ -56,6 +56,7 @@
 //    28-Aug-2014 (CT) Finetune keys ignored by `gtw_e_type_selector_hd_mf3`
 //                     (e.g., add `cursor left`, `end`, and some others)
 //    15-Sep-2014 (CT) Change `default_position` from `right` to `left`
+//     5-Dec-2014 (CT) Use pure, not jqueryui, buttons
 //    ««revision-date»»···
 //--
 
@@ -90,7 +91,7 @@
                   , opts && opts ["icon_map"] || {}
                   );
               var completer_position, dialog_position;
-              this.icons = new $GTW.UI_Icon_Map (icon_map);
+              this.icons     = new $GTW.FA_Icon_Map (icon_map);
               this.selectors = $.extend
                   ( {}
                   , this.defaults.selectors
@@ -193,8 +194,8 @@
               // enable `apply` but reset `gtw_ets_completed_response`, if any
               // if the user clicks to `apply` button, the associated input
               // will be cleared
-              ab$.button        ("option", "disabled", false);
-              self.widget.data  ("gtw_ets_completed_response", null);
+              ab$.gtw_button_pure ("option", "disabled", false);
+              self.widget.data    ("gtw_ets_completed_response", null);
           }
         , close                 : function close (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
@@ -219,7 +220,7 @@
                   .data ("gtw_ets_completed_response", response);
               this.a_form$
                   .find (S.apply_button)
-                      .button ("option", "disabled", false);
+                      .gtw_button_pure ("option", "disabled", false);
           }
         , get_ccb               : function get_ccb (inp$, term, cb, response) {
               var label;
@@ -372,10 +373,9 @@
               var esfp$   = result.hasClass (options.esf_polymorphic_cls) ?
                                 result : result.find  (S.esf_polymorphic);
               var form$;
-              result.find  (S.button)
-                  .gtw_buttonify (self.icons, options.buttonify_options);
+              result.find  (S.button).gtw_button_pure ({icon_map : this.icons});
               result.find  (S.apply_button)
-                  .button  ("option", "disabled", true)
+                  .gtw_button_pure ("option", "disabled", true)
                   .click   (self, self.apply_cb);
               result.find  (S.cancel_button).click (self, self.close);
               result.find  (S.clear_button).click  (self, self.clear_cb);
@@ -543,7 +543,7 @@
                     ( { callback      : function (ev) {
                             var k = ev.which;
                                 // Unicode value of key pressed
-                                //   8     backspace (delete backwars key)
+                                //   8     backspace (delete backwards key)
                                 //   9     tab
                                 //  10     new line
                                 //  13     carriage return

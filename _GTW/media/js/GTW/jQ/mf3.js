@@ -10,7 +10,7 @@
 //    GTW/jQ/mf3.js
 //
 // Purpose
-//    Query plugin for MF3-forms
+//    jQuery plugin for MF3-forms
 //
 // Revision Dates
 //    28-Apr-2014 (CT) Creation
