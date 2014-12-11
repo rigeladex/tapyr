@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -23,6 +23,8 @@
 #     9-Dec-2013 (CT) Adapt `_set_session_cookie` to signature change of
 #                     `set_secure_cookie`
 #     9-Dec-2013 (CT) Add `anti_csrf_token`
+#    12-Dec-2014 (CT) Consider `session.user.is_valid` in `username.setter`
+#    12-Dec-2014 (CT) Increase `max_age` of session cookie to `1<<31`
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,7 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     @username.setter
     def username (self, value) :
         session = self.session
-        if value != session.username :
+        if value != session.username or not session.user.is_valid :
             session.username = value
             self._set_session_cookie ()
     # end def username
@@ -81,8 +83,7 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
         session = self.session
         name    = request.session_cookie_name
         value   = request.new_secure_cookie (session.sid)
-        ttl     = self.resource.session_ttl
-        cookie  = self.set_secure_cookie (name, value, max_age = ttl)
+        cookie  = self.set_secure_cookie (name, value, max_age = 1<<31)
         GTW.Notification_Collection (session)
         return cookie
     # end def _set_session_cookie

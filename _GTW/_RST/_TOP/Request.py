@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -90,6 +90,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     # end def locale_codes
 
     @Once_Property
+    @getattr_safe
     def session (self) :
         cookie_name = self.session_cookie_name
         S_Class     = self.settings.get  ("Session_Class", GTW.File_Session)

@@ -44,12 +44,18 @@
 #    11-Feb-2014 (CT) Force `sid` to `str`
 #     2-Jul-2014 (CT) Localize `Epxired` message
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    11-Dec-2014 (CT) Add `User.change`, `.is_valid`; remove `User.name.setter`
+#    11-Dec-2014 (CT) Keep sessions that are expired or invalid but ignore
+#                     `user.name` of such sessions
+#    11-Dec-2014 (CT) Don't change session ids, remove `renew_session_id`
+#    11-Dec-2014 (CT) Use `uuid4` for session id
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 
 from   _TFL                     import TFL
+from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.pyk                 import pyk
 
@@ -64,39 +70,40 @@ import random
 import time
 import uuid
 
-### session key generation is based on the version found in Django
-### (www.djangoproject.com)
-
-MAX_SESSION_KEY = 340282366920938463463374607431768211456     # 2 ** 128
-# Use the system (hardware-based) random number generator if it exists.
-if hasattr(random, "SystemRandom") :
-    randrange = random.SystemRandom ().randrange
-else:
-    randrange = random.randrange
-
 @pyk.adapt__bool__
 class User (TFL.Meta.Object) :
     """Encapsulate user information for session."""
 
-    expiry = None
-    hash   = None
-    _name  = None
+    expired        = True
+    expiry         = None
+    hash           = None
+    valid_hash     = False
+
+    _name          = None
 
     def __init__ (self) :
-        self.name = None
+        self._name    = None
+        self.sessions = {}
     # end def __init__
+
+    @property
+    def is_valid (self) :
+        return self._name and self.valid_hash and not self.expired
+    # end def is_valid
 
     @property
     def name (self) :
         return self._name
     # end def name
 
-    @name.setter
-    def name (self, value) :
-        if value is None or value != self._name :
-            self._name    = value
-            self.sessions = {}
-    # end def name
+    def change (self, name, hash, expiry) :
+        invalid         = name is None
+        self.expired    = invalid
+        self.expiry     = expiry
+        self.hash       = hash
+        self.valid_hash = not invalid
+        self._name      = name
+    # end def change
 
     def __bool__ (self) :
         return self._name is not None
@@ -113,6 +120,7 @@ class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
 
 # end class M_Session
 
+@pyk.adapt__bool__
 class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     """Base class for sessions
 
@@ -135,12 +143,11 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     def __init__ (self, sid = None, settings = {}, hasher = None) :
         self._settings = settings
         self._hasher   = hasher or (lambda x : x)
-        if sid is None or not self.exists (sid) :
-            self._sid     = self._new_sid (settings.get ("cookie_salt"))
-            self._data    = dict (user = User ())
-            self.username = None
+        if sid is None :
+            self._sid  = self._new_sid (settings.get ("cookie_salt"))
+            self._data = dict (user = User ())
         else :
-            self._sid     = str (sid)
+            self._sid  = str (sid)
     # end def __init__
 
     @property
@@ -150,17 +157,17 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
 
     @property
     def username (self) :
-        return self.user.name
+        user = self.user
+        return user.is_valid and user.name
     # end def username
 
     @username.setter
     def username (self, value) :
-        if self.user.name != value :
-            self._change_user     (self.user, value)
-            self.renew_session_id ()
+        self._change_user (self.user, value)
     # end def username
 
     @property
+    @getattr_safe
     def _data (self) :
         loaded = False
         result = self._data_dict
@@ -169,13 +176,9 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
             user   = result.get ("user")
             if user is None :
                 user = result ["user"] = User ()
-            expired = \
-                (  (user.hash != self._hasher (user.name))
-                or self._expired (user.expiry)
-                )
-            if expired :
-                self._change_user (user, None)
-            elif loaded :
+            user.expired    = self._expired (user.expiry)
+            user.valid_hash = (user.hash == self._hasher (user.name))
+            if loaded :
                 for id in list (user.sessions) :
                     try :
                         self.edit_session (id)
@@ -232,18 +235,9 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     # end def new_edit_session
 
     def New_ID (self, check = None, salt = "") :
-        try :
-            getpid = os.getpid
-        except AttributeError :
-            pid = 1
-        else :
-            pid = getpid ()
         hash_fct = self._settings.get ("hash_fct", TFL.user_config.sha)
         while True :
-            id = hash_fct \
-                ( "%s%s%s%s"
-                % (randrange (0, MAX_SESSION_KEY), pid, time.time (), salt)
-                ).hexdigest ()
+            id = hash_fct ("%s%s" % (uuid.uuid4 ().hex, salt)).hexdigest ()
             if check is None or not check (id) :
                 return pyk.text_type (id)
     # end def New_ID
@@ -261,18 +255,6 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
             ("%s must implement `remove`" % (self.__class__, ))
     # end def remove
 
-    def renew_session_id (self, n_sid = None) :
-        n_sid     = n_sid or self._new_sid (self._settings.get ("cookie_salt"))
-        o_sid     = self._sid
-        self._sid = str (n_sid)
-        try :
-            with self.LET (_sid = o_sid) :
-                self.remove ()
-        except :
-            pass
-        return self
-    # end def renew_session_id
-
     def save (self) :
         raise NotImplementedError \
             ("%s must implement `save`" % (self.__class__, ))
@@ -285,9 +267,11 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     # end def setdefault
 
     def _change_user (self, user, value) :
-        user.name   = value
-        user.hash   = self._hasher (value)
-        user.expiry = None if value is None else self._expiry ()
+        user.change \
+            ( name   = value
+            , hash   = self._hasher (value)
+            , expiry = None if value is None else self._expiry ()
+            )
     # end def _change_user
 
     def _expired (self, expiry) :
@@ -306,6 +290,10 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     def _new_sid (self, salt) :
         return self.New_ID (self.exists, salt)
     # end def _new_sid
+
+    def __bool__ (self) :
+        return any (bool (v) for v in pyk.itervalues (self._data))
+    # end def __bool__
 
     def __contains__ (self, item) :
         return item in self._data

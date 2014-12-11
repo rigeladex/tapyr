@@ -20,6 +20,7 @@
 #    11-Dec-2013 (CT) Use `request.host`, not `.host_url`, for `Anti_CSRF`
 #    24-Feb-2014 (CT) Change `__repr__` to use `pyk.encoded`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    12-Dec-2014 (CT) Add `request.path` to `Anti_CSRF.secrets`
 #    ««revision-date»»···
 #--
 
@@ -212,6 +213,7 @@ class Anti_CSRF (_Base_) :
         result  = self.__super.secrets + \
             ( request.session.sid
             , request.host
+            , request.path
             )
         return result
     # end def secrets

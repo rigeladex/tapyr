@@ -21,6 +21,7 @@
 #    18-Aug-2012 (MG) Fix `discarge` to avoid `empty` head/tail result
 #    24-Oct-2014 (CT) Add `Notification_Collection.__repr__`, use `portable_repr`
 #    24-Oct-2014 (CT) Fix spelling: s/discarge/disgorge/g
+#    11-Dec-2014 (CT) Add `Notification_Collection.__bool__`
 #    ««revision-date»»···
 #--
 """
@@ -77,6 +78,7 @@ class M_Notification_Collection (TFL.Meta.Object.__class__) :
 
 # end class M_Notification_Collection
 
+@pyk.adapt__bool__
 class Notification_Collection \
           ( TFL.Meta.BaM
               (TFL.Meta.Object, metaclass = M_Notification_Collection)
@@ -111,6 +113,10 @@ class Notification_Collection \
             self._notifications = []
         return "".join (result)
     # end def disgorge
+
+    def __bool__ (self) :
+        return bool (self._notifications)
+    # end def __bool__
 
     def __getstate__ (self) :
         self.__dict__.pop ("Cached", ())

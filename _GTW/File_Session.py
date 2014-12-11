@@ -32,6 +32,8 @@
 #    24-Aug-2012 (MG) Import for `fcntl` moved to `posix` part
 #     2-May-2013 (CT) Call `fchmod` to clear permissions for `group` and `other`
 #    14-Sep-2013 (MG) Move `fchmod` call to posix function
+#    11-Dec-2014 (CT) Remove obsolete code from `remove`
+#    11-Dec-2014 (CT) Change `save` to skip/remove empty sessions
 #    ««revision-date»»···
 #--
 
@@ -215,19 +217,18 @@ class File_Session (GTW.Session) :
 
     def remove (self) :
         try :
-            del self.file_name
-            del self.lock_file_name
-        except :
-            pass
-        try :
             os.unlink (self.file_name)
         except EnvironmentError :
             pass
     # end def remove
 
     def save (self) :
-        with Locked_File (self.file_name, "wb") as f :
-            cPickle.dump (self._data, f)
+        fn = self.file_name
+        if bool (self) :
+            with Locked_File (fn, "wb") as f :
+                cPickle.dump (self._data, f)
+        elif os.path.exists (fn) :
+            self.remove ()
     # end def save
 
     def _file_name (self, sid) :
