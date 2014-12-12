@@ -43,6 +43,7 @@
 //    30-Aug-2014 (CT) Add `hide` and `show` calls for `$(S.form_errors)`
 //     3-Sep-2014 (CT) Use `.call`, not `.apply`, in `entity_display_open_cb`
 //    25-Sep-2014 (CT) Add `polish_field`
+//    12-Dec-2014 (CT) Add `F_ACT` to `submit_cb`
 //    ««revision-date»»···
 //--
 
@@ -894,9 +895,11 @@
             var form_spec    = options.form_spec;
             var name         = target$.prop ("name");
             var url          = form$.prop ("action") || document.URL;
+            var f_act        = $(":input[name=F_ACT]", form$).val ();
             var json_data    =
                 { cancel : (name == "cancel")
                 , cargo  : form_spec.cargo
+                , F_ACT  : f_act
                 , next   : options.url.next
                 };
             var pre_submit_callbacks = options.pre_submit_callbacks;

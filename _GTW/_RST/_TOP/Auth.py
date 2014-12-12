@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -54,6 +54,7 @@
 #                     (use `_Cmd_`, not `_Form_Cmd_`)
 #     3-Sep-2014 (CT) Add message to `Forbidden` of `_skip_render`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    12-Dec-2014 (CT) Factor `HTTP_POST_CRSF_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -144,18 +145,11 @@ class _Form_Cmd_ (GTW.RST.Auth_Mixin, _Cmd_) :
 
     class _Form_Cmd__POST_ \
             ( _Cmd_._Cmd_Method_Mixin_
-            , GTW.RST.TOP.HTTP_Method_Mixin
+            , GTW.RST.TOP.HTTP_POST_CRSF_Mixin
             , GTW.RST.Auth_Mixin.POST
             ) :
 
         _real_name              = "POST"
-
-        def _skip_render (self, resource, request, response) :
-            result = self.__super._skip_render (resource, request, response)
-            if not result :
-                resource.csrf_check (request, response)
-            return result
-        # end def _skip_render
 
     POST = _Form_Cmd__POST_ # end class
 

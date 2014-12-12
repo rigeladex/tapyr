@@ -3,7 +3,7 @@
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -46,6 +46,8 @@
 #                     `first_child`, `last_child`
 #    14-Mar-2014 (CT) Use `proper_entries` for relative links
 #    29-Apr-2014 (CT) Robustify `first_child` and `last_child`
+#    12-Dec-2014 (CT) Add `HTTP_POST_CRSF_Mixin`
+#                     (factored from `GTW.RST.TOP.Auth._Form_Cmd_.POST`)
 #    ««revision-date»»···
 #--
 
@@ -114,6 +116,18 @@ class HTTP_Method_Mixin (GTW.RST.HTTP_Method) :
     # end def _response_body
 
 # end class HTTP_Method_Mixin
+
+class HTTP_POST_CRSF_Mixin (HTTP_Method_Mixin) :
+    """Mixin for HTTP POST methods to check anti crsf token"""
+
+    def _skip_render (self, resource, request, response) :
+        result = self.__super._skip_render (resource, request, response)
+        if not result :
+            resource.csrf_check (request, response)
+        return result
+    # end def _skip_render
+
+# end class HTTP_POST_CRSF_Mixin
 
 _Ancestor = GTW.RST._Base_
 

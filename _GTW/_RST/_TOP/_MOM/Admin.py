@@ -100,6 +100,7 @@
 #    24-Sep-2014 (CT) Factor `set_request_defaults`
 #    25-Sep-2014 (CT) Add `Polisher`
 #    26-Sep-2014 (CT) Use `_polished` in `Completer._rendered_post`
+#    12-Dec-2014 (CT) Add `_Changer_.POST ` to call `csrf_check`
 #    ««revision-date»»···
 #--
 
@@ -463,9 +464,17 @@ class _JSON_Action_PO_ (_JSON_Action_) :
 
 # end class _JSON_Action_PO_
 
-class _Changer_ (_HTML_Action_) :
+_Ancestor = _HTML_Action_
+
+class _Changer_ (_Ancestor) :
 
     page_template_name   = "e_type_mf3"
+
+    class _Changer__POST_ (_Ancestor.POST, GTW.RST.TOP.HTTP_POST_CRSF_Mixin) :
+
+        _real_name             = "POST"
+
+    POST = _Changer__POST_ # end class
 
     @property
     @getattr_safe

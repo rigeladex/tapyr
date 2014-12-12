@@ -35,6 +35,7 @@
 ##    25-Sep-2014 (CT) Add `polisher` to `Field`
 ##    21-Nov-2014 (CT) Correct use of `safe` in `do_description`
 ##                     (`safe` applied to `None` returns `"None"`)
+##    12-Dec-2014 (CT) Add `F_ACT` to `do_form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -128,6 +129,10 @@
         method="post" {# -#}
   >
     {{ caller () }}
+    {%- set anti_csrf_token = page.response and page.response.anti_csrf_token %}
+    {%- if anti_csrf_token %}
+      {{ X.input.hidden (name = "F_ACT", value = anti_csrf_token) }}
+    {% endif -%}
     <div class="pure-controls">
       <button class="pure-button pure-button-primary" {# -#}
               title="{{ GTW._T ("Send form data to server and leave form") }}" {# -#}
@@ -230,7 +235,7 @@
     {%- if form_caller %}
       {{ form_caller () }}
     {% endif -%}
-  {% endcall %} {# FM.form #}
+  {% endcall %} {# do_form #}
 {%- endmacro -%} {#- Entity_ -#}
 
 {%- macro Field (page, form, elem, t_module) -%}
