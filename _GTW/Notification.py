@@ -22,6 +22,7 @@
 #    24-Oct-2014 (CT) Add `Notification_Collection.__repr__`, use `portable_repr`
 #    24-Oct-2014 (CT) Fix spelling: s/discarge/disgorge/g
 #    11-Dec-2014 (CT) Add `Notification_Collection.__bool__`
+#    16-Dec-2014 (CT) Add missing import for `TFL.Meta.Once_Property`
 #    ««revision-date»»···
 #--
 """
@@ -61,6 +62,7 @@ from   _TFL.portable_repr  import portable_repr
 from   _TFL.pyk            import pyk
 
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
 import  datetime
 
