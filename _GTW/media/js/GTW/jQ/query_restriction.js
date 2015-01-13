@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -66,6 +66,15 @@
 //                     `order_by.cb.apply`
 //     4-Dec-2014 (CT) Change `order_by.cb.apply` to test class of `icon$`,
 //                     not `dir$`, against `fa_icons.icon_class`, not `ui_class`
+//    13-Jan-2015 (CT) Simplify menu structure by removing nested `a.button`
+//                     (jquery-ui 1.11 doesn't need the `a` anymore)
+//    14-Jan-2015 (CT) Change `menu_select_cb` to be invoked by `select` event
+//                     of `menu`
+//                     + change signature of `add_attr_filter_cb`,
+//                       `attr_select.cb.add`, `op_select_cb`, and
+//                       `order_by.cb.add_criterion` from `(ev)`
+//                       to `(item, choice)`
+//    14-Jan-2015 (CT) Factor `hide_menu`
 //    ««revision-date»»···
 //--
 
@@ -114,6 +123,7 @@
               , disabler                 : ".disabler"
               , head_line                : "h1.headline"
               , limit                    : ":input[name=limit]"
+              , menu_item                : "li"
               , object_container         : "table.Object-List"
               , offset                   : ":input[name=offset]"
               , order_by_criteria        : "ul.attributes"
@@ -231,8 +241,9 @@
               } ()
             );
         var toggle_disabled_state = function toggle_disabled_state (menu$, choice, state) {
-            var cl = choice.length;
-            menu$.find ("a.button").each
+            var S       = options.selectors;
+            var cl      = choice.length;
+            menu$.find (S.menu_item).each
                 ( function () {
                     var a$         = $(this);
                     var c          = a$.data ("gtw_qr_choice");
@@ -250,10 +261,8 @@
                   }
                 );
         };
-        var add_attr_filter_cb = function add_attr_filter_cb (ev) {
+        var add_attr_filter_cb = function add_attr_filter_cb (item, choice) {
             var S       = options.selectors;
-            var target$ = $(ev.delegateTarget);
-            var choice  = target$.data ("gtw_qr_choice");
             var afs$    = $(S.attr_filter_container, qr$);
             var head$   = afs$.filter
                 ( function () {
@@ -272,8 +281,9 @@
             setup_esf (nf$);
         };
         var adjust_op_menu = function adjust_op_menu (afs) {
-            var menu$ = afs.ops_menu$;
-            menu$.element.find ("a.button").each
+            var S       = options.selectors;
+            var menu$   = afs.ops_menu$;
+            menu$.element.find (S.menu_item).each
                 ( function () {
                     var a$    = $(this);
                     var label = a$.html ();
@@ -291,15 +301,14 @@
         };
         var attr_select =
             { cb              :
-                { add         : function add (ev) {
+                { add         : function add (item, choice) {
                       var S       = options.selectors;
-                      var target$ = $(ev.delegateTarget);
-                      var choice  = target$.data ("gtw_qr_choice").label;
-                      var c$      = attr_select.new_attr (choice);
+                      var label   = choice.label;
+                      var c$      = attr_select.new_attr (label);
                       var but$    = as_widget$.find (S.add_button);
                       var menu$   = but$.data ("gtw_qr_menu$").element;
                       as_widget$.find    (S.attr_select_attributes).append (c$);
-                      attr_select.toggle (menu$, choice, true);
+                      attr_select.toggle (menu$, label, true);
                       as_widget$.find    (S.apply_button).focus ();
                   }
                 , apply       : function apply (ev) {
@@ -333,7 +342,7 @@
                       var but$    = as_widget$.find (S.add_button);
                       var menu$   = but$.data ("gtw_qr_menu$").element;
                       as_widget$.find (S.attr_select_attributes).empty ();
-                      menu$.find ("a.button").removeClass ("ui-state-disabled");
+                      menu$.find (S.menu_item).removeClass ("ui-state-disabled");
                   }
                 , close       : function close (ev) {
                       as_widget$.dialog ("close");
@@ -514,14 +523,19 @@
             var method = state ? "enable" : "disable";
             but$.gtw_button_pure (method);
         };
+        var hide_menu = function hide_menu (menu$) {
+            var amb$ = $("." + options.ui_class.active_menu_button);
+            amb$.removeClass (options.ui_class.active_menu_button);
+            menu$.hide ();
+        };
         var hide_menu_cb = function hide_menu_cb (ev) {
-            var menu$ = $(".drop-menu"), tc;
-            if (menu$.is (":visible")) {
-                tc = $(ev.target).closest (".drop-menu");
-                if (ev.keyCode === $.ui.keyCode.ESCAPE || ! tc.length) {
-                    menu$.hide ();
-                    $("." + options.ui_class.active_menu_button)
-                        .removeClass (options.ui_class.active_menu_button);
+            var menu$ = $(".drop-menu:visible");
+            if (menu$.length) {
+                var target$ = $(ev.target);
+                var esc_p   = ev.keyCode === $.ui.keyCode.ESCAPE;
+                var tc      = target$.closest (".drop-menu");
+                if (esc_p || ! tc.length) {
+                    hide_menu (menu$);
                 };
             };
         };
@@ -530,8 +544,7 @@
             var menu = but$.data ("gtw_qr_menu$");
             var opts = menu.element.data ("gtw_qr_options");
             if (menu.element.is (":visible")) {
-                menu.element.hide ();
-                but$.removeClass (options.ui_class.active_menu_button);
+                hide_menu (menu.element);
             } else {
                 hide_menu_cb (ev); // hide other open menus, if any
                 if (opts && "open" in opts) {
@@ -556,13 +569,13 @@
                 };
             };
         };
-        var menu_select_cb = function menu_select_cb (ev) {
-            var target$ = $(ev.delegateTarget);
-            var menu$   = target$.closest (".cmd-menu");
-            target$.data ("gtw_qr_callback") (ev);
-            $("."+options.ui_class.active_menu_button)
-                .removeClass (options.ui_class.active_menu_button);
-            menu$.hide ();
+        var menu_select_cb = function menu_select_cb (ev, ui) {
+            var item    = ui.item;
+            var cb      = item.data    ("gtw_qr_callback");
+            var choice  = item.data    ("gtw_qr_choice");
+            var menu$   = item.closest (".cmd-menu");
+            cb (item, choice);
+            hide_menu (menu$);
         };
         var new_attr_filter = function new_attr_filter (choice) {
             var S = options.selectors;
@@ -607,17 +620,15 @@
             return result;
         };
         var new_menu__add = function new_menu__add (choice, menu, cb, off) {
+            var S      = options.selectors;
             var label  = choice.label.substr (off || 0);
-            var entry  = $(L ("a.button", { html : label }));
-            var result = $(L ("li"));
-            entry
-                .click (menu_select_cb)
-                .data  ({ gtw_qr_callback : cb, gtw_qr_choice : choice});
-            result.append (entry);
+            var result = $(L ("li", { html : label }));
+            result.data ({ gtw_qr_callback : cb, gtw_qr_choice : choice});
             menu.append (result);
             return result;
         };
         var new_menu__add_nested = function new_menu__add_nested (choice, menu, cb, off, pred, icnp) {
+            var S      = options.selectors;
             var label  = choice.label.substr (off || 0);
             var offs   = choice.label.length + qrs.ui_sep.length;
             var sub, tail = "", treshold = 2;
@@ -628,8 +639,7 @@
             };
             if ("attrs" in choice) {
                 if (choice.attrs.length > treshold) {
-                    sub = $(L ("li")).append
-                        ( $(L ("a.button", { html : label + tail })));
+                    sub = $(L ("li", { html : label + tail }));
                     menu.append (sub);
                     new_menu__add_sub (choice.attrs, sub, cb, offs, pred, icnp);
                 } else {
@@ -639,11 +649,9 @@
                     };
                 };
             } else if (icnp && "children_np" in choice) {
-                sub = $(L ("li")).append
-                    ( $(L ("a.button", { html : label + tail })));
+                sub = $(L ("li", { html : label + tail }));
                 menu.append (sub);
-                new_menu__add_sub_cnp
-                        (choice.children_np, sub, cb, offs, pred);
+                new_menu__add_sub_cnp (choice.children_np, sub, cb, offs, pred);
             };
         };
         var new_menu__add_sub = function new_menu__add_sub (choices, menu, cb, off, pred, icnp) {
@@ -655,6 +663,7 @@
             };
         };
         var new_menu__add_sub_cnp = function new_menu__add_sub_cnp (children_np, menu, cb, off, pred) {
+            var S        = options.selectors;
             var sub_menu = $(L ("ul"));
             var etn, offs, typ_menu, typ;
             menu.append (sub_menu);
@@ -662,8 +671,7 @@
                 typ  = children_np [i];
                 etn  = "[" + typ.ui_type_name + "]";
                 offs = off + etn.length;
-                typ_menu = $(L ("li")).append
-                    ( $(L ("a.button", { html : etn })));
+                typ_menu = $(L ("li", { html : etn }));
                 sub_menu.append (typ_menu);
                 new_menu__add_sub (typ.attrs, typ_menu, cb, offs, pred, true);
             };
@@ -675,7 +683,7 @@
         };
         var new_menu__finish = function new_menu__finish (menu) {
             var result = menu
-                .menu     ({})
+                .menu     ({ select : menu_select_cb })
                 .appendTo (body$)
                 .css      ({ top: 0, left: 0, position : "absolute" })
                 .hide     ()
@@ -702,13 +710,11 @@
             };
             return new_menu__finish (menu);
         };
-        var op_select_cb = function op_select_cb (ev) {
+        var op_select_cb = function op_select_cb (item, choice) {
             var S       = options.selectors;
-            var target$ = $(ev.delegateTarget);
-            var choice  = target$.data ("gtw_qr_choice");
-            var but$    = $("."+options.ui_class.active_menu_button).first ();
+            var but$    = $("." + options.ui_class.active_menu_button).first ();
             var afc$    = but$.closest (S.attr_filter_container);
-            var val$  = $(S.attr_filter_value, afc$);
+            var val$    = $(S.attr_filter_value, afc$);
             var name    = val$.prop ("name");
             var prefix  = name.split  (qrs.op_sep) [0];
             var key     = prefix + qrs.op_sep + choice.key;
@@ -722,15 +728,14 @@
         };
         var order_by =
             { cb              :
-                { add_criterion : function add_criterion (ev) {
+                { add_criterion : function add_criterion (item, choice) {
                       var S       = options.selectors;
-                      var target$ = $(ev.delegateTarget);
-                      var choice  = target$.data ("gtw_qr_choice").label;
-                      var c$      = order_by.new_criterion (choice);
+                      var label   = choice.label;
+                      var c$      = order_by.new_criterion (label);
                       var but$    = ob_widget$.find (S.add_button);
                       var menu$   = but$.data ("gtw_qr_menu$").element;
                       ob_widget$.find (S.order_by_criteria).append (c$);
-                      order_by.toggle_criteria (menu$, choice, true);
+                      order_by.toggle_criteria (menu$, label, true);
                       ob_widget$.find (S.apply_button).focus ();
                   }
                 , apply         : function apply (ev) {
@@ -775,7 +780,7 @@
                       var but$    = ob_widget$.find (S.add_button);
                       var menu$   = but$.data ("gtw_qr_menu$").element;
                       ob_widget$.find (S.order_by_criteria).empty ();
-                      menu$.find ("a.button").removeClass ("ui-state-disabled");
+                      menu$.find (S.menu_item).removeClass ("ui-state-disabled");
                   }
                 , close         : function close (ev) {
                       var hdi$ = order_by.hd_input$;

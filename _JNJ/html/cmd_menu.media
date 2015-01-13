@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #    23-Nov-2011 (CT) Creation (factored from html/afs.jnj.media)
 #     8-Apr-2013 (CT) Add `max_height` and `overflow_y` to `.cmd-menu`
 #     9-Apr-2013 (CT) Add `max_width`, rule for `.cmd-menu.nested`
+#    13-Jan-2015 (CT) Remove osbolete rules
 #    ««revision-date»»···
 #--
 
@@ -34,51 +35,6 @@ style_sheet = Style_Sheet \
         , overflow_y       = "auto"
         , padding          = 0
         , width            = "auto"
-        , children         =
-            [ Rule
-                ( "a.button"
-                , border      = 0
-                , display     = "inline-block"
-                , float       = "none"
-                , font_size   = Percent (70)
-                , line_height = Em (2.05)
-                , margin      = 0
-                )
-            , Rule
-                ( "a.default"
-                , padding     = TRBL (0, Em (1.5))
-                )
-            , Rule
-                ( "a.drop"
-                , border_left = "2px solid " + P.color_medium_grey
-                , height      = Em (2.0)
-                , padding     = 0
-                , width       = Em (2.0)
-                , children    =
-                    [ Rule
-                        ( "i"
-                        , Border
-                            ( style   = "solid"
-                            , color   = C_TRBL0
-                                ( t   = P.afs.color_spec_heading ["color"])
-                            , width   = TRBL0
-                                ( default    = Em (0.5)
-                                , b          = 0
-                                )
-                            )
-                        , display     = "inline-block"
-                        , height      = 0
-                        , margin      = TRBL0
-                            (l = Em (0.5), b = Em (0.15))
-                        , width       = 0
-                        )
-                    , Rule_Pseudo
-                        ( "hover i"
-                        , border_color = C_TRBL0 (t = "red")
-                        )
-                    ]
-                )
-            ]
         )
     , Rule
         ( ".cmd-menu.nested"
