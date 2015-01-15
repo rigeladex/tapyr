@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -44,6 +44,8 @@
 //     3-Sep-2014 (CT) Use `.call`, not `.apply`, in `entity_display_open_cb`
 //    25-Sep-2014 (CT) Add `polish_field`
 //    12-Dec-2014 (CT) Add `F_ACT` to `submit_cb`
+//    15-Jan-2015 (CT) Factor key handling to `gtw_hd_input`,
+//                     remove `entity_display_open_cb`
 //    ««revision-date»»···
 //--
 
@@ -500,24 +502,6 @@
                 };
               }
             };
-        var entity_display_open_cb = function entity_display_open_cb (ev) {
-            var k = ev.which;
-                // Unicode value of key pressed
-                //   8     backspace
-                //   9     tab
-                //  10     new line
-                //  13     carriage return
-                //  27     escape
-                // 127     delete
-            if (k >= 9 && k <= 27) {
-                return true;
-            };
-            action_callback.open.call (this, ev);
-            if (k in {8 : 1, 127:1}) {
-                action_callback.clear.call (this, ev);
-            };
-            return false;
-        };
         var field_blur_cb = function field_blur_cb (ev) {
             var S         = options.selectors;
             var f$        = $(this);
@@ -822,8 +806,10 @@
             var f$ = $(this);
             var s$ = f$.closest (S.container);
             s$.gtw_hd_input
-                ( { callback      : entity_display_open_cb
-                  , trigger_event : "click keydown"
+                ( { callback       : action_callback.open
+                  , clear_callback : action_callback.clear
+                  , key_ignore_hi  : 27               // escape
+                  , trigger_event  : "click keydown"
                   }
                 );
         };

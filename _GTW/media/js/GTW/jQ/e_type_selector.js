@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -57,6 +57,9 @@
 //                     (e.g., add `cursor left`, `end`, and some others)
 //    15-Sep-2014 (CT) Change `default_position` from `right` to `left`
 //     5-Dec-2014 (CT) Use pure, not jqueryui, buttons
+//    15-Jan-2015 (CT) Factor key handling to `gtw_hd_input`
+//    15-Jan-2015 (CT) Change `gtw_e_type_selector_hd` to use "click keydown"
+//                     as `trigger_event`
 //    ««revision-date»»···
 //--
 
@@ -505,10 +508,11 @@
                 var self     = $(this);
                 selector.hd_input$ = self;
                 self.gtw_hd_input
-                    ( { callback     : function (ev) {
+                    ( { callback       : function (ev) {
                             selector.activate_cb (ev);
                         }
-                      , closing_flag : selector.options.closing_flag
+                      , closing_flag   : selector.options.closing_flag
+                      , trigger_event  : "click keydown"
                       }
                     );
               }
@@ -540,42 +544,15 @@
                 var self     = $(this);
                 selector.hd_input$ = self;
                 self.gtw_hd_input
-                    ( { callback      : function (ev) {
-                            var k = ev.which;
-                                // Unicode value of key pressed
-                                //   8     backspace (delete backwards key)
-                                //   9     tab
-                                //  10     new line
-                                //  13     carriage return
-                                //  16     shift key
-                                //  17     control key
-                                //  18     alt key
-                                //  27     escape
-                                //  32     space
-                                //  33     page up           (mini keypad)
-                                //  33     page down         (mini keypad)
-                                //  35     end               (mini keypad)
-                                //  36     home              (mini keypad)
-                                //  37     cursor left
-                                //  38     cursor up
-                                //  39     cursor right
-                                //  40     cursor down
-                                //  45     insert            (mini keypad)
-                                //  46     delete            (mini keypad)
-                                // 127     backspace
-                            if (  k >=  9 // tab
-                               && k <= 39 // cursor right
-                               && ! (k in {32 : 1, 38 : 1}) // space, cursor up
-                               ) {
-                                return true;
-                            };
-                            selector.activate_cb (ev);
-                            if (k in {8 : 1, 46 : 1, 127:1}) {
-                                selector.clear_cb (ev);
-                            };
+                    ( { callback       : function (ev) {
+                          selector.activate_cb (ev)
                         }
-                      , closing_flag  : selector.options.closing_flag
-                      , trigger_event : "click keydown"
+                      , clear_callback : function (ev) {
+                          selector.clear_cb (ev)
+                        }
+                      , closing_flag   : selector.options.closing_flag
+                      , key_trigger    : {32 : 1, 38 : 1} // space, cursor up
+                      , trigger_event  : "click keydown"
                       }
                     );
                 self.data ("gtw_e_type_selector_mf3", selector);

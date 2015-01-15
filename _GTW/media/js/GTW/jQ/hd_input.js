@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -19,6 +19,8 @@
 //    10-Apr-2013 (CT) Add and use `closing_flag`
 //     3-May-2014 (CT) Add and use `trigger_event`, not hard-coded "focus"
 //    11-Jul-2014 (CT) Move `"use strict"` into closure
+//    15-Jan-2015 (CT) Add handling of `trigger_event` for keys,
+//                     add `clear_callback`
 //    ««revision-date»»···
 //--
 
@@ -35,6 +37,9 @@
             );
         var options   = $.extend
             ( { closing_flag  : "gtw_hd_input_closing"
+              , key_ignore_hi : 39               // cursor right
+              , key_ignore_lo :  9               // tab
+              , key_trigger   : {38 : 1}         // cursor up
               , trigger_event : "focus"
               }
             , opts || {}
@@ -43,19 +48,72 @@
             );
         var display$ = $(selectors.display, this);
         var hidden$  = $(selectors.hidden,  this);
+        var hd_callback;
         if ("callback" in options) {
-            display$.bind
-                ( options.trigger_event
-                , function hd_input_focus () {
-                      var closing = self.data (options.closing_flag);
-                      if (closing) {
-                          return false;
-                      } else {
-                          return options.callback.apply (this, arguments);
-                      };
-                  }
-                );
-        }
+            if (options.trigger_event.match (/\bkey(?:down|press|up)\b/)) {
+                hd_callback = function hd_input_trigger_key (ev) {
+                    var closing = self.data (options.closing_flag);
+                    if (closing) {
+                        return false;
+                    } else {
+                        var k      = ev.which;
+                            // Unicode value of key pressed
+                            //   8     backspace (delete backwards key)
+                            //   9     tab
+                            //  10     new line
+                            //  13     carriage return
+                            //  16     shift key
+                            //  17     control key
+                            //  18     alt key
+                            //  27     escape
+                            //  32     space
+                            //  33     page up           (mini keypad)
+                            //  33     page down         (mini keypad)
+                            //  35     end               (mini keypad)
+                            //  36     home              (mini keypad)
+                            //  37     cursor left
+                            //  38     cursor up
+                            //  39     cursor right
+                            //  40     cursor down
+                            //  45     insert            (mini keypad)
+                            //  46     delete            (mini keypad)
+                            // 127     backspace
+                        var ignore =
+                            (  k >= options.key_ignore_lo
+                            && k <= options.key_ignore_hi
+                            && ! (k in options.key_trigger)
+                            );
+                        var result = ignore;
+                        if (! ignore) {
+                            result = options.callback.apply (this, arguments);
+                            if (ev && "preventDefault" in ev) {
+                                // without this, cursor-up and cursor-down
+                                // cause scrolling
+                                ev.preventDefault ();
+                            };
+                            if ("clear_callback" in options) {
+                                if (k in {8 : 1, 46 : 1, 127:1}) {
+                                    options.clear_callback.apply
+                                        (this, arguments);
+                                };
+                            };
+                        };
+                        return result;
+
+                    };
+                };
+            } else {
+                hd_callback = function hd_input_trigger (ev) {
+                    var closing = self.data (options.closing_flag);
+                    if (closing) {
+                        return false;
+                    } else {
+                        return options.callback.apply (this, arguments);
+                    };
+                };
+            };
+            display$.bind (options.trigger_event, hd_callback);
+        };
         display$.prop ("disabled", false);
         hidden$.prop  ("disabled", false);
         return this;

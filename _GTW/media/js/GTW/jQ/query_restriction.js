@@ -75,6 +75,8 @@
 //                       `order_by.cb.add_criterion` from `(ev)`
 //                       to `(item, choice)`
 //    14-Jan-2015 (CT) Factor `hide_menu`
+//    15-Jan-2015 (CT) Use `click` and `keydown`, not `focus`, to open dialogs
+//                     + Pass `clear_callback` to `gtw_hd_input`
 //    ««revision-date»»···
 //--
 
@@ -277,8 +279,9 @@
             } else {
                 $(S.attrs_container).append (nf$);
             };
-            $(S.attr_filter_value, nf$).focus ();
             setup_esf (nf$);
+            // `focus` must be done after `setup_esf`
+            $(S.attr_filter_value, nf$).focus ();
         };
         var adjust_op_menu = function adjust_op_menu (afs) {
             var S       = options.selectors;
@@ -376,10 +379,6 @@
                       };
                       attr_select.cb.clear ();
                       attr_select.prefill  (val ? val.split (",") : []);
-                      // The stattement setting `_isOpen` to `false`
-                      // shouldn't be necessary but otherwise the dialog
-                      // doesn't open the second (and later) time
-                      as_widget$.data ("ui-dialog")._isOpen = false;
                       as_widget$
                           .dialog
                               ( "option"
@@ -428,8 +427,10 @@
                   var p$ = $(this).parent ();
                   attr_select.hd_input$ = p$;
                   p$.gtw_hd_input
-                      ( { callback     : attr_select.cb.open
-                        , closing_flag : options.asf_closing_flag
+                      ( { callback       : attr_select.cb.open
+                        , clear_callback : attr_select.cb.clear
+                        , closing_flag   : options.asf_closing_flag
+                        , trigger_event  : "click keydown"
                         }
                       );
               }
@@ -822,10 +823,6 @@
                       };
                       order_by.cb.clear ();
                       order_by.prefill  (target$.val ().split (","));
-                      // The stattement setting `_isOpen` to `false`
-                      // shouldn't be necessary but otherwise the dialog
-                      // doesn't open the second (and later) time
-                      obw$.data   ("ui-dialog")._isOpen = false;
                       obw$.dialog ("option", "width", "auto")
                           .dialog ("open")
                           .dialog ("widget")
@@ -880,8 +877,10 @@
                   var p$ = $(this).parent ();
                   order_by.hd_input$ = p$;
                   p$.gtw_hd_input
-                      ( { callback     : order_by.cb.open
-                        , closing_flag : options.obf_closing_flag
+                      ( { callback       : order_by.cb.open
+                        , clear_callback : order_by.cb.clear
+                        , closing_flag   : options.obf_closing_flag
+                        , trigger_event  : "click keydown"
                         }
                       );
               }

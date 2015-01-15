@@ -1,5 +1,5 @@
 //-*- coding: utf-8 -*-
-// Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+// Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 // Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 // #*** <License> ************************************************************#
 // This software is licensed under the terms of the BSD 3-Clause License
@@ -26,6 +26,7 @@
 //    29-Apr-2013 (CT) Move `gtw_externalize` and `fix_a_nospam` to `jQ/util.js`
 //    29-Apr-2013 (CT) Add `show_message`
 //     1-May-2014 (CT) Change `show_message` to use `inspect.show` if available
+//    15-Jan-2015 (CT) Use `String.match`, not `String.search`
 //    ««revision-date»»···
 //--
 
@@ -39,7 +40,7 @@
                 var result = new Array ();
                 for (var i = 0; i < list.length; i+= 1) {
                     var x = list [i];
-                    if (x.search (pat) != null) {
+                    if (x.match (pat)) {
                         result.push (eval (x));
                     };
                 };
