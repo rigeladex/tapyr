@@ -60,6 +60,13 @@
 //    15-Jan-2015 (CT) Factor key handling to `gtw_hd_input`
 //    15-Jan-2015 (CT) Change `gtw_e_type_selector_hd` to use "click keydown"
 //                     as `trigger_event`
+//    16-Jan-2015 (CT) Fix `setup_form`
+//                     * exclude inputs with `type=hidden`
+//                     * do setup only once
+//    16-Jan-2015 (CT) Change `setup_widget` to use `ui.panel` of `create` event
+//                     * `ui.content` was deprecated in jqueryui 1.10,
+//                       and was removed in jqueryui 1.11
+//                     * missed that during the upgrade to 1.10
 //    ««revision-date»»···
 //--
 
@@ -331,31 +338,34 @@
               var self     = this;
               var options  = self.options;
               var S        = options.selectors;
-              var inputs$  = form$.find (":input").not ("button, .hidden");
-              this.a_form$ = form$;
-              this.inputs$ = inputs$;
-              form$.submit (self, self.apply_cb);
-              inputs$.each
-                  ( function () {
-                      var inp$ = $(this);
-                      inp$.gtw_autocomplete
-                          ( { focus     : function (event, ui) {
-                                  return false;
-                              }
-                            , minLength : options.treshold
-                            , position  : options.completer_position
-                            , select    : function (event, ui) {
-                                  self.select_cb (event, inp$, ui.item);
-                                  return false;
-                              }
-                            , source    : function (req, cb) {
-                                  self.get_completions (inp$, req.term, cb);
-                              }
-                            }
-                          , "html"
-                          );
-                    }
-                  );
+              var inputs$  = form$.find
+                  (":input:not([type=hidden]):not(button):not(.hidden)");
+              if (this.a_form$ !== form$) {
+                  this.a_form$ = form$;
+                  this.inputs$ = inputs$;
+                  form$.submit (self, self.apply_cb);
+                  inputs$.each
+                      ( function () {
+                          var inp$ = $(this);
+                          inp$.gtw_autocomplete
+                              ( { focus     : function (event, ui) {
+                                      return false;
+                                  }
+                                , minLength : options.treshold
+                                , position  : options.completer_position
+                                , select    : function (event, ui) {
+                                      self.select_cb (event, inp$, ui.item);
+                                      return false;
+                                  }
+                                , source    : function (req, cb) {
+                                      self.get_completions (inp$, req.term, cb);
+                                  }
+                                }
+                              , "html"
+                              );
+                        }
+                      );
+              };
               inputs$.first ().focus ();
           }
         , setup_widget          : function setup_widget (response) {
@@ -400,7 +410,7 @@
                             self.activate_form (ui.newPanel);
                           }
                         , create      : function (event, ui) {
-                            self.activate_form (ui.content);
+                            self.activate_form (ui.panel);
                           }
                         , collapsible : true
                         , heightStyle : "content"
