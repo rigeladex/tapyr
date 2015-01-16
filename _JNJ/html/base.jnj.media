@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -53,6 +53,8 @@
 #     5-Dec-2014 (CT) Add `Style_File` for `pure.css` and `font-awesome.css`
 #     5-Dec-2014 (CT) Add `padding_left` to `.nav-off-canvas .pg_body`
 #    10-Dec-2014 (CT) Remove `Include` of `reset.media`; pure.css includes reset
+#    16-Jan-2015 (CT) Correct `margin_left` of `.js .pg_body .nav-off-canvas`
+#                     by `padding_left` introduced on 20141205
 #    ««revision-date»»···
 #--
 
@@ -173,12 +175,13 @@ style_sheet = Style_Sheet \
         , children      =
             [ Rule_Class
                 ( "nav-off-canvas"
-                , margin_left      = - P.nav_col.full_width - P.col_padding
+                , margin_left      =
+                    - P.nav_col.full_width - P.col_padding - Rem (0.5)
                 , children         =
                     [ P.Rule.pg_nav_show
                     , Rule
                         ( ".pg_body"
-                        , padding_left  = Em (0.5)
+                        , padding_left  = Rem (0.5)
                         )
                     ]
                 )
@@ -188,7 +191,8 @@ style_sheet = Style_Sheet \
                     [ P.Rule.pg_nav_show
                     , Rule
                         ( ".pg_nav_show"
-                        , margin_left      = - P.nav_col.full_width - P.col_padding
+                        , margin_left      =
+                          - P.nav_col.full_width - P.col_padding - Rem (0.5)
                         )
                     ]
                 )

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -51,6 +51,7 @@
 #     3-Sep-2014 (CT) Add `Rule.hidden`
 #     3-Dec-2014 (CT) Add `color.alphabet_max_contrast_colors` and
 #                     `color.kellys_max_contrast_colors`
+#    16-Jan-2015 (CT) Change `nav_col.width` and `col_padding` to unit `Rem`
 #    ««revision-date»»···
 #--
 
@@ -276,7 +277,7 @@ class Media_Defaults (Definition) :
         , ** Border (radius = Px (10))
         )
 
-    col_padding            = Px (5)
+    col_padding            = Rem (0.3125) ### Px (5)
 
     background_color       = P.color.p_white
     link_color             = RGB_X     ("#0000EE")
@@ -432,8 +433,8 @@ class Media_Defaults (Definition) :
         mark_color_section     = P.R.color_heading
         mark_width             = Em (0.40)
 
-        vert_padding           = Em (0.2)
-        width                  = Px (190)
+        vert_padding           = Rem (0.2)
+        width                  = Rem (11.875) ### Px (190)
 
         full_width             = P.width      + 2 * P.R.col_padding
         right                  = P.full_width + 2 * P.R.col_padding
