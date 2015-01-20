@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    11-Mar-2014 (CT) Creation
+#    20-Jan-2015 (CT) Add `padding`, `p:first-child`, `p:last-child`
 #    ««revision-date»»···
 #--
 
@@ -26,13 +27,27 @@ style_sheet = Style_Sheet \
         , width              = Percent (100)
         , children           =
             [ Rule
-                ( "td:first-child"
-                , width      = Percent (20)
-                )
-            , Rule
-                ( "td:last-child"
-                , display    = "block"
-                , width      = Percent (75)
+                ( "td"
+                , padding            = TRBL (Em (0.5))
+                , children           =
+                    [ Rule_Pseudo
+                        ( "first-child"
+                        , width              = Percent (20)
+                        )
+                    , Rule_Pseudo
+                        ( "last-child"
+                        , display            = "block"
+                        , width              = Percent (75)
+                        )
+                    , Rule_Child
+                        ( "p:first-child"
+                        , margin_top         = 0
+                        )
+                    , Rule_Child
+                        ( "p:last-child"
+                        , margin_bottom      = 0
+                        )
+                    ]
                 )
             ]
         )
