@@ -125,6 +125,8 @@
 #    29-Apr-2014 (CT) Add `Root._old_cids`
 #    30-Apr-2014 (CT) Move `_new_child` from `Dir_V` to `_Dir_Base_`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    20-Jan-2015 (CT) Add `** kw` to `allow_method`, `allow_user`
+#    20-Jan-2015 (CT) Add `allow_child`
 #    30-Jan-2015 (CT) Add `_RST_Base_.target` returning `self`
 #    ««revision-date»»···
 #--
@@ -594,7 +596,17 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         self._auth_required = value
     # end def _login_required
 
-    def allow_method (self, method, user) :
+    def allow_child (self, name, user, obj, ** kw) :
+        """Returns True if child `name` allows `obj` for `user`."""
+        try :
+            p = self.child_permission_map [name]
+        except KeyError :
+            return True
+        else :
+            return p.instance (user, self, obj = obj, ** kw)
+    # end def allow_child
+
+    def allow_method (self, method, user, ** kw) :
         """Returns True if `self` allows `method` for `user`."""
         if self.auth_required and not \
                (user and user.authenticated and user.active) :
@@ -610,12 +622,12 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         if method and not (user and user.superuser) :
             pn = method.mode + "_permissions"
             permissions = getattr (self, pn)
-            return all (p (user, self) for p in permissions)
+            return all (p (user, self, ** kw) for p in permissions)
         return True
     # end def allow_method
 
-    def allow_user (self, user) :
-        return self.allow_method (self.GET, user)
+    def allow_user (self, user, ** kw) :
+        return self.allow_method (self.GET, user, ** kw)
     # end def allow_user
 
     def check_postconditions (self, request, response) :
@@ -781,11 +793,10 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         def _gen (self, name) :
             p = getattr (self, "_" + name, None)
             if p is not None :
-                if isinstance (p, GTW.RST._Permission_.__class__) :
-                    p = p ()
-                yield p
+                yield getattr (p, "instance", p)
             if self.parent :
-                for p in getattr (self.parent, name + "s", ()) :
+                pps = getattr (self.parent, name + "s", ())
+                for p in pps or () :
                     yield p
         return uniq (_gen (self, name))
     # end def _get_permissions

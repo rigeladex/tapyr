@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #    25-Sep-2013 (CT) Remove `LOWER`, `_Func_`
 #    10-Oct-2013 (CT) Factor `_Filter_S_._add_derived_classes`
 #     4-Apr-2014 (CT) Remove `Attr_Query` to `Q_Exp`
+#     5-Feb-2015 (CT) Add Property `instance`
 #    ««revision-date»»···
 #--
 
@@ -176,6 +177,8 @@ operators short-circuit::
 from   __future__  import print_function
 
 from   _TFL                     import TFL
+
+from   _TFL._Meta.Property      import Property
 from   _TFL.predicate           import first, all_true, any_true
 
 import _TFL._Meta.Object
@@ -187,6 +190,11 @@ class _Filter_ (TFL.Meta.Object) :
 
     attrs = {}
     _rank = 0
+
+    @Property
+    def instance (self) :
+        return self
+    # end def instance
 
     def filter (self, iterable, * args, ** kw) :
         return list (self.filter_iter (iterable, * args, ** kw))
