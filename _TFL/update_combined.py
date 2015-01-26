@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -18,6 +18,12 @@
 #
 # Revision Dates
 #    21-Aug-2014 (CT) Creation
+#    26-Jan-2015 (CT) Add `update_combined.Undef`, ".List_Filtered"
+#    26-Jan-2015 (CT) Add type `Undef` to `update_combined`,
+#                     `update_combined_value`
+#    26-Jan-2015 (CT) DRY `update_combined`
+#    26-Jan-2015 (CT) Add `update_combined_many`
+#    26-Jan-2015 (CT) Add `update_combined__set` to force `rhs` to `set`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +63,7 @@ class tuple_dont_combine (Dont_Combine, tuple) :
     """Tuple that doesn't combine, but replaces, under `update_combined`"""
 # end class tuple_dont_combine
 
-class filtered_list (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
+class list_filtered (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
     """List that filters elements from ``lhs`` when `update_combined` as
        ``rhs``.
     """
@@ -68,25 +74,48 @@ class filtered_list (TFL.Meta.BaM (list, metaclass = TFL.Meta.M_Class)) :
         self.__super.__init__ (args)
     # end def __init__
 
-# end class filtered_list
+# end class list_filtered
+
+_update_combined_props = dict \
+    ( Dict_DC       = dict_dont_combine
+    , List_DC       = list_dont_combine
+    , List_Filtered = list_filtered
+    , Set_DC        = set_dont_combine
+    , Tuple_DC      = tuple_dont_combine
+    , Undef         = _undef
+    )
 
 @Single_Dispatch
-@Attributed \
-    ( Dict_DC  = dict_dont_combine
-    , List_DC  = list_dont_combine
-    , Set_DC   = set_dont_combine
-    , Tuple_DC = tuple_dont_combine
-    )
+@Attributed (** _update_combined_props)
 def update_combined (lhs, rhs) :
     """Generic function to update ``lhs`` with the elements of ``rhs``,
        combining existing keys.
     """
-    raise NotImplementedError \
-        ( "`update_combined` isn't implemented for type `%s`; "
-          "got arguments (%r, %r)"
-        % (type (lhs), lhs, rhs)
-        )
+    return update_combined_value (lhs, rhs)
 # end def update_combined
+
+@Attributed (** _update_combined_props)
+def update_combined_many (lhs, * rest) :
+    """Update `lhs` with the elements of all of `rest`, combining existing
+       keys.
+    """
+    result = lhs
+    for rhs in rest :
+        result = update_combined (result, rhs)
+    return result
+# end def update_combined_many
+
+@update_combined.add_type (set)
+def update_combined__set (lhs, rhs) :
+    if not isinstance (rhs, (set, TFL.Undef)) :
+        rhs = set (rhs)
+    return update_combined_value (lhs, rhs)
+# end def update_combined__set
+
+@update_combined.add_type (TFL.Undef)
+def update_combined__undef (lhs, rhs) :
+    return rhs
+# end def update_combined__undef
 
 @Single_Dispatch_2nd
 def update_combined_value (lhs, rhs) :
@@ -99,44 +128,23 @@ def update_combined_value (lhs, rhs) :
     return rhs
 # end def update_combined_value
 
-@update_combined.add_type (dict)
-def update_combined__dict (lhs, rhs) :
-    """Update/combine the dictionary ``lhs`` with the key/value pairs from
-       ``rhs``, combining the values of existing keys, if possible.
-    """
-    if isinstance (rhs, Dont_Combine) :
-        result = rhs
-    else :
-        result = lhs.__class__ (lhs)
-        skip   = TFL.is_undefined
-        for k, r in pyk.iteritems (rhs) :
-            if not skip (r) :
-                l = lhs.get (k, _undef)
-                result [k] = r if l is _undef else update_combined_value (l, r)
-    return result
-# end def update_combined__dict
-
-@update_combined.add_type (list, set, tuple)
-def update_combined__l_s_t (lhs, rhs) :
-    """Update/combine the list/set/tuple ``lhs`` with the elements of ``rhs``."""
-    if isinstance (rhs, Dont_Combine) :
-        result = rhs
-    else :
-        result = update_combined_value (lhs, rhs)
-    return result
-# end def update_combined__l_s_t
-
 @update_combined_value.add_type (dict)
 def update_combined_value__dict (lhs, rhs) :
-    return update_combined__dict (lhs, rhs)
+    result = lhs.__class__ (lhs)
+    skip   = TFL.is_undefined
+    for k, r in pyk.iteritems (rhs) :
+        if not skip (r) :
+            l = lhs.get (k, _undef)
+            result [k] = r if l is _undef else update_combined_value (l, r)
+    return result
 # end def update_combined_value__dict
 
-@update_combined_value.add_type (filtered_list)
-def update_combined_value__filtered_list (lhs, rhs) :
+@update_combined_value.add_type (list_filtered)
+def update_combined_value__list_filtered (lhs, rhs) :
     result  = lhs.__class__ (l for l in lhs if rhs.Filter (l))
     result += rhs
     return result
-# end def update_combined_value__filtered_list
+# end def update_combined_value__list_filtered
 
 @update_combined_value.add_type (list, tuple)
 def update_combined_value__list (lhs, rhs) :
@@ -156,6 +164,11 @@ def update_combined_value__set (lhs, rhs) :
 def update_combined_value__dont_combine (lhs, rhs) :
     return rhs
 # end def update_combined_value__dont_combine
+
+@update_combined_value.add_type (TFL.Undef)
+def update_combined_value__undef (lhs, rhs) :
+    return lhs
+# end def update_combined_value__undef
 
 __doc__ = """
 Module `update_combined`
@@ -195,7 +208,7 @@ replacing like the standard ``dict`` method ``update()``does .
     "{'bar' : {1, 2, 3, 4, 5}, 'qux' : {4, 5}}"
 
     >>> l4 = list (range (10))
-    >>> r4 = filtered_list (20, 30, 40, filter = lambda x : bool (x % 2))
+    >>> r4 = list_filtered (20, 30, 40, filter = lambda x : bool (x % 2))
     >>> portable_repr (l4)
     '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]'
     >>> portable_repr (r4)
@@ -203,13 +216,27 @@ replacing like the standard ``dict`` method ``update()``does .
     >>> portable_repr (update_combined (l4, r4))
     '[1, 3, 5, 7, 9, 20, 30, 40]'
 
-    >>> r5 = filtered_list (20, 30, 40, filter = lambda x : not (x % 2))
+    >>> r5 = list_filtered (20, 30, 40, filter = lambda x : not (x % 2))
     >>> portable_repr (l4)
     '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]'
     >>> portable_repr (r5)
     '[20, 30, 40]'
     >>> portable_repr (update_combined (l4, r5))
     '[0, 2, 4, 6, 8, 20, 30, 40]'
+
+    >>> portable_repr (update_combined_many (l1))
+    "{'bar' : {1 : 'a', 2 : 'b'}, 'foo' : 1, 'qux' : [2, 3]}"
+    >>> portable_repr (update_combined_many (_undef, l1))
+    "{'bar' : {1 : 'a', 2 : 'b'}, 'foo' : 1, 'qux' : [2, 3]}"
+    >>> portable_repr (update_combined_many (l1, _undef))
+    "{'bar' : {1 : 'a', 2 : 'b'}, 'foo' : 1, 'qux' : [2, 3]}"
+    >>> portable_repr (update_combined_many (_undef, l1, _undef))
+    "{'bar' : {1 : 'a', 2 : 'b'}, 'foo' : 1, 'qux' : [2, 3]}"
+    >>> portable_repr (update_combined_many (_undef, l1, _undef, r1))
+    "{'bar' : {1 : 'a', 2 : 'baz', 3 : 'c'}, 'foo' : 1, 'qux' : [2, 3, 5, 7]}"
+
+    >>> portable_repr (update_combined_many ([(0, ), (1, )], [(2, ), (0, )]))
+    '[(0,), (1,), (2,), (0,)]'
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 

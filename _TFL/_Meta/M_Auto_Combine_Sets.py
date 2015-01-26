@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #     5-Jan-2010 (CT) Creation (new implementation)
+#    26-Jan-2015 (CT) Add `_sets_to_combine` to `_sets_to_combine`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class M_Auto_Combine_Sets (TFL.Meta.M_Base) :
        `_sets_to_combine` between a class and it's ancestors.
     """
 
-    _sets_to_combine = ()
+    _sets_to_combine = ("_sets_to_combine", )
 
     def __init__ (cls, name, bases, dict) :
         cls._m_combine_sets    (bases, dict)
