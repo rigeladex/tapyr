@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -47,6 +47,8 @@
 #     1-Sep-2014 (CT) Use `P.cmd.apply_to_version` as default version for
 #                     `_python_path` (need symbolic link in path)
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
+#    26-Jan-2015 (CT) Derive `_Meta_Base_` from `M_Auto_Update_Combined`,
+#                     not `M_Auto_Combine`
 #    ««revision-date»»···
 #--
 
@@ -143,7 +145,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
     class _GTWD_Babel_ (_Command_) :
         """Extract or compile translations."""
 
-        _lists_to_combine   = ("_package_dirs", )
+        _attrs_uniq_to_update_combine = ("_package_dirs", )
 
         min_args            = 1
 

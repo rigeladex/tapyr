@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -283,6 +283,8 @@
 #                     `_set_raw_inner`
 #    26-Sep-2014 (CT) Change `_kw_polished`, `_kw_undeprecated` to `classmethod`
 #     9-Oct-2014 (CT) Use `portable_repr`
+#    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
+#                     as metaclass
 #    ««revision-date»»···
 #--
 
@@ -348,10 +350,10 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
     ui_display_sep        = ", "
     x_locked              = False
 
-    _app_globals          = {}
-    _dicts_to_combine     = ("deprecated_attr_names", )
-    _home_scope           = None
-    _Reload_Mixin_        = None
+    _app_globals             = {}
+    _attrs_to_update_combine = ("deprecated_attr_names", )
+    _home_scope              = None
+    _Reload_Mixin_           = None
 
     class _Attributes (MOM.Attr.Spec) :
 
@@ -1092,7 +1094,7 @@ class Id_Entity \
     uniqueness_ems        = TFL.Meta.Alias_Property \
         ("_Predicates.uniqueness_ems")
 
-    _sets_to_combine      = ("refuse_links", )
+    _attrs_to_update_combine = ("refuse_links", )
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

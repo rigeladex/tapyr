@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -27,6 +27,7 @@
 #    10-Mar-2014 (CT) Add new entries in `.auto_up_depends` to `_own_names`
 #    10-Mar-2014 (CT) Set `_d_rank` in `m_setup_names`
 #    11-Mar-2014 (CT) Add support for `_Overrides`
+#    26-Jan-2015 (CT) Derive from `M_Auto_Update_Combined`, not `M_Class`
 #    ««revision-date»»···
 #--
 
@@ -36,14 +37,15 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 from   _TFL.pyk              import pyk
 
-import _TFL._Meta.M_Class
+import _TFL._Meta.M_Auto_Update_Combined
 import _MOM._Meta.M_Prop_Type
 
-class M_Prop_Spec (TFL.Meta.M_Class) :
+class M_Prop_Spec (TFL.Meta.M_Auto_Update_Combined) :
     """Root meta class for for attribute-spec and predicate-spec metaclasses.
     """
 
-    _Overridden = set ()
+    _attrs_uniq_to_update_combine = ("Kind_Mixins", )
+    _Overridden                   = set ()
 
     def m_setup_names (cls, e_type, app_type = None) :
         dct        = dict (cls.__dict__)

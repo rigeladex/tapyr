@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -82,6 +82,8 @@
 #     3-Sep-2014 (CT) Add attribute `restrict_completion`
 #    25-Sep-2014 (CT) Add `polisher`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    26-Jan-2015 (CT) Derive `_M_Element_` from `M_Auto_Update_Combined`,
+#                     not `M_Auto_Combine_Lists`
 #    ««revision-date»»···
 #--
 
@@ -147,7 +149,7 @@ class Delay_Call (BaseException) :
     """Delay call until rev-ref is defined."""
 # end class Delay_Call
 
-class _M_Element_ (TFL.Meta.M_Auto_Combine_Lists, TFL.Meta.Object.__class__) :
+class _M_Element_ (TFL.Meta.M_Auto_Update_Combined) :
     """Meta class for `_Element_`"""
 
     def __init__ (cls, name, bases, dct) :
@@ -289,13 +291,13 @@ class _Base_ (TFL.Meta.Object) :
     template_module     = "mf3"
     undef               = TFL.Undef ("value")
 
+    _attrs_uniq_to_update_combine = \
+        ("_element_ids", "_reset_properties", "_pop_to_self", "_pop_to_self_")
     _commit_errors      = ()
     _conflicts          = 0
     _elements           = ()
     _element_ids        = ("id", )
     _index              = None
-    _lists_to_combine   = \
-        ("_element_ids", "_reset_properties", "_pop_to_self", "_pop_to_self_")
     _pop_to_self        = ("parent", "template_macro", "template_module")
     _pop_to_self_       = ("index", )
     _po_index           = None

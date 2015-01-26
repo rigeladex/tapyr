@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -49,6 +49,8 @@
 #                     `user.name` of such sessions
 #    11-Dec-2014 (CT) Don't change session ids, remove `renew_session_id`
 #    11-Dec-2014 (CT) Use `uuid4` for session id
+#    26-Jan-2015 (CT) Derive `M_Session` from `M_Auto_Update_Combined`,
+#                     not `M_Auto_Combine_Sets`
 #    ««revision-date»»···
 #--
 
@@ -115,7 +117,7 @@ class User (TFL.Meta.Object) :
 
 # end class User
 
-class M_Session (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.Object.__class__) :
+class M_Session (TFL.Meta.M_Auto_Update_Combined) :
     """Meta class for Session."""
 
 # end class M_Session
@@ -134,7 +136,7 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     _data_dict         = None
     _non_data_attrs    = set \
         (("_data", "_data_dict", "_hasher", "_sid", "_settings", "username"))
-    _sets_to_combine   = ("_non_data_attrs", )
+    _attrs_to_update_combine = ("_non_data_attrs", )
 
     class Expired (LookupError) :
         pass

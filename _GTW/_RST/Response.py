@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -31,6 +31,8 @@
 #     9-Dec-2013 (CT) Add `anti_csrf_token`
 #    11-Feb-2014 (CT) Add `user`
 #    13-Mar-2014 (CT) Add `add_rel_links`, `rel_{first,last,next,parent,prev}`
+#    26-Jan-2015 (CT) Derive `_M_Response_` from `M_Auto_Update_Combined`,
+#                     not `M_Auto_Combine_Sets`
 #    ««revision-date»»···
 #--
 
@@ -45,7 +47,7 @@ import _GTW._RST
 from   _TFL._Meta.Once_Property  import Once_Property
 from   _TFL.pyk                  import pyk
 
-import _TFL._Meta.M_Auto_Combine_Sets
+import _TFL._Meta.M_Auto_Update_Combined
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 
@@ -53,7 +55,7 @@ from   posixpath                 import join as pp_join
 
 import urllib
 
-class _M_Response_ (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
+class _M_Response_ (TFL.Meta.M_Auto_Update_Combined) :
     """Meta class for Response"""
 
 # end class _M_Response_
@@ -62,16 +64,16 @@ class _RST_Response_ \
           (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Response_)) :
     """Wrap and extend wsgi-specific Response class."""
 
-    _auto_headers     = \
+    _auto_headers            = \
         { "X-Frame-Options" : "SAMEORIGIN"
         }
 
-    _own_vars         = \
-        ("root", "_auto_headers", "_links", "_request", "_response")
+    _own_vars                = set \
+        (("root", "_auto_headers", "_links", "_request", "_response"))
 
-    _sets_to_combine  = ("_own_vars", )
+    _attrs_to_update_combine = ("_own_vars", )
 
-    anti_csrf_token   = None
+    anti_csrf_token          = None
 
     def __init__ (self, _root, _request, * args, ** kw) :
         self.root          = _root

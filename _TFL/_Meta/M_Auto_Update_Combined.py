@@ -88,6 +88,7 @@ from   _TFL.predicate                 import uniq
 from   _TFL.update_combined           import update_combined_many
 
 import _TFL._Meta.M_Auto_Combine_Sets
+import _TFL._Meta.M_Class
 
 import itertools
 

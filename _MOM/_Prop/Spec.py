@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -57,13 +57,12 @@ class _Prop_Spec_ \
           (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Prop_Spec)) :
     """Base class for attribute and predicate specification."""
 
-    _real_name          = "Spec"
-    _lists_to_combine   = ("Kind_Mixins", )
+    _real_name               = "Spec"
 
-    Kind_Mixins         = ()
+    Kind_Mixins              = ()
 
-    _prop_dict_cls      = dict
-    _mixed_kinds        = dict ()
+    _prop_dict_cls           = dict
+    _mixed_kinds             = dict ()
 
     def __init__ (self, e_type) :
         self._own_names  = dict  (self._own_names) ### class to instance

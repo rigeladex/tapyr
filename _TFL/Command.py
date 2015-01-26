@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -43,6 +43,8 @@
 #    18-Dec-2013 (CT) Add `abspath` to `app_dir`
 #     2-Sep-2014 (CT) Change defaults to add `_init_kw` before
 #                     `dynamic_defaults`
+#    26-Jan-2015 (CT) Derive `_Meta_Base_` from `M_Auto_Update_Combined`,
+#                     not `M_Auto_Combine`
 #    ««revision-date»»···
 #--
 
@@ -58,13 +60,13 @@ from   _TFL                   import sos
 
 import _TFL.Accessor
 import _TFL.CAO
-import _TFL._Meta.M_Auto_Combine
+import _TFL._Meta.M_Auto_Update_Combined
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 from   itertools              import chain as ichain
 
-class _Meta_Base_ (TFL.Meta.M_Auto_Combine) :
+class _Meta_Base_ (TFL.Meta.M_Auto_Update_Combined) :
 
     def __new__ (mcls, name, bases, dct) :
         prefix = dct.get ("_rn_prefix") or first \
@@ -118,7 +120,7 @@ class TFL_Option (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Option_)) :
     _defaults         = ()
     _name             = None
 
-    _lists_to_combine = ("_defaults", )
+    _attrs_uniq_to_update_combine = ("_defaults", )
 
     def __init__ (self, cmd) :
         if self.type is None :
@@ -279,14 +281,13 @@ class _M_Command_ (_Meta_Base_) :
 class TFL_Command (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _M_Command_)) :
     ### Base class for interactive commands.
 
-    _rn_prefix              = "TFL_"
+    _rn_prefix                    = "TFL_"
 
-    _dicts_to_combine       = ("_defaults", )
-    _lists_to_combine       = \
-        ( "_args", "_buns", "_opts"
-        , "_dicts_to_combine", "_lists_to_combine", "_sets_to_combine"
-        )
-    _sets_to_combine        = ("_opts_reified", "_sub_commands")
+    _attrs_to_update_combine      = \
+        ("_defaults", "_opts_reified", "_sub_commands")
+
+    _attrs_uniq_to_update_combine = \
+        ("_args", "_buns", "_opts")
 
     cmd_choice_name         = _ ("command")
     do_keywords             = False

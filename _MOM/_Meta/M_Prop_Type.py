@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -26,6 +26,8 @@
 #    10-Mar-2014 (CT) Improve grep-ability of `dyn_doc_p` update
 #    10-Mar-2014 (CT) Factor `_i_rank` in here
 #    26-Mar-2014 (CT) Add guard against double quotes in `_doc_properties`
+#    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine_Dict`,
+#                     as ancestor
 #    ««revision-date»»···
 #--
 
@@ -33,10 +35,10 @@ from   _MOM                import MOM
 from   _TFL                import TFL
 
 import _MOM._Meta
-import _TFL._Meta.M_Auto_Combine
+import _TFL._Meta.M_Auto_Update_Combined
 import _TFL.normalized_indent
 
-class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
+class M_Prop_Type (TFL.Meta.M_Auto_Update_Combined) :
     """Root of metaclasses for MOM.Attr.Type and MOM.Pred.Type"""
 
     count = 0

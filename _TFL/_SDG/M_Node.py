@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,6 +24,8 @@
 #    20-Nov-2007 (MG) Imports fixed
 #    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    26-Feb-2012 (MG) `__future__` imports added
+#    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine_Dicts`,
+#                     as metaclass
 #    ««revision-date»»···
 #--
 
@@ -31,7 +33,7 @@ from   __future__  import absolute_import, division, print_function, unicode_lit
 from   _TFL                            import TFL
 from   _TFL.pyk                        import pyk
 
-import _TFL._Meta.M_Auto_Combine_Dicts
+import _TFL._Meta.M_Auto_Update_Combined
 import _TFL._Meta.M_Class
 import _TFL._SDG
 import _TFL._SDG.Formatter
@@ -40,11 +42,11 @@ from   _TFL.Regexp                     import *
 
 _indent_pat = Regexp (r">*")
 
-class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
+class M_Node (TFL.Meta.M_Auto_Update_Combined, TFL.Meta.M_Class) :
     """Meta class for SDG.Node classes"""
 
-    __id              = 0
-    _dicts_to_combine = ("init_arg_defaults", "_autoconvert")
+    __id                     = 0
+    _attrs_to_update_combine = ("init_arg_defaults", "_autoconvert")
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)

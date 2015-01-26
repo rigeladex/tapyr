@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Martin Glueck All rights reserved
+# Copyright (C) 2013-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -24,6 +24,8 @@
 #    27-Nov-2013 (MG) Add part of the legacy lifting to the change objects as
 #                     well (renaming of etypes)
 #     8-Jan-2014 (CT) Refactor classes, add cache for `E_Type_Lifter`
+#    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
+#                     as metaclass
 #    ««revision-date»»···
 #--
 
@@ -38,23 +40,23 @@ import  _TFL.import_module
 import  _TFL.sos             as     os
 
 class _MOM_Legacy_Lifter_ \
-          (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Auto_Combine_Dicts)) :
+          (TFL.Meta.BaM (object, metaclass = TFL.Meta.M_Auto_Update_Combined)) :
     """Base class for project specific legacy lifters"""
 
-    _real_name         = "Legacy_Lifter"
+    _real_name               = "Legacy_Lifter"
 
-    _dicts_to_combine  = \
+    _attrs_to_update_combine = \
         ( "Type_Name_Renaming", "Type_Name_Lifter", "E_Type_Lifter")
 
-    Type_Name_Renaming = \
+    Type_Name_Renaming       = \
         { "Auth.Account_P" : "Auth.Account"
         }
 
-    Type_Name_Lifter   = \
+    Type_Name_Lifter         = \
         { "Auth.Account"   : "_account_lifter"
         }
 
-    E_Type_Lifter      = {}
+    E_Type_Lifter            = {}
 
     def __init__ (self, db_man) :
         self.db_man         = db_man

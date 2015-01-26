@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Attr.
@@ -343,6 +343,8 @@
 #     9-Oct-2014 (CT) Use `portable_repr`
 #    13-Oct-2014 (CT) Set `P_Type` of `_A_Filename_` and `_A_String_Ascii_`
 #                     to `pyk.byte_type`
+#    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
+#                     as metaclass
 #    ««revision-date»»···
 #--
 
@@ -463,9 +465,9 @@ class A_Attr_Type \
           ) :
     """Root class for attribute types for the MOM meta object model."""
 
-    _doc_properties     = ("syntax", )
-    _sets_to_combine    = MOM.Prop.Type._sets_to_combine  + ("check", )
-    _lists_to_combine   = MOM.Prop.Type._lists_to_combine + ("Kind_Mixins", )
+    _attrs_to_update_combine      = ("check", )
+    _attrs_uniq_to_update_combine = ("Kind_Mixins", )
+    _doc_properties               = ("syntax", )
 
     auto_up_depends     = ()
     check               = set ()
@@ -1385,10 +1387,8 @@ class _A_SPK_Entity_ (_A_Entity_) :
 class _A_Id_Entity_ (_A_SPK_Entity_) :
     """Attribute referring to an entity."""
 
-    _sets_to_combine    = \
-        ( _A_Entity_._sets_to_combine
-        + ("allow_e_types", "only_e_types", "refuse_e_types")
-        )
+    _attrs_to_update_combine = \
+        ("allow_e_types", "only_e_types", "refuse_e_types")
 
     Q_Ckd_Type          = MOM.Attr.Querier.Id_Entity
 

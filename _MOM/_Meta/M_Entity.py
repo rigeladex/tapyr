@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -221,6 +221,8 @@
 #    17-Oct-2014 (CT) Change `db_sig` to
 #                     * return a dict, not a tuple
 #                     * use a dict, not tuple, of attributes
+#    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine_Dict`,
+#                     as metaclass
 #    ««revision-date»»···
 #--
 
@@ -260,7 +262,10 @@ class Type_Name_Type (pyk.text_type) :
 
 # end class Type_Name_Type
 
-class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
+class M_E_Mixin \
+        ( TFL.Meta.M_Auto_Update_Combined
+        , TFL.Meta.M_Auto_Combine_Nested_Classes
+        ) :
     """Meta mixin for M_Entity and M_E_Type."""
 
     _Class_Kind      = "Bare Essence"
