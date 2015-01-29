@@ -82,6 +82,7 @@
 #     3-Sep-2014 (CT) Add attribute `restrict_completion`
 #    25-Sep-2014 (CT) Add `polisher`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    22-Jan-2015 (CT) Add `css_class` and `css_align` for `MAT`
 #    26-Jan-2015 (CT) Derive `_M_Element_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine_Lists`
 #    ««revision-date»»···
@@ -138,6 +139,15 @@ MAT._A_Number_.input_widget             = "mf3_input, number"
 MAT.A_Attr_Type.mf3_template_macro      = None
 MAT.A_Confirmation.mf3_template_macro   = "Field__Confirmation"
 MAT.A_Attr_Type.mf3_template_module     = None
+
+MAT.Kind.css_class                      = ""
+MAT.A_Attr_Type.css_class               = ""
+
+MAT.A_Attr_Type.css_align               = ""
+MAT._A_Number_.css_align                = "right"
+MAT.A_Date.css_align                    = "right"
+MAT.A_Numeric_String.css_align          = "right"
+MAT.A_Time.css_align                    = "right"
 
 for _n in ("A_Date_Interval", "A_Time_Interval") :
     _AT = getattr (MAT, _n, None)

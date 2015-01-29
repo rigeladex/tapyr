@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -586,6 +586,7 @@ _test_code = """
         perma_name          3
         races_counted       0
         year                0
+        max_crew            0
       name                3
       club                2
         name                3
@@ -800,6 +801,7 @@ _test_code = """
         String `perma_name` teams.left.perma_name
         Int `races_counted` teams.left.races_counted
         Int `year` teams.left.year
+        Int `max_crew` teams.left.max_crew
         String `name` teams.name
         String `name` teams.club.name
         String `long_name` teams.club.long_name

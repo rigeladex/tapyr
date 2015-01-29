@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,9 +17,10 @@
 #
 # Revision Dates
 #    13-Feb-2014 (CT) Creation
-#    20-Feb-2014 (CT) Sort dingbats by by name
+#    20-Feb-2014 (CT) Sort dingbats by name
 #    20-Feb-2014 (CT) Add `trigram_for_heaven`
 #    13-Mar-2014 (CT) Add some symbols for triangles and blocks
+#    23-Jan-2015 (CT) Add some symbols for various space characters
 #    ««revision-date»»···
 #--
 
@@ -243,6 +244,13 @@ right_one_eighth_block                                              = "\u2595"
 
 ### http://www.alanwood.net/unicode/miscellaneous_symbols.html
 trigram_for_heaven                                                  = "\u2630"
+
+### various space characters
+figure_space                                                        = "\u2007"
+narrow_no_break_space                                               = "\u202F"
+no_break_space                                                      = "\u00A0"
+thin_space                                                          = "\u2009"
+zero_width_space                                                    = "\u200B"
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

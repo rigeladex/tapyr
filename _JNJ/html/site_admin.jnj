@@ -1,7 +1,7 @@
 {%- extends site_base or "html/base.jnj" %}
 {#- jinja template: site_admin.jnj -#}
 {#
-## Copyright (C) 2010-2011 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -20,6 +20,7 @@
 ## Revision Dates
 ##    22-Jan-2010 (CT) Creation
 ##    22-Dec-2010 (CT) `a_link` factored, `Group` support added, `class` added
+##    11-Feb-2015 (CT) Use `pure-table`
 ##    ««revision-date»»···
 ##--
 #}
@@ -31,13 +32,13 @@
 {%- endmacro -%} {#- a_link -#}
 
 {%- macro site_admin (page) -%}
-  <table class="Object-List">
+  <table class="Object-List pure-table">
     {%- for link in page.own_links_transitive if link.allow_user (request.user) %}
       <tr>
         {%- if link.has_children %}
-          <th colspan="2" class="Group">{{ a_link (link) }}</th>
+          <th colspan="2" class="Group link">{{ a_link (link) }}</th>
         {%- else -%}
-          <td class="{{ link.css_group or "Type" }}">
+          <td class="{{ link.css_group or "Type" }} link">
             {{- a_link (link) -}}
           </td>
           <td class="Count">{{ link.count }}</td>

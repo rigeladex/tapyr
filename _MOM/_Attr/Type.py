@@ -343,6 +343,7 @@
 #     9-Oct-2014 (CT) Use `portable_repr`
 #    13-Oct-2014 (CT) Set `P_Type` of `_A_Filename_` and `_A_String_Ascii_`
 #                     to `pyk.byte_type`
+#    23-Jan-2015 (CT) Add `ui_name_short`, `ui_name_short_T`
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
 #                     as metaclass
 #    ««revision-date»»···
@@ -510,6 +511,8 @@ class A_Attr_Type \
     ui_length           = 20
     ui_name             = TFL.Meta.Class_and_Instance_Once_Property \
         (lambda s : s.name.capitalize ().replace ("_", " "))
+    ui_name_short       = TFL.Meta.Class_and_Instance_Once_Property \
+        (lambda s : s.ui_name)
     ui_rank             = 0
 
     _t_rank             = 0
@@ -600,6 +603,13 @@ class A_Attr_Type \
         ### Must not be a `Once_Property`, because `language` can change
         return _T (self.ui_name)
     # end def ui_name_T
+
+    @property
+    def ui_name_short_T (self) :
+        """Localized `ui_name_short`."""
+        ### Must not be a `Once_Property`, because `language` can change
+        return _T (self.ui_name_short)
+    # end def ui_name_short_T
 
     def __init__ (self, kind, e_type) :
         self.e_type       = e_type

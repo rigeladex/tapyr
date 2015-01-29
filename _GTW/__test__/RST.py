@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -1515,6 +1515,18 @@ _test_doc = r"""
                   , 'p_type' : 'int'
                   , 'type' : 'Int'
                   , 'ui_name' : 'Year'
+                  }
+                , { 'default_value' : ''
+                  , 'description' : 'Integer attribute.'
+                  , 'example' : '42'
+                  , 'is_changeable' : False
+                  , 'is_required' : False
+                  , 'is_settable' : False
+                  , 'kind' : 'query'
+                  , 'name' : 'max_crew'
+                  , 'p_type' : 'int'
+                  , 'type' : 'Int'
+                  , 'ui_name' : 'Max crew'
                   }
                 , { 'default_value' : ''
                   , 'description' : '`Team` links'

@@ -29,6 +29,7 @@
 #     9-Dec-2013 (CT) Adapt to style changes of Auth forms
 #    15-Sep-2014 (CT) Adapt to change of macro `entity_selector_form`
 #     2-Jan-2015 (CT) Adapt to another change of macro `entity_selector_form`
+#    27-Jan-2015 (CT) Add template `e_type_admin|ETR_table`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ _test_nav = """
     calendar_day
     console
     e_type_admin
+    e_type_admin|ETR_table
     e_type_aggregator
     e_type_display
     e_type_mf3
@@ -74,9 +76,7 @@ _test_nav = """
     photo
     regatta_calendar
     regatta_page
-    regatta_registration
-    regatta_result
-    regatta_result_teamrace
+    regatta_page_r
     site_admin
 
     >>> for k in sorted (TTT.css_href_map, key = sk) :
@@ -99,6 +99,7 @@ _test_nav = """
     calendar_day
     console
     e_type_admin
+    e_type_admin|ETR_table
     e_type_display
     e_type_mf3
     e_type_mf3|mf3
@@ -184,7 +185,9 @@ _test_nav = """
       , 'login'
       ]
     , ['console']
-    , ['e_type_admin']
+    , [ 'e_type_admin'
+      , 'e_type_admin|ETR_table'
+      ]
     , ['e_type_display']
     , ['e_type_mf3|mf3']
     , ['gallery']

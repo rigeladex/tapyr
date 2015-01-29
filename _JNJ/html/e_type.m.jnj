@@ -51,6 +51,9 @@
 ##    30-Oct-2014 (CT) Factor `e_type_q.m.jnj`, switch to pure buttons
 ##     2-Dec-2014 (CT) Remove class `button` from `direction` and `disabler`
 ##     3-Dec-2014 (CT) Factor `esf_field`
+##    29-Jan-2015 (CT) Remove `admin_table`, use `page.renderer` instead
+##                     + remove `obj_button`, `obj_create_button`
+##     5-Feb-2015 (CT) Remove `vip_button`
 ##    ««revision-date»»···
 ##--
 #}
@@ -148,20 +151,6 @@
   {%- set end_tag = "</td></tr></tfoot>" %}
   {{ NT.rel_nav_buttons (page, start_tag, end_tag) }}
 {%- endmacro -%} {#- nav_buttons -#}
-
-{%- macro obj_button (page, E_Type, tag, href, name, desc, icon, kind, a_class=None) -%}
-  <{{ tag }} class="cmd-button {{ kind }}">
-    <b class="ui-state-default">
-      <a href="{{ href }}" title="{{ desc }} {{ name }}"
-         class="ui-icon ui-icon-{{ icon }}{%- if a_class %} {{ a_class }}{% endif -%}"
-      >{{ desc }}</a>
-    </b>
-  </{{ tag }}>
-{%- endmacro -%} {#- obj_button -#}
-
-{%- macro obj_create_button (page, E_Type, tag) -%}
-  {{ obj_button (page, E_Type, tag, page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "circle-plus", "add") }}
-{%- endmacro -%} {#- obj_create_button -#}
 
 {%- macro order_by_form (page) -%}
   <form class = "QR order-by" {# -#}
@@ -270,66 +259,14 @@
   </form>
 {%- endmacro -%} {#- select_attr_form -#}
 
-{%- macro vip_button (page, cls ="") -%}
-  {%- if page.vip_button_p %}
-    {%- set text = GTW._T ("Add new entry for %s") % page.E_Type.ui_name_T %}
-    <p>
-      <a href="{{ page.href_create () }}"{#--#}
-         title="{{ text }}"{#--#}
-         class="button vip {{ cls }}"{#--#}
-      >{{ text }}</a>
-    </p>
-  {% endif -%}
-{%- endmacro -%} {#- vip_button -#}
-
-{%- macro admin_table (page, fields, objects) -%}
-  {%- set E_Type = page.E_Type %}
-  <table class="Object-List">
-    <thead>
-      <tr>
-        {{ obj_create_button (page, E_Type, "th") }}
-        {% for f in fields %}
-          <th scope="col" title="{{ f.description }}">{{ f.ui_name }}</th>
-        {% endfor %}
-        {{ obj_create_button (page, E_Type, "th") }}
-      </tr>
-    </thead>
-    {{ nav_buttons (page, fields, objects) }}
-    <tbody>
-      {% for o in objects %}
-        {%- set href_change  = o.href_change  () %}
-        {%- set href_delete  = o.href_delete  () %}
-        {%- set href_display = o.href_display () %}
-        <tr id="pk-{{ o.pid }}">
-          {%- if href_change %}
-            {{ obj_button (page, E_Type, "td", href_change, o.pid, GTW._T ("Change object"), "pencil", "change") }}
-          {%- elif href_display %}
-            {{ obj_button (page, E_Type, "td", href_display, o.pid, GTW._T ("Display object"), "circle-zoomin", "display") }}
-          {%- else %}
-            <td></td>
-          {% endif -%}
-          {% for f, v in o.fields %}
-            {%- set css_class =
-                   (" class=\"%s\"" % (f.css_class, )) if f.css_class else ""
-            -%}
-            <td{{ css_class }}>{{ f.as_html (o, v) }}</td>
-          {% endfor %}
-          {%- if href_delete %}
-            {{ obj_button (page, E_Type, "td", href_delete, o.pid, GTW._T ("Delete object"), "trash", "delete", "delete") }}
-          {%- else %}
-            <td></td>
-          {% endif -%}
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{%- endmacro -%} {#- admin_table -#}
-
-{%- macro admin  (page, fields, objects) -%}
-  {{ vip_button  (page, "top") }}
-  {{ ETQ.qr_form (page, fields, page.query_restriction) }}
-  {{ admin_table (page, fields, objects) }}
-  {{ vip_button  (page, "bot") }}
+{%- macro admin   (page, renderer) -%}
+  {{ ETQ.qr_form  (page, renderer.fields, page.query_restriction) }}
+  {{ GTW.call_macro
+     ( "E_Type", renderer
+     , t_class    = "Object-List"
+     , templ_name = renderer.template_module
+     )
+  }}
 {%- endmacro -%} {#- admin -#}
 
 {#- __END__ jinja template: html/e_type.m.jnj -#}

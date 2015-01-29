@@ -47,6 +47,7 @@
 #    26-Sep-2014 (CT) Add `sail_number.polisher`
 #     5-Feb-2015 (CT) Paranoidify `sail_number.polisher`
 #                     [somebody recently really tried to enter `NAT NAT 1234`]
+#    11-Feb-2015 (CT) Remove `sail_number_head`, `sail_number_tail`
 #    ««revision-date»»···
 #--
 
@@ -171,32 +172,6 @@ class Boat (_Ancestor_Essence) :
             max_length         = 48
 
         # end class name
-
-        class sail_number_head (A_String) :
-            """Non numeric head of `sail_number`, if any."""
-
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("sail_number_x",)
-
-            def computed (self, obj) :
-                return obj.raw_attr ("sail_number_x")
-            # end def computed
-
-        # end class sail_number_head
-
-        class sail_number_tail (A_String) :
-            """Numeric tail of `sail_number`."""
-
-            kind               = Attr.Cached
-            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("sail_number",)
-
-            def computed (self, obj) :
-                return obj.raw_attr ("sail_number")
-            # end def computed
-
-        # end class sail_number_tail
 
     # end class _Attributes
 

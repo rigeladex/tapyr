@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -46,6 +46,7 @@
 #    17-Jan-2014 (CT) Add query attribute `races_counted`
 #    30-Jan-2014 (CT) Add attributes `ranking_list_factor`, `starters`
 #    17-Aug-2014 (CT) Remove attribute `ranking_list_factor`
+#     3-Feb-2015 (CT) Add `max_crew`
 #    ««revision-date»»···
 #--
 
@@ -252,6 +253,13 @@ class Regatta_C (_Ancestor_Essence) :
 
         # end class is_team_race
 
+        class max_crew (A_Int) :
+
+            kind               = Attr.Query
+            query              = Q.boat_class.max_crew
+
+        # end class max_crew
+
     # end class _Attributes
 
 # end class Regatta_C
@@ -286,6 +294,13 @@ class Regatta_H (_Ancestor_Essence) :
             query              = Q.boat_class
 
         # end class handicap
+
+        class max_crew (A_Int) :
+
+            kind               = Attr.Const
+            default            = 0
+
+        # end class max_crew
 
     # end class _Attributes
 

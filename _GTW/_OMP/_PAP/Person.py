@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -48,6 +48,7 @@
 #    26-Sep-2014 (CT) Use `Polisher.capitalize_if_not_mixed_case`,
 #                     not `.capitalize`
 #    26-Sep-2014 (CT) Add `polisher = capitalize_if_lower_case` to `title`
+#    23-Jan-2015 (CT) Add `title.ui_name_short`
 #    ««revision-date»»···
 #--
 
@@ -160,6 +161,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             max_length     = 20
             rank           = 2
             ui_name        = _("Academic title")
+            ui_name_short  = _("Title")
 
             completer      = Attr.Completer_Spec  (1)
             polisher       = Attr.Polisher.capitalize_if_lower_case

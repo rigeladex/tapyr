@@ -52,6 +52,8 @@
 #     3-Dec-2014 (CT) Add `color.alphabet_max_contrast_colors` and
 #                     `color.kellys_max_contrast_colors`
 #    16-Jan-2015 (CT) Change `nav_col.width` and `col_padding` to unit `Rem`
+#    23-Jan-2015 (CT) Add `color_jnd_grey`, reduce contrast of `color_spec_row1`
+#    23-Jan-2015 (CT) Factor `line_height*` parameters
 #    ««revision-date»»···
 #--
 
@@ -244,7 +246,8 @@ class Media_Defaults (Definition) :
     color_heading          = RGB_X     ("#34444D")
     color_heading_closed   = RGB_X     ("#56666E")
     color_heading_sub      = RGB_X     ("#78888F")
-    color_lightest_grey    = RGB_X     ("#F8F8F8")
+    color_jnd_grey         = RGB_X     ("#F8F8F8")
+    color_lightest_grey    = RGB_X     ("#F6F6F6")
     color_lighter_grey     = RGB_X     ("#EDEDED")
     color_light_grey       = RGB_X     ("#DEDEDE")
     color_border_grey      = RGB_X     ("#CCCCCC")
@@ -429,6 +432,8 @@ class Media_Defaults (Definition) :
             )
 
         li_left                = Em (0.75)
+        line_height_larger     = 1.50
+        line_height_normal     = 1.35
         mark_color_link        = P.R.css_arrow_color
         mark_color_section     = P.R.color_heading
         mark_width             = Em (0.40)
@@ -599,11 +604,11 @@ class Media_Defaults (Definition) :
         , color            = RGB_X     ("#0200DE")
         )
     color_spec_row1        = color_spec_meta = P_dict \
-        ( background_color = P.color_lighter_grey
+        ( background_color = "transparent"
         , color            = P.text_color
         )
     color_spec_row2        = color_spec_message = P_dict \
-        ( background_color = P.color_light_grey
+        ( background_color = P.color_lightest_grey
         , color            = P.text_color
         )
     color_spec_selected    = P_dict \
@@ -641,7 +646,7 @@ class Media_Defaults (Definition) :
         ( font_family      = P.font_family_normal
         , font_style       = "normal"
         , font_weight      = "normal"
-        , line_height      = 1.44
+        , line_height      = P.line_height_normal
         )
 
     font_spec_print        = P_dict \
@@ -684,6 +689,11 @@ class Media_Defaults (Definition) :
         ( text_decoration  = "none"
         # XXX ???
         )
+
+    line_height_heading    = 2.00
+    line_height_larger     = 1.875
+    line_height_normal     = 1.44
+    line_height_input      = 1.143
 
     outline_focus          = "2px solid "   + P.color_focus
     outline_target         = "2px dotted "  + P.color_target

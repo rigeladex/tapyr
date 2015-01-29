@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,6 +17,7 @@
 #
 # Revision Dates
 #    14-Dec-2012 (CT) Creation
+#     5-Feb-2015 (CT) Remove `vip_button_p`
 #    ««revision-date»»···
 #--
 
@@ -35,7 +36,6 @@ class E_Type_R (Admin.E_Type) :
     et_map_name           = None
     skip_etag             = True
     restriction_desc      = _ ("created by")
-    vip_button_p          = True
 
     @property
     @getattr_safe

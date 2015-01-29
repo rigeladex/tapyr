@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -50,7 +50,7 @@ style_sheet = Style_Sheet \
                         ( ".account-name"
                         , font_size        = P.h1_font_size + 10
                         , font_weight      = "bold"
-                        , line_height      = 2.0
+                        , line_height      = P.line_height_heading
                         )
                     , Rule
                         ( "label"

@@ -18,6 +18,7 @@
 # Revision Dates
 #    11-Mar-2014 (CT) Creation
 #    20-Jan-2015 (CT) Add `padding`, `p:first-child`, `p:last-child`
+#    29-Jan-2015 (CT) Adapt to change of `html/e_type_display.jnj`
 #    ««revision-date»»···
 #--
 
@@ -27,27 +28,28 @@ style_sheet = Style_Sheet \
         , width              = Percent (100)
         , children           =
             [ Rule
+                ( "td", "th"
+                , line_height       = P.line_height_larger
+                , padding           = TRBL (Em (0.5))
+                )
+            , Rule
                 ( "td"
-                , padding            = TRBL (Em (0.5))
                 , children           =
-                    [ Rule_Pseudo
-                        ( "first-child"
-                        , width              = Percent (20)
-                        )
-                    , Rule_Pseudo
-                        ( "last-child"
-                        , display            = "block"
-                        , width              = Percent (75)
-                        )
-                    , Rule_Child
-                        ( "p:first-child"
-                        , margin_top         = 0
+                    [ Rule_Child
+                        ( "p"
+                        , margin             = TRBL0 (b = (Em (0.5)))
                         )
                     , Rule_Child
                         ( "p:last-child"
                         , margin_bottom      = 0
                         )
                     ]
+                )
+            , Rule
+                ( """th[scope="row"]"""
+                , color              = P.color_desc
+                , text_align         = "right"
+                , width              = Percent (20)
                 )
             ]
         )

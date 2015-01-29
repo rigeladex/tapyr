@@ -128,6 +128,7 @@
 #    20-Jan-2015 (CT) Add `** kw` to `allow_method`, `allow_user`
 #    20-Jan-2015 (CT) Add `allow_child`
 #    30-Jan-2015 (CT) Add `_RST_Base_.target` returning `self`
+#    10-Feb-2015 (CT) Add property `RST_Types` to ease introspection
 #    ««revision-date»»···
 #--
 
@@ -527,6 +528,19 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
         return sorted \
             (self._get_permissions ("r_permission"), key = TFL.Getter._rank)
     # end def r_permissions
+
+    @Once_Property
+    @getattr_safe
+    def RST_Types (self) :
+        def _gen (self) :
+            seen = set ()
+            for e in self.entries_transitive :
+                T = e.__class__
+                if T not in seen :
+                    seen.add (T)
+                    yield T
+        return tuple (_gen (self))
+    # end def RST_Types
 
     @Once_Property
     @getattr_safe

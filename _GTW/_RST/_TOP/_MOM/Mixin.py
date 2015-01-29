@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -31,6 +31,9 @@
 #    14-Mar-2014 (CT) Redefine alias property `proper_entries`
 #                     to `object_entries`
 #    25-Jun-2014 (CT) Add `_TOP_MOM_Mixin_Base_`
+#     2-Feb-2015 (CT) Factor `button_types`, `Renderers`, `_fields` and friends,
+#                     `_renderer_template_iter` from `Admin.E_Type`
+#    10-Feb-2015 (CT) Factor `Renderer_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -40,7 +43,10 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._RST._MOM.Mixin
+import _GTW._RST._TOP._MOM.Action
+import _GTW._RST._TOP._MOM.Field
 import _GTW._RST._TOP._MOM.Query_Restriction
+import _GTW._RST._TOP._MOM.Renderer
 
 from   _MOM.import_MOM          import Q
 
@@ -48,6 +54,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL._Meta.Property      import Alias_Property
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import callable, filtered_join
 from   _TFL.pyk                 import pyk
 
 import _TFL.Ascii
@@ -55,8 +62,38 @@ import _TFL.Attr_Mapper
 
 from   posixpath                import join as pp_join
 
+import logging
+
 class _TOP_MOM_Mixin_Base_ (GTW.RST.MOM.Mixin) :
     """Base mixin for RST.TOP classes displaying MOM instances."""
+
+    Field                         = GTW.RST.TOP.MOM.Field.AQ
+    Renderer                      = None
+
+    button_types                  = dict \
+        ( ADD                     = "button"
+        , APPLY                   = "submit"
+        , CANCEL                  = "button"
+        , CLEAR                   = "button"
+        , CLOSE                   = "button"
+        , FIRST                   = "submit"
+        , LAST                    = "submit"
+        , NEXT                    = "submit"
+        , PREV                    = "submit"
+        )
+
+    _attrs_to_update_combine      = \
+        ("_field_class_map", "_field_pred_map", "_field_type_map")
+    _attrs_uniq_to_update_combine = ("_field_type_attr_names", )
+    _field_type_attr_names        = ("_gtw_admin_field_type", "_gtw_field_type")
+    _field_class_map              = {}
+    _field_pred_map               = {}
+    _field_type_map               = {}
+
+    def __init__ (self, ** kw) :
+        self._field_map = {}
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     @Once_Property
     def referral_query_unbound (self) :
@@ -95,6 +132,148 @@ class _TOP_MOM_Mixin_Base_ (GTW.RST.MOM.Mixin) :
     # end def _new_referral_entry
 
 # end class _TOP_MOM_Mixin_Base_
+
+class Renderer_Mixin (_TOP_MOM_Mixin_Base_) :
+    """Mixin for RST.TOP classes that use `GTW.RST.TOP.MOM.Renderer`."""
+
+    ### `Renderer_Mixin` might be used as very specific mixin
+    ### --> define class attributes in _TOP_MOM_Mixin_Base_, not here:
+    ###     that way, less specific mixins
+    ###     * can override `Field` or `Renderer`
+    ###     * can add to or override `_field_{class,pred,type}_map`
+
+    @Once_Property
+    @getattr_safe
+    def fields_default (self) :
+        return self._fields (self.list_display)
+    # end def fields_default
+
+    @Once_Property
+    def Renderers (self) :
+        Renderer = self.Renderer
+        return (Renderer, ) if Renderer is not None else ()
+    # end def Renderers
+
+    def add_field_classes (self, field) :
+        try :
+            super_afc = self.__super.add_field_classes
+        except AttributeError :
+            result  = ()
+        else :
+            result  = super_afc (field)
+        afc = self._field_class_map.get (field.field_name)
+        if afc :
+            result += (afc, )
+        return result
+    # end def add_field_classes
+
+    def template_iter (self) :
+        for t in self.__super.template_iter () :
+            yield t
+        for t in self._renderer_template_iter () :
+            yield t
+    # end def template_iter
+
+    def _field (self, name, E_Type, map = None) :
+        if map is None :
+            map = self._field_map
+        try :
+            result = map [name]
+        except KeyError :
+            Field  = self._field_type (name, E_Type)
+            result = Field (self, name, E_Type)
+            afcs   = self.add_field_classes (result)
+            if afcs :
+                result.css_class_add = filtered_join \
+                    (" ", (result.css_class_add, ) + afcs)
+            map [name] = map [result.name] = map [result.attr_name] = result
+        return result
+    # end def _field
+
+    def _field_type (self, name, E_Type) :
+        ft_map = self._field_type_map
+        result = ft_map.get (name)
+        if result is None :
+            at = E_Type.attr_prop (name)
+            if at is not None :
+                result = ft_map.get (at)
+            if result is None :
+                result = self._field_type_by_attr  (name, at)
+            if result is None :
+                result = self.Field
+        else :
+            result     = self._field_type_callable (name, result)
+        ft_map [name]  = result
+        return result
+    # end def _field_type
+
+    def _field_type_by_attr (self, name, at) :
+        for k in self._field_type_attr_names :
+            result = self._field_type_callable (k, getattr (at, k, None))
+            if result is not None :
+                return result
+    # end def _field_type_by_attr
+
+    def _field_type_callable (self, name, FT) :
+        M_Field = GTW.RST.TOP.MOM.Field.M_Field
+        result  = FT
+        if callable (result) and not isinstance (result, M_Field) :
+            try :
+                result = result (self)
+            except (TypeError, ValueError, LookupError) :
+                logging.exception \
+                    ( "Evaluating callable "
+                      "field-type-property %s %s failed"
+                    % (name, result)
+                    )
+                result = None
+        return result
+    # end def _field_type_callable
+
+    def _fields (self, names, E_Type = None) :
+        def _gen (self, names, E_Type) :
+            if E_Type is None :
+                E_Type = self.E_Type
+            _f    = self._field
+            p_map = self._field_pred_map
+            for name in names :
+                pred = p_map.get (name)
+                if pred is None or (pred (self) if callable (pred) else pred) :
+                    f = _f (name, E_Type)
+                    yield f
+        return tuple (_gen (self, names, E_Type))
+    # end def _fields
+
+    @TFL.Contextmanager
+    def _handle_method_context (self, method, request, response) :
+        with self.__super._handle_method_context (method, request, response) :
+            renderer = self.Renderer         (self)
+            fields   = self._renderer_fields ()
+            with self.LET \
+                    ( fields   = fields
+                    , renderer = renderer
+                    ) :
+                yield
+    # end def _handle_method_context
+
+    def _renderer_fields (self) :
+        return self.fields_default
+    # end def _renderer_fields
+
+    def _renderer_template_iter (self) :
+        T = self.top.Templateer
+        for Renderer in self.Renderers :
+            renderer = Renderer (self)
+            yield T.get_template \
+                ( self.template_name
+                , tuple
+                    (   T.get_template (r)
+                    for r in renderer.template_module_iter ()
+                    )
+                )
+    # end def _renderer_template_iter
+
+# end class Renderer_Mixin
 
 class TOP_MOM_Entity_Mixin_Base \
           (GTW.RST.MOM.Entity_Mixin, _TOP_MOM_Mixin_Base_) :

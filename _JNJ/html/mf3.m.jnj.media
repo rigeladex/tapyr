@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************
 # This module is licensed under the terms of the BSD 3-Clause License
@@ -76,7 +76,7 @@ style_sheet = Style_Sheet \
                 , children     =
                     [ Rule
                         ( "input", "select", "textarea"
-                        , line_height          = Em (1.143)
+                        , line_height          = P.line_height_input
                         , children             =
                             [ Rule_Class
                                 ( "bad"
@@ -130,7 +130,7 @@ style_sheet = Style_Sheet \
                         , children         =
                             [ Rule_Pseudo
                                 ( "hover"
-                                , background_color = P.color_lightest_grey
+                                , background_color = P.color_jnd_grey
                                 )
                             , Rule_Child
                                 ( "h1"

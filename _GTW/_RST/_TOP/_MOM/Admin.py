@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.MOM.
@@ -102,7 +102,20 @@
 #    26-Sep-2014 (CT) Use `_polished` in `Completer._rendered_post`
 #    30-Oct-2014 (CT) Adapt to changes of `e_type` template macros
 #    31-Oct-2014 (CT) Change `E_Type.rendered` to pass `qr_next_p`, not buttons
+#    10-Dec-2014 (CT) Remove `.FO` rom `E_Type.Entity`
 #    12-Dec-2014 (CT) Add `_Changer_.POST ` to call `csrf_check`
+#    21-Jan-2015 (CT) Factor `E_Type._field` from `._fields`
+#    22-Jan-2015 (CT) Add `Renderer`
+#    27-Jan-2015 (CT) Add and use `fields_default`
+#    27-Jan-2015 (CT) Factor `_field_type`, `_field_type_by_attr`
+#    27-Jan-2015 (CT) Add `E_Type.template_iter`
+#    29-Jan-2015 (CT) Make `Displayer.fields` compatible with `Renderer`
+#     2-Feb-2015 (CT) Factor `_field` and friends from `E_Type` to
+#                     `_TOP_MOM_Mixin_Base_`
+#    10-Feb-2015 (CT) Factor `template_iter`, parts of `_handle_method_context`
+#                     from `E_Type` to `Renderer_Mixin`
+#    11-Feb-2015 (CT) Change `E_Type_Alias` to refer to `.target.ETM.ui_name_T`,
+#                     not `.target.ETM.type_name`
 #    ««revision-date»»···
 #--
 
@@ -121,7 +134,6 @@ from   _GTW._RST._TOP._MOM.Query_Restriction import  \
      )
 
 import _GTW._RST._TOP._MOM.Mixin
-import _GTW._RST._TOP._MOM.Field
 import _GTW._RST._TOP.Dir
 import _GTW._RST._TOP.Page
 import _GTW.FO
@@ -816,10 +828,8 @@ class Displayer (GTW.RST.TOP.MOM.Entity_Mixin, GTW.RST.TOP.Page) :
     @Once_Property
     @getattr_safe
     def fields (self) :
-        admin  = self.admin
         names  = tuple (a.name for a in self.E_Type.edit_attr)
-        FO     = GTW.FO (self.obj, admin.top.encoding)
-        result = tuple ((f, f.value (FO)) for f in admin._fields (names))
+        result = self.admin._fields (names)
         return result
     # end def fields
 
@@ -1063,31 +1073,28 @@ _Ancestor = GTW.RST.TOP._Base_
 class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
     """Mixin handling MF3 forms for one E_Type."""
 
-    _real_name            = "E_Type_Mixin"
+    _real_name                    = "E_Type_Mixin"
 
-    Field                 = GTW.RST.TOP.MOM.Field.Attr
-    Instance              = Instance
+    Instance                      = Instance
 
-    max_completions       = 20
-    mf3_attr_spec_d       = {}
-    nav_off_canvas        = True
-    skip_etag             = True
-    submit_callback       = None
-    submit_error_callback = None
+    max_completions               = 20
+    mf3_attr_spec_d               = {}
+    nav_off_canvas                = True
+    skip_etag                     = True
+    submit_callback               = None
+    submit_error_callback         = None
 
-    _auth_required        = True
-    _exclude_robots       = True
-    _field_type_attr_name = "_gtw_admin_field_type"
-    _field_type_map       = {}
-    _greet_entry          = None
-    _list_display         = None
-    _mf3_attr_spec        = {}
-    _MF3_Attr_Spec        = {}
-    _MF3_Form_Spec        = {}
-    _mf3_id_prefix        = "MF3"
-    _sort_key             = None
+    _auth_required                = True
+    _exclude_robots               = True
+    _greet_entry                  = None
+    _list_display                 = None
+    _mf3_attr_spec                = {}
+    _MF3_Attr_Spec                = {}
+    _MF3_Form_Spec                = {}
+    _mf3_id_prefix                = "MF3"
+    _sort_key                     = None
 
-    _v_entry_type_list    = \
+    _v_entry_type_list            = \
         ( Add_Rev_Ref, Completed, Completer, Creator, Deleter, Displayer
         , Instance, Polisher
         , _QX_Dispatcher_E_Type_Mixin_
@@ -1119,7 +1126,8 @@ class _Admin_E_Type_Mixin_ (_NC_Mixin_, _Ancestor) :
             renderers = set ()
         else :
             renderers = set (self.Form.template_module_iter ())
-        return tuple (self.top.Templateer.get_template (r) for r in renderers)
+        T = self.top.Templateer
+        return tuple (T.get_template (r) for r in renderers)
     # end def form_injected_templates
 
     @property
@@ -1290,20 +1298,13 @@ E_Type_Mixin = _Admin_E_Type_Mixin_ # end class
 
 _Ancestor = GTW.RST.TOP.Dir_V
 
-class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
+class E_Type \
+        ( GTW.RST.TOP.MOM.Renderer_Mixin
+        , _Admin_E_Type_Mixin_
+        , GTW.RST.TOP.MOM.E_Type_Mixin
+        , _Ancestor
+        ) :
     """Directory displaying the instances of one E_Type."""
-
-    button_types          = dict \
-        ( ADD             = "button"
-        , APPLY           = "submit"
-        , CANCEL          = "button"
-        , CLEAR           = "button"
-        , CLOSE           = "button"
-        , FIRST           = "submit"
-        , LAST            = "submit"
-        , NEXT            = "submit"
-        , PREV            = "submit"
-        )
 
     css_group             = "Type"
     default_qr_kw         = dict \
@@ -1321,50 +1322,26 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     GET = _E_Type_GET_ # end class
 
-    class Entity (TFL.Meta.Object) :
-        """Wrap a specific instance in the context of an admin page for one
-           E_Type, e.g., displayed as one line of a table.
-        """
+    class Renderer (GTW.RST.TOP.MOM.Renderer.E_Type) :
 
-        def __init__ (self, obj, parent, ** kw) :
-            self.admin = parent
-            self.obj   = obj
-            self.FO    = GTW.FO (obj, parent.top.encoding)
-        # end def __init__
+        Action    = GTW.RST.TOP.MOM.Action
 
-        @Once_Property
-        @getattr_safe
-        def fields (self) :
-            admin = self.admin
-            FO    = self.FO
-            return tuple ((f, f.value (FO)) for f in admin.fields)
-        # end def fields
+        Actions_I = \
+            ( Action.Change
+            , Action.Delete
+            )
 
-        def href_change (self) :
-            return self.admin.href_change (self.obj)
-        # end def href_change
+        Actions_T = \
+            ( Action.Create
+            ,
+            )
 
-        def href_delete (self) :
-            return self.admin.href_delete (self.obj)
-        # end def href_delete
+        actions_at_top = None
 
-        def href_display (self) :
-            return self.admin.href_display (self.obj)
-        # end def href_display
-
-        def __getattr__ (self, name) :
-            return getattr (self.obj, name)
-        # end def __getattr__
-
-        def __iter__ (self) :
-            return iter (self.fields)
-        # end def __iter__
-
-    # end class Entity
+    # end class Renderer
 
     def __init__ (self, ** kw) :
         self.pop_to_self (kw, "list_display", prefix = "_")
-        self._field_map = {}
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -1379,6 +1356,12 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
         if not self.implicit :
             return "admin"
     # end def et_map_name
+
+    @Once_Property
+    @getattr_safe
+    def fields_default (self) :
+        return self._fields  (self.list_display)
+    # end def fields_default
 
     @property
     @getattr_safe
@@ -1506,27 +1489,27 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
     # end def href_qx_obf
 
     def rendered (self, context, template = None) :
+        objects  = self.objects
+        qr       = self.query_restriction
         request  = context ["request"]
         response = context ["response"]
-        qr       = self.query_restriction
-        fields   = self.fields
-        Entity   = self.Entity
-        objects  = tuple (Entity (obj = o, parent = self) for o in self.objects)
         with self.LET (query_size = len (objects)) :
             context.update \
-                ( fields            = fields
+                ( fields            = self.fields
                 , objects           = objects
-                , query_restriction = self.query_restriction
+                , query_restriction = qr
                 )
+            renderer = self.renderer
             if response.renderer and response.renderer.name == "JSON" :
-                template   = self.top.Templateer.get_template ("e_type")
+                template   = self.top.Templateer.get_template \
+                    (renderer.template_module)
                 call_macro = template.call_macro
                 result     = dict \
                     ( callbacks        = ["setup_obj_list"]
                     , head_line        = self.head_line
                     , limit            = qr.limit
                     , object_container = call_macro
-                        ("admin_table", self, fields, objects)
+                        ("E_Type", renderer, t_class = "Object-List")
                     , offset           = qr.offset
                     , qr_next_p        = qr.next_p
                     , qr_prev_p        = qr.prev_p
@@ -1535,41 +1518,6 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
                 result = self.__super.rendered (context, template)
         return result
     # end def rendered
-
-    def _fields (self, names) :
-        def _gen (E_Type, names, map) :
-            AQ      = E_Type.AQ
-            Field   = self.Field
-            M_Field = GTW.RST.TOP.MOM.Field.M_Attr
-            ft_map  = self._field_type_map
-            for n in names :
-                try :
-                    f  = map [n]
-                except KeyError :
-                    FT = ft_map.get (n)
-                    if FT is None :
-                        at = E_Type.attr_prop (n)
-                        if at is not None :
-                            FT = ft_map.get (at)
-                        if FT is None :
-                            FT = getattr (at, self._field_type_attr_name, None)
-                            if callable (FT) and not issubclass (FT, M_Field) :
-                                try :
-                                    FT = FT ()
-                                except (TypeError, ValueError, LookupError) :
-                                    logging.exception \
-                                        ( "Evaluating callable "
-                                          "field-type-property %s %s failed"
-                                        % (self._field_type_attr_name, FT)
-                                        )
-                                    FT = None
-                    if FT is None :
-                        FT = Field
-                    aq = getattr (AQ, n)
-                    f  = map [n] = FT (aq)
-                yield f
-        return tuple (_gen (self.E_Type, names, self._field_map))
-    # end def _fields
 
     def _fix_filters (self, filters) :
         scope = self.top.scope
@@ -1585,16 +1533,21 @@ class E_Type (_Admin_E_Type_Mixin_, GTW.RST.TOP.MOM.E_Type_Mixin, _Ancestor) :
 
     @TFL.Contextmanager
     def _handle_method_context (self, method, request, response) :
-        with self.__super._handle_method_context (method, request, response) :
-            qr = QR.from_request \
-                ( self.top.scope, self.ETM.E_Type, request
-                , ** self.default_qr_kw
-                )
-            self._fix_filters (qr.filters)
-            fields = self._fields (qr.attributes or self.list_display)
-            with self.LET (fields = fields, query_restriction = qr):
+        qr = QR.from_request \
+            ( self.top.scope, self.E_Type, request
+            , ** self.default_qr_kw
+            )
+        self._fix_filters (qr.filters)
+        with self.LET (query_restriction = qr) :
+            with self.__super._handle_method_context \
+                    (method, request, response) :
                 yield
     # end def _handle_method_context
+
+    def _renderer_fields (self) :
+        qr_attrs = self.query_restriction.attributes
+        return self._fields (qr_attrs) if qr_attrs else self.fields_default
+    # end def _renderer_fields
 
 # end class E_Type
 
@@ -1606,7 +1559,7 @@ class E_Type_Alias (GTW.RST.TOP.Alias) :
         )
 
     short_title           = property \
-        ( lambda s        : s.target.ETM.type_name
+        ( lambda s        : s.target.ETM.ui_name_T
         , lambda s, v     : None
         )
 

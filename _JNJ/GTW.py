@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -56,6 +56,8 @@
 #    14-Apr-2014 (CT) Add `ichain`
 #    18-Apr-2014 (CT) Add `bool`
 #     2-Dec-2014 (CT) Add `setattr`
+#    21-Jan-2015 (CT) Add `filtered_dict`
+#    23-Jan-2015 (CT) Add `html_char_ref`
 #    ««revision-date»»···
 #--
 
@@ -155,6 +157,17 @@ class GTW (TFL.Meta.Object) :
         return result
     # end def eval_sorted_by
 
+    def filtered_dict (self, * ds, ** kw) :
+        result = {}
+        for d in ds :
+            result.update (d)
+        result.update (kw)
+        return dict \
+            (  (k, v) for k, v in pyk.iteritems (result)
+            if v is not None and v != ""
+            )
+    # end def filtered_dict
+
     filtered_join = staticmethod (filtered_join)
     first         = staticmethod (TFL.first)
 
@@ -193,6 +206,12 @@ class GTW (TFL.Meta.Object) :
 
     getattr    = staticmethod (getattr)
     Getter     = TFL.Getter
+
+    def html_char_ref (self, arg) :
+        if isinstance (arg, pyk.string_types) and len (arg) == 1 :
+            arg = ord (arg)
+        return "&#x%4.4X" % (arg, )
+    # end def html_char_ref
 
     ichain     = staticmethod (itertools.chain)
     len        = staticmethod (len)

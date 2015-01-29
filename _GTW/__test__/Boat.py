@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -30,6 +30,7 @@
 #     9-Sep-2012 (RS) Add `last_changed` and `creation_date` checks
 #    30-Jan-2013 (CT) Adapt to `Unique` predicates
 #     3-Jun-2013 (CT) Add `_test_instances_committed`, `_test_instances_pending`
+#    11-Feb-2015 (CT) Remove test for `sail_number_head` and `sail_number_tail`
 #    ««revision-date»»···
 #--
 
@@ -106,13 +107,6 @@ _test_code = """
     2
     >>> scope.SRM.Boat.query_s ().all ()
     [SRM.Boat (('optimist', ), 42, '', 'OE'), SRM.Boat (('optimist', ), 1107, 'AUT', '')]
-
-    >>> prepr ((c.sail_number, c.sail_number_head, c.sail_number_tail))
-    (42, 'OE', '42')
-    >>> prepr ((c.FO.sail_number, c.FO.sail_number_head, c.FO.sail_number_tail))
-    ('42', 'OE', '42')
-    >>> prepr ((b.sail_number, b.sail_number_head, b.sail_number_tail))
-    (1107, '', '1107')
 
     >>> s1 = TFL.Sorted_By ("name")
     >>> s2 = TFL.Sorted_By ("-name")

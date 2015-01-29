@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -24,8 +24,9 @@
 #    18-Jan-2012 (CT) Add `_Color_.__eq__` and `__hash__`
 #    18-Jan-2012 (CT) Return `name`, not `"name"`, from `SVG_Color.formatted`
 #    16-Apr-2012 (CT) Add `sorted` to `.iteritems`
-#    31-Aug-2012 (CT) Add property `no_alpha`
+#    31-Aug-2012 (CT) Add property `Color.no_alpha`
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#    11-Feb-2015 (CT) Add `Color.with_alpha`
 #    ««revision-date»»···
 #--
 
@@ -242,11 +243,13 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
     # end def __init__
 
     @classmethod
-    def cast (cls, v) :
+    def cast (cls, v, alpha = None) :
         result = cls.__new__ (cls)
         result.value = v.value
-        if v.alpha is not None :
-            result.alpha = v.alpha
+        if alpha is None :
+            alpha = v.alpha
+        if alpha is not None :
+            result.alpha = alpha
         return result
     # end def cast
 
@@ -393,6 +396,10 @@ class _Color_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Color)) :
         else :
             return "%s(%s)" % (self.name, v)
     # end def formatted
+
+    def with_alpha (self, alpha) :
+        return self.cast (self, alpha)
+    # end def with_alpha
 
     def __add__ (self, rhs) :
         return str (self) + rhs

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -72,6 +72,7 @@
 #     2-Mar-2014 (CT) Add `_nesting_level` and compare to `hidden_nested`
 #     7-Mar-2014 (CT) Sort `Attrs` by `ui_rank`
 #     6-May-2014 (CT) Add `Show_in_UI_Selector`
+#    23-Jan-2015 (CT) Add `_ui_name_short_T`
 #    ««revision-date»»···
 #--
 
@@ -467,6 +468,16 @@ class _Type_ (TFL.Meta.BaM (_Base_, metaclass = _M_Type_)) :
             (ui_sep, (outer and outer._ui_name_T, self._attr.ui_name_T))
     # end def _ui_name_T
 
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
+    def _ui_name_short_T (self) :
+        outer = self._outer
+        return filtered_join \
+            ( ui_sep
+            , (outer and outer._ui_name_short_T, self._attr.ui_name_short_T)
+            )
+    # end def _ui_name_short_T
+
     def Wrapped (self, outer) :
         assert not self._outer
         return self.__class__ (self._attr, outer)
@@ -738,6 +749,13 @@ class _Id_Entity_NP_ (Id_Entity) :
         return "%s[%s]" % ((self.__super._ui_name_T), _T (self.E_Type.ui_name))
     # end def _ui_name_T
 
+    @property    ### depends on currently selected language (I18N/L10N)
+    @getattr_safe###
+    def _ui_name_short_T (self) :
+        return "%s[%s]" % \
+            ((self.__super._ui_name_short_T), _T (self.E_Type.ui_name))
+    # end def _ui_name_short_T
+
     def Wrapped (self, outer) :
         assert not self._outer
         return self.__class__ (self._E_Type, self._attr, outer)
@@ -836,7 +854,7 @@ class Raw (String) :
 class E_Type (_Container_) :
     """Query object for `E_Type` returning an essential attribute's `AQ`"""
 
-    _id = _q_name = _ui_name_T = None
+    _id = _q_name = _ui_name_T = _ui_name_short_T = None
 
     Show_in_UI_Selector = property (lambda s : True)
 

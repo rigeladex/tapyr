@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -1110,6 +1110,8 @@ _test_attr_wrappers = """
     SRM.Regatta_C
       Kind_Wrapper : Boolean `is_team_race`
           Optional, _User_, _DB_Attr_
+      Kind_Wrapper_Q : Int `max_crew`
+          Query, _Cached_, _Volatile_, _System_
       Kind_Wrapper_R : Link_Ref_List `teams`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
     SRM.Regatta_H
@@ -2538,6 +2540,7 @@ _test_q_able = """
       <SAW : Rev_Ref `last_change`>
       <SAW : Int `last_cid` [mom_id_entity.last_cid]>
       <SAW : Regatta_Event `left` [srm_regatta.left]>
+      <SAW : Int `max_crew`>
       <SAW : String `perma_name` [srm_regatta.perma_name]>
       <SAW : Surrogate `pid` [mom_id_entity.pid]>
       <SAW : Int `races` [srm_regatta.races]>
@@ -3756,6 +3759,7 @@ _test_q_able = """
       last_change                   : last_change
       last_cid                      : last_cid
       left                          : event, left
+      max_crew                      : max_crew
       perma_name                    : perma_name
       pid                           : pid
       races                         : races
@@ -7842,6 +7846,7 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         left                      : srm_regatta.left
+        max_crew                  : <SAW : Int `max_crew`>
         perma_name                : srm_regatta.perma_name
         pid                       : mom_id_entity.pid
         races                     : srm_regatta.races

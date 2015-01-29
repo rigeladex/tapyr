@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -28,9 +28,10 @@
 #    18-Nov-2011 (CT) Import `unicode_literals` from `__future__`
 #    24-Jan-2012 (CT) Correct `club.description`
 #    30-May-2012 (CT) Add attribute `is_cancelled`
-##     9-Jan-2014 (CT) Use `–`, not `--`
-##    17-Jan-2014 (CT) Change attribute `year` to `Attr.Query`
-##    ««revision-date»»···
+#     9-Jan-2014 (CT) Use `–`, not `--`
+#    17-Jan-2014 (CT) Change attribute `year` to `Attr.Query`
+#    10-Feb-2015 (CT) Add `ui_date_short` (`ui_date` without `year`)
+#    ««revision-date»»···
 #--
 
 from   __future__            import unicode_literals
@@ -146,12 +147,12 @@ class Regatta_Event (_Ancestor_Essence) :
 
         # end class title
 
-        class ui_date (A_String) :
+        class _ui_date_ (A_String) :
 
             kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("date", )
-            date_format        = "%d.%m.%Y"
+            ui_name            = _ ("Date")
 
             def computed (self, obj) :
                 date_format   = self.date_format
@@ -167,7 +168,19 @@ class Regatta_Event (_Ancestor_Essence) :
                 return "–".join (result)
             # end def computed
 
+        # end class _ui_date_
+
+        class ui_date (_ui_date_) :
+
+            date_format        = "%d.%m.%Y"
+
         # end class ui_date
+
+        class ui_date_short (_ui_date_) :
+
+            date_format        = "%d.%m."
+
+        # end class ui_date_short
 
         class year (A_Int) :
             """Year in which the regatta happens."""

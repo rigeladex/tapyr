@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -322,6 +322,7 @@ _test_code = r"""
     (<teams.left.perma_name.AQ [Attr.Type.Querier String]>, '-----')
     (<teams.left.races_counted.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.left.year.AQ [Attr.Type.Querier Ckd]>, '-----')
+    (<teams.left.max_crew.AQ [Attr.Type.Querier Ckd]>, '-----')
     (<teams.name.AQ [Attr.Type.Querier String]>, '-----')
     (<teams.club.AQ [Attr.Type.Querier Id_Entity]>, 'SRM.Club')
     (<teams.club.name.AQ [Attr.Type.Querier String]>, '-----')
@@ -445,6 +446,7 @@ _test_code = r"""
     teams__left__perma_name
     teams__left__races_counted
     teams__left__year
+    teams__left__max_crew
     teams__name
     teams__club__name
     teams__club__long_name

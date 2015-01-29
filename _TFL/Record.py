@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2000-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #                     property setters that actually work
 #    10-Oct-2014 (CT) Use `portable_repr`
 #    15-Oct-2014 (CT) Add `_portable_repr_Record`, protect against recursion
+#    23-Jan-2015 (CT) Add support for dotted names to `__setattr__`
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,14 @@ class Record (TFL.Meta.Object) :
     def __setattr__ (self, name, value) :
         if name in self._properties :
             self.__super.__setattr__ (name, value)
+        elif "." in name :
+            this  = self
+            names = name.split (".")
+            for name in names [:-1] :
+                nested = this.__class__ ()
+                setattr (this, name, nested)
+                this   = nested
+            setattr (this, names [-1], value)
         else :
             self._kw [name] = value
     # end def __setattr__

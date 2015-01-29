@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -80,6 +80,9 @@
 #    29-Aug-2014 (CT) Remove `AFS` specific templates
 #    12-Oct-2014 (CT) Add `sk` to `__lt__` to avoid Python-3 exception
 #                     because different types
+#    21-Jan-2015 (CT) Add `ETR_table`
+#    11-Feb-2015 (CT) Factor `SRM` template declarations,
+#                     remove obsolete templates
 #    ««revision-date»»···
 #--
 
@@ -557,6 +560,8 @@ Template ("mf3",           "html/mf3.m.jnj")
 Template ("mf3_input",     "html/MF3/input.m.jnj")
 Template ("mf3_h_cols",    "html/MF3/h_cols.m.jnj", parent_name = "mf3")
 
+Template ("ETR_table",                    "html/ETR/table.m.jnj")
+
 Template ("calendar",                     "html/calendar.jnj")
 Template ("calendar_qx",                  "html/cal/wr.jnj")
 Template ("calendar_day",                 "html/cal_day.jnj")
@@ -564,28 +569,18 @@ Template ("calendar_day_qx",              "html/cal/day.jnj")
 Template ("calendar_week",                "html/cal_week.jnj")
 Template ("console",                      "html/console.jnj")
 Template ("default",                      "html/error.jnj")
-Template ("dynamic_form",                 "html/dynamic_form.jnj")
 Template ("empty_dir",                    "html/empty_dir.jnj")
 Template ("error_email",                  "email/error.jnj")
 Template ("e_type",                       "html/e_type.m.jnj")
 Template ("e_type_admin",                 "html/e_type_admin.jnj")
-Template ("e_type_afs",                   "html/e_type_afs.jnj")
 Template ("e_type_display",               "html/e_type_display.jnj")
 Template ("e_type_doc",                   "html/e_type_doc.jnj")
 Template ("e_type_doc_bare",              "html/e_type_doc_bare.jnj")
-Template ("e_type_change",                "html/e_type_change.jnj")
 Template ("e_type_mf3",                   "html/e_type_mf3.jnj")
 Template ("gallery",                      "html/gallery.jnj")
 Template ("login",                        "html/login.jnj")
 Template ("photo",                        "html/photo.jnj")
 Template ("pns_e_type_doc",               "html/pns_e_type_doc.jnj")
-Template ("regatta_calendar",             "html/regatta_calendar.jnj")
-Template ("regatta_page",                 "html/regatta_page.jnj")
-Template ("regatta_ranking",              "html/regatta_ranking.jnj")
-Template ("regatta_register_email",       "email/regatta_register.jnj")
-Template ("regatta_registration",         "html/regatta_registration.jnj")
-Template ("regatta_result",               "html/regatta_result.jnj")
-Template ("regatta_result_teamrace",      "html/regatta_result_teamrace.jnj")
 Template ("site_admin",                   "html/site_admin.jnj")
 Template ("video",                        "html/video.jnj")
 

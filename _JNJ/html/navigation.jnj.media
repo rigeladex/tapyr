@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package JNJ.
@@ -194,7 +194,7 @@ style_sheet = Style_Sheet \
             , Rule
                 ( "h1"
                 , font_size      = Percent (100)
-                , line_height    = 2.0
+                , line_height    = P.line_height_heading
                 , margin         = TRBL0 (b = Em (1./4))
                 , padding_left   = Em (0.50)
                 , children       =

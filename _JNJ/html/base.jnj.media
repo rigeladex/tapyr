@@ -55,6 +55,8 @@
 #    10-Dec-2014 (CT) Remove `Include` of `reset.media`; pure.css includes reset
 #    16-Jan-2015 (CT) Correct `margin_left` of `.js .pg_body .nav-off-canvas`
 #                     by `padding_left` introduced on 20141205
+#     2-Feb-2015 (CT) Add `.col-set` rules
+#    11-Feb-2015 (CT) Add rule for `td .link .a`
 #    ««revision-date»»···
 #--
 
@@ -110,11 +112,41 @@ style_sheet = Style_Sheet \
         , ** P.nav_col.color_spec_heading
         )
     , Rule
+        ( "td"
+        , children             =
+            [ Rule_Class
+                ( "link"
+                , children     =
+                    [ Rule
+                        ( "a"
+                        , color        = P.color.m_blue
+                        , outline      = 0
+                        , children     = [P.Rule.hover]
+                        )
+                    ]
+                )
+            ]
+        )
+    , Rule
         ( "td", "th"
         , padding              = TRBL (Em (0.15), Em (0.25))
         , vertical_align       = "top"
         , children             =
-            [ Rule_Attr
+            [ Rule_Class
+                ( "col-set"
+                , children             =
+                    [ Rule_Class
+                        ( "l", "m"
+                        , padding_right        = Em (0.25)
+                        )
+                    , Rule_Class
+                        ( "m", "r"
+                        , border_left          = 0
+                        , padding_left         = 0
+                        )
+                    ]
+                )
+            , Rule_Attr
                 ( "[colspan]"
                 , text_align   = "center"
                 )
@@ -156,7 +188,7 @@ style_sheet = Style_Sheet \
                 ( "nav"
                 , background_color = P.nav_col.background_color
                 , font_size        = "small"
-                , line_height      = 1.35
+                , line_height      = P.nav_col.line_height_normal
                 , margin_left      = Percent (-100)
                 , overflow         = "hidden"
                 , padding          = TRBL (Em (1./4), P.col_padding, 0)
@@ -234,7 +266,7 @@ style_sheet = Style_Sheet \
                     , Rule_Child
                         ( "nav"
                         , font_size        = "normal"
-                        , line_height      = 1.50
+                        , line_height      = P.nav_col.line_height_larger
                         , margin           = TRBL0 (Em (0.5))
                         , padding          = TRBL (Em (1./4), 0, 0)
                         , right            = 0
