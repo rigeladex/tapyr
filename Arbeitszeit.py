@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,6 +23,7 @@
 #     7-Jun-2012 (CT) Use `TFL.r_eval`
 #     4-Sep-2012 (CT) Fix bugs, factor functions, add optional fields
 #    29-Mar-2013 (CT) Add meta class `M_Entry` to set `Kind`
+#    30-Jan-2015 (CT) Factor `_Day_Entry_` and `_Sick_`, add `Sick_D`
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,27 @@ class _Entry_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Entry)) :
 
 # end class _Entry_
 
+class _Day_Entry_ (_Entry_) :
+    """Entry measuring work days."""
+
+    granularity   = 1.0
+
+    def __init__ (self, date, days = 1, text = "", ** kw) :
+        self.__super.__init__ (date, text, ** kw)
+        self.days = rounded_to (float (days), self.granularity)
+    # end def __init__
+
+    @Once_Property
+    def formatted_value (self) :
+        return "%2.0f" % (self.days, )
+    # end def formatted_value
+
+    def __float__ (self) :
+        return self.days
+    # end def __float__
+
+# end class _Day_Entry_
+
 class _Hour_Entry_ (_Entry_) :
     """Entry measuring work hours."""
 
@@ -112,41 +134,36 @@ class _Hour_Entry_ (_Entry_) :
 
 # end class _Hour_Entry_
 
-class Work (_Hour_Entry_) :
-    """Entry describing one unit of work."""
-
-    work        = property (TFL.Getter.hours)
-
-# end class Work
-
-class Sick (_Hour_Entry_) :
+class _Sick_ (_Entry_) :
     """Entry describing work lost to sickness."""
 
     sick        = property (TFL.Getter.hours)
 
-# end class Sick
+# end class _Sick_
 
-class Free (_Entry_) :
+class Free (_Day_Entry_) :
     """Entry describing vacation time."""
 
-    free        = property (TFL.Getter.days)
-    granularity = 1.0
-
-    def __init__ (self, date, days, text = "", ** kw) :
-        self.__super.__init__ (date, text, ** kw)
-        self.days = rounded_to (float (days), self.granularity)
-    # end def __init__
-
-    @Once_Property
-    def formatted_value (self) :
-        return "%2.0f" % (self.days, )
-    # end def formatted_value
-
-    def __float__ (self) :
-        return self.days
-    # end def __float__
+    free          = property (TFL.Getter.days)
 
 # end class Free
+
+class Sick (_Sick_, _Hour_Entry_) :
+    """Entry describing work hours lost to sickness."""
+
+# end class Sick
+
+class Sick_D (_Sick_, _Day_Entry_) :
+    """Entry describing work days lost to sickness."""
+
+# end class Sick
+
+class Work (_Hour_Entry_) :
+    """Entry describing one unit of work."""
+
+    work          = property (TFL.Getter.hours)
+
+# end class Work
 
 @pyk.adapt__bool__
 class Period (TFL.Meta.Object) :
@@ -217,9 +234,10 @@ class Period (TFL.Meta.Object) :
 
 def eval_scope (** kw) :
     result = dict \
-        ( Work = Work
-        , Sick = Sick
-        , Free = Free
+        ( Work   = Work
+        , Sick   = Sick
+        , Sick_D = Sick_D
+        , Free   = Free
         )
     result.update (kw)
     return result
