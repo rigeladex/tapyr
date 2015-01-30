@@ -1,6 +1,6 @@
 {#- jinja template: html/mf3.m.jnj -#}
 {#
-## Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
@@ -36,6 +36,8 @@
 ##    21-Nov-2014 (CT) Correct use of `safe` in `do_description`
 ##                     (`safe` applied to `None` returns `"None"`)
 ##    12-Dec-2014 (CT) Add `F_ACT` to `do_form`
+##    30-Jan-2015 (CT) Use `page.request.path` for form `action`
+##                     (to match what `Anti_CSRF` uses; otherwise Aliases break)
 ##    ««revision-date»»···
 ##--
 #}
@@ -123,7 +125,7 @@
 
 {%- macro do_form (page, form, referrer) -%}
   {%- set caller = kwargs.pop ("caller") -%}
-  <form action="{{ page.abs_href }}" {# -#}
+  <form action="{{ page.request.path }}" {# -#}
         class="{{ form.css_class }} pure-form pure-form-aligned" {# -#}
         id="{{ form.id }}"
         method="post" {# -#}

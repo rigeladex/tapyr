@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -125,6 +125,7 @@
 #    29-Apr-2014 (CT) Add `Root._old_cids`
 #    30-Apr-2014 (CT) Move `_new_child` from `Dir_V` to `_Dir_Base_`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    30-Jan-2015 (CT) Add `_RST_Base_.target` returning `self`
 #    ««revision-date»»···
 #--
 
@@ -555,6 +556,12 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     def SUPPORTED_METHODS (self) :
         return self._SUPPORTED_METHODS
     # end def SUPPORTED_METHODS
+
+    @Once_Property
+    @getattr_safe
+    def target (self) :
+        return self
+    # end def target
 
     @property
     @getattr_safe
