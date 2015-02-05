@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2006-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,6 +50,7 @@
 #    21-Aug-2014 (CT)  Add `Add_To_Object`
 #    16-Oct-2014 (CT)  Change `dict_from_class` to return real `dict`,
 #                      remove thunder properties from its result
+#     5-Feb-2015 (CT) Add `default` to `getattr_safe`; factor `_update_wrapper`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,18 @@ from   _TFL.pyk     import pyk
 import _TFL.Undef
 
 import logging
+
+def _update_wrapper (wrapper, wrapped) :
+    try :
+        wrapper.__name__   = wrapped.__name__
+    except AttributeError :
+        pass ### Python 2.6 doesn't support `__name__` for classmethod
+    wrapper.__module__ = getattr (wrapped, "__module__", "<builtin>")
+    wrapper.__doc__    = wrapped.__doc__
+    wrapper.__dict__.update (getattr (wrapped, "__dict__", {}))
+    wrapper._globals   = getattr \
+        (wrapped, "_globals", getattr (wrapped, "__globals__", {}))
+# end def _update_wrapper
 
 def Decorator (decorator) :
     """Decorate `decorator` so that `__name__`, `__doc__`, and `__dict__` of
@@ -95,16 +108,6 @@ def Decorator (decorator) :
            >>> foo.__name__, foo.__doc__
            ('foo', 'Function to test decoration')
     """
-    def _update (wrapper, wrapped) :
-        try :
-            wrapper.__name__   = wrapped.__name__
-        except AttributeError :
-            pass ### Python 2.6 doesn't support `__name__` for classmethod
-        wrapper.__module__ = getattr (wrapped, "__module__", "<builtin>")
-        wrapper.__doc__    = wrapped.__doc__
-        wrapper.__dict__.update (getattr (wrapped, "__dict__", {}))
-        wrapper._globals   = getattr \
-            (wrapped, "_globals", getattr (wrapped, "__globals__", {}))
     def wrapper (f) :
         if isinstance (f, (classmethod, staticmethod)) :
             cors = f.__class__
@@ -117,12 +120,12 @@ def Decorator (decorator) :
                 orig_f.is_classmethod = cors is classmethod
             wrapper    = decorator (orig_f)
             decorated  = cors (wrapper)
-            _update (wrapper, orig_f)
+            _update_wrapper (wrapper, orig_f)
         else :
             decorated = decorator (f)
-            _update (decorated, f)
+            _update_wrapper (decorated, f)
         return decorated
-    _update (wrapper, decorator)
+    _update_wrapper (wrapper, decorator)
     return wrapper
 # end def Decorator
 
@@ -283,9 +286,10 @@ def dict_from_class (cls) :
         )
 # end def dict_from_class
 
-@Decorator
-def getattr_safe (f) :
+def getattr_safe (f = None, default = None) :
     """Protect `f` from raising `AttributeError` (to avoid `__getattr__`)."""
+    if f is None :
+        return lambda f : getattr_safe (f, default = default)
     def _ (* args, ** kw) :
         try :
             return f (* args, ** kw)
@@ -294,6 +298,8 @@ def getattr_safe (f) :
                 ( "Property %s [module %s] triggered AttributeError"
                 , f.__name__, f.__module__
                 )
+            return default
+    _update_wrapper (_, f)
     return _
 # end def getattr_safe
 
