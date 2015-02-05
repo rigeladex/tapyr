@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.SRM.
@@ -45,6 +45,8 @@
 #    26-Mar-2014 (CT) Remove double quotes from `sail_number_x.description`
 #    29-Aug-2014 (CT) Add `syntax` descriptions to `sail_number`, `sail_number_x`
 #    26-Sep-2014 (CT) Add `sail_number.polisher`
+#     5-Feb-2015 (CT) Paranoidify `sail_number.polisher`
+#                     [somebody recently really tried to enter `NAT NAT 1234`]
 #    ««revision-date»»···
 #--
 
@@ -61,16 +63,42 @@ import _GTW._OMP._SRM.Entity
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Regexp              import Multi_Regexp, Regexp, re
 
-_Ancestor_Essence = GTW.OMP.SRM.Link1
+class _Sail_Number_Polisher_ (MOM.Attr.Polisher.Match_Split) :
+    """Polisher splitting a sail-number into nation, sail_number, sail_number_x"""
 
-_sail_number_split = MOM.Attr.Polisher.Match_Split \
-    ( Regexp
-        ( r"^"
-          r"(?:(?P<nation>[A-Za-z]{3}) +)?"
-          r"(?:(?P<sail_number_x>[A-Za-z]+)[- ]*)?"
-          r"(?P<sail_number>\d+)"
-        )
-    )
+    def __init__ (self, ** kw) :
+        matcher = Regexp \
+            ( r"^"
+              r"(?:(?P<nation>[A-Za-z]{3}) +)?"
+              r"(?:(?P<sail_number_x>[A-Za-z]+)[- ]*)?"
+              r"(?P<sail_number>\d+)"
+            )
+        self.__super.__init__ (matcher = matcher, ** kw)
+    # end def __init__
+
+    def _polish (self, attr, name, value, result) :
+        self.__super._polish (attr, name, value, result)
+        undef = object ()
+        snx   = result.get ("sail_number_x", "")
+        if snx :
+            nat = result.get ("nation",      "")
+            num = result.get ("sail_number", "")
+            if nat :
+                l = len (nat)
+                while snx.startswith (nat) :
+                    snx = snx [l:].strip ()
+            if num :
+                l = len (num)
+                while snx.endswith (num) :
+                    snx = snx [:-l].strip ()
+            result ["sail_number_x"] = snx
+    # end def _polish
+
+# end class _Sail_Number_Polisher_
+
+_sail_number_split = _Sail_Number_Polisher_ ()
+
+_Ancestor_Essence = GTW.OMP.SRM.Link1
 
 class Boat (_Ancestor_Essence) :
     """Boat of a specific boat-class."""
