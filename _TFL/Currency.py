@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -26,6 +26,7 @@
 #     7-Jan-2010 (CT) `__str__` moved from `Currency` to `_Currency_`
 #    17-Jun-2010 (CT) `__unicode__` introduced
 #    23-May-2013 (CT) Use `TFL.Meta.BaM` for Python-3 compatibility
+#     6-Feb-2015 (CT) Add `ui_display.add_type`
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,7 @@ from   _TFL.pyk    import pyk
 import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.I18N
+import _TFL.ui_display
 
 import decimal
 import re
@@ -353,6 +355,11 @@ class Currency (_Currency_) :
     # end def _massage_rhs_float
 
 # end class Currency
+
+@TFL.ui_display.add_type (_Currency_)
+def _ui_display_date (obj) :
+    return pyk.text_type (obj)
+# end def _ui_display_date
 
 if __name__ != "__main__" :
     TFL._Export ("*")

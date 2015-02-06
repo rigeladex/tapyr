@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -540,6 +540,9 @@ introduction of the Euro.
     False
     >>> ATS (100) == 7.267283416785971
     True
+
+    >>> print (TFL.ui_display (EUR (42)))
+    42.00 EUR
 
 This module extends TFL.CAO with three argument types:
 
