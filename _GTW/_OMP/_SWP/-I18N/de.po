@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2014 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2015 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: 2014-08-31 11:31+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -33,14 +33,14 @@ msgstr "Kurzfassung"
 #: _GTW._OMP._SWP.Clip:0
 msgid "Clip_O"
 msgid_plural "Clip_Os"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Schnipsel"
+msgstr[1] "Schnipseln"
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Clip_X"
 msgid_plural "Clip_Xs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Schnipsel/X"
+msgstr[1] "Schnipseln/X"
 
 #: _MOM._Attr.A_2D:0
 msgid "D2_Value_Float"
@@ -68,7 +68,7 @@ msgstr "Name für heruntergeladene Datei"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Extension of file holding picture."
-msgstr ""
+msgstr "Dateiendung des Bilds."
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Format"
@@ -84,11 +84,11 @@ msgstr[1] "Gallerien"
 msgid "Gallery to which this picture belongs."
 msgstr "Gallerie, zu der das Bild gehört."
 
-#: _GTW/_OMP/_SWP/graph.py:65
+#: _GTW/_OMP/_SWP/graph.py:55
 msgid "Graph displaying SWP partial object model"
 msgstr "Graphische Darstellung des SWP Modells"
 
-#: _GTW/_OMP/_SWP/Format.py:102
+#: _GTW/_OMP/_SWP/Format.py:96
 #, python-format
 msgid ""
 "HTML must not contain any of the tags:\n"
@@ -98,7 +98,7 @@ msgstr ""
 "enthalten:\n"
 "%s"
 
-#: _GTW/_OMP/_SWP/Format.py:96
+#: _GTW/_OMP/_SWP/Format.py:90
 #, python-format
 msgid ""
 "HTML must not contain comments:\n"
@@ -253,10 +253,10 @@ msgstr "Publikations- und Verfallsdatum"
 #: _GTW._OMP._SWP.Referral:0
 msgid "Referral"
 msgid_plural "Referrals"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Querverweis"
+msgstr[1] "Querverweise"
 
-#: _GTW/_OMP/_SWP/graph.py:66
+#: _GTW/_OMP/_SWP/graph.py:56
 msgid "SWP graph"
 msgstr ""
 
@@ -291,10 +291,6 @@ msgstr "Miniaturbild"
 #: _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
 msgstr "Miniaturbild"
-
-#: _GTW._OMP._SWP.Object_PN:0 _GTW._OMP._SWP.Clip:0
-msgid "Title"
-msgstr "Titel"
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Title of news clip."
@@ -349,4 +345,7 @@ msgstr "Jahr, auf das sich die Webseite bezieht."
 #: _GTW._OMP._SWP.Clip:0
 msgid "date"
 msgstr "Datum"
+
+#~ msgid "Title"
+#~ msgstr "Titel"
 

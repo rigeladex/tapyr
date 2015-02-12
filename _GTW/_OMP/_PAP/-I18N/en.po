@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -22,8 +22,8 @@ msgstr ""
 msgid "Academic title"
 msgstr ""
 
-#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Email:0
-#: _GTW._OMP._PAP.Address_Position:0 _GTW._OMP._PAP.Subject_has_Property:0
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Address_Position:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] ""
@@ -120,6 +120,11 @@ msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr ""
 
 #: _GTW._OMP._PAP.Email:0
+#, fuzzy
+msgid "Email address"
+msgstr ""
+
+#: _GTW._OMP._PAP.Email:0
 msgid "Email address (including domain)"
 msgstr ""
 
@@ -143,11 +148,11 @@ msgstr ""
 msgid "Extension number used in PBX"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Attr_Type.py:52
+#: _GTW/_OMP/_PAP/Attr_Type.py:43
 msgid "Female"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/IM_Handle.py:52
+#: _GTW/_OMP/_PAP/IM_Handle.py:42
 msgid "First internet-wide instant messaging service"
 msgstr ""
 
@@ -175,7 +180,7 @@ msgstr ""
 msgid "Geographical position of an Address."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/graph.py:95
+#: _GTW/_OMP/_PAP/graph.py:85
 msgid "Graph displaying PAP partial object model"
 msgstr ""
 
@@ -191,7 +196,7 @@ msgstr ""
 msgid "International country code of phone number (without prefix)"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/IM_Handle.py:53
+#: _GTW/_OMP/_PAP/IM_Handle.py:43
 msgid "Internet relay chat"
 msgstr ""
 
@@ -253,7 +258,7 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Attr_Type.py:53
+#: _GTW/_OMP/_PAP/Attr_Type.py:44
 msgid "Male"
 msgstr ""
 
@@ -305,11 +310,11 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Property.py:63
+#: _GTW/_OMP/_PAP/Property.py:53
 msgid "Office"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/graph.py:96
+#: _GTW/_OMP/_PAP/graph.py:86
 msgid "PAP graph"
 msgstr ""
 
@@ -531,6 +536,10 @@ msgid "Subject_has_Url"
 msgid_plural "Subject_has_Urls"
 msgstr[0] ""
 msgstr[1] ""
+
+#: _GTW/_OMP/_PAP/Person.py:164
+msgid "Title"
+msgstr ""
 
 #: _GTW._OMP._PAP.Url:0
 msgid "URL value referrring to a specific resource."

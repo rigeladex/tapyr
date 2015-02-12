@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2014 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2015 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: 2014-08-31 11:27+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -22,8 +22,8 @@ msgstr ""
 msgid "Academic title"
 msgstr "Akademischer Titel"
 
-#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Email:0
-#: _GTW._OMP._PAP.Address_Position:0 _GTW._OMP._PAP.Subject_has_Property:0
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Address_Position:0
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Address"
 msgid_plural "Addresses"
 msgstr[0] "Adresse"
@@ -118,12 +118,12 @@ msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr "Geburtstag (und Sterbetag)"
 
 #: _GTW._OMP._PAP.Email:0
-msgid "Email address (including domain)"
-msgstr "Emailadresse (inkl. Domain)"
-
-#: _GTW._OMP._PAP.Email:0
 msgid "Email address"
 msgstr "Emailadresse"
+
+#: _GTW._OMP._PAP.Email:0
+msgid "Email address (including domain)"
+msgstr "Emailadresse (inkl. Domain)"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Email of company"
@@ -145,11 +145,11 @@ msgstr "Durchwahl"
 msgid "Extension number used in PBX"
 msgstr "Durchwahl"
 
-#: _GTW/_OMP/_PAP/Attr_Type.py:52
+#: _GTW/_OMP/_PAP/Attr_Type.py:43
 msgid "Female"
 msgstr "Weiblich"
 
-#: _GTW/_OMP/_PAP/IM_Handle.py:52
+#: _GTW/_OMP/_PAP/IM_Handle.py:42
 msgid "First internet-wide instant messaging service"
 msgstr "Erstes internetweites Sofortnachrichtensystem"
 
@@ -177,7 +177,7 @@ msgstr "Koordinaten"
 msgid "Geographical position of an Address."
 msgstr "Koordinaten der Adresse."
 
-#: _GTW/_OMP/_PAP/graph.py:95
+#: _GTW/_OMP/_PAP/graph.py:85
 msgid "Graph displaying PAP partial object model"
 msgstr "Graphische Darstellung des PAP Modells"
 
@@ -193,7 +193,7 @@ msgstr "Höhe über dem Meererspiegel"
 msgid "International country code of phone number (without prefix)"
 msgstr "Internationale Landesvorwahl (ohne landespezifische Startziffern)"
 
-#: _GTW/_OMP/_PAP/IM_Handle.py:53
+#: _GTW/_OMP/_PAP/IM_Handle.py:43
 msgid "Internet relay chat"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgstr "Verknüpfe Person mit Webadresse"
 msgid "Longitude"
 msgstr "Länge"
 
-#: _GTW/_OMP/_PAP/Attr_Type.py:53
+#: _GTW/_OMP/_PAP/Attr_Type.py:44
 msgid "Male"
 msgstr "Männlich"
 
@@ -307,11 +307,11 @@ msgstr "Vorwahl"
 msgid "Number"
 msgstr "Nummer"
 
-#: _GTW/_OMP/_PAP/Property.py:63
+#: _GTW/_OMP/_PAP/Property.py:53
 msgid "Office"
 msgstr "Büro"
 
-#: _GTW/_OMP/_PAP/graph.py:96
+#: _GTW/_OMP/_PAP/graph.py:86
 msgid "PAP graph"
 msgstr ""
 
@@ -479,8 +479,8 @@ msgstr "Strasse (oder Platz) und Hausnummer"
 #: _GTW._OMP._PAP.Subject:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject"
 msgid_plural "Subjects"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Subjekt"
+msgstr[1] "Subjekte"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Address"
@@ -523,14 +523,18 @@ msgstr[1] "Subjekt hat Telefone"
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject_has_Property"
 msgid_plural "Subject_has_Propertys"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Subjekt hat Eigenschaft"
+msgstr[1] "Subjekte haben Eigenschaften"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject_has_Url"
 msgid_plural "Subject_has_Urls"
 msgstr[0] "Subjekt hat Webadresse"
 msgstr[1] "Subjekt hat Webadressen"
+
+#: _GTW/_OMP/_PAP/Person.py:164
+msgid "Title"
+msgstr "Titel"
 
 #: _GTW._OMP._PAP.Url:0
 msgid "URL value referrring to a specific resource."
@@ -572,3 +576,4 @@ msgstr "Postleitzahl der Adresse"
 
 #~ msgid ""
 #~ msgstr "Anrede, die in Briefen oder Emails verwendet werden soll."
+

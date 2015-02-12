@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -89,18 +89,18 @@ msgstr[1] ""
 msgid "Gallery to which this picture belongs."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/graph.py:65
+#: _GTW/_OMP/_SWP/graph.py:55
 msgid "Graph displaying SWP partial object model"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Format.py:102
+#: _GTW/_OMP/_SWP/Format.py:96
 #, python-format
 msgid ""
 "HTML must not contain any of the tags:\n"
 "%s"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Format.py:96
+#: _GTW/_OMP/_SWP/Format.py:90
 #, python-format
 msgid ""
 "HTML must not contain comments:\n"
@@ -259,7 +259,7 @@ msgid_plural "Referrals"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_SWP/graph.py:66
+#: _GTW/_OMP/_SWP/graph.py:56
 msgid "SWP graph"
 msgstr ""
 
@@ -291,11 +291,6 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
-msgstr ""
-
-#: _GTW._OMP._SWP.Object_PN:0 _GTW._OMP._SWP.Clip:0
-#, fuzzy
-msgid "Title"
 msgstr ""
 
 #: _GTW._OMP._SWP.Clip:0
@@ -353,4 +348,7 @@ msgstr ""
 #, fuzzy
 msgid "date"
 msgstr ""
+
+#~ msgid "Title"
+#~ msgstr ""
 

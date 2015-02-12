@@ -1,5 +1,5 @@
 # German translations for MOM/GTW/JNJ.
-# Copyright (C) 2010-2014 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2010-2015 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: 2014-08-31 11:27+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -77,7 +77,7 @@ msgstr "Aktivierung des Benutzerkontos."
 msgid "An acount which uses passwords for authorization."
 msgstr "Ein Benutzerkonto, das zur Anmeldung ein Kennwort benötigt."
 
-#: _GTW/_OMP/_Auth/graph.py:64
+#: _GTW/_OMP/_Auth/graph.py:54
 msgid "Auth graph"
 msgstr ""
 
@@ -98,8 +98,8 @@ msgstr "Datum und Uhrzeit, zu dem das Zertifikat ungültig erklärt wurde"
 #: _MOM._Attr.Date_Time_Interval:0
 msgid "Date_Time_Interval"
 msgid_plural "Date_Time_Intervals"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Datum/Zeit Interval"
+msgstr[1] "Datum/Zeit Intervalle"
 
 #: _MOM._Attr.Date_Time_Interval:0
 msgid "Date_Time_Interval_C"
@@ -147,7 +147,7 @@ msgstr "Verfalldatum für diese Aktion"
 msgid "Expires"
 msgstr "Verfällt"
 
-#: _GTW/_OMP/_Auth/graph.py:63
+#: _GTW/_OMP/_Auth/graph.py:53
 msgid "Graph displaying Auth partial object model"
 msgstr "Graphische Darstellung des Auth-Models"
 

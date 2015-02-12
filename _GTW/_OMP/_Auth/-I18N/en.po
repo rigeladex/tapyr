@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgstr ""
 msgid "An acount which uses passwords for authorization."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/graph.py:64
+#: _GTW/_OMP/_Auth/graph.py:54
 msgid "Auth graph"
 msgstr ""
 
@@ -155,7 +155,7 @@ msgstr ""
 msgid "Expires"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/graph.py:63
+#: _GTW/_OMP/_Auth/graph.py:53
 msgid "Graph displaying Auth partial object model"
 msgstr ""
 

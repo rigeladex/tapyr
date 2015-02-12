@@ -1,15 +1,15 @@
 # Translations template for MOM/GTW/JNJ.
-# Copyright (C) 2014 Mag. Christian Tanzer, Martin Glueck
+# Copyright (C) 2015 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2014-08-31 13:06+0200\n"
+"POT-Creation-Date: 2015-02-12 12:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,11 +40,11 @@ msgstr ""
 msgid "A team of sailors participating in a regatta."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:68
+#: _GTW/_OMP/_SRM/Attr_Type.py:58
 msgid "Australia"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:69
+#: _GTW/_OMP/_SRM/Attr_Type.py:59
 msgid "Austria"
 msgstr ""
 
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Beam"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:70
+#: _GTW/_OMP/_SRM/Attr_Type.py:60
 msgid "Belgium"
 msgstr ""
 
@@ -99,24 +99,13 @@ msgstr[1] ""
 msgid "Boolean attribute."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:71
+#: _GTW/_OMP/_SRM/Attr_Type.py:61
 msgid "Canada"
-msgstr ""
-
-#: _GTW._OMP._SRM.Boat:0
-msgid "Class"
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Class of boats sailing in this regatta."
 msgstr ""
-
-#: _GTW._OMP._SRM.Club:0 _GTW._OMP._SRM.Regatta_Event:0 _GTW._OMP._SRM.Sailor:0
-#: _GTW._OMP._SRM.Team:0
-msgid "Club"
-msgid_plural "Clubs"
-msgstr[0] ""
-msgstr[1] ""
 
 #: _GTW._OMP._SRM.Regatta_Event:0
 msgid "Club that organizes the regatta."
@@ -144,15 +133,15 @@ msgid_plural "Crew_Members"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:72
+#: _GTW/_OMP/_SRM/Attr_Type.py:62
 msgid "Croatia"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:73
+#: _GTW/_OMP/_SRM/Attr_Type.py:63
 msgid "Cyprus"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:74
+#: _GTW/_OMP/_SRM/Attr_Type.py:64
 msgid "Czech Republic"
 msgstr ""
 
@@ -160,7 +149,7 @@ msgstr ""
 msgid "Date of regatta result."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:75
+#: _GTW/_OMP/_SRM/Attr_Type.py:65
 msgid "Denmark"
 msgstr ""
 
@@ -176,7 +165,7 @@ msgstr ""
 msgid "Discards"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:77
+#: _GTW/_OMP/_SRM/Attr_Type.py:67
 msgid "Estonia"
 msgstr ""
 
@@ -184,27 +173,27 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:78
+#: _GTW/_OMP/_SRM/Attr_Type.py:68
 msgid "Finland"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:79
+#: _GTW/_OMP/_SRM/Attr_Type.py:69
 msgid "France"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:81
+#: _GTW/_OMP/_SRM/Attr_Type.py:71
 msgid "Germany"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/graph.py:98
+#: _GTW/_OMP/_SRM/graph.py:88
 msgid "Graph displaying SRM partial object model"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:80
+#: _GTW/_OMP/_SRM/Attr_Type.py:70
 msgid "Great Britain"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:82
+#: _GTW/_OMP/_SRM/Attr_Type.py:72
 msgid "Greece"
 msgstr ""
 
@@ -214,11 +203,11 @@ msgid_plural "Handicaps"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:83
+#: _GTW/_OMP/_SRM/Attr_Type.py:73
 msgid "Hungary"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:85
+#: _GTW/_OMP/_SRM/Attr_Type.py:75
 msgid "Iceland"
 msgstr ""
 
@@ -230,7 +219,7 @@ msgstr ""
 msgid "Information about result."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:84
+#: _GTW/_OMP/_SRM/Attr_Type.py:74
 msgid "Ireland"
 msgstr ""
 
@@ -242,7 +231,7 @@ msgstr ""
 msgid "Is team race"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:86
+#: _GTW/_OMP/_SRM/Attr_Type.py:76
 msgid "Italy"
 msgstr ""
 
@@ -251,14 +240,10 @@ msgid "Key"
 msgstr ""
 
 #: _GTW._OMP._SRM.Regatta:0
-msgid "Kind"
-msgstr ""
-
-#: _GTW._OMP._SRM.Regatta:0
 msgid "Kind of regatta."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:87
+#: _GTW/_OMP/_SRM/Attr_Type.py:77
 msgid "Latvia"
 msgstr ""
 
@@ -274,11 +259,11 @@ msgstr ""
 msgid "Length over all (in meters)."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:88
+#: _GTW/_OMP/_SRM/Attr_Type.py:78
 msgid "Lichtenstein"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:89
+#: _GTW/_OMP/_SRM/Attr_Type.py:79
 msgid "Lithuania"
 msgstr ""
 
@@ -294,11 +279,11 @@ msgstr ""
 msgid "Long name of the sailing club."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:90
+#: _GTW/_OMP/_SRM/Attr_Type.py:80
 msgid "Luxembourg"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:91
+#: _GTW/_OMP/_SRM/Attr_Type.py:81
 msgid "Malta"
 msgstr ""
 
@@ -330,11 +315,11 @@ msgstr ""
 msgid "Model a handicap formula for sailboats."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:93
+#: _GTW/_OMP/_SRM/Attr_Type.py:83
 msgid "Monaco"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:92
+#: _GTW/_OMP/_SRM/Attr_Type.py:82
 msgid "Montenegro"
 msgstr ""
 
@@ -374,15 +359,15 @@ msgstr ""
 msgid "Nation for which the sailor sails."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:94
+#: _GTW/_OMP/_SRM/Attr_Type.py:84
 msgid "Netherlands"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:96
+#: _GTW/_OMP/_SRM/Attr_Type.py:86
 msgid "New Zealand"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:95
+#: _GTW/_OMP/_SRM/Attr_Type.py:85
 msgid "Norway"
 msgstr ""
 
@@ -428,20 +413,16 @@ msgstr ""
 msgid "Points of boat in this race."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:97
+#: _GTW/_OMP/_SRM/Attr_Type.py:87
 msgid "Poland"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:98
+#: _GTW/_OMP/_SRM/Attr_Type.py:88
 msgid "Portugal"
 msgstr ""
 
 #: _GTW._OMP._SRM.Attr_Type:0
 msgid "Provide information about the result of a regatta."
-msgstr ""
-
-#: _GTW._OMP._SRM.Race_Result:0
-msgid "Race"
 msgstr ""
 
 #: _GTW._OMP._SRM.Race_Result:0
@@ -457,13 +438,6 @@ msgstr[1] ""
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Races"
 msgstr ""
-
-#: _GTW._OMP._SRM.Regatta:0 _GTW._OMP._SRM.Boat_in_Regatta:0
-#: _GTW._OMP._SRM.Team:0
-msgid "Regatta"
-msgid_plural "Regattas"
-msgstr[0] ""
-msgstr[1] ""
 
 #: _GTW._OMP._SRM.Boat_in_Regatta:0
 msgid "Regatta a boat races in."
@@ -531,15 +505,15 @@ msgstr ""
 msgid "Role of crew member."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:99
+#: _GTW/_OMP/_SRM/Attr_Type.py:89
 msgid "Romania"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:101
+#: _GTW/_OMP/_SRM/Attr_Type.py:91
 msgid "Russia"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/graph.py:99
+#: _GTW/_OMP/_SRM/graph.py:89
 msgid "SRM graph"
 msgstr ""
 
@@ -571,17 +545,11 @@ msgstr ""
 msgid "Sailing team boats sail for in regatta."
 msgstr ""
 
-#: _GTW._OMP._SRM.Sailor:0 _GTW._OMP._SRM.Crew_Member:0
-msgid "Sailor"
-msgid_plural "Sailors"
-msgstr[0] ""
-msgstr[1] ""
-
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Seal area upwind (in square meters)."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:103
+#: _GTW/_OMP/_SRM/Attr_Type.py:93
 msgid "Serbia"
 msgstr ""
 
@@ -605,11 +573,11 @@ msgstr ""
 msgid "Skipper of boat."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:105
+#: _GTW/_OMP/_SRM/Attr_Type.py:95
 msgid "Slovakia"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:102
+#: _GTW/_OMP/_SRM/Attr_Type.py:92
 msgid "Slovenia"
 msgstr ""
 
@@ -617,11 +585,11 @@ msgstr ""
 msgid "Software"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:100
+#: _GTW/_OMP/_SRM/Attr_Type.py:90
 msgid "South Africa"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:76
+#: _GTW/_OMP/_SRM/Attr_Type.py:66
 msgid "Spain"
 msgstr ""
 
@@ -641,11 +609,11 @@ msgstr ""
 msgid "Status of result (e.g., `preliminary` or `final`)."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:106
+#: _GTW/_OMP/_SRM/Attr_Type.py:96
 msgid "Sweden"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:104
+#: _GTW/_OMP/_SRM/Attr_Type.py:94
 msgid "Switzerland"
 msgstr ""
 
@@ -681,11 +649,11 @@ msgstr ""
 msgid "Total points of boat in this regatta."
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:107
+#: _GTW/_OMP/_SRM/Attr_Type.py:97
 msgid "Ukraine"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Attr_Type.py:108
+#: _GTW/_OMP/_SRM/Attr_Type.py:98
 msgid "United States"
 msgstr ""
 
@@ -721,7 +689,7 @@ msgstr ""
 msgid "crew_number_valid"
 msgstr ""
 
-#: _GTW/_OMP/_SRM/Crew_Member.py:99
+#: _GTW/_OMP/_SRM/Crew_Member.py:89
 msgid "trimmer"
 msgstr ""
 
