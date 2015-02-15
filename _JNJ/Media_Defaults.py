@@ -54,6 +54,7 @@
 #    16-Jan-2015 (CT) Change `nav_col.width` and `col_padding` to unit `Rem`
 #    23-Jan-2015 (CT) Add `color_jnd_grey`, reduce contrast of `color_spec_row1`
 #    23-Jan-2015 (CT) Factor `line_height*` parameters
+#    15-Feb-2015 (CT) Add `menu_icon`
 #    ««revision-date»»···
 #--
 
@@ -375,6 +376,16 @@ class Media_Defaults (Definition) :
             )
 
     # end class breakpoint
+
+    class menu_icon (Definition) :
+
+        color                  = P.R.color_selected
+        line_width             = Rem (0.1875)
+        margin_ab              = Em (0.4375)
+        margin_m               = Em (0.125)
+        width                  = Em  (1.25)
+
+    # end class menu_icon
 
     class nav_col (Definition) :
 

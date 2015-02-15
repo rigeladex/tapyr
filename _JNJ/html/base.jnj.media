@@ -57,6 +57,7 @@
 #                     by `padding_left` introduced on 20141205
 #     2-Feb-2015 (CT) Add `.col-set` rules
 #    11-Feb-2015 (CT) Add rule for `td .link .a`
+#    15-Feb-2015 (CT) Add rules for `.menu-icon`
 #    ««revision-date»»···
 #--
 
@@ -198,7 +199,14 @@ style_sheet = Style_Sheet \
             , Rule
                 ( ".pg_nav_show"
                 , display          = "none"
+                , outline          = 0
                 , visibility       = "hidden"
+                , children         =
+                    [ Rule
+                        ( "a"
+                        , outline  = 0
+                        )
+                    ]
                 )
             ]
         )
@@ -418,6 +426,43 @@ style_sheet = Style_Sheet \
     , Rule
         ( ".section + .section"
         , margin_top     = Em (0.5)
+        )
+    ### CSS menu-icon
+    ,  Rule
+        ( ".menu-icon", ".menu-icon::before", ".menu-icon::after"
+        , Border
+            ( color          = C_TRBL0 (b = P.menu_icon.color)
+            , style          = "solid"
+            , width          = TRBL0   (b = P.menu_icon.line_width)
+            )
+        , Box
+            ( sizing         = "border-box"
+            )
+        , background_color   = "transparent"
+        , height             = P.menu_icon.line_width
+        , width              = P.menu_icon.width
+        )
+    , Rule
+        ( ".menu-icon"
+        , display            = "inline-block"
+        , margin_bottom      = P.menu_icon.margin_m
+        , text_align         = "left"
+        , vertical_align     = "middle"
+        , children           =
+            [ Rule_Pseudo
+                ( "after", "before"
+                , content            = '""'
+                , position           = "absolute"
+                )
+            , Rule_Pseudo
+                ( "after"
+                , margin_top         = + P.menu_icon.margin_ab
+                )
+            , Rule_Pseudo
+                ( "before"
+                , margin_top         = - P.menu_icon.margin_ab
+                )
+            ]
         )
     ### CSS arrows
     ###     http://www.dinnermint.org/blog/css/creating-triangles-in-css/
