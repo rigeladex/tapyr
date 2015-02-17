@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1999-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ATAX.
@@ -157,6 +157,7 @@
 #     4-Dec-2014 (MG) Add `T_Account.calculation_method` to allow
 #                     customization of calculation method
 #     4-Dec-2014 (CT) Remove debug output for `calculation_method`
+#    17-Feb-2015 (CT) Move values for `ignore` to `Config`, out of `__init__`
 #    ««revision-date»»···
 #--
 
@@ -433,6 +434,7 @@ class Account (_Base_):
 
     Entry          = Account_Entry
 
+    ignore         = ()
     gewerbe_anteil = 0
     privat         = {}
 
@@ -441,7 +443,7 @@ class Account (_Base_):
         self.vst_korrektur  = vst_korrektur
         self.entries        = []
         self.privat         = dict (self.privat)
-        self.ignore         = set (("83003", "83013", "83006", "83016"))
+        self.ignore         = set  (self.__class__.ignore)
         self._finished      = False
     # end def __init__
 
@@ -1448,12 +1450,8 @@ class H_Account (T_Account) :
 
     Ancestor = __Ancestor = T_Account
     Entry    = H_Account_Entry
+    ignore             = () ### DON'T IGNORE ANYTHING HERE
     t_konto_ignore_pat = Regexp (r"^DON'T MATCH ANYTHING HERE$", re.X)
-
-    def __init__ (self, * args, ** kw) :
-        self.__Ancestor.__init__ (self, * args, ** kw)
-        self.ignore = set ()
-    # end def __init__
 
     def _effective_amount (self, entry, amount) :
         return amount
