@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,10 @@
 #    24-Sep-2014 (CT) Creation
 #    26-Sep-2014 (CT) Add `guard`, `capitalize_if_not_mixed_case`,
 #                     `capitalize_if_lower_case`
+#    26-Feb-2015 (CT) Change `_polish` to `_polished`
+#                     + return new dict instead of updating parameter
+#    26-Feb-2015 (CT) Change `area_code_clean` to `area_code_split`;
+#                     factor, add patterns to, and improve `_phone_multi_regexp`
 #    ««revision-date»»···
 #--
 
@@ -52,21 +56,22 @@ class _Polisher_ (TFL.Meta.Object) :
         result = dict (value_dict)
         name   = attr.name
         if value is None :
-            value = value_dict.get (name)
+            value  = value_dict.get (name)
         if isinstance (value, pyk.string_types) :
-            guard = self.guard
-            value = value.strip ()
+            guard  = self.guard
+            value  = value.strip ()
             if value and (guard is None or guard (value)) :
-                self._polish (attr, name, value, result)
+                polished = self._polished (attr, name, value, value_dict)
+                result.update (polished)
         return result
     # end def __call__
 
-    def _polish (self, attr, name, value, value_dict) :
+    def _polished (self, attr, name, value, value_dict) :
         raise NotImplementedError \
-            ( "%s needs to implement either __call__ or _polish"
+            ( "%s needs to implement either __call__ or _polished"
             % (self.__class__, )
             )
-    # end def __call__
+    # end def _polished
 
 # end class _Polisher_
 
@@ -83,14 +88,16 @@ class Match_Split (_Polisher_) :
         self.matcher.add (* matchers, ** kw)
     # end def add
 
-    def _polish (self, attr, name, value, result) :
-        match = self.matcher.search (value)
+    def _polished (self, attr, name, value, value_dict) :
+        result = {}
+        match  = self.matcher.search (value)
         if match is not None :
             dct = match.groupdict ()
             for k, v in pyk.iteritems (dct) :
                 if v is not None :
                     result [k] = v
-    # end def _polish
+        return result
+    # end def _polished
 
 # end class Match_Split
 
@@ -101,9 +108,10 @@ class Replace (_Polisher_) :
         self.__super.__init__ (replacer = replacer, ** kw)
     # end def __init__
 
-    def _polish (self, attr, name, value, result) :
-        result [name] = self.replacer (value)
-    # end def _polish
+    def _polished (self, attr, name, value, value_dict) :
+        result = { name : self.replacer (value) }
+        return result
+    # end def _polished
 
 # end class Replace
 
@@ -113,7 +121,7 @@ def _capitalize_words (match) :
     return result
 # end def _capitalize_words
 
-### `_uni_case_word` whould use `[:lower:]` and `[:upper:]` but
+### `_uni_case_word` should use `[:lower:]` and `[:upper:]` but
 ### unfortunately Python regular expressions don't support these
 _uni_case_word_pat = \
     ( r"("
@@ -155,18 +163,15 @@ capitalize_last_word = Replace \
 
 _area_code_pat     = r"(?P<area_code>\d+)"
 _country_code_pat  = r"(?:(?:\+ *|00)(?P<country_code>\d+))"
-_number_pat        = r"(?P<number>\d+)"
+_number_pat        = r"(?P<number>\d+)\s*"
 
-area_code_clean    = Match_Split (r"^0 *" + _area_code_pat + r"$")
-country_code_clean = Match_Split (r"^" + _country_code_pat + r"$")
-phone_number_split = Match_Split \
-    ( Multi_Regexp
+def _phone_multi_regexp (tail = "") :
+    return Multi_Regexp \
         ( Regexp
             ( r"^"
             + r"(?:" + _country_code_pat + " +|0 *)?"
             + _area_code_pat
-            + r" "
-            + _number_pat
+            + ((r" " + tail) if tail else "")
             + r"$"
             , re.UNICODE
             )
@@ -176,12 +181,35 @@ phone_number_split = Match_Split \
             + r"\("
             + _area_code_pat
             + r"\) *"
-            + _number_pat
+            + tail
+            + r"$"
+            , re.UNICODE
+            )
+        , Regexp
+            ( r"^"
+            + r"(?:" + _country_code_pat + "|0)? *"
+            + r"/"
+            + _area_code_pat
+            + r"/"
+            + ("" if tail else "?")
+            + " *"
+            + tail
+            + r"$"
+            , re.UNICODE
+            )
+        , Regexp
+            ( r"^"
+            + r"(?:" + _country_code_pat + "|0)? *"
+            + ((r" +" + tail) if tail else "")
             + r"$"
             , re.UNICODE
             )
         )
-    )
+# end def _phone_multi_regexp
+
+area_code_split    = Match_Split (_phone_multi_regexp ())
+country_code_clean = Match_Split (r"^" + _country_code_pat + r"$")
+phone_number_split = Match_Split (_phone_multi_regexp (_number_pat))
 
 _test_capitalize = """
     >>> from _TFL.Record import Record
@@ -296,13 +324,13 @@ _test_capitalize = """
 
 """
 
-_test_area_code_clean = r"""
+_test_area_code_split = r"""
     >>> from _TFL.Record import Record
 
     >>> attr = Record (name = "area_code")
 
     >>> def show_split (v) :
-    ...     r  = area_code_clean (attr, dict (area_code = v))
+    ...     r  = area_code_split (attr, dict (area_code = v))
     ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()))
     ...     print (", ".join (vs))
 
@@ -381,10 +409,16 @@ _test_phone_number_split = r"""
     >>> show_split ("0 (664) 12345678")
     area_code = 664, number = 12345678
 
+    >>> show_split ("43 66412345678")
+    area_code = 43, number = 66412345678
+
+    >>> show_split ("+43 66412345678")
+    country_code = 43, number = 66412345678
+
 """
 
 __test__ = dict \
-    ( test_area_code_clean    = _test_area_code_clean
+    ( test_area_code_split    = _test_area_code_split
     , test_country_code_clean = _test_country_code_clean
     , test_capitalize         = _test_capitalize
     , test_phone_number_split = _test_phone_number_split

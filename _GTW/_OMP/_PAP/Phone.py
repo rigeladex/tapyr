@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -29,16 +29,176 @@
 #     7-Mar-2014 (CT) Add `ui_rank` in reverse order of `rank`
 #                     (to improve completion)
 #    24-Sep-2014 (CT) Add `polisher` to `country_code`, `area_code`, `number`
+#    26-Feb-2015 (CT) Add `_Area_Code_Polisher_`, `_Number_Polisher_` to fix
+#                     erroneous input values
 #    ««revision-date»»···
 #--
 
-from   __future__            import unicode_literals
+from   __future__               import unicode_literals
 
-from   _MOM.import_MOM        import *
-from   _GTW                   import GTW
-from   _GTW._OMP._PAP         import PAP
+from   _MOM.import_MOM          import *
+from   _GTW                     import GTW
+from   _GTW._OMP._PAP           import PAP
 
 import _GTW._OMP._PAP.Property
+
+from   _TFL._Meta.Once_Property import Once_Property
+
+class _Area_Code_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+    """Polisher for `area_code`, `country_code` attributes."""
+
+    @Once_Property
+    def splitter (self) :
+        return Attr.Polisher.area_code_split
+    # end def splitter
+
+    def _polished (self, attr, name, value, value_dict) :
+        result  = self.splitter._polished (attr, name, value, value_dict)
+        if result and (name not in result or value == "0") :
+            ### user entered a `country_code` or just `0` into the
+            ### input-field for `area_code` --> remove that value
+            result [name] = ""
+        return result
+    # end def _polished
+
+# end class _Area_Code_Polisher_
+
+class _Number_Polisher_ (MOM.Attr.Polisher._Polisher_) :
+    """Polisher for `country_code`, `area_code`, `number` attributes."""
+
+    @Once_Property
+    def splitter (self) :
+        return Attr.Polisher.phone_number_split
+    # end def splitter
+
+    def _polished (self, attr, name, value, value_dict) :
+        result = self.splitter (attr, value_dict, value)
+        cc     = result.get ("country_code", "")
+        ac     = result.get ("area_code",    "")
+        if ac and ac == cc :
+            ### user entered something like `43 123456789` into the
+            ### input-field for `number` while there was a value of `43` in
+            ### the input-field for `country_code`
+            ### --> remove that value unless the user explicitly entered
+            ###     `43 43 123456789`
+            match = self.splitter.matcher.search (value)
+            if match :
+                dct = match.groupdict ()
+                acm = dct.get ("area_code")
+                ccm = dct.get ("country_code")
+                if acm and ccm :
+                    ac = ""
+            if ac :
+                result.pop ("area_code")
+        return result
+    # end def _polished
+
+# end class _Number_Polisher_
+
+_test_polisher = """
+
+    >>> from _TFL.Record import Record
+
+    >>> attr     = Record (name = "number")
+    >>> polisher = _Number_Polisher_ ()
+    >>> def show_c_a_n (number, ** kw) :
+    ...     r  = polisher (attr, dict (number = number, ** kw))
+    ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()) if v)
+    ...     print (", ".join (vs))
+
+    >>> show_c_a_n ("43 66412345678", country_code = "43")
+    country_code = 43, number = 66412345678
+
+    >>> show_c_a_n ("43 43 66412345678", country_code = "43")
+    country_code = 43, number = 43 43 66412345678
+
+    >>> show_c_a_n ("+43 43 66412345678", country_code = "43")
+    area_code = 43, country_code = 43, number = 66412345678
+
+    >>> show_c_a_n ("12345678")
+    number = 12345678
+
+    >>> show_c_a_n ("0043 664 12345678")
+    area_code = 664, country_code = 43, number = 12345678
+
+    >>> show_c_a_n ("+43 664 12345678")
+    area_code = 664, country_code = 43, number = 12345678
+
+    >>> show_c_a_n ("0043 664 12345678")
+    area_code = 664, country_code = 43, number = 12345678
+
+    >>> show_c_a_n ("664 12345678")
+    area_code = 664, number = 12345678
+
+    >>> show_c_a_n ("0664 12345678")
+    area_code = 664, number = 12345678
+
+    >>> show_c_a_n ("+43(664)12345678")
+    area_code = 664, country_code = 43, number = 12345678
+
+    >>> show_c_a_n ("+43 (664) 12345678")
+    area_code = 664, country_code = 43, number = 12345678
+
+    >>> show_c_a_n ("0(664)12345678")
+    area_code = 664, number = 12345678
+
+    >>> show_c_a_n ("0 (664) 12345678")
+    area_code = 664, number = 12345678
+
+    >>> show_c_a_n ("43 66412345678", country_code = "43")
+    country_code = 43, number = 66412345678
+
+    >>> show_c_a_n ("+43 66412345678", country_code = "43")
+    country_code = 43, number = 66412345678
+
+    >>> attr     = Record (name = "area_code")
+    >>> polisher = _Area_Code_Polisher_ ()
+    >>> def show_c_a (value, ** kw) :
+    ...     r  = polisher (attr, dict (area_code = value, ** kw))
+    ...     vs = ("%s = %s" % (k, v) for k, v in sorted (r.items ()) if v)
+    ...     print (", ".join (vs))
+
+    >>> show_c_a ("664")
+    area_code = 664
+
+    >>> show_c_a ("0664")
+    area_code = 664
+
+    >>> show_c_a ("0 664")
+    area_code = 664
+
+    >>> show_c_a ("664", country_code = "43")
+    area_code = 664, country_code = 43
+
+    >>> show_c_a ("(664)", country_code = "43")
+    area_code = 664, country_code = 43
+
+    >>> show_c_a ("+44 664", country_code = "43")
+    area_code = 664, country_code = 44
+
+    >>> show_c_a ("+44 664 ", country_code = "43")
+    area_code = 664, country_code = 44
+
+    >>> show_c_a ("+44/664", country_code = "43")
+    area_code = 664, country_code = 44
+
+    >>> show_c_a ("+44/664/", country_code = "43")
+    area_code = 664, country_code = 44
+
+    >>> show_c_a ("+44 (664)", country_code = "43")
+    area_code = 664, country_code = 44
+
+    >>> show_c_a ("+44", country_code = "43")
+    country_code = 44
+
+    >>> show_c_a ("0", country_code = "43")
+    country_code = 43
+
+"""
+
+__test__ = dict \
+    ( test_polisher = _test_polisher
+    )
 
 _Ancestor_Essence = PAP.Property
 
@@ -78,7 +238,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
 
             completer      = Attr.Completer_Spec  \
                 (1, Attr.Selector.Name ("country_code"))
-            polisher       = Attr.Polisher.area_code_clean
+            polisher       = _Area_Code_Polisher_ ()
 
         # end class area_code
 
@@ -93,7 +253,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             ui_rank        = -3
 
             completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
-            polisher       = Attr.Polisher.phone_number_split
+            polisher       = _Number_Polisher_ ()
 
         # end class number
 

@@ -48,6 +48,8 @@
 #     5-Feb-2015 (CT) Paranoidify `sail_number.polisher`
 #                     [somebody recently really tried to enter `NAT NAT 1234`]
 #    11-Feb-2015 (CT) Remove `sail_number_head`, `sail_number_tail`
+#    26-Feb-2015 (CT) Change `_Sail_Number_Polisher_` to override `__call__`,
+#                     not `_polish`
 #    ««revision-date»»···
 #--
 
@@ -77,10 +79,10 @@ class _Sail_Number_Polisher_ (MOM.Attr.Polisher.Match_Split) :
         self.__super.__init__ (matcher = matcher, ** kw)
     # end def __init__
 
-    def _polish (self, attr, name, value, result) :
-        self.__super._polish (attr, name, value, result)
-        undef = object ()
-        snx   = result.get ("sail_number_x", "")
+    def __call__ (self, attr, value_dict, value = None) :
+        result  = self.__super.__call__ (attr, value_dict, value)
+        undef   = object ()
+        snx     = result.get ("sail_number_x", "")
         if snx :
             nat = result.get ("nation",      "")
             num = result.get ("sail_number", "")
@@ -93,7 +95,8 @@ class _Sail_Number_Polisher_ (MOM.Attr.Polisher.Match_Split) :
                 while snx.endswith (num) :
                     snx = snx [:-l].strip ()
             result ["sail_number_x"] = snx
-    # end def _polish
+        return result
+    # end def __call__
 
 # end class _Sail_Number_Polisher_
 
