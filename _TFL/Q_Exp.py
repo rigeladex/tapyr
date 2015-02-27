@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -70,6 +70,7 @@
 #    10-Sep-2014 (CT) Add `__getattr__` and `__getitem__` to `_Bool_Bin_Op_`
 #    11-Sep-2014 (CT) Add `Q.APPLY`
 #    11-Sep-2014 (CT) Add `_Distributive_` as mixin for `_Bool_Bin_Op_`, `_Get_`
+#    27-Feb-2015 (CT) Add `Q.DATE`, `Q.DATE_TIME`, `Q.TIME`, and `_Date_.NOW`
 #    ««revision-date»»···
 #--
 
@@ -482,6 +483,21 @@ class Base (TFL.Meta.Object) :
     # end def __init__
 
     @property
+    def DATE (self) :
+        return self._Date_ (self._Date_.Date)
+    # end def DATE
+
+    @property
+    def DATE_TIME (self) :
+        return self._Date_ (self._Date_.Date_Time)
+    # end def DATE_TIME
+
+    @property
+    def TIME (self) :
+        return self._Date_ (self._Date_.Time)
+    # end def TIME
+
+    @property
     def NIL (self) :
         return self._NIL_ (self)
     # end def NIL
@@ -881,6 +897,7 @@ class _Date_ (TFL.Meta.Object) :
 
         type       = datetime.date
         lom_delta  = datetime.timedelta (days=1)
+        now        = type.today
 
     # end class Date
 
@@ -890,13 +907,35 @@ class _Date_ (TFL.Meta.Object) :
 
         type       = datetime.datetime
         lom_delta  = datetime.timedelta (seconds=1)
+        now        = type.today
 
     # end class Date_Time
 
-    def __init__ (self, exp, D_Type) :
-        self.exp    = exp
+    class Time (TFL.Meta.Object) :
+
+        import datetime
+
+        type       = datetime.time
+        lom_delta  = datetime.timedelta (seconds=1)
+
+        @classmethod
+        def now (cls) :
+            result = cls.datetime.datetime.today ()
+            return result.time ().replace (microsecond = 0)
+        # end def now
+
+    # end class Time
+
+    def __init__ (self, D_Type, exp = None) :
         self.D_Type = D_Type
+        self.exp    = exp
     # end def __init__
+
+    @property
+    def NOW (self) :
+        """Return date/datetime instance for right now."""
+        return self.D_Type.now ()
+    # end def NOW
 
     def MONTH (self, m, y) :
         D_Type = self.D_Type
@@ -1067,13 +1106,13 @@ class _Exp_ (_Exp_Base_) :
 
     @property
     def D (self) :
-        return self.Q._Date_ (self, self.Q._Date_.Date)
-    # end def D
+        return self.Q._Date_ (self.Q._Date_.Date, self)
+    DATE = D # end def D
 
     @property
     def DT (self) :
-        return self.Q._Date_ (self, self.Q._Date_.Date_Time)
-    # end def DT
+        return self.Q._Date_ (self.Q._Date_.Date_Time, self)
+    DATE_TIME = DT # end def DT
 
     @_method
     def ENDSWITH () :

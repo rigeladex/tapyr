@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -70,22 +70,22 @@ _q_result = r"""
 
     >>> p = PAP.Person.query (pid = 1).one ()
     >>> p.lifetime # 1
-    MOM.Date_Interval ('2010-01-01')
+    MOM.Date_Interval_lifetime ('2010-01-01')
 
     >>> p.lifetime.finish = datetime.date (2010, 12, 31)
 
     >>> p.lifetime # 2
-    MOM.Date_Interval ('2010-01-01', '2010-12-31')
+    MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31')
     >>> first (PAP.Person.query (pid = 1).attrs (Q.lifetime.start, Q.lifetime.finish))
     (datetime.date(2010, 1, 1), datetime.date(2010, 12, 31))
     >>> first (PAP.Person.query (pid = 1).attr (Q.lifetime))
-    MOM.Date_Interval ('2010-01-01', '2010-12-31')
+    MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31')
 
     >>> prepr (sorted (PAP.Person.query (pid = 1).attrs ("first_name", Q.lifetime)))
-    [('fn 1', MOM.Date_Interval ('2010-01-01', '2010-12-31'))]
+    [('fn 1', MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31'))]
 
     >>> prepr (sorted (PAP.Person.query (pid = 1).attrs (Q.RAW.first_name, Q.lifetime)))
-    [('FN 1', MOM.Date_Interval ('2010-01-01', '2010-12-31'))]
+    [('FN 1', MOM.Date_Interval_lifetime ('2010-01-01', '2010-12-31'))]
 
     >>> scope.rollback ()
 

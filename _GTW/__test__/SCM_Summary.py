@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -499,18 +499,18 @@ _basic = r"""
     >>> scope.commit ()
 
     >>> _ = p.lifetime.set (start = "1997-11-16")
-    >>> _ = p.lifetime.set (finish = "2077-11-30")
+    >>> _ = p.lifetime.set (finish = "2007-11-30")
 
     >>> ucc = scope.uncommitted_changes
     >>> for pid, csp in sorted (pyk.iteritems (ucc.by_pid)) : ### 7
     ...     print (csp)
     <Change Summary for pid 8: 2 changes>
         <Modify/C PAP.Person.lifetime ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'last_cid' : '32', 'start' : ''}, new-values = {'last_cid' : '115', 'start' : '1997-11-16'}>
-        <Modify/C PAP.Person.lifetime ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'finish' : '', 'last_cid' : '115'}, new-values = {'finish' : '2077-11-30', 'last_cid' : '116'}>
+        <Modify/C PAP.Person.lifetime ('Tanzer', 'Laurens', 'William', 'Mr.', 'PAP.Person'), old-values = {'finish' : '', 'last_cid' : '115'}, new-values = {'finish' : '2007-11-30', 'last_cid' : '116'}>
 
     >>> for pid, csp in sorted (pyk.iteritems (ucc.by_pid)) : ### 8
     ...     print (csp.pid, clean_change (sorted (pyk.iteritems (csp.attribute_changes))))
-    8 [('last_cid', (old = '32', new = '116')), ('lifetime', (old = (('finish', ''), ('start', '')), new = (('finish', '2077-11-30'), ('start', '1997-11-16'))))]
+    8 [('last_cid', (old = '32', new = '116')), ('lifetime', (old = (('finish', ''), ('start', '')), new = (('finish', '2007-11-30'), ('start', '1997-11-16'))))]
 
     >>> for pid, ca in sorted (pyk.iteritems (ucc.changed_attrs)) :
     ...     print (pid, sorted (ca))

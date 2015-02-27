@@ -111,6 +111,7 @@ _test_ancestors = """
     PAP.Object                           < MOM.Id_Entity
     PAP.Property                         < MOM.Id_Entity
     PAP.Address                          < MOM.Id_Entity
+    MOM.Date_Interval_lifetime
     PAP.Subject                          < MOM.Id_Entity
     PAP.Group                            < MOM.Id_Entity
     PAP.Legal_Entity                     < MOM.Id_Entity
@@ -228,6 +229,7 @@ _test_ancestors = """
     PAP.Object                           mom_id_entity
     PAP.Property                         mom_id_entity
     PAP.Address                          mom_id_entity
+    MOM.Date_Interval_lifetime           None
     PAP.Subject                          mom_id_entity
     PAP.Group                            mom_id_entity
     PAP.Legal_Entity                     mom_id_entity
@@ -648,6 +650,13 @@ _test_attr_wrappers = """
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper : String `zip`
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
+    MOM.Date_Interval_lifetime
+      Kind_Wrapper_Q : Boolean `alive`
+          _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
+      Kind_Wrapper_Date : Date `finish`
+          _Nested_Mixin_, Optional, _User_, _DB_Attr_
+      Kind_Wrapper_Date : Date `start`
+          _Nested_Mixin_, Necessary, _User_, _DB_Attr_
     PAP.Subject
       Kind_Wrapper_R : Role_Ref_Set `addresses`
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
@@ -696,7 +705,7 @@ _test_attr_wrappers = """
           Computed, _Rev_Query_, _Cached_, _Volatile_, _System_
       Kind_Wrapper_C : Date_Interval `lifetime`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
-        MOM.Date_Interval
+        MOM.Date_Interval_lifetime
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
@@ -748,7 +757,7 @@ _test_attr_wrappers = """
           _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
       Kind_Wrapper_C : Date_Interval `lifetime`
           _Composite_Mixin_, Optional, _User_, _DB_Attr_
-        MOM.Date_Interval
+        MOM.Date_Interval_lifetime
           Kind_Wrapper_Q : Boolean `alive`
               _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
           Kind_Wrapper_Date : Date `finish`
@@ -1357,7 +1366,7 @@ _test_attr_wrappers = """
         Internal, _DB_System_, _DB_Attr_, _System_
       last_name
         _Raw_Value_Mixin_, Primary, _Required_Mixin_, _Primary_, _User_, _DB_Attr_
-      lifetime             -> MOM.Date_Interval
+      lifetime             -> MOM.Date_Interval_lifetime
         _Composite_Mixin_, Optional, _User_, _DB_Attr_
         alive
           _Nested_Mixin_, Computed, Query, _Cached_, _Volatile_, _System_
@@ -2016,6 +2025,10 @@ _test_q_able = """
       <SAW : String `street` [pap_address.street, pap_address.__raw_street]>
       <SAW : String `type_name` [mom_id_entity.type_name]>
       <SAW : String `zip` [pap_address.zip, pap_address.__raw_zip]>
+    <SAW : MOM.Date_Interval_lifetime []>
+      <SAW : Boolean `alive`>
+      <SAW : Date `finish` [finish]>
+      <SAW : Date `start` [start]>
     <SAW : PAP.Subject [mom_id_entity]>
       <SAW : Role_Ref_Set `addresses`>
       <SAW : Rev_Ref `creation`>
@@ -3201,6 +3214,10 @@ _test_q_able = """
       street                        : street
       type_name                     : type_name
       zip                           : zip
+    <SAW : MOM.Date_Interval_lifetime []>
+      alive                         : alive
+      finish                        : finish
+      start                         : start
     <SAW : PAP.Subject [mom_id_entity]>
       addresses                     : addresses
       creation                      : creation
@@ -4595,7 +4612,7 @@ _test_qc_map = """
         events                    : <SAW : Link_Ref_List `events`>
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
-        lifetime                  : <Col-Mapper for MOM.Date_Interval>
+        lifetime                  : <Col-Mapper for MOM.Date_Interval_lifetime>
             alive                 : <SAW : Boolean `lifetime.alive`>
             finish                : pap_company.lifetime__finish
             start                 : pap_company.lifetime__start
@@ -4666,7 +4683,7 @@ _test_qc_map = """
         last_change               : <SAW : Rev_Ref `last_change`>
         last_cid                  : mom_id_entity.last_cid
         last_name                 : pap_person.last_name
-        lifetime                  : <Col-Mapper for MOM.Date_Interval>
+        lifetime                  : <Col-Mapper for MOM.Date_Interval_lifetime>
             alive                 : <SAW : Boolean `lifetime.alive`>
             finish                : pap_person.lifetime__finish
             start                 : pap_person.lifetime__start
@@ -10920,6 +10937,7 @@ _test_tables = """
     MOM.Date_Interval                        : None
     MOM.Date_Interval_C                      : None
     MOM.Date_Interval_N                      : None
+    MOM.Date_Interval_lifetime               : None
     MOM.Date_Time_Interval                   : None
     MOM.Date_Time_Interval_C                 : None
     MOM.Date_Time_Interval_N                 : None

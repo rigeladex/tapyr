@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -152,45 +152,45 @@ _test_getters = """
     >>> qxp = QX.Mapper (qrt)
 
     >>> show (qxp (Q.lifetime))
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
         <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.lifetime.start))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
         <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.RAW.lifetime))
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
         RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.lifetime.RAW))
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
         RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.RAW.lifetime.start))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.lifetime.RAW.start))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.lifetime.start.RAW))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
         RAW <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.lifetime.start.year))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
         <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
             <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
 
     >>> show (qxp (Q.accounts))
@@ -222,35 +222,35 @@ _test_getters = """
              <SAW : Person `left` [pap_subject_has_property.left]>>
 
     >>> show (qxh (Q.subject.lifetime))
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
         <PAP.Person_has_Phone | QX.Kind_EPK for
              <SAW : Person `left` [pap_subject_has_property.left]>>
 
     >>> show (qxh (Q.subject.lifetime.alive))
-    <MOM.Date_Interval | QX.Kind_Query for
+    <MOM.Date_Interval_lifetime | QX.Kind_Query for
          <SAW : Boolean `lifetime.alive`>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
              <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
             <PAP.Person_has_Phone | QX.Kind_EPK for
                  <SAW : Person `left` [pap_subject_has_property.left]>>
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_person__1.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_person__1.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_person__1.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_person__1.lifetime__finish]>>
               <<today>>
 
@@ -275,15 +275,15 @@ _test_getters = """
             RAW <SAW : Role_Ref `person`>>
 
     >>> show (qxa (Q.person.lifetime))
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person__2.lifetime__finish, pap_person__2.lifetime__start]>>
         <Auth.Account | QX.Kind_Rev_Query for
              <SAW : Role_Ref `person`>>
 
     >>> show (qxa (Q.person.lifetime.start))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
          <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
              <SAW : Date_Interval `lifetime` [pap_person__2.lifetime__finish, pap_person__2.lifetime__start]>>
             <Auth.Account | QX.Kind_Rev_Query for
                  <SAW : Role_Ref `person`>>
@@ -341,11 +341,11 @@ _test_getters = """
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind_Composite for
+      <MOM.Date_Interval_lifetime | QX.Kind_Composite for
            <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
           <PAP.Subject_has_Phone | QX.Kind_EPK for
                <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind_Composite for
+      <MOM.Date_Interval_lifetime | QX.Kind_Composite for
            <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
           <PAP.Subject_has_Phone | QX.Kind_EPK for
                <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -356,15 +356,15 @@ _test_getters = """
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
            <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
            <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -375,15 +375,15 @@ _test_getters = """
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -394,15 +394,15 @@ _test_getters = """
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -413,15 +413,15 @@ _test_getters = """
         RAW <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
           RAW <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
               RAW <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -432,54 +432,54 @@ _test_getters = """
          <SAW : Date_Interval `lifetime` (PAP.Company | PAP.Person)>>
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
-      <MOM.Date_Interval | QX.Kind_Query for
+      <MOM.Date_Interval_lifetime | QX.Kind_Query for
            <SAW : Boolean `lifetime.alive`>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
           :AND:
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
                 None
               Bin:__le__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
                 <<today>>
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
                 None
               Bin:__ge__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
                 <<today>>
-      <MOM.Date_Interval | QX.Kind_Query for
+      <MOM.Date_Interval_lifetime | QX.Kind_Query for
            <SAW : Boolean `lifetime.alive`>>
-          <MOM.Date_Interval | QX.Kind_Composite for
+          <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
               <PAP.Subject_has_Phone | QX.Kind_EPK for
                    <SAW : Subject `left` [pap_subject_has_property.left]>>
           :AND:
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
                 None
               Bin:__le__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.start` [pap_person__4.lifetime__start]>>
                 <<today>>
             :OR:
               Bin:__eq__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.finish` [pap_person__4.lifetime__finish]>>
                 None
               Bin:__ge__:
-                <MOM.Date_Interval | QX.Kind for
+                <MOM.Date_Interval_lifetime | QX.Kind for
                      <SAW : Date `lifetime.finish` [pap_person__4.lifetime__finish]>>
                 <<today>>
 
@@ -601,18 +601,18 @@ _test_expr = """
 
     >>> show (qxp (Q.lifetime.start.year + 3))
     Bin:__add__:
-      <MOM.Date_Interval | QX.Kind for
+      <MOM.Date_Interval_lifetime | QX.Kind for
            <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-           <MOM.Date_Interval | QX.Kind_Composite for
+           <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
       3
 
     >>> show (qxp (- (Q.lifetime.start.year + 3)))
     Una:__neg__:
       Bin:__add__:
-        <MOM.Date_Interval | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind for
              <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-             <MOM.Date_Interval | QX.Kind_Composite for
+             <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         3
 
@@ -621,35 +621,35 @@ _test_expr = """
       :AND:
         :OR:
           Bin:__eq__:
-            <MOM.Date_Interval | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind for
                  <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
             None
           Bin:__le__:
-            <MOM.Date_Interval | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind for
                  <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
             <<today>>
         :OR:
           Bin:__eq__:
-            <MOM.Date_Interval | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind for
                  <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
             None
           Bin:__ge__:
-            <MOM.Date_Interval | QX.Kind for
+            <MOM.Date_Interval_lifetime | QX.Kind for
                  <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
             <<today>>
 
     >>> show (qxp (Q.lifetime.start.year + 25 > Q.lifetime.finish.year - 2))
     Bin:__gt__:
       Bin:__add__:
-        <MOM.Date_Interval | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind for
              <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
-             <MOM.Date_Interval | QX.Kind_Composite for
+             <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         25
       Bin:__sub__:
-        <MOM.Date_Interval | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind for
              <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
-             <MOM.Date_Interval | QX.Kind_Composite for
+             <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         2
 
@@ -670,15 +670,15 @@ _test_expr = """
          <SAW : Role_Ref_Set `persons`>>
 
     >>> show (qxh (Q.persons.lifetime))
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
         <PAP.Phone | QX.Kind_Rev_Query for
              <SAW : Role_Ref_Set `persons`>>
 
     >>> show (qxh (Q.persons.lifetime.start))
-    <MOM.Date_Interval | QX.Kind for
+    <MOM.Date_Interval_lifetime | QX.Kind for
          <SAW : Date `lifetime.start` [pap_person__1.lifetime__start]>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
              <SAW : Date_Interval `lifetime` [pap_person__1.lifetime__finish, pap_person__1.lifetime__start]>>
             <PAP.Phone | QX.Kind_Rev_Query for
                  <SAW : Role_Ref_Set `persons`>>
@@ -696,40 +696,40 @@ _test_expr = """
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
               <<today>>
       Una:__not__:
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
               <<today>>
 
@@ -740,18 +740,18 @@ _test_expr = """
              <SAW : Subject `left` [pap_subject_has_property.left]>>
       Una:__neg__:
         Bin:__mul__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
       Una:__neg__:
         Bin:__mul__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -763,9 +763,9 @@ _test_expr = """
         <PAP.Subject_has_Phone | QX.Kind_EPK for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
       Bin:__sub__/r:
-        <MOM.Date_Interval | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind for
              <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-            <MOM.Date_Interval | QX.Kind_Composite for
+            <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
                 <PAP.Subject_has_Phone | QX.Kind_EPK for
                      <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -778,9 +778,9 @@ _test_expr = """
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
       Bin:__sub__/r:
-        <MOM.Date_Interval | QX.Kind for
+        <MOM.Date_Interval_lifetime | QX.Kind for
              <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
-            <MOM.Date_Interval | QX.Kind_Composite for
+            <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                  <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
                 <PAP.Subject_has_Phone | QX.Kind_EPK for
                      <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -800,68 +800,68 @@ _test_expr = """
              <SAW : Subject `left` [pap_subject_has_property.left]>>
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           5
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.finish` [pap_company__1.lifetime__finish]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           5
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.start` [pap_company__1.lifetime__start]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_company.lifetime__finish, pap_company.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           5
       Bin:__sub__:
         Bin:__mul__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.finish` [pap_person__2.lifetime__finish]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
           2
         Bin:__add__:
-          <MOM.Date_Interval | QX.Kind for
+          <MOM.Date_Interval_lifetime | QX.Kind for
                <SAW : Date `lifetime.start` [pap_person__2.lifetime__start]>>
-              <MOM.Date_Interval | QX.Kind_Composite for
+              <MOM.Date_Interval_lifetime | QX.Kind_Composite for
                    <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
                   <PAP.Subject_has_Phone | QX.Kind_EPK for
                        <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -979,7 +979,7 @@ _test_expr = """
                  <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> show (qxs (Q.subject["PAP.Person"].lifetime)) ### PAP.Subject_has_Property
-    <MOM.Date_Interval | QX.Kind_Composite for
+    <MOM.Date_Interval_lifetime | QX.Kind_Composite for
          <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
         <PAP.Person | QX._Kind_EPK_Restricted_ for
              <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -987,9 +987,9 @@ _test_expr = """
                  <SAW : Subject `left` [pap_subject_has_property.left]>>
 
     >>> show (qxs (Q.subject["PAP.Person"].lifetime.alive)) ### PAP.Subject_has_Property
-    <MOM.Date_Interval | QX.Kind_Query for
+    <MOM.Date_Interval_lifetime | QX.Kind_Query for
          <SAW : Boolean `lifetime.alive`>>
-        <MOM.Date_Interval | QX.Kind_Composite for
+        <MOM.Date_Interval_lifetime | QX.Kind_Composite for
              <SAW : Date_Interval `lifetime` [pap_person.lifetime__finish, pap_person.lifetime__start]>>
             <PAP.Person | QX._Kind_EPK_Restricted_ for
                  <SAW : Subject `left` [pap_subject_has_property.left]>>
@@ -998,20 +998,20 @@ _test_expr = """
         :AND:
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
               None
             Bin:__le__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.start` [pap_person.lifetime__start]>>
               <<today>>
           :OR:
             Bin:__eq__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
               None
             Bin:__ge__:
-              <MOM.Date_Interval | QX.Kind for
+              <MOM.Date_Interval_lifetime | QX.Kind for
                    <SAW : Date `lifetime.finish` [pap_person.lifetime__finish]>>
               <<today>>
 

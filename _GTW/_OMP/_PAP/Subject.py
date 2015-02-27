@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -21,6 +21,7 @@
 #     4-Sep-2014 (CT) Add query attribute `my_group`
 #    12-Sep-2014 (CT) Remove `my_group`, `my_person`
 #                     [use type restriction in queries, instead]
+#    27-Feb-2015 (CT) Add `not_in_future` to `lifetime.start`  and `.finish`
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,13 @@ class _PAP_Subject_ (_Ancestor_Essence) :
 
         class lifetime (A_Date_Interval) :
             """Date of birth [`start`] (and death [`finish`])"""
+
+            class _Attributes :
+                _Overrides     = dict \
+                    ( finish   = dict (not_in_future = True)
+                    , start    = dict (not_in_future = True)
+                    )
+            # end class _Attributes
 
             kind           = Attr.Optional
 

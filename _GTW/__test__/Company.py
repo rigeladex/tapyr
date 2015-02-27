@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
@@ -143,13 +143,13 @@ _test_code = """
     <owner.left.first_name.AQ [Attr.Type.Querier String_FL]> -----
     <owner.left.middle_name.AQ [Attr.Type.Querier String]> -----
     <owner.left.title.AQ [Attr.Type.Querier String]> -----
-    <owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
     <owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <registered_in.AQ [Attr.Type.Querier String]> -----
-    <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <lifetime.start.AQ [Attr.Type.Querier Date]> -----
     <lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
@@ -162,13 +162,13 @@ _test_code = """
     <affiliate.owner.left.first_name.AQ [Attr.Type.Querier String_FL]> -----
     <affiliate.owner.left.middle_name.AQ [Attr.Type.Querier String]> -----
     <affiliate.owner.left.title.AQ [Attr.Type.Querier String]> -----
-    <affiliate.owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <affiliate.owner.left.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <affiliate.owner.left.lifetime.start.AQ [Attr.Type.Querier Date]> -----
     <affiliate.owner.left.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <affiliate.owner.left.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----
     <affiliate.owner.left.sex.AQ [Attr.Type.Querier Ckd]> -----
     <affiliate.registered_in.AQ [Attr.Type.Querier String]> -----
-    <affiliate.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval
+    <affiliate.lifetime.AQ [Attr.Type.Querier Composite]> MOM.Date_Interval_lifetime
     <affiliate.lifetime.start.AQ [Attr.Type.Querier Date]> -----
     <affiliate.lifetime.finish.AQ [Attr.Type.Querier Date]> -----
     <affiliate.lifetime.alive.AQ [Attr.Type.Querier Boolean]> -----

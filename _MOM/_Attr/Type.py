@@ -346,6 +346,8 @@
 #    23-Jan-2015 (CT) Add `ui_name_short`, `ui_name_short_T`
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
 #                     as metaclass
+#    27-Feb-2015 (CT) Add `_A_Date_.not_in_future` and corresponding checker
+#    27-Feb-2015 (CT) Change `_A_Composite_.cooked` to try downcast
 #    ««revision-date»»···
 #--
 
@@ -970,9 +972,19 @@ class _A_Composite_ \
                 value = P_Type.args_as_kw (* value)
         if isinstance (value, dict) :
             value = P_Type (** value)
-        if value is not None and not isinstance (value, P_Type) :
-            raise MOM.Error.Wrong_Type \
-                (_T ("Value `%r` is not of type %s") % (value, P_Type))
+        wrong_t = value is not None and not isinstance (value, P_Type)
+        if wrong_t :
+            if issubclass (P_Type, value.__class__) :
+                ### try converting `value` to more specific `P_Type`
+                try :
+                    akw     = P_Type.args_as_kw (* value.attr_tuple ())
+                    value   = P_Type (** akw)
+                    wrong_t = False
+                except Exception as exc :
+                    pass
+            if wrong_t :
+                raise MOM.Error.Wrong_Type \
+                    (_T ("Value `%r` is not of type %s") % (value, P_Type))
         return value
     # end def cooked
 
@@ -1039,6 +1051,7 @@ class _A_Date_ (A_Attr_Type) :
     """Common base class for date-valued attributes of an object."""
 
     needs_raw_value    = False
+    not_in_future      = False
     _tuple_off         = 0
 
     @property
@@ -1056,6 +1069,28 @@ class _A_Date_ (A_Attr_Type) :
             return pyk.text_type (value.strftime (soc._output_format ()))
         return ""
     # end def as_string
+
+    def _checkers (self, e_type, kind) :
+        for c in self.__super._checkers (e_type, kind) :
+            yield c
+        if self.not_in_future :
+            name   = self.name
+            p_name = "%s__not_in_future" % name
+            check  = MOM.Pred.Condition.__class__ \
+                ( p_name, (MOM.Pred.Condition, )
+                , dict
+                    ( assertion  = "%s <= now" % (name, )
+                    , attributes = (name, )
+                    , bindings   = dict
+                        ( now    = "Q.%s.NOW" % (self.Q_Name, )
+                        )
+                    , kind       = MOM.Pred.Object
+                    , name       = p_name
+                    , __doc__    = _ ("Value must not be in the future")
+                    )
+                )
+            yield check
+    # end def _checkers
 
     @TFL.Meta.Class_and_Instance_Method
     def _from_string (soc, s, obj = None, glob = {}, locl = {}) :
@@ -2206,6 +2241,7 @@ class A_Date (_A_Date_) :
     typ            = _ ("Date")
     P_Type         = datetime.date
     Q_Ckd_Type     = MOM.Attr.Querier.Date
+    Q_Name         = "DATE"
     syntax         = _ ("yyyy-mm-dd")
     ui_length      = 12
     input_formats  = \
@@ -2276,6 +2312,7 @@ class A_Date_Time (_A_Date_) :
     example        = "2010-10-10 06:42"
     typ            = _ ("Date-Time")
     P_Type         = datetime.datetime
+    Q_Name         = "DATE_TIME"
     syntax         = _ ("yyyy-mm-dd hh:mm:ss, the seconds `ss` are optional")
     ui_length      = 22
     input_formats  = tuple \
@@ -2817,6 +2854,7 @@ class A_Time (_A_Date_) :
     example        = "06:42"
     typ            = _ ("Time")
     P_Type         = datetime.time
+    Q_Name         = "TIME"
     syntax         = _ ("hh:mm:ss, the seconds `ss` are optional")
     ui_length      = 8
     input_formats  = ("%H:%M:%S", "%H:%M")

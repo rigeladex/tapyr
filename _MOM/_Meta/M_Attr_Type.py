@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -65,6 +65,7 @@
 #    26-Jun-2013 (CT) Pass `postfix` to `_A_String_.New`
 #    10-Mar-2014 (CT) Factor `_d_rank` to `M_Prop_Type`
 #    11-Mar-2014 (CT) Add `Composite` to simplify attribute redefinition
+#    27-Feb-2015 (CT) Change `_do_overrides` to use `New`, unique `__name__`
 #    ««revision-date»»···
 #--
 
@@ -161,8 +162,9 @@ class Composite (Root) :
                       "`_Predicates` but no `P_Type`"
                     % (dct ["__module__"], name)
                     )
-            dn = name [2:] if name.startswith (("A_", "_A_")) \
-                   else P_Type_parent.__name__
+            dn = name [2:] if name.startswith (("A_", "_A_")) else name
+            pn = P_Type_parent.__name__
+            ns = [dn] if dn.startswith (pn) else [pn, dn]
             kw = dict (__module__  = cls.__module__)
             if _Attributes :
                 kw ["_Attributes"] = P_Type_parent._Attributes.__class__ \
@@ -174,7 +176,7 @@ class Composite (Root) :
                     ( "_Predicates", (P_Type_parent._Predicates, )
                     , _Predicates.__dict__
                     )
-            cls.P_Type = P_Type_parent.__class__ (dn, (P_Type_parent, ), kw)
+            cls.P_Type = P_Type_parent.New (__name__ = "_".join (ns), ** kw)
     # end def _do_overrides
 
 # end class Composite

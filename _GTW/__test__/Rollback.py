@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -37,16 +37,16 @@ _test_attr = r"""
     >>> per
     PAP.Person ('ln', 'fn', '', '')
     >>> per.lifetime
-    MOM.Date_Interval ('2010-01-01')
+    MOM.Date_Interval_lifetime ('2010-01-01')
 
     >>> per.lifetime.finish = "2010-02-01"
     >>> per.lifetime
-    MOM.Date_Interval ('2010-01-01', '2010-02-01')
+    MOM.Date_Interval_lifetime ('2010-01-01', '2010-02-01')
 
     >>> scope.rollback ()
 
     >>> per.lifetime
-    MOM.Date_Interval ('2010-01-01')
+    MOM.Date_Interval_lifetime ('2010-01-01')
 
 """
 
