@@ -46,6 +46,7 @@
 //    12-Dec-2014 (CT) Add `F_ACT` to `submit_cb`
 //    15-Jan-2015 (CT) Factor key handling to `gtw_hd_input`,
 //                     remove `entity_display_open_cb`
+//    27-Feb-2015 (CT) Change `close_section` to call `focus` only once
 //    ««revision-date»»···
 //--
 
@@ -262,7 +263,7 @@
                     fvs.push (v);
                 };
             };
-            var fs$, i, n$, s$;
+            var fs$, i, n$;
             if (d === "") {
                 fs$ = $(":input[id]:not(.prefilled):not(.display)", c$);
                 fs$.each (acc);
@@ -271,14 +272,10 @@
             fs$ = $(S.focusables);
             i   = fs$.index (t$);
             n$  = fs$.get   (i+1);
-            s$ = $(S.submit).first ();
-            setTimeout
-                ( function () {
-                    s$.focus ();
-                    n$.focus ();
-                  }
-                , 0
-                );
+            if (! n$) {
+                n$ = $(S.submit).first ();
+            };
+            setTimeout  (function () { n$.focus (); }, 0);
             c$.addClass ("closed");
         };
         var completer =
