@@ -24,6 +24,7 @@
 #    26-Jan-2015 (CT) DRY `update_combined`
 #    26-Jan-2015 (CT) Add `update_combined_many`
 #    26-Jan-2015 (CT) Add `update_combined__set` to force `rhs` to `set`
+#     6-Mar-2015 (CT) Add `except` to `update_combined`, `update_combined__set`
 #    ««revision-date»»···
 #--
 
@@ -91,7 +92,15 @@ def update_combined (lhs, rhs) :
     """Generic function to update ``lhs`` with the elements of ``rhs``,
        combining existing keys.
     """
-    return update_combined_value (lhs, rhs)
+    try :
+        return update_combined_value (lhs, rhs)
+    except Exception as exc :
+        print \
+            ( "*** Exception during update_combined for"
+            , "\n    lhs = ", repr (lhs)
+            , "\n    rhs = ", repr (rhs)
+            )
+        raise
 # end def update_combined
 
 @Attributed (** _update_combined_props)
@@ -109,7 +118,15 @@ def update_combined_many (lhs, * rest) :
 def update_combined__set (lhs, rhs) :
     if not isinstance (rhs, (set, TFL.Undef)) :
         rhs = set (rhs)
-    return update_combined_value (lhs, rhs)
+    try :
+        return update_combined_value (lhs, rhs)
+    except Exception as exc :
+        print \
+            ( "*** Exception during update_combined__set for"
+            , "\n    lhs = ", repr (lhs)
+            , "\n    rhs = ", repr (rhs)
+            )
+        raise
 # end def update_combined__set
 
 @update_combined.add_type (TFL.Undef)

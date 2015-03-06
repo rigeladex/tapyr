@@ -18,6 +18,7 @@
 #
 # Revision Dates
 #    26-Jan-2015 (CT) Creation
+#     6-Mar-2015 (CT) Add `except` to `_m_update_combine`
 #    ««revision-date»»···
 #--
 
@@ -115,7 +116,14 @@ class M_Auto_Update_Combined (TFL.Meta.M_Auto_Combine_Sets, TFL.Meta.M_Class) :
             for c in reversed ((cls, ) + bases) :
                 yield getattr (c, name, undef)
         for name in cls._attrs_to_update_combine :
-            v = update_combined_many (* _gen (cls, bases, name))
+            try :
+                v = update_combined_many (* _gen (cls, bases, name))
+            except Exception as exc :
+                print \
+                    ( "*** Exception when trying to update/combined", name
+                    , "for class", cls
+                    )
+                raise
             setattr (cls, name, v)
         for name in cls._attrs_uniq_to_update_combine :
             v = update_combined_many (* _gen (cls, bases, name))
