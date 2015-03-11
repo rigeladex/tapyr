@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -21,6 +21,7 @@
 #    24-Jul-2012 (CT) Fix `_Language_.GET.__call__`
 #    26-Nov-2013 (CT) Use cookie, not session, to store `language`
 #    26-Nov-2013 (CT) Add `_Language_.skip_etag`
+#    11-Mar-2015 (CT) Add `logging.error` to `_Language_.GET.__call__`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TFL.pyk                 import pyk
 from   posixpath                import join  as pp_join
 
 import itertools
+import logging
 
 _Ancestor = GTW.RST.TOP.Page
 
@@ -66,6 +68,12 @@ class _Language_ (_Ancestor) :
                     response.add_notification \
                         ( GTW.Notification
                             (_T (u"Language %s selected") % language)
+                        )
+                else :
+                    logging.error \
+                        ( "%s: request for language %r; "
+                          "I18N.context returned %r"
+                        % (resource.abs_href, language, choice)
                         )
                 raise Status.Temporary_Redirect (next)
             raise Status.Not_Found ()
