@@ -51,6 +51,10 @@
 #    10-Feb-2015 (CT) Factor `fields_default`, `template_iter`,
 #                     `_handle_method_context` to `Renderer_Mixin`
 #    10-Feb-2015 (CT) Use `Renderer` for `Archive.Year`
+#    11-Mar-2015 (CT) Remove check for `bir_admin` from `can_register`
+#                     * otherwise, register buttons aren't visible before
+#                       somebody visits the `bir_admin`
+#    11-Mar-2015 (CT) Add `register` to `Regatta`
 #    ««revision-date»»···
 #--
 
@@ -666,7 +670,7 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
     @getattr_safe
     def can_register (self) :
         obj = self.obj
-        if self.bir_admin and not obj.is_cancelled :
+        if not obj.is_cancelled :
             event = obj.event
             start = event.date.start
             now   = event.__class__.date.start.now ()
@@ -715,13 +719,14 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
         obj = self.obj
         if self.can_register :
             if not obj.is_team_race :
-                return pp_join (self.abs_href, "admin", "create")
+                return pp_join (self.abs_href, "register")
             ### XXX implement registration for team race, too
     # end def href_register
 
     def _get_bir_admin (self) :
-        bir = self.top.ET_Map ["SRM.Boat_in_Regatta"]
-        if bir and bir.admin :
+        bir    = self.top.ET_Map ["SRM.Boat_in_Regatta"]
+        result = self.bir_admin
+        if result is None and bir and bir.admin :
             obj     = self.obj
             scope   = self.scope
             mf3_attr_spec = dict (right = dict (default = obj))
@@ -755,8 +760,8 @@ class _Regatta_Mixin_ (GTW.RST.TOP.MOM.Entity_Mixin_Base) :
                 , submit_error_callback = self._register_submit_error_callback
                 , _auth_required        = False
                 )
-            self.bir_admin = result = bir.admin.__class__ (** kw)
-            return result
+            result = self.bir_admin = bir.admin.__class__ (** kw)
+        return result
     # end def _get_bir_admin
 
     def _regatta_registration_changed_msg (self, resource, scope, fv) :
@@ -829,13 +834,28 @@ class Regatta (_Regatta_Mixin_, _Ancestor) :
 
     def _get_child (self, child, * grandchildren) :
         result = self.__super._get_child (child, * grandchildren)
-        if result is None and child == "admin" :
-            result = self._get_bir_admin ()
-            if result :
-                if ((not self._entries) or self._entries [-1] is not result) :
-                    self.add_entries (result)
-                if grandchildren :
-                    result = result._get_child (* grandchildren)
+        if result is None :
+            if child == "admin" :
+                result = self._get_bir_admin ()
+                if result :
+                    _entries = self._entries
+                    if ((not _entries) or _entries [-1] is not result) :
+                        self.add_entries (result)
+                    if grandchildren :
+                        result = result._get_child (* grandchildren)
+            elif child == "register" :
+                bir_admin = self._get_bir_admin ()
+                result = GTW.RST.TOP.Alias \
+                    ( name          = child
+                    , hidden        = True
+                    , parent        = self
+                    , short_title   = child
+                    , target        = bir_admin._get_child ("create")
+                    , title         =
+                        ( _T ("Register an entry for %s at %s")
+                        % (self.short_title, self.parent.short_title)
+                        )
+                    )
         return result
     # end def _get_child
 
