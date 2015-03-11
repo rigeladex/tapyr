@@ -22,6 +22,7 @@
 #    26-Nov-2013 (CT) Use cookie, not session, to store `language`
 #    26-Nov-2013 (CT) Add `_Language_.skip_etag`
 #    11-Mar-2015 (CT) Add `logging.error` to `_Language_.GET.__call__`
+#    11-Mar-2015 (CT) Use `HTTP_Status.See_Other`, not `.Temporary_Redirect`
 #    ««revision-date»»···
 #--
 
@@ -75,7 +76,7 @@ class _Language_ (_Ancestor) :
                           "I18N.context returned %r"
                         % (resource.abs_href, language, choice)
                         )
-                raise Status.Temporary_Redirect (next)
+                raise Status.See_Other (next)
             raise Status.Not_Found ()
         # end def __call__
 
