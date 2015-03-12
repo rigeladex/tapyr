@@ -38,6 +38,7 @@
 #     2-Apr-2014 (CT) Add/fix tests for `Q.NOT` and `~`
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    12-Sep-2014 (CT) Remove some of the redundant tests
+#    12-Mar-2015 (CT) Adapt to sqlalchemy 0.9.8
 #    ««revision-date»»···
 #--
 
@@ -5659,7 +5660,7 @@ _test_q_result = """
            JOIN pap_phone AS pap_phone__1 ON pap_phone__1.pid = pap_person_has_phone."right"
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
 
-    >>> print (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### PAP.Person_has_Phone
+    >>> show_query (qrt.filter (Q.person.lifetime == ("2013-07-15", ))) ### PAP.Person_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5675,6 +5676,8 @@ _test_q_result = """
            JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
            JOIN pap_person AS pap_person__1 ON pap_person__1.pid = pap_person_has_phone."left"
          WHERE pap_person__1.lifetime__start = :lifetime__start_1
+    Parameters:
+         lifetime__start_1    : datetime.date(2013, 7, 15)
 
     >>> print (qrt.order_by (Q.person.lifetime)) ### PAP.Person_has_Phone
     SQL: SELECT
@@ -5696,7 +5699,7 @@ _test_q_result = """
     >>> ET = apt ["PAP.Subject_has_Email"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.right.address == "lucky@mangari.org")) ### PAP.Subject_has_Email
+    >>> show_query (qrt.filter (Q.right.address == "lucky@mangari.org")) ### PAP.Subject_has_Email
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5720,8 +5723,11 @@ _test_q_result = """
             OR mom_id_entity.pid = pap_person_has_email.pid)
             AND (pap_email__1.address = :address_1
             OR pap_email__2.address = :address_2)
+    Parameters:
+         address_1            : 'lucky@mangari.org'
+         address_2            : 'lucky@mangari.org'
 
-    >>> print (qrt.filter (Q.right.address.ENDSWITH ("@mangari.org"))) ### PAP.Subject_has_Email
+    >>> show_query (qrt.filter (Q.right.address.ENDSWITH ("@mangari.org"))) ### PAP.Subject_has_Email
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5745,11 +5751,14 @@ _test_q_result = """
             OR mom_id_entity.pid = pap_person_has_email.pid)
             AND ((pap_email__1.address LIKE '%%%%' || :address_1)
             OR (pap_email__2.address LIKE '%%%%' || :address_2))
+    Parameters:
+         address_1            : '@mangari.org'
+         address_2            : '@mangari.org'
 
     >>> ET = apt ["PAP.Subject_has_Phone"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.NOT (Q.electric))) ### PAP.Subject_has_Phone
+    >>> show_query (qrt.filter (Q.NOT (Q.electric))) ### PAP.Subject_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5771,9 +5780,9 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
          WHERE (mom_id_entity.pid = pap_company_has_phone.pid
             OR mom_id_entity.pid = pap_person_has_phone.pid)
-            AND mom_id_entity.electric != true
+            AND mom_id_entity.electric != 1
 
-    >>> print (qrt.filter (~ Q.electric)) ### PAP.Subject_has_Phone
+    >>> show_query (qrt.filter (~ Q.electric)) ### PAP.Subject_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5795,9 +5804,9 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
          WHERE (mom_id_entity.pid = pap_company_has_phone.pid
             OR mom_id_entity.pid = pap_person_has_phone.pid)
-            AND mom_id_entity.electric != true
+            AND mom_id_entity.electric != 1
 
-    >>> print (qrt.filter (Q.x_locked)) ### PAP.Subject_has_Phone
+    >>> show_query (qrt.filter (Q.x_locked)) ### PAP.Subject_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5819,9 +5828,9 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_phone ON mom_id_entity.pid = pap_person_has_phone.pid
          WHERE (mom_id_entity.pid = pap_company_has_phone.pid
             OR mom_id_entity.pid = pap_person_has_phone.pid)
-            AND mom_id_entity.x_locked = true
+            AND mom_id_entity.x_locked = 1
 
-    >>> print (qrt.filter (Q.left)) ### PAP.Subject_has_Phone
+    >>> show_query (qrt.filter (Q.left)) ### PAP.Subject_has_Phone
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5849,7 +5858,7 @@ _test_q_result = """
     >>> ET = apt ["PAP.Person_has_Account"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.person.last_name == "nl")) ### PAP.Person_has_Account
+    >>> show_query (qrt.filter (Q.person.last_name == "nl")) ### PAP.Person_has_Account
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5863,11 +5872,13 @@ _test_q_result = """
            JOIN pap_person_has_account ON mom_id_entity.pid = pap_person_has_account.pid
            JOIN pap_person AS pap_person__2 ON pap_person__2.pid = pap_person_has_account."left"
          WHERE pap_person__2.last_name = :last_name_1
+    Parameters:
+         last_name_1          : 'nl'
 
     >>> ET = apt ["PAP.Subject"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.phone_links.phone.number == 42)) ### PAP.Subject
+    >>> show_query (qrt.filter (Q.phone_links.phone.number == 42)) ### PAP.Subject
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -5906,6 +5917,9 @@ _test_q_result = """
             OR mom_id_entity.pid = pap_person.pid)
             AND (pap_phone__2.number = :number_1
             OR pap_phone__1.number = :number_2)
+    Parameters:
+         number_1             : 42
+         number_2             : 42
 
 """
 
@@ -11659,7 +11673,7 @@ _test_date_extraction_pg = """
     >>> ET = apt ["SRM.Regatta_C"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.left.date.start.year == 2012)) ### SRM.Regatta_C
+    >>> show_query (qrt.filter (Q.left.date.start.year == 2012)) ### SRM.Regatta_C
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -11685,6 +11699,8 @@ _test_date_extraction_pg = """
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
            JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
          WHERE EXTRACT(year FROM srm_regatta_event__1.date__start) = :param_1
+    Parameters:
+         param_1              : 2012
 
 """
 
@@ -11694,7 +11710,7 @@ _test_date_extraction_sq = """
     >>> ET = apt ["SRM.Regatta_C"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
 
-    >>> print (qrt.filter (Q.left.date.start.year == 2016)) ### SRM.Regatta_C
+    >>> show_query (qrt.filter (Q.left.date.start.year == 2016)) ### SRM.Regatta_C
     SQL: SELECT
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
@@ -11720,6 +11736,9 @@ _test_date_extraction_sq = """
            JOIN srm_regatta_c ON srm_regatta.pid = srm_regatta_c.pid
            JOIN srm_regatta_event AS srm_regatta_event__1 ON srm_regatta_event__1.pid = srm_regatta."left"
          WHERE CAST(strftime(:strftime_1, srm_regatta_event__1.date__start) AS INTEGER) = :param_1
+    Parameters:
+         param_1              : 2016
+         strftime_1           : '%%Y'
 
 """
 

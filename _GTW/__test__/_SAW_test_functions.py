@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package _GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -20,6 +20,7 @@
 #    26-Aug-2013 (CT) Add `show_key_o_p`, `show_sequence`
 #    18-Sep-2013 (CT) Add `show_query` (uses `compile` to show `params`)
 #    27-Jan-2014 (CT) Factor `formatted` to `MOM.DBW.SAW.Q_Result`
+#    12-Mar-2015 (CT) Add `fixed_booleans` for sqlalchemy 0.9.8
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,12 @@ nl     = chr (10)
 indent = "  " * 2
 sk     = lambda x   : (x.type_name, x.i_rank, )
 pred   = lambda ETW : True
+
+def fixed_booleans (qf) :
+    if not isinstance (qf, pyk.string_types) :
+        qf = pyk.text_type (qf)
+    return qf.replace ("WHERE 0 = 1", "WHERE false")
+# end def fixed_booleans
 
 def formatted_column (c) :
     tail = []
@@ -269,7 +276,7 @@ def show_qc_map (apt, pred = pred) :
 # end def show_qc_map
 
 def show_query (qr) :
-    print (qr.formatted ())
+    print (fixed_booleans (qr.formatted ()))
 # end def show_query
 
 def show_root_table (apt, pred = pred) :
@@ -291,7 +298,10 @@ def show_selects (apt, name = "select", pred = pred) :
             second = "" if T.relevant_root is T \
                 else (T.relevant_root.type_name if T.relevant_root else "")
             head   = ("%s %s" % (T.type_name, second)).strip ()
-            print ("%s%s" % (head, nl), "  ", formatted_select (ETW, name = name))
+            print \
+                ( "%s%s" % (head, nl), "  "
+                , fixed_booleans (formatted_select (ETW, name = name))
+                )
 # end def show_selects
 
 def show_sequence (apt) :

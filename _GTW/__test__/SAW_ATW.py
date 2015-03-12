@@ -41,6 +41,7 @@
 #    26-Aug-2014 (CT) Add tests for `attrs` with argument `Q.skipper.club.name`,
 #                     `Q.RAW.skipper.club.name`, `Q.skipper.club.__raw_name`
 #     9-Sep-2014 (CT) Add test for query with type restriction
+#    12-Mar-2015 (CT) Adapt to sqlalchemy 0.9.8
 #    ««revision-date»»···
 #--
 
@@ -4144,7 +4145,7 @@ _test_q_result = """
            pap_person.title AS pap_person_title
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-         WHERE pap_person.__raw_title LIKE :__raw_title_1 || '%%%%'
+         WHERE (pap_person.__raw_title LIKE :__raw_title_1 || '%%%%')
     Parameters:
          __raw_title_1        : 'D'
 
@@ -4154,7 +4155,7 @@ _test_q_result = """
            sum(:param_1) AS sum_1
          FROM mom_id_entity
            JOIN pap_person ON mom_id_entity.pid = pap_person.pid
-         WHERE pap_person.__raw_title LIKE :__raw_title_1 || '%%%%'
+         WHERE (pap_person.__raw_title LIKE :__raw_title_1 || '%%%%')
     Parameters:
          __raw_title_1        : 'D'
          param_1              : 1
@@ -4166,7 +4167,7 @@ _test_q_result = """
     >>> print (ET._SAW) ### PAP.Subject
     <SAW : PAP.Subject [mom_id_entity]>
 
-    >>> print (qrs) ### PAP.Subject
+    >>> show_query (qrs) ### PAP.Subject
     SQL: SELECT mom_id_entity.pid
          FROM mom_id_entity
          WHERE false
@@ -4314,7 +4315,7 @@ _test_q_result = """
     >>> print (ET._SAW) ### SRM.Regatta
     <SAW : SRM.Regatta [srm_regatta : mom_id_entity]>
 
-    >>> print (qrs) ### SRM.Regatta
+    >>> show_query (qrs) ### SRM.Regatta
     SQL: SELECT srm_regatta.pid
          FROM srm_regatta
          WHERE false
@@ -5227,7 +5228,7 @@ _test_q_result = """
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_person_has_email ON pap_subject_has_property.pid = pap_person_has_email.pid
            JOIN pap_email AS pap_email__2 ON pap_email__2.pid = pap_subject_has_property."right"
-         WHERE pap_email__2.address LIKE '%%%%' || :address_1
+         WHERE (pap_email__2.address LIKE '%%%%' || :address_1)
 
     >>> ET = apt ["PAP.Subject_has_Phone"]
     >>> qrt = apt.DBW.PNS.Q_Result.E_Type (ET, _strict = False)
@@ -5249,7 +5250,7 @@ _test_q_result = """
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
            LEFT OUTER JOIN mom_id_entity AS mom_id_entity__13 ON mom_id_entity__13.pid = pap_subject_has_property."left"
-         WHERE mom_id_entity__13.electric = true
+         WHERE mom_id_entity__13.electric = 1
 
     >>> print (qrt.filter (Q.phone.electric != Q.subject.electric)) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -5288,7 +5289,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-         WHERE mom_id_entity.electric = true
+         WHERE mom_id_entity.electric = 1
 
     >>> print (qrt.filter (~ Q.electric)) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -5306,7 +5307,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-         WHERE mom_id_entity.electric != true
+         WHERE mom_id_entity.electric != 1
 
     >>> print (qrt.filter (Q.NOT (Q.electric))) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -5324,7 +5325,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-         WHERE mom_id_entity.electric != true
+         WHERE mom_id_entity.electric != 1
 
     >>> print (qrt.filter (Q.NOT (~ Q.electric))) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -5342,7 +5343,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-         WHERE mom_id_entity.electric = true
+         WHERE mom_id_entity.electric = 1
 
     >>> print (qrt.filter (Q.x_locked)) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -5360,7 +5361,7 @@ _test_q_result = """
          FROM mom_id_entity
            JOIN pap_subject_has_property ON mom_id_entity.pid = pap_subject_has_property.pid
            JOIN pap_subject_has_phone ON pap_subject_has_property.pid = pap_subject_has_phone.pid
-         WHERE mom_id_entity.x_locked = true
+         WHERE mom_id_entity.x_locked = 1
 
     >>> print (qrt.filter (Q.left)) ### PAP.Subject_has_Phone
     SQL: SELECT
@@ -5550,7 +5551,7 @@ _test_q_result = """
            JOIN auth_account ON auth__account_.pid = auth_account.pid
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__1 ON pap_person_has_account__1."right" = auth_account.pid
            LEFT OUTER JOIN pap_person AS pap_person__3 ON pap_person__3.pid = pap_person_has_account__1."left"
-         WHERE pap_person__3.last_name LIKE :last_name_1 || '%%%%'
+         WHERE (pap_person__3.last_name LIKE :last_name_1 || '%%%%')
 
     >>> print (qrt.order_by (- Q.superuser).order_by (Q.name)) ### Auth.Account
     SQL: SELECT
@@ -6312,11 +6313,11 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
            JOIN auth_account AS auth_account__2 ON auth_account__2.pid = pap_person_has_account__4."right"
            JOIN auth__account_ AS auth__account___2 ON auth__account___2.pid = pap_person_has_account__4."right"
-         ORDER BY NOT (auth__account___2.suspended != true AND auth__account___2.enabled = true)
+         ORDER BY NOT (auth__account___2.suspended != 1 AND auth__account___2.enabled = 1)
 
     >>> show_query (qrt.order_by (~ Q.account_links.account.active).distinct ()) ### PAP.Person
     SQL: SELECT DISTINCT
-           NOT (auth__account___2.suspended != true AND auth__account___2.enabled = true),
+           NOT (auth__account___2.suspended != 1 AND auth__account___2.enabled = 1),
            mom_id_entity.electric AS mom_id_entity_electric,
            mom_id_entity.last_cid AS mom_id_entity_last_cid,
            mom_id_entity.pid AS mom_id_entity_pid,
@@ -6339,7 +6340,7 @@ _test_q_result = """
            LEFT OUTER JOIN pap_person_has_account AS pap_person_has_account__4 ON pap_person_has_account__4."left" = pap_person.pid
            JOIN auth_account AS auth_account__2 ON auth_account__2.pid = pap_person_has_account__4."right"
            JOIN auth__account_ AS auth__account___2 ON auth__account___2.pid = pap_person_has_account__4."right"
-         ORDER BY NOT (auth__account___2.suspended != true AND auth__account___2.enabled = true)
+         ORDER BY NOT (auth__account___2.suspended != 1 AND auth__account___2.enabled = 1)
 
     >>> show_query (qrt.order_by (~ Q.account_links).distinct ()) ### PAP.Person
     SQL: SELECT DISTINCT
