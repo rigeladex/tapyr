@@ -51,6 +51,7 @@
 #    11-Dec-2014 (CT) Use `uuid4` for session id
 #    26-Jan-2015 (CT) Derive `M_Session` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine_Sets`
+#    13-Mar-2015 (CT) Don't return False from `username`
 #    ««revision-date»»···
 #--
 
@@ -160,7 +161,7 @@ class Session (TFL.Meta.BaM (TFL.Meta.Object, metaclass = M_Session)) :
     @property
     def username (self) :
         user = self.user
-        return user.is_valid and user.name
+        return user.name if user.is_valid else None
     # end def username
 
     @username.setter
