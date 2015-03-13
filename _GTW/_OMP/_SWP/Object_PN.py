@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SWP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -18,6 +18,7 @@
 # Revision Dates
 #    17-Jun-2013 (CT) Creation (recovered from late `_SWP.Entity` module)
 #    28-Jan-2014 (CT) Add `hidden` and `prio` (move from `SWP.Page_Mixin`)
+#    13-Mar-2015 (CT) Add `check` against `/` to `perma_name`
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,10 @@ class Object_PN (_Ancestor_Essence) :
             max_length         = 80
             ui_name            = "Name"
 
-            check              = ("""' ' not in value""", )
+            check              = \
+                ( """' ' not in value"""
+                , """'/' not in value"""
+                )
 
         # end class perma_name
 
