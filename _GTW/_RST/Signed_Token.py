@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -21,6 +21,7 @@
 #    24-Feb-2014 (CT) Change `__repr__` to use `pyk.encoded`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
 #    12-Dec-2014 (CT) Add `request.path` to `Anti_CSRF.secrets`
+#    13-Mar-2015 (CT) Add `form_action` to `Anti_CSRF`
 #    ««revision-date»»···
 #--
 
@@ -207,13 +208,16 @@ class Cookie (_Base_) :
 class Anti_CSRF (_Base_) :
     """CSRF prevention token"""
 
+    form_action = None
+
     @Once_Property
     def secrets (self) :
-        request = self.request
-        result  = self.__super.secrets + \
+        request     = self.request
+        form_action = self.form_action
+        result    = self.__super.secrets + \
             ( request.session.sid
             , request.host
-            , request.path
+            , form_action or request.path
             )
         return result
     # end def secrets

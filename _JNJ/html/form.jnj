@@ -1,6 +1,6 @@
 {#- jinja template: form.jnj -#}
 {#
-## Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -82,6 +82,7 @@
 ##    11-Feb-2014 (CT) Skip `anti_csrf_token` for `link_only` form
 ##    20-Feb-2014 (CT) Remove `level-0`
 ##     7-May-2014 (CT) Don't generate empty `action` for `form`
+##    13-Mar-2015 (CT) Pass `action` to `anti_csrf_token`
 ##    ««revision-date»»···
 ##--
 #}
@@ -156,7 +157,7 @@
       {{ X.input.hidden (** next_form_kw) }}
     {% endif -%}
     {%- set anti_csrf_token =
-          include_ACT and response and response.anti_csrf_token
+          include_ACT and response and response.anti_csrf_token (action)
     %}
     {%- if anti_csrf_token %}
       {{ X.input.hidden (name = "F_ACT", value = anti_csrf_token) }}
