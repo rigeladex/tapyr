@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -34,6 +34,7 @@
 #    11-Feb-2014 (CT) Remove `username.setter` (redundant to `Response...`)
 #    29-Apr-2014 (CT) Add `getattr_safe` to property `username`
 #    12-Oct-2014 (CT) Use `TFL.Secure_Hash`
+#    17-Mar-2015 (CT) Pop `Anti_CSRF` from `session`
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ class _RST_TOP_Request_ (GTW.RST.Request) :
     def csrf_token (self) :
         value = self.req_data.get ("F_ACT", "")
         csrf_token = GTW.RST.Signed_Token.Anti_CSRF.recover (self, value)
+        self.session.pop ("Anti_CSRF", None)
         return csrf_token
     # end def csrf_token
 

@@ -26,6 +26,7 @@
 #    12-Dec-2014 (CT) Consider `session.user.is_valid` in `username.setter`
 #    12-Dec-2014 (CT) Increase `max_age` of session cookie to `1<<31`
 #    13-Mar-2015 (CT) Change `anti_csrf_token` to method with arg `form_action`
+#    17-Mar-2015 (CT) Signify `Anti_CSRF` in `session`
 #    ««revision-date»»···
 #--
 
@@ -75,8 +76,11 @@ class _RST_TOP_Response_ (GTW.RST.Response) :
     # end def add_notification
 
     def anti_csrf_token (self, form_action = None) :
-        return GTW.RST.Signed_Token.Anti_CSRF \
-            (self._request, "don't bug me", form_action = form_action)
+        request = self._request
+        result  = GTW.RST.Signed_Token.Anti_CSRF \
+            (request, "don't bug me", form_action = form_action)
+        request.session.Anti_CSRF = True
+        return result
     # end def anti_csrf_token
 
     def _set_session_cookie (self) :
