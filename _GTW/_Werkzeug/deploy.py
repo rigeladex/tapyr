@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -43,6 +43,8 @@
 #     1-Sep-2014 (CT) Add `lib_dirs` to arguments of `templateer.call_macro`
 #     2-Sep-2014 (CT) Add and use `template_package_dirs`
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
+#    17-Mar-2015 (CT) Add sub-command `wsgi_script`, remove sub-command `fcgi`
+#    17-Mar-2015 (CT) Add option `use_wsgi` to `create_config`
 #    ««revision-date»»···
 #--
 
@@ -75,9 +77,16 @@ class GT2W_Command (_Ancestor) :
 
     _rn_prefix              = "GT2W"
 
-    _defaults      = dict \
+    _defaults               = dict \
         ( template_package_dirs = ["_JNJ"]
         )
+    _wsgi_script_format     = """\
+import sys
+sys.path.insert (0, "%(app_dir)s")
+from %(app_mod)s import command
+sys.path = sys.path [1:]
+application = command (%(args)s)
+    """
 
     class _GT2W_HTTP_Config_ (TFL.Command.Root_Command.Config) :
         """Config file for HTTP-config specific options"""
@@ -93,27 +102,29 @@ class GT2W_Command (_Ancestor) :
 
     _Babel_ = _GT2W_Babel_ # end class
 
-    class _GT2W_FCGI_ (_Sub_Command_) :
+    class _GT2W_xxGI_ (_Sub_Command_) :
         """Run application as a FastCGI server."""
+
+        is_partial              = True
 
         _defaults               = dict \
             ( apply_to_version  = "active"
             )
-
-    _FCGI_ = _GT2W_FCGI_ # end class
-
-    class _GT2W_FCGI_Script_ (_FCGI_) :
-        """Create script for running the application as a FastCGI server."""
 
         _opts                   = \
             ( "-quiet:B?Don't write information about files created"
             , "-script_path:Q?Path of script created"
             )
 
+    _GT2W_xxGI_ # end class
+
+    class _GT2W_FCGI_Script_ (_GT2W_xxGI_) :
+        """Create script for running the application as a FastCGI server."""
+
     _FCGI_Script_ = _GT2W_FCGI_Script_ # end class
 
-    class _GT2W_Create_Config_ (_FCGI_Script_) :
-        """Create config file and fcgi-script for http-server"""
+    class _GT2W_Create_Config_ (_GT2W_xxGI_) :
+        """Create config file and fcgi- or wsgi-script for http-server"""
 
         _defaults               = dict \
             ( address           = "*"
@@ -130,6 +141,7 @@ class GT2W_Command (_Ancestor) :
             , "-ca_key_name:S?Name of CA key file"
             , "-ca_path:Q?Path for server-specific CA for client certificates"
             , "-config_path:Q?Path for config file"
+            , "-group:S?Define unix group that the wsgi process should be run as"
             , "-host_macro:S?Name of macro to create virtual host"
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
@@ -139,6 +151,8 @@ class GT2W_Command (_Ancestor) :
             , "-server_aliases:T#8?Alias names for virtual host"
             , "-server_name:S?Fully qualified domain name of virtual host"
             , "-ssl_key_name:S?Name of SSL key to use for HTTPS"
+            , "-use_wsgi:B?Define unix user that the wsgi process should be run as"
+            , "-user:S?Run wsgi process as user specified "
             , "-template_dirs:P?Directories containing templates for config"
             )
 
@@ -171,14 +185,20 @@ class GT2W_Command (_Ancestor) :
 
         _sub_command_seq = \
             [ "update"
-            , ["babel", "compile"]
             , "pycompile"
+            , ["babel", "compile"]
             , ["migrate", "-Active", "-Passive"]
             , "setup_cache"
             , "switch"
             ]
 
     _UBYCMS_ = _GT2W_UBYCMS_ # end class
+
+    class _GT2W_WSGI_Script_ (_GT2W_xxGI_) :
+        """Create script for running the application as a wsgi server."""
+
+
+    _WSGI_Script_ = _GT2W_WSGI_Script_ # end class
 
     def _create_fcgi_script (self, cmd, argv = (), script_path = None) :
         P      = self._P (cmd)
@@ -205,8 +225,43 @@ class GT2W_Command (_Ancestor) :
             write (sys.stdout, app, P.py_path)
     # end def _create_fcgi_script
 
+    def _create_wsgi_script (self, cmd, argv = (), script_path = None) :
+        P      = self._P (cmd)
+        a_conf = cmd.app_config
+        try :
+            h_conf = cmd._spec ["HTTP_Config"].pathes
+        except KeyError :
+            h_conf = []
+        config   = self.App_Config.auto_split.join (a_conf + h_conf)
+        app_dir  = sos.path.dirname  (self._app_path (cmd, P))
+        app_mod  = sos.path.splitext (sos.path.basename (cmd.app_module)) [0]
+        args     = ("wsgi", "-config", config) + tuple (argv)
+        s_path   = script_path or cmd.script_path
+        def write (f, app_dir, app_mod, args) :
+            script = self._wsgi_script_format % dict \
+                ( app_dir = app_dir
+                , app_mod = app_mod
+                , args    = list (args) if args else ""
+                )
+            f.write (script.strip ())
+            f.write ("\n")
+        if s_path and not s_path.endswith (("-", "stdout")) :
+            with open (s_path, "w") as f :
+                write (f, app_dir, app_mod, args)
+            if not cmd.quiet :
+                print ("Created wsgi script", s_path)
+        else :
+            write (sys.stdout, app_dir, app_mod, args)
+    # end def _create_wsgi_script
+
     def _handle_create_config (self, cmd) :
-        self._create_fcgi_script (cmd, cmd.argv, cmd.script_path)
+        if cmd.use_wsgi :
+            _create_script  = self._create_wsgi_script
+            xxgi_macro_name = "use_wsgi"
+        else :
+            _create_script  = self._create_fcgi_script
+            xxgi_macro_name = "use_fcgi"
+        _create_script (cmd, cmd.argv, cmd.script_path)
         from   _JNJ import JNJ
         import _JNJ.Templateer
         templateer           = JNJ.Templateer \
@@ -215,6 +270,8 @@ class GT2W_Command (_Ancestor) :
             , load_path      = cmd.template_dirs
             , trim_blocks    = True
             )
+        xxgi_macro           = templateer.GTW.get_macro \
+            (xxgi_macro_name, templ_name = cmd.macro_module)
         config               = templateer.call_macro \
             ( macro_name     = cmd.host_macro
             , templ_name     = cmd.macro_module
@@ -224,12 +281,15 @@ class GT2W_Command (_Ancestor) :
             , ca_key_name    = cmd.ca_key_name
             , ca_path        = cmd.ca_path
             , cmd            = cmd
+            , group          = cmd.group
             , lib_dirs       = cmd.lib_dir
             , port           = cmd.port
             , root           = cmd.root_dir
             , script         = cmd.script_path
             , server_name    = cmd.server_name
             , ssl_key_name   = cmd.ssl_key_name
+            , user           = cmd.user
+            , xxgi_macro     = xxgi_macro
             )
         config_s = strip_empty_lines (config).strip ()
         c_path   = cmd.config_path
@@ -247,13 +307,6 @@ class GT2W_Command (_Ancestor) :
             write (sys.stdout, config_s)
     # end def _handle_create_config
 
-    def _handle_fcgi (self, cmd) :
-        P     = self._P (cmd)
-        app   = self._app_cmd (cmd, P)
-        args  = ("fcgi", ) + tuple (cmd.argv)
-        self._app_call (cmd, P, app, args)
-    # end def _handle_fcgi
-
     def _handle_fcgi_script (self, cmd) :
         self._create_fcgi_script (cmd, cmd.argv, cmd.script_path)
     # end def _handle_fcgi_script
@@ -264,6 +317,10 @@ class GT2W_Command (_Ancestor) :
         args = ("setup_cache", ) + tuple (cmd.argv)
         self._app_call (cmd, P, app, args)
     # end def _handle_setup_cache
+
+    def _handle_wsgi_script (self, cmd) :
+        self._create_wsgi_script (cmd, cmd.argv, cmd.script_path)
+    # end def _handle_wsgi_script
 
 Command = GT2W_Command # end class
 

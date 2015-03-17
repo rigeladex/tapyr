@@ -1,10 +1,10 @@
 {#- jinja template: apache.m.jnj -#}
 {#
-## Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## #*** <License> ************************************************************#
 ## This template is part of the package JNJ.
-## 
+##
 ## This template is licensed under the terms of the BSD 3-Clause License
 ## <http://www.c-tanzer.at/license/bsd_3c.html>.
 ## #*** </License> ***********************************************************#
@@ -23,6 +23,7 @@
 ##    20-Dec-2013 (CT) Split `addr_port` into `address` and `port`
 ##    29-Apr-2014 (CT) Use `-`, not `/`, as separator for logfile names
 ##     1-Sep-2014 (CT) Use `lib_dir` parameter, not hard-coded `"lib"`
+##    17-Mar-2015 (CT) Add `use_wsgi`; and `gtw_host` argument `xxgi_macro`
 ##    ««revision-date»»···
 ##--
 #}
@@ -68,21 +69,23 @@
 
 {%- macro gtw_host
         ( server_name, script, admin, root
-        , address   = "*"
-        , port      = "80"
-        , aliases   = ()
+        , address    = "*"
+        , port       = "80"
+        , aliases    = ()
         )
 -%}
-  {%- set _caller = kwargs.pop ("caller", None) -%}
-  {%- set lib_dir = kwargs.get ("lib_dirs", ["lib"]) [-1] %}
+  {%- set _caller    = kwargs.pop ("caller", None) -%}
+  {%- set lib_dir    = kwargs.get ("lib_dirs", ["lib"]) [-1] %}
+  {%- set xxgi_macro = kwargs.pop ("xxgi_macro", use_fcgi) %}
+  {%- set kw         = GTW.dict   (kwargs) %}
   {% call virtual_host
-      ( server_name = server_name
-      , address     = address
-      , port        = port
-      , admin       = admin
-      , root        = root
-      , aliases     = aliases
-      , ** kwargs
+      ( server_name  = server_name
+      , address      = address
+      , port         = port
+      , admin        = admin
+      , root         = root
+      , aliases      = aliases
+      , ** kw
       )
   -%}
   {% if _caller %}{{ _caller () }}{% endif %}
@@ -90,7 +93,7 @@
   {{ gtw_aliases     (root, lib_dir) }}
   {{ gtw_permissions (root, lib_dir) }}
   {{ gtw_expires     (root, lib_dir) }}
-  {{ use_fcgi        (root, script) }}
+  {{ xxgi_macro      (root, script, server_name, ** kw) }}
   {% endcall %} {# AT.virtual_host #}
 {% endmacro -%} {#- gtw_host -#}
 
@@ -213,7 +216,7 @@
 {% endmacro -%} {#- use_client_cert -#}
 
 {%- macro use_fcgi
-        ( root, script
+        ( root, script, server_name
         , ext         = ".fcgi"
         , process_min = 0
         , process_max = 1
@@ -242,6 +245,28 @@
   SSLCompression        off
   SSLCipherSuite        '{{- ssl_ciphers -}}'
 {% endmacro -%} {#- use_ssl -#}
+
+{%- macro use_wsgi
+        ( root, script, server_name
+        , process_max   = 5
+        , thread_max    = 1
+        , process_group = None
+        )
+-%}
+  {%- set group = kwargs.pop ("group", None) %}
+  {%- set user  = kwargs.pop ("user", None) %}
+  {%- if not process_group %}
+    {%- set process_group = server_name %}
+  {%- endif -%}
+  WSGIDaemonProcess {{ process_group }}
+    {%- if user %} user={{ user }} {%- endif %}
+    {%- if group %} group={{ group }} {%- endif %}
+    {#- #} processes={{ process_max }}
+    {#- #} threads={{ thread_max }}
+    {#- #} display-name=%{GROUP}
+  WSGIProcessGroup  {{ process_group }}
+  WSGIScriptAlias   / {{ script }}
+{% endmacro -%} {#- use_wsgi -#}
 
 {%- macro virtual_host
         ( server_name

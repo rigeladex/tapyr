@@ -49,6 +49,7 @@
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    26-Jan-2015 (CT) Derive `_Meta_Base_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine`
+#    17-Mar-2015 (CT) Factor `_app_path`
 #    ««revision-date»»···
 #--
 
@@ -263,16 +264,20 @@ class GTWD_Command (TFL.Command.Root_Command) :
     # end def _app_call
 
     def _app_cmd (self, cmd, P, version = None, args = ()) :
-        if version is None :
-            version = cmd.apply_to_version
-        result = P.python \
-            [pjoin (str (P.root), version, cmd.app_dir, cmd.app_module)]
+        result = P.python [self._app_path (cmd, P, version)]
         if cmd.verbose :
             result = result ["-verbose"]
         if args :
             result = result [args]
         return result
     # end def _app_cmd
+
+    def _app_path (self, cmd, P, version = None) :
+        if version is None :
+            version = cmd.apply_to_version
+        result = pjoin (str (P.root), version, cmd.app_dir, cmd.app_module)
+        return sos.path.normpath (result)
+    # end def _app_path
 
     def _handle_app (self, cmd, * args) :
         P   = self._P (cmd)
