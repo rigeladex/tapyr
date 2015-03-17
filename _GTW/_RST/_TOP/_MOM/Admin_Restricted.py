@@ -18,6 +18,7 @@
 # Revision Dates
 #    14-Dec-2012 (CT) Creation
 #     5-Feb-2015 (CT) Remove `vip_button_p`
+#    17-Mar-2015 (CT) Define `_objects` property to use user-specific cache
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,17 @@ class E_Type_R (Admin.E_Type) :
         if user is not None :
             return Q.created_by == user
     # end def query_filters_restricted
+
+    @property
+    @getattr_safe
+    def _objects (self) :
+        return self.top._objects_cache.get (self._change_info_key)
+    # end def _objects
+
+    @_objects.setter
+    def _objects (self, value) :
+        self.top._objects_cache [self._change_info_key] = value
+    # end def _objects
 
 E_Type = E_Type_R # end class
 

@@ -129,6 +129,7 @@
 #    20-Jan-2015 (CT) Add `allow_child`
 #    30-Jan-2015 (CT) Add `_RST_Base_.target` returning `self`
 #    10-Feb-2015 (CT) Add property `RST_Types` to ease introspection
+#    17-Mar-2015 (CT) Add `_objects_cache`
 #    ««revision-date»»···
 #--
 
@@ -1460,6 +1461,7 @@ class RST_Root (_Ancestor) :
         self.SC             = TFL.Record ()
         self.Table          = {}
         self._change_infos  = {}
+        self._objects_cache = {}
         self._old_cids      = {}
         self.top            = self
         self.__super.__init__ (** kw)
