@@ -24,6 +24,8 @@
 ##    29-Apr-2014 (CT) Use `-`, not `/`, as separator for logfile names
 ##     1-Sep-2014 (CT) Use `lib_dir` parameter, not hard-coded `"lib"`
 ##    17-Mar-2015 (CT) Add `use_wsgi`; and `gtw_host` argument `xxgi_macro`
+##    18-Mar-2015 (CT) Change `use_fcgi` to access `kwargs`
+##    18-Mar-2015 (CT) Change `use_fcgi` default of `process_max` to 5
 ##    ««revision-date»»···
 ##--
 #}
@@ -219,9 +221,11 @@
         ( root, script, server_name
         , ext         = ".fcgi"
         , process_min = 0
-        , process_max = 1
+        , process_max = 5
         )
 -%}
+  {#- Use `kwargs.pop` to make `use_fcgi` compatible to `use_wsgi` -#}
+  {%- do kwargs.pop ("group", None) %}
   AddHandler fcgid-script {{ ext }}
   Options    +ExecCGI
 
