@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.
@@ -44,6 +44,7 @@
 #    14-Aug-2012 (MG) Add support for domains
 #     4-Dec-2012 (MG) Fix media `Domain` handling
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
+#    18-Mar-2015 (CT) Add support for debian-packaged `cssmin` and `jsmin`
 #    ««revision-date»»···
 #--
 
@@ -443,12 +444,23 @@ class Media (TFL.Meta.Object) :
 # end class Media
 
 def minified_css (style, keep_bang_comments = True) :
-    """Return minified CSS `style`."""
+    """Return minified CSS `style`.
+
+       If neither `cssmin`_ nor `rcssmin`_ is installed, `style` is returned
+       unchanged.
+
+       .. _`cssmin`: https://github.com/zacharyvoase/cssmin
+       .. _`rcssmin`: http://opensource.perlig.de/rcssmin/
+    """
     try :
-        ### http://opensource.perlig.de/rcssmin/
-        from rcssmin import cssmin
+        ### https://packages.qa.debian.org/c/cssmin.html
+        from cssmin import cssmin as _cssmin
+        cssmin = lambda style, keep_bang_comments : _cssmin (style)
     except ImportError :
-        return style
+        try :
+            from rcssmin import cssmin
+        except ImportError :
+            return style
     else :
         try :
             return cssmin (style, keep_bang_comments = keep_bang_comments)
@@ -457,12 +469,22 @@ def minified_css (style, keep_bang_comments = True) :
 # end def minified_css
 
 def minified_js (code) :
-    """Return minified javascript `code`."""
+    """Return minified javascript `code`.
+
+       If neither `jsmin`_ nor `rjsmin`_ is installed, `code` is returned
+       unchanged.
+
+       .. _`jsmin`: https://bitbucket.org/dcs/jsmin/
+       .. _`rjsmin`: http://opensource.perlig.de/rjsmin/
+    """
     try :
-        ### http://opensource.perlig.de/rjsmin/
-        from rjsmin import jsmin
+        ### https://packages.debian.org/sid/python/python-jsmin
+        from jsmin import jsmin
     except ImportError :
-        return code
+        try :
+            from rjsmin import jsmin
+        except ImportError :
+            return code
     else :
         try :
             return jsmin (code)
