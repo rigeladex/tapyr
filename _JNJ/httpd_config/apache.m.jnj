@@ -31,6 +31,7 @@
 ##                     * make `doc_root` parent of `app_root` (formerly `root`)
 ##                     * define permissions for `doc_root` directory
 ##                     * remove explicit permissions for lower directories
+##    19-Mar-2015 (CT) Use `config_options.cert_extension`
 ##    ««revision-date»»···
 ##--
 #}
@@ -263,8 +264,9 @@
         , ssl_ciphers  = "EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA"
         )
 -%}
+  {% set cert_ext = config_options.get ("cert_extension", "pem") -%}
   SSLEngine on
-  SSLCertificateFile    /etc/ssl/certs/{{- ssl_key_name -}}.pem
+  SSLCertificateFile    /etc/ssl/certs/{{- ssl_key_name -}}.{{ cert_ext }}
   SSLCertificateKeyFile /etc/ssl/private/{{- ssl_key_name -}}.key
   SSLProtocol           {{ ssl_protocol }}
   SSLHonorCipherOrder   On

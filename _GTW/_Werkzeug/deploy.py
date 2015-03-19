@@ -47,6 +47,7 @@
 #    17-Mar-2015 (CT) Add option `use_wsgi` to `create_config`
 #    19-Mar-2015 (CT) Add `-apache2_4`, `-document_root` to `create_config`
 #                     put `config_options` into `globals` of `templateer `
+#    19-Mar-2015 (CT) Add option `-cert_extension` to `create_config`
 #    ««revision-date»»···
 #--
 
@@ -132,6 +133,7 @@ application = command (%(args)s)
             ( address           = "*"
             , ca_key_name       = "CA_crt"
             , ca_path           = "~/CA"
+            , cert_extension    = "pem"
             , document_root     = "~/"
             , host_macro        = "gtw_host"
             , macro_module      = "httpd_config/apache.m.jnj"
@@ -144,6 +146,7 @@ application = command (%(args)s)
             , "-apache2_4:B?Create config for Apache 2.4"
             , "-ca_key_name:S?Name of CA key file"
             , "-ca_path:Q?Path for server-specific CA for client certificates"
+            , "-cert_extension:S?Extension of SSLCertificateFile (pem or crt)"
             , "-config_path:Q?Path for config file"
             , "-document_root:Q?"
                 "Path for DocumentRoot of virtual host. For Apache 2.4, "
@@ -281,6 +284,7 @@ application = command (%(args)s)
             , app_root       = cmd.root_dir
             , ca_key_name    = cmd.ca_key_name
             , ca_path        = cmd.ca_path
+            , cert_extension = cmd.cert_extension
             , cmd            = cmd
             , doc_root       = cmd.document_root
             , group          = cmd.group
