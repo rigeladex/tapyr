@@ -26,6 +26,11 @@
 ##    17-Mar-2015 (CT) Add `use_wsgi`; and `gtw_host` argument `xxgi_macro`
 ##    18-Mar-2015 (CT) Change `use_fcgi` to access `kwargs`
 ##    18-Mar-2015 (CT) Change `use_fcgi` default of `process_max` to 5
+##    19-Mar-2015 (CT) Add support for Apache 2.4
+##                     * factor `gtw_permission_*` macros, support `apache2_4`
+##                     * make `doc_root` parent of `app_root` (formerly `root`)
+##                     * define permissions for `doc_root` directory
+##                     * remove explicit permissions for lower directories
 ##    ««revision-date»»···
 ##--
 #}
@@ -54,23 +59,23 @@
   Header add Strict-Transport-Security "max-age=15768000"
 {% endmacro -%} {#- force_ssl -#}
 
-{%- macro gtw_aliases (root, lib_dir = "lib") -%}
-  Alias /media/GTW/ {{ root -}}/{{ lib_dir }}/_GTW/media/
-  Alias /media/v/   {{ root -}}/www/app/media/v/
-  Alias /media/     {{ root -}}/www/media/
+{%- macro gtw_aliases (app_root, doc_root, lib_dir = "lib") -%}
+  Alias /media/GTW/ {{ app_root -}}/{{ lib_dir }}/_GTW/media/
+  Alias /media/v/   {{ app_root -}}/www/app/media/v/
+  Alias /media/     {{ app_root -}}/www/media/
 {% endmacro -%} {#- gtw_aliases -#}
 
-{%- macro gtw_expires (root, lib_dir = "lib") -%}
-  {%- set lib_media = "/". join ((root, lib_dir, "_GTW/media/")) %}
-  {{ file_match_expires  ("gif|jpe?g|png",        1, "year") }}
-  {{ dir_expires_default (lib_media + "js",       1, "week") }}
-  {{ dir_expires_default (lib_media + "css",      1, "week") }}
-  {{ dir_expires_default (root + "/www/media/v",  1, "year") }}
-  {{ dir_expires_default (root + "/www/media",    1, "day" ) }}
+{%- macro gtw_expires (app_root, doc_root, lib_dir = "lib") -%}
+  {%- set lib_media = "/". join ((app_root, lib_dir, "_GTW/media/")) %}
+  {{ file_match_expires  ("gif|jpe?g|png",            1, "year") }}
+  {{ dir_expires_default (lib_media + "js",           1, "week") }}
+  {{ dir_expires_default (lib_media + "css",          1, "week") }}
+  {{ dir_expires_default (app_root + "/www/media/v",  1, "year") }}
+  {{ dir_expires_default (app_root + "/www/media",    1, "day" ) }}
 {% endmacro -%} {#- gtw_expires -#}
 
 {%- macro gtw_host
-        ( server_name, script, admin, root
+        ( server_name, script, admin, app_root, doc_root
         , address    = "*"
         , port       = "80"
         , aliases    = ()
@@ -85,17 +90,18 @@
       , address      = address
       , port         = port
       , admin        = admin
-      , root         = root
+      , app_root     = app_root
       , aliases      = aliases
+      , doc_root     = doc_root
       , ** kw
       )
   -%}
   {% if _caller %}{{ _caller () }}{% endif %}
 
-  {{ gtw_aliases     (root, lib_dir) }}
-  {{ gtw_permissions (root, lib_dir) }}
-  {{ gtw_expires     (root, lib_dir) }}
-  {{ xxgi_macro      (root, script, server_name, ** kw) }}
+  {{ gtw_aliases     (app_root, doc_root, lib_dir) }}
+  {{ gtw_permissions (app_root, doc_root, lib_dir) }}
+  {{ gtw_expires     (app_root, doc_root, lib_dir) }}
+  {{ xxgi_macro      (app_root, script, server_name, ** kw) }}
   {% endcall %} {# AT.virtual_host #}
 {% endmacro -%} {#- gtw_host -#}
 
@@ -121,7 +127,7 @@
 {%- endmacro -%} {#- gtw_host_80_redirect -#}
 
 {%- macro gtw_host_ssl
-        ( server_name, script, ssl_key_name, admin, root
+        ( server_name, script, ssl_key_name, admin, app_root, doc_root
         , address   = "*"
         , port      = "443"
         , aliases   = ()
@@ -129,13 +135,14 @@
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
   {% call gtw_host
-      ( server_name = server_name
-      , script      = script
-      , address     = address
-      , port        = port
-      , admin       = admin
-      , root        = root
-      , aliases     = aliases
+      ( server_name  = server_name
+      , script       = script
+      , address      = address
+      , port         = port
+      , admin        = admin
+      , app_root     = app_root
+      , aliases      = aliases
+      , doc_root     = doc_root
       , ** kwargs
       )
   -%}
@@ -145,7 +152,7 @@
 {% endmacro -%} {#- gtw_host_ssl -#}
 
 {%- macro gtw_host_ssl_cc
-        ( server_name, script, ssl_key_name, admin, root, ca_path
+        ( server_name, script, ssl_key_name, admin, app_root, ca_path
         , ca_key_name = "CA_crt"
         , address   = "*"
         , port      = "443"
@@ -160,7 +167,7 @@
       , address      = address
       , port         = port
       , admin        = admin
-      , root         = root
+      , app_root     = app_root
       , aliases      = aliases
       , ** kwargs
       )
@@ -170,30 +177,45 @@
   {% endcall %} {# gtw_host_ssl #}
 {% endmacro -%} {#- gtw_host_ssl_cc -#}
 
-{%- macro gtw_permissions (root, lib_dir = "lib") -%}
-  <Directory {{ root -}}/{{ lib_dir }}/_GTW/media>
-    Order    deny,allow
+{%- macro gtw_permission_allow_all () -%}
+  {% if config_options.apache2_4 -%}
+    Require  all granted{#- -#}
+  {% else -%}
+    Order    allow,deny
     Allow    from all
-    FileETag all
-  </Directory>
+  {%- endif -%}
+{%- endmacro -%} {#- gtw_permission_allow_all -#}
 
-  <Directory {{ root -}}/www/app/media/v>
-    Order    deny,allow
-    Allow    from all
-  </Directory>
-
-  <Directory {{ root -}}/www/app>
+{%- macro gtw_permission_allow_host (host) -%}
+  {% if config_options.apache2_4 -%}
+    Require  host {{ host -}}
+  {% else -%}
     Order    deny,allow
     Deny     from all
-  </Directory>
+    Allow    from {{ host }}
+  {%- endif -%}
+{%- endmacro -%} {#- gtw_permission_allow_all -#}
 
-  <Directory {{ root -}}/www/media>
+{%- macro gtw_permission_deny_all () -%}
+  {% if config_options.apache2_4 -%}
+    Require  all denied{#- -#}
+  {% else -%}
     Order    deny,allow
-    Allow    from all
+    Deny     from all
+  {%- endif -%}
+{%- endmacro -%} {#- gtw_permission_deny_all -#}
+
+{%- macro gtw_permissions (app_root, doc_root, lib_dir = "lib") -%}
+  <Directory {{ app_root -}}/{{ lib_dir }}/_GTW/media>
     FileETag all
   </Directory>
 
-  <Directory {{ root -}}/www>
+  <Directory {{ app_root -}}/www/media>
+    FileETag all
+  </Directory>
+
+  <Directory {{ doc_root -}}>
+    {{ gtw_permission_allow_all () }}
     DirectoryIndex index.html
   </Directory>
 {% endmacro -%} {#- gtw_permissions -#}
@@ -218,14 +240,14 @@
 {% endmacro -%} {#- use_client_cert -#}
 
 {%- macro use_fcgi
-        ( root, script, server_name
+        ( app_root, script, server_name
         , ext         = ".fcgi"
         , process_min = 0
         , process_max = 5
         )
 -%}
-  {#- Use `kwargs.pop` to make `use_fcgi` compatible to `use_wsgi` -#}
-  {%- do kwargs.pop ("group", None) %}
+  {# Use `kwargs.pop` to make `use_fcgi` compatible to `use_wsgi` -#}
+  {% do kwargs.pop ("group", None) -%}
   AddHandler fcgid-script {{ ext }}
   Options    +ExecCGI
 
@@ -251,17 +273,17 @@
 {% endmacro -%} {#- use_ssl -#}
 
 {%- macro use_wsgi
-        ( root, script, server_name
+        ( app_root, script, server_name
         , process_max   = 5
         , thread_max    = 1
         , process_group = None
         )
 -%}
-  {%- set group = kwargs.pop ("group", None) %}
-  {%- set user  = kwargs.pop ("user", None) %}
-  {%- if not process_group %}
-    {%- set process_group = server_name %}
-  {%- endif -%}
+  {% set group = kwargs.pop ("group", None) -%}
+  {% set user  = kwargs.pop ("user", None) -%}
+  {% if not process_group -%}
+    {%- set process_group = server_name -%}
+  {% endif -%}
   WSGIDaemonProcess {{ process_group }}
     {%- if user %} user={{ user }} {%- endif %}
     {%- if group %} group={{ group }} {%- endif %}
@@ -277,13 +299,13 @@
         , address   = "*"
         , port      = "80"
         , admin     = None
-        , root      = None
+        , app_root  = None
         , doc_root  = None
         , aliases   = ()
         )
 -%}
-  {%- if root and doc_root == None %}
-    {%- set doc_root = root + "/www" %}
+  {%- if app_root and not doc_root %}
+    {%- set doc_root = app_root %}
   {%- endif %}
 
 {#- #}
@@ -302,15 +324,15 @@
   AddDefaultCharset     utf-8
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
 
-    {{ caller () }}
+  {{ caller () }}
 
-    {{- logfiles
-        ( fqdn  = server_name
-        , port  = port
-        , fmt   = kwargs.get ("logfile_fmt",   "combined")
-        , level = kwargs.get ("logfile_level", "warn")
-        )
-    }}
+  {{- logfiles
+      ( fqdn  = server_name
+      , port  = port
+      , fmt   = kwargs.get ("logfile_fmt",   "combined")
+      , level = kwargs.get ("logfile_level", "warn")
+      )
+  }}
 
   UseCanonicalName On
 </VirtualHost>

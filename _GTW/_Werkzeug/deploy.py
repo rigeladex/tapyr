@@ -45,6 +45,8 @@
 #     2-Sep-2014 (CT) Change `dynamic_defaults` to check `combined`
 #    17-Mar-2015 (CT) Add sub-command `wsgi_script`, remove sub-command `fcgi`
 #    17-Mar-2015 (CT) Add option `use_wsgi` to `create_config`
+#    19-Mar-2015 (CT) Add `-apache2_4`, `-document_root` to `create_config`
+#                     put `config_options` into `globals` of `templateer `
 #    ««revision-date»»···
 #--
 
@@ -128,25 +130,32 @@ application = command (%(args)s)
 
         _defaults               = dict \
             ( address           = "*"
-            , port              = "80"
             , ca_key_name       = "CA_crt"
             , ca_path           = "~/CA"
+            , document_root     = "~/"
             , host_macro        = "gtw_host"
             , macro_module      = "httpd_config/apache.m.jnj"
+            , port              = "80"
             , root_dir          = "~/active"
             )
 
         _opts                   = \
             ( "-address:S?Address of virtual host"
+            , "-apache2_4:B?Create config for Apache 2.4"
             , "-ca_key_name:S?Name of CA key file"
             , "-ca_path:Q?Path for server-specific CA for client certificates"
             , "-config_path:Q?Path for config file"
+            , "-document_root:Q?"
+                "Path for DocumentRoot of virtual host. For Apache 2.4, "
+                "`DocumentRoot` must include both `root_dir` and `script_path`."
             , "-group:S?Define unix group that the wsgi process should be run as"
             , "-host_macro:S?Name of macro to create virtual host"
             , "-macro_module:S"
                 "?Name of jinja module providing config-generation macros"
             , "-port:S?Port for virtual host"
-            , "-root_dir:Q?Root path of web app"
+            , "-root_dir:Q?Root directory of the web app. This is the path "
+                "to the directory containing www/app and the library "
+                "directories specified by the option `-lib_dir`."
             , "-server_admin:S?Email address of server admin of virtual host"
             , "-server_aliases:T#8?Alias names for virtual host"
             , "-server_name:S?Fully qualified domain name of virtual host"
@@ -264,33 +273,36 @@ application = command (%(args)s)
         _create_script (cmd, cmd.argv, cmd.script_path)
         from   _JNJ import JNJ
         import _JNJ.Templateer
+        config_options       = dict \
+            ( address        = cmd.address
+            , admin          = cmd.server_admin
+            , aliases        = cmd.server_aliases
+            , apache2_4      = cmd.apache2_4
+            , app_root       = cmd.root_dir
+            , ca_key_name    = cmd.ca_key_name
+            , ca_path        = cmd.ca_path
+            , cmd            = cmd
+            , doc_root       = cmd.document_root
+            , group          = cmd.group
+            , lib_dirs       = cmd.lib_dir
+            , macro_name     = cmd.host_macro
+            , port           = cmd.port
+            , script         = cmd.script_path
+            , server_name    = cmd.server_name
+            , ssl_key_name   = cmd.ssl_key_name
+            , templ_name     = cmd.macro_module
+            , user           = cmd.user
+            )
         templateer           = JNJ.Templateer \
             ( encoding       = cmd.input_encoding
-            , globals        = dict ()
+            , globals        = dict (config_options = config_options)
             , load_path      = cmd.template_dirs
             , trim_blocks    = True
             )
         xxgi_macro           = templateer.GTW.get_macro \
             (xxgi_macro_name, templ_name = cmd.macro_module)
-        config               = templateer.call_macro \
-            ( macro_name     = cmd.host_macro
-            , templ_name     = cmd.macro_module
-            , address        = cmd.address
-            , admin          = cmd.server_admin
-            , aliases        = cmd.server_aliases
-            , ca_key_name    = cmd.ca_key_name
-            , ca_path        = cmd.ca_path
-            , cmd            = cmd
-            , group          = cmd.group
-            , lib_dirs       = cmd.lib_dir
-            , port           = cmd.port
-            , root           = cmd.root_dir
-            , script         = cmd.script_path
-            , server_name    = cmd.server_name
-            , ssl_key_name   = cmd.ssl_key_name
-            , user           = cmd.user
-            , xxgi_macro     = xxgi_macro
-            )
+        config_options.update (xxgi_macro = xxgi_macro)
+        config   = templateer.call_macro (** config_options)
         config_s = strip_empty_lines (config).strip ()
         c_path   = cmd.config_path
         def write (f, config) :
