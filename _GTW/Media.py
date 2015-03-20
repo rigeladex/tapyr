@@ -45,6 +45,7 @@
 #     4-Dec-2012 (MG) Fix media `Domain` handling
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    18-Mar-2015 (CT) Add support for debian-packaged `cssmin` and `jsmin`
+#    20-Mar-2015 (CT) Change `minified_css`, `minified_js` to never return None
 #    ««revision-date»»···
 #--
 
@@ -460,12 +461,13 @@ def minified_css (style, keep_bang_comments = True) :
         try :
             from rcssmin import cssmin
         except ImportError :
-            return style
+            pass
     else :
         try :
             return cssmin (style, keep_bang_comments = keep_bang_comments)
         except Exception as exc :
-            return style
+            pass
+    return style
 # end def minified_css
 
 def minified_js (code) :
@@ -484,12 +486,13 @@ def minified_js (code) :
         try :
             from rjsmin import jsmin
         except ImportError :
-            return code
+            pass
     else :
         try :
             return jsmin (code)
         except Exception as exc :
-            return code
+            pass
+    return code
 # end def minified_js
 
 if __name__ != "__main__":
