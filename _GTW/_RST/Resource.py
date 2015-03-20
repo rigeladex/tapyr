@@ -130,6 +130,8 @@
 #    30-Jan-2015 (CT) Add `_RST_Base_.target` returning `self`
 #    10-Feb-2015 (CT) Add property `RST_Types` to ease introspection
 #    17-Mar-2015 (CT) Add `_objects_cache`
+#    20-Mar-2015 (CT) Use `request.language`
+#    20-Mar-2015 (CT) Change `lang_pat` to `property`
 #    ««revision-date»»···
 #--
 
@@ -662,7 +664,9 @@ class _RST_Base_ (TFL.Meta.BaM (TFL.Meta.Object, metaclass = _RST_Meta_)) :
     def get_etag (self, request) :
         ci = self.change_info
         result = list \
-            (x for x in (self.rst_etag, request.lang, request.username) if x)
+            (  x for x in (self.rst_etag, request.language, request.username)
+            if x
+            )
         if ci :
             ci_etag = getattr (ci, "etag", None)
             if ci_etag :
@@ -1417,6 +1421,7 @@ class RST_Root (_Ancestor) :
     _exclude_robots            = True
     _hash_fct                  = None
     _href_pat                  = None
+    _lang_pat                  = None
     _name                      = ""
     _needs_parent              = False
 
@@ -1508,12 +1513,19 @@ class RST_Root (_Ancestor) :
         return result
     # end def href_pat
 
-    @Once_Property
+    @property
     @getattr_safe
     def lang_pat (self) :
-        if self.i18n and "L10N" in self.SC :
-            return re.compile \
-                (r"(?:/?(?:%s)(?:/|$))" % ("|".join (sorted (self.languages))))
+        result = self._lang_pat
+        if result is None and self.i18n :
+            try :
+                self.SC.L10N ### only return `lang_pat` if L10N exists
+                languages = self.languages
+                result    = self._lang_pat = re.compile \
+                    (r"(?:/?(?:%s)(?:/|$))" % ("|".join (sorted (languages))))
+            except Exception as exc :
+                logging.error (exc)
+            return result
     # end def lang_pat
 
     @Once_Property
@@ -1692,9 +1704,7 @@ class RST_Root (_Ancestor) :
     def _http_response_context (self, resource, request, response) :
         user      = request.user
         scope     = self.scope
-        r_context = dict \
-            (request = request, response = response, user = user)
-            ### XXX language ?
+        r_context = dict (request = request, response = response, user = user)
         with self.LET (** r_context) :
             if scope and getattr (scope, "LET", None) :
                 with scope.LET (user = user) :

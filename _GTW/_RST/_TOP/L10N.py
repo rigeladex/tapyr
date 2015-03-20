@@ -23,6 +23,7 @@
 #    26-Nov-2013 (CT) Add `_Language_.skip_etag`
 #    11-Mar-2015 (CT) Add `logging.error` to `_Language_.GET.__call__`
 #    11-Mar-2015 (CT) Use `HTTP_Status.See_Other`, not `.Temporary_Redirect`
+#    20-Mar-2015 (CT) Add `request.use_language` to `_Language_.GET.__call__`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class _Language_ (_Ancestor) :
                 next   = request.req_data.get ("next", request.referrer)
                 choice = TFL.I18N.Config.choice
                 if language.startswith (choice [0]) :
+                    request.use_language (choice)
                     response.set_cookie ("language", language, max_age = 1<<31)
                     response.add_notification \
                         ( GTW.Notification

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
@@ -48,6 +48,7 @@
 #    29-Apr-2014 (CT) Robustify `first_child` and `last_child`
 #    12-Dec-2014 (CT) Add `HTTP_POST_CRSF_Mixin`
 #                     (factored from `GTW.RST.TOP.Auth._Form_Cmd_.POST`)
+#    20-Mar-2015 (CT) Use `request.language` in `render_context`
 #    ««revision-date»»···
 #--
 
@@ -384,10 +385,12 @@ class _TOP_Base_ (_Ancestor) :
     # end def page_from_obj
 
     def render_context (self, nav_page = None, ** kw) :
+        if nav_page is None :
+            nav_page = self
         return self.top.Templateer.Context \
             ( NAV           = self.top
-            , lang          = "_".join (uniq (TFL.I18N.Config.choice))
-            , nav_page      = nav_page or self
+            , lang          = nav_page.request.language
+            , nav_page      = nav_page
             , page          = self
             , ** kw
             )

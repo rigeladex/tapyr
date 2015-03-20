@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
@@ -41,6 +41,7 @@
 #     7-Apr-2014 (CT) Change `rat_authorized_user` to look at `req_data ["RAT"]`
 #    26-Apr-2014 (CT) Remove stale imports
 #    29-Apr-2014 (CT) Add `getattr_safe` to several properties
+#    20-Mar-2015 (CT) Add property `language`
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,14 @@ class _RST_Request_ (TFL.Meta.Object) :
     def is_secure (self) :
         return self.scheme == "https"
     # end def is_secure
+
+    @property
+    def language (self) :
+        result = self.lang
+        if result is None :
+            result = self.locale_codes
+        return result [0] if result else None
+    # end def language
 
     @Once_Property
     @getattr_safe
