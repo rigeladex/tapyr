@@ -46,6 +46,7 @@
 #    22-Feb-2013 (CT) Use `TFL.Undef ()` not `object ()`
 #    18-Mar-2015 (CT) Add support for debian-packaged `cssmin` and `jsmin`
 #    20-Mar-2015 (CT) Change `minified_css`, `minified_js` to never return None
+#    20-Mar-2015 (CT) Fix `minified_css`, `minified_js`
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,8 @@ from   _TFL._Meta.Property                import Alias_Property
 from   _TFL.pyk                           import pyk
 
 from   posixpath import join as pjoin
+
+import logging
 
 class Media_Base (TFL.Meta.Object) :
     """Base class for media objects."""
@@ -453,6 +456,7 @@ def minified_css (style, keep_bang_comments = True) :
        .. _`cssmin`: https://github.com/zacharyvoase/cssmin
        .. _`rcssmin`: http://opensource.perlig.de/rcssmin/
     """
+    cssmin = None
     try :
         ### https://packages.qa.debian.org/c/cssmin.html
         from cssmin import cssmin as _cssmin
@@ -462,11 +466,11 @@ def minified_css (style, keep_bang_comments = True) :
             from rcssmin import cssmin
         except ImportError :
             pass
-    else :
+    if cssmin is not None :
         try :
             return cssmin (style, keep_bang_comments = keep_bang_comments)
         except Exception as exc :
-            pass
+            logging.error ("Exception during minified_css\n    %s" % (exc, ))
     return style
 # end def minified_css
 
@@ -479,6 +483,7 @@ def minified_js (code) :
        .. _`jsmin`: https://bitbucket.org/dcs/jsmin/
        .. _`rjsmin`: http://opensource.perlig.de/rjsmin/
     """
+    jsmin = None
     try :
         ### https://packages.debian.org/sid/python/python-jsmin
         from jsmin import jsmin
@@ -487,11 +492,11 @@ def minified_js (code) :
             from rjsmin import jsmin
         except ImportError :
             pass
-    else :
+    if jsmin is not None :
         try :
             return jsmin (code)
         except Exception as exc :
-            pass
+            logging.error ("Exception during minified_js\n    %s" % (exc, ))
     return code
 # end def minified_js
 
