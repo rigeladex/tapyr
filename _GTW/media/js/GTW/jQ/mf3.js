@@ -47,6 +47,9 @@
 //    15-Jan-2015 (CT) Factor key handling to `gtw_hd_input`,
 //                     remove `entity_display_open_cb`
 //    27-Feb-2015 (CT) Change `close_section` to call `focus` only once
+//    24-Mar-2015 (CT) Move `removeClass ("open")` from `field_blur_cb` to
+//                     `field_focus_cb` (avoid disruption of button click by
+//                     page shift due to hiding of previously open `aside`)
 //    ««revision-date»»···
 //--
 
@@ -508,8 +511,6 @@
             var old_value = f$.data      ("old_value");
             var polisher  = f$.data      ("polisher");
             var new_value = ft.get_input (f$);
-            a$.removeClass ("open");
-            $("aside", c$).removeClass ("open");
             if (  polisher
                && new_value !== ""
                && ((! old_value) || old_value != new_value)
@@ -565,6 +566,10 @@
             var ft        = f$.data ("field_type");
             var fv        = values [F_id];
             f$.data ("old_value", ft.get_cargo (fv));
+            // hide `aside` elements of field that had focus before
+            // + this is done here, not in `field_blur_cb`, to avoid
+            //   unnecessary layout changes
+            $("aside", options.form$).removeClass ("open");
             a$.addClass  ("open");
             ca$.addClass ("open");
         };

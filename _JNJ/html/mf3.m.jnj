@@ -39,6 +39,8 @@
 ##    30-Jan-2015 (CT) Use `page.request.path` for form `action`
 ##                     (to match what `Anti_CSRF` uses; otherwise Aliases break)
 ##    13-Mar-2015 (CT) Pass `action` to `anti_csrf_token`
+##    24-Mar-2015 (CT) Add `<b>*</b>` to `label` for required elements
+##                     (that aren't also prefilled)
 ##    ««revision-date»»···
 ##--
 #}
@@ -163,6 +165,7 @@
   <label for="{{ elem.id }}">{# -#}
     {%- if prefix %}{{ prefix }} {% endif -%}
     {{ label or GTW._T (elem.label) -}}
+    {%- if elem.required and not elem.prefilled %}<b>*</b>{% endif -%}
   </label>
 {%- endmacro -%} {#- do_label -#}
 

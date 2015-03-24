@@ -24,6 +24,9 @@
 #    24-Aug-2014 (CT) Add rule for `aside` for media with `max_width = Rem (34)`
 #    27-Aug-2014 (CT) Change `aside` to `display="block"`, not `"inline-block"`
 #     8-Sep-2014 (CT) Fix rules for `quite_narrow` screens
+#    24-Mar-2015 (CT) Remove rule `focus + aside`
+#    24-Mar-2015 (CT) Use `P.Rule.input_focus`, not `P.Rule.focus`
+#    24-Mar-2015 (CT) Add rule for `form .pure-form label > b`
 #    ««revision-date»»···
 #--
 
@@ -84,7 +87,7 @@ style_sheet = Style_Sheet \
                                 , children          =
                                     [ Rule_Pseudo
                                         ( "focus"
-                                        , border_width = Px (2)
+                                        , border_width  = Px (2)
                                         )
                                     ]
                                 )
@@ -100,8 +103,24 @@ style_sheet = Style_Sheet \
                             , Rule_Pseudo
                                 ( """invalid[value=""]"""
                                 , border_color = P.color_status_missing
+                                , children     =
+                                    [ Rule_Pseudo
+                                        ( "focus"
+                                        , P.Rule.input_focus
+                                        , outline = "3px solid "
+                                                  + P.color_status_missing
+                                        )
+                                    ]
                                 )
+                            , P.Rule.input_focus
                             ]
+                        )
+                    , Rule
+                        ( "label > b"
+                        , color            = P.color_status_bad
+                        , font_size        = Em (1.25)
+                        , margin_left      = Em (0.25)
+                        , position         = "absolute"
                         )
                     ]
                 )
@@ -354,22 +373,12 @@ style_sheet = Style_Sheet \
                                 , border_color         = "inherit"
                                 , color                = "inherit"
                                 , children             =
-                                    [ Rule_Pseudo
-                                        ( "focus"
-                                        , P.Rule.focus
-                                        , border_color =
-                                            P.pure.input_focus_border_color
-                                        )
+                                    [ P.Rule.input_focus
                                     ]
                                 )
                             , Rule_Class
                                 ( "hidden.value"
                                 , display              = "none"
-                                )
-                            , Rule_Pseudo
-                                ( "focus + aside"
-                                , display              = "block"
-                                , visibility           = "visible"
                                 )
                             ]
                         )

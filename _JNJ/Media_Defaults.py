@@ -55,6 +55,7 @@
 #    23-Jan-2015 (CT) Add `color_jnd_grey`, reduce contrast of `color_spec_row1`
 #    23-Jan-2015 (CT) Factor `line_height*` parameters
 #    15-Feb-2015 (CT) Add `menu_icon`
+#    24-Mar-2015 (CT) Add `Rule.input_focus`
 #    ««revision-date»»···
 #--
 
@@ -533,6 +534,14 @@ class Media_Defaults (Definition) :
         hover_rev          = Rule_Pseudo \
             ( "hover"
             ,  P.R.color_spec_selected_rev
+            )
+
+        input_focus        = Rule_Pseudo \
+            ( "focus"
+            , background_color = "inherit"
+            , border_color     = P.R.pure.input_focus_border_color
+            , color            = RGB_X ("#0078E7")
+            , outline          = P.R.pure.input_focus_border_color
             )
 
         link               = Rule_Pseudo \
