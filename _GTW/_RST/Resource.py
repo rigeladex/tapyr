@@ -132,6 +132,8 @@
 #    17-Mar-2015 (CT) Add `_objects_cache`
 #    20-Mar-2015 (CT) Use `request.language`
 #    20-Mar-2015 (CT) Change `lang_pat` to `property`
+#    24-Mar-2015 (CT) Call `I18N.use` in `_http_response_context`
+#    24-Mar-2015 (CT) Use `_http_response_context` for error renderings, too
 #    ««revision-date»»···
 #--
 
@@ -1643,7 +1645,8 @@ class RST_Root (_Ancestor) :
                 if isinstance (status, Status.Server_Error) :
                     self.send_error_email \
                         (request, status, traceback.format_exc ())
-                result  = status (self, request, response)
+                with self._http_response_context (self, request, response) :
+                    result  = status (self, request, response)
             except HTTP.HTTP_Exception as exc :
                 ### works for werkzeug.exceptions.HTTPException
                 return exc
@@ -1702,9 +1705,15 @@ class RST_Root (_Ancestor) :
 
     @TFL.Contextmanager
     def _http_response_context (self, resource, request, response) :
+        language  = request.language or self.language
         user      = request.user
         scope     = self.scope
         r_context = dict (request = request, response = response, user = user)
+        if language :
+            ### Cannot use `with TFL.I18N.context (language)` here
+            ### because the final WSGI call at the end of `wsgi_app` would be
+            ### outside that context
+            TFL.I18N.use (language)
         with self.LET (** r_context) :
             if scope and getattr (scope, "LET", None) :
                 with scope.LET (user = user) :
@@ -1714,8 +1723,10 @@ class RST_Root (_Ancestor) :
     # end def _http_response_context
 
     def _http_response_error (self, request, response, exc, tbi = None) :
+        Error = self.Status.Internal_Server_Error ()
         self.send_error_email (request, exc, tbi)
-        return self.Status.Internal_Server_Error () (self, request, response)
+        with self._http_response_context (self, request, response) :
+            return Error (self, request, response)
     # end def _http_response_error
 
     def _http_response_need_auth (self, resource, request, response, auth) :
