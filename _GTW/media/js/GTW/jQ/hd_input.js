@@ -21,6 +21,8 @@
 //    11-Jul-2014 (CT) Move `"use strict"` into closure
 //    15-Jan-2015 (CT) Add handling of `trigger_event` for keys,
 //                     add `clear_callback`
+//    26-Mar-2015 (CT) Prevent default for cursor moving keys only
+//                     in `hd_input_trigger_key`
 //    ««revision-date»»···
 //--
 
@@ -68,7 +70,7 @@
                             //  27     escape
                             //  32     space
                             //  33     page up           (mini keypad)
-                            //  33     page down         (mini keypad)
+                            //  34     page down         (mini keypad)
                             //  35     end               (mini keypad)
                             //  36     home              (mini keypad)
                             //  37     cursor left
@@ -87,12 +89,14 @@
                         if (! ignore) {
                             result = options.callback.apply (this, arguments);
                             if (ev && "preventDefault" in ev) {
-                                // without this, cursor-up and cursor-down
-                                // cause scrolling
-                                ev.preventDefault ();
+                                if (k >= 33 && k <= 40) {
+                                    // without this, cursor-up and cursor-down
+                                    // cause scrolling
+                                    ev.preventDefault ();
+                                };
                             };
                             if ("clear_callback" in options) {
-                                if (k in {8 : 1, 46 : 1, 127:1}) {
+                                if (k in {8 : 1, 46 : 1, 127: 1}) {
                                     options.clear_callback.apply
                                         (this, arguments);
                                 };
