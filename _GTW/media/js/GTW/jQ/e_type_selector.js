@@ -165,6 +165,10 @@
               } else {
                   self.widget = self.setup_widget (self.ajax_response);
               };
+              if (self.options.treshold === 0) {
+                  // display possible completions, automatically
+                  self.inputs$.eq (0).autocomplete ("search");
+              };
               return false;
           }
         , activate_form         : function activate_form (form) {
