@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -27,6 +27,7 @@
 #                     * allow wrapping on white-space
 #                     * add `display`, `padding_left`, `text_indent` to create
 #                       hanging indent
+#    27-Mar-2015 (CT) Add `min_width`, `overflow_*` to factored `ui-menu`
 #    ««revision-date»»···
 #--
 
@@ -35,28 +36,34 @@ style_sheet = Style_Sheet \
         ( ".ui-autocomplete"
         , display        = "block"
         , max_height     = Percent (80)
-        , overflow_y     = "auto"
         , children =
             [ Rule_Class
-                ( "ui-menu .ui-menu-item"
-                , children =
+                ( "ui-menu"
+                , overflow_x     = "visible"
+                , overflow_y     = "scroll"
+                , children       =
                     [ Rule
-                        ("a"
-                        , display       = "block"
-                        , padding_left  = Em ( 2.0)
-                        , text_indent   = Em (-1.6)
-                        , white_space   = "normal"
-                        )
-                    , Rule
-                        ( "b"
-                        , font_weight   = "normal"
-                        , padding_left  = Em (0.25)
-                        )
-                    , Rule
-                        ( "b:first-child:not(:last-child)"
-                        , font_weight   = "bold"
-                        , padding_left  = 0
-                        , padding_right = Em (0.75)
+                        ( ".ui-menu-item"
+                        , children =
+                            [ Rule
+                                ("a"
+                                , display       = "block"
+                                , padding_left  = Em ( 2.0)
+                                , text_indent   = Em (-1.6)
+                                , white_space   = "normal"
+                                )
+                            , Rule
+                                ( "b"
+                                , font_weight   = "normal"
+                                , padding_left  = Em (0.25)
+                                )
+                            , Rule
+                                ( "b:first-child:not(:last-child)"
+                                , font_weight   = "bold"
+                                , padding_left  = 0
+                                , padding_right = Em (0.75)
+                                )
+                            ]
                         )
                     ]
                 )

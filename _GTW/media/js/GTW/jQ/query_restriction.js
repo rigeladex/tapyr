@@ -77,6 +77,7 @@
 //    14-Jan-2015 (CT) Factor `hide_menu`
 //    15-Jan-2015 (CT) Use `click` and `keydown`, not `focus`, to open dialogs
 //                     + Pass `clear_callback` to `gtw_hd_input`
+//    27-Mar-2015 (CT) Use `flipfit`, not `fit`, for `collision`
 //    ««revision-date»»···
 //--
 
@@ -102,7 +103,7 @@
         var menu_position  = $.extend
             ( { my         : "right top"
               , at         : "left bottom"
-              , collision  : "fit"
+              , collision  : "flipfit"
               }
             , opts && opts ["menu_position"] || {}
             );

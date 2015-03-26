@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package JNJ.
@@ -19,6 +19,8 @@
 #     9-Apr-2013 (CT) Creation
 #    15-Sep-2014 (CT) Add rule for `... .ui-dialog-titlebar`
 #     5-Dec-2014 (CT) Use pure buttons for `.ui-dialog`
+#    26-Mar-2015 (CT) Add rules for `a:hover`, `form`; factor `.ui-dialog`
+#    27-Mar-2015 (CT) Move `a:hover` rule to `.ui-widget`
 #    ««revision-date»»···
 #--
 
@@ -28,20 +30,42 @@ style_sheet = Style_Sheet \
         , display                  = None
         )
     , Rule
-        ( ".ui-dialog .ui-dialog-titlebar .ui-dialog-title"
-        , max_width                = Percent (100)
-        , white_space              = "normal"
-        )
-    , Rule
-        ( ".ui-dialog .pure-button"
+        ( ".ui-widget"
         , children                 =
             [ Rule
-                ( "b"
-                , display                  = "none"
+                ( "a:hover"
+                , background_color         = "inherit"
+                , color                    = "inherit"
+                )
+            ]
+        )
+    , Rule
+        ( ".ui-dialog"
+        , min_width                = Percent (50)
+        , children                 =
+            [ Rule
+                ( "form"
+                , min_height               = "240px !important"
+                    ### `!important` is needed because jQuery_UI
+                    ### applies element style for `min_height` that is too small
                 )
             , Rule
-                ( ".fa"
-                , color                    = P.color.m_blue
+                ( ".pure-button"
+                , children                 =
+                    [ Rule
+                        ( "b"
+                        , display                  = "none"
+                        )
+                    , Rule
+                        ( ".fa"
+                        , color                    = P.color.m_blue
+                        )
+                    ]
+                )
+            , Rule
+                ( ".ui-dialog-titlebar .ui-dialog-title"
+                , max_width                = Percent (100)
+                , white_space              = "normal"
                 )
             ]
         )

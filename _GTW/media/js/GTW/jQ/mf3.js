@@ -50,6 +50,7 @@
 //    24-Mar-2015 (CT) Move `removeClass ("open")` from `field_blur_cb` to
 //                     `field_focus_cb` (avoid disruption of button click by
 //                     page shift due to hiding of previously open `aside`)
+//    27-Mar-2015 (CT) Pass `collision : flipfit` to `gtw_autocomplete`
 //    ««revision-date»»···
 //--
 
@@ -266,19 +267,19 @@
                     fvs.push (v);
                 };
             };
-            var fs$, i, n$;
-            if (d === "") {
+            var fs$, i, nxt;
+            if (d == "") {
                 fs$ = $(":input[id]:not(.prefilled):not(.display)", c$);
                 fs$.each (acc);
                 d$.val   (fvs.join (", "));
             };
             fs$ = $(S.focusables);
             i   = fs$.index (t$);
-            n$  = fs$.get   (i+1);
-            if (! n$) {
-                n$ = $(S.submit).first ();
+            nxt = fs$.get   (i+1);
+            if (! nxt) {
+                nxt = $(S.submit).first ();
             };
-            setTimeout  (function () { n$.focus (); }, 0);
+            setTimeout  (function () { nxt.focus (); }, 0);
             c$.addClass ("closed");
         };
         var completer =
@@ -466,6 +467,7 @@
                 if ("choices" in f_completer) {
                     f$.gtw_autocomplete
                         ( { minLength : f_completer.treshold
+                          , position  : { collision  : "flipfit" }
                           , source    : f_completer.choices
                           }
                         );

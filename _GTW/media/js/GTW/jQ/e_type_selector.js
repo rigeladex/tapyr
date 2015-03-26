@@ -67,6 +67,9 @@
 //                     * `ui.content` was deprecated in jqueryui 1.10,
 //                       and was removed in jqueryui 1.11
 //                     * missed that during the upgrade to 1.10
+//    26-Mar-2015 (CT) Change `activate_cb` to display possible completions
+//                     automatically, if `treshold === 0`
+//    27-Mar-2015 (CT) Use `flipfit`, not `fit`, for `collision`
 //    ««revision-date»»···
 //--
 
@@ -79,7 +82,7 @@
     var default_position =
         { my         : "left top"
         , at         : "left bottom"
-        , collision  : "fit"
+        , collision  : "flipfit"
         };
     var ET_Selector = $GTW.Class.extend (
         { defaults              :
