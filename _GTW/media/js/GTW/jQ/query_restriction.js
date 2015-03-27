@@ -78,6 +78,7 @@
 //    15-Jan-2015 (CT) Use `click` and `keydown`, not `focus`, to open dialogs
 //                     + Pass `clear_callback` to `gtw_hd_input`
 //    27-Mar-2015 (CT) Use `flipfit`, not `fit`, for `collision`
+//    27-Mar-2015 (CT) Factor `serialized_form`, add `:checkbox:not(:checked)`
 //    ««revision-date»»···
 //--
 
@@ -966,6 +967,20 @@
                   dir$.prop ("title", title);
               }
             };
+        var serialized_form = function serialized_form (form$, button) {
+            var result = [form$.serialize ()];
+            var unchecked$ = $(":checkbox", form$).filter (":not(:checked)");
+            if (button) {
+                result.push (button.name + "=" + button.value);
+            };
+            unchecked$.each
+                ( function () {
+                    // unchecked checkboxes aren't submitted by HTML forms
+                    result.push (this.name + "=" + "no");
+                  }
+                );
+            return result.join ("&");
+        };
         var setup_a_toggle = function setup_a_toggle (a$, title, names, cb) {
             var opts = { click_handler : cb, icon_map : fa_icons };
             a$.data                     (names)
@@ -1055,14 +1070,14 @@
                     };
                 };
             };
-            $GTW.push_history (qr$.prop ("action") + "?" + qr$.serialize ());
+            $GTW.push_history
+                (qr$.prop ("action") + "?" + serialized_form (qr$));
         };
         var submit_cb = function submit_cb (ev) {
             var S = options.selectors;
             var target$ = $(ev.target);
             var form$   = target$.closest ($("form"));
-            var args    = form$.serialize ()
-                + "&" + this.name + "=" + this.value;
+            var args    = serialized_form (form$, this);
             $.getJSON (form$.prop ("action"), args, submit_ajax_cb);
             return false;
         };

@@ -348,6 +348,7 @@
 #                     as metaclass
 #    27-Feb-2015 (CT) Add `_A_Date_.not_in_future` and corresponding checker
 #    27-Feb-2015 (CT) Change `_A_Composite_.cooked` to try downcast
+#    27-Mar-2015 (CT) Add `on` to `Table_X` of `A_Boolean`, `A_Confirmation`
 #    ««revision-date»»···
 #--
 
@@ -2153,6 +2154,7 @@ class A_Boolean (_A_Boolean_) :
     Table_X           = dict \
         ( Table
         , false       = False
+        , on          = True  ### value of a checked <input type="checkbox">
         , true        = True
         )
 
@@ -2221,6 +2223,7 @@ class A_Confirmation (_A_Boolean_) :
     ### (want only canonical values in UI and documentation)
     Table_X           = dict \
         ( Table
+        , on          = True  ### value of a checked <input type="checkbox">
         , true        = True
         )
 
