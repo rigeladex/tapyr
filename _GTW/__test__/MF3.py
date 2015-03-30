@@ -20,6 +20,7 @@
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #    25-Aug-2014 (CT) Adapt to changes of `GTW.MF3.Completer`
 #    27-Aug-2014 (CT) Add test `skip`
+#    30-Mar-2015 (CT) Add test `single_primary`
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,8 @@ from   _GTW._MF3                  import Element as MF3_E
 
 from   _TFL._Meta.Single_Dispatch import Single_Dispatch
 from   _TFL.Regexp                import Multi_Re_Replacer, Re_Replacer, re
+
+import _GTW._OMP._SRM.Ranking
 
 _cleaner = Re_Replacer \
     ( r"'\$sid' : '[0-9a-f]+'"
@@ -988,342 +991,342 @@ _test_element = """
     >>> show_elements_x (f_PhP_s, "id", "allow_new", filter = (Q.allow_new != None))
     Type    id           allow_new
     ============================
-    F_E     Y-119:left   False
-    F_E     Y-119:right  True
+    F_E     Y-121:left   False
+    F_E     Y-121:right  True
 
     >>> show_elements_x (f_PhP_z, "id", "allow_new", filter = (Q.allow_new != None))
     Type    id           allow_new
     ===========================
-    F_E     Z-119:left   True
-    F_E     Z-119:right  True
+    F_E     Z-121:left   True
+    F_E     Z-121:right  True
 
     >>> show_elements (f_PhP_z, "Entity")
-    <Entity Z-119> <Entity Z-119>
-    <Field_Entity Z-119:left> <Entity Z-119>
-    <Field Z-119:left.last_name> <Field_Entity Z-119:left>
-    <Field Z-119:left.first_name> <Field_Entity Z-119:left>
-    <Field Z-119:left.middle_name> <Field_Entity Z-119:left>
-    <Field Z-119:left.title> <Field_Entity Z-119:left>
-    <Field_Composite Z-119:left.lifetime> <Field_Entity Z-119:left>
-    <Field Z-119:left.lifetime.start> <Field_Entity Z-119:left>
-    <Field Z-119:left.lifetime.finish> <Field_Entity Z-119:left>
-    <Field Z-119:left.sex> <Field_Entity Z-119:left>
-    <Field_Entity Z-119:right> <Entity Z-119>
-    <Field Z-119:right.country_code> <Field_Entity Z-119:right>
-    <Field Z-119:right.area_code> <Field_Entity Z-119:right>
-    <Field Z-119:right.number> <Field_Entity Z-119:right>
-    <Field Z-119:right.desc> <Field_Entity Z-119:right>
-    <Field Z-119:extension> <Entity Z-119>
-    <Field Z-119:desc> <Entity Z-119>
+    <Entity Z-121> <Entity Z-121>
+    <Field_Entity Z-121:left> <Entity Z-121>
+    <Field Z-121:left.last_name> <Field_Entity Z-121:left>
+    <Field Z-121:left.first_name> <Field_Entity Z-121:left>
+    <Field Z-121:left.middle_name> <Field_Entity Z-121:left>
+    <Field Z-121:left.title> <Field_Entity Z-121:left>
+    <Field_Composite Z-121:left.lifetime> <Field_Entity Z-121:left>
+    <Field Z-121:left.lifetime.start> <Field_Entity Z-121:left>
+    <Field Z-121:left.lifetime.finish> <Field_Entity Z-121:left>
+    <Field Z-121:left.sex> <Field_Entity Z-121:left>
+    <Field_Entity Z-121:right> <Entity Z-121>
+    <Field Z-121:right.country_code> <Field_Entity Z-121:right>
+    <Field Z-121:right.area_code> <Field_Entity Z-121:right>
+    <Field Z-121:right.number> <Field_Entity Z-121:right>
+    <Field Z-121:right.desc> <Field_Entity Z-121:right>
+    <Field Z-121:extension> <Entity Z-121>
+    <Field Z-121:desc> <Entity Z-121>
 
     >>> show_elements (f_PhP_z, "q_name")
-    <Entity Z-119> None
-    <Field_Entity Z-119:left> left
-    <Field Z-119:left.last_name> left.last_name
-    <Field Z-119:left.first_name> left.first_name
-    <Field Z-119:left.middle_name> left.middle_name
-    <Field Z-119:left.title> left.title
-    <Field_Composite Z-119:left.lifetime> left.lifetime
-    <Field Z-119:left.lifetime.start> left.lifetime.start
-    <Field Z-119:left.lifetime.finish> left.lifetime.finish
-    <Field Z-119:left.sex> left.sex
-    <Field_Entity Z-119:right> right
-    <Field Z-119:right.country_code> right.country_code
-    <Field Z-119:right.area_code> right.area_code
-    <Field Z-119:right.number> right.number
-    <Field Z-119:right.desc> right.desc
-    <Field Z-119:extension> extension
-    <Field Z-119:desc> desc
+    <Entity Z-121> None
+    <Field_Entity Z-121:left> left
+    <Field Z-121:left.last_name> left.last_name
+    <Field Z-121:left.first_name> left.first_name
+    <Field Z-121:left.middle_name> left.middle_name
+    <Field Z-121:left.title> left.title
+    <Field_Composite Z-121:left.lifetime> left.lifetime
+    <Field Z-121:left.lifetime.start> left.lifetime.start
+    <Field Z-121:left.lifetime.finish> left.lifetime.finish
+    <Field Z-121:left.sex> left.sex
+    <Field_Entity Z-121:right> right
+    <Field Z-121:right.country_code> right.country_code
+    <Field Z-121:right.area_code> right.area_code
+    <Field Z-121:right.number> right.number
+    <Field Z-121:right.desc> right.desc
+    <Field Z-121:extension> extension
+    <Field Z-121:desc> desc
 
     >>> show_elements (f_PhP_z, "r_name")
-    <Entity Z-119> ---
-    <Field_Entity Z-119:left> left
-    <Field Z-119:left.last_name> last_name
-    <Field Z-119:left.first_name> first_name
-    <Field Z-119:left.middle_name> middle_name
-    <Field Z-119:left.title> title
-    <Field_Composite Z-119:left.lifetime> lifetime
-    <Field Z-119:left.lifetime.start> lifetime.start
-    <Field Z-119:left.lifetime.finish> lifetime.finish
-    <Field Z-119:left.sex> sex
-    <Field_Entity Z-119:right> right
-    <Field Z-119:right.country_code> country_code
-    <Field Z-119:right.area_code> area_code
-    <Field Z-119:right.number> number
-    <Field Z-119:right.desc> desc
-    <Field Z-119:extension> extension
-    <Field Z-119:desc> desc
+    <Entity Z-121> ---
+    <Field_Entity Z-121:left> left
+    <Field Z-121:left.last_name> last_name
+    <Field Z-121:left.first_name> first_name
+    <Field Z-121:left.middle_name> middle_name
+    <Field Z-121:left.title> title
+    <Field_Composite Z-121:left.lifetime> lifetime
+    <Field Z-121:left.lifetime.start> lifetime.start
+    <Field Z-121:left.lifetime.finish> lifetime.finish
+    <Field Z-121:left.sex> sex
+    <Field_Entity Z-121:right> right
+    <Field Z-121:right.country_code> country_code
+    <Field Z-121:right.area_code> area_code
+    <Field Z-121:right.number> number
+    <Field Z-121:right.desc> desc
+    <Field Z-121:extension> extension
+    <Field Z-121:desc> desc
 
     >>> show_elements (f_PhP, "root")
-    <Entity X-119> <Entity X-119>
-    <Field_Entity X-119:left> <Entity X-119>
-    <Field_Entity X-119:right> <Entity X-119>
-    <Field X-119:right.country_code> <Entity X-119>
-    <Field X-119:right.area_code> <Entity X-119>
-    <Field X-119:right.number> <Entity X-119>
-    <Field X-119:extension> <Entity X-119>
-    <Field X-119:desc> <Entity X-119>
+    <Entity X-121> <Entity X-121>
+    <Field_Entity X-121:left> <Entity X-121>
+    <Field_Entity X-121:right> <Entity X-121>
+    <Field X-121:right.country_code> <Entity X-121>
+    <Field X-121:right.area_code> <Entity X-121>
+    <Field X-121:right.number> <Entity X-121>
+    <Field X-121:extension> <Entity X-121>
+    <Field X-121:desc> <Entity X-121>
 
     >>> show_elements (f_PhP, "Entity")
-    <Entity X-119> <Entity X-119>
-    <Field_Entity X-119:left> <Entity X-119>
-    <Field_Entity X-119:right> <Entity X-119>
-    <Field X-119:right.country_code> <Field_Entity X-119:right>
-    <Field X-119:right.area_code> <Field_Entity X-119:right>
-    <Field X-119:right.number> <Field_Entity X-119:right>
-    <Field X-119:extension> <Entity X-119>
-    <Field X-119:desc> <Entity X-119>
+    <Entity X-121> <Entity X-121>
+    <Field_Entity X-121:left> <Entity X-121>
+    <Field_Entity X-121:right> <Entity X-121>
+    <Field X-121:right.country_code> <Field_Entity X-121:right>
+    <Field X-121:right.area_code> <Field_Entity X-121:right>
+    <Field X-121:right.number> <Field_Entity X-121:right>
+    <Field X-121:extension> <Entity X-121>
+    <Field X-121:desc> <Entity X-121>
 
     >>> show_elements (f_PhP, "Entity.E_Type.type_name")
-    <Entity X-119> PAP.Person_has_Phone
-    <Field_Entity X-119:left> PAP.Person_has_Phone
-    <Field_Entity X-119:right> PAP.Person_has_Phone
-    <Field X-119:right.country_code> PAP.Phone
-    <Field X-119:right.area_code> PAP.Phone
-    <Field X-119:right.number> PAP.Phone
-    <Field X-119:extension> PAP.Person_has_Phone
-    <Field X-119:desc> PAP.Person_has_Phone
+    <Entity X-121> PAP.Person_has_Phone
+    <Field_Entity X-121:left> PAP.Person_has_Phone
+    <Field_Entity X-121:right> PAP.Person_has_Phone
+    <Field X-121:right.country_code> PAP.Phone
+    <Field X-121:right.area_code> PAP.Phone
+    <Field X-121:right.number> PAP.Phone
+    <Field X-121:extension> PAP.Person_has_Phone
+    <Field X-121:desc> PAP.Person_has_Phone
 
     >>> show_elements (f_PhP, "E_Type.type_name")
-    <Entity X-119> PAP.Person_has_Phone
-    <Field_Entity X-119:left> PAP.Person
-    <Field_Entity X-119:right> PAP.Phone
-    <Field X-119:right.country_code> PAP.Phone
-    <Field X-119:right.area_code> PAP.Phone
-    <Field X-119:right.number> PAP.Phone
-    <Field X-119:extension> PAP.Person_has_Phone
-    <Field X-119:desc> PAP.Person_has_Phone
+    <Entity X-121> PAP.Person_has_Phone
+    <Field_Entity X-121:left> PAP.Person
+    <Field_Entity X-121:right> PAP.Phone
+    <Field X-121:right.country_code> PAP.Phone
+    <Field X-121:right.area_code> PAP.Phone
+    <Field X-121:right.number> PAP.Phone
+    <Field X-121:extension> PAP.Person_has_Phone
+    <Field X-121:desc> PAP.Person_has_Phone
 
     >>> show_elements (f_PhP, "attr.E_Type.type_name")
-    <Entity X-119> ---
-    <Field_Entity X-119:left> PAP.Person
-    <Field_Entity X-119:right> PAP.Phone
-    <Field X-119:right.country_code> ---
-    <Field X-119:right.area_code> ---
-    <Field X-119:right.number> ---
-    <Field X-119:extension> ---
-    <Field X-119:desc> ---
+    <Entity X-121> ---
+    <Field_Entity X-121:left> PAP.Person
+    <Field_Entity X-121:right> PAP.Phone
+    <Field X-121:right.country_code> ---
+    <Field X-121:right.area_code> ---
+    <Field X-121:right.number> ---
+    <Field X-121:extension> ---
+    <Field X-121:desc> ---
 
     >>> show_elements (F_PhP, "parent")
-    <class Entity X-119> None
-    <class Field_Entity X-119:left> <class Entity X-119>
-    <class Field X-119:left.last_name> <class Field_Entity X-119:left>
-    <class Field X-119:left.first_name> <class Field_Entity X-119:left>
-    <class Field X-119:left.middle_name> <class Field_Entity X-119:left>
-    <class Field X-119:left.title> <class Field_Entity X-119:left>
-    <class Field_Entity X-119:right> <class Entity X-119>
-    <class Field X-119:right.country_code> <class Field_Entity X-119:right>
-    <class Field X-119:right.area_code> <class Field_Entity X-119:right>
-    <class Field X-119:right.number> <class Field_Entity X-119:right>
-    <class Field X-119:extension> <class Entity X-119>
-    <class Field X-119:desc> <class Entity X-119>
+    <class Entity X-121> None
+    <class Field_Entity X-121:left> <class Entity X-121>
+    <class Field X-121:left.last_name> <class Field_Entity X-121:left>
+    <class Field X-121:left.first_name> <class Field_Entity X-121:left>
+    <class Field X-121:left.middle_name> <class Field_Entity X-121:left>
+    <class Field X-121:left.title> <class Field_Entity X-121:left>
+    <class Field_Entity X-121:right> <class Entity X-121>
+    <class Field X-121:right.country_code> <class Field_Entity X-121:right>
+    <class Field X-121:right.area_code> <class Field_Entity X-121:right>
+    <class Field X-121:right.number> <class Field_Entity X-121:right>
+    <class Field X-121:extension> <class Entity X-121>
+    <class Field X-121:desc> <class Entity X-121>
 
     >>> show_elements (f_PhP, "parent")
-    <Entity X-119> None
-    <Field_Entity X-119:left> <Entity X-119>
-    <Field_Entity X-119:right> <Entity X-119>
-    <Field X-119:right.country_code> <Field_Entity X-119:right>
-    <Field X-119:right.area_code> <Field_Entity X-119:right>
-    <Field X-119:right.number> <Field_Entity X-119:right>
-    <Field X-119:extension> <Entity X-119>
-    <Field X-119:desc> <Entity X-119>
+    <Entity X-121> None
+    <Field_Entity X-121:left> <Entity X-121>
+    <Field_Entity X-121:right> <Entity X-121>
+    <Field X-121:right.country_code> <Field_Entity X-121:right>
+    <Field X-121:right.area_code> <Field_Entity X-121:right>
+    <Field X-121:right.number> <Field_Entity X-121:right>
+    <Field X-121:extension> <Entity X-121>
+    <Field X-121:desc> <Entity X-121>
 
     >>> for e in f_PhP.entity_elements :
     ...     print (e)
-    <Entity X-119>
-    <Field_Entity X-119:right>
+    <Entity X-121>
+    <Field_Entity X-121:right>
 
     >>> for e in f_PhP.field_elements :
     ...     print (e)
-    <Field_Entity X-119:left>
-    <Field_Entity X-119:right>
-    <Field X-119:extension>
-    <Field X-119:desc>
+    <Field_Entity X-121:left>
+    <Field_Entity X-121:right>
+    <Field X-121:extension>
+    <Field X-121:desc>
 
     >>> show_elements (F_PhP, "input_widget")
-    <class Entity X-119> ---
-    <class Field_Entity X-119:left> mf3_input, id_entity
-    <class Field X-119:left.last_name> mf3_input, string
-    <class Field X-119:left.first_name> mf3_input, string
-    <class Field X-119:left.middle_name> mf3_input, string
-    <class Field X-119:left.title> mf3_input, string
-    <class Field_Entity X-119:right> mf3_input, id_entity
-    <class Field X-119:right.country_code> mf3_input, number
-    <class Field X-119:right.area_code> mf3_input, number
-    <class Field X-119:right.number> mf3_input, number
-    <class Field X-119:extension> mf3_input, number
-    <class Field X-119:desc> mf3_input, string
+    <class Entity X-121> ---
+    <class Field_Entity X-121:left> mf3_input, id_entity
+    <class Field X-121:left.last_name> mf3_input, string
+    <class Field X-121:left.first_name> mf3_input, string
+    <class Field X-121:left.middle_name> mf3_input, string
+    <class Field X-121:left.title> mf3_input, string
+    <class Field_Entity X-121:right> mf3_input, id_entity
+    <class Field X-121:right.country_code> mf3_input, number
+    <class Field X-121:right.area_code> mf3_input, number
+    <class Field X-121:right.number> mf3_input, number
+    <class Field X-121:extension> mf3_input, number
+    <class Field X-121:desc> mf3_input, string
 
     >>> show_elements (f_PhP, "input_widget")
-    <Entity X-119> ---
-    <Field_Entity X-119:left> mf3_input, id_entity
-    <Field_Entity X-119:right> mf3_input, id_entity
-    <Field X-119:right.country_code> mf3_input, number
-    <Field X-119:right.area_code> mf3_input, number
-    <Field X-119:right.number> mf3_input, number
-    <Field X-119:extension> mf3_input, number
-    <Field X-119:desc> mf3_input, string
+    <Entity X-121> ---
+    <Field_Entity X-121:left> mf3_input, id_entity
+    <Field_Entity X-121:right> mf3_input, id_entity
+    <Field X-121:right.country_code> mf3_input, number
+    <Field X-121:right.area_code> mf3_input, number
+    <Field X-121:right.number> mf3_input, number
+    <Field X-121:extension> mf3_input, number
+    <Field X-121:desc> mf3_input, string
 
     >>> show_elements (f_PhP, "template_macro")
-    <Entity X-119> Entity_Form
-    <Field_Entity X-119:left> Field_Entity
-    <Field_Entity X-119:right> Field_Entity
-    <Field X-119:right.country_code> Field
-    <Field X-119:right.area_code> Field
-    <Field X-119:right.number> Field
-    <Field X-119:extension> Field
-    <Field X-119:desc> Field
+    <Entity X-121> Entity_Form
+    <Field_Entity X-121:left> Field_Entity
+    <Field_Entity X-121:right> Field_Entity
+    <Field X-121:right.country_code> Field
+    <Field X-121:right.area_code> Field
+    <Field X-121:right.number> Field
+    <Field X-121:extension> Field
+    <Field X-121:desc> Field
 
     >>> show_elements (f_PhP, "cooked")
-    <Entity X-119> ---
-    <Field_Entity X-119:left> None
-    <Field_Entity X-119:right> None
-    <Field X-119:right.country_code> 43
-    <Field X-119:right.area_code>
-    <Field X-119:right.number>
-    <Field X-119:extension>
-    <Field X-119:desc>
+    <Entity X-121> ---
+    <Field_Entity X-121:left> None
+    <Field_Entity X-121:right> None
+    <Field X-121:right.country_code> 43
+    <Field X-121:right.area_code>
+    <Field X-121:right.number>
+    <Field X-121:extension>
+    <Field X-121:desc>
 
     >>> show_elements (f_PhP, "edit")
-    <Entity X-119> ---
-    <Field_Entity X-119:left>
-    <Field_Entity X-119:right>
-    <Field X-119:right.country_code> 43
-    <Field X-119:right.area_code>
-    <Field X-119:right.number>
-    <Field X-119:extension>
-    <Field X-119:desc>
+    <Entity X-121> ---
+    <Field_Entity X-121:left>
+    <Field_Entity X-121:right>
+    <Field X-121:right.country_code> 43
+    <Field X-121:right.area_code>
+    <Field X-121:right.number>
+    <Field X-121:extension>
+    <Field X-121:desc>
 
     >>> show_elements (f_PhP_s, "edit")
-    <Entity Y-119> ---
-    <Field_Entity Y-119:left>
-    <Field_Entity Y-119:right>
-    <Field Y-119:right.country_code> 49
-    <Field Y-119:right.area_code>
-    <Field Y-119:right.number>
-    <Field Y-119:extension>
-    <Field Y-119:desc>
+    <Entity Y-121> ---
+    <Field_Entity Y-121:left>
+    <Field_Entity Y-121:right>
+    <Field Y-121:right.country_code> 49
+    <Field Y-121:right.area_code>
+    <Field Y-121:right.number>
+    <Field Y-121:extension>
+    <Field Y-121:desc>
 
     >>> show_elements (f_PhP_s, "prefilled")
-    <Entity Y-119> ---
-    <Field_Entity Y-119:left> False
-    <Field_Entity Y-119:right> False
-    <Field Y-119:right.country_code> 1
-    <Field Y-119:right.area_code> False
-    <Field Y-119:right.number> False
-    <Field Y-119:extension> False
-    <Field Y-119:desc> False
+    <Entity Y-121> ---
+    <Field_Entity Y-121:left> False
+    <Field_Entity Y-121:right> False
+    <Field Y-121:right.country_code> 1
+    <Field Y-121:right.area_code> False
+    <Field Y-121:right.number> False
+    <Field Y-121:extension> False
+    <Field Y-121:desc> False
 
     >>> show_elements (f_pph, "cooked")
-    <Entity X-119> ---
-    <Field_Entity X-119:left> ('tanzer', 'christian', '', '')
-    <Field_Entity X-119:right> ('43', '1', '98765432')
-    <Field X-119:right.country_code> 43
-    <Field X-119:right.area_code> 1
-    <Field X-119:right.number> 98765432
-    <Field X-119:extension> 42
-    <Field X-119:desc> example
+    <Entity X-121> ---
+    <Field_Entity X-121:left> ('tanzer', 'christian', '', '')
+    <Field_Entity X-121:right> ('43', '1', '98765432')
+    <Field X-121:right.country_code> 43
+    <Field X-121:right.area_code> 1
+    <Field X-121:right.number> 98765432
+    <Field X-121:extension> 42
+    <Field X-121:desc> example
 
     >>> show_elements (f_pph, "edit")
-    <Entity X-119> ---
-    <Field_Entity X-119:left> 1
-    <Field_Entity X-119:right> 2
-    <Field X-119:right.country_code> 43
-    <Field X-119:right.area_code> 1
-    <Field X-119:right.number> 98765432
-    <Field X-119:extension> 42
-    <Field X-119:desc> example
+    <Entity X-121> ---
+    <Field_Entity X-121:left> 1
+    <Field_Entity X-121:right> 2
+    <Field X-121:right.country_code> 43
+    <Field X-121:right.area_code> 1
+    <Field X-121:right.number> 98765432
+    <Field X-121:extension> 42
+    <Field X-121:desc> example
 
     >>> show_elements (f_pph, "ui_display")
-    <Entity X-119> Tanzer Christian, 43/1/98765432, 42
-    <Field_Entity X-119:left> Tanzer Christian
-    <Field_Entity X-119:right> 43/1/98765432
-    <Field X-119:right.country_code> 43
-    <Field X-119:right.area_code> 1
-    <Field X-119:right.number> 98765432
-    <Field X-119:extension> 42
-    <Field X-119:desc> example
+    <Entity X-121> Tanzer Christian, 43/1/98765432, 42
+    <Field_Entity X-121:left> Tanzer Christian
+    <Field_Entity X-121:right> 43/1/98765432
+    <Field X-121:right.country_code> 43
+    <Field X-121:right.area_code> 1
+    <Field X-121:right.number> 98765432
+    <Field X-121:extension> 42
+    <Field X-121:desc> example
 
     >>> show_elements (f_pph, "essence")
-    <Entity X-119> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
-    <Field_Entity X-119:left> ('tanzer', 'christian', '', '')
-    <Field_Entity X-119:right> ('43', '1', '98765432')
-    <Field X-119:right.country_code> ('43', '1', '98765432')
-    <Field X-119:right.area_code> ('43', '1', '98765432')
-    <Field X-119:right.number> ('43', '1', '98765432')
-    <Field X-119:extension> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
-    <Field X-119:desc> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Entity X-121> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field_Entity X-121:left> ('tanzer', 'christian', '', '')
+    <Field_Entity X-121:right> ('43', '1', '98765432')
+    <Field X-121:right.country_code> ('43', '1', '98765432')
+    <Field X-121:right.area_code> ('43', '1', '98765432')
+    <Field X-121:right.number> ('43', '1', '98765432')
+    <Field X-121:extension> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
+    <Field X-121:desc> (('tanzer', 'christian', '', ''), ('43', '1', '98765432'), '42')
 
     >>> show_elements (f_pph, "q_name")
-    <Entity X-119> None
-    <Field_Entity X-119:left> left
-    <Field_Entity X-119:right> right
-    <Field X-119:right.country_code> right.country_code
-    <Field X-119:right.area_code> right.area_code
-    <Field X-119:right.number> right.number
-    <Field X-119:extension> extension
-    <Field X-119:desc> desc
+    <Entity X-121> None
+    <Field_Entity X-121:left> left
+    <Field_Entity X-121:right> right
+    <Field X-121:right.country_code> right.country_code
+    <Field X-121:right.area_code> right.area_code
+    <Field X-121:right.number> right.number
+    <Field X-121:extension> extension
+    <Field X-121:desc> desc
 
     >>> show_elements (f_pph, "prefilled")
-    <Entity X-119> ---
-    <Field_Entity X-119:left> False
-    <Field_Entity X-119:right> False
-    <Field X-119:right.country_code> False
-    <Field X-119:right.area_code> False
-    <Field X-119:right.number> False
-    <Field X-119:extension> False
-    <Field X-119:desc> False
+    <Entity X-121> ---
+    <Field_Entity X-121:left> False
+    <Field_Entity X-121:right> False
+    <Field X-121:right.country_code> False
+    <Field X-121:right.area_code> False
+    <Field X-121:right.number> False
+    <Field X-121:extension> False
+    <Field X-121:desc> False
 
     >>> show_field_values (f_pph)
-    { 'X-119:desc' : {'init' : 'example'}
-    , 'X-119:extension' : {'init' : '42'}
-    , 'X-119:left' :
+    { 'X-121:desc' : {'init' : 'example'}
+    , 'X-121:extension' : {'init' : '42'}
+    , 'X-121:left' :
         { 'init' :
             { 'cid' : 1
             , 'display' : 'Tanzer Christian'
             , 'pid' : 1
             }
         }
-    , 'X-119:right' :
+    , 'X-121:right' :
         { 'init' :
             { 'cid' : 2
             , 'display' : '43/1/98765432'
             , 'pid' : 2
             }
         }
-    , 'X-119:right.area_code' : {'init' : '1'}
-    , 'X-119:right.country_code' : {'init' : '43'}
-    , 'X-119:right.number' : {'init' : '98765432'}
+    , 'X-121:right.area_code' : {'init' : '1'}
+    , 'X-121:right.country_code' : {'init' : '43'}
+    , 'X-121:right.number' : {'init' : '98765432'}
     }
 
 
     >>> show_field_values (f_PhP_s)
-    { 'Y-119:desc' : {}
-    , 'Y-119:extension' : {}
-    , 'Y-119:left' : {'init' : {}}
-    , 'Y-119:right' : {'init' : {}}
-    , 'Y-119:right.area_code' : {}
-    , 'Y-119:right.country_code' : {'edit' : '49'}
-    , 'Y-119:right.number' : {}
+    { 'Y-121:desc' : {}
+    , 'Y-121:extension' : {}
+    , 'Y-121:left' : {'init' : {}}
+    , 'Y-121:right' : {'init' : {}}
+    , 'Y-121:right.area_code' : {}
+    , 'Y-121:right.country_code' : {'edit' : '49'}
+    , 'Y-121:right.number' : {}
     }
 
 
     >>> show_field_values (f_PhP_z)
-    { 'Z-119:desc' : {}
-    , 'Z-119:extension' : {}
-    , 'Z-119:left' : {'init' : {}}
-    , 'Z-119:left.first_name' : {}
-    , 'Z-119:left.last_name' : {}
-    , 'Z-119:left.lifetime.finish' : {}
-    , 'Z-119:left.lifetime.start' : {}
-    , 'Z-119:left.middle_name' : {}
-    , 'Z-119:left.sex' : {}
-    , 'Z-119:left.title' : {}
-    , 'Z-119:right' : {'init' : {}}
-    , 'Z-119:right.area_code' : {}
-    , 'Z-119:right.country_code' : {'edit' : '43'}
-    , 'Z-119:right.desc' : {}
-    , 'Z-119:right.number' : {}
+    { 'Z-121:desc' : {}
+    , 'Z-121:extension' : {}
+    , 'Z-121:left' : {'init' : {}}
+    , 'Z-121:left.first_name' : {}
+    , 'Z-121:left.last_name' : {}
+    , 'Z-121:left.lifetime.finish' : {}
+    , 'Z-121:left.lifetime.start' : {}
+    , 'Z-121:left.middle_name' : {}
+    , 'Z-121:left.sex' : {}
+    , 'Z-121:left.title' : {}
+    , 'Z-121:right' : {'init' : {}}
+    , 'Z-121:right.area_code' : {}
+    , 'Z-121:right.country_code' : {'edit' : '43'}
+    , 'Z-121:right.desc' : {}
+    , 'Z-121:right.number' : {}
     }
 
     >>> set (x.id for x in F_PhP.elements_transitive ()) >= set (x.id for x in f_PhP.elements_transitive ())
@@ -1944,6 +1947,160 @@ _test_element = """
 
 """
 
+_test_single_primary = r"""
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+
+    >>> scope.db_meta_data.dbid = '2d802327-5c99-49ca-9af7-2ddc6b4c648b'
+
+    >>> SRM       = scope.SRM
+    >>> attr_spec = dict              (left = dict (allow_new = False))
+    >>> F_B       = MF3_E.Entity.Auto (scope.SRM.Boat, id_prefix = "S")
+    >>> F_B_r     = MF3_E.Entity.Auto (scope.SRM.Boat, id_prefix = "S_r", attr_spec = attr_spec)
+    >>> F_RiR     = MF3_E.Entity.Auto (scope.SRM.Regatta_in_Ranking, id_prefix = "S")
+    >>> f_b       = F_B               (scope)
+    >>> f_b_r     = F_B_r             (scope)
+    >>> f_rir     = F_RiR             (scope)
+
+    >>> print (formatted (f_b.as_json_cargo))
+    { 'cargo' :
+        { 'field_values' :
+            { 'S-78:left' : {'init' : {}}
+            , 'S-78:left.max_crew' : {}
+            , 'S-78:left.name' : {}
+            , 'S-78:name' : {}
+            , 'S-78:nation' : {}
+            , 'S-78:sail_number' : {}
+            , 'S-78:sail_number_x' : {}
+            }
+        , 'sid' : 0
+        , 'sigs' :
+            { 'S-78' : 'u4WqM4z80ecVqG87yANk0TLgY5afnhXYL0dYgw'
+            , 'S-78:left' : 'CFgIz2bZCpFCFmTL5rsuV4_EvvQl7fYA1LN2pA'
+            }
+        }
+    , 'checkers' : {}
+    , 'completers' :
+        { 0 :
+            { 'entity_p' : True
+            , 'fields' : ['S-78:left.name']
+            , 'treshold' : 1
+            }
+        , 1 :
+            { 'entity_p' : True
+            , 'fields' :
+                [ 'S-78:left'
+                , 'S-78:nation'
+                , 'S-78:sail_number'
+                , 'S-78:sail_number_x'
+                ]
+            , 'treshold' : 1
+            }
+        }
+    }
+
+    >>> print (formatted (f_b_r.as_json_cargo))
+    { 'cargo' :
+        { 'field_values' :
+            { 'S_r-78:left' : {'init' : {}}
+            , 'S_r-78:name' : {}
+            , 'S_r-78:nation' : {}
+            , 'S_r-78:sail_number' : {}
+            , 'S_r-78:sail_number_x' : {}
+            }
+        , 'sid' : 0
+        , 'sigs' : {'S_r-78' : '1ppsFq2WWiam4lZHVQAD90YYcaslupFqElDmKQ'}
+        }
+    , 'checkers' : {}
+    , 'completers' :
+        { 0 :
+            { 'entity_p' : True
+            , 'fields' :
+                [ 'S_r-78:left'
+                , 'S_r-78:nation'
+                , 'S_r-78:sail_number'
+                , 'S_r-78:sail_number_x'
+                ]
+            , 'treshold' : 1
+            }
+        }
+    }
+
+    >>> print (formatted (f_rir.as_json_cargo))
+    { 'cargo' :
+        { 'field_values' :
+            { 'S-113:factor' : {'edit' : '1.0'}
+            , 'S-113:left' : {'init' : {}}
+            , 'S-113:right' : {'init' : {}}
+            }
+        , 'sid' : 0
+        , 'sigs' : {'S-113' : 'sel16VeaFS7RjDA3-bpqOEmoLMk0PXToz3CIAw'}
+        }
+    , 'checkers' : {}
+    , 'completers' :
+        { 0 :
+            { 'entity_p' : True
+            , 'fields' :
+                [ 'S-113:left'
+                , 'S-113:right'
+                ]
+            , 'treshold' : 1
+            }
+        , 1 :
+            { 'entity_p' : True
+            , 'fields' :
+                [ 'S-113:left'
+                , 'S-113:right'
+                ]
+            , 'treshold' : 0
+            }
+        }
+    }
+
+    >>> show_elements (f_b, "Entity")
+    <Entity S-78> <Entity S-78>
+    <Field_Entity S-78:left> <Entity S-78>
+    <Field S-78:left.name> <Field_Entity S-78:left>
+    <Field S-78:left.max_crew> <Field_Entity S-78:left>
+    <Field S-78:sail_number> <Entity S-78>
+    <Field S-78:nation> <Entity S-78>
+    <Field S-78:sail_number_x> <Entity S-78>
+    <Field S-78:name> <Entity S-78>
+
+    >>> show_elements (f_b_r, "Entity")
+    <Entity S_r-78> <Entity S_r-78>
+    <Field_Entity S_r-78:left> <Entity S_r-78>
+    <Field S_r-78:sail_number> <Entity S_r-78>
+    <Field S_r-78:nation> <Entity S_r-78>
+    <Field S_r-78:sail_number_x> <Entity S_r-78>
+    <Field S_r-78:name> <Entity S_r-78>
+
+    >>> sorted (f_b_r ["S_r-78:left"].attr_map.items ())
+    [('max_crew', <Field S_r-78:left.max_crew>), ('name', <Field S_r-78:left.name>)]
+
+    >>> f_b_r_l_n = f_b_r ["S_r-78:left.name"]
+    >>> f_b_r_l_n.attr.completer.MF3 (f_b_r_l_n)
+    <Completer for <Field S_r-78:left.name>, treshold = 1, entity_p = 1>
+
+    >>> show_elements (f_rir, "completer")
+    <Entity S-113> None
+    <Field_Entity S-113:left> <E_Completer for <Field_Entity S-113:left>, treshold = 1, entity_p = 1>
+    <Field_Entity S-113:right> <E_Completer for <Field_Entity S-113:right>, treshold = 0, entity_p = 1>
+    <Field S-113:factor> None
+
+    >>> f_rir_r = f_rir ["S-113:right"]
+    >>> f_rir_r.completer
+    <E_Completer for <Field_Entity S-113:right>, treshold = 0, entity_p = 1>
+
+    >>> f_rir_r.completer.elems
+    (<Field_Entity S-113:right>, <Field_Entity S-113:left>)
+
+    >>> f_rir_r_n = f_rir ["S-113:right.name"]
+    >>> f_rir_r_n.attr.completer.MF3 (f_rir_r_n)
+    <Completer for <Field S-113:right.name>, treshold = 0, entity_p = 1>
+
+"""
+
 _test_skip = r"""
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -1983,8 +2140,9 @@ _test_skip = r"""
 
 __test__ = Scaffold.create_test_dict \
     ( dict
-        ( element = _test_element
-        , skip    = _test_skip
+        ( element        = _test_element
+        , single_primary = _test_single_primary
+        , skip           = _test_skip
         )
     )
 

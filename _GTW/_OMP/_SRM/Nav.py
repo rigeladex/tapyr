@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package  GTW.OMP.SRM.
@@ -36,6 +36,7 @@
 #     4-Jun-2012 (CT) Rename `handicap` to `boat_class`
 #    26-Aug-2014 (CT) Replace `GTW.AFS` specification by `MF3_Form_Spec`
 #    26-Sep-2014 (CT) Change `sail_number_x` from `skip` to `readonly`
+#    30-Mar-2015 (CT) Add `Ranking`, `Regatta_in_Ranking`
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,10 @@ class Admin (object) :
         ( ETM          = "GTW.OMP.SRM.Person_owns_Boat"
         )
 
+    Ranking            = dict \
+        ( ETM          = "GTW.OMP.SRM.Ranking"
+        )
+
     Regatta_C          = dict \
         ( ETM          = "GTW.OMP.SRM.Regatta_C"
         , sort_key     = TFL.Sorted_By ("-event.date.start", "boat_class.name")
@@ -111,6 +116,10 @@ class Admin (object) :
         ( ETM          = "GTW.OMP.SRM.Regatta_Event"
         , sort_key     = TFL.Sorted_By ("-date.start", "name")
         , list_display = ( "name", "date", "desc")
+        )
+
+    Regatta_in_Ranking            = dict \
+        ( ETM          = "GTW.OMP.SRM.Regatta_in_Ranking"
         )
 
     Sailor             = dict \

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.SRM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -17,6 +17,8 @@
 #
 # Revision Dates
 #    17-Aug-2014 (CT) Creation
+#    30-Mar-2015 (CT) Set `treshold` for `Ranking.name` to `0`;
+#                     ditto for `Regatta_in_Ranking.right`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +46,7 @@ class Ranking (_Ancestor_Essence) :
             """Name of the ranking list"""
 
             kind               = Attr.Primary
+            completer          = Attr.Completer_Spec (0, Attr.Selector.primary)
             max_length         = 32
 
         # end class name
@@ -116,7 +119,7 @@ class Regatta_in_Ranking (_Ancestor_Essence) :
 
             role_type          = Ranking
             auto_rev_ref       = True
-            completer          = Attr.E_Completer_Spec (Attr.Selector.primary)
+            completer          = Attr.E_Completer_Spec (0, Attr.Selector.primary)
 
         # end class right
 
