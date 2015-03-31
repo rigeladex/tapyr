@@ -79,6 +79,8 @@
 //                     + Pass `clear_callback` to `gtw_hd_input`
 //    27-Mar-2015 (CT) Use `flipfit`, not `fit`, for `collision`
 //    27-Mar-2015 (CT) Factor `serialized_form`, add `:checkbox:not(:checked)`
+//    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
+//                     (`flipfit` truncates on the left of completion info)
 //    ««revision-date»»···
 //--
 
@@ -104,7 +106,7 @@
         var menu_position  = $.extend
             ( { my         : "right top"
               , at         : "left bottom"
-              , collision  : "flipfit"
+              , collision  : "fit"
               }
             , opts && opts ["menu_position"] || {}
             );

@@ -51,6 +51,8 @@
 //                     `field_focus_cb` (avoid disruption of button click by
 //                     page shift due to hiding of previously open `aside`)
 //    27-Mar-2015 (CT) Pass `collision : flipfit` to `gtw_autocomplete`
+//    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
+//                     (`flipfit` truncates on the left of completion info)
 //    ««revision-date»»···
 //--
 
@@ -467,7 +469,7 @@
                 if ("choices" in f_completer) {
                     f$.gtw_autocomplete
                         ( { minLength : f_completer.treshold
-                          , position  : { collision  : "flipfit" }
+                          , position  : { collision  : "fit" }
                           , source    : f_completer.choices
                           }
                         );

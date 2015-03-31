@@ -54,6 +54,8 @@
 ##    29-Jan-2015 (CT) Remove `admin_table`, use `page.renderer` instead
 ##                     + remove `obj_button`, `obj_create_button`
 ##     5-Feb-2015 (CT) Remove `vip_button`
+##    31-Mar-2015 (CT) Use `pure-form-stacked`, not `pure-form-aligned`, for
+##                     `entity_selector_form`
 ##    ««revision-date»»···
 ##--
 #}
@@ -66,7 +68,7 @@
 {%- set attr_filter_pure = ETQ.attr_filter_field %}
 
 {%- macro entity_selector_form (page, af, form_class="") -%}
-  <form class = "{{ ('pure-form pure-form-aligned ' + form_class).strip () }}" {# -#}
+  <form class = "{{ ('pure-form pure-form-stacked ' + form_class).strip () }}" {# -#}
       title="{{ esf_title (af) }}"{# -#}
   >
     <input type="hidden" name="__esf_for_attr__" value="{{ af.id }}">

@@ -70,6 +70,9 @@
 //    26-Mar-2015 (CT) Change `activate_cb` to display possible completions
 //                     automatically, if `treshold === 0`
 //    27-Mar-2015 (CT) Use `flipfit`, not `fit`, for `collision`
+//    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
+//                     (`flipfit` truncates on the left of completion info)
+//    31-Mar-2015 (CT) Set CSS `overflow` to `visible` for `dialog`
 //    ««revision-date»»···
 //--
 
@@ -82,7 +85,7 @@
     var default_position =
         { my         : "left top"
         , at         : "left bottom"
-        , collision  : "flipfit"
+        , collision  : "fit"
         };
     var ET_Selector = $GTW.Class.extend (
         { defaults              :
@@ -403,6 +406,9 @@
                   .dialog ("option", "width", "auto")
                   .dialog ("open")
                   .dialog ("widget")
+                      // make large autocompletion menus visible outside the
+                      // dialog widget
+                      .css ("overflow", "visible")
                       .position
                           ( $.extend
                               ( {}

@@ -28,6 +28,10 @@
 #                     * add `display`, `padding_left`, `text_indent` to create
 #                       hanging indent
 #    27-Mar-2015 (CT) Add `min_width`, `overflow_*` to factored `ui-menu`
+#    31-Mar-2015 (CT) Add `border`, `font_weight`, `margin` to .ui-menu-item
+#                     * Otherwise, the item with focus/hover gets wider
+#                       and triggers a horizontal scrollbar
+#                     + Set `overflow` to `auto` for `ui-menu`
 #    ««revision-date»»···
 #--
 
@@ -39,12 +43,14 @@ style_sheet = Style_Sheet \
         , children =
             [ Rule_Class
                 ( "ui-menu"
-                , overflow_x     = "visible"
-                , overflow_y     = "scroll"
+                , overflow       = "auto"
                 , children       =
                     [ Rule
                         ( ".ui-menu-item"
-                        , children =
+                        , border        = "1px solid transparent"
+                        , font_weight   = "normal"
+                        , margin        = 0
+                        , children      =
                             [ Rule
                                 ("a"
                                 , display       = "block"
