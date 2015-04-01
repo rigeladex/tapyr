@@ -73,6 +73,15 @@
 //    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
 //                     (`flipfit` truncates on the left of completion info)
 //    31-Mar-2015 (CT) Set CSS `overflow` to `visible` for `dialog`
+//     1-Apr-2015 (CT) Add dialog class `no-close`
+//     1-Apr-2015 (CT) Handle multiple calls of `activate_cb` gracefully
+//                     + `focus` 1.input in `activate_cb`, not `setup_form`
+//                     + change `close_cb` to reset `.widget`
+//     1-Apr-2015 (CT) Focus `apply_button` in `completed_cb`
+//     1-Apr-2015 (CT) Add `max-height`, `max-width`, `min-width` to
+//                     `autocomplete.css`
+//     1-Apr-2015 (CT) Mark non-matching input with class `bad`
+//     2-Apr-2015 (CT) Add `feedback` to `get_ccb`
 //    ««revision-date»»···
 //--
 
@@ -142,6 +151,7 @@
           }
         , activate_cb           : function activate_cb (ev) {
               var self = (ev && "data" in ev) ? ev.data || this : this;
+              var input1$, val1;
               self.target$  = $(ev.delegateTarget);
               self.esf_data = self.get_esf_data (ev, self.target$);
               if (! self.ajax_response) {
@@ -165,12 +175,17 @@
                         }
                       , "Entity completer"
                       );
-              } else {
+              } else if (! self.widget) {
                   self.widget = self.setup_widget (self.ajax_response);
               };
+              input1$ = self.inputs$.eq (0);
+              input1$.focus ();
               if (self.options.treshold === 0) {
-                  // display possible completions, automatically
-                  self.inputs$.eq (0).autocomplete ("search");
+                  val1 = input1$.val ();
+                  if (val1 === "") {
+                      // display possible completions, automatically
+                      input1$.autocomplete ("search");
+                  };
               };
               return false;
           }
@@ -226,6 +241,7 @@
               var hdi$ = self.hd_input$;
               try {
                   self.widget.dialog ("destroy");
+                  self.widget = null;
               } finally {
                   if (hdi$) {
                       hdi$.removeData (self.options.closing_flag);
@@ -240,28 +256,46 @@
                   .data ("gtw_ets_completed_response", response);
               this.a_form$
                   .find (S.apply_button)
-                      .gtw_button_pure ("option", "disabled", false);
+                      .gtw_button_pure ("option", "disabled", false)
+                      .focus ();
           }
         , get_ccb               : function get_ccb (inp$, term, cb, response) {
-              var label;
+              var S = this.options.selectors;
               var l = response.fields - !response.partial; // skip pid
               var v = response.fields - 1;
               var result = [];
+              var label;
               inp$.data ("gtw_ets_completer_response", response);
-              if (response.completions > 0 && response.fields > 0) {
-                  for ( var i = 0, li = response.matches.length, match
-                      ; i < li
-                      ; i++
-                      ) {
-                      match = response.matches [i];
-                      label = $.map (match.slice (0, l), bwrap).join ("");
+              if (response.completions > 0) {
+                  inp$.removeClass ("bad");
+                  if (response.fields > 0) {
+                      for ( var i = 0, li = response.matches.length, match
+                          ; i < li
+                          ; i++
+                          ) {
+                          match = response.matches [i];
+                          label = $.map (match.slice (0, l), bwrap).join ("");
+                          result.push
+                              ( { index : i
+                                , label : label
+                                , value : match [v]
+                                }
+                              );
+                      };
+                  } else if ("feedback" in response) {
                       result.push
-                          ( { index : i
-                            , label : label
-                            , value : match [v]
+                          ( { disabled : true
+                            , index    : null
+                            , label    : response.feedback
+                            , value    : null
                             }
                           );
                   };
+              } else {
+                  inp$.addClass ("bad");
+                  this.a_form$
+                      .find (S.apply_button)
+                          .gtw_button_pure ("option", "disabled", true);
               };
               cb (result);
           }
@@ -314,34 +348,36 @@
               var self     = this;
               var S        = self.options.selectors;
               var response = inp$.data ("gtw_ets_completer_response");
-              if (response.partial) {
-                  inp$.val (item.value);
-                  if (response.matches.length > 1) {
-                      setTimeout
-                          ( function () {
-                              inp$.focus ();
-                              inp$.autocomplete ("search");
-                            }
-                          , 1
-                          );
+              if (! item.disabled) {
+                  if (response.partial) {
+                      inp$.val (item.value);
+                      if (response.matches.length > 1) {
+                          setTimeout
+                              ( function () {
+                                  inp$.focus ();
+                                  inp$.autocomplete ("search");
+                                }
+                              , 1
+                              );
+                      } else {
+                          self.inputs$.eq (item.index + 1).focus ();
+                      };
                   } else {
-                      self.inputs$.eq (item.index + 1).focus ();
-                  };
-              } else {
-                  $.gtw_ajax_2json
-                      ( { async         : true
-                        , data          : $.extend
-                            ( { pid     : item.value
+                      $.gtw_ajax_2json
+                          ( { async         : true
+                            , data          : $.extend
+                                ( { pid     : item.value
+                                  }
+                                , self.completion_data
+                                )
+                            , success       : function (answer, status, xhr) {
+                                  self.completed_cb (inp$, answer);
                               }
-                            , self.completion_data
-                            )
-                        , success       : function (answer, status, xhr) {
-                              self.completed_cb (inp$, answer);
-                          }
-                        , url           : self.options.url.qx_esf_completed
-                        }
-                      , "Completion"
-                      );
+                            , url           : self.options.url.qx_esf_completed
+                            }
+                          , "Completion"
+                          );
+                  };
               };
           }
         , setup_form            : function setup_form (form$) {
@@ -350,6 +386,13 @@
               var S        = options.selectors;
               var inputs$  = form$.find
                   (":input:not([type=hidden]):not(button):not(.hidden)");
+              var height   = $(window).height ();
+              var width    = $(window).width  ();
+              var css_spec =
+                  { "max-height" : height * 0.6
+                  , "max-width"  : width  * 0.8
+                  , "min-width"  : width  * (width < 680 ? 0.8 : 0.5)
+                  };
               if (this.a_form$ !== form$) {
                   this.a_form$ = form$;
                   this.inputs$ = inputs$;
@@ -372,11 +415,10 @@
                                   }
                                 }
                               , "html"
-                              );
+                              ).autocomplete ("widget").css (css_spec);
                         }
                       );
               };
-              inputs$.first ().focus ();
           }
         , setup_widget          : function setup_widget (response) {
               var self    = this;
@@ -391,6 +433,7 @@
                             { self.before_close_cb (ev, ui); }
                         , close       : function (ev, ui)
                             { self.close_cb (ev, ui); }
+                        , dialogClass : "no-close"
                         }
                       );
               var esfp$   = result.hasClass (options.esf_polymorphic_cls) ?

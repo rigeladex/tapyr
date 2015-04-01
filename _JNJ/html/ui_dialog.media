@@ -22,6 +22,9 @@
 #    26-Mar-2015 (CT) Add rules for `a:hover`; factor `.ui-dialog`
 #    27-Mar-2015 (CT) Move `a:hover` rule to `.ui-widget`
 #    31-Mar-2015 (CT) Add `min_height` for `.ui-dialog` plus media rules
+#     1-Apr-2015 (CT) Add rules for `.pure-button-primary`, `name=CANCEL`,
+#                     and `.ui-dialog-titlebar-close`; remove `min_height`
+#     2-Apr-2015 (CT) Increase contrast of `.ui-dialog-title`
 #    ««revision-date»»···
 #--
 
@@ -29,6 +32,7 @@ style_sheet = Style_Sheet \
     ( Rule
         ( ".no-close .ui-dialog-titlebar-close"
         , display                  = None
+        , visibility               = "collapse"
         )
     , Rule
         ( ".ui-widget"
@@ -44,7 +48,6 @@ style_sheet = Style_Sheet \
     , Rule
         ( ".ui-dialog"
         , display                  = "block"
-        , min_height               = Px (480)
         , min_width                = Percent (50)
         , children                 =
             [ Rule
@@ -58,6 +61,19 @@ style_sheet = Style_Sheet \
                         ( ".fa"
                         , color                    = P.color.m_blue
                         )
+                    , Rule_Class
+                        ( "pure-button-primary"
+                        , children                 =
+                            [ Rule
+                                ( ".fa"
+                                , color                    = "inherit"
+                                )
+                            ]
+                        )
+                    , Rule_Attr
+                        ( "[name='CANCEL']"
+                        , float                    = "right"
+                        )
                     ]
                 )
             , Rule
@@ -65,9 +81,21 @@ style_sheet = Style_Sheet \
                 , width                    = Percent (100)
                 )
             , Rule
-                ( ".ui-dialog-titlebar .ui-dialog-title"
-                , max_width                = Percent (100)
-                , white_space              = "normal"
+                ( ".ui-dialog-titlebar"
+                , children                 =
+                    [ Rule
+                        ( ".ui-dialog-title"
+                        , color                    = P.color.m_white
+                        , max_width                = Percent (100)
+                        , white_space              = "normal"
+                        )
+                    , Rule
+                        ( ".ui-dialog-titlebar-close"
+                        , height                   = Rem (2)
+                        , margin_top               = Rem (-1)
+                        , width                    = Rem (2)
+                        )
+                    ]
                 )
             ]
         )
@@ -76,8 +104,7 @@ style_sheet = Style_Sheet \
         , rules               =
             [ Rule
                 ( ".ui-dialog"
-                , max_height          = Px (400)
-                , min_height          = Px (300)
+                , max_height          = Px (300)
                 )
             ]
         )
@@ -87,7 +114,6 @@ style_sheet = Style_Sheet \
             [ Rule
                 ( ".ui-dialog"
                 , max_height          = Px (200)
-                , min_height          = Px (200)
                 )
             ]
         )

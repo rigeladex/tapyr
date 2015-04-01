@@ -27,6 +27,7 @@
 #    24-Mar-2015 (CT) Remove rule `focus + aside`
 #    24-Mar-2015 (CT) Use `P.Rule.input_focus`, not `P.Rule.focus`
 #    24-Mar-2015 (CT) Add rule for `form .pure-form label > b`
+#     1-Apr-2015 (CT) Add `background_color` to rule for `... input.bad:focus`
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,8 @@ style_sheet = Style_Sheet \
                                 , children          =
                                     [ Rule_Pseudo
                                         ( "focus"
-                                        , border_width  = Px (2)
+                                        , background_color  = P.color_status_bad
+                                        , border_width      = Px (2)
                                         )
                                     ]
                                 )

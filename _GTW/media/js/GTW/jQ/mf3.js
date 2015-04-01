@@ -53,6 +53,7 @@
 //    27-Mar-2015 (CT) Pass `collision : flipfit` to `gtw_autocomplete`
 //    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
 //                     (`flipfit` truncates on the left of completion info)
+//     2-Apr-2015 (CT) Add guard for `item.disabled` to `completer.select_cb`
 //    ««revision-date»»···
 //--
 
@@ -435,29 +436,33 @@
                     completer.completed_cb
                         (f$, f_completer, answer, true, cargo);
                 };
-                completer.put_values (response, match, cargo);
-                if (response.partial) {
-                    if (! response.finished) {
-                        setTimeout (function () { completer.trigger (f$); }, 1);
-                    };
-                } else if (f_completer ["entity_p"]) {
-                    data  =
-                        { complete_entity : true
-                        , field_values    : completer.get_values (f_completer)
-                        , form_pid        : cargo.pid
-                        , pid             : item.value
-                        , sid             : cargo.sid
-                        , sigs            : cargo.sigs
-                        , trigger         : F_id
+                if (! item.disabled) {
+                    completer.put_values (response, match, cargo);
+                    if (response.partial) {
+                        if (! response.finished) {
+                            setTimeout
+                                (function () { completer.trigger (f$); }, 1);
                         };
-                    $.gtw_ajax_2json
-                        ( { async         : true
-                          , data          : data
-                          , success       : success_cb
-                          , url           : options.url.completed
-                          }
-                        , "Completion"
-                        );
+                    } else if (f_completer ["entity_p"]) {
+                        data  =
+                            { complete_entity : true
+                            , field_values    :
+                                completer.get_values (f_completer)
+                            , form_pid        : cargo.pid
+                            , pid             : item.value
+                            , sid             : cargo.sid
+                            , sigs            : cargo.sigs
+                            , trigger         : F_id
+                            };
+                        $.gtw_ajax_2json
+                            ( { async         : true
+                              , data          : data
+                              , success       : success_cb
+                              , url           : options.url.completed
+                              }
+                            , "Completion"
+                            );
+                    };
                 };
               }
             , setup : function setup (n) {

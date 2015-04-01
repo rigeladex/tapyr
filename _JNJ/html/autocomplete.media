@@ -32,15 +32,14 @@
 #                     * Otherwise, the item with focus/hover gets wider
 #                       and triggers a horizontal scrollbar
 #                     + Set `overflow` to `auto` for `ui-menu`
+#     1-Apr-2015 (CT) Remove `max_height`
 #    ««revision-date»»···
 #--
 
 style_sheet = Style_Sheet \
     ( Rule
         ( ".ui-autocomplete"
-        , display        = "block"
-        , max_height     = Percent (80)
-        , children =
+        , children       =
             [ Rule_Class
                 ( "ui-menu"
                 , overflow       = "auto"

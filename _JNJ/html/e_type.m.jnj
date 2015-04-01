@@ -56,6 +56,8 @@
 ##     5-Feb-2015 (CT) Remove `vip_button`
 ##    31-Mar-2015 (CT) Use `pure-form-stacked`, not `pure-form-aligned`, for
 ##                     `entity_selector_form`
+##     1-Apr-2015 (CT) Move buttons to begin of `entity_selector_form`
+##     1-Apr-2015 (CT) Add class `pure-button-primary` to `Apply` button
 ##    ««revision-date»»···
 ##--
 #}
@@ -71,14 +73,10 @@
   <form class = "{{ ('pure-form pure-form-stacked ' + form_class).strip () }}" {# -#}
       title="{{ esf_title (af) }}"{# -#}
   >
-    <input type="hidden" name="__esf_for_attr__" value="{{ af.id }}">
-    <input type="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
-    {% for f in af.filters %}
-      {{- esf_field (page, f) }}
-    {% endfor -%}
     <div class="pure-controls">
       {{ ETQ.button
           ( page
+          , class = "pure-button-primary"
           , name  = GTW._  ("Apply")
           , title = GTW._T ("Use the currently selected %s") % af.ui_type_name
           , typ   = "submit"
@@ -97,14 +95,16 @@
           )
       -}}
     </div>
+    <input type="hidden" name="__esf_for_attr__" value="{{ af.id }}">
+    <input type="hidden" name="__esf_for_type__" value="{{ af.type_name }}">
+    {% for f in af.filters %}
+      {{- esf_field (page, f) }}
+    {% endfor -%}
   </form>
 {%- endmacro -%} {#- entity_selector_form -#}
 
 {%- macro entity_selector_form_p (page, af) -%}
   <div title="{{ esf_title (af) }}">
-    <h2>
-      {{- GTW._T ("Select one of the types below") -}}
-    </h2>
     <div class="ESF-Polymorphic">
       {%- for cf in af.filters_np %}
         <h3 title="{{ esf_title (cf) }}">

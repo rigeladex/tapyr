@@ -1889,6 +1889,17 @@ _test_esf = """
     >>> ETT = crad.Templateer.get_template ("e_type")
     >>> print ((ETT.call_macro ("entity_selector_form", crad, afa)))
     <form class = "pure-form pure-form-stacked" title="Select Company_R for attribute Affiliate">
+        <div class="pure-controls">
+                      <button class="pure-button pure-button-primary" name="APPLY" title="Use the currently selected Company_R" type="submit">
+          <i class="fa"></i><b>Apply</b>
+        </button>
+                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
+          <i class="fa"></i><b>Clear</b>
+        </button>
+                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Company_R" type="button">
+          <i class="fa"></i><b>Cancel</b>
+        </button>
+        </div>
         <input type="hidden" name="__esf_for_attr__" value="affiliate___AC">
         <input type="hidden" name="__esf_for_type__" value="PAP.Company_R">
           <div class="pure-control-group attr-filter" title="Name">
@@ -1905,18 +1916,7 @@ _test_esf = """
        </span>
         <a class="disabler"></a>
       </div>
-        <div class="pure-controls">
-                      <button class="pure-button" name="APPLY" title="Use the currently selected Company_R" type="submit">
-          <i class="fa"></i><b>Apply</b>
-        </button>
-                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
-          <i class="fa"></i><b>Clear</b>
-        </button>
-                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Company_R" type="button">
-          <i class="fa"></i><b>Cancel</b>
-        </button>
-        </div>
-      </form>
+    </form>
 
     >>> afos = QR.Filter (crad.E_Type, "owner")
     >>> afos.AQ.E_Type.polymorphic_epk
@@ -2207,6 +2207,17 @@ _test_esf = """
 
     >>> print (ETT.call_macro ("entity_selector_form", crad, afop))
     <form class = "pure-form pure-form-stacked" title="Select Person for attribute Owner[Person]">
+        <div class="pure-controls">
+                      <button class="pure-button pure-button-primary" name="APPLY" title="Use the currently selected Person" type="submit">
+          <i class="fa"></i><b>Apply</b>
+        </button>
+                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
+          <i class="fa"></i><b>Clear</b>
+        </button>
+                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Person" type="button">
+          <i class="fa"></i><b>Cancel</b>
+        </button>
+        </div>
         <input type="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
         <input type="hidden" name="__esf_for_type__" value="PAP.Person">
           <div class="pure-control-group attr-filter" title="Last name">
@@ -2237,18 +2248,7 @@ _test_esf = """
        </span>
         <a class="disabler"></a>
       </div>
-        <div class="pure-controls">
-                      <button class="pure-button" name="APPLY" title="Use the currently selected Person" type="submit">
-          <i class="fa"></i><b>Apply</b>
-        </button>
-                    <button class="pure-button" name="CLEAR" title="Reset fields" type="button">
-          <i class="fa"></i><b>Clear</b>
-        </button>
-                    <button class="pure-button" name="CANCEL" title="Leave form without selecting Person" type="button">
-          <i class="fa"></i><b>Cancel</b>
-        </button>
-        </div>
-      </form>
+    </form>
 
 """
 

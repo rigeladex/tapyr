@@ -116,6 +116,7 @@
 #                     from `E_Type` to `Renderer_Mixin`
 #    11-Feb-2015 (CT) Change `E_Type_Alias` to refer to `.target.ETM.ui_name_T`,
 #                     not `.target.ETM.type_name`
+#     2-Apr-2015 (CT) Add `feedback` to `_rendered_completions_a`
 #    ««revision-date»»···
 #--
 
@@ -418,7 +419,9 @@ class _JSON_Action_ (_Ancestor) :
                         result ["partial"] = True
                     else :
                         ### XXX find fewer partial matches !!!
-                        result ["fields"]  = 0
+                        result ["fields"] = 0
+            if not result ["matches"] :
+                result ["feedback"]  = _T ("More than %s matches" % n)
         return result
     # end def _rendered_completions_a
 
