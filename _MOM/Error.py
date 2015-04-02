@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -88,6 +88,14 @@
 #     9-Oct-2014 (CT) Use `portable_repr`
 #    10-Oct-2014 (CT) Use `pyk.reprify`, not `pyk.encoded`
 #    15-Oct-2014 (CT) Add `db_meta_data` to `Incompatible_DB_Version`
+#     2-Apr-2015 (CT) Fix various encoding and L10N issues
+#                     * Change `__repr__` to use `reprify (text_type (self))`
+#                     * Override `__repr__` for `_Invariant_`, `Invariants`
+#                     * Use `decoded`, not `text_type`,  in `str_arg`
+#                     * Use `decoded`, not `reprify`, in `bindings`,
+#                     * Use `decoded` in  `__init__` methods
+#                     * Don't include `inv` in `args` of `Invariant`
+#                     * Add `_T` for `description`, `explanation`
 #    ««revision-date»»···
 #--
 
@@ -103,6 +111,7 @@ from   _TFL.predicate           import *
 from   _TFL.portable_repr       import portable_repr
 from   _TFL.pyk                 import pyk
 from   _TFL.Record              import Record
+from   _TFL.Regexp              import Regexp
 
 import _TFL._Meta.Object
 import _TFL.Caller
@@ -192,7 +201,7 @@ class _MOM_Error_ \
     def str_arg (self, args) :
         for a in args :
             try :
-                s = pyk.text_type (a)
+                s = pyk.decoded (a)
             except Exception as exc :
                 s = "%s --> %s" % (portable_repr (a), exc)
             yield s
@@ -215,7 +224,7 @@ class _MOM_Error_ \
     # end def __hash__
 
     def __repr__ (self) :
-        return "".join ((self.__class__.__name__, portable_repr (self.args)))
+        return pyk.reprify (pyk.text_type (self))
     # end def __repr__
 
     def __str__ (self) :
@@ -293,7 +302,7 @@ class _Invariant_ (Error) :
         result = []
         for info in self.head, self.description, self.explanation :
             if info :
-                result.append (info)
+                result.append (pyk.decoded (info))
         return ("\n" + self.indent).join (result)
     # end def assertion
 
@@ -328,6 +337,19 @@ class _Invariant_ (Error) :
                 v = _T ("None")
             yield "%s = %s" % (k, v)
     # end def _formatted_bindings
+
+    def __repr__ (self) :
+        obj    = self.obj
+        obj_p  = isinstance (obj, MOM.Entity)
+        fmt    = "<%(name)s: %(obj)s, %(repr)s>" if obj_p \
+            else "<%(name)s: (%(repr)s>"
+        result = fmt % dict \
+            ( name = _T (self.__class__.__name__)
+            , obj  = obj.ui_repr if obj_p else ""
+            , repr = pyk.decoded (self.__super.__repr__ ())
+            )
+        return pyk.reprify (result)
+    # end def __repr__
 
 # end class _Invariant_
 
@@ -375,7 +397,7 @@ class Ambiguous_Epk (_Invariant_) :
     def bindings (self) :
         FO = self.FO
         return sorted \
-            (   (k, (pyk.reprify (FO (k, v)) if v is not None else v))
+            (   (k, (pyk.decoded (FO (k, v)) if v is not None else v))
             for (k, v) in itertools.chain
                 ( (zip (self.e_type.epk_sig, self.epk))
                 , pyk.iteritems (self.kw)
@@ -443,9 +465,9 @@ class Attribute (Error) :
             try :
                 fov   = FO (name, self.value)
             except Exception :
-                value = pyk.reprify (self.value)
+                value = pyk.decoded (self.value)
             else :
-                value = pyk.reprify (fov)
+                value = pyk.decoded (fov)
             return ((name, value), )
     # end def bindings
 
@@ -482,7 +504,7 @@ class Attribute_Syntax (_Invariant_, ValueError) :
         except AttributeError :
             self.is_required  = getattr (attr.kind, "is_required", False)
         self.value        = val
-        self.exc_str      = exc_str
+        self.exc_str      = pyk.decoded (exc_str)
     # end def __init__
 
     @Once_Property
@@ -594,13 +616,13 @@ class Invariant (_Invariant_) :
     def __init__ (self, obj, inv) :
         self.__super.__init__ (obj)
         pid               = getattr (obj, "pid", None)
-        self.args         = (obj, inv) if pid else (_T (obj.ui_name), inv)
+        self.args         = (obj, ) if pid else (_T (obj.ui_name), )
         self.inv          = inv
         self.is_required  = inv.is_required
         self.attributes   = sorted (inv.attributes + inv.attr_none)
         self.extra_links  = list   (inv.extra_links)
         self.val_disp     = dict   (inv.val_disp)
-        description       = inv.description
+        description       = _T     (inv.description)
         try :
             self.inv_desc = description % TFL.Caller.Object_Scope (obj)
         except TypeError :
@@ -636,7 +658,7 @@ class Invariant (_Invariant_) :
 
     @Once_Property
     def explanation (self) :
-        return self.inv.explanation
+        return _T (self.inv.explanation)
     # end def explanation
 
     @Once_Property
@@ -721,6 +743,14 @@ class Invariants (Error) :
             return pyk.text_type (err)
     # end def _sort_key
 
+    def __repr__ (self) :
+        result = "<%s: %s>" % \
+            ( _T (self.__class__.__name__)
+            , "; ".join (pyk.decoded (repr (e)) for e in self.errors)
+            )
+        return pyk.reprify (result)
+    # end def __repr__
+
 # end class Invariants
 
 class Link_Scope_Mix (Error) :
@@ -734,12 +764,12 @@ class Multiplicity (Error) :
         self.e_type       = e_type
         self.role         = role
         self.type_name    = e_type.ui_name
-        self.l_ui_display = pyk.reprify (epk)
+        self.l_ui_display = pyk.decoded (pyk.reprify (epk))
         self.r_ui_display = r_obj.ui_repr
         self.extra_links  = tuple \
             ( TFL.Record
                 ( pid        = getattr (x, "pid", None)
-                , ui_display = x.ui_repr
+                , ui_display = pyk.decoded (x.ui_repr)
                 , type_name  = _T (x.ui_name)
                 )
             for x in links
@@ -835,14 +865,14 @@ class Not_Unique (_Invariant_) :
         self.extra_links  = tuple \
             ( TFL.Record
                 ( pid        = getattr (x, "pid", None)
-                , ui_display = x.ui_repr
+                , ui_display = pyk.decoded (x.ui_repr)
                 , type_name  = _T (x.ui_name)
                 )
             for x in inv.extra_links
             )
         self.inv          = inv
         self.type_name    = _T (obj.ui_name)
-        self.ui_display   = obj.ui_repr
+        self.ui_display   = pyk.decoded (obj.ui_repr)
         self.args         = (self.type_name, self.ui_display)
         description       = _T (inv.description)
         try :

@@ -549,7 +549,7 @@ class _Changer_ (_Ancestor) :
                 cb (self, request, response, scope, fv, result)
             except Exception as exc :
                 logging.exception \
-                    ( "%s._rendered_post: %s -> %s"
+                    ( "%s._rendered_post:\n    %s\n    -> %s"
                     , self.__class__, request.json ["cargo"], result
                     )
     # end def _call_submit_callback

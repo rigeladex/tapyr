@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package MOM.Pred.
@@ -51,6 +51,8 @@
 #     3-Sep-2014 (CT) Change `set_s_attr_value` to use `attr.prop`, not
 #                     `hasattr (obj, name)`
 #    10-Oct-2014 (CT) Use `portable_repr`
+#     2-Apr-2015 (CT) Don't put `FO` object into `val_disp`,
+#                     convert them with `pyk.text_type` to string
 #    ««revision-date»»···
 #--
 
@@ -185,7 +187,7 @@ class _Condition_ \
                     )
         if result is not None :
             if tail :
-                self.val_disp [c_attr] = obj.FO (c_attr, result)
+                self.val_disp [c_attr] = pyk.text_type (obj.FO (c_attr, result))
         return result
     # end def set_c_attr_value
 
@@ -213,7 +215,7 @@ class _Condition_ \
                 % (self.name, name, obj, self.assertion)
                 )
         val_dict [name] = result
-        self.val_disp [name] = obj.FO (name, result)
+        self.val_disp [name] = pyk.text_type (obj.FO (name, result))
         return result
     # end def set_s_attr_value
 

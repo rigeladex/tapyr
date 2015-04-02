@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Martin Glueck All rights reserved
+# Copyright (C) 2010-2015 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -58,8 +58,8 @@ _test_code = r"""
         first_name = None
 
     >>> errors
-    [Invariants(Required_Empty('Person', Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
-        first_name = None),)]
+    [<Invariants: <Required_Empty: PAP.Person ('', '', '', ''), Condition `first_name_not_empty` : The attribute first_name needs a non-empty value
+        first_name = None>>]
     >>> for e in errors :
     ...     print (e)
     Condition `first_name_not_empty` : The attribute first_name needs a non-empty value

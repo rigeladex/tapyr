@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package TFL.
@@ -18,6 +18,9 @@
 # Revision Dates
 #    15-Oct-2014 (CT) Creation
 #    17-Oct-2014 (CT) Add `compact`
+#     1-Apr-2015 (CT) Apply `pyk.decoded` to `line.head`, `line.body`, and
+#                     `line.tail` in `formatted_repr` to avoid
+#                     `UnicodeDecodeError` for 8-bit strings
 #    ««revision-date»»···
 #--
 
@@ -213,7 +216,14 @@ _formatted_repr_properties.update \
 def formatted_repr (obj, level = 0, compact = False, indent = "  ") :
     """Return a formatted canonical string representation of `obj`."""
     return  "\n".join \
-        ( ( "".join ((indent * line.level, line.head, line.body, line.tail))
+        ( ( "".join
+              ( ( indent * line.level
+                , pyk.decoded (line.head, pyk.user_config.output_encoding, "ascii")
+                , pyk.decoded (line.body, pyk.user_config.output_encoding, "ascii")
+                , pyk.decoded (line.tail, pyk.user_config.output_encoding, "ascii")
+
+                )
+              )
           ).replace (" ", " ").rstrip (" ")
         for line in formatted_repr.iter (obj, level, compact, seen = set ())
         )
