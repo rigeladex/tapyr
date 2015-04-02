@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2004-2013 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,13 +18,21 @@
 #    19-Sep-2004 (CT) Creation
 #     1-May-2006 (CT) `Alias_Mgr.transitive_translation` added
 #    16-Jun-2013 (CT) Correct import of `Regexp`
+#     2-Apr-2015 (CT) Add `get`, `__getitem__` to `Alias_Mgr`
+#     2-Apr-2015 (CT) Change `add_alias_file` to use `expanded_path`,
+#                     ignore missing file
+#     2-Apr-2015 (CT) Change `Alias.__str__` to return joined `email_addresses`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 
+from   _TFL.predicate          import split_hst
 from   _TFL.Regexp             import *
+from   _TFL                    import sos
+
+
 from   _PMA                    import Lib
 
 import _TFL._Meta.Object
@@ -56,7 +64,7 @@ class Alias (TFL.Meta.Object) :
     # end def __repr__
 
     def __str__ (self) :
-        return "%s: %s" % (self.key, ", ".join (self.values))
+        return ", ".join (self.email_addresses ())
     # end def __str__
 
 # end class Alias
@@ -93,11 +101,19 @@ class Alias_Mgr (TFL.Meta.Object) :
     # end def add_alias_buffer
 
     def add_alias_file (self, name) :
-        f       = open (name)
-        buffer  = f.read ()
-        f.close ()
-        self.add_alias_buffer (buffer)
+        path = sos.expanded_path (name)
+        if sos.path.exists (path) :
+            with open (path) as f :
+                buffer = f.read ()
+            self.add_alias_buffer (buffer)
     # end def add_alias_file
+
+    def get (self, key, default = None) :
+        try :
+            return self [key]
+        except KeyError :
+            return default
+    # end def get
 
     def transitive_translation (self, alias) :
         """Return transitive translation of `alias`"""
@@ -111,13 +127,25 @@ class Alias_Mgr (TFL.Meta.Object) :
         return result
     # end def transitive_translation
 
+    def __getitem__ (self, key) :
+        map     = self.aliases
+        rn, ea  = Lib.parseaddr (key)
+        l, s, d = split_hst (ea, "@")
+        if s :
+            try :
+                return map [l]
+            except KeyError :
+                pass
+        return map [ea]
+    # end def __getitem__
+
 # end class Alias_Mgr
 
 """
 from   _PMA                    import PMA
 import _PMA.Alias
-amgr = PMA.Alias_Mgr ("/etc/aliases", "/swing/private/tanzer/.mh_aliases")
-a    = amgr.aliases ["baby-news"]
+amgr = PMA.Alias_Mgr ("/etc/aliases", "~/.aliases", "~/.mh_aliases")
+a    = amgr ["mailer-daemon"]
 list (a.addresses ())
 
 """

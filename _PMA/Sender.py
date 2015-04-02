@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2010 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -18,6 +18,7 @@
 #    28-Jul-2005 (CT) Creation (factored from Composer.py)
 #    19-Feb-2010 (CT) `TFL.SMTP` factored
 #    27-Dec-2010 (CT) `** kw` added to `__init__`
+#     2-Apr-2015 (CT) Add `Sender_Logger`, `Sender_Tester`
 #    ««revision-date»»···
 #--
 
@@ -30,8 +31,10 @@ import _TFL.SMTP
 class Sender (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
+    SMTP = TFL.SMTP
+
     def __init__ (self, mail_host = None, ** kw) :
-        self.smtp = TFL.SMTP (mail_host = mail_host, ** kw)
+        self.smtp = self.SMTP (mail_host = mail_host, ** kw)
     # end def __init__
 
     def __call__ (self, email, envelope = None) :
@@ -43,6 +46,18 @@ class Sender (TFL.Meta.Object) :
     # end def send
 
 # end class Sender
+
+class Sender_Logger (Sender) :
+
+    SMTP = TFL.SMTP_Logger
+
+# end class Sender_Logger
+
+class Sender_Tester (Sender) :
+
+    SMTP = TFL.SMTP_Tester
+
+# end class Sender_Tester
 
 if __name__ != "__main__" :
     PMA._Export ("*")

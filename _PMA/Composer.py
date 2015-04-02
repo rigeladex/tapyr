@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,15 +48,16 @@
 #                     `defaults`
 #    17-Mar-2014 (CT) Add option `-msg_base_dirs`
 #     4-Nov-2014 (CT) Add `-attach` options, factor `_process_attachement`
+#     2-Apr-2015 (CT) Add option `-Bcc`, alias expansion for it
+#     2-Apr-2015 (CT) Add option `-Debug`
 #    ««revision-date»»···
 #--
-
-from   __future__              import with_statement
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 
+import _PMA.Alias
 import _PMA.Message
 import _PMA.Mime
 import _PMA.Sender
@@ -144,7 +145,7 @@ class Composer (TFL.Meta.Object) :
         ( ( """From:        %(email_address)s"""
           , """To:          %(receiver)s"""
           , """Subject:     %(subject)s"""
-          , """Bcc:         %(email_address)s"""
+          , """Bcc:         %(bcc_addr)s"""
           , """X-mailer:    PMA %(version)s"""
           , """%(body_marker)s"""
           , ""
@@ -156,7 +157,7 @@ class Composer (TFL.Meta.Object) :
           , """To:          %(addressee)s"""
           , """Subject:     FW: %(subject)s"""
           , """Cc:          """
-          , """Bcc:         %(email_address)s"""
+          , """Bcc:         %(bcc_addr)s"""
           , """X-mailer:    PMA %(version)s"""
           , """%(body_marker)s"""
           , """see attached mail"""
@@ -168,7 +169,7 @@ class Composer (TFL.Meta.Object) :
         ( ( """From:        %(email_address)s"""
           , """To:          %(reply_address)s"""
           , """Subject:     Re: %(subject)s"""
-          , """Bcc:         %(email_address)s"""
+          , """Bcc:         %(bcc_addr)s"""
           , """X-mailer:    PMA %(version)s"""
           , """In-reply-to: Your message of "%(message_date)s" """
           , """             %(message_id)s"""
@@ -215,6 +216,8 @@ class Composer (TFL.Meta.Object) :
             , receiver         = None
             , subject          = None
             , attach           = None
+            , bcc              = None
+            , debug            = False
             ) :
         if editor   is not None    : self.editor   = editor
         if user     is not None    : self.user     = user
@@ -224,11 +227,14 @@ class Composer (TFL.Meta.Object) :
         if attach   is not None    : self.attach   = attach
         if user is not None or domain is not None :
             self.email_address = "%s@%s" % (self.user, self.domain)
+        self.bcc_addr          = self.email_address if bcc is None else bcc
+        self.debug             = debug
         self.smtp              = smtp
         self.send_cb           = send_cb
         self.rst2html          = rst2html
         self.locals            = dict \
-            ( body_marker      = self.body_marker
+            ( bcc_addr         = self.bcc_addr
+            , body_marker      = self.body_marker
             , email_address    = self.email_address
             , domain           = self.domain
             , user             = self.user
@@ -256,7 +262,8 @@ class Composer (TFL.Meta.Object) :
 
     def compose (self) :
         """Compose and send a new email."""
-        self._send (self._formatted (self.compose_format), self._finish_edit)
+        message = self._formatted (self.compose_format)
+        self._send (message, self._finish_edit)
     # end def compose
 
     def forward (self, msg, * more_msgs) :
@@ -404,6 +411,9 @@ class Composer (TFL.Meta.Object) :
         if send_cb is not None :
             email = send_cb (email)
         if email and self.smtp :
+            if self.debug :
+                print email
+                print
             self.smtp (email, envelope)
     # end def _finish__send
 
@@ -459,7 +469,8 @@ class Composer (TFL.Meta.Object) :
 # end class Composer
 
 def _main (cmd) :
-    smtp = PMA.Sender \
+    Sender = PMA.Sender_Tester if cmd.Debug else PMA.Sender
+    smtp   = Sender \
         ( local_hostname = cmd.mail_local_hostname
         , mail_host      = cmd.mail_host
         , mail_port      = cmd.mail_port
@@ -479,12 +490,25 @@ def _main (cmd) :
             , cmd.attach
             )
         )
+    bcc    = None
+    if cmd.Bcc :
+        try :
+            alias_mgr = PMA.Alias_Mgr \
+                ("/etc/aliases", "~/.aliases", "~/.mh_aliases")
+            alias = alias_mgr [cmd.Bcc]
+            bcc   = str (alias)
+        except KeyError :
+            bcc = cmd.Bcc
+        except Exception as exc :
+            print exc
     comp   = PMA.Composer \
         ( cmd.editor, cmd.user, cmd.domain, smtp
         , rst2html = cmd.HTML
         , receiver = cmd.To
         , subject  = cmd.subject
         , attach   = attach
+        , bcc      = bcc
+        , debug    = cmd.Debug
         )
     def message_from_arg (cmd, arg) :
         try :
@@ -509,8 +533,10 @@ _Command = TFL.CAO.Cmd \
     , opts        =
         ( "-attach:P ?File to attach"
         , "-Attach_Message:P ?Message to attach"
+        , "-Bcc:S?Email(s) to be put on blind carbon copy (default: sender's email)"
         , "-bounce:S?Message to resend"
         , "-config:C?File specifying defaults for options"
+        , "-Debug:B?Use SMTP_Tester for debugging"
         , "-domain:S?Domain of sender"
         , "-editor:S?Command used to start editor"
         , "-forward:S?Message to forward"
