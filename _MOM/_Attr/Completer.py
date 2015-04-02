@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2011-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package MOM.Attr.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -32,6 +32,9 @@
 #    25-Apr-2013 (CT) Add optional arg `xtra_filter` to `Completer.__call__`
 #     7-May-2014 (CT) Add `** kw` to `copy`; use in `embedded`
 #     8-May-2014 (CT) Add `_Nested_Completer_Spec_.default_selector`
+#    30-Mar-2015 (CT) Allow `buddies` as single argument for `Completer_Spec`
+#                     + add `treshold` to `_Nested_Completer_Spec_.__init__`
+#                     + factor `default_selector` to `Completer_Spec`
 #    ««revision-date»»···
 #--
 
@@ -149,15 +152,21 @@ class E_Completer (_Nested_Completer_) :
 class Completer_Spec (TFL.Meta.Object) :
     """Attribute completer specification for a MOM attribute."""
 
-    buddies    = None
-    treshold   = 1
-    Type       = Completer
+    buddies          = None
+    default_selector = None
+    treshold         = 1
+    Type             = Completer
 
     def __init__ (self, treshold = None, buddies = None) :
+        Selector = MOM.Attr.Selector._Selector_
+        if isinstance (treshold, Selector) and buddies is None:
+            treshold, buddies = None, treshold
         if treshold is not None :
             self.treshold = treshold
+        if buddies is None :
+            buddies = self.default_selector
         if buddies is not None :
-            assert isinstance (buddies, MOM.Attr.Selector._Selector_), \
+            assert isinstance (buddies, Selector), \
                 "Expected Attr.Selector for `buddies`, got `%s`" % (buddies, )
             self.buddies = buddies
     # end def __init__
@@ -170,12 +179,8 @@ class Completer_Spec (TFL.Meta.Object) :
 
 class _Nested_Completer_Spec_ (Completer_Spec) :
 
-    default_selector = None
-
-    def __init__ (self, buddies = None, ** kw) :
-        if buddies is None :
-            buddies = self.default_selector
-        self.__super.__init__ (buddies = buddies)
+    def __init__ (self, treshold = None, buddies = None, ** kw) :
+        self.__super.__init__ (treshold = treshold, buddies = buddies)
         self.nested_specs = kw
     # end def __init__
 
