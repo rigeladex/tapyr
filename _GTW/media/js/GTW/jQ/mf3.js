@@ -54,6 +54,8 @@
 //    31-Mar-2015 (CT) Use `fit`, not `flipfit`, for `collision`
 //                     (`flipfit` truncates on the left of completion info)
 //     2-Apr-2015 (CT) Add guard for `item.disabled` to `completer.select_cb`
+//     3-Apr-2015 (CT) Add `field_type.id_ref_select`
+//                     + add optional arg `ft` to `field_type.normal.reset`
 //    ««revision-date»»···
 //--
 
@@ -584,7 +586,7 @@
         };
         var field_type =
             { checkbox   :
-                { clear : function clear (f$) {
+                { clear : function clear_checkbox (f$) {
                     field_type.checkbox.put_input (f$, "");
                   }
                 , get_cargo : function get_cargo_checkbox (fv) {
@@ -596,22 +598,21 @@
                         ? "yes" : (req ? null : "no");
                     return result;
                   }
-                , put_cargo : function put_cargo_id_ref (id, value) {
+                , put_cargo : function put_cargo_checkbox (id, value) {
                     field_type.normal.put_cargo (id, value);
                   }
                 , put_input : function put_input_checkbox (f$, value) {
-                    // XXX ??? is this correct ???
                     f$.val ((value == "yes") ? true : false).trigger ("change");
                   }
-                , reset : function reset (f$) {
-                    field_type.normal.reset (f$);
+                , reset : function reset_checkbox (f$, ft) {
+                    field_type.normal.reset (f$, ft || field_type.checkbox);
                   }
                 , truth : function truth_checkbox (value) {
                     return field_type.normal.truth (value);
                   }
                 }
             , id_ref :
-                { clear : function clear (f$) {
+                { clear : function clear_id_ref (f$) {
                     field_type.id_ref.put_input (f$, {});
                   }
                 , get_cargo : function get_cargo_id_ref (fv) {
@@ -654,10 +655,10 @@
                         h$.val (value);
                     };
                   }
-                , reset : function reset (f$) {
-                    field_type.normal.reset (f$);
+                , reset : function reset_id_ref (f$, ft) {
+                    field_type.normal.reset (f$, ft || field_type.id_ref);
                   }
-                , truth : function truth_checkbox (value) {
+                , truth : function truth_id_ref (value) {
                     if (typeof value === "object") {
                         return !! (value ["pid"])
                     } else {
@@ -665,8 +666,50 @@
                     };
                   }
                 }
+            , id_ref_select :
+                { clear : function clear_id_ref_select (f$) {
+                    field_type.id_ref_select.put_input (f$, {});
+                  }
+                , get_cargo : function get_cargo_id_ref_select (fv) {
+                    field_type.id_ref.get_cargo (fv);
+                  }
+                , get_input : function get_input_id_ref_select (f$) {
+                    var elem   = f$.get (0);
+                    var value  = f$.val ();
+                    var result =
+                        { display : elem.item (elem.selectedIndex).label
+                        , pid     : f$.val () || -1
+                        };
+                    return result;
+                  }
+                , put_cargo : function put_cargo_id_ref_select (id, value) {
+                    field_type.id_ref.put_cargo (id, value);
+                  }
+                , put_input : function put_input_id_ref_select (f$, value) {
+                    var id = f$.prop ("id");
+                    var fv, val, pid;
+                    if (typeof value === "object") {
+                        pid = value ["pid"];
+                        val = value ["display"] || "";
+                        f$.val (val);
+                        if (pid !== undefined) {
+                            field_type.normal.put_cargo (id, value);
+                        } else {
+                            fv      = options.form_spec.cargo.field_values [id];
+                            fv.edit = undefined;
+                        };
+                    };
+                  }
+                , reset : function reset_id_ref_select (f$, ft) {
+                    field_type.normal.reset
+                        (f$, ft || field_type.id_ref_select);
+                  }
+                , truth : function truth_id_ref_select (value) {
+                    return field_type.id_ref.truth (value);
+                  }
+                }
             , normal :
-                { clear : function clear (f$) {
+                { clear : function clear_normal (f$) {
                     field_type.normal.put_input (f$, "");
                   }
                 , get_cargo : function get_cargo_normal (fv) {
@@ -690,12 +733,12 @@
                 , put_input : function put_input_normal (f$, value) {
                     f$.val (value).trigger ("change");
                   }
-                , reset : function reset (f$) {
+                , reset : function reset_normal (f$, ft) {
                     var id = f$.prop ("id");
                     var fv = options.form_spec.cargo.field_values [id];
-                    field_type.normal.put_input (f$, fv.init);
+                    (ft || field_type.normal).put_input (f$, fv.init);
                   }
-                , truth : function truth_checkbox (value) {
+                , truth : function truth_normal (value) {
                     return !! value;
                   }
                 }
@@ -705,6 +748,8 @@
                 var typ;
                 if (f$.attr ("type") == "checkbox") {
                     typ = field_type.checkbox;
+                } else if (f$.is (".id_ref_select")) {
+                    typ = field_type.id_ref_select;
                 } else if (f$.is (".id_ref")) {
                     typ = field_type.id_ref;
                 } else {

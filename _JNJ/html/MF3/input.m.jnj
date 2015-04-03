@@ -29,6 +29,7 @@
 ##    27-Aug-2014 (CT) Add `tabindex="-1"` for non-focusable input elements
 ##    21-Nov-2014 (CT) Factor `X.input.hd_input`, `_id_entity_display`
 ##    24-Mar-2015 (CT) Add `tabindex="-1"` for readonly fields
+##     3-Apr-2015 (CT) Add `id_entity_select`
 ##    ««revision-date»»···
 ##--
 #}
@@ -96,6 +97,25 @@
       )
   }}
 {%- endmacro -%} {#- _id_entity_display -#}
+
+{%- macro id_entity_select (elem) -%}
+  {%- set choices = elem.choices %}
+  {%- if choices %}
+    {%- set class = kwargs.pop ("class", "").replace ("value", "")  %}
+    {%- set kw = GTW.dict
+        ( choices  = choices
+        , class    = GTW.filtered_join (" ", (class, "id_ref_select"))
+        , id       = elem.id
+        , name     = elem.r_name
+        , selected = elem.edit
+        )
+    -%}
+    {%- do kw.update (kwargs) %}
+    {{ X.input.select_v (** kw) }}
+  {%- else %}
+    {{- id_entity (elem, ** kwargs) -}}
+  {% endif -%}
+{%- endmacro -%} {#- id_entity_select -#}
 
 {%- macro integer (elem) -%}
   {%- set kw = GTW.dict

@@ -85,6 +85,8 @@
 #    22-Jan-2015 (CT) Add `css_class` and `css_align` for `MAT`
 #    26-Jan-2015 (CT) Derive `_M_Element_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine_Lists`
+#     3-Apr-2015 (CT) Add `_Field_Entity_Mixin_.choices`
+#     3-Apr-2015 (CT) Change `Field_Entity.__call__` to handle `pid == -1`
 #    ««revision-date»»···
 #--
 
@@ -1026,6 +1028,14 @@ class _Field_Entity_Mixin_ (_Entity_Mixin_) :
     action_buttons      = ("close", "clear", "reset")
     _reset_properties   = ("field_as_json_cargo", )
 
+    @TFL.Meta.Once_Property
+    def choices (self) :
+        ETM = self.root.scope [self.E_Type]
+        q   = ETM.query (sort_key = ETM.sorted_by_epk)
+        if q.count () < 100 :
+            return [(o.pid, o.ui_display) for o in q]
+    # end def choices
+
     @property
     def cooked (self) :
         return self.essence
@@ -1487,7 +1497,9 @@ class Field_Entity (_Field_Composite_Mixin_, _Field_Entity_Mixin_, _Field_) :
                 if not edit :
                     edit = my_cargo.get ("init", {})
                 pid  = edit.get ("pid") or None
-                if pid is not None :
+                if pid == -1 :
+                    self._submitted_value = None
+                elif pid is not None :
                     if _essence is None or pid != _essence.pid :
                         value = scope.pid_query (pid)
                         self._submitted_value = value
