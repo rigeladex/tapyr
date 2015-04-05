@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.TOP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -28,6 +28,7 @@
 #     6-Apr-2013 (CT) Fix typo
 #    24-Feb-2014 (CT) Add `_Event_Wrapper_`
 #    26-Feb-2014 (CT) Remove `nav_off_canvas`
+#     5-Apr-2015 (CT) Fix typo
 #    ««revision-date»»···
 #--
 
@@ -193,7 +194,7 @@ class _Q_ (_Mixin_, _Cal_Page_) :
         response = context ["response"]
         try :
             qa   = self._q_args (anchor, request)
-        except Exception (exc) :
+        except Exception as exc :
             raise self.Status.Not_Found (exc)
         if qa.anchor == self.anchor :
             this = self
