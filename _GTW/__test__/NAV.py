@@ -118,11 +118,11 @@ _test_nav = """
     Admin/Personenverwaltung/Address e_type_admin
     Admin/Personenverwaltung/Address_Position e_type_admin
     Admin/Personenverwaltung/Company e_type_admin
-    Admin/Personenverwaltung/Company_R e_type_admin
     Admin/Personenverwaltung/Company_has_Address e_type_admin
     Admin/Personenverwaltung/Company_has_Email e_type_admin
     Admin/Personenverwaltung/Company_has_Phone e_type_admin
     Admin/Personenverwaltung/Company_has_Url e_type_admin
+    Admin/Personenverwaltung/Company_R e_type_admin
     Admin/Personenverwaltung/Email e_type_admin
     Admin/Personenverwaltung/Person e_type_admin
     Admin/Personenverwaltung/Person_has_Account e_type_admin
@@ -134,8 +134,8 @@ _test_nav = """
     Admin/Personenverwaltung/Url e_type_admin
     Admin/Regattaverwaltung site_admin
     Admin/Regattaverwaltung/Boat e_type_admin
-    Admin/Regattaverwaltung/Boat_Class e_type_admin
     Admin/Regattaverwaltung/Boat_in_Regatta e_type_admin
+    Admin/Regattaverwaltung/Boat_Class e_type_admin
     Admin/Regattaverwaltung/Club e_type_admin
     Admin/Regattaverwaltung/Regatta_C e_type_admin
     Admin/Regattaverwaltung/Regatta_Event e_type_admin
@@ -1888,7 +1888,7 @@ _test_esf = """
 
     >>> ETT = crad.Templateer.get_template ("e_type")
     >>> print ((ETT.call_macro ("entity_selector_form", crad, afa)))
-    <form class = "pure-form pure-form-aligned" title="Select Company_R for attribute Affiliate">
+    <form class = "pure-form pure-form-stacked" title="Select Company_R for attribute Affiliate">
         <input type="hidden" name="__esf_for_attr__" value="affiliate___AC">
         <input type="hidden" name="__esf_for_type__" value="PAP.Company_R">
           <div class="pure-control-group attr-filter" title="Name">
@@ -2206,7 +2206,7 @@ _test_esf = """
     )
 
     >>> print (ETT.call_macro ("entity_selector_form", crad, afop))
-    <form class = "pure-form pure-form-aligned" title="Select Person for attribute Owner[Person]">
+    <form class = "pure-form pure-form-stacked" title="Select Person for attribute Owner[Person]">
         <input type="hidden" name="__esf_for_attr__" value="owner[PAP.Person]">
         <input type="hidden" name="__esf_for_type__" value="PAP.Person">
           <div class="pure-control-group attr-filter" title="Last name">

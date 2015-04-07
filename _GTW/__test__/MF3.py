@@ -391,7 +391,7 @@ _test_element = """
     <Field Z-26:lifetime.finish> Finish
     <Field Z-26:sex> Sex
     <Field_Rev_Ref Z-26:phones> Phones
-    <Entity_Rev_Ref Z-26:phones@3> Person_has_Phone
+    <Entity_Rev_Ref Z-26:phones@3> Person has Phone
     <Field_Entity Z-26:phones::right@3> Phone
     <Field Z-26:phones::right.country_code@3> Country code
     <Field Z-26:phones::right.area_code@3> Area code

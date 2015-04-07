@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.__test__.
@@ -1049,16 +1049,16 @@ The app-type specific entity-types are ready to be used by
     >>> prepr ((last_name_prop.name, last_name_prop.ui_name))
     ('last_name', 'Last name')
     >>> sorted (ET_Person._Attributes._own_names)
-    ['first_name', 'last_name', 'middle_name', 'owns_trap_links', 'sets_trap_links', 'traps', 'ui_display']
+    ['first_name', 'last_name', 'middle_name', 'owns_trap_links', 'sets_trap_links', 'traps']
 
     >>> color_prop = ET_Mouse.attr_prop ("color")
     >>> prepr ((color_prop.name, color_prop.ui_name))
     ('color', 'Color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['catch', 'max_weight', 'owner', 'owner_link', 'owner_links', 'reaction_time_range', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'ui_display', 'up_ex', 'up_ex_q']
+    ['catch', 'max_weight', 'owner', 'owner_link', 'owner_links', 'reaction_time_range', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'up_ex', 'up_ex_q']
     >>> sorted (ET_Supertrap._Attributes._own_names)
-    ['ui_display', 'weights']
+    ['weights']
     >>> sorted (ET_Trap._Attributes._names)
     ['FO', 'catch', 'created_by', 'creation', 'creation_date', 'electric', 'is_used', 'last_change', 'last_changed', 'last_changed_by', 'last_cid', 'max_weight', 'name', 'owner', 'owner_link', 'owner_links', 'pid', 'reaction_time_range', 'rodent_link', 'rodent_links', 'serial_no', 'setter', 'setter_link', 'setter_links', 'type_name', 'ui_display', 'ui_repr', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
@@ -1364,7 +1364,7 @@ appropriate class:
     BMT.Rodent_in_Trap (('mighty_mouse', ), ('x', 1))
     >>> with expect_except (MOM.Error.Multiplicity) :
     ...     RiT (m, t2)
-    Multiplicity: The new definition of Rodent_in_Trap (BMT.Mouse ('mighty_mouse'), BMT.Trap ('x', 2)) would exceed the maximum number [1] of links allowed for BMT.Mouse ('mighty_mouse',).
+    Multiplicity: The new definition of Rodent in Trap (BMT.Mouse ('mighty_mouse'), BMT.Trap ('x', 2)) would exceed the maximum number [1] of links allowed for BMT.Mouse ('mighty_mouse',).
       Already existing:
         BMT.Rodent_in_Trap (('mighty_mouse', 'BMT.Mouse'), ('x', '1', 'BMT.Trap'))
     >>> rit3 = RiT (r, t3)

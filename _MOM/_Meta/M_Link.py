@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -98,6 +98,7 @@
 #                     `_update_auto_kw` to `_m_create_role_child`
 #    11-Jul-2014 (CT) Change `child_np` to use `.E_Type`, not `.__class__` to
 #                     determine the `etypes` of `roles`
+#     7-Apr-2015 (CT) Redefine `_m_default_ui_name` to improve auto-`ui_name`
 #    ««revision-date»»···
 #--
 
@@ -108,8 +109,9 @@ import _MOM._Meta.M_Entity
 import _MOM.E_Type_Manager
 
 from   _TFL.I18N             import _, _T, _Tn
-from   _TFL.predicate        import cartesian, plural_of, uniq
+from   _TFL.predicate        import cartesian, filtered_join, paired, plural_of, uniq
 from   _TFL.pyk              import pyk
+from   _TFL.Regexp           import Regexp, re
 
 import _TFL.multimap
 import _TFL.Undef
@@ -119,8 +121,8 @@ import itertools
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
-    _orn = {}
     auto_derive_np_kw = TFL.mm_dict_mm_dict ()
+    _orn              = {}
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
@@ -445,6 +447,28 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
         for l in etm.links_of (obj) :
             scope.remove (l)
     # end def destroy_links
+
+    def _m_default_ui_name (cls, base_name) :
+        result = base_name
+        Roles  = getattr (cls, "Roles", [])
+        if Roles and all (R.E_Type for R in Roles) :
+            rn_pat = Regexp \
+                ( "^"
+                + "_(.+)_".join (R.E_Type.type_base_name for R in Roles)
+                + "$"
+                )
+            if rn_pat.match (base_name) :
+                cs     = rn_pat.groups ()
+                ns     = tuple (R.E_Type.ui_name for R in Roles)
+                result = filtered_join \
+                    (" ", itertools.chain (* paired (ns, cs)))
+        return result
+    # end def _m_default_ui_name
+
+    def _m_fix_doc (cls) :
+        cls.set_ui_name          (cls.__name__)
+        cls.__m_super._m_fix_doc ()
+    # end def _m_fix_doc
 
     def _m_setup_ref_maps (cls) :
         cls._m_setup_roles              ()

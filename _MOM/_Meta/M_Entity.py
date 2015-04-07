@@ -223,6 +223,8 @@
 #                     * use a dict, not tuple, of attributes
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine_Dict`,
 #                     as metaclass
+#     7-Apr-2015 (CT) Factor `_m_default_ui_name`
+#                     + remove spurious redefinitions of `ui_display`
 #    ««revision-date»»···
 #--
 
@@ -464,13 +466,17 @@ class M_E_Mixin \
         return child
     # end def set_default_child
 
-    def set_ui_name (cls, ui_name) :
+    def set_ui_name (cls, base_name) :
         """Sets `ui_name` of `cls`"""
-        if not cls.show_package_prefix :
-            cls.ui_name = Type_Name_Type    (ui_name)
+        if getattr (cls, "_ui_name_xp", False) :
+            ui_name = cls.ui_name
         else :
-            cls.ui_name = cls.pns_qualified (ui_name)
-    # end def set_alias
+            ui_name = cls._m_default_ui_name (base_name)
+        if not cls.show_package_prefix :
+            cls.ui_name = pyk.text_type      (ui_name)
+        else :
+            cls.ui_name = cls.pns_qualified  (ui_name)
+    # end def set_ui_name
 
     def _m_auto_args_as_kw (cls, sig, attrs) :
         def _gen_args (attrs, dict) :
@@ -551,6 +557,10 @@ class M_E_Mixin \
         app_type.DBW.finalize (app_type)
     # end def _m_create_e_types
 
+    def _m_default_ui_name (cls, base_name) :
+        return base_name
+    # end def _m_default_ui_name
+
     def _m_new_e_type (cls, app_type, etypes) :
         M_E_Type = cls.M_E_Type
         bases    = cls._m_new_e_type_bases (app_type, etypes)
@@ -617,7 +627,7 @@ class M_E_Mixin \
         cls.type_base_name = TNT (base_name)
         cls.type_name      = cls._type_name = tn
         cls.type_name_fq   = TNT (cls.pns_qualified_f (base_name))
-        cls.set_ui_name      (cls.__dict__.get ("ui_name", base_name))
+        cls.set_ui_name      (base_name)
         cls._type_names.add  (tn)
     # end def _set_type_names
 
@@ -643,6 +653,7 @@ class M_Entity (M_E_Mixin) :
     def __new__ (mcls, name, bases, dct) :
         dct ["_default_child"] = dct.pop ("default_child", None)
         dct ["use_indices"]    = dct.pop ("use_indices",   None) or []
+        dct ["_ui_name_xp"]    = bool    (dct.get ("ui_name"))
         doc = dct.get ("__doc__")
         if doc and "%(" in doc :
             dct ["_dyn_doc"] = doc
@@ -746,10 +757,6 @@ class M_Entity (M_E_Mixin) :
             setattr (cls, "show_in_ui", cls.show_in_ui_T)
         for psn in cls._nested_classes_to_combine :
             cls._m_combine_nested_class (psn, bases, dct)
-        if "ui_display" not in cls._Attributes.__dict__ :
-            base = cls._Attributes.ui_display
-            cls._Attributes.ui_display = base.__class__ \
-                ("ui_display", (base, ), dict (ui_name = cls.ui_name))
     # end def _m_init_prop_specs
 
     def _m_setup_auto_props (cls, SX) :
