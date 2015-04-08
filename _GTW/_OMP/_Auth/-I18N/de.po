@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-02-12 12:38+0100\n"
+"POT-Creation-Date: 2015-04-08 13:11+0200\n"
 "PO-Revision-Date: 2014-08-31 11:27+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -28,6 +28,12 @@ msgid "Account"
 msgid_plural "Accounts"
 msgstr[0] "Benutzerkonto"
 msgstr[1] "Benutzerkonten"
+
+#: _GTW._OMP._Auth.Account_in_Group:0
+msgid "Account in Group"
+msgid_plural "Account in Groups"
+msgstr[0] "Benutzerkonto in Gruppe"
+msgstr[1] "Benutzerkonten in Gruppen"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account which this action is bound to."
@@ -63,12 +69,6 @@ msgid_plural "Account_Password_Resets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: _GTW._OMP._Auth.Account_in_Group:0
-msgid "Account_in_Group"
-msgid_plural "Account_in_Groups"
-msgstr[0] "Benutzerkonto in Gruppe"
-msgstr[1] "Benutzerkonten in Gruppen"
-
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Activation of the account"
 msgstr "Aktivierung des Benutzerkontos."
@@ -79,7 +79,7 @@ msgstr "Ein Benutzerkonto, das zur Anmeldung ein Kennwort benötigt."
 
 #: _GTW/_OMP/_Auth/graph.py:54
 msgid "Auth graph"
-msgstr ""
+msgstr "Auth Diagramm"
 
 #: _GTW._OMP._Auth.Certificate:0
 msgid "Certificate"
@@ -238,4 +238,3 @@ msgstr "Gültigkeitsintervall"
 #: _GTW._OMP._Auth.Certificate:0
 msgid "valid_revocation_date"
 msgstr ""
-

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-02-12 12:38+0100\n"
+"POT-Creation-Date: 2015-04-08 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,12 @@ msgstr ""
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account"
 msgid_plural "Accounts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._Auth.Account_in_Group:0
+msgid "Account in Group"
+msgid_plural "Account in Groups"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -60,12 +66,6 @@ msgstr[1] ""
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Password_Reset"
 msgid_plural "Account_Password_Resets"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._Auth.Account_in_Group:0
-msgid "Account_in_Group"
-msgid_plural "Account_in_Groups"
 msgstr[0] ""
 msgstr[1] ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-02-12 12:38+0100\n"
+"POT-Creation-Date: 2015-04-08 13:11+0200\n"
 "PO-Revision-Date: 2012-05-23 10:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -67,6 +67,13 @@ msgstr[1] ""
 msgid "Boat class"
 msgstr ""
 
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+#, fuzzy
+msgid "Boat in Regatta"
+msgid_plural "Boat in Regattas"
+msgstr[0] ""
+msgstr[1] ""
+
 #: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Crew_Member:0
 msgid "Boat in regatta"
 msgstr ""
@@ -86,12 +93,6 @@ msgstr ""
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Boat_Class"
 msgid_plural "Boat_Classes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Boat_in_Regatta"
-msgid_plural "Boat_in_Regattas"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -624,8 +625,9 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
-msgid "Team_has_Boat_in_Regatta"
-msgid_plural "Team_has_Boat_in_Regattas"
+#, fuzzy
+msgid "Team has Boat in Regatta"
+msgid_plural "Team has Boat in Regattas"
 msgstr[0] ""
 msgstr[1] ""
 

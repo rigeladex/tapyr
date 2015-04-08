@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-02-12 12:38+0100\n"
+"POT-Creation-Date: 2015-04-08 13:11+0200\n"
 "PO-Revision-Date: 2014-08-31 11:29+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -67,6 +67,12 @@ msgstr[1] "Boote"
 msgid "Boat class"
 msgstr "Bootsklasse"
 
+#: _GTW._OMP._SRM.Boat_in_Regatta:0
+msgid "Boat in Regatta"
+msgid_plural "Boat in Regattas"
+msgstr[0] "Boot in Regatta"
+msgstr[1] "Boote in Regatten"
+
 #: _GTW._OMP._SRM.Race_Result:0 _GTW._OMP._SRM.Crew_Member:0
 msgid "Boat in regatta"
 msgstr "Boot in Regatta"
@@ -88,12 +94,6 @@ msgid "Boat_Class"
 msgid_plural "Boat_Classes"
 msgstr[0] "Bootsklasse"
 msgstr[1] "Bootsklassen"
-
-#: _GTW._OMP._SRM.Boat_in_Regatta:0
-msgid "Boat_in_Regatta"
-msgid_plural "Boat_in_Regattas"
-msgstr[0] "Boot in Regatta"
-msgstr[1] "Boote in Regatten"
 
 #: _GTW._OMP._SRM.Regatta:0
 msgid "Boolean attribute."
@@ -515,7 +515,7 @@ msgstr "Russland"
 
 #: _GTW/_OMP/_SRM/graph.py:89
 msgid "SRM graph"
-msgstr ""
+msgstr "SRM Diagramm"
 
 #: _GTW._OMP._SRM.Boat_Class:0
 msgid "Sail area"
@@ -626,8 +626,8 @@ msgstr[0] "Team"
 msgstr[1] "Teams"
 
 #: _GTW._OMP._SRM.Team_has_Boat_in_Regatta:0
-msgid "Team_has_Boat_in_Regatta"
-msgid_plural "Team_has_Boat_in_Regattas"
+msgid "Team has Boat in Regatta"
+msgid_plural "Team has Boat in Regattas"
 msgstr[0] "Team hat Boot in Regatta"
 msgstr[1] "Teams haben Boote in Regatten"
 
@@ -730,20 +730,31 @@ msgstr "Gültiges Baujahr"
 #~ msgstr[1] ""
 
 #~ msgid "Kind"
-#~ msgstr "Klubs"
+#~ msgstr ""
 
 #~ msgid "Race"
-#~ msgstr "Art"
+#~ msgstr ""
 
 #~ msgid "Regatta"
-#~ msgstr "Wettfahrt"
+#~ msgstr ""
 
 #~ msgid "Regattas"
-#~ msgstr "Regatta"
+#~ msgstr ""
 
 #~ msgid "Sailor"
-#~ msgstr "Regatten"
+#~ msgstr ""
 
 #~ msgid "Sailors"
-#~ msgstr "Segler"
+#~ msgstr ""
 
+#~ msgid "Boat_in_Regatta"
+#~ msgstr "Klubs"
+
+#~ msgid "Boat_in_Regattas"
+#~ msgstr "Art"
+
+#~ msgid "Team_has_Boat_in_Regatta"
+#~ msgstr "Wettfahrt"
+
+#~ msgid "Team_has_Boat_in_Regattas"
+#~ msgstr "Regatta"

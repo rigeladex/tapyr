@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2015-02-12 12:38+0100\n"
+"POT-Creation-Date: 2015-04-08 13:11+0200\n"
 "PO-Revision-Date: 2014-08-31 11:27+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -66,6 +66,30 @@ msgstr[0] "Firma"
 msgstr[1] "Firmen"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company has Address"
+msgid_plural "Company has Addresses"
+msgstr[0] "Firma hat Adresse"
+msgstr[1] "Firma hat Adressen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company has Email"
+msgid_plural "Company has Emails"
+msgstr[0] "Firma hat Email"
+msgstr[1] "Firma hat Emails"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company has Phone"
+msgid_plural "Company has Phones"
+msgstr[0] "Firma hat Telefon"
+msgstr[1] "Firma hat Telefone"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Company has Url"
+msgid_plural "Company has Urls"
+msgstr[0] "Firma hat Webadresse"
+msgstr[1] "Firma hat Webadressen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Company linked to Address"
 msgstr "Mit der Adresse verknüpfte Firma"
 
@@ -81,30 +105,6 @@ msgstr "Mit der Telefonnummer verknüpfte Firma"
 msgid "Company linked to Url"
 msgstr "Mit der Webadresse verknüpfte Firma"
 
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Company_has_Address"
-msgid_plural "Company_has_Addresses"
-msgstr[0] "Firma hat Adresse"
-msgstr[1] "Firma hat Adressen"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Company_has_Email"
-msgid_plural "Company_has_Emails"
-msgstr[0] "Firma hat Email"
-msgstr[1] "Firma hat Emails"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Company_has_Phone"
-msgid_plural "Company_has_Phones"
-msgstr[0] "Firma hat Telefon"
-msgstr[1] "Firma hat Telefone"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Company_has_Url"
-msgid_plural "Company_has_Urls"
-msgstr[0] "Firma hat Webadresse"
-msgstr[1] "Firma hat Webadressen"
-
 #: _GTW._OMP._PAP.Address:0
 msgid "Country"
 msgstr "Land"
@@ -116,6 +116,12 @@ msgstr "Ländervorwahl"
 #: _GTW._OMP._PAP.Subject:0
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr "Geburtstag (und Sterbetag)"
+
+#: _GTW._OMP._PAP.Subject:0
+msgid "Date_Interval_lifetime"
+msgid_plural "Date_Interval_lifetimes"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._PAP.Email:0
 msgid "Email address"
@@ -313,13 +319,37 @@ msgstr "Büro"
 
 #: _GTW/_OMP/_PAP/graph.py:86
 msgid "PAP graph"
-msgstr ""
+msgstr "PAP Diagramm"
 
 #: _GTW._OMP._PAP.Person:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person"
 msgid_plural "Persons"
 msgstr[0] "Person"
 msgstr[1] "Personen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person has Address"
+msgid_plural "Person has Addresses"
+msgstr[0] "Person hat Adresse"
+msgstr[1] "Person hat Adressen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person has Email"
+msgid_plural "Person has Emails"
+msgstr[0] "Person hat Email"
+msgstr[1] "Person hat Emails"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person has Phone"
+msgid_plural "Person has Phones"
+msgstr[0] "Person hat Telefon"
+msgstr[1] "Person hat Telefone"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Person has Url"
+msgid_plural "Person has Urls"
+msgstr[0] "Person hat Webadresse"
+msgstr[1] "Person hat Webadressen"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person linked to Address"
@@ -336,30 +366,6 @@ msgstr "Mit Telefonnummer verknüpfte Person"
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Person linked to Url"
 msgstr "Mit Webadresse verknüpfte Person"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Person_has_Address"
-msgid_plural "Person_has_Addresses"
-msgstr[0] "Person hat Adresse"
-msgstr[1] "Person hat Adressen"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Person_has_Email"
-msgid_plural "Person_has_Emails"
-msgstr[0] "Person hat Email"
-msgstr[1] "Person hat Emails"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Person_has_Phone"
-msgid_plural "Person_has_Phones"
-msgstr[0] "Person hat Telefon"
-msgstr[1] "Person hat Telefone"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Person_has_Url"
-msgid_plural "Person_has_Urls"
-msgstr[0] "Person hat Webadresse"
-msgstr[1] "Person hat Webadressen"
 
 #: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Phone"
@@ -483,6 +489,36 @@ msgstr[0] "Subjekt"
 msgstr[1] "Subjekte"
 
 #: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject has Address"
+msgid_plural "Subject has Addresses"
+msgstr[0] "Subjekt hat Adresse"
+msgstr[1] "Subjekt hat Adressen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject has Email"
+msgid_plural "Subject has Emails"
+msgstr[0] "Subjekt hat Email"
+msgstr[1] "Subjekt hat Emails"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject has Phone"
+msgid_plural "Subject has Phones"
+msgstr[0] "Subjekt hat Telefon"
+msgstr[1] "Subjekt hat Telefone"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject has Property"
+msgid_plural "Subject has Propertys"
+msgstr[0] "Subjekt hat Eigenschaft"
+msgstr[1] "Subjekte haben Eigenschaften"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
+msgid "Subject has Url"
+msgid_plural "Subject has Urls"
+msgstr[0] "Subjekt hat Webadresse"
+msgstr[1] "Subjekt hat Webadressen"
+
+#: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Address"
 msgstr "Mit Adresse verknüpftes Subjekt"
 
@@ -501,36 +537,6 @@ msgstr "Mit Merkmal verknüpftes Subjekt"
 #: _GTW._OMP._PAP.Subject_has_Property:0
 msgid "Subject linked to Url"
 msgstr "Mit Webadresse verknüpftes Subjekt"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Subject_has_Address"
-msgid_plural "Subject_has_Addresses"
-msgstr[0] "Subjekt hat Adresse"
-msgstr[1] "Subjekt hat Adressen"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Subject_has_Email"
-msgid_plural "Subject_has_Emails"
-msgstr[0] "Subjekt hat Email"
-msgstr[1] "Subjekt hat Emails"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Subject_has_Phone"
-msgid_plural "Subject_has_Phones"
-msgstr[0] "Subjekt hat Telefon"
-msgstr[1] "Subjekt hat Telefone"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Subject_has_Property"
-msgid_plural "Subject_has_Propertys"
-msgstr[0] "Subjekt hat Eigenschaft"
-msgstr[1] "Subjekte haben Eigenschaften"
-
-#: _GTW._OMP._PAP.Subject_has_Property:0
-msgid "Subject_has_Url"
-msgid_plural "Subject_has_Urls"
-msgstr[0] "Subjekt hat Webadresse"
-msgstr[1] "Subjekt hat Webadressen"
 
 #: _GTW/_OMP/_PAP/Person.py:164
 msgid "Title"
@@ -576,4 +582,3 @@ msgstr "Postleitzahl der Adresse"
 
 #~ msgid ""
 #~ msgstr "Anrede, die in Briefen oder Emails verwendet werden soll."
-
