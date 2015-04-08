@@ -50,6 +50,7 @@
 #    26-Jan-2015 (CT) Derive `_Meta_Base_` from `M_Auto_Update_Combined`,
 #                     not `M_Auto_Combine`
 #    17-Mar-2015 (CT) Factor `_app_path`
+#     8-Apr-2015 (CT) Add `compile_options = "-q"` to `_defaults`
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ class GTWD_Command (TFL.Command.Root_Command) :
         ( active_name       = "active"
         , app_dir           = "app"
         , bugs_address      = "tanzer@swing.co.at,martin@mangari.org"
+        , compile_options   = "-q"
         , copyright_holder  = "Mag. Christian Tanzer, Martin Glück"
         , lib_dir           = "lib"
         , output_encoding   = "utf-8"
