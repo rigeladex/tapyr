@@ -56,6 +56,8 @@
 #    23-Jan-2015 (CT) Factor `line_height*` parameters
 #    15-Feb-2015 (CT) Add `menu_icon`
 #    24-Mar-2015 (CT) Add `Rule.input_focus`
+#     8-Apr-2015 (CT) Change `font_family_print` to "serif" to void font
+#                     substitution by the printer
 #    ««revision-date»»···
 #--
 
@@ -658,10 +660,11 @@ class Media_Defaults (Definition) :
         )
 
     font_family_normal     = """"Lucida Grande", verdana, sans-serif"""
-    font_family_print      = \
-        """"Lucida Serif", Lucida, "Times New Roman", Times, serif"""
     font_family_pre        = \
         """"Lucida Sans Typewriter", "Lucida Console", "Courier New", Courier, monospace"""
+    font_family_print      = "serif"
+        ### Don't use specific fonts for `print` because font substitution done
+        ### by a printer can look terribly ugly
     font_spec_normal       = P_dict \
         ( font_family      = P.font_family_normal
         , font_style       = "normal"
