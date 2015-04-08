@@ -1,7 +1,42 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2015 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
+# This module is licensed under the terms of the BSD 3-Clause License
+# <http://www.c-tanzer.at/license/bsd_3c.html>.
+# ****************************************************************************
+#
+#++
+# Name
+#    TGL.TKT.HILD._wrapper_generator
+#
+# Purpose
+#    Generate the the raw wrapper file for a HILD widget
+#
+# Revision Dates
+#    22-Mar-2005 (MG) Creation
+#    27-Mar-2005 (MG) `find_properties` fixed
+#    27-Mar-2005 (MG) Correct auto base name
+#    27-Mar-2005 (MG) Support for `SG_Object_Property` added
+#     8-Apr-2015 (CT) Fix syntax errors introduced by commit 8e25eb429c19
+#    ««revision-date»»···
+#--
+
+import gtk
+import gobject
+import sys
+import os
+import time
+import hildon
+
+from   _TFL.Command_Line import Command_Line
+from   _TFL.Regexp       import Regexp
+
+template = '''# -*- coding: iso-8859-15 -*-
+# Copyright (C) 2005-2015 Martin Glück. All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
+# ****************************************************************************
+# This module is part of the package MOM.Attr.
 #
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
