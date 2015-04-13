@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2013-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2013-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.MOM.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #     6-Jan-2013 (CT) Creation
 #     3-May-2013 (CT) Add `Requester.add_cookies`
 #     3-May-2013 (CT) Add exception handler to `Resource._json`
+#    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #    ««revision-date»»···
 #--
 
@@ -30,10 +31,12 @@ from   _TFL                     import TFL
 import _GTW._RST._MOM
 
 from   _TFL._Meta.Once_Property import Once_Property
-import _TFL._Meta.Object
 from   _TFL.Decorator           import getattr_safe
 from   _TFL.pyk                 import pyk
 from   _TFL.predicate           import callable
+
+import _TFL._Meta.Object
+import _TFL.json_dump
 
 from   posixpath                import join as pp_join
 
@@ -102,6 +105,7 @@ class _Entity_ (TFL.Meta.Object) :
                 ( { self._ad_name : self._attrs
                   , "cid"         : self._json ["cid"]
                   }
+                , default = TFL.json_dump.default
                 )
             return self._requester.put (self._url, data = cargo)
     # end def PUT

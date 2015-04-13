@@ -87,6 +87,7 @@
 #                     not `M_Auto_Combine_Lists`
 #     3-Apr-2015 (CT) Add `_Field_Entity_Mixin_.choices`
 #     3-Apr-2015 (CT) Change `Field_Entity.__call__` to handle `pid == -1`
+#    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.M_Auto_Combine_Lists
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
+import _TFL.json_dump
 import _TFL.Undef
 
 from   itertools                import chain as ichain
@@ -293,6 +295,10 @@ class _Base_ (TFL.Meta.Object) :
     completer           = None
     id_sep              = "."
     index_sep           = "/"
+    json_dump_kw        = dict \
+        ( default       = TFL.json_dump.default
+        , sort_keys     = True
+        )
     name                = None
     parent              = None
     pid_sep             = "@"
@@ -1177,7 +1183,7 @@ class Entity (_Entity_) :
     @TFL.Meta.Once_Property
     def as_json (self) :
         cargo = self.as_json_cargo
-        return json.dumps (cargo, sort_keys = True)
+        return json.dumps (cargo, ** self.json_dump_kw)
     # end def as_json
 
     @TFL.Meta.Once_Property

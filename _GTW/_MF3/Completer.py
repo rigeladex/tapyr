@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2014-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.MF3.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -35,6 +35,7 @@
 #    29-Aug-2014 (CT) Factor `field_values`; add init-values for `readonly`
 #                     elements
 #    30-Aug-2014 (CT) Sort `matches` in `_q_e_as_json`
+#    13-Apr-2015 (CT) Remove special-casing of MOM.Id_Entity from `choose`
 #    ««revision-date»»···
 #--
 
@@ -226,8 +227,6 @@ class _MF3_Completer_ (TFL.Meta.Object) :
         def _gen_values (obj, fs) :
             for f in fs :
                 v = f (obj)
-                if isinstance (v, MOM.Id_Entity) :
-                    v = dict (display = v.ui_display, pid = v.pid)
                 yield v
             yield dict (display = obj.ui_display, pid = obj.pid)
         result = dict \

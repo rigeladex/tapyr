@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.Werkzeug.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -19,6 +19,7 @@
 #    20-Jun-2012 (CT) Creation
 #     2-Mar-2013 (CT) Add `add_header` and `set_header` (both encode `key`)
 #    14-Mar-2014 (CT) Add `encoded_url`
+#    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #    ««revision-date»»···
 #--
 
@@ -33,6 +34,7 @@ from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.pyk                   import pyk
 
 import _TFL._Meta.M_Class
+import _TFL.json_dump
 
 from   werkzeug.wrappers          import Response
 from   werkzeug.contrib.wrappers  import DynamicCharsetResponseMixin
@@ -86,7 +88,7 @@ class _WZG_Response_ \
         if __data is not None :
             data.update (__data)
         self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
-        self.write      (json.dumps (data))
+        self.write      (json.dumps (data, default = TFL.json_dump.default))
     # end def write_json
 
 Response = _WZG_Response_ # end class

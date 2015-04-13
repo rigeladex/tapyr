@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.RST.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -46,6 +46,7 @@ from   _TFL                     import sos
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.json_dump
 import _TFL.Record
 
 import json
@@ -227,7 +228,9 @@ class RST_JSON (_Base_) :
 
     _real_name                 = "JSON"
     force_charset              = "utf-8"
-    json_dump_kw               = {}
+    json_dump_kw               = dict \
+        ( default              = TFL.json_dump.default
+        )
     mime_types                 = ("application/json", )
 
     def rendered (self, request, response, body) :

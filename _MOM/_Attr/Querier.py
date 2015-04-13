@@ -73,6 +73,7 @@
 #     7-Mar-2014 (CT) Sort `Attrs` by `ui_rank`
 #     6-May-2014 (CT) Add `Show_in_UI_Selector`
 #    23-Jan-2015 (CT) Add `_ui_name_short_T`
+#    13-Apr-2015 (CT) Use `TFL.json_dump.default`
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,7 @@ from   _TFL.pyk              import pyk
 
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+import _TFL.json_dump
 
 id_sep = "__"
 op_sep = "___"
@@ -870,7 +872,11 @@ class E_Type (_Container_) :
     @property
     def As_Json (self) :
         import json
-        return json.dumps (self.As_Json_Cargo, sort_keys = True)
+        return json.dumps \
+            ( self.As_Json_Cargo
+            , default   = TFL.json_dump.default
+            , sort_keys = True
+            )
     # end def as_json
 
     @property    ### depends on currently selected language (I18N/L10N)
