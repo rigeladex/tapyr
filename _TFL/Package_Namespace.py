@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2001-2014 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2015 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -135,6 +135,7 @@
 #    15-Jun-2013 (CT) Add `lazy_resolvers`; factor `_args_from_kw`
 #     4-Aug-2013 (CT) Add `_Derived_Module_` to properly support
 #                     `_Export_Module` for `Derived_Package_Namespace`
+#    13-Apr-2015 (CT) Change `_Add_Import_Callback` to be useable as decorator
 #    ««revision-date»»···
 #--
 
@@ -227,7 +228,10 @@ class Package_Namespace (object) :
     # end def _Add
 
     @classmethod
-    def _Add_Import_Callback (cls, module_name, callback, * args, ** kw) :
+    def _Add_Import_Callback (cls, module_name, callback = None, ** kw) :
+        if callback is None :
+            return lambda cb : cls._Add_Import_Callback (module_name, cb, ** kw)
+        args   = kw.pop ("args", ())
         module = sys.modules.get (module_name)
         if module is not None :
             ### run the callbacks immediately
