@@ -39,6 +39,7 @@
 #    10-Oct-2014 (CT) Use `portable_repr`
 #    15-Oct-2014 (CT) Add `_portable_repr_Record`, protect against recursion
 #    23-Jan-2015 (CT) Add support for dotted names to `__setattr__`
+#    13-Apr-2015 (CT) Add `_import_cb_json_dump`
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,10 @@ class Record (TFL.Meta.Object) :
 
     >>> r
     Record (kw = {'foo' : 42}, x = 'y')
+
+    >>> from _TFL.json_dump import json
+    >>> json.dumps (r, default = TFL.json_dump.default, sort_keys = True)
+    '{"kw": {"foo": 42}, "x": "y"}'
 
     """
 
@@ -183,6 +188,10 @@ class Record_S (Record) :
     >>> o
     Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (x = 1)))
 
+    >>> from _TFL.json_dump import json
+    >>> json.dumps (o, default = TFL.json_dump.default, sort_keys = True)
+    '{"a": 42, "b": {"a": 137, "b": "foo", "c": {"x": 1}}}'
+
     >>> c.y = o
 
     >>> c
@@ -190,6 +199,11 @@ class Record_S (Record) :
 
     >>> o
     Record_S (a = 42, b = Record_S (a = 137, b = 'foo', c = Record_S (x = 1, y = Record_S (...))))
+
+    >>> json.dumps (o, default = TFL.json_dump.default, sort_keys = True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Circular reference detected
 
     """
 
@@ -218,6 +232,13 @@ def _portable_repr_Record (obj, seen) :
 def _recursion_repr_Record (obj) :
     return "%s (...)" % (obj.__class__.__name__, )
 # end def _recursion_repr_Record
+
+@TFL._Add_Import_Callback ("_TFL.json_dump")
+def _import_cb_json_dump (module) :
+    @module.default.add_type (Record)
+    def json_encode_record (o) :
+        return o._kw
+# end def _import_cb_json_dump
 
 if __name__ != "__main__" :
     TFL._Export ("*")

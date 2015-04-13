@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package TFL.
@@ -20,6 +20,7 @@
 #    28-Sep-2010 (CT) `__nonzero__` added
 #    22-Feb-2013 (CT) Add doc-tests
 #    21-Aug-2014 (CT) Add `is_undefined`
+#    13-Apr-2015 (CT) Add `_import_cb_json_dump`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,13 @@ def is_undefined (value) :
     """Return True, if `value` is an instance of `Undef`."""
     return isinstance (value, Undef)
 # end def is_undefined
+
+@TFL._Add_Import_Callback ("_TFL.json_dump")
+def _import_cb_json_dump (module) :
+    @module.default.add_type (Undef)
+    def json_encode_undef (o) :
+        return None
+# end def _import_cb_json_dump
 
 __doc__ = """
 Module `Undef`

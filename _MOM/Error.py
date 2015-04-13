@@ -96,6 +96,7 @@
 #                     * Use `decoded` in  `__init__` methods
 #                     * Don't include `inv` in `args` of `Invariant`
 #                     * Add `_T` for `description`, `explanation`
+#    13-Apr-2015 (CT) Add `json_encode_exception`, `json_encode_error`
 #    ««revision-date»»···
 #--
 
@@ -117,6 +118,7 @@ import _TFL._Meta.Object
 import _TFL.Caller
 import _TFL.Accessor
 import _TFL.I18N
+import _TFL.json_dump
 import _TFL.Record
 
 import itertools
@@ -1120,6 +1122,19 @@ class Too_Many_Objects (Error) :
 class Wrong_Type (Error) :
     """Raised when an instance of inccorect type is passed to an attribute."""
 # end class Wrong_Type
+
+@TFL.json_dump.default.add_type (Exception)
+def json_encode_exception (exc) :
+    return dict \
+        ( description = pyk.text_type (exc)
+        , head        = exc.__class__.__name__
+        )
+# end def json_encode_exception
+
+@TFL.json_dump.default.add_type (Error)
+def json_encode_error (err) :
+    return err.as_json_cargo
+# end def json_encode_error
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

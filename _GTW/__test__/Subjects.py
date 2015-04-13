@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2012-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.__test__.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -27,6 +27,7 @@
 #                     `polymorphic_epk` over multiple inheritance levels
 #    13-Jun-2014 (RS) Fix tests for `PAP.Group`
 #     9-Sep-2014 (CT) Add tests for query expressions with type restriction
+#    13-Apr-2015 (CT) Add `_test_json`
 #    ««revision-date»»···
 #--
 
@@ -338,6 +339,27 @@ _test_code = """
 
 """
 
+_test_json = r"""
+
+    >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
+    Creating new scope MOMT__...
+    >>> PAP = scope.PAP
+
+    >>> print (PAP.Subject.count, PAP.Company.count_strict, PAP.Person.count_strict)
+    0 0 0
+
+    >>> pg  = PAP.Person ("Glück", "Martin")
+    >>> php = PAP.Person_has_Phone  (pg, PAP.Phone ("43", "1", "234567", raw = True))
+
+    >>> from _TFL.json_dump import json
+    >>> prepr(json.dumps ({ "obj" : pg.FO}, default = TFL.json_dump.default, sort_keys = True))
+    '{"obj": "Gl\\u00fcck Martin"}'
+
+    >>> prepr (json.dumps (pg, default = TFL.json_dump.default, sort_keys = True))
+    '{"display": "Gl\\u00fcck Martin", "pid": 1}'
+
+"""
+
 _test_saw = """
     >>> scope = Scaffold.scope (%(p1)s, %(n1)s) # doctest:+ELLIPSIS
     Creating new scope MOMT__...
@@ -453,7 +475,13 @@ class Association_T (_Ancestor_Essence) :
 
 # end class Association_T
 
-__test__ = Scaffold.create_test_dict (_test_code)
+__test__ = Scaffold.create_test_dict \
+    ( dict
+        ( test_code           = _test_code
+        , test_json           = _test_json
+        )
+    )
+
 __test__.update \
     ( Scaffold.create_test_dict
         ( dict

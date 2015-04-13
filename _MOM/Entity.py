@@ -285,6 +285,7 @@
 #     9-Oct-2014 (CT) Use `portable_repr`
 #    26-Jan-2015 (CT) Use `M_Auto_Update_Combined`, not `M_Auto_Combine`,
 #                     as metaclass
+#    13-Apr-2015 (CT) Add `_json_encode`, `__json_encode_FO_`
 #    ««revision-date»»···
 #--
 
@@ -319,6 +320,7 @@ import _TFL.Sorted_By
 import _TFL.Undef
 
 from   _TFL.I18N             import _, _T, _Tn
+import _TFL.json_dump
 from   _TFL.object_globals   import object_globals
 from   _TFL.portable_repr    import portable_repr
 from   _TFL.predicate        import paired
@@ -481,6 +483,11 @@ class Entity (TFL.Meta.BaM (TFL.Meta.Object, metaclass = MOM.Meta.M_Entity)) :
         # end def __str__
 
     # end class _FO_
+
+    @TFL.json_dump.default.add_type (_FO_)
+    def __json_encode_FO_ (fo) :
+        return pyk.text_type (fo)
+    # end def __json_encode_FO_
 
     @property
     def home_scope (self) :
@@ -1008,6 +1015,11 @@ class An_Entity (TFL.Meta.BaM (Entity, metaclass = MOM.Meta.M_An_Entity)) :
         self.owner = None
         self.__super._init_attributes ()
     # end def _init_attributes_
+
+    @staticmethod
+    def _json_encode (o) :
+        return pyk.text_type (o)
+    # end def _json_encode
 
     def _main__init__ (self, * args, ** kw) :
         raw = bool (kw.pop ("raw", False))
@@ -1690,6 +1702,11 @@ class Id_Entity \
         self.dependencies                = TFL.defaultdict (int)
         self.object_referring_attributes = TFL.defaultdict (list)
     # end def _init_meta_attrs
+
+    @staticmethod
+    def _json_encode (o) :
+        return dict (display = o.FO, pid = o.pid)
+    # end def _json_encode
 
     def _main__init__ (self, * epk, ** kw) :
         self.implicit = kw.pop ("implicit", False)

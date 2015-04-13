@@ -225,6 +225,7 @@
 #                     as metaclass
 #     7-Apr-2015 (CT) Factor `_m_default_ui_name`
 #                     + remove spurious redefinitions of `ui_display`
+#    13-Apr-2015 (CT) Add `_json_encode` to `m_setup_etypes`
 #    ««revision-date»»···
 #--
 
@@ -436,6 +437,9 @@ class M_E_Mixin \
             ### created properties are included in subclasses, too
             for s in cls._S_Extension :
                 s._m_setup_prop_names (app_type)
+            for s in cls._S_Extension [1:3] :
+                TFL.json_dump.default.add_type \
+                    (s.Essence, func = s._json_encode)
         cls._m_create_e_types (app_type, cls._S_Extension)
         for t in reversed (app_type._T_Extension) :
             t._m_setup_relevant_roots ()
