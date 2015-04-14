@@ -31,6 +31,7 @@
 #    24-Sep-2014 (CT) Add `polisher` to `country_code`, `area_code`, `number`
 #    26-Feb-2015 (CT) Add `_Area_Code_Polisher_`, `_Number_Polisher_` to fix
 #                     erroneous input values
+#    14-Apr-2015 (CT) Lower completer treshold for `number`
 #    ««revision-date»»···
 #--
 
@@ -252,7 +253,7 @@ class _PAP_Phone_ (_Ancestor_Essence) :
             rank           = 3
             ui_rank        = -3
 
-            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
             polisher       = _Number_Polisher_ ()
 
         # end class number

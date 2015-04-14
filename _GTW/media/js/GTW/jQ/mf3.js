@@ -56,6 +56,8 @@
 //     2-Apr-2015 (CT) Add guard for `item.disabled` to `completer.select_cb`
 //     3-Apr-2015 (CT) Add `field_type.id_ref_select`
 //                     + add optional arg `ft` to `field_type.normal.reset`
+//    14-Apr-2015 (CT) Use `response ["entity_p"]` in `completer.select_cb`,
+//                     not `f_completer ["entity_p"]`
 //    ««revision-date»»···
 //--
 
@@ -445,7 +447,7 @@
                             setTimeout
                                 (function () { completer.trigger (f$); }, 1);
                         };
-                    } else if (f_completer ["entity_p"]) {
+                    } else if (response ["entity_p"]) {
                         data  =
                             { complete_entity : true
                             , field_values    :

@@ -49,6 +49,7 @@
 #                     not `.capitalize`
 #    26-Sep-2014 (CT) Add `polisher = capitalize_if_lower_case` to `title`
 #    23-Jan-2015 (CT) Add `title.ui_name_short`
+#    14-Apr-2015 (CT) Lower completer tresholds
 #    ««revision-date»»···
 #--
 
@@ -121,7 +122,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             max_length     = 48
             rank           = 1
 
-            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
             polisher       = Attr.Polisher.capitalize_last_word
 
         # end class last_name
@@ -133,7 +134,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             max_length     = 32
             rank           = 2
 
-            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
             polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class first_name
@@ -147,7 +148,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             max_length     = 32
             rank           = 1
 
-            completer      = Attr.Completer_Spec  (2, Attr.Selector.primary)
+            completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
             polisher       = Attr.Polisher.capitalize_if_not_mixed_case
 
         # end class middle_name
@@ -163,7 +164,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             ui_name        = _("Academic title")
             ui_name_short  = _("Title")
 
-            completer      = Attr.Completer_Spec  (1)
+            completer      = Attr.Completer_Spec  (0)
             polisher       = Attr.Polisher.capitalize_if_lower_case
 
         # end class title

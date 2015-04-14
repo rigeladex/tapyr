@@ -36,6 +36,13 @@
 #                     elements
 #    30-Aug-2014 (CT) Sort `matches` in `_q_e_as_json`
 #    13-Apr-2015 (CT) Remove special-casing of MOM.Id_Entity from `choose`
+#    14-Apr-2015 (CT) Try single-attr completion in `choices` if standard
+#                     completions has no matches
+#                     + Change `query` argument `values` to `aq_filters`
+#                     + Add `entity_p` to result of `_q_a_as_json`,
+#                       `_q_e_as_json`
+#                     + Add `feedback` for non-matching single field to
+#                       `_q_a_as_json`
 #    ««revision-date»»···
 #--
 
@@ -209,11 +216,38 @@ class _MF3_Completer_ (TFL.Meta.Object) :
     # end def aq_filters
 
     def choices (self, scope, json, xtra_filter, max_completions = 20) :
-        ETM       = scope [self.etn]
-        limit     = max_completions + 1
-        query     = self.query (ETM, self.field_values (json), xtra_filter)
-        q_as_json = self._q_e_as_json if self.entity_p else self._q_a_as_json
-        return q_as_json (ETM, query, json, limit)
+        entity_p   = self.entity_p
+        ETM        = scope [self.etn]
+        limit      = max_completions + 1
+        names      = None
+        values     = self.field_values (json)
+        aq_fs      = self.aq_filters   (ETM, values)
+        query      = self.query        (ETM, aq_fs, xtra_filter)
+        q_as_json  = self._q_a_as_json
+        if query.limit (1).count () > 0 :
+            if entity_p :
+                q_as_json  = self._q_e_as_json
+        elif len (self.elems) > 1 :
+            aq_fs      = ()
+            elem       = self.elem
+            etn        = elem.E_Type.type_name
+            ETM        = scope [etn]
+            aq         = getattr (ETM.AQ, elem.name, None)
+            if aq is not None :
+                v      = values.get (elem.id)
+                if not (v == "" or v is None) :
+                    aq_fs  = (aq.AC (v), )
+            else :
+                ### XXX nested attribute of nested E_Type
+                logging.warning \
+                    ( "Non-entity attribute completion for nested attribute "
+                      "'%s' of nested E_Type %s not yet implemented"
+                    , elem, etn
+                    )
+            names      = (elem.name, )
+            query      = self.query (ETM, aq_fs, xtra_filter)
+        result = q_as_json (ETM, query, json, limit, names = names)
+        return result
     # end def choices
 
     def choose (self, scope, json, xtra_filter, pid_query_request) :
@@ -250,8 +284,7 @@ class _MF3_Completer_ (TFL.Meta.Object) :
         return result
     # end def field_values
 
-    def query (self, ETM, values, xtra_filter) :
-        aq_fs = self.aq_filters (ETM, values)
+    def query (self, ETM, aq_fs, xtra_filter) :
         if aq_fs or self.treshold == 0 :
             q = ETM.query (* aq_fs)
             if xtra_filter is not None :
@@ -268,9 +301,16 @@ class _MF3_Completer_ (TFL.Meta.Object) :
         fs_n      = len (fs)
         ids       = self.field_ids
         matches   = query.attrs (* fs).limit (limit).all ()
-        result    = dict (matches = [], partial = False)
-        n         = result ["completions"] = len (matches)
-        finished  = result ["finished"]    = n == 1
+        n         = len (matches)
+        result    = dict \
+            ( completions = n
+            , entity_p    = False
+            , fields      = 0
+            , field_ids   = []
+            , finished    = n == 1
+            , matches     = []
+            , partial     = n >= limit
+            )
         if n :
             if n < limit :
                 result.update \
@@ -279,41 +319,36 @@ class _MF3_Completer_ (TFL.Meta.Object) :
                     , matches   = sorted (ETM.ac_ui_display (names, matches))
                     )
             else :
+                update = dict (feedback  = _T ("More than %s matches" % n))
                 if fs_n > 1 :
                     s_matches = query.attrs (fs [0]).limit (limit).all ()
-                    m = len (s_matches)
+                    m         = len (s_matches)
                     if m < limit :
                         s_matches = sorted \
                             ( [m [0], "..."] for m in ETM.ac_ui_display
                                 (names [:1], s_matches)
                             )
-                        result.update \
+                        update = dict \
                             ( fields    = 1
                             , field_ids = ids [: 1]
                             , matches   = sorted (s_matches)
-                            , partial   = True
                             )
-                    else :
-                        ### XXX find fewer partial matches !!!
-                        result.update \
-                            ( fields    = 0
-                            , field_ids = []
-                            , feedback  = _T ("More than %s matches" % n)
-                            )
+                result.update (update)
         return result
     # end def _q_a_as_json
 
-    def _q_e_as_json (self, ETM, query, json, limit) :
+    def _q_e_as_json (self, ETM, query, json, limit, ** kw) :
         matches  = query.limit (limit).all ()
-        result   = dict (partial = False)
-        n        = result ["completions"] = len (matches)
-        finished = result ["finished"]    = n == 1
+        n        = len  (matches)
+        result   = dict \
+            (completions = n, finished = n == 1, partial  = n >= limit)
         if n :
             if n < limit :
                 result.update \
-                    ( fields    = 2
-                    , field_ids = []
-                    , matches   = list
+                    ( entity_p    = True
+                    , fields      = 2
+                    , field_ids   = []
+                    , matches     = list
                         (   (m.ui_display, m.pid)
                         for m in sorted (matches, key = ETM.sort_key)
                         )
@@ -321,8 +356,8 @@ class _MF3_Completer_ (TFL.Meta.Object) :
             else :
                 names  = self.attr_names [:1]
                 result = dict \
-                    ( self._q_a_as_json (ETM, query, json, limit, names = names)
-                    , partial = True
+                    ( self._q_a_as_json (ETM, query, json, limit, names)
+                    , ** result
                     )
         return result
     # end def _q_e_as_json
