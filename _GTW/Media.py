@@ -47,6 +47,10 @@
 #    18-Mar-2015 (CT) Add support for debian-packaged `cssmin` and `jsmin`
 #    20-Mar-2015 (CT) Change `minified_css`, `minified_js` to never return None
 #    20-Mar-2015 (CT) Fix `minified_css`, `minified_js`
+#    15-Apr-2015 (CT) Try `rcssmin` and `rjsmin` before `cssmin` and `jsmin`
+#                     * On my machine, _GTW/__test__/NAV.py runs in:
+#                       -  5 seconds with rcssmin, rjsmin
+#                       - 37 seconds with cssmin,  jsmin
 #    ««revision-date»»···
 #--
 
@@ -458,12 +462,12 @@ def minified_css (style, keep_bang_comments = True) :
     """
     cssmin = None
     try :
-        ### https://packages.qa.debian.org/c/cssmin.html
-        from cssmin import cssmin as _cssmin
-        cssmin = lambda style, keep_bang_comments : _cssmin (style)
+        from rcssmin import cssmin
     except ImportError :
         try :
-            from rcssmin import cssmin
+            ### https://packages.qa.debian.org/c/cssmin.html
+            from cssmin import cssmin as _cssmin
+            cssmin = lambda style, keep_bang_comments : _cssmin (style)
         except ImportError :
             pass
     if cssmin is not None :
@@ -485,11 +489,11 @@ def minified_js (code) :
     """
     jsmin = None
     try :
-        ### https://packages.debian.org/sid/python/python-jsmin
-        from jsmin import jsmin
+        from rjsmin import jsmin
     except ImportError :
         try :
-            from rjsmin import jsmin
+            ### https://packages.debian.org/sid/python/python-jsmin
+            from jsmin import jsmin
         except ImportError :
             pass
     if jsmin is not None :
