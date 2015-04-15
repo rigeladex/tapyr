@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014 Dr. Ralf Schlatterbeck All rights reserved
+# Copyright (C) 2014-2015 Dr. Ralf Schlatterbeck All rights reserved
 # Reichergasse 131, A--3411 Weidling, Austria. rsc@runtux.com
 # #*** <License> ************************************************************#
 # This module is part of the package GTW.OMP.PAP.
-# 
+#
 # This module is licensed under the terms of the BSD 3-Clause License
 # <http://www.c-tanzer.at/license/bsd_3c.html>.
 # #*** </License> ***********************************************************#
@@ -57,7 +57,8 @@ class _PAP_Group_ (_Ancestor_Essence) :
             max_length         = 64
             ignore_case        = True
             completer          = Attr.Completer_Spec  (2, Attr.Selector.primary)
-            polisher           = Attr.Polisher.capitalize_if_not_mixed_case
+            polisher           = \
+                Attr.Polisher.capitalize_if_not_mixed_case_compress_spaces
 
         # end class name
 

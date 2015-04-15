@@ -73,6 +73,7 @@ class _Number_Polisher_ (MOM.Attr.Polisher._Polisher_) :
     # end def splitter
 
     def _polished (self, attr, name, value, value_dict) :
+        value  = Attr.Polisher.compress_spaces.replacer   (value)
         result = self.splitter (attr, value_dict, value)
         cc     = result.get ("country_code", "")
         ac     = result.get ("area_code",    "")

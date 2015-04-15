@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -64,7 +64,8 @@ class _PAP_Address_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
+            polisher       = \
+                Attr.Polisher.capitalize_if_not_mixed_case_compress_spaces
 
         # end class street
 
@@ -94,7 +95,8 @@ class _PAP_Address_ (_Ancestor_Essence) :
 
             completer      = Attr.Completer_Spec  \
                 (1, Attr.Selector.Primary_Followers ())
-            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
+            polisher       = \
+                Attr.Polisher.capitalize_if_not_mixed_case_compress_spaces
 
         # end class city
 
@@ -109,7 +111,7 @@ class _PAP_Address_ (_Ancestor_Essence) :
 
             completer      = Attr.Completer_Spec  \
                 (0, Attr.Selector.Primary_Followers ())
-            polisher       = Attr.Polisher.capitalize
+            polisher       = Attr.Polisher.capitalize_compress_spaces
 
         # end class country
 
@@ -122,7 +124,8 @@ class _PAP_Address_ (_Ancestor_Essence) :
             ignore_case    = True
             max_length     = 20
             rank           = 5
-            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
+            polisher       = \
+                Attr.Polisher.capitalize_if_not_mixed_case_compress_spaces
 
         # end class region
 

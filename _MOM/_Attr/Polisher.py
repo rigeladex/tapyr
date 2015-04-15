@@ -23,6 +23,7 @@
 #                     + return new dict instead of updating parameter
 #    26-Feb-2015 (CT) Change `area_code_clean` to `area_code_split`;
 #                     factor, add patterns to, and improve `_phone_multi_regexp`
+#    15-Apr-2015 (CT) Add `compress_spaces` and capitalize+compress combos
 #    ««revision-date»»···
 #--
 
@@ -159,6 +160,40 @@ capitalize_last_word = Replace \
         , _capitalize_words
         , re.UNICODE
         )
+    )
+
+compress_spaces = Replace (Re_Replacer (r"[ \t]+", " ", re.UNICODE))
+
+capitalize_compress_spaces = Replace \
+    ( Multi_Re_Replacer
+        ( capitalize.replacer
+        , compress_spaces.replacer
+        )
+    , guard = capitalize.guard
+    )
+
+capitalize_if_lower_case_compress_spaces = Replace \
+    ( Multi_Re_Replacer
+        ( capitalize_if_lower_case.replacer
+        , compress_spaces.replacer
+        )
+    , guard = capitalize_if_lower_case.guard
+    )
+
+capitalize_if_not_mixed_case_compress_spaces = Replace \
+    ( Multi_Re_Replacer
+        ( capitalize_if_not_mixed_case.replacer
+        , compress_spaces.replacer
+        )
+    , guard = capitalize_if_not_mixed_case.guard
+    )
+
+capitalize_last_word_compress_spaces = Replace \
+    ( Multi_Re_Replacer
+        ( capitalize_last_word.replacer
+        , compress_spaces.replacer
+        )
+    , guard = capitalize_last_word.guard
     )
 
 _area_code_pat     = r"(?P<area_code>\d+)"

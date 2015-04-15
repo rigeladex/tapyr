@@ -117,13 +117,13 @@ _test_code = """
 
     >>> lnc = PAP.Person.last_name.completer
     >>> print (lnc.name, lnc.names, lnc.treshold)
-    last_name ('last_name', 'first_name', 'middle_name', 'title') 2
+    last_name ('last_name', 'first_name', 'middle_name', 'title') 1
     >>> fnc = PAP.Person.first_name.completer
     >>> print (fnc.name, fnc.names, fnc.treshold)
-    first_name ('first_name', 'last_name', 'middle_name', 'title') 2
+    first_name ('first_name', 'last_name', 'middle_name', 'title') 1
     >>> tnc = PAP.Person.title.completer
     >>> print (tnc.name, tnc.names, tnc.treshold)
-    title ('title',) 1
+    title ('title',) 0
 
     >>> show_ac (lnc, scope, dict (last_name = "Ta"))
     Tanzer, Christian, '', ''

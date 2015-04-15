@@ -123,7 +123,7 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize_last_word
+            polisher       = Attr.Polisher.capitalize_last_word_compress_spaces
 
         # end class last_name
 
@@ -135,7 +135,8 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 2
 
             completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
+            polisher       = \
+                Attr.Polisher.capitalize_if_not_mixed_case_compress_spaces
 
         # end class first_name
 
@@ -149,7 +150,8 @@ class _PAP_Person_ (_Ancestor_Essence) :
             rank           = 1
 
             completer      = Attr.Completer_Spec  (1, Attr.Selector.primary)
-            polisher       = Attr.Polisher.capitalize_if_not_mixed_case
+            polisher       = \
+                Attr.Polisher.capitalize_if_not_mixed_case_compress_spaces
 
         # end class middle_name
 
@@ -165,7 +167,8 @@ class _PAP_Person_ (_Ancestor_Essence) :
             ui_name_short  = _("Title")
 
             completer      = Attr.Completer_Spec  (0)
-            polisher       = Attr.Polisher.capitalize_if_lower_case
+            polisher       = \
+                Attr.Polisher.capitalize_if_lower_case_compress_spaces
 
         # end class title
 

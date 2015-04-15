@@ -1550,10 +1550,10 @@ _test_element = """
     F       right.left.date.finish    entity_p = False, names = ['finish'], treshold = 4
     F       right.boat_class.name     entity_p = True, names = ['name'], treshold = 1
     F_E     skipper.left              entity_p = True, names = ['left', 'nation', 'mna_number', 'club'], treshold = 1
-    F       skipper.left.last_name    entity_p = True, names = ['last_name', 'first_name', 'middle_name', 'title'], treshold = 2
-    F       skipper.left.first_name   entity_p = True, names = ['first_name', 'last_name', 'middle_name', 'title'], treshold = 2
-    F       skipper.left.middle_name  entity_p = True, names = ['middle_name', 'last_name', 'first_name', 'title'], treshold = 2
-    F       skipper.left.title        entity_p = False, names = ['title'], treshold = 1
+    F       skipper.left.last_name    entity_p = True, names = ['last_name', 'first_name', 'middle_name', 'title'], treshold = 1
+    F       skipper.left.first_name   entity_p = True, names = ['first_name', 'last_name', 'middle_name', 'title'], treshold = 1
+    F       skipper.left.middle_name  entity_p = True, names = ['middle_name', 'last_name', 'first_name', 'title'], treshold = 1
+    F       skipper.left.title        entity_p = False, names = ['title'], treshold = 0
     F       skipper.mna_number        entity_p = True, names = ['mna_number', 'left', 'nation', 'club'], treshold = 1
     F_E     skipper.club              entity_p = True, names = ['club', 'left', 'nation', 'mna_number'], treshold = 1
     F       skipper.club.name         entity_p = True, names = ['name'], treshold = 1
@@ -1570,10 +1570,10 @@ _test_element = """
     F       right.left.date.finish    5     entity_p = False, fields = ['R-107:right.left.date.finish'], treshold = 4
     F       right.boat_class.name     6     entity_p = True, fields = ['R-107:right.boat_class.name'], treshold = 1
     F_E     skipper.left              0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
-    F       skipper.left.last_name    7     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 2
-    F       skipper.left.first_name   7     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 2
-    F       skipper.left.middle_name  7     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 2
-    F       skipper.left.title        8     entity_p = False, fields = ['R-107:skipper.left.title'], treshold = 1
+    F       skipper.left.last_name    0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
+    F       skipper.left.first_name   0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
+    F       skipper.left.middle_name  0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
+    F       skipper.left.title        7     entity_p = False, fields = ['R-107:skipper.left.title'], treshold = 0
     F       skipper.mna_number        0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
     F_E     skipper.club              0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
     F       skipper.club.name         0     entity_p = True, fields = ['R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'], treshold = 1
@@ -1590,10 +1590,10 @@ _test_element = """
     F       right.left.date.finish    5     (('R-107:right.left.date.finish',), 4, False)
     F       right.boat_class.name     6     (('R-107:right.boat_class.name',), 1, True)
     F_E     skipper.left              0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
-    F       skipper.left.last_name    7     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 2, True)
-    F       skipper.left.first_name   7     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 2, True)
-    F       skipper.left.middle_name  7     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 2, True)
-    F       skipper.left.title        8     (('R-107:skipper.left.title',), 1, False)
+    F       skipper.left.last_name    0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
+    F       skipper.left.first_name   0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
+    F       skipper.left.middle_name  0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
+    F       skipper.left.title        7     (('R-107:skipper.left.title',), 0, False)
     F       skipper.mna_number        0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
     F_E     skipper.club              0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
     F       skipper.club.name         0     (('R-107:skipper.club', 'R-107:skipper.club.name', 'R-107:skipper.left', 'R-107:skipper.left.first_name', 'R-107:skipper.left.last_name', 'R-107:skipper.left.middle_name', 'R-107:skipper.left.title', 'R-107:skipper.mna_number', 'R-107:skipper.nation'), 1, True)
@@ -1654,24 +1654,9 @@ _test_element = """
         , 'treshold' : 1
         }
     , 7 :
-        { 'entity_p' : True
-        , 'fields' :
-            [ 'R-107:skipper.club'
-            , 'R-107:skipper.club.name'
-            , 'R-107:skipper.left'
-            , 'R-107:skipper.left.first_name'
-            , 'R-107:skipper.left.last_name'
-            , 'R-107:skipper.left.middle_name'
-            , 'R-107:skipper.left.title'
-            , 'R-107:skipper.mna_number'
-            , 'R-107:skipper.nation'
-            ]
-        , 'treshold' : 2
-        }
-    , 8 :
         { 'entity_p' : False
         , 'fields' : ['R-107:skipper.left.title']
-        , 'treshold' : 1
+        , 'treshold' : 0
         }
     }
 
@@ -1779,10 +1764,10 @@ _test_element = """
     Type    q_name           completer.id  completer.as_json_cargo
     ================================================================================================================================================
     E       None             None  None
-    F       last_name        0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 2
-    F       first_name       0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 2
-    F       middle_name      0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 2
-    F       title            1     entity_p = False, fields = ['X-26:title'], treshold = 1
+    F       last_name        0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 1
+    F       first_name       0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 1
+    F       middle_name      0     entity_p = True, fields = ['X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'], treshold = 1
+    F       title            1     entity_p = False, fields = ['X-26:title'], treshold = 0
     F_C     lifetime         None  None
     F       lifetime.start   2     entity_p = False, fields = ['X-26:lifetime.start'], treshold = 4
     F       lifetime.finish  3     entity_p = False, fields = ['X-26:lifetime.finish'], treshold = 4
@@ -1792,10 +1777,10 @@ _test_element = """
     Type    q_name           completer.id  completer.sig
     ===================================================================================================================
     E       None             None  None
-    F       last_name        0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 2, True)
-    F       first_name       0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 2, True)
-    F       middle_name      0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 2, True)
-    F       title            1     (('X-26:title',), 1, False)
+    F       last_name        0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 1, True)
+    F       first_name       0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 1, True)
+    F       middle_name      0     (('X-26:first_name', 'X-26:last_name', 'X-26:middle_name', 'X-26:title'), 1, True)
+    F       title            1     (('X-26:title',), 0, False)
     F_C     lifetime         None  None
     F       lifetime.start   2     (('X-26:lifetime.start',), 4, False)
     F       lifetime.finish  3     (('X-26:lifetime.finish',), 4, False)
@@ -1850,12 +1835,12 @@ _test_element = """
             , 'X-26:middle_name'
             , 'X-26:title'
             ]
-        , 'treshold' : 2
+        , 'treshold' : 1
         }
     , 1 :
         { 'entity_p' : False
         , 'fields' : ['X-26:title']
-        , 'treshold' : 1
+        , 'treshold' : 0
         }
     , 2 :
         { 'entity_p' : False
