@@ -28,6 +28,7 @@
 #    24-Mar-2015 (CT) Use `P.Rule.input_focus`, not `P.Rule.focus`
 #    24-Mar-2015 (CT) Add rule for `form .pure-form label > b`
 #     1-Apr-2015 (CT) Add `background_color` to rule for `... input.bad:focus`
+#    16-Apr-2015 (CT) Add rule for vertical alignment of `input[type=checkbox]`
 #    ««revision-date»»···
 #--
 
@@ -353,8 +354,7 @@ style_sheet = Style_Sheet \
                             [ Rule
                                 ( "label"
                                 , display          = "block"
-                                , margin           =
-                                    TRBL0 (l = Em (0.5))
+                                , margin           = TRBL0 (l = Em (0.5))
                                 , text_align       = "left"
                                 , vertical_align   = "top"
                                 , width            = "auto"
@@ -367,8 +367,17 @@ style_sheet = Style_Sheet \
                             ]
                         )
                     , Rule
+                        ( "input"
+                        , children             =
+                            [ Rule_Attr
+                                ( "[type=checkbox]"
+                                , vertical_align       = "text-top"
+                                )
+                            ]
+                        )
+                    , Rule
                         ( "input", "textarea"
-                        , children     =
+                        , children             =
                             [ Rule_Class
                                 ( "display.value"
                                 , background_color     = "inherit"
