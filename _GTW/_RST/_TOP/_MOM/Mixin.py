@@ -34,6 +34,7 @@
 #     2-Feb-2015 (CT) Factor `button_types`, `Renderers`, `_fields` and friends,
 #                     `_renderer_template_iter` from `Admin.E_Type`
 #    10-Feb-2015 (CT) Factor `Renderer_Mixin`
+#    16-Apr-2015 (CT) Pass `default` to `getattr_safe` for `fields_default`
 #    ««revision-date»»···
 #--
 
@@ -143,7 +144,7 @@ class Renderer_Mixin (_TOP_MOM_Mixin_Base_) :
     ###     * can add to or override `_field_{class,pred,type}_map`
 
     @Once_Property
-    @getattr_safe
+    @getattr_safe (default = ())
     def fields_default (self) :
         return self._fields (self.list_display)
     # end def fields_default
