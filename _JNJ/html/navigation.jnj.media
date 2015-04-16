@@ -23,6 +23,7 @@
 #     7-Jan-2011 (CT) Rules for `current-link` and `current-section` changed
 #    21-Feb-2011 (CT) Use `Border`
 #    14-Mar-2014 (CT) Include `rel_nav`
+#    16-Apr-2015 (CT) Add rules for `a`, `i.fa` to `b.current-link`
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,18 @@ style_sheet = Style_Sheet \
                 ( "a.current-link", "b.current-link"
                 , children    =
                     [ Rule
+                        ( "a"
+                        , background_color   = "transparent"
+                        , color              = P.nav_col.mark_color_link
+                        , display            = "inline-block"
+                        , font_size          = Em (0.875)
+                        , margin             = TRBL0
+                            ( l = - P.nav_col.li_left
+                            , r = + P.nav_col.li_left - P.nav_col.mark_width
+                            )
+                        , padding            = 0
+                        )
+                    , Rule
                         ( "i"
                         , Border
                             ( style   = "solid"
@@ -147,6 +160,13 @@ style_sheet = Style_Sheet \
                             , r = + P.nav_col.li_left - P.nav_col.mark_width
                             )
                         , width          = 0
+                        )
+                    , Rule
+                        ( "i.fa"
+                        , border         = 0
+                        , height         = "inherit"
+                        , margin         = 0
+                        , width          = "inherit"
                         )
                     ]
                 )

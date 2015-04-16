@@ -1,6 +1,6 @@
 {#- jinja template: html/navigation.jnj -#}
 {#
-## Copyright (C) 2009-2014 Mag. Christian Tanzer All rights reserved
+## Copyright (C) 2009-2015 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
 ## This template is part of the package JNJ.
@@ -47,6 +47,10 @@
 ##    14-Mar-2014 (CT) Add macros for related links: `rel_link`,
 ##                     `rel_nav_buttons`, `rel_first`...
 ##     5-Dec-2014 (CT) Use pure buttons for `rel_nav_buttons`; remove `neighbor`
+##    16-Apr-2015 (CT) Add `permalink`, if any, to `current-link` entry
+##                     + Add guard for `contents` to `rel_link`
+##    16-Apr-2015 (CT) Add `rel` attribute to `rel_next`, `rel_prev`
+##                     + Add `kwargs` to `rel_link`
 ##    ««revision-date»»···
 ##--
 #}
@@ -94,7 +98,20 @@
       {%- else -%}
         {% if isc -%}
           <li>
-            <b class="current-link"><i></i>{{- entry_body (link) -}}</b>
+            <b class="current-link">
+              {%- if page.permalink -%}
+                {{- rel_link
+                    ( page, page.permalink
+                    , GTW._T ("Permalink of current page"), "bookmark", None
+                    , enabled = True
+                    , rel     = "bookmark"
+                    )
+                -}}
+              {%- else -%}
+                <i></i>
+              {% endif %}
+              {{- entry_body (link) -}}
+            </b>
           </li>
         {%- else -%}
           {%- if href -%}
@@ -206,9 +223,12 @@
 {%- endmacro -%} {#- rel_last -#}
 
 {%- macro rel_link (page, href, title, symbol, contents) -%}
-  {%- set enabled = href and href != page.abs_href %}
+  {%- set enabled = kwargs.pop ("enabled", False)
+                      or (href and href != page.abs_href)
+  %}
   {%- set akw = GTW.dict
-        ( class = GTW.filtered_join
+        ( kwargs
+        , class = GTW.filtered_join
             (" ", ("pure-button", "" if enabled else "pure-button-disabled"))
         , title = title
         )
@@ -216,7 +236,9 @@
   {%- if enabled %}{%- do akw.update (href = href) %}{% endif -%}
   <a{{ akw|xmlattr }}>{#- -#}
     <i class="fa fa-{{ symbol }}">{#- -#}
-      <b>{{- contents -}}</b>{#- -#}
+      {%- if contents %}
+        <b>{{- contents -}}</b>{#- -#}
+      {% endif -%}
     </i>{#- -#}
   </a>
 {%- endmacro -%} {#- rel_link -#}
@@ -240,7 +262,7 @@
   {%- if not title %}
     {%- set title = GTW._T ("Goto next page") %}
   {% endif -%}
-  {{ rel_link (page, href, title, "angle-right", GTW._T ("Next")) }}
+  {{ rel_link (page, href, title, "angle-right", GTW._T ("Next"), rel = "next") }}
 {%- endmacro -%} {#- rel_next -#}
 
 {%- macro rel_parent (page, href, title = None) -%}
@@ -254,7 +276,7 @@
   {%- if not title %}
     {%- set title = GTW._T ("Goto previous page") %}
   {% endif -%}
-  {{ rel_link (page, href, title, "angle-left", GTW._T ("Prev")) }}
+  {{ rel_link (page, href, title, "angle-left", GTW._T ("Prev"), rel = "prev") }}
 {%- endmacro -%} {#- rel_prev -#}
 
 {%- macro section (link_list, name = None) -%}
