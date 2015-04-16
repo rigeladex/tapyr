@@ -349,6 +349,7 @@
 #    27-Feb-2015 (CT) Add `_A_Date_.not_in_future` and corresponding checker
 #    27-Feb-2015 (CT) Change `_A_Composite_.cooked` to try downcast
 #    27-Mar-2015 (CT) Add `on` to `Table_X` of `A_Boolean`, `A_Confirmation`
+#    16-Apr-2015 (CT) Add `max_rev_ref`, `min_rev_ref`
 #    ««revision-date»»···
 #--
 
@@ -1592,6 +1593,8 @@ class _A_Rev_Ref_ (A_Attr_Type) :
     ### set by meta machinery
     P_Type              = None
     E_Type              = TFL.Meta.Alias_Property ("P_Type")
+    max_rev_ref         = -1
+    min_rev_ref         = 0
     Ref_Type            = None
     ref_name            = None
     sort_key            = None
@@ -2625,6 +2628,11 @@ class _A_Link_Ref_ (_A_Rev_Ref_) :
 
     role_filter         = TFL.Meta.Alias_Property ("ref_filter")
     role_name           = TFL.Meta.Alias_Property ("ref_name")
+
+    @property
+    def max_rev_ref (self) :
+        return self.ref_attr.max_links
+    # end def max_rev_ref
 
 # end class _A_Link_Ref_
 

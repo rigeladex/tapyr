@@ -41,6 +41,7 @@
 ##    13-Mar-2015 (CT) Pass `action` to `anti_csrf_token`
 ##    24-Mar-2015 (CT) Add `<b>*</b>` to `label` for required elements
 ##                     (that aren't also prefilled)
+##    16-Apr-2015 (CT) Add guard for `add_rev_ref` button
 ##    ««revision-date»»···
 ##--
 #}
@@ -328,11 +329,13 @@
          data-max-rev-ref="{{ elem.max_rev_ref }}" {#- -#}
     >
       <h1>{{ label }}</h1>
-      <div class="action-button">{# -#}
-        {{- action_button
-            ("add_rev_ref", "plus", GTW._T ("Add a %s") % (label, ))
-        -}}
-      </div>
+      {%- if elem.max_index < elem.max_rev_ref %}
+        <div class="action-button">{# -#}
+          {{- action_button
+              ("add_rev_ref", "plus", GTW._T ("Add a %s") % (label, ))
+          -}}
+        </div>
+      {% endif -%}
       {{ GTW.call_macro
           ("do_elements", page, form, elem, t_module, templ_name = t_module)
       }}

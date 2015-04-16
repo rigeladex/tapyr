@@ -88,6 +88,7 @@
 #     3-Apr-2015 (CT) Add `_Field_Entity_Mixin_.choices`
 #     3-Apr-2015 (CT) Change `Field_Entity.__call__` to handle `pid == -1`
 #    13-Apr-2015 (CT) Use `TFL.json_dump.default`
+#    16-Apr-2015 (CT) Take default of `max_rev_ref` from `.attr`
 #    ««revision-date»»···
 #--
 
@@ -1638,11 +1639,11 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
 
     attr_selector         = None
     max_index             = 0
-    max_rev_ref           = 1 << 31
-    min_rev_ref           = 0
     ui_rank               = (1 << 31, )
 
-    _pop_to_self          = ("max_rev_ref", "min_rev_ref")
+    _max_rev_ref          = None
+    _min_rev_ref          = None
+    _pop_to_self_         = ("max_rev_ref", "min_rev_ref")
 
     def __init__ (self, essence = None, ** kw) :
         self.__super.__init__ (essence, ** kw)
@@ -1700,6 +1701,26 @@ class Field_Rev_Ref (BaM (_Field_Base_, metaclass = M_Field_Rev_Ref)) :
         for tm in cls.proto.template_module_iter () :
             yield tm
     # end def template_module_iter
+
+    @TFL.Meta.Once_Property
+    def max_rev_ref (self) :
+        result = self._max_rev_ref
+        if result is None :
+            result = self.attr.max_rev_ref
+        if result < 0 :
+            result = 1 << 31
+        return result
+    # end def max_rev_ref
+
+    @TFL.Meta.Once_Property
+    def min_rev_ref (self) :
+        result = self._min_rev_ref
+        if result is None :
+            result = self.attr.min_rev_ref
+        if result < 0 :
+            result = 0
+        return result
+    # end def min_rev_ref
 
     def add (self, how_many = 1, ** kw) :
         """Add `how_many` new `Entity_Rev_Ref` instances to `self.elements`"""
