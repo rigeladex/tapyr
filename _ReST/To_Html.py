@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2010-2014 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010-2015 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package ReST.
@@ -18,6 +18,7 @@
 # Revision Dates
 #    17-Mar-2010 (CT) Creation
 #    22-Feb-2012 (CT) Import `_ReST.Directives`
+#    21-Apr-2015 (CT) Disable `file_insertion_enabled`, `raw_enabled`
 #    ««revision-date»»···
 #--
 
@@ -39,14 +40,21 @@ class To_Html (TFL.Meta.Object) :
     """Convert re-structured text to HTML."""
 
     include  = ("html_title", "html_subtitle", "fragment")
+
+    ### http://docutils.sourceforge.net/docs/user/config.html
+    ### http://docutils.sourceforge.net/docs/howto/security.html
     settings = dict \
-        ( embed_stylesheet              = False
+        ( cloak_email_addresses         = False
+        , embed_stylesheet              = False
+        , file_insertion_enabled        = False
         , initial_header_level          = "2"
         , input_encoding                = "unicode"
+        , language_code                 = "en"
         , output_encoding               = "utf8"
         , output_encoding_error_handler = "xmlcharrefreplace"
-        , language_code                 = "en"
-        , cloak_email_addresses         = False
+        , raw_enabled                   = False
+        , smart_quotes                  = False
+        , _disable_config               = True
         )
 
     def __init__ (self, * replacers, ** kw) :
