@@ -32,6 +32,10 @@
 ##                     * define permissions for `doc_root` directory
 ##                     * remove explicit permissions for lower directories
 ##    19-Mar-2015 (CT) Use `config_options.cert_extension`
+##    21-Apr-2015 (CT) Change `redirect_to_https` to use `Redirect`,
+##                     not `RewriteRule`; add `rewrite_to_https`
+##    21-Apr-2015 (CT) Create separate `VirtualHost` for aliases in
+##                     `gtw_host_80_redirect`; add optional argument `real_name`
 ##    ««revision-date»»···
 ##--
 #}
@@ -111,20 +115,19 @@
         , address   = "*"
         , port      = "80"
         , aliases   = ()
+        , real_name = None
         )
 -%}
   {%- set _caller = kwargs.pop ("caller", None) -%}
 <VirtualHost {{ address -}}:{{- port -}}>
   ServerName {{ server_name }}
-  {% for a in aliases -%}
-    ServerAlias {{ a }}
-  {% endfor -%}
-  {% if admin -%}
-    ServerAdmin {{ admin }}
-  {% endif -%}
-  {{ redirect_to_https () }}
-  {% if _caller %}{{ _caller () }}{% endif %}
+  {{ redirect_to_https (real_name or server_name) }}
+  {%- if _caller %}{{ _caller () }}{% endif -%}
 </VirtualHost>
+
+{% for a in aliases -%}
+  {{ gtw_host_80_redirect (a, None, address, port, real_name = server_name) }}
+{% endfor -%}
 {%- endmacro -%} {#- gtw_host_80_redirect -#}
 
 {%- macro gtw_host_ssl
@@ -141,8 +144,8 @@
       , address      = address
       , port         = port
       , admin        = admin
-      , app_root     = app_root
       , aliases      = aliases
+      , app_root     = app_root
       , doc_root     = doc_root
       , ** kwargs
       )
@@ -227,10 +230,14 @@
   LogLevel  {{ level }}
 {% endmacro -%} {#- logfiles -#}
 
-{%- macro redirect_to_https () -%}
+{%- macro redirect_to_https (server_name) -%}
+  Redirect permanent / https://{{- server_name -}}/
+{% endmacro -%} {#- redirect_to_https -#}
+
+{%- macro rewrite_to_https (server_name) -%}
   RewriteEngine On
   RewriteRule   ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [L,R=permanent]
-{% endmacro -%} {#- redirect_to_https -#}
+{% endmacro -%} {#- rewrite_to_https -#}
 
 {%- macro use_client_cert (ca_path, ca_key_name, verify_depth = 1) -%}
   SSLCACertificatePath  {{ ca_path }}
